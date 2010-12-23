@@ -43,6 +43,7 @@
 # Version 10.0 - 20100729 adaption to new GC-design DateHiddenrex , optimized cacheOwnerRex araber95
 # Version 11.0 - 20101110 adaption to new GC-design (maybe not complete)
 # Version 12.0 - 20101223 first little adaption to new GC-design (logs)
+# Version 12.0 - 20101224 adaption to new GC-design (decode distance)
 #============================================================
 # A suffix of Rex indicates a regular expression
 # A suffix of ExStart indicates the start of an Extractor search pattern
@@ -73,6 +74,8 @@ logDateRex         = <td>\\s*(.*?)<br\ />\\s*<span\ class="Success">
 availableRex       = <span\ class="Strike">
 archivedRex        = <span\ class="OldWarning\ Strike">
 PMRex              = small_profile.gif
+distCodeRex        = k=(.*?)"\ style=
+distCodeKey        = groundspeak
 distRex            = (.*?)(?:km|mi)
 waypointRex        = \\(GC(.*?)\\)<br\ />
 TypeRex            = k">\\s*<img\ src="/images/WptTypes/(.*?)\\.gif

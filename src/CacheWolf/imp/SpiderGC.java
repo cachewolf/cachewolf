@@ -155,6 +155,8 @@ public class SpiderGC {
 	private static String propPM;
 	private static Regex RexPropDirection;
 	private static Regex RexPropDistance;
+	private static Regex RexPropDistanceCode;
+	private static String DistanceCodeKey;
 	private static Regex RexPropWaypoint;
 	private static Regex RexPropType;
 	private static Regex RexPropSize;
@@ -1425,6 +1427,8 @@ public class SpiderGC {
 			propPM = p.getProp("PMRex");
 			RexPropDirection = new Regex(p.getProp("directionRex"));
 			RexPropDistance = new Regex(p.getProp("distRex"));
+			RexPropDistanceCode = new Regex(p.getProp("distCodeRex"));
+			DistanceCodeKey = p.getProp("distCodeKey");
 			RexPropWaypoint = new Regex(p.getProp("waypointRex"));
 			RexPropType = new Regex(p.getProp("TypeRex"));
 			RexPropSize = new Regex(p.getProp("SizeRex"));
@@ -1725,25 +1729,22 @@ public class SpiderGC {
 	 * @return Distance
 	 */
 	private double getDistGC(String doc) throws Exception {
-		Regex RexDistance = new Regex("k=(.*?)\"");
-		RexDistance.search(doc);
-		if (!RexDistance.didMatch()) {
+		RexPropDistanceCode.search(doc);
+		if (!RexPropDistanceCode.didMatch()) {
 			pref.log("check distRex" + Preferences.NEWLINE + doc);
 			return 0;
 		}
-		String stmp = ewe.net.URL.decodeURL(RexDistance.stringMatched(1));
+		String stmp = ewe.net.URL.decodeURL(RexPropDistanceCode.stringMatched(1));
 		byte ctmp[] = stmp.getBytes();
-		ctmp[0]^='g';
-		ctmp[1]^='r';
-		ctmp[2]^='o';
-		ctmp[3]^='u';
-		ctmp[4]^='n';
-		ctmp[5]^='d';
-		ctmp[6]^='s';
+		byte ckey[] = DistanceCodeKey.getBytes();
+		int maxDecodeLength = java.lang.Math.min(stmp.length(), DistanceCodeKey.length());
+		for (int i=0; i<maxDecodeLength; i++) {
+		  ctmp[i]^=ckey[i];
+    }
 		stmp = new String(ctmp);
 		RexPropDistance.search(stmp); // km oder mi
-		pref.log(RexDistance.stringMatched(1)+" : "+stmp,null);
-		if (RexDistance.didMatch()) {
+		pref.log(RexPropDistanceCode.stringMatched(1)+" : "+stmp,null);
+		if (RexPropDistance.didMatch()) {
 			if (MyLocale.getDigSeparator().equals(","))
 				return Convert.toDouble(RexPropDistance.stringMatched(1)
 						.replace('.', ','));
@@ -1855,6 +1856,10 @@ public class SpiderGC {
 	 * @return direction String
 	 */
 	private String getDirection(String doc) throws Exception {
+	  //TODO decode direction from image cache code
+	  return "";
+	  
+	  /*
 		RexPropDirection.search(doc);
 		if (!RexPropDirection.didMatch()) {
 			pref.log("check directionRex in spider.def" 
@@ -1862,6 +1867,7 @@ public class SpiderGC {
 			return "";
 		}
 		return RexPropDirection.stringMatched(1);
+		*/
 	}
 
 	/*
@@ -2232,8 +2238,8 @@ public class SpiderGC {
 		shortDescRex.search(doc);
 		if (!shortDescRex.didMatch()) {
 			if (shortDescRex_not_yet_found)
-				pref.log("no shortDesc or check shortDescRex in spider.def"
-						+ Preferences.NEWLINE + doc);
+				pref.log("no shortDesc or check shortDescRex in spider.def");
+				//		+ Preferences.NEWLINE + doc);
 		} else {
 			res = shortDescRex.stringMatched(1);
 			shortDescRex_not_yet_found = false;
