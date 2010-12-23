@@ -1720,6 +1720,17 @@ public class SpiderGC {
 		}
 		return counter;
 	}
+	
+	private String decodeXor(String input, String key) {
+	  byte ctmp[] = input.getBytes();
+		byte ckey[] = key.getBytes();
+		int codeLength = input.length();
+		int keyLength = key.length();
+		for (int i=0; i<codeLength; i++) {
+		  ctmp[i]^=ckey[i%keyLength];
+    }
+		return new String(ctmp);
+  }
 
 	/**
 	 * Get the Distance to the centre
@@ -1735,13 +1746,7 @@ public class SpiderGC {
 			return 0;
 		}
 		String stmp = ewe.net.URL.decodeURL(RexPropDistanceCode.stringMatched(1));
-		byte ctmp[] = stmp.getBytes();
-		byte ckey[] = DistanceCodeKey.getBytes();
-		int maxDecodeLength = java.lang.Math.min(stmp.length(), DistanceCodeKey.length());
-		for (int i=0; i<maxDecodeLength; i++) {
-		  ctmp[i]^=ckey[i];
-    }
-		stmp = new String(ctmp);
+		stmp = decodeXor( stmp, DistanceCodeKey);
 		RexPropDistance.search(stmp); // km oder mi
 		pref.log(RexPropDistanceCode.stringMatched(1)+" : "+stmp,null);
 		if (RexPropDistance.didMatch()) {
