@@ -1725,20 +1725,31 @@ public class SpiderGC {
 	 * @return Distance
 	 */
 	private double getDistGC(String doc) throws Exception {
-		if (doc.indexOf("Here") >= 0) {
-			return (0);
-		} else {
-			RexPropDistance.search(doc);
-			if (!RexPropDistance.didMatch()) {
-				pref.log("check distRex in spider.def" 
-						+ Preferences.NEWLINE + doc);
-				return 0;
-			}
+		Regex RexDistance = new Regex("k=(.*?)\"");
+		RexDistance.search(doc);
+		if (!RexDistance.didMatch()) {
+			pref.log("check distRex" + Preferences.NEWLINE + doc);
+			return 0;
+		}
+		String stmp = ewe.net.URL.decodeURL(RexDistance.stringMatched(1));
+		byte ctmp[] = stmp.getBytes();
+		ctmp[0]^='g';
+		ctmp[1]^='r';
+		ctmp[2]^='o';
+		ctmp[3]^='u';
+		ctmp[4]^='n';
+		ctmp[5]^='d';
+		ctmp[6]^='s';
+		stmp = new String(ctmp);
+		RexPropDistance.search(stmp); // km oder mi
+		pref.log(RexDistance.stringMatched(1)+" : "+stmp,null);
+		if (RexDistance.didMatch()) {
 			if (MyLocale.getDigSeparator().equals(","))
 				return Convert.toDouble(RexPropDistance.stringMatched(1)
 						.replace('.', ','));
 			return Convert.toDouble(RexPropDistance.stringMatched(1));
 		}
+		return 0;
 	}
 
 	/**
