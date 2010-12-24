@@ -1815,6 +1815,7 @@ public class SpiderGC {
 	 * check for changed CacheSize
 	 */
 	private boolean sizeChanged(CacheHolder ch, String toCheck) {
+	  //TODO extract size from image code
 		RexPropSize.search(toCheck);
 		if (RexPropSize.didMatch()) {
 			String stmp = RexPropSize.stringMatched(1);
@@ -1833,6 +1834,7 @@ public class SpiderGC {
 	 * check for changed Difficulty or Terrain
 	 */
 	private boolean difficultyOrTerrainChanged(CacheHolder ch, String toCheck) {
+	  //TODO extract D/T from image code
 		boolean ret = false;
 		RexPropDandT.search(toCheck);
 		if (RexPropDandT.didMatch()) {
