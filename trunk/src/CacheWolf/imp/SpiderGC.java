@@ -238,10 +238,7 @@ public class SpiderGC {
 
 			cachesToUpdate = fillDownloadLists(pref.maxSpiderNumber, maxUpdate,
 					maxDistance, minDistance, directions, cachesToUpdate);
-			if (cachesToUpdate == null) {
-				cachesToUpdate = new Hashtable();
-			}
-			;
+			if (cachesToUpdate == null) { cachesToUpdate = new Hashtable(); };
 			if (!infB.isClosed) {
 				infB.setInfo(MyLocale.getMsg(5511, "Found ")
 						+ cachesToLoad.size()
@@ -805,8 +802,6 @@ public class SpiderGC {
 			}
 			if (maxUpdate == -1)
 				maxUpdate = Integer.MAX_VALUE;
-			// TODO maxUpdate in preferences ?
-
 		}
 
 		// options for all
@@ -823,7 +818,7 @@ public class SpiderGC {
 			profile.setDistGC(Double.toString(maxDistance));
 		}
 
-		directions = mString.split(direction, ',');
+		directions = mString.split(direction, '-');
 		// works even if TYPE not in options
 		cacheTypeRestriction = options.getCacheTypeRestriction(p);
 		restrictedCacheType = options.getRestrictedCacheType(p);
@@ -952,14 +947,14 @@ public class SpiderGC {
 						Global.mainTab.statBar.updateDisplay("working "
 								+ page_number + " / " + found_on_page);
 					String CacheDescriptionGC = RexPropLine.stringMatched(1);
-					double gotDistance = getDistGC(CacheDescriptionGC);
+					String DistanceAndDirection = getDistanceAndDirection(CacheDescriptionGC);
+					double gotDistance = getDistGC(DistanceAndDirection);
 					String chWaypoint = getWP(CacheDescriptionGC);
 					if (gotDistance <= toDistance) {
 						CacheHolder ch = cacheDB.get(chWaypoint);
 						if (ch == null) { // not in DB
 							if (gotDistance >= fromDistance
-									&& directionOK(directions,
-											getDirection(CacheDescriptionGC))
+									&& directionOK(directions, getDirection(DistanceAndDirection))
 									&& doPMCache(CacheDescriptionGC)
 									&& cachesToLoad.size() < maxNew) {
 								if (CacheDescriptionGC.indexOf(propFound) != -1)
@@ -1731,7 +1726,15 @@ public class SpiderGC {
     }
 		return new String(ctmp);
   }
-
+	private String getDistanceAndDirection(String doc) {
+		RexPropDistanceCode.search(doc);
+		if (!RexPropDistanceCode.didMatch()) {
+			pref.log("check distRex" + Preferences.NEWLINE + doc);
+			return "";
+		}
+		String stmp = ewe.net.URL.decodeURL(RexPropDistanceCode.stringMatched(1));
+		return decodeXor( stmp, DistanceCodeKey);
+	}
 	/**
 	 * Get the Distance to the centre
 	 * 
@@ -1740,15 +1743,7 @@ public class SpiderGC {
 	 * @return Distance
 	 */
 	private double getDistGC(String doc) throws Exception {
-		RexPropDistanceCode.search(doc);
-		if (!RexPropDistanceCode.didMatch()) {
-			pref.log("check distRex" + Preferences.NEWLINE + doc);
-			return 0;
-		}
-		String stmp = ewe.net.URL.decodeURL(RexPropDistanceCode.stringMatched(1));
-		stmp = decodeXor( stmp, DistanceCodeKey);
-		RexPropDistance.search(stmp); // km oder mi
-		pref.log(RexPropDistanceCode.stringMatched(1)+" : "+stmp,null);
+		RexPropDistance.search(doc); // km oder mi
 		if (RexPropDistance.didMatch()) {
 			if (MyLocale.getDigSeparator().equals(","))
 				return Convert.toDouble(RexPropDistance.stringMatched(1)
@@ -1863,18 +1858,13 @@ public class SpiderGC {
 	 * @return direction String
 	 */
 	private String getDirection(String doc) throws Exception {
-	  //TODO decode direction from image cache code
-	  return "";
-	  
-	  /*
 		RexPropDirection.search(doc);
 		if (!RexPropDirection.didMatch()) {
-			pref.log("check directionRex in spider.def" 
-					+ Preferences.NEWLINE + doc);
+			pref.log("check directionRex in spider.def" + Preferences.NEWLINE + doc);
 			return "";
 		}
-		return RexPropDirection.stringMatched(1);
-		*/
+		String s=RexPropDirection.stringMatched(1);
+		return s;
 	}
 
 	/*
@@ -1883,18 +1873,19 @@ public class SpiderGC {
 	private boolean directionOK(String[] directions, String gotDirection) {
 		if (directions.length == 0)
 			return true; // nothing means all
-		for (int i = 0; i < directions.length; i++) {
-			if (directions[i].equals(gotDirection)) {
-				return true;
-			}
-			int j = directions[i].indexOf("*");
-			if (j > 0) {
-				if (gotDirection.indexOf(directions[i].substring(0, 1)) > -1) {
-					return true;
-				}
-			}
+		int lowerLimit = Common.parseInt(directions[0]);
+		int upperLimit = Common.parseInt(directions[1]);
+		int toCheck = Common.parseInt(gotDirection);
+		if (lowerLimit <= upperLimit) {
+			if ((toCheck>=lowerLimit) && (toCheck<=upperLimit))
+			{return true;}
+			else {return false;}
 		}
-		return false;
+		else {
+			if ((toCheck>=lowerLimit) || (toCheck<=upperLimit))
+			{return true;}
+			else {return false;}
+		}
 	}
 
 	/*
