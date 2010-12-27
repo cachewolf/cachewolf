@@ -58,28 +58,28 @@ public class Profile {
 	public CWPoint centre=new CWPoint();
 	/** The name of the profile. The baseDir in preferences is appended this name to give the dataDir where
 	 *  the index.xml and cache files live. (Excuse the English spelling of centre)     */
-	public String name=new String();
+	public String name="";
 	/** This is the directory for the profile. It contains a closing /.   	 */
-	public String dataDir = new String();
+	public String dataDir = "";
 
 	/** Last sync date for opencaching caches */
-	private String last_sync_opencaching = new String();
+	private String last_sync_opencaching = "";
 
 	/** Distance for opencaching caches */
-	private String distOC = new String();
+	private String distOC = "";
 
 	/** Distance for geocaching caches */
-	private String distGC = new String();
-	private String minDistGC = new String();
+	private String distGC = "";
+	private String minDistGC = "";
 	/** Direction for geocaching caches */
-	private String directionGC = new String();
+	private String directionGC = "";
 	
 	private String gpxStyle =new String(); 
 	private String gpxTarget =new String(); 
 	private String gpxId =new String(); 
 
 	/** path to the maps of the profile relative to the maps root */
-	private String relativeCustomMapsPath = new String();
+	private String relativeCustomMapsPath = "";
 
 	public final static boolean SHOW_PROGRESS_BAR = true;
 	public final static boolean NO_SHOW_PROGRESS_BAR = false;
@@ -227,7 +227,7 @@ public class Profile {
 			if (getDirectionGC() == null || getDirectionGC().endsWith("null") || getDirectionGC().equals("")) {
 				setDirectionGC("");
 			}
-			
+
 			// If the current filter is a CacheTour filter, then save it as
 			// normal filter, because after loading there is no cache tour defined
 			// which could be used as filter criterium.
