@@ -150,7 +150,7 @@ public class OCXMLImporterScreen extends Form {
 			this.addNext(new mLabel(MyLocale.getMsg(1629,"Richtung:")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
 			directionInput = new mInput();
 			directionInput.setText(Global.getProfile().getDirectionGC());
-			directionInput.toolTip=MyLocale.getMsg(1630,"z.B. leer oder N oder N* oder N,NE,E");
+			directionInput.toolTip=MyLocale.getMsg(1630,"z.B. leer oder von-bis (Grad)");
 			this.addLast(directionInput,CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
 		}
 
