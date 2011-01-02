@@ -271,7 +271,7 @@ public class MainTab extends mTabbedPanel {
 			break;
 		case 6:  // CalcPanel
 			MyLocale.setSIPOff();
-			calcP.setFields(ch);
+			if (ch != null) calcP.setFields(ch);
 			break;
 		case 7: // GotoPanel
 			MyLocale.setSIPOff();
