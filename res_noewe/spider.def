@@ -69,18 +69,19 @@ nextListPage       = /seek/nearest.aspx
 # Regex to search for cachenames
 listBlockRex       = <table id="ctl00_ContentBody_dlResults"((?s).*?)</table>
 lineRex            = <tr\ bgcolor='#.{6}'\\s*class="Data\ BorderTop">((?s).*?)</tr>
-directionRex       = /compass/(.*?).gif
-logDateRex         = <td>\\s*(.*?)<br\ />\\s*<span\ class="Success">
+logDateRex         = <td valign="top">\\s*(.*?)<br\ />
 availableRex       = class="lnk\ \ Strike">
 archivedRex        = class="lnk\ OldWarning\ Strike\ Strike">
 PMRex              = small_profile.gif
 distCodeRex        = k=(.*?)"\ style=
 distCodeKey        = groundspeak
 distRex            = (.*?)(?:km|mi)
+DTSRex             = v=(.*?)"\ style=
+DTSCodeKey         = hbM9fjmrxy7z42LFD58BkKgPGdHscvCqNnw3ptO6lJ
 waypointRex        = \\(GC(.*?)\\)<br\ />
 TypeRex            = k">\\s*<img\ src="http://www.geocaching.com/images/wpttypes/sm/(.*?)\\.gif
-SizeRex            = /container/(.*?)\\.gif
-DandTRex           = <td>\\s*\\((.*?)/(.*?)\\)<br
+#SizeRex            = /container/(.*?)\\.gif
+#DandTRex           = <td>\\s*\\((.*?)/(.*?)\\)<br
 found              = alt="Found\ It!"
 own                = /WptTypes/name_tag.gif
 TBRex              = /wpttypes/([0-9]+).gif" alt="(.*?)"
