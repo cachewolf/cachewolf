@@ -1690,8 +1690,8 @@ public class SpiderGC {
 			numLogUpdates++;
 			ret = true;
 		}
-		if (!ret && TBchanged(ch, CacheDescription)) {
-			ret = true;
+		if (!ret) {
+			ret = TBchanged(ch, CacheDescription);
 		}
 		if (save)
 			ch.save();
@@ -2104,12 +2104,8 @@ public class SpiderGC {
 			return false;
 		}
 		if (stmp.indexOf("day") > 0) {
-			lastLogGC.setTime(lastLogGC.getTime() - 691200000L); // simplyfied
-																	// (update
-																	// if not
-																	// newer
-																	// than last
-																	// week)
+			// simplyfied (update if not newer than last week)
+			lastLogGC.setTime(lastLogGC.getTime() - 691200000L); 
 		} else if (stmp.equals("")) {
 			return false; // no log yet
 		} else {
@@ -2132,9 +2128,8 @@ public class SpiderGC {
 	private boolean TBchanged(CacheHolder ch, String cacheDescription) {
 		// simplified Version: only presence is checked 
 		if (pref.downloadTBs && pref.checkTBs ) {
-			boolean hasCoin=cacheDescription.indexOf("Geocoin") > -1;
-			boolean hasTB=cacheDescription.indexOf("Travel Bug Dog Tag") > -1;						
-			return (ch.has_bugs() != (hasCoin || hasTB));
+			boolean hasTB=cacheDescription.indexOf("data-tbcount") > -1;
+			return ch.has_bugs() != (hasTB);
 		}
 		return false;
 	}
