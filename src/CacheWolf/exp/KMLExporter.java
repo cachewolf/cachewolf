@@ -256,7 +256,9 @@ public class KMLExporter extends Exporter {
 		} catch (IOException e) {
 		}
 		try {
-			zif = new ZipFile (FileBase.getProgramDirectory() + FileBase.separator + "exporticons" + FileBase.separator + "exporticons" + FileBase.separator + "GoogleEarth.zip");
+      if (zif == null) {
+			  zif = new ZipFile (FileBase.getProgramDirectory() + FileBase.separator + "exporticons" + FileBase.separator + "exporticons" + FileBase.separator + "GoogleEarth.zip");
+			}
 			ZipEntry zipEnt;
 			int len;
 			String fileName;

@@ -549,7 +549,7 @@ public class GPXImporter extends MinML {
 				}
 				else {
 					addr = "http://www.geocaching.com/seek/cache_details.aspx?wp=" + holder.getWayPoint() ;
-					cacheText = SpiderGC.fetch(addr,false);
+					cacheText = SpiderGC.fetchText(addr,false);
 					if (cacheText.indexOf(propsSpider.getProp("premiumCachepage")) > 0) {
 						// Premium cache spidered by non premium member
 						imgSpider.getImages(holder.getCacheDetails(false).LongDescription, holder.getCacheDetails(false),false);

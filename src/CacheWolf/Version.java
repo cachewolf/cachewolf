@@ -42,7 +42,7 @@ public class Version {
 	static final int VER_MINOR = 2;
 	static final String VER_SVN ="$LastChangedRevision$"; // the number is automatically replaced by subversion to the latest versionnumer of this file (svn:keywords LastChangedRevision)
 	static final int SVN_REVISION = Common.parseInt(VER_SVN.substring(VER_SVN.indexOf(" ")+1, VER_SVN.lastIndexOf(" ")));
-	static final int VERSION_TYPE = 3;
+	static final int VERSION_TYPE = 3; // don't change (the number is automatically replaced by build script)
 	public static final String VERSION_TYPES(int i) {
 		if (i==0) return MyLocale.getMsg(7000,"Release");
 		if (i==1) return MyLocale.getMsg(7001,"Release candidate");
