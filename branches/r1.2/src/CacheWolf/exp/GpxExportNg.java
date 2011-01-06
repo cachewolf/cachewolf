@@ -34,6 +34,7 @@ import CacheWolf.CacheSize;
 import CacheWolf.CacheTerrDiff;
 import CacheWolf.CacheType;
 import CacheWolf.Common;
+import CacheWolf.DateFormat;
 import CacheWolf.Global;
 import CacheWolf.Log;
 import CacheWolf.LogList;
@@ -559,8 +560,8 @@ public class GpxExportNg {
 			ret.append("  </wpt>").append(newLine);
 		} catch (IllegalArgumentException e) {
 			exportErrors++;
-			ch.setIncomplete(true);
-			Global.getPref().log("GPX Export: " + ch.getWayPoint() + " set to incomplete ",	e, true);
+			ch.checkIncomplete();  // ch.setIncomplete(true);
+			Global.getPref().log("GPX Export: " + ch.getWayPoint() + " check incomplete ",	e, true);
 			return "";
 		} catch (Exception e) {
 			exportErrors++;
@@ -807,7 +808,8 @@ public class GpxExportNg {
 			append("<br />").
 			append(newLine);
 		}
-		Log log = new Log("icon_note.gif", "2000-01-01", "CacheWolf",logText.toString());
+		if (logText.length() == 0 && !ch.getLastSync().equals("")) logText.append(MyLocale.getMsg(1051,"Last sync date"));
+		Log log = new Log("icon_note.gif", DateFormat.yyyyMMddHHmmss2gpxLogdate(ch.getLastSync()), "CacheWolf", logText.toString());
 		return log;
 	}
 	

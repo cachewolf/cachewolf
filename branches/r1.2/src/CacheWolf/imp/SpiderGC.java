@@ -688,6 +688,7 @@ public class SpiderGC {
 	private boolean doDownloadGui(int menu) {
 
 		OCXMLImporterScreen options;
+		direction = "";
 		if (menu == 0 && spiderAllFinds) {
 			options = new OCXMLImporterScreen(MyLocale.getMsg(217,
 					"Spider all finds from geocaching.com"),
@@ -705,7 +706,6 @@ public class SpiderGC {
 			// setting default values for options not used (if necessary)
 			maxDistance = 1.0;
 			minDistance = 0.0;
-			direction = "";
 		} else if (menu == 0) {
 			options = new OCXMLImporterScreen(MyLocale.getMsg(131,
 					"Download from geocaching.com"), OCXMLImporterScreen.ISGC
@@ -728,22 +728,14 @@ public class SpiderGC {
 			// setting default values for options not used (if necessary)
 
 			String minDist = options.minDistanceInput.getText();
-			if (minDist.length() == 0)
-				minDist = "0";
 			minDistance = Common.parseDouble(minDist);
-			profile
-					.setMinDistGC(Double.toString(minDistance)
-							.replace(',', '.'));
+			profile.setMinDistGC(Double.toString(minDistance).replace(',', '.'));
 
-			direction = options.directionInput.getText().toUpperCase();
-			direction = direction.replace(' ', ','); // separator blank to ,
-			direction = direction.replace(';', ','); // separator ; to ,
-			profile.setDirectionGC(direction);
-			direction = direction.replace('O', 'E'); // synonym for East
-			direction = direction.replace('Z', 'S'); // synonym for South
-			direction = direction.replace('P', 'S'); // synonym for South
+			direction = options.directionInput.getText();
+			directions = mString.split(direction, '-');
 
 			doNotgetFound = options.foundCheckBox.getState();
+			profile.setDirectionGC(direction);
 
 		} else if (menu == 1) { // menu = 1 input values for get Caches along a
 								// route
@@ -764,7 +756,6 @@ public class SpiderGC {
 			// setting default values for options not used (if necessary)
 			minDistance = 0.0;
 			doNotgetFound = options.foundCheckBox.getState();
-			direction = "";
 			maxUpdate = 0;
 			fileName = options.fileName;
 		} else { // if (menu == 2) {
@@ -781,8 +772,6 @@ public class SpiderGC {
 		}
 
 		if (menu == 0) {
-
-			// handling input of common options
 
 			int maxNew = -1;
 			String maxNumberString = options.maxNumberInput.getText();
@@ -810,17 +799,12 @@ public class SpiderGC {
 
 		if (options.maxDistanceInput != null) {
 			String maxDist = options.maxDistanceInput.getText();
-			if (maxDist.length() == 0)
-				return false;
 			maxDistance = Common.parseDouble(maxDist);
-			if (maxDistance == 0)
-				return false;
-			if (maxDistance < 0.5)
-				maxDistance = 0.5; // zur Sicherheit mindenstens 500 meter Umkreis
+			if (maxDistance == 0) return false;
+			if (maxDistance < 0.5) maxDistance = 0.5; // zur Sicherheit bei "along the route" mindenstens 500 meter Umkreis
 			profile.setDistGC(Double.toString(maxDistance));
 		}
 
-		directions = mString.split(direction, '-');
 		// works even if TYPE not in options
 		cacheTypeRestriction = options.getCacheTypeRestriction(p);
 		restrictedCacheType = options.getRestrictedCacheType(p);
