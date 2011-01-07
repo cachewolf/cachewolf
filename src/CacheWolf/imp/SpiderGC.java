@@ -688,6 +688,7 @@ public class SpiderGC {
 	private boolean doDownloadGui(int menu) {
 
 		OCXMLImporterScreen options;
+		direction = "";
 		if (menu == 0 && spiderAllFinds) {
 			options = new OCXMLImporterScreen(MyLocale.getMsg(217,
 					"Spider all finds from geocaching.com"),
@@ -705,7 +706,6 @@ public class SpiderGC {
 			// setting default values for options not used (if necessary)
 			maxDistance = 1.0;
 			minDistance = 0.0;
-			direction = "";
 		} else if (menu == 0) {
 			options = new OCXMLImporterScreen(MyLocale.getMsg(131,
 					"Download from geocaching.com"), OCXMLImporterScreen.ISGC
@@ -728,22 +728,14 @@ public class SpiderGC {
 			// setting default values for options not used (if necessary)
 
 			String minDist = options.minDistanceInput.getText();
-			if (minDist.length() == 0)
-				minDist = "0";
 			minDistance = Common.parseDouble(minDist);
-			profile
-					.setMinDistGC(Double.toString(minDistance)
-							.replace(',', '.'));
+			profile.setMinDistGC(Double.toString(minDistance).replace(',', '.'));
 
-			direction = options.directionInput.getText().toUpperCase();
-			direction = direction.replace(' ', ','); // separator blank to ,
-			direction = direction.replace(';', ','); // separator ; to ,
-			profile.setDirectionGC(direction);
-			direction = direction.replace('O', 'E'); // synonym for East
-			direction = direction.replace('Z', 'S'); // synonym for South
-			direction = direction.replace('P', 'S'); // synonym for South
+			direction = options.directionInput.getText();
+			directions = mString.split(direction, '-');
 
 			doNotgetFound = options.foundCheckBox.getState();
+			profile.setDirectionGC(direction);
 
 		} else if (menu == 1) { // menu = 1 input values for get Caches along a
 								// route
@@ -764,7 +756,6 @@ public class SpiderGC {
 			// setting default values for options not used (if necessary)
 			minDistance = 0.0;
 			doNotgetFound = options.foundCheckBox.getState();
-			direction = "";
 			maxUpdate = 0;
 			fileName = options.fileName;
 		} else { // if (menu == 2) {
@@ -781,8 +772,6 @@ public class SpiderGC {
 		}
 
 		if (menu == 0) {
-
-			// handling input of common options
 
 			int maxNew = -1;
 			String maxNumberString = options.maxNumberInput.getText();
@@ -810,17 +799,12 @@ public class SpiderGC {
 
 		if (options.maxDistanceInput != null) {
 			String maxDist = options.maxDistanceInput.getText();
-			if (maxDist.length() == 0)
-				return false;
 			maxDistance = Common.parseDouble(maxDist);
-			if (maxDistance == 0)
-				return false;
-			if (maxDistance < 0.5)
-				maxDistance = 0.5; // zur Sicherheit mindenstens 500 meter Umkreis
+			if (maxDistance == 0) return false;
+			if (maxDistance < 0.5) maxDistance = 0.5; // zur Sicherheit bei "along the route" mindenstens 500 meter Umkreis
 			profile.setDistGC(Double.toString(maxDistance));
 		}
 
-		directions = mString.split(direction, '-');
 		// works even if TYPE not in options
 		cacheTypeRestriction = options.getCacheTypeRestriction(p);
 		restrictedCacheType = options.getRestrictedCacheType(p);
@@ -1746,7 +1730,38 @@ public class SpiderGC {
 			return "";
 		}
 		String stmp = ewe.net.URL.decodeURL(RexPropDistanceCode.stringMatched(1));
-		return decodeXor( stmp, DistanceCodeKey);
+		String ret = decodeXor( stmp, DistanceCodeKey);
+		if (ret.indexOf("|") == -1) {
+			// Versuch den DistanceCodeKey automatisch zu bestimmen
+			// da dieser von gc mal wieder geändert wurde.
+			// todo Benötigt ev noch weitere Anpassungen: | am Anfang, and calc of keylength
+			String thereitis="|0.34 km|102.698";
+			String page = fetchText("http://www.geocaching.com/seek/nearest.aspx?lat=48.48973&lng=009.26313&dist=2&f=1",false);
+
+			RexPropListBlock.search(page);
+			String table="";
+			if (RexPropListBlock.didMatch()) {
+				table = RexPropListBlock.stringMatched(1);
+			}
+			
+			RexPropLine.search(table);
+			String row="";
+			if (RexPropLine.didMatch()) {
+				row = RexPropLine.stringMatched(1);
+			}
+
+			RexPropDistanceCode.search(row);
+			if (!RexPropDistanceCode.didMatch()) {
+				pref.log("Didn't get DistanceCodeKey automaticly." + Preferences.NEWLINE);
+				return "";
+			}
+			String coded = ewe.net.URL.decodeURL(RexPropDistanceCode.stringMatched(1));
+			String newkey=decodeXor(coded,thereitis);
+			int keylength=13; // wenn nicht 13 dann newkey auf wiederholung prüfen
+			DistanceCodeKey=newkey.substring(0, keylength);
+			ret = decodeXor( stmp, DistanceCodeKey);
+		}
+		return ret;
 	}
 	/**
 	 * Get the Distance to the centre
@@ -1763,7 +1778,10 @@ public class SpiderGC {
 						.replace('.', ','));
 			return Convert.toDouble(RexPropDistance.stringMatched(1));
 		}
-		return 0;
+		else {
+			pref.log("(gc Code change ?) check distCodeKey in spider.def" + Preferences.NEWLINE + doc);
+			return 0;			
+		}
 	}
 
 	/**
@@ -1776,8 +1794,7 @@ public class SpiderGC {
 	private String getWP(String doc) throws Exception {
 		RexPropWaypoint.search(doc);
 		if (!RexPropWaypoint.didMatch()) {
-			pref.log("check waypointRex in spider.def" 
-					+ Preferences.NEWLINE + doc);
+			pref.log("check waypointRex in spider.def" + Preferences.NEWLINE + doc);
 			return "???";
 		}
 		return "GC" + RexPropWaypoint.stringMatched(1);
@@ -1823,11 +1840,11 @@ public class SpiderGC {
 		RexPropDTS.search(toCheck);
 		if (RexPropDTS.didMatch()) {
 			String code=RexPropDTS.stringMatched(1);
-			/*
+			/* */
 			String url = "http://www.geocaching.com/ImgGen/seek/CacheInfo.ashx?v="+code;
 			ByteArray doc=fetch(url);
 			Image idoc = new Image(doc,0,null,0,0);
-			/
+			/*
 			FileOutputStream fos;
 			try {
 				fos = new FileOutputStream(new File("temp.png"));
@@ -1837,10 +1854,11 @@ public class SpiderGC {
 			}
 			finally {
 			}
-			/
-			return getDTfromImage(idoc) + "/" + getSizeFromImage(idoc);
 			*/
+			return getDTfromImage(idoc) + "/" + getSizeFromImage(idoc);
+			//*/
 
+			/*
 			int decoded = 0;
 			int pwr = 1;
 			for (int i = code.length()-1 ; i >= 0; i--) {
@@ -1872,6 +1890,7 @@ public class SpiderGC {
 				difficulty = "5";
 			}
 			return difficulty+"/"+terrain+"/"+size;
+			*/
 		}
 		pref.log("check DTSRex in spider.def" + Preferences.NEWLINE + toCheck);
 		return "";
@@ -2046,7 +2065,18 @@ public class SpiderGC {
 	 * @return direction String (degree)
 	 */
 	private String getDirection(String doc) throws Exception {
-		return mString.split(mString.split(doc, '|')[1],'.')[0];		
+		String ret;
+		String r="";
+		if (doc.indexOf('|') >- 1) {
+			r=mString.split(doc, '|')[2];
+		}
+		if (r.indexOf('.') > -1) {
+			ret=mString.split(r,'.')[0];
+		}
+		else {
+			ret="";
+		}
+		return ret;		
 	}
 
 	/*
