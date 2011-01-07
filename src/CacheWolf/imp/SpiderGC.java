@@ -1731,6 +1731,36 @@ public class SpiderGC {
 		}
 		String stmp = ewe.net.URL.decodeURL(RexPropDistanceCode.stringMatched(1));
 		String ret = decodeXor( stmp, DistanceCodeKey);
+		if (ret.indexOf("|") == -1) {
+			// Versuch den DistanceCodeKey automatisch zu bestimmen
+			// da dieser von gc mal wieder geändert wurde.
+			// todo Benötigt ev noch weitere Anpassungen: | am Anfang, and calc of keylength
+			String thereitis="|0.34 km|102.698";
+			String page = fetchText("http://www.geocaching.com/seek/nearest.aspx?lat=48.48973&lng=009.26313&dist=2&f=1",false);
+
+			RexPropListBlock.search(page);
+			String table="";
+			if (RexPropListBlock.didMatch()) {
+				table = RexPropListBlock.stringMatched(1);
+			}
+			
+			RexPropLine.search(table);
+			String row="";
+			if (RexPropLine.didMatch()) {
+				row = RexPropLine.stringMatched(1);
+			}
+
+			RexPropDistanceCode.search(row);
+			if (!RexPropDistanceCode.didMatch()) {
+				pref.log("Didn't get DistanceCodeKey automaticly." + Preferences.NEWLINE);
+				return "";
+			}
+			String coded = ewe.net.URL.decodeURL(RexPropDistanceCode.stringMatched(1));
+			String newkey=decodeXor(coded,thereitis);
+			int keylength=13; // wenn nicht 13 dann newkey auf wiederholung prüfen
+			DistanceCodeKey=newkey.substring(0, keylength);
+			ret = decodeXor( stmp, DistanceCodeKey);
+		}
 		return ret;
 	}
 	/**
