@@ -74,8 +74,8 @@ availableRex       = class="lnk\ \ Strike">
 archivedRex        = class="lnk\ OldWarning\ Strike\ Strike">
 PMRex              = small_profile.gif
 distCodeRex        = k=(.*?)"\ style=
-distCodeKey        = groundspeak
-distRex            = (.*?)(?:km|mi)
+distCodeKey        = signalthefrog
+distRex            = \\|(.*?)(?:km|mi)
 DTSRex             = v=(.*?)"\ style=
 DTSCodeKey         = hbM9fjmrxy7z42LFD58BkKgPGdHscvCqNnw3ptO6lJ
 waypointRex        = \\(GC(.*?)\\)<br\ />
