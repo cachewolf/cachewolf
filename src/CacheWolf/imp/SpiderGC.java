@@ -1730,7 +1730,8 @@ public class SpiderGC {
 			return "";
 		}
 		String stmp = ewe.net.URL.decodeURL(RexPropDistanceCode.stringMatched(1));
-		return decodeXor( stmp, DistanceCodeKey);
+		String ret = decodeXor( stmp, DistanceCodeKey);
+		return ret;
 	}
 	/**
 	 * Get the Distance to the centre
@@ -1747,7 +1748,10 @@ public class SpiderGC {
 						.replace('.', ','));
 			return Convert.toDouble(RexPropDistance.stringMatched(1));
 		}
-		return 0;
+		else {
+			pref.log("(gc Code change ?) check distCodeKey in spider.def" + Preferences.NEWLINE + doc);
+			return 0;			
+		}
 	}
 
 	/**
@@ -1760,8 +1764,7 @@ public class SpiderGC {
 	private String getWP(String doc) throws Exception {
 		RexPropWaypoint.search(doc);
 		if (!RexPropWaypoint.didMatch()) {
-			pref.log("check waypointRex in spider.def" 
-					+ Preferences.NEWLINE + doc);
+			pref.log("check waypointRex in spider.def" + Preferences.NEWLINE + doc);
 			return "???";
 		}
 		return "GC" + RexPropWaypoint.stringMatched(1);
@@ -1807,11 +1810,11 @@ public class SpiderGC {
 		RexPropDTS.search(toCheck);
 		if (RexPropDTS.didMatch()) {
 			String code=RexPropDTS.stringMatched(1);
-			/*
+			/* */
 			String url = "http://www.geocaching.com/ImgGen/seek/CacheInfo.ashx?v="+code;
 			ByteArray doc=fetch(url);
 			Image idoc = new Image(doc,0,null,0,0);
-			/
+			/*
 			FileOutputStream fos;
 			try {
 				fos = new FileOutputStream(new File("temp.png"));
@@ -1821,10 +1824,11 @@ public class SpiderGC {
 			}
 			finally {
 			}
-			/
-			return getDTfromImage(idoc) + "/" + getSizeFromImage(idoc);
 			*/
+			return getDTfromImage(idoc) + "/" + getSizeFromImage(idoc);
+			//*/
 
+			/*
 			int decoded = 0;
 			int pwr = 1;
 			for (int i = code.length()-1 ; i >= 0; i--) {
@@ -1856,6 +1860,7 @@ public class SpiderGC {
 				difficulty = "5";
 			}
 			return difficulty+"/"+terrain+"/"+size;
+			*/
 		}
 		pref.log("check DTSRex in spider.def" + Preferences.NEWLINE + toCheck);
 		return "";
@@ -2030,7 +2035,18 @@ public class SpiderGC {
 	 * @return direction String (degree)
 	 */
 	private String getDirection(String doc) throws Exception {
-		return mString.split(mString.split(doc, '|')[1],'.')[0];		
+		String ret;
+		String r="";
+		if (doc.indexOf('|') >- 1) {
+			r=mString.split(doc, '|')[2];
+		}
+		if (r.indexOf('.') > -1) {
+			ret=mString.split(r,'.')[0];
+		}
+		else {
+			ret="";
+		}
+		return ret;		
 	}
 
 	/*
