@@ -733,7 +733,7 @@ public class SpiderGC {
 
 			direction = options.directionInput.getText();
 			directions = mString.split(direction, '-');
-
+			
 			doNotgetFound = options.foundCheckBox.getState();
 			profile.setDirectionGC(direction);
 
@@ -941,7 +941,7 @@ public class SpiderGC {
 						if (ch == null) { // not in DB
 							if (gotDistance >= fromDistance
 									&& directionOK(directions, getDirection(DistanceAndDirection))
-									&& doPMCache(CacheDescriptionGC)
+									&& doPMCache(chWaypoint, CacheDescriptionGC)
 									&& cachesToLoad.size() < maxNew) {
 								if (CacheDescriptionGC.indexOf(propFound) != -1)
 									chWaypoint = chWaypoint + "found";
@@ -955,7 +955,7 @@ public class SpiderGC {
 						} else {
 							if (maxUpdate > 0) { // regardless of fromDistance
 								if (!ch.is_black()) {
-									if (doPMCache(CacheDescriptionGC)
+									if (doPMCache(chWaypoint, CacheDescriptionGC)
 										&& updateExists(ch, CacheDescriptionGC)) {
 										if (cFoundForUpdate.size() < maxUpdate) {
 											cFoundForUpdate.put(chWaypoint, ch);
@@ -1053,7 +1053,7 @@ public class SpiderGC {
 				holder.setWayPoint(wpt);
 				int test = getCacheByWaypointName(holder, false,
 						pref.downloadPics, pref.downloadTBs, doNotgetFound,
-						loadAllLogs || is_found);
+						loadAllLogs || is_found |!doNotgetFound);
 				if (test == SPIDER_CANCEL) {
 					infB.close(0);
 					break;
@@ -1329,8 +1329,7 @@ public class SpiderGC {
 
 			rexCookieID.search(loginPage);
 			if (!rexCookieID.didMatch()) {
-				pref.log("[login]:check rexCookieID in SpiderGC.java --> CookieID not found. Using old one."
-						 + Preferences.NEWLINE + loginPage, null);
+				pref.log("[login]:check rexCookieID in SpiderGC.java --> CookieID not found. Using old one.", null);
 			} else
 				cookieID = rexCookieID.stringMatched(1);
 			rexCookieSession.search(loginPage);
@@ -1723,7 +1722,8 @@ public class SpiderGC {
     }
 		return new String(ctmp);
   }
-	private String getDistanceAndDirection(String doc) {
+	private String getDistanceAndDirection(String doc) {		
+		if (spiderAllFinds) return "";
 		RexPropDistanceCode.search(doc);
 		if (!RexPropDistanceCode.didMatch()) {
 			pref.log("check distRex" + Preferences.NEWLINE + doc);
@@ -1731,7 +1731,7 @@ public class SpiderGC {
 		}
 		String stmp = ewe.net.URL.decodeURL(RexPropDistanceCode.stringMatched(1));
 		String ret = decodeXor( stmp, DistanceCodeKey);
-		if (ret.indexOf("|") == -1) {
+		if (ret.indexOf("km") == -1) {
 			// Versuch den DistanceCodeKey automatisch zu bestimmen
 			// da dieser von gc mal wieder geändert wurde.
 			// todo Benötigt ev noch weitere Anpassungen: | am Anfang, and calc of keylength
@@ -1771,6 +1771,7 @@ public class SpiderGC {
 	 * @return Distance
 	 */
 	private double getDistGC(String doc) throws Exception {
+		if (spiderAllFinds) return 0;
 		RexPropDistance.search(doc); // km oder mi
 		if (RexPropDistance.didMatch()) {
 			if (MyLocale.getDigSeparator().equals(","))
@@ -1803,13 +1804,16 @@ public class SpiderGC {
 	/**
 	 * check for Premium Member Cache
 	 */
-	private boolean doPMCache(String toCheck) {
+	private boolean doPMCache(String chWaypoint, String toCheck) {
 		if (pref.isPremium)
 			return true;
 		if (toCheck.indexOf(propPM) <= 0) {
 			return true;
 		} else {
 			numPrivate = numPrivate + 1;
+			if (spiderAllFinds) {
+				pref.log(chWaypoint+" is private.",null);
+			}
 			return false;
 		}
 	}
@@ -2083,7 +2087,7 @@ public class SpiderGC {
 	 * if cache lies in the desired direction
 	 */
 	private boolean directionOK(String[] directions, String gotDirection) {
-		if (directions.length == 0)
+		if (directions == null || directions.length == 0)
 			return true; // nothing means all
 		int lowerLimit = Common.parseInt(directions[0]);
 		int upperLimit = Common.parseInt(directions[1]);
