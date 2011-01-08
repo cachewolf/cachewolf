@@ -933,14 +933,13 @@ public class SpiderGC {
 						Global.mainTab.statBar.updateDisplay("working "
 								+ page_number + " / " + found_on_page);
 					String CacheDescriptionGC = RexPropLine.stringMatched(1);
-					String DistanceAndDirection = getDistanceAndDirection(CacheDescriptionGC);
-					double gotDistance = getDistGC(DistanceAndDirection);
+					double[] DistanceAndDirection = getDistanceAndDirection(CacheDescriptionGC);
 					String chWaypoint = getWP(CacheDescriptionGC);
-					if (gotDistance <= toDistance) {
+					if (DistanceAndDirection[0] <= toDistance) {
 						CacheHolder ch = cacheDB.get(chWaypoint);
 						if (ch == null) { // not in DB
-							if (gotDistance >= fromDistance
-									&& directionOK(directions, getDirection(DistanceAndDirection))
+							if (DistanceAndDirection[0] >= fromDistance
+									&& directionOK(directions, DistanceAndDirection[1])
 									&& doPMCache(chWaypoint, CacheDescriptionGC)
 									&& cachesToLoad.size() < maxNew) {
 								if (CacheDescriptionGC.indexOf(propFound) != -1)
@@ -1722,16 +1721,19 @@ public class SpiderGC {
     }
 		return new String(ctmp);
   }
-	private String getDistanceAndDirection(String doc) {		
-		if (spiderAllFinds) return "";
+	private double[] getDistanceAndDirection(String doc) {
+		double[] distanceAndDirection={(0.0),(0.0)};
+		if (spiderAllFinds) return distanceAndDirection;
 		RexPropDistanceCode.search(doc);
 		if (!RexPropDistanceCode.didMatch()) {
 			pref.log("check distRex" + Preferences.NEWLINE + doc);
-			return "";
+			return distanceAndDirection;
 		}
 		String stmp = ewe.net.URL.decodeURL(RexPropDistanceCode.stringMatched(1));
-		String ret = decodeXor( stmp, DistanceCodeKey);
-		if (ret.indexOf("km") == -1) {
+		String ret = decodeXor( stmp, DistanceCodeKey).replace('|', ' ');
+		RexPropDistance.search(ret); // km oder mi
+		if (!RexPropDistance.didMatch()) {
+			if (ret.indexOf("ere") > -1) return distanceAndDirection; // zur Zeit " Here -1"
 			// Versuch den DistanceCodeKey automatisch zu bestimmen
 			// da dieser von gc mal wieder geändert wurde.
 			// todo Benötigt ev noch weitere Anpassungen: | am Anfang, and calc of keylength
@@ -1753,36 +1755,33 @@ public class SpiderGC {
 			RexPropDistanceCode.search(row);
 			if (!RexPropDistanceCode.didMatch()) {
 				pref.log("Didn't get DistanceCodeKey automaticly." + Preferences.NEWLINE);
-				return "";
+				return distanceAndDirection;
 			}
 			String coded = ewe.net.URL.decodeURL(RexPropDistanceCode.stringMatched(1));
 			String newkey=decodeXor(coded,thereitis);
 			int keylength=13; // wenn nicht 13 dann newkey auf wiederholung prüfen
 			DistanceCodeKey=newkey.substring(0, keylength);
-			ret = decodeXor( stmp, DistanceCodeKey);
+			ret = decodeXor( stmp, DistanceCodeKey).replace('|', ' ');
+			RexPropDistance.search(ret); // km oder mi
 		}
-		return ret;
-	}
-	/**
-	 * Get the Distance to the centre
-	 * 
-	 * @param doc
-	 *            A previously fetched cachepage
-	 * @return Distance
-	 */
-	private double getDistGC(String doc) throws Exception {
-		if (spiderAllFinds) return 0;
-		RexPropDistance.search(doc); // km oder mi
+
 		if (RexPropDistance.didMatch()) {
-			if (MyLocale.getDigSeparator().equals(","))
-				return Convert.toDouble(RexPropDistance.stringMatched(1)
-						.replace('.', ','));
-			return Convert.toDouble(RexPropDistance.stringMatched(1));
+			if (MyLocale.getDigSeparator().equals(",")) {
+				distanceAndDirection[0] = Convert.toDouble(RexPropDistance.stringMatched(1).replace('.', ','));
+				String r = RexPropDistance.right(1).substring(3);  //3 expexts 2 char which are at moment "km" or "mi"
+				distanceAndDirection[1] = Convert.toDouble(r.replace('.', ','));
+			}
+			else {
+				distanceAndDirection[0] =  Convert.toDouble(RexPropDistance.stringMatched(1));
+				String r = RexPropDistance.right(1).substring(3);
+				distanceAndDirection[1] = Convert.toDouble(r);
+			}
 		}
 		else {
 			pref.log("(gc Code change ?) check distCodeKey in spider.def" + Preferences.NEWLINE + doc);
-			return 0;			
 		}
+		
+		return distanceAndDirection;
 	}
 
 	/**
@@ -2062,36 +2061,14 @@ public class SpiderGC {
 		}
 	}
 
-	/**
-	 * Get the direction
-	 * 
-	 * @param doc String : A previously fetched cachepage
-	 * @return direction String (degree)
-	 */
-	private String getDirection(String doc) throws Exception {
-		String ret;
-		String r="";
-		if (doc.indexOf('|') >- 1) {
-			r=mString.split(doc, '|')[2];
-		}
-		if (r.indexOf('.') > -1) {
-			ret=mString.split(r,'.')[0];
-		}
-		else {
-			ret="";
-		}
-		return ret;		
-	}
-
 	/*
 	 * if cache lies in the desired direction
 	 */
-	private boolean directionOK(String[] directions, String gotDirection) {
+	private boolean directionOK(String[] directions, double toCheck) {
 		if (directions == null || directions.length == 0)
 			return true; // nothing means all
 		int lowerLimit = Common.parseInt(directions[0]);
 		int upperLimit = Common.parseInt(directions[1]);
-		int toCheck = Common.parseInt(gotDirection);
 		if (lowerLimit <= upperLimit) {
 			if ((toCheck>=lowerLimit) && (toCheck<=upperLimit))
 			{return true;}
