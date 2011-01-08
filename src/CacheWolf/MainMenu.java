@@ -319,6 +319,7 @@ public class MainMenu extends MenuBar {
 			///////////////////////////////////////////////////////////////////////
 			if(mev.selectedItem == mnuNewProfile){
 				if (NewProfileWizard.startNewProfileWizard(getFrame()) ) {
+					tbp.myMod.numRows=0;
 					pref.setCurCentrePt(profile.centre);
 		            filtBlack.modifiers=Global.getProfile().showBlacklisted()?filtBlack.modifiers|MenuItem.Checked:filtBlack.modifiers&~MenuItem.Checked;
 					tbp.refreshTable();
