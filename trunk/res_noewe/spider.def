@@ -80,9 +80,7 @@ DTSRex             = v=(.*?)"\ style=
 DTSCodeKey         = hbM9fjmrxy7z42LFD58BkKgPGdHscvCqNnw3ptO6lJ
 waypointRex        = \\(GC(.*?)\\)<br\ />
 TypeRex            = k">\\s*<img\ src="http://www.geocaching.com/images/wpttypes/sm/(.*?)\\.gif
-#SizeRex            = /container/(.*?)\\.gif
-#DandTRex           = <td>\\s*\\((.*?)/(.*?)\\)<br
-found              = alt="Found\ It!"
+found              = class="Success"
 own                = /WptTypes/name_tag.gif
 TBRex              = /wpttypes/([0-9]+).gif" alt="(.*?)"
 
