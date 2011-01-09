@@ -283,10 +283,8 @@ public class SpiderGC {
 				Global.mainTab.statBar.updateDisplay("");
 
 			if (!infB.isClosed) {
-				spiderErrors = downloadCaches(cachesToLoad, spiderErrors,
-						totalCachesToLoad, loadAllLogs);
-				spiderErrors = updateCaches(cachesToUpdate, spiderErrors,
-						totalCachesToLoad, loadAllLogs);
+				spiderErrors = downloadCaches(cachesToLoad, spiderErrors, totalCachesToLoad, loadAllLogs);
+				spiderErrors = updateCaches(cachesToUpdate, spiderErrors, totalCachesToLoad, loadAllLogs);
 			}
 
 			if (spiderErrors > 0) {
@@ -942,11 +940,8 @@ public class SpiderGC {
 									&& directionOK(directions, DistanceAndDirection[1])
 									&& doPMCache(chWaypoint, CacheDescriptionGC)
 									&& cachesToLoad.size() < maxNew) {
-								if (CacheDescriptionGC.indexOf(propFound) != -1)
-									chWaypoint = chWaypoint + "found";
-								if (!cachesToLoad.contains(chWaypoint)) {
-									cachesToLoad.add(chWaypoint);
-								}
+								if (CacheDescriptionGC.indexOf(propFound) != -1) chWaypoint = chWaypoint + "found";
+								if (!cachesToLoad.contains(chWaypoint)) { cachesToLoad.add(chWaypoint);	}
 							} else {
 								// pref.log("no load of (Premium Cache/other direction/short Distance ?) " + chWaypoint);
 								cExpectedForUpdate.remove(chWaypoint);
@@ -1068,8 +1063,7 @@ public class SpiderGC {
 		return spiderErrors;
 	}
 
-	private int updateCaches(Hashtable cachesToUpdate, int spiderErrors,
-			int totalCachesToLoad, boolean loadAllLogs) {
+	private int updateCaches(Hashtable cachesToUpdate, int spiderErrors, int totalCachesToLoad, boolean loadAllLogs) {
 		int j = 1;
 		for (Enumeration e = cachesToUpdate.elements(); e.hasMoreElements(); j++) {
 			if (infB.isClosed)
@@ -1078,15 +1072,17 @@ public class SpiderGC {
 			infB.setInfo(MyLocale.getMsg(5513, "Loading: ") + ch.getWayPoint()
 					+ " (" + (cachesToLoad.size() + j) + " / "
 					+ totalCachesToLoad + ")");
-			int test = spiderSingle(cacheDB.getIndex(ch), infB, false,
-					loadAllLogs);
+			int test = spiderSingle(cacheDB.getIndex(ch), infB, false, loadAllLogs);
 			if (test == SPIDER_CANCEL) {
 				break;
-			} else if (test == SPIDER_ERROR) {
-				spiderErrors++;
-				pref.log("[updateCaches] could not spider " + ch.getWayPoint(), null);
-			} else {
-				// profile.hasUnsavedChanges=true;
+			} 
+			else {
+				if (test == SPIDER_ERROR) {
+					spiderErrors++;
+					pref.log("[updateCaches] could not spider " + ch.getWayPoint(), null);
+				} else {
+					// profile.hasUnsavedChanges=true;
+				}
 			}
 		}
 		return spiderErrors;
@@ -2089,14 +2085,14 @@ public class SpiderGC {
 	 * @return boolean newLogExists
 	 */
 	private boolean newFoundExists(CacheHolder ch, String cacheDescription) {
-		if (!pref.checkLog)
+		if (!pref.checkLog || pref.maxLogsToSpider==0)
 			return false;
 		Time lastLogCW = new Time();
 		Log lastLog = ch.getCacheDetails(true).CacheLogs.getLog(0);
 		if (lastLog == null)
 			return true;
 		String slastLogCW = lastLog.getDate();
-		if (slastLogCW.equals(""))
+		if (slastLogCW.equals("") || slastLogCW.equals("1900-00-00"))
 			return true; // or check cacheDescGC also no log?
 		lastLogCW.parse(slastLogCW, "yyyy-MM-dd");
 
