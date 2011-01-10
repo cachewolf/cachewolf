@@ -1,0 +1,21 @@
+TakenFromUrl:       http://www.geoserver.nrw.de/gbdatenIT.NRW.html#9
+GetCapabilitiesUrl: http://www.wms.nrw.de/geobasis/DOP?SERVICE=WMS&VERSION=1.1.1&REQUEST=GetCapabilities
+Name:               de.nw p
+MapType:            photo
+MainUrl:            http://www.wms.nrw.de/geobasis/DOP?
+ServiceTypeUrlPart: SERVICE=WMS
+VersionUrlPart:     VERSION=1.1.1
+CoordinateReferenceSystemCacheWolf:  31466 31467
+CoordinateReferenceSystemUrlPart: SRS=EPSG:31466 SRS=EPSG:31467 
+RequestUrlPart:     REQUEST=GetMap
+#LayersUrlPart:     LAYERS=0|DOP||
+LayersUrlPart:     LAYERS=0
+StylesUrlPart:     STYLES=
+ImageFormatUrlPart:FORMAT=image/jpeg
+BoundingBoxTopLeftWGS84: N 52.5391 E 5.7591
+BoundingBoxButtomRightWGS84: N 50.3040 E 9.4718
+#BBox_Mitte: N 51.421555 E 7.6154425
+MinScale:   0
+MaxScale:   1000
+RecommendedScale: 1 0.5 2  
+ImageFileExtension: .jpg
