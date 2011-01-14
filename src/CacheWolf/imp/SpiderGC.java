@@ -1733,9 +1733,12 @@ public class SpiderGC {
 			// Versuch den DistanceCodeKey automatisch zu bestimmen
 			// da dieser von gc mal wieder geändert wurde.
 			// todo Benötigt ev noch weitere Anpassungen: | am Anfang, and calc of keylength
-			String thereitis="|0.34 km|102.698";
-			String page = fetchText("http://www.geocaching.com/seek/nearest.aspx?lat=48.48973&lng=009.26313&dist=2&f=1",false);
 
+			// String thereitis="|0.34 km|102.698";
+			// String page = fetchText("http://www.geocaching.com/seek/nearest.aspx?lat=48.48973&lng=009.26313&dist=2&f=1",false);
+			String thereitis="|0.08 km|223.968";
+			String page = fetchText("http://www.geocaching.com/seek/nearest.aspx?lat=45.29152&lng=-122.41262&dist=1",false);
+			//  
 			RexPropListBlock.search(page);
 			String table="";
 			if (RexPropListBlock.didMatch()) {
@@ -1854,7 +1857,8 @@ public class SpiderGC {
 			finally {
 			}
 			*/
-			return getDTfromImage(idoc) + "/" + getSizeFromImage(idoc);
+			String ret = getDTfromImage(idoc) + "/" + getSizeFromImage(idoc);
+			return ret; 
 			//*/
 
 			/*
