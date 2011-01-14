@@ -310,7 +310,7 @@ public class GPXImporter extends MinML {
 			if (name.equals("groundspeak:log") || name.equals("log") || name.equals("terra:log") ) {
 				holder.getCacheDetails(false).CacheLogs.add(new Log(logIcon,logDate,logFinder,logData));
 				if((logIcon.equals("icon_smile.gif") || logIcon.equals("icon_camera.gif") || logIcon.equals("icon_attended.gif")) && 
-						  (logFinder.equalsIgnoreCase(pref.myAlias) || (pref.myAlias2.length()>0 && logFinder.equalsIgnoreCase(pref.myAlias2)))) {
+						  (SafeXML.cleanback(logFinder).equalsIgnoreCase(pref.myAlias) || (pref.myAlias2.length()>0 && SafeXML.cleanback(logFinder).equalsIgnoreCase(pref.myAlias2)))) {
 							holder.setCacheStatus(logDate);
 							holder.setFound(true);
 							holder.getCacheDetails(false).OwnLogId = logId;
@@ -452,13 +452,17 @@ public class GPXImporter extends MinML {
 		}
 		if (name.equals("groundspeak:owner") || name.equals("owner")||name.equals("terra:owner")) {
 			holder.setCacheOwner(strData);
-			if(pref.myAlias.equals(strData)) holder.setOwned(true);
+			if (pref.myAlias.equals(SafeXML.cleanback(strData)) || 
+				(pref.myAlias2.length()>0 && SafeXML.cleanback(strData).equalsIgnoreCase(pref.myAlias2)))
+				holder.setOwned(true);
 			return;
 		}
 		if (name.equals("groundspeak:placed_by")) {
 			if(holder.getCacheOwner().equals("")) {
 				holder.setCacheOwner(strData);
-				if(pref.myAlias.equals(strData)) holder.setOwned(true);
+				if (pref.myAlias.equals(SafeXML.cleanback(strData)) || 
+						(pref.myAlias2.length()>0 && SafeXML.cleanback(strData).equalsIgnoreCase(pref.myAlias2)))
+						holder.setOwned(true);
 			}
 			return;
 		}
