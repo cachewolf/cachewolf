@@ -105,9 +105,9 @@ onlyWherigo         = &tx=0544fa55-772d-4e5c-96a9-36a51ebcf5c9
 #--------------------------------------
 getPageByName      = http://www.geocaching.com/seek/cache_details.aspx?wp=
 fetchAllLogs       = &log=y
-cacheUnavailable   = cache\ is\ temporarily\ unavailable
-cacheArchived      = cache\ has\ been\ archived
-premiumCachepage   = Premium\ Member\ Only\ Cache
+cacheUnavailable   = class="OldWarning"><li>This\ cache\ is\ temporarily\ unavailable
+cacheArchived      = class="OldWarning"><li>This\ cache\ has\ been\ archived
+premiumCachepage   = class="Warning">This\ is\ a\ Premium\ Member\ Only\ Cache
 latLonRex          = tBody_LatLon"\ style="font-weight:bold;">((?s).*?)</span>
 shortDescRex       = tBody_ShortDescription">((?s).*?)</span>
 longDescRex        = tBody_LongDescription">((?s).*?)<td\ valign="top"\ width="10%">\\s*&nbsp;\\s*</td
