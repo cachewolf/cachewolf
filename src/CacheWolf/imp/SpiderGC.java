@@ -1727,7 +1727,7 @@ public class SpiderGC {
 		}
 		String stmp = ewe.net.URL.decodeURL(RexPropDistanceCode.stringMatched(1));
 		String ret = decodeXor( stmp, DistanceCodeKey).replace('|', ' ');
-		RexPropDistance.search(ret); // km oder mi
+		RexPropDistance.search(ret); // km oder mi oder ft		
 		if (!RexPropDistance.didMatch()) {
 			if (ret.indexOf("ere") > -1) return distanceAndDirection; // zur Zeit " Here -1"
 			// Versuch den DistanceCodeKey automatisch zu bestimmen
@@ -1774,6 +1774,10 @@ public class SpiderGC {
 				distanceAndDirection[0] =  Convert.toDouble(RexPropDistance.stringMatched(1));
 				String r = RexPropDistance.right(1).substring(3);
 				distanceAndDirection[1] = Convert.toDouble(r);
+			}
+			if (ret.indexOf("ft")>0) {
+				// Umrechnung in miles
+				distanceAndDirection[0]=distanceAndDirection[0] / 5280.0;				
 			}
 		}
 		else {
@@ -2291,12 +2295,11 @@ public class SpiderGC {
 							ch.getCacheDetails(false).State = "";
 							pref.log("No location (country/state) found");
 						}
-
-						ch.setCacheOwner(SafeXML.cleanback(
-								getOwner(completeWebPage)).trim());
+						String owner = getOwner(completeWebPage);
+						owner = SafeXML.cleanback(owner).trim();
+						ch.setCacheOwner(owner);
 						if (ch.getCacheOwner().equals(pref.myAlias)
-								|| (pref.myAlias2.length() > 0 && ch
-										.getCacheOwner().equals(pref.myAlias2)))
+							|| (pref.myAlias2.length() > 0 && ch.getCacheOwner().equals(pref.myAlias2)))
 							ch.setOwned(true);
 						pref.log("Owner: " + ch.getCacheOwner()
 								+ "; is_owned = " + ch.is_owned()
@@ -3209,16 +3212,21 @@ public class SpiderGC {
 			if (pref.myproxy.length() > 0 && pref.proxyActive) {
 				pref.log("[fetch]:Using proxy: " + pref.myproxy + " / " + pref.myproxyport);
 			}
-			conn = new HttpConnection(address);
+			if (conn == null) { conn = new HttpConnection(address); }
+			else { conn.setUrl(address); }
 			conn.setRequestorProperty("User-Agent", "Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.7.5) Gecko/20041107 Firefox/1.0");
 			if (cookieSession.length() > 0) {conn.setRequestorProperty("Cookie", "ASP.NET_SessionId=" + cookieSession + "; userid=" + cookieID);};
 			conn.setRequestorProperty("Connection", "close");
 			conn.documentIsEncoded = true;
-			Socket sock = conn.connect();
-			pref.log("[fetch]:Connect ok! " + address);
-			ByteArray daten = conn.readData(sock);
-			sock.close();
-			return daten;
+			conn.connect();
+			if (conn.isOpen()) {
+				pref.log("[fetch]:Connect ok! " + address);
+				ByteArray daten = conn.readData();
+				conn.disconnect();
+				return daten;
+			}
+			pref.log("[fetch]:Connect not opened! " + address, null);
+			return null;
 		} catch (IOException ioex) {
 			pref.log("IOException in fetch", ioex);
 			return null;
