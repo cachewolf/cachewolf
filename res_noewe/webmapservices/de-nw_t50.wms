@@ -12,11 +12,11 @@ RequestUrlPart:     REQUEST=GetMap
 #LayersUrlPart:     LAYERS=TK50|TK50|0|37.4364224890389
 LayersUrlPart:     LAYERS=adv_tk50
 StylesUrlPart:     STYLES=
-ImageFormatUrlPart:FORMAT=image/jpeg
+ImageFormatUrlPart:FORMAT=image/png
 BoundingBoxTopLeftWGS84: N 52.5850 E 5.7043
 BoundingBoxButtomRightWGS84: N 50.2178 E 9.5219
 #BBox_Mitte: N 51.4014 E 7.61312
 MinScale:   2
 MaxScale:   36
 RecommendedScale:    5 2.5 10
-ImageFileExtension: .jpg
+ImageFileExtension: .png
