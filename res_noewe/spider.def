@@ -75,14 +75,12 @@ archivedRex        = class="lnk\ OldWarning\ Strike\ Strike">
 PMRex              = small_profile.gif
 distCodeRex        = k=(.*?)"\ style=
 distCodeKey        = signalthefrog
-distRex            = \\|(.*?)(?:km|mi)
+distRex            = (.*?)(?:km|mi|ft)
 DTSRex             = v=(.*?)"\ style=
 DTSCodeKey         = hbM9fjmrxy7z42LFD58BkKgPGdHscvCqNnw3ptO6lJ
 waypointRex        = \\(GC(.*?)\\)<br\ />
 TypeRex            = k">\\s*<img\ src="http://www.geocaching.com/images/wpttypes/sm/(.*?)\\.gif
-#SizeRex            = /container/(.*?)\\.gif
-#DandTRex           = <td>\\s*\\((.*?)/(.*?)\\)<br
-found              = alt="Found\ It!"
+found              = class="Success"
 own                = /WptTypes/name_tag.gif
 TBRex              = /wpttypes/([0-9]+).gif" alt="(.*?)"
 
@@ -107,9 +105,9 @@ onlyWherigo         = &tx=0544fa55-772d-4e5c-96a9-36a51ebcf5c9
 #--------------------------------------
 getPageByName      = http://www.geocaching.com/seek/cache_details.aspx?wp=
 fetchAllLogs       = &log=y
-cacheUnavailable   = cache\ is\ temporarily\ unavailable
-cacheArchived      = cache\ has\ been\ archived
-premiumCachepage   = Premium\ Member\ Only\ Cache
+cacheUnavailable   = class="OldWarning"><li>This\ cache\ is\ temporarily\ unavailable
+cacheArchived      = class="OldWarning"><li>This\ cache\ has\ been\ archived
+premiumCachepage   = class="Warning">This\ is\ a\ Premium\ Member\ Only\ Cache
 latLonRex          = tBody_LatLon"\ style="font-weight:bold;">((?s).*?)</span>
 shortDescRex       = tBody_ShortDescription">((?s).*?)</span>
 longDescRex        = tBody_LongDescription">((?s).*?)<td\ valign="top"\ width="10%">\\s*&nbsp;\\s*</td
