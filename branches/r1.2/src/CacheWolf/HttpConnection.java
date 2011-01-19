@@ -319,6 +319,10 @@ protected Socket connectedSocket;
 public HttpConnection(String url)
 //===================================================================
 {
+	setUrl(url);
+}
+public void setUrl(String url)
+{
 	if (useProxy) { 
 		host = proxy;
 		port = proxyPort;
@@ -621,6 +625,11 @@ public ByteArray readData(Socket connection) throws IOException
 {
 	return (ByteArray)waitOnIO(readInData(connection),"Error reading data.");
 }
+public ByteArray readData() throws IOException
+//===================================================================
+{
+	return (ByteArray)waitOnIO(readInData(openSocket),"Error reading data.");
+}
 /**
  * Read in all the data from the Socket, converting it to text using the specified
  * codec. 
@@ -697,8 +706,19 @@ private Handle connectAsync(final TextCodec serverTextDecoder)
 			//
 			// Create a Socket using an IOHandle.
 			//
-			Handle sh = (openSocket != null) ? new Handle(Handle.Succeeded,openSocket) : new IOHandle();
-			Socket sock = (openSocket != null) ? openSocket : new Socket(host,port,(IOHandle)sh);
+			Handle sh;
+			Socket sock;
+			if (openSocket != null) {
+				sh = new Handle(Handle.Succeeded,openSocket);
+				sock = openSocket;
+			}
+			else {
+				sh = new IOHandle();
+				sock = new Socket(host,port,(IOHandle)sh);
+				// openSocket = sock;
+			}
+			// Handle sh = (openSocket != null) ? new Handle(Handle.Succeeded,openSocket) : new IOHandle();
+			// Socket sock = (openSocket != null) ? openSocket : new Socket(host,port,(IOHandle)sh);
 			try{
 				//
 				// Now wait until connected.
@@ -733,7 +753,16 @@ private Handle connectAsync(final TextCodec serverTextDecoder)
  * @exception IOException if there was an error connecting or getting the data.
  */
 public Socket connect() throws IOException {
-	return (Socket)waitOnIO(connectAsync(),"Could not connect.");
+	openSocket = (Socket)waitOnIO(connectAsync(),"Could not connect.");
+	return openSocket;
+}
+public void disconnect() {
+	if (openSocket.isOpen()) {
+		openSocket.close(); // releases the handles of the system
+	}
+}
+public boolean isOpen() {
+	return openSocket.isOpen();
 }
 }
 
