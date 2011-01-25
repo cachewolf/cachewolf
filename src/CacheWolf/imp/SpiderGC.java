@@ -1219,7 +1219,7 @@ public class SpiderGC {
 		localInfB.exec();
 		try {
 			// Access the page once to get a viewstate
-			loginPage = fetchText(loginPageUrl, true); // http://www.geocaching.com/login/Default.aspx
+			loginPage = fetchText(loginPageUrl, false); // http://www.geocaching.com/login/Default.aspx
 			pref.log("[login]:Fetched login page " + loginPageUrl);
 			if (loginPage.equals("")) {
 				localInfB.close(0);
@@ -1723,6 +1723,7 @@ public class SpiderGC {
 		RexPropDistanceCode.search(doc);
 		if (!RexPropDistanceCode.didMatch()) {
 			pref.log("check distRex" + Preferences.NEWLINE + doc);
+			distanceAndDirection[0]=-1.0; // Abbruch
 			return distanceAndDirection;
 		}
 		String stmp = ewe.net.URL.decodeURL(RexPropDistanceCode.stringMatched(1));
