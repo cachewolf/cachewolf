@@ -79,7 +79,7 @@ distRex            = (.*?)(?:km|mi|ft)
 DTSRex             = v=(.*?)"\ style=
 DTSCodeKey         = hbM9fjmrxy7z42LFD58BkKgPGdHscvCqNnw3ptO6lJ
 waypointRex        = \\(GC(.*?)\\)<br\ />
-TypeRex            = k">\\s*<img\ src="http://www.geocaching.com/images/wpttypes/sm/(.*?)\\.gif
+TypeRex            = www.geocaching.com/images/wpttypes/sm/(.*?)\\.gif
 found              = class="Success"
 own                = /WptTypes/name_tag.gif
 TBRex              = /wpttypes/([0-9]+).gif" alt="(.*?)"
@@ -131,7 +131,7 @@ singleLogExStart   = ><strong><img src=
 singleLogExEnd     = <small><a\ href="
 # iconEx, nameTempEx, dateEx, singleLogEx werden auf einen singleLog angewendet
 iconExStart        = www.geocaching.com/images/icons/
-iconExEnd          = '\ title='
+iconExEnd          = \ title='
 nameTempExStart    = <a\ href='
 nameTempExEnd      = /a>
 # Name extrahiert aus nameTemp
