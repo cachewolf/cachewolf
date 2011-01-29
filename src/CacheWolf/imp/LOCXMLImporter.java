@@ -97,7 +97,7 @@ public class LOCXMLImporter extends MinML {
 
 	public void endElement(String name) {
 		if (name.equals("name")) {
-			holder.setCacheName(strData);
+			holder.setCacheName(strData.replace('\n', ' ').replace('\r', ' ').trim());
 		}
 
 		if (name.equals("waypoint")) {
