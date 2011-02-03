@@ -113,11 +113,11 @@ shortDescRex       = tBody_ShortDescription">((?s).*?)</span>
 longDescRex        = tBody_LongDescription">((?s).*?)<td\ valign="top"\ width="10%">\\s*&nbsp;\\s*</td
 cacheNameRex       = tBody_CacheName">((?s).*?)</span>
 cacheOwnerRex      = &wid(?:(?s).*?)>((?s).*?)<
-dateHiddenRex      = (?:Hidden|Event\ Date)\\s*:\\s*</strong>\\s*((?s).*?)\\s*<
+dateHiddenRex      = (?:Hidden|Event\ Date)\\s*:\\s*((?s).*?)<
 hintsRex           = <div id="div_hint" class="HalfLeft">\\s*((?s).*?)\\s*</div>
 sizeRex            = alt="Size:\ ((?s).*?)"\ />&nbsp<small>
-difficultyRex      = Difficulty:</strong>\\s*<img src=.*?alt="(.*?)\ out\ of
-terrainRex         = Terrain:</strong>\\s*<img src=.*?alt="(.*?)\ out\ of
+difficultyRex      = difficulty\ of\ (.*?),
+terrainRex         = terrain\ of\ (.*?)\\.\\ 
 cacheTypeRex       = /images/WptTypes/(.*?)\\.gif"\ alt="
 cacheLocationRex   = tBody_Location">In\ ([^<]*?)<
 
