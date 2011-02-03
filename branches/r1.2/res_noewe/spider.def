@@ -79,7 +79,7 @@ distRex            = (.*?)(?:km|mi|ft)
 DTSRex             = v=(.*?)"\ style=
 DTSCodeKey         = hbM9fjmrxy7z42LFD58BkKgPGdHscvCqNnw3ptO6lJ
 waypointRex        = \\(GC(.*?)\\)<br\ />
-TypeRex            = k">\\s*<img\ src="http://www.geocaching.com/images/wpttypes/sm/(.*?)\\.gif
+TypeRex            = www.geocaching.com/images/wpttypes/sm/(.*?)\\.gif
 found              = class="Success"
 own                = /WptTypes/name_tag.gif
 TBRex              = /wpttypes/([0-9]+).gif" alt="(.*?)"
@@ -113,11 +113,11 @@ shortDescRex       = tBody_ShortDescription">((?s).*?)</span>
 longDescRex        = tBody_LongDescription">((?s).*?)<td\ valign="top"\ width="10%">\\s*&nbsp;\\s*</td
 cacheNameRex       = tBody_CacheName">((?s).*?)</span>
 cacheOwnerRex      = &wid(?:(?s).*?)>((?s).*?)<
-dateHiddenRex      = (?:Hidden|Event\ Date)\\s*:\\s*</strong>\\s*((?s).*?)\\s*<
+dateHiddenRex      = (?:Hidden|Event\ Date)\\s*:\\s*((?s).*?)<
 hintsRex           = <div id="div_hint" class="HalfLeft">\\s*((?s).*?)\\s*</div>
 sizeRex            = alt="Size:\ ((?s).*?)"\ />&nbsp<small>
-difficultyRex      = Difficulty:</strong>\\s*<img src=.*?alt="(.*?)\ out\ of
-terrainRex         = Terrain:</strong>\\s*<img src=.*?alt="(.*?)\ out\ of
+difficultyRex      = difficulty\ of\ (.*?),
+terrainRex         = terrain\ of\ (.*?)\\.\\ 
 cacheTypeRex       = /images/WptTypes/(.*?)\\.gif"\ alt="
 cacheLocationRex   = tBody_Location">In\ ([^<]*?)<
 
@@ -131,7 +131,7 @@ singleLogExStart   = ><strong><img src=
 singleLogExEnd     = <small><a\ href="
 # iconEx, nameTempEx, dateEx, singleLogEx werden auf einen singleLog angewendet
 iconExStart        = www.geocaching.com/images/icons/
-iconExEnd          = '\ title='
+iconExEnd          = \ title='
 nameTempExStart    = <a\ href='
 nameTempExEnd      = /a>
 # Name extrahiert aus nameTemp
