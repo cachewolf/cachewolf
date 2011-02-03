@@ -278,6 +278,9 @@ public class DataMover {
 	}
 
 	public void deleteCacheFiles(String wpt,String dir, String[] tmp ){
+		if (wpt.length() == 0){
+			return;
+		}
 		// delete files in dstDir to clean up trash
 		// String tmp[] = new FileBugfix(dir).list(wpt + "*.*", ewe.io.FileBase.LIST_FILES_ONLY);
 		for (int i=0; i < tmp.length;i++){
@@ -289,6 +292,9 @@ public class DataMover {
 	}
 
 	private void moveCacheFiles(String wpt, String srcDir, String dstDir, String[] srcFiles){
+		if (wpt.length() == 0){
+			return;
+		}
 		// String srcFiles[] = new FileBugfix(srcDir).list(wpt + "*.*", ewe.io.FileBase.LIST_FILES_ONLY);
 		for (int i=0; i < srcFiles.length;i++){
 			if (srcFiles[i].substring(0, java.lang.Math.min(srcFiles[i].length(),wpt.length())).equalsIgnoreCase(wpt)) {
@@ -300,6 +306,9 @@ public class DataMover {
 	}
 
 	private void copyCacheFiles(String wpt, String srcDir, String dstDir, String[] srcFiles){
+		if (wpt.length() == 0){
+			return;
+		}
 		// String srcFiles[] = new FileBugfix(srcDir).list(wpt + "*.*", ewe.io.FileBase.LIST_FILES_ONLY);
 		for (int i=0; i < srcFiles.length;i++){
 			if (srcFiles[i].substring(0, java.lang.Math.min(srcFiles[i].length(),wpt.length())).equalsIgnoreCase(wpt)) {

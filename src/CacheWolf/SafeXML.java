@@ -313,9 +313,7 @@ public final class SafeXML{
 	 * @return (String) translated text, or null if input is null
 	 */
 	public final static String cleanGPX(String str){
-		String dummy = new String();
-		
-		dummy = STRreplace.replace(str, "&","&amp;");
+		String dummy = STRreplace.replace(str, "&","&amp;");
 		//"&amp;#" --> "&#"); //Darstellung Umlaute etc : siehe  http://www.geoclub.de/viewtopic.php?f=40&t=50635&p=798796#p798796
 		// aber so etwas nicht "&amp;#entry15063" --> !!not!! "&#entry15063" (Cache GCPB5P export -> gpx, import -> mapsource)
 		int pos=0;
@@ -335,6 +333,7 @@ public final class SafeXML{
 				pos++;
 			}
 		}
+		dummy = STRreplace.replace(dummy, "&amp;amp;","&amp;"); //falls schon &amp; im str war 
 			
 		dummy = STRreplace.replace(dummy, "<", "&lt;");
 		dummy = STRreplace.replace(dummy, ">", "&gt;");

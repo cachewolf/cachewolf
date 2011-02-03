@@ -2651,17 +2651,16 @@ public class SpiderGC {
 			// pref.log(singleLog);
 			nLogs++;
 			icon = exIcon.findNext();
+			icon=icon.substring(0, icon.length() - 1); // ' changes to " in UMTS-connection! first char in iconExEnd.
 			name = exName.findNext();
 			logText = exLog.findNext();
 			logId = exLogId.findNext();
 			String d = DateFormat.logdate2YMD(exDate.findNext());
-			// pref.log(Integer.toString(nLogs)+":"+icon+"|logger:"+name+"|id:"+logId+"|"+d);
+			// pref.log("Lognr:"+nLogs+"|"+icon+"|"+name+"-|-"+SafeXML.clean(pref.myAlias)+"|"+logId,null);
 			// if this log says this Cache is found by me
-			if ((icon.equals(icon_smile) || icon.equals(icon_camera) || icon
-					.equals(icon_attended))
-					&& (name.equalsIgnoreCase(SafeXML.clean(pref.myAlias)) || (pref.myAlias2
-							.length() > 0 && name.equalsIgnoreCase(SafeXML
-							.clean(pref.myAlias2))))) {
+			if ((icon.equals(icon_smile) || icon.equals(icon_camera) || icon.equals(icon_attended))	&&
+					(name.equalsIgnoreCase(SafeXML.clean(pref.myAlias)) ||
+					( pref.myAlias2.length() > 0 && name.equalsIgnoreCase(SafeXML.clean(pref.myAlias2))))) {
 				chD.getParent().setFound(true);
 				chD.getParent().setCacheStatus(d);
 				chD.OwnLogId = logId;
