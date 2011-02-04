@@ -3529,7 +3529,7 @@ public class SpiderGC {
 		}
 
 		public void startElement(String name, AttributeList atts) {
-			if (name.equals("trkpt")|| name.equals("rtept")) {
+			if (name.equals("trkpt")|| name.equals("rtept")|| name.equals("gpxx:rpt")) {
 				double lat = Common.parseDouble(atts.getValue("lat"));
 				double lon = Common.parseDouble(atts.getValue("lon"));
 				TrackPoint tp = new TrackPoint(lat, lon);
