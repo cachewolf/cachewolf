@@ -405,7 +405,18 @@ public class SpiderGC {
 				}
 				if (pointsIndex == points.size())
 					nextPos = null;
+				else {
+					if (Global.mainTab.statBar != null)
+						Global.mainTab.statBar.updateDisplay("GC pages: "
+								+ page_number + " Caches added to CW: "
+								+ num_added + " at "
+								+ pointsIndex+"("+points.size()+")"
+								+ nextPos
+								);
+				}
 			}
+
+
 			if (nextPos != null) {
 				sq = getSquare(startPos, lateralDistance);
 				getCaches(sq.topleft.latDec, sq.topleft.lonDec,
@@ -3529,7 +3540,7 @@ public class SpiderGC {
 		}
 
 		public void startElement(String name, AttributeList atts) {
-			if (name.equals("trkpt")|| name.equals("rtept")) {
+			if (name.equals("trkpt")|| name.equals("rtept")|| name.equals("gpxx:rpt")) {
 				double lat = Common.parseDouble(atts.getValue("lat"));
 				double lon = Common.parseDouble(atts.getValue("lon"));
 				TrackPoint tp = new TrackPoint(lat, lon);
