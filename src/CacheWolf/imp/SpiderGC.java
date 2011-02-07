@@ -405,7 +405,18 @@ public class SpiderGC {
 				}
 				if (pointsIndex == points.size())
 					nextPos = null;
+				else {
+					if (Global.mainTab.statBar != null)
+						Global.mainTab.statBar.updateDisplay("GC pages: "
+								+ page_number + " Caches added to CW: "
+								+ num_added + " at "
+								+ pointsIndex+"("+points.size()+")"
+								+ nextPos
+								);
+				}
 			}
+
+
 			if (nextPos != null) {
 				sq = getSquare(startPos, lateralDistance);
 				getCaches(sq.topleft.latDec, sq.topleft.lonDec,
