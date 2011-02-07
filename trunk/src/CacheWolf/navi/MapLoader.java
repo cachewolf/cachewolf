@@ -34,11 +34,15 @@ import CacheWolf.MyLocale;
 import CacheWolf.STRreplace;
 import CacheWolf.utils.FileBugfix;
 import ewe.fx.Point;
+import ewe.io.BufferedWriter;
 import ewe.io.File;
 import ewe.io.FileBase;
 import ewe.io.FileInputStream;
 import ewe.io.FileOutputStream;
+import ewe.io.FileReader;
+import ewe.io.FileWriter;
 import ewe.io.IOException;
+import ewe.io.PrintWriter;
 import ewe.net.Socket;
 import ewe.sys.Convert;
 import ewe.sys.Double;
@@ -251,35 +255,204 @@ public class MapLoader {
 	public void downloadMap(CWPoint center, float scale, Point pixelsize, String path) throws Exception {
 		MapInfoObject mio = currentOnlineMapService.getMapInfoObject(center, scale, pixelsize);
 		String filename = createFilename(mio.getCenter(), mio.scale);
-		String imagename = mio.setName(path, filename) + currentOnlineMapService.getImageFileExt();
+		String imagename = mio.setName(path, filename);
+		String imagetype = currentOnlineMapService.getImageFileExt();
 		String url = currentOnlineMapService.getUrlForCenterScale(center, scale, pixelsize);
 		if (currentOnlineMapService instanceof ExpediaMapService) {
-			downloadImage(url, path+imagename);
-			mio.saveWFL();
+			downloadImage(url, path+imagename+imagetype);
 		}
 		else {
 			WebMapService wms = (WebMapService) currentOnlineMapService;
-			if (wms.requestUrlPart.equalsIgnoreCase("Kosmos")) {
-				url="bitmapgen"+
-					" \""+FileBase.getProgramDirectory().replace('/',File.separatorChar)+"\\"+wms.serviceTypeUrlPart+"\""+
-					" \""+path.replace('/', File.separatorChar)+imagename+"\""+
-					" -mb "+url; // + minx miny maxx maxy + pixelsize.x
-				File f=new FileBugfix(wms.MainUrl);
+			
+			if (wms.requestUrlPart.startsWith("REQUEST")) {
+				downloadImage(url, path+imagename+imagetype);
+			}
+			else {
+				Area maparea = wms.CenterScaleToArea(center, scale, pixelsize);
+				CWPoint buttomleft = new CWPoint (maparea.buttomright.latDec, maparea.topleft.lonDec);
+				CWPoint topright = new CWPoint (maparea.topleft.latDec, maparea.buttomright.lonDec);
+
+				String mapProgramPath = wms.versionUrlPart+"/";
+				mapProgramPath = mapProgramPath.replace('/', FileBase.separatorChar);
+				String mapProgram = mapProgramPath+wms.MainUrl;
+				File f=new FileBugfix(mapProgram);
 				if (!f.exists() || !f.canRead()) {
 					MessageBox mb=new MessageBox(MyLocale.getMsg(321,"Error"),MyLocale.getMsg(1834,"Please enter the correct path to Kosmos.Console.exe into the wms-file."),ewe.ui.MessageBox.OKB);
 					mb.execute();
-				} else {
-					Vm.exec(wms.MainUrl.replace('/', File.separatorChar), url, 0, true);
-					mio.saveWFL();
+					return;
 				}
-			}
-			else {
-				downloadImage(url, path+imagename);
-				mio.saveWFL();
-			}
+				
+				String mapProgramParams = "";
+				
+				if (wms.requestUrlPart.equalsIgnoreCase("Kosmos")) {					
+					// minx miny maxx maxy + pixelsize.x
+					mapProgramParams="bitmapgen" +
+						" \""+FileBase.getProgramDirectory().replace('/',File.separatorChar)+"\\"+wms.serviceTypeUrlPart+"\""+
+						" \""+path.replace('/', File.separatorChar)+imagename+imagetype+"\""+
+						" -mb " +
+						buttomleft.toString(TransformCoordinates.LAT_LON).replace(',',' ') + " " +
+						topright.toString(TransformCoordinates.LAT_LON).replace(',',' ') +
+						" -w "+pixelsize.x;				
+					Vm.exec(mapProgram, mapProgramParams, 0, true);				
+				}
+				else { 
+					if (wms.requestUrlPart.equalsIgnoreCase("Maperitive")) {
+						// Maperitive runs on Windows and Linux
+						// generating scriptfile for Maperitive from wmsfile
+						String cwPath = FileBase.getProgramDirectory().replace('/',FileBase.separatorChar) + FileBase.separatorChar;
+						String scriptFileName = cwPath + "maperitive.script";
+						
+						PrintWriter outp =  new PrintWriter(new BufferedWriter(new FileWriter(scriptFileName)));
+						outp.println("use-ruleset alias=default");
+						outp.println("clear-map");
+
+						if (wms.serviceTypeUrlPart.equals("")) {
+							outp.println("add-web-map");
+						}
+						else {
+							outp.println("add-web-map provider=" + wms.serviceTypeUrlPart);
+						}
+						
+						if (!wms.stylesUrlPart.equals("")) {
+							String myrules = mapProgramPath + wms.stylesUrlPart;
+							outp.println("use-ruleset location=" + myrules + "as-alias=myrules");
+							// outp.println("apply-ruleset");
+						}
+						if (!wms.layersUrlPart.equals("")) {
+							outp.println("clear-map");
+							outp.println("load-source " + mapProgramPath + wms.layersUrlPart);
+							// implicit does apply-ruleset
+						}
+						
+						String koords = buttomleft.toString(TransformCoordinates.LON_LAT) + "," + topright.toString(TransformCoordinates.LON_LAT);
+						outp.println("bounds-set "+koords);
+						outp.println("zoom-bounds");
+						outp.print("export-bitmap file=" + path + imagename + imagetype);
+						outp.print(" bounds="+ koords);
+						String pxSize = " width="+pixelsize.x + " height="+pixelsize.y;						
+						outp.print(pxSize);
+						outp.println(" kml=false");
+						outp.close();
+						// executing the generated script
+						mapProgramParams = "-exitafter " + "\"" + scriptFileName + "\""; 
+						Vm.exec(mapProgram, mapProgramParams, 0, true);
+						// preparation for generating wfl from the ozi map-file
+						Vector GCPs = map2wfl(path+imagename);
+						mio.evalGCP(GCPs, pixelsize.x, pixelsize.y);
+						// can not supress genaration of pgw-file
+						File pgwFile = new File(path + imagename + ".pgw");
+						pgwFile.delete();
+					}
+				}
+			}			
 		}
+		mio.saveWFL();
 	}
 
+	private Vector map2wfl(String pathAndImageName) {
+		Vector GCPs = new Vector();
+		File mapFile = new File(pathAndImageName + ".map");
+		if(mapFile.exists()){
+			GCPoint gcp1 = new GCPoint();
+			GCPoint gcp2 = new GCPoint();
+			GCPoint gcp3 = new GCPoint();
+			GCPoint gcp4 = new GCPoint();
+			GCPoint gcpG = new GCPoint();
+			String line="";
+			String[] parts;
+			try {
+				FileReader inMap = new FileReader(pathAndImageName + ".map");
+				while((line = inMap.readLine()) != null){
+					if(line.equals("MMPNUM,4")){
+
+						line = inMap.readLine();
+						parts = mString.split(line, ',');
+						gcp1.bitMapX = Convert.toInt(parts[2]);
+						gcp1.bitMapY = Convert.toInt(parts[3]);
+						if(gcp1.bitMapX == 0) gcp1.bitMapX = 1;
+						if(gcp1.bitMapY == 0) gcp1.bitMapY = 1;
+
+						line = inMap.readLine();
+						parts = mString.split(line, ',');
+						gcp2.bitMapX = Convert.toInt(parts[2]);
+						gcp2.bitMapY = Convert.toInt(parts[3]);
+						if(gcp2.bitMapX == 0) gcp2.bitMapX = 1;
+						if(gcp2.bitMapY == 0) gcp2.bitMapY = 1;
+
+						line = inMap.readLine();
+						parts = mString.split(line, ',');
+						gcp3.bitMapX = Convert.toInt(parts[2]);
+						gcp3.bitMapY = Convert.toInt(parts[3]);
+						if(gcp3.bitMapX == 0) gcp3.bitMapX = 1;
+						if(gcp3.bitMapY == 0) gcp3.bitMapY = 1;
+						//imageWidth = gcp3.bitMapX;
+						//imageHeight = gcp3.bitMapY;
+
+						line = inMap.readLine();
+						parts = mString.split(line, ',');
+						gcp4.bitMapX = Convert.toInt(parts[2]);
+						gcp4.bitMapY = Convert.toInt(parts[3]);
+						if(gcp4.bitMapX == 0) gcp4.bitMapX = 1;
+						if(gcp4.bitMapY == 0) gcp4.bitMapY = 1;
+
+						line = inMap.readLine();
+						parts = mString.split(line, ',');
+						if(MyLocale.getDigSeparator().equals(",")) {
+							parts[3]= parts[3].replace('.', ',');
+							parts[2]= parts[2].replace('.', ',');
+						}
+						gcpG = new GCPoint(Convert.toDouble(parts[3]), Convert.toDouble(parts[2]));
+						gcpG.bitMapX = gcp1.bitMapX;
+						gcpG.bitMapY = gcp1.bitMapY;
+						GCPs.add(gcpG);
+
+						line = inMap.readLine();
+						parts = mString.split(line, ',');
+						if(MyLocale.getDigSeparator().equals(",")) {
+							parts[3]= parts[3].replace('.', ',');
+							parts[2]= parts[2].replace('.', ',');
+						}
+						gcpG = new GCPoint(Convert.toDouble(parts[3]), Convert.toDouble(parts[2]));
+						gcpG.bitMapX = gcp2.bitMapX;
+						gcpG.bitMapY = gcp2.bitMapY;
+						GCPs.add(gcpG);
+
+						line = inMap.readLine();
+						parts = mString.split(line, ',');
+						if(MyLocale.getDigSeparator().equals(",")) {
+							parts[3]= parts[3].replace('.', ',');
+							parts[2]= parts[2].replace('.', ',');
+						}
+						gcpG = new GCPoint(Convert.toDouble(parts[3]), Convert.toDouble(parts[2]));
+						gcpG.bitMapX = gcp3.bitMapX;
+						gcpG.bitMapY = gcp3.bitMapY;
+						GCPs.add(gcpG);
+
+						line = inMap.readLine();
+						parts = mString.split(line, ',');
+						if(MyLocale.getDigSeparator().equals(",")) {
+							parts[3]= parts[3].replace('.', ',');
+							parts[2]= parts[2].replace('.', ',');
+						}
+						gcpG = new GCPoint(Convert.toDouble(parts[3]), Convert.toDouble(parts[2]));
+						gcpG.bitMapX = gcp4.bitMapX;
+						gcpG.bitMapY = gcp4.bitMapY;
+						GCPs.add(gcpG);
+					} // if
+				} // while
+				inMap.close();
+			} catch(IllegalArgumentException ex){ // is thrown from Convert.toDouble and saveWFL if affine[0-5]==0 NumberFormatException is a subclass of IllegalArgumentExepction
+				Global.getPref().log(MyLocale.getMsg(4117, "Error while importing .map-file: "), ex);
+			} catch(IOException ex){
+				Global.getPref().log(MyLocale.getMsg(4118, "IO-Error while reading or writing calibration file"), ex);
+			}
+			mapFile.delete(); 
+		} else { // if map file.exists
+			Global.getPref().log(MyLocale.getMsg(4119, "No calibration file found for: "), null);
+		}
+		return GCPs;
+	}
+	
 	public String createFilename(CWPoint center, float scale) {
 		String filename = Common.ClearForFileName(currentOnlineMapService.getNameForFileSystem()+"_s"+Common.DoubleToString(scale,0,1)
 				+ "_c" + center.toString(TransformCoordinates.LAT_LON).replace(',', '-'));
@@ -633,12 +806,6 @@ class WebMapService extends OnlineMapService {
 		coordinateReferenceSystemUrlPart[crs] + "&" + bbox +
 		"&WIDTH=" + pixelsize.x + "&HEIGHT=" + pixelsize.y + "&" +
 		layersUrlPart + "&" + stylesUrlPart + "&" + imageFormatUrlPart;
-		if (requestUrlPart.equalsIgnoreCase("Kosmos")) {
-			// minlat minlng maxlat maxlng
-			ret=buttomleft.toString(TransformCoordinates.LAT_LON).replace(',',' ')+" "+
-				topright.toString(TransformCoordinates.LAT_LON).replace(',',' ')+
-				" -w "+pixelsize.x;
-		}
 		Global.getPref().log(ret + " WGS84: Buttom left: " + buttomleft.toString(TransformCoordinates.DD) + "top right: " + topright.toString(TransformCoordinates.DD));
 		return ret;
 	}
