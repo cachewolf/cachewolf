@@ -314,13 +314,13 @@ public class MapLoader {
 						}
 						
 						if (!wms.stylesUrlPart.equals("")) {
-							String myrules = mapProgramPath + wms.stylesUrlPart;
-							outp.println("use-ruleset location=" + myrules + "as-alias=myrules");
+							String myrules = mapProgramPath + wms.stylesUrlPart.replace('/',FileBase.separatorChar);
+							outp.println("use-ruleset location=" + myrules);
 							// outp.println("apply-ruleset");
 						}
 						if (!wms.layersUrlPart.equals("")) {
 							outp.println("clear-map");
-							outp.println("load-source " + mapProgramPath + wms.layersUrlPart);
+							outp.println("load-source " + mapProgramPath + wms.layersUrlPart.replace('/',FileBase.separatorChar));
 							// implicit does apply-ruleset
 						}
 						
