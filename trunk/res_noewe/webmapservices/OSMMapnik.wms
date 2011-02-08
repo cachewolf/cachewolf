@@ -4,7 +4,7 @@ Name:               OSM Mapnik with Maperitive.exe
 MapType:                        topo
 #MainUrl: name of exceutable
 MainUrl:            Maperitive.exe
-#ServiceTypeUrlPart: default map to use : may be empty(=mapnik) or mapnik or osmarender or osmcyclemap(does not work at moment)
+#ServiceTypeUrlPart: default map to use : may be empty(=mapnik) or mapnik or osmarender or cyclemap
 ServiceTypeUrlPart: 
 #VersionUrlPart: path to executable of mainUrl
 VersionUrlPart: C:/Programme/Maperitive
