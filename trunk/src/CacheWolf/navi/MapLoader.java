@@ -334,14 +334,21 @@ public class MapLoader {
 						outp.println(" kml=false");
 						outp.close();
 						// executing the generated script
-						mapProgramParams = "-exitafter " + "\"" + scriptFileName + "\""; 
+						if (mapProgram.indexOf(':') == 1) {
+							mapProgramParams = "-exitafter " + "\"" + scriptFileName + "\"";
+						}
+						else {
+							mapProgramParams = "-exitafter " + scriptFileName;								
+						}
 						Vm.exec(mapProgram, mapProgramParams, 0, true);
 						// preparation for generating wfl from the ozi map-file
 						Vector GCPs = map2wfl(path+imagename);
 						mio.evalGCP(GCPs, pixelsize.x, pixelsize.y);
-						// can not supress genaration of pgw-file
-						File pgwFile = new File(path + imagename + ".pgw");
+						// can not supress genaration of pgw,jgw-file
+						File pgwFile = new File(path + imagename + ".pgw"); // seems to bee for png
 						pgwFile.delete();
+						File jgwFile = new File(path + imagename + ".jgw"); // seems to bee for jpg
+						jgwFile.delete();
 					}
 				}
 			}			

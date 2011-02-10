@@ -58,6 +58,7 @@ public final class CWWrapper {
 		return exec(cmd, arg, false, true);
 	}
 	public static int exec(String cmd, String arg, final boolean wait, final boolean surround) throws ewe.io.IOException {
+		// works if there is only one argument
 		if (surround) {
 			if (Vm.getPlatform().equals("WinCE") || Vm.getPlatform().equals("Win32"))
 			{
@@ -70,8 +71,11 @@ public final class CWWrapper {
 				 * (see ewe/sys/Vm.java)			 *
 				 * on linux (and os x?) we must not have extra quotes, filenames with spaces are unsupported
 				 * */
-				if (cmd.indexOf(' ') > -1) {
-					cmd = "\"" + cmd + "\"";
+				if (cmd.indexOf(':') == 1) {
+					// java on Windows
+					if (cmd.indexOf(' ') > -1) {
+						cmd = "\"" + cmd + "\"";
+					}
 				}
 				if (arg.indexOf(' ') > -1) {
 					arg = "\"" + arg + "\"";
