@@ -114,6 +114,17 @@ public class Attribute {
      * get GC_TEXT string
 	 */
     public String getGCText () { return attRef(_Id,GC_TEXT); }
+    /*
+     * 
+     */
+    public static String getIdFromGCText(String t) {
+    	for (int i = 0; i < maxAttRef; i++) {
+    		if 	(attRef[i] [GC_TEXT].equals(t)) {
+    			return attRef[i][GC_ID];
+    		}
+    	}
+    	return "-1";
+    }
     /**
      * get GC_ID string
 	 */

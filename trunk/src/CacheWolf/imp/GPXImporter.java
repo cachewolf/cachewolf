@@ -27,6 +27,7 @@ package CacheWolf.imp;
 
 import com.stevesoft.ewe_pat.Regex;
 
+import CacheWolf.Attribute;
 import CacheWolf.CacheDB;
 import CacheWolf.CacheHolder;
 import CacheWolf.CacheSize;
@@ -88,7 +89,9 @@ public class GPXImporter extends MinML {
 	SpiderProperties propsSpider;
 	StringBuffer strBuf;
 	private int doitHow;
-	
+	private String attID;
+	private String attInc;
+
 	public GPXImporter(Preferences p, Profile prof, String f )
 	{
 		profile=prof;
@@ -177,7 +180,7 @@ public class GPXImporter extends MinML {
 			}
 				Vm.showWait(false);
 			}catch(Exception e){
-				pref.log("[GPXExporter:DoIt]",e,true);
+				pref.log("[GPXImporter:DoIt]",e,true);
 				Vm.showWait(false);
 			}
 		if(wasFiltered){
@@ -273,17 +276,16 @@ public class GPXImporter extends MinML {
 			holder.getCacheDetails(false).Travelbugs.clear();
 			return;
 		}
+		if (name.equals("groundspeak:attribute")) {
+			attID = atts.getValue("id");
+			attInc = atts.getValue("inc");
+			return;
+		}		
 		if (debugGPX){
 			for (int i = 0; i < atts.getLength(); i++) {
 				pref.log("[GPXExporter:startElement]Type: " + atts.getType(i) + " Name: " + atts.getName(i)+ " Value: "+atts.getValue(i),null);
 			}
-		}	
-		if (name.equals("groundspeak:attribute")) {
-			int id = Integer.parseInt(atts.getValue("id"));
-			holder.getCacheDetails(false).attributes.add(id,atts.getValue("inc")); // from GC!
-			holder.setAttribsAsBits(holder.getCacheDetails(false).attributes.getAttribsAsBits());
-			return;
-		}		
+		}
 	}
 	
 	public void endElement(String name){
@@ -522,6 +524,15 @@ public class GPXImporter extends MinML {
 			return;
 		}
 
+		if (name.equals("groundspeak:attribute")) {
+			if (attID.equals("")) {
+				attID=Attribute.getIdFromGCText(strData);
+			}
+			int id = Integer.parseInt(attID);
+			holder.getCacheDetails(false).attributes.add(id,attInc);
+			holder.setAttribsAsBits(holder.getCacheDetails(false).attributes.getAttribsAsBits());
+			return;
+		}		
 
 	}
 	public void characters(char[] ch,int start,int length){
