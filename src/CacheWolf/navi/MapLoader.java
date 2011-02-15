@@ -327,7 +327,12 @@ public class MapLoader {
 						String koords = buttomleft.toString(TransformCoordinates.LON_LAT) + "," + topright.toString(TransformCoordinates.LON_LAT);
 						outp.println("bounds-set "+koords);
 						outp.println("zoom-bounds");
-						outp.print("export-bitmap file=" + path + imagename + imagetype);
+						if ( path.indexOf(':') == 1) {
+							outp.print("export-bitmap file=" + "\"" + path + imagename + imagetype + "\"");
+						}
+						else {
+							outp.print("export-bitmap file=" + path + imagename + imagetype);
+						}
 						outp.print(" bounds="+ koords);
 						String pxSize = " width="+pixelsize.x + " height="+pixelsize.y;						
 						outp.print(pxSize);
