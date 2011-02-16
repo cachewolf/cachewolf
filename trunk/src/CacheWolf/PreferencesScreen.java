@@ -62,7 +62,7 @@ import ewe.ui.mTabbedPanel;
 public class PreferencesScreen extends Form {
 	mButton cancelB, applyB, brwBt, gpsB;
 	mChoice inpLanguage, inpMetric, inpSpiderUpdates;
-	mInput DataDir, Proxy, ProxyPort, Alias, nLogs, Browser, fontSize, 
+	mInput DataDir, Proxy, ProxyPort, Alias, nLogs, Browser, fontName, fontSize, 
 	       inpLogsPerPage,inpMaxLogsToSpider,inpPassword,inpGcMemberID;
 	mCheckBox chkAutoLoad, chkShowDeletedImg, chkMenuAtTop, chkTabsAtTop, chkShowStatus,chkHasCloseButton,
 	          chkSynthShort,chkProxyActive, chkDescShowImg, chkAddDetailsToWaypoint, chkAddDetailsToName, 
@@ -179,11 +179,14 @@ public class PreferencesScreen extends Form {
 		frmScreen.borderStyle=UIConstants.BDR_RAISEDOUTER|UIConstants.BDR_SUNKENINNER;
 		pnlScreen.addNext(new mLabel(MyLocale.getMsg(625,"Screen (needs restart):")));
 		pnlScreen.addNext(new mLabel("Font"),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.LEFT));
+		pnlScreen.addNext(fontName = new mInput(),CellConstants.STRETCH, (CellConstants.HFILL|CellConstants.LEFT));
+		fontName.maxLength=50;
+		fontName.setText(pref.fontName);
 		pnlScreen.addLast(fontSize = new mInput(),CellConstants.DONTSTRETCH, (CellConstants.HFILL|CellConstants.LEFT));
 		fontSize.maxLength=2;
-		fontSize.setPreferredSize(40,-1);
-		frmScreen.addLast(pnlScreen,HSTRETCH,HFILL);
+		fontSize.setPreferredSize(2*pref.fontSize,-1);
 		fontSize.setText(Convert.toString(pref.fontSize));
+		frmScreen.addLast(pnlScreen,HSTRETCH,HFILL);
 		
 		frmScreen.addLast(chkHasCloseButton=new mCheckBox(MyLocale.getMsg(631,"PDA has close Button")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.LEFT));	
     	//lblTitle.setTag(INSETS,new Insets(2,0,0,0));
@@ -342,6 +345,7 @@ public class PreferencesScreen extends Form {
 				pref.setBaseDir(DataDir.getText());
 				pref.fontSize = Convert.toInt(fontSize.getText());
 				if (pref.fontSize<6) pref.fontSize=11;
+				pref.fontName=fontName.getText();
 				pref.logsPerPage=Common.parseInt(inpLogsPerPage.getText());
 				if (pref.logsPerPage==0) pref.logsPerPage=pref.DEFAULT_LOGS_PER_PAGE;
 				pref.maxLogsToSpider=Common.parseInt(inpMaxLogsToSpider.getText());

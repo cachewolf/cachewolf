@@ -189,8 +189,7 @@ public class MainForm extends Editor {
 
 	private void addGuiFont(){
 		Font defaultGuiFont = mApp.findFont("gui");
-		int sz = (pref.fontSize);
-		Font newGuiFont = new Font(defaultGuiFont.getName(), defaultGuiFont.getStyle(), sz);
+		Font newGuiFont = new Font(pref.fontName, defaultGuiFont.getStyle(), pref.fontSize);
 		mApp.addFont(newGuiFont, "gui");
 		mApp.fontsChanged();
 		mApp.mainApp.font = newGuiFont;

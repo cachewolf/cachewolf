@@ -205,7 +205,8 @@ public class Preferences extends MinML{
 	/** Timer for logging GPS data */
 	public String logGPSTimer = "5";
 	/** The default font size */
-	public int fontSize; 
+	public int fontSize;
+	public String fontName;
 	// These settings govern where the menu and the tabs are displayed and whether the statusbas is shown
 	/** True if the menu is to be displayed at the top of the screen */
 	public boolean menuAtTop=true;
@@ -441,7 +442,11 @@ public class Preferences extends MinML{
 				fixSIP = true;
 			}
 		}
-		else if(name.equals("font")) fontSize = Convert.toInt(atts.getValue("size"));
+		else if(name.equals("font")) {
+			fontSize = Convert.toInt(atts.getValue("size"));
+			fontName = atts.getValue("name");
+			if (fontName == null) fontName="Helvetica";
+		}
 		else if(name.equals("alias")) {
 			myAlias = SafeXML.cleanback(atts.getValue("name"));
 			tmp = SafeXML.cleanback(atts.getValue("password"));
@@ -714,7 +719,7 @@ public class Preferences extends MinML{
 			outp.print("    <portforward active= \"" + SafeXML.clean(Convert.toString(forwardGPS)) + "\" destinationHost = \"" + SafeXML.clean(forwardGpsHost) + "\"/>\n");
 			outp.print("    <gpsd active= \"" + SafeXML.strxmlencode(useGPSD) + "\" host = \"" + SafeXML.clean(gpsdHost) + "\" port = \"" + SafeXML.strxmlencode(gpsdPort) + "\"/>\n");
 			outp.print("    <portlog active= \"" + SafeXML.clean(Convert.toString(logGPS)) + "\" logTimer = \"" + SafeXML.clean(logGPSTimer) + "\"/>\n");
-			outp.print("    <font size =\"" + SafeXML.strxmlencode(fontSize) + "\"/>\n");
+			outp.print("    <font name=\"" + fontName + "\" size=\"" + SafeXML.strxmlencode(fontSize) + "\"/>\n");
 			outp.print("    <screen menuattop=\""+menuAtTop+"\" tabsattop=\""+tabsAtTop+"\" showstatus=\""+showStatus+"\" hasclosebutton=\""+hasCloseButton+
 	                "\" h=\""+myAppHeight+"\" w=\""+myAppWidth+"\" />\n");
 			outp.print("    <fixedsip state = \"" + SafeXML.strxmlencode(fixSIP) + "\"/>\n");
