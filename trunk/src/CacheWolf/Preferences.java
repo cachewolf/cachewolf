@@ -46,6 +46,7 @@ import ewe.ui.InputBox;
 import ewe.ui.MessageBox;
 import ewe.ui.Window;
 import ewe.ui.WindowConstants;
+import ewe.ui.mApp;
 import ewe.util.Comparer;
 import ewe.util.Enumeration;
 import ewe.util.Hashtable;
@@ -445,7 +446,7 @@ public class Preferences extends MinML{
 		else if(name.equals("font")) {
 			fontSize = Convert.toInt(atts.getValue("size"));
 			fontName = atts.getValue("name");
-			if (fontName == null) fontName="Helvetica";
+			if (fontName == null) fontName=mApp.findFont("gui").getName();
 		}
 		else if(name.equals("alias")) {
 			myAlias = SafeXML.cleanback(atts.getValue("name"));
