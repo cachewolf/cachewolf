@@ -100,6 +100,7 @@ public class OCXMLImporter extends MinML {
 	String strData = "";
 	int picCnt;
 	boolean incUpdate = true; // complete or incremental Update
+	boolean incFinds = false;
 	Hashtable DBindexID = new Hashtable();
 
 	String picUrl = "";
@@ -206,13 +207,17 @@ public class OCXMLImporter extends MinML {
 			(new MessageBox("Error", "Coordinates for centre must be set", FormBase.OKB)).execute();
 			return;
 		}
-		OCXMLImporterScreen importOpt = new OCXMLImporterScreen( MyLocale.getMsg(130,"Download from opencaching"),
-																 OCXMLImporterScreen.ALL | OCXMLImporterScreen.DIST | OCXMLImporterScreen.IMAGES
-																 | OCXMLImporterScreen.HOST);
+		OCXMLImporterScreen importOpt = new OCXMLImporterScreen(
+				MyLocale.getMsg(130,"Download from opencaching"),
+				OCXMLImporterScreen.ALL |
+				OCXMLImporterScreen.DIST |
+				OCXMLImporterScreen.IMAGES|
+				OCXMLImporterScreen.INCLUDEFOUND|
+				OCXMLImporterScreen.HOST);
 		if (importOpt.execute() == FormBase.IDCANCEL) {	return; }
 		Vm.showWait(true);
 		String dist = importOpt.maxDistanceInput.getText();
-
+		incFinds = !importOpt.foundCheckBox.getState();
 		if (importOpt.domains.getSelectedItem()!=null) {
 			hostname = (String)importOpt.domains.getSelectedItem();
 			pref.lastOCSite=hostname;
@@ -409,10 +414,11 @@ public class OCXMLImporter extends MinML {
 	}
 
 	private void startCache(String name, AttributeList atts){
-		inf.setInfo(MyLocale.getMsg(1609,"Importing Cache:")+" " + numCacheImported + "\n");
 		if(name.equals("id")){
 			cacheID = atts.getValue("id");
 		}
+		if (holder==null) return;
+		inf.setInfo(MyLocale.getMsg(1609,"Importing Cache:")+" " + numCacheImported + "\n");
 		if(name.equals("type")){
 			holder.setType(CacheType.ocType2CwType(atts.getValue("id")));
 			holder.getCacheDetails(false).attributes.clear();
@@ -432,7 +438,7 @@ public class OCXMLImporter extends MinML {
 			} else {
 				holder.setAvailable(false);
 				if( (atts.getValue("id").equals("3")) || (atts.getValue("id").equals("6")) ) {
-					holder.setArchived(true);
+					holder=null; // holder.setArchived(true);
 				}
 			}
 			return;
@@ -469,6 +475,7 @@ public class OCXMLImporter extends MinML {
 
 
 	private void startCacheDesc(String name, AttributeList atts){
+		if (holder==null) return;
 		inf.setInfo(MyLocale.getMsg(1611,"Importing cache description:")+" " + numDescImported);
 		if (name.equals("cacheid")){
 			String ocCacheID = new String(atts.getValue("id"));
@@ -485,12 +492,10 @@ public class OCXMLImporter extends MinML {
 	}
 
 	private void startPicture(String name, AttributeList atts){
-		if(name.equals("picture")){
-			inf.setInfo(MyLocale.getMsg(1613,"Pictures:")+" " + ++picCnt);
-		}
 	}
 
 	private void startCacheLog(String name, AttributeList atts){
+		if (holder==null) return;
 		inf.setInfo(MyLocale.getMsg(1612,"Importing Cachlog:")+" " + numLogImported);
 		if (name.equals("logtype")){
 			logtype = Convert.toInt(atts.getValue("id"));
@@ -515,6 +520,14 @@ public class OCXMLImporter extends MinML {
 	}
 
 	private void endCache(String name){
+		if(name.equals("id")){ // </id>
+			holder = getHolder(strData, true); // Allocate a new CacheHolder object
+			holder.setOcCacheID(strData);
+			String ocSeekUrl = new String("http://" + hostname + "/viewcache.php?cacheid=");
+			holder.getCacheDetails(false).URL = ocSeekUrl + cacheID;
+			return;
+		}
+		if (holder == null) return; // id should always be the first for a <cache>
 		if (name.equals("cache")){
 			holder.setLastSync(dateOfthisSync.format("yyyyMMddHHmmss"));
 			int index;
@@ -543,13 +556,8 @@ public class OCXMLImporter extends MinML {
 			holder.getCacheDetails(false).hasUnsavedChanges = true; // this makes CachHolder save the details in case that they are unloaded from memory
 			// chD.saveCacheDetails(profile.dataDir);
 			// profile.saveIndex(pref,Profile.NO_SHOW_PROGRESS_BAR); // this is done after .xml is completly processed
-			return;
-		}
-		if(name.equals("id")){ // </id>
-			holder = getHolder(strData); // Allocate a new CacheHolder object
-			holder.setOcCacheID(strData);
-			String ocSeekUrl = new String("http://" + hostname + "/viewcache.php?cacheid=");
-			holder.getCacheDetails(false).URL = ocSeekUrl + cacheID;
+
+			holder=null;
 			return;
 		}
 
@@ -591,6 +599,12 @@ public class OCXMLImporter extends MinML {
 	}
 
 	private void endCacheDesc(String name){
+		if (name.equals("cacheid")){
+			// load cachedata
+			holder = getHolder(strData, false);
+			return;
+		}
+		if (holder == null) return;
 		if (name.equals("cachedesc")){
 			if (pref.downloadPics && holder.is_HTML()) {
 				String fetchUrl, imgTag, imgAltText;
@@ -623,13 +637,6 @@ public class OCXMLImporter extends MinML {
 				}
 			}
 			holder.getCacheDetails(false).hasUnsavedChanges = true;
-			return;
-		}
-
-
-		if (name.equals("cacheid")){
-			// load cachedata
-			holder = getHolder(strData);
 			return;
 		}
 
@@ -718,6 +725,12 @@ public class OCXMLImporter extends MinML {
 
 
 	private void endPicture(String name){
+		if(name.equals("object")){
+			// get cachedata
+			holder = getHolder(strData, false);
+			return;
+		}
+		if (holder == null) return;
 
 		if(name.equals("id")){
 			picID = strData;
@@ -732,12 +745,8 @@ public class OCXMLImporter extends MinML {
 			picTitle = strData;
 			return;
 		}
-		if(name.equals("object")){
-			// get cachedata
-			holder = getHolder(strData);
-			return;
-		}
 		if(name.equals("picture")){
+			inf.setInfo(MyLocale.getMsg(1613,"Pictures:")+" " + ++picCnt);
 			//String fileName = holder.wayPoint + "_" + picUrl.substring(picUrl.lastIndexOf("/")+1);
 			getPic(picUrl,picTitle);
 			holder.getCacheDetails(false).hasUnsavedChanges = true; //saveCacheDetails(profile.dataDir);
@@ -746,21 +755,31 @@ public class OCXMLImporter extends MinML {
 	}
 
 	private void endCacheLog(String name){
-		if (name.equals("cachelog")){ // </cachelog>
-			holder.getCacheDetails(false).CacheLogs.merge(new Log(logIcon, logDate, logFinder, logData, loggerRecommended));
-			if((logFinder.toLowerCase().compareTo(user) == 0 || logFinder.equalsIgnoreCase(pref.myAlias2)) && logtype == 1) {
-						holder.setCacheStatus(logDate);
-						holder.setFound(true);
-						holder.getCacheDetails(false).OwnLogId = logId;
-						holder.getCacheDetails(false).OwnLog = new Log(logIcon, logDate, logFinder, logData, loggerRecommended);
-			}
-			holder.getCacheDetails(false).hasUnsavedChanges = true; //chD.saveCacheDetails(profile.dataDir);
-			return;
-		}
-
 		if (name.equals("cacheid")){ // </cacheid>
 			// load cachedata
-			holder = getHolder(strData);
+			holder = getHolder(strData, false);
+			return;
+		}
+		if (holder == null) return;
+		if (name.equals("cachelog")){ // </cachelog>
+			holder.getCacheDetails(false).CacheLogs.merge(new Log(logIcon, logDate, logFinder, logData, loggerRecommended));
+			holder.getCacheDetails(false).hasUnsavedChanges = true; //chD.saveCacheDetails(profile.dataDir);
+			if((logFinder.toLowerCase().compareTo(user) == 0 || logFinder.equalsIgnoreCase(pref.myAlias2)) && logtype == 1) {
+				if (incFinds) {
+					holder.setCacheStatus(logDate);
+					holder.setFound(true);
+					holder.getCacheDetails(false).OwnLogId = logId;
+					holder.getCacheDetails(false).OwnLog = new Log(logIcon, logDate, logFinder, logData, loggerRecommended);
+				}
+				else {
+					int index;
+					index = cacheDB.getIndex(holder);
+					cacheDB.removeElementAt(index);
+					File tmpFile = new File(profile.dataDir + holder.getWayPoint()+".xml");
+					tmpFile.delete();
+					holder = null;
+				}
+			}
 			return;
 		}
 
@@ -802,14 +821,14 @@ public class OCXMLImporter extends MinML {
 	}
 
 
-	private CacheHolder getHolder(String wpt){// See also LOCXMLImporter
-		CacheHolder chx;
+	private CacheHolder getHolder(String wpt, boolean create){// See also LOCXMLImporter
+		CacheHolder chx = null;
 		int index;
 
 		index = cacheDB.getIndex(wpt);
 		if (index == -1) index = searchID(wpt);
 		if (index == -1) {
-			chx = new CacheHolder();
+			if (create) chx = new CacheHolder();
 		} else {
 			chx = cacheDB.get(index);
 		}
