@@ -439,7 +439,7 @@ public class OCXMLImporter extends MinML {
 				holder.setAvailable(true);
 			} else {
 				holder.setAvailable(false);
-				if( (atts.getValue("id").equals("3")) || (atts.getValue("id").equals("6")) ) {
+				if( (atts.getValue("id").equals("3")) || (atts.getValue("id").equals("6"))|| (atts.getValue("id").equals("7")) ) {
 					if (!isSyncSingle) {
 						holder=null; // holder.setArchived(true);
 						numCacheImported--;
