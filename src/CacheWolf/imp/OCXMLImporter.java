@@ -119,6 +119,7 @@ public class OCXMLImporter extends MinML {
 	/** Temporarly save the values from XML: set to the language of the description which is currently parsed */
 	String processingDescLang;
 	boolean isHTML;
+	boolean isSyncSingle; // to load archieved
 
 	public OCXMLImporter(Preferences p,Profile prof)
 	{
@@ -192,6 +193,7 @@ public class OCXMLImporter extends MinML {
 			+ "&cdata=0"
 			+ "&session=0";
 		ch.setUpdated(false);
+		isSyncSingle=true;
 		syncOC(url);
 		inf.close(0);
 		return true;
@@ -265,6 +267,7 @@ public class OCXMLImporter extends MinML {
 		inf.relayout(false);
 		inf.exec();
 
+		isSyncSingle=false;
 		success = syncOC(url);
 		profile.saveIndex(pref,Profile.SHOW_PROGRESS_BAR);
 		Vm.showWait(false);
@@ -437,8 +440,10 @@ public class OCXMLImporter extends MinML {
 			} else {
 				holder.setAvailable(false);
 				if( (atts.getValue("id").equals("3")) || (atts.getValue("id").equals("6")) ) {
-					holder=null; // holder.setArchived(true);
-					numCacheImported--;
+					if (!isSyncSingle) {
+						holder=null; // holder.setArchived(true);
+						numCacheImported--;
+					}
 				}
 			}
 			return;
@@ -768,23 +773,24 @@ public class OCXMLImporter extends MinML {
 			if (holder.getCacheDetails(false).CacheLogs.merge(new Log(logIcon, logDate, logFinder, logData, loggerRecommended))> -1) {
 				numLogImported++;
 				holder.getCacheDetails(false).hasUnsavedChanges = true; //chD.saveCacheDetails(profile.dataDir);
-				if((logFinder.toLowerCase().compareTo(user) == 0 || logFinder.equalsIgnoreCase(pref.myAlias2)) && logtype == 1) {
-					if (incFinds || !holder.is_new()) {
-						// aber vorhandene werden mit gefunden aktualisiert
-						holder.setCacheStatus(logDate);
-						holder.setFound(true);
-						holder.getCacheDetails(false).OwnLogId = logId;
-						holder.getCacheDetails(false).OwnLog = new Log(logIcon, logDate, logFinder, logData, loggerRecommended);
-					}
-					else {
-						//if (holder.is_new())
-						cacheDB.removeElementAt(cacheDB.getIndex(holder));
-						DBindexID.remove(holder.GetCacheID());
-						// und Dateien löschen?
-						File tmpFile = new File(profile.dataDir + holder.getWayPoint()+".xml");
-						tmpFile.delete();
-						// todo: was ist mit den schon heruntergeladenen Bildern?
-					}
+			}
+			// 
+			if((logFinder.toLowerCase().compareTo(user) == 0 || logFinder.equalsIgnoreCase(pref.myAlias2)) && logtype == 1) {
+				if (incFinds || !holder.is_new()) {
+					// aber vorhandene werden mit gefunden aktualisiert
+					holder.setCacheStatus(logDate);
+					holder.setFound(true);
+					holder.getCacheDetails(false).OwnLogId = logId;
+					holder.getCacheDetails(false).OwnLog = new Log(logIcon, logDate, logFinder, logData, loggerRecommended);
+				}
+				else {
+					//if (holder.is_new())
+					cacheDB.removeElementAt(cacheDB.getIndex(holder));
+					DBindexID.remove(holder.GetCacheID());
+					// und Dateien löschen?
+					File tmpFile = new File(profile.dataDir + holder.getWayPoint()+".xml");
+					tmpFile.delete();
+					// todo: was ist mit den schon heruntergeladenen Bildern?
 				}
 			}
 			return;
