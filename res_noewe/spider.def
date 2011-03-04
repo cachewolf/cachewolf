@@ -53,7 +53,7 @@
 # * When entering spaces into a string ensure to escape them or write them as \\u0020
 # * Be sure that you have no hidden spaces at the end of a line or the patterns will not match!
 #------------------------------------------------------------
-loginPage          = http://www.geocaching.com/login/Default.aspx
+loginPage          = http://www.geocaching.com/login/default.aspx
 loginSuccess       = You\ are\ logged\ in\ as
 nextPage           = /login/default.aspx
 waypoint           = http://www.geocaching.com/seek/cache_details.aspx?wp=
@@ -73,7 +73,7 @@ logDateRex         = <td valign="top">\\s*(.*?)<br\ />
 availableRex       = class="lnk\ \ Strike">
 archivedRex        = class="lnk\ OldWarning\ Strike\ Strike">
 PMRex              = small_profile.gif
-distCodeRex        = k=(.*?)"\ style=
+distCodeRex        = k=(.*?)"
 distCodeKey        = signalthefrog
 distRex            = (.*?)(?:km|mi|ft)
 DTSRex             = v=(.*?)"\ style=

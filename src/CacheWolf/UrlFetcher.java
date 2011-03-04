@@ -25,8 +25,10 @@
     */
 package CacheWolf;
 
+import ewe.data.PropertyList;
 import ewe.io.AsciiCodec;
-import ewe.io.ByteArrayInputStream;
+import ewe.io.File;
+import ewe.io.FileOutputStream;
 import ewe.io.IOException;
 import ewe.io.JavaUtf8Codec;
 import ewe.net.Socket;
@@ -35,33 +37,64 @@ import ewe.sys.Handle;
 import ewe.sys.HandleStoppedException;
 import ewe.util.ByteArray;
 import ewe.util.CharArray;
-import ewe.util.Properties;
 
 public class UrlFetcher {
-	public static String fetchString(String address) throws IOException
-	{
-		ByteArray daten = fetchByteArray(address, null);
+	static HttpConnection conn;
+	static int maxRedirections = 5;
+	static PropertyList requestorProperties = null;
+	static PropertyList permanentRequestorProperties = null;
+	static String postData=null;
+	static String urltmp=null;
+	
+	public static PropertyList getDocumentProperties() {
+		if (conn != null) 
+			return conn.documentProperties;
+		else return null;
+	}
+	public static String getRealUrl() { return urltmp; };
+	public static void setMaxRedirections(int value) { maxRedirections=value; };
+	public static void setRequestorProperties(PropertyList value) { requestorProperties=value; };
+	public static void setRequestorProperty(String name, String property) {
+		if (requestorProperties == null) requestorProperties = new PropertyList();
+		requestorProperties.set(name,property);
+	}
+	private static void initPermanentRequestorProperty() {
+		permanentRequestorProperties = new PropertyList();
+		permanentRequestorProperties.add("USER_AGENT", "Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.7.5) Gecko/20041107 Firefox/1.0");
+		// permanentRequestorProperties.add("Connection", "close");		
+	}
+	public static void setPermanentRequestorProperty(String name, String property) {
+		if (permanentRequestorProperties == null) initPermanentRequestorProperty();
+		if (property != null) 
+			permanentRequestorProperties.set(name,property);
+		else {
+			int index = permanentRequestorProperties.find(name);
+			if ( index >= 0 ) permanentRequestorProperties.del(index);			
+		}
+	}
+	public static void setpostData(String value) { postData=value;};
+	public static String fetch(String address) throws IOException {
+		ByteArray daten = fetchByteArray(address);
 		JavaUtf8Codec codec = new JavaUtf8Codec();
 		CharArray c_data = codec.decodeText(daten.data, 0, daten.length, true, null);
 		return c_data.toString();
+	}	
+	public static ByteArray fetchData(String address) throws IOException
+	{ return fetchByteArray(address); }
+	public static void fetchDataFile(String address, String target) throws IOException {
+		FileOutputStream outp =  new FileOutputStream(new File(target));
+		outp.write(fetchByteArray(address).toBytes());
+		outp.close();
 	}
-
-	public static Properties fetchPropertyList(String url) throws IOException {
-		CharArray t = new CharArray();
-		ByteArray doc = fetchByteArray(url, t);
-		Properties props = new Properties();
-		props.load(new ByteArrayInputStream(doc));
-		return props; 
-	}
-
-	public static ByteArray fetchByteArray(String url, CharArray realurl) throws IOException {
+	// all errors as IOException
+	private static ByteArray fetchByteArray(String url) throws IOException {
 		Handle[] hndl = new Handle[1];
 		try {
-		return fetchByteArray(url, realurl, hndl);
+		return fetchByteArray(url, hndl);
 		} catch ( InterruptedException e) {
-			throw new IOException("Error reading data. i :"+url);
+			throw new IOException("Error reading data. Interrupted :"+url);
 		} catch ( HandleStoppedException e) {
-			throw new IOException("Error reading data. s :"+url);
+			throw new IOException("Error reading data. HandleStopped :"+url);
 		}
 	}
 
@@ -73,20 +106,23 @@ public class UrlFetcher {
 	 * @throws InterruptedException 
 	 * @throws HandleStoppedException 
 	 */
-	public static ByteArray fetchByteArray(String url, CharArray realurl, Handle[] hndl) 
+	public static ByteArray fetchByteArray(String url, Handle[] hndl) 
 	throws IOException, HandleStoppedException, InterruptedException {	
-		final int maxRedirections = 5;
-		HttpConnection conn = null;
 		Socket sock = null;
 		int i=0;
-		String urltmp = new String(url);
+		urltmp = url;
+		conn = new HttpConnection(urltmp);
 		do  { // allow max 5 redirections (http 302 location)
-			if (realurl != null) realurl.copyFrom(new String(urltmp));
 			i++;
-			conn = new HttpConnection(urltmp);
-			conn.setRequestorProperty("USER_AGENT", "Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.7.5) Gecko/20041107 Firefox/1.0");
-			conn.setRequestorProperty("Connection", "close");
+			conn.setUrl(urltmp);
 			conn.documentIsEncoded = isUrlEncoded(urltmp);
+			if (permanentRequestorProperties == null) initPermanentRequestorProperty();
+			if (postData != null) {
+				conn.setPostData(postData);
+				setRequestorProperty("Content-Type","application/x-www-form-urlencoded");
+			}
+			conn.setRequestorProperty(permanentRequestorProperties);
+			if (requestorProperties != null) conn.setRequestorProperty(requestorProperties);
 			hndl[0] = conn.connectAsync();
 			hndl[0].waitOn(Handle.Success);
 			sock = (Socket)hndl[0].returnValue; //"Could not connect.");
@@ -108,8 +144,10 @@ public class UrlFetcher {
 		}finally {
 			sock.close();
 		}
-		daten = (ByteArray)hndl[0].returnValue;
-		// ByteArray daten = conn.readData(sock);
+		maxRedirections = 5;
+		requestorProperties = null;
+		postData=null;
+		daten = (ByteArray)hndl[0].returnValue; // ByteArray daten = conn.readData(sock);
 		return daten;
 	}
 
@@ -117,7 +155,7 @@ public class UrlFetcher {
 	 * @param url
 	 * @return true, if the string seems to be already URL encoded (that is, it contains only url-allowd chars), false otherwise
 	 */
-	public static boolean isUrlEncoded(String url) {
+	private static boolean isUrlEncoded(String url) {
 		final String allowed = new String ("-_.~!*'();:@&=+$,/?%#[]");
 		char [] src = ewe.sys.Vm.getStringChars(url);
 		char c;
@@ -163,7 +201,7 @@ public class UrlFetcher {
 	 * @return The encoded URL.
 	 */
 	//===================================================================
-	public static String encodeURL(String url, boolean spaceToPlus)
+	private static String encodeURL(String url, boolean spaceToPlus)
 	//===================================================================
 	{
 		char [] what = ewe.sys.Vm.getStringChars(url);

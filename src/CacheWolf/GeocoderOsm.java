@@ -43,7 +43,7 @@ public class GeocoderOsm {
 
 	public static Vector geocode(String address, Handle[] h) 
 	throws SAXException, IOException, HandleStoppedException, InterruptedException {
-		ByteArray answ = UrlFetcher.fetchByteArray((geocoderUrl+UrlFetcher.toUtf8Url(address)), null, h);
+		ByteArray answ = UrlFetcher.fetchByteArray((geocoderUrl+UrlFetcher.toUtf8Url(address)), h);
 		XMLDecoder xmldec = new XMLDecoder();
 		xmldec.parse(new InputStreamReader(new ByteArrayInputStream(answ), IO.JAVA_UTF8_CODEC));
 		Vector erg = new Vector();

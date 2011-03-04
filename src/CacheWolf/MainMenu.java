@@ -41,6 +41,7 @@ import CacheWolf.imp.FieldnotesImporter;
 import CacheWolf.imp.GCVoteImporter;
 import CacheWolf.imp.GPXImporter;
 import CacheWolf.imp.LOCXMLImporter;
+import CacheWolf.imp.OCGPXfetch;
 import CacheWolf.imp.OCXMLImporter;
 import CacheWolf.imp.OCXMLImporterScreen;
 import CacheWolf.imp.SpiderGC;
@@ -78,7 +79,7 @@ import ewe.util.Vector;
  *     20061123 salzkammergut Tidied up, added MyLocale, added additional internationalisation, combine save/filter for small screens, garminConn
  */
 public class MainMenu extends MenuBar {
-	private MenuItem preferences, mnuContext,loadcaches,loadOC, /* savenexit, */ savenoxit,exit,search,searchAll,searchClr;
+	private MenuItem preferences, mnuContext,loadcaches,loadOC, loadOCFinds, /* savenexit, */ savenoxit,exit,search,searchAll,searchClr;
 	private MenuItem downloadmap, kalibmap, importmap, selectMapPath;
 	private MenuItem spider, spiderRoute, spiderQuick, spiderAllFinds, loadGCVotes, update, chkVersion;
 	private MenuItem about, wolflang, sysinfo, legend;
@@ -120,7 +121,10 @@ public class MainMenu extends MenuBar {
 		else spiderRoute = mnuSeparator;
 		MenuItem[] mnuImport = {				
 				loadcaches     = new MenuItem(MyLocale.getMsg(129,"Import GPX")),
+				mnuSeparator,
 				loadOC         = new MenuItem(MyLocale.getMsg(130,"Download from opencaching")),
+				loadOCFinds    = new MenuItem(MyLocale.getMsg(163,"Finds from opencaching")),
+				mnuSeparator,
 				spider         = new MenuItem(MyLocale.getMsg(131,"Download from geocaching.com")),
 				spiderRoute,
 				spiderAllFinds = new MenuItem(MyLocale.getMsg(217,"Spider all finds from geocaching.com")),
@@ -361,7 +365,7 @@ public class MainMenu extends MenuBar {
 			// subMenu for import, part of "Application" menu
 			///////////////////////////////////////////////////////////////////////
 			if(mev.selectedItem == spider){
-				SpiderGC spGC = new SpiderGC(pref, profile, true);
+				SpiderGC spGC = new SpiderGC(pref, profile);
 				Global.mainTab.saveUnsavedChanges(false);
 				spGC.doIt();
 				cacheDB.clear();
@@ -369,7 +373,7 @@ public class MainMenu extends MenuBar {
 				tbp.resetModel();
 			}
 			if(mev.selectedItem == spiderRoute){
-				SpiderGC spGC = new SpiderGC(pref, profile, true);
+				SpiderGC spGC = new SpiderGC(pref, profile);
 				Global.mainTab.saveUnsavedChanges(false);
 				spGC.doItAlongARoute();
 				cacheDB.clear();
@@ -377,7 +381,7 @@ public class MainMenu extends MenuBar {
 				tbp.resetModel();
 			}
 			if(mev.selectedItem == spiderQuick){
-				SpiderGC spGC = new SpiderGC(pref, profile, true);
+				SpiderGC spGC = new SpiderGC(pref, profile);
 				Global.mainTab.saveUnsavedChanges(false);
 				spGC.doItQuickFillFromMapList();
 				cacheDB.clear();
@@ -385,7 +389,7 @@ public class MainMenu extends MenuBar {
 				tbp.resetModel();
 			}
 			if(mev.selectedItem == spiderAllFinds){
-				SpiderGC spGC = new SpiderGC(pref, profile, true);
+				SpiderGC spGC = new SpiderGC(pref, profile);
 				Global.mainTab.saveUnsavedChanges(false);
 				spGC.doIt(true);
 				cacheDB.clear();
@@ -393,7 +397,7 @@ public class MainMenu extends MenuBar {
 				tbp.resetModel();
 			}
 			if(mev.selectedItem == loadGCVotes){
-                GCVoteImporter sGCV = new GCVoteImporter(pref, profile, true);
+                GCVoteImporter sGCV = new GCVoteImporter(pref, profile);
                 sGCV.doIt();
                 tbp.resetModel();
 			}
@@ -431,6 +435,12 @@ public class MainMenu extends MenuBar {
 			if(mev.selectedItem == loadOC){
 				OCXMLImporter oc = new OCXMLImporter(pref,profile);
 				oc.doIt();
+                Global.getProfile().setShowBlacklisted(false);
+                filtBlack.modifiers=Global.getProfile().showBlacklisted()?filtBlack.modifiers|MenuItem.Checked:filtBlack.modifiers&~MenuItem.Checked;
+				tbp.resetModel();
+			}
+			if(mev.selectedItem == loadOCFinds){
+				OCGPXfetch.doIt();
                 Global.getProfile().setShowBlacklisted(false);
                 filtBlack.modifiers=Global.getProfile().showBlacklisted()?filtBlack.modifiers|MenuItem.Checked:filtBlack.modifiers&~MenuItem.Checked;
 				tbp.resetModel();
@@ -839,7 +849,7 @@ public class MainMenu extends MenuBar {
 		OCXMLImporterScreen options = new OCXMLImporterScreen(MyLocale.getMsg(1014,"updateSelectedCaches"), OCXMLImporterScreen.IMAGES| OCXMLImporterScreen.TRAVELBUGS| OCXMLImporterScreen.MAXLOGS| OCXMLImporterScreen.ALL);
 		if (options.execute() == FormBase.IDCANCEL) {	return; }
 
-		SpiderGC spider = new SpiderGC(pref, profile, false);
+		SpiderGC spider = new SpiderGC(pref, profile);
 		OCXMLImporter ocSync = new OCXMLImporter(pref, profile);
 		Vm.showWait(true);
 		boolean alreadySaid = false;
