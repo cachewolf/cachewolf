@@ -48,6 +48,7 @@ import CacheWolf.Profile;
 import CacheWolf.STRreplace;
 import CacheWolf.SafeXML;
 import CacheWolf.Travelbug;
+import CacheWolf.UrlFetcher;
 import CacheWolf.navi.Area;
 import CacheWolf.navi.Metrics;
 import CacheWolf.navi.MovingMap;
@@ -67,7 +68,6 @@ import ewe.io.FileInputStream;
 import ewe.io.FileOutputStream;
 import ewe.io.IOException;
 import ewe.io.InputStreamReader;
-import ewe.io.JavaUtf8Codec;
 import ewe.net.Socket;
 import ewe.net.URL;
 import ewe.net.UnknownHostException;
@@ -77,7 +77,6 @@ import ewe.sys.Vm;
 import ewe.ui.FormBase;
 import ewe.ui.MessageBox;
 import ewe.util.ByteArray;
-import ewe.util.CharArray;
 import ewe.util.Enumeration;
 import ewe.util.Hashtable;
 import ewe.util.Properties;
@@ -115,8 +114,7 @@ public class SpiderGC {
 	private static Preferences pref;
 	private Profile profile;
 
-	private static String cookieID = "";
-	private static String cookieSession = "";
+	private static String cookie = "";
 	private static double minDistance = 0;
 	private static double maxDistance = 0;
 	private static String direction = "";
@@ -182,10 +180,8 @@ public class SpiderGC {
 	private int numPrivate = 0;
 	private int page_number = 1;
 	private int num_added = 0;
-	
-	private static HttpConnection conn;
 
-	public SpiderGC(Preferences prf, Profile profile, boolean bypass) {
+	public SpiderGC(Preferences prf, Profile profile) {
 		this.profile = profile;
 		this.cacheDB = profile.cacheDB;
 		pref = prf;
@@ -233,9 +229,7 @@ public class SpiderGC {
 					+ "with Founds       : " + (doNotgetFound ? "no" : "yes")
 					+ Preferences.NEWLINE + "alias is premium m: "
 					+ (!pref.isPremium ? "no" : "yes") + Preferences.NEWLINE
-					+ "Update if new Logs: " + (!pref.checkLog ? "no" : "yes") + Preferences.NEWLINE
-					+ "Update if TB change: " + (!pref.checkTBs ? "no" : "yes") + Preferences.NEWLINE
-					+ "Update if DTS change: " + (!pref.checkDTS ? "no" : "yes")
+					+ "Update if new Logs: " + (!pref.checkLog ? "no" : "yes")
 					+ Preferences.NEWLINE, null);
 
 			Hashtable cachesToUpdate = new Hashtable(cacheDB.size());
@@ -1182,7 +1176,7 @@ public class SpiderGC {
 		localInfB.exec();
 		try {
 			String doc = p.getProp("waypoint") + wayPoint;
-			completeWebPage = fetchText(doc, false);
+			completeWebPage = UrlFetcher.fetch(doc);
 			pref.log("Fetched " + wayPoint);
 		} catch (Exception ex) {
 			localInfB.close(0);
@@ -1204,19 +1198,22 @@ public class SpiderGC {
 	 * displayed.
 	 */
 	private int login() {
-		String passwort = pref.password;
+		if (cookie.length() > 0) 
+			UrlFetcher.setPermanentRequestorProperty("Cookie", cookie);
+		else
+			UrlFetcher.setPermanentRequestorProperty("Cookie", null);
 		loggedIn = false;
-		String loginPage, loginPageUrl, loginSuccess, nextPage;
+		String loginPage, loginPageUrl, loginSuccess;
 		try {
 			loginPageUrl = p.getProp("loginPage");
 			loginSuccess = p.getProp("loginSuccess");
-			nextPage = p.getProp("nextPage");
 		} catch (Exception ex) { // Tag not found in spider.def
 			return ERR_LOGIN;
 		}
-		// Get password
-		InfoBox localInfB = new InfoBox(MyLocale.getMsg(5506, "Password"),
-				MyLocale.getMsg(5505, "Enter Password"), InfoBox.INPUT);
+
+		// **0 Get password
+		String passwort = pref.password;
+		InfoBox localInfB = new InfoBox(MyLocale.getMsg(5506, "Password"),MyLocale.getMsg(5505, "Enter Password"), InfoBox.INPUT);
 		localInfB.feedback.setText(passwort);
 		localInfB.feedback.isPassword = true;
 		int code = FormBase.IDOK;
@@ -1225,15 +1222,14 @@ public class SpiderGC {
 			passwort = localInfB.getInput();
 		}
 		localInfB.close(0);
-		if (code != FormBase.IDOK)
-			return code;
-		// Now start the login proper
+		if (code != FormBase.IDOK) return code;
+		
+		// **1 now we have user and password for login
 		localInfB = new InfoBox(MyLocale.getMsg(5507, "Status"), MyLocale.getMsg(5508, "Logging in..."));
 		localInfB.exec();
 		try {
-			// Access the page once to get a viewstate
-			loginPage = fetchText(loginPageUrl, false); // http://www.geocaching.com/login/Default.aspx
-			pref.log("[login]:Fetched login page " + loginPageUrl);
+			// "http://www.geocaching.com/login/default.aspx?RESETCOMPLETE=Y" | loginPageUrl
+			loginPage = UrlFetcher.fetch(loginPageUrl); // http://www.geocaching.com/login/Default.aspx
 			if (loginPage.equals("")) {
 				localInfB.close(0);
 				(new MessageBox(MyLocale.getMsg(5500, "Error"),
@@ -1250,64 +1246,105 @@ public class SpiderGC {
 			pref.log("[login]:Could not fetch: gc.com login page", ex);
 			return ERR_LOGIN;
 		}
-		if (!localInfB.isClosed) { // If user has not aborted, we continue
-			Regex rexCookieID = new Regex("(?i)Set-Cookie: userid=(.*?);.*");
-			Regex rexViewstate = new Regex(
-					"id=\"__VIEWSTATE\" value=\"(.*?)\" />");
-			// Regex rexViewstate1 = new
-			// Regex("id=\"__VIEWSTATE1\" value=\"(.*?)\" />");
-			// Regex rexEventvalidation = new
-			// Regex("id=\"__EVENTVALIDATION\" value=\"(.*?)\" />");
-			Regex rexCookieSession = new Regex(
-					"(?i)Set-Cookie: ASP.NET_SessionId=(.*?);.*");
-			String viewstate = "";
-			rexViewstate.search(loginPage);
-			if (rexViewstate.didMatch()) {
-				viewstate = rexViewstate.stringMatched(1);
-			} else {
-				pref.log("[login]:rexViewstate not found before login", null);
+		
+		// **2 now we can check the loginpage if logged in else log in
+		if (!localInfB.isClosed) {
+			if (loginPage.indexOf(loginSuccess) > 0)  {
+				if (loginPage.indexOf(pref.myAlias) > 0) {
+					loggedIn = true;
+					// assume language is already set to EN
+					pref.log("[login]:Already logged in as " + pref.myAlias);
+				}
+				else {
+					// it is another user, whom we should logout
+					try {
+						loginPage = UrlFetcher.fetch("http://www.geocaching.com/login/default.aspx?RESETCOMPLETE=Y");						
+					} catch (Exception ex) {
+						localInfB.close(0);
+						(new MessageBox(MyLocale.getMsg(5500, "Error"),
+								MyLocale.getMsg(5499, "Error loading login page.%0aPlease check your internet connection."),
+								FormBase.OKB)).execute();
+						pref.log("[login]:Could not fetch: gc.com login page", ex);
+						return ERR_LOGIN;
+					}
+					
+				}
 			}
-
-			if (loginPage.indexOf(loginSuccess) > 0)
-				pref.log("[login]:Already logged in" + pref.myAlias);
-			else {
-				/*
-				 * rexEventvalidation.search(loginPage);
-				 * if(rexEventvalidation.didMatch()){ // eventvalidation =
-				 * rexEventvalidation.stringMatched(1); } else
-				 * pref.log("[login]:rexEventvalidation not found before login"
-				 * ,null); //Ok now login!
-				 */
+			if (!loggedIn)
+				{
 				try {
+					Regex rexViewstate = new Regex("id=\"__VIEWSTATE\" value=\"(.*?)\" />");
+					String viewstate = "";
+					rexViewstate.search(loginPage);
+					if (rexViewstate.didMatch()) {
+						viewstate = rexViewstate.stringMatched(1);
+					} else {
+						pref.log("[login]:__VIEWSTATE not found (before login): no login possible.", null);
+						// we need the __VIEWSTATE for sending loginData, so we should abort here
+						return ERR_LOGIN;
+					}
 					StringBuffer sb = new StringBuffer(1000);
-					sb.append(URL.encodeURL("__VIEWSTATE", false));
-					sb.append("=");
-					sb.append(URL.encodeURL(viewstate, false));
+					sb.append("__VIEWSTATE="+URL.encodeURL(viewstate, false));
 					sb.append("&ctl00%24ContentBody%24");
-					sb.append(URL.encodeURL("myUsername", false));
-					sb.append("=");
-					sb.append(encodeUTF8URL(Utils
-							.encodeJavaUtf8String(pref.myAlias)));
+					sb.append("myUsername="+encodeUTF8URL(Utils.encodeJavaUtf8String(pref.myAlias)));
 					sb.append("&ctl00%24ContentBody%24");
-					sb.append(URL.encodeURL("myPassword", false));
-					sb.append("=");
-					sb.append(encodeUTF8URL(Utils
-							.encodeJavaUtf8String(passwort)));
+					sb.append("myPassword="+encodeUTF8URL(Utils.encodeJavaUtf8String(passwort)));
 					sb.append("&ctl00%24ContentBody%24");
-					sb.append(URL.encodeURL("cookie", false));
-					sb.append("=");
-					sb.append(URL.encodeURL("on", false));
+					sb.append("cookie=on");
 					sb.append("&ctl00%24ContentBody%24");
-					sb.append(URL.encodeURL("Button1", false));
-					sb.append("=");
-					sb.append(URL.encodeURL("Login", false));
-					// sb.append("&");
-					// sb.append(URL.encodeURL("__EVENTVALIDATION",false));
-					// sb.append("=");
-					// sb.append(URL.encodeURL(eventvalidation,false));
-					loginPage = fetch_post(loginPageUrl, sb.toString(), true);
-					if (loginPage.indexOf(loginSuccess) > 0)
+					sb.append("Button1=Login");
+					UrlFetcher.setpostData(sb.toString());
+					loginPage = UrlFetcher.fetch(loginPageUrl);
+					if (loginPage.indexOf(loginSuccess) > 0) {
 						pref.log("Login successful: " + pref.myAlias);
+						// **3 now we are logged in and get the Cookie (there are two)
+						PropertyList pl = UrlFetcher.getDocumentProperties();
+						cookie = "";
+						for (int i = 0; i < pl.size(); i++) {
+							Property p = (Property) pl.get(i);
+							if (p.name.equalsIgnoreCase("Set-Cookie")) {
+								cookie+=p.value;
+							}
+						}
+						/* */
+						String cookieID="";
+						Regex rexCookieID = new Regex("(?i)userid=(.*?);.*");
+						rexCookieID.search(cookie);
+						if (!rexCookieID.didMatch()) {
+							pref.log("[login]:check rexCookieID in SpiderGC.java --> CookieID not found. Using old one.");
+						} else
+							cookieID = rexCookieID.stringMatched(1);
+						String cookieSession="";
+						Regex rexCookieSession = new Regex("(?i)ASP.NET_SessionId=(.*?);.*");
+						rexCookieSession.search(cookie);
+						if (!rexCookieSession.didMatch()) {
+							pref.log("[login]:check rexCookieSession in SpiderGC.java --> CookieSession not found. Using old one.");
+						} else
+							cookieSession = rexCookieSession.stringMatched(1);
+						cookie="ASP.NET_SessionId=" + cookieSession + "; userid=" + cookieID;
+						/* */
+						UrlFetcher.setPermanentRequestorProperty("Cookie", cookie);
+
+						// **4 change language to EN 
+						rexViewstate.search(loginPage);
+						if (!rexViewstate.didMatch()) {
+							pref.log("[login]:check rexViewstate in SpiderGC.java --> not found after login"
+									+ Preferences.NEWLINE + loginPage, null);
+						}
+						viewstate = rexViewstate.stringMatched(1);
+						String strEnglishPage = "ctl00$uxLocaleList$uxLocaleList$ctl01$uxLocaleItem";
+						String postStr = "__EVENTTARGET="+ URL.encodeURL(strEnglishPage, false)
+										+ "&__EVENTARGUMENT="
+										+ "&__VIEWSTATE=" + URL.encodeURL(viewstate, false);
+						try {
+							UrlFetcher.setpostData(postStr);
+							loginPage = UrlFetcher.fetch(loginPageUrl);
+							// there is no real check if switched
+							pref.log("Switched to English"+loginPage);
+						} catch (Exception ex) {
+							pref.log("Error switching to English: check/n" + loginPageUrl + "/n" + postStr, ex);
+						}
+					}
 					else {
 						pref.log("Login failed. Wrong Account or Password? " + pref.myAlias, null);
 						pref.log("[login.LoginUrl]:" + sb.toString(), null);
@@ -1327,63 +1364,8 @@ public class SpiderGC {
 					return ERR_LOGIN;
 				}
 			}
-
-			rexViewstate.search(loginPage);
-			if (!rexViewstate.didMatch()) {
-				pref.log("[login]:check rexViewstate in SpiderGC.java --> not found after login"
-						+ Preferences.NEWLINE + loginPage, null);
-			}
-			viewstate = rexViewstate.stringMatched(1);
-
-			rexCookieID.search(loginPage);
-			if (!rexCookieID.didMatch()) {
-				pref.log("[login]:check rexCookieID in SpiderGC.java --> CookieID not found. Using old one.", null);
-			} else
-				cookieID = rexCookieID.stringMatched(1);
-			rexCookieSession.search(loginPage);
-			if (!rexCookieSession.didMatch()) {
-				pref.log("[login]:check rexCookieSession in SpiderGC.java --> CookieSession not found. Using old one."
-						+ Preferences.NEWLINE + loginPage);
-			} else
-				cookieSession = rexCookieSession.stringMatched(1);
-
-			/*
-			 * String viewstate1; rexViewstate1.search(loginPage);
-			 * if(rexViewstate1.didMatch()){ viewstate1 =
-			 * rexViewstate1.stringMatched(1); } else { viewstate1 = "";
-			 * pref.log(
-			 * "[login]:check rexViewstate1 in SpiderGC.java --> not found after login"
-			 * +Preferences.NEWLINE+loginPage); }
-			 */
-
-			/*
-			 * rexEventvalidation.search(htmlPage);
-			 * if(rexEventvalidation.didMatch()){ eventvalidation =
-			 * rexEventvalidation.stringMatched(1); } else { eventvalidation =
-			 * ""; }
-			 */
-
-			String strEnglishPage = "ctl00$uxLocaleList$uxLocaleList$ctl01$uxLocaleItem";
-			String postStr = URL.encodeURL("__EVENTTARGET", false) + "="
-					+ URL.encodeURL(strEnglishPage, false) + "&"
-					+ URL.encodeURL("__EVENTARGUMENT", false) + "="
-					+ URL.encodeURL("", false)
-					// + "&" + URL.encodeURL("__VIEWSTATEFIELDCOUNT",false)
-					// +"=2"
-					+ "&" + URL.encodeURL("__VIEWSTATE", false) + "="
-					+ URL.encodeURL(viewstate, false);
-			// + "&" + URL.encodeURL("__VIEWSTATE1",false) +"="+
-			// URL.encodeURL(viewstate1,false);
-			// + "&" + URL.encodeURL("__EVENTVALIDATION",false) +"="+
-			// URL.encodeURL(eventvalidation,false);
-			try {
-				loginPage = fetch_post(loginPageUrl, postStr, true);
-				pref.log("Switched to English");
-			} catch (Exception ex) {
-				pref.log("Error switching to English: check/n" + loginPageUrl
-						+ "/n" + postStr + "/n" + nextPage + "/n", ex);
-			}
 		}
+		
 		boolean loginAborted = localInfB.isClosed;
 		localInfB.close(0);
 		if (loginAborted)
@@ -1393,7 +1375,6 @@ public class SpiderGC {
 			return FormBase.IDOK;
 		}
 	}
-
 	/*
 	 *
 	 */
@@ -1457,7 +1438,7 @@ public class SpiderGC {
 		url = url + cacheTypeRestriction;
 		
 		try {
-			htmlListPage = fetchText(url, false);
+			htmlListPage = UrlFetcher.fetch(url);
 			pref.log("[getFirstListPage] Got first page " + url);
 		} catch (Exception ex) {
 			pref.log("[getFirstListPage] Error fetching first list page " + url, ex, true);
@@ -1521,7 +1502,8 @@ public class SpiderGC {
 						  "__VIEWSTATE1=" + URL.encodeURL(viewstate1, false); // + "&" +
 						  //"__EVENTVALIDATION=" + URL.encodeURL(eventvalidation,false);
 		try {
-			htmlListPage = fetch_post(url, postData, true);
+			UrlFetcher.setpostData(postData);
+			htmlListPage = UrlFetcher.fetch(url);
 			pref.log("[getAListPage] Got list page: " + URL.encodeURL(whatPage, false));
 		} catch (Exception ex) {
 			pref.log("[getAListPage] Error getting a list page" + url, ex);
@@ -1537,7 +1519,11 @@ public class SpiderGC {
 		"&lng="	+ middle.getLonDeg(TransformCoordinates.DD);
 
 		if (userToken.equals("")) {
-			ret = fetchText(referer, false);
+			try {
+				ret = UrlFetcher.fetch(referer);
+			} catch (IOException e) {
+				ret="";
+			}
 			int i = ret.indexOf("userToken = '");
 			i=i+13;
 			int j = ret.indexOf("'", i);
@@ -1557,52 +1543,25 @@ public class SpiderGC {
 		String postData = param1+param2+param3+userToken+param4;
 
 		try {
-		ret = post(url, postData, referer, false);
+			UrlFetcher.setpostData(postData);
+			// UrlFetcher.setRequestorProperty("Accept","application/json, text/javascript, */*; q=0.01");
+			// UrlFetcher.setRequestorProperty("Accept-Language","de-de,de;q=0.8,en-us;q=0.5,en;q=0.3");
+			// UrlFetcher.setRequestorProperty("Accept-Encoding","gzip,deflate");
+			// UrlFetcher.setRequestorProperty("Accept-Charset","ISO-8859-1,utf-8;q=0.7,*;q=0.7");
+			// UrlFetcher.setRequestorProperty("Keep-Alive","115");
+			// UrlFetcher.setRequestorProperty("Proxy-Connection","keep-alive");
+			UrlFetcher.setRequestorProperty("Content-Type", "application/json; charset=UTF-8");
+			// UrlFetcher.setRequestorProperty("X-Requested-With","XMLHttpRequest");
+			// UrlFetcher.setRequestorProperty("Referer",referer);
+			// UrlFetcher.setRequestorProperty("Pragma","no-cache");
+			// UrlFetcher.setRequestorProperty("Cache-Control","no-cache");
+			ret=UrlFetcher.fetch(url);
 		} catch (Exception ex) {
 			ret = "";
 			pref.log("[SpiderGC:getMapListPage] Error getting map Cachepage" + url + postData, ex);
 		}
 		return ret;
  	}
-
-	private static String post(String url, String postData, String referer, boolean withResponseHeaders) {
-		HttpConnection conn;
-		try {
-			conn = new HttpConnection(url);
-			JavaUtf8Codec codec = new ewe.io.JavaUtf8Codec();
-			conn.documentIsEncoded = true;
-			conn.setRequestorProperty("User-Agent","Mozilla/5.0 (Windows; U; Windows NT 6.0; de; rv:1.9.2.12) Gecko/20101026 Firefox/3.6.12");
-			conn.setRequestorProperty("Accept","application/json, text/javascript, */*; q=0.01");
-			conn.setRequestorProperty("Accept-Language","de-de,de;q=0.8,en-us;q=0.5,en;q=0.3");
-			conn.setRequestorProperty("Accept-Encoding","gzip,deflate");
-			conn.setRequestorProperty("Accept-Charset","ISO-8859-1,utf-8;q=0.7,*;q=0.7");
-			conn.setRequestorProperty("Keep-Alive","115");
-			conn.setRequestorProperty("Proxy-Connection","keep-alive");
-			conn.setRequestorProperty("Content-Type", "application/json; charset=UTF-8");
-			conn.setRequestorProperty("X-Requested-With","XMLHttpRequest");
-			conn.setRequestorProperty("Referer",referer);
-			conn.setRequestorProperty("Pragma","no-cache");
-			conn.setRequestorProperty("Cache-Control","no-cache");
-			// if (cookieSession.length() > 0) { conn.setRequestorProperty("Cookie", "ASP.NET_SessionId=" + cookieSession + "; userid=" + cookieID); }
-			conn.setRequestorProperty("Connection", "close");
-			//conn.setPostData(codec.encodeText(postData.toCharArray(), 0, postData.length(), true, null));
-			conn.setPostData(postData);
-			Socket sock = conn.connect();
-			// CharArray c_data = conn.readText(sock, codec);
-			ByteArray daten = conn.readData(sock);
-			CharArray c_data = codec.decodeText(daten.data, 0, daten.length, true, null);
-			
-			sock.close();
-			
-			if (withResponseHeaders)
-				return getResponseHeaders(conn) + c_data.toString();
-			else
-				return c_data.toString();
-		} catch (Exception e) {
-			pref.log("[fetch_post] Ignored Exception", e, true);
-		}
-		return "";
-	}
 
 	/**
 	 * check if new Update exists
@@ -1656,31 +1615,29 @@ public class SpiderGC {
 			save = true;
 			ret = true;
 		}
-		
 		if (pref.checkDTS) {
-  		String dts[]=mString.split(getDTS(CacheDescription),'/');
-  		if (dts.length == 3) {
-  			if (difficultyChanged(ch,  CacheTerrDiff.v1Converter(dts[0]))) {
-  				save = true;
-  				ret = true;
-  				pref.log("difficultyChanged");
-  			}
-  			if (terrainChanged(ch, CacheTerrDiff.v1Converter(dts[1]))) {
-  				save = true;
-  				ret = true;
-  				pref.log("terrainChanged");
-  			}
-  			if (sizeChanged(ch, (byte) Common.parseInt(dts[2]))) {
-  				save = true;
-  				ret = true;
-  				pref.log("sizeChanged");
-  			}
-  		}
-  		else {
-  			pref.log("check DTS calculation", null);
-  		}
+			String dts[]=mString.split(getDTS(CacheDescription),'/');
+			if (dts.length == 3) {
+				if (difficultyChanged(ch,  CacheTerrDiff.v1Converter(dts[0]))) {
+					save = true;
+					ret = true;
+					pref.log("difficultyChanged");
+				}
+				if (terrainChanged(ch, CacheTerrDiff.v1Converter(dts[1]))) {
+					save = true;
+					ret = true;
+					pref.log("terrainChanged");
+				}
+				if (sizeChanged(ch, (byte) Common.parseInt(dts[2]))) {
+					save = true;
+					ret = true;
+					pref.log("sizeChanged");
+				}
+			}
+			else {
+				pref.log("check DTS calculation", null);
+			}
 		}
-		
 		if (newFoundExists(ch,  CacheDescription)) {
 			numLogUpdates++;
 			ret = true;
@@ -1755,7 +1712,12 @@ public class SpiderGC {
 			// String thereitis="|0.34 km|102.698";
 			// String page = fetchText("http://www.geocaching.com/seek/nearest.aspx?lat=48.48973&lng=009.26313&dist=2&f=1",false);
 			String thereitis="|0.08 km|223.968";
-			String page = fetchText("http://www.geocaching.com/seek/nearest.aspx?lat=45.29152&lng=-122.41262&dist=1",false);
+			String page;
+			try {
+				page = UrlFetcher.fetch("http://www.geocaching.com/seek/nearest.aspx?lat=45.29152&lng=-122.41262&dist=1");
+			} catch (IOException e) {
+				page="";
+			}
 			//  
 			RexPropListBlock.search(page);
 			String table="";
@@ -1779,7 +1741,6 @@ public class SpiderGC {
 			int keylength=13; // wenn nicht 13 dann newkey auf wiederholung prüfen
 			DistanceCodeKey=newkey.substring(0, keylength);
 			ret = decodeXor( stmp, DistanceCodeKey).replace('|', ' ');
-			pref.log("Automatic key: " + DistanceCodeKey + " result: " + ret + Preferences.NEWLINE);
 			RexPropDistance.search(ret); // km oder mi
 		}
 
@@ -1866,8 +1827,13 @@ public class SpiderGC {
 		if (RexPropDTS.didMatch()) {
 			String code=RexPropDTS.stringMatched(1);
 			/* */
-			String url = "http://www.geocaching.com/ImgGen/seek/CacheInfo.ashx?v="+code;
-			ByteArray doc=fetch(url);
+			String address = "http://www.geocaching.com/ImgGen/seek/CacheInfo.ashx?v="+code;
+			ByteArray doc;
+			try {
+				doc = UrlFetcher.fetchData(address);
+			} catch (IOException e) {
+				return "";
+			}
 			Image idoc = new Image(doc,0,null,0,0);
 			/*
 			FileOutputStream fos;
@@ -2207,7 +2173,7 @@ public class SpiderGC {
 							+ ch.getWayPoint()
 							+ ((fetchAllLogs || ch.is_found()) ? p
 									.getProp("fetchAllLogs") : "");
-					completeWebPage = fetchText(doc, false);
+					completeWebPage = UrlFetcher.fetch(doc);
 					pref.log("Fetched: " + ch.getWayPoint());
 					if (completeWebPage.equals("")) {
 						pref.log("Could not fetch " + ch.getWayPoint(), null);
@@ -2749,7 +2715,7 @@ public class SpiderGC {
 					infB.setInfo(oldInfoBox
 							+ MyLocale.getMsg(5514, "\nGetting bug: ")
 							+ SafeXML.cleanback(bug));
-					bugDetails = fetchText(link, false);
+					bugDetails = UrlFetcher.fetch(link);
 					pref.log("[getBugs] Fetched TB details: " + bug);
 					Extractor exDetails = new Extractor(bugDetails, p
 							.getProp("bugDetailsStart"), p
@@ -2795,23 +2761,17 @@ public class SpiderGC {
 		if (oldCh != null) {
 			lastImages = oldCh.getCacheDetails(false).images;
 		}
-
 		// ========
-		// In the long description
+		// In the long Description
 		// ========
-		String longDesc = "";
+		String longDesc = doc;
 		try {
-			if (chD.getParent().getWayPoint().startsWith("TC") || !extractLongDesc)
-				longDesc = doc;
-			else
+			if (chD.getParent().getWayPoint().startsWith("GC") || extractLongDesc)
 				longDesc = getLongDesc(doc);
 			longDesc = STRreplace.replace(longDesc, "<img", "<IMG");
 			longDesc = STRreplace.replace(longDesc, "src=", "SRC=");
 			longDesc = STRreplace.replace(longDesc, "'", "\"");
-			exImgBlock = new Extractor(longDesc, 
-					p.getProp("imgBlockExStart"),
-					p.getProp("imgBlockExEnd"), 
-					0, false);
+			exImgBlock = new Extractor(longDesc, p.getProp("imgBlockExStart"), p.getProp("imgBlockExEnd"), 0, false);
 		} catch (Exception ex) {// Missing property in spider.def
 			return;
 		}
@@ -2821,12 +2781,10 @@ public class SpiderGC {
 		while (exImgBlock.endOfSearch() == false) {
 			imgUrl = exImgSrc.findNext();
 			if (imgUrl.length() > 0) {
-				// Optimize: img.groundspeak.com -> img.geocaching.com (for
-				// better caching purposes)
+				// Optimize: img.groundspeak.com -> img.geocaching.com (for better caching purposes)
 				imgUrl = CacheImages.optimizeLink("http://" + imgUrl);
 				try {
-					imgType = (imgUrl.substring(imgUrl.lastIndexOf('.'))
-							.toLowerCase() + "    ").substring(0, 4).trim();
+					imgType = (imgUrl.substring(imgUrl.lastIndexOf('.')).toLowerCase() + "    ").substring(0, 4).trim();
 					// imgType is now max 4 chars, starting with .
 					if (imgType.startsWith(".png")
 							|| imgType.startsWith(".jpg")
@@ -2881,15 +2839,11 @@ public class SpiderGC {
 		// ========
 		Extractor spanBlock, exImgName;
 		try {
-			spanBlock = new Extractor(doc, p.getProp("imgSpanExStart"), 
-					p.getProp("imgSpanExEnd"), 0, true);
+			spanBlock = new Extractor(doc, p.getProp("imgSpanExStart"), p.getProp("imgSpanExEnd"), 0, true);
 			tst = spanBlock.findNext();
-			exImgName = new Extractor(tst, p.getProp("imgNameExStart"), 
-					p.getProp("imgNameExEnd"), 0, true);
-			exImgSrc = new Extractor(tst, p.getProp("imgSrcExStart"), 
-					p.getProp("imgSrcExEnd"), 0, true);
-			exImgComment = new Extractor(tst, p.getProp("imgCommentExStart"), 
-					p.getProp("imgCommentExEnd"), 0, true);
+			exImgName = new Extractor(tst, p.getProp("imgNameExStart"), p.getProp("imgNameExEnd"), 0, true);
+			exImgSrc = new Extractor(tst, p.getProp("imgSrcExStart"), p.getProp("imgSrcExEnd"), 0, true);
+			exImgComment = new Extractor(tst, p.getProp("imgCommentExStart"), p.getProp("imgCommentExEnd"), 0, true);
 		} catch (Exception ex) {
 			return;
 		}
@@ -2908,16 +2862,12 @@ public class SpiderGC {
 						// Check whether image was already spidered for this
 						// cache
 						idxUrl = spideredUrls.find(imgUrl);
-						imgName = chD.getParent().getWayPoint() + "_"
-								+ Convert.toString(imgCounter);
+						imgName = chD.getParent().getWayPoint() + "_" + Convert.toString(imgCounter);
 						imageInfo = null;
 						if (idxUrl < 0) { // New image
-							fileName = chD.getParent().getWayPoint()
-									.toLowerCase()
-									+ "_" + Convert.toString(spiderCounter);
+							fileName = chD.getParent().getWayPoint().toLowerCase() + "_" + Convert.toString(spiderCounter);
 							if (lastImages != null) {
-								imageInfo = lastImages.needsSpidering(imgUrl,
-										fileName + imgType);
+								imageInfo = lastImages.needsSpidering(imgUrl, fileName + imgType);
 							}
 							if (imageInfo == null) {
 								imageInfo = new ImageInfo();
@@ -2957,12 +2907,10 @@ public class SpiderGC {
 		while (!exFinal.endOfSearch()) {
 			imgUrl = exFinal.findNext();
 			if (imgUrl.length() > 0) {
-				// Optimize: img.groundspeak.com -> img.geocaching.com (for
-				// better caching purposes)
+				// Optimize: img.groundspeak.com -> img.geocaching.com (for better caching purposes)
 				imgUrl = CacheImages.optimizeLink("http://" + imgUrl);
 				try {
-					imgType = (imgUrl.substring(imgUrl.lastIndexOf('.'))
-							.toLowerCase() + "    ").substring(0, 4).trim();
+					imgType = (imgUrl.substring(imgUrl.lastIndexOf('.')).toLowerCase() + "    ").substring(0, 4).trim();
 					// imgType is now max 4 chars, starting with . Delete
 					// characters in URL after the image extension
 					imgUrl = imgUrl.substring(0, imgUrl.lastIndexOf('.')
@@ -2971,8 +2919,7 @@ public class SpiderGC {
 							|| imgType.startsWith(".bmp")
 							|| imgType.startsWith(".png")
 							|| imgType.startsWith(".gif")) {
-						// Check whether image was already spidered for this
-						// cache
+						// Check whether image was already spidered for this cache
 						idxUrl = spideredUrls.find(imgUrl);
 						if (idxUrl < 0) { // New image
 							imgName = chD.getParent().getWayPoint() + "_" + Convert.toString(imgCounter);
@@ -3201,104 +3148,6 @@ public class SpiderGC {
 		chD.getParent().setAttribsAsBits(chD.attributes.getAttribsAsBits());
 	}
 
-	public static String fetchText(String address, boolean withResponseHeaders) {
-		ByteArray daten = fetch(address);
-		if (daten == null) return "";
-		try {
-			JavaUtf8Codec codec = new JavaUtf8Codec();
-			CharArray c_data;
-			c_data = codec.decodeText(daten.data, 0, daten.length, true, null);
-			if (withResponseHeaders)
-				return getResponseHeaders(conn) + c_data.toString();
-			else
-				return c_data.toString();
-		} catch (IOException e) {
-			pref.log("IOException in fetch", e);
-			return null;
-		}
-	}
-
-	/**
-	 * Performs an initial fetch to a given address. 
-	 */
-	private static ByteArray fetch(String address) {
-		try {
-			if (pref.myproxy.length() > 0 && pref.proxyActive) {
-				pref.log("[fetch]:Using proxy: " + pref.myproxy + " / " + pref.myproxyport);
-			}
-			if (conn == null) { conn = new HttpConnection(address); }
-			else { conn.setUrl(address); }
-			conn.setRequestorProperty("User-Agent", "Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.7.5) Gecko/20041107 Firefox/1.0");
-			if (cookieSession.length() > 0) {conn.setRequestorProperty("Cookie", "ASP.NET_SessionId=" + cookieSession + "; userid=" + cookieID);};
-			conn.setRequestorProperty("Connection", "close");
-			conn.documentIsEncoded = true;
-			conn.connect();
-			if (conn.isOpen()) {
-				pref.log("[fetch]:Connect ok! " + address);
-				ByteArray daten = conn.readData();
-				conn.disconnect();
-				return daten;
-			}
-			pref.log("[fetch]:Connect not opened! " + address, null);
-			return null;
-		} catch (IOException ioex) {
-			pref.log("IOException in fetch", ioex);
-			return null;
-		}
-	}
-
-	/**
-	 * After a fetch to gc.com the next fetches have to use the post method.
-	 * This method does exactly that. Actually this method is generic in the
-	 * sense that it can be used to post to a URL using http post.
-	 */
-	private static String fetch_post(String address, String postData, boolean withResponseHeaders) {
-		try {
-			HttpConnection conn = new HttpConnection(address);
-			JavaUtf8Codec codec = new JavaUtf8Codec();
-			conn.documentIsEncoded = true;
-			conn.setRequestorProperty("User-Agent","Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.7.5) Gecko/20041107 Firefox/1.0");
-			conn.setPostData(codec.encodeText(postData.toCharArray(), 0, postData.length(), true, null));
-			conn.setRequestorProperty("Content-Type", "application/x-www-form-urlencoded");
-			if (cookieSession.length() > 0) { conn.setRequestorProperty("Cookie", "ASP.NET_SessionId=" + cookieSession + "; userid=" + cookieID);};
-			conn.setRequestorProperty("Connection", "close");
-			Socket sock = conn.connect();
-			pref.log("[fetch_post]:Connect ok! " + address);
-			// ByteArray daten = conn.readData(sock);
-			CharArray c_data = conn.readText(sock, codec);
-			pref.log("[fetch_post]:Read data ok " + address);
-			// CharArray c_data = codec.decodeText(daten.data, 0, daten.length, true, null);
-			sock.close();
-			if (withResponseHeaders)
-				return getResponseHeaders(conn) + c_data.toString();
-			else
-				return c_data.toString();
-		} catch (Exception e) {
-			pref.log("[fetch_post] Ignored Exception", e, true);
-		}
-		return "";
-	}
-
-	private static String getResponseHeaders(HttpConnection conn) {
-		PropertyList pl = conn.documentProperties;
-		if (pl != null) {
-			StringBuffer sb = new StringBuffer(1000);
-			boolean gotany = false;
-
-			for (int i = 0; i < pl.size(); i++) {
-				Property currProp = (Property) pl.get(i);
-				if (currProp.value != null) {
-					sb.append(currProp.name).append(": ")
-							.append(currProp.value).append("\r\n");
-					gotany = true;
-				}
-			}
-			if (gotany)
-				return sb.toString() + "\r\n";
-		}
-		return "";
-	}
-
 	final static String hex = ewe.util.TextEncoder.hex;
 
 	public String encodeUTF8URL(byte[] what) {
@@ -3333,7 +3182,7 @@ public class SpiderGC {
 		String bugList;
 		try {
 			// infB.setInfo(oldInfoBox+"\nGetting bug: "+bug);
-			bugList = fetchText(p.getProp("getBugByName") + STRreplace.replace(SafeXML.clean(name), " ", "+"), false);
+			bugList = UrlFetcher.fetch(p.getProp("getBugByName") + STRreplace.replace(SafeXML.clean(name), " ", "+"));
 			pref.log("[getBugId] Fetched bugId: " + name);
 		} catch (Exception ex) {
 			pref.log("[getBugId] Could not fetch bug list" + name, ex);
@@ -3379,9 +3228,9 @@ public class SpiderGC {
 		try {
 			// infB.setInfo(oldInfoBox+"\nGetting bug: "+bug);
 			if (guid.length() > 10)
-				bugDetails = fetchText(p.getProp("getBugByGuid") + guid, false);
+				bugDetails = UrlFetcher.fetch(p.getProp("getBugByGuid") + guid);
 			else
-				bugDetails = fetchText(p.getProp("getBugById") + guid, false);
+				bugDetails = UrlFetcher.fetch(p.getProp("getBugById") + guid);
 			pref.log("[getBugMissionByGuid] Fetched TB detailsById: " + guid);
 		} catch (Exception ex) {
 			pref.log("[getBugMissionByGuid] Could not fetch TB details " + guid, ex);
@@ -3415,7 +3264,7 @@ public class SpiderGC {
 	public String getBugMissionByTrackNr(String trackNr) {
 		String bugDetails;
 		try {
-			bugDetails = fetchText(p.getProp("getBugByTrackNr") + trackNr, false);
+			bugDetails = UrlFetcher.fetch(p.getProp("getBugByTrackNr") + trackNr);
 			pref.log("[getBugMissionByTrackNr] Fetched bug detailsByTrackNr: " + trackNr);
 		} catch (Exception ex) {
 			pref.log("[getBugMissionByTrackNr] getBugByTrackNr " + trackNr, ex);
@@ -3451,7 +3300,7 @@ public class SpiderGC {
 		String bugDetails;
 		String trackNr = TB.getTrackingNo();
 		try {
-			bugDetails = fetchText(p.getProp("getBugByTrackNr") + trackNr, false);
+			bugDetails = UrlFetcher.fetch(p.getProp("getBugByTrackNr") + trackNr);
 			pref.log("[getBugMissionAndNameByTrackNr] Fetched TB getBugByTrackNr: " + trackNr);
 		} catch (Exception ex) {
 			pref.log("[getBugMissionAndNameByTrackNr] Could not fetch bug details: " + trackNr, ex);

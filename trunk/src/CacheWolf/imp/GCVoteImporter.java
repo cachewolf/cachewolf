@@ -32,6 +32,7 @@ import CacheWolf.HttpConnection;
 import CacheWolf.MyLocale;
 import CacheWolf.Preferences;
 import CacheWolf.Profile;
+import CacheWolf.UrlFetcher;
 import CacheWolf.imp.SpiderGC.SpiderProperties;
 import ewe.io.IOException;
 import ewe.io.JavaUtf8Codec;
@@ -58,19 +59,15 @@ public class GCVoteImporter extends MinML{
 	private String GCVWaypoints;
 	private String GCVResults;
 	private static Preferences pref;
-	private static SpiderProperties p=null;
 
 	/**
 	*	Constructor initalizing profile and cacheDB
 	*/
-	public GCVoteImporter(Preferences prf, Profile _profile, boolean bypass){
+	public GCVoteImporter(Preferences prf, Profile _profile){
 		this.profile=_profile;
 		this.cacheDB = profile.cacheDB;
 		pref = prf;
-		if (p == null) {
-			pref.logInit();
-		}
-		// initialiseProperties();
+		// pref.logInit();
 	}
 
 	/**
@@ -110,7 +107,8 @@ public class GCVoteImporter extends MinML{
 				pref.log("[GCVote]:Requesting ratings");
 
 				// request web page http://gcvote.de/getVotes.php
-				GCVResults = getResponse(GCVURL);
+				// UrlFetcher.setRequestorProperty("User-Agent", "Mozilla/5.0 (compatible; Cachewolf; GCVoteImporter)");
+				GCVResults = UrlFetcher.fetch(GCVURL);
 				if (GCVResults.equals("")) {
 					(new MessageBox(MyLocale.getMsg(0,"Error"), MyLocale.getMsg(0,"Error loading GCVote page.%0aPlease check your internet connection."), FormBase.OKB)).execute();
 					pref.log("[GCVote]:Could not fetch: getVotes.php page",null);
@@ -142,35 +140,5 @@ public class GCVoteImporter extends MinML{
 			CacheHolder cb = cacheDB.get(waypoint);
 			cb.setNumRecommended( 100*voteCnt + (int)(voteAvg + 0.5));
 		}
-	}
-
-	/**
-	*	Perform an request to fetch the GCVote results
-	*/
-	public static String getResponse(String address) {
-		CharArray c_data;
-		try{
-			HttpConnection conn;
-			if(pref.myproxy.length() > 0 && pref.proxyActive){
-				pref.log("[GCVote]:Using proxy: " + pref.myproxy + " / " +pref.myproxyport);
-			}
-			conn = new HttpConnection(address);
-			conn.setRequestorProperty("User-Agent", "Mozilla/5.0 (compatible; Cachewolf; GCVoteImporter)");
-			conn.setRequestorProperty("Connection", "close");
-			conn.documentIsEncoded = true;
-			pref.log("[GCVote]:Connecting "+address);
-			Socket sock = conn.connect();
-			pref.log("[GCVote]:Connect ok! "+address);
-			JavaUtf8Codec codec = new JavaUtf8Codec();
-			c_data = conn.readText(sock, codec);
-			sock.close();
-			pref.log("[GCVote]:Read data ok "+address);
-			return c_data.toString();
-		}catch(IOException ioex){
-			pref.log("IOException in fetch", ioex);
-		}finally{
-			//continue
-		}
-		return "";
 	}
 }

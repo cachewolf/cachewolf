@@ -30,22 +30,32 @@ import com.stevesoft.ewe_pat.Regex;
 import CacheWolf.Attribute;
 import CacheWolf.CacheDB;
 import CacheWolf.CacheHolder;
+import CacheWolf.CacheImages;
 import CacheWolf.CacheSize;
 import CacheWolf.CacheTerrDiff;
 import CacheWolf.CacheType;
 import CacheWolf.Common;
 import CacheWolf.Extractor;
 import CacheWolf.Filter;
+import CacheWolf.ImageInfo;
 import CacheWolf.InfoBox;
 import CacheWolf.Log;
 import CacheWolf.MyLocale;
+import CacheWolf.OC;
 import CacheWolf.Preferences;
 import CacheWolf.Profile;
 import CacheWolf.STRreplace;
 import CacheWolf.SafeXML;
 import CacheWolf.Travelbug;
+import CacheWolf.UrlFetcher;
 import CacheWolf.imp.SpiderGC.SpiderProperties;
+import CacheWolf.utils.FileBugfix;
+import ewe.io.File;
 import ewe.io.FileInputStream;
+import ewe.io.IOException;
+import ewe.net.MalformedURLException;
+import ewe.net.URL;
+import ewe.sys.Convert;
 import ewe.sys.Time;
 import ewe.sys.Vm;
 import ewe.ui.FormBase;
@@ -127,7 +137,7 @@ public class GPXImporter extends MinML {
 				doSpider = true;
 			}
 			if (doSpider) {
-				imgSpider = new SpiderGC(pref, profile, false);
+				imgSpider = new SpiderGC(pref, profile);
 				doitHow = DOIT_WITHSPOILER;
 			} else {
 				doitHow = DOIT_NOSPOILER;
@@ -157,6 +167,7 @@ public class GPXImporter extends MinML {
 							infB.close(0);
 						}
 					}
+					zif.close();
 				}
 				else {
 					FileInputStream rFIS = new ewe.io.FileInputStream(file);
@@ -198,7 +209,7 @@ public class GPXImporter extends MinML {
 			if (atts.getValue("creator").startsWith("TerraCaching")) fromTC = true;
 			else fromTC = false;
 
-			if (fromOC && doSpider) (new MessageBox("Warnung", MyLocale.getMsg(4001, "GPX files from opencaching don't contain information of images, they cannot be laoded. Best you get caches from opencaching by menu /Application/Import/Download from Opencaching"), FormBase.OKB)).execute();
+			// if (fromOC && doSpider) (new MessageBox("Warnung", MyLocale.getMsg(4001, "GPX files from opencaching don't contain information of images, they cannot be laoded. Best you get caches from opencaching by menu /Application/Import/Download from Opencaching"), FormBase.OKB)).execute();
 			zaehlerGel = 0;
 		}
 		if (name.equals("wpt")) {
@@ -223,6 +234,13 @@ public class GPXImporter extends MinML {
 			inCache = true;
 			holder.setAvailable(atts.getValue("available").equals("True"));
 			holder.setArchived(atts.getValue("archived").equals("True"));
+			// OC now has GC - Format,  get CacheID -- missing p.ex. on GcTour gpx
+			for (int i = 0; i < atts.getLength(); i++) {
+				if (atts.getName(i).equals("id")) {
+					holder.setOcCacheID(atts.getValue("id"));
+					break;
+				}
+			}
 			return;
 		}
 		// OC
@@ -233,13 +251,12 @@ public class GPXImporter extends MinML {
 			// get CacheID -- missing p.ex. on GcTour gpx
 			for (int i = 0; i < atts.getLength(); i++) {
 				if (atts.getName(i).equals("id")) {
-					String ocCacheID = atts.getValue("id");
-					holder.setOcCacheID(ocCacheID);
+					holder.setOcCacheID(atts.getValue("id"));
 					break;
 				}
 			}
 			// get status
-			String status = new String(atts.getValue("status"));
+			String status = atts.getValue("status");
 			if (status.equals("Available")) available = true;
 			else if (status.equals("Unavailable")) available = false;
 			else if (status.equals("Draft")) available = false;
@@ -333,26 +350,23 @@ public class GPXImporter extends MinML {
 				// if waypoint starts with "GC"
 				if(doSpider) {
 					if(spiderOK && holder.is_archived() == false){
-							if(holder.getLatLon().length() > 1){
-						}
-						if(holder.getWayPoint().startsWith("GC")|| fromTC) {
-							//spiderImages();
-							spiderImagesUsingSpider();
-							//Rename image sources
-							String text;
-							String orig;
-							String imgName;
-							orig = holder.getCacheDetails(false).LongDescription;
-							Extractor ex = new Extractor(orig, "<img src=\"", ">", 0, false);
+						if(holder.getLatLon().length() > 1){ }
+						//spiderImages();
+						spiderImagesUsingSpider();
+						//Rename image sources
+						String text;
+						String orig;
+						String imgName;
+						orig = holder.getCacheDetails(false).LongDescription;
+						Extractor ex = new Extractor(orig, "<img src=\"", ">", 0, false);
+						text = ex.findNext();
+						int num = 0;
+						while(ex.endOfSearch() == false && spiderOK){
+							if (num >= holder.getCacheDetails(false).images.size())break;
+							imgName = holder.getCacheDetails(false).images.get(num).getTitle();
+							holder.getCacheDetails(false).LongDescription = STRreplace.replace(holder.getCacheDetails(false).LongDescription, text, "[[Image: " + imgName + "]]");
+							num++;
 							text = ex.findNext();
-							int num = 0;
-							while(ex.endOfSearch() == false && spiderOK){
-								if (num >= holder.getCacheDetails(false).images.size())break;
-								imgName = holder.getCacheDetails(false).images.get(num).getTitle();
-								holder.getCacheDetails(false).LongDescription = STRreplace.replace(holder.getCacheDetails(false).LongDescription, text, "[[Image: " + imgName + "]]");
-								num++;
-								text = ex.findNext();
-							}
 						}
 					}
 				}
@@ -364,7 +378,12 @@ public class GPXImporter extends MinML {
 				CacheHolder oldCh= cacheDB.get(index);
 				// Preserve images: Copy images from old cache version because here we didn't add
 				// any image information to the holder object.
-				holder.getCacheDetails(false).images = oldCh.getCacheDetails(true).images;
+				if (pref.downloadPics && holder.isOC()) {
+					spiderImagesUsingSpider(); 
+				}
+				else {
+					holder.getCacheDetails(false).images = oldCh.getCacheDetails(true).images;
+				}
 				oldCh.initStates(false);
 				oldCh.update(holder);
 				oldCh.save();
@@ -551,11 +570,11 @@ public class GPXImporter extends MinML {
 	}
 	
 	private void spiderImagesUsingSpider(){
-		String addr;
+		String addresse;
 		String cacheText;
 		
 		// just to be sure to have a spider object
-		if (imgSpider == null) imgSpider = new SpiderGC(pref, profile, false);
+		if (imgSpider == null) imgSpider = new SpiderGC(pref, profile);
 		if (propsSpider == null) {propsSpider = imgSpider.new SpiderProperties();	}
 		
 		try {
@@ -563,26 +582,154 @@ public class GPXImporter extends MinML {
 						imgSpider.getImages(holder.getCacheDetails(false).LongDescription, holder.getCacheDetails(false),false);
 				}
 				else {
-					addr = "http://www.geocaching.com/seek/cache_details.aspx?wp=" + holder.getWayPoint() ;
-					cacheText = SpiderGC.fetchText(addr,false);
-					if (cacheText.indexOf(propsSpider.getProp("premiumCachepage")) > 0) {
-						// Premium cache spidered by non premium member
-						imgSpider.getImages(holder.getCacheDetails(false).LongDescription, holder.getCacheDetails(false),false);
+					if (fromOC) {
+						holder.getCacheDetails(false).images.clear();
+						addresse=holder.getCacheDetails(false).URL;
+						cacheText = UrlFetcher.fetch(addresse);
+						Extractor exBeschreibung = new Extractor(cacheText, "<!-- Beschreibung -->", "<!-- End Beschreibung -->", 0, false);
+						String beschreibung = exBeschreibung.findNext();
+						getOCPictures(beschreibung);
+						Extractor exBilder = new Extractor(cacheText, "<!-- Bilder -->", "<!-- End Bilder -->", 0, false);
+						String bilder = exBilder.findNext();
+						getOCPictures(bilder);
 					}
 					else {
-						imgSpider.getImages(cacheText, holder.getCacheDetails(false),true);
-					}
-					try {
-						imgSpider.getAttributes(cacheText, holder.getCacheDetails(false));
-					} catch (Exception e) {
-						pref.log("unable to fetch attrivbutes for"+holder.getWayPoint(), e);
+						addresse = "http://www.geocaching.com/seek/cache_details.aspx?wp=" + holder.getWayPoint() ;
+						cacheText = UrlFetcher.fetch(addresse);
+						if (cacheText.indexOf(propsSpider.getProp("premiumCachepage")) > 0) {
+							// Premium cache spidered by non premium member
+							imgSpider.getImages(holder.getCacheDetails(false).LongDescription, holder.getCacheDetails(false),false);
+						}
+						else {
+							imgSpider.getImages(cacheText, holder.getCacheDetails(false),true);
+						}
+						try {
+							imgSpider.getAttributes(cacheText, holder.getCacheDetails(false));
+						} catch (Exception e) {
+							pref.log("unable to fetch attributes for"+holder.getWayPoint(), e);
+						}
 					}
 				}
 		} catch (Exception e1) {
 			// e1.printStackTrace();
 		}
 	}
+	private void getOCPictures(String html) {
+		Regex imgRegexUrl = new Regex("(<img[^>]*src=[\"\']([^>^\"^\']*)[^>]*>|<img[^>]*src=([^>^\"^\'^ ]*)[^>]*>)");
+		imgRegexUrl.setIgnoreCase(true);
+		int descIndex=0;
+		while (imgRegexUrl.searchFrom(html, descIndex)) {			
+			descIndex = imgRegexUrl.matchedTo();
+			String fetchUrl=imgRegexUrl.stringMatched(2); // URL in Anführungszeichen in (2)		
+			if (fetchUrl==null) { fetchUrl=imgRegexUrl.stringMatched(3); } // falls ohne in (3)			
+			if (fetchUrl==null) {continue;} // schlechtes html
+			//  fetchUrl ist auf jeden Fall ohne Anführungszeichen
+			if (fetchUrl.startsWith("resource")) continue; // 
+			if (fetchUrl.startsWith("images")) // z.B. Flaggen
+				if (!fetchUrl.startsWith("images/uploads")) continue;
+			if (fetchUrl.startsWith("thumbs")) continue; // z.B. Flaggen
+			try {
+				//TODO this is not quite correct: actually the "base" URL must be known...
+				// but anyway a different baseURL should not happen very often  - it doesn't in my area
+				String hostname = OC.getOCHostName(holder.getWayPoint());
+				if (!fetchUrl.startsWith("http://")) {
+					fetchUrl = new URL(new URL("http://" + hostname+"/"), fetchUrl).toString();
+				}
+			} catch (MalformedURLException e) {	continue; } // auch egal
+			ImageInfo imageInfo = new ImageInfo();
+			imageInfo.setURL(fetchUrl);
+			imageInfo.setTitle(makeTitle(imgRegexUrl.stringMatched(1), fetchUrl));
+			getPic(imageInfo);
+		}
+		
+		
+		Extractor exHref = new Extractor(html, "<a href=", "</a>", 0, true);
+		while (!exHref.endOfSearch()) {
+			String href = exHref.findNext();
+			if (href.length() > 0) {
+				Extractor exHttp = new Extractor(href, "http://", "\"", 0, true);
+				String fetchUrl = exHttp.findNext();
+				try {
+					String imgType = (fetchUrl.substring(fetchUrl.lastIndexOf('.')).toLowerCase() + "    ").substring(0, 4).trim();
+					fetchUrl = "http://" + fetchUrl.substring(0, fetchUrl.lastIndexOf('.') + imgType.length());
+					if (imgType.startsWith(".jpg") ||
+						imgType.startsWith(".bmp") ||
+						imgType.startsWith(".png") ||
+						imgType.startsWith(".gif")) {
+						ImageInfo imageInfo = new ImageInfo();
+						imageInfo.setURL(fetchUrl);
+						imageInfo.setTitle(makeTitle(href, fetchUrl));
+						getPic(imageInfo);
+					}
+				} catch (IndexOutOfBoundsException e) {
+				}
+			}
+		}
+	}
+
+	private String makeTitle(String imgTag, String fetchUrl) {
+		Regex imgRegexAlt = new Regex("(?:alt=[\"\']([^>^\"^\']*)|alt=([^>^\"^\'^ ]*))");
+		imgRegexAlt.setIgnoreCase(true);
+		String imgAltText;
+		if (imgRegexAlt.search(imgTag)) {
+			imgAltText=imgRegexAlt.stringMatched(1);
+			if (imgAltText==null)	imgAltText=imgRegexAlt.stringMatched(2);			
+		} else { // no alternative text as image title -> use --- or filename
+			//wenn von Opencaching oder geocaching ist Dateiname doch nicht so toll, weil nur aus Nummer bestehend
+			if (fetchUrl.toLowerCase().indexOf("opencaching.") > 0 || fetchUrl.toLowerCase().indexOf("geocaching.com") > 0) 
+				imgAltText = "---"; // no image title
+			else imgAltText = fetchUrl.substring(fetchUrl.lastIndexOf('/')+1);
+		}
+		return imgAltText;
+	}
 	
+	private void getPic(ImageInfo imageInfo) {
+		String fileName = holder.getWayPoint() + "_" + imageInfo.getURL().substring(imageInfo.getURL().lastIndexOf('/')+1);
+		fileName = Common.ClearForFileName(fileName).toLowerCase();
+		String target = profile.dataDir + fileName;
+		imageInfo.setFilename(fileName);
+		try {
+			File ftest = new FileBugfix(target);
+			if (ftest.exists()){
+				if (ftest.length() == 0) { ftest.delete(); }
+				else { holder.getCacheDetails(false).images.add(imageInfo);	}
+			}
+			else {
+				if (pref.downloadPics) {
+					UrlFetcher.fetchDataFile(imageInfo.getURL(), target);
+					ftest = new FileBugfix(target);
+					if (ftest.exists()){
+						if ( ftest.length() > 0 ) {
+							holder.getCacheDetails(false).images.add(imageInfo);
+						}
+						else {
+							ftest.delete();
+						}
+					}
+				}
+			}
+		} catch (IOException e) {
+			String ErrMessage;
+			String wp, n;
+			if (holder != null && holder.getWayPoint() != null) wp = holder.getWayPoint();
+			else 												wp = "WP???";
+			if (holder != null && holder.getCacheName() != null) n = holder.getCacheName();
+			else 												 n = "name???";
+
+			if (e == null) ErrMessage = "Ignoring error: OCXMLImporter.getPic: IOExeption == null, while downloading picture: "+fileName+" from URL:"+imageInfo.getURL();
+			else {
+				if (e.getMessage().equalsIgnoreCase("could not connect") ||
+						e.getMessage().equalsIgnoreCase("unkown host")) {
+					// is there a better way to find out what happened?
+					ErrMessage = MyLocale.getMsg(1618,"Ignoring error in cache: ")+ n + " ("+wp+")"+MyLocale.getMsg(1619,": could not download image from URL: ")+imageInfo.getURL();
+				} else
+					ErrMessage = MyLocale.getMsg(1618,"Ignoring error in cache: ")+ n + " ("+wp+"): ignoring IOException: "+e.getMessage()+ " while downloading picture:"+fileName+" from URL:"+imageInfo.getURL();
+			}
+			pref.log(ErrMessage,e,true);
+		}
+
+	}
+
 	public int getHow() {
 		return doitHow;
 	}

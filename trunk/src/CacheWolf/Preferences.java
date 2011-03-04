@@ -251,7 +251,8 @@ public class Preferences extends MinML{
 	public String garminGPSBabelOptions="";
 	/** Max. length for Garmin waypoint names (for etrex which can only accept 6 chars) */
 	public int garminMaxLen=0;
-	public boolean downloadMissingOC = false;
+	/** OC true = alle neu Laden false = wenn Änderungsdatum neuer */
+	public boolean downloadAllOC = false;
 	public String lastOCSite=OC.OCSites[0][OC.OC_HOSTNAME];
 	/** The currently used centre point, can be different from the profile's centrepoint. This is used
 	 *  for spidering */
@@ -292,7 +293,7 @@ public class Preferences extends MinML{
 	public boolean checkLog=false;
 	/** Check if presence of TBs changed*/
 	public boolean checkTBs=true;
-	/** Check if difficulty, terrain or size changed*/
+	/** Check if presence of DTS changed*/
 	public boolean checkDTS=true;
 	/** menu of spider along a route exists*/
 	public boolean spiderRoute=false;
@@ -495,7 +496,7 @@ public class Preferences extends MinML{
 			tmp=atts.getValue("lastSite");
 			if (!(tmp == null) && OC.getSiteIndex(tmp)>=0 ) lastOCSite=tmp;
 			tmp=atts.getValue("downloadMissing");
-			if (!(tmp == null)) downloadMissingOC = Boolean.valueOf(tmp).booleanValue();
+			if (!(tmp == null)) downloadAllOC = Boolean.valueOf(tmp).booleanValue();
 		}
 		else if (name.equals("listview")) {
 			listColMap=atts.getValue("colmap");
@@ -569,11 +570,11 @@ public class Preferences extends MinML{
 		}
 		else if (name.equals("spider")) {
 			forceLogin = Boolean.valueOf(atts.getValue("forcelogin")).booleanValue();
-			checkLog = Boolean.valueOf(atts.getValue("checkLog")).booleanValue();
-      tmp = atts.getValue("checkTBs");
-			if (tmp != null) checkTBs = Boolean.valueOf(atts.getValue("checkTBs")).booleanValue();
-      tmp = atts.getValue("checkDTS");
-			if (tmp != null) checkDTS = Boolean.valueOf(atts.getValue("checkDTS")).booleanValue();
+			checkLog = Boolean.valueOf(atts.getValue("checkLog")).booleanValue();      
+			tmp = atts.getValue("checkTBs");
+			if (tmp != null) checkTBs=Boolean.valueOf(atts.getValue("checkTBs")).booleanValue();
+			tmp = atts.getValue("checkDTS");
+			if (tmp != null) checkDTS=Boolean.valueOf(atts.getValue("checkDTS")).booleanValue();
 			spiderRoute = Boolean.valueOf(atts.getValue("spiderRoute")).booleanValue();
 			tmp = atts.getValue("spiderUpdates");
 			if (tmp != null) spiderUpdates=Convert.parseInt(tmp);
@@ -736,9 +737,19 @@ public class Preferences extends MinML{
 			outp.print("    <solver ignorevariablecase=\"" + SafeXML.strxmlencode(solverIgnoreCase) + "\" degMode=\"" + SafeXML.strxmlencode(solverDegMode) + "\" />\n");
 			outp.print("    <garmin connection = \"" + SafeXML.clean(garminConn) + "\" GPSBabelOptions = \"" + SafeXML.clean(garminGPSBabelOptions) + "\" MaxWaypointLength = \"" + SafeXML.strxmlencode(garminMaxLen) +
 					        "\" addDetailsToWaypoint = \"" + SafeXML.strxmlencode(addDetailsToWaypoint) + "\" addDetailsToName = \"" + SafeXML.strxmlencode(addDetailsToName) + "\" />\n");
-			outp.print("    <opencaching lastSite=\""+lastOCSite+"\" downloadMissing=\"" + SafeXML.strxmlencode(downloadMissingOC) + "\"/>\n");
+			outp.print("    <opencaching lastSite=\""+lastOCSite+"\" downloadMissing=\"" + SafeXML.strxmlencode(downloadAllOC) + "\"/>\n");
 			outp.print("    <location lat = \"" + SafeXML.clean(curCentrePt.getLatDeg(TransformCoordinates.DD)) + "\" long = \"" + SafeXML.clean(curCentrePt.getLonDeg(TransformCoordinates.DD)) + "\"/>\n");
-			outp.print("    <spider forcelogin=\"" + SafeXML.strxmlencode(forceLogin) + "\" spiderUpdates=\"" + SafeXML.strxmlencode(spiderUpdates) + "\" checkLog=\"" + SafeXML.strxmlencode(checkLog) + "\" checkTBs=\"" + SafeXML.strxmlencode(checkTBs) + "\" checkDTS=\"" + SafeXML.strxmlencode(checkDTS) + "\" spiderRoute=\"" + SafeXML.strxmlencode(spiderRoute) + "\" maxSpiderNumber=\"" + SafeXML.strxmlencode(maxSpiderNumber) + "\" downloadPics=\"" + SafeXML.strxmlencode(downloadPics) + "\" downloadTBs=\"" + SafeXML.strxmlencode(downloadTBs) +"\"/>\n");
+			outp.print("    <spider"+
+					" forcelogin=\"" + SafeXML.strxmlencode(forceLogin) + "\""+
+					" spiderUpdates=\"" + SafeXML.strxmlencode(spiderUpdates) + "\""+
+					" checkLog=\"" + SafeXML.strxmlencode(checkLog) + "\""+
+					" checkTBs=\"" + SafeXML.strxmlencode(checkTBs) + "\""+
+					" checkDTS=\"" + SafeXML.strxmlencode(checkDTS) +"\""+
+					" spiderRoute=\"" + SafeXML.strxmlencode(spiderRoute) + "\""+
+					" maxSpiderNumber=\"" + SafeXML.strxmlencode(maxSpiderNumber) + "\""+
+					" downloadPics=\"" + SafeXML.strxmlencode(downloadPics) + "\""+
+					" downloadTBs=\"" + SafeXML.strxmlencode(downloadTBs) +"\""+
+					"/>\n");
 			outp.print("    <gotopanel northcentered=\"" + SafeXML.strxmlencode(northCenteredGoto) + "\" />\n");
 			outp.print("    <details cacheSize=\"" + SafeXML.strxmlencode(maxDetails) + "\" delete=\"" + SafeXML.strxmlencode(deleteDetails) + "\"/>\n");
 			outp.print("    <metric type=\"" + SafeXML.strxmlencode(metricSystem) + "\"/>\n");

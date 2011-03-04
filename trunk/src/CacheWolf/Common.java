@@ -185,7 +185,7 @@ public final class Common {
 	}
 	
 	public static String fixSerialPortName(String name) {
-		if (name.startsWith("/")) return new String(".."+name); // on linux (*nix) machines it is quite usual to give the complete file path to the serial port, but ewe expects only "ttyS0" or similar
+		if (name.startsWith("/")) return ".."+name; // on linux (*nix) machines it is quite usual to give the complete file path to the serial port, but ewe expects only "ttyS0" or similar
 		else                      return name;
 	}
 	
