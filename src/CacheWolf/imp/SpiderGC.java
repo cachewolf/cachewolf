@@ -233,7 +233,9 @@ public class SpiderGC {
 					+ "with Founds       : " + (doNotgetFound ? "no" : "yes")
 					+ Preferences.NEWLINE + "alias is premium m: "
 					+ (!pref.isPremium ? "no" : "yes") + Preferences.NEWLINE
-					+ "Update if new Logs: " + (!pref.checkLog ? "no" : "yes")
+					+ "Update if new Logs: " + (!pref.checkLog ? "no" : "yes") + Preferences.NEWLINE
+					+ "Update if TB change: " + (!pref.checkTBs ? "no" : "yes") + Preferences.NEWLINE
+					+ "Update if DTS change: " + (!pref.checkDTS ? "no" : "yes")
 					+ Preferences.NEWLINE, null);
 
 			Hashtable cachesToUpdate = new Hashtable(cacheDB.size());
@@ -1654,27 +1656,31 @@ public class SpiderGC {
 			save = true;
 			ret = true;
 		}
-		String dts[]=mString.split(getDTS(CacheDescription),'/');
-		if (dts.length == 3) {
-			if (difficultyChanged(ch,  CacheTerrDiff.v1Converter(dts[0]))) {
-				save = true;
-				ret = true;
-				pref.log("difficultyChanged");
-			}
-			if (terrainChanged(ch, CacheTerrDiff.v1Converter(dts[1]))) {
-				save = true;
-				ret = true;
-				pref.log("terrainChanged");
-			}
-			if (sizeChanged(ch, (byte) Common.parseInt(dts[2]))) {
-				save = true;
-				ret = true;
-				pref.log("sizeChanged");
-			}
+		
+		if (pref.checkDTS) {
+  		String dts[]=mString.split(getDTS(CacheDescription),'/');
+  		if (dts.length == 3) {
+  			if (difficultyChanged(ch,  CacheTerrDiff.v1Converter(dts[0]))) {
+  				save = true;
+  				ret = true;
+  				pref.log("difficultyChanged");
+  			}
+  			if (terrainChanged(ch, CacheTerrDiff.v1Converter(dts[1]))) {
+  				save = true;
+  				ret = true;
+  				pref.log("terrainChanged");
+  			}
+  			if (sizeChanged(ch, (byte) Common.parseInt(dts[2]))) {
+  				save = true;
+  				ret = true;
+  				pref.log("sizeChanged");
+  			}
+  		}
+  		else {
+  			pref.log("check DTS calculation", null);
+  		}
 		}
-		else {
-			pref.log("check DTS calculation", null);
-		}
+		
 		if (newFoundExists(ch,  CacheDescription)) {
 			numLogUpdates++;
 			ret = true;
@@ -1773,6 +1779,7 @@ public class SpiderGC {
 			int keylength=13; // wenn nicht 13 dann newkey auf wiederholung prüfen
 			DistanceCodeKey=newkey.substring(0, keylength);
 			ret = decodeXor( stmp, DistanceCodeKey).replace('|', ' ');
+			pref.log("Automatic key: " + DistanceCodeKey + " result: " + ret + Preferences.NEWLINE);
 			RexPropDistance.search(ret); // km oder mi
 		}
 
