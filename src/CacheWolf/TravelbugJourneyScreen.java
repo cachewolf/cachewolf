@@ -589,7 +589,7 @@ class tbListControl extends TableControl {
 		}
 		if (selectedItem==mnuGetMission && selectedRow>-1) {
 			TravelbugJourney tbj=tblMyTravelbugJourneys.getTBJourney(selectedRow);
-			SpiderGC spider=new SpiderGC(Global.getPref(),Global.getProfile(),false);
+			SpiderGC spider=new SpiderGC(Global.getPref(),Global.getProfile());
 			Vm.showWait(true);
 			
 			//if we have an ID, get mission by ID
@@ -620,7 +620,7 @@ class tbListControl extends TableControl {
 		}
 		if (selectedItem==mnuOpenOnline && selectedRow>=0) {
 			TravelbugJourney tbj=tblMyTravelbugJourneys.getTBJourney(selectedRow);
-			SpiderGC spider=new SpiderGC(Global.getPref(),Global.getProfile(),false);
+			SpiderGC spider=new SpiderGC(Global.getPref(),Global.getProfile());
 			Vm.showWait(true);
 			// First check whether ID is set, if not get it
 			if (tbj.getTb().getGuid().length()==0) tbj.getTb().setGuid(spider.getBugId(tbj.getTb().getName()));

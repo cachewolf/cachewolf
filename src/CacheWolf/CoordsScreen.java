@@ -331,7 +331,7 @@ public class CoordsScreen extends Form {
 				CWPoint coord;
 				String inp=inpText.getText().trim().toUpperCase();
 				if (inp.startsWith("GC")) {
-					SpiderGC spider = new SpiderGC(Global.getPref(), Global.getProfile(), false);
+					SpiderGC spider = new SpiderGC(Global.getPref(), Global.getProfile());
 					coord = new CWPoint(spider.getCacheCoordinates(inp));
 				} else {	
 					coord = new CWPoint(inp);

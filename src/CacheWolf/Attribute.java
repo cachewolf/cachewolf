@@ -202,111 +202,101 @@ public class Attribute {
 	private final static int BIT_NR = 0; 
 	private final static int MSG_NR = 1;
 	private final static int PIC_NAME = 2;
-	private final static int OC_ID = 3;
-	private final static int GC_ID = 4;
+	private final static int OC_ID = 3; // OC - XML
+	private final static int GC_ID = 4; // auch OC neues gpx
 	private final static int GC_TEXT = 5; // for export , didn't extract by myself, copied from forum	
 	private static final String[][] attRef = {
-		// Empfehlungen / Personen - Conditions (Yes/No)
-		{"30","2562","scenic","0","8","Scenic view"},//62 scenic view
+		{"00","2502","available","38","13","Available at all times"},//02 available 24-7
+		{"01","2504","bicycles","0","32","Bicycles"},//04 bikes allowed
+		{"02","2506","boat","52","4","Boat"},//06 Wasserfahrzeug
+		// {"03","2508","cactus","0","0",""},//08 removed 14.08.10 araber95
+		{"04","2510","campfires","0","38","Campfires"},//10 campfires allowed
+		{"05","2512","camping","0","31","Camping available"},//12 Camping allowed
+		{"06","2514","cliff","11","21","Cliff / falling rocks"},//14 falling-rocks nearby
+		{"07","2516","climbing","28","10","Difficult climbing"},//16 easy climbing(OC-28), difficult climbing(GC-10) 
+		{"08","2518","compass","47","147","Compass"}, //OC special
+		{"09","2520","cow","0","43","Watch for livestock"},//20 watch for livestock
+		{"10","2522","danger","9","23","Dangerous area"},//22 dangerous area
+		{"11","2524","dogs","0","1","Dogs"},//24 dogs allowed
+		{"12","2526","fee","36","2","Access or parking fee"},//26 access/parking fees
+		// {"13","2528","hiking","0","9","Significant hike"},//28 significant hike : removed
+		{"13","2528","hiking","25","125","Long walk"}, //OC special
+		{"14","2530","horses","0","37","Horses"},//30 horses allowed
+		{"15","2532","hunting","12","22","Hunting"},//32 hunting area
+		{"16","2534","jeeps","0","35","Off-road vehicles"},//34 off-road vehicles allowed
 		{"17","2536","kids","59","6","Recommended for kids"},//36 kid friendly
-		{"35","2572","stroller","0","41","Stroller accessible"},//72 stroller accessible	
-		{"41","2584","wheelchair","0","24","Wheelchair accessible"},//84 wheelchair accessible
-		//  vorhanden / Eigenschaften / Infrastruktur - Facilities (Yes/No)
+		{"18","2538","mine","15","20","Abandoned mines"},//38
+		{"19","2540","motorcycles","0","33","Motorcycles"},//40 motorcycles allowed
+		{"20","2542","night","1","14","Recommended at night"},//42 recommended at night
+		{"21","2544","onehour","0","7","Takes less than an hour"},//44 takes less than one hour
 		{"22","2546","parking","18","25","Parking available"},//46 parking available
-		{"26","2554","public","19","26","Public transportation"},//54 public transit available
-		{"40","2582","water","20","27","Drinking water nearby"},//82 drinking water nearby
-		{"29","2560","restrooms","21","28","Public restrooms nearby"},//60 restrooms available
 		{"23","2548","phone","22","29","Telephone nearby"},//48 telephone nearby
 		{"24","2550","picnic","0","30","Picnic tables nearby"},//50 picnic tables available
-		{"43","2588","firstaid","23","42","Firstaid"}, // GC: Cachewartung notwendig (Auto Attribut) , OC: erste Hilfe 
-		{"73","2654","rv","0","46","Truck Driver/RV"},// changed by Moorteufel 12.07.10 
-		{"85","2678","fuel","0","58","Fuel nearby"}, // changed by araber95 14.08.10 
-		{"86","2680","food","0","59","Food nearby"}, // changed by araber95 14.08.10
-		// Erlaubt - Permissions (Allowed/Not Allowed)
-		{"11","2524","dogs","0","1","Dogs"},//24 dogs allowed
-		{"05","2512","camping","0","31","Camping available"},//12 Camping allowed
-		{"01","2504","bicycles","0","32","Bicycles"},//04 bikes allowed
-		{"19","2540","motorcycles","0","33","Motorcycles"},//40 motorcycles allowed
+		{"25","2552","poisonoak","16","17","Poison plants"},//52 Giftige Pflanzen
+		{"26","2554","public","19","26","Public transportation"},//54 public transit available
 		{"27","2556","quads","0","34","Quads"},//56 quads allowed
-		{"16","2534","jeeps","0","35","Off-road vehicles"},//34 off-road vehicles allowed
+		{"28","2558","rappelling","49","3","Climbing gear"},//58 climbing gear Kletterausrüstung
+		{"29","2560","restrooms","21","28","Public restrooms nearby"},//60 restrooms available
+		{"30","2562","scenic","0","8","Scenic view"},//62 scenic view
+		{"31","2564","scuba","51","5","Scuba gear"},//64 Tauchausrüstung
+		// {"32","2566","snakes","0","18","Snakes"},//66 araber95 replaced by Dangerous Animals 14.08.10
+		{"32","2566","dangerousanimals","0","18","Dangerous Animals"},//66
 		{"33","2568","snowmobiles","0","36","Snowmobiles"},//68
-		{"14","2530","horses","0","37","Horses"},//30 horses allowed
-		{"04","2510","campfires","0","38","Campfires"},//10 campfires allowed
-		// Eigenschaften / Gefahren - Hazards (Present/Not Present)
-		{"10","2522","danger","9","23","Dangerous area"},//22 dangerous area
-		{"62","2644","train","10","0",""},// 144 aktive Eisenbahnlinien in der Nähe
-		{"06","2514","cliff","11","21","Cliff / falling rocks"},//14 falling-rocks nearby
-		{"15","2532","hunting","12","22","Hunting"},//32 hunting area
+		{"34","2570","stealth","0","40","Stealth required"},//70 stealth required (Heimlich,List,Schläue)
+		{"35","2572","stroller","0","41","Stroller accessible"},//72 stroller accessible	
+		{"36","2574","swimming","29","12","May require swimming"},//74
 		{"37","2576","thorn","13","39","Thorns"},//76 thorns!
 		{"38","2578","ticks","14","19","Ticks"},//78 ticks!
-		{"18","2538","mine","15","20","Abandoned mines"},//38
-		{"25","2552","poisonoak","16","17","Poison plants"},//52 Giftige Pflanzen
-		{"46","2594","animals","17","0",""},// 94 Giftige/gef%e4hrliche Tiere
-		// {"03","2508","cactus","0","0",""},//08 removed 14.08.10 araber95
-		{"32","2566","dangerousanimals","0","18","Dangerous Animals"},//66
-		// {"32","2566","snakes","0","18","Snakes"},//66 araber95 replaced by Dangerous Animals 14.08.10
-		{"09","2520","cow","0","43","Watch for livestock"},//20 watch for livestock
-		// Eigenschaften / Der Weg - Conditions (Yes/No)
-		{"49","2600","car","24","0",""},// 100 Nahe beim Auto
-		{"21","2544","onehour","0","7","Takes less than an hour"},//44 takes less than one hour
-		{"82","2672","hike_short","0","55","Short hike"}, // added by araber95 14.8.10
-		{"83","2674","hike_med","0","56","Medium Hike"}, // added by araber95 14.8.10
-		{"84","2676","hike_long","0","57","Long Hike"}, // added by araber95 14.8.10
-		{"13","2528","hiking","25","9","Significant hike"},//28 significant hike
 		{"39","2580","wading","26","11","May require wading"},//80 may require wading
-		{"65","2634","steep","27","0",""},// 134 Hügeliges Gelände
-		{"07","2516","climbing","28","10","Difficult climbing"},//16 easy climbing(OC-28), difficult climbing(GC-10) 
-		{"36","2574","swimming","29","12","May require swimming"},//74
-		{"79","2666","nightcache","0","52","Night Cache"}, // added by araber95 14.8.10
-		{"80","2668","parkngrab","0","53","Park and grab"}, // added by araber95 14.8.10
-		{"81","2670","abandonedbuilding","0","54","Abandoned structure"}, // added by araber95 14.8.10
-		// Eigenschaften / Wegpunkte  - Conditions (Yes/No)
-		{"55","2612","letter","8","0",""},// 112 Letterbox (benötigt Stempel)
-		{"54","2610","interestsign","30","0",""},// 110 Interessanter Ort ev mit scenic zusammenfassen?
-		{"56","2614","moving","31","0",""},// 114 Bewegliches Ziel
-		{"64","2646","webcam","32","0",""},// 146 Webcam am Ziel
-		{"53","2608","indoor","33","0",""},// 108 In geschlossenen Räumen
-		{"66","2636","submerged","34","0",""},// 136 Im Wasser
-		{"58","2618","nogps","35","0",""},// 118 Ohne GPS
-		{"34","2570","stealth","0","40","Stealth required"},//70 stealth required (Heimlich,List,Schläue)
-		// Einschränkungen und Voraussetzungen / Allgemein
-		{"12","2526","fee","36","2","Access or parking fee"},//26 access/parking fees
-		{"61","2624","overnight","37","0",""},// 124 Übernachtung erforderlich
-		// Einschränkungen und Voraussetzungen / Zeitlich
-		{"20","2542","night","1","14","Recommended at night"},//42 recommended at night
-		{"00","2502","available","38","13","Available at all times"},//02 available 24-7
-		{"68","2640","time","39","0",""},// 140 An bestimmte Zeiten gebunden
-		{"52","2606","day","40","0",""},// 106 nur tagsüber
-		{"67","2638","tide","41","0",""},// 138 Gezeiten
-		// Einschränkungen und Voraussetzungen / Saisonbedingt
-		{"51","2604","date","42","0",""},// 104 während des ganzen Jahres zugänglich
-		{"57","2616","naturschutz","43","0",""},// 116 Brutsaison/Naturschutz
+		{"40","2582","water","20","27","Drinking water nearby"},//82 drinking water nearby
+		{"41","2584","wheelchair","0","24","Wheelchair accessible"},//84 wheelchair accessible
 		{"42","2586","winter","44","15","Available during winter"},//86 available in winter 132 Schneesicheres Versteck
-		// Einschränkungen und Voraussetzungen / Systembedingt
-		{"59","2620","oconly","6","0",""},// 120 Nur bei Opencaching logbar
-		{"71","2650","wwwlink","7","0",""},// 150 Nur Hyperlink zu OC-externen Portalen
-		// Einschränkungen und Voraussetzungen / Werkzeug - Equipment (Required/Not Required)
-		{"69","2642","tools","46","0","Special Tool required"},// 142 Spezielle Ausrüstung
-		{"08","2518","compass","47","0",""},//18 Kompass
+		{"43","2588","firstaid","0","42","Firstaid"}, // GC: Cachewartung notwendig (Auto Attribut) , OC: erste Hilfe 
 		{"44","2590","flashlight","48","44","Flashlight required"}, // 90 Flashlight required
-		{"28","2558","rappelling","49","3","Climbing gear"},//58 climbing gear Kletterausrüstung
-		{"50","2602","cave","50","0",""},// 102 Höhlenausrüstung
-		{"31","2564","scuba","51","5","Scuba gear"},//64 Tauchausrüstung
-		{"02","2506","boat","52","4","Boat"},//06 Wasserfahrzeug
-		{"45","2592","aircraft","53","38",""},// 92
+		{"45","2592","aircraft","53","153","Aircraft"}, //OC special //38 GC removed
+		{"46","2594","animals","17","0",""},// 94 Giftige/gef%e4hrliche Tiere
+		{"47","2596","arith_prob","56","156","Arithmetical problem"}, //OC special
+		{"48","2598","ask","58","158","Ask owner for start conditions"}, //OC special
+		{"49","2600","car","24","0",""},// 100 Nahe beim Auto
+		{"50","2602","cave","50","150","Cave equipment"}, //OC special
+		{"51","2604","date","42","142","All seasons"}, //OC special
+		{"52","2606","day","40","140","by day only"}, //OC special 
+		{"53","2608","indoor","33","133","Within enclosed rooms (caves, buildings etc.)"}, //OC special
+		{"54","2610","interestsign","30","130","Point of interest"}, //OC special
+		{"55","2612","letter","8","108","Letterbox (needs stamp)"}, //OC special
+		{"56","2614","moving","31","131","Moving target"}, //OC special
+		{"57","2616","naturschutz","43","143","Breeding season / protected nature"}, //OC special
+		{"58","2618","nogps","35","135","Without GPS (letterboxes, cistes, compass juggling ...)"}, //OC special
+		{"59","2620","oconly","6","106","Only loggable at Opencaching"},// 120 Nur bei Opencaching logbar
+		{"60","2622","othercache","57","157","Other cache type"}, //OC special
+		{"61","2624","overnight","37","137","Overnight stay necessary"}, //OC special
+		{"62","2644","train","10","110","Active railway nearby"}, //OC special
+		{"63","2630","riddle","55","0",""},// 130 Rätsel
+		{"64","2646","webcam","32","132","Webcam"}, //OC special
+		{"65","2634","steep","27","127","Hilly area"}, //OC special
+		{"66","2636","submerged","34","134","In the water"}, //OC special
+		{"67","2638","tide","41","141","Tide"}, //OC special
+		{"68","2640","time","39","139","Only available at specified times"}, //OC special
+		{"69","2642","tools","46","0","Special Tool required"},// 142 Spezielle Ausrüstung
+		{"70","2648","wiki","54","154","Investigation"}, //OC special
+		{"71","2650","wwwlink","7","107","Hyperlink to another caching portal only"}, //OC special
+		{"72","2652","landf","0","45","Lost And Found Tour"}, // thx to Kappler and MiK
+		{"73","2654","rv","0","46","Truck Driver/RV"},// changed by Moorteufel 12.07.10 
+		{"74","2656","field_puzzle","0","47","Field Puzzle"},// changed by Moorteufel 12.07.10
 		{"75","2658","uv","0","48","UV Light required"}, // added by araber95 14.8.10
 		{"76","2660","snowshoes","0","49","Snowshoes"}, // added by araber95 14.8.10"
 		{"77","2662","skiis","0","50","Cross Country Skis"}, // added by araber95 14.8.10
 		{"78","2664","s-tool","0","51","Special Tool required"}, // added by araber95 14.8.10
-		{"87","2681","wirelessbeacon","0","60","Wireless Beacon"}, // added by araber95 27.10.10
-		// Einschränkungen und Voraussetzungen / Benötigt Vorarbeit
-		{"70","2648","wiki","54","0",""},// 148 Recherche
-		{"63","2630","riddle","55","0",""},// 130 Rätsel
-		{"74","2656","field_puzzle","0","47","Field Puzzle"},// changed by Moorteufel 12.07.10
-		{"47","2596","arith_prob","56","0",""},// 96 Rechenaufgabe
-		{"60","2622","othercache","57","0",""},// 122 besondere Cacheart
-		{"48","2598","ask","58","0",""},// 98 Startbedingungen beim Owner erfragen
-		{"72","2652","landf","0","45","Lost And Found Tour"}, // thx to Kappler and MiK
+		{"79","2666","nightcache","0","52","Night Cache"}, // added by araber95 14.8.10
+		{"80","2668","parkngrab","0","53","Park and grab"}, // added by araber95 14.8.10
+		{"81","2670","abandonedbuilding","0","54","Abandoned structure"}, // added by araber95 14.8.10
+		{"82","2672","hike_short","0","55","Short hike"}, // added by araber95 14.8.10
+		{"83","2674","hike_med","0","56","Medium Hike"}, // added by araber95 14.8.10
+		{"84","2676","hike_long","0","57","Long Hike"}, // added by araber95 14.8.10
+		{"85","2678","fuel","0","58","Fuel nearby"}, // changed by araber95 14.08.10 
+		{"86","2680","food","0","59","Food nearby"}, // changed by araber95 14.08.10
+		{"87","2681","wirelessbeacon","0","60","Wireless Beacon"}, // added by araber95 27.10.10		
+		{"88","2588","firstaid","23","123","First aid available"}, //OC special
 		// {"-1","2500","error","0","0",""}, //
 
 	};

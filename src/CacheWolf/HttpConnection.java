@@ -257,6 +257,11 @@ public void setRequestorProperty(String name, String property)
 {
 	getRequestorProperties().set(name,property);
 }
+public void setRequestorProperty(PropertyList pl)
+//===================================================================
+{
+	getRequestorProperties().set(pl);
+}
 /**
  * Add a non-exclusive requestor property. These are sent to the web server after the initial request line.
  * @param name The name of the property.
@@ -347,6 +352,7 @@ public void setUrl(String url)
 			}
 		}
 	}
+	getRequestorProperties().clear();
 }
 
 //FIXME: never referenced

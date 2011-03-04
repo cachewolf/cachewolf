@@ -412,7 +412,7 @@ public class CacheHolderDetail {
 			
 				  detfile.print("<NOTES><![CDATA["+CacheNotes+"]]></NOTES>\n");
 				  detfile.print("<IMAGES>\n");
-				  String stbuf = new String();
+				  String stbuf;
 				  for(int i = 0;i<images.size();i++){
 						stbuf = images.get(i).getFilename();
 						String urlBuf = images.get(i).getURL();
