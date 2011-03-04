@@ -65,6 +65,7 @@ public class OCGPXfetch {
 	}
 	
 	private static boolean login() {
+		// just to compile a new one
 		boolean loggedIn = false;
 		String page;
 		try {
