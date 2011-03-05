@@ -45,6 +45,7 @@ public class UrlFetcher {
 	static PropertyList permanentRequestorProperties = null;
 	static String postData=null;
 	static String urltmp=null;
+	static boolean forceRedirect=false;
 	
 	public static PropertyList getDocumentProperties() {
 		if (conn != null) 
@@ -53,6 +54,7 @@ public class UrlFetcher {
 	}
 	public static String getRealUrl() { return urltmp; };
 	public static void setMaxRedirections(int value) { maxRedirections=value; };
+	public static void setForceRedirect() { forceRedirect=true; };
 	public static void setRequestorProperties(PropertyList value) { requestorProperties=value; };
 	public static void setRequestorProperty(String name, String property) {
 		if (requestorProperties == null) requestorProperties = new PropertyList();
@@ -135,7 +137,7 @@ public class UrlFetcher {
 				}
 				urltmp = STRreplace.replace(urltmp, eweUrl.getHost() + "/\\.\\./", eweUrl.getHost() + "/");
 			}
-		} while (urltmp != null && i <= maxRedirections ); 
+		} while (((urltmp != null) || (urltmp == null) && forceRedirect) && i <= maxRedirections ); 
 		if (i > maxRedirections) throw new IOException("too many http redirections while trying to fetch: "+url + " only "+maxRedirections+" are allowed");
 		hndl[0] = conn.readInData();
 		ByteArray daten;
@@ -147,6 +149,7 @@ public class UrlFetcher {
 		maxRedirections = 5;
 		requestorProperties = null;
 		postData=null;
+		forceRedirect=false;
 		daten = (ByteArray)hndl[0].returnValue; // ByteArray daten = conn.readData(sock);
 		return daten;
 	}
