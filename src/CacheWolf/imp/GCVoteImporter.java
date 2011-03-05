@@ -105,9 +105,6 @@ public class GCVoteImporter extends MinML{
 
 			try {
 				pref.log("[GCVote]:Requesting ratings");
-
-				// request web page http://gcvote.de/getVotes.php
-				// UrlFetcher.setRequestorProperty("User-Agent", "Mozilla/5.0 (compatible; Cachewolf; GCVoteImporter)");
 				GCVResults = UrlFetcher.fetch(GCVURL);
 				if (GCVResults.equals("")) {
 					(new MessageBox(MyLocale.getMsg(0,"Error"), MyLocale.getMsg(0,"Error loading GCVote page.%0aPlease check your internet connection."), FormBase.OKB)).execute();

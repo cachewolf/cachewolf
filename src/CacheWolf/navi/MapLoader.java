@@ -32,6 +32,7 @@ import CacheWolf.HttpConnection;
 import CacheWolf.InfoBox;
 import CacheWolf.MyLocale;
 import CacheWolf.STRreplace;
+import CacheWolf.UrlFetcher;
 import CacheWolf.utils.FileBugfix;
 import ewe.fx.Point;
 import ewe.io.BufferedWriter;
@@ -479,10 +480,6 @@ public class MapLoader {
 	 * @param datei path and name of file to save to
 	 */
 	public void downloadImage(String url, String datei) throws IOException {
-		HttpConnection connImg; // TODO implement this in UrlFetcher class
-		Socket sockImg;
-		FileOutputStream fos;
-		ByteArray daten;
 		String realurl;
 		boolean forceredirect;
 		if (url.startsWith("R")) {
@@ -492,44 +489,16 @@ public class MapLoader {
 			forceredirect = false;
 			realurl = url;
 		}
-		connImg = new HttpConnection(realurl);
-		connImg.setRequestorProperty("USER_AGENT", "Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.7.5) Gecko/20041107 Firefox/1.0");
-		connImg.setRequestorProperty("Connection", "close");
-	//	this prevents gdz1.leipzig.ifag.de (dtk100) from answering and ist not necessary for expedia connImg.setRequestorProperty("Cookie", "jscript=1; path=/;");
-		connImg.documentIsEncoded = true;
-		try{
-			File dateiF = new FileBugfix(datei);
-			if(!dateiF.exists()){
-				int i=0;
-				sockImg = connImg.connect();
-				String quelle = connImg.getRedirectTo();
-				boolean redirrected = false;
-				while (i < 5 && (quelle != null || (forceredirect && !redirrected))) { // this is necessary because expedia sometimes doesn't directly anser with the redirect to the map-image, but give a page in between. Solved the problem by retrying see also: http://www.geoclub.de/viewtopic.php?p=305071#305071
-					if (quelle != null) {
-						redirrected = true;
-						sockImg.close();
-						connImg = connImg.getRedirectedConnection(quelle);
-						sockImg = connImg.connect();
-						quelle = connImg.getRedirectTo();
-					}
-					i++;
-				}
-				if (i > 4) throw new IOException(MyLocale.getMsg(4807, "loadTo: failed to download map: didn't get http-redirect"));
-				String ct = (String)connImg.documentProperties.getValue("content-type", "");
-				if (!ct.substring(0, 5).equalsIgnoreCase("image") )  {
-					String tmp = connImg.readText(sockImg, null).toString(); // TODO if the content is binary will will get an Exception in InfoBox, trying to display the content
-					tmp = tmp.substring(0, (tmp.length() < 1000 ? tmp.length() : 1000));
-					sockImg.close();
-					throw new IOException(MyLocale.getMsg(4808, "downloadImage: content-type:")+" " + ct + MyLocale.getMsg(4809, " is not an image, begin of content:")+" " + tmp);
-				}
-				daten = connImg.readData(sockImg);
-				fos = new FileOutputStream(datei); // note: using the constructor (File) instead of (String) will cause not to use the fake file system
-				fos.write(daten.toBytes());
-				fos.close();
-				sockImg.close();
+		File dateiF = new FileBugfix(datei);
+		if(!dateiF.exists()){
+			if (forceredirect) UrlFetcher.setForceRedirect();
+			UrlFetcher.fetchDataFile(realurl, datei);
+			String ct = (String) UrlFetcher.getDocumentProperties().getValue("content-type","");
+			if (!ct.substring(0, 5).equalsIgnoreCase("image") )  {
+				dateiF = new FileBugfix(datei); //??? muss das nochmal ???
+				dateiF.delete();
+				throw new IOException(MyLocale.getMsg(4808, "downloadImage: content-type:")+" " + ct + MyLocale.getMsg(4809, " is not an image, begin of content:")+" (deleted)");
 			}
-		}catch(IOException e){
-			throw new IOException(MyLocale.getMsg(4810, "Error while downloading or saving map:\n") + e.getMessage());
 		}
 	}
 }
