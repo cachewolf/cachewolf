@@ -16,8 +16,8 @@ public class OCGPXfetch {
 	
 	public static void doIt() {
 		String hostname = pref.lastOCSite;
-		Boolean oldDownloadAllOC=pref.downloadAllOC;
-		Boolean onlyListedAtOC = false;
+		boolean oldDownloadAllOC=pref.downloadAllOC;
+		boolean onlyListedAtOC = false;
 		OCXMLImporterScreen importOpt = new OCXMLImporterScreen(
 				MyLocale.getMsg(130,"Download from opencaching"),
 				OCXMLImporterScreen.IMAGES|
