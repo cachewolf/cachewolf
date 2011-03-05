@@ -2958,40 +2958,9 @@ public class SpiderGC {
 	 * @param target
 	 *            The bytes of the image
 	 */
-	private void spiderImage(String imgUrl, String target) {
-		// TODO implement a fetch(URL, filename) in HttpConnection and use that one
-		HttpConnection connImg;
-		Socket sockImg;
-		// InputStream is;
-		FileOutputStream fos;
-		// int bytes_read;
-		// byte[] buffer = new byte[9000];
-		ByteArray daten;
-		String datei = "";
-		datei = profile.dataDir + target;
-		connImg = new HttpConnection(imgUrl);
-		if (imgUrl.indexOf('%') >= 0)
-			connImg.documentIsEncoded = true;
-		connImg.setRequestorProperty("Connection", "close");
-		// connImg.setRequestorProperty("User-Agent","Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.8.1.12) Gecko/20080201 Firefox/2.0.0.12");
-		// connImg.setRequestorProperty("Accept","text/xml,application/xml,application/xhtml+xml,text/html;q=0.9,text/plain;q=0.8,image/png,*/*;q=0.5");
+	private void spiderImage(String address, String fn) {
 		try {
-			pref.log("[spiderImage] Trying to fetch image from: " + imgUrl);
-			String redirect = null;
-			do {
-				sockImg = connImg.connect();
-				redirect = connImg.getRedirectTo();
-				if (redirect != null) {
-					connImg = connImg.getRedirectedConnection(redirect);
-					pref.log("[spiderImage] Redirect to " + redirect);
-				}
-			} while (redirect != null); 
-			// TODO this can end up in an endless loop if trying to load from a malicous site
-			daten = connImg.readData(sockImg);
-			fos = new FileOutputStream(new File(datei));
-			fos.write(daten.toBytes());
-			fos.close();
-			sockImg.close();
+			UrlFetcher.fetchDataFile(address, profile.dataDir + fn);
 		} catch (UnknownHostException e) {
 			pref.log("[spiderImage] Host not there...", e);
 		} catch (IOException ioex) {

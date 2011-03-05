@@ -53,11 +53,9 @@ public class OCGPXfetch {
 			File ftmp = new FileBugfix(tmpFile);
 			if (ftmp.exists() && ftmp.length()>0) {
 				GPXImporter gpx = new GPXImporter(pref, prof, tmpFile);
-				int withPics = GPXImporter.DOIT_NOSPOILER;
-				if (pref.downloadPics) {
-					withPics=GPXImporter.DOIT_WITHSPOILER;
-				}			
-				gpx.doIt(withPics);
+				if (pref.downloadPics) 
+					gpx.doIt(GPXImporter.DOIT_WITHSPOILER);				
+				else gpx.doIt(GPXImporter.DOIT_NOSPOILER);
 			}
 			ftmp.delete();
 		} catch (IOException e) {
