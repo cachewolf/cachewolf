@@ -49,6 +49,7 @@ public class OCGPXfetch {
 			address+="&count=max";
 			address+="&finder="+pref.myAlias;
 			String tmpFile=prof.dataDir + "dummy.zip";
+			login();
 			UrlFetcher.fetchDataFile(address, tmpFile);
 			File ftmp = new FileBugfix(tmpFile);
 			if (ftmp.exists() && ftmp.length()>0) {
@@ -63,7 +64,7 @@ public class OCGPXfetch {
 	}
 	
 	private static boolean login() {
-		// just to compile a new one
+		// TODO this is only a preliminary Version of login
 		boolean loggedIn = false;
 		String page;
 		try {
