@@ -68,6 +68,7 @@ import ewe.io.FileInputStream;
 import ewe.io.FileOutputStream;
 import ewe.io.IOException;
 import ewe.io.InputStreamReader;
+import ewe.io.JavaUtf8Codec;
 import ewe.net.Socket;
 import ewe.net.URL;
 import ewe.net.UnknownHostException;
@@ -77,6 +78,7 @@ import ewe.sys.Vm;
 import ewe.ui.FormBase;
 import ewe.ui.MessageBox;
 import ewe.util.ByteArray;
+import ewe.util.CharArray;
 import ewe.util.Enumeration;
 import ewe.util.Hashtable;
 import ewe.util.Properties;
@@ -220,17 +222,18 @@ public class SpiderGC {
 			infB = new InfoBox("Status", MyLocale.getMsg(5502, "Fetching first page..."));
 			infB.exec();
 
-			pref.log("ListPages Properties : " + Preferences.NEWLINE
-					+ "minDistance: " + minDistance + Preferences.NEWLINE
-					+ "maxDistance: " + maxDistance + Preferences.NEWLINE
-					+ "directions: " + direction + Preferences.NEWLINE
-					+ "maxNew: " + pref.maxSpiderNumber + Preferences.NEWLINE
-					+ "maxUpdate: " + maxUpdate + Preferences.NEWLINE
-					+ "with Founds       : " + (doNotgetFound ? "no" : "yes")
-					+ Preferences.NEWLINE + "alias is premium m: "
-					+ (!pref.isPremium ? "no" : "yes") + Preferences.NEWLINE
-					+ "Update if new Logs: " + (!pref.checkLog ? "no" : "yes")
-					+ Preferences.NEWLINE, null);
+			pref.log( "ListPages Properties : " + Preferences.NEWLINE
+					+ "minDistance          : " + minDistance + Preferences.NEWLINE
+					+ "maxDistance          : " + maxDistance + Preferences.NEWLINE
+					+ "directions           : " + direction + Preferences.NEWLINE
+					+ "maxNew               : " + pref.maxSpiderNumber + Preferences.NEWLINE
+					+ "maxUpdate            : " + maxUpdate + Preferences.NEWLINE
+					+ "with Founds          : " + (doNotgetFound ? "no" : "yes") + Preferences.NEWLINE 
+					+ "alias is premium memb: "	+ (!pref.isPremium ? "no" : "yes") + Preferences.NEWLINE
+					+ "Update if new Log    : " + (pref.checkLog ? "yes" : "no") + Preferences.NEWLINE
+					+ "Update if TB changed : " + (pref.checkTBs ? "yes" : "no") + Preferences.NEWLINE
+					+ "Update if DTS changed: " + (pref.checkDTS ? "yes" : "no") + Preferences.NEWLINE
+					, null);
 
 			Hashtable cachesToUpdate = new Hashtable(cacheDB.size());
 
@@ -602,6 +605,10 @@ public class SpiderGC {
 		page_number++;
 		String listPage = getMapListPage(middle, north, west, south, east);
 		int i = listPage.indexOf("\"count\\\":"); // \"count\":
+		if (i==-1) {
+			pref.log("[getCaches:getMapListPage]got nothing!"+listPage,null);
+			return;
+		}
 		pref.log("" + north + " " + west + " " + south + " " + east + " " + listPage.substring(i) + "\n len=" + len);
 		if ((listPage.indexOf("\"count\\\":501") > -1)
 		||  (listPage.indexOf("\"count\\\":0") > -1 && len > 30)) {
@@ -1021,7 +1028,7 @@ public class SpiderGC {
 				"Found " + numAvailableUpdates + " caches with changed available status."+Preferences.NEWLINE+
 				"Found " + numLogUpdates + " caches with new found in log."+Preferences.NEWLINE+
 				"Found " + (cExpectedForUpdate.size()-numAvailableUpdates-numLogUpdates) + " caches possibly archived."+Preferences.NEWLINE+
-				"Found " + cFoundForUpdate.size() + "?=" + (numFoundUpdates+numArchivedUpdates+numAvailableUpdates+numArchivedUpdates) + " caches to update."+Preferences.NEWLINE+
+				"Found " + cFoundForUpdate.size() + " ?= " + (numFoundUpdates+numArchivedUpdates+numAvailableUpdates+numArchivedUpdates) + " caches to update."+Preferences.NEWLINE+
 				"Found " + numPrivate + " Premium Caches (for non Premium Member.)",null);
 		if(spiderAllFinds){
 			pref.log("Found " + numFoundUpdates + " caches with no found in profile."+Preferences.NEWLINE+
@@ -1228,8 +1235,7 @@ public class SpiderGC {
 		localInfB = new InfoBox(MyLocale.getMsg(5507, "Status"), MyLocale.getMsg(5508, "Logging in..."));
 		localInfB.exec();
 		try {
-			// "http://www.geocaching.com/login/default.aspx?RESETCOMPLETE=Y" | loginPageUrl
-			loginPage = UrlFetcher.fetch(loginPageUrl); // http://www.geocaching.com/login/Default.aspx
+			loginPage = UrlFetcher.fetch(loginPageUrl); // http://www.geocaching.com/login/default.aspx
 			if (loginPage.equals("")) {
 				localInfB.close(0);
 				(new MessageBox(MyLocale.getMsg(5500, "Error"),
@@ -1279,6 +1285,7 @@ public class SpiderGC {
 					if (rexViewstate.didMatch()) {
 						viewstate = rexViewstate.stringMatched(1);
 					} else {
+						localInfB.close(0);
 						pref.log("[login]:__VIEWSTATE not found (before login): no login possible.", null);
 						// we need the __VIEWSTATE for sending loginData, so we should abort here
 						return ERR_LOGIN;
@@ -1299,38 +1306,42 @@ public class SpiderGC {
 						pref.log("Login successful: " + pref.myAlias);
 						// **3 now we are logged in and get the Cookie (there are two)
 						PropertyList pl = UrlFetcher.getDocumentProperties();
-						cookie = "";
+						String docprops = "";
 						for (int i = 0; i < pl.size(); i++) {
 							Property p = (Property) pl.get(i);
 							if (p.name.equalsIgnoreCase("Set-Cookie")) {
-								cookie+=p.value;
+								docprops+=p.value;
 							}
 						}
-						/* */
-						String cookieID="";
-						Regex rexCookieID = new Regex("(?i)userid=(.*?);.*");
-						rexCookieID.search(cookie);
-						if (!rexCookieID.didMatch()) {
-							pref.log("[login]:check rexCookieID in SpiderGC.java --> CookieID not found. Using old one.");
-						} else
-							cookieID = rexCookieID.stringMatched(1);
-						String cookieSession="";
 						Regex rexCookieSession = new Regex("(?i)ASP.NET_SessionId=(.*?);.*");
-						rexCookieSession.search(cookie);
-						if (!rexCookieSession.didMatch()) {
-							pref.log("[login]:check rexCookieSession in SpiderGC.java --> CookieSession not found. Using old one.");
-						} else
-							cookieSession = rexCookieSession.stringMatched(1);
-						cookie="ASP.NET_SessionId=" + cookieSession + "; userid=" + cookieID;
-						/* */
+						rexCookieSession.search(docprops);
+						if (rexCookieSession.didMatch()) {
+							cookie = "ASP.NET_SessionId=" + rexCookieSession.stringMatched(1);
+						} 
+						else {
+							localInfB.close(0);
+							pref.log("[login]:SessionID not found.", null);
+							return ERR_LOGIN;
+						}
+						Regex rexCookieID = new Regex("(?i)userid=(.*?);.*");
+						rexCookieID.search(docprops);
+						if (rexCookieID.didMatch()) {
+							cookie += "; userid=" + rexCookieID.stringMatched(1);
+						} 
+						else {
+							localInfB.close(0);
+							pref.log("[login]:userID not found.", null);
+							return ERR_LOGIN;
+						}
 						UrlFetcher.setPermanentRequestorProperty("Cookie", cookie);
 
 						// **4 change language to EN 
-						// viewstate=old one
 						rexViewstate.search(loginPage);
 						if (rexViewstate.didMatch()) {
 							viewstate = rexViewstate.stringMatched(1);
-						} else {
+						} 
+						else {
+							localInfB.close(0);
 							pref.log("[login]:__VIEWSTATE not found (before Language=EN): can't change language.", null);
 							return ERR_LOGIN;
 						}
@@ -1349,7 +1360,8 @@ public class SpiderGC {
 					}
 					else {
 						pref.log("Login failed. Wrong Account or Password? " + pref.myAlias, null);
-						pref.log("[login.LoginUrl]:" + sb.toString(), null);
+						pref.log("[login.url]:" + loginPageUrl, null);
+						pref.log("[login.postData]:" + sb.toString(), null);
 						pref.log("[login.Answer]:" + loginPage, null);
 						localInfB.close(0);
 						(new MessageBox(MyLocale.getMsg(5500, "Error"),
@@ -1490,23 +1502,15 @@ public class SpiderGC {
 			pref.log("[getAListPage] check rexViewstate1 in SpiderGC.java" + Preferences.NEWLINE + htmlListPage);
 		}
 
-		/*
-		 * rexEventvalidation.search(htmlPage);
-		 * if(rexEventvalidation.didMatch()){ 
-		 * eventvalidation = rexEventvalidation.stringMatched(1); } 
-		 * else { eventvalidation = ""; }
-		 */
-
 		String postData = "__EVENTTARGET=" + URL.encodeURL(whatPage, false) + "&" +
 						  "__EVENTARGUMENT=" + "&" +
 						  "__VIEWSTATEFIELDCOUNT=2" + "&" +
 						  "__VIEWSTATE=" + URL.encodeURL(viewstate, false) + "&" +
-						  "__VIEWSTATE1=" + URL.encodeURL(viewstate1, false); // + "&" +
-						  //"__EVENTVALIDATION=" + URL.encodeURL(eventvalidation,false);
+						  "__VIEWSTATE1=" + URL.encodeURL(viewstate1, false);
 		try {
 			UrlFetcher.setpostData(postData);
 			htmlListPage = UrlFetcher.fetch(url);
-			pref.log("[getAListPage] Got list page: " + URL.encodeURL(whatPage, false));
+			pref.log("[getAListPage] Got list page: " + url);
 		} catch (Exception ex) {
 			pref.log("[getAListPage] Error getting a list page" + url, ex);
 		}
@@ -1546,18 +1550,9 @@ public class SpiderGC {
 
 		try {
 			UrlFetcher.setpostData(postData);
-			// UrlFetcher.setRequestorProperty("Accept","application/json, text/javascript, */*; q=0.01");
-			// UrlFetcher.setRequestorProperty("Accept-Language","de-de,de;q=0.8,en-us;q=0.5,en;q=0.3");
-			// UrlFetcher.setRequestorProperty("Accept-Encoding","gzip,deflate");
-			// UrlFetcher.setRequestorProperty("Accept-Charset","ISO-8859-1,utf-8;q=0.7,*;q=0.7");
-			// UrlFetcher.setRequestorProperty("Keep-Alive","115");
-			// UrlFetcher.setRequestorProperty("Proxy-Connection","keep-alive");
 			UrlFetcher.setRequestorProperty("Content-Type", "application/json; charset=UTF-8");
-			// UrlFetcher.setRequestorProperty("X-Requested-With","XMLHttpRequest");
-			// UrlFetcher.setRequestorProperty("Referer",referer);
-			// UrlFetcher.setRequestorProperty("Pragma","no-cache");
-			// UrlFetcher.setRequestorProperty("Cache-Control","no-cache");
-			ret=UrlFetcher.fetch(url);
+			ret=UrlFetcher.fetch(url);			
+
 		} catch (Exception ex) {
 			ret = "";
 			pref.log("[SpiderGC:getMapListPage] Error getting map Cachepage" + url + postData, ex);
@@ -2206,8 +2201,7 @@ public class SpiderGC {
 						// deleting existing coordinates
 						String latLon = getLatLon(completeWebPage);
 						if (latLon.equals("???")) {
-							if (completeWebPage.indexOf(p
-									.getProp("premiumCachepage")) > 0) {
+							if (completeWebPage.indexOf(p.getProp("premiumCachepage")) > 0) {
 								// Premium cache spidered by non premium member
 								pref.log("Ignoring premium member cache: " + ch.getWayPoint());
 								spiderTrys = MAX_SPIDER_TRYS;
