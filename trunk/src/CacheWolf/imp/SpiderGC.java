@@ -1326,12 +1326,14 @@ public class SpiderGC {
 						UrlFetcher.setPermanentRequestorProperty("Cookie", cookie);
 
 						// **4 change language to EN 
+						// viewstate=old one
 						rexViewstate.search(loginPage);
-						if (!rexViewstate.didMatch()) {
-							pref.log("[login]:check rexViewstate in SpiderGC.java --> not found after login"
-									+ Preferences.NEWLINE + loginPage, null);
+						if (rexViewstate.didMatch()) {
+							viewstate = rexViewstate.stringMatched(1);
+						} else {
+							pref.log("[login]:__VIEWSTATE not found (before Language=EN): can't change language.", null);
+							return ERR_LOGIN;
 						}
-						viewstate = rexViewstate.stringMatched(1);
 						String strEnglishPage = "ctl00$uxLocaleList$uxLocaleList$ctl01$uxLocaleItem";
 						String postStr = "__EVENTTARGET="+ URL.encodeURL(strEnglishPage, false)
 										+ "&__EVENTARGUMENT="
@@ -1340,7 +1342,7 @@ public class SpiderGC {
 							UrlFetcher.setpostData(postStr);
 							loginPage = UrlFetcher.fetch(loginPageUrl);
 							// there is no real check if switched
-							pref.log("Switched to English"+loginPage);
+							pref.log("Switched to English");
 						} catch (Exception ex) {
 							pref.log("Error switching to English: check/n" + loginPageUrl + "/n" + postStr, ex);
 						}
@@ -1741,6 +1743,7 @@ public class SpiderGC {
 			int keylength=13; // wenn nicht 13 dann newkey auf wiederholung prüfen
 			DistanceCodeKey=newkey.substring(0, keylength);
 			ret = decodeXor( stmp, DistanceCodeKey).replace('|', ' ');
+			pref.log("Automatic key: " + DistanceCodeKey + " result: " + ret + Preferences.NEWLINE);
 			RexPropDistance.search(ret); // km oder mi
 		}
 

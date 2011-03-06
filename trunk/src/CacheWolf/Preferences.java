@@ -744,7 +744,7 @@ public class Preferences extends MinML{
 					" spiderUpdates=\"" + SafeXML.strxmlencode(spiderUpdates) + "\""+
 					" checkLog=\"" + SafeXML.strxmlencode(checkLog) + "\""+
 					" checkTBs=\"" + SafeXML.strxmlencode(checkTBs) + "\""+
-					" checkDTS=\"" + SafeXML.strxmlencode(checkDTS) +"\""+
+					" checkDTS=\"" + SafeXML.strxmlencode(checkDTS) + "\""+
 					" spiderRoute=\"" + SafeXML.strxmlencode(spiderRoute) + "\""+
 					" maxSpiderNumber=\"" + SafeXML.strxmlencode(maxSpiderNumber) + "\""+
 					" downloadPics=\"" + SafeXML.strxmlencode(downloadPics) + "\""+
