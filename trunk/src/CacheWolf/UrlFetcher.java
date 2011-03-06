@@ -62,8 +62,8 @@ public class UrlFetcher {
 	}
 	private static void initPermanentRequestorProperty() {
 		permanentRequestorProperties = new PropertyList();
-		permanentRequestorProperties.add("USER_AGENT", "Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.7.5) Gecko/20041107 Firefox/1.0");
-		// permanentRequestorProperties.add("Connection", "close");		
+		permanentRequestorProperties.add("User_Agent", "Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.7.5) Gecko/20041107 Firefox/1.0");
+		permanentRequestorProperties.add("Connection", "keep-alive");		
 	}
 	public static void setPermanentRequestorProperty(String name, String property) {
 		if (permanentRequestorProperties == null) initPermanentRequestorProperty();
@@ -121,7 +121,7 @@ public class UrlFetcher {
 			if (permanentRequestorProperties == null) initPermanentRequestorProperty();
 			if (postData != null) {
 				conn.setPostData(postData);
-				setRequestorProperty("Content-Type","application/x-www-form-urlencoded");
+				conn.setRequestorProperty("Content-Type","application/x-www-form-urlencoded");
 			}
 			conn.setRequestorProperty(permanentRequestorProperties);
 			if (requestorProperties != null) conn.setRequestorProperty(requestorProperties);
