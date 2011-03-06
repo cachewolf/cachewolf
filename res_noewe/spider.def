@@ -76,7 +76,7 @@ PMRex              = small_profile.gif
 distCodeRex        = k=(.*?)"
 distCodeKey        = signalthefrog
 distRex            = (.*?)(?:km|mi|ft)
-DTSRex             = v=(.*?)"\ style=
+DTSRex             = v=(.*?)"
 DTSCodeKey         = hbM9fjmrxy7z42LFD58BkKgPGdHscvCqNnw3ptO6lJ
 waypointRex        = \\(GC(.*?)\\)<br\ />
 TypeRex            = www.geocaching.com/images/wpttypes/sm/(.*?)\\.gif
