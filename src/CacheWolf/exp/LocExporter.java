@@ -29,8 +29,6 @@ import CacheWolf.CacheHolder;
 import CacheWolf.CacheHolderDetail;
 import CacheWolf.Common;
 import CacheWolf.Global;
-import ewe.io.File;
-import ewe.io.FileBase;
 
 
 /**

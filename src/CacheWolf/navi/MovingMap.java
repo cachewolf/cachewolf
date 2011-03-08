@@ -168,7 +168,6 @@ public final class MovingMap extends Form implements ICommandListener {
 		}
 	}
 
-	public boolean getShowCachesOnMap() {return pref.showCachesOnMap; }
 	public void setShowCachesOnMap(boolean value) {
 		if (value != pref.showCachesOnMap) {
 			pref.showCachesOnMap=value;
@@ -432,7 +431,7 @@ public final class MovingMap extends Form implements ICommandListener {
 		if (Global.getProfile().selectionChanged) {
 			// this means marking has changed
 			Global.getProfile().selectionChanged = false;
-			if (getShowCachesOnMap()) removeAllMapSymbols(); // not really needed: hopefully removed by showCachesOnMap
+			if (pref.showCachesOnMap) removeAllMapSymbols(); // not really needed: hopefully removed by showCachesOnMap
 		}
 		setMarkedCache(Global.mainTab.ch); // this is the selected one (not necessary marked)
 		showCachesOnMap();
@@ -1062,7 +1061,7 @@ public final class MovingMap extends Form implements ICommandListener {
 			if (screenArea.isInBound(ch.pos)) {
 				// because visible and valid don't change while showing map -->need no remove
 				if (ch.isVisible() && ch.pos.isValid()) {
-					if (getShowCachesOnMap()) {
+					if (pref.showCachesOnMap) {
 						addSymbolIfNecessary(ch.cacheName, ch, GuiImageBroker.getTypeImage(ch.getType(),true), ch.pos);
 					}
 					else {
@@ -1096,7 +1095,7 @@ public final class MovingMap extends Form implements ICommandListener {
 			}
 			if (gotoPosCH != null) {
 				if (screenArea.isInBound(gotoPosCH.pos)) {
-					if (!getShowCachesOnMap()) {
+					if (!pref.showCachesOnMap) {
 						addSymbolIfNecessary(gotoPosCH.cacheName, gotoPosCH, GuiImageBroker.getTypeImage(gotoPosCH.getType(),true), gotoPosCH.pos);
 					}
 					addSymbolOnTop("goto", gotoPosCH, "goto_map.png", gotoPos.where);
