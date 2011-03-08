@@ -88,9 +88,9 @@ public class MapLoaderGui extends Form {
 	mComboBox scaleInputPerCache = new mComboBox();
 	mLabel overlappingLbl = new mLabel(MyLocale.getMsg(1808,"overlapping in pixel:"));
     mInput overlappingInput = new mInput(""+pref.mapOverlapping);
-	mCheckBox overviewChkBox = new mCheckBox(MyLocale.getMsg(1809,"download an overview map"));
+	mCheckBox overviewChkBox = new mCheckBox(MyLocale.getMsg(1809,"download an overview map"));	
+	mCheckBox fetchOnlyMapWithCacheChkBox = new mCheckBox(MyLocale.getMsg(165,"only for caches"));	
 	mCheckBox overviewChkBoxPerCache = new mCheckBox(MyLocale.getMsg(1809,"download an overview map"));
-
     mCheckBox smallTiles = new mCheckBox (MyLocale.getMsg (4280, "Small Tiles"));
     mCheckBox bigTiles = new mCheckBox (MyLocale.getMsg (4282, "BigTiles"));
     CheckBoxGroup tileSize = new CheckBoxGroup ();
@@ -168,7 +168,9 @@ public class MapLoaderGui extends Form {
 		pnlTiles.addNext(overlappingLbl);
 		pnlTiles.addLast(overlappingInput);
 		overviewChkBox.setState(false);
-		pnlTiles.addLast(overviewChkBox);
+		pnlTiles.addNext(overviewChkBox);
+		fetchOnlyMapWithCacheChkBox.setState(false);
+		pnlTiles.addLast(fetchOnlyMapWithCacheChkBox);
 		pnlTiles.addNext(smallTiles);
 		pnlTiles.addLast(bigTiles);
 		smallTiles.setGroup(tileSize);
@@ -342,6 +344,7 @@ public class MapLoaderGui extends Form {
 		}
 		if (!perCache){  // download tiles
 			mapLoader.setProgressInfoBox(progressBox);
+			mapLoader.setFetchOnlyMapWithCache(fetchOnlyMapWithCacheChkBox.getState());
 			mapLoader.downlaodTiles(mapsDir);
 		} else { // per cache
 			CacheHolder ch;
