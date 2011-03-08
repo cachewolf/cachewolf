@@ -26,9 +26,10 @@
 package CacheWolf.navi;
 
 import CacheWolf.CWPoint;
+import CacheWolf.CacheDB;
+import CacheWolf.CacheHolder;
 import CacheWolf.Common;
 import CacheWolf.Global;
-import CacheWolf.HttpConnection;
 import CacheWolf.InfoBox;
 import CacheWolf.MyLocale;
 import CacheWolf.STRreplace;
@@ -39,19 +40,16 @@ import ewe.io.BufferedWriter;
 import ewe.io.File;
 import ewe.io.FileBase;
 import ewe.io.FileInputStream;
-import ewe.io.FileOutputStream;
 import ewe.io.FileReader;
 import ewe.io.FileWriter;
 import ewe.io.IOException;
 import ewe.io.PrintWriter;
-import ewe.net.Socket;
 import ewe.sys.Convert;
 import ewe.sys.Double;
 import ewe.sys.Time;
 import ewe.sys.Vm;
 import ewe.ui.FormBase;
 import ewe.ui.MessageBox;
-import ewe.util.ByteArray;
 import ewe.util.Properties;
 import ewe.util.StandardComparer;
 import ewe.util.Utils;
@@ -83,6 +81,7 @@ public class MapLoader {
 	CWPoint buttomright;
 	Point tilesSize;
 	float tileScale;
+	boolean fetchOnlyMapWithCache=false;
 
 	/**
 	 *
@@ -126,6 +125,10 @@ public class MapLoader {
 		}
 	}
 
+	public void setFetchOnlyMapWithCache(boolean value) {
+		fetchOnlyMapWithCache=value;
+	}
+	
 	public String[] getAvailableOnlineMapServices(){
 		int s = onlineMapServices.size();
 		String[] services = new String[s];
@@ -227,19 +230,38 @@ public class MapLoader {
 		for (int row = 1; row <= numMapsY; row++) {
 			lon = topleft.lonDec;
 			for (int col = 1; col <= numMapsX; col++) {
-				if (progressInfobox != null)
-					progressInfobox.setInfo(MyLocale.getMsg(4802, "Downloading calibrated (georeferenced) \n map image \n '") + currentOnlineMapService.getName()+MyLocale.getMsg(4803, "' \n Downloading tile \n row")+" "+row+" / "+numMapsY+MyLocale.getMsg(4804, " column")+" "+ col + " / "+numMapsX);
 				center.set(lat, lon);
-				try {
-					downloadMap(center, tileScale, tilesSize, tilesPath);
-				} catch (Exception e) {
-					this.progressInfobox.addWarning(MyLocale.getMsg(4805, "Tile")+" " + row + "/" + col + MyLocale.getMsg(4806, ": Ignoring error:")+" " + e.getMessage()+"\n");
+				if (!fetchOnlyMapWithCache || hasCache(center,latinc,loninc)) {					
+					if (progressInfobox != null)
+						progressInfobox.setInfo(MyLocale.getMsg(4802, "Downloading calibrated (georeferenced) \n map image \n '") + currentOnlineMapService.getName()+MyLocale.getMsg(4803, "' \n Downloading tile \n row")+" "+row+" / "+numMapsY+MyLocale.getMsg(4804, " column")+" "+ col + " / "+numMapsX);
+					try {
+						downloadMap(center, tileScale, tilesSize, tilesPath);
+					} catch (Exception e) {
+						this.progressInfobox.addWarning(MyLocale.getMsg(4805, "Tile")+" " + row + "/" + col + MyLocale.getMsg(4806, ": Ignoring error:")+" " + e.getMessage()+"\n");
+					}
+					if (progressInfobox.isClosed) return;
 				}
-				if (progressInfobox.isClosed) return;
 				lon += loninc;
 			}
 			lat += latinc;
 		}
+	}
+	private boolean hasCache(CWPoint center, double latinc, double loninc) {
+		double lat = center.latDec - (latinc / 2.0);
+		double lon = center.lonDec - (loninc / 2.0);
+		CWPoint tl = new CWPoint(lat,lon);
+		lat = center.latDec + (latinc / 2.0);
+		lon = center.lonDec + (loninc / 2.0);
+		CWPoint br = new CWPoint(lat,lon);
+		Area maparea = new Area(tl,br);
+		CacheDB cacheDB = Global.getProfile().cacheDB;
+		for (int i = 0; i < cacheDB.size(); i++) {
+			CacheHolder ch = cacheDB.get(i);
+			if (maparea.isInBound(ch.pos)) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	public void setProgressInfoBox (InfoBox progrssInfoboxi) {
@@ -259,107 +281,111 @@ public class MapLoader {
 		String imagename = mio.setName(path, filename);
 		String imagetype = currentOnlineMapService.getImageFileExt();
 		String url = currentOnlineMapService.getUrlForCenterScale(center, scale, pixelsize);
-		if (currentOnlineMapService instanceof ExpediaMapService) {
-			downloadImage(url, path+imagename+imagetype);
-		}
-		else {
-			WebMapService wms = (WebMapService) currentOnlineMapService;
-			
-			if (wms.requestUrlPart.startsWith("REQUEST")) {
+		String fName = path + imagename + imagetype;
+		FileBugfix fn = new FileBugfix(path + imagename + ".wfl");
+		FileBugfix fn1 = new FileBugfix(fName);						
+		if (!fn.exists() || fn.length()==0 || !fn1.exists() || fn1.length()==0) {
+			if (currentOnlineMapService instanceof ExpediaMapService) {
 				downloadImage(url, path+imagename+imagetype);
 			}
 			else {
-				Area maparea = wms.CenterScaleToArea(center, scale, pixelsize);
-				CWPoint buttomleft = new CWPoint (maparea.buttomright.latDec, maparea.topleft.lonDec);
-				CWPoint topright = new CWPoint (maparea.topleft.latDec, maparea.buttomright.lonDec);
-
-				String mapProgramPath = wms.versionUrlPart+"/";
-				mapProgramPath = mapProgramPath.replace('/', FileBase.separatorChar);
-				String mapProgram = mapProgramPath+wms.MainUrl;
-				File f=new FileBugfix(mapProgram);
-				if (!f.exists() || !f.canRead()) {
-					MessageBox mb=new MessageBox(MyLocale.getMsg(321,"Error"),MyLocale.getMsg(1834,"Please enter the correct path to Kosmos.Console.exe into the wms-file."),ewe.ui.MessageBox.OKB);
-					mb.execute();
-					return;
+				WebMapService wms = (WebMapService) currentOnlineMapService;				
+				if (wms.requestUrlPart.startsWith("REQUEST")) {
+					downloadImage(url, path+imagename+imagetype);
 				}
-				
-				String mapProgramParams = "";
-				
-				if (wms.requestUrlPart.equalsIgnoreCase("Kosmos")) {					
-					// minx miny maxx maxy + pixelsize.x
-					mapProgramParams="bitmapgen" +
-						" \""+FileBase.getProgramDirectory().replace('/',File.separatorChar)+"\\"+wms.serviceTypeUrlPart+"\""+
-						" \""+path.replace('/', File.separatorChar)+imagename+imagetype+"\""+
-						" -mb " +
-						buttomleft.toString(TransformCoordinates.LAT_LON).replace(',',' ') + " " +
-						topright.toString(TransformCoordinates.LAT_LON).replace(',',' ') +
-						" -w "+pixelsize.x;				
-					Vm.exec(mapProgram, mapProgramParams, 0, true);				
-				}
-				else { 
-					if (wms.requestUrlPart.equalsIgnoreCase("Maperitive")) {
-						// Maperitive runs on Windows and Linux
-						// generating scriptfile for Maperitive from wmsfile
-						String cwPath = FileBase.getProgramDirectory().replace('/',FileBase.separatorChar) + FileBase.separatorChar;
-						String scriptFileName = cwPath + "maperitive.script";
-						
-						PrintWriter outp =  new PrintWriter(new BufferedWriter(new FileWriter(scriptFileName)));
-						outp.println("use-ruleset alias=default");
-						outp.println("clear-map");
+				else {
+					Area maparea = wms.CenterScaleToArea(center, scale, pixelsize);
+					CWPoint buttomleft = new CWPoint (maparea.buttomright.latDec, maparea.topleft.lonDec);
+					CWPoint topright = new CWPoint (maparea.topleft.latDec, maparea.buttomright.lonDec);
 
-						if (wms.serviceTypeUrlPart.equals("")) {
-							outp.println("add-web-map");
-						}
-						else {
-							outp.println("add-web-map provider=" + wms.serviceTypeUrlPart);
-						}
-						
-						if (!wms.stylesUrlPart.equals("")) {
-							String myrules = mapProgramPath + wms.stylesUrlPart.replace('/',FileBase.separatorChar);
-							outp.println("use-ruleset location=" + myrules);
-							// outp.println("apply-ruleset");
-						}
-						if (!wms.layersUrlPart.equals("")) {
-							outp.println("clear-map");
-							outp.println("load-source " + mapProgramPath + wms.layersUrlPart.replace('/',FileBase.separatorChar));
-							// implicit does apply-ruleset
-						}
-						
-						String koords = buttomleft.toString(TransformCoordinates.LON_LAT) + "," + topright.toString(TransformCoordinates.LON_LAT);
-						outp.println("bounds-set "+koords);
-						outp.println("zoom-bounds");
-						if ( path.indexOf(':') == 1) {
-							outp.print("export-bitmap file=" + "\"" + path + imagename + imagetype + "\"");
-						}
-						else {
-							outp.print("export-bitmap file=" + path + imagename + imagetype);
-						}
-						outp.print(" bounds="+ koords);
-						String pxSize = " width="+pixelsize.x + " height="+pixelsize.y;						
-						outp.print(pxSize);
-						outp.println(" kml=false");
-						outp.close();
-						// executing the generated script
-						if (mapProgram.indexOf(':') == 1) {
-							mapProgramParams = "-exitafter " + "\"" + scriptFileName + "\"";
-						}
-						else {
-							mapProgramParams = "-exitafter " + scriptFileName;								
-						}
-						Vm.exec(mapProgram, mapProgramParams, 0, true);
-						// preparation for generating wfl from the ozi map-file
-						Vector GCPs = map2wfl(path+imagename);
-						mio.evalGCP(GCPs, pixelsize.x, pixelsize.y);
-						// can not supress genaration of pgw,jgw-file
-						File pgwFile = new File(path + imagename + ".pgw"); // seems to bee for png
-						pgwFile.delete();
-						File jgwFile = new File(path + imagename + ".jgw"); // seems to bee for jpg
-						jgwFile.delete();
+					String mapProgramPath = wms.versionUrlPart+"/";
+					mapProgramPath = mapProgramPath.replace('/', FileBase.separatorChar);
+					String mapProgram = mapProgramPath+wms.MainUrl;
+					File f=new FileBugfix(mapProgram);
+					if (!f.exists() || !f.canRead()) {
+						MessageBox mb=new MessageBox(MyLocale.getMsg(321,"Error"),MyLocale.getMsg(1834,"Please enter the correct path to Kosmos.Console.exe into the wms-file."),ewe.ui.MessageBox.OKB);
+						mb.execute();
+						return;
 					}
-				}
-			}			
+					
+					String mapProgramParams = "";
+					
+					if (wms.requestUrlPart.equalsIgnoreCase("Kosmos")) {					
+						// minx miny maxx maxy + pixelsize.x
+						mapProgramParams="bitmapgen" +
+							" \""+FileBase.getProgramDirectory().replace('/',File.separatorChar)+"\\"+wms.serviceTypeUrlPart+"\""+
+							" \""+path.replace('/', File.separatorChar)+imagename+imagetype+"\""+
+							" -mb " +
+							buttomleft.toString(TransformCoordinates.LAT_LON).replace(',',' ') + " " +
+							topright.toString(TransformCoordinates.LAT_LON).replace(',',' ') +
+							" -w "+pixelsize.x;				
+						Vm.exec(mapProgram, mapProgramParams, 0, true);				
+					}
+					else {						
+						if (wms.requestUrlPart.equalsIgnoreCase("Maperitive")) {
+							// Maperitive runs on Windows and Linux
+							// generating scriptfile for Maperitive from wmsfile
+							String cwPath = FileBase.getProgramDirectory().replace('/',FileBase.separatorChar) + FileBase.separatorChar;
+							String scriptFileName = cwPath + "maperitive.script";
+							
+							PrintWriter outp =  new PrintWriter(new BufferedWriter(new FileWriter(scriptFileName)));
+							outp.println("use-ruleset alias=default");
+							outp.println("clear-map");
+
+							if (wms.serviceTypeUrlPart.equals("")) {
+								outp.println("add-web-map");
+							}
+							else {
+								outp.println("add-web-map provider=" + wms.serviceTypeUrlPart);
+							}
+							
+							if (!wms.stylesUrlPart.equals("")) {
+								String myrules = mapProgramPath + wms.stylesUrlPart.replace('/',FileBase.separatorChar);
+								outp.println("use-ruleset location=" + myrules);
+								// outp.println("apply-ruleset");
+							}
+							if (!wms.layersUrlPart.equals("")) {
+								outp.println("clear-map");
+								outp.println("load-source " + mapProgramPath + wms.layersUrlPart.replace('/',FileBase.separatorChar));
+								// implicit does apply-ruleset
+							}
+							
+							String koords = buttomleft.toString(TransformCoordinates.LON_LAT) + "," + topright.toString(TransformCoordinates.LON_LAT);
+							outp.println("bounds-set "+koords);
+							outp.println("zoom-bounds");
+							if ( path.indexOf(':') == 1) {
+								outp.print("export-bitmap file=" + "\"" + fName + "\"");
+							}
+							else {
+								outp.print("export-bitmap file=" + fName);
+							}
+							outp.print(" bounds="+ koords);
+							String pxSize = " width="+pixelsize.x + " height="+pixelsize.y;						
+							outp.print(pxSize);
+							outp.println(" kml=false");
+							outp.close();
+							// executing the generated script
+							if (mapProgram.indexOf(':') == 1) {
+								mapProgramParams = "-exitafter " + "\"" + scriptFileName + "\"";
+							}
+							else {
+								mapProgramParams = "-exitafter " + scriptFileName;								
+							}
+							Vm.exec(mapProgram, mapProgramParams, 0, true);
+							// preparation for generating wfl from the ozi map-file
+							Vector GCPs = map2wfl(path+imagename);
+							mio.evalGCP(GCPs, pixelsize.x, pixelsize.y);
+							// can not supress genaration of pgw,jgw-file
+							FileBugfix pgwFile = new FileBugfix(path + imagename + ".pgw"); // seems to bee for png
+							pgwFile.delete();
+							FileBugfix jgwFile = new FileBugfix(path + imagename + ".jgw"); // seems to bee for jpg
+							jgwFile.delete();
+						}
+					}
+				}			
+			}
+			mio.saveWFL();
 		}
-		mio.saveWFL();
 	}
 
 	private Vector map2wfl(String pathAndImageName) {
