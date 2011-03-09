@@ -132,13 +132,13 @@ singleLogExStart   = ><strong><img src=
 singleLogExEnd     = <small><a\ href="
 # iconEx, nameTempEx, dateEx, singleLogEx werden auf einen singleLog angewendet
 iconExStart        = www.geocaching.com/images/icons/
-iconExEnd          = \ title='
+iconExEnd          = \ alt="
 nameTempExStart    = <a\ href='
 nameTempExEnd      = /a>
 # Name extrahiert aus nameTemp
 nameExStart        = >
 nameExEnd          = <
-dateExStart        = '\ />&nbsp;
+dateExStart        = "\ />&nbsp;
 dateExEnd          = \ by\ <a\ href='/profile/?guid=
 logExStart         = found)<br\ /><br\ />
 logExEnd           = <br\ /><br\ /><small><a\ href="
