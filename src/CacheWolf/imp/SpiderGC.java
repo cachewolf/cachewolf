@@ -37,7 +37,6 @@ import CacheWolf.Common;
 import CacheWolf.DateFormat;
 import CacheWolf.Extractor;
 import CacheWolf.Global;
-import CacheWolf.HttpConnection;
 import CacheWolf.ImageInfo;
 import CacheWolf.InfoBox;
 import CacheWolf.Log;
@@ -2614,8 +2613,7 @@ public class SpiderGC {
 		LogList reslts = chD.CacheLogs;
 		RexLogBlock.search(completeWebPage);
 		if (!RexLogBlock.didMatch()) {
-			pref.log("check blockRex in spider.def" 
-					+ Preferences.NEWLINE + completeWebPage);
+			pref.log("check blockRex in spider.def" + Preferences.NEWLINE + completeWebPage);
 		}
 		String LogBlock = RexLogBlock.stringMatched(1);
 		exSingleLog.setSource(LogBlock);
@@ -2636,7 +2634,8 @@ public class SpiderGC {
 			name = exName.findNext();
 			logText = exLog.findNext();
 			logId = exLogId.findNext();
-			String d = DateFormat.logdate2YMD(exDate.findNext());
+			String ed=exDate.findNext();
+			String d = DateFormat.logdate2YMD(ed);
 			// pref.log("Lognr:"+nLogs+"|"+icon+"|"+name+"-|-"+SafeXML.clean(pref.myAlias)+"|"+logId,null);
 			// if this log says this Cache is found by me
 			if ((icon.equals(icon_smile) || icon.equals(icon_camera) || icon.equals(icon_attended))	&&
