@@ -194,7 +194,7 @@ imgCommentExEnd    = <
 #--------------------------------------
 #Section2d: Additional waypoints
 #--------------------------------------
-wayBlockExStart    = <span\ id="ctl00_ContentBody_WaypointsInfo"\ style="font-weight:bold;">Additional\ Waypoints</span>
+wayBlockExStart    = <span\ id="ctl00_ContentBody_WaypointsInfo"
 wayBlockExEnd      = </table>
 nameRex            = &RefDS=1">(.*)</a>
 koordRex           = <td>\\s*([NSns]\ [0-9]{1,2}..[0-9]{1,2}.[0-9]{1,3}\ [EWew]\ [0-9]{1,3}..[0-9]{1,2}.[0-9]{1,3})&nbsp;\\s*</td>
