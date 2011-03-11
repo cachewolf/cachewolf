@@ -108,8 +108,8 @@ fetchAllLogs       = &log=y
 cacheUnavailable   = class="OldWarning"><li>This\ cache\ is\ temporarily\ unavailable
 cacheArchived      = class="OldWarning"><li>This\ cache\ has\ been\ archived
 premiumCachepage   = class="Warning">listing\ visible\ to\ Premium
-#latLonRex          = tBody_LatLon"\ style="font-weight:bold;">((?s).*?)</span>
-latLonRex          = tBody_LatLon"><b>((?s).*?)</b></span>
+latLonRex          = tBody_LatLon"\ style="font-weight:bold;">((?s).*?)</span>
+#latLonRex          = tBody_LatLon"><b>((?s).*?)</b></span>
 shortDescRex       = tBody_ShortDescription">((?s).*?)</span>
 longDescRex        = tBody_LongDescription">((?s).*?)<td\ valign="top"\ width="10%">\\s*&nbsp;\\s*</td
 cacheNameRex       = tBody_CacheName">((?s).*?)</span>
@@ -132,13 +132,13 @@ singleLogExStart   = ><strong><img src=
 singleLogExEnd     = <small><a\ href="
 # iconEx, nameTempEx, dateEx, singleLogEx werden auf einen singleLog angewendet
 iconExStart        = www.geocaching.com/images/icons/
-iconExEnd          = \ title='
+iconExEnd          = \ alt="
 nameTempExStart    = <a\ href='
 nameTempExEnd      = /a>
 # Name extrahiert aus nameTemp
 nameExStart        = >
 nameExEnd          = <
-dateExStart        = '\ />&nbsp;
+dateExStart        = "\ />&nbsp;
 dateExEnd          = \ by\ <a\ href='/profile/?guid=
 logExStart         = found)<br\ /><br\ />
 logExEnd           = <br\ /><br\ /><small><a\ href="
@@ -194,7 +194,7 @@ imgCommentExEnd    = <
 #--------------------------------------
 #Section2d: Additional waypoints
 #--------------------------------------
-wayBlockExStart    = <span\ id="ctl00_ContentBody_WaypointsInfo"\ style="font-weight:bold;">Additional\ Waypoints</span>
+wayBlockExStart    = <span\ id="ctl00_ContentBody_WaypointsInfo"
 wayBlockExEnd      = </table>
 nameRex            = &RefDS=1">(.*)</a>
 koordRex           = <td>\\s*([NSns]\ [0-9]{1,2}..[0-9]{1,2}.[0-9]{1,3}\ [EWew]\ [0-9]{1,3}..[0-9]{1,2}.[0-9]{1,3})&nbsp;\\s*</td>
