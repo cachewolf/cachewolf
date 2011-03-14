@@ -268,13 +268,14 @@ public final class CacheType {
 	 */
 	public static byte gpxType2CwType(final String gpxType) throws IllegalArgumentException {
 		for (byte i=0; i<cTypRef.length; i++) {
-			if (cTypRef[i]._gpxWptTypeTag.equals(gpxType)) {return cTypRef[i]._cwMappedCType;};
+			if (cTypRef[i]._gpxWptTypeTag.equalsIgnoreCase(gpxType)) {return cTypRef[i]._cwMappedCType;};
 		}
 		for (byte i=0; i<cTypRef.length; i++) {
-			if (cTypRef[i]._gpxWptGCextensionTypTag.equals(gpxType)) {return cTypRef[i]._cwMappedCType;};
+			if (cTypRef[i]._gpxWptGCextensionTypTag.equalsIgnoreCase(gpxType)) {return cTypRef[i]._cwMappedCType;};
 		}
+		String lowerCaseGPXType = gpxType.toLowerCase();
 		for (byte i=0; i<cTypRef.length; i++) {
-			if (cTypRef[i]._gpxAlternativeWptTypTags.indexOf(gpxType) != -1) {
+			if (cTypRef[i]._gpxAlternativeWptTypTags.toLowerCase().indexOf(lowerCaseGPXType) != -1) {
 				return cTypRef[i]._cwMappedCType;
 			};
 		}
