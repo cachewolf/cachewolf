@@ -763,14 +763,16 @@ public class GpxExportNg {
 		for (int i = 0; i < ch.getCacheDetails(true).attributes.count(); i++) {
 			// <groundspeak:attribute id="X" inc="Y">text für X</groundspeak:attribute>
 			attrib=ch.getCacheDetails(true).attributes.getAttribute(i);
-			ret.append("        <groundspeak:attribute id=\"").
-			append(attrib.getGCId()).
-			append("\" inc=\"").
-			append(attrib.getInc()).
-			append("\">").
-			append(attrib.getGCText()).
-			append("</groundspeak:attribute>").
-			append(newLine);
+			if (attrib.getGCId().length() > 0) {
+				ret.append("        <groundspeak:attribute id=\"").
+				append(attrib.getGCId()).
+				append("\" inc=\"").
+				append(attrib.getInc()).
+				append("\">").
+				append(attrib.getGCText()).
+				append("</groundspeak:attribute>").
+				append(newLine);
+			}
 		}
 		return ret.toString();
 	}
