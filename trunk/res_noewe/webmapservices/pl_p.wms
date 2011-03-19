@@ -14,7 +14,7 @@ LayersUrlPart:     LAYERS=ORTOFOTO
 StylesUrlPart:     STYLES=
 ImageFormatUrlPart:FORMAT=image/jpeg
 BoundingBoxTopLeftWGS84: N 54.8793 E 10.0579
-BoundingBoxButtomRightWGS84: N 48.3726 E 28.4862
+BoundingBoxBottomRightWGS84: N 48.3726 E 28.4862
 #BBox_Center: N 51.6259298143288 E 19.2720480387164
 MinScale:   0
 MaxScale:   24

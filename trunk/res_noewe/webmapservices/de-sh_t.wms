@@ -121,7 +121,7 @@ LayersUrlPart:     LAYERS=0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,2
 StylesUrlPart:     STYLES=
 ImageFormatUrlPart:FORMAT=image/png
 BoundingBoxTopLeftWGS84: N 55.08 E 8.156
-BoundingBoxButtomRightWGS84: N 53.34 E 11.33
+BoundingBoxBottomRightWGS84: N 53.34 E 11.33
 MinScale:   0
 MaxScale:   150
 RecommendedScale:    1 2.5 5 10 16

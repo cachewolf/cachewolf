@@ -28,7 +28,7 @@ LayersUrlPart:     LAYERS=navigation_f
 StylesUrlPart:     STYLES=
 ImageFormatUrlPart:FORMAT=image/jpeg
 BoundingBoxTopLeftWGS84: N 54.5549 E 5.8986
-BoundingBoxButtomRightWGS84: N 50.6539 E 12.6239
+BoundingBoxBottomRightWGS84: N 50.6539 E 12.6239
 #BBox_Mitte: N 52.6044 E 9.261245
 MinScale:   0.7
 MaxScale:   14000

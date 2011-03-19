@@ -32,7 +32,7 @@ LayersUrlPart:   LAYERS=S/W-Orthofoto,Orientierungskarte,Geonamen,Autobahn,Lande
 StylesUrlPart:   STYLES=
 ImageFormatUrlPart:   FORMAT=image/png
 BoundingBoxTopLeftWGS84:   N 49.027050  E 9.529250
-BoundingBoxButtomRightWGS84:   N 46.357433 E 17.202733
+BoundingBoxBottomRightWGS84:   N 46.357433 E 17.202733
 MinScale:   0
 MaxScale:   45
 RecommendedScale:   1

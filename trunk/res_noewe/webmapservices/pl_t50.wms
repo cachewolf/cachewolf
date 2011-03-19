@@ -37,7 +37,7 @@ ImageFormatUrlPart:FORMAT=image/jpeg
 
 # pfeffer entered here the bounding box of Poland
 BoundingBoxTopLeftWGS84: N 54.84 E 14.121686
-BoundingBoxButtomRightWGS84: N 48.9996 E 24.1488
+BoundingBoxBottomRightWGS84: N 48.9996 E 24.1488
 MinScale:   1
 MaxScale:   11
 RecommendedScale:   5

@@ -21,7 +21,7 @@ LayersUrlPart:   LAYERS=freedop%3Adop
 StylesUrlPart:   STYLES=
 ImageFormatUrlPart:   FORMAT=image/jpeg
 BoundingBoxTopLeftWGS84: N 51.0000 E 6.0000
-BoundingBoxButtomRightWGS84: N 48.8000 E 8.7000
+BoundingBoxBottomRightWGS84: N 48.8000 E 8.7000
 MinScale:   0.5
 MaxScale:   24.95
 RecommendedScale:	0.4

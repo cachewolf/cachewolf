@@ -19,7 +19,7 @@ StylesUrlPart:
 ImageFormatUrlPart:FORMAT=image/png
 # BBox the osm-file covers
 BoundingBoxTopLeftWGS84: N 90.0000 W 180.0000
-BoundingBoxButtomRightWGS84: S 90.0000 E 180.0000
+BoundingBoxBottomRightWGS84: S 90.0000 E 180.0000
 MinScale:   0
 MaxScale:   1000
 RecommendedScale:   5
