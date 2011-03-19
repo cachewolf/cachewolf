@@ -15,7 +15,7 @@ LayersUrlPart:     LAYERS=DOQ
 StylesUrlPart:     STYLES=
 ImageFormatUrlPart:FORMAT=image/jpeg
 BoundingBoxTopLeftWGS84: N 71.5500 W 168.6700
-BoundingBoxButtomRightWGS84: N 17.8400 W 65.1500
+BoundingBoxBottomRightWGS84: N 17.8400 W 65.1500
 MinScale:   0
 MaxScale:   45
 RecommendedScale:   5

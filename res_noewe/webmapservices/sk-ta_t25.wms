@@ -84,14 +84,14 @@ StylesUrlPart:     STYLES=
 ImageFormatUrlPart:FORMAT=image/png
 #Server
 #BoundingBoxTopLeftWGS84: N 51.2574 E 7.8974
-#BoundingBoxButtomRightWGS84: N 43.9529 E 24.7863
+#BoundingBoxBottomRightWGS84: N 43.9529 E 24.7863
 #BBox_Mitte: N 47.60515 E 16.341865
 #real
 #BoundingBoxTopLeftWGS84: N 49.85157 E 13.44451
-#BoundingBoxButtomRightWGS84: N 46.72608 E 18.08012
+#BoundingBoxBottomRightWGS84: N 46.72608 E 18.08012
 #SK Tyrnauer
 BoundingBoxTopLeftWGS84: N 48.882582 E 16.927528
-BoundingBoxButtomRightWGS84: N 47.75606 E 18.08583
+BoundingBoxBottomRightWGS84: N 47.75606 E 18.08583
 #MinScale:   1
 #MaxScale:   26
 RecommendedScale:   2.5

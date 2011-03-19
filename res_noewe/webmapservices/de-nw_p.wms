@@ -13,7 +13,7 @@ LayersUrlPart:     LAYERS=0
 StylesUrlPart:     STYLES=
 ImageFormatUrlPart:FORMAT=image/jpeg
 BoundingBoxTopLeftWGS84: N 52.5391 E 5.7591
-BoundingBoxButtomRightWGS84: N 50.3040 E 9.4718
+BoundingBoxBottomRightWGS84: N 50.3040 E 9.4718
 #BBox_Mitte: N 51.421555 E 7.6154425
 MinScale:   0
 MaxScale:   1000

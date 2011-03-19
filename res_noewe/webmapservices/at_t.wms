@@ -14,7 +14,7 @@ LayersUrlPart:   LAYERS=koogle
 StylesUrlPart:   STYLES=
 ImageFormatUrlPart:   FORMAT=image/png
 BoundingBoxTopLeftWGS84:   N 49.027050  E 9.529250
-BoundingBoxButtomRightWGS84:   N 46.357433 E 17.202733
+BoundingBoxBottomRightWGS84:   N 46.357433 E 17.202733
 MinScale:   1
 MaxScale:   20
 RecommendedScale:   1 2 5 10

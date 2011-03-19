@@ -53,7 +53,7 @@ LayersUrlPart:     LAYERS=osmwms
 StylesUrlPart:     STYLES=
 ImageFormatUrlPart:FORMAT=image/png
 BoundingBoxTopLeftWGS84: N 55.1087 E 5.2905
-BoundingBoxButtomRightWGS84: N 47.1503 E 15.3245
+BoundingBoxBottomRightWGS84: N 47.1503 E 15.3245
 #BBox_Mitte: N 51.1295 E 10.30751
 #MinScale:   0
 #MaxScale:   45

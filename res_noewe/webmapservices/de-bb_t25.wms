@@ -20,7 +20,7 @@ LayersUrlPart:     LAYERS=siedlung,vegetation,gewaesser,transport
 StylesUrlPart:     STYLES=2
 ImageFormatUrlPart:FORMAT=image/png
 BoundingBoxTopLeftWGS84: N 53.5000 E 11.7000
-BoundingBoxButtomRightWGS84: N 51.3000 E 14.8000
+BoundingBoxBottomRightWGS84: N 51.3000 E 14.8000
 MinScale:   0.1
 MaxScale:   25
 RecommendedScale:   2.5
