@@ -31,37 +31,37 @@ public class Area {
 	 public final static int NOT_ON_EDGE = -1;
 	 public final static int AT_TOP_EDGE = 1;
 	 public final static int AT_RIGHT_EDGE = 2;
-	 public final static int AT_BUTTOM_EDGE = 3;
+	 public final static int AT_BOTTOM_EDGE = 3;
 	 public final static int AT_LEFT_EDGE = 4;
 	 public static double edgeTolerance = 3 * 360/40000000; // approx 3m will be seen as the same
 */
 	 public CWPoint topleft;
-	 public CWPoint buttomright;
+	 public CWPoint bottomright;
 	 
 	 public Area() {
 		 topleft = new CWPoint();
-		 buttomright = new CWPoint();
+		 bottomright = new CWPoint();
 	 }
 
 	 public Area(TrackPoint tl, TrackPoint br){
 		 topleft = new CWPoint(tl);
-		 buttomright = new CWPoint(br);
+		 bottomright = new CWPoint(br);
 	 }
 	 
 	 public Area(CWPoint tl, CWPoint br) {
 		 topleft = tl;
-		 buttomright = br;
+		 bottomright = br;
 	 }
 
 	 public final boolean isInBound(TrackPoint p) {
 		 if (topleft.latDec >= p.latDec && topleft.lonDec <= p.lonDec 
-				 && buttomright.latDec <= p.latDec && buttomright.lonDec >= p.lonDec) return true;
+				 && bottomright.latDec <= p.latDec && bottomright.lonDec >= p.lonDec) return true;
 		 else return false;
 	 }
 		
 	 public final boolean isInBound(double lat, double lon) {
 		 if (topleft.latDec >= lat && topleft.lonDec <= lon
-				 && buttomright.latDec <= lat && buttomright.lonDec >= lon) return true;
+				 && bottomright.latDec <= lat && bottomright.lonDec >= lon) return true;
 		 else return false;
 	 }
 
@@ -71,24 +71,24 @@ public class Area {
 	 * @return
 	 */
 	 public final boolean isInBound(Area a) {
-		 return (isInBound(a.topleft) && isInBound(a.buttomright));
+		 return (isInBound(a.topleft) && isInBound(a.bottomright));
 	 }
 	 
 	 
 	 public final boolean isOverlapping(Area a) {
 		 return ! ( // test if not overlapping and invert the result, see http://www.geoclub.de/viewtopic.php?f=40&t=38364&p=607033#p607033
-				    this.buttomright.latDec > a.topleft.latDec
-				 || this.topleft.latDec     < a.buttomright.latDec
-				 || this.buttomright.lonDec < a.topleft.lonDec
-				 || this.topleft.lonDec     > a.buttomright.lonDec);
+				    this.bottomright.latDec > a.topleft.latDec
+				 || this.topleft.latDec     < a.bottomright.latDec
+				 || this.bottomright.lonDec < a.topleft.lonDec
+				 || this.topleft.lonDec     > a.bottomright.lonDec);
 	 }
 	 
 	 /* not used at the moment
 	  public boolean equals(Area a) {
 		 if(java.lang.Math.abs(topleft.latDec - a.topleft.latDec) < edgeTolerance 
 				 && java.lang.Math.abs(topleft.lonDec - a.topleft.lonDec) < edgeTolerance
-				 && java.lang.Math.abs(buttomright.latDec - a.buttomright.latDec) < edgeTolerance
-				 && java.lang.Math.abs(buttomright.lonDec - a.buttomright.lonDec) < edgeTolerance )
+				 && java.lang.Math.abs(bottomright.latDec - a.bottomright.latDec) < edgeTolerance
+				 && java.lang.Math.abs(bottomright.lonDec - a.bottomright.lonDec) < edgeTolerance )
 			 return true;
 		 else return false;
 	 }
@@ -98,19 +98,19 @@ public class Area {
 	 public int getEdge(CWPoint tl, CWPoint br) {
 		 if (java.lang.Math.abs(topleft.latDec - br.latDec) < edgeTolerance 
 				 && java.lang.Math.abs(topleft.lonDec - tl.lonDec) < edgeTolerance 
-				 && java.lang.Math.abs(buttomright.lonDec - br.lonDec) < edgeTolerance)
+				 && java.lang.Math.abs(bottomright.lonDec - br.lonDec) < edgeTolerance)
 			 return AT_TOP_EDGE;
 			 if (java.lang.Math.abs(topleft.latDec - tl.latDec) < edgeTolerance 
-					 && java.lang.Math.abs(buttomright.lonDec - tl.lonDec) < edgeTolerance 
-					 && java.lang.Math.abs(buttomright.latDec - br.latDec) < edgeTolerance)
+					 && java.lang.Math.abs(bottomright.lonDec - tl.lonDec) < edgeTolerance 
+					 && java.lang.Math.abs(bottomright.latDec - br.latDec) < edgeTolerance)
 				 return AT_RIGHT_EDGE;
 			 if (java.lang.Math.abs(topleft.lonDec - tl.lonDec) < edgeTolerance 
-					 && java.lang.Math.abs(buttomright.latDec - tl.latDec) < edgeTolerance 
-					 && java.lang.Math.abs(buttomright.lonDec - br.lonDec) < edgeTolerance)
-				 return AT_BUTTOM_EDGE;
+					 && java.lang.Math.abs(bottomright.latDec - tl.latDec) < edgeTolerance 
+					 && java.lang.Math.abs(bottomright.lonDec - br.lonDec) < edgeTolerance)
+				 return AT_BOTTOM_EDGE;
 			 if (java.lang.Math.abs(topleft.latDec - tl.latDec) < edgeTolerance 
 					 && java.lang.Math.abs(topleft.lonDec - br.lonDec) < edgeTolerance 
-					 && java.lang.Math.abs(buttomright.latDec - br.latDec) < edgeTolerance)
+					 && java.lang.Math.abs(bottomright.latDec - br.latDec) < edgeTolerance)
 				 return AT_LEFT_EDGE;
 			 return NOT_ON_EDGE;
 	 }
@@ -122,7 +122,7 @@ public class Area {
 	  */
 	 public final String getEasyFindString() {
 		 String ul = getEasyFindString(topleft, 30);
-		 String br = getEasyFindString(buttomright, 30);
+		 String br = getEasyFindString(bottomright, 30);
 		 int i;
 		 for (i=0; i<br.length(); i++ ) {
 			 if (ul.charAt(i) != br.charAt(i)) break;
@@ -158,10 +158,10 @@ public class Area {
 	 }
 	 
 	 public String toString() {
-		 return topleft.toString() + ", " + buttomright.toString();
+		 return topleft.toString() + ", " + bottomright.toString();
 	 }
 	 
 	 public final CWPoint getCenter() {
-		 return new CWPoint((topleft.latDec + buttomright.latDec)/2, (topleft.lonDec + buttomright.lonDec)/2);
+		 return new CWPoint((topleft.latDec + bottomright.latDec)/2, (topleft.lonDec + bottomright.lonDec)/2);
 	 }
 }

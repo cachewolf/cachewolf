@@ -328,7 +328,7 @@ public class MapLoaderGui extends Form {
 				progressBox.close(0);
 				return;
 			}
-			mapLoader.setTiles(surArea.topleft, surArea.buttomright, scale, size, overlapping );
+			mapLoader.setTiles(surArea.topleft, surArea.bottomright, scale, size, overlapping );
 		} else
 		{ // calculate from centre point an radius
 			mapLoader.setTiles(center, radius * 1000, scale, size, overlapping);
