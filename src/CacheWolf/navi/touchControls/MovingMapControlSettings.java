@@ -84,7 +84,7 @@ public class MovingMapControlSettings extends MinML  implements ICommandListener
 	public static final String BUTTON_ATTR_FROM_BOTTOM = "fromBottom";
 	/**
 	 * define when this button is visible. Contains a list of rolenames. Delimiter is '+'. If the role name starts with
-	 * '!' the buttom is shown if this role is inactive [(!)String+(!)String...] Example visibleIf="menu+!zoom" button
+	 * '!' the button is shown if this role is inactive [(!)String+(!)String...] Example visibleIf="menu+!zoom" button
 	 * is visible if role "menu" is active and role "zoom" is inactive.
 	 */
 	public static final String BUTTON_ATTR_VISIBILITY = "visibleIf";

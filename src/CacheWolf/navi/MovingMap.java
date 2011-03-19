@@ -1201,10 +1201,10 @@ public final class MovingMap extends Form implements ICommandListener {
 			return;
 		}
 		//A map was found, but it does not contain the previously calculated center
-		if (!(bestMap.buttomright.latDec <= centerPoint.latDec && centerPoint.latDec <= bestMap.topleft.latDec)){
+		if (!(bestMap.bottomright.latDec <= centerPoint.latDec && centerPoint.latDec <= bestMap.topleft.latDec)){
 			return;
 		}
-		if (!(bestMap.topleft.lonDec <= centerPoint.lonDec && centerPoint.lonDec <= bestMap.buttomright.lonDec)){
+		if (!(bestMap.topleft.lonDec <= centerPoint.lonDec && centerPoint.lonDec <= bestMap.bottomright.lonDec)){
 			return;
 		}
 		//Pfeffer got an NPE in the following if-statement. I think the image-filename has got not the correct extension.
@@ -1223,7 +1223,7 @@ public final class MovingMap extends Form implements ICommandListener {
 				Point mapposint = bestMap.calcMapXY(posCircle.where);
 				mapPos.x = posCircleX - mapposint.x;
 				mapPos.y = posCircleY - mapposint.y;
-				Point mapDimension = bestMap.calcMapXY(bestMap.buttomright);
+				Point mapDimension = bestMap.calcMapXY(bestMap.bottomright);
 				blackArea = new Rect (mapPos.x, mapPos.y, mapDimension.x, mapDimension.y);
 				//Are there any white areas left?
 				calculateRectangles(blackArea, r, rectangles);
@@ -1582,7 +1582,7 @@ public final class MovingMap extends Form implements ICommandListener {
 			(new MessageBox(MyLocale.getMsg(4207, "Error"), MyLocale.getMsg(4215, "Keine  Caches mit H�ckchen ausgew�hlt"), FormBase.OKB)).execute();
 			return;
 		}
-		MapInfoObject newmap = maps.getMapForArea(sur.topleft, sur.buttomright);
+		MapInfoObject newmap = maps.getMapForArea(sur.topleft, sur.bottomright);
 		if (newmap == null ) { // no map that includs all caches is available -> load map with lowest resolution
 			Object [] s = getRectForMapChange(posCircle.where);
 			CWPoint cll = (CWPoint) s[0];
@@ -1594,8 +1594,8 @@ public final class MovingMap extends Form implements ICommandListener {
 				Object [] s = getRectForMapChange(posCircle.where);
 			//	CWPoint cll = (CWPoint) s[0];
 				Rect screen = (Rect) s[1];
-				float neededscalex = (float) (sur.topleft.getDistance(sur.topleft.latDec, sur.buttomright.lonDec) * 1000 / (screen.width-15)); // 15 for the size of the cache image
-				float neededscaley = (float) (sur.topleft.getDistance(sur.buttomright.latDec, sur.topleft.lonDec) * 1000 / (screen.height-15)); // 15 for the size of the cache image
+				float neededscalex = (float) (sur.topleft.getDistance(sur.topleft.latDec, sur.bottomright.lonDec) * 1000 / (screen.width-15)); // 15 for the size of the cache image
+				float neededscaley = (float) (sur.topleft.getDistance(sur.bottomright.latDec, sur.topleft.lonDec) * 1000 / (screen.height-15)); // 15 for the size of the cache image
 				newmap = ((MapListEntry)maps.elementAt(maps.getCount() - 4)).getMap(); // beware: "-4" only works if the empty maps were added last see MapsList.addEmptyMaps
 				newmap.zoom(newmap.scale * newmap.zoomFactor / (neededscalex > neededscaley ? neededscalex : neededscaley), 0, 0);
 				forceMapLoad = true;

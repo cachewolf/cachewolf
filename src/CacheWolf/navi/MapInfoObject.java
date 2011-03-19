@@ -83,7 +83,7 @@ public class MapInfoObject extends Area {
 	}
 
 	public MapInfoObject(MapInfoObject map) {
-		super (map.topleft, map.buttomright);
+		super (map.topleft, map.bottomright);
 		mapName = map.mapName;
 		affine[0] = map.affine[0];
 		affine[1] = map.affine[1];
@@ -115,8 +115,8 @@ public class MapInfoObject extends Area {
 		affine[3]=0; //y2lon
 		topleft.latDec=1; //top
 		topleft.lonDec=0; //left
-		buttomright.latDec = 0; //buttom
-		buttomright.lonDec = 1; //right
+		bottomright.latDec = 0; //bottom
+		bottomright.lonDec = 1; //right
 		affineTopleft.set(topleft);
 		doCalculations();
 		origAffineUpperLeft = new CWPoint(affineTopleft);
@@ -140,8 +140,8 @@ public class MapInfoObject extends Area {
 		topleft.latDec=center.latDec + hight / 2 *pixel2deg; //top
 		topleft.lonDec=center.lonDec - width / 2 *pixel2deghorizontal; //left
 		affineTopleft.set(topleft);
-		buttomright.latDec = center.latDec - hight / 2 *pixel2deg; //buttom
-		buttomright.lonDec = center.lonDec + width / 2 *pixel2deghorizontal; //right
+		bottomright.latDec = center.latDec - hight / 2 *pixel2deg; //bottom
+		bottomright.lonDec = center.lonDec + width / 2 *pixel2deghorizontal; //right
 		fileNameWFL = name;
 		origAffineUpperLeft = new CWPoint(affineTopleft);
 		doCalculations();
@@ -198,9 +198,9 @@ public class MapInfoObject extends Area {
 			line = in.readLine();
 			affineTopleft.lonDec = Common.parseDoubleException(line);
 			line = in.readLine();
-			buttomright.latDec = Common.parseDoubleException(line);
+			bottomright.latDec = Common.parseDoubleException(line);
 			line = in.readLine();
-			buttomright.lonDec = Common.parseDoubleException(line);
+			bottomright.lonDec = Common.parseDoubleException(line);
 			line = in.readLine(); // readLine returns null, if End of File reached
 			if (line != null) coordTrans = Common.parseInt(line);
 			else coordTrans = 0;
@@ -208,7 +208,7 @@ public class MapInfoObject extends Area {
 //			fileName = ""; //mapsPath + thisMap + ".png";
 			mapName = thisMap;
 			in.close();
-			if( !buttomright.isValid() ) {
+			if( !bottomright.isValid() ) {
 				affine[0] = 0; affine[1] = 0; affine[2] = 0; affine[3] = 0; 
 				topleft.makeInvalid();
 				throw (new IOException(MyLocale.getMsg(4301, "Lat/Lon out of range while reading ")+mapsPath + thisMap + ".wfl"));
@@ -279,7 +279,7 @@ public class MapInfoObject extends Area {
 		affine[3] = beta.matrix[2][0];
 		affineTopleft.lonDec = beta.matrix[0][0];
 		coordTrans = epsg_code;
-		buttomright = calcLatLon(imageWidth, imageHeight);
+		bottomright = calcLatLon(imageWidth, imageHeight);
 		doCalculations();
 	}
 
@@ -291,8 +291,8 @@ public class MapInfoObject extends Area {
 	private void doCalculations() throws ArithmeticException {
 		try {
 			topleft.set(calcLatLon(0, 0));
-			center.set((buttomright.latDec + topleft.latDec)/2,(buttomright.lonDec + topleft.lonDec)/2);
-			sizeKm = java.lang.Math.abs((float)center.getDistance(buttomright)) *2;
+			center.set((bottomright.latDec + topleft.latDec)/2,(bottomright.lonDec + topleft.lonDec)/2);
+			sizeKm = java.lang.Math.abs((float)center.getDistance(bottomright)) *2;
 
 			//calculate reverse affine
 			double nenner=(-affine[1]*affine[2]+affine[0]*affine[3]);
@@ -338,8 +338,8 @@ public class MapInfoObject extends Area {
 		towriteB.append(Convert.toString(affine[3])).append("\n");
 		towriteB.append(Convert.toString(affineTopleft.latDec)).append("\n");
 		towriteB.append(Convert.toString(affineTopleft.lonDec)).append("\n");
-		towriteB.append(Convert.toString(buttomright.latDec)).append("\n");
-		towriteB.append(Convert.toString(buttomright.lonDec)).append("\n");
+		towriteB.append(Convert.toString(bottomright.latDec)).append("\n");
+		towriteB.append(Convert.toString(bottomright.lonDec)).append("\n");
 		towriteB.append(((coordTrans == 0 || coordTrans == TransformCoordinates.EPSG_WGS84) ? "" : Convert.toString(coordTrans)+"\n"));
 		String towrite = towriteB.toString();
 		if (digSep.equals(",")) towrite=towrite.replace(',', '.');
