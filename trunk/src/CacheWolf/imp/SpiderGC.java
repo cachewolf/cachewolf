@@ -418,7 +418,7 @@ public class SpiderGC {
 			if (nextPos != null) {
 				sq = getSquare(startPos, lateralDistance);
 				getCaches(sq.topleft.latDec, sq.topleft.lonDec,
-						sq.buttomright.latDec, sq.buttomright.lonDec, complete);
+						sq.bottomright.latDec, sq.bottomright.lonDec, complete);
 				// pref.log("next WP = " + startPos.toString(), null);
 
 				double degrees = startPos.getBearing(nextPos);
@@ -431,7 +431,7 @@ public class SpiderGC {
 					origin = nextCheckPoint;
 					sq = getSquare(origin, lateralDistance);
 					getCaches(sq.topleft.latDec, sq.topleft.lonDec,
-							sq.buttomright.latDec, sq.buttomright.lonDec, complete);
+							sq.bottomright.latDec, sq.bottomright.lonDec, complete);
 					// pref.log("next CP = " + origin.toString(), null);
 					if (infB.isClosed) {
 						break;
@@ -444,8 +444,8 @@ public class SpiderGC {
 			}
 		}
 		sq = getSquare(startPos, lateralDistance);
-		getCaches(sq.topleft.latDec, sq.topleft.lonDec, sq.buttomright.latDec,
-				sq.buttomright.lonDec, complete);
+		getCaches(sq.topleft.latDec, sq.topleft.lonDec, sq.bottomright.latDec,
+				sq.bottomright.lonDec, complete);
 		// pref.log("last WP = " + startPos.toString(), null);
 		if (infB.isClosed) {
 			Vm.showWait(false);
@@ -534,10 +534,10 @@ public class SpiderGC {
 		ret.topleft.shift(halfSideLength, north);
 		ret.topleft.shift(halfSideLength, west);
 
-		ret.buttomright.latDec = centre.latDec;
-		ret.buttomright.lonDec = centre.lonDec;
-		ret.buttomright.shift(halfSideLength, south);
-		ret.buttomright.shift(halfSideLength, east);
+		ret.bottomright.latDec = centre.latDec;
+		ret.bottomright.lonDec = centre.lonDec;
+		ret.bottomright.shift(halfSideLength, south);
+		ret.bottomright.shift(halfSideLength, east);
 
 		return ret;
 	}
@@ -581,8 +581,8 @@ public class SpiderGC {
 		num_added = 0;
 
 		Area sq = getSquare(origin, halfSideLength);
-		getCaches(sq.topleft.latDec, sq.topleft.lonDec, sq.buttomright.latDec,
-				sq.buttomright.lonDec, false);
+		getCaches(sq.topleft.latDec, sq.topleft.lonDec, sq.bottomright.latDec,
+				sq.bottomright.lonDec, false);
 
 		if (!infB.isClosed)
 			infB.close(0);

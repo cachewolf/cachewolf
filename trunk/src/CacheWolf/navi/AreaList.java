@@ -38,28 +38,28 @@ package CacheWolf.navi;
 /*
 	 public AreaList(int s) {super(s);}
 
-	 public void addArea(CWPoint topleft, CWPoint buttomright) {
+	 public void addArea(CWPoint topleft, CWPoint bottomright) {
 		 Area tp = getArea(topleft);
-		 if (tp != null && tp.isInBound(buttomright)) return; // area already completly in list
-		 int edge = tp.getEdge(topleft, buttomright);
+		 if (tp != null && tp.isInBound(bottomright)) return; // area already completly in list
+		 int edge = tp.getEdge(topleft, bottomright);
 		 switch (edge) {
 		 case Area.AT_TOP_EDGE: tp.topleft.latDec = topleft.latDec; break;
-		 case Area.AT_RIGHT_EDGE: tp.buttomright.lonDec = buttomright.lonDec; break;
-		 case Area.AT_BUTTOM_EDGE: tp.buttomright.latDec = buttomright.latDec; break;
+		 case Area.AT_RIGHT_EDGE: tp.bottomright.lonDec = bottomright.lonDec; break;
+		 case Area.AT_BOTTOM_EDGE: tp.bottomright.latDec = bottomright.latDec; break;
 		 case Area.AT_LEFT_EDGE: tp.topleft.lonDec = topleft.lonDec; break;
-		 case Area.NOT_ON_EDGE: addAreaUnconditionally(new Area(topleft, buttomright));
+		 case Area.NOT_ON_EDGE: addAreaUnconditionally(new Area(topleft, bottomright));
 		 }
 	 }
 
-	 public boolean AreaIsCovered(CWPoint topleft, CWPoint buttomright) {
+	 public boolean AreaIsCovered(CWPoint topleft, CWPoint bottomright) {
 		 Area tp = getArea(topleft);
-		 if (tp != null && tp.isInBound(buttomright)) return true; // area already completly in list
+		 if (tp != null && tp.isInBound(bottomright)) return true; // area already completly in list
 		 else return false;
 
 	 }
 
 	 public void addArea(Area a) {
-		 addArea(a.topleft, a.buttomright);
+		 addArea(a.topleft, a.bottomright);
 	 }
 
 	 public static AreaList joinAreas(AreaList al){
