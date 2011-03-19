@@ -27,7 +27,7 @@ LayersUrlPart:   LAYERS=Municipio,Ferrocarril,Localidad,Altimetria,Carretera,Rio
 StylesUrlPart:   STYLES=
 ImageFormatUrlPart:   FORMAT=image/png
 BoundingBoxTopLeftWGS84:   N 42.945  W 2.19
-BoundingBoxButtomRightWGS84:   N 39.813 E 0.805
+BoundingBoxBottomRightWGS84:   N 39.813 E 0.805
 MinScale:   0
 MaxScale:   72
 RecommendedScale:   5

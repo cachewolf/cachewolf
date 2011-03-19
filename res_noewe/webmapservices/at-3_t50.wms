@@ -39,7 +39,7 @@ LayersUrlPart:     LAYERS=oek50,flu_50t,see
 StylesUrlPart:     STYLES=
 ImageFormatUrlPart:FORMAT=image/png
 BoundingBoxTopLeftWGS84:   N 49.112935  E 14.243781
-BoundingBoxButtomRightWGS84:   N 47.297627 E 17.481360
+BoundingBoxBottomRightWGS84:   N 47.297627 E 17.481360
 MinScale:   0
 MaxScale:   45
 RecommendedScale:   5

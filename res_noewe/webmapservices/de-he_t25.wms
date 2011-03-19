@@ -16,7 +16,7 @@ LayersUrlPart:     LAYERS=adv_dtk25
 StylesUrlPart:     STYLES=
 ImageFormatUrlPart:FORMAT=image/png
 BoundingBoxTopLeftWGS84: N 51.6697 E 7.6991
-BoundingBoxButtomRightWGS84: N 49.3455 E 11.3986
+BoundingBoxBottomRightWGS84: N 49.3455 E 11.3986
 MinScale:   2
 MaxScale:   16
 RecommendedScale:    3 7 10

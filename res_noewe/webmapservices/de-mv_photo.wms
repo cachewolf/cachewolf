@@ -13,7 +13,7 @@ LayersUrlPart:	LAYERS=DOP
 StylesUrlPart:	STYLES=
 ImageFormatUrlPart:	FORMAT=image/jpeg
 BoundingBoxTopLeftWGS84:	N 54.8209 E 10.3394
-BoundingBoxButtomRightWGS84:	N 53.0392 E 14.477
+BoundingBoxBottomRightWGS84:	N 53.0392 E 14.477
 MinScale:	0.000374177136322228
 MaxScale:	37.4180878093591
 RecommendedScale:	0.4

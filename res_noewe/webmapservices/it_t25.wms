@@ -19,7 +19,7 @@ StylesUrlPart:     STYLES=
 # .jpg appears white in sun-vm --> use .gif, that works on both VMs 
 ImageFormatUrlPart:FORMAT=image/gif
 BoundingBoxTopLeftWGS84: N 48.0000 E 6.0000
-BoundingBoxButtomRightWGS84: N 36.0000 E 19.0000
+BoundingBoxBottomRightWGS84: N 36.0000 E 19.0000
 # min and maxScale found by testing the server (pfeffer 1-10-2009)
 MinScale:   0
 MaxScale:   6.6

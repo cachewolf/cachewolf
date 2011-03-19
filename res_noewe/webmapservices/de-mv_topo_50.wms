@@ -13,7 +13,7 @@ LayersUrlPart:	LAYERS=DTK50Vf
 StylesUrlPart:	STYLES=
 ImageFormatUrlPart:	FORMAT=image/png
 BoundingBoxTopLeftWGS84:	N 54.8209 E 10.3394
-BoundingBoxButtomRightWGS84:	N 53.0392 E 14.477
+BoundingBoxBottomRightWGS84:	N 53.0392 E 14.477
 MinScale:	5.6122828676971
 MaxScale:	28.0636594013034
 RecommendedScale:	5.0

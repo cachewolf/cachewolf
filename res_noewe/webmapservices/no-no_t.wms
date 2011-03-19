@@ -165,7 +165,7 @@ LayersUrlPart:     LAYERS=Kartdata2_WMS
 StylesUrlPart:     STYLES=
 ImageFormatUrlPart:FORMAT=image/jpeg
 BoundingBoxTopLeftWGS84: N 71.8912 W 2.5599
-BoundingBoxButtomRightWGS84: N 57.0881 E 33.0199
+BoundingBoxBottomRightWGS84: N 57.0881 E 33.0199
 #BBox_Mitte: N 64.48965 E 15.229995
 MinScale:   0
 MaxScale:   1000

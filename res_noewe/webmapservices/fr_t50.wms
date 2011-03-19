@@ -48,7 +48,7 @@ LayersUrlPart:     LAYERS=RASTER50k
 StylesUrlPart:     STYLES=
 ImageFormatUrlPart:FORMAT=image/png
 BoundingBoxTopLeftWGS84: N 51.2918 W 6.06258
-BoundingBoxButtomRightWGS84: N 41.1632 E 10.8783
+BoundingBoxBottomRightWGS84: N 41.1632 E 10.8783
 #MinScale:   0
 #MaxScale:   45
 RecommendedScale:   1

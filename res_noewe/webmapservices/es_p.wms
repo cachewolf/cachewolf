@@ -15,7 +15,7 @@ LayersUrlPart:     LAYERS=pnoa
 StylesUrlPart:     STYLES=
 ImageFormatUrlPart:FORMAT=image/jpeg
 BoundingBoxTopLeftWGS84: N 45.2863 W 18.1621
-BoundingBoxButtomRightWGS84: N 21.8992 E 6.2893
+BoundingBoxBottomRightWGS84: N 21.8992 E 6.2893
 MinScale:   0
 MaxScale:   10
 RecommendedScale:   1

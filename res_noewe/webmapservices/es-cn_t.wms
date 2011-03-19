@@ -13,7 +13,7 @@ LayersUrlPart:   LAYERS=WMS_CARTO5
 StylesUrlPart:   STYLES=
 ImageFormatUrlPart:   FORMAT=image/png
 BoundingBoxTopLeftWGS84:   N 29.8305 W 18.3099
-BoundingBoxButtomRightWGS84:   N 26.1839 W 13.137
+BoundingBoxBottomRightWGS84:   N 26.1839 W 13.137
 MinScale:   1.49671
 MaxScale:   174.0000
 RecommendedScale:   5.000
