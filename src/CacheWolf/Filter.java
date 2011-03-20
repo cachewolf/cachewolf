@@ -483,9 +483,9 @@ public class Filter{
 			        }
 		        } else if (attributesChoice == 1) {
 			        // OR-condition:
-			        if ((chAtts[0] & attributesPattern[0]) == 0 ||
-				        	(chAtts[1] & attributesPattern[1]) == 0 ||
-				        	(chAtts[2] & attributesPattern[2]) == 0 ||
+			        if ((chAtts[0] & attributesPattern[0]) == 0 &&
+				        	(chAtts[1] & attributesPattern[1]) == 0 &&
+				        	(chAtts[2] & attributesPattern[2]) == 0 &&
 				        	(chAtts[3] & attributesPattern[3]) == 0 )
 				        {
 				        cacheFiltered = true;
