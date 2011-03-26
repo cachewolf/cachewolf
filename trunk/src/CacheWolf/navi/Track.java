@@ -5,6 +5,7 @@ import ewe.io.BufferedWriter;
 import ewe.io.FileWriter;
 import ewe.io.IOException;
 import ewe.io.PrintWriter;
+import ewe.sys.Vm;
 import ewe.ui.MessageBox;
 import ewe.util.Utils;
 
@@ -64,23 +65,23 @@ public class Track {
         }
 
 	public void loadTrack(String filename){ // TODO untested!
-		byte [] all = ewe.sys.Vm.readResource(null,filename);
+		byte [] all = Vm.readResource(null,filename);
 		if (all == null) return; // TODO error handling
-		num = Utils.readInt(all, 0, 4);
-		for (int i=0; i<=num; i++){
-			trackPoints[i].latDec = Double.longBitsToDouble(Utils.readLong(all, (i*2)*8 + 4));
-			trackPoints[i].lonDec = Double.longBitsToDouble(Utils.readLong(all, (i*2+1)*8 + 4));
+		int numOfPoints = Utils.readInt(all, 0, 4);
+		for (int i=0; i<=numOfPoints; i++){
+			TrackPoint point = new TrackPoint();
+			point.latDec = Double.longBitsToDouble(Utils.readLong(all, (i*2)*8 + 4));
+			point.lonDec = Double.longBitsToDouble(Utils.readLong(all, (i*2+1)*8 + 4));
+			add (point);
 		}
 	}
 	
 	public void saveTrack(String filename) { // TODO untested!
-		// ByteArray ba=new ByteArray();
-		byte[] ba = new byte[8 * 2 * num + 4]; // 8 bytes is one double int has
-												// size 4
-		Utils.writeInt(num, ba, 0, 4);
-		for (int i = 0; i <= num; i++) {
-			Utils.writeLong(Double.doubleToLongBits(trackPoints[i].latDec), ba, (i * 2) * 8 + 4);
-			Utils.writeLong(Double.doubleToLongBits(trackPoints[i].lonDec), ba, (i * 2 + 1) * 8 + 4);
+		byte[] ba = new byte[8 * 2 * size() + 4]; // 8 bytes is one double int has size 4
+		Utils.writeInt(size(), ba, 0, 4);
+		for (int i = 0; i <= size(); i++) {
+			Utils.writeLong(Double.doubleToLongBits(get(i).latDec), ba, (i * 2) * 8 + 4);
+			Utils.writeLong(Double.doubleToLongBits(get(i).lonDec), ba, (i * 2 + 1) * 8 + 4);
 		}
 		try {
 			PrintWriter outp = new PrintWriter(new BufferedWriter(new FileWriter(filename)));
