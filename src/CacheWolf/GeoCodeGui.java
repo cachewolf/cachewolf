@@ -25,10 +25,7 @@
     */
 package CacheWolf;
 
-import ewe.io.IOException;
-import ewe.sys.Handle;
-import ewe.sys.HandleStoppedException;
-import ewe.sys.mThread;
+import ewe.sys.Vm;
 import ewe.ui.CellConstants;
 import ewe.ui.CellPanel;
 import ewe.ui.ControlEvent;
@@ -40,8 +37,8 @@ import ewe.ui.ScrollBarPanel;
 import ewe.ui.mButton;
 import ewe.ui.mInput;
 import ewe.ui.mLabel;
+import ewe.ui.mList;
 import ewe.util.Vector;
-import ewesoft.xml.sax.SAXException;
 
 /**
  * Class for entering an address and convert it to lat/lon
@@ -55,12 +52,12 @@ public class GeoCodeGui extends Form {
 	CWPoint coordInp = new CWPoint();
 	CellPanel topLinePanel = new CellPanel();
 	CellPanel mainPanel = new CellPanel();
-	HtmlDisplay foundTxt;
+	// HtmlDisplay foundTxt;
+	mList choice;
 	int exitKeys[]={75009};
 
 	Vector geoCodeAnsw;
 	String searchText;
-	Handle[] fetchHandle = new Handle[1];
 
 	public GeoCodeGui()
 	{
@@ -76,10 +73,9 @@ public class GeoCodeGui extends Form {
 		this.addLast(topLinePanel,CellConstants.STRETCH, CellConstants.FILL | CellConstants.WEST);
 
 		// Description of found sites
-		foundTxt     = new HtmlDisplay();
-		foundTxt.setPreferredSize(200, 200);
-		ScrollBarPanel sbp = new MyScrollBarPanel(foundTxt, 0);
-		sbp.setClientConstraints(ScrollBarPanel.HCONTRACT|ScrollBarPanel.HCONTRACT);
+		choice=new mList(8,50,false);
+		ScrollBarPanel sbp = new MyScrollBarPanel(choice, 0);
+		sbp.setOptions(MyScrollBarPanel.NeverShowVerticalScrollers);
 		mainPanel.addLast(sbp, CellConstants.STRETCH, CellConstants.FILL | CellConstants.WEST);
 
 		// Buttons for cancel and apply
@@ -95,60 +91,29 @@ public class GeoCodeGui extends Form {
 
 	public void onEvent(Event ev){
 
-		// Ensure that the Enter key moves to the appropriate field
-		// for Checkboxes and Choice controls this is done via the exitKeys
-		// For input fields we use the wantReturn field
 		if(ev instanceof ControlEvent && ev.type == ControlEvent.PRESSED){
 			if (ev.target == searchBtn ){
-				foundTxt.setHtml(MyLocale.getMsg(7306, "searching..."));
-				// only insert "," if city AND street is set
-				searchText = streetInp.text.trim();
-				if (searchText.length() > 0) {
-					if (cityInp.text.trim().length() > 0) searchText = searchText + ","+cityInp.text;
-				} else searchText = cityInp.text;
-
-				mThread thrdfetch = 
-					new mThread() {
-					public void run() {
-						try {
-							fetchHandle[0] = null;
-							geoCodeAnsw = GeocoderOsm.geocode(searchText, fetchHandle);
-						} catch (IOException e) {
-							geoCodeAnsw = new Vector();
-							geoCodeAnsw.add(new GeocodeAnswer(new CWPoint(), "IOExecption"));
-						} catch (SAXException e) {
-							geoCodeAnsw = new Vector();
-							geoCodeAnsw.add(new GeocodeAnswer(new CWPoint(), "SAXException"));
-						} catch (HandleStoppedException ie) {
-							geoCodeAnsw = new Vector();
-							if (fetchHandle[0].stopReason == 4321)
-								geoCodeAnsw.add(new GeocodeAnswer(new CWPoint(), MyLocale.getMsg(7307, "Canceled by user")));
-							else geoCodeAnsw.add(new GeocodeAnswer(new CWPoint(), MyLocale.getMsg(7308, "Could not connect")));
-						} catch (InterruptedException ie) {
-							geoCodeAnsw = new Vector();
-							if (fetchHandle[0].stopReason == 4321)
-								geoCodeAnsw.add(new GeocodeAnswer(new CWPoint(), MyLocale.getMsg(7307, "Canceled by user")));
-							else geoCodeAnsw.add(new GeocodeAnswer(new CWPoint(), MyLocale.getMsg(7308, "Could not connect")));
-
-						}
-						// foundTxt.startHtml();
-						if (geoCodeAnsw.size() == 0) foundTxt.setHtml("nothing found");
-						else {
-							GeocodeAnswer ga = (GeocodeAnswer)geoCodeAnsw.get(0);
-							foundTxt.setHtml(ga.where.toString() + "<br>" + ga.foundname);
-						}
-						fetchHandle[0] = null;
-					}
-				};
-				thrdfetch.start();
+		        Vm.showWait(true);
+				try {
+					geoCodeAnsw = GeocoderOsm.geocode(cityInp.text.trim(), streetInp.text.trim());
+				} catch (Exception e) {
+					geoCodeAnsw = new Vector();
+					geoCodeAnsw.add(new GeocodeAnswer(new CWPoint(), e.getMessage()));
+				}
+		        Vm.showWait(false);
+				if (geoCodeAnsw.size() == 0) {
+					geoCodeAnsw = new Vector();
+					geoCodeAnsw.add(new GeocodeAnswer(new CWPoint(), "nothing found"));
+				}
+				choice.items.clear();
+				for (int i = 0; i < geoCodeAnsw.size(); i++) {
+					GeocodeAnswer ga = (GeocodeAnswer)geoCodeAnsw.get(i);
+					choice.addItem(ga.where.toString() + " | " + ga.foundname);
+				}
+				choice.updateItems();
 			}
 
 			if (ev.target == searchCancelBtn){
-				if (fetchHandle != null && fetchHandle[0] != null)
-				{
-					fetchHandle[0].stop(4321);
-					fetchHandle[0].set(Handle.Stopped);
-				}
 			}
 
 			if (ev.target == btnCancel){
@@ -156,8 +121,10 @@ public class GeoCodeGui extends Form {
 			}
 
 			if (ev.target == btnOk){
-				if (geoCodeAnsw != null && geoCodeAnsw.size() > 0)
-				coordInp = ((GeocodeAnswer)geoCodeAnsw.get(0)).where;
+				if (geoCodeAnsw != null && geoCodeAnsw.size() > 0) {
+					int i = choice.selectedIndex;
+					coordInp = ((GeocodeAnswer)geoCodeAnsw.get(i)).where;					
+				}
 				else coordInp.makeInvalid();
 				this.close(IDOK);
 			}

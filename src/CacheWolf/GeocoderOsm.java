@@ -25,10 +25,14 @@
     */
 package CacheWolf;
 
+import CacheWolf.utils.FileBugfix;
 import ewe.io.ByteArrayInputStream;
+import ewe.io.File;
+import ewe.io.FileInputStream;
 import ewe.io.IO;
 import ewe.io.IOException;
 import ewe.io.InputStreamReader;
+import ewe.io.StringStream;
 import ewe.sys.Handle;
 import ewe.sys.HandleStoppedException;
 import ewe.util.ByteArray;
@@ -39,35 +43,46 @@ import ewesoft.xml.sax.SAXException;
 
 public class GeocoderOsm {
 
-	private static final String geocoderUrl = "http://gazetteer.openstreetmap.org/namefinder/search.xml?max=1&find=";  
+	//private static final String geocoderUrl = "http://gazetteer.openstreetmap.org/namefinder/search.xml?max=1&find=";
+	private static final String geocoderUrl = "http://nominatim.openstreetmap.org/search?"; //q=135+pilkington+avenue,+birmingham&format=xml&polygon=1&addressdetails=1
 
-	public static Vector geocode(String address, Handle[] h) 
-	throws SAXException, IOException, HandleStoppedException, InterruptedException {
-		ByteArray answ = UrlFetcher.fetchByteArray((geocoderUrl+UrlFetcher.toUtf8Url(address)), h);
+	public static Vector geocode(String city, String street) throws Exception 
+	{
+		String searchFor;
+		if (street.equals("")) {
+			searchFor=UrlFetcher.toUtf8Url(city);
+		}
+		else {
+			searchFor=UrlFetcher.toUtf8Url(street) + "+" + UrlFetcher.toUtf8Url(city);
+		}
+		String answer = UrlFetcher.fetch(geocoderUrl + "q=" + searchFor + "&format=xml");
+		answer=STRreplace.replace(answer,"\'","\' ");
+		answer=STRreplace.replace(answer,"  "," ");
 		XMLDecoder xmldec = new XMLDecoder();
-		xmldec.parse(new InputStreamReader(new ByteArrayInputStream(answ), IO.JAVA_UTF8_CODEC));
 		Vector erg = new Vector();
-		if ( "searchresults".equalsIgnoreCase((String)xmldec.document.tag) ) {
-			XMLElement xe, xe2;
-			String desc, lat, lon;
-			desc = null;
-			CWPoint where = new CWPoint();
-			if (xmldec.document != null && xmldec.document.subElements != null) {
-				for (int i=0;  i < xmldec.document.subElements.size(); i++) {
-					xe = (XMLElement) xmldec.document.subElements.elementAt(i);
-					if (xe.tag.equalsIgnoreCase("named")) {
-						lat = (String) xe.attributes.getPropertyValues("lat").get(0);
-						lon = (String) xe.attributes.getPropertyValues("lon").get(0);
-						where.set(Common.parseDouble(lat), Common.parseDouble(lon));
-						for (int j = 0; j < xe.subElements.size(); j++) {
-							xe2 = (XMLElement) xe.subElements.elementAt(j);
-							if ( xe2.tag.equalsIgnoreCase("description")) { desc = xe2.text; break; }  
+		try {
+			xmldec.parse(new InputStreamReader(new StringStream(answer)));
+			if ( "searchresults".equalsIgnoreCase((String)xmldec.document.tag) ) {
+				XMLElement xe;
+				String desc, lat, lon;
+				desc = null;
+				CWPoint where = new CWPoint();
+				if (xmldec.document != null && xmldec.document.subElements != null) {
+					for (int i=0;  i < xmldec.document.subElements.size(); i++) {
+						xe = (XMLElement) xmldec.document.subElements.elementAt(i);
+						if (xe.tag.equalsIgnoreCase("place")) {
+							lat = (String) xe.attributes.getPropertyValues("lat").get(0);
+							lon = (String) xe.attributes.getPropertyValues("lon").get(0);
+							where.set(Common.parseDouble(lat), Common.parseDouble(lon));
+							desc = (String) xe.attributes.getPropertyValues("display_name").get(0);
+							erg.add(new GeocodeAnswer(where, desc));
 						}
-						erg.add(new GeocodeAnswer(where, desc));
 					}
 				}
 			}
-		}
+		} catch (Exception e) {
+			throw new Exception(e.getMessage());
+		}	
 		return erg;
 	}
 
