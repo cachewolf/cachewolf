@@ -31,10 +31,7 @@ import ewe.io.File;
 import ewe.io.FileOutputStream;
 import ewe.io.IOException;
 import ewe.io.JavaUtf8Codec;
-import ewe.net.Socket;
 import ewe.net.URL;
-import ewe.sys.Handle;
-import ewe.sys.HandleStoppedException;
 import ewe.util.ByteArray;
 import ewe.util.CharArray;
 
@@ -62,7 +59,7 @@ public class UrlFetcher {
 	}
 	private static void initPermanentRequestorProperty() {
 		permanentRequestorProperties = new PropertyList();
-		permanentRequestorProperties.add("User_Agent", "Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.7.5) Gecko/20041107 Firefox/1.0");
+		permanentRequestorProperties.add("User-Agent", "Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.7.5) Gecko/20041107 Firefox/1.0");
 		permanentRequestorProperties.add("Connection", "keep-alive");		
 	}
 	public static void setPermanentRequestorProperty(String name, String property) {
@@ -74,46 +71,32 @@ public class UrlFetcher {
 			if ( index >= 0 ) permanentRequestorProperties.del(index);			
 		}
 	}
-	public static void setpostData(String value) { postData=value;};
+	public static void setpostData(String value) { 
+		postData=value;
+	};
 	public static String fetch(String address) throws IOException {
 		ByteArray daten = fetchByteArray(address);
 		JavaUtf8Codec codec = new JavaUtf8Codec();
 		CharArray c_data = codec.decodeText(daten.data, 0, daten.length, true, null);
 		return c_data.toString();
 	}	
-	public static ByteArray fetchData(String address) throws IOException
-	{ return fetchByteArray(address); }
+	public static ByteArray fetchData(String address) throws IOException {
+		return fetchByteArray(address);
+	}
 	public static void fetchDataFile(String address, String target) throws IOException {
 		FileOutputStream outp =  new FileOutputStream(new File(target));
 		outp.write(fetchByteArray(address).toBytes());
 		outp.close();
 	}
-	// all errors as IOException
-	private static ByteArray fetchByteArray(String url) throws IOException {
-		Handle[] hndl = new Handle[1];
-		try {
-		return fetchByteArray(url, hndl);
-		} catch ( InterruptedException e) {
-			throw new IOException("Error reading data. Interrupted :"+url);
-		} catch ( HandleStoppedException e) {
-			throw new IOException("Error reading data. HandleStopped :"+url);
-		}
-	}
-
 	/**
-	 * @param url - if url-not-allowed chars are contained, they will be automatically encoded
-	 * @param if non null, realurl will be filled with the real url, which can differ from the given url, in case url returns a http-redirect
-	 * @return
+	 * @param url
+	 * @return ByteArray
 	 * @throws IOException
-	 * @throws InterruptedException 
-	 * @throws HandleStoppedException 
 	 */
-	public static ByteArray fetchByteArray(String url, Handle[] hndl) 
-	throws IOException, HandleStoppedException, InterruptedException {	
-		Socket sock = null;
+	public static ByteArray fetchByteArray(String url) throws IOException {	
 		int i=0;
+		conn = new HttpConnection(url);		
 		urltmp = url;
-		conn = new HttpConnection(urltmp);
 		do  { // allow max 5 redirections (http 302 location)
 			i++;
 			conn.setUrl(urltmp);
@@ -125,9 +108,7 @@ public class UrlFetcher {
 			}
 			conn.setRequestorProperty(permanentRequestorProperties);
 			if (requestorProperties != null) conn.setRequestorProperty(requestorProperties);
-			hndl[0] = conn.connectAsync();
-			hndl[0].waitOn(Handle.Success);
-			sock = (Socket)hndl[0].returnValue; //"Could not connect.");
+			conn.connect();
 			if (conn.responseCode >= 400) throw new IOException("URL: "+ urltmp + "\nhttp response code: " + conn.responseCode);
 			urltmp = conn.getRedirectTo();
 			if(urltmp!=null){
@@ -139,18 +120,16 @@ public class UrlFetcher {
 			}
 		} while (((urltmp != null) || (urltmp == null) && forceRedirect) && i <= maxRedirections ); 
 		if (i > maxRedirections) throw new IOException("too many http redirections while trying to fetch: "+url + " only "+maxRedirections+" are allowed");
-		hndl[0] = conn.readInData();
 		ByteArray daten;
-		try{
-			hndl[0].waitOn(Handle.Success);
-		}finally {
-			sock.close();
+		if (conn.isOpen()) {
+			daten = conn.readData();
+			conn.disconnect();
 		}
+		else daten=null;
 		maxRedirections = 5;
 		requestorProperties = null;
 		postData=null;
 		forceRedirect=false;
-		daten = (ByteArray)hndl[0].returnValue; // ByteArray daten = conn.readData(sock);
 		return daten;
 	}
 
