@@ -108,8 +108,8 @@ fetchAllLogs       = &log=y
 cacheUnavailable   = class="OldWarning"><li>This\ cache\ is\ temporarily\ unavailable
 cacheArchived      = class="OldWarning"><li>This\ cache\ has\ been\ archived
 premiumCachepage   = class="Warning">listing\ visible\ to\ Premium
-#latLonRex          = tBody_LatLon"\ style="font-weight:bold;">((?s).*?)</span>
-latLonRex          = tBody_LatLon"><b>((?s).*?)</b></span>
+latLonRex          = tBody_LatLon"\ style="font-weight:bold;">((?s).*?)</span>
+#latLonRex          = tBody_LatLon"><b>((?s).*?)</b></span>
 shortDescRex       = tBody_ShortDescription">((?s).*?)</span>
 longDescRex        = tBody_LongDescription">((?s).*?)<td\ valign="top"\ width="10%">\\s*&nbsp;\\s*</td
 cacheNameRex       = tBody_CacheName">((?s).*?)</span>

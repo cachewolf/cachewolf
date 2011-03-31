@@ -353,6 +353,7 @@ public void setUrl(String url)
 		}
 	}
 	getRequestorProperties().clear();
+	command = "GET";
 }
 
 //FIXME: never referenced
