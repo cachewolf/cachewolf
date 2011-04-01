@@ -42,6 +42,7 @@ public class UrlFetcher {
 	static PropertyList permanentRequestorProperties = null;
 	static String postData=null;
 	static String urltmp=null;
+	static String realUrl=null;
 	static boolean forceRedirect=false;
 	
 	public static PropertyList getDocumentProperties() {
@@ -49,7 +50,7 @@ public class UrlFetcher {
 			return conn.documentProperties;
 		else return null;
 	}
-	public static String getRealUrl() { return urltmp; };
+	public static String getRealUrl() { return realUrl; };
 	public static void setMaxRedirections(int value) { maxRedirections=value; };
 	public static void setForceRedirect() { forceRedirect=true; };
 	public static void setRequestorProperties(PropertyList value) { requestorProperties=value; };
@@ -95,10 +96,18 @@ public class UrlFetcher {
 	 */
 	public static ByteArray fetchByteArray(String url) throws IOException {	
 		int i=0;
-		conn = new HttpConnection(url);		
+		conn = new HttpConnection(url); //todo reuse: don#t reuse, some params are not correctly reset with SetUrl		
 		urltmp = url;
 		do  { // allow max 5 redirections (http 302 location)
 			i++;
+			if (urltmp == null) {
+				// hack for expedia, doing the original url again. 
+				// expedia always must redirect >=1 time, but sometimes that is missed
+				// see also: http://www.geoclub.de/viewtopic.php?p=305071#305071
+				urltmp=url;
+				i=i-1;
+			}
+			realUrl=urltmp;
 			conn.setUrl(urltmp);
 			conn.documentIsEncoded = isUrlEncoded(urltmp);
 			if (permanentRequestorProperties == null) initPermanentRequestorProperty();
@@ -112,13 +121,11 @@ public class UrlFetcher {
 			if (conn.responseCode >= 400) throw new IOException("URL: "+ urltmp + "\nhttp response code: " + conn.responseCode);
 			urltmp = conn.getRedirectTo();
 			if(urltmp!=null){
-				URL eweUrl = new URL(url);
-				if(urltmp.indexOf(eweUrl.getHost())<0){
-					urltmp = new URL(eweUrl.getProtocol(), eweUrl.getHost(),eweUrl.getPort(), urltmp).url;
-				}
-				urltmp = STRreplace.replace(urltmp, eweUrl.getHost() + "/\\.\\./", eweUrl.getHost() + "/");
+				conn.disconnect();
+				conn=conn.getRedirectedConnection(urltmp);
+				forceRedirect=false; // one time or more redirected
 			}
-		} while (((urltmp != null) || (urltmp == null) && forceRedirect) && i <= maxRedirections ); 
+		} while (((urltmp != null) || (urltmp == null) && forceRedirect) && i <= maxRedirections );	
 		if (i > maxRedirections) throw new IOException("too many http redirections while trying to fetch: "+url + " only "+maxRedirections+" are allowed");
 		ByteArray daten;
 		if (conn.isOpen()) {

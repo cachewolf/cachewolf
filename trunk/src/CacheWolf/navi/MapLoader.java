@@ -519,9 +519,14 @@ public class MapLoader {
 		if(!dateiF.exists()){
 			if (forceredirect) UrlFetcher.setForceRedirect();
 			UrlFetcher.fetchDataFile(realurl, datei);
-			String ct = (String) UrlFetcher.getDocumentProperties().getValue("content-type","");
+			String ct=null;
+			try {
+				ct = (String) UrlFetcher.getDocumentProperties().getValue("content-type","");
+			} catch (Exception e) {
+				ct="document property content-type does not exist!";
+			}
 			if (!ct.substring(0, 5).equalsIgnoreCase("image") )  {
-				dateiF = new FileBugfix(datei); //??? muss das nochmal ???
+				dateiF = new FileBugfix(datei);
 				dateiF.delete();
 				throw new IOException(MyLocale.getMsg(4808, "downloadImage: content-type:")+" " + ct + MyLocale.getMsg(4809, " is not an image, begin of content:")+" (deleted)");
 			}
