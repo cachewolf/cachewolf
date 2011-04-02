@@ -106,6 +106,11 @@ public class SpiderGC {
 	/** no probs, but exmpl found und not want this */
 	public static int SPIDER_IGNORE = 2;
 
+	/**
+	 * This is the pattern for inlined smilies
+	 */
+	private static final String 		string = "<img src=\"/images/icons/";
+
 	private static int ERR_LOGIN = -10;
 	private static Preferences pref;
 	private Profile profile;
@@ -2628,6 +2633,7 @@ public class SpiderGC {
 			icon=icon.substring(0, icon.length() - 1); // ' changes to " in UMTS-connection! first char in iconExEnd.
 			name = exName.findNext();
 			logText = exLog.findNext();
+			logText = correctSmilies (logText);
 			logId = exLogId.findNext();
 			String ed=exDate.findNext();
 			String d = DateFormat.logdate2YMD(ed);
@@ -2664,6 +2670,22 @@ public class SpiderGC {
 		}
 		// pref.log(nLogs+" checked!");
 		// return reslts;
+	}
+
+	/**
+	 * This methods cleans up the path for inlined smilies in logtexts.
+	 * @param logText
+	 * @return
+	 */
+	private String correctSmilies(String logText) {
+		int indexOf = logText.indexOf(string);
+		while (indexOf >= 0) {
+			String prefix = logText.substring(0, indexOf);
+			String postFix = logText.substring(indexOf + string.length());
+			logText = prefix + "<img src=\"" + postFix;
+			indexOf = logText.indexOf(string);
+		}
+		return logText;
 	}
 
 	/**
@@ -3369,6 +3391,6 @@ public class SpiderGC {
 		public void endElement(String name) {
 
 		}
-
 	}
 }
+
