@@ -73,7 +73,7 @@ public class GeocoderOsm {
 						if (xe.tag.equalsIgnoreCase("place")) {
 							lat = (String) xe.attributes.getPropertyValues("lat").get(0);
 							lon = (String) xe.attributes.getPropertyValues("lon").get(0);
-							where.set(Common.parseDouble(lat), Common.parseDouble(lon));
+							where.set(Common.parseDouble(lat.trim()), Common.parseDouble(lon.trim()));
 							desc = (String) xe.attributes.getPropertyValues("display_name").get(0);
 							erg.add(new GeocodeAnswer(where, desc));
 						}

@@ -182,7 +182,7 @@ public class MapLoader {
 		//if (toplefti.latDec <= bottomrighti.latDec || toplefti.lonDec >= toplefti.lonDec) throw new IllegalArgumentException("topleft must be left and above bottom right");
 		topleft = new CWPoint(toplefti);
 		bottomright = new CWPoint(bottomrighti);
-		double metersPerLat = (1000*(new CWPoint(0,0)).getDistance(new CWPoint(1,0)));
+		double metersPerLat = (1000.0 * (new CWPoint(0,0)).getDistance(new CWPoint(1,0)));
 		double metersPerLon = metersPerLat * java.lang.Math.cos((toplefti.latDec + bottomright.latDec)/2/180*java.lang.Math.PI);
 		double metersperpixel = currentOnlineMapService.getMetersPerPixel(scale);
 		double pixelsPerLat = metersPerLat / metersperpixel;

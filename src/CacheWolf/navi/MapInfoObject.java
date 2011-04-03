@@ -328,6 +328,9 @@ public class MapInfoObject extends Area {
 	 * @throws IllegalArgumentException when affine[x] for all x == 0 ("map not calibrated").
 	 */
 	public void saveWFL(String mapsPath, String mapFileName) throws IOException, IllegalArgumentException {
+		if (mapsPath.endsWith("/")) {
+			mapsPath=mapsPath.substring(0, mapsPath.length()-1);
+		}
 		if (affine[0]==0 && affine[1]==0 && affine[2]==0 && affine[3]==0 && 
 				!topleft.isValid()) throw (new IllegalArgumentException(MyLocale.getMsg(4306, "map not calibrated")));
 		PrintWriter outp =  new PrintWriter(new BufferedWriter(new FileWriter(mapsPath + "/" + mapFileName + ".wfl")));
