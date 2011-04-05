@@ -1,6 +1,6 @@
 ﻿
-Microsoft Visual Studio Solution File, Format Version 10.00
-# Visual Basic Express 2008
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Basic Express 2010
 Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "capxml2wms", "capxml2wms\capxml2wms.vbproj", "{623B1E12-B5BF-4835-A982-AE5500BFADC8}"
 EndProject
 Global

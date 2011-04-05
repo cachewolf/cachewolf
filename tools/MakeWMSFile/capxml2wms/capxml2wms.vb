@@ -85,39 +85,13 @@ Public Class capxml2wms
         End If
         CheckedListBoxLayers.Items.Add(Layername, False)
     End Sub
-
-    Private Sub ButtonGetCapabilities_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles ButtonGetCapabilities.Click
-        GotCapabilities = GetCapabilities()
-        maxScale = 1000
-        minScale = 0
-        If Not recScale Is Nothing Then
-            recScale.Clear()
-        End If
-    End Sub
-
-    Private Sub ButtonShowMap_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles ButtonShowMap.Click
-        Dim MeineSkalierung As Double
-        MeineSkalierung = 2.0 * Me.HScrollBar1.Value
-        mapUrl = makeGetMapUrl(MeineSkalierung)
-        Dim center As point
-        center.x = 0
-        center.y = 0
-        Dim SM As New Map(mapUrl, 0, 0, 0, center)
-        'MsgBox("Noch nicht vorhanden!", MsgBoxStyle.Information, "Hinweis!")
-        SM.ButtonAddToRecommendedScale.Visible = False
-        SM.ButtonHelp.Visible = False
-        SM.ButtonScaleDown.Visible = False
-        SM.ButtonScaleUp.Visible = False
-        SM.ButtonUseAsMaxScale.Visible = False
-        SM.ButtonUseAsMinScale.Visible = False
-        SM.LabelScaleDiagonal.Visible = False
-        SM.LabelScaleVertical.Visible = False
-        SM.ShowDialog()
-    End Sub
     Friend _srs As Integer
     Friend _pixelwidth As Integer
     Private Sub ButtonFindScale_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles ButtonFindScale.Click
         Dim BBoxString As String
+        If Me.ComboBoxEPSG.Items.Count = 0 Then
+            Return
+        End If
 
         _srs = Me.ComboBoxEPSG.SelectedItem
 
@@ -199,75 +173,7 @@ Public Class capxml2wms
         mapUrl += "&FORMAT=" & Me.ComboBoxFormat.SelectedItem.ToString
         makeGetMapUrlFromBBox = mapUrl
     End Function
-    Private Function makeGetMapUrl(ByVal scale As Double) As String
-        'http:// www.lv-bw.de/dv/service/getrds2.asp?login=dv&pw=anonymous
-        '&SERVICE=WMS&VERSION=1.1.1&REQUEST=GetMap
-        '&SRS=EPSG:31467
-        '&BBOX=3500394.51 , 5371405.09 , 3520394.51 , 5391405.09 
-        '&WIDTH=1000
-        '&HEIGHT=1000
-        '&LAYERS=DVTK50K
-        '&STYLES=
-        '&FORMAT=image/png
-
-
-        mapUrl = wmsUrl & "SERVICE=WMS&VERSION=" & Version & "&REQUEST=GetMap"
-
-        mapUrl += "&SRS=EPSG:" & Me.ComboBoxEPSG.SelectedItem
-
-        Dim rxmin As Double
-        Dim rxmax As Double
-        Dim rymin As Double
-        Dim rymax As Double
-
-        If Me.ComboBoxEPSG.SelectedItem = "4326" Then
-            Me.ComboBoxBBoxI.SelectedIndex = Me.ComboBoxBBox.SelectedIndex
-            GetBBoxValues(Me.ComboBoxBBoxI.SelectedItem)
-        Else
-            Try
-                GetBBoxValues(Me.OBBoxes.Item("EPSG:" & Me.ComboBoxEPSG.SelectedItem))
-            Catch ex As Exception
-                'todo: und jetzt umrechnen !
-                'das spar ich mir wohl, oder !
-                Me.ComboBoxBBoxI.SelectedIndex = Me.ComboBoxBBox.SelectedIndex
-                GetBBoxValues(Me.ComboBoxBBoxI.SelectedItem)
-                ' jetzt haben wir die BBox zum WGS84
-                MsgBox("Kartenansicht für diese Auswahl nicht implementiert", MsgBoxStyle.Exclamation)
-                Exit Function
-            End Try
-        End If
-
-        Dim HalbeKantenlaengex As Double = (rmaxx - rminx) / scale
-        Dim HalbeKantenlaengey As Double = (rmaxy - rminy) / scale
-        Dim HalbeKantenlaenge As Double = HalbeKantenlaengex
-        If HalbeKantenlaengex > HalbeKantenlaengey Then
-            HalbeKantenlaenge = HalbeKantenlaengey
-        End If
-        ' is in x und y die gleiche Einheit?
-        rxmin = rxmitte - HalbeKantenlaenge
-        rxmax = rxmitte + HalbeKantenlaenge
-        rymin = rymitte - HalbeKantenlaenge
-        rymax = rymitte + HalbeKantenlaenge
-
-        Dim BBox As String = "&BBox=" & rxmin.ToString(DPunkt) & "," & rymin.ToString(DPunkt) & ","
-        BBox += rxmax.ToString(DPunkt) & "," & rymax.ToString(DPunkt)
-
-        mapUrl += BBox
-        mapUrl += "&WIDTH=500"
-        mapUrl += "&HEIGHT=500"
-        ' und die gewählten Layer durch Komma getrennt
-        Dim SelectedLayers As String = ""
-        For Each s As String In CheckedListBoxLayers.CheckedItems
-            SelectedLayers += "," & s.Split("|")(0)
-        Next
-        If SelectedLayers <> "" Then
-            mapUrl += "&LAYERS=" & SelectedLayers.Substring(1).Replace(" ", "%20")
-        End If
-        mapUrl += "&STYLES="
-        mapUrl += "&FORMAT=" & Me.ComboBoxFormat.SelectedItem.ToString
-        makeGetMapUrl = mapUrl
-    End Function
-
+    
     Friend Function metersToBBoxVertical(ByVal epsg As Integer) As Double
         If epsg = 4326 Then
             metersToBBoxVertical = 360 / (WGS84.a * Math.PI * 2)
@@ -297,14 +203,18 @@ Public Class capxml2wms
     End Function
     Private Sub ButtonErstellen_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles ButtonErstellen.Click
 
+        If Not GotCapabilities Then
+            GotCapabilities = GetCapabilities()
+        End If
+        If Not GotCapabilities Then
+            Return
+        End If
+
+
         Dim wmsFileName As String = IO.Path.ChangeExtension(xmlFileName, ".wms")
         IO.File.Delete(wmsFileName) 'vorsichtshalber
         Dim encoding As System.Text.Encoding = New System.Text.UTF8Encoding(False)
         Dim F As New System.IO.StreamWriter(wmsFileName, False, encoding)
-
-        If Not GotCapabilities Then
-            GotCapabilities = GetCapabilities()
-        End If
 
         Me.ComboBoxBBoxI.SelectedIndex = Me.ComboBoxBBox.SelectedIndex
         GetBBoxValues(Me.ComboBoxBBoxI.SelectedItem)
@@ -337,7 +247,7 @@ Public Class capxml2wms
         F.WriteLine("StylesUrlPart:     STYLES=")
         F.WriteLine("ImageFormatUrlPart:FORMAT=" & Me.ComboBoxFormat.SelectedItem.ToString)
         F.WriteLine("BoundingBoxTopLeftWGS84: " & maxy & " " & minx)
-        F.WriteLine("BoundingBoxButtomRightWGS84: " & miny & " " & maxx)
+        F.WriteLine("BoundingBoxBottomRightWGS84: " & miny & " " & maxx)
         F.WriteLine("#BBox_Mitte: " & mittey & " " & mittex)
         F.WriteLine("MinScale:   " & (Math.Ceiling(minScale * 10000) / 10000).ToString(DPunkt))
         F.WriteLine("MaxScale:   " & (Math.Floor(maxScale * 10000) / 10000).ToString(DPunkt))
@@ -425,7 +335,6 @@ Public Class capxml2wms
 
     Private Sub TextBoxUrl_TextChanged(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles TextBoxUrl.TextChanged
         GotCapabilities = False
-        Me.ButtonShowMap.Enabled = False
         wmsUrl = Me.TextBoxUrl.Text
         capsUrl = Me.TextBoxUrl.Text
     End Sub
@@ -500,8 +409,6 @@ Public Class capxml2wms
         Me.TextBoxXML.Text = System.Text.Encoding.UTF8.GetString(ms.GetBuffer())
         ms.Close()
 
-        Me.ButtonShowMap.Enabled = True
-
         '1. Version aus WMT_MS_Capabilities
         For Each nl As XmlNode In xd.GetElementsByTagName("WMT_MS_Capabilities")
             If nl.NodeType = XmlNodeType.Element Then
@@ -522,16 +429,22 @@ Public Class capxml2wms
             End If
         Next
 
+        If Caps Is Nothing Then
+            Return False
+        End If
+
         '2. OnlineResource  aus Service
-        For Each nl As XmlNode In Service
-            If nl.NodeType = XmlNodeType.Element Then
-                If nl.Name = "OnlineResource" Then
-                    Dim ne As XmlElement = nl
-                    OnlineResource = ne.GetAttribute("xlink:href")
-                    Exit For
+        If Not Service Is Nothing Then
+            For Each nl As XmlNode In Service
+                If nl.NodeType = XmlNodeType.Element Then
+                    If nl.Name = "OnlineResource" Then
+                        Dim ne As XmlElement = nl
+                        OnlineResource = ne.GetAttribute("xlink:href")
+                        Exit For
+                    End If
                 End If
-            End If
-        Next
+            Next
+        End If
 
         Dim Request As XmlElement = Nothing
         Dim Exception As XmlElement = Nothing
@@ -558,7 +471,7 @@ Public Class capxml2wms
             End If
         Next
         If Layer Is Nothing Then
-            Exit Function
+            Return False
         End If
 
         Dim ltmp() As String
@@ -588,16 +501,6 @@ Public Class capxml2wms
                     End If
                 End If
             Next
-        Next
-        Me.ComboBoxEPSG.SelectedIndex = -1
-        For i As Integer = 0 To Me.ComboBoxEPSG.Items.Count - 1
-            If Me.ComboBoxEPSG.Items.Item(i) = "4326" Then
-                Me.ComboBoxEPSG.SelectedIndex = i
-                Exit For
-            Else
-                'falls überhaupt was drin steht
-                Me.ComboBoxEPSG.SelectedIndex = 0
-            End If
         Next
 
         '11.
@@ -676,22 +579,44 @@ Public Class capxml2wms
             If n.NodeType = XmlNodeType.Element Then
                 Dim e As XmlElement = n
                 Dim stmp As String = e.GetAttribute("SRS")
-                If Not OBBoxes.ContainsKey(stmp) Then
-                    OBBoxes.Add(stmp, e)
+                If Not stmp = "EPSG:4326" Then
+                    If Not OBBoxes.ContainsKey(stmp) Then
+                        OBBoxes.Add(stmp, e)
+                    End If
                 End If
             End If
         Next
+        '<LatLonBoundingBox minx="8.334125" miny="44.552846" maxx="11.658327" maxy="46.739748" />
         If Not OBBoxes.ContainsKey("EPSG:4326") Then
             For Each n As XmlNode In Layer.GetElementsByTagName("LatLonBoundingBox")
                 If n.NodeType = XmlNodeType.Element Then
                     Dim e As XmlElement = n
-                    Dim stmp As String = e.GetAttribute("SRS")
-                    If Not stmp = "" And Not OBBoxes.ContainsKey(stmp) Then
+                    If Not OBBoxes.ContainsKey("EPSG:4326") Then
                         OBBoxes.Add("EPSG:4326", e)
+                        If Me.ComboBoxEPSG.Items.Count = 0 Then
+                            Dim s As String = "4326"
+                            SRSD.Add("SRS=EPSG:" & s, " ")
+                            SRS = SRS & "SRS=EPSG:" & s & " "
+                            SRSCW = SRSCW & " " & s
+                            ComboBoxEPSG.Items.Add(s)
+                        End If
                     End If
                 End If
             Next
         End If
+
+        ' 14 Nacharbeiten
+        Me.ComboBoxEPSG.SelectedIndex = -1
+        For i As Integer = 0 To Me.ComboBoxEPSG.Items.Count - 1
+            If Me.ComboBoxEPSG.Items.Item(i) = "4326" Then
+                Me.ComboBoxEPSG.SelectedIndex = i
+                Exit For
+            Else
+                'falls überhaupt was drin steht
+                Me.ComboBoxEPSG.SelectedIndex = 0
+            End If
+        Next
+
 
         ButtonCheckAll_Click(Nothing, Nothing)
         Return True
@@ -709,6 +634,9 @@ Public Class capxml2wms
         'Dim rminy As Double
         'Dim rmaxx As Double
         'Dim rmaxy As Double
+        If e Is Nothing Then
+            Return
+        End If
         minx = e.GetAttribute("minx")
         rminx = Double.Parse(minx, DPunkt.NumberFormat)
         minx = Format(rminx, "0.0000").Replace(",", ".")
@@ -798,4 +726,12 @@ Public Class capxml2wms
 
     End Function
 
+    Private Sub ButtonGetCapabilities_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles ButtonGetCapabilities.Click
+        GotCapabilities = GetCapabilities()
+        maxScale = 1000
+        minScale = 0
+        If Not recScale Is Nothing Then
+            recScale.Clear()
+        End If
+    End Sub
 End Class
