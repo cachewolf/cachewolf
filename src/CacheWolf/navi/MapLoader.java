@@ -128,7 +128,7 @@ public class MapLoader {
 	public void setFetchOnlyMapWithCache(boolean value) {
 		fetchOnlyMapWithCache=value;
 	}
-	
+
 	public String[] getAvailableOnlineMapServices(){
 		int s = onlineMapServices.size();
 		String[] services = new String[s];
@@ -231,7 +231,7 @@ public class MapLoader {
 			lon = topleft.lonDec;
 			for (int col = 1; col <= numMapsX; col++) {
 				center.set(lat, lon);
-				if (!fetchOnlyMapWithCache || hasCache(center,latinc,loninc)) {					
+				if (!fetchOnlyMapWithCache || hasCache(center,latinc,loninc)) {
 					if (progressInfobox != null)
 						progressInfobox.setInfo(MyLocale.getMsg(4802, "Downloading calibrated (georeferenced) \n map image \n '") + currentOnlineMapService.getName()+MyLocale.getMsg(4803, "' \n Downloading tile \n row")+" "+row+" / "+numMapsY+MyLocale.getMsg(4804, " column")+" "+ col + " / "+numMapsX);
 					try {
@@ -283,13 +283,13 @@ public class MapLoader {
 		String url = currentOnlineMapService.getUrlForCenterScale(center, scale, pixelsize);
 		String fName = path + imagename + imagetype;
 		FileBugfix fn = new FileBugfix(path + imagename + ".wfl");
-		FileBugfix fn1 = new FileBugfix(fName);						
+		FileBugfix fn1 = new FileBugfix(fName);
 		if (!fn.exists() || fn.length()==0 || !fn1.exists() || fn1.length()==0) {
 			if (currentOnlineMapService instanceof ExpediaMapService) {
 				downloadImage(url, path+imagename+imagetype);
 			}
 			else {
-				WebMapService wms = (WebMapService) currentOnlineMapService;				
+				WebMapService wms = (WebMapService) currentOnlineMapService;
 				if (wms.requestUrlPart.startsWith("REQUEST")) {
 					downloadImage(url, path+imagename+imagetype);
 				}
@@ -307,10 +307,10 @@ public class MapLoader {
 						mb.execute();
 						return;
 					}
-					
+
 					String mapProgramParams = "";
-					
-					if (wms.requestUrlPart.equalsIgnoreCase("Kosmos")) {					
+
+					if (wms.requestUrlPart.equalsIgnoreCase("Kosmos")) {
 						// minx miny maxx maxy + pixelsize.x
 						mapProgramParams="bitmapgen" +
 							" \""+FileBase.getProgramDirectory().replace('/',File.separatorChar)+"\\"+wms.serviceTypeUrlPart+"\""+
@@ -318,16 +318,16 @@ public class MapLoader {
 							" -mb " +
 							bottomleft.toString(TransformCoordinates.LAT_LON).replace(',',' ') + " " +
 							topright.toString(TransformCoordinates.LAT_LON).replace(',',' ') +
-							" -w "+pixelsize.x;				
-						Vm.exec(mapProgram, mapProgramParams, 0, true);				
+							" -w "+pixelsize.x;
+						Vm.exec(mapProgram, mapProgramParams, 0, true);
 					}
-					else {						
+					else {
 						if (wms.requestUrlPart.equalsIgnoreCase("Maperitive")) {
 							// Maperitive runs on Windows and Linux
 							// generating scriptfile for Maperitive from wmsfile
 							String cwPath = FileBase.getProgramDirectory().replace('/',FileBase.separatorChar) + FileBase.separatorChar;
 							String scriptFileName = cwPath + "maperitive.script";
-							
+
 							PrintWriter outp =  new PrintWriter(new BufferedWriter(new FileWriter(scriptFileName)));
 							outp.println("use-ruleset alias=default");
 							outp.println("clear-map");
@@ -338,7 +338,7 @@ public class MapLoader {
 							else {
 								outp.println("add-web-map provider=" + wms.serviceTypeUrlPart);
 							}
-							
+
 							if (!wms.stylesUrlPart.equals("")) {
 								String myrules = mapProgramPath + wms.stylesUrlPart.replace('/',FileBase.separatorChar);
 								outp.println("use-ruleset location=" + myrules);
@@ -349,7 +349,7 @@ public class MapLoader {
 								outp.println("load-source " + mapProgramPath + wms.layersUrlPart.replace('/',FileBase.separatorChar));
 								// implicit does apply-ruleset
 							}
-							
+
 							String koords = bottomleft.toString(TransformCoordinates.LON_LAT) + "," + topright.toString(TransformCoordinates.LON_LAT);
 							outp.println("bounds-set "+koords);
 							outp.println("zoom-bounds");
@@ -360,7 +360,7 @@ public class MapLoader {
 								outp.print("export-bitmap file=" + fName);
 							}
 							outp.print(" bounds="+ koords);
-							String pxSize = " width="+pixelsize.x + " height="+pixelsize.y;						
+							String pxSize = " width="+pixelsize.x + " height="+pixelsize.y;
 							outp.print(pxSize);
 							outp.println(" kml=false");
 							outp.close();
@@ -369,7 +369,7 @@ public class MapLoader {
 								mapProgramParams = "-exitafter " + "\"" + scriptFileName + "\"";
 							}
 							else {
-								mapProgramParams = "-exitafter " + scriptFileName;								
+								mapProgramParams = "-exitafter " + scriptFileName;
 							}
 							Vm.exec(mapProgram, mapProgramParams, 0, true);
 							// preparation for generating wfl from the ozi map-file
@@ -382,7 +382,7 @@ public class MapLoader {
 							jgwFile.delete();
 						}
 					}
-				}			
+				}
 			}
 			mio.saveWFL();
 		}
@@ -485,13 +485,13 @@ public class MapLoader {
 			} catch(IOException ex){
 				Global.getPref().log(MyLocale.getMsg(4118, "IO-Error while reading or writing calibration file"), ex);
 			}
-			mapFile.delete(); 
+			mapFile.delete();
 		} else { // if map file.exists
 			Global.getPref().log(MyLocale.getMsg(4119, "No calibration file found for: "), null);
 		}
 		return GCPs;
 	}
-	
+
 	public String createFilename(CWPoint center, float scale) {
 		String filename = Common.ClearForFileName(currentOnlineMapService.getNameForFileSystem()+"_s"+Common.DoubleToString(scale,0,1)
 				+ "_c" + center.toString(TransformCoordinates.LAT_LON).replace(',', '-'));
@@ -521,7 +521,7 @@ public class MapLoader {
 			UrlFetcher.fetchDataFile(realurl, datei);
 			String ct=null;
 			try {
-				ct = (String) UrlFetcher.getDocumentProperties().getValue("content-type","");
+				ct = (String) UrlFetcher.getDocumentProperties().getValue("content-type","no-content-type provided");
 			} catch (Exception e) {
 				ct="document property content-type does not exist!";
 			}
@@ -819,7 +819,7 @@ class WebMapService extends OnlineMapService {
 		} else if (coordinateReferenceSystem[0] == TransformCoordinates.EPSG_WGS84)
 			bbox += bottomleft.toString(TransformCoordinates.LON_LAT)  + "," + topright.toString(TransformCoordinates.LON_LAT);
 		else throw new IllegalArgumentException(MyLocale.getMsg(4828, "Coordinate system not supported by cachewolf:")+" " + coordinateReferenceSystem.toString());
-		String ret = MainUrl + "SERVICE=WMS" + "&"+ versionUrlPart + "&" + requestUrlPart + "&" +
+		String ret = MainUrl + serviceTypeUrlPart + "&" + versionUrlPart + "&" + requestUrlPart + "&" +
 		coordinateReferenceSystemUrlPart[crs] + "&" + bbox +
 		"&WIDTH=" + pixelsize.x + "&HEIGHT=" + pixelsize.y + "&" +
 		layersUrlPart + "&" + stylesUrlPart + "&" + imageFormatUrlPart;
