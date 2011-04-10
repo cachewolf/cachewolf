@@ -31,11 +31,11 @@ package CacheWolf;
  */
 public class DBStats {
 	CacheDB cacheDB = null;
-	
+
 	public DBStats(CacheDB db){
 		cacheDB = db;
 	}
-	
+
 	/**
 	 * Method to get the number of caches displayed in the list.
 	 * It will count waypoints only that start with
@@ -55,18 +55,18 @@ public class DBStats {
 				if (CacheType.isAddiWpt(holder.getType())) {
 					whiteWaypoints++;
 				}
-				else {				
+				else {
 					whiteCaches++;
-				}		
+				}
 			}
 		}
 		if (big)
 			return counter+"("+whiteCaches+"/"+whiteWaypoints+")";
 		else
 			return ""+whiteCaches;
-		
+
 	}
-	
+
 	/**
 	 * Method to get the number of caches available for display
 	 * @return
@@ -82,7 +82,7 @@ public class DBStats {
 			holder = cacheDB.get(i);
 			if(holder.is_black()){
 			  if (CacheType.isAddiWpt(holder.getType())) {
-				  blackWaypoints++;  
+				  blackWaypoints++;
 			  }
 			  else {
 				  blackCaches++;
@@ -92,17 +92,23 @@ public class DBStats {
 				if (CacheType.isAddiWpt(holder.getType())) {
 					whiteWaypoints++;
 				}
-				else {				
+				else {
 					whiteCaches++;
-				}		
+				}
 			}
 		}
-		if (big)
-			return all+"("+whiteCaches+"/"+whiteWaypoints+"+"+blackCaches+"/"+blackWaypoints+")";
+		if (big){
+			if ( blackCaches > 0 || blackWaypoints > 0) {
+				return all+"("+whiteCaches+"/"+whiteWaypoints+"+"+blackCaches+"/"+blackWaypoints+")";
+			}
+			else {
+				return all+"("+whiteCaches+"/"+whiteWaypoints+")";
+			}
+		}
 		else
 			return ""+whiteCaches;
 	}
-	
+
 	public int totalFound(){
 		CacheHolder holder;
 		int counter = 0;
