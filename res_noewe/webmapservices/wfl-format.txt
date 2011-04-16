@@ -1,0 +1,34 @@
+f0 affine lat x
+f1 affine lon x
+f2 affine lat y
+f3 affine lon y
+topleft.lat
+topleft.lon
+bottomright.lat
+bottomright.lon
+EPSG - Code
+
+
+
+
+
+Berechnung der Koordinaten ll aus einem Bildpunkt (x,y)
+		ll.lat = x * f0 + y * f2 + topleft.lat;
+		ll.lon = x * f1 + y * f3 + topleft.lon;
+
+Berechnung 
+			//calculate reverse affine
+			double nenner=(-f1*f2+f0*f3);
+			transLatX = f3/nenner; // nenner == 0 cannot happen as long als affine is correct
+			transLonX = -f2/nenner;
+			transLatY = -f1/nenner;
+			transLonY = f0/nenner;
+
+Berechnung Bildpunkt x,y aus Koordinaten t
+		x = (int)Math.round(transLatX * (t.latDec - topleft.lat) + transLonX * (t.lonDec - topleft.lon));
+		y = (int)Math.round(transLatY * (t.latDec - topleft.lat) + transLonY * (t.lonDec - topleft.lon));
+
+Beispiel
+Berechnung f2,f1 vereinfacht bei f0,f3=0(keineDrehung) Bildgrösse 500x500
+(bottomright.lon-topleft.lon)/499=f1
+(bottomright.lat-topleft.lat)/499=f2
