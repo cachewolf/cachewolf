@@ -339,6 +339,13 @@ public class Preferences extends MinML{
 	public boolean debug = false;
 	//////////////////////////////////////////////
 
+	/**
+	 * This switches the behaviour of GUI-Element factories. If set to true, it will construct alternative Forms.
+	 * It can only be set in the Preference-File directly, not by user-interaction now.
+	 * Add  <MobileGui value="true"/> to your pref.xml
+	 */
+	public boolean mobileGUI = false;
+
     //////////////////////////////////////////////////////////////////////////////////////
     // Public fields not stored in pref.xml
 	//////////////////////////////////////////////////////////////////////////////////////
@@ -681,6 +688,7 @@ public class Preferences extends MinML{
 		else if (name.equals("Symbols")) {
 			useOwnSymbols=Boolean.valueOf(atts.getValue("useOwnSymbols")).booleanValue();
 		}
+		else if (name.equals("MobileGui")) mobileGUI=Boolean.valueOf(atts.getValue("value")).booleanValue();
 	}
 
 	public void characters( char ch[], int start, int length ) {
@@ -780,6 +788,7 @@ public class Preferences extends MinML{
 			outp.print("    <showCachesOnMap on=\""+SafeXML.strxmlencode(showCachesOnMap)+"\"/>\n");
 			outp.print("    <SortingGroupedByCache on=\""+SafeXML.strxmlencode(SortingGroupedByCache)+"\"/>\n");
 			outp.print("    <Symbols useOwnSymbols=\"" + SafeXML.strxmlencode(useOwnSymbols) + "\"/>\n");
+			if (mobileGUI) outp.print("    <MobileGui value=\"true\" />\n"); // Keep the vmgui switch if it is set
 			outp.print("</preferences>");
 			outp.close();
 		} catch (Exception e) {
