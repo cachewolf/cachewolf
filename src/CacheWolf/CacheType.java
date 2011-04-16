@@ -31,26 +31,27 @@ final class CTyp {
 	public byte _cwMappedCType; // CW Cache Typ intern
 	public byte _cwCType; // CW Cache Typ intern
 	public char _cwCGroup; // Cache Typ Group intern
-	public String _cwCTypeV1; // V1 Cache Typ 
-	public String _gcCTypeSpider; // GC Type on Spider Import from GC.com 
-	public String _ocCTypeXmlImport; // GC Type on Spider Import from GC.com 
-	public byte _cwCTypeV2; // V2 Cache Typ 
+	public String _cwCTypeV1; // V1 Cache Typ
+	public String _gcCTypeSpider; // GC Type on Spider Import from GC.com
+	public String _ocCTypeXmlImport; // GC Type on Spider Import from GC.com
+	public byte _cwCTypeV2; // V2 Cache Typ
 	public char _gpxShortCType; // Short Typ (one char abbreviation)
 	public String _imageName; // name of imageName for Icon, "showCacheInBrowser" and "KML Export"
 	public String _gpxWptTypeTag; // gpx wpt <type> tag
 	public String _gpxWptSymTag; // gpx wpt <sym> tag
 	public String _gpxWptGCextensionTypTag; // gpx cache extension <groundspeak:type> tag
-	public String _gpxAlternativeWptTypTags; // alternative typ - names for gpx from other sources 		
+	public String _gpxAlternativeWptTypTags; // alternative typ - names for gpx from other sources
 	public int _msgNrCTypeName; // message number for gui cache Typ name
 	public int _GUIOrder; // sort Order in GUI selection //TODO more intelligent implementation (now manually change each line on new one)
-	public int _FilterStringPos; // BitNr in Filter String (profile) 
+	public int _FilterStringPos; // BitNr in Filter String (profile)
 	public int _FilterPattern; // 2**BitNr in Filter int (does not correspond with BitNr in String)
-	public Image _iconImage; 
+	public Image _iconImage;
 	public Image _mapImage;
-	public CTyp(byte cwMappedCType, byte cwCType, char cwCGroup, String cwCTypeV1, String gcCTypeSpider, 
-			String ocCTypeXmlImport, byte cwCTypeV2, char gpxShortCType, String imageName, 
+	public Image _foundImage;
+	public CTyp(byte cwMappedCType, byte cwCType, char cwCGroup, String cwCTypeV1, String gcCTypeSpider,
+			String ocCTypeXmlImport, byte cwCTypeV2, char gpxShortCType, String imageName,
 			String[] gpx, int msgNrCTypeName, int gUIOrder, int filterStringPos, int filterPattern) {
-		
+
 		_cwMappedCType = cwMappedCType;
 		_cwCType = cwCType;
 		_cwCGroup = cwCGroup;
@@ -71,13 +72,14 @@ final class CTyp {
 		if (!_imageName.equals("")) {
 			_iconImage=new Image(_imageName);
 			_mapImage=_iconImage;
+			_foundImage=new Image("found.png");
 		}
 	}
 }
 
 
 /**
- * Handles all aspects of converting cache type information 
+ * Handles all aspects of converting cache type information
  * from and to the various im- and exporters ...
  * converting legacy profiles to current standard
  *
@@ -158,12 +160,12 @@ public final class CacheType {
 		new CTyp(CW_TYPE_REFERENCE,CW_TYPE_REFERENCE,'A',"55","","",(byte) -73,'R',"typeReference.png",new String[] {"Waypoint|Reference Point","Reference Point","Reference Point",""},55,18,16,0x010000),
 		// error on waypoint
 		new CTyp(CW_TYPE_ERROR,CW_TYPE_ERROR,'E',"","","",(byte) -1,'-',"guiError.png",new String[] {"","","",""},49,-1,-1,0),
-        // mapped types (recognized on input from gpx or download-spider / or cw - version)                 
+        // mapped types (recognized on input from gpx or download-spider / or cw - version)
 		new CTyp(CW_TYPE_UNKNOWN,(byte) 1,'C',"","","1",(byte) -1,'U',"",new String[] {"Geocache|Other","Geocache","Other","Other"},21,-1,-1,0),
 		new CTyp(CW_TYPE_UNKNOWN,(byte) 7,'C',"7","","7",(byte) -121,'U',"",new String[] {"Geocache|Quiz","Geocache","Quiz","Quiz"},7,-1,-1,0),
 		new CTyp(CW_TYPE_UNKNOWN,(byte) 9,'C',"9","","9",(byte) -119,'U',"",new String[] {"Geocache|Moving","Geocache","Moving","Moving"},9,-1,-1,0),
 		new CTyp(CW_TYPE_TRADITIONAL,(byte) 10,'C',"10","","10",(byte) -118,'U',"",new String[] {"Geocache|DriveIn","Geocache","DriveIn","DriveIn"},10,-1,-1,0),
-		new CTyp(CW_TYPE_EVENT,(byte) 14,'C',"","3653","",(byte) -1,'X',"",new String[] {"Geocache|Lost and Found Event Cache","Geocache","Lost and Found Event Cache",""},6,-1,-1,0),		         
+		new CTyp(CW_TYPE_EVENT,(byte) 14,'C',"","3653","",(byte) -1,'X',"",new String[] {"Geocache|Lost and Found Event Cache","Geocache","Lost and Found Event Cache",""},6,-1,-1,0),
 		new CTyp(CW_TYPE_TRADITIONAL,(byte) 102,'C',"","9","",(byte) -1,'T',"",new String[] {"Geocache|Project APE Cache","Geocache","Project APE Cache","APE"},16,-1,-1,0),
 		new CTyp(CW_TYPE_EVENT,(byte) 103,'C',"","1304","",(byte) -1,'X',"",new String[] {"Geocache|GPS Adventures Exhibit","Geocache","GPS Adventures Exhibit","MAZE"},17,-1,-1,0),
 		new CTyp(CW_TYPE_UNKNOWN,(byte) 108,'C',"","","8",(byte) -1,'U',"",new String[] {"only on OC download","","",""},19,-1,-1,0),
@@ -179,12 +181,12 @@ public final class CacheType {
 	   }
 	}
 	public static byte Ref_Index(final byte type) {
-		byte ret=Ref_Index[cTypRef[Ref_Index[type+1]]._cwMappedCType + 1];
+		final byte ret=Ref_Index[cTypRef[Ref_Index[type+1]]._cwMappedCType + 1];
 		return ret;
 	}
-	
-	
-	
+
+
+
 	/**
 	 * check if a given waypoint type is an additional waypoint
 	 * @param type waypoint type to check
@@ -209,8 +211,8 @@ public final class CacheType {
 	public static boolean isCustomWpt(final byte type) {
 		return cTypRef[Ref_Index(type)]._cwCGroup == 'P';
 	}
-	
-	
+
+
 	// done for DetailsPanel.java and KML- and TomTom-Exporter
 	/**
 	 * create list of cache types to be shown in GUI drop down lists
@@ -225,7 +227,7 @@ public final class CacheType {
 				j=cTypRef[i]._GUIOrder;
 			}
 		}
-		String[] ret = new String[j+1];
+		final String[] ret = new String[j+1];
 		for (int i = 0; i < cTypRef.length; i++) {
 			if (cTypRef[i]._GUIOrder > -1) {
 				ret[cTypRef[i]._GUIOrder]=MyLocale.getMsg(cTypRef[i]._msgNrCTypeName,"");
@@ -259,8 +261,8 @@ public final class CacheType {
 		return cTypRef[Ref_Index(typeId)]._GUIOrder;
 	}
 
-	
-	
+
+
 	/**
 	 * convert the strings found in import of GPX from GC, OC or TC to internal cache type
 	 * @param gpxType type information found in GPX
@@ -273,14 +275,14 @@ public final class CacheType {
 		for (byte i=0; i<cTypRef.length; i++) {
 			if (cTypRef[i]._gpxWptGCextensionTypTag.equalsIgnoreCase(gpxType)) {return cTypRef[i]._cwMappedCType;};
 		}
-		String lowerCaseGPXType = gpxType.toLowerCase();
+		final String lowerCaseGPXType = gpxType.toLowerCase();
 		for (byte i=0; i<cTypRef.length; i++) {
 			if (cTypRef[i]._gpxAlternativeWptTypTags.toLowerCase().indexOf(lowerCaseGPXType) != -1) {
 				return cTypRef[i]._cwMappedCType;
 			};
 		}
 		// TODO extend definition of _gpxAlternativeWptTypTags for all cases of Mystery
-		// old code was : if (!(gpxType.indexOf("Mystery")==-1)) return CW_TYPE_UNKNOWN; 
+		// old code was : if (!(gpxType.indexOf("Mystery")==-1)) return CW_TYPE_UNKNOWN;
 		return -1;
 	}
 
@@ -341,8 +343,8 @@ public final class CacheType {
 		return -1;
 	}
 
-	
-	
+
+
 	/**
 	 * translate cache type to a short version for compact exporters or "smart" cache names.
 	 * @param typeId CacheWolf internal type information
@@ -407,13 +409,17 @@ public final class CacheType {
 	public static Image getMapImage(final byte typeId) {
 		return cTypRef[Ref_Index(typeId)]._mapImage;
 	}
+
+	public static Image getFoundImage(final byte typeId) {
+		return cTypRef[Ref_Index(typeId)]._foundImage;
+	}
 	/**
 	 * select image to be displayed for a given cache type
 	 * @param typeId internal cache type id
 	 * @param Image object to be displayed
 	 */
 	public static void setTypeImage(final byte id, final Image iconImage) {
-		if (cTypRef[Ref_Index(id)]._iconImage != cTypRef[Ref_Index(id)]._mapImage) 
+		if (cTypRef[Ref_Index(id)]._iconImage != cTypRef[Ref_Index(id)]._mapImage)
 			cTypRef[Ref_Index(id)]._iconImage.free();
 		cTypRef[Ref_Index(id)]._iconImage=iconImage;
 	}
@@ -423,12 +429,15 @@ public final class CacheType {
 	 * @param Image object to be displayed
 	 */
 	public static void setMapImage(final byte id, final Image mapImage) {
-		if (cTypRef[Ref_Index(id)]._iconImage != cTypRef[Ref_Index(id)]._mapImage) 
+		if (cTypRef[Ref_Index(id)]._iconImage != cTypRef[Ref_Index(id)]._mapImage)
 			cTypRef[Ref_Index(id)]._mapImage.free();
 		cTypRef[Ref_Index(id)]._mapImage=mapImage;
 	}
-	
-	
+	public static void setFoundImage(final byte id, final Image foundImage) {
+		cTypRef[Ref_Index(id)]._foundImage=foundImage;
+	}
+
+
 	// TODO do it better in Version 4
 	public static int getCacheTypePattern(final byte typeId) {
 		return cTypRef[Ref_Index(typeId)]._FilterPattern;
@@ -456,6 +465,6 @@ public final class CacheType {
 		}
 		return (typeMatchPattern & TYPE_MAIN) != 0;
 	}
-	
+
 	// TODO it for OCXMLImporterScreen and FilterScreen ?
 }

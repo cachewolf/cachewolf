@@ -69,43 +69,43 @@ public class RadarPanel extends CellPanel{
 	*/
 	public RadarPanel(){
 		this.addLast(iActP = new myInteractivePanel(), CellConstants.STRETCH, CellConstants.FILL);
-		CellPanel cp = new CellPanel();
+		final CellPanel cp = new CellPanel();
 		cp.addNext(btMinus,CellConstants.HSTRETCH, (CellConstants.FILL|CellConstants.WEST));
 		cp.addNext(btToggle,CellConstants.HSTRETCH, CellConstants.FILL);
 		cp.addLast(btPlus,CellConstants.HSTRETCH, (CellConstants.FILL|CellConstants.EAST));
 		this.addLast(cp, CellConstants.HSTRETCH, CellConstants.FILL);
 	}
-	
+
 	public void setMainTab(MainTab tb){
 		mt = tb;
 		iActP.setMainTab(tb);
 	}
-	
+
 	/**
 	* Informs the radar panel on preferences and currently loaded cache
-	* database. It also calculates the maximum size available for drawing 
+	* database. It also calculates the maximum size available for drawing
 	* the radar.
 	*/
 	public void setParam(Preferences p, CacheDB db, CacheHolder sWp){
 		selectedWaypoint = sWp;
 		pref = p;
 		cacheDB = db;
-		height = (pref.myAppHeight)*6/5; // add 10% each at top/bottom 
+		height = (pref.myAppHeight)*6/5; // add 10% each at top/bottom
 		width = (pref.myAppWidth)*6/5;
 	}
-	
+
 	// Call this after the centre has changed to re-center the radar panel
 	public void recenterRadar() {
 		reCenterImage=true;
 	}
-	
+
 	/**
 	* Public method to draw the different caches and the
 	* radar background
 	*/
 	public void drawThePanel(){
 		// If there are any images remove them!
-		int anz = iActP.images.size();
+		final int anz = iActP.images.size();
 		for(int i = 0; i<anz;i++){
 			iActP.removeImage((AniImage)iActP.images.get(0));
 		}
@@ -116,25 +116,25 @@ public class RadarPanel extends CellPanel{
 		if (reCenterImage) {
 			// Hack to scroll to left origin for a defined position for subsequent
 			// scroll which centers the image
-			iActP.scroll(-1000,-1000); 
-			Dimension dispSize=getDisplayedSize(null);
+			iActP.scroll(-1000,-1000);
+			final Dimension dispSize=getDisplayedSize(null);
 			iActP.scroll((width-dispSize.width)/2,(height-dispSize.height+btMinus.getSize(null).height)/2);
 			reCenterImage=false;
 		}
 	}
-	
+
 	/**
 	* Private method to draw the caches.
 	*/
 	private void drawCaches(){
-		Font radarFont = new Font("Gui", Font.BOLD,Global.getPref().fontSize);
-		FontMetrics fm = getFontMetrics(radarFont);
+		final Font radarFont = new Font("Gui", Font.BOLD,Global.getPref().fontSize);
+		final FontMetrics fm = getFontMetrics(radarFont);
 		AniImage aImg;
 		RadarPanelImage rpi;
 		int drX,drY = 0;
 		CacheHolder holder;
 		double degrees;
-		double pi180=java.lang.Math.PI / 180.0;
+		final double pi180=java.lang.Math.PI / 180.0;
 		for(int i = cacheDB.size()-1; i >=0 ; i--){
 			holder = cacheDB.get(i);
 			if(holder.isVisible() && holder.pos.isValid()) {
@@ -148,10 +148,10 @@ public class RadarPanel extends CellPanel{
 							s=holder.getWayPoint();
 						else
 							s=holder.getCacheName();
-						if (s.length()>0) { 
+						if (s.length()>0) {
 							int tw;
-							Image img = new Image(tw=fm.getTextWidth(s),fm.getHeight());
-							Graphics g = new Graphics(img);
+							final Image img = new Image(tw=fm.getTextWidth(s),fm.getHeight());
+							final Graphics g = new Graphics(img);
 							g.setFont(radarFont);
 							g.setColor(Color.Black);
 							g.fillRect(0,0,tw, fm.getHeight());
@@ -164,20 +164,20 @@ public class RadarPanel extends CellPanel{
 							iActP.addImage(aImg);
 						}
 					}
-					Image imgCache=GuiImageBroker.getTypeImage(holder.getType(),true);
+					Image imgCache=GuiImageBroker.getTypeImage(holder.getType(),true, holder.is_found());
 					// If we have no image for the cache type use a question mark
-					if (imgCache==null) imgCache=GuiImageBroker.getTypeImage(CacheType.CW_TYPE_UNKNOWN,true); 
+					if (imgCache==null) imgCache=GuiImageBroker.getTypeImage(CacheType.CW_TYPE_UNKNOWN,true,false);
 					rpi = new RadarPanelImage(imgCache);
 					rpi.wayPoint = holder.getWayPoint();
 					rpi.rownum = i;
-					int dx = imgCache.getWidth();
-					int dy = imgCache.getHeight();
+					final int dx = imgCache.getWidth();
+					final int dy = imgCache.getHeight();
 					rpi.setLocation(centerX+drX-dx/2,centerY+drY-dy/2);
 					iActP.addImage(rpi);
 					if(holder == selectedWaypoint){ // Draw red circle around selected wpt
-						int diag = (int) (java.lang.Math.sqrt(dx*dx+dy*dy)+0.5);
-						Image imgCircle = new Image(diag, diag);
-						Graphics gCircle = new Graphics(imgCircle);
+						final int diag = (int) (java.lang.Math.sqrt(dx*dx+dy*dy)+0.5);
+						final Image imgCircle = new Image(diag, diag);
+						final Graphics gCircle = new Graphics(imgCircle);
 						gCircle.setColor(Color.Black);
 						gCircle.fillRect(0,0,diag,diag);
 						gCircle.setColor(new Color(255,0,0));
@@ -192,22 +192,22 @@ public class RadarPanel extends CellPanel{
 			}// if is_black...
 		}
 	}
-	
+
 	/**
 	* Private method to draw the black background and green radar.
 	* Also calculates some other parameters.
 	* Always call this before calling drawCaches().
 	*/
 	private void drawBackground(){
-		Rect r = new Rect(new Dimension(width, height));
+		final Rect r = new Rect(new Dimension(width, height));
 		iActP.virtualSize = r;
 		iActP.refresh();
-		Image img = new Image(width, height);
-		Graphics g = new Graphics(img);
+		final Image img = new Image(width, height);
+		final Graphics g = new Graphics(img);
 		g.setColor(Color.Black);
 		g.fillRect(0,0,width, height);
-		
-		
+
+
 		if(width < height) {
 			scale = (double)scaleKm / (double)height;
 		} else {
@@ -218,7 +218,7 @@ public class RadarPanel extends CellPanel{
 		//centerY = (int)(centerY-centerY*0.15);
 		g.setColor(new Color(0,255,0));
 		int radstep= 0, steps=0, radius = 0;
-		
+
 		if(width > height){
 			radstep = (int)(10 / scale);
 			steps = (width / radstep);
@@ -239,15 +239,15 @@ public class RadarPanel extends CellPanel{
 			radius = radstep/5;
 			g.drawEllipse(centerX-radius/2,centerY-radius/2, radius,radius);
 			g.free();
-		}	
-		AniImage aImg = new AniImage(img);
+		}
+		final AniImage aImg = new AniImage(img);
 		//iActP.addImage(aImg);
 		iActP.backgroundImage = img;
-		int xPos = (pref.myAppWidth/2 - width/2);
+		final int xPos = (pref.myAppWidth/2 - width/2);
 		aImg.setLocation(xPos,0);
 		aImg.refresh();
 	}
-	
+
 	public void onEvent(Event ev){
 		if(ev instanceof ControlEvent && ev.type == ControlEvent.PRESSED){
 			if (ev.target == btPlus){
