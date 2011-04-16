@@ -30,7 +30,6 @@ import CacheWolf.CacheType;
 import CacheWolf.Preferences;
 import CacheWolf.Profile;
 
-
 /**
 *	Class to export the cache database (index) to an OziExplorer File
 */
