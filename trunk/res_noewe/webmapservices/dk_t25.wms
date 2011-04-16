@@ -30,11 +30,11 @@ RequestUrlPart:     REQUEST=GetMap
 #LayersUrlPart:     LAYERS=topo25_klassisk|DTK/kort25 klassisk||
 LayersUrlPart:     LAYERS=topo25_klassisk
 StylesUrlPart:     STYLES=
-ImageFormatUrlPart:FORMAT=image/png
+ImageFormatUrlPart:FORMAT=image/jpeg
 BoundingBoxTopLeftWGS84: N 58.4744 E 2.4783
 BoundingBoxBottomRightWGS84: N 53.0150 E 17.5575
 #BBox_Mitte: N 55.7447 E 10.017915
 MinScale:   1
 MaxScale:   20
 RecommendedScale:    2.5 5
-ImageFileExtension: .png
+ImageFileExtension: .jpg
