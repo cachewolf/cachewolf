@@ -53,12 +53,17 @@ public final class GuiImageBroker {
 		// Noting to do
 	}
 
-	public static Image getTypeImage(byte typeId,boolean map) {
+	public static Image getTypeImage(byte typeId,boolean map, boolean found) {
 		if (!map) {
 			return CacheType.getTypeImage(typeId);
 		}
 		else {
-			return CacheType.getMapImage(typeId);
+			if (found) {
+				return CacheType.getFoundImage(typeId);
+			}
+			else {
+				return CacheType.getMapImage(typeId);
+			}
 		}
 	}
 
@@ -78,6 +83,7 @@ public final class GuiImageBroker {
 		if (dir.isDirectory()){
 			int id;
 			boolean size=false;
+			boolean found=false;
 			String name = "";
 			String [] pngFiles;
 			pngFiles=dir.list("*.png",0);
@@ -88,18 +94,29 @@ public final class GuiImageBroker {
 					size=true;
 					name=name.substring(0,name.length()-4);
 				}
+				if (name.toLowerCase().endsWith("found")){
+					found=true;
+					name=name.substring(0,name.length()-5);
+				}
 				try {
 					id = Integer.parseInt(name);
 				}
-				catch (Exception E){
+				catch (final Exception E){
 					id = -1; //filename invalid for symbols
 				}
 				if (0<=id && id<=CacheType.maxCWCType){
-					String s=FileBase.getProgramDirectory()+sdir+pngFiles[i];
+					final String s=FileBase.getProgramDirectory()+sdir+pngFiles[i];
 					Global.getPref().log("own symbol: "+(i+1)+" = "+pngFiles[i]);
 					if (size){
-						CacheType.setMapImage((byte) id, new Image(s));
+						if (found) {
+							CacheType.setFoundImage((byte) id, new Image(s));
+						}
+						else {
+							CacheType.setMapImage((byte) id, new Image(s));
+						}
 						size=false;
+						found=false;
+
 					}
 					else{
 						CacheType.setTypeImage((byte) id, new Image(s));
