@@ -66,9 +66,9 @@ public class TravelbugJourneyScreenFactory {
 				return new PDATravelbugJourneyScreen(model);
 			}
 		} else if (isSwing) {
-			return new TravelbugJourneyScreen(model);
+			throw new InstantiationError ("No Swing GUI available");
 		} else if (isAndroid) {
-			return new TravelbugJourneyScreen(model);
+			throw new InstantiationError ("No Android GUI available");
 		} else {
 			return new TravelbugJourneyScreen(model);
 		}
