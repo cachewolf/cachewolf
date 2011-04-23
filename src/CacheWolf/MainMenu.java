@@ -48,6 +48,7 @@ import CacheWolf.imp.SpiderGC;
 import CacheWolf.navi.MapImporter;
 import CacheWolf.navi.MapLoaderGui;
 import CacheWolf.navi.SelectMap;
+import CacheWolf.view.TravelbugJourneyScreenFactory;
 import ewe.filechooser.FileChooser;
 import ewe.filechooser.FileChooserBase;
 import ewe.fx.Font;
@@ -736,9 +737,9 @@ public class MainMenu extends MenuBar {
 				tbp.refreshTable();
 			}
 			if(mev.selectedItem == orgTravelbugs){
-				TravelbugJourneyScreen tbs=new TravelbugJourneyScreen();
+				Form tbs=TravelbugJourneyScreenFactory.createTravelbugJourneyScreen();
 				tbs.setPreferredSize(800,600);
-				tbs.execute(); //getFrame(), Gui.CENTER_FRAME);
+				tbs.execute();
 				tbs.close(0);
 			}
 			if(mev.selectedItem == cacheTour){
