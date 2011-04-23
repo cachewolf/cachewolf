@@ -83,6 +83,7 @@ public class MainForm extends Editor {
 		pref.setPathToConfigFile(pathtoprefxml); // in case pathtoprefxml == null the preferences will determine the path itself
 		doIt();
 	}
+	
 	protected void checkButtons() {
 		if (pref.hasCloseButton) super.checkButtons();
 	}

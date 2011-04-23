@@ -62,6 +62,7 @@ public class DateTimeChooser extends Editor {
 	public int hour;
 	public int minute;
 	public String time;
+	Time dateSet;
 	
 	public boolean autoAdvance = true;
 	public boolean didAll = false;
@@ -75,7 +76,7 @@ public class DateTimeChooser extends Editor {
 	Control timeDisplay;
 	//Control minuteDisplay;
 
-	Time getTime() {
+	Time getDate() {
 		Time t = (Time)dateSet.getCopy();
 		t.day = day;
 		t.month = month;
@@ -84,7 +85,6 @@ public class DateTimeChooser extends Editor {
 		t.minute = minute;
 		t.update();
 		return t;
-		//return new Time(day,month,year);
 	}
 	
 	void addTable(TableControl tc,TableModel tm,String pName) {
@@ -246,7 +246,6 @@ public class DateTimeChooser extends Editor {
 		else super.onControlEvent(ev);
 	}
 	
-	Time dateSet;
 	
 	public void setDate(Time t) {
 		dateSet = t;
@@ -274,6 +273,30 @@ public class DateTimeChooser extends Editor {
 		tcm.set(hour,minute);
 		//dayChooser.repaintNow();
 		//monthChooser.repaintNow();
+	}
+
+	public int getDay() {		
+		return day;
+	}
+
+	public int getMonth() {
+		return month;
+	}
+
+	public int getYear() {
+		return year;
+	}
+
+	public String getTime() {
+		return time;
+	}
+
+	public int getHour() {
+		return hour;
+	}
+
+	public int getMinute() {
+		return minHeight;
 	}
 } // DateTimeChooser
 
