@@ -18,8 +18,8 @@ printf '/VER_SVN =/s/\$.*\$/$LastChanged''Revision: %s $/\nw\nq\n' $v | \
 rm -rf bin
 mkdir -p bin/CacheWolf
 javac -source 1.3 -target 1.1 -encoding windows-1252 \
-    -cp lib/CompileEwe.zip:lib -d bin -deprecation -nowarn \
-    src/CacheWolf/*.java src/CacheWolf/*/*.java src/CacheWolf/navi/touchControls/*.java
+     -cp lib/CompileEwe.zip:lib -d bin -deprecation -nowarn \
+     src/CacheWolf/*.java src/CacheWolf/*/*.java src/CacheWolf/navi/touchControls/*.java src/CacheWolf/view/*/*.java	 
 javac -source 1.3 -target 1.1 -encoding windows-1252 \
     -cp ./lib/CompileEwe.zip:lib -d lib -deprecation -nowarn \
 	lib/net/ax86/*.java ./lib/org/json/*.java
