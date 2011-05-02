@@ -1,0 +1,90 @@
+﻿TakenFromUrl:       http://mapdmz.brgm.fr/cgi-bin/mapserv?map=/carto/infoterre/mapFiles/geocat_metr.map&
+GetCapabilitiesUrl: http://mapdmz.brgm.fr/cgi-bin/mapserv54?map=/carto/infoterre/mapFiles/geocat_metr.map&SERVICE=WMS&VERSION=1.1.1&REQUEST=GetCapabilities
+Name:               fr + (Guadeloupe..Polynesie) t
+MapType:                        topo
+MainUrl:            http://mapdmz.brgm.fr/cgi-bin/mapserv54?map=/carto/infoterre/mapFiles/geocat_metr.map&
+ServiceTypeUrlPart: SERVICE=WMS
+VersionUrlPart:     VERSION=1.1.1
+CoordinateReferenceSystemCacheWolf:  4326
+CoordinateReferenceSystemUrlPart: SRS=EPSG:4326 
+RequestUrlPart:     REQUEST=GetMap
+#LayersUrlPart:     LAYERS=METROPOLE|Fonds Geosignal|1.24725712107409|0
+#LayersUrlPart:     LAYERS=raster_geosignal|raster_geosignal||
+#LayersUrlPart:     LAYERS=WORLD_COUNTRIES_FR|Limites du monde|1496.70854528891|0
+#LayersUrlPart:     LAYERS=HydroSurf|Hydrographie surfacique - France metropolitaine|0|37.4182125350712
+#LayersUrlPart:     LAYERS=HydroLigne|Hydrographie lineaire - France metropolitaine|0|37.4182125350712
+#LayersUrlPart:     LAYERS=Routes|Reseau routier - France metropolitaine|0|37.4182125350712
+#LayersUrlPart:     LAYERS=fer|Reseau ferre - France metropolitaine|0|37.4182125350712
+#LayersUrlPart:     LAYERS=Communes|Communes - France metropolitaine|0|37.4182125350712
+
+#LayersUrlPart:     LAYERS=RASTER4000k|Raster Metropole 1/4 000 000|997.805696859274|4989.02848429637
+#LayersUrlPart:     LAYERS=RASTER1000k|Raster Metropole 1/1 000 000|374.177136322228|997.805696859274
+#LayersUrlPart:     LAYERS=RASTER500k_01|Raster Metropole 1/500 000|199.561139371855|374.177136322228
+#LayersUrlPart:     LAYERS=RASTER250k_01|Raster Metropole 1/250 000|99.7805696859274|199.561139371855
+#LayersUrlPart:     LAYERS=RASTER175k|Raster Metropole 1/175 000|62.3628560537046|99.7805696859274
+#LayersUrlPart:     LAYERS=RASTER100k_01|Raster Metropole 1/100 000|37.4177136322228|62.3628560537046
+#LayersUrlPart:     LAYERS=RASTER50k_01|Raster Metropole 1/50 000|17.4615996950373|37.4177136322228
+#LayersUrlPart:     LAYERS=RASTER25k_01|Raster Metropole 1/25 000|6.23628560537046|17.4615996950373
+#LayersUrlPart:     LAYERS=RASTER10k|Raster Metropole 1/10 000|3.74177136322228|6.23628560537046
+#LayersUrlPart:     LAYERS=RASTER5k_01|Raster Metropole 1/5 000|0|3.74177136322228
+
+#LayersUrlPart:     LAYERS=RASTER500k_02|Raster Guadeloupe 1/500 000|174.615996950373|498.902848429637
+#LayersUrlPart:     LAYERS=RASTER250k_02|Raster Guadeloupe 1/250 000|74.8354272644456|174.615996950373
+#LayersUrlPart:     LAYERS=RASTER100k_02|Raster Guadeloupe 1/100 000|37.4177136322228|74.8354272644456
+#LayersUrlPart:     LAYERS=RASTER50k_02|Raster Guadeloupe 1/50 000|17.4615996950373|37.4177136322228
+#LayersUrlPart:     LAYERS=RASTER25k_02|Raster Guadeloupe 1/25 000|7.48354272644456|17.4615996950373
+#LayersUrlPart:     LAYERS=RASTER12_5k_01|Raster Guadeloupe 1/12 500|3.74177136322228|7.48354272644456
+#LayersUrlPart:     LAYERS=RASTER5k_02|Raster Guadeloupe 1/5 000|0|3.74177136322228
+
+#LayersUrlPart:     LAYERS=RASTER500k_03|Raster Guyane 1/500 000|174.615996950373|4989.02848429637
+#LayersUrlPart:     LAYERS=RASTER250k_03|Raster Guyane 1/250 000|74.8354272644456|174.615996950373
+#LayersUrlPart:     LAYERS=RASTER100k_03|Raster Guyane 1/100 000|37.4177136322228|74.8354272644456
+#LayersUrlPart:     LAYERS=RASTER50k_03|Raster Guyane 1/50 000|17.4615996950373|37.4177136322228
+#LayersUrlPart:     LAYERS=RASTER25k_03|Raster Guyane 1/25 000|7.48354272644456|17.4615996950373
+#LayersUrlPart:     LAYERS=RASTER12_5k_02|Raster Guyane 1/12 500|3.74177136322228|7.48354272644456
+#LayersUrlPart:     LAYERS=RASTER5k_03|Raster Guyane 1/5 000|0|3.74177136322228
+
+#LayersUrlPart:     LAYERS=RASTER500k_04|Raster Martinique 1/500 000|174.615996950373|498.902848429637
+#LayersUrlPart:     LAYERS=RASTER250k_04|Raster Martinique 1/250 000|74.8354272644456|174.615996950373
+#LayersUrlPart:     LAYERS=RASTER100k_04|Raster Martinique 1/100 000|37.4177136322228|74.8354272644456
+#LayersUrlPart:     LAYERS=RASTER50k_04|Raster Martinique 1/50 000|17.4615996950373|37.4177136322228
+#LayersUrlPart:     LAYERS=RASTER25k_04|Raster Martinique 1/25 000|7.48354272644456|17.4615996950373
+#LayersUrlPart:     LAYERS=RASTER12_5k_03|Raster Martinique 1/12 500|3.74177136322228|7.48354272644456
+#LayersUrlPart:     LAYERS=RASTER5k_04|Raster Martinique 1/5 000|0|3.74177136322228
+
+#LayersUrlPart:     LAYERS=RASTER500k_05|Raster La Reunion 1/500 000|174.615996950373|498.902848429637
+#LayersUrlPart:     LAYERS=RASTER250k_05|Raster La Reunion 1/250 000|74.8354272644456|174.615996950373
+#LayersUrlPart:     LAYERS=RASTER100k_05|Raster La Reunion 1/100 000|37.4177136322228|74.8354272644456
+#LayersUrlPart:     LAYERS=RASTER50k_05|Raster La Reunion 1/50 000|17.4615996950373|37.4177136322228
+#LayersUrlPart:     LAYERS=RASTER25k_05|Raster La Reunion 1/25 000|7.48354272644456|17.4615996950373
+#LayersUrlPart:     LAYERS=RASTER12_5k_04|Raster La Reunion 1/12 500|3.74177136322228|7.48354272644456
+#LayersUrlPart:     LAYERS=RASTER5k_05|Raster La Reunion 1/5 000|0|7.48354272644456
+
+#LayersUrlPart:     LAYERS=RASTER500k_06|Raster Mayotte 1/500 000|174.615996950373|498.902848429637
+#LayersUrlPart:     LAYERS=RASTER250k_06|Raster Mayotte 1/250 000|74.8354272644456|174.615996950373
+#LayersUrlPart:     LAYERS=RASTER100k_06|Raster Mayotte 1/100 000|0|74.8354272644456
+
+#LayersUrlPart:     LAYERS=RASTER500k_07|Raster caledonie 1/500 000|174.615996950373|1496.70854528891
+#LayersUrlPart:     LAYERS=RASTER250k_07|Raster caledonie 1/250 000|74.8354272644456|174.615996950373
+#LayersUrlPart:     LAYERS=RASTER100k_07|Raster caledonie 1/100 000|0|74.8354272644456
+
+#LayersUrlPart:     LAYERS=RASTER500k_08|Raster Polynesie 1/500 000|174.615996950373|498.902848429637
+#LayersUrlPart:     LAYERS=RASTER250k_08|Raster Polynesie 1/250 000|74.8354272644456|174.615996950373
+#LayersUrlPart:     LAYERS=RASTER100k_08|Raster Polynesie 1/100 000|0|1496.70854528891
+#LayersUrlPart:     LAYERS=RASTER500k_09|Raster Polynesie 1/500 000|174.615996950373|498.902848429637
+#LayersUrlPart:     LAYERS=RASTER250k_09|Raster Polynesie 1/250 000|74.8354272644456|174.615996950373
+#LayersUrlPart:     LAYERS=RASTER100k_09|Raster Polynesie 1/100 000|0|1496.70854528891
+
+#LayersUrlPart:     LAYERS=RASTER500k_10|Raster Saint-Pierre et Miquelon 1/500 000|174.615996950373|498.902848429637
+#LayersUrlPart:     LAYERS=RASTER250k_10|Raster Saint-Pierre et Miquelon 1/250 000|74.8354272644456|174.615996950373
+#LayersUrlPart:     LAYERS=RASTER100k_10|Raster Saint-Pierre et Miquelon 1/100 000|0|74.8354272644456
+LayersUrlPart:     LAYERS=raster_geosignal
+StylesUrlPart:     STYLES=
+ImageFormatUrlPart:FORMAT=image/jpeg
+#BoundingBoxTopLeftWGS84: N 51.1007 W 5.8482
+#BoundingBoxBottomRightWGS84: N 41.1326 E 11.1984
+#BBox_Mitte: N 46.11665 E 2.67511
+MinScale:   0
+MaxScale:   100
+RecommendedScale:   1 5
+ImageFileExtension: .jpg
