@@ -53,7 +53,8 @@
 # * When entering spaces into a string ensure to escape them or write them as \\u0020
 # * Be sure that you have no hidden spaces at the end of a line or the patterns will not match!
 #------------------------------------------------------------
-loginPage          = http://www.geocaching.com/login/default.aspx
+#loginPage          = http://www.geocaching.com/login/default.aspx
+loginPage          = https://www.geocaching.com/login/default.aspx
 loginSuccess       = You\ are\ logged\ in\ as
 nextPage           = /login/default.aspx
 waypoint           = http://www.geocaching.com/seek/cache_details.aspx?wp=
@@ -67,8 +68,8 @@ showOnlyFound      = &f=1
 maxDistance        = &dist=
 nextListPage       = /seek/nearest.aspx
 # Regex to search for cachenames
-listBlockRex       = <table id="ctl00_ContentBody_dlResults"((?s).*?)</table>
-lineRex            = <tr\ bgcolor='#.{6}'\\s*class="Data\ BorderTop">((?s).*?)</tr>
+listBlockRex       = <table\ class="SearchResultsTable\ Table">((?s).*?)</table>
+lineRex            = Data\ BorderTop">((?s).*?)</tr>
 logDateRex         = <td valign="top">\\s*(.*?)<br\ />
 availableRex       = class="lnk\ \ Strike">
 archivedRex        = class="lnk\ OldWarning\ Strike\ Strike">
@@ -78,7 +79,7 @@ distCodeKey        = signalthefrog
 distRex            = (.*?)(?:km|mi|ft)
 DTSRex             = v=(.*?)"
 DTSCodeKey         = hbM9fjmrxy7z42LFD58BkKgPGdHscvCqNnw3ptO6lJ
-waypointRex        = \\(GC(.*?)\\)<br\ />
+waypointRex        = \\|\\s+GC(.*?)\\s+
 TypeRex            = www.geocaching.com/images/wpttypes/sm/(.*?)\\.gif
 found              = class="Success"
 own                = /WptTypes/name_tag.gif
@@ -109,9 +110,8 @@ cacheUnavailable   = class="OldWarning"><li>This\ cache\ is\ temporarily\ unavai
 cacheArchived      = class="OldWarning"><li>This\ cache\ has\ been\ archived
 premiumCachepage   = class="Warning">listing\ visible\ to\ Premium
 latLonRex          = tBody_LatLon"\ style="font-weight:bold;">((?s).*?)</span>
-#latLonRex          = tBody_LatLon"><b>((?s).*?)</b></span>
 shortDescRex       = tBody_ShortDescription">((?s).*?)</span>
-longDescRex        = tBody_LongDescription">((?s).*?)<td\ valign="top"\ width="10%">\\s*&nbsp;\\s*</td
+longDescRex        = tBody_LongDescription">((?s).*?)</span>\\s+</div>
 cacheNameRex       = tBody_CacheName">((?s).*?)</span>
 cacheOwnerRex      = &wid(?:(?s).*?)>((?s).*?)<
 dateHiddenRex      = (?:Hidden|Event\ Date)\\s*:\\s*((?s).*?)<
@@ -126,7 +126,7 @@ cacheLocationRex   = tBody_Location">In\ ([^<]*?)<
 #Section2a: Logs
 #--------------------------------------
 # blockRex extrahiert zunächst aus der gesamten Seite den Logbereich
-blockRex           = <table class="LogsTable Table">((?s).*?)<td></td></tr></table>
+blockRex           = <table class="LogsTable">((?s).*?)</table>\\s+<p>\\s+</p>
 # singleLogEx extrahiert in einer Schleife alle Logs aus dem Logbereich
 singleLogExStart   = ><strong><img src=
 singleLogExEnd     = <small><a\ href="
@@ -161,8 +161,8 @@ bugExEnd           = </a>
 bugLinkEnd         = "\ class="lnk">
 bugNameExStart     = <span>
 bugNameExEnd       = </span>
-bugDetailsStart    = "og:description"\ content="
-bugDetailsEnd      = "\ property="og:desc
+bugDetailsStart    = <meta\ name="og:description"\ content="
+bugDetailsEnd      = "\ property="og:description"
 getBugByName       = http://www.geocaching.com/track/search.aspx?k=
 getBugByGuid       = http://www.geocaching.com/track/details.aspx?guid=
 getBugById         = http://www.geocaching.com/track/details.aspx?id=
