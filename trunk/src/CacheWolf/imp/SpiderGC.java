@@ -862,13 +862,8 @@ public class SpiderGC {
 		}
 		final int startSize = cExpectedForUpdate.size(); // for save reasons
 
-		final Hashtable cFoundForUpdate = new Hashtable(cacheDB.size()); // for
-																			// don't
-																			// loose
-																			// the
-																			// already
-																			// done
-																			// work
+		// for don't loose the already done work
+		final Hashtable cFoundForUpdate = new Hashtable(cacheDB.size());
 		page_number = 1;
 		int found_on_page = 0;
 		try {
@@ -1135,7 +1130,7 @@ public class SpiderGC {
 			if (loggedIn)
 				return FormBase.IDOK;
 			else {
-				(new MessageBox("Login", "Check UserID in preferences| Einstellungen.", FormBase.OKB)).execute();
+				(new MessageBox("Login", "Check UserID in preferences | Einstellungen, or check GC-Language. Must be English.", FormBase.OKB)).execute();
 				return ERR_LOGIN;
 			}
 		} else {
@@ -1295,9 +1290,9 @@ public class SpiderGC {
 
 	private boolean switchToEnglish() {
 		// change language to EN , further operations relay on English
-		String url = "http://www.geocaching.com/my/default.aspx";
+		String url = "http://www.geocaching.com/";
 		String page = "";
-		String loggedInEnglish = "Sign Out";
+		String loggedInEnglish = ">Sign Out<";
 		String userID = "userid=" + pref.userID;
 		try {
 			UrlFetcher.setPermanentRequestorProperty("Cookie", userID);
@@ -1307,7 +1302,7 @@ public class SpiderGC {
 		} catch (final Exception ex) {
 			return false;
 		}
-		final PropertyList pl = UrlFetcher.getDocumentProperties();
+		PropertyList pl = UrlFetcher.getDocumentProperties();
 		String docprops = "";
 		for (int i = 0; i < pl.size(); i++) {
 			final Property p = (Property) pl.get(i);
@@ -1336,7 +1331,7 @@ public class SpiderGC {
 			return true;
 		}
 		// todo next doesn't work correct don't know why
-		// switch to english now goes into profile (is permanent, must be reset)
+		// switch to english now goes into gc account Display Preferences (is permanent, must be reset)
 		final Regex rexViewstate = new Regex("id=\"__VIEWSTATE\" value=\"(.*?)\" />");
 		String viewstate = "";
 		rexViewstate.search(page);
@@ -1348,16 +1343,21 @@ public class SpiderGC {
 		final String postStr = "__EVENTTARGET=" + UrlFetcher.encodeURL(strEnglishPage, false) + "&__EVENTARGUMENT=" + "&__VIEWSTATE=" + UrlFetcher.encodeURL(viewstate, false);
 		try {
 			UrlFetcher.setpostData(postStr);
+			/*
+			 * UrlFetcher.setRequestorProperty("Referer", url); UrlFetcher.setRequestorProperty("Origin", "http://www.geocaching.com"); UrlFetcher.setRequestorProperty("Cache-Control", "max-age=0"); UrlFetcher.setRequestorProperty("Accept-Charset",
+			 * "ISO-8859-1,utf-8;q=0.7,*;q=0.3"); UrlFetcher.setRequestorProperty("Accept-Language", "de-DE,de;q=0.8,en-US;q=0.6,en;q=0.4"); cookie =
+			 * "company_history=%5B%5B%22http%3A//feedback.geocaching.com/geocaching%22%2C%22Geocaching%22%5D%5D; Send2GPS=garmin; __qca=P0-675333427-1299837942815; " + cookie; UrlFetcher.setPermanentRequestorProperty("Cookie", cookie);
+			 */
 			page = UrlFetcher.fetch(url);
 			if (page.indexOf(loggedInEnglish) > -1) {
 				pref.log("Switched to English");
 				return true;
 			} else {
-				pref.log(page, null);
+				pref.log("couldn't switch to english", null);
 				return false;
 			}
 		} catch (final Exception ex) {
-			pref.log("Error switching to English: check/n" + url + "/n" + postStr, ex);
+			pref.log("Error switching to English: check " + url + " : " + postStr, ex);
 			return false;
 		}
 
@@ -2246,14 +2246,58 @@ public class SpiderGC {
 		} else {
 			final String monthNames[] = { "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December" };
 			SDate = mString.split(stmp, ' ');
-			lastLogGC.day = Common.parseInt(SDate[0]);
-			for (int m = 0; m < 12; m++) {
-				if (monthNames[m].startsWith(SDate[1])) {
-					lastLogGC.month = m + 1;
-					m = 12;
+			if (SDate.length == 1) {
+				SDate = mString.split(stmp, '/');
+				// trying to determine Dateformat
+				int v0 = Common.parseInt(SDate[0]);
+				int v1 = Common.parseInt(SDate[1]);
+				int v2 = Common.parseInt(SDate[2]);
+				int dd, mm, yy;
+				if (v0 > 31) {
+					// yyyy mm dd
+					yy = v0;
+					mm = v1;
+					dd = v2;
+				} else {
+					yy = v2;
+					if ((v0 == 0) || (v1 == 0)) {
+						// month as text
+						String month;
+						if (v0 == 0) {
+							month = SDate[0];
+							dd = v1;
+						} else {
+							month = SDate[1];
+							dd = v0;
+						}
+						mm = 12;
+						for (int m = 0; m < 12; m++) {
+							if (monthNames[m].startsWith(month)) {
+								mm = m + 1;
+								m = 12;
+							}
+						}
+					} else {
+						// mm dd yyyy
+						mm = v0;
+						dd = v1;
+					}
+
 				}
+				lastLogGC.month = mm;
+				lastLogGC.day = dd;
+				lastLogGC.year = yy;
+			} else {
+				// Format till may 2011
+				lastLogGC.day = Common.parseInt(SDate[0]);
+				for (int m = 0; m < 12; m++) {
+					if (monthNames[m].startsWith(SDate[1])) {
+						lastLogGC.month = m + 1;
+						m = 12;
+					}
+				}
+				lastLogGC.year = 2000 + Common.parseInt(SDate[2].substring(0, 2));
 			}
-			lastLogGC.year = 2000 + Common.parseInt(SDate[2].substring(0, 2));
 		}
 		final boolean ret = lastLogCW.compareTo(lastLogGC) < 0;
 		return ret;
