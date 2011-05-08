@@ -236,7 +236,7 @@ public class UrlFetcher {
 			char c = what[i];
 			if (spaceToPlus && c == ' ')
 				c = '+';
-			else if (c <= ' ' || c >= 127 || c == '+' || c == '&' || c == '%' || c == '=' || c == '|' || c == '{' || c == '}') {
+			else if (c <= '/' || c >= 127 || c == '+' || c == '&' || c == '%' || c == '=' || c == '|' || c == '{' || c == '}') {
 				dest[d++] = '%';
 				dest[d++] = hex.charAt((c >> 4) & 0xf);
 				dest[d++] = hex.charAt(c & 0xf);
