@@ -70,7 +70,7 @@ nextListPage       = /seek/nearest.aspx
 # Regex to search for cachenames
 listBlockRex       = <table\ class="SearchResultsTable\ Table">((?s).*?)</table>
 lineRex            = Data\ BorderTop">((?s).*?)</tr>
-logDateRex         = <td valign="top">\\s*(.*?)<br\ />
+logDateRex         = </span>\\s+</td>\\s+<td\ valign="top"\ width="70">\\s+<span\ class="small">\\s+(.*?)<br\ />
 availableRex       = class="lnk\ \ Strike">
 archivedRex        = class="lnk\ OldWarning\ Strike\ Strike">
 PMRex              = small_profile.gif
@@ -80,7 +80,7 @@ distRex            = (.*?)(?:km|mi|ft)
 DTSRex             = v=(.*?)"
 DTSCodeKey         = hbM9fjmrxy7z42LFD58BkKgPGdHscvCqNnw3ptO6lJ
 waypointRex        = \\|\\s+GC(.*?)\\s+
-TypeRex            = www.geocaching.com/images/wpttypes/sm/(.*?)\\.gif
+TypeRex            = www.geocaching.com/images/wpttypes/(.*?)\\.gif
 found              = class="Success"
 own                = /WptTypes/name_tag.gif
 TBRex              = /wpttypes/([0-9]+).gif" alt="(.*?)"
