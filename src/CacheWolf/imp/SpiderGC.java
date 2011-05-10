@@ -1330,6 +1330,7 @@ public class SpiderGC {
 			pref.log("already English");
 			return true;
 		}
+
 		// todo next doesn't work correct don't know why
 		// switch to english now goes into gc account Display Preferences (is permanent, must be reset)
 		final Regex rexViewstate = new Regex("id=\"__VIEWSTATE\" value=\"(.*?)\" />");
@@ -1605,7 +1606,7 @@ public class SpiderGC {
 			lonmax = (int) br.lonDec;
 			latmin = (int) tl.latDec;
 			latmax = (int) br.latDec;
-		} while ((lonmax - lonmin > 1) && (latmax - latmin > 1) && (scale > 16));
+		} while ((lonmax - lonmin > 1) && (latmax - latmin > 1) && (scale > 10));
 
 		String cachelist;
 
@@ -1706,16 +1707,22 @@ public class SpiderGC {
 
 		final int WpIndex = page.indexOf("\"gc\":");
 		final String[] elements = mString.split(page.substring(WpIndex), '\"');
-
+		if (elements.length != 63) {
+			(new MessageBox(MyLocale.getMsg(5500, "Error"), "GC changed format of new Map Infos", FormBase.OKB)).execute();
+			return;
+		}
 		final int posWP = 3; // gc
-		final int posDisabled = 6; // disabled
-		final int posDiff = 10; // difficulty
-		final int posTerr = 18; // terrain
-		final int posHidden = 25; // hidden date
-		final int posSize = 31; // size
-		final int posType = 44; // type
-		final int posOwner = 49; // owner
-		final int posGUID = 53; // guid
+		// final int posWPGuid = 7; // g
+		final int posDisabled = 10; // disabled
+		final int posPM = 12; // PM - Cache
+		// final int posLI = 14; // who knows
+		final int posDiff = 18; // difficulty
+		final int posTerr = 26; // terrain
+		final int posHidden = 33; // hidden date
+		final int posSize = 39; // size oder 43
+		final int posType = 52; // type 49 , 52
+		final int posOwner = 57; // owner
+		// final int posOwnerGUID = 61; // guid
 
 		// final boolean found = (elements[posFound].indexOf("true") > -1 ? true
 		// : false);
@@ -1726,13 +1733,16 @@ public class SpiderGC {
 			if (restrictedCacheType != cacheType)
 				return;
 		}
-
+		boolean pm = elements[posPM].indexOf("false") > -1 ? false : true;
+		// boolean li = elements[posLI].indexOf("true") > -1 ? false : true;
 		String wp = elements[posWP];
 		CacheHolder ch = cacheDB.get(wp);
 		if (ch == null) {
 
 			ch = new CacheHolder();
 			ch.setWayPoint(wp);
+			if (pm && !pref.isPremium)
+				ch.setCacheStatus("PM");
 			ch.pos = p;
 			final String owner = elements[posOwner];
 			ch.setCacheOwner(owner);
@@ -1751,7 +1761,7 @@ public class SpiderGC {
 			cacheName = STRreplace.replace(cacheName, "\\\"", "\"");
 			ch.setCacheName(cacheName);
 			ch.setAvailable((elements[posDisabled].indexOf("true") > -1 ? false : true));
-			ch.setDateHidden(DateFormat.MDY2YMD(elements[posHidden]));
+			ch.setDateHidden(DateFormat.toYYMMDD(elements[posHidden]));
 			ch.setHard(CacheTerrDiff.v1Converter(elements[posDiff].substring(1, elements[posDiff].length() - 1)));
 			ch.setTerrain(CacheTerrDiff.v1Converter(elements[posTerr].substring(1, elements[posTerr].length() - 1)));
 			ch.setCacheSize(CacheSize.gcGpxString2Cw(elements[posSize]));
@@ -2224,12 +2234,6 @@ public class SpiderGC {
 			return true; // or check cacheDescGC also no log?
 		lastLogCW.parse(slastLogCW, "yyyy-MM-dd");
 
-		final Time lastLogGC = new Time(); // is current time
-		lastLogGC.hour = 0;
-		lastLogGC.minute = 0;
-		lastLogGC.second = 0;
-		lastLogGC.millis = 0;
-		String[] SDate;
 		String stmp = "";
 		RexPropLogDate.search(cacheDescription);
 		if (RexPropLogDate.didMatch()) {
@@ -2238,67 +2242,8 @@ public class SpiderGC {
 			pref.log("check logDateRex in spider.def" + Preferences.NEWLINE + cacheDescription);
 			return false;
 		}
-		if (stmp.indexOf("day") > 0) {
-			// simplyfied (update if not newer than last week)
-			lastLogGC.setTime(lastLogGC.getTime() - 691200000L);
-		} else if (stmp.equals("")) {
-			return false; // no log yet
-		} else {
-			final String monthNames[] = { "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December" };
-			SDate = mString.split(stmp, ' ');
-			if (SDate.length == 1) {
-				SDate = mString.split(stmp, '/');
-				// trying to determine Dateformat
-				int v0 = Common.parseInt(SDate[0]);
-				int v1 = Common.parseInt(SDate[1]);
-				int v2 = Common.parseInt(SDate[2]);
-				int dd, mm, yy;
-				if (v0 > 31) {
-					// yyyy mm dd
-					yy = v0;
-					mm = v1;
-					dd = v2;
-				} else {
-					yy = v2;
-					if ((v0 == 0) || (v1 == 0)) {
-						// month as text
-						String month;
-						if (v0 == 0) {
-							month = SDate[0];
-							dd = v1;
-						} else {
-							month = SDate[1];
-							dd = v0;
-						}
-						mm = 12;
-						for (int m = 0; m < 12; m++) {
-							if (monthNames[m].startsWith(month)) {
-								mm = m + 1;
-								m = 12;
-							}
-						}
-					} else {
-						// mm dd yyyy
-						mm = v0;
-						dd = v1;
-					}
-
-				}
-				lastLogGC.month = mm;
-				lastLogGC.day = dd;
-				lastLogGC.year = yy;
-			} else {
-				// Format till may 2011
-				lastLogGC.day = Common.parseInt(SDate[0]);
-				for (int m = 0; m < 12; m++) {
-					if (monthNames[m].startsWith(SDate[1])) {
-						lastLogGC.month = m + 1;
-						m = 12;
-					}
-				}
-				lastLogGC.year = 2000 + Common.parseInt(SDate[2].substring(0, 2));
-			}
-		}
+		final Time lastLogGC = DateFormat.toDate(stmp);
+		// String timecheck = DateFormat.toYYMMDD(lastLogGC);
 		final boolean ret = lastLogCW.compareTo(lastLogGC) < 0;
 		return ret;
 	}
@@ -2442,7 +2387,7 @@ public class SpiderGC {
 							ch.setOwned(true);
 						pref.log("Owner: " + ch.getCacheOwner() + "; is_owned = " + ch.is_owned() + ";  alias1,2 = [" + pref.myAlias + "|" + pref.myAlias2 + "]");
 
-						ch.setDateHidden(DateFormat.MDY2YMD(getDateHidden(completeWebPage)));
+						ch.setDateHidden(DateFormat.toYYMMDD(getDateHidden(completeWebPage)));
 						pref.log("Hidden: " + ch.getDateHidden());
 
 						ch.getCacheDetails(false).setHints(getHints(completeWebPage));
@@ -2749,8 +2694,10 @@ public class SpiderGC {
 			pref.log("check blockRex in spider.def" + Preferences.NEWLINE + completeWebPage);
 		}
 		final String LogBlock = RexLogBlock.stringMatched(1);
+
 		exSingleLog.setSource(LogBlock);
 		singleLog = exSingleLog.findNext();
+
 		exIcon.setSource(singleLog);
 		exNameTemp.setSource(singleLog);
 		exName.setSource(exNameTemp.findNext());
@@ -2763,17 +2710,14 @@ public class SpiderGC {
 			// pref.log(singleLog);
 			nLogs++;
 			icon = exIcon.findNext();
-			icon = icon.substring(0, icon.length() - 1); // ' changes to " in
-															// UMTS-connection!
-															// first char in
-															// iconExEnd.
+			// ' changes to " in UMTS-connection! first char in iconExEnd.
+			icon = icon.substring(0, icon.length() - 1);
 			name = exName.findNext();
 			logText = exLog.findNext();
 			logText = correctSmilies(logText);
 			logId = exLogId.findNext();
 			final String ed = exDate.findNext();
-			final String d = DateFormat.logdate2YMD(ed);
-			// pref.log("Lognr:"+nLogs+"|"+icon+"|"+name+"-|-"+SafeXML.clean(pref.myAlias)+"|"+logId,null);
+			final String d = DateFormat.toYYMMDD(ed);
 			// if this log says this Cache is found by me
 			if ((icon.equals(icon_smile) || icon.equals(icon_camera) || icon.equals(icon_attended)) && (name.equalsIgnoreCase(SafeXML.clean(pref.myAlias)) || (pref.myAlias2.length() > 0 && name.equalsIgnoreCase(SafeXML.clean(pref.myAlias2))))) {
 				chD.getParent().setFound(true);
