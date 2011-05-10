@@ -1,28 +1,28 @@
-    /*
-    GNU General Public License
-    CacheWolf is a software for PocketPC, Win and Linux that
-    enables paperless caching.
-    It supports the sites geocaching.com and opencaching.de
+/*
+GNU General Public License
+CacheWolf is a software for PocketPC, Win and Linux that
+enables paperless caching.
+It supports the sites geocaching.com and opencaching.de
 
-    Copyright (C) 2006  CacheWolf development team
-    See http://developer.berlios.de/projects/cachewolf/
-    for more information.
-    Contact: 	bilbowolf@users.berlios.de
-    			kalli@users.berlios.de
+Copyright (C) 2006  CacheWolf development team
+See http://developer.berlios.de/projects/cachewolf/
+for more information.
+Contact: 	bilbowolf@users.berlios.de
+			kalli@users.berlios.de
 
-    This program is free software; you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation; version 2 of the License.
+This program is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation; version 2 of the License.
 
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
 
-    You should have received a copy of the GNU General Public License
-    along with this program; if not, write to the Free Software
-    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
-    */
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software
+Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+ */
 package CacheWolf;
 
 /* Several date formats are used by GC.COM
@@ -33,75 +33,129 @@ package CacheWolf;
  *    2004-02-27    - YYYY-MM-DD   
  */
 
-import ewe.sys.Convert;
 import ewe.sys.Time;
+import ewe.util.mString;
 
 public class DateFormat {
 
 	/** Convert the US Format into a sortable format */
-	public static String MDY2YMD(String date) {
-		// Dates are in format M/D/Y
-		int p1, p2 = -1, p3;
-		p1 = date.indexOf("/");
-		if (p1==-1){
-			//dayofweek, dayofmonth month year (Monday, 07 June 2010)
-			p1 = date.indexOf(",");			
-			p2 = date.indexOf(" ", p1 + 2);
-			p3 = date.indexOf(" ", p2 + 1);
-			final String monthNames[] = { "January", "February", "March", "April", "May",
-					"June", "July", "August", "September", "October", "November",
-					"December" };
-			for (int m = 0; m < 12; m++) {
-				if (monthNames[m].equals(date.substring(p2+1,p3))) {
-					String mm = Integer.toString(m+1);
-					if (mm.length()==1) {mm=0+mm;}
-					return date.substring(p3+1,p3+5) + "-" + mm + "-" + date.substring(p1+2, p1+4);
-				}
-			}
-			return date;
-		}
-		else {
-			if (p1 > 0)
-				p2 = date.indexOf("/", p1 + 1);
-			if (p1 > 0 && p2 > 0) {
-				return date.substring(p2 + 1) + "-" + (p1 == 1 ? "0" : "")
-						+ date.substring(0, p1) + "-" + (p1 + 2 == p2 ? "0" : "")
-						+ date.substring(p1 + 1, p2);
-			} else
-				return date;
-		}
+	public static String toYYMMDD(String date) {
+		return toYYMMDD(toDate(date));
 	}
 
-	/* Convert the sortable date into a US date */
-	// static String YMD2MDY(String date) {
-	// return
-	// date.substring(4,6)+"/"+date.substring(6,8)+"/"+date.substring(0,4);
-	// }
-	/** Convert the log format into a sortable format */
-	public static String logdate2YMD(String logdate) {
-		String monthNames[] = { "January", "February", "March", "April", "May",
-				"June", "July", "August", "September", "October", "November",
-				"December" };
-		Time t = new Time();
-		String year, month, day;
-		int i, m;
-		logdate += ", " + t.year; // If logdate already has a year, this one is
-									// ignored
-		i = logdate.indexOf(',');
-		year = logdate.substring(i + 2, i + 6);
-		for (m = 0; m < 12; m++) {
-			if (logdate.startsWith(monthNames[m])) {
-				month = (m < 9 ? "0" : "") + Convert.formatInt(m + 1);
-				day = logdate.substring(monthNames[m].length() + 1, i);
-				if (day.length() == 1)
-					day = "0" + day;
-				return year + "-" + month + "-" + day;
+	public static Time toDate(String ds) {
+		if (ds == null || ds.equals("") || ds.indexOf("1900") > -1)
+			return new Time(1, 1, 1900);
+		final long adaylong = new Time(2, 1, 2000).getTime() - new Time(1, 1, 2000).getTime();
+		Time d = new Time();
+		d.hour = 0;
+		d.minute = 0;
+		d.second = 0;
+		d.millis = 0;
+		if (ds.indexOf("day") > 0) {
+			if (ds.indexOf("Yesterday") > -1) {
+				d.setTime(d.getTime() - adaylong);
+			} else {
+				d.setTime(d.getTime() - adaylong * Common.parseInt(ds.substring(0, 1)));
+			}
+		} else {
+			String[] SDate;
+			ds = STRreplace.replace(ds, ",", " ");
+			ds = STRreplace.replace(ds, "  ", " ");
+			SDate = mString.split(ds, ' ');
+			if (SDate.length == 1) {
+				if (ds.indexOf('/') > -1)
+					SDate = mString.split(ds, '/');
+				else if (ds.indexOf('-') > -1)
+					SDate = mString.split(ds, '-');
+				// trying to determine Dateformat
+				int v0 = Common.parseInt(SDate[0]);
+				int v1 = Common.parseInt(SDate[1]);
+				int v2 = Common.parseInt(SDate[2]);
+				int dd, mm, yy;
+				if (v0 > 31) {
+					// yyyy mm dd
+					yy = v0;
+					mm = v1;
+					dd = v2;
+				} else {
+					yy = v2;
+					if ((v0 == 0) || (v1 == 0)) {
+						// month as text
+						String month;
+						if (v0 == 0) {
+							month = SDate[0];
+							dd = v1;
+						} else {
+							month = SDate[1];
+							dd = v0;
+						}
+						mm = monthName2int(month);
+					} else {
+						// mm dd yyyy
+						mm = v0;
+						dd = v1;
+					}
+
+				}
+				d.month = mm;
+				d.day = dd;
+				d.year = yy;
+			} else {
+				// starting with dayOfWeek or missing year
+				int offs = SDate.length - 3;
+				if (offs < 0)
+					offs = 0;
+				int v0 = Common.parseInt(SDate[offs]);
+				if (v0 == 0) {
+					d.day = Common.parseInt(SDate[offs + 1]);
+					d.month = monthName2int(SDate[offs]);
+				} else {
+					d.day = Common.parseInt(SDate[offs]);
+					d.month = monthName2int(SDate[offs + 1]);
+				}
+				if (SDate.length > 2) {
+					int yy = Common.parseInt(SDate[offs + 2]);
+					if (yy < 100)
+						d.year = 2000 + yy;
+					else
+						d.year = yy;
+				} else
+					// missing year
+					; // d.year = this year
 			}
 		}
-		return "";
+		return d;
 	}
+
+	private static int monthName2int(String month) {
+		final String enMonthNames[] = { "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December" };
+		for (int m = 0; m < 12; m++) {
+			if (enMonthNames[m].startsWith(month)) {
+				return m + 1;
+			}
+		}
+		final String deMonthNames[] = { "Januar", "Februar", "März", "April", "Mai", "Juni", "Juli", "August", "September", "Oktober", "November", "Dezember" };
+		for (int m = 0; m < 12; m++) {
+			if (deMonthNames[m].startsWith(month)) {
+				return m + 1;
+			}
+		}
+		return 1; // Januar if not detected / in other language
+	}
+
+	public static String toYYMMDD(Time d) {
+		return toYYMMDD(d, '-');
+	}
+
+	public static String toYYMMDD(Time d, char separator) {
+		// the CW Time Format is with separator
+		String f = "yyyy" + separator + "MM" + separator + "dd";
+		return d.format(f);
+	}
+
 	// from lastSyncDate (yyyyMMddHHmmss) to gpxLogdate (yyyy-MM-dd)
-	// if no lastSyncDate returns current Date 
+	// if no lastSyncDate returns current Date
 	public static String yyyyMMddHHmmss2gpxLogdate(String yyyyMMddHHmmss) {
 		Time d = new Time();
 		try {
@@ -109,7 +163,7 @@ public class DateFormat {
 		} catch (IllegalArgumentException e) {
 			d = new Time();
 			d.parse(yyyyMMddHHmmss, "yyyyMMddHHmmss");
-		}		
+		}
 		return d.format("yyyy-MM-dd"); // +d.format("HH:mm:ss"); is set to 00:00:00 at gpxExport
 	}
 
