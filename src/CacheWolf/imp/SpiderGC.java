@@ -1676,6 +1676,10 @@ public class SpiderGC {
 		try {
 			page_number++;
 			url = "http://www.geocaching.com/map/beta/map.info?" + "x=" + strLon + "&y=" + strLat + "&z=" + scale + "&k=" + userToken + "&st=" + sessionToken + "&ep=1";
+			if (doNotgetFound) {
+				url = url + "&hf=1"; // do not get finds
+			}
+			url = url + "&hh=1"; // do not get own
 			UrlFetcher.setRequestorProperty("Content-Type", "application/json; charset=UTF-8");
 			ret = UrlFetcher.fetch(url);
 
