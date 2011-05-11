@@ -28,6 +28,7 @@ package CacheWolf;
 import ewe.data.PropertyList;
 import ewe.io.AsciiCodec;
 import ewe.io.File;
+import ewe.io.FileBase;
 import ewe.io.FileOutputStream;
 import ewe.io.IOException;
 import ewe.io.JavaUtf8Codec;
@@ -131,6 +132,20 @@ public class UrlFetcher {
 				i = i - 1;
 			}
 			realUrl = urltmp;
+			if (!urltmp.startsWith("http")) {
+				url = FileBase.fixupPath(url);
+				String uu = url.toLowerCase();
+				String host;
+				uu = url.replace('\\', '/');
+				host = uu.substring(7);
+				int first = host.indexOf('/');
+				if (first != -1) {
+					host = host.substring(0, first);
+				}
+				if (!urltmp.startsWith("/"))
+					host = host + "/";
+				urltmp = "http://" + host + urltmp;
+			}
 			conn.setUrl(urltmp);
 			conn.documentIsEncoded = isUrlEncoded(urltmp);
 			if (permanentRequestorProperties == null)
@@ -153,6 +168,12 @@ public class UrlFetcher {
 			urltmp = conn.getRedirectTo();
 			if (urltmp != null) {
 				conn.disconnect();
+				final PropertyList pl = UrlFetcher.getDocumentProperties();
+				if (pl != null) {
+					String cookie = (String) pl.getValue("Set-Cookie", "");
+					if (!cookie.equals(""))
+						setPermanentRequestorProperty("Cookie", cookie);
+				}
 				conn = conn.getRedirectedConnection(urltmp);
 				forceRedirect = false; // one time or more redirected
 			}
@@ -236,7 +257,7 @@ public class UrlFetcher {
 			char c = what[i];
 			if (spaceToPlus && c == ' ')
 				c = '+';
-			else if (c <= '/' || c >= 127 || c == '+' || c == '&' || c == '%' || c == '=' || c == '|' || c == '{' || c == '}') {
+			else if (c <= ' ' || c >= 127 || c == '+' || c == '&' || c == '%' || c == '=' || c == '|' || c == '{' || c == '}' || c == '$' || c == '/') {
 				dest[d++] = '%';
 				dest[d++] = hex.charAt((c >> 4) & 0xf);
 				dest[d++] = hex.charAt(c & 0xf);
