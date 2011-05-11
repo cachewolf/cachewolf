@@ -1341,14 +1341,17 @@ public class SpiderGC {
 		} else
 			return false;
 		final String strEnglishPage = "ctl00$uxLocaleList$uxLocaleList$ctl01$uxLocaleItem";
-		final String postStr = "__EVENTTARGET=" + UrlFetcher.encodeURL(strEnglishPage, false) + "&__EVENTARGUMENT=" + "&__VIEWSTATE=" + UrlFetcher.encodeURL(viewstate, false);
+		String postStr = "__EVENTTARGET=" + UrlFetcher.encodeURL(strEnglishPage, false) + "&__EVENTARGUMENT=" + "&__VIEWSTATE=" + UrlFetcher.encodeURL(viewstate, false);
+		// postStr += UrlFetcher.encodeURL("&ctl00$ContentBody$tbSearch=postal code, country, etc.", true);
 		try {
 			UrlFetcher.setpostData(postStr);
-			/*
-			 * UrlFetcher.setRequestorProperty("Referer", url); UrlFetcher.setRequestorProperty("Origin", "http://www.geocaching.com"); UrlFetcher.setRequestorProperty("Cache-Control", "max-age=0"); UrlFetcher.setRequestorProperty("Accept-Charset",
-			 * "ISO-8859-1,utf-8;q=0.7,*;q=0.3"); UrlFetcher.setRequestorProperty("Accept-Language", "de-DE,de;q=0.8,en-US;q=0.6,en;q=0.4"); cookie =
-			 * "company_history=%5B%5B%22http%3A//feedback.geocaching.com/geocaching%22%2C%22Geocaching%22%5D%5D; Send2GPS=garmin; __qca=P0-675333427-1299837942815; " + cookie; UrlFetcher.setPermanentRequestorProperty("Cookie", cookie);
-			 */
+			// UrlFetcher.setRequestorProperty("Referer", url);
+			// UrlFetcher.setRequestorProperty("Origin", "http://www.geocaching.com");
+			// UrlFetcher.setRequestorProperty("Cache-Control", "max-age=0");
+			// UrlFetcher.setRequestorProperty("Accept-Charset", "ISO-8859-1,utf-8;q=0.7,*;q=0.3");
+			// UrlFetcher.setRequestorProperty("Accept-Language", "de-DE,de;q=0.8,en-US;q=0.6,en;q=0.4");
+			// cookie = "company_history=%5B%5B%22http%3A//feedback.geocaching.com/geocaching%22%2C%22Geocaching%22%5D%5D; Send2GPS=garmin; __qca=P0-675333427-1299837942815; " + cookie;
+			// UrlFetcher.setPermanentRequestorProperty("Cookie", cookie);
 			page = UrlFetcher.fetch(url);
 			if (page.indexOf(loggedInEnglish) > -1) {
 				pref.log("Switched to English");
