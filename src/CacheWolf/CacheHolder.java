@@ -514,7 +514,8 @@ public class CacheHolder {
 		this.setIncomplete(ch.is_incomplete());
 		this.addiWpts = ch.addiWpts;
 		this.mainCache = ch.mainCache;
-		this.setOcCacheID(ch.getOcCacheID());
+		if (ch.getOcCacheID().length() > 0)
+			this.setOcCacheID(ch.getOcCacheID());
 		this.setNoFindLogs(ch.getNoFindLogs());
 		this.setHas_bugs(ch.has_bugs());
 		this.setHTML(ch.is_HTML());
@@ -1872,7 +1873,7 @@ public class CacheHolder {
 		if (!isCacheWpt())
 			return "";
 		if (isOC()) {
-			return Convert.formatInt(numRecommended);
+			return Convert.formatInt(recommendationScore) + " (" + Convert.formatInt(numRecommended) + ")";
 		} else {
 			int gcVote = numRecommended;
 			if (gcVote < 100) {

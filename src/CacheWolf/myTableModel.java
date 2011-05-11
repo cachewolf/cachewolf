@@ -1,28 +1,28 @@
-    /*
-    GNU General Public License
-    CacheWolf is a software for PocketPC, Win and Linux that
-    enables paperless caching.
-    It supports the sites geocaching.com and opencaching.de
+/*
+GNU General Public License
+CacheWolf is a software for PocketPC, Win and Linux that
+enables paperless caching.
+It supports the sites geocaching.com and opencaching.de
 
-    Copyright (C) 2006  CacheWolf development team
-    See http://developer.berlios.de/projects/cachewolf/
-    for more information.
-    Contact: 	bilbowolf@users.berlios.de
-    			kalli@users.berlios.de
+Copyright (C) 2006  CacheWolf development team
+See http://developer.berlios.de/projects/cachewolf/
+for more information.
+Contact: 	bilbowolf@users.berlios.de
+			kalli@users.berlios.de
 
-    This program is free software; you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation; version 2 of the License.
+This program is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation; version 2 of the License.
 
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
 
-    You should have received a copy of the GNU General Public License
-    along with this program; if not, write to the Free Software
-    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
-    */
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software
+Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+ */
 package CacheWolf;
 
 import ewe.fx.Color;
@@ -31,7 +31,6 @@ import ewe.fx.IconAndText;
 import ewe.fx.Image;
 import ewe.fx.Point;
 import ewe.fx.mImage;
-import ewe.sys.Convert;
 import ewe.sys.Time;
 import ewe.sys.Vm;
 import ewe.ui.CellConstants;
@@ -39,11 +38,10 @@ import ewe.ui.IKeys;
 import ewe.ui.TableCellAttributes;
 import ewe.ui.TableModel;
 import ewe.util.Vector;
+import ewe.util.mString;
 
 /**
- * Table model used to display the cache list. Used by the table control in the
- * first panel of CacheWolf. 20061212 salzkammergut, patch to speed up
- * scrolling, Used MyLocale
+ * Table model used to display the cache list. Used by the table control in the first panel of CacheWolf. 20061212 salzkammergut, patch to speed up scrolling, Used MyLocale
  */
 public class myTableModel extends TableModel {
 
@@ -66,30 +64,17 @@ public class myTableModel extends TableModel {
 	/** The max number of columns in the list view */
 	public static final int N_COLUMNS = 20;
 	/**
-	 * How the columns are mapped onto the list view. If colMap[i]=j, it means
-	 * that the element j (as per the list below) is visible in column i.
-	 * [0]TickBox, [1]Type, [2]Distance, [3]Terrain, [4]waypoint, [5]name,
-	 * [6]coordinates, [7]owner, [8]datehidden, [9]status, [10]distance,
-	 * [11]bearing, [12] Size, [13] # of OC recommend. [14] OC index, [15]
-	 * Solver exists, [16] Note exists, [17] # Additionals, [18] # DNF [19] Last
-	 * Sync Date
+	 * How the columns are mapped onto the list view. If colMap[i]=j, it means that the element j (as per the list below) is visible in column i. [0]TickBox, [1]Type, [2]Distance, [3]Terrain, [4]waypoint, [5]name, [6]coordinates, [7]owner, [8]datehidden,
+	 * [9]status, [10]distance, [11]bearing, [12] Size, [13] # of OC recommend. [14] OC index, [15] Solver exists, [16] Note exists, [17] # Additionals, [18] # DNF [19] Last Sync Date
 	 * 
-	 * Attention: When adding columns here, also add a default width in
-	 * Preferences.listColWidth
+	 * Attention: When adding columns here, also add a default width in Preferences.listColWidth
 	 */
 	private int[] colMap;
 	/** The column widths corresponding to the list of columns above */
 	private int[] colWidth;
-	private String[] colName = { " ", "?", MyLocale.getMsg(1000, "D"),
-			MyLocale.getMsg(1001, "T"), MyLocale.getMsg(1002, "Waypoint"),
-			"Name", MyLocale.getMsg(1004, "Location"),
-			MyLocale.getMsg(1005, "Owner"), MyLocale.getMsg(1006, "Hidden"),
-			MyLocale.getMsg(1007, "Status"), MyLocale.getMsg(1008, "Dist"),
-			MyLocale.getMsg(1009, "Bear"), MyLocale.getMsg(1017, "S"),
-			MyLocale.getMsg(1026, "#Rec"), MyLocale.getMsg(1027, "OC-IDX"),
-			MyLocale.getMsg(1038, "S"), MyLocale.getMsg(1040, "N"),
-			MyLocale.getMsg(1047, "A"), MyLocale.getMsg(1049, "DNF"),
-			MyLocale.getMsg(1051, "Last synced") };
+	private String[] colName = { " ", "?", MyLocale.getMsg(1000, "D"), MyLocale.getMsg(1001, "T"), MyLocale.getMsg(1002, "Waypoint"), "Name", MyLocale.getMsg(1004, "Location"), MyLocale.getMsg(1005, "Owner"), MyLocale.getMsg(1006, "Hidden"),
+			MyLocale.getMsg(1007, "Status"), MyLocale.getMsg(1008, "Dist"), MyLocale.getMsg(1009, "Bear"), MyLocale.getMsg(1017, "S"), MyLocale.getMsg(1026, "#Rec"), MyLocale.getMsg(1027, "OC-IDX"), MyLocale.getMsg(1038, "S"),
+			MyLocale.getMsg(1040, "N"), MyLocale.getMsg(1047, "A"), MyLocale.getMsg(1049, "DNF"), MyLocale.getMsg(1051, "Last synced") };
 
 	private static Image noFindLogs[] = new Image[4];
 	public static mImage red, blue, yellow; // skull, green
@@ -106,8 +91,7 @@ public class myTableModel extends TableModel {
 	private mImage picHasSolver, picHasNotes;
 	private mImage[] sizePics = new mImage[CacheSize.CW_TOTAL_SIZE_IMAGES];
 	/**
-	 * This is the modifier (Shift & Control key status) for Pen Events it is
-	 * set in myTableControl.onEvent
+	 * This is the modifier (Shift & Control key status) for Pen Events it is set in myTableControl.onEvent
 	 */
 	public int penEventModifiers;
 	public myTableControl tcControl;
@@ -174,10 +158,8 @@ public class myTableModel extends TableModel {
 	 * 
 	 */
 	public void setColumnNamesAndWidths() {
-		colMap = TableColumnChooser.str2Array(Global.getPref().listColMap, 0,
-				N_COLUMNS - 1, 0, -1);
-		colWidth = TableColumnChooser.str2Array(Global.getPref().listColWidth,
-				10, 1024, 50, colMap.length);
+		colMap = TableColumnChooser.str2Array(Global.getPref().listColMap, 0, N_COLUMNS - 1, 0, -1);
+		colWidth = TableColumnChooser.str2Array(Global.getPref().listColWidth, 10, 1024, 50, colMap.length);
 		numCols = colMap.length;
 		clearCellAdjustments();
 		// If the displayed columns include the checkbox, we use the full menu
@@ -188,8 +170,7 @@ public class myTableModel extends TableModel {
 	}
 
 	/**
-	 * Return the column widths as a comma delimited string for storing in the
-	 * preferences
+	 * Return the column widths as a comma delimited string for storing in the preferences
 	 * 
 	 * @return
 	 */
@@ -261,14 +242,12 @@ public class myTableModel extends TableModel {
 	}
 
 	/**
-	 * Method to set the row color of the table displaying the cache list,
-	 * depending on different flags set to the cache.
+	 * Method to set the row color of the table displaying the cache list, depending on different flags set to the cache.
 	 */
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see ewe.ui.TableModel#getCellAttributes(int, int, boolean,
-	 * ewe.ui.TableCellAttributes)
+	 * @see ewe.ui.TableModel#getCellAttributes(int, int, boolean, ewe.ui.TableCellAttributes)
 	 */
 	public TableCellAttributes getCellAttributes(int row, int col, boolean isSelected, TableCellAttributes ta) {
 		ta = super.getCellAttributes(row, col, isSelected, ta);
@@ -320,7 +299,7 @@ public class myTableModel extends TableModel {
 					lastColorFG.set(ta.foreground);
 					lastRow = row;
 				} catch (Exception e) {
-					Global.getPref().log("[myTableModel:getCellAttributes]Ignored row="+row+" lastRow="+lastRow,e, true);
+					Global.getPref().log("[myTableModel:getCellAttributes]Ignored row=" + row + " lastRow=" + lastRow, e, true);
 				}
 				;
 			} else {
@@ -329,8 +308,7 @@ public class myTableModel extends TableModel {
 				ta.fillColor = lastColorBG;
 				ta.foreground = lastColorFG;
 			}
-		} else if (row == -1 && colMap[col] == 0
-				&& Global.getProfile().showBlacklisted()) {
+		} else if (row == -1 && colMap[col] == 0 && Global.getProfile().showBlacklisted()) {
 			ta.fillColor = Color.Black;
 			lastColorBG.set(ta.fillColor);
 		}
@@ -338,22 +316,17 @@ public class myTableModel extends TableModel {
 	}
 
 	/**
-	 * Determines the arithmetic mean value of two colors and stores the result
-	 * in the third color.
+	 * Determines the arithmetic mean value of two colors and stores the result in the third color.
 	 * 
 	 * @param colorMerged
 	 *            Resulting color
 	 * @param colorA
-	 *            First color to merge. May be same object as
-	 *            <code>colorMerged</code>.
+	 *            First color to merge. May be same object as <code>colorMerged</code>.
 	 * @param colorB
-	 *            Second color to merge. May be same object as
-	 *            <code>colorMerged</code>.
+	 *            Second color to merge. May be same object as <code>colorMerged</code>.
 	 */
 	private void mergeColor(Color colorMerged, Color colorA, Color colorB) {
-		colorMerged.set((colorA.getRed() + colorB.getRed()) / 2, (colorA
-				.getGreen() + colorB.getGreen()) / 2,
-				(colorA.getBlue() + colorB.getBlue()) / 2);
+		colorMerged.set((colorA.getRed() + colorB.getRed()) / 2, (colorA.getGreen() + colorB.getGreen()) / 2, (colorA.getBlue() + colorB.getBlue()) / 2);
 	}
 
 	public int calculateRowHeight(int row) {
@@ -370,9 +343,7 @@ public class myTableModel extends TableModel {
 	}
 
 	/**
-	 * Need to override this method with a null return to avoid getCellData
-	 * being called twice on each access to a cell. For further reference see
-	 * the Ewe source code.
+	 * Need to override this method with a null return to avoid getCellData being called twice on each access to a cell. For further reference see the Ewe source code.
 	 * 
 	 * @author skg
 	 */
@@ -432,8 +403,7 @@ public class myTableModel extends TableModel {
 					return ch.getWayPoint();
 				case 5: // Cachename
 					// Fast return for majority of case
-					if (!showExtraWptInfo
-							|| (ch.has_bugs() == false && ch.getNoFindLogs() == 0))
+					if (!showExtraWptInfo || (ch.has_bugs() == false && ch.getNoFindLogs() == 0))
 						return ch.getCacheName();
 					// Now need more checks
 					IconAndText wpVal = new IconAndText();
@@ -465,13 +435,23 @@ public class myTableModel extends TableModel {
 					} else {
 						return sizePics[CacheSize.guiSizeImageId(ch.getCacheSize())];
 					}
-				case 13: // OC number of recommendations
-					 return ch.getRecommended();
-          
-				case 14: // OC rating
-					if (ch.isOC())
-						return Convert.formatInt(ch.recommendationScore);
-					return null;
+				case 13: // OC / gcvote Bewertung
+					return ch.getRecommended();
+				case 14: //
+					if (ch.getWayPoint().startsWith("GC"))
+						return ch.getOcCacheID();
+					else {
+						String[] stmp = mString.split(ch.getCacheOwner(), '/');
+						int l = stmp.length - 1;
+						if (l > 0) {
+							String s = stmp[l].trim();
+							if (s.startsWith("GC"))
+								return s;
+							else
+								return "";
+						} else
+							return "";
+					}
 				case 15: // Is solver filled?
 					if (ch.hasSolver())
 						return picHasSolver;
@@ -497,10 +477,9 @@ public class myTableModel extends TableModel {
 				case 19: // Last sync date
 					if (!ch.getLastSync().equals("")) {
 						try {
-							lastSyncWorker.parse(ch.getLastSync(),
-									"yyyyMMddHHmmss");
+							lastSyncWorker.parse(ch.getLastSync(), "yyyyMMddHHmmss");
 						} catch (IllegalArgumentException e) {
-							Global.getPref().log("Could not parse 'lastSyncDate': "	+ ch.getLastSync() + ". Reset to empty.", e);
+							Global.getPref().log("Could not parse 'lastSyncDate': " + ch.getLastSync() + ". Reset to empty.", e);
 							ch.setLastSync("");
 						}
 						return lastSyncWorker.format("yyyy-MM-dd HH:mm");
@@ -551,7 +530,7 @@ public class myTableModel extends TableModel {
 				retval = true;
 			}
 		} catch (NullPointerException npex) {
-			Global.getPref().log("[myTableModel:Penpressed]",npex,true);
+			Global.getPref().log("[myTableModel:Penpressed]", npex, true);
 			Vm.showWait(false);
 		}
 		return retval;
@@ -574,7 +553,7 @@ public class myTableModel extends TableModel {
 			CacheHolder ch = null;
 			if ((a != null) && (a.y >= 0) && (a.y < cacheDB.size()))
 				ch = cacheDB.get(a.y);
-			cacheDB.sort(new MyComparer(cacheDB, sortedBy, numRows),!sortAscending);
+			cacheDB.sort(new MyComparer(cacheDB, sortedBy, numRows), !sortAscending);
 			updateRows();
 			// = cacheDB.rebuild(sortedVector of ch,
 			// invisibleVector of ch)
@@ -591,9 +570,7 @@ public class myTableModel extends TableModel {
 	}
 
 	/**
-	 * Toggle the select status for a group of caches If from==to, the addi
-	 * Waypoints are also toggled if the cache is a main waypoint If from!=to,
-	 * each cache is toggled irrespective of its type (main or addi)
+	 * Toggle the select status for a group of caches If from==to, the addi Waypoints are also toggled if the cache is a main waypoint If from!=to, each cache is toggled irrespective of its type (main or addi)
 	 * 
 	 * @param from
 	 *            index of first cache to toggle
