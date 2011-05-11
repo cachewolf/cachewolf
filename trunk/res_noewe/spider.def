@@ -126,7 +126,7 @@ cacheLocationRex   = tBody_Location">In\ ([^<]*?)<
 #Section2a: Logs
 #--------------------------------------
 # blockRex extrahiert zunächst aus der gesamten Seite den Logbereich
-blockRex           = <table class="LogsTable">((?s).*?)</table>\\s+<p>\\s+</p>
+blockRex           = <table class="LogsTable">((?s).*?)</table>\\s+<p>
 # singleLogEx extrahiert in einer Schleife alle Logs aus dem Logbereich
 singleLogExStart   = ><strong><img src=
 singleLogExEnd     = <small><a\ href="
@@ -208,7 +208,7 @@ prefixExEnd        = ">
 #--------------------------------------
 #Section2e: Attributes
 #--------------------------------------
-attBlockExStart = <div\ class="CacheDetailNavigationWidget\ Spacing">
+attBlockExStart = <div\ class="CacheDetailNavigationWidget
 attBlockExEnd  = What\ are\ Attributes?</a></small></p>
 attExStart = /images/attributes/
 attExEnd = "\ alt="
