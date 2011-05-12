@@ -501,17 +501,18 @@ public class myTableModel extends TableModel {
 			return false;
 		try {
 			// Check whether the click is on the checkbox image
+			tcControl.clickedColumn = colMap[cell.x];
 			if (cell.y >= 0 && colMap[cell.x] == 0) {
 				Global.getProfile().selectionChanged = true;
 				if ((penEventModifiers & IKeys.SHIFT) > 0) {
-					if (tcControl.cursor.y >= 0) { // Second row being marked
-													// with shift key pressed
+					if (tcControl.cursor.y >= 0) {
+						// Second row being marked with shift key pressed
 						if (tcControl.cursor.y < cell.y)
 							toggleSelect(tcControl.cursor.y + 1, cell.y, cell.x);
 						else
 							toggleSelect(cell.y, tcControl.cursor.y - 1, cell.x);
-					} else { // Remember this row as start of range, but don't
-								// toggle yet
+					} else {
+						// Remember this row as start of range, but don't toggle yet
 					}
 				} else { // Single row marked
 					toggleSelect(cell.y, cell.y, cell.x);
