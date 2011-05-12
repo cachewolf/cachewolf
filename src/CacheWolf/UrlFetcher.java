@@ -226,7 +226,7 @@ public class UrlFetcher {
 		AsciiCodec asciicod = new AsciiCodec();
 		CharArray utf8bytes = new CharArray();
 		asciicod.decodeText(utf8.data, 0, utf8.length, true, utf8bytes);
-		return encodeURL(utf8bytes.toString(), false);
+		return encodeURL(utf8bytes.toString(), true);
 	}
 
 	final static String hex = ewe.util.TextEncoder.hex;

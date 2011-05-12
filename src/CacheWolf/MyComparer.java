@@ -136,7 +136,10 @@ public class MyComparer implements Comparer {
 			for (int i = 0; i < visibleSize; i++) {
 				CacheHolder ch = cacheDB.get(i);
 				if (ch.getWayPoint().startsWith("GC"))
-					ch.sort = ch.getOcCacheID();
+					if (ch.getOcCacheID().length() == 0)
+						ch.sort = "\uFFFF";
+					else
+						ch.sort = ch.getOcCacheID();
 				else {
 					String[] stmp = mString.split(ch.getCacheOwner(), '/');
 					int l = stmp.length - 1;
