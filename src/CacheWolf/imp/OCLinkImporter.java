@@ -33,47 +33,58 @@ import ewe.sys.Handle;
 import ewe.ui.ProgressBarForm;
 
 public class OCLinkImporter {
-	private CacheDB cacheDB;
+	private static CacheDB cacheDB = null;
 
-	public OCLinkImporter() {
-		this.cacheDB = Global.getProfile().cacheDB;
-	}
+	public static void doIt() {
 
-	public void doIt() {
+		if (cacheDB == null)
+			cacheDB = Global.getProfile().cacheDB;
 		ProgressBarForm pbf = new ProgressBarForm();
 		Handle h = new Handle();
 
 		pbf.showMainTask = false;
 		pbf.setTask(h, "Import OC names ...");
 		pbf.exec();
-		OCGPXfetch.login();
-		for (int o = 0; o < cacheDB.size(); o += 1) {
-			CacheHolder ch = cacheDB.get(o);
-			String wp = ch.getWayPoint();
-			if (wp.startsWith("GC")) {
-				String url = "http://www.opencaching.de/map2.php?mode=wpsearch&wp=" + wp;
+		if (OCGPXfetch.login()) {
+			for (int o = 0; o < cacheDB.size(); o += 1) {
 				h.progress = (float) o / (float) (cacheDB.size() - 1);
-				h.changed();
-				try {
-					String result = UrlFetcher.fetch(url);
-					boolean found = false;
-					int start = result.indexOf("found=\"") + 7;
-					if (result.substring(start).startsWith("1"))
-						found = true;
-					start = result.indexOf("wpoc=\"") + 6;
-					if (start > 5) {
-						int idend = result.indexOf("\"", start);
-						String ocwp = result.substring(start, idend);
-						if (!found)
-							ocwp = "-" + ocwp;
-						ch.setOcCacheID(ocwp);
-					}
-				} catch (Exception e) {
-					// dann halt nicht
-				}
+				if (o % 100 == 0)
+					h.changed();
+				if (pbf.exitValue == -1)
+					break;
+				CacheHolder ch = cacheDB.get(o);
+				if (ch.isVisible())
+					updateOCLink(ch);
 			}
 		}
 		pbf.exit(0);
+	}
+
+	public static void updateOCLink(CacheHolder ch) {
+		String wp = ch.getWayPoint();
+		if (wp.startsWith("GC")) {
+			String url = "http://www.opencaching.de/map2.php?mode=wpsearch&wp=" + wp;
+			ch.setOcCacheID("");
+			try {
+				String result = UrlFetcher.fetch(url);
+				boolean found = false;
+				int start = result.indexOf("found=\"") + 7;
+				if (result.substring(start).startsWith("1"))
+					found = true;
+				start = result.indexOf("wpoc=\"") + 6;
+				if (start > 5) {
+					int idend = result.indexOf("\"", start);
+					String ocwp = result.substring(start, idend);
+					if (!found)
+						ocwp = "-" + ocwp;
+					ch.setOcCacheID(ocwp);
+					ch.save();
+				}
+			} catch (Exception e) {
+				// dann halt nicht
+			}
+		}
+		// return ch;
 	}
 
 }
