@@ -32,6 +32,7 @@ import CacheWolf.exp.HTMLExporter;
 import CacheWolf.exp.KMLExporter;
 import CacheWolf.exp.LocExporter;
 import CacheWolf.exp.MSARCSVExporter;
+import CacheWolf.exp.OCLogExport;
 import CacheWolf.exp.OVLExporter;
 import CacheWolf.exp.OziExporter;
 import CacheWolf.exp.SpoilerPOIExporter;
@@ -84,7 +85,7 @@ public class MainMenu extends MenuBar {
 	private MenuItem spider, spiderRoute, spiderQuick, spiderAllFinds, loadGCVotes, fetchOCLink, update, chkVersion;
 	private MenuItem about, wolflang, sysinfo, legend;
 	private MenuItem exportGpxNg, exporthtml, exporttop50, exportASC, exportTomTom, exportMSARCSV, exportSpoilerPOI;
-	private MenuItem exportOZI, exportKML, exportTPL, exportExplorist;
+	private MenuItem exportOZI, exportKML, exportTPL, exportExplorist, exportOCLog;
 	private MenuItem filtCreate, filtClear, filtInvert, filtSelected, filtNonSelected, filtBlack, filtApply;
 	private MenuItem exportLOC, exportGPS, mnuSeparator = new MenuItem("-");
 	private MenuItem orgNewWP, orgCopy, orgMove, orgDelete, orgRebuild, orgCheckNotesAndSolver;
@@ -154,8 +155,9 @@ public class MainMenu extends MenuBar {
 				exportOZI = new MenuItem(MyLocale.getMsg(124, "to OZI")), //
 				exportKML = new MenuItem(MyLocale.getMsg(125, "to Google Earth")), //
 				exportExplorist = new MenuItem(MyLocale.getMsg(132, "to Explorist")), //
-				exportTPL = new MenuItem(MyLocale.getMsg(128, "via Template")), //
 				exportSpoilerPOI = new MenuItem(MyLocale.getMsg(135, "to SpoilerPOI")), //
+				exportTPL = new MenuItem(MyLocale.getMsg(128, "via Template")), //
+				exportOCLog = new MenuItem(MyLocale.getMsg(1210, "logs to OC")), //
 		};
 		if (Global.getPref().gpsbabel == null) {
 			exportGPS.modifiers = MenuItem.Disabled;
@@ -509,6 +511,11 @@ public class MainMenu extends MenuBar {
 					TPLExporter tpl = new TPLExporter(pref, profile, fc.getChosenFile().toString());
 					tpl.doIt();
 				}
+			}
+			//
+			if (mev.selectedItem == exportOCLog) {
+				OCLogExport.doit();
+				tbp.resetModel();
 			}
 			if (mev.selectedItem == exportExplorist) {
 				ExploristExporter mag = new ExploristExporter(pref, profile);
