@@ -28,8 +28,10 @@ package CacheWolf.imp;
 import CacheWolf.CacheDB;
 import CacheWolf.CacheHolder;
 import CacheWolf.Global;
+import CacheWolf.OC;
 import CacheWolf.UrlFetcher;
 import ewe.sys.Handle;
+import ewe.sys.Vm;
 import ewe.ui.ProgressBarForm;
 
 public class OCLinkImporter {
@@ -39,6 +41,8 @@ public class OCLinkImporter {
 
 		if (cacheDB == null)
 			cacheDB = Global.getProfile().cacheDB;
+		int totalWaypoints = cacheDB.countVisible();
+		int updated = 0;
 		ProgressBarForm pbf = new ProgressBarForm();
 		Handle h = new Handle();
 
@@ -47,44 +51,70 @@ public class OCLinkImporter {
 		pbf.exec();
 		if (OCGPXfetch.login()) {
 			for (int o = 0; o < cacheDB.size(); o += 1) {
-				h.progress = (float) o / (float) (cacheDB.size() - 1);
-				if (o % 100 == 0)
-					h.changed();
+				h.progress = (float) updated / (float) totalWaypoints;
+				h.changed();
 				if (pbf.exitValue == -1)
 					break;
 				CacheHolder ch = cacheDB.get(o);
-				if (ch.isVisible())
+				if (ch.isVisible()) {
 					updateOCLink(ch);
+					updated++;
+				}
 			}
 		}
 		pbf.exit(0);
 	}
 
 	public static void updateOCLink(CacheHolder ch) {
+		// todo other OC sites
+		Vm.showWait(true);
+		boolean save = false;
 		String wp = ch.getWayPoint();
 		if (wp.startsWith("GC")) {
-			String url = "http://www.opencaching.de/map2.php?mode=wpsearch&wp=" + wp;
-			ch.setOcCacheID("");
+			String wpName = ch.getOcCacheID();
+			if (wpName.length() > 0) {
+				if (wpName.charAt(0) < 65)
+					wp = wpName.substring(1);
+				else {
+					if (wpName.startsWith("OC")) // other OC sites
+						wp = wpName;
+				}
+				if (!wp.startsWith("OC")) {
+					// other OC sites
+					ch.setOcCacheID(""); // there may be a value from gpx - import
+					save = true;
+				}
+			}
+			// other OC sites
+			String url = "http://" + OC.getOCHostName("OC") + "/map2.php?mode=wpsearch&wp=" + wp;
 			try {
 				String result = UrlFetcher.fetch(url);
 				boolean found = false;
-				int start = result.indexOf("found=\"") + 7;
-				if (result.substring(start).startsWith("1"))
+				if (result.substring(result.indexOf("found=\"") + 7).startsWith("1"))
 					found = true;
-				start = result.indexOf("wpoc=\"") + 6;
+				int start = result.indexOf("wpoc=\"") + 6;
 				if (start > 5) {
 					int idend = result.indexOf("\"", start);
 					String ocwp = result.substring(start, idend);
 					if (!found)
 						ocwp = "-" + ocwp;
-					ch.setOcCacheID(ocwp);
-					ch.save();
+					if (!ocwp.equals(ch.getOcCacheID())) {
+						ch.setOcCacheID(ocwp);
+						save = true;
+					}
+				} else {
+					// check over coordinates
+					// still looking for the best method
 				}
+				if (save)
+					ch.save();
+
 			} catch (Exception e) {
 				// dann halt nicht
 			}
 		}
 		// return ch;
+		Vm.showWait(false);
 	}
 
 }

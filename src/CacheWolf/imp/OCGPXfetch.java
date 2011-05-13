@@ -64,6 +64,7 @@ public class OCGPXfetch {
 
 	public static boolean login() {
 		// TODO this is only a preliminary Version of login
+		// todo for other opencaching sites
 		boolean loggedIn = false;
 		String page;
 		try {

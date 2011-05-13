@@ -25,8 +25,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 package CacheWolf;
 
-import CacheWolf.imp.OCGPXfetch;
-import CacheWolf.imp.OCLinkImporter;
+import CacheWolf.exp.OCLogExport;
 import CacheWolf.utils.CWWrapper;
 import CacheWolf.utils.FileBugfix;
 import ewe.fx.IconAndText;
@@ -36,7 +35,6 @@ import ewe.io.FileBase;
 import ewe.io.IOException;
 import ewe.sys.Handle;
 import ewe.sys.Locale;
-import ewe.sys.Time;
 import ewe.sys.Vm;
 import ewe.ui.Control;
 import ewe.ui.DragContext;
@@ -204,6 +202,9 @@ public class myTableControl extends TableControl {
 	}
 
 	public void popupMenuEvent(Object selectedItem) {
+		String url;
+		CacheHolder mainCache;
+		CacheHolderDetail chD;
 		if (selectedItem == null)
 			return;
 		CacheHolder ch;
@@ -344,18 +345,17 @@ public class myTableControl extends TableControl {
 
 		if (selectedItem == miOpenOnline) {
 			ch = cacheDB.get(tbp.getSelectedCache());
-			CacheHolder mainCache = ch;
+			mainCache = ch;
 			if (ch.isAddiWpt() && (ch.mainCache != null)) {
 				mainCache = ch.mainCache;
 			}
-			CacheHolderDetail chD = mainCache.getCacheDetails(true);
-			String url = chD.URL;
-			if (clickedColumn == 14 && mainCache.getOcCacheID().length() > 0) {
-				if (!mainCache.getOcCacheID().startsWith("OC")) {
-					url = "http://www.opencaching.de/viewcache.php?wp=" + mainCache.getOcCacheID().substring(1);
-				} else {
-					url = "http://www.opencaching.de/viewcache.php?wp=" + mainCache.getOcCacheID();
-				}
+			chD = mainCache.getCacheDetails(true);
+			url = chD.URL;
+			String wpName = mainCache.getOcCacheID();
+			if (clickedColumn == 14 && wpName.length() > 0) {
+				if (wpName.charAt(0) < 65)
+					wpName = mainCache.getOcCacheID().substring(1);
+				url = "http://" + OC.getOCHostName(wpName) + "/viewcache.php?wp=" + wpName;
 			}
 			if (url != null) {
 				callExternalProgram(pref.browser, url);
@@ -372,7 +372,7 @@ public class myTableControl extends TableControl {
 				if (!pref.language.equalsIgnoreCase("auto")) {
 					language = pref.language;
 				}
-				String url = "http://maps.google." + language + "/maps?q=" + nameOfCache + "@" + lat + "," + lon;
+				url = "http://maps.google." + language + "/maps?q=" + nameOfCache + "@" + lat + "," + lon;
 				callExternalProgram(pref.browser, url);
 				url = "http://www.geocaching.com/map/default.aspx?lat=" + lat + "&lng=" + lon;
 				callExternalProgram(pref.browser, url);
@@ -386,64 +386,49 @@ public class myTableControl extends TableControl {
 
 		if (selectedItem == miLogOnline) {
 			ch = cacheDB.get(tbp.getSelectedCache());
-			CacheHolder mainCache = ch;
+			mainCache = ch;
+			url = "";
 			if (ch.isAddiWpt() && (ch.mainCache != null)) {
 				mainCache = ch.mainCache;
 			}
 			if (mainCache.isCacheWpt()) {
-				CacheHolderDetail chD = mainCache.getCacheDetails(true);
+				chD = mainCache.getCacheDetails(false);
 				if (chD != null) {
-					String URL = "";
 					String notes = chD.getCacheNotes();
 					if (notes.length() > 0) {
-						Vm.setClipboardText(notes);
+						Vm.setClipboardText(mainCache.getCacheStatus() + '\n' + "<br>" + notes);
 					}
-					if (ch.isOC()) {
-						URL = chD.URL;
-						if (URL.indexOf("viewcache") >= 0) {
-							URL = STRreplace.replace(URL, "viewcache", "log");
-						} else {
-							URL = "";
+					if (mainCache.isOC()) {
+						url = chD.URL;
+						if (url.indexOf("viewcache") >= 0) {
+							url = STRreplace.replace(url, "viewcache", "log");
 						}
 					} else {
-						if (chD.OwnLogId.length() > 0 && mainCache.getOcCacheID().startsWith("-")) {
-							URL = "http://www.opencaching.de/log.php?wp=" + mainCache.getOcCacheID().substring(1);
-							if (clickedColumn == 14) {
-								// take GC log direct to OC
-								if (OCGPXfetch.login()) {
-									String page = "";
-									try {
-										page = UrlFetcher.fetch(URL);
-										String ocCacheId = new Extractor(page, "viewcache.php?cacheid=", "\">", 0, true).findNext();
-										String postData = "cacheid=" + ocCacheId + "&version3=1&descMode=3&logtype=1";
-										Time logDate = DateFormat.toDate(chD.OwnLog.getDate());
-										postData += "&logday=" + logDate.day;
-										postData += "&logmonth=" + logDate.month;
-										postData += "&logyear=" + logDate.year;
-										postData += "&logtext=" + UrlFetcher.toUtf8Url(chD.OwnLog.getMessage());
-										postData += "&submitform=Log+eintragen";
-										UrlFetcher.setpostData(postData);
-										page = UrlFetcher.fetch(URL);
-										OCLinkImporter.updateOCLink(ch);
-										if (ch.getOcCacheID().startsWith("-")) {
-											ch.setOcCacheID("!" + ch.getOcCacheID().substring(1));
-											ch.save();
+						if (chD.OwnLogId.length() > 0) {
+							String wpName = mainCache.getOcCacheID();
+							if (wpName.length() > 0 && wpName.charAt(0) < 65) {
+								// OC log (already logged at GC but not at OC)
+								if (clickedColumn == 14) {
+									OCLogExport.doOneLog(mainCache);
+									tbp.refreshTable();
+								} else {
+									// open OC logpage with GC Logtext in Clipboard
+									Vm.setClipboardText(chD.OwnLog.getDate() + '\n' + "<br>" + chD.OwnLog.getMessage());
+									if (wpName.length() > 1) {
+										if (wpName.charAt(0) < 65) {
+											wpName = mainCache.getOcCacheID().substring(1);
 										}
-									} catch (IOException e) {
-										// dann nicht
+										url = "http://" + OC.getOCHostName(wpName) + "/log.php?wp=" + wpName;
 									}
 								}
-								URL = "";
-							} else {
-								// open OC logpage with GC Logtext in Clipboard
-								Vm.setClipboardText(chD.OwnLog.getDate() + '\n' + "<br>" + chD.OwnLog.getMessage());
 							}
 						} else
-							URL = "http://www.geocaching.com/seek/log.aspx?ID=" + mainCache.GetCacheID();
+							// GC log
+							url = "http://www.geocaching.com/seek/log.aspx?ID=" + mainCache.GetCacheID();
 					}
 
-					if (URL.length() > 0) {
-						callExternalProgram(pref.browser, URL);
+					if (url.length() > 0) {
+						callExternalProgram(pref.browser, url);
 					}
 				}
 			}
