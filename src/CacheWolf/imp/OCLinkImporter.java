@@ -25,16 +25,19 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 package CacheWolf.imp;
 
+import CacheWolf.CWPoint;
 import CacheWolf.CacheDB;
 import CacheWolf.CacheHolder;
+import CacheWolf.Common;
 import CacheWolf.Global;
 import CacheWolf.OC;
+import CacheWolf.SafeXML;
 import CacheWolf.UrlFetcher;
 import ewe.sys.Handle;
 import ewe.sys.Vm;
 import ewe.ui.ProgressBarForm;
 
-public class OCLinkImporter {
+public final class OCLinkImporter {
 	private static CacheDB cacheDB = null;
 
 	public static void doIt() {
@@ -51,14 +54,14 @@ public class OCLinkImporter {
 		pbf.exec();
 		if (OCGPXfetch.login()) {
 			for (int o = 0; o < cacheDB.size(); o += 1) {
-				h.progress = (float) updated / (float) totalWaypoints;
-				h.changed();
 				if (pbf.exitValue == -1)
 					break;
 				CacheHolder ch = cacheDB.get(o);
 				if (ch.isVisible()) {
 					updateOCLink(ch);
 					updated++;
+					h.progress = (float) updated / (float) totalWaypoints;
+					h.changed();
 				}
 			}
 		}
@@ -86,25 +89,52 @@ public class OCLinkImporter {
 				}
 			}
 			// other OC sites
-			String url = "http://" + OC.getOCHostName("OC") + "/map2.php?mode=wpsearch&wp=" + wp;
+			String baseurl = "http://" + OC.getOCHostName("OC") + "/map2.php?";
+			boolean hasOC = false;
 			try {
+				String url = baseurl + "mode=wpsearch&wp=" + wp;
 				String result = UrlFetcher.fetch(url);
-				boolean found = false;
-				if (result.substring(result.indexOf("found=\"") + 7).startsWith("1"))
-					found = true;
-				int start = result.indexOf("wpoc=\"") + 6;
-				if (start > 5) {
-					int idend = result.indexOf("\"", start);
-					String ocwp = result.substring(start, idend);
-					if (!found)
-						ocwp = "-" + ocwp;
-					if (!ocwp.equals(ch.getOcCacheID())) {
-						ch.setOcCacheID(ocwp);
-						save = true;
-					}
-				} else {
+				if (result.indexOf("wpoc=\"") > -1)
+					hasOC = true;
+				else {
 					// check over coordinates
-					// still looking for the best method
+					// getting a cache next to the coordinates
+					String nLat = ch.pos.getLatDeg(CWPoint.DD);
+					String nLon = ch.pos.getLonDeg(CWPoint.DD);
+					url = baseurl + "mode=locate&lat=" + nLat + "&lon=" + nLon;
+					result = SafeXML.cleanback(UrlFetcher.fetch(url));
+					if (result.indexOf(ch.cacheName) > -1) {
+						hasOC = true;
+					} else {
+						int start = result.indexOf("coords=\"") + 8;
+						int lonend = result.indexOf(",", start);
+						int latend = result.indexOf("\"", lonend);
+						double lon = Common.parseDouble(result.substring(start, lonend));
+						double lat = Common.parseDouble(result.substring(lonend + 1, latend));
+						boolean sameCoord = lon == ch.pos.lonDec && lat == ch.pos.latDec;
+						if (sameCoord) {
+							start = result.indexOf("username=\"") + 10;
+							int end = result.indexOf("\"", start);
+							if (ch.getCacheOwner().toLowerCase().equals(result.substring(start, end).toLowerCase()))
+								hasOC = true;
+						}
+					}
+				}
+				if (hasOC) {
+					boolean found = false;
+					if (result.substring(result.indexOf("found=\"") + 7).startsWith("1"))
+						found = true;
+					int start = result.indexOf("wpoc=\"") + 6;
+					if (start > 5) {
+						int idend = result.indexOf("\"", start);
+						String ocwp = result.substring(start, idend);
+						if (!found)
+							ocwp = "-" + ocwp;
+						if (!ocwp.equals(ch.getOcCacheID())) {
+							ch.setOcCacheID(ocwp);
+							save = true;
+						}
+					}
 				}
 				if (save)
 					ch.save();
