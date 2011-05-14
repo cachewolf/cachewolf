@@ -3,6 +3,7 @@ package CacheWolf.exp;
 import CacheWolf.CacheDB;
 import CacheWolf.CacheHolder;
 import CacheWolf.CacheHolderDetail;
+import CacheWolf.CacheType;
 import CacheWolf.DateFormat;
 import CacheWolf.Extractor;
 import CacheWolf.Global;
@@ -16,7 +17,7 @@ import ewe.sys.Time;
 import ewe.sys.Vm;
 import ewe.ui.ProgressBarForm;
 
-public class OCLogExport {
+public final class OCLogExport {
 	private static boolean loggedIn = false;
 	private static CacheDB cacheDB = null;
 
@@ -34,14 +35,14 @@ public class OCLogExport {
 		pbf.exec();
 		if (OCGPXfetch.login()) {
 			for (int o = 0; o < cacheDB.size(); o += 1) {
-				h.progress = (float) o / (float) totalWaypoints;
-				h.changed();
 				if (pbf.exitValue == -1)
 					break;
 				CacheHolder ch = cacheDB.get(o);
 				if (ch.isVisible()) {
 					doOneLog(ch);
 					updated++;
+					h.progress = (float) updated / (float) totalWaypoints;
+					h.changed();
 				}
 			}
 		}
@@ -66,7 +67,11 @@ public class OCLogExport {
 						page = UrlFetcher.fetch(url);
 						loggedIn = page.indexOf("Eingeloggt als") > -1; // next time perhaps
 						String ocCacheId = new Extractor(page, "viewcache.php?cacheid=", "\">", 0, true).findNext();
-						String postData = "cacheid=" + ocCacheId + "&version3=1&descMode=3&logtype=1";
+						String postData = "cacheid=" + ocCacheId + "&version3=1&descMode=3";
+						if (ch.getType() == CacheType.CW_TYPE_EVENT || ch.getType() == CacheType.CW_TYPE_EVENT)
+							postData = postData + "&logtype=7";
+						else
+							postData = postData + "&logtype=1";
 						Time logDate = DateFormat.toDate(chD.OwnLog.getDate());
 						postData += "&logday=" + logDate.day;
 						postData += "&logmonth=" + logDate.month;

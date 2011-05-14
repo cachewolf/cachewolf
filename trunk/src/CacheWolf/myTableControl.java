@@ -51,6 +51,7 @@ import ewe.ui.ProgressBarForm;
 import ewe.ui.TableControl;
 import ewe.ui.TableEvent;
 import ewe.ui.mList;
+import ewe.util.mString;
 
 /**
  * Implements the user interaction of the list view. Works together with myTableModel and TablePanel
@@ -352,10 +353,23 @@ public class myTableControl extends TableControl {
 			chD = mainCache.getCacheDetails(true);
 			url = chD.URL;
 			String wpName = mainCache.getOcCacheID();
-			if (clickedColumn == 14 && wpName.length() > 0) {
-				if (wpName.charAt(0) < 65)
-					wpName = mainCache.getOcCacheID().substring(1);
-				url = "http://" + OC.getOCHostName(wpName) + "/viewcache.php?wp=" + wpName;
+			if (clickedColumn == 14) {
+				if (mainCache.isOC()) {
+					String[] stmp = mString.split(ch.getCacheOwner(), '/');
+					int l = stmp.length - 1;
+					if (l > 0) {
+						String s = stmp[l].trim();
+						if (s.startsWith("GC")) {
+							url = "http://www.geocaching.com/seek/cache_details.aspx?wp=" + s;
+						}
+					}
+				} else {
+					if (wpName.length() > 0) {
+						if (wpName.charAt(0) < 65)
+							wpName = mainCache.getOcCacheID().substring(1);
+						url = "http://" + OC.getOCHostName(wpName) + "/viewcache.php?wp=" + wpName;
+					}
+				}
 			}
 			if (url != null) {
 				callExternalProgram(pref.browser, url);
@@ -367,7 +381,7 @@ public class myTableControl extends TableControl {
 			if (ch.pos.isValid()) {
 				String lat = "" + ch.pos.getLatDeg(CWPoint.DD);
 				String lon = "" + ch.pos.getLonDeg(CWPoint.DD);
-				String nameOfCache = ewe.net.URL.encodeURL(ch.cacheName, false).replace('#', 'N').replace('@', '_');
+				String nameOfCache = UrlFetcher.encodeURL(ch.cacheName, false).replace('#', 'N').replace('@', '_');
 				String language = Vm.getLocale().getString(Locale.LANGUAGE_SHORT, 0, 0);
 				if (!pref.language.equalsIgnoreCase("auto")) {
 					language = pref.language;
