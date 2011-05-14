@@ -50,6 +50,8 @@ public final class OCLogExport {
 	}
 
 	public static void doOneLog(CacheHolder ch) {
+		if (!ch.is_found())
+			return;
 		// take GC log direct to OC, needs valid ch
 		Vm.showWait(true);
 		String wpName = ch.getOcCacheID();
@@ -64,26 +66,28 @@ public final class OCLogExport {
 					String page = "";
 					try {
 						CacheHolderDetail chD = ch.getCacheDetails(false);
-						page = UrlFetcher.fetch(url);
-						loggedIn = page.indexOf("Eingeloggt als") > -1; // next time perhaps
-						String ocCacheId = new Extractor(page, "viewcache.php?cacheid=", "\">", 0, true).findNext();
-						String postData = "cacheid=" + ocCacheId + "&version3=1&descMode=3";
-						if (ch.getType() == CacheType.CW_TYPE_EVENT || ch.getType() == CacheType.CW_TYPE_EVENT)
-							postData = postData + "&logtype=7";
-						else
-							postData = postData + "&logtype=1";
-						Time logDate = DateFormat.toDate(chD.OwnLog.getDate());
-						postData += "&logday=" + logDate.day;
-						postData += "&logmonth=" + logDate.month;
-						postData += "&logyear=" + logDate.year;
-						postData += "&logtext=" + UrlFetcher.toUtf8Url(chD.OwnLog.getMessage());
-						postData += "&submitform=Log+eintragen"; // todo for other opencaching sites
-						UrlFetcher.setpostData(postData);
-						page = UrlFetcher.fetch(url);
-						OCLinkImporter.updateOCLink(ch);
-						if (ch.getOcCacheID().startsWith("-")) {
-							ch.setOcCacheID("!" + ch.getOcCacheID().substring(1));
-							ch.save();
+						if (chD.OwnLog != null) {
+							page = UrlFetcher.fetch(url);
+							loggedIn = page.indexOf("Eingeloggt als") > -1; // next time perhaps
+							String ocCacheId = new Extractor(page, "viewcache.php?cacheid=", "\">", 0, true).findNext();
+							String postData = "cacheid=" + ocCacheId + "&version3=1&descMode=3";
+							if (ch.getType() == CacheType.CW_TYPE_EVENT || ch.getType() == CacheType.CW_TYPE_EVENT)
+								postData = postData + "&logtype=7";
+							else
+								postData = postData + "&logtype=1";
+							Time logDate = DateFormat.toDate(chD.OwnLog.getDate());
+							postData += "&logday=" + logDate.day;
+							postData += "&logmonth=" + logDate.month;
+							postData += "&logyear=" + logDate.year;
+							postData += "&logtext=" + UrlFetcher.toUtf8Url(chD.OwnLog.getMessage());
+							postData += "&submitform=Log+eintragen"; // todo for other opencaching sites
+							UrlFetcher.setpostData(postData);
+							page = UrlFetcher.fetch(url);
+							OCLinkImporter.updateOCLink(ch);
+							if (ch.getOcCacheID().startsWith("-")) {
+								ch.setOcCacheID("!" + ch.getOcCacheID().substring(1));
+								ch.save();
+							}
 						}
 					} catch (IOException e) {
 						// dann nicht
