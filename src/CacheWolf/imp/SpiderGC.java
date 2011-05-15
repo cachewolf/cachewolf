@@ -142,17 +142,10 @@ public class SpiderGC {
 	private static String propFirstPage2;
 	private static String propFirstPageFinds;
 	private static String gotoNextPage = "ctl00$ContentBody$pgrTop$ctl08";
-	private static String gotoNextBlock = "ctl00$ContentBody$pgrTop$ctl06"; // change
-																			// to
-																			// the
-																			// block
-																			// (10pages)
-																			// of
-																			// the
-																			// wanted
-																			// page
-	private static String gotoPage = "ctl00$ContentBody$pgrTop$lbGoToPage_"; // add
-																				// pagenumber
+	// change to the block (10pages) of the wanted page
+	private static String gotoNextBlock = "ctl00$ContentBody$pgrTop$ctl06";
+	// add pagenumber
+	private static String gotoPage = "ctl00$ContentBody$pgrTop$lbGoToPage_";
 	private static String propMaxDistance;
 	private static String propShowOnlyFound;
 	private static Regex RexPropListBlock;
@@ -545,7 +538,7 @@ public class SpiderGC {
 				ch.initStates(false);
 		}
 
-		double halfSideLength = maxDistance; // halbe Seitenl�nge eines Quadrats
+		double halfSideLength = maxDistance; // halbe Seitenlänge eines Quadrats
 												// ums Zentrum in km
 		if (pref.metricSystem == Metrics.IMPERIAL) {
 			halfSideLength = Metrics.convertUnit(maxDistance, Metrics.MILES, Metrics.KILOMETER);
@@ -1130,7 +1123,7 @@ public class SpiderGC {
 			if (loggedIn)
 				return FormBase.IDOK;
 			else {
-				(new MessageBox("Login", "Check UserID in preferences | Einstellungen, or check GC-Language. Must be English.", FormBase.OKB)).execute();
+				(new MessageBox("Login", "Check UserID in preferences | Einstellungen.", FormBase.OKB)).execute();
 				return ERR_LOGIN;
 			}
 		} else {
@@ -1290,7 +1283,7 @@ public class SpiderGC {
 
 	private boolean switchToEnglish() {
 		// change language to EN , further operations relay on English
-		String url = "http://www.geocaching.com/";
+		String url = "http://www.geocaching.com/default.aspx";
 		String page = "";
 		String loggedInEnglish = ">Sign Out<";
 		String userID = "userid=" + pref.userID;
@@ -1328,31 +1321,23 @@ public class SpiderGC {
 		}
 		if (page.indexOf(loggedInEnglish) > -1) {
 			pref.log("already English");
+			pref.oldLanguageCtl = ""; // nothing to reset
 			return true;
 		}
-
-		// todo next doesn't work correct don't know why
 		// switch to english now goes into gc account Display Preferences (is permanent, must be reset)
-		final Regex rexViewstate = new Regex("id=\"__VIEWSTATE\" value=\"(.*?)\" />");
-		String viewstate = "";
-		rexViewstate.search(page);
-		if (rexViewstate.didMatch()) {
-			viewstate = rexViewstate.stringMatched(1);
-		} else
-			return false;
-		final String strEnglishPage = "ctl00$uxLocaleList$uxLocaleList$ctl01$uxLocaleItem";
-		String postStr = "__EVENTTARGET=" + UrlFetcher.encodeURL(strEnglishPage, false) + "&__EVENTARGUMENT=" + "&__VIEWSTATE=" + UrlFetcher.encodeURL(viewstate, false);
-		// postStr += UrlFetcher.encodeURL("&ctl00$ContentBody$tbSearch=postal code, country, etc.", true);
+		String languages[] = { "English", "Deutsch", "Français", "Português", "Čeština", "Svenska", "Nederlands", "Català", "Polski", "Eesti", "Norsk, Bokmål", "한국어", "Español" };
+		String oldLanguage = new Extractor(page, "<a href=\"#\">", "&#9660;</a>", 0, true).findNext();
+		for (int i = 0; i < languages.length; i++) {
+			if (oldLanguage.equals(languages[i])) {
+				pref.oldLanguageCtl = url + "?__EVENTTARGET=" + UrlFetcher.encodeURL("ctl00$uxLocaleList$uxLocaleList$ctl" + MyLocale.formatLong(i, "00") + "$uxLocaleItem", false);
+				break;
+			}
+		}
+		final String strEnglishPage = "ctl00$uxLocaleList$uxLocaleList$ctl00$uxLocaleItem";
+		url += "?__EVENTTARGET=" + UrlFetcher.encodeURL(strEnglishPage, false);
 		try {
-			UrlFetcher.setpostData(postStr);
-			// UrlFetcher.setRequestorProperty("Referer", url);
-			// UrlFetcher.setRequestorProperty("Origin", "http://www.geocaching.com");
-			// UrlFetcher.setRequestorProperty("Cache-Control", "max-age=0");
-			// UrlFetcher.setRequestorProperty("Accept-Charset", "ISO-8859-1,utf-8;q=0.7,*;q=0.3");
-			// UrlFetcher.setRequestorProperty("Accept-Language", "de-DE,de;q=0.8,en-US;q=0.6,en;q=0.4");
-			// cookie = "company_history=%5B%5B%22http%3A//feedback.geocaching.com/geocaching%22%2C%22Geocaching%22%5D%5D; Send2GPS=garmin; __qca=P0-675333427-1299837942815; " + cookie;
-			// UrlFetcher.setPermanentRequestorProperty("Cookie", cookie);
 			page = UrlFetcher.fetch(url);
+			// String s = new Extractor(page, "<a href=\"#\">", "&#9660;</a>", 0, true).findNext();
 			if (page.indexOf(loggedInEnglish) > -1) {
 				pref.log("Switched to English");
 				return true;
@@ -1361,7 +1346,7 @@ public class SpiderGC {
 				return false;
 			}
 		} catch (final Exception ex) {
-			pref.log("Error switching to English: check " + url + " : " + postStr, ex);
+			pref.log("Error switching to English: check " + url, ex);
 			return false;
 		}
 
@@ -1547,7 +1532,7 @@ public class SpiderGC {
 				ch.initStates(false);
 		}
 
-		double halfSideLength = maxDistance; // halbe Seitenl�nge eines Quadrats ums Zentrum in km
+		double halfSideLength = maxDistance; // halbe Seitenlänge eines Quadrats ums Zentrum in km
 		if (pref.metricSystem == Metrics.IMPERIAL) {
 			halfSideLength = Metrics.convertUnit(maxDistance, Metrics.MILES, Metrics.KILOMETER);
 		}
@@ -1930,8 +1915,8 @@ public class SpiderGC {
 			if (ret.indexOf("ere") > -1)
 				return distanceAndDirection; // zur Zeit " Here -1"
 			// Versuch den DistanceCodeKey automatisch zu bestimmen
-			// da dieser von gc mal wieder ge�ndert wurde.
-			// todo Ben�tigt ev noch weitere Anpassungen: | am Anfang, and calc
+			// da dieser von gc mal wieder geändert wurde.
+			// todo Benötigt ev noch weitere Anpassungen: | am Anfang, and calc
 			// of keylength
 
 			// String thereitis="|0.34 km|102.698";
@@ -1965,7 +1950,7 @@ public class SpiderGC {
 			final String coded = ewe.net.URL.decodeURL(RexPropDistanceCode.stringMatched(1));
 			final String newkey = decodeXor(coded, thereitis);
 			final int keylength = 13; // wenn nicht 13 dann newkey auf
-										// wiederholung pr�fen
+										// wiederholung prüfen
 			DistanceCodeKey = newkey.substring(0, keylength);
 			ret = decodeXor(stmp, DistanceCodeKey).replace('|', ' ');
 			pref.log("Automatic key: " + DistanceCodeKey + " result: " + ret + Preferences.NEWLINE);
