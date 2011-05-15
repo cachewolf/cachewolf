@@ -19,8 +19,7 @@ import ewe.ui.MenuItem;
 import ewe.ui.PullDownMenu;
 
 /**
- * Controller for the {@link TravelbugList}. Preferrably used by
- * {@link TravelbugJourneyScreen}
+ * Controller for the {@link TravelbugList}. Preferrably used by {@link TravelbugJourneyScreen}
  * 
  * @author andi
  * 
@@ -43,7 +42,6 @@ public class TravelbugMenu extends MenuBar {
 	public TravelbugJourneyScreen view;
 	private TravelBugScreenModel model;
 
-	
 	public TravelbugMenu(TravelBugScreenModel model) {
 		this.model = model;
 		MenuItem[] TBMenuItems = new MenuItem[9];
@@ -147,6 +145,7 @@ public class TravelbugMenu extends MenuBar {
 						}
 					}
 				}
+				Global.getPref().setOldGCLanguage();
 			} else if (mev.selectedItem == mnuOpenOnline && view.selectedRow >= 0) {
 				TravelbugJourney tbj = model.allTravelbugJourneys.getTBJourney(view.selectedRow);
 				SpiderGC spider = new SpiderGC(Global.getPref(), Global.getProfile());
@@ -169,6 +168,7 @@ public class TravelbugMenu extends MenuBar {
 						Global.getPref().log("Ignored Exception", ioex, true);
 					}
 				}
+				Global.getPref().setOldGCLanguage();
 			}
 
 		}

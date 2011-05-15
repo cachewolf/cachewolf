@@ -314,18 +314,16 @@ public class Preferences extends MinML {
 	/** Width and height of free defined tile size */
 	public int tilewidth;
 	public int tileheight;
-
 	/** ShowCachesOnMap */
 	public boolean showCachesOnMap = true;
-
 	/** SortingGroupedByCache */
 	public boolean SortingGroupedByCache = true;
-
 	/** useOwnSymbols */
 	public boolean useOwnSymbols = true;
-
 	/** TRUE if we want automatic sorting **/
 	public boolean sortAutomatic = true;
+	//
+	public String oldLanguageCtl = "";
 
 	// ////////////////////////////////////////////
 	/**
@@ -1342,4 +1340,12 @@ public class Preferences extends MinML {
 			absoluteBaseDir += "/";
 	}
 
+	public void setOldGCLanguage() {
+		if (oldLanguageCtl.length() != 0)
+			try {
+				UrlFetcher.fetch(oldLanguageCtl);
+			} catch (IOException e) {
+				// dann halt nicht
+			}
+	}
 }
