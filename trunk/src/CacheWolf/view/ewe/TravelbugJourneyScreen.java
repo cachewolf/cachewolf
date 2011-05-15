@@ -104,9 +104,7 @@ public class TravelbugJourneyScreen extends Form {
 
 	/** The panel for the lower half of the screen */
 	private CellPanel lowerpane;
-	private mInput inpName, inpTrackingNo,
-			inpFromDate, inpFromProfile, inpFromWaypoint,
-			inpToDate, inpToProfile, inpToWaypoint;
+	private mInput inpName, inpTrackingNo, inpFromDate, inpFromProfile, inpFromWaypoint, inpToDate, inpToProfile, inpToWaypoint;
 	private mLabel lblId;
 	private mButton btnFromDate, btnToDate;
 	private mCheckBox chkFromLogged, chkToLogged;
@@ -136,7 +134,7 @@ public class TravelbugJourneyScreen extends Form {
 
 	// =========== MODEL
 	// Set to Public to implement MVC-Pattern [AP]
-//	public TravelbugJourneyList tblMyTravelbugJourneys;
+	// public TravelbugJourneyList tblMyTravelbugJourneys;
 	/** List of TBs in the current cache */
 	// Set to Public to implement MVC-Pattern [AP]
 	public TravelbugList tblSrcCache;
@@ -170,8 +168,7 @@ public class TravelbugJourneyScreen extends Form {
 		title = "Travelbugs" + cache;
 		tcTbJourneyList = new tbListControl(model);
 		tcTbJourneyList.setTableModel(modTbJourneyList = new tbListTableModel());
-		tablepane.addLast(new MyScrollBarPanel(tcTbJourneyList, ScrollablePanel.AlwaysShowVerticalScrollers), STRETCH,
-				FILL);
+		tablepane.addLast(new MyScrollBarPanel(tcTbJourneyList, ScrollablePanel.AlwaysShowVerticalScrollers), STRETCH, FILL);
 
 		lowerpane = split.getNextPanel();
 
@@ -255,10 +252,8 @@ public class TravelbugJourneyScreen extends Form {
 
 		modTbJourneyList.numRows = model.allTravelbugJourneys.size();
 		// Get the columns to display and their widths from preferences
-		modTbJourneyList.columnMap =
-				TableColumnChooser.str2Array(Global.getPref().travelbugColMap, 0, 11, 0, -1);
-		modTbJourneyList.colWidth =
-				TableColumnChooser.str2Array(Global.getPref().travelbugColWidth, 10, 1024, 50, -1);
+		modTbJourneyList.columnMap = TableColumnChooser.str2Array(Global.getPref().travelbugColMap, 0, 11, 0, -1);
+		modTbJourneyList.colWidth = TableColumnChooser.str2Array(Global.getPref().travelbugColWidth, 10, 1024, 50, -1);
 		modTbJourneyList.numCols = modTbJourneyList.columnMap.length;
 
 		modTbJourneyList.select(0, 12, true);
@@ -281,9 +276,7 @@ public class TravelbugJourneyScreen extends Form {
 
 	public void onEvent(Event ev) {
 		// Update the table from the input form
-		if ((ev instanceof MultiPanelEvent || ev instanceof ControlEvent || ev instanceof DataChangeEvent)
-				&& selectedRow != -1 &&
-				selectedRow < model.allTravelbugJourneys.size()) {
+		if ((ev instanceof MultiPanelEvent || ev instanceof ControlEvent || ev instanceof DataChangeEvent) && selectedRow != -1 && selectedRow < model.allTravelbugJourneys.size()) {
 			TravelbugJourney tbj = model.allTravelbugJourneys.getTBJourney(selectedRow);
 			if (currentControl == inpName)
 				tbj.getTb().setName(inpName.getText());
@@ -338,8 +331,7 @@ public class TravelbugJourneyScreen extends Form {
 				;
 				dc.reset(t);
 				if (dc.execute() == ewe.ui.FormBase.IDOK) {
-					inpDate.setText(Convert.toString(dc.year) + "-" + MyLocale.formatLong(dc.month, "00") + "-"
-							+ MyLocale.formatLong(dc.day, "00") + " " + dc.time);
+					inpDate.setText(Convert.toString(dc.year) + "-" + MyLocale.formatLong(dc.month, "00") + "-" + MyLocale.formatLong(dc.day, "00") + " " + dc.time);
 					if (ev.target == btnFromDate) {
 						model.allTravelbugJourneys.getTBJourney(selectedRow).setFromDate(inpDate.getText());
 						Gui.takeFocus(chkFromLogged, ControlConstants.ByKeyboard);
@@ -368,8 +360,7 @@ public class TravelbugJourneyScreen extends Form {
 			String travelbugColWidth = modTbJourneyList.getColWidths();
 			// If the preferences changed, save the pref.xml file
 			Vm.showWait(true);
-			if (!Global.getPref().travelbugColWidth.equals(travelbugColWidth) ||
-					old != Global.getPref().travelbugShowOnlyNonLogged) {
+			if (!Global.getPref().travelbugColWidth.equals(travelbugColWidth) || old != Global.getPref().travelbugShowOnlyNonLogged) {
 				Global.getPref().travelbugColWidth = travelbugColWidth;
 				Global.getPref().savePreferences();
 			}
@@ -421,12 +412,10 @@ public class TravelbugJourneyScreen extends Form {
 				int map = columnMap[col];
 				// If we have not yet logged the from or the to, a red dot is
 				// placed in front of the first item
-				if (col == 0 && (!model.allTravelbugJourneys.getTBJourney(row).getFromLogged() ||
-						!model.allTravelbugJourneys.getTBJourney(row).getToLogged())) {
+				if (col == 0 && (!model.allTravelbugJourneys.getTBJourney(row).getFromLogged() || !model.allTravelbugJourneys.getTBJourney(row).getToLogged())) {
 					// Is it a column with a checkbox?
 					if (map != 7 && map != 11)
-						return new IconAndText((IImage) imgRed, (String) model.allTravelbugJourneys.getTBJourney(row)
-								.getElementByNumber(map), fm);
+						return new IconAndText((IImage) imgRed, (String) model.allTravelbugJourneys.getTBJourney(row).getElementByNumber(map), fm);
 					else { // Checkbox - special treatment
 						IconAndText iat = new IconAndText(imgRed, "", fm);
 						iat.addColumn(model.allTravelbugJourneys.getTBJourney(row).getElementByNumber(map));
@@ -721,6 +710,7 @@ public class TravelbugJourneyScreen extends Form {
 				inpName.setText(tbj.getTb().getName());
 				lblId.setText(tbj.getTb().getGuid());
 				lowerpane.repaint();
+				Global.getPref().setOldGCLanguage();
 			}
 			if (selectedItem == mnuOpenOnline && selectedRow >= 0) {
 				TravelbugJourney tbj = tbModel.allTravelbugJourneys.getTBJourney(selectedRow);
@@ -749,6 +739,7 @@ public class TravelbugJourneyScreen extends Form {
 				toggleNonLogged();
 			}
 			updateNumBugs();
+			Global.getPref().setOldGCLanguage();
 		}
 
 		/**

@@ -286,6 +286,7 @@ public class myTableControl extends TableControl {
 
 		if (selectedItem == miUpdate) {
 			MainMenu.updateSelectedCaches(tbp);
+			pref.setOldGCLanguage();
 		} else
 
 		if (selectedItem == miChangeBlack) {

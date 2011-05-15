@@ -55,12 +55,12 @@ public class PDATravelbugDetailMenu extends PDAMenu {
 				journeyScreen.model.allTravelbugJourneys.addTbDrop(tb, Global.getProfile().name, ch.getWayPoint());
 				ch.setHas_bugs(true);
 				ch.save();
-				//Set Input fields to the new Values:
+				// Set Input fields to the new Values:
 				view.getInpToWaypoint().setText(view.getTravelbug().getToWaypoint());
 				view.getInpToProfile().setText(view.getTravelbug().getToProfile());
 				view.getInpToDate().setText(view.getTravelbug().getToDate());
-				//Save now. The action won't recognize the changes:
-				journeyScreen.model.allTravelbugJourneys.saveTravelbugsFile();	
+				// Save now. The action won't recognize the changes:
+				journeyScreen.model.allTravelbugJourneys.saveTravelbugsFile();
 			}
 			journeyScreen.setupTBButtons();
 			exit(0);
@@ -87,6 +87,7 @@ public class PDATravelbugDetailMenu extends PDAMenu {
 					Global.getPref().log("Ignored Exception", ioex, true);
 				}
 			}
+			Global.getPref().setOldGCLanguage();
 			exit(0);
 		} else if (action.equals(SPIDER)) {
 			Travelbug tb = view.getTravelbug().getTb();
@@ -113,16 +114,15 @@ public class PDATravelbugDetailMenu extends PDAMenu {
 			}
 			journeyScreen.model.allTravelbugJourneys.saveTravelbugsFile();
 			Vm.showWait(false);
+			Global.getPref().setOldGCLanguage();
 			exit(0);
 		} else if (action.equals(DELETE)) {
 			// LOESCHEN DES TB's aus der Datenbank ist Boese!!!
 			// Erst mal eine Sicherheitesabfrage bauen:
-			int r = PDAOptionPane.showConfirmDialog(this.getFrame(), "Sind Sie Sicher???",
-					"Wollen Sie wirklich den TB löschen??");
+			int r = PDAOptionPane.showConfirmDialog(this.getFrame(), "Sind Sie Sicher???", "Wollen Sie wirklich den TB löschen??");
 			if (r == PDAOptionPane.OK) {
 				for (int i = 0; i < journeyScreen.model.allTravelbugJourneys.size(); i++) {
-					TravelbugJourney tbJourney =
-							journeyScreen.model.allTravelbugJourneys.getTBJourney(i);
+					TravelbugJourney tbJourney = journeyScreen.model.allTravelbugJourneys.getTBJourney(i);
 					if (tbJourney.getTb().getTrackingNo().equals(view.getTravelbug().getTb().getTrackingNo())) {
 						journeyScreen.model.allTravelbugJourneys.remove(i);
 						journeyScreen.model.allTravelbugJourneys.saveTravelbugsFile();

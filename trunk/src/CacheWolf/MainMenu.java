@@ -354,6 +354,7 @@ public class MainMenu extends MenuBar {
 				cacheDB.clear();
 				profile.readIndex();
 				tbp.resetModel();
+				pref.setOldGCLanguage();
 			}
 			if (mev.selectedItem == spiderRoute) {
 				SpiderGC spGC = new SpiderGC(pref, profile);
@@ -362,6 +363,7 @@ public class MainMenu extends MenuBar {
 				cacheDB.clear();
 				profile.readIndex();
 				tbp.resetModel();
+				pref.setOldGCLanguage();
 			}
 			if (mev.selectedItem == spiderQuick) {
 				SpiderGC spGC = new SpiderGC(pref, profile);
@@ -370,6 +372,7 @@ public class MainMenu extends MenuBar {
 				cacheDB.clear();
 				profile.readIndex();
 				tbp.resetModel();
+				pref.setOldGCLanguage();
 			}
 			if (mev.selectedItem == spiderAllFinds) {
 				SpiderGC spGC = new SpiderGC(pref, profile);
@@ -378,6 +381,7 @@ public class MainMenu extends MenuBar {
 				cacheDB.clear();
 				profile.readIndex();
 				tbp.resetModel();
+				pref.setOldGCLanguage();
 			}
 			if (mev.selectedItem == loadGCVotes) {
 				if (sGCV == null)
@@ -417,6 +421,7 @@ public class MainMenu extends MenuBar {
 				Global.getProfile().setShowBlacklisted(false);
 				filtBlack.modifiers = Global.getProfile().showBlacklisted() ? filtBlack.modifiers | MenuItem.Checked : filtBlack.modifiers & ~MenuItem.Checked;
 				tbp.resetModel();
+				pref.setOldGCLanguage();
 			}
 			if (mev.selectedItem == loadOC) {
 				OCXMLImporter oc = new OCXMLImporter(pref, profile);
@@ -431,8 +436,10 @@ public class MainMenu extends MenuBar {
 				filtBlack.modifiers = Global.getProfile().showBlacklisted() ? filtBlack.modifiers | MenuItem.Checked : filtBlack.modifiers & ~MenuItem.Checked;
 				tbp.resetModel();
 			}
-			if (mev.selectedItem == update)
+			if (mev.selectedItem == update) {
 				updateSelectedCaches(tbp);
+				pref.setOldGCLanguage();
+			}
 			if (mev.selectedItem == mnuForceLogin) {
 				mnuForceLogin.modifiers ^= MenuItem.Checked;
 				Global.getPref().forceLogin = (mnuForceLogin.modifiers & MenuItem.Checked) != 0;
