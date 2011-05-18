@@ -111,7 +111,7 @@ cacheArchived      = class="OldWarning"><li>This\ cache\ has\ been\ archived
 premiumCachepage   = class="Warning">listing\ visible\ to\ Premium
 latLonRex          = tBody_LatLon"\ style="font-weight:bold;">((?s).*?)</span>
 shortDescRex       = tBody_ShortDescription">((?s).*?)</span>
-longDescRex        = tBody_LongDescription">((?s).*?)</span>\\s+</div>
+longDescRex        = tBody_LongDescription">((?s).*?)<strong>\\s+Additional\ Hints</strong>
 cacheNameRex       = tBody_CacheName">((?s).*?)</span>
 cacheOwnerRex      = &wid(?:(?s).*?)>((?s).*?)<
 dateHiddenRex      = (?:Hidden|Event\ Date)\\s*:\\s*((?s).*?)<
