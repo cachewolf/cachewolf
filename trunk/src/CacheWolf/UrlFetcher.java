@@ -255,11 +255,10 @@ public class UrlFetcher {
 				dest = n;
 			}
 			char c = what[i];
-			// removed || c == '&'
 			// added || c == '$' || c == '/' || c == ','
 			if (spaceToPlus && c == ' ')
 				c = '+';
-			else if (c <= ' ' || c >= 127 || c == '+' || c == '%' || c == '=' || c == '|' || c == '{' || c == '}' || c == '$' || c == '/' || c == ',') {
+			else if (c <= ' ' || c >= 127 || c == '+' || c == '&' || c == '%' || c == '=' || c == '|' || c == '{' || c == '}' || c == '$' || c == '/' || c == ',') {
 				dest[d++] = '%';
 				dest[d++] = hex.charAt((c >> 4) & 0xf);
 				dest[d++] = hex.charAt(c & 0xf);
