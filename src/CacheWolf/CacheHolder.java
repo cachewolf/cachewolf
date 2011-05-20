@@ -1517,7 +1517,7 @@ public class CacheHolder {
 		if (level != iconAndTextWPLevel || iconAndTextWP == null || !iconAndTextWP.text.equals(wayPoint)) {
 			switch (level) {
 			case 4:
-				iconAndTextWP = new IconAndText(GuiImageBroker.imageError, wayPoint, fm);
+				iconAndTextWP = new IconAndText(CacheType.getTypeImage(CacheType.CW_TYPE_ERROR), wayPoint, fm);
 				break;
 			case 3:
 				iconAndTextWP = new IconAndText(myTableModel.yellow, wayPoint, fm);
@@ -1542,7 +1542,6 @@ public class CacheHolder {
 		if (!cacheStatus.equals(this.cacheStatus)) {
 			this.cacheStatus = cacheStatus;
 			Global.getProfile().notifyUnsavedChanges(true);
-			this.cacheStatus = cacheStatus;
 			if ((this.getType() == CacheType.CW_TYPE_FINAL) && (this.mainCache != null)) {
 				this.mainCache.setCacheStatus(this.getCacheStatus());
 				// change the addi's in setFound
