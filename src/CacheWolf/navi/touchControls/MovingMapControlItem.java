@@ -1,28 +1,28 @@
-    /*
-    GNU General Public License
-    CacheWolf is a software for PocketPC, Win and Linux that
-    enables paperless caching.
-    It supports the sites geocaching.com and opencaching.de
+/*
+GNU General Public License
+CacheWolf is a software for PocketPC, Win and Linux that
+enables paperless caching.
+It supports the sites geocaching.com and opencaching.de
 
-    Copyright (C) 2006  CacheWolf development team
-    See http://developer.berlios.de/projects/cachewolf/
-    for more information.
-    Contact: 	bilbowolf@users.berlios.de
-    			kalli@users.berlios.de
+Copyright (C) 2006  CacheWolf development team
+See http://developer.berlios.de/projects/cachewolf/
+for more information.
+Contact: 	bilbowolf@users.berlios.de
+			kalli@users.berlios.de
 
-    This program is free software; you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation; version 2 of the License.
+This program is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation; version 2 of the License.
 
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
 
-    You should have received a copy of the GNU General Public License
-    along with this program; if not, write to the Free Software
-    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
-    */
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software
+Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+ */
 package CacheWolf.navi.touchControls;
 
 import CacheWolf.Global;
@@ -87,25 +87,21 @@ public abstract class MovingMapControlItem {
 					offsetx = offsety;
 				}
 
-				int[] iconPixels = icon.getPixels(null, 0, 0, 0, iconW, iconH,
-						0);
-				int[] imagePixels = image.getPixels(null, 0, 0, 0, imageW,
-						imageH, 0);
+				int[] iconPixels = icon.getPixels(null, 0, 0, 0, iconW, iconH, 0);
+				int[] imagePixels = image.getPixels(null, 0, 0, 0, imageW, imageH, 0);
 
-				for (int line = 0; line < imageH; line++) {
-					for (int pos = 0; pos < imageW; pos++) {
+				for (int y = 0; y < imageH; y++) {
+					for (int x = 0; x < imageW; x++) {
 
-						if (line >= offsety && pos >= offsetx
-								&& line < offsety + iconH
-								&& pos < offsetx + iconW) {
+						if (y >= offsety && x >= offsetx && y < offsety + iconH && x < offsetx + iconW) {
 
-							int iconx = pos - offsetx;
-							int icony = line - offsety;
+							int iconx = x - offsetx;
+							int icony = y - offsety;
 
-							int index = line * imageW + pos;
+							int index = y * imageW + x;
 							int iconIndex = icony * iconW + iconx;
 							int alphaval = (iconPixels[iconIndex] >> 24) & 0xff;
-							
+
 							if (alphaval > 127) {
 								imagePixels[index] = iconPixels[iconIndex];
 							}
@@ -117,15 +113,14 @@ public abstract class MovingMapControlItem {
 				image.setPixels(imagePixels, 0, 0, 0, imageW, imageH, 0);
 
 			} else
-				Global.getPref().log("icon " + iconSrc + " is bigger than " + source+ "! Icon not loaded",null);
+				Global.getPref().log("icon " + iconSrc + " is bigger than " + source + "! Icon not loaded", null);
 
 		}
 
 		if (alpha >= 0 && alpha < 256) {
 			alpha = alpha << 24;
 
-			int[] imageBits = image.getPixels(null, 0, 0, 0, image.getWidth(),
-					image.getHeight(), 0);
+			int[] imageBits = image.getPixels(null, 0, 0, 0, image.getWidth(), image.getHeight(), 0);
 			for (int i = 0; i < imageBits.length; i++) {
 				if (imageBits[i] != 0) {
 					imageBits[i] &= 0xffffff;
@@ -133,8 +128,7 @@ public abstract class MovingMapControlItem {
 				}
 
 			}
-			image.setPixels(imageBits, 0, 0, 0, image.getWidth(), image
-					.getHeight(), 0);
+			image.setPixels(imageBits, 0, 0, 0, image.getWidth(), image.getHeight(), 0);
 			image.enableAlpha();
 		}
 
@@ -156,6 +150,7 @@ public abstract class MovingMapControlItem {
 	public String getContent() {
 		return null;
 	}
+
 	public String getText() {
 		return null;
 	}
@@ -209,7 +204,7 @@ public abstract class MovingMapControlItem {
 
 			Boolean thisElement = (Boolean) roles.get(nextKey);
 			if (!overallRoles.containsKey(nextKey)) {
-				Global.getPref().log("Lookup role " + nextKey + " not possible",null);
+				Global.getPref().log("Lookup role " + nextKey + " not possible", null);
 				return false;
 			}
 
