@@ -2,15 +2,17 @@ package CacheWolf.model;
 
 import ewe.util.Vector;
 
-public abstract class AbstractListModel {
+public  class DefaultListModel {
 
 	public Vector allItems;
 
 	public Vector shownItems = new Vector ();
 	public int sortCriteria;
 
-	public AbstractListModel() {
+	public DefaultListModel() {
 		super();
+		allItems = new Vector ();
+		shownItems = new Vector();
 	}
 
 	/**
