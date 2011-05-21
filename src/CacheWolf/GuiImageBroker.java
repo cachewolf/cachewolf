@@ -41,7 +41,7 @@ public final class GuiImageBroker {
 	public static Image archived = new Image("archived.png");
 	public static Image solved = new Image("solved.png");
 	public static Image bonus = new Image("bonus.png");
-	public static Image owned = new Image("selected.png");
+	public static Image owned = new Image("owned.png");
 	public static Image dnf = new Image("dnf.png");
 
 	private GuiImageBroker() {
