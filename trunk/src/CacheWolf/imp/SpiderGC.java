@@ -724,7 +724,7 @@ public class SpiderGC {
 			}
 			doNotgetFound = options.foundCheckBox.getState();
 		}
-
+		pref.doNotGetFound = doNotgetFound;
 		if (menu == 0) {
 
 			int maxNew = -1;
@@ -1273,7 +1273,7 @@ public class SpiderGC {
 
 	private boolean switchToEnglish() {
 		// change language to EN , further operations relay on English
-		String url = "http://www.geocaching.com/default.aspx";
+		String url = "http://www.geocaching.com/account/ManagePreferences.aspx";
 		String page = "";
 		String userID = "userid=" + pref.userID;
 		try {
@@ -1308,7 +1308,13 @@ public class SpiderGC {
 		} catch (IOException e) {
 			return false;
 		}
-		Extractor ext = new Extractor(page, "<a href=\"#\">", "&#9660;</a>", 0, true);
+		Extractor ext = new Extractor(page, "ctl00$ContentBody$uxLanguagePreference", "</select>", 0, true);
+		String languageBlock = ext.findNext();
+		ext.set(ext.findNext("ctl00$ContentBody$uxDateTimeFormat"), "selected\" value=\"", "\">", 0, true);
+		DateFormat.GCDateFormat = ext.findNext();
+		// <option selected="selected" value="de-DE">Deutsch</option>
+		ext.set(languageBlock, "<option selected=", "/option>", 0, true);
+		ext.set(ext.findNext(), ">", "<", 0, true);
 		String oldLanguage = ext.findNext();
 		if (oldLanguage.equals("English")) {
 			pref.log("already English");
@@ -1332,6 +1338,7 @@ public class SpiderGC {
 		url += "?__EVENTTARGET=" + UrlFetcher.encodeURL(strEnglishPage, false);
 		try {
 			page = UrlFetcher.fetch(url);
+			ext.set(page, "<a href=\"#\">", "&#9660;", 0, true);
 			if (ext.findFirst(page).equals("English")) {
 				pref.log("Switched to English");
 				return true;

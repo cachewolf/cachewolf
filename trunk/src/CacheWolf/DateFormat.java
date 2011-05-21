@@ -38,6 +38,8 @@ import ewe.util.mString;
 
 public class DateFormat {
 
+	public static String GCDateFormat = "";
+
 	/** Convert the US Format into a sortable format */
 	public static String toYYMMDD(String date) {
 		return toYYMMDD(toDate(date));
@@ -92,9 +94,14 @@ public class DateFormat {
 						}
 						mm = monthName2int(month);
 					} else {
-						// mm dd yyyy
-						mm = v0;
-						dd = v1;
+						// mm dd yyyy (doesn't work for dd mm yyyy)
+						if (GCDateFormat.equals("dd/MM/yyyy")) {
+							dd = v0;
+							mm = v1;
+						} else {
+							mm = v0;
+							dd = v1;
+						}
 					}
 
 				}
