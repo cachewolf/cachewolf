@@ -1720,12 +1720,12 @@ public class SpiderGC {
 			// wird nicht mehr geliefert , todo aus Grafik extrahieren.
 			if (owner.equals(pref.myAlias) || owner.equals(pref.myAlias2)) {
 				ch.setOwned(true);
-			} else {
-				if (false) {
-					ch.setFound(true);
-					ch.setCacheStatus(ch.getFoundText());
-				}
 			}
+			//DEAD CODE commented out
+//			else if (false) {
+//				ch.setFound(true);
+//				ch.setCacheStatus(ch.getFoundText());
+//			}
 
 			cacheName = STRreplace.replace(cacheName, "\\\"", "\"");
 			ch.setCacheName(cacheName);
