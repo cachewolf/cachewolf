@@ -1100,7 +1100,7 @@ public final class MovingMap extends Form implements ICommandListener {
 							addSymbol(ch.getWayPoint(), ch, CacheType.getMapImage(ch), ch.pos);
 						}
 					} else {
-						if (ch.is_Checked || ch == Global.mainTab.ch) {
+						if (ch.is_Checked || ch == cacheDB.get(Global.mainTab.tbP.getSelectedCache())) {
 							if (addSymbolIsNecessary(ch.getWayPoint())) {
 								addSymbol(ch.getWayPoint(), ch, CacheType.getMapImage(ch), ch.pos);
 							}
