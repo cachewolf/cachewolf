@@ -27,6 +27,8 @@ import ewe.ui.mLabel;
 
 public class PDATravelbugDetailPanel extends Form {
 
+	private static final int BOXWIDTH = 40;
+
 	private static final String MENUE = "MENUE";
 
 	private static final String BACK = "back";
@@ -169,6 +171,8 @@ public class PDATravelbugDetailPanel extends Form {
 
 		panel.addNext(new mLabel(MyLocale.getMsg(6031, "Logged:")), DONTSTRETCH, DONTFILL | WEST);
 		chkFromLogged = new mCheckBox("");
+		chkFromLogged.boxWidth = BOXWIDTH;
+		chkFromLogged.font = tmpFont;
 		chkFromLogged.setState(tbJourney.getFromLogged());
 		panel.addLast(chkFromLogged, DONTSTRETCH, DONTFILL | WEST);
 		chkFromLogged.exitKeys = exitKeys;
@@ -192,6 +196,7 @@ public class PDATravelbugDetailPanel extends Form {
 
 		panel.addNext(new mLabel(MyLocale.getMsg(6031, "Logged:")), DONTSTRETCH, DONTFILL | WEST);
 		chkToLogged = new mCheckBox("");
+		chkToLogged.boxWidth = BOXWIDTH;
 		chkToLogged.setState(tbJourney.getToLogged());
 		panel.addLast(chkToLogged, DONTSTRETCH, DONTFILL | WEST);
 		chkToLogged.exitKeys = exitKeys;

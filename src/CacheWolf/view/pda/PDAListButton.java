@@ -31,12 +31,4 @@ public class PDAListButton extends mButton {
 		this.buttonObject = new PDAListButtonObject(this);
 	}
 	
-//	public Dimension getPreferredSize(Dimension paramDimension) {
-//		Dimension size = super.getPreferredSize(paramDimension);
-//		FontMetrics fm = new FontMetrics(font, getWindow());
-//		size.height = (int)(fm.getHeight()*2.5);
-//		size.width=fm.getTextWidth(text);
-//		return size;
-//	}
-
 }
