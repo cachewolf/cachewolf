@@ -735,7 +735,7 @@ public class MainMenu extends MenuBar {
 			}
 			if (mev.selectedItem == orgTravelbugs) {
 				Form tbs = TravelbugJourneyScreenFactory.createTravelbugJourneyScreen();
-				tbs.setPreferredSize(800, 600);
+				tbs.setPreferredSize(MyLocale.getScreenWidth(), MyLocale.getScreenHeight());
 				tbs.execute();
 				tbs.close(0);
 			}
