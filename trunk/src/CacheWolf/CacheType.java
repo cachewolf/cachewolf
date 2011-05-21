@@ -80,7 +80,7 @@ final class CTyp {
  * Handles all aspects of converting cache type information
  * from and to the various im- and exporters ...
  * converting legacy profiles to current standard
- * 
+ *
  * Do not instantiate this class, only use it in a static way
  */
 public final class CacheType {
@@ -194,7 +194,7 @@ public final class CacheType {
 
 	/**
 	 * check if a given waypoint type is an additional waypoint
-	 * 
+	 *
 	 * @param type
 	 *            waypoint type to check
 	 * @return true if it is an additional waypoint, false otherwise
@@ -205,7 +205,7 @@ public final class CacheType {
 
 	/**
 	 * check if a given waypoint type is an cache waypoint
-	 * 
+	 *
 	 * @param type
 	 *            waypoint type to check
 	 * @return true if it is an Cache waypoint, false otherwise
@@ -216,7 +216,7 @@ public final class CacheType {
 
 	/**
 	 * check if a given waypoint type is an Custom waypoint
-	 * 
+	 *
 	 * @param type
 	 *            waypoint type to check
 	 * @return true if it is an Custom waypint, false otherwise
@@ -228,7 +228,7 @@ public final class CacheType {
 	// done for DetailsPanel.java and KML- and TomTom-Exporter
 	/**
 	 * create list of cache types to be shown in GUI drop down lists
-	 * 
+	 *
 	 * @return list of cache types to be shown in GUI drop down list
 	 * @see guiSelect2Cw
 	 * @see cw2GuiSelect
@@ -251,7 +251,7 @@ public final class CacheType {
 
 	/**
 	 * translate GUI drop down index selection back to internally stored type
-	 * 
+	 *
 	 * @param selection
 	 *            index value from drop down list
 	 * @return internal type
@@ -272,7 +272,7 @@ public final class CacheType {
 
 	/**
 	 * translate cache type to position of index to highlight in GUI cache type drop down list
-	 * 
+	 *
 	 * @param typeId
 	 *            internal id of cache type
 	 * @return index of the cache type in GUI list
@@ -287,7 +287,7 @@ public final class CacheType {
 
 	/**
 	 * convert the strings found in import of GPX from GC, OC or TC to internal cache type
-	 * 
+	 *
 	 * @param gpxType
 	 *            type information found in GPX
 	 * @return internal cache type
@@ -319,7 +319,7 @@ public final class CacheType {
 
 	/**
 	 * convert the cache type information from an OC XML import to internal cache type
-	 * 
+	 *
 	 * @param ocType
 	 *            cache type found in OC XML
 	 * @return internal cache type
@@ -337,7 +337,7 @@ public final class CacheType {
 
 	/**
 	 * convert type information discovered by GC spider to internal type information
-	 * 
+	 *
 	 * @param gcType
 	 *            type information from GC spider
 	 * @return internal representation of cache type
@@ -355,7 +355,7 @@ public final class CacheType {
 
 	/**
 	 * convert version1 type information to current values
-	 * 
+	 *
 	 * @param type
 	 *            version1 cache type information
 	 * @return current version cache type information or -1
@@ -372,7 +372,7 @@ public final class CacheType {
 
 	/**
 	 * convert version2 type information to current values
-	 * 
+	 *
 	 * @param type
 	 *            version2 cache type information
 	 * @return current version cache type information or -1
@@ -389,7 +389,7 @@ public final class CacheType {
 
 	/**
 	 * translate cache type to a short version for compact exporters or "smart" cache names.
-	 * 
+	 *
 	 * @param typeId
 	 *            CacheWolf internal type information
 	 * @return abbreviation of cache type
@@ -400,7 +400,7 @@ public final class CacheType {
 
 	/**
 	 * map cache types to images
-	 * 
+	 *
 	 * @param typeId
 	 *            internal cache type id
 	 * @return non qualified name of image
@@ -411,7 +411,7 @@ public final class CacheType {
 
 	/**
 	 * generate type description matching those of GC for GPX export
-	 * 
+	 *
 	 * @param typeId
 	 *            internal type id
 	 * @return type information in GC.com <type> GPX format
@@ -422,7 +422,7 @@ public final class CacheType {
 
 	/**
 	 * generate type description matching those of GC for GPX export
-	 * 
+	 *
 	 * @param typeId
 	 *            internal type id
 	 * @return symb information in GC.com <sym> GPX format
@@ -433,7 +433,7 @@ public final class CacheType {
 
 	/**
 	 * generate type description matching those of GC for GPX export
-	 * 
+	 *
 	 * @param typeId
 	 *            internal type id
 	 * @return type information in GC.com <groundspeak:type> GPX format
@@ -444,7 +444,7 @@ public final class CacheType {
 
 	/**
 	 * generate type description matching those of GC for GPX export
-	 * 
+	 *
 	 * @param typeId
 	 *            internal type id
 	 * @return Gui - string for type
@@ -455,7 +455,7 @@ public final class CacheType {
 
 	/**
 	 * select image to be displayed for a given cache type
-	 * 
+	 *
 	 * @param typeId
 	 *            internal cache type id
 	 * @return <code>Image</code> object to be displayed
@@ -466,7 +466,7 @@ public final class CacheType {
 
 	/**
 	 * select image to be displayed for a given cache type
-	 * 
+	 *
 	 * @param typeId
 	 *            internal cache type id
 	 * @return <code>Image</code> object to be displayed
@@ -499,7 +499,7 @@ public final class CacheType {
 				cTypRef[Ref_Index(typeId)]._modImage[solved] = newOverlayedImage(im, GuiImageBroker.solved);
 			}
 			im = cTypRef[Ref_Index(typeId)]._modImage[solved];
-		} else if (ch.getCacheStatus().startsWith(MyLocale.getMsg(319, "Not Found"))) {
+		} else if (ch.getCacheStatus().indexOf(MyLocale.getMsg(319, "Not Found")) > -1) {
 			if (cTypRef[Ref_Index(typeId)]._modImage[dnf] == null) {
 				cTypRef[Ref_Index(typeId)]._modImage[dnf] = newOverlayedImage(im, GuiImageBroker.dnf);
 			}
@@ -515,7 +515,7 @@ public final class CacheType {
 
 	/**
 	 * select image to be displayed for a given cache type
-	 * 
+	 *
 	 * @param typeId
 	 *            internal cache type id
 	 * @param Image
@@ -529,7 +529,7 @@ public final class CacheType {
 
 	/**
 	 * select image to be displayed for a given cache type
-	 * 
+	 *
 	 * @param typeId
 	 *            internal cache type id
 	 * @param Image
