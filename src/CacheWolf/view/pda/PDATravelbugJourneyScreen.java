@@ -2,10 +2,11 @@ package CacheWolf.view.pda;
 
 import CacheWolf.MyLocale;
 import CacheWolf.TravelbugJourney;
-import CacheWolf.model.TravelBugScreenModel;
+import CacheWolf.model.TravelBugJourneyScreenModel;
 import ewe.graphics.AniImage;
 import ewe.sys.Vm;
 import ewe.ui.CellConstants;
+import ewe.ui.ControlConstants;
 import ewe.ui.ControlEvent;
 import ewe.ui.Form;
 
@@ -20,14 +21,8 @@ public class PDATravelbugJourneyScreen extends Form {
 
 	PDAListButton[] listButtons;
 
-	TravelBugScreenModel model;
-	// public boolean onlyLogged = false;
-	// /**
-	// * List of all travelbugs in inventory
-	// */
-	// public TravelbugJourneyList myTravelbugJourneys;
-	//
-	// private Vector tbJourneysShowSet;
+	TravelBugJourneyScreenModel model;
+
 	/**
 	 * The index of the first item in the list shown
 	 */
@@ -39,7 +34,7 @@ public class PDATravelbugJourneyScreen extends Form {
 	 * The six visible entries in the List
 	 */
 
-	public PDATravelbugJourneyScreen(TravelBugScreenModel travelbugModel) {
+	public PDATravelbugJourneyScreen(TravelBugJourneyScreenModel travelbugModel) {
 		listButtons = new PDAListButton[linesOnScreen];
 		addListener(this);
 		setTitle("TravelBugs");
@@ -115,13 +110,12 @@ public class PDATravelbugJourneyScreen extends Form {
 				listButtons[i].toText = tbJourney.getToWaypoint() + '/' + tbJourney.getToProfile();
 				listButtons[i].toLogged = tbJourney.getToLogged();
 				listButtons[i].image = new AniImage("bug_vga.gif");
+				listButtons[i].modify(ControlConstants.Disabled, 1);
 			} else {
-				listButtons[i].text =
-						listButtons[i].fromText =
-								listButtons[i].toText = "";
-				listButtons[i].toLogged =
-						listButtons[i].fromLogged = true;
+				listButtons[i].text = listButtons[i].fromText =	listButtons[i].toText = "";
+				listButtons[i].toLogged = listButtons[i].fromLogged = true;
 				listButtons[i].image = null;
+				listButtons[i].modify(ControlConstants.Disabled, 0);
 			}
 			listButtons[i].repaint();
 		}
