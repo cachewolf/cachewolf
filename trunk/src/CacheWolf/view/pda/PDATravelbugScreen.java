@@ -3,9 +3,9 @@ package CacheWolf.view.pda;
 import CacheWolf.MyLocale;
 import CacheWolf.Travelbug;
 import CacheWolf.TravelbugList;
+import CacheWolf.model.DefaultListModel;
 import CacheWolf.view.ITravelbugScreen;
 import ewe.ui.ControlEvent;
-import ewe.util.Vector;
 
 public class PDATravelbugScreen extends PDAList implements ITravelbugScreen{
 
@@ -20,7 +20,7 @@ public class PDATravelbugScreen extends PDAList implements ITravelbugScreen{
 	 */
 	public PDATravelbugScreen(TravelbugList tbl, String title, boolean allowNew) {
 		super();
-		model = new Vector();
+		model = new DefaultListModel();
 		for (int i=0;i < tbl.size();i++){
 			Travelbug tb = tbl.getTB(i);
 			model.add(tb.getName());
@@ -28,6 +28,7 @@ public class PDATravelbugScreen extends PDAList implements ITravelbugScreen{
 		if (allowNew){
 			model.add(MyLocale.getMsg(6015,"*** OTHER ***"));
 		}
+		model.createShowSet();
 		setupTBButtons();
 }
 
