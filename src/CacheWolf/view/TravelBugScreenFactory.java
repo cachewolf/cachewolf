@@ -34,7 +34,7 @@ public class TravelBugScreenFactory {
 	 */
 	private static final boolean isAndroid = false;
 
-	public static ITravelbugScreen createTravelbugScreen(TravelbugList tbl, String title, boolean allowNew) {
+	public static ITravelbugScreen createTravelbugScreen(TravelbugList tbl, String title, Boolean allowNew) {
 		Global.getPref().log("Mobile-Device: " + Vm.isMobile());
 		Global.getPref().log("Preference for Mobile-Device: " + Global.getPref().mobileGUI);
 		if (Vm.isMobile() && Global.getPref().mobileGUI) {
@@ -49,7 +49,7 @@ public class TravelBugScreenFactory {
 				Global.getPref().log("Error in instantiating TravelBugScreen", e, true);
 				e.printStackTrace();
 				// ignore?? VM on WinPC seems to have no classloader
-				return new PDATravelbugScreen(tbl, title, allowNew);
+				return new PDATravelbugScreen(tbl, title, allowNew.booleanValue());
 			}
 		} else if (isSwing) {
 			throw new InstantiationError("No Swing GUI available");
@@ -58,7 +58,7 @@ public class TravelBugScreenFactory {
 			throw new InstantiationError("No Android GUI available");
 			// return new TravelbugJourneyScreen(model);
 		} else {
-			return new TravelbugScreen(tbl, title, allowNew);
+			return new TravelbugScreen(tbl, title, allowNew.booleanValue());
 		}
 	}
 
