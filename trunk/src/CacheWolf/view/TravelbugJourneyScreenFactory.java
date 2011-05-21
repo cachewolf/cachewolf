@@ -6,7 +6,7 @@ import CacheWolf.CacheDB;
 import CacheWolf.CacheHolder;
 import CacheWolf.Global;
 import CacheWolf.TravelbugJourneyList;
-import CacheWolf.model.TravelBugScreenModel;
+import CacheWolf.model.TravelBugJourneyScreenModel;
 import CacheWolf.view.ewe.TravelbugJourneyScreen;
 import CacheWolf.view.pda.PDATravelbugJourneyScreen;
 import ewe.reflect.Reflect;
@@ -30,6 +30,7 @@ public class TravelbugJourneyScreenFactory {
 			//ignore!
 		}
 		isSwing = swingClass!=null;
+		isSwing = false;
 	}
 
 	/**
@@ -38,7 +39,7 @@ public class TravelbugJourneyScreenFactory {
 	private static final boolean isAndroid = false;
 
 	public static Form createTravelbugJourneyScreen() {
-		TravelBugScreenModel model = new TravelBugScreenModel();
+		TravelBugJourneyScreenModel model = new TravelBugJourneyScreenModel();
 		model.onlyLogged = Global.getPref().travelbugShowOnlyNonLogged;
 		int curCacheNo = Global.mainTab.tbP.getSelectedCache();
 		CacheDB cacheDB = Global.getProfile().cacheDB;
@@ -65,7 +66,7 @@ public class TravelbugJourneyScreenFactory {
 				//ignore?? VM on WinPC seems to have no classloader
 				return new PDATravelbugJourneyScreen(model);
 			}
-		} else if (isSwing) {
+		} else if ( isSwing) {
 			throw new InstantiationError ("No Swing GUI available");
 		} else if (isAndroid) {
 			throw new InstantiationError ("No Android GUI available");

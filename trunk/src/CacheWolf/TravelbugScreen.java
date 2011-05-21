@@ -25,6 +25,7 @@
     */
 package CacheWolf;
 
+import CacheWolf.view.ITravelbugScreen;
 import ewe.ui.CellConstants;
 import ewe.ui.ControlEvent;
 import ewe.ui.Event;
@@ -40,19 +41,23 @@ import ewe.ui.mButton;
  * Choose a travelbug to pick up or drop
  * @author salzkammergut
  */ 
-public class TravelbugScreen extends Form {
+public class TravelbugScreen extends Form implements ITravelbugScreen {
 	private myList disp;
 	private mButton btCancel,btAccept;
 	/** The index into the list of travelbugs indicating the selected bug */
 	public int selectedItem=-1;
 	
+	public int getSelectedItem() {
+		return selectedItem;
+	}
+
 	/**
 	 * A screen to choose a travelbug from a list of bugs
 	 * @param tbl The list of travelbugs from which to choose
 	 * @param title The title of the screen
 	 * @param allowNew True if a travelbug not on the list can be selected
 	 */
-	TravelbugScreen(TravelbugList tbl, String title,boolean allowNew) {
+	public TravelbugScreen(TravelbugList tbl, String title,boolean allowNew) {
 		this.setTitle(title);
 		this.setPreferredSize(240, -1);
 		disp=new myList(tbl,allowNew);
@@ -104,7 +109,4 @@ public class TravelbugScreen extends Form {
 				return SafeXML.cleanback(tbl.getTB(idx).getName());
 		}
 	}
-
-
-
 }
