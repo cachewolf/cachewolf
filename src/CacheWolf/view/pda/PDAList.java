@@ -1,6 +1,7 @@
 package CacheWolf.view.pda;
 
 import CacheWolf.MyLocale;
+import CacheWolf.model.DefaultListModel;
 import ewe.sys.Vm;
 import ewe.ui.CellConstants;
 import ewe.ui.ControlEvent;
@@ -16,7 +17,7 @@ public abstract class PDAList extends Form {
 
 	protected static final String MENUE = "Menue";
 
-	public Vector model;
+	public DefaultListModel model;
 	private int linesOnScreen=7;
 	PDAListButton[] listButtons;
 	protected int firstLine;
@@ -33,7 +34,6 @@ public abstract class PDAList extends Form {
 			listButtons[i] = new PDAListButton("", LINE + i);
 			addLast(listButtons[i], CellConstants.STRETCH, CellConstants.FILL);
 		}
-		model = new Vector();
 		setupTBButtons();
 		PDAMenuButton b1 = new PDAMenuButton("<<<", PREV_PAGE);
 		addNext(b1, CellConstants.HSTRETCH, CellConstants.HFILL);
@@ -74,7 +74,7 @@ public abstract class PDAList extends Form {
 
 	public void setupTBButtons() {
 		for (int i = 0; i < linesOnScreen; i++) {
-			if (i + firstLine < model.size()) {
+			if (model != null && i + firstLine < model.size()) {
 				Object modelElement = model.get(i + firstLine);
 				listButtons[i].text = modelElement.toString();
 			} else {

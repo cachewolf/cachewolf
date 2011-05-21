@@ -1,6 +1,6 @@
 package CacheWolf.model;
 
-public class TravelbugScreenModel extends AbstractListModel {
+public class TravelbugScreenModel extends DefaultListModel {
 
 	public void createShowSet() {
 	}
