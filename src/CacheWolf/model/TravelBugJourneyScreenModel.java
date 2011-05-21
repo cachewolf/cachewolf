@@ -6,7 +6,7 @@ import CacheWolf.TravelbugJourney;
 import CacheWolf.TravelbugJourneyList;
 import ewe.util.Vector;
 
-public class TravelBugScreenModel {
+public class TravelBugJourneyScreenModel {
 
 	public CacheHolder actualCache;
 	public TravelbugJourneyList allTravelbugJourneys;

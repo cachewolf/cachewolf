@@ -958,14 +958,12 @@ public class DetailsPanel extends CellPanel {
 					tbjList = new TravelbugJourneyList();
 					tbjList.readTravelbugsFile();
 					TravelbugList tbl = tbjList.getMyTravelbugs();
-					TravelbugScreen tbs = new TravelbugScreen(tbl, MyLocale
-							.getMsg(6017, "Drop a travelbug"), false);
+					TravelbugScreen tbs = new TravelbugScreen(tbl, MyLocale.getMsg(6017, "Drop a travelbug"), false);
 					tbs.execute();
 					if (tbs.selectedItem >= 0) {
 						Travelbug tb = tbl.getTB(tbs.selectedItem);
 						cache.getCacheDetails(true).Travelbugs.add(tb);
-						tbjList.addTbDrop(tb, Global.getProfile().name,
-								cache.getWayPoint());
+						tbjList.addTbDrop(tb, Global.getProfile().name, cache.getWayPoint());
 					}
 					tbjList.saveTravelbugsFile();
 					cache.setHas_bugs(cache.getCacheDetails(true).Travelbugs.size() > 0);

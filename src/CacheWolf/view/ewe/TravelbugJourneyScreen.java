@@ -49,7 +49,7 @@ import CacheWolf.TravelbugJourney;
 import CacheWolf.TravelbugList;
 import CacheWolf.TravelbugPickup;
 import CacheWolf.imp.SpiderGC;
-import CacheWolf.model.TravelBugScreenModel;
+import CacheWolf.model.TravelBugJourneyScreenModel;
 import CacheWolf.utils.CWWrapper;
 import ewe.fx.Color;
 import ewe.fx.Dimension;
@@ -123,7 +123,7 @@ public class TravelbugJourneyScreen extends Form {
 	// =========== CONTROLLER
 	public TravelbugMenu mnuTBMenu;
 	// ========== MODEL
-	public TravelBugScreenModel model;
+	public TravelBugJourneyScreenModel model;
 
 	/**
 	 * A flag to track whether the current cache has to be saved because a
@@ -148,7 +148,7 @@ public class TravelbugJourneyScreen extends Form {
 	// Set to Public to implement MVC-Pattern [AP]
 	public String waypoint = "";
 
-	public TravelbugJourneyScreen(TravelBugScreenModel newModel) {
+	public TravelbugJourneyScreen(TravelBugJourneyScreenModel newModel) {
 		model = newModel;
 		CacheDB cacheDB = Global.getProfile().cacheDB;
 		SplittablePanel split = new SplittablePanel(PanelSplitter.VERTICAL);
@@ -555,9 +555,9 @@ public class TravelbugJourneyScreen extends Form {
 		private MenuItem mnuNewTB, mnuDeleteTB, mnuGetMission, mnuOpenOnline, mnuDropTB, mnuPickupTB, mnuDeleteTBs;
 		public MenuItem mnuToggleList;
 		private Menu mnuFullMenu, mnuDeleteMenu;
-		private TravelBugScreenModel tbModel;
+		private TravelBugJourneyScreenModel tbModel;
 
-		tbListControl(TravelBugScreenModel tbModel) {
+		tbListControl(TravelBugJourneyScreenModel tbModel) {
 			this.tbModel = tbModel;
 			MenuItem[] TBMenuItems = new MenuItem[10];
 			TBMenuItems[0] = mnuPickupTB = new MenuItem(MyLocale.getMsg(6040, "Pick up TB from current cache"));

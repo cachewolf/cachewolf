@@ -7,7 +7,8 @@ import CacheWolf.TravelbugJourney;
 import CacheWolf.TravelbugList;
 import CacheWolf.TravelbugPickup;
 import CacheWolf.imp.SpiderGC;
-import CacheWolf.model.TravelBugScreenModel;
+import CacheWolf.model.AbstractListModel;
+import CacheWolf.model.TravelBugJourneyScreenModel;
 import CacheWolf.utils.CWWrapper;
 import ewe.fx.Rect;
 import ewe.sys.Vm;
@@ -40,9 +41,9 @@ public class TravelbugMenu extends MenuBar {
 	 * The View displaying the model for this
 	 */
 	public TravelbugJourneyScreen view;
-	private TravelBugScreenModel model;
+	private TravelBugJourneyScreenModel model;
 
-	public TravelbugMenu(TravelBugScreenModel model) {
+	public TravelbugMenu(TravelBugJourneyScreenModel model) {
 		this.model = model;
 		MenuItem[] TBMenuItems = new MenuItem[9];
 		TBMenuItems[0] = mnuPickupTB = new MenuItem(MyLocale.getMsg(6040, "Pick up TB from current cache"));
