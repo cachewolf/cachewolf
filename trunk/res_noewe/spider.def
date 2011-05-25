@@ -115,7 +115,7 @@ longDescRex        = tBody_LongDescription">((?s).*?)<strong>\\s+Additional\ Hin
 cacheNameRex       = tBody_CacheName">((?s).*?)</span>
 cacheOwnerRex      = &wid(?:(?s).*?)>((?s).*?)<
 dateHiddenRex      = (?:Hidden|Event\ Date)\\s*:\\s*((?s).*?)<
-hintsRex           = <div id="div_hint" class="HalfLeft">\\s*((?s).*?)\\s*</div>
+hintsRex           = <div\ id="div_hint"\ class="span-8\ WrapFix">\\s*((?s).*?)\\s*</div>
 sizeRex            = alt="Size:\ ((?s).*?)"
 difficultyRex      = difficulty\ of\ (.*?),
 terrainRex         = terrain\ of\ (.*?)\\.\\ 
