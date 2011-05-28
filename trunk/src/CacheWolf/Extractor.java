@@ -74,6 +74,11 @@ public class Extractor {
 		_startOffset = 0;
 	}
 
+	public void set(String searchText, int startOffset) {
+		_searchText = searchText;
+		_startOffset = startOffset;
+	}
+
 	public String findFirst(String searchText) {
 		_searchText = searchText;
 		_startOffset = 0;
