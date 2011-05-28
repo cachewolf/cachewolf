@@ -862,14 +862,14 @@ public class SpiderGC {
 				if (RexPropListBlock.didMatch()) {
 					tableOfHtmlListPage = RexPropListBlock.stringMatched(1);
 				} else {
-					pref.log("check listBlockRex in spider.def" + Preferences.NEWLINE + htmlListPage);
+					pref.log("[SpiderGC.java:fillDownloadLists]check listBlockRex!");
 					tableOfHtmlListPage = "";
 				}
 				RexPropLine.search(tableOfHtmlListPage);
 				while (toDistance > 0) {
 					if (!RexPropLine.didMatch()) {
 						if (page_number == 1 && found_on_page == 0)
-							pref.log("check lineRex in spider.def");
+							pref.log("[SpiderGC.java:fillDownloadLists]check lineRex!");
 						break;
 					}
 					found_on_page++;
@@ -1347,7 +1347,7 @@ public class SpiderGC {
 				return false;
 			}
 		} catch (final Exception ex) {
-			pref.log("Error switching to English: check " + url, ex);
+			pref.log("[SpiderGC.java:switchToEnglish]Error switching to English: check " + url, ex);
 			return false;
 		}
 
@@ -1445,7 +1445,7 @@ public class SpiderGC {
 			viewstate = rexViewstate.stringMatched(1);
 		} else {
 			viewstate = "";
-			pref.log("[getAListPage] check rexViewstate in SpiderGC.java" + Preferences.NEWLINE + htmlListPage);
+			pref.log("[SpiderGC.java:getAListPage] check rexViewstate!", null);
 		}
 
 		final Regex rexViewstate1 = new Regex("id=\"__VIEWSTATE1\" value=\"(.*?)\" />");
@@ -1455,7 +1455,7 @@ public class SpiderGC {
 			viewstate1 = rexViewstate1.stringMatched(1);
 		} else {
 			viewstate1 = "";
-			pref.log("[getAListPage] check rexViewstate1 in SpiderGC.java" + Preferences.NEWLINE + htmlListPage);
+			pref.log("[SpiderGC.java:getAListPage] check rexViewstate1!", null);
 		}
 
 		final String postData = "__EVENTTARGET=" + URL.encodeURL(whatPage, false) + "&" + "__EVENTARGUMENT=" + "&" + "__VIEWSTATEFIELDCOUNT=2" + "&" + "__VIEWSTATE=" + URL.encodeURL(viewstate, false) + "&" + "__VIEWSTATE1="
@@ -1728,11 +1728,11 @@ public class SpiderGC {
 			if (owner.equals(pref.myAlias) || owner.equals(pref.myAlias2)) {
 				ch.setOwned(true);
 			}
-			//DEAD CODE commented out
-//			else if (false) {
-//				ch.setFound(true);
-//				ch.setCacheStatus(ch.getFoundText());
-//			}
+			// DEAD CODE commented out
+			// else if (false) {
+			// ch.setFound(true);
+			// ch.setCacheStatus(ch.getFoundText());
+			// }
 
 			cacheName = STRreplace.replace(cacheName, "\\\"", "\"");
 			ch.setCacheName(cacheName);
@@ -1826,7 +1826,7 @@ public class SpiderGC {
 					pref.log("sizeChanged");
 				}
 			} else {
-				pref.log("check DTS calculation", null);
+				pref.log("[SpiderGC.java:updateExists]check DTS calculation!", null);
 			}
 		}
 		if (newFoundExists(ch, CacheDescription)) {
@@ -1853,7 +1853,7 @@ public class SpiderGC {
 		if (RexNumFinds.didMatch()) {
 			return Common.parseInt(RexNumFinds.stringMatched(1));
 		} else {
-			pref.log("check RexNumFinds in SpiderGC.java / initialiseProperties" + Preferences.NEWLINE + doc);
+			pref.log("[SpiderGC.java:getNumFound]check RexNumFinds!", null);
 			return 0;
 		}
 	}
@@ -1888,7 +1888,7 @@ public class SpiderGC {
 			return distanceAndDirection;
 		RexPropDistanceCode.search(doc);
 		if (!RexPropDistanceCode.didMatch()) {
-			pref.log("check distRex" + Preferences.NEWLINE + doc);
+			pref.log("[SpiderGC.java:getDistanceAndDirection]check distRex!", null);
 			distanceAndDirection[0] = -1.0; // Abbruch
 			return distanceAndDirection;
 		}
@@ -1957,7 +1957,7 @@ public class SpiderGC {
 				distanceAndDirection[0] = distanceAndDirection[0] / 5280.0;
 			}
 		} else {
-			pref.log("(gc Code change ?) check distCodeKey in spider.def" + Preferences.NEWLINE + doc);
+			pref.log("[SpiderGC.java:getDistanceAndDirection](gc Code change ?) check distCodeKey!", null);
 		}
 
 		return distanceAndDirection;
@@ -1973,7 +1973,7 @@ public class SpiderGC {
 	private String getWP(String doc) throws Exception {
 		RexPropWaypoint.search(doc);
 		if (!RexPropWaypoint.didMatch()) {
-			pref.log("check waypointRex in spider.def" + Preferences.NEWLINE + doc);
+			pref.log("[SpiderGC.java:getWP]check waypointRex!", null);
 			return "???";
 		}
 		return "GC" + RexPropWaypoint.stringMatched(1);
@@ -2014,7 +2014,7 @@ public class SpiderGC {
 				return true;
 			}
 		}
-		pref.log("check TypeRex in spider.def" + Preferences.NEWLINE + toCheck);
+		pref.log("[SpiderGC.java:typeChanged]check TypeRex!", null);
 		return false;
 	}
 
@@ -2047,7 +2047,7 @@ public class SpiderGC {
 			 * 4)) / 2.0); if (difficulty.equals("0.5")) { difficulty = "5"; } return difficulty+"/"+terrain+"/"+size;
 			 */
 		}
-		pref.log("check DTSRex in spider.def" + Preferences.NEWLINE + toCheck);
+		pref.log("[SpiderGC.java:getDTS]check DTSRex!", null);
 		return "";
 	}
 
@@ -2206,7 +2206,7 @@ public class SpiderGC {
 		if (RexPropLogDate.didMatch()) {
 			stmp = RexPropLogDate.stringMatched(1);
 		} else {
-			pref.log("check logDateRex in spider.def" + Preferences.NEWLINE + cacheDescription);
+			pref.log("[SpiderGC.java:newFoundExists]check logDateRex!", null);
 			return false;
 		}
 		final Time lastLogGC = DateFormat.toDate(stmp);
@@ -2440,7 +2440,7 @@ public class SpiderGC {
 		final Regex inRex = new Regex(p.getProp("latLonRex"));
 		inRex.search(doc);
 		if (!inRex.didMatch()) {
-			pref.log("check latLonRex in spider.def" + Preferences.NEWLINE + doc);
+			pref.log("[SpiderGC.java:getLatLon]check latLonRex!", null);
 			return "???";
 		}
 		return inRex.stringMatched(1);
@@ -2462,7 +2462,7 @@ public class SpiderGC {
 		shortDescRex.search(doc);
 		if (!shortDescRex.didMatch()) {
 			if (shortDescRex_not_yet_found)
-				pref.log("no shortDesc or check shortDescRex in spider.def");
+				pref.log("[SpiderGC.java:getLongDesc]no shortDesc or check shortDescRex!", null);
 			// + Preferences.NEWLINE + doc);
 		} else {
 			res = shortDescRex.stringMatched(1);
@@ -2471,7 +2471,7 @@ public class SpiderGC {
 		res += "<br>";
 		longDescRex.search(doc);
 		if (!longDescRex.didMatch()) {
-			pref.log("check longDescRex in spider.def" + Preferences.NEWLINE + doc);
+			pref.log("[SpiderGC.java:getLongDesc]check longDescRex!", null);
 		} else {
 			res += longDescRex.stringMatched(1);
 		}
@@ -2495,7 +2495,7 @@ public class SpiderGC {
 		final Regex inRex = new Regex(p.getProp("cacheLocationRex"));
 		inRex.search(doc);
 		if (!inRex.didMatch()) {
-			pref.log("check cacheLocationRex in spider.def" + Preferences.NEWLINE + doc);
+			pref.log("[SpiderGC.java:getLocation]check cacheLocationRex!", null);
 			return "";
 		}
 		return inRex.stringMatched(1);
@@ -2512,7 +2512,7 @@ public class SpiderGC {
 		final Regex inRex = new Regex(p.getProp("cacheNameRex"));
 		inRex.search(doc);
 		if (!inRex.didMatch()) {
-			pref.log("check cacheNameRex in spider.def" + Preferences.NEWLINE + doc);
+			pref.log("[SpiderGC.java:getName]check cacheNameRex!", null);
 			return "???";
 		}
 		return inRex.stringMatched(1);
@@ -2529,7 +2529,7 @@ public class SpiderGC {
 		final Regex inRex = new Regex(p.getProp("cacheOwnerRex"));
 		inRex.search(doc);
 		if (!inRex.didMatch()) {
-			pref.log("check cacheOwnerRex in spider.def" + Preferences.NEWLINE + doc);
+			pref.log("[SpiderGC.java:getOwner]check cacheOwnerRex!", null);
 			return "???";
 		}
 		return inRex.stringMatched(1);
@@ -2546,7 +2546,7 @@ public class SpiderGC {
 		final Regex inRex = new Regex(p.getProp("dateHiddenRex"));
 		inRex.search(doc);
 		if (!inRex.didMatch()) {
-			pref.log("check dateHiddenRex in spider.def" + Preferences.NEWLINE + doc);
+			pref.log("[SpiderGC.java:getDateHidden]check dateHiddenRex!", null);
 			return "???";
 		}
 		return inRex.stringMatched(1);
@@ -2563,7 +2563,7 @@ public class SpiderGC {
 		final Regex inRex = new Regex(p.getProp("hintsRex"));
 		inRex.search(doc);
 		if (!inRex.didMatch()) {
-			pref.log("check hintsRex in spider.def" + Preferences.NEWLINE + doc);
+			pref.log("[SpiderGC.java:getHints]check hintsRex!", null);
 			return "";
 		}
 		return inRex.stringMatched(1);
@@ -2582,7 +2582,7 @@ public class SpiderGC {
 		if (inRex.didMatch())
 			return inRex.stringMatched(1);
 		else {
-			pref.log("check sizeRex in spider.def" + Preferences.NEWLINE + doc);
+			pref.log("[SpiderGC.java:getSize]check sizeRex!", null);
 			return "None";
 		}
 	}
@@ -2600,7 +2600,7 @@ public class SpiderGC {
 		if (inRex.didMatch())
 			return inRex.stringMatched(1);
 		else {
-			pref.log("check difficultyRex in spider.def" + Preferences.NEWLINE + doc);
+			pref.log("[SpiderGC.java:getDiff]check difficultyRex!", null);
 			return "-1";
 		}
 	}
@@ -2618,7 +2618,7 @@ public class SpiderGC {
 		if (inRex.didMatch())
 			return inRex.stringMatched(1);
 		else {
-			pref.log("check terrainRex in spider.def" + Preferences.NEWLINE + doc);
+			pref.log("[SpiderGC.java:getTerr]check terrainRex!", null);
 			return "-1";
 		}
 	}
@@ -2635,7 +2635,7 @@ public class SpiderGC {
 		if (RexCacheType.didMatch())
 			return CacheType.gcSpider2CwType(RexCacheType.stringMatched(1));
 		else {
-			pref.log("check cacheTypeRex in spider.def" + Preferences.NEWLINE + doc);
+			pref.log("[SpiderGC.java:getType]check cacheTypeRex!", null);
 			return 0;
 		}
 	}
@@ -2658,7 +2658,7 @@ public class SpiderGC {
 		final LogList reslts = chD.CacheLogs;
 		RexLogBlock.search(completeWebPage);
 		if (!RexLogBlock.didMatch()) {
-			pref.log("check blockRex in spider.def" + Preferences.NEWLINE + completeWebPage);
+			pref.log("[SpiderGC.java:getLogs]check blockRex!", null);
 		}
 		final String LogBlock = RexLogBlock.stringMatched(1);
 
@@ -2732,39 +2732,47 @@ public class SpiderGC {
 	 * @return A HTML formatted string with bug names and there purpose
 	 */
 	public void getBugs(CacheHolderDetail chD, String doc) throws Exception {
+		chD.Travelbugs.clear();
+		if (doc.indexOf("ctl00_ContentBody_uxTravelBugList_uxNoTrackableItemsLabel") >= 0) {
+			return; // there are no trackables
+		}
 		final Extractor exBlock = new Extractor(doc, p.getProp("blockExStart"), p.getProp("blockExEnd"), 0, Extractor.EXCLUDESTARTEND);
+		final Extractor exBug = new Extractor("", p.getProp("bugExStart"), p.getProp("bugExEnd"), 0, Extractor.EXCLUDESTARTEND);
+		final Extractor exBugName = new Extractor("", "", "", 0, Extractor.EXCLUDESTARTEND);
 		final String bugBlock;
 		if ((bugBlock = exBlock.findNext()).length() > 0) {
 			String link, bug, linkPlusBug, bugDetails;
 			final String oldInfoBox = infB.getInfo();
-			chD.Travelbugs.clear();
-			final Extractor exBug = new Extractor(bugBlock, p.getProp("bugExStart"), p.getProp("bugExEnd"), 0, Extractor.EXCLUDESTARTEND);
+			boolean exBugWrong = true;
+			exBug.set(bugBlock);
 			while ((linkPlusBug = exBug.findNext()).length() > 0) {
+				exBugWrong = false;
 				if (infB.isClosed)
 					break;
 				final int idx = linkPlusBug.indexOf(p.getProp("bugLinkEnd"));
-				if (idx < 0)
+				if (idx < 0) {
+					pref.log("[SpiderGC.java:getBugs]check TBs bugLinkEnd!", null);
 					break; // No link/bug pair found
+				}
 				link = linkPlusBug.substring(0, idx);
-				final Extractor exBugName = new Extractor(linkPlusBug, p.getProp("bugNameExStart"), p.getProp("bugNameExEnd"), 0, Extractor.EXCLUDESTARTEND);
+				exBugName.set(linkPlusBug, p.getProp("bugNameExStart"), p.getProp("bugNameExEnd"), idx, Extractor.EXCLUDESTARTEND);
 				if ((bug = exBugName.findNext()).length() > 0) {
-					// Found a bug, get its details
-					final Travelbug tb = new Travelbug(bug);
+					// Found a bug, get its mission
 					try {
 						infB.setInfo(oldInfoBox + MyLocale.getMsg(5514, "\nGetting bug: ") + SafeXML.cleanback(bug));
 						bugDetails = UrlFetcher.fetch(link);
-						pref.log("[getBugs] Fetched TB details: " + bug);
-						final Extractor exDetails = new Extractor(bugDetails, p.getProp("bugDetailsStart"), p.getProp("bugDetailsEnd"), 0, Extractor.EXCLUDESTARTEND);
-						tb.setMission(exDetails.findNext());
-						final Extractor exGuid = new Extractor(bugDetails, "action=\"details.aspx?guid=", "\" id=\"aspnetForm", 0, Extractor.EXCLUDESTARTEND);
-						tb.setGuid(exGuid.findNext());
-						chD.Travelbugs.add(tb);
+						exBugName.set(bugDetails, p.getProp("bugDetailsStart"), p.getProp("bugDetailsEnd"), 0, Extractor.EXCLUDESTARTEND); // reusing exBugName
+						chD.Travelbugs.add(new Travelbug(link.substring(1 + link.indexOf("=")), bug, exBugName.findNext()));
 					} catch (final Exception ex) {
-						pref.log("[getBugs] Could not fetch bug details", ex);
+						pref.log("[SpiderGC.java:getBugs] Could not fetch buginfo from " + link, ex);
 					}
 				}
 			}
 			infB.setInfo(oldInfoBox);
+			if (exBugWrong)
+				pref.log("[SpiderGC.java:getBugs]check TBs bugExStart / bugExEnd!", null);
+		} else {
+			pref.log("[SpiderGC.java:getBugs]check TBs blockExStart / blockExEnd!", null);
 		}
 	}
 
