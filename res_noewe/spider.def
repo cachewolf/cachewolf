@@ -153,8 +153,8 @@ icon_attended      = icon_attended.gif
 #Section2b: Bugs
 #--------------------------------------
 # blockEx extrahiert zunächst den Bugbereich aus der gesamten Seite
-blockExStart       = <span\ id="ctl00_ContentBody_uxTravelBugList_uxInventoryLabel">Inventory</span>
-blockExEnd         = <p\ class="NoSpacing">
+blockExStart       = ctl00_ContentBody_uxTravelBugList_uxInventoryLabel
+blockExEnd         = ctl00_ContentBody_uxTravelBugList_uxTrackableItemsLinks
 # bugEx extrahiert die Namen der einzelnen Bugs aus dem Bugbereich
 bugExStart         = <a\ href="
 bugExEnd           = </a>
