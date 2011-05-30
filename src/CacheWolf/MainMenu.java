@@ -864,8 +864,7 @@ public class MainMenu extends MenuBar {
 		for (int i = 0; i < cacheDB.size(); i++) {
 			ch = cacheDB.get(i);
 			if (ch.is_Checked == true && ch.isVisible()) {
-				String wpStart = ch.getWayPoint().substring(0, 2);
-				if (ch.getWayPoint().length() > 1 && (wpStart.equalsIgnoreCase("GC") || ch.isOC()))
+				if (ch.getWayPoint().length() > 1 && ch.isCacheWpt())
 				// Notiz: Wenn es ein addi Wpt ist, sollte eigentlich der Maincache gespidert werden
 				// Alter code prft aber nur ob ein Maincache von GC existiert und versucht dann den addi direkt zu spidern, was nicht funktioniert
 				{

@@ -982,7 +982,10 @@ public class CacheHolder {
 	}
 
 	public boolean isOC() {
-		return OC.isOC(wayPoint);
+		if (this.isCacheWpt()) {
+			return OC.isOC(wayPoint);
+		} else
+			return false;
 	}
 
 	public void calcDistance(CWPoint toPoint) {
@@ -1238,7 +1241,7 @@ public class CacheHolder {
 
 	public String GetCacheID() {
 		String result = "";
-		String pattern = getWayPoint().toUpperCase();
+		String pattern = wayPoint.toUpperCase();
 
 		if (pattern.startsWith("GC")) {
 			int gcId = 0;
