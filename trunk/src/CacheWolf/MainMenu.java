@@ -864,7 +864,8 @@ public class MainMenu extends MenuBar {
 		for (int i = 0; i < cacheDB.size(); i++) {
 			ch = cacheDB.get(i);
 			if (ch.is_Checked == true && ch.isVisible()) {
-				if (ch.getWayPoint().length() > 1 && ch.isCacheWpt())
+				// should work even if only the wayPoint is created
+				if ((ch.getWayPoint().toUpperCase().startsWith("GC") || ch.isOC()))
 				// Notiz: Wenn es ein addi Wpt ist, sollte eigentlich der Maincache gespidert werden
 				// Alter code prft aber nur ob ein Maincache von GC existiert und versucht dann den addi direkt zu spidern, was nicht funktioniert
 				{
