@@ -27,7 +27,6 @@ package CacheWolf;
 
 import ewe.util.Comparer;
 import ewe.util.Vector;
-import ewe.util.mString;
 
 /**
  * This class handles the sorting for most of the sorting tasks. If a cache is to be displayed in the table or not is handled in the table model
@@ -141,15 +140,8 @@ public class MyComparer implements Comparer {
 					else
 						ch.sort = ch.getOcCacheID();
 				else {
-					String[] stmp = mString.split(ch.getCacheOwner(), '/');
-					int l = stmp.length - 1;
-					if (l > 0) {
-						String s = stmp[l].trim();
-						if (s.startsWith("GC"))
-							ch.sort = s;
-						else
-							ch.sort = "\uFFFF";
-					} else
+					ch.sort = OC.getGCWayPoint(ch.getCacheOwner());
+					if (ch.sort.length() == 0)
 						ch.sort = "\uFFFF"; // ans Ende
 				}
 			}

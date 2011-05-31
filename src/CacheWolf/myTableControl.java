@@ -51,7 +51,6 @@ import ewe.ui.ProgressBarForm;
 import ewe.ui.TableControl;
 import ewe.ui.TableEvent;
 import ewe.ui.mList;
-import ewe.util.mString;
 
 /**
  * Implements the user interaction of the list view. Works together with myTableModel and TablePanel
@@ -356,14 +355,9 @@ public class myTableControl extends TableControl {
 			String wpName = mainCache.getOcCacheID();
 			if (clickedColumn == 14) {
 				if (mainCache.isOC()) {
-					String[] stmp = mString.split(ch.getCacheOwner(), '/');
-					int l = stmp.length - 1;
-					if (l > 0) {
-						String s = stmp[l].trim();
-						if (s.startsWith("GC")) {
-							url = "http://www.geocaching.com/seek/cache_details.aspx?wp=" + s;
-						}
-					}
+					String s = OC.getGCWayPoint(ch.getCacheOwner());
+					if (s.length() > 0)
+						url = "http://www.geocaching.com/seek/cache_details.aspx?wp=" + s;
 				} else {
 					if (wpName.length() > 0) {
 						if (wpName.charAt(0) < 65)

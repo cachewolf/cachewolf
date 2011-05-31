@@ -38,7 +38,6 @@ import ewe.ui.IKeys;
 import ewe.ui.TableCellAttributes;
 import ewe.ui.TableModel;
 import ewe.util.Vector;
-import ewe.util.mString;
 
 /**
  * Table model used to display the cache list. Used by the table control in the first panel of CacheWolf. 20061212 salzkammergut, patch to speed up scrolling, Used MyLocale
@@ -441,16 +440,7 @@ public class myTableModel extends TableModel {
 					if (ch.getWayPoint().startsWith("GC"))
 						return ch.getOcCacheID();
 					else {
-						String[] stmp = mString.split(ch.getCacheOwner(), '/');
-						int l = stmp.length - 1;
-						if (l > 0) {
-							String s = stmp[l].trim();
-							if (s.startsWith("GC"))
-								return s;
-							else
-								return "";
-						} else
-							return "";
+						return OC.getGCWayPoint(ch.getCacheOwner());
 					}
 				case 15: // Is solver filled?
 					if (ch.hasSolver())
