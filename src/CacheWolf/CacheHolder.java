@@ -982,10 +982,7 @@ public class CacheHolder {
 	}
 
 	public boolean isOC() {
-		if (this.isCacheWpt()) {
-			return OC.isOC(wayPoint);
-		} else
-			return false;
+		return OC.isOC(wayPoint);
 	}
 
 	public void calcDistance(CWPoint toPoint) {
