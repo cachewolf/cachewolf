@@ -61,6 +61,7 @@ import ewe.sys.Convert;
 import ewe.sys.Double;
 import ewe.sys.SystemResourceException;
 import ewe.sys.Vm;
+import ewe.sys.Time;
 import ewe.ui.CellConstants;
 import ewe.ui.ControlConstants;
 import ewe.ui.ControlEvent;
@@ -1132,6 +1133,7 @@ public final class MovingMap extends Form implements ICommandListener {
 			}
 		}
 		// mark Selected
+		removeMapSymbol("selectedCache");
 		ch = cacheDB.get(Global.mainTab.tbP.getSelectedCache());
 		if (ch != null) {
 			if (screenArea.isInBound(ch.pos)) {
@@ -2149,7 +2151,7 @@ class MovingMapPanel extends InteractivePanel implements EventListener {
 	Menu kontextMenu;
 	MenuItem gotoMenuItem = new MenuItem(MyLocale.getMsg(4230, "Goto here$g"), 0, null);
 	MenuItem newWayPointMenuItem = new MenuItem(MyLocale.getMsg(4232, "Create new Waypoint here$n"), 0, null);;
-	MenuItem openCacheDescMenuItem, openCacheDetailMenuItem, addCachetoListMenuItem, gotoCacheMenuItem, hintMenuItem, missionMenuItem;
+	MenuItem openCacheDescMenuItem, openCacheDetailMenuItem, addCachetoListMenuItem, gotoCacheMenuItem, markFoundMenuItem, hintMenuItem, missionMenuItem;
 
 	MenuItem miLuminary[];
 
@@ -2383,6 +2385,13 @@ class MovingMapPanel extends InteractivePanel implements EventListener {
 						kontextMenu.addItem(openCacheDetailMenuItem);
 						gotoCacheMenuItem = new MenuItem(MyLocale.getMsg(4279, "Goto") + " '" + (clickedCache.getCacheName().length() > 0 ? clickedCache.getCacheName() : clickedCache.getWayPoint()) + "'$g");
 						kontextMenu.addItem(gotoCacheMenuItem);
+						if (!clickedCache.is_found()) {
+							int msgNr=318; // normal found
+							if (clickedCache.getType() == CacheType.CW_TYPE_WEBCAM) { msgNr=361;}
+							else if (clickedCache.getType() == CacheType.CW_TYPE_EVENT || clickedCache.getType() == CacheType.CW_TYPE_MEGA_EVENT) { msgNr=355;}
+							markFoundMenuItem = new MenuItem(MyLocale.getMsg(msgNr, "Found") + " '" + (clickedCache.getCacheName().length() > 0 ? clickedCache.getCacheName() : clickedCache.getWayPoint()) + "'$m");
+							kontextMenu.addItem(markFoundMenuItem);
+						}
 						if (Global.mainForm.cacheListVisible) {
 							addCachetoListMenuItem = new MenuItem(MyLocale.getMsg(199, "Add to cachetour"));
 							kontextMenu.addItem(addCachetoListMenuItem);
@@ -2477,6 +2486,19 @@ class MovingMapPanel extends InteractivePanel implements EventListener {
 					if (action == gotoCacheMenuItem) {
 						closeKontextMenu();
 						mm.myNavigation.setDestination(clickedCache);
+					}
+					if (action == markFoundMenuItem) {
+						closeKontextMenu();
+						final Time dtm = new Time();
+						dtm.setFormat("yyyy-MM-dd HH:mm");
+						clickedCache.setCacheStatus(dtm.toString());
+						clickedCache.setFound(true);
+						if ( Global.mainTab.detP.cache.getWayPoint().equals(clickedCache.getWayPoint()) ) {
+							Global.mainTab.detP.setDetails(clickedCache, false);
+						}
+						mm.removeMapSymbol(clickedCache.getWayPoint());
+						mm.updateSymbolPositions();
+						this.repaintNow();
 					}
 					if (action == newWayPointMenuItem) {
 						leaveMovingMap();
