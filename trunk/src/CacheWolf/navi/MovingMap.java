@@ -60,8 +60,8 @@ import ewe.io.IOException;
 import ewe.sys.Convert;
 import ewe.sys.Double;
 import ewe.sys.SystemResourceException;
-import ewe.sys.Vm;
 import ewe.sys.Time;
+import ewe.sys.Vm;
 import ewe.ui.CellConstants;
 import ewe.ui.ControlConstants;
 import ewe.ui.ControlEvent;
@@ -2379,17 +2379,42 @@ class MovingMapPanel extends InteractivePanel implements EventListener {
 					clickedCache = (CacheHolder) (((MapSymbol) clickedOnImage).mapObject);
 					// clickedCache == null can happen if clicked on the goto-symbol
 					if (clickedCache != null) {
-						openCacheDescMenuItem = new MenuItem(MyLocale.getMsg(201, "Open Desctiption") + " '" + (clickedCache.getCacheName().length() > 0 ? clickedCache.getCacheName() : clickedCache.getWayPoint()) + "'$o");
+						CacheHolder ch = clickedCache;
+						if (clickedCache.isAddiWpt()) {
+							ch = clickedCache.mainCache;
+						}
+						if (ch != null) {
+							kontextMenu.addItem(new MenuItem(ch.getWayPoint() + " '" + ch.getCacheName() + "'"));
+							if (!ch.isCustomWpt()) {
+								kontextMenu.addItem(new MenuItem( //
+										CacheSize.cw2ExportString(ch.getCacheSize()) + //
+												" D: " + CacheTerrDiff.longDT(ch.getHard()) + //
+												" T: " + CacheTerrDiff.longDT(ch.getTerrain()) + //
+												""));
+								kontextMenu.addItem(new MenuItem( //
+										"" + ch.getCacheOwner() + //
+												" " + ch.getDateHidden() + //
+												""));
+							}
+						}
+						if (clickedCache.isAddiWpt()) {
+							kontextMenu.addItem(new MenuItem(clickedCache.getWayPoint() + " '" + clickedCache.getCacheName() + "'"));
+						}
+						kontextMenu.addItem(new MenuItem("-"));
+						openCacheDescMenuItem = new MenuItem(MyLocale.getMsg(201, "Open Desctiption") + "$o");
 						kontextMenu.addItem(openCacheDescMenuItem);
-						openCacheDetailMenuItem = new MenuItem(MyLocale.getMsg(200, "Open Details") + " '" + (clickedCache.getCacheName().length() > 0 ? clickedCache.getCacheName() : clickedCache.getWayPoint()) + "'$e");
+						openCacheDetailMenuItem = new MenuItem(MyLocale.getMsg(200, "Open Details") + "$e");
 						kontextMenu.addItem(openCacheDetailMenuItem);
-						gotoCacheMenuItem = new MenuItem(MyLocale.getMsg(4279, "Goto") + " '" + (clickedCache.getCacheName().length() > 0 ? clickedCache.getCacheName() : clickedCache.getWayPoint()) + "'$g");
+						gotoCacheMenuItem = new MenuItem(MyLocale.getMsg(4279, "Goto") + "$g");
 						kontextMenu.addItem(gotoCacheMenuItem);
 						if (!clickedCache.is_found()) {
-							int msgNr=318; // normal found
-							if (clickedCache.getType() == CacheType.CW_TYPE_WEBCAM) { msgNr=361;}
-							else if (clickedCache.getType() == CacheType.CW_TYPE_EVENT || clickedCache.getType() == CacheType.CW_TYPE_MEGA_EVENT) { msgNr=355;}
-							markFoundMenuItem = new MenuItem(MyLocale.getMsg(msgNr, "Found") + " '" + (clickedCache.getCacheName().length() > 0 ? clickedCache.getCacheName() : clickedCache.getWayPoint()) + "'$m");
+							int msgNr = 318; // normal found
+							if (clickedCache.getType() == CacheType.CW_TYPE_WEBCAM) {
+								msgNr = 361;
+							} else if (clickedCache.getType() == CacheType.CW_TYPE_EVENT || clickedCache.getType() == CacheType.CW_TYPE_MEGA_EVENT) {
+								msgNr = 355;
+							}
+							markFoundMenuItem = new MenuItem(MyLocale.getMsg(msgNr, "Found") + "$m");
 							kontextMenu.addItem(markFoundMenuItem);
 						}
 						if (Global.mainForm.cacheListVisible) {
@@ -2407,11 +2432,6 @@ class MovingMapPanel extends InteractivePanel implements EventListener {
 								kontextMenu.addItem(missionMenuItem = new MenuItem("?: "));
 							}
 						}
-						kontextMenu.addItem(new MenuItem("-"));
-						kontextMenu.addItem(new MenuItem(clickedCache.getWayPoint() + " Info:"));
-						kontextMenu.addItem(new MenuItem("Difficulty: " + CacheTerrDiff.longDT(clickedCache.getHard())));
-						kontextMenu.addItem(new MenuItem("Terrain: " + CacheTerrDiff.longDT(clickedCache.getTerrain())));
-						kontextMenu.addItem(new MenuItem("Size: " + CacheSize.cw2ExportString(clickedCache.getCacheSize())));
 					}
 				}
 			}
@@ -2440,11 +2460,7 @@ class MovingMapPanel extends InteractivePanel implements EventListener {
 		if (which instanceof MapSymbol) {
 			if (((MapSymbol) which).mapObject instanceof CacheHolder) {
 				final CacheHolder ch = (CacheHolder) ((MapSymbol) which).mapObject;
-				this.toolTip = ch.getWayPoint() + "\n" + ch.getCacheName() + "\n" + "Difficulty: " + CacheTerrDiff.longDT(ch.getHard()) + "\n" + "Terrain: " + CacheTerrDiff.longDT(ch.getTerrain()) + "\n" + "Size: "
-						+ CacheSize.cw2ExportString(ch.getCacheSize()) + "\n";
-				if (ch.getType() == CacheType.CW_TYPE_QUESTION) {
-					this.toolTip = this.toolTip + ch.getCacheDetails(false).LongDescription;
-				}
+				this.toolTip = ch.getWayPoint() + "\n" + ch.getCacheName();
 			}
 		}
 		return true;
@@ -2493,8 +2509,16 @@ class MovingMapPanel extends InteractivePanel implements EventListener {
 						dtm.setFormat("yyyy-MM-dd HH:mm");
 						clickedCache.setCacheStatus(dtm.toString());
 						clickedCache.setFound(true);
-						if ( Global.mainTab.detP.cache.getWayPoint().equals(clickedCache.getWayPoint()) ) {
-							Global.mainTab.detP.setDetails(clickedCache, false);
+						clickedCache.save();
+						if (clickedCache.hasAddiWpt()) {
+							CacheHolder addiWpt;
+							for (int i = clickedCache.addiWpts.getCount() - 1; i >= 0; i--) {
+								addiWpt = (CacheHolder) clickedCache.addiWpts.get(i);
+								addiWpt.setCacheStatus(dtm.toString());
+								addiWpt.setFound(true);
+								addiWpt.save();
+								mm.removeMapSymbol(addiWpt.getWayPoint());
+							}
 						}
 						mm.removeMapSymbol(clickedCache.getWayPoint());
 						mm.updateSymbolPositions();
