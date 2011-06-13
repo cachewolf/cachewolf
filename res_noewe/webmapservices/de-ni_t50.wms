@@ -1,0 +1,43 @@
+﻿TakenFromUrl:       http://www.umweltkarten.niedersachsen.de/arcgis/services/Programme/MapServer/WMSServer
+GetCapabilitiesUrl: http://www.umweltkarten.niedersachsen.de/arcgis/services/Programme/MapServer/WMSServer?SERVICE=WMS&VERSION=1.1.1&REQUEST=GetCapabilities
+Name:               de.Niedersachsen t5
+MapType:                        topo
+MainUrl:            http://www.umweltkarten.niedersachsen.de/arcgis/services/Programme/MapServer/WMSServer?
+ServiceTypeUrlPart: SERVICE=WMS
+VersionUrlPart:     VERSION=1.1.1
+CoordinateReferenceSystemCacheWolf:  31466 31467 31468 31469
+CoordinateReferenceSystemUrlPart: SRS=EPSG:31466 SRS=EPSG:31467 SRS=EPSG:31468 SRS=EPSG:31469 
+RequestUrlPart:     REQUEST=GetMap
+#LayersUrlPart:     LAYERS=0|Gebiete mit gesamtstaatlicher repräsentativer Bedeutung|2.772396|Infinity
+#LayersUrlPart:     LAYERS=1|Fließgewässerschutzsystem Verbindungsgewässer|2.772396|Infinity
+#LayersUrlPart:     LAYERS=2|Fließgewässerschutzsystem Hauptgewässer und Auen|2.772396|Infinity
+#LayersUrlPart:     LAYERS=3|Moorschutzprogramm Neubewertung|2.772396|Infinity
+#LayersUrlPart:     LAYERS=4|Moorschutzprogramm Teil II|2.772396|Infinity
+#LayersUrlPart:     LAYERS=5|Abgrenzung des Hochmoorkomplexes MSP Teil I|2.772396|Infinity
+#LayersUrlPart:     LAYERS=6|Moorschutzprogramm (MSP) Teil I|2.772396|Infinity
+#LayersUrlPart:     LAYERS=7|Untere  Naturschutzbehörden|2.772396|Infinity
+#LayersUrlPart:     LAYERS=8|Naturräumliche Regionen und Unterregionen DTK50||
+#LayersUrlPart:     LAYERS=9|Naturräumliche Regionen DTK50||
+#LayersUrlPart:     LAYERS=10|Landesgrenze inkl. 12 Seemeilen-Zone||
+#LayersUrlPart:     LAYERS=11|Landkreise||
+#LayersUrlPart:     LAYERS=12|Ortslagen|99.000000|237.600000
+#LayersUrlPart:     LAYERS=13|Grosse Seen|198.000000|Infinity
+#LayersUrlPart:     LAYERS=14|Große Flüsse|198.000000|Infinity
+#LayersUrlPart:     LAYERS=15|Orthophoto Farbe|0.0|2.772000
+#LayersUrlPart:     LAYERS=16|DTK 25|2.772396|4.950000
+#LayersUrlPart:     LAYERS=17|TK 50 |4.950396|9.900000
+#LayersUrlPart:     LAYERS=18|TK 100|9.900396|29.700000
+#LayersUrlPart:     LAYERS=19|DTK 500 |29.700396|99.000000
+#LayersUrlPart:     LAYERS=20|Autobahnen||
+#LayersUrlPart:     LAYERS=21|Schrift: Große Orte||
+#LayersUrlPart:     LAYERS=22|Schrift: Kleine Orte||
+LayersUrlPart:     LAYERS=17
+StylesUrlPart:     STYLES=
+ImageFormatUrlPart:FORMAT=image/jpeg
+BoundingBoxTopLeftWGS84: N 54.0018 E 6.5794
+BoundingBoxBottomRightWGS84: N 51.3727 E 11.7346
+#BBox_Mitte: N 52.6872895 E 9.156994
+MinScale:   2
+MaxScale:   10
+RecommendedScale:    2 3 5
+ImageFileExtension: .jpg
