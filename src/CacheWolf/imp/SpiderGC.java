@@ -205,15 +205,14 @@ public class SpiderGC {
 	public void doIt(boolean _spiderAllFinds) {
 		cachesToLoad.clear();
 		spiderAllFinds = _spiderAllFinds;
-		origin = pref.getCurCentrePt(); // No need to copy curCentrePt as it is
-										// only read and not written
+		// No need to copy curCentrePt as it is only read and not written
+		origin = pref.getCurCentrePt();
 		if (!spiderAllFinds && !origin.isValid()) {
 			(new MessageBox(MyLocale.getMsg(5500, "Error"), MyLocale.getMsg(5509, "Coordinates for centre must be set"), FormBase.OKB)).execute();
 			return;
 		}
 
-		// Reset states for all caches when spidering
-		// (http://tinyurl.com/dzjh7p)
+		// Reset states for all caches when spidering (http://tinyurl.com/dzjh7p)
 		for (int i = 0; i < cacheDB.size(); i++) {
 			final CacheHolder ch = cacheDB.get(i);
 			if (ch.mainCache == null)
@@ -320,12 +319,8 @@ public class SpiderGC {
 					for (int i = 0; i < points.size(); i++) {
 						try {
 							nav.curTrack.add((TrackPoint) points.get(i));
-						} catch (final IndexOutOfBoundsException e) { // track
-																		// full
-																		// ->
-																		// create
-																		// a new
-																		// one
+						} catch (final IndexOutOfBoundsException e) {
+							// track full -> create a new one
 							nav.curTrack = new Track(nav.trackColor);
 							nav.curTrack.add((TrackPoint) points.get(i));
 							if (mm != null)
@@ -528,16 +523,15 @@ public class SpiderGC {
 		infB = new InfoBox("Status", MyLocale.getMsg(1609, "getting the caches."));
 		infB.exec();
 
-		// Reset states for all caches when spidering
-		// (http://tinyurl.com/dzjh7p)
+		// Reset states for all caches when spidering (http://tinyurl.com/dzjh7p)
 		for (int i = 0; i < cacheDB.size(); i++) {
 			final CacheHolder ch = cacheDB.get(i);
 			if (ch.mainCache == null)
 				ch.initStates(false);
 		}
 
-		double halfSideLength = maxDistance; // halbe SeitenlÃƒÂ¤nge eines Quadrats
-												// ums Zentrum in km
+		// halbe Seitenlänge eines Quadrats ums Zentrum in km
+		double halfSideLength = maxDistance;
 		if (pref.metricSystem == Metrics.IMPERIAL) {
 			halfSideLength = Metrics.convertUnit(maxDistance, Metrics.MILES, Metrics.KILOMETER);
 		}
@@ -702,12 +696,11 @@ public class SpiderGC {
 			doNotgetFound = options.foundCheckBox.getState();
 			profile.setDirectionGC(direction);
 
-		} else if (menu == 1) { // menu = 1 input values for get Caches along a
-								// route
+		} else if (menu == 1) {
+			// menu = 1 input values for get Caches along a route
 			options = new OCXMLImporterScreen(MyLocale.getMsg(137, "Download along a Route from geocaching.com"), OCXMLImporterScreen.ISGC | OCXMLImporterScreen.DIST | OCXMLImporterScreen.INCLUDEFOUND | OCXMLImporterScreen.TRAVELBUGS
 					| OCXMLImporterScreen.IMAGES | OCXMLImporterScreen.MAXLOGS | OCXMLImporterScreen.FILENAME | OCXMLImporterScreen.TYPE);
-			// setting defaults for input
-			// doing the input
+			// setting defaults for input doing the input
 			if (options.execute() == FormBase.IDCANCEL) {
 				return false;
 			}
@@ -756,9 +749,10 @@ public class SpiderGC {
 			maxDistance = Common.parseDouble(maxDist);
 			if (maxDistance == 0)
 				return false;
+			// zur Sicherheit bei "along the route"
+			// mindenstens 500 meter Umkreis
 			if (maxDistance < 0.5)
-				maxDistance = 0.5; // zur Sicherheit bei "along the route"
-									// mindenstens 500 meter Umkreis
+				maxDistance = 0.5;
 			profile.setDistGC(Double.toString(maxDistance));
 		}
 
@@ -778,8 +772,7 @@ public class SpiderGC {
 
 		int numFinds;
 		int startPage = 1;
-		// get pagenumber of page with fromDistance , to skip reading of pages <
-		// fromDistance
+		// get pagenumber of page with fromDistance , to skip reading of pages < fromDistance
 		if (fromDistance > 0) {
 			// distance in miles for URL
 			int fromDistanceInMiles = (int) java.lang.Math.ceil(fromDistance);
@@ -788,9 +781,8 @@ public class SpiderGC {
 			}
 			// - a mile to be save to get a page with fromDistance
 			getFirstListPage(java.lang.Math.max(fromDistanceInMiles - 1, 1));
-			numFinds = getNumFound(htmlListPage); // Number of caches from gc
-													// Listpage
-			// calc the number of the startpage
+			// Number of caches from gc Listpage calc the number of the startpage
+			numFinds = getNumFound(htmlListPage);
 			startPage = (int) java.lang.Math.ceil(numFinds / 20);
 		}
 
@@ -799,12 +791,11 @@ public class SpiderGC {
 		if (pref.metricSystem != Metrics.IMPERIAL) {
 			toDistanceInMiles = (int) java.lang.Math.ceil(Metrics.convertUnit(toDistance, Metrics.KILOMETER, Metrics.MILES));
 		}
-		// add a mile to be save from different distance calculations in CW and
-		// at GC
+		// add a mile to be save from different distance calculations in CW and at GC
 		toDistanceInMiles++;
 		getFirstListPage(toDistanceInMiles);
-		numFinds = getNumFound(htmlListPage); // Number of caches from gc first
-												// Listpage
+		// Number of caches from gcfirst Listpage
+		numFinds = getNumFound(htmlListPage);
 
 		if (fromDistance > 0) {
 			// skip (most of) the pages with distance < fromDistance
@@ -847,15 +838,15 @@ public class SpiderGC {
 				}
 			}
 		}
-		final int startSize = cExpectedForUpdate.size(); // for save reasons
+		// for save reasons
+		final int startSize = cExpectedForUpdate.size();
 
 		// for don't loose the already done work
 		final Hashtable cFoundForUpdate = new Hashtable(cacheDB.size());
 		page_number = 1;
 		int found_on_page = 0;
 		try {
-			// Loop pages till maximum distance has been found or no more caches
-			// are in the list
+			// Loop pages till maximum distance has been found or no more caches are in the list
 			while (toDistance > 0) {
 				RexPropListBlock.search(htmlListPage);
 				String tableOfHtmlListPage;
@@ -888,12 +879,13 @@ public class SpiderGC {
 									cachesToLoad.add(chWaypoint);
 								}
 							} else {
-								// pref.log("no load of (Premium Cache/other direction/short Distance ?) "
-								// + chWaypoint);
+								// pref.log("no load of (Premium Cache/other direction/short
+								// Distance ?) " + chWaypoint);
 								cExpectedForUpdate.remove(chWaypoint);
 							}
 						} else {
-							if (maxUpdate > 0) { // regardless of fromDistance
+							if (maxUpdate > 0) {
+								// regardless of fromDistance
 								if (!ch.is_black()) {
 									if (doPMCache(chWaypoint, CacheDescriptionGC) && updateExists(ch, CacheDescriptionGC)) {
 										if (cFoundForUpdate.size() < maxUpdate) {
@@ -917,9 +909,8 @@ public class SpiderGC {
 							}
 						}
 					} else
-						toDistance = 0; // finish listing
-					// get next row of table (next Cache Description) of this
-					// htmlListPage
+						// finish listing get next row of table (next Cache Description) of this htmlListPage
+						toDistance = 0;
 					RexPropLine.searchFrom(tableOfHtmlListPage, RexPropLine.matchedTo());
 					if (infB.isClosed) {
 						toDistance = 0;
@@ -929,14 +920,12 @@ public class SpiderGC {
 				infB.setInfo(MyLocale.getMsg(5511, "Found ") + cachesToLoad.size() + " / " + cFoundForUpdate.size() + MyLocale.getMsg(5512, " caches"));
 				if (found_on_page < 20) {
 					if (spiderAllFinds) {
-						// check all pages ( seen a gc-account with
-						// found_on_page less 20 and not on end )
+						// check all pages ( seen a gc-account with found_on_page less 20 and not on end )
 						if (((page_number - 1) * 20 + found_on_page) >= numFinds) {
 							toDistance = 0;
 						}
 					} else
-						toDistance = 0; // last page (has less than 20
-										// entries!?) to check reached
+						toDistance = 0; // last page (has less than 20 entries!?) to check reached
 				}
 				if (toDistance > 0) {
 					getAListPage(toDistanceInMiles, gotoNextPage);
@@ -989,8 +978,7 @@ public class SpiderGC {
 				} else if (test == SPIDER_OK) {
 					cacheDB.add(holder);
 					holder.save();
-				} // For test == SPIDER_IGNORE_PREMIUM and SPIDER_IGNORE there
-					// is nothing to do
+				} // For test == SPIDER_IGNORE_PREMIUM and SPIDER_IGNORE there is nothing to do
 			}
 		}
 		return spiderErrors;
@@ -1021,7 +1009,8 @@ public class SpiderGC {
 	/**
 	 * Method to spider a single cache. It assumes a login has already been performed!
 	 * 
-	 * @return 1 if spider was successful, -1 if spider was cancelled by closing the infobox, 0 error, but continue with next cache
+	 * @return 1 if spider was successful, -1 if spider was cancelled by closing the infobox, 0 error, but continue with
+	 *         next cache
 	 */
 	public int spiderSingle(int number, InfoBox pInfB, boolean forceLogin, boolean loadAllLogs) {
 		int ret = -1;
@@ -1029,8 +1018,7 @@ public class SpiderGC {
 		final CacheHolder ch = new CacheHolder(); // cacheDB.get(number);
 		ch.setWayPoint(cacheDB.get(number).getWayPoint());
 		if (ch.isAddiWpt())
-			return -1; // No point re-spidering an addi waypoint, comes with
-						// parent
+			return -1; // No point re-spidering an addi waypoint, comes with parent
 
 		if (!login())
 			return -1;
@@ -1042,11 +1030,9 @@ public class SpiderGC {
 				final CacheHolder cacheInDB = cacheDB.get(number);
 				cacheInDB.initStates(false);
 				if (cacheInDB.is_found() && !ch.is_found() && !loadAllLogs) {
-					// If the number of logs to spider is 5 or less, then the
-					// "not found" information
-					// of the spidered cache is not credible. In this case it
-					// should not overwrite
-					// the "found" state of an existing cache.
+					// If the number of logs to spider is 5 or less,
+					// then the "not found" information of the spidered cache is not credible.
+					// In this case it should not overwrite the "found" state of an existing cache.
 					ch.setFound(true);
 				}
 				// preserve rating information
@@ -1076,8 +1062,8 @@ public class SpiderGC {
 	 */
 	public String getCacheCoordinates(String wayPoint) {
 		String completeWebPage;
-		// Check whether spider definitions could be loaded, if not issue
-		// appropriate message and terminate
+		// Check whether spider definitions could be loaded,
+		// if not issue appropriate message and terminate
 		// Try to login. If login fails, issue appropriate message and terminate
 		if (!login())
 			return "";
@@ -1101,7 +1087,8 @@ public class SpiderGC {
 	} // getCacheCoordinates
 
 	/**
-	 * Method to login the user to gc.com It will request a password and use the alias defined in preferences If the login page cannot be fetched, the password is cleared. If the login fails, an appropriate message is displayed.
+	 * Method to login the user to gc.com It will request a password and use the alias defined in preferences If the
+	 * login page cannot be fetched, the password is cleared. If the login fails, an appropriate message is displayed.
 	 */
 	private boolean login() {
 		if (loggedIn && !pref.forceLogin) {
@@ -1194,8 +1181,7 @@ public class SpiderGC {
 					} else {
 						localInfB.close(0);
 						pref.log("[login]:__VIEWSTATE not found (before login): no login possible.", null);
-						// we need the __VIEWSTATE for sending loginData, so we
-						// should abort here
+						// we need the __VIEWSTATE for sending loginData, so we should abort here
 						return false;
 					}
 					final StringBuffer sb = new StringBuffer(1000);
@@ -1212,8 +1198,7 @@ public class SpiderGC {
 					loginPage = UrlFetcher.fetch(loginPageUrl);
 					if (loginPage.indexOf(loginSuccess) > 0) {
 						pref.log("Login successful: " + pref.myAlias);
-						// **3 now we are logged in and get the Cookie (there
-						// are two)
+						// **3 now we are logged in and get the Cookie (there are two)
 						final PropertyList pl = UrlFetcher.getDocumentProperties();
 						String docprops = "";
 						for (int i = 0; i < pl.size(); i++) {
@@ -1321,8 +1306,10 @@ public class SpiderGC {
 			pref.oldLanguageCtl = ""; // nothing to reset
 			return true;
 		}
-		// switch to english now goes into gc account Display Preferences (is permanent, must be reset)
-		// todo as long as Textfile Encoding is CP1252 we compare with substring(1) and think koreanisch if no merge at all
+		// switch to english now goes into gc account Display Preferences
+		// (is permanent, must be reset)
+		// todo as long as Textfile Encoding is CP1252 we compare with
+		// substring(1) and think koreanisch if no merge at all
 		String languages[] = { "English", "Deutsch", "Français", "Português", "Ceština", "Svenska", "Nederlands", "Català", "Polski", "Eesti", "Norsk, Bokmål", "???", "Español" };
 		for (int i = 0; i < languages.length; i++) {
 			if (oldLanguage.substring(1).equals(languages[i].substring(1))) {
@@ -1354,7 +1341,7 @@ public class SpiderGC {
 	}
 
 	/*
-	 *
+	 * 
 	 */
 	private void initialiseProperties() {
 		try {
@@ -1397,7 +1384,7 @@ public class SpiderGC {
 	}
 
 	/*
-	 *
+	 * 
 	 */
 	private void getFirstListPage(int distance) {
 		// Get first page
@@ -1533,7 +1520,8 @@ public class SpiderGC {
 				ch.initStates(false);
 		}
 
-		double halfSideLength = maxDistance; // halbe SeitenlÃƒÂ¤nge eines Quadrats ums Zentrum in km
+		// halbe Seitenlänge eines Quadrats ums Zentrum in km
+		double halfSideLength = maxDistance;
 		if (pref.metricSystem == Metrics.IMPERIAL) {
 			halfSideLength = Metrics.convertUnit(maxDistance, Metrics.MILES, Metrics.KILOMETER);
 		}
@@ -1633,7 +1621,8 @@ public class SpiderGC {
 		final int f = 1 << scale; // 2**scale
 		lat = lat * f;
 		lon = lon * f;
-		return new TrackPoint(lat, lon); // TrackPoint only for returning values
+		return new TrackPoint(lat, lon); // TrackPoint only for returning
+		// values
 	}
 
 	private CWPoint getLatLon(double basex, double basey, int offsetx, int offsety, int scale) {
@@ -1900,9 +1889,7 @@ public class SpiderGC {
 				return distanceAndDirection; // zur Zeit " Here -1"
 			// Versuch den DistanceCodeKey automatisch zu bestimmen
 			// da dieser von gc mal wieder geÃƒÂ¤ndert wurde.
-			// todo BenÃƒÂ¶tigt ev noch weitere Anpassungen: | am Anfang, and calc
-			// of keylength
-
+			// todo Benötigt ev noch weitere Anpassungen: | am Anfang, and calc of keylength
 			// String thereitis="|0.34 km|102.698";
 			// String page =
 			// fetchText("http://www.geocaching.com/seek/nearest.aspx?lat=48.48973&lng=009.26313&dist=2&f=1",false);
@@ -2032,19 +2019,27 @@ public class SpiderGC {
 			}
 			final Image idoc = new Image(doc, 0, null, 0, 0);
 			/*
-			 * FileOutputStream fos; try { fos = new FileOutputStream(new File("temp.png")); fos.write(doc.toBytes()); fos.close(); } catch (IOException e) { } finally { }
+			 * FileOutputStream fos; try { fos = new FileOutputStream(new File("temp.png")); fos.write(doc.toBytes());
+			 * fos.close(); } catch (IOException e) { } finally { }
 			 */
 			final String ret = getDTfromImage(idoc) + "/" + getSizeFromImage(idoc);
 			return ret;
 			// */
 
 			/*
-			 * int decoded = 0; int pwr = 1; for (int i = code.length()-1 ; i >= 0; i--) { decoded = decoded + DTSCodeKey.indexOf(code.substring(i,i+1)) * pwr; pwr = pwr * 42; } decoded = (decoded - 1386) % 16777216; // size 0=not choosen 1=Micro
-			 * 3=Regular 5=Large 7=Virtual 8=Unknown 12=Small int sizecode = decoded / 74088; // 42 ^ 3 int sizeremove; byte size; switch (sizecode) { case 0: size=CacheSize.CW_SIZE_NOTCHOSEN; sizeremove=0; break; case 1: size=CacheSize.CW_SIZE_MICRO;
-			 * sizeremove=131072; break; case 3: size=CacheSize.CW_SIZE_REGULAR; sizeremove=262144; break; case 5: size=CacheSize.CW_SIZE_LARGE; sizeremove=393217; break; case 7: size=CacheSize.CW_SIZE_VIRTUAL; sizeremove=524288; break; case 8:
-			 * size=CacheSize.CW_SIZE_OTHER; sizeremove=655360; break; case 12: size=CacheSize.CW_SIZE_SMALL; sizeremove=917504; break; default: size=CacheSize.CW_SIZE_ERROR; sizeremove=0; break; } decoded = decoded - sizeremove; int terraincode =
-			 * decoded / 252; // terrain 0=1 1=1.5 2=2 3=2.5 4=3 5=3.5 6=4 7=4.5 8=5 String terrain = "" + (1 + terraincode / 2.0 ); // difficulty 0=1 1=1.5 2=2 3=2.5 4=3 5=3.5 6=4 7=4.5 8=5 String difficulty = "" + (1+((decoded % 42) - (terraincode *
-			 * 4)) / 2.0); if (difficulty.equals("0.5")) { difficulty = "5"; } return difficulty+"/"+terrain+"/"+size;
+			 * int decoded = 0; int pwr = 1; for (int i = code.length()-1 ; i >= 0; i--) { decoded = decoded +
+			 * DTSCodeKey.indexOf(code.substring(i,i+1)) * pwr; pwr = pwr * 42; } decoded = (decoded - 1386) % 16777216; //
+			 * size 0=not choosen 1=Micro 3=Regular 5=Large 7=Virtual 8=Unknown 12=Small int sizecode = decoded / 74088; //
+			 * 42 ^ 3 int sizeremove; byte size; switch (sizecode) { case 0: size=CacheSize.CW_SIZE_NOTCHOSEN;
+			 * sizeremove=0; break; case 1: size=CacheSize.CW_SIZE_MICRO; sizeremove=131072; break; case 3:
+			 * size=CacheSize.CW_SIZE_REGULAR; sizeremove=262144; break; case 5: size=CacheSize.CW_SIZE_LARGE;
+			 * sizeremove=393217; break; case 7: size=CacheSize.CW_SIZE_VIRTUAL; sizeremove=524288; break; case 8:
+			 * size=CacheSize.CW_SIZE_OTHER; sizeremove=655360; break; case 12: size=CacheSize.CW_SIZE_SMALL;
+			 * sizeremove=917504; break; default: size=CacheSize.CW_SIZE_ERROR; sizeremove=0; break; } decoded = decoded -
+			 * sizeremove; int terraincode = decoded / 252; // terrain 0=1 1=1.5 2=2 3=2.5 4=3 5=3.5 6=4 7=4.5 8=5
+			 * String terrain = "" + (1 + terraincode / 2.0 ); // difficulty 0=1 1=1.5 2=2 3=2.5 4=3 5=3.5 6=4 7=4.5 8=5
+			 * String difficulty = "" + (1+((decoded % 42) - (terraincode * 4)) / 2.0); if (difficulty.equals("0.5")) {
+			 * difficulty = "5"; } return difficulty+"/"+terrain+"/"+size;
 			 */
 		}
 		pref.log("[SpiderGC.java:getDTS]check DTSRex!", null);
@@ -2103,9 +2098,7 @@ public class SpiderGC {
 			if (bild.getHeight() > startY + y) {
 				for (int x = 0; x < validChar[0].length; x++) {
 					if (bild.getWidth() > startX + x) {
-						// int[] alpha =
-						// bild.getAlphaRaster().getPixel(startX+x, startY+y,
-						// new int[1]);
+						// int[] alpha = bild.getAlphaRaster().getPixel(startX+x, startY+y, new int[1]);
 						final int[] argb = bild.getPixels(null, 0, startX + x, startY + y, 1, 1, 0);
 						if ((argb[0] == 0 && validChar[y][x] == 0) || (argb[0] != 0 && validChar[y][x] > 0)) {
 							// matches
@@ -2225,18 +2218,27 @@ public class SpiderGC {
 	}
 
 	/**
-	 * Read a complete cachepage from geocaching.com including all logs. This is used both when updating already existing caches (via spiderSingle) and when spidering around a centre. It is also used when reading a GPX file and fetching the images.
+	 * Read a complete cachepage from geocaching.com including all logs. This is used both when updating already
+	 * existing caches (via spiderSingle) and when spidering around a centre. It is also used when reading a GPX file
+	 * and fetching the images.
 	 * 
 	 * This is the workhorse function of the spider.
 	 * 
 	 * @param CacheHolderDetail
 	 *            chD The element wayPoint must be set to the name of a waypoint
-	 * @param boolean isUpdate True if an existing cache is being updated, false if it is a new cache
-	 * @param boolean fetchImages True if the pictures are to be fetched
-	 * @param boolean fetchTBs True if the TBs are to be fetched
-	 * @param boolean doNotGetFound True if the cache is not to be spidered if it has already been found
-	 * @param boolean fetchAllLogs True if all logs are to be fetched (by adding option '&logs=y' to command line). This is normally false when spidering from GPXImport as the logs are part of the GPX file, and true otherwise
-	 * @return -1 if the infoBox was closed (cancel spidering), 0 if there was an error (continue with next cache), 1 if everything ok
+	 * @param boolean
+	 *            isUpdate True if an existing cache is being updated, false if it is a new cache
+	 * @param boolean
+	 *            fetchImages True if the pictures are to be fetched
+	 * @param boolean
+	 *            fetchTBs True if the TBs are to be fetched
+	 * @param boolean
+	 *            doNotGetFound True if the cache is not to be spidered if it has already been found
+	 * @param boolean
+	 *            fetchAllLogs True if all logs are to be fetched (by adding option '&logs=y' to command line). This is
+	 *            normally false when spidering from GPXImport as the logs are part of the GPX file, and true otherwise
+	 * @return -1 if the infoBox was closed (cancel spidering), 0 if there was an error (continue with next cache), 1 if
+	 *         everything ok
 	 */
 	private int getCacheByWaypointName(CacheHolder ch, boolean isUpdate, boolean fetchImages, boolean fetchTBs, boolean doNotGetFound, boolean fetchAllLogs) {
 		int ret = SPIDER_OK; // initialize value;
@@ -2269,14 +2271,12 @@ public class SpiderGC {
 						return SPIDER_CANCEL;
 					}
 				}
-				// Only analyse the cache data and fetch pictures if user has
-				// not closed the progress window
+				// Only analyse the cache data and fetch pictures if user has not closed the progress window
 				if (!infB.isClosed) {
 					try {
 						ch.initStates(!isUpdate);
 
-						// first check if coordinates are available to prevent
-						// deleting existing coordinates
+						// first check if coordinates are available to prevent deleting existing coordinates
 						final String latLon = getLatLon(completeWebPage);
 						if (latLon.equals("???")) {
 							if (completeWebPage.indexOf(p.getProp("premiumCachepage")) > 0) {
@@ -2287,7 +2287,7 @@ public class SpiderGC {
 								continue;
 							} else {
 								if (spiderTrys == MAX_SPIDER_TRYS)
-									pref.log(">>>> Failed to spider Cache. Retry." + completeWebPage, null);
+									pref.log(">>>> Failed to spider Cache. Retry.", null);
 								ret = SPIDER_ERROR;
 								continue; // Restart the spider
 							}
@@ -2295,8 +2295,7 @@ public class SpiderGC {
 
 						ch.setHTML(true);
 						ch.setIncomplete(true);
-						// Save size of logs to be able to check whether any new
-						// logs were added
+						// Save size of logs to be able to check whether any new logs were added
 						// int logsz = chD.CacheLogs.size();
 						// chD.CacheLogs.clear();
 						ch.addiWpts.clear();
@@ -2309,8 +2308,7 @@ public class SpiderGC {
 						// ==========
 						getLogs(completeWebPage, ch.getCacheDetails(false));
 						pref.log("Got logs");
-						// If the switch is set to not store found caches and we
-						// found the cache => return
+						// If the switch is set to not store found caches and we found the cache => return
 						if (ch.is_found() && doNotGetFound) {
 							if (infB.isClosed) {
 								return SPIDER_CANCEL;
@@ -2422,8 +2420,8 @@ public class SpiderGC {
 			}
 			break;
 		}// while(true) // retry even if failure
-		if (infB.isClosed) {// If the infoBox was closed before getting here, we
-							// return -1
+		if (infB.isClosed) {
+			// If the infoBox was closed before getting here, we return -1
 			return SPIDER_CANCEL;
 		}
 		return ret;
@@ -2479,9 +2477,8 @@ public class SpiderGC {
 		if (spanEnd >= 0) {
 			res = res.substring(0, spanEnd);
 		}
-		return SafeXML.cleanback(res); // since internal viewer doesn't show
-										// html-entities that are now in
-										// cacheDescription
+		// since internal viewer doesn't show html-entities that are now in cacheDescription
+		return SafeXML.cleanback(res);
 	}
 
 	/**
@@ -2725,7 +2722,8 @@ public class SpiderGC {
 	}
 
 	/**
-	 * Read the travelbug names from a previously fetched Cache page and then read the travelbug purpose for each travelbug
+	 * Read the travelbug names from a previously fetched Cache page and then read the travelbug purpose for each
+	 * travelbug
 	 * 
 	 * @param doc
 	 *            The previously fetched cachepage
@@ -2761,7 +2759,8 @@ public class SpiderGC {
 					try {
 						infB.setInfo(oldInfoBox + MyLocale.getMsg(5514, "\nGetting bug: ") + SafeXML.cleanback(bug));
 						bugDetails = UrlFetcher.fetch(link);
-						exBugName.set(bugDetails, p.getProp("bugDetailsStart"), p.getProp("bugDetailsEnd"), 0, Extractor.EXCLUDESTARTEND); // reusing exBugName
+						exBugName.set(bugDetails, p.getProp("bugDetailsStart"), p.getProp("bugDetailsEnd"), 0, Extractor.EXCLUDESTARTEND); // reusing
+						// exBugName
 						chD.Travelbugs.add(new Travelbug(link.substring(1 + link.indexOf("=")), bug, exBugName.findNext()));
 					} catch (final Exception ex) {
 						pref.log("[SpiderGC.java:getBugs] Could not fetch buginfo from " + link, ex);
@@ -2777,7 +2776,8 @@ public class SpiderGC {
 	}
 
 	/**
-	 * Get the images for a previously fetched cache page. Images are extracted from two areas: The long description and the pictures section (including the spoiler)
+	 * Get the images for a previously fetched cache page. Images are extracted from two areas: The long description and
+	 * the pictures section (including the spoiler)
 	 * 
 	 * @param doc
 	 *            The previously fetched cachepage
@@ -2816,16 +2816,14 @@ public class SpiderGC {
 		String tst;
 		Extractor exImgSrc = new Extractor("", "http://", "\"", 0, true);
 		while ((tst = exImgBlock.findNext()).length() > 0) {
-			// Optimize: img.groundspeak.com -> img.geocaching.com (for
-			// better caching purposes)
+			// Optimize: img.groundspeak.com -> img.geocaching.com (for better caching purposes)
 			imgUrl = exImgSrc.findFirst(tst);
 			imgUrl = CacheImages.optimizeLink("http://" + imgUrl);
 			try {
 				imgType = (imgUrl.substring(imgUrl.lastIndexOf('.')).toLowerCase() + "    ").substring(0, 4).trim();
 				// imgType is now max 4 chars, starting with .
 				if (imgType.startsWith(".png") || imgType.startsWith(".jpg") || imgType.startsWith(".gif")) {
-					// Check whether image was already spidered for this
-					// cache
+					// Check whether image was already spidered for this cache
 					idxUrl = spideredUrls.find(imgUrl);
 					imgName = chD.getParent().getWayPoint() + "_" + Convert.toString(imgCounter);
 					imageInfo = null;
@@ -2881,8 +2879,7 @@ public class SpiderGC {
 				imgType = (imgUrl.substring(imgUrl.lastIndexOf('.')).toLowerCase() + "    ").substring(0, 4).trim();
 				// imgType is now max 4 chars, starting with .
 				if (imgType.startsWith(".png") || imgType.startsWith(".jpg") || imgType.startsWith(".gif")) {
-					// Check whether image was already spidered for this
-					// cache
+					// Check whether image was already spidered for this cache
 					idxUrl = spideredUrls.find(imgUrl);
 					imgName = chD.getParent().getWayPoint() + "_" + Convert.toString(imgCounter);
 					imageInfo = null;
@@ -2927,17 +2924,15 @@ public class SpiderGC {
 		// ========
 		final Extractor exFinal = new Extractor(longDesc, "http://", "\"", 0, true);
 		while ((imgUrl = exFinal.findNext()).length() > 0) {
-			// Optimize: img.groundspeak.com -> img.geocaching.com (for
-			// better caching purposes)
+			// Optimize: img.groundspeak.com -> img.geocaching.com (for better caching purposes)
 			imgUrl = CacheImages.optimizeLink("http://" + imgUrl);
 			try {
 				imgType = (imgUrl.substring(imgUrl.lastIndexOf('.')).toLowerCase() + "    ").substring(0, 4).trim();
-				// imgType is now max 4 chars, starting with . Delete
-				// characters in URL after the image extension
+				// imgType is now max 4 chars, starting with .
+				// Delete characters in URL after the image extension
 				imgUrl = imgUrl.substring(0, imgUrl.lastIndexOf('.') + imgType.length());
 				if (imgType.startsWith(".jpg") || imgType.startsWith(".bmp") || imgType.startsWith(".png") || imgType.startsWith(".gif")) {
-					// Check whether image was already spidered for this
-					// cache
+					// Check whether image was already spidered for this cache
 					idxUrl = spideredUrls.find(imgUrl);
 					if (idxUrl < 0) { // New image
 						imgName = chD.getParent().getWayPoint() + "_" + Convert.toString(imgCounter);
@@ -3108,9 +3103,8 @@ public class SpiderGC {
 
 	public String encodeUTF8URL(byte[] what) {
 		final int max = what.length;
-		final char[] dest = new char[6 * max]; // Assume each char is a UTF char
-												// and
-												// encoded into 6 chars
+		// Assume each char is a UTF char and encoded into 6 chars
+		final char[] dest = new char[6 * max];
 		char d = 0;
 		for (int i = 0; i < max; i++) {
 			final char c = (char) what[i];
@@ -3125,7 +3119,8 @@ public class SpiderGC {
 	}
 
 	/**
-	 * Load the bug id for a given name. This method is not ideal, as there are sometimes several bugs with identical names but different IDs. Normally the bug GUID is used which can be obtained from the cache page.<br>
+	 * Load the bug id for a given name. This method is not ideal, as there are sometimes several bugs with identical
+	 * names but different IDs. Normally the bug GUID is used which can be obtained from the cache page.<br>
 	 * Note that each bug has both an ID and a GUID.
 	 * 
 	 * @param name
@@ -3161,7 +3156,8 @@ public class SpiderGC {
 	}
 
 	/**
-	 * Fetch a bug's mission for a given GUID or ID. If the guid String is longer than 10 characters it is assumed to be a GUID, otherwise it is an ID.
+	 * Fetch a bug's mission for a given GUID or ID. If the guid String is longer than 10 characters it is assumed to be
+	 * a GUID, otherwise it is an ID.
 	 * 
 	 * @param guid
 	 *            the guid or id of the travelbug
