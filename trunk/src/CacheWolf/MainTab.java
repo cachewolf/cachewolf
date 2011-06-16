@@ -149,7 +149,7 @@ public class MainTab extends mTabbedPanel {
 		MAP_CARD = this.cardPanel.cards.size() - 1;
 		c.iconize(new Image("globe_small" + imagesize + ".gif"), true);
 
-		if (pref.useBigIcons) {
+		if (pref.isBigScreen) {
 			c = this.addCard(radarP, "Radar", null);
 			RADAR_CARD = this.cardPanel.cards.size() - 1;
 			radarP.setMainTab(this);
