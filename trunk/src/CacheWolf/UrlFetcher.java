@@ -77,6 +77,7 @@ public class UrlFetcher {
 	private static void initPermanentRequestorProperty() {
 		permanentRequestorProperties = new PropertyList();
 		permanentRequestorProperties.add("User-Agent", "Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.7.5) Gecko/20041107 Firefox/1.0");
+		// permanentRequestorProperties.add("Connection", "close");
 		permanentRequestorProperties.add("Connection", "keep-alive");
 	}
 
@@ -168,11 +169,20 @@ public class UrlFetcher {
 			urltmp = conn.getRedirectTo();
 			if (urltmp != null) {
 				conn.disconnect();
+				// mainly implemented for opencaching.de ... login
 				final PropertyList pl = UrlFetcher.getDocumentProperties();
 				if (pl != null) {
 					String cookie = (String) pl.getValue("Set-Cookie", "");
-					if (!cookie.equals(""))
-						setPermanentRequestorProperty("Cookie", cookie);
+					if (cookie.length() > 0) {
+						if (postData == null)
+							// do not overwrite existing cookie (mostly for geocaching.com)
+							// normally a cookie exists for a website
+							// we do not handle that correct
+							setRequestorProperty("Cookie", cookie);
+						else
+							// needed for opencaching.de ... login
+							setPermanentRequestorProperty("Cookie", cookie);
+					}
 				}
 				conn = conn.getRedirectedConnection(urltmp);
 				forceRedirect = false; // one time or more redirected
@@ -195,7 +205,8 @@ public class UrlFetcher {
 
 	/**
 	 * @param url
-	 * @return true, if the string seems to be already URL encoded (that is, it contains only url-allowd chars), false otherwise
+	 * @return true, if the string seems to be already URL encoded (that is, it contains only url-allowd chars), false
+	 *         otherwise
 	 */
 	private static boolean isUrlEncoded(String url) {
 		final String allowed = new String("-_.~!*'();:@&=+$,/?%#[]");
@@ -213,7 +224,8 @@ public class UrlFetcher {
 
 	/**
 	 * This method encodes an URL containing special characters using the UTF-8 codec in %nn%nn notation<br>
-	 * Note that the encoding for URLs is not generally defined. Usually cp1252 or UTF-8 is used. It depends on what the server expects, what encoding you must use.
+	 * Note that the encoding for URLs is not generally defined. Usually cp1252 or UTF-8 is used. It depends on what the
+	 * server expects, what encoding you must use.
 	 * 
 	 * @param cc
 	 * @return
@@ -232,7 +244,8 @@ public class UrlFetcher {
 	final static String hex = ewe.util.TextEncoder.hex;
 
 	/**
-	 * Encode the URL using %## notation. Note: this fixes a bug in ewe.net.URL.encodeURL(): that routine assumes all chars to be < 127. This method is mainly copied from there
+	 * Encode the URL using %## notation. Note: this fixes a bug in ewe.net.URL.encodeURL(): that routine assumes all
+	 * chars to be < 127. This method is mainly copied from there
 	 * 
 	 * @param url
 	 *            The unencoded URL.

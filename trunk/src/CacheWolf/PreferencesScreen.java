@@ -54,13 +54,14 @@ import ewe.ui.mLabel;
 import ewe.ui.mTabbedPanel;
 
 /**
- * This class displays a user interface allowing the user to change and set preferences. It also provides a method to save the changed preferences that are saved immediatly when the user presses "Apply". Class ID=600
+ * This class displays a user interface allowing the user to change and set preferences. It also provides a method to
+ * save the changed preferences that are saved immediatly when the user presses "Apply". Class ID=600
  */
 public class PreferencesScreen extends Form {
 	mButton cancelB, applyB, brwBt, gpsB;
 	mChoice inpLanguage, inpMetric, inpSpiderUpdates;
 	mInput DataDir, Proxy, ProxyPort, Alias, nLogs, Browser, fontName, fontSize, inpLogsPerPage, inpMaxLogsToSpider, inpPassword, inpGcMemberID, inpUserID;
-	mCheckBox chkAutoLoad, chkShowDeletedImg, chkMenuAtTop, chkTabsAtTop, chkShowStatus, chkHasCloseButton, chkSynthShort, chkProxyActive, chkDescShowImg, chkAddDetailsToWaypoint, chkAddDetailsToName, chkSetCurrentCentreFromGPSPosition,
+	mCheckBox chkAutoLoad, chkShowDeletedImg, chkMenuAtTop, chkTabsAtTop, chkShowStatus, chkHasCloseButton, chkUseBigIcons, chkSynthShort, chkProxyActive, chkDescShowImg, chkAddDetailsToWaypoint, chkAddDetailsToName, chkSetCurrentCentreFromGPSPosition,
 			chkSortingGroupedByCache, chkuseOwnSymbols, chkDebug, chkPM;
 	mTabbedPanel mTab;
 	mChoice chcGarminPort;
@@ -183,7 +184,6 @@ public class PreferencesScreen extends Form {
 		frmScreen.addLast(pnlScreen, HSTRETCH, HFILL);
 
 		frmScreen.addLast(chkHasCloseButton = new mCheckBox(MyLocale.getMsg(631, "PDA has close Button")), CellConstants.DONTSTRETCH, (CellConstants.DONTFILL | CellConstants.LEFT));
-		// lblTitle.setTag(INSETS,new Insets(2,0,0,0));
 		chkHasCloseButton.setState(pref.hasCloseButton);
 		frmScreen.addNext(chkMenuAtTop = new mCheckBox(MyLocale.getMsg(626, "Menu top")), CellConstants.DONTSTRETCH, (CellConstants.DONTFILL | CellConstants.LEFT));
 		chkMenuAtTop.setTag(INSETS, new Insets(0, 0, 2, 0));
@@ -194,17 +194,21 @@ public class PreferencesScreen extends Form {
 		frmScreen.addLast(chkShowStatus = new mCheckBox(MyLocale.getMsg(628, "Status")), CellConstants.DONTSTRETCH, (CellConstants.DONTFILL | CellConstants.LEFT));
 		chkShowStatus.setState(pref.showStatus);
 		chkShowStatus.setTag(INSETS, new Insets(0, 0, 2, 0));
+		frmScreen.addLast(chkUseBigIcons = new mCheckBox("use big Icons"), CellConstants.DONTSTRETCH, (CellConstants.DONTFILL | CellConstants.LEFT));
+		chkUseBigIcons.setState(pref.useBigIcons);
 		pnlDisplay.addLast(frmScreen, CellConstants.HSTRETCH, CellConstants.FILL);
 
 		Frame frmImages = new Frame();
 		frmImages.borderStyle = UIConstants.BDR_RAISEDOUTER | UIConstants.BDR_SUNKENINNER | UIConstants.BF_TOP | UIConstants.BF_BOTTOM;
-		// frmImages.addNext(new mLabel(MyLocale.getMsg(623,"Images:")),CellConstants.VSTRETCH, (CellConstants.DONTFILL|CellConstants.LEFT));
+		// frmImages.addNext(new mLabel(MyLocale.getMsg(623,"Images:")),CellConstants.VSTRETCH,
+		// (CellConstants.DONTFILL|CellConstants.LEFT));
 		frmImages.addLast(chkShowDeletedImg = new mCheckBox(MyLocale.getMsg(624, "Show deleted images")), CellConstants.DONTSTRETCH, (CellConstants.DONTFILL | CellConstants.LEFT));
 		chkShowDeletedImg.setTag(INSETS, new Insets(2, 0, 0, 0));
 		if (pref.showDeletedImages)
 			chkShowDeletedImg.setState(true);
 		// mLabel dummy;
-		// frmImages.addNext(dummy=new mLabel(""),CellConstants.VSTRETCH, (CellConstants.DONTFILL|CellConstants.LEFT|CellConstants.NORTH));
+		// frmImages.addNext(dummy=new mLabel(""),CellConstants.VSTRETCH,
+		// (CellConstants.DONTFILL|CellConstants.LEFT|CellConstants.NORTH));
 		// dummy.setTag(INSETS,new Insets(0,0,2,0));
 		frmImages.addLast(chkDescShowImg = new mCheckBox(MyLocale.getMsg(638, "Show pictures in description")), CellConstants.VSTRETCH, (CellConstants.DONTFILL | CellConstants.LEFT | CellConstants.NORTH));
 		chkDescShowImg.setTag(INSETS, new Insets(0, 0, 2, 0));
@@ -246,7 +250,8 @@ public class PreferencesScreen extends Form {
 		chkProxyActive.setState(pref.proxyActive);
 		pnlMore.addLast(pnlProxy, HSTRETCH, HFILL);
 		pnlMore.addNext(new mLabel(MyLocale.getMsg(592, "Language (needs restart)")), DONTSTRETCH, DONTFILL | LEFT);
-		String[] tmp = (new FileBugfix(FileBase.getProgramDirectory() + "/languages").list("*.cfg", FileBase.LIST_FILES_ONLY)); // "*.xyz" doesn't work on some systems -> use FileBugFix
+		// "*.xyz" doesn't work on some systems -> use FileBugFix
+		String[] tmp = (new FileBugfix(FileBase.getProgramDirectory() + "/languages").list("*.cfg", FileBase.LIST_FILES_ONLY));
 		if (tmp == null)
 			tmp = new String[0];
 		String[] langs = new String[tmp.length + 1];
@@ -340,7 +345,8 @@ public class PreferencesScreen extends Form {
 				pref.myproxy = Proxy.getText();
 				pref.myproxyport = ProxyPort.getText();
 				pref.proxyActive = chkProxyActive.getState();
-				HttpConnection.setProxy(pref.myproxy, Common.parseInt(pref.myproxyport), pref.proxyActive); // TODO generate an error message if proxy port is not a number
+				// TODO generate an error message if proxy port is not a number
+				HttpConnection.setProxy(pref.myproxy, Common.parseInt(pref.myproxyport), pref.proxyActive);
 				pref.autoReloadLastProfile = chkAutoLoad.getState();
 				pref.isPremium = chkPM.getState();
 				pref.setCurrentCentreFromGPSPosition = chkSetCurrentCentreFromGPSPosition.getState();
@@ -351,6 +357,7 @@ public class PreferencesScreen extends Form {
 				pref.tabsAtTop = chkTabsAtTop.getState();
 				pref.showStatus = chkShowStatus.getState();
 				pref.hasCloseButton = chkHasCloseButton.getState();
+				pref.useBigIcons = chkUseBigIcons.getState();
 				pref.travelbugColMap = tccBugs.getSelectedCols();
 				pref.listColMap = tccList.getSelectedCols();
 				pref.descShowImg = chkDescShowImg.getState();
