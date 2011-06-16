@@ -58,9 +58,8 @@ import ewesoft.xml.MinML;
 import ewesoft.xml.sax.AttributeList;
 
 /**
- * A class to hold the preferences that were loaded upon start up of
- * CacheWolf. This class is also capable of parsing the prefs.xml file as
- * well as saving the current settings of preferences.
+ * A class to hold the preferences that were loaded upon start up of CacheWolf. This class is also capable of parsing
+ * the prefs.xml file as well as saving the current settings of preferences.
  */
 public class Preferences extends MinML {
 
@@ -71,7 +70,7 @@ public class Preferences extends MinML {
 	public static final int GPSD_DISABLED = 0; // do not use gpsd
 	public static final int GPSD_FORMAT_OLD = 1; // use old protocol
 	public static final int GPSD_FORMAT_NEW = 2; // use new protocol
-													// (JSON)
+	// (JSON)
 	public static final int YES = 0;
 	public static final int NO = 1;
 	public static final int ASK = 2;
@@ -106,8 +105,8 @@ public class Preferences extends MinML {
 
 	/**
 	 * Call this method to set the path of the config file <br>
-	 * If you call it with null it defaults to [program-dir]/pref.xml if p
-	 * is a directory "pref.xml" will automatically appended
+	 * If you call it with null it defaults to [program-dir]/pref.xml if p is a directory "pref.xml" will automatically
+	 * appended
 	 * 
 	 * @param p
 	 */
@@ -115,10 +114,9 @@ public class Preferences extends MinML {
 		String p_;
 		if (p == null) {
 			/*
-			 * String test; test = Vm.getenv("APPDATA", "/"); // returns in
-			 * java-vm on win xp: c:\<dokumente und Einstellungen>\<username>\<application
-			 * data> log("Vm.getenv(APPDATA: " + test); // this works also
-			 * in win32.exe (ewe-vm on win xp) test = Vm.getenv("HOME",
+			 * String test; test = Vm.getenv("APPDATA", "/");
+			 * // returns in java-vm on win xp: c:\<dokumente und Einstellungen>\<username>\<application data> log("Vm.getenv(APPDATA: " + test);
+			 * // this works also in win32.exe (ewe-vm on win xp) test = Vm.getenv("HOME",
 			 * "/"); // This should return on *nix system the home dir
 			 * log("Vm.getenv(HOME: " + test); test =
 			 * System.getProperty("user.dir"); // return in java-vm on win
@@ -139,16 +137,8 @@ public class Preferences extends MinML {
 			else
 				p_ = p;
 		}
-		pathToConfigFile = STRreplace.replace(p_, "//", "/"); // this is
-																// necessary
-																// in case
-																// that the
-																// root dir
-																// is the
-																// dir where
-																// the
-																// pref.xml
-																// is stored
+		// this is necessary in case that the root dir is the dir where the pref.xml is stored
+		pathToConfigFile = STRreplace.replace(p_, "//", "/");
 		pathToConfigFile = pathToConfigFile.replace('\\', '/');
 		p = System.getProperty("os.name");
 		if (p == null || p.indexOf("indows") != -1) {
@@ -189,8 +179,7 @@ public class Preferences extends MinML {
 	/** Name of last used profile */
 	public String lastProfile = "";
 	/**
-	 * If true, the last profile is reloaded automatically without a
-	 * dialogue
+	 * If true, the last profile is reloaded automatically without a dialogue
 	 */
 	public boolean autoReloadLastProfile = false;
 	/** If true current cetre will be set from gps position */
@@ -200,8 +189,7 @@ public class Preferences extends MinML {
 	/** Optional password */
 	public String password = "";
 	/**
-	 * This is an alternative alias used to identify found caches (i.e. if
-	 * using multiple IDs)
+	 * This is an alternative alias used to identify found caches (i.e. if using multiple IDs)
 	 */
 	public String myAlias2 = "";
 	/** The path to the browser */
@@ -241,9 +229,8 @@ public class Preferences extends MinML {
 	public boolean showStatus = true;
 	// public boolean noTabs=false;
 	/**
-	 * True if the application can be closed by clicking on the close button
-	 * in the top line. This can be set to avoid accidental closing of the
-	 * application
+	 * True if the application can be closed by clicking on the close button in the top line. This can be set to avoid
+	 * accidental closing of the application
 	 */
 	public boolean hasCloseButton = true;
 	/** True if the SIP is always visible */
@@ -253,22 +240,19 @@ public class Preferences extends MinML {
 	/** The widths for each column in list view */
 	public String listColWidth = "15,20,20,25,92,177,144,83,60,105,50,104,22,30,30,30,30,30,30,30";
 	/**
-	 * The columns which are to be displayed in TravelbugsJourneyScreen. See
-	 * also TravelbugJourney
+	 * The columns which are to be displayed in TravelbugsJourneyScreen. See also TravelbugJourney
 	 */
 	public String travelbugColMap = "1,4,5,6,8,9,10,7";
 	/** The column widths for the travelbug journeys. */
 	public String travelbugColWidth = "212,136,62,90,50,56,90,38,50,50,94,50";
 	/**
-	 * If this flag is true, only non-logged travelbug journeys will be
-	 * shown
+	 * If this flag is true, only non-logged travelbug journeys will be shown
 	 */
 	public boolean travelbugShowOnlyNonLogged = false;
 	/** If this is true, deleted images are shown with a ? in the imagepanel */
 	public boolean showDeletedImages = true;
 	/**
-	 * This setting determines how many logs are shown per page of hintlogs
-	 * (default 5)
+	 * This setting determines how many logs are shown per page of hintlogs (default 5)
 	 */
 	public int logsPerPage = DEFAULT_LOGS_PER_PAGE;
 	/** Initial height of hints field (set to 0 to hide them initially) */
@@ -278,8 +262,7 @@ public class Preferences extends MinML {
 	/** True if the Solver should ignore the case of variables */
 	public boolean solverIgnoreCase = true;
 	/**
-	 * True if the solver expects arguments for trigonometric functions in
-	 * degrees
+	 * True if the solver expects arguments for trigonometric functions in degrees
 	 */
 	public boolean solverDegMode = true;
 	/** True if the description panel should show images */
@@ -289,16 +272,14 @@ public class Preferences extends MinML {
 	/** Additional options for GPSBabel, i.e. -s to synthethise short names */
 	public String garminGPSBabelOptions = "";
 	/**
-	 * Max. length for Garmin waypoint names (for etrex which can only
-	 * accept 6 chars)
+	 * Max. length for Garmin waypoint names (for etrex which can only accept 6 chars)
 	 */
 	public int garminMaxLen = 0;
 	/** OC true = alle neu Laden false = wenn Änderungsdatum neuer */
 	public boolean downloadAllOC = false;
 	public String lastOCSite = OC.OCSites[0][OC.OC_HOSTNAME];
 	/**
-	 * The currently used centre point, can be different from the profile's
-	 * centrepoint. This is used for spidering
+	 * The currently used centre point, can be different from the profile's centrepoint. This is used for spidering
 	 */
 	private CWPoint curCentrePt = new CWPoint();
 	/** True if a login screen is displayed on each spider operation */
@@ -310,8 +291,7 @@ public class Preferences extends MinML {
 	/** Number of CacheHolder details that are kept in memory */
 	public int maxDetails = 50;
 	/**
-	 * Number of details to delete when maxDetails have been stored in
-	 * cachesWithLoadedDetails
+	 * Number of details to delete when maxDetails have been stored in cachesWithLoadedDetails
 	 */
 	public int deleteDetails = 5;
 	/** The locale code (DE, EN, ...) */
@@ -380,8 +360,7 @@ public class Preferences extends MinML {
 
 	// ////////////////////////////////////////////
 	/**
-	 * The debug switch (Can be used to activate dormant code) by adding the
-	 * line:
+	 * The debug switch (Can be used to activate dormant code) by adding the line:
 	 * 
 	 * <pre>
 	 * &lt;debug value=&quot;true&quot; /&gt;
@@ -393,10 +372,9 @@ public class Preferences extends MinML {
 	// ////////////////////////////////////////////
 
 	/**
-	 * This switches the behaviour of GUI-Element factories. If set to true,
-	 * it will construct alternative Forms. It can only be set in the
-	 * Preference-File directly, not by user-interaction now. Add <MobileGui
-	 * value="true"/> to your pref.xml
+	 * This switches the behaviour of GUI-Element factories. If set to true, it will construct alternative Forms. It can
+	 * only be set in the Preference-File directly, not by user-interaction now. Add <MobileGui value="true"/> to your
+	 * pref.xml
 	 */
 	public boolean mobileGUI = false;
 
@@ -418,9 +396,8 @@ public class Preferences extends MinML {
 	// ////////////////////////////////////////////////////////////////////////////////////
 
 	/**
-	 * Method to open and parse the config file (pref.xml). Results are
-	 * stored in the public variables of this class. If you want to specify
-	 * a non default config file call setPathToConfigFile() first.
+	 * Method to open and parse the config file (pref.xml). Results are stored in the public variables of this class. If
+	 * you want to specify a non default config file call setPathToConfigFile() first.
 	 */
 	public void readPrefFile() {
 		if (pathToConfigFile == null)
@@ -439,7 +416,6 @@ public class Preferences extends MinML {
 			else
 				log("Error reading pref.xml: ", e);
 		}
-		useBigIcons = MyLocale.getScreenWidth() >= 400; // && Vm.isMobile()
 		isBigScreen = (MyLocale.getScreenWidth() >= 400) && (MyLocale.getScreenHeight() >= 600);
 	}
 
@@ -452,11 +428,8 @@ public class Preferences extends MinML {
 		String pf = Vm.getPlatform();
 		String testlist[] = null;
 		if (pf.equals("Java") || pf.equals("Win32")) {
-			String progdir = Vm.getenv("ProgramFiles", null); // at least
-																// in
-																// java-Win
-																// XP this
-																// is set
+			// at least in java-Win XP this is set
+			String progdir = Vm.getenv("ProgramFiles", null);
 			String homedir = Vm.getenv("HOMEPATH", "");
 			if (progdir != null) {
 				String test[] = { homedir + "/Lokale Einstellungen/Anwendungsdaten/Google/Chrome/Application/chrome.exe", progdir + "/Firefox/firefox.exe", progdir + "/Opera/opera.exe", progdir + "/Internet Explorer/iexplore.exe" };
@@ -483,8 +456,8 @@ public class Preferences extends MinML {
 
 	/** Helper variables for XML parser */
 	private StringBuffer collectElement = null;
-	private String lastName; // The string to the last XML that was
-								// processed
+	// The string to the last XML that was processed
+	private String lastName;
 
 	private long getLongAttr(AttributeList atts, String name) {
 		String stmp = atts.getValue(name);
@@ -496,8 +469,7 @@ public class Preferences extends MinML {
 	}
 
 	/**
-	 * Method that gets called when a new element has been identified in
-	 * pref.xml
+	 * Method that gets called when a new element has been identified in pref.xml
 	 */
 	public void startElement(String name, AttributeList atts) {
 		lastName = name;
@@ -595,6 +567,11 @@ public class Preferences extends MinML {
 			if (atts.getValue("h") != null) {
 				myAppHeight = Convert.toInt(atts.getValue("h"));
 				myAppWidth = Convert.toInt(atts.getValue("w"));
+			}
+			if (atts.getValue("useBigIcons") != null)
+				useBigIcons = Boolean.valueOf(atts.getValue("useBigIcons")).booleanValue();
+			else {
+				useBigIcons = MyLocale.getScreenWidth() >= 400 && Vm.isMobile();
 			}
 		} else if (name.equals("hintlogpanel")) {
 			logsPerPage = Convert.parseInt(atts.getValue("logsperpage"));
@@ -747,15 +724,13 @@ public class Preferences extends MinML {
 
 	public void characters(char ch[], int start, int length) {
 		if (collectElement != null) {
-			collectElement.append(ch, start, length); // Collect the name
-														// of the last
-														// profile
+			// Collect the name of the last profile
+			collectElement.append(ch, start, length);
 		}
 	}
 
 	/**
-	 * Method that gets called when the end of an element has been
-	 * identified in pref.xml
+	 * Method that gets called when the end of an element has been identified in pref.xml
 	 */
 	public void endElement(String tag) {
 		if (tag.equals("lastprofile")) {
@@ -845,6 +820,7 @@ public class Preferences extends MinML {
 					+ " hasclosebutton=\"" + hasCloseButton + "\"" //
 					+ " h=\"" + myAppHeight + "\"" //
 					+ " w=\"" + myAppWidth + "\"" //
+					+ " useBigIcons=\"" + useBigIcons + "\"" //
 					+ "/>\n" //
 
 					+ "    <fixedsip state=\"" + SafeXML.strxmlencode(fixSIP) + "\"/>\n" //
@@ -904,10 +880,8 @@ public class Preferences extends MinML {
 				outp.print(this.getFilter(filterIDs[i]).toXML(filterIDs[i]));
 			}
 			if (debug)
-				outp.print("    <debug value=\"true\" />\n"); // Keep the
-																// debug
-																// switch if
-																// it is set
+				// Keep the debug switch if it is set
+				outp.print("    <debug value=\"true\" />\n");
 			// save last path of different exporters
 			Iterator itPath = exporterPaths.entries();
 			MapEntry entry;
@@ -928,13 +902,8 @@ public class Preferences extends MinML {
 			outp.print("    <SortingGroupedByCache on=\"" + SafeXML.strxmlencode(SortingGroupedByCache) + "\"/>\n");
 			outp.print("    <Symbols useOwnSymbols=\"" + SafeXML.strxmlencode(useOwnSymbols) + "\"/>\n");
 			if (mobileGUI)
-				outp.print("    <MobileGui value=\"true\" />\n"); // Keep
-																	// the
-																	// vmgui
-																	// switch
-																	// if it
-																	// is
-																	// set
+				// Keep the vmgui switch if it is set
+				outp.print("    <MobileGui value=\"true\" />\n");
 			outp.print("</preferences>");
 			outp.close();
 		} catch (Exception e) {
@@ -1004,11 +973,9 @@ public class Preferences extends MinML {
 	}
 
 	/**
-	 * gets the path to the calibrated maps it first tries if there are
-	 * manually imported maps in <baseDir>/maps/standard then it tries the
-	 * legacy dir: <program-dir>/maps In case in both locations are no
-	 * .wfl-files it returns <baseDir>/maps/expedia - the place where the
-	 * automatically downloaded maps are placed.
+	 * gets the path to the calibrated maps it first tries if there are manually imported maps in
+	 * <baseDir>/maps/standard then it tries the legacy dir: <program-dir>/maps In case in both locations are no
+	 * .wfl-files it returns <baseDir>/maps/expedia - the place where the automatically downloaded maps are placed.
 	 * 
 	 * 
 	 */
@@ -1030,8 +997,8 @@ public class Preferences extends MinML {
 			return absoluteBaseDir + mapsPath;
 		f = t.list("*.wfl", FileBase.LIST_DIRECTORIES_ONLY | FileBase.LIST_ALWAYS_INCLUDE_DIRECTORIES);
 		if (f != null && f.length > 0) { // see if in a subdir of
-											// <baseDir>/maps/standard are
-											// .wfl files
+			// <baseDir>/maps/standard are
+			// .wfl files
 			String[] f2;
 			for (int i = 0; i < f.length; i++) {
 				t.set(null, ret + "/" + f[i]);
@@ -1079,15 +1046,14 @@ public class Preferences extends MinML {
 	/**
 	 * @param create
 	 *            if true the directory if it doesn't exist will be created
-	 * @return the path where manually imported maps should be stored this
-	 *         should be adjustable in preferences...
+	 * @return the path where manually imported maps should be stored this should be adjustable in preferences...
 	 */
 	public String getMapManuallySavePath(boolean create) {
 		String mapsDir = absoluteBaseDir + mapsPath;
 		if (create && !(new FileBugfix(mapsDir).isDirectory())) { // dir
-																	// exists?
+			// exists?
 			if (new FileBugfix(mapsDir).mkdirs() == false) {// dir creation
-															// failed?
+				// failed?
 				(new MessageBox(MyLocale.getMsg(321, "Error"), MyLocale.getMsg(172, "Error: cannot create maps directory: \n") + mapsDir, FormBase.OKB)).exec();
 				return null;
 			}
@@ -1102,9 +1068,8 @@ public class Preferences extends MinML {
 		String subdir = Global.getProfile().dataDir.substring(Global.getPref().absoluteBaseDir.length()).replace('\\', '/');
 		String mapsDir = Global.getPref().absoluteBaseDir + "maps/" + Common.ClearForFileName(mapkind) + "/" + subdir;
 		if (!(new FileBugfix(mapsDir).isDirectory())) { // dir exists?
-			if (new FileBugfix(mapsDir).mkdirs() == false) // dir creation
-															// failed?
-			{
+			if (new FileBugfix(mapsDir).mkdirs() == false) {
+				// dir creation failed?
 				(new MessageBox(MyLocale.getMsg(321, "Error"), MyLocale.getMsg(172, "Error: cannot create maps directory: \n") + new FileBugfix(mapsDir).getParentFile(), FormBase.OKB)).exec();
 				return null;
 			}
@@ -1113,10 +1078,8 @@ public class Preferences extends MinML {
 	}
 
 	public String getMapExpediaLoadPath() {
-		return Global.getPref().absoluteBaseDir.replace('\\', '/') + "maps/expedia"; // baseDir
-																						// has
-																						// trailing
-																						// /
+		// baseDir has trailing /
+		return Global.getPref().absoluteBaseDir.replace('\\', '/') + "maps/expedia";
 	}
 
 	// ////////////////////////////////////////////////////////////////////////////////////
@@ -1128,31 +1091,26 @@ public class Preferences extends MinML {
 	static protected final int PROFILE_SELECTOR_ONOROFF = 2;
 
 	/**
-	 * tries to get the home data dir of the user e.g. "c:\documents and...\<user>\my
-	 * documents" or "/home/<user>" in linux if none could be identified,
-	 * "/" is returned.
+	 * tries to get the home data dir of the user e.g. "c:\documents and...\<user>\my documents" or "/home/<user>" in
+	 * linux if none could be identified, "/" is returned.
 	 * 
 	 * @return
 	 */
 	public String getHomeDir() {
 		String test;
-		test = Vm.getenv("HOMEDRIVE", ""); // returns in java-vm on win xp:
-											// c:\<dokumente und
-											// Einstellungen>\<username>\<application
-											// data>
-		log("[Preferences:getHomeDir]" + test); // this works also in
-												// win32.exe (ewe-vm on win
-												// xp)
-		test += Vm.getenv("HOMEPATH", ""); // returns in java-vm on win xp:
-											// c:\<dokumente und
-											// Einstellungen>\<username>\<application
-											// data>
-		log("[Preferences:getHomeDir]" + test); // this works also in
-												// win32.exe (ewe-vm on win
-												// xp)
+		// returns in java-vm on win xp:
+		// c:\<dokumente und Einstellungen>\<username>\<application data>
+		test = Vm.getenv("HOMEDRIVE", "");
+		log("[Preferences:getHomeDir]" + test);
+		// this works also in win32.exe (ewe-vm on win xp)
+		test += Vm.getenv("HOMEPATH", "");
+		// returns in java-vm on win xp:
+		// c:\<dokumente und Einstellungen>\<username>\<application data>
+		log("[Preferences:getHomeDir]" + test);
+		// this works also in win32.exe (ewe-vm on win xp)
 		if (test.length() == 0)
-			test = Vm.getenv("HOME", ""); // This should return on *nix
-											// system the home dir
+			// This should return on *nix system the home dir
+			test = Vm.getenv("HOME", "");
 		if (test.length() == 0)
 			test = "/";
 		return test;
@@ -1183,10 +1141,10 @@ public class Preferences extends MinML {
 		checkAbsoluteBaseDir();
 		boolean profileExists = true; // Assume that the profile exists
 		do {
-			if (!profileExists || (showProfileSelector == PROFILE_SELECTOR_FORCED_ON) || (showProfileSelector == PROFILE_SELECTOR_ONOROFF && !autoReloadLastProfile)) { // Ask
-																																										// for
-																																										// the
-																																										// profile
+			if (!profileExists//
+					|| (showProfileSelector == PROFILE_SELECTOR_FORCED_ON)//
+					|| (showProfileSelector == PROFILE_SELECTOR_ONOROFF && !autoReloadLastProfile)//
+			) {
 				ProfilesForm f = new ProfilesForm(absoluteBaseDir, lastProfile, !profileExists || hasNewButton ? 0 : 1);
 				int code = f.execute();
 				// If no profile chosen (includes a new one), terminate
@@ -1196,7 +1154,8 @@ public class Preferences extends MinML {
 				prof.clearProfile();
 				prof.setCenterCoords(savecenter);
 				// prof.hasUnsavedChanges = true;
-				// curCentrePt.set(0,0); // No centre yet
+				// curCentrePt.set(0,0);
+				// No centre yet
 				lastProfile = f.newSelectedProfile;
 			}
 			profileExists = (new FileBugfix(absoluteBaseDir + lastProfile)).exists();
@@ -1280,9 +1239,8 @@ public class Preferences extends MinML {
 	private final String LOGFILENAME = FileBase.getProgramDirectory() + "/log.txt";
 
 	/**
-	 * Method to delete an existing log file. Called on every SpiderGC. The
-	 * log file is also cleared when Preferences is created and the filesize >
-	 * 60KB
+	 * Method to delete an existing log file. Called on every SpiderGC. The log file is also cleared when Preferences is
+	 * created and the filesize > 60KB
 	 */
 	public void logInit() {
 		File logFile = new FileBugfix(LOGFILENAME);
@@ -1299,9 +1257,8 @@ public class Preferences extends MinML {
 	boolean forceLog = false;
 
 	/**
-	 * Method to log messages to a file called log.txt It will always append
-	 * to an existing file. To show the message on the console, the global
-	 * variable debug must be set. This can be done by adding
+	 * Method to log messages to a file called log.txt It will always append to an existing file. To show the message on
+	 * the console, the global variable debug must be set. This can be done by adding
 	 * 
 	 * <pre>
 	 * &lt;debug value=&quot;true&quot;&gt;
@@ -1347,12 +1304,9 @@ public class Preferences extends MinML {
 	 * @param e
 	 *            The exception
 	 * @param withStackTrace
-	 *            If true and the debug switch is true, the stack trace is
-	 *            appended to the log The debug switch can be set by
-	 *            including the line <i>&lt;debug
-	 *            value="true"&gt;&lt;/debug&gt;</i> in the pref.xml file
-	 *            or by manually setting it (i.e. in BE versions or RC
-	 *            versions) by including the line
+	 *            If true and the debug switch is true, the stack trace is appended to the log The debug switch can be
+	 *            set by including the line <i>&lt;debug value="true"&gt;&lt;/debug&gt;</i> in the pref.xml file or by
+	 *            manually setting it (i.e. in BE versions or RC versions) by including the line
 	 * 
 	 * <pre>
 	 * Global.getPref().debug = true;
@@ -1374,9 +1328,8 @@ public class Preferences extends MinML {
 	}
 
 	/**
-	 * Log an exception to the log file without a stack trace, i.e. where a
-	 * stack trace is not needed because the location/cause of the error is
-	 * clear
+	 * Log an exception to the log file without a stack trace, i.e. where a stack trace is not needed because the
+	 * location/cause of the error is clear
 	 * 
 	 * @param message
 	 *            Optional message (Can be empty string)
@@ -1428,8 +1381,8 @@ public class Preferences extends MinML {
 	}
 
 	/**
-	 * <code>True</code> or <code>false</code>, depending if a filter
-	 * with the given ID is saved in the preferences.
+	 * <code>True</code> or <code>false</code>, depending if a filter with the given ID is saved in the
+	 * preferences.
 	 * 
 	 * @param filterID
 	 *            ID of the filter to check
@@ -1440,8 +1393,8 @@ public class Preferences extends MinML {
 	}
 
 	/**
-	 * Returns the FilterData object saved with the given ID. The ID is not
-	 * saved in the object, so it may be resaved under another ID.
+	 * Returns the FilterData object saved with the given ID. The ID is not saved in the object, so it may be resaved
+	 * under another ID.
 	 * 
 	 * @param filterID
 	 *            ID of the FilterData object
@@ -1452,9 +1405,8 @@ public class Preferences extends MinML {
 	}
 
 	/**
-	 * Adds a FilterData object to the list. If a FilterData object is
-	 * already saved unter the given ID, the old object is removed and the
-	 * new one is set at its place.
+	 * Adds a FilterData object to the list. If a FilterData object is already saved unter the given ID, the old object
+	 * is removed and the new one is set at its place.
 	 * 
 	 * @param filterID
 	 *            ID to associate with the filter object
@@ -1466,8 +1418,8 @@ public class Preferences extends MinML {
 	}
 
 	/**
-	 * Removed the FilterData object which is saved with the given ID. If no
-	 * such FilterData object exists, nothing happens.
+	 * Removed the FilterData object which is saved with the given ID. If no such FilterData object exists, nothing
+	 * happens.
 	 * 
 	 * @param filterID
 	 *            ID of FilterData object to remove
@@ -1477,8 +1429,7 @@ public class Preferences extends MinML {
 	}
 
 	/**
-	 * Returns a alphabetically sorted array of ID of saved FilterData
-	 * objects.
+	 * Returns a alphabetically sorted array of ID of saved FilterData objects.
 	 * 
 	 * @return Array of IDs
 	 */
@@ -1508,25 +1459,18 @@ public class Preferences extends MinML {
 			p.waitFor();
 			gpsbabel = "gpsbabel";
 		} catch (IOException ioex) {
-			// Most of the time there will be an exception, so don't
-			// complain
-		}
-		if (gpsbabel == null) {
 			try {
 				ewe.sys.Process p = Vm.exec("gpsbabel.exe -V");
 				p.waitFor();
 				gpsbabel = "gpsbabel.exe";
-			} catch (IOException ioex) {
-				// Most of the time there will be an exception, so don't
-				// complain
+			} catch (IOException io_ex) {
 			}
 		}
 	}
 
 	/**
 	 * get directory where pref.xml is stored<br>
-	 * use this if you need a path where the user has sufficient rights to
-	 * create a file
+	 * use this if you need a path where the user has sufficient rights to create a file
 	 */
 	public String getPathToConfigFile() {
 		return pathToConfigFile;
