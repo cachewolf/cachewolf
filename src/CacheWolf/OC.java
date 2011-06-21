@@ -25,7 +25,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 package CacheWolf;
 
-
 public final class OC {
 
 	/** thou shallst not instantiate this object */
@@ -35,8 +34,19 @@ public final class OC {
 
 	public final static int OC_HOSTNAME = 0;
 	public final static int OC_PREFIX = 1;
-	public final static String[][] OCSites = { { "www.opencaching.de", "OC" }, { "www.opencaching.pl", "OP" }, { "www.opencaching.cz", "OZ" }, { "www.opencaching.org.uk", "OK" }, { "www.opencaching.se", "OS" }, { "www.opencaching.no", "ON" },
-			{ "www.opencaching.us", "OU" } };
+	public final static String[][] OCSites = {//
+	{ "www.opencaching.de", "OC" },// 1
+			{ "www.opencaching.pl", "OP" },// 2
+			{ "www.opencaching.cz", "OZ" },// 3
+			{ "www.opencaching.org.uk", "OK" },// 4
+			{ "www.opencaching.se", "OS" },// 5
+			{ "www.opencaching.no", "ON" },// 6
+			{ "www.opencaching.us", "OU" },// 7
+			{ "www.opencachingspain.es", "OC" },// 8 !!!
+			{ "www.opencaching.it", "OC" },// 9 !!!
+			{ "www.opencaching.jp", "OJ" },// 10
+			{ "www.opencaching.nl", "OB" },// 11
+	};
 
 	public final static String[] OCHostNames() {
 		String[] ret = new String[OCSites.length];
