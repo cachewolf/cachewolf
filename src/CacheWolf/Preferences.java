@@ -51,9 +51,9 @@ import ewe.util.Comparer;
 import ewe.util.Enumeration;
 import ewe.util.Hashtable;
 import ewe.util.Iterator;
+import ewe.util.Map.MapEntry;
 import ewe.util.StringTokenizer;
 import ewe.util.Utils;
-import ewe.util.Map.MapEntry;
 import ewesoft.xml.MinML;
 import ewesoft.xml.sax.AttributeList;
 
@@ -754,9 +754,9 @@ public class Preferences extends MinML {
 			PrintWriter outp = new PrintWriter(new BufferedWriter(new FileWriter(pathToConfigFile)));
 			outp.print("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" //
 					+ "<preferences>\n" //
-					+ "    <locale language=\"" + SafeXML.clean(language) + "\"/>\n" //
+					+ "    <locale language=\"" + SafeXML.clean(language) + "\" />\n" //
 
-					+ "    <basedir dir=\"" + SafeXML.clean(getBaseDir()) + "\"/>\n"//
+					+ "    <basedir dir=\"" + SafeXML.clean(getBaseDir()) + "\" />\n"//
 
 					+ "    <lastprofile" //
 					+ " autoreload=\"" + SafeXML.strxmlencode(autoReloadLastProfile) + "\"" //
@@ -765,53 +765,53 @@ public class Preferences extends MinML {
 
 					+ "    <CurrentCentre" //
 					+ " FromGPSPosition=\"" + SafeXML.strxmlencode(setCurrentCentreFromGPSPosition) + "\"" //
-					+ "/>\n" //
+					+ " />\n" //
 
 					+ "    <alias" //
 					+ " name=\"" + SafeXML.clean(myAlias) + "\"" //
 					+ " password=\"" + SafeXML.clean(password) + "\"" //
-					+ "/>\n" //
+					+ " />\n" //
 
-					+ "    <alias2 name=\"" + SafeXML.clean(myAlias2) + "\"/>\n" //
+					+ "    <alias2 name=\"" + SafeXML.clean(myAlias2) + "\" />\n" //
 
 					+ "    <gcmemberid" //
 					+ " name=\"" + SafeXML.clean(gcMemberId) + "\"" //
 					+ " Premium=\"" + SafeXML.strxmlencode(isPremium) + "\"" //
-					+ "/>\n" //
+					+ " />\n" //
 
-					+ "    <browser name=\"" + SafeXML.clean(browser) + "\"/>\n" //
+					+ "    <browser name=\"" + SafeXML.clean(browser) + "\" />\n" //
 
 					+ "    <proxy" //
 					+ " prx=\"" + SafeXML.clean(myproxy) + "\"" //
 					+ " prt=\"" + SafeXML.clean(myproxyport) + "\"" //
 					+ " active=\"" + SafeXML.strxmlencode(proxyActive) + "\"" //
-					+ "/>\n" //
+					+ " />\n" //
 
 					+ "    <port" //
 					+ " portname=\"" + SafeXML.clean(mySPO.portName) + "\"" //
 					+ " baud=\"" + SafeXML.strxmlencode(mySPO.baudRate) + "\"" //
-					+ "/>\n" //
+					+ " />\n" //
 
 					+ "    <portforward" //
 					+ " active=\"" + SafeXML.strxmlencode(forwardGPS) + "\"" //
 					+ " destinationHost=\"" + SafeXML.clean(forwardGpsHost) + "\"" //
-					+ "/>\n" //
+					+ " />\n" //
 
 					+ "    <gpsd" //
 					+ " active=\"" + SafeXML.strxmlencode(useGPSD) + "\"" //
 					+ " host=\"" + SafeXML.clean(gpsdHost) + "\"" //
 					+ " port=\"" + SafeXML.strxmlencode(gpsdPort) + "\"" //
-					+ "/>\n" //
+					+ " />\n" //
 
 					+ "    <portlog" //
 					+ " active=\"" + SafeXML.strxmlencode(logGPS) + "\"" //
 					+ " logTimer=\"" + SafeXML.clean(logGPSTimer) + "\"" //
-					+ "/>\n" //
+					+ " />\n" //
 
 					+ "    <font" //
 					+ " name=\"" + fontName + "\"" //
 					+ " size=\"" + SafeXML.strxmlencode(fontSize) + "\"" //
-					+ "/>\n" //
+					+ " />\n" //
 
 					+ "    <screen" //
 					+ " menuattop=\"" + menuAtTop + "\"" //
@@ -821,28 +821,28 @@ public class Preferences extends MinML {
 					+ " h=\"" + myAppHeight + "\"" //
 					+ " w=\"" + myAppWidth + "\"" //
 					+ " useBigIcons=\"" + useBigIcons + "\"" //
-					+ "/>\n" //
+					+ " />\n" //
 
-					+ "    <fixedsip state=\"" + SafeXML.strxmlencode(fixSIP) + "\"/>\n" //
+					+ "    <fixedsip state=\"" + SafeXML.strxmlencode(fixSIP) + "\" />\n" //
 
 					+ "    <listview" //
 					+ " colmap=\"" + SafeXML.clean(listColMap) + "\"" //
 					+ " colwidths=\"" + SafeXML.clean(listColWidth) + "\"" //
-					+ "/>\n" //
+					+ " />\n" //
 
 					+ "    <travelbugs" //
 					+ " colmap=\"" + SafeXML.clean(travelbugColMap) + "\"" //
 					+ " colwidths=\"" + SafeXML.clean(travelbugColWidth) + "\"" //
 					+ " shownonlogged=\"" + SafeXML.strxmlencode(travelbugShowOnlyNonLogged) + "\"" //
-					+ "/>\n");
+					+ " />\n");
 
 			outp.print("    <descpanel showimages=\"" + SafeXML.strxmlencode(descShowImg) + "\" />\n");
-			outp.print("    <imagepanel showdeletedimages=\"" + SafeXML.strxmlencode(showDeletedImages) + "\"/>\n");
+			outp.print("    <imagepanel showdeletedimages=\"" + SafeXML.strxmlencode(showDeletedImages) + "\" />\n");
 			outp.print("    <hintlogpanel"//
 					+ " logsperpage=\"" + SafeXML.strxmlencode(logsPerPage) + "\"" //
 					+ " initialhintheight=\"" + SafeXML.strxmlencode(initialHintHeight) + "\"" //
 					+ " maxspiderlogs=\"" + SafeXML.strxmlencode(maxLogsToSpider) + "\"" //
-					+ "/>\n");
+					+ " />\n");
 			outp.print("    <solver ignorevariablecase=\"" + SafeXML.strxmlencode(solverIgnoreCase) + "\" degMode=\"" + SafeXML.strxmlencode(solverDegMode) + "\" />\n");
 			outp.print("    <garmin" //
 					+ " connection=\"" + SafeXML.clean(garminConn) + "\"" //
@@ -850,9 +850,9 @@ public class Preferences extends MinML {
 					+ " MaxWaypointLength=\"" + SafeXML.strxmlencode(garminMaxLen) + "\"" //
 					+ " addDetailsToWaypoint=\"" + SafeXML.strxmlencode(addDetailsToWaypoint) + "\"" //
 					+ " addDetailsToName=\"" + SafeXML.strxmlencode(addDetailsToName) + "\"" //
-					+ "/>\n");
-			outp.print("    <opencaching lastSite=\"" + lastOCSite + "\" downloadMissing=\"" + SafeXML.strxmlencode(downloadAllOC) + "\"/>\n");
-			outp.print("    <location lat=\"" + SafeXML.clean(curCentrePt.getLatDeg(TransformCoordinates.DD)) + "\" long=\"" + SafeXML.clean(curCentrePt.getLonDeg(TransformCoordinates.DD)) + "\"/>\n");
+					+ " />\n");
+			outp.print("    <opencaching lastSite=\"" + lastOCSite + "\" downloadMissing=\"" + SafeXML.strxmlencode(downloadAllOC) + "\" />\n");
+			outp.print("    <location lat=\"" + SafeXML.clean(curCentrePt.getLatDeg(TransformCoordinates.DD)) + "\" long=\"" + SafeXML.clean(curCentrePt.getLonDeg(TransformCoordinates.DD)) + "\" />\n");
 			outp.print("    <spider" //
 					+ " forcelogin=\"" + SafeXML.strxmlencode(forceLogin) + "\"" //
 					+ " spiderUpdates=\"" + SafeXML.strxmlencode(spiderUpdates) + "\"" //
@@ -865,15 +865,15 @@ public class Preferences extends MinML {
 					+ " downloadTBs=\"" + SafeXML.strxmlencode(downloadTBs) + "\"" //
 					+ " UserID=\"" + SafeXML.clean(userID) + "\"" //
 					+ " getFinds=\"" + SafeXML.strxmlencode(!doNotGetFound) + "\"" //
-					+ "/>\n");
+					+ " />\n");
 			outp.print("    <gotopanel northcentered=\"" + SafeXML.strxmlencode(northCenteredGoto) + "\" />\n");
-			outp.print("    <details cacheSize=\"" + SafeXML.strxmlencode(maxDetails) + "\" delete=\"" + SafeXML.strxmlencode(deleteDetails) + "\"/>\n");
-			outp.print("    <metric type=\"" + SafeXML.strxmlencode(metricSystem) + "\"/>\n");
+			outp.print("    <details cacheSize=\"" + SafeXML.strxmlencode(maxDetails) + "\" delete=\"" + SafeXML.strxmlencode(deleteDetails) + "\" />\n");
+			outp.print("    <metric type=\"" + SafeXML.strxmlencode(metricSystem) + "\" />\n");
 			outp.print("    <export numberOfLogsToExport=\"" + SafeXML.strxmlencode(numberOfLogsToExport) + "\" exportTravelbugs=\"" + SafeXML.strxmlencode(exportTravelbugs) + "\" exportGpxAsMyFinds=\"" + SafeXML.strxmlencode(exportGpxAsMyFinds)
-					+ "\"/>\n");
+					+ "\" />\n");
 			outp.print("    <datamover processorMode=\"" + SafeXML.strxmlencode(processorMode) + "\" />\n");
 			if (customMapsPath != null)
-				outp.print("    <mapspath dir=\"" + SafeXML.clean(customMapsPath.replace('\\', '/')) + "\"/>\n");
+				outp.print("    <mapspath dir=\"" + SafeXML.clean(customMapsPath.replace('\\', '/')) + "\" />\n");
 			// Saving filters
 			String[] filterIDs = this.getFilterIDs();
 			for (int i = 0; i < filterIDs.length; i++) {
@@ -887,20 +887,20 @@ public class Preferences extends MinML {
 			MapEntry entry;
 			while (itPath.hasNext()) {
 				entry = (MapEntry) itPath.next();
-				outp.print("    <expPath key = \"" + SafeXML.clean(entry.getKey().toString()) + "\" value = \"" + SafeXML.clean(entry.getValue().toString().replace('\\', '/')) + "\"/>\n");
+				outp.print("    <expPath key = \"" + SafeXML.clean(entry.getKey().toString()) + "\" value = \"" + SafeXML.clean(entry.getValue().toString().replace('\\', '/')) + "\" />\n");
 			}
 			itPath = importerPaths.entries();
 			while (itPath.hasNext()) {
 				entry = (MapEntry) itPath.next();
-				outp.print("    <impPath key = \"" + SafeXML.clean(entry.getKey().toString()) + "\" value = \"" + SafeXML.clean(entry.getValue().toString().replace('\\', '/')) + "\"/>\n");
+				outp.print("    <impPath key = \"" + SafeXML.clean(entry.getKey().toString()) + "\" value = \"" + SafeXML.clean(entry.getValue().toString().replace('\\', '/')) + "\" />\n");
 			}
 			outp.print("    <logkeeping maximum=\"" + SafeXML.strxmlencode(maxLogsToKeep) + "\" keepown=\"" + SafeXML.strxmlencode(alwaysKeepOwnLogs) + "\" />\n");
-			outp.print("    <fillWhiteArea on=\"" + SafeXML.strxmlencode(fillWhiteArea) + "\"/>\n");
+			outp.print("    <fillWhiteArea on=\"" + SafeXML.strxmlencode(fillWhiteArea) + "\" />\n");
 			outp.print("    <mapLoader tileSize=\"" + SafeXML.strxmlencode(mapTileSize) + "\" overlapping=\"" + SafeXML.strxmlencode(mapOverlapping) + "\" tilewidth=\"" + SafeXML.strxmlencode(tilewidth) + "\" tileheight=\""
-					+ SafeXML.strxmlencode(tileheight) + "\"/>\n");
-			outp.print("    <showCachesOnMap on=\"" + SafeXML.strxmlencode(showCachesOnMap) + "\"/>\n");
-			outp.print("    <SortingGroupedByCache on=\"" + SafeXML.strxmlencode(SortingGroupedByCache) + "\"/>\n");
-			outp.print("    <Symbols useOwnSymbols=\"" + SafeXML.strxmlencode(useOwnSymbols) + "\"/>\n");
+					+ SafeXML.strxmlencode(tileheight) + "\" />\n");
+			outp.print("    <showCachesOnMap on=\"" + SafeXML.strxmlencode(showCachesOnMap) + "\" />\n");
+			outp.print("    <SortingGroupedByCache on=\"" + SafeXML.strxmlencode(SortingGroupedByCache) + "\" />\n");
+			outp.print("    <Symbols useOwnSymbols=\"" + SafeXML.strxmlencode(useOwnSymbols) + "\" />\n");
 			if (mobileGUI)
 				// Keep the vmgui switch if it is set
 				outp.print("    <MobileGui value=\"true\" />\n");
@@ -1308,11 +1308,11 @@ public class Preferences extends MinML {
 	 *            set by including the line <i>&lt;debug value="true"&gt;&lt;/debug&gt;</i> in the pref.xml file or by
 	 *            manually setting it (i.e. in BE versions or RC versions) by including the line
 	 * 
-	 * <pre>
+	 *            <pre>
 	 * Global.getPref().debug = true;
 	 * </pre>
 	 * 
-	 * in Version.getRelease()
+	 *            in Version.getRelease()
 	 */
 	public void log(String text, Throwable e, boolean withStackTrace) {
 		if (e != null) {
