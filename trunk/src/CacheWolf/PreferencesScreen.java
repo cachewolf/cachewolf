@@ -61,8 +61,8 @@ public class PreferencesScreen extends Form {
 	mButton cancelB, applyB, brwBt, gpsB;
 	mChoice inpLanguage, inpMetric, inpSpiderUpdates;
 	mInput DataDir, Proxy, ProxyPort, Alias, nLogs, Browser, fontName, fontSize, inpLogsPerPage, inpMaxLogsToSpider, inpPassword, inpGcMemberID, inpUserID;
-	mCheckBox chkAutoLoad, chkShowDeletedImg, chkMenuAtTop, chkTabsAtTop, chkShowStatus, chkHasCloseButton, chkUseBigIcons, chkSynthShort, chkProxyActive, chkDescShowImg, chkAddDetailsToWaypoint, chkAddDetailsToName, chkSetCurrentCentreFromGPSPosition,
-			chkSortingGroupedByCache, chkuseOwnSymbols, chkDebug, chkPM;
+	mCheckBox chkAutoLoad, chkShowDeletedImg, chkMenuAtTop, chkTabsAtTop, chkShowStatus, chkHasCloseButton, chkUseBigIcons, chkUseRadar, chkSynthShort, chkProxyActive, chkDescShowImg, chkAddDetailsToWaypoint, chkAddDetailsToName,
+			chkSetCurrentCentreFromGPSPosition, chkSortingGroupedByCache, chkuseOwnSymbols, chkDebug, chkPM;
 	mTabbedPanel mTab;
 	mChoice chcGarminPort;
 	mLabel lblGarmin;
@@ -194,8 +194,10 @@ public class PreferencesScreen extends Form {
 		frmScreen.addLast(chkShowStatus = new mCheckBox(MyLocale.getMsg(628, "Status")), CellConstants.DONTSTRETCH, (CellConstants.DONTFILL | CellConstants.LEFT));
 		chkShowStatus.setState(pref.showStatus);
 		chkShowStatus.setTag(INSETS, new Insets(0, 0, 2, 0));
-		frmScreen.addLast(chkUseBigIcons = new mCheckBox("use big Icons"), CellConstants.DONTSTRETCH, (CellConstants.DONTFILL | CellConstants.LEFT));
+		frmScreen.addNext(chkUseBigIcons = new mCheckBox("use big Icons"), CellConstants.DONTSTRETCH, (CellConstants.DONTFILL | CellConstants.LEFT));
 		chkUseBigIcons.setState(pref.useBigIcons);
+		frmScreen.addLast(chkUseRadar = new mCheckBox("Radartab on small screen"), CellConstants.DONTSTRETCH, (CellConstants.DONTFILL | CellConstants.LEFT));
+		chkUseRadar.setState(pref.useRadar);
 		pnlDisplay.addLast(frmScreen, CellConstants.HSTRETCH, CellConstants.FILL);
 
 		Frame frmImages = new Frame();
@@ -358,6 +360,7 @@ public class PreferencesScreen extends Form {
 				pref.showStatus = chkShowStatus.getState();
 				pref.hasCloseButton = chkHasCloseButton.getState();
 				pref.useBigIcons = chkUseBigIcons.getState();
+				pref.useRadar = chkUseRadar.getState();
 				pref.travelbugColMap = tccBugs.getSelectedCols();
 				pref.listColMap = tccList.getSelectedCols();
 				pref.descShowImg = chkDescShowImg.getState();
