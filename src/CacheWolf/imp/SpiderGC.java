@@ -2770,8 +2770,10 @@ public class SpiderGC {
 				}
 			}
 			infB.setInfo(oldInfoBox);
-			if (exBugWrong)
-				pref.log("[SpiderGC.java:getBugs]check TBs bugExStart / bugExEnd! blockLength = " + blockLength, null);
+			if (exBugWrong) {
+				if (blockLength > 200)
+					pref.log("[SpiderGC.java:getBugs]check TBs bugExStart / bugExEnd! blockLength = " + blockLength + " for " + chD.URL, null);
+			}
 		} else {
 			pref.log("[SpiderGC.java:getBugs]check TBs blockExStart / blockExEnd! ", null);
 		}
