@@ -53,7 +53,7 @@ public class MainTab extends mTabbedPanel {
 	static int DETAILS_CARD;
 	static int DESCRIPTION_CARD;
 	static int IMAGES_CARD;
-	static int HINTSANSLOGS_CARD;
+	static int HINTSANDLOGS_CARD;
 	static int SOLVER_CARD;
 	static int CALC_CARD;
 	static int GOTO_CARD;
@@ -126,7 +126,7 @@ public class MainTab extends mTabbedPanel {
 		c.iconize(new Image("images" + imagesize + ".gif"), true);
 
 		c = this.addCard(hintLP, MyLocale.getMsg(1204, "Hints & Logs"), null);
-		HINTSANSLOGS_CARD = this.cardPanel.cards.size() - 1;
+		HINTSANDLOGS_CARD = this.cardPanel.cards.size() - 1;
 		c.iconize(new Image("more" + imagesize + ".gif"), true);
 
 		c = this.addCard(solverP = new SolverPanel(pref, profile), MyLocale.getMsg(1205, "Solver"), null);
@@ -292,7 +292,7 @@ public class MainTab extends mTabbedPanel {
 			} else {
 				imageP.setImages(chD);
 			}
-		} else if (panelNo == HINTSANSLOGS_CARD) {
+		} else if (panelNo == HINTSANDLOGS_CARD) {
 			if (ch.isAddiWpt()) {
 				hintLP.setText(ch.mainCache.getCacheDetails(true));
 			} else {
@@ -318,7 +318,7 @@ public class MainTab extends mTabbedPanel {
 				select(descP);
 			} else if (oldCard == IMAGES_CARD) {
 				select(imageP);
-			} else if (oldCard == HINTSANSLOGS_CARD) {
+			} else if (oldCard == HINTSANDLOGS_CARD) {
 				select(hintLP);
 			} else if (oldCard == SOLVER_CARD) {
 				select(solverP);
@@ -340,7 +340,8 @@ public class MainTab extends mTabbedPanel {
 	/**
 	 * this is called from MovingMap Cache context menu
 	 * 
-	 * @param chi ,
+	 * @param chi
+	 *            ,
 	 *            the CacheHolder for the Cache to switch to
 	 * @param panelNo
 	 *            1=DetailsPanel 2=Description Panel
@@ -439,8 +440,8 @@ public class MainTab extends mTabbedPanel {
 						i++;
 						ewe.sys.mThread.sleep(100);
 					} // wait until the window size of the moving map is
-					// known note: ewe.sys.sleep() will pause the whole
-					// vm - no other thread will run
+						// known note: ewe.sys.sleep() will pause the whole
+						// vm - no other thread will run
 					if (i >= 10 * 60) {
 						(new MessageBox("Error", "MovingMap cannot be displayed - this is most likely a bug - plaese report it on www.geoclub.de", FormBase.OKB)).execute();
 						return;

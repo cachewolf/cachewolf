@@ -1008,7 +1008,7 @@ public class SpiderGC {
 
 	/**
 	 * Method to spider a single cache. It assumes a login has already been performed!
-	 *
+	 * 
 	 * @return 1 if spider was successful, -1 if spider was cancelled by closing the infobox, 0 error, but continue with
 	 *         next cache
 	 */
@@ -1055,7 +1055,7 @@ public class SpiderGC {
 
 	/**
 	 * Fetch the coordinates of a waypoint from GC
-	 *
+	 * 
 	 * @param wayPoint
 	 *            the name of the waypoint
 	 * @return the cache coordinates
@@ -1747,7 +1747,7 @@ public class SpiderGC {
 
 	/**
 	 * check if new Update exists
-	 *
+	 * 
 	 * @param ch
 	 *            CacheHolder
 	 * @param CacheDescription
@@ -1832,7 +1832,7 @@ public class SpiderGC {
 
 	/**
 	 * Get num found
-	 *
+	 * 
 	 * @param doc
 	 *            A previously fetched cachepage
 	 * @return numFound
@@ -1952,7 +1952,7 @@ public class SpiderGC {
 
 	/**
 	 * Get the waypoint name
-	 *
+	 * 
 	 * @param doc
 	 *            A previously fetched cachepage
 	 * @return Name of waypoint to add to list
@@ -2177,9 +2177,9 @@ public class SpiderGC {
 
 	/*
 	 * @param CacheHolder ch
-	 *
+	 * 
 	 * @param String cacheDescGC
-	 *
+	 * 
 	 * @return boolean newLogExists
 	 */
 	private boolean newFoundExists(CacheHolder ch, String cacheDescription) {
@@ -2221,22 +2221,22 @@ public class SpiderGC {
 	 * Read a complete cachepage from geocaching.com including all logs. This is used both when updating already
 	 * existing caches (via spiderSingle) and when spidering around a centre. It is also used when reading a GPX file
 	 * and fetching the images.
-	 *
+	 * 
 	 * This is the workhorse function of the spider.
-	 *
+	 * 
 	 * @param CacheHolderDetail
 	 *            chD The element wayPoint must be set to the name of a waypoint
 	 * @param boolean
-	 *            isUpdate True if an existing cache is being updated, false if it is a new cache
+	 *        isUpdate True if an existing cache is being updated, false if it is a new cache
 	 * @param boolean
-	 *            fetchImages True if the pictures are to be fetched
+	 *        fetchImages True if the pictures are to be fetched
 	 * @param boolean
-	 *            fetchTBs True if the TBs are to be fetched
+	 *        fetchTBs True if the TBs are to be fetched
 	 * @param boolean
-	 *            doNotGetFound True if the cache is not to be spidered if it has already been found
+	 *        doNotGetFound True if the cache is not to be spidered if it has already been found
 	 * @param boolean
-	 *            fetchAllLogs True if all logs are to be fetched (by adding option '&logs=y' to command line). This is
-	 *            normally false when spidering from GPXImport as the logs are part of the GPX file, and true otherwise
+	 *        fetchAllLogs True if all logs are to be fetched (by adding option '&logs=y' to command line). This is
+	 *        normally false when spidering from GPXImport as the logs are part of the GPX file, and true otherwise
 	 * @return -1 if the infoBox was closed (cancel spidering), 0 if there was an error (continue with next cache), 1 if
 	 *         everything ok
 	 */
@@ -2429,7 +2429,7 @@ public class SpiderGC {
 
 	/**
 	 * Get the coordinates of the cache
-	 *
+	 * 
 	 * @param doc
 	 *            A previously fetched cachepage
 	 * @return Cache coordinates
@@ -2448,7 +2448,7 @@ public class SpiderGC {
 
 	/**
 	 * Get the long description
-	 *
+	 * 
 	 * @param doc
 	 *            A previously fetched cachepage
 	 * @return the long description
@@ -2483,7 +2483,7 @@ public class SpiderGC {
 
 	/**
 	 * Get the cache location (country and state)
-	 *
+	 * 
 	 * @param doc
 	 *            A previously fetched cachepage
 	 * @return the location (country and state) of the cache
@@ -2500,7 +2500,7 @@ public class SpiderGC {
 
 	/**
 	 * Get the cache name
-	 *
+	 * 
 	 * @param doc
 	 *            A previously fetched cachepage
 	 * @return the name of the cache
@@ -2517,7 +2517,7 @@ public class SpiderGC {
 
 	/**
 	 * Get the cache owner
-	 *
+	 * 
 	 * @param doc
 	 *            A previously fetched cachepage
 	 * @return the cache owner
@@ -2534,7 +2534,7 @@ public class SpiderGC {
 
 	/**
 	 * Get the date when the cache was hidden
-	 *
+	 * 
 	 * @param doc
 	 *            A previously fetched cachepage
 	 * @return Hidden date
@@ -2551,7 +2551,7 @@ public class SpiderGC {
 
 	/**
 	 * Get the hints
-	 *
+	 * 
 	 * @param doc
 	 *            A previously fetched cachepage
 	 * @return Cachehints
@@ -2568,7 +2568,7 @@ public class SpiderGC {
 
 	/**
 	 * Get the cache size
-	 *
+	 * 
 	 * @param doc
 	 *            A previously fetched cachepage
 	 * @return Cache size
@@ -2586,7 +2586,7 @@ public class SpiderGC {
 
 	/**
 	 * Get the Difficulty
-	 *
+	 * 
 	 * @param doc
 	 *            A previously fetched cachepage
 	 * @return The cache difficulty
@@ -2604,7 +2604,7 @@ public class SpiderGC {
 
 	/**
 	 * Get the terrain rating
-	 *
+	 * 
 	 * @param doc
 	 *            A previously fetched cachepage
 	 * @return Terrain rating
@@ -2622,7 +2622,7 @@ public class SpiderGC {
 
 	/**
 	 * Get the waypoint type
-	 *
+	 * 
 	 * @param doc
 	 *            A previously fetched cachepage
 	 * @return the waypoint type (Tradi, Multi, etc.)
@@ -2639,7 +2639,7 @@ public class SpiderGC {
 
 	/**
 	 * Get the logs
-	 *
+	 * 
 	 * @param doc
 	 *            A previously fetched cachepage
 	 * @param chD
@@ -2706,7 +2706,7 @@ public class SpiderGC {
 
 	/**
 	 * This methods cleans up the path for inlined smilies in logtexts.
-	 *
+	 * 
 	 * @param logText
 	 * @return
 	 */
@@ -2724,7 +2724,7 @@ public class SpiderGC {
 	/**
 	 * Read the travelbug names from a previously fetched Cache page and then read the travelbug purpose for each
 	 * travelbug
-	 *
+	 * 
 	 * @param doc
 	 *            The previously fetched cachepage
 	 * @return A HTML formatted string with bug names and there purpose
@@ -2738,7 +2738,9 @@ public class SpiderGC {
 		final Extractor exBug = new Extractor("", p.getProp("bugExStart"), p.getProp("bugExEnd"), 0, Extractor.EXCLUDESTARTEND);
 		final Extractor exBugName = new Extractor("", "", "", 0, Extractor.EXCLUDESTARTEND);
 		final String bugBlock;
-		if ((bugBlock = exBlock.findNext()).length() > 0) {
+		bugBlock = exBlock.findNext();
+		int blockLength = bugBlock.length();
+		if (blockLength > 0) {
 			String link, bug, linkPlusBug, bugDetails;
 			final String oldInfoBox = infB.getInfo();
 			boolean exBugWrong = true;
@@ -2769,16 +2771,16 @@ public class SpiderGC {
 			}
 			infB.setInfo(oldInfoBox);
 			if (exBugWrong)
-				pref.log("[SpiderGC.java:getBugs]check TBs bugExStart / bugExEnd!", null);
+				pref.log("[SpiderGC.java:getBugs]check TBs bugExStart / bugExEnd! blockLength = " + blockLength, null);
 		} else {
-			pref.log("[SpiderGC.java:getBugs]check TBs blockExStart / blockExEnd!", null);
+			pref.log("[SpiderGC.java:getBugs]check TBs blockExStart / blockExEnd! ", null);
 		}
 	}
 
 	/**
 	 * Get the images for a previously fetched cache page. Images are extracted from two areas: The long description and
 	 * the pictures section (including the spoiler)
-	 *
+	 * 
 	 * @param doc
 	 *            The previously fetched cachepage
 	 * @param chD
@@ -2965,7 +2967,7 @@ public class SpiderGC {
 
 	/**
 	 * Read an image from the server
-	 *
+	 * 
 	 * @param imgUrl
 	 *            The Url of the image
 	 * @param target
@@ -2987,7 +2989,7 @@ public class SpiderGC {
 
 	/**
 	 * Read all additional waypoints from a previously fetched cachepage.
-	 *
+	 * 
 	 * @param doc
 	 *            The previously fetched cachepage
 	 * @param wayPoint
@@ -3122,7 +3124,7 @@ public class SpiderGC {
 	 * Load the bug id for a given name. This method is not ideal, as there are sometimes several bugs with identical
 	 * names but different IDs. Normally the bug GUID is used which can be obtained from the cache page.<br>
 	 * Note that each bug has both an ID and a GUID.
-	 *
+	 * 
 	 * @param name
 	 *            The name (or partial name) of a travelbug
 	 * @return the id of the bug
@@ -3158,7 +3160,7 @@ public class SpiderGC {
 	/**
 	 * Fetch a bug's mission for a given GUID or ID. If the guid String is longer than 10 characters it is assumed to be
 	 * a GUID, otherwise it is an ID.
-	 *
+	 * 
 	 * @param guid
 	 *            the guid or id of the travelbug
 	 * @return The mission
@@ -3191,7 +3193,7 @@ public class SpiderGC {
 
 	/**
 	 * Fetch a bug's mission for a given tracking number
-	 *
+	 * 
 	 * @param trackNr
 	 *            the tracking number of the travelbug
 	 * @return The mission
@@ -3223,7 +3225,7 @@ public class SpiderGC {
 
 	/**
 	 * Fetch a bug's mission and namefor a given tracking number
-	 *
+	 * 
 	 * @param TB
 	 *            the travelbug
 	 * @return true if suceeded
@@ -3270,7 +3272,7 @@ public class SpiderGC {
 
 		/**
 		 * Gets an entry in spider.def by its key (tag)
-		 *
+		 * 
 		 * @param key
 		 *            The key which is attributed to a specific entry
 		 * @return The value for the key
