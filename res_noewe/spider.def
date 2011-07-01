@@ -154,7 +154,8 @@ icon_attended      = icon_attended.gif
 #--------------------------------------
 # blockEx extrahiert zunächst den Bugbereich aus der gesamten Seite
 blockExStart       = ctl00_ContentBody_uxTravelBugList_uxInventoryLabel
-blockExEnd         = ctl00_ContentBody_uxTravelBugList_uxTrackableItemsLinks
+#blockExEnd         = ctl00_ContentBody_uxTravelBugList_uxTrackableItemsLinks
+blockExEnd         = ctl00_ContentBody_uxTravelBugList_uxTrackableItemsHistory
 # bugEx extrahiert die Namen der einzelnen Bugs aus dem Bugbereich
 bugExStart         = <a\ href="
 bugExEnd           = </a>
