@@ -82,6 +82,7 @@ public class Preferences extends MinML {
 	/** display big icons. default only true for VGA PDAs */
 	// TODO: make this configurable via pref.xml
 	public boolean useBigIcons;
+	public boolean useRadar;
 
 	// ////////////////////////////////////////////////////////////////////////////////////
 	// Constructor
@@ -573,6 +574,11 @@ public class Preferences extends MinML {
 			else {
 				useBigIcons = MyLocale.getScreenWidth() >= 400 && Vm.isMobile();
 			}
+			if (atts.getValue("useRadar") != null)
+				useRadar = Boolean.valueOf(atts.getValue("useRadar")).booleanValue();
+			else {
+				useRadar = MyLocale.getScreenWidth() >= 400 && Vm.isMobile();
+			}
 		} else if (name.equals("hintlogpanel")) {
 			logsPerPage = Convert.parseInt(atts.getValue("logsperpage"));
 			String strInitialHintHeight = atts.getValue("initialhintheight");
@@ -821,6 +827,7 @@ public class Preferences extends MinML {
 					+ " h=\"" + myAppHeight + "\"" //
 					+ " w=\"" + myAppWidth + "\"" //
 					+ " useBigIcons=\"" + useBigIcons + "\"" //
+					+ " useRadar=\"" + useRadar + "\"" //
 					+ " />\n" //
 
 					+ "    <fixedsip state=\"" + SafeXML.strxmlencode(fixSIP) + "\" />\n" //

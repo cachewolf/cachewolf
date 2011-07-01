@@ -145,11 +145,13 @@ public class MainTab extends mTabbedPanel {
 		c.iconize(new Image("goto" + imagesize + ".gif"), true);
 		nav.setGotoPanel(gotoP);
 
-		c = this.addCard(mapP = new ewe.ui.CellPanel(), MyLocale.getMsg(347, "Show map"), null);
-		MAP_CARD = this.cardPanel.cards.size() - 1;
-		c.iconize(new Image("globe_small" + imagesize + ".gif"), true);
+		if (pref.isBigScreen || !pref.useRadar) {
+			c = this.addCard(mapP = new ewe.ui.CellPanel(), MyLocale.getMsg(347, "Show map"), null);
+			MAP_CARD = this.cardPanel.cards.size() - 1;
+			c.iconize(new Image("globe_small" + imagesize + ".gif"), true);
+		}
 
-		if (pref.isBigScreen) {
+		if (pref.isBigScreen || pref.useRadar) {
 			c = this.addCard(radarP, "Radar", null);
 			RADAR_CARD = this.cardPanel.cards.size() - 1;
 			radarP.setMainTab(this);
