@@ -5,8 +5,8 @@ MapType:                        topo
 MainUrl:            http://osmwms.itc-halle.de/maps/osmfree?
 ServiceTypeUrlPart: SERVICE=WMS
 VersionUrlPart:     VERSION=1.1.1
-CoordinateReferenceSystemCacheWolf:  31466 31467 31468 31469
-CoordinateReferenceSystemUrlPart: SRS=EPSG:31466 SRS=EPSG:31467 SRS=EPSG:31468 SRS=EPSG:31469 
+CoordinateReferenceSystemCacheWolf:  4326
+CoordinateReferenceSystemUrlPart: SRS=EPSG:4326 
 RequestUrlPart:     REQUEST=GetMap
 #LayersUrlPart:     LAYERS=osmwms|OpenStreetMap-WMS||
 #LayersUrlPart:     LAYERS=grenzen|Administrative Grenzen||
