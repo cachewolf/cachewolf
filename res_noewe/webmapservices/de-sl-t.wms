@@ -1,0 +1,38 @@
+TakenFromUrl:       http://geoportal.lkvk.saarland.de/freewms/uebersichtsl?
+GetCapabilitiesUrl: http://geoportal.lkvk.saarland.de/freewms/uebersichtsl?SERVICE=WMS&VERSION=1.1.1&REQUEST=GetCapabilities
+Name:               de.Saarland t
+MapType:                        topo
+MainUrl:            http://geoportal.lkvk.saarland.de/freewms/uebersichtsl?
+ServiceTypeUrlPart: SERVICE=WMS
+VersionUrlPart:     VERSION=1.1.1
+CoordinateReferenceSystemCacheWolf:  31466 31467
+CoordinateReferenceSystemUrlPart: SRS=EPSG:31466 SRS=EPSG:31467
+RequestUrlPart:     REQUEST=GetMap
+#LayersUrlPart:     LAYERS=Saarland|SL_UEBERSICHT||
+#LayersUrlPart:     LAYERS=landesflaeche|Landesflaeche||
+#LayersUrlPart:     LAYERS=gruenland|Gruenland||
+#LayersUrlPart:     LAYERS=industrie|Industrie||
+#LayersUrlPart:     LAYERS=wald|Wald||
+#LayersUrlPart:     LAYERS=sonderkultur|Sonderkulturen||
+#LayersUrlPart:     LAYERS=ortslagen|Ortslagen||
+#LayersUrlPart:     LAYERS=gewaesser|Gewaesser||
+#LayersUrlPart:     LAYERS=weg|Wege||
+#LayersUrlPart:     LAYERS=strasse|Strassen||
+#LayersUrlPart:     LAYERS=gemeindestrasse|Gemeindestrassen||
+#LayersUrlPart:     LAYERS=kreisstrasse|Kreisstrassen||
+#LayersUrlPart:     LAYERS=landesstrasse|Landesstrassen||
+#LayersUrlPart:     LAYERS=bundesstrasse|Bundesstrassen||
+#LayersUrlPart:     LAYERS=autobahn|Autobahnen||
+#LayersUrlPart:     LAYERS=bahn|Bahn||
+#LayersUrlPart:     LAYERS=orte|Orte||
+#LayersUrlPart: LAYERS=Saarland,landesflaeche,gruenland,industrie,wald,sonderkultur,ortslagen,gewaesser,weg,strasse,gemeindestrasse,kreisstrasse,landesstrasse,bundesstrasse,autobahn,bahn,orte
+LayersUrlPart:		LAYERS=Saarland
+StylesUrlPart:     STYLES=
+ImageFormatUrlPart:FORMAT=image/jpeg
+BoundingBoxTopLeftWGS84: N 49.6445 E 6.3553
+BoundingBoxBottomRightWGS84: N 49.1094 E 7.4138
+#BBox_Mitte: N 49.37695 E 6.88454
+MinScale:   0.2
+MaxScale:   200
+RecommendedScale:    9 2
+ImageFileExtension: .jpg
