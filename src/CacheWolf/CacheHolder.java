@@ -671,14 +671,15 @@ public class CacheHolder {
 		varParams.put("STATUS_DATE", getStatusDate());
 		varParams.put("STATUS_TIME", getStatusTime());
 		varParams.put("CACHE_NAME", cacheName);
+		String cn = cacheName;
 		if (codec instanceof AsciiCodec) {
-			cacheName = Exporter.simplifyString(cacheName);
+			cn = Exporter.simplifyString(cacheName);
 		} // use for "NAME"
 		if (badChars != null) {
-			cacheName = badChars.replaceAll(cacheName);
+			cn = badChars.replaceAll(cacheName);
 		} // use for "NAME"
-		varParams.put("NAME", cacheName); // !!! cacheName used twice
-		String shortName = shortenName(cacheName, shortNameLength);
+		varParams.put("NAME", cn);
+		String shortName = shortenName(cn, shortNameLength);
 		varParams.put("SHORTNAME", shortName);
 		varParams.put("TRAVELBUG", (bugs ? "Y" : "N"));
 		if (gm != null)
