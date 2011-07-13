@@ -1,0 +1,22 @@
+TakenFromUrl:       http://deutschlandviewer.bayern.de/deutschlandviewer/D_Viewer_Hilfe/Hilfe_D_Viewer.htm#Geodaten
+GetCapabilitiesUrl: http://www.lv-bw.de/dv/service/getrds.asp?login=dv&pw=anonymous&SERVICE=WMS&REQUEST=GetCapabilities
+Name: de.Baden-Wuerttemberg t10k
+MapType:                        topo
+#MainUrl:            http://www.lv-bw.de/dv/service/getrds.asp?login=dv&pw=anonymous&
+MainUrl:            http://www.lv-bw.de/dv/service/getrds.asp?login=geoportal&pw=gdi_bw&
+ServiceTypeUrlPart: SERVICE=WMS
+VersionUrlPart:     VERSION=1.1.1
+CoordinateReferenceSystemCacheWolf:  31467
+CoordinateReferenceSystemUrlPart: SRS=EPSG:31467
+RequestUrlPart:     REQUEST=GetMap
+#LayersUrlPart:     LAYERS=DVDOP2|DOP_2m||
+#LayersUrlPart:     LAYERS=DVTK50K|TK50||
+LayersUrlPart:     LAYERS=RK10
+StylesUrlPart:     STYLES=
+ImageFormatUrlPart:FORMAT=image/jpeg
+BoundingBoxTopLeftWGS84: N 50.0000 E 7.6000
+BoundingBoxBottomRightWGS84: N 47.4000 E 10.0000
+MinScale:   0
+MaxScale:   20
+RecommendedScale:    1 5 10
+ImageFileExtension: .jpg
