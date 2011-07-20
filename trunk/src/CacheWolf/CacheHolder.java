@@ -58,7 +58,7 @@ public class CacheHolder {
 	/** The name of the waypoint, typically GC.... or OC.... or CW...... (can be any characters) */
 	private String wayPoint = EMPTY;
 	/** The name of the cache (short description) */
-	public String cacheName = EMPTY;
+	private String cacheName = EMPTY;
 	/** The alias of the owner */
 	private String cacheOwner = EMPTY;
 	/** The coordinates of the cache */
