@@ -898,6 +898,9 @@ public class CacheHolder {
 			start = chD.LongDescription.indexOf(">", pos) + 1;
 			String oldurl = chD.images.get(imageNo).getURL();
 			String imgString = chD.LongDescription.substring(pos, start);
+			imgString = STRreplace.replace(imgString, "\n", "");
+			imgString = STRreplace.replace(imgString, "\r", "");
+			imgString = STRreplace.replace(imgString, "groundspeak", "geocaching");
 			if (imgString.indexOf(oldurl) == -1) {
 				if (oldurl.startsWith("http://")) {
 					int i = oldurl.indexOf("/", 7) + 1;
