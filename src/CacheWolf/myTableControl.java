@@ -376,7 +376,7 @@ public class myTableControl extends TableControl {
 			if (ch.pos.isValid()) {
 				String lat = "" + ch.pos.getLatDeg(CWPoint.DD);
 				String lon = "" + ch.pos.getLonDeg(CWPoint.DD);
-				String nameOfCache = UrlFetcher.encodeURL(ch.cacheName, false).replace('#', 'N').replace('@', '_');
+				String nameOfCache = UrlFetcher.encodeURL(ch.getCacheName(), false).replace('#', 'N').replace('@', '_');
 				String language = Vm.getLocale().getString(Locale.LANGUAGE_SHORT, 0, 0);
 				if (!pref.language.equalsIgnoreCase("auto")) {
 					language = pref.language;
