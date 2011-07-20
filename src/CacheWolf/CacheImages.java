@@ -274,8 +274,7 @@ public class CacheImages {
 	 * @return Same URL, eventually modified
 	 */
 	public static String optimizeLink(String pUrl) {
-		String url = STRreplace.replace(pUrl, "\n", "");
-		url = STRreplace.replace(pUrl, "\r", "");
+		String url = pUrl;
 		// img.groundspeak.com is same as img.geocaching.com, so replace it
 		if (url.toLowerCase().startsWith("http://img.groundspeak.com/")) {
 			url = "http://img.geocaching.com/" + url.substring(27);
