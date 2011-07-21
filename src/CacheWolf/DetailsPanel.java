@@ -345,7 +345,7 @@ public class DetailsPanel extends CellPanel {
 		dirtyDetails = false;
 		inpWaypoint.setText(ch.getWayPoint());
 		inpName.setText(ch.getCacheName());
-		btnCoordinates.setText(ch.pos.toString());
+		btnCoordinates.setText(ch.getPos().toString());
 		inpHidden.setText(mainCache.getDateHidden());
 		inpOwner.setText(mainCache.getCacheOwner());
 		chcStatus.setText(ch.getStatusText());
@@ -508,7 +508,7 @@ public class DetailsPanel extends CellPanel {
 					waypointNotes.setText(cache.getCacheDetails(true).getCacheNotes());
 				}
 			} else if (ev.target == btnShowMap) {
-				Global.mainTab.SwitchToMovingMap(cache.pos, true);
+				Global.mainTab.SwitchToMovingMap(cache.getPos(), true);
 			} else if (ev.target == btnShowBug) {
 				// InfoScreen is = new InfoScreen(thisCache.Travelbugs.toHtml(),
 				// "Travelbugs",
@@ -566,8 +566,7 @@ public class DetailsPanel extends CellPanel {
 				blackStatusChanged = true;
 			} else if (ev.target == btnNewWpt) {
 				final CacheHolder ch = new CacheHolder();
-				ch.setLatLon(cache.getLatLon());
-				ch.pos = new CWPoint(cache.pos);
+				ch.setPos(cache.getPos());
 				ch.setType(CacheType.CW_TYPE_STAGE);
 				ch.setHard(CacheTerrDiff.CW_DT_UNSET);
 				ch.setTerrain(CacheTerrDiff.CW_DT_UNSET);
@@ -587,10 +586,8 @@ public class DetailsPanel extends CellPanel {
 					if (InScr.execute(null, CellConstants.TOP) == FormBase.IDOK) {
 						dirtyDetails = true;
 						coords = InScr.getCoords();
-						Global.getProfile().notifyUnsavedChanges(!cache.pos.toString().equals(coords.toString()));
-						cache.pos.set(coords);
+						cache.setPos(coords);
 						btnCoordinates.setText(coords.toString());
-						cache.setLatLon(coords.toString());
 						// If the current centre is valid, calculate the distance and bearing to it
 						final CWPoint centre = Global.getPref().getCurCentrePt();
 						if (centre.isValid()) {
@@ -603,10 +600,8 @@ public class DetailsPanel extends CellPanel {
 					if (cs.execute() == FormBase.IDOK) {
 						dirtyDetails = true;
 						coords = cs.getCoords();
-						Global.getProfile().notifyUnsavedChanges(!cache.pos.toString().equals(coords.toString()));
-						cache.pos.set(coords);
+						cache.setPos(coords);
 						btnCoordinates.setText(coords.toString());
-						cache.setLatLon(coords.toString());
 						// If the current centre is valid, calculate the distance and bearing to it
 						final CWPoint centre = Global.getPref().getCurCentrePt();
 						if (centre.isValid()) {
@@ -771,7 +766,6 @@ public class DetailsPanel extends CellPanel {
 		if (cache.getWayPoint().length() < 2)
 			cache.setWayPoint(cache.getWayPoint() + " ");
 		cache.setCacheName(inpName.getText().trim());
-		cache.setLatLon(cache.pos.toString());
 		if (!cache.isAddiWpt()) {
 			cache.setDateHidden(inpHidden.getText().trim());
 		}

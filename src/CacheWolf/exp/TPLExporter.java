@@ -249,7 +249,7 @@ public class TPLExporter {
 				imgExpName = expName;
 			for (int i = 0; i < counter; i++) {
 				CacheHolder ch = cacheDB.get(i);
-				if (ch.isVisible() && (ch.pos.isValid() || myFilter.formatModifier > 0)) {
+				if (ch.isVisible() && (ch.getPos().isValid() || myFilter.formatModifier > 0)) {
 					boolean get = true;
 					if (myFilter.getAddiWp) {
 						get = ch.isAddiWpt();

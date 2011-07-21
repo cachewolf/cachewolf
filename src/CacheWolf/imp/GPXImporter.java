@@ -46,6 +46,7 @@ import CacheWolf.SafeXML;
 import CacheWolf.Travelbug;
 import CacheWolf.UrlFetcher;
 import CacheWolf.imp.SpiderGC.SpiderProperties;
+import CacheWolf.navi.TrackPoint;
 import CacheWolf.utils.FileBugfix;
 
 import com.stevesoft.ewe_pat.Regex;
@@ -191,7 +192,7 @@ public class GPXImporter extends MinML {
 			if (holder.getWayPoint().length() > 0) {
 				pref.log("[GPXImporter:DoIt] " + holder.getWayPoint() + " LogID=" + logId, e, true);
 			} else {
-				pref.log("[GPXImporter:DoIt] " + holder.getLatLon() + " LogID=" + logId, e, true);
+				pref.log("[GPXImporter:DoIt] " + holder.getPos().toString() + " LogID=" + logId, e, true);
 			}
 			infB.close(0);
 			Vm.showWait(false);
@@ -223,8 +224,7 @@ public class GPXImporter extends MinML {
 		}
 		if (name.equals("wpt")) {
 			holder = new CacheHolder();
-			holder.pos.set(Common.parseDouble(atts.getValue("lat")), Common.parseDouble(atts.getValue("lon")));
-			holder.setLatLon(holder.pos.toString());
+			holder.setPos(new TrackPoint(Common.parseDouble(atts.getValue("lat")), Common.parseDouble(atts.getValue("lon"))));
 			inWpt = true;
 			inLogs = false;
 			inBug = false;
@@ -364,8 +364,6 @@ public class GPXImporter extends MinML {
 				// if waypoint starts with "GC"
 				if (doSpider) {
 					if (spiderOK && holder.is_archived() == false) {
-						if (holder.getLatLon().length() > 1) {
-						}
 						// spiderImages();
 						spiderImagesUsingSpider();
 						// Rename image sources

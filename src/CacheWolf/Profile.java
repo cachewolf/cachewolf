@@ -592,32 +592,29 @@ public class Profile {
 		CacheHolder ch;
 		CWPoint topleft = null;
 		CWPoint bottomright = null;
-		CWPoint tmpca = new CWPoint();
 		numCachesInArea = 0;
 		boolean isAddi = false;
 		for (int i = cacheDB.size() - 1; i >= 0; i--) {
 			ch = cacheDB.get(i);
 			if (!onlyOfSelected || ch.is_Checked) {
-				if (ch.pos == null) { // this can not happen
-					tmpca.set(ch.getLatLon());
-					ch.pos = new CWPoint(tmpca);
-				}
-				if (ch.pos.isValid()) { // done: && ch.pos.latDec != 0 && ch.pos.lonDec != 0 TO-DO != 0 sollte rausgenommen werden sobald in der Liste vernünftig mit nicht gesetzten pos umgegangen wird
+				if (ch.getPos().isValid()) { // done: && ch.pos.latDec != 0 && ch.pos.lonDec != 0 TO-DO != 0 sollte rausgenommen werden sobald in der Liste vernünftig mit nicht gesetzten pos umgegangen wird
 					isAddi = ch.isAddiWpt();
-					if (!isAddi || (isAddi && ch.mainCache != null && ch.pos.getDistance(ch.mainCache.pos) < 1000)) { // test for plausiblity of coordinates of Additional Waypoints: more then 1000 km away from main Waypoint is unplausible -> ignore it //
-																														// && ch.mainCache != null is only necessary because the data base may be corrupted
+					// test for plausiblity of coordinates of Additional Waypoints: more then 1000 km away from main Waypoint is unplausible ->
+					// ignore it //
+					// && ch.mainCache != null is only necessary because the data base may be corrupted
+					if (!isAddi || (isAddi && ch.mainCache != null && ch.getPos().getDistance(ch.mainCache.getPos()) < 1000)) {
 						if (topleft == null)
-							topleft = new CWPoint(ch.pos);
+							topleft = new CWPoint(ch.getPos());
 						if (bottomright == null)
-							bottomright = new CWPoint(ch.pos);
-						if (topleft.latDec < ch.pos.latDec)
-							topleft.latDec = ch.pos.latDec;
-						if (topleft.lonDec > ch.pos.lonDec)
-							topleft.lonDec = ch.pos.lonDec;
-						if (bottomright.latDec > ch.pos.latDec)
-							bottomright.latDec = ch.pos.latDec;
-						if (bottomright.lonDec < ch.pos.lonDec)
-							bottomright.lonDec = ch.pos.lonDec;
+							bottomright = new CWPoint(ch.getPos());
+						if (topleft.latDec < ch.getPos().latDec)
+							topleft.latDec = ch.getPos().latDec;
+						if (topleft.lonDec > ch.getPos().lonDec)
+							topleft.lonDec = ch.getPos().lonDec;
+						if (bottomright.latDec > ch.getPos().latDec)
+							bottomright.latDec = ch.getPos().latDec;
+						if (bottomright.lonDec < ch.getPos().lonDec)
+							bottomright.lonDec = ch.getPos().lonDec;
 						numCachesInArea++;
 					}
 				}

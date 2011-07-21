@@ -28,6 +28,7 @@ package CacheWolf;
 import CacheWolf.exp.Exporter;
 import CacheWolf.exp.GarminMap;
 import CacheWolf.navi.Metrics;
+import CacheWolf.navi.TrackPoint;
 
 import com.stevesoft.ewe_pat.Regex;
 
@@ -62,9 +63,7 @@ public class CacheHolder {
 	/** The alias of the owner */
 	private String cacheOwner = EMPTY;
 	/** The coordinates of the cache */
-	public CWPoint pos = new CWPoint();
-	/** The coordinates of the cache */
-	private String LatLon = pos.toString();
+	private CWPoint pos = new CWPoint();
 	/** The date when the cache was hidden in format yyyy-mm-dd */
 	private String dateHidden = EMPTY;
 	/** The size of the cache (as per GC cache sizes Micro, Small, ....) */
@@ -182,8 +181,7 @@ public class CacheHolder {
 				start = xmlString.indexOf('"', end + 1);
 				end = xmlString.indexOf('"', start + 1);
 				double lon = Convert.parseDouble(xmlString.substring(start + 1, end).replace(notDecSep, decSep));
-				pos = new CWPoint(lat, lon);
-				LatLon = pos.toString();
+				pos.set(lat, lon);
 
 				start = xmlString.indexOf('"', end + 1);
 				end = xmlString.indexOf('"', start + 1);
@@ -343,7 +341,6 @@ public class CacheHolder {
 				end = xmlString.indexOf('"', start + 1);
 				double lon = Convert.parseDouble(xmlString.substring(start + 1, end).replace(notDecSep, decSep));
 				pos = new CWPoint(lat, lon);
-				LatLon = pos.toString();
 
 				start = xmlString.indexOf('"', end + 1);
 				end = xmlString.indexOf('"', start + 1);
@@ -492,7 +489,6 @@ public class CacheHolder {
 		if (ch.pos.isValid() || !this.pos.isValid()) {
 			if (mayChangeCoordinates) {
 				this.pos = ch.pos;
-				this.LatLon = ch.LatLon;
 			}
 		}
 		this.setWayPoint(ch.getWayPoint());
@@ -655,7 +651,7 @@ public class CacheHolder {
 		varParams.put("DISTANCE", decSep.replaceAll(getDistance()));
 		varParams.put("BEARING", bearing);
 		if ((pos != null && pos.isValid())) {
-			varParams.put("LATLON", decSep.replaceAll(LatLon));
+			varParams.put("LATLON", decSep.replaceAll(pos.toString()));
 			varParams.put("LAT", decSep.replaceAll(pos.getLatDeg(CWPoint.DD)));
 			varParams.put("LON", decSep.replaceAll(pos.getLonDeg(CWPoint.DD)));
 		} else {
@@ -1492,16 +1488,14 @@ public class CacheHolder {
 
 	// Getter and Setter for private properties
 
-	public String getLatLon() {
-		return LatLon;
+	public CWPoint getPos() {
+		return pos;
 	}
 
-	public void setLatLon(String _LatLon) {
-		_LatLon = _LatLon.trim();
-		if (!_LatLon.equals(LatLon.trim()))
+	public void setPos(TrackPoint _pos) {
+		if (!_pos.toString().equals(pos.toString()))
 			setUpdated(true);
-		LatLon = _LatLon;
-		pos.set(_LatLon);
+		pos.set(_pos);
 	}
 
 	public String getBearing() {

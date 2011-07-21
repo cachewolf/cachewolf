@@ -317,7 +317,7 @@ public class myTableControl extends TableControl {
 				return;
 			}
 			CacheHolder thisCache = cacheDB.get(tbp.getSelectedCache());
-			CWPoint cp = new CWPoint(thisCache.getLatLon());
+			CWPoint cp = new CWPoint(thisCache.getPos());
 			if (!cp.isValid()) {
 				MessageBox tmpMB = new MessageBox(MyLocale.getMsg(321, "Error"), MyLocale.getMsg(4111, "Coordinates must be entered in the format N DD MM.MMM E DDD MM.MMM"), FormBase.OKB);
 				tmpMB.execute();
@@ -373,9 +373,9 @@ public class myTableControl extends TableControl {
 
 		if (selectedItem == miOpenGmaps) {
 			ch = cacheDB.get(tbp.getSelectedCache());
-			if (ch.pos.isValid()) {
-				String lat = "" + ch.pos.getLatDeg(CWPoint.DD);
-				String lon = "" + ch.pos.getLonDeg(CWPoint.DD);
+			if (ch.getPos().isValid()) {
+				String lat = "" + ch.getPos().getLatDeg(CWPoint.DD);
+				String lon = "" + ch.getPos().getLonDeg(CWPoint.DD);
 				String nameOfCache = UrlFetcher.encodeURL(ch.getCacheName(), false).replace('#', 'N').replace('@', '_');
 				String language = Vm.getLocale().getString(Locale.LANGUAGE_SHORT, 0, 0);
 				if (!pref.language.equalsIgnoreCase("auto")) {

@@ -417,7 +417,7 @@ public class myTableModel extends TableModel {
 					wpVal.addColumn(ch.getCacheName());
 					return wpVal;
 				case 6: // Location
-					return ch.getLatLon();
+					return ch.getPos().toString();
 				case 7: // Owner
 					return ch.getCacheOwner();
 				case 8: // Date hidden

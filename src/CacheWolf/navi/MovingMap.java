@@ -1016,7 +1016,7 @@ public final class MovingMap extends Form implements ICommandListener {
 	}
 
 	public void destChanged(CacheHolder ch) {
-		final CWPoint d = new CWPoint(ch.pos);
+		final CWPoint d = new CWPoint(ch.getPos());
 		if (!running || (gotoPos != null && gotoPos.where.equals(d)))
 			return;
 		removeMapSymbol("goto");
@@ -1190,18 +1190,18 @@ public final class MovingMap extends Form implements ICommandListener {
 		final Area screenArea = new Area(ScreenXY2LatLon(0, 0), ScreenXY2LatLon(width, height));
 		for (int i = cacheDB.size() - 1; i >= 0; i--) {
 			ch = cacheDB.get(i);
-			if (screenArea.isInBound(ch.pos)) {
+			if (screenArea.isInBound(ch.getPos())) {
 				// because visible and valid don't change while showing map
 				// -->need no remove
-				if (ch.isVisible() && ch.pos.isValid()) {
+				if (ch.isVisible() && ch.getPos().isValid()) {
 					if (pref.showCachesOnMap) {
 						if (addSymbolIsNecessary(ch.getWayPoint())) {
-							addSymbol(ch.getWayPoint(), ch, CacheType.getMapImage(ch), ch.pos);
+							addSymbol(ch.getWayPoint(), ch, CacheType.getMapImage(ch), ch.getPos());
 						}
 					} else {
 						if (ch.is_Checked || ch == cacheDB.get(Global.mainTab.tbP.getSelectedCache())) {
 							if (addSymbolIsNecessary(ch.getWayPoint())) {
-								addSymbol(ch.getWayPoint(), ch, CacheType.getMapImage(ch), ch.pos);
+								addSymbol(ch.getWayPoint(), ch, CacheType.getMapImage(ch), ch.getPos());
 							}
 						} else {
 							removeMapSymbol(ch);
@@ -1223,9 +1223,9 @@ public final class MovingMap extends Form implements ICommandListener {
 				gotoPosCH = (CacheHolder) gotoPos.mapObject;
 			}
 			if (gotoPosCH != null) {
-				if (screenArea.isInBound(gotoPosCH.pos)) {
+				if (screenArea.isInBound(gotoPosCH.getPos())) {
 					if (!pref.showCachesOnMap) {
-						addSymbolIfNecessary(gotoPosCH.getWayPoint(), gotoPosCH, CacheType.getMapImage(gotoPosCH), gotoPosCH.pos);
+						addSymbolIfNecessary(gotoPosCH.getWayPoint(), gotoPosCH, CacheType.getMapImage(gotoPosCH), gotoPosCH.getPos());
 					}
 					addSymbolIfNecessary("goto", gotoPosCH, imgGoto, gotoPos.where);
 				}
@@ -1235,8 +1235,8 @@ public final class MovingMap extends Form implements ICommandListener {
 		removeMapSymbol("selectedCache");
 		ch = cacheDB.get(Global.mainTab.tbP.getSelectedCache());
 		if (ch != null) {
-			if (screenArea.isInBound(ch.pos)) {
-				addSymbolIfNecessary("selectedCache", ch, imgSelectedCache, ch.pos);
+			if (screenArea.isInBound(ch.getPos())) {
+				addSymbolIfNecessary("selectedCache", ch, imgSelectedCache, ch.getPos());
 			}
 		}
 	}
@@ -2864,8 +2864,7 @@ class MovingMapPanel extends InteractivePanel implements EventListener {
 					if (action == newWayPointMenuItem) {
 						leaveMovingMap();
 						final CacheHolder newWP = new CacheHolder();
-						newWP.pos = mm.ScreenXY2LatLon(saveMapLoc.x, saveMapLoc.y);
-						newWP.setLatLon(newWP.pos.toString());
+						newWP.setPos(mm.ScreenXY2LatLon(saveMapLoc.x, saveMapLoc.y));
 						Global.mainTab.newWaypoint(newWP);
 					}
 					if (action == addCachetoListMenuItem) {

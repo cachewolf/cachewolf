@@ -100,8 +100,8 @@ public final class OCLinkImporter {
 				else {
 					// check over coordinates
 					// getting a cache next to the coordinates
-					String nLat = ch.pos.getLatDeg(CWPoint.DD);
-					String nLon = ch.pos.getLonDeg(CWPoint.DD);
+					String nLat = ch.getPos().getLatDeg(CWPoint.DD);
+					String nLon = ch.getPos().getLonDeg(CWPoint.DD);
 					url = baseurl + "mode=locate&lat=" + nLat + "&lon=" + nLon;
 					result = SafeXML.cleanback(UrlFetcher.fetch(url));
 					String ocCacheName = new Extractor(result, "name=\"", "\"", 0, true).findNext();
@@ -113,7 +113,7 @@ public final class OCLinkImporter {
 						int latend = result.indexOf("\"", lonend);
 						double lon = Common.parseDouble(result.substring(start, lonend));
 						double lat = Common.parseDouble(result.substring(lonend + 1, latend));
-						boolean sameCoord = lon == ch.pos.lonDec && lat == ch.pos.latDec;
+						boolean sameCoord = lon == ch.getPos().lonDec && lat == ch.getPos().latDec;
 						if (sameCoord) {
 							start = result.indexOf("username=\"") + 10;
 							int end = result.indexOf("\"", start);
