@@ -460,8 +460,8 @@ public class SpiderGC {
 		CacheHolder ch = null;
 		for (int i = 0; i < cacheDB.size(); i++) {
 			ch = cacheDB.get(i);
-			if (ch.is_Checked && ch.pos.isValid()) {
-				final CWPoint tmpPos = ch.pos;
+			if (ch.is_Checked && ch.getPos().isValid()) {
+				final CWPoint tmpPos = ch.getPos();
 				final double tmpDistance = tmpPos.getDistance(startPos);
 				if (nextDistance == 0) {
 					// Startwert
@@ -484,7 +484,7 @@ public class SpiderGC {
 			}
 		}
 		if (index > -1) {
-			return cacheDB.get(index).pos;
+			return cacheDB.get(index).getPos();
 		} else
 			return null;
 	}
@@ -630,7 +630,7 @@ public class SpiderGC {
 
 				ch = new CacheHolder();
 				ch.setWayPoint(wp);
-				ch.setLatLon(lat + " " + lon);
+				ch.setPos(new CWPoint(lat + " " + lon));
 				ch.setType(cacheType);
 				if (own.equals("true")) {
 					ch.setOwned(true);
@@ -1711,7 +1711,7 @@ public class SpiderGC {
 			boolean pm = subrOnly.equals("false") ? false : true;
 			if (pm && !pref.isPremium)
 				ch.setCacheStatus("PM");
-			ch.pos = p;
+			ch.setPos(p);
 			ch.setCacheOwner(owner);
 			// wird nicht mehr geliefert , todo aus Grafik extrahieren.
 			if (owner.equals(pref.myAlias) || owner.equals(pref.myAlias2)) {
@@ -2319,8 +2319,8 @@ public class SpiderGC {
 						// ==========
 						// General Cache Data
 						// ==========
-						ch.setLatLon(latLon);
-						pref.log("LatLon: " + ch.getLatLon());
+						ch.setPos(new CWPoint(latLon));
+						pref.log("LatLon: " + ch.getPos().toString());
 
 						final String longDesc = getLongDesc(completeWebPage);
 						ch.getCacheDetails(false).setLongDescription(longDesc);
@@ -3047,7 +3047,7 @@ public class SpiderGC {
 
 					koordRex.search(rowBlock);
 					if (koordRex.didMatch()) {
-						hd.setLatLon(koordRex.stringMatched(1));
+						hd.setPos(new CWPoint(koordRex.stringMatched(1)));
 						koords_not_yet_found = false;
 					} else {
 						if (koords_not_yet_found) {
