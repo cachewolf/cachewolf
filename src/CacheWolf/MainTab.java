@@ -386,15 +386,15 @@ public class MainTab extends mTabbedPanel {
 			// why not using the target ???
 			CacheHolder selectedCache = profile.cacheDB.get(selectedIndex);
 			// try to start new waypoint with real coords
-			if (!pCh.pos.isValid()) {
-				pCh.pos.set(selectedCache.pos);
+			if (!pCh.getPos().isValid()) {
+				pCh.setPos(selectedCache.getPos());
 			}
 			if (selectedCache.isAddiWpt()) {
 				if (selectedCache.mainCache != null) {
 					mainCache = selectedCache.mainCache.getWayPoint();
 					// try to start new waypoint with real coords
-					if (!pCh.pos.isValid()) {
-						pCh.pos.set(selectedCache.mainCache.pos);
+					if (!pCh.getPos().isValid()) {
+						pCh.setPos(selectedCache.mainCache.getPos());
 					}
 				} else {
 					mainCache = null;

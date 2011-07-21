@@ -73,7 +73,7 @@ public class MyComparer implements Comparer {
 		} else if (colToCompare == 6) {
 			for (int i = 0; i < visibleSize; i++) {
 				CacheHolder ch = cacheDB.get(i);
-				ch.sort = ch.getLatLon();
+				ch.sort = ch.getPos().toString();
 			}
 		} else if (colToCompare == 7) {
 			for (int i = 0; i < visibleSize; i++) {

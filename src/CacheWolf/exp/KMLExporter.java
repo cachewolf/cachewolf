@@ -134,8 +134,8 @@ public class KMLExporter extends Exporter {
 						h.progress = (float) expCount / (float) counter;
 						h.changed();
 
-						if (ch.pos.isValid()) {
-							str = record(ch, ch.pos.getLatDeg(CWPoint.DD).replace('.', this.decimalSeparator), ch.pos.getLonDeg(CWPoint.DD).replace('.', this.decimalSeparator));
+						if (ch.getPos().isValid()) {
+							str = record(ch, ch.getPos().getLatDeg(CWPoint.DD).replace('.', this.decimalSeparator), ch.getPos().getLonDeg(CWPoint.DD).replace('.', this.decimalSeparator));
 							if (str != null)
 								outp.print(str);
 						}
@@ -144,12 +144,12 @@ public class KMLExporter extends Exporter {
 							for (int j = 0; j < ch.addiWpts.size(); j++) {
 								addiWpt = (CacheHolder) ch.addiWpts.get(j);
 								expCount++;
-								if (ch.pos.isValid() && addiWpt.isVisible()) {
+								if (ch.getPos().isValid() && addiWpt.isVisible()) {
 									if (!createdAdditionalWaypointsFolder) {
 										outp.print(startFolder("Additional Waypoints", false));
 										createdAdditionalWaypointsFolder = true;
 									}
-									str = record(addiWpt, addiWpt.pos.getLatDeg(CWPoint.DD).replace('.', this.decimalSeparator), addiWpt.pos.getLonDeg(CWPoint.DD).replace('.', this.decimalSeparator));
+									str = record(addiWpt, addiWpt.getPos().getLatDeg(CWPoint.DD).replace('.', this.decimalSeparator), addiWpt.getPos().getLonDeg(CWPoint.DD).replace('.', this.decimalSeparator));
 									if (str != null)
 										outp.print(str);
 								}
