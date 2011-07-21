@@ -810,18 +810,32 @@ public class CacheHolder {
 			for (int i = 0; i < det.images.size(); i++) {
 				Hashtable imgs = new Hashtable();
 				String imgFile = det.images.get(i).getFilename();
-				imgs.put("FILENAME", imgFile);
-				imgs.put("TEXT", det.images.get(i).getTitle());
-				imgs.put("COMMENT", det.images.get(i).getComment());
-				imgs.put("URL", det.images.get(i).getURL());
-				if (!expName.equals("")) {
-					String src = Global.getProfile().dataDir + imgFile;
-					String dest = Global.getPref().getExportPath(expName) + imgFile;
-					if (!DataMover.copy(src, dest)) {
-						Global.getPref().log("[CacheHolder:toHashtable]error copying " + imgFile + " to " + Global.getPref().getExportPath(expName));
+				boolean doit = true;
+				for (int j = i + 1; j < det.images.size(); j++) {
+					String jmgFile = det.images.get(j).getFilename();
+					if (imgFile.equals(jmgFile)) {
+						doit = false;
+						break;
 					}
 				}
-				imgVect.add(imgs);
+				if (doit) {
+					imgs.put("FILENAME", imgFile);
+					String title = det.images.get(i).getTitle();
+					imgs.put("TEXT", title);
+					String comment = det.images.get(i).getComment();
+					imgs.put("COMMENT", comment);
+					imgs.put("URL", det.images.get(i).getURL());
+					if (!expName.equals("")) {
+						String src = Global.getProfile().dataDir + imgFile;
+						String dest = Global.getPref().getExportPath(expName) + imgFile;
+						if (!DataMover.copy(src, dest)) {
+							Global.getPref().log("[CacheHolder:toHashtable]error copying " + imgFile + " to " + Global.getPref().getExportPath(expName));
+						}
+					}
+					if (!title.toLowerCase().startsWith(wayPoint.toLowerCase())) {
+						imgVect.add(imgs);
+					}
+				}
 			}
 			varParams.put("cacheImg", imgVect);
 		}
