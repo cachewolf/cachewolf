@@ -102,7 +102,7 @@ public class MainTab extends mTabbedPanel {
 		// Don't expand tabs if the screen is very narrow, i.e. HP IPAQ
 		// 65xx, 69xx
 		int sw = MyLocale.getScreenWidth();
-		if (sw <= 240)
+		if (sw <= 480)
 			this.dontExpandTabs = true;
 		String imagesize = "";
 		if (pref.useBigIcons)
