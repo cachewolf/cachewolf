@@ -823,23 +823,13 @@ public final class MovingMap extends Form implements ICommandListener {
 			posCircleX = width / 2;
 			posCircleY = height / 2;
 		} else {
-			posCircleX = pref.myAppWidth / 2; // maybe this could /should
-												// be repleced to windows
-												// size
+			// maybe this could / should be replaced to windows size
+			posCircleX = pref.myAppWidth / 2;
 			posCircleY = pref.myAppHeight / 2;
 		}
 		posCircle.hidden = false;
-		posCircle.move(posCircleX - posCircle.getWidth() / 2, posCircleY - posCircle.getHeight() / 2); // posCircle.setLocation
-																										// caused
-																										// a
-																										// problem
-																										// ->
-																										// hiding
-																										// the
-																										// posCircle
-																										// in
-																										// some
-																										// situation
+		posCircle.move(posCircleX - posCircle.getWidth() / 2, posCircleY - posCircle.getHeight() / 2);
+		// posCircle.setLocation a problem -> hiding the posCircle in some situation
 	}
 
 	public void movePosCircleToLatLon(CWPoint p, boolean repaint) {
@@ -879,8 +869,8 @@ public final class MovingMap extends Form implements ICommandListener {
 			dontUpdatePos = false;
 			updatePosition(posCircle.where);
 		} else
-			updateSymbolPositions(); // will also be done in
-										// updatePosition
+			// will also be done in updatePosition
+			updateSymbolPositions();
 		updateOverlayPos();
 	}
 
@@ -1125,7 +1115,7 @@ public final class MovingMap extends Form implements ICommandListener {
 	 * posCircle is at lat/lon
 	 */
 	public void updatePosition(CWPoint where) {
-		if (dontUpdatePos || loadingMapList)
+		if (dontUpdatePos || loadingMapList || (where.latDec == 0 && where.lonDec == 0))
 			return; // avoid multi-threading problems
 		loadBestMap(where);
 		if (width == 0 || height == 0) {
@@ -1137,17 +1127,7 @@ public final class MovingMap extends Form implements ICommandListener {
 		final boolean screenNotCompletlyCovered = (mmp.mapImage == null) || (mmp.mapImage != null && (mapPos.y > 0 || mapPos.x > 0 || mapPos.y + mmp.mapImage.getHeight() < this.height || mapPos.x + mmp.mapImage.getWidth() < this.width));
 		// if screendimensions changed also force reload of map
 		forceMapLoad |= lastWidth != width || lastHeight != height;
-		if (forceMapLoad || wantMapTest || screenNotCompletlyCovered) { // if
-																		// force
-																		// ||
-																		// want
-																		// ||
-																		// map
-																		// doesn't
-																		// cover
-																		// the
-																		// screen
-																		// completly
+		if (forceMapLoad || wantMapTest || screenNotCompletlyCovered) {
 			if (forceMapLoad || (java.lang.Math.abs(lastCompareX - mapPos.x) > this.width / 10 || java.lang.Math.abs(lastCompareY - mapPos.y) > this.height / 10)) {
 				// more then 1/10 of screen moved since last time we tried
 				// to find a better map
