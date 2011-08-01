@@ -1,20 +1,26 @@
-TakenFromUrl:   http://wiki.gfoss.it/index.php/GIS_Open_Data#Italia
-GetCapabilitiesUrl:   http://webgis.regione.sardegna.it/wmsconnector/com.esri.wms.Esrimap/ras_wms?request=getcapabilities&service=WMS&version=1.1.1
-Name:   it.Sardinien photo
-MapType:   photo
-MainUrl:   http://webgis.regione.sardegna.it/wmsconnector/com.esri.wms.Esrimap/ras_wms?
-ServiceTypeUrlPart:   SERVICE=WMS
-VersionUrlPart:   VERSION=1.1.1
+TakenFromUrl:       http://webgis.regione.sardegna.it:80/wmsconnector/com.esri.wms.Esrimap/ras_wms?
+GetCapabilitiesUrl: http://webgis.regione.sardegna.it/wmsconnector/com.esri.wms.Esrimap/ras_wms?SERVICE=WMS&VERSION=1.1.1&REQUEST=GetCapabilities
+Name:               it.sardegna p
+MapType:                        photo
+MainUrl:            http://webgis.regione.sardegna.it/wmsconnector/com.esri.wms.Esrimap/ras_wms?
+ServiceTypeUrlPart: SERVICE=WMS
+VersionUrlPart:     VERSION=1.1.1
 CoordinateReferenceSystemCacheWolf:  4326
 CoordinateReferenceSystemUrlPart: SRS=EPSG:4326
-RequestUrlPart:   REQUEST=GetMap
-LayersUrlPart:   LAYERS=ortofoto_it_2006
-StylesUrlPart:   STYLES=
-ImageFormatUrlPart:   FORMAT=image/png
-BoundingBoxTopLeftWGS84:   N 41.400307 E 7.964019
-BoundingBoxButtomRightWGS84:   N 38.792131 E 10.022418
-MinScale:   4
-MaxScale:   6
-# RecommendedScale:   1.000
-RecommendedScale:   4
+RequestUrlPart:     REQUEST=GetMap
+#LayersUrlPart:     LAYERS=ortofoto_it_2000|Ortofoto IT2000||
+#LayersUrlPart:     LAYERS=ortofoto_it_2006|Ortofoto IT2006||
+#LayersUrlPart:     LAYERS=Carta fisica|Carta fisica||
+#LayersUrlPart:     LAYERS=CTR10K raster|CTR10K raster||
+#LayersUrlPart:     LAYERS=IKONOS_RGB_Mosaico_Sardegna|IKONOS Mosaico RGB||
+#LayersUrlPart:     LAYERS=orto2k_totale|Ortofoto 2K||
+LayersUrlPart:     LAYERS=ortofoto_it_2006
+StylesUrlPart:     STYLES=
+ImageFormatUrlPart:FORMAT=image/png
+BoundingBoxTopLeftWGS84: N 41.4003 E 7.9640
+BoundingBoxBottomRightWGS84: N 38.7921 E 10.0224
+#BBox_Mitte: N 40.0962197844 E 8.99321880565
+MinScale:   0.3453
+MaxScale:   2.7621
+RecommendedScale:    1 0.5 1.5
 ImageFileExtension: .png

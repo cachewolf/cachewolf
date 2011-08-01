@@ -14,7 +14,7 @@ LayersUrlPart:     LAYERS=WMS_OrtoExpress
 StylesUrlPart:     STYLES=
 ImageFormatUrlPart:FORMAT=image/jpeg
 BoundingBoxTopLeftWGS84: N 29.8305 W 18.3099
-BoundingBoxButtomRightWGS84: N 26.1839 W 13.1373
+BoundingBoxBottomRightWGS84: N 26.1839 W 13.1373
 MinScale:   0
 MaxScale:   45
 RecommendedScale:   5

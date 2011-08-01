@@ -349,7 +349,7 @@ LayersUrlPart:     LAYERS=dtkv25col
 StylesUrlPart:     STYLES=
 ImageFormatUrlPart:FORMAT=image/png
 BoundingBoxTopLeftWGS84: N 51.7 E 10.3
-BoundingBoxButtomRightWGS84: N 50.1 E 12.7
+BoundingBoxBottomRightWGS84: N 50.1 E 12.7
 MinScale:   1
 MaxScale:   12
 RecommendedScale:   2,5

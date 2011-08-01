@@ -1,0 +1,22 @@
+TakenFromUrl:       http://10.220.56.127/ArcGIS93/services/wms/ortofoto_UTM32N_wms/MapServer/WMSServer
+GetCapabilitiesUrl: http://www.cartografia.regione.lombardia.it/ArcGIS93/services/wms/ortofoto_UTM32N_wms/MapServer/WMSServer?SERVICE=WMS&VERSION=1.1.1&REQUEST=GetCapabilities
+Name:               it.lombardia p
+MapType:                        photo
+MainUrl:            http://www.cartografia.regione.lombardia.it/ArcGIS93/services/wms/ortofoto_UTM32N_wms/MapServer/WMSServer?
+ServiceTypeUrlPart: SERVICE=WMS
+VersionUrlPart:     VERSION=1.1.1
+CoordinateReferenceSystemCacheWolf:  4326
+CoordinateReferenceSystemUrlPart: SRS=EPSG:4326 
+RequestUrlPart:     REQUEST=GetMap
+#LayersUrlPart:     LAYERS=0|lombardia2007wgs84.ecw||
+#LayersUrlPart:     LAYERS=1|Province||
+LayersUrlPart:     LAYERS=0
+StylesUrlPart:     STYLES=
+ImageFormatUrlPart:FORMAT=image/png
+BoundingBoxTopLeftWGS84: N 46.7475 E 8.2398
+BoundingBoxBottomRightWGS84: N 44.5181 E 11.7416
+#BBox_Mitte: N 45.632761 E 9.990684
+MinScale:   0.3453
+MaxScale:   2.7621
+RecommendedScale:    1
+ImageFileExtension: .png

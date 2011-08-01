@@ -1,20 +1,27 @@
-TakenFromUrl: http://downloads.igorbrejc.net/osm/kosmos/
-#Kosmos Download : http://downloads.igorbrejc.net/osm/kosmos/
+TakenFromUrl: http://maperitive.net/
 GetCapabilitiesUrl:
-Name:               OSMOsmarender mit Kosmos.Console.exe
+Name:               OSMarender with Maperitive.exe
 MapType:                        topo
-MainUrl:            C:\\Programme\\Kosmos-2.5.405.6\\Console\\Kosmos.Console.exe
-ServiceTypeUrlPart: OSMOsmarender.kpr
-VersionUrlPart:
+#MainUrl: name of exceutable
+MainUrl:            Maperitive.exe
+#ServiceTypeUrlPart: default map to use : may be empty(=mapnik) or mapnik or osmarender or cyclemap
+ServiceTypeUrlPart: osmarender
+#VersionUrlPart: path to executable of mainUrl
+VersionUrlPart: C:/Programme/Maperitive
 CoordinateReferenceSystemCacheWolf:  4326
 CoordinateReferenceSystemUrlPart: SRS=EPSG:4326
-RequestUrlPart:     Kosmos
+#RequestUrlPart: must be Maperitive
+RequestUrlPart:     Maperitive
+#LayersUrlPart: empty or filename (osm or other) for the load-source command; path from VersionUrlPart will be added by CW
 LayersUrlPart:
+#StylesUrlPart: empty or filename for the use-ruleset location; path from VersionUrlPart will be added by CW
 StylesUrlPart:
 ImageFormatUrlPart:FORMAT=image/png
+# BBox the osm-file covers
 BoundingBoxTopLeftWGS84: N 90.0000 W 180.0000
-BoundingBoxButtomRightWGS84: S 90.0000 E 180.0000
+BoundingBoxBottomRightWGS84: S 90.0000 E 180.0000
 MinScale:   0
 MaxScale:   1000
 RecommendedScale:   5
-ImageFileExtension: .png
+#Maperitive does many png, jpg(jpeg), bmp, tif(tiff) , gif, emf, wmf
+ImageFileExtension: .jpg

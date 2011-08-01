@@ -41,7 +41,7 @@ LayersUrlPart:     LAYERS=ortho1m_sw,flu_50t,see
 StylesUrlPart:     STYLES=
 ImageFormatUrlPart:FORMAT=image/png
 BoundingBoxTopLeftWGS84:   N 49.112935  E 14.243781
-BoundingBoxButtomRightWGS84:   N 47.297627 E 17.481360
+BoundingBoxBottomRightWGS84:   N 47.297627 E 17.481360
 #BBox_Mitte: N 48.205281 E 15.862571
 MinScale:   0
 MaxScale:   45

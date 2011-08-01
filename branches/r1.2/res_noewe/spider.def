@@ -53,7 +53,8 @@
 # * When entering spaces into a string ensure to escape them or write them as \\u0020
 # * Be sure that you have no hidden spaces at the end of a line or the patterns will not match!
 #------------------------------------------------------------
-loginPage          = http://www.geocaching.com/login/default.aspx
+#loginPage          = http://www.geocaching.com/login/default.aspx
+loginPage          = https://www.geocaching.com/login/default.aspx
 loginSuccess       = You\ are\ logged\ in\ as
 nextPage           = /login/default.aspx
 waypoint           = http://www.geocaching.com/seek/cache_details.aspx?wp=
@@ -67,9 +68,9 @@ showOnlyFound      = &f=1
 maxDistance        = &dist=
 nextListPage       = /seek/nearest.aspx
 # Regex to search for cachenames
-listBlockRex       = <table id="ctl00_ContentBody_dlResults"((?s).*?)</table>
-lineRex            = <tr\ bgcolor='#.{6}'\\s*class="Data\ BorderTop">((?s).*?)</tr>
-logDateRex         = <td valign="top">\\s*(.*?)<br\ />
+listBlockRex       = <table\ class="SearchResultsTable\ Table">((?s).*?)</table>
+lineRex            = Data\ BorderTop">((?s).*?)</tr>
+logDateRex         = </span>\\s+</td>\\s+<td\ valign="top"\ width="70">\\s+<span\ class="small">\\s+(.*?)<br\ />
 availableRex       = class="lnk\ \ Strike">
 archivedRex        = class="lnk\ OldWarning\ Strike\ Strike">
 PMRex              = small_profile.gif
@@ -78,8 +79,8 @@ distCodeKey        = signalthefrog
 distRex            = (.*?)(?:km|mi|ft)
 DTSRex             = v=(.*?)"
 DTSCodeKey         = hbM9fjmrxy7z42LFD58BkKgPGdHscvCqNnw3ptO6lJ
-waypointRex        = \\(GC(.*?)\\)<br\ />
-TypeRex            = www.geocaching.com/images/wpttypes/sm/(.*?)\\.gif
+waypointRex        = \\|\\s+GC(.*?)\\s+
+TypeRex            = www.geocaching.com/images/wpttypes/(.*?)\\.gif
 found              = class="Success"
 own                = /WptTypes/name_tag.gif
 TBRex              = /wpttypes/([0-9]+).gif" alt="(.*?)"
@@ -109,13 +110,12 @@ cacheUnavailable   = class="OldWarning"><li>This\ cache\ is\ temporarily\ unavai
 cacheArchived      = class="OldWarning"><li>This\ cache\ has\ been\ archived
 premiumCachepage   = class="Warning">listing\ visible\ to\ Premium
 latLonRex          = tBody_LatLon"\ style="font-weight:bold;">((?s).*?)</span>
-#latLonRex          = tBody_LatLon"><b>((?s).*?)</b></span>
 shortDescRex       = tBody_ShortDescription">((?s).*?)</span>
-longDescRex        = tBody_LongDescription">((?s).*?)<td\ valign="top"\ width="10%">\\s*&nbsp;\\s*</td
+longDescRex        = tBody_LongDescription">((?s).*?)<strong>\\s+Additional\ Hints</strong>
 cacheNameRex       = tBody_CacheName">((?s).*?)</span>
 cacheOwnerRex      = &wid(?:(?s).*?)>((?s).*?)<
 dateHiddenRex      = (?:Hidden|Event\ Date)\\s*:\\s*((?s).*?)<
-hintsRex           = <div id="div_hint" class="HalfLeft">\\s*((?s).*?)\\s*</div>
+hintsRex           = <div\ id="div_hint"\ class="span-8\ WrapFix">\\s*((?s).*?)\\s*</div>
 sizeRex            = alt="Size:\ ((?s).*?)"
 difficultyRex      = difficulty\ of\ (.*?),
 terrainRex         = terrain\ of\ (.*?)\\.\\ 
@@ -126,7 +126,7 @@ cacheLocationRex   = tBody_Location">In\ ([^<]*?)<
 #Section2a: Logs
 #--------------------------------------
 # blockRex extrahiert zunächst aus der gesamten Seite den Logbereich
-blockRex           = <table class="LogsTable Table">((?s).*?)<td></td></tr></table>
+blockRex           = <table class="LogsTable">((?s).*?)</table>\\s+<p>
 # singleLogEx extrahiert in einer Schleife alle Logs aus dem Logbereich
 singleLogExStart   = ><strong><img src=
 singleLogExEnd     = <small><a\ href="
@@ -153,16 +153,17 @@ icon_attended      = icon_attended.gif
 #Section2b: Bugs
 #--------------------------------------
 # blockEx extrahiert zunächst den Bugbereich aus der gesamten Seite
-blockExStart       = <span\ id="ctl00_ContentBody_uxTravelBugList_uxInventoryLabel">Inventory</span>
-blockExEnd         = <p\ class="NoSpacing">
+blockExStart       = ctl00_ContentBody_uxTravelBugList_uxInventoryLabel
+#blockExEnd         = ctl00_ContentBody_uxTravelBugList_uxTrackableItemsLinks
+blockExEnd         = ctl00_ContentBody_uxTravelBugList_uxTrackableItemsHistory
 # bugEx extrahiert die Namen der einzelnen Bugs aus dem Bugbereich
 bugExStart         = <a\ href="
 bugExEnd           = </a>
 bugLinkEnd         = "\ class="lnk">
 bugNameExStart     = <span>
 bugNameExEnd       = </span>
-bugDetailsStart    = "og:description"\ content="
-bugDetailsEnd      = "\ property="og:desc
+bugDetailsStart    = <meta\ name="og:description"\ content="
+bugDetailsEnd      = "\ property="og:description"
 getBugByName       = http://www.geocaching.com/track/search.aspx?k=
 getBugByGuid       = http://www.geocaching.com/track/details.aspx?guid=
 getBugById         = http://www.geocaching.com/track/details.aspx?id=
@@ -208,7 +209,7 @@ prefixExEnd        = ">
 #--------------------------------------
 #Section2e: Attributes
 #--------------------------------------
-attBlockExStart = <div\ class="CacheDetailNavigationWidget\ Spacing">
+attBlockExStart = <div\ class="CacheDetailNavigationWidget
 attBlockExEnd  = What\ are\ Attributes?</a></small></p>
 attExStart = /images/attributes/
 attExEnd = "\ alt="

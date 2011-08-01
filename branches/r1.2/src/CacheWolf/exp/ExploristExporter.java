@@ -1,28 +1,28 @@
-    /*
-    GNU General Public License
-    CacheWolf is a software for PocketPC, Win and Linux that
-    enables paperless caching.
-    It supports the sites geocaching.com and opencaching.de
+/*
+GNU General Public License
+CacheWolf is a software for PocketPC, Win and Linux that
+enables paperless caching.
+It supports the sites geocaching.com and opencaching.de
 
-    Copyright (C) 2006  CacheWolf development team
-    See http://developer.berlios.de/projects/cachewolf/
-    for more information.
-    Contact: 	bilbowolf@users.berlios.de
-    			kalli@users.berlios.de
+Copyright (C) 2006  CacheWolf development team
+See http://developer.berlios.de/projects/cachewolf/
+for more information.
+Contact: 	bilbowolf@users.berlios.de
+			kalli@users.berlios.de
 
-    This program is free software; you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation; version 2 of the License.
+This program is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation; version 2 of the License.
 
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
 
-    You should have received a copy of the GNU General Public License
-    along with this program; if not, write to the Free Software
-    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
-    */
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software
+Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+ */
 package CacheWolf.exp;
 
 import CacheWolf.CWPoint;
@@ -95,19 +95,19 @@ public class ExploristExporter {
 	public void doIt() {
 		File configFile = new File("magellan.cfg");
 		if (configFile.exists()) {
-			FileChooser fc = new FileChooser(FileChooserBase.DIRECTORY_SELECT, pref.getExportPath(expName+"Dir"));
+			FileChooser fc = new FileChooser(FileChooserBase.DIRECTORY_SELECT, pref.getExportPath(expName + "Dir"));
 			fc.setTitle(MyLocale.getMsg(2104, "Choose directory for exporting .gs files"));
 			String targetDir;
-			if(fc.execute() != FormBase.IDCANCEL){
+			if (fc.execute() != FormBase.IDCANCEL) {
 				targetDir = fc.getChosen() + "/";
-				pref.setExportPath(expName+"Dir", targetDir);
+				pref.setExportPath(expName + "Dir", targetDir);
 
 				CWPoint centre = profile.centre;
 				try {
 					LineNumberReader reader = new LineNumberReader(new BufferedReader(new FileReader(configFile)));
 					String line, fileName, coordinate;
-					while ((line = reader.readLine()) != null)  {
-						StringTokenizer tokenizer = new StringTokenizer(line,"=");
+					while ((line = reader.readLine()) != null) {
+						StringTokenizer tokenizer = new StringTokenizer(line, "=");
 						fileName = targetDir + tokenizer.nextToken().trim() + ".gs";
 						coordinate = tokenizer.nextToken().trim();
 						CWPoint point = new CWPoint(coordinate);
@@ -117,17 +117,16 @@ public class ExploristExporter {
 					}
 					reader.close();
 				} catch (FileNotFoundException e) {
-					InfoBox info = new InfoBox(MyLocale.getMsg(2100, "Explorist Exporter"),MyLocale.getMsg(2101, "Failure at loading magellan.cfg\n" + e.getMessage()));
+					InfoBox info = new InfoBox(MyLocale.getMsg(2100, "Explorist Exporter"), MyLocale.getMsg(2101, "Failure at loading magellan.cfg\n" + e.getMessage()));
 					info.show();
 				} catch (IOException e) {
-					InfoBox info = new InfoBox(MyLocale.getMsg(2100, "Explorist Exporter"),MyLocale.getMsg(2103, "Failure at reading magellan.cfg\n" + e.getMessage()));
+					InfoBox info = new InfoBox(MyLocale.getMsg(2100, "Explorist Exporter"), MyLocale.getMsg(2103, "Failure at reading magellan.cfg\n" + e.getMessage()));
 					info.show();
 				} finally {
-					cacheDB.sort(new DistanceComparer(centre),false);
+					cacheDB.sort(new DistanceComparer(centre), false);
 				}
 			}
-		}
-		else {
+		} else {
 			doIt(null);
 		}
 	}
@@ -164,18 +163,14 @@ public class ExploristExporter {
 
 		try {
 			// Set initial value for outp to calm down compiler
-			PrintWriter outp = new PrintWriter(new BufferedWriter(
-								new FileWriter(new File(fileBaseName + expCount
-										/ 200 + ".gs"))));
+			PrintWriter outp = new PrintWriter(new BufferedWriter(new FileWriter(new File(fileBaseName + expCount / 200 + ".gs"))));
 			for (int i = 0; i < cacheDB.size(); i++) {
 				ch = cacheDB.get(i);
 				if (ch.isVisible()) {
 					// all 200 caches we need a new file
 					if (expCount % 200 == 0 && expCount > 0) {
 						outp.close();
-						outp = new PrintWriter(new BufferedWriter(
-								new FileWriter(new File(fileBaseName + expCount
-										/ 200 + ".gs"))));
+						outp = new PrintWriter(new BufferedWriter(new FileWriter(new File(fileBaseName + expCount / 200 + ".gs"))));
 					}
 
 					expCount++;
@@ -195,20 +190,19 @@ public class ExploristExporter {
 			outp.close();
 			pbf.exit(0);
 		} catch (IOException ioE) {
-			pref.log("Error opening " + outFile.getName(),ioE);
+			pref.log("Error opening " + outFile.getName(), ioE);
 		}
 		// try
 	}
 
 	/**
 	 * uses a filechooser to get the name of the export file
-	 *
+	 * 
 	 * @return
 	 */
 	public File getOutputFile() {
 		File file;
-		FileChooser fc = new FileChooser(FileChooserBase.SAVE, pref
-				.getExportPath(expName));
+		FileChooser fc = new FileChooser(FileChooserBase.SAVE, pref.getExportPath(expName));
 		fc.setTitle(MyLocale.getMsg(2102, "Select target file:"));
 		fc.addMask(mask);
 		if (fc.execute() != FormBase.IDCANCEL) {
@@ -222,7 +216,7 @@ public class ExploristExporter {
 
 	/**
 	 * this method can be overided by an exporter class
-	 *
+	 * 
 	 * @param ch
 	 *            cachedata
 	 * @return formated cache data
@@ -230,21 +224,21 @@ public class ExploristExporter {
 	public String record(CacheHolder ch) {
 		CacheHolderDetail det = ch.getCacheDetails(true);
 		/*
-		static protected final int GC_AW_PARKING = 50;
-		static protected final int GC_AW_STAGE_OF_MULTI = 51;
-		static protected final int GC_AW_QUESTION = 52;
-		static protected final int GC_AW_FINAL = 53;
-		static protected final int GC_AW_TRAILHEAD = 54;
-		static protected final int GC_AW_REFERENCE = 55;
-		*/
+		 * static protected final int GC_AW_PARKING = 50;
+		 * static protected final int GC_AW_STAGE_OF_MULTI = 51;
+		 * static protected final int GC_AW_QUESTION = 52;
+		 * static protected final int GC_AW_FINAL = 53;
+		 * static protected final int GC_AW_TRAILHEAD = 54;
+		 * static protected final int GC_AW_REFERENCE = 55;
+		 */
 		StringBuffer sb = new StringBuffer();
 		sb.append("$PMGNGEO,");
-		sb.append(ch.pos.getLatDeg(CWPoint.DMM));
-		sb.append(ch.pos.getLatMin(CWPoint.DMM));
+		sb.append(ch.getPos().getLatDeg(CWPoint.DMM));
+		sb.append(ch.getPos().getLatMin(CWPoint.DMM));
 		sb.append(",");
 		sb.append("N,");
-		sb.append(ch.pos.getLonDeg(CWPoint.DMM));
-		sb.append(ch.pos.getLonMin(CWPoint.DMM));
+		sb.append(ch.getPos().getLonDeg(CWPoint.DMM));
+		sb.append(ch.getPos().getLonMin(CWPoint.DMM));
 		sb.append(",");
 		sb.append("E,");
 		sb.append("0000,"); // Height
@@ -281,11 +275,11 @@ public class ExploristExporter {
 			sb.append(CacheType.type2GSTypeTag(ch.getType()));
 		}
 		sb.append(",");
-		sb.append(toGsDateFormat(ch.getDateHidden()));  // created - DDMMYYY, YYY = year - 1900
+		sb.append(toGsDateFormat(ch.getDateHidden())); // created - DDMMYYY, YYY = year - 1900
 		sb.append(",");
 		String lastFound = "0000";
 		for (int i = 0; i < det.CacheLogs.size(); i++) {
-			if (det.CacheLogs.getLog(i).isFoundLog() && det.CacheLogs.getLog(i).getDate().compareTo(lastFound) > 0 ) {
+			if (det.CacheLogs.getLog(i).isFoundLog() && det.CacheLogs.getLog(i).getDate().compareTo(lastFound) > 0) {
 				lastFound = det.CacheLogs.getLog(i).getDate();
 			}
 		}
@@ -301,7 +295,7 @@ public class ExploristExporter {
 
 	/**
 	 * this method can be overided by an exporter class
-	 *
+	 * 
 	 * @return formated trailer data
 	 */
 	public String trailer() {
@@ -310,6 +304,7 @@ public class ExploristExporter {
 
 	/**
 	 * Changes "," in "." in the input String
+	 * 
 	 * @param input
 	 * @return changed String
 	 */
@@ -319,14 +314,15 @@ public class ExploristExporter {
 
 	/**
 	 * change the Dateformat from "yyyy-mm-dd" to ddmmyyy, where yyy is years after 1900
-	 * @param input Date in yyyy-mm-dd
- 	 * @return Date in ddmmyyy
+	 * 
+	 * @param input
+	 *            Date in yyyy-mm-dd
+	 * @return Date in ddmmyyy
 	 */
 	private String toGsDateFormat(String input) {
 		if (input.length() >= 10) {
 			return input.substring(8, 10) + input.substring(5, 7) + "1" + input.substring(2, 4);
-		}
-		else {
+		} else {
 			return "";
 		}
 	}

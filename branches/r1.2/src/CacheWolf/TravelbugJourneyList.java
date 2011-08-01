@@ -40,9 +40,15 @@ import ewesoft.xml.sax.AttributeList;
 
 public class TravelbugJourneyList extends MinML {
 
-	/** The Vector holdin the travelbug journeys */
+	/** The Vector holding the travelbug journeys */
 	private Vector tbJourneyList=new Vector(10);
 	
+	/**
+	 * Public constructor
+	 */
+	public TravelbugJourneyList() {
+	}
+
 	/** Return a TravelbugJourney */
 	public TravelbugJourney getTBJourney(int i) {
 		return (TravelbugJourney) tbJourneyList.elementAt(i);
@@ -99,9 +105,6 @@ public class TravelbugJourneyList extends MinML {
 		for (int i=size()-1; i>=0; i--)
 			if (!getTBJourney(i).bothLogsDone()) count++;
 		return count;
-	}
-	
-	TravelbugJourneyList() { // Public constructor
 	}
 	
 	/**

@@ -300,8 +300,8 @@ public final class MapsList extends Vector {
 	 * if no map includes both it returns null
 	 * @param if more than one map includes topleft and bottomright than the one will
 	 * be returned which has its center nearest to topleft. If you have gps-pos and goto-pos
-	 * as topleft and buttomright use gps as topleft.
-	 * if topleft is really topleft or if it is buttomright is not relevant.
+	 * as topleft and bottomright use gps as topleft.
+	 * if topleft is really topleft or if it is bottomright is not relevant.
 	 */
 
 	public final MapInfoObject getMapForArea(CWPoint topleft, CWPoint bottomright){
@@ -527,9 +527,9 @@ public final class MapsList extends Vector {
 	}
 */
 	/** for determining if a new map should be downloaded
-	public boolean isInAmap(CWPoint topleft, CWPoint buttomright) {
-		if (!latRangeList.isInRange(topleft.latDec) || !latRangeList.isInRange(buttomright.latDec)) ||
-			!lonRangeList.inInRange(topleft.lonDec) || !lonRangeList.isInRange(buttomright.lonDec)
+	public boolean isInAmap(CWPoint topleft, CWPoint bottomright) {
+		if (!latRangeList.isInRange(topleft.latDec) || !latRangeList.isInRange(bottomright.latDec)) ||
+			!lonRangeList.inInRange(topleft.lonDec) || !lonRangeList.isInRange(boxsttomright.lonDec)
 			return false;
 	}
 	 */

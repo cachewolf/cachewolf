@@ -59,7 +59,7 @@ LayersUrlPart:     LAYERS=Landwirtschaft,Industriegebiet,Bauland,Gruenflaeche,un
 StylesUrlPart:     STYLES=
 ImageFormatUrlPart:FORMAT=image/png
 BoundingBoxTopLeftWGS84: N 74.1000 W 10.4000
-BoundingBoxButtomRightWGS84: N 35.7000 E 43.0000
+BoundingBoxBottomRightWGS84: N 35.7000 E 43.0000
 #BBox_Mitte: N 54.9 E 16.3
 MinScale: 0.6
 MaxScale: 99.99
