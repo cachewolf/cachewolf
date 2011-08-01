@@ -289,7 +289,7 @@ class fastScrollText extends InteractivePanel { // TODO extend this class in a w
 			if (dx != 0 || dy != 0) scroll(dx,dy);
 			refresh();
 			return true;
-		}else if (true || where.x < origin.x || where.x >= origin.x+r.width || where.y < origin.y || where.y >= origin.y+r.height){
+		}else if (true/* || where.x < origin.x || where.x >= origin.x+r.width || where.y < origin.y || where.y >= origin.y+r.height*/){
 	 			if (autoScrolling) {
 					didAutoScroll = true;
 					scroll(-to.x,-to.y);

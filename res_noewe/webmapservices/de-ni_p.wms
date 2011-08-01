@@ -1,43 +1,43 @@
-TakenFromUrl:       http://www.umwelt.niedersachsen.de/master/C7089178_N7088657_L20_D0_I598.html
+ÔªøTakenFromUrl:       http://www.umweltkarten.niedersachsen.de/arcgis/services/Programme/MapServer/WMSServer
 GetCapabilitiesUrl: http://www.umweltkarten.niedersachsen.de/arcgis/services/Programme/MapServer/WMSServer?SERVICE=WMS&VERSION=1.1.1&REQUEST=GetCapabilities
-Name:               de.Niedersachsen photo c SF=0..1,95
+Name:               de.Niedersachsen p
 MapType:                        photo
-#MainUrl:            http://www.umweltkarten.niedersachsen.de/arcgis/services/GR_Gebiete/MapServer/WMSServer?
 MainUrl:            http://www.umweltkarten.niedersachsen.de/arcgis/services/Programme/MapServer/WMSServer?
 ServiceTypeUrlPart: SERVICE=WMS
 VersionUrlPart:     VERSION=1.1.1
-CoordinateReferenceSystemCacheWolf:  31467
-CoordinateReferenceSystemUrlPart: SRS=EPSG:31467 
+CoordinateReferenceSystemCacheWolf:  31466 31467 31468 31469
+CoordinateReferenceSystemUrlPart: SRS=EPSG:31466 SRS=EPSG:31467 SRS=EPSG:31468 SRS=EPSG:31469 
 RequestUrlPart:     REQUEST=GetMap
-#LayersUrlPart:     LAYERS=0|Gebiete mit gesamtstaatlicher repr‰sentativer Bedeutung|2.772396|Infinity
-#LayersUrlPart:     LAYERS=1|Flieﬂgew‰sserschutzsystem Verbindungsgew‰sser|2.772396|Infinity
-#LayersUrlPart:     LAYERS=2|Flieﬂgew‰sserschutzsystem Hauptgew‰sser und Auen|2.772396|Infinity
-#LayersUrlPart:     LAYERS=3|Moorschutzprogramm Neubewertung|2,772396|Infinity
+#LayersUrlPart:     LAYERS=0|Gebiete mit gesamtstaatlicher repr√§sentativer Bedeutung|2.772396|Infinity
+#LayersUrlPart:     LAYERS=1|Flie√ügew√§sserschutzsystem Verbindungsgew√§sser|2.772396|Infinity
+#LayersUrlPart:     LAYERS=2|Flie√ügew√§sserschutzsystem Hauptgew√§sser und Auen|2.772396|Infinity
+#LayersUrlPart:     LAYERS=3|Moorschutzprogramm Neubewertung|2.772396|Infinity
 #LayersUrlPart:     LAYERS=4|Moorschutzprogramm Teil II|2.772396|Infinity
 #LayersUrlPart:     LAYERS=5|Abgrenzung des Hochmoorkomplexes MSP Teil I|2.772396|Infinity
 #LayersUrlPart:     LAYERS=6|Moorschutzprogramm (MSP) Teil I|2.772396|Infinity
-#LayersUrlPart:     LAYERS=7|Untere  Naturschutzbehˆrden|2.772396|Infinity
-#LayersUrlPart:     LAYERS=8|Landkreise||
-#LayersUrlPart:     LAYERS=9|Ortslagen|99.000000|237.600000
-#LayersUrlPart:     LAYERS=10|Grosse Seen|198.000000|Infinity
-#LayersUrlPart:     LAYERS=11|Groﬂe Fl¸sse|198.000000|Infinity
-#LayersUrlPart:     LAYERS=12|Orthophoto Farbe|0.0|2.772000
-#LayersUrlPart:     LAYERS=13|DTK 25|2.772396|4.950000
-#LayersUrlPart:     LAYERS=14|TK 50|4.950396|9.900000
-#LayersUrlPart:     LAYERS=15|TK 100|9.900396|29.700000
-#LayersUrlPart:     LAYERS=16|TK 500|29.700396|99.000000
-#LayersUrlPart:     LAYERS=17|Autobahnen||
-#LayersUrlPart:     LAYERS=18|Schrift: Groﬂe Orte||
-#LayersUrlPart:     LAYERS=19|Schrift: Kleine Orte||
-LayersUrlPart:     LAYERS=12
+#LayersUrlPart:     LAYERS=7|Untere  Naturschutzbeh√∂rden|2.772396|Infinity
+#LayersUrlPart:     LAYERS=8|Naturr√§umliche Regionen und Unterregionen DTK50||
+#LayersUrlPart:     LAYERS=9|Naturr√§umliche Regionen DTK50||
+#LayersUrlPart:     LAYERS=10|Landesgrenze inkl. 12 Seemeilen-Zone||
+#LayersUrlPart:     LAYERS=11|Landkreise||
+#LayersUrlPart:     LAYERS=12|Ortslagen|99.000000|237.600000
+#LayersUrlPart:     LAYERS=13|Grosse Seen|198.000000|Infinity
+#LayersUrlPart:     LAYERS=14|Gro√üe Fl√ºsse|198.000000|Infinity
+#LayersUrlPart:     LAYERS=15|Orthophoto Farbe|0.0|2.772000
+#LayersUrlPart:     LAYERS=16|DTK 25|2.772396|4.950000
+#LayersUrlPart:     LAYERS=17|TK 50 |4.950396|9.900000
+#LayersUrlPart:     LAYERS=18|TK 100|9.900396|29.700000
+#LayersUrlPart:     LAYERS=19|DTK 500 |29.700396|99.000000
+#LayersUrlPart:     LAYERS=20|Autobahnen||
+#LayersUrlPart:     LAYERS=21|Schrift: Gro√üe Orte||
+#LayersUrlPart:     LAYERS=22|Schrift: Kleine Orte||
+LayersUrlPart:     LAYERS=15
 StylesUrlPart:     STYLES=
 ImageFormatUrlPart:FORMAT=image/jpeg
-BoundingBoxTopLeftWGS84: N 53.898485 E 6.600296
-BoundingBoxButtomRightWGS84: N 51.265165 E 11.665345
-MinScale:   0
-MaxScale:   2.772396
-RecommendedScale:   1
-#MinSFInput:0
-#MaxSFInput:1,9586
+BoundingBoxTopLeftWGS84: N 54.0098 E 6.4705
+BoundingBoxBottomRightWGS84: N 51.2325 E 11.6591
+#BBox_Mitte: N 52.6211685 E 9.0647625
+MinScale:   0.2
+MaxScale:   3
+RecommendedScale:    1
 ImageFileExtension: .jpg
-#weitere Overlays hinzuf¸gen geht bei Photo nicht.

@@ -29,8 +29,6 @@ import CacheWolf.CacheSize;
 import CacheWolf.CacheType;
 import CacheWolf.Preferences;
 import CacheWolf.Profile;
-import ewe.io.File;
-import ewe.io.FileBase;
 
 /**
 *	Class to export the cache database (index) to an OziExplorer File

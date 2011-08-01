@@ -13,8 +13,8 @@ LayersUrlPart:     LAYERS=0
 StylesUrlPart:     STYLES=
 ImageFormatUrlPart:FORMAT=image/png
 BoundingBoxTopLeftWGS84: N 55.7319 E 4.6186
-BoundingBoxButtomRightWGS84: N 45.9690 E 16.7118
+BoundingBoxBottomRightWGS84: N 45.9690 E 16.7118
 MinScale:   50
-MaxScale:   350
-RecommendedScale:    150
+MaxScale:   400
+RecommendedScale:    250 100 200 300
 ImageFileExtension: .png

@@ -12,10 +12,10 @@ RequestUrlPart:     REQUEST=GetMap
 #LayersUrlPart:     LAYERS=sc500k|Carta de Portugal Continental 1:500.000|0.249451424214819|249451.424214819
 LayersUrlPart:     LAYERS=sc500k
 StylesUrlPart:     STYLES=
-ImageFormatUrlPart:FORMAT=image/png
+ImageFormatUrlPart:FORMAT=image/jpeg
 BoundingBoxTopLeftWGS84: N 42.2787 W 10.1943
-BoundingBoxButtomRightWGS84: N 36.7636 W 5.71067
+BoundingBoxBottomRightWGS84: N 36.7636 W 5.71067
 MinScale:   0
-MaxScale:   45
-RecommendedScale:   5
-ImageFileExtension: .png
+MaxScale:   100
+RecommendedScale:   50
+ImageFileExtension: .jpg

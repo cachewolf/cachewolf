@@ -1,0 +1,21 @@
+﻿TakenFromUrl:       http://kortforsyningen.kms.dk/topo_skaermkort?
+GetCapabilitiesUrl: http://kortforsyningen.kms.dk/service?servicename=topo_skaermkort&login=kfmonitor&password=kfmonitor&SERVICE=WMS&VERSION=1.1.1&REQUEST=GetCapabilities
+Name:               dk topo
+MapType:                        topo
+MainUrl:            http://kortforsyningen.kms.dk/service?servicename=topo_skaermkort&login=kfmonitor&password=kfmonitor&
+ServiceTypeUrlPart: SERVICE=WMS
+VersionUrlPart:     VERSION=1.1.1
+CoordinateReferenceSystemCacheWolf:  4326
+CoordinateReferenceSystemUrlPart: SRS=EPSG:4326 
+RequestUrlPart:     REQUEST=GetMap
+#LayersUrlPart:     LAYERS=dtk_skaermkort|DTK/Skærmkort||
+LayersUrlPart:     LAYERS=dtk_skaermkort
+StylesUrlPart:     STYLES=
+ImageFormatUrlPart:FORMAT=image/jpeg
+BoundingBoxTopLeftWGS84: N 58.4744 E 2.4783
+BoundingBoxBottomRightWGS84: N 53.0150 E 17.5575
+#BBox_Mitte: N 55.7447 E 10.017915
+MinScale:   0
+MaxScale:   20
+RecommendedScale:    4 1
+ImageFileExtension: .jpg

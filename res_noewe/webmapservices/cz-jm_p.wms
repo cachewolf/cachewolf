@@ -91,7 +91,7 @@ StylesUrlPart:     STYLES=
 ImageFormatUrlPart:FORMAT=image/jpeg
 #manuell
 BoundingBoxTopLeftWGS84: N 49.634341 E 15.50975
-BoundingBoxButtomRightWGS84: N 48.614016 E 17.666016
+BoundingBoxBottomRightWGS84: N 48.614016 E 17.666016
 #MinScale:   0
 #MaxScale:   45
 RecommendedScale:   1

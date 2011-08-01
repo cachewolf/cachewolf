@@ -281,10 +281,11 @@ public class DataMover {
 		if (wpt.length() == 0){
 			return;
 		}
+
 		// delete files in dstDir to clean up trash
-		// String tmp[] = new FileBugfix(dir).list(wpt + "*.*", ewe.io.FileBase.LIST_FILES_ONLY);
+		wpt=wpt.toLowerCase();
 		for (int i=0; i < tmp.length;i++){
-			if (tmp[i].substring(0, java.lang.Math.min(tmp[i].length(),wpt.length())).equalsIgnoreCase(wpt)) {
+			if (tmp[i].toLowerCase().startsWith(wpt+'.') || tmp[i].toLowerCase().startsWith(wpt+'_')){
 				File tmpFile = new File(dir + tmp[i]);
 				tmpFile.delete();
 			}
@@ -295,9 +296,9 @@ public class DataMover {
 		if (wpt.length() == 0){
 			return;
 		}
-		// String srcFiles[] = new FileBugfix(srcDir).list(wpt + "*.*", ewe.io.FileBase.LIST_FILES_ONLY);
+		wpt=wpt.toLowerCase();
 		for (int i=0; i < srcFiles.length;i++){
-			if (srcFiles[i].substring(0, java.lang.Math.min(srcFiles[i].length(),wpt.length())).equalsIgnoreCase(wpt)) {
+			if (srcFiles[i].toLowerCase().startsWith(wpt+'.') || srcFiles[i].toLowerCase().startsWith(wpt+'_')){
 				File srcFile = new File(srcDir + srcFiles[i]);
 				File dstFile = new File(dstDir + srcFiles[i]);
 				srcFile.move(dstFile);
@@ -309,9 +310,9 @@ public class DataMover {
 		if (wpt.length() == 0){
 			return;
 		}
-		// String srcFiles[] = new FileBugfix(srcDir).list(wpt + "*.*", ewe.io.FileBase.LIST_FILES_ONLY);
+		wpt=wpt.toLowerCase();
 		for (int i=0; i < srcFiles.length;i++){
-			if (srcFiles[i].substring(0, java.lang.Math.min(srcFiles[i].length(),wpt.length())).equalsIgnoreCase(wpt)) {
+			if (srcFiles[i].toLowerCase().startsWith(wpt+'.') || srcFiles[i].toLowerCase().startsWith(wpt+'_')){
 				copy(srcDir + srcFiles[i],dstDir + srcFiles[i]);
 			}
 		}
@@ -439,6 +440,7 @@ public class DataMover {
 			 destFileList= destPath.list(null,FileBase.LIST_FILES_ONLY|FileBase.LIST_DONT_SORT);
 			 pbf.exit(0);
 		 }
+		 
 		 public void doIt(int i,CacheHolder srcHolder) {
 			 srcDB.removeElementAt(i);
 			 deleteCacheFiles(srcHolder.getWayPoint(),dstProfile.dataDir, destFileList);

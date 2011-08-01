@@ -33,9 +33,9 @@ LayersUrlPart:     LAYERS=zm10
 StylesUrlPart:     STYLES=
 ImageFormatUrlPart:FORMAT=image/png
 #BoundingBoxTopLeftWGS84: N 49.9457 E 14.7989
-#BoundingBoxButtomRightWGS84: N 48.8765 E 16.5340
+#BoundingBoxBottomRightWGS84: N 48.8765 E 16.5340
 BoundingBoxTopLeftWGS84: N 49.9841 E 14.7605
-BoundingBoxButtomRightWGS84: N 48.7959 E 16.5811
+BoundingBoxBottomRightWGS84: N 48.7959 E 16.5811
 #BBox_Mitte: N 49.41110624465 E 15.6664623227
 #MinScale:   0
 #MaxScale:   45

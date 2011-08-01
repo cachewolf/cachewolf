@@ -1,0 +1,40 @@
+TakenFromUrl:       http://service.salzburg.gv.at/ArcGIS/services/Geoland_WMS_Land_Salzburg/MapServer/WMSServer
+GetCapabilitiesUrl: http://service.salzburg.gv.at/ArcGIS/services/Geoland_WMS_Land_Salzburg/MapServer/WMSServer?SERVICE=WMS&VERSION=1.1.1&REQUEST=GetCapabilities
+Name:               at.Salzburg t
+MapType:                        topo
+MainUrl:            http://service.salzburg.gv.at/ArcGIS/services/Geoland_WMS_Land_Salzburg/MapServer/WMSServer?
+ServiceTypeUrlPart: SERVICE=WMS
+VersionUrlPart:     VERSION=1.1.1
+CoordinateReferenceSystemCacheWolf:  4326
+CoordinateReferenceSystemUrlPart: SRS=EPSG:4326 
+RequestUrlPart:     REQUEST=GetMap
+#LayersUrlPart:     LAYERS=0|Polygondecker||
+#LayersUrlPart:     LAYERS=1|Orientierungskarte|0.000396|198.000000
+#LayersUrlPart:     LAYERS=2|Orthofoto|3.960000|7.920396
+#LayersUrlPart:     LAYERS=3|Flugjahr Orthofoto|3.960000|7.920396
+#LayersUrlPart:     LAYERS=4|Vogelschutzgebiete|0.792000|39.600000
+#LayersUrlPart:     LAYERS=5|Habitat Richtlinie (PSCI)|0.792000|39.600000
+#LayersUrlPart:     LAYERS=6|Naturpark|0.792000|39.600000
+#LayersUrlPart:     LAYERS=7|Landschaftsschutzgebiet|0.792000|39.600000
+#LayersUrlPart:     LAYERS=8|Nationalpark|0.792000|39.600000
+#LayersUrlPart:     LAYERS=9|Naturschutzgebiet|0.792000|39.600000
+#LayersUrlPart:     LAYERS=10|geschuetzte Landschaftsteile|0.792000|39.600000
+#LayersUrlPart:     LAYERS=11|Landesstrasse B|0.000396|39.600000
+#LayersUrlPart:     LAYERS=12|Landesstrasse L|0.000396|39.600000
+#LayersUrlPart:     LAYERS=13|Autobahn|0.000396|39.600000
+#LayersUrlPart:     LAYERS=14|Radwanderroute|0.0|1.980396
+#LayersUrlPart:     LAYERS=15|geonam|0.000396|7.919604
+#LayersUrlPart:     LAYERS=16|Politische Gemeinde|7.920000|39.600000
+#LayersUrlPart:     LAYERS=17|Politische Bezirke|39.600396|99.000000
+#LayersUrlPart:     LAYERS=18|NUTS 3 Regionen|3.959604|Infinity
+#LayersUrlPart:     LAYERS=19|Landesgrenze|198.000396|297.000000
+LayersUrlPart:     LAYERS=1,11,12,13,15,16,17,19
+StylesUrlPart:     STYLES=
+ImageFormatUrlPart:FORMAT=image/png
+BoundingBoxTopLeftWGS84: N 48.8794 E 11.1495
+BoundingBoxBottomRightWGS84: N 46.5273 E 15.1958
+#BBox_Mitte: N 47.70337 E 13.1726725
+MinScale:   0
+MaxScale:   1000
+RecommendedScale:   1 5 10
+ImageFileExtension: .png

@@ -1,0 +1,29 @@
+TakenFromUrl:       http://vogis.cnv.at/mapserver/mapserv?map=i_topographie_r_wms.map&version=1.1.1&
+GetCapabilitiesUrl: http://vogis.cnv.at/mapserver/mapserv?map=i_topographie_r_wms.map&SERVICE=WMS&VERSION=1.1.1&REQUEST=GetCapabilities
+Name:               at.Vorarlberg t
+MapType:                        topo
+MainUrl:            http://vogis.cnv.at/mapserver/mapserv?map=i_topographie_r_wms.map&
+ServiceTypeUrlPart: SERVICE=WMS
+VersionUrlPart:     VERSION=1.1.1
+CoordinateReferenceSystemCacheWolf:  4326
+CoordinateReferenceSystemUrlPart: SRS=EPSG:4326 
+RequestUrlPart:     REQUEST=GetMap
+#LayersUrlPart:     LAYERS=MS|Topographische Karten||
+#LayersUrlPart:     LAYERS=topokarte_isoli_text_20t|Topographische Karte Isoli_Text 1:20.000|0.37455131345855|187.08894233825
+#LayersUrlPart:     LAYERS=topokarte_winter_isoli_text_20t|Topographische Karte Isoli_Text Winter 1:20.000|0.37455131345855|187.08894233825
+#LayersUrlPart:     LAYERS=topokarte_20t|Topographische Karte 1:20.000|0.37455131345855|187.08894233825
+#LayersUrlPart:     LAYERS=topokarte_winter_20t|Topographische Karte Winter 1:20.000|0.37455131345855|187.08894233825
+#LayersUrlPart:     LAYERS=topo_symbole|Topographische Karte Symbole|0.37455131345855|18.7092309932477
+#LayersUrlPart:     LAYERS=topo_texte|Topographische Karte Texte|0.37455131345855|18.7092309932477
+#LayersUrlPart:     LAYERS=topo_linien|Topographische Karte Linien|0.37455131345855|18.7092309932477
+#LayersUrlPart:     LAYERS=topo_textlinien|Topographische Karte Textlinien|0.37455131345855|18.7092309932477
+LayersUrlPart:     LAYERS=topokarte_20t
+StylesUrlPart:     STYLES=
+ImageFormatUrlPart:FORMAT=image/jpeg
+BoundingBoxTopLeftWGS84: N 47.6586 E 9.4012
+BoundingBoxBottomRightWGS84: N 46.7554 E 10.3996
+#BBox_Mitte: N 47.207 E 9.90039
+MinScale:   1.3811
+MaxScale:   88.3883
+RecommendedScale:    2 5 10
+ImageFileExtension: .jpg

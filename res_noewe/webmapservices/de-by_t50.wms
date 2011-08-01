@@ -17,7 +17,7 @@ LayersUrlPart:     LAYERS=TK50
 StylesUrlPart:     STYLES=
 ImageFormatUrlPart:FORMAT=image/png
 BoundingBoxTopLeftWGS84: N 50.6269 E 8.8929
-BoundingBoxButtomRightWGS84: N 47.0828 E 13.9782
+BoundingBoxBottomRightWGS84: N 47.0828 E 13.9782
 MinScale:   1
 MaxScale:   15
 RecommendedScale:    3 5 7

@@ -133,14 +133,12 @@ public class CacheList extends CellPanel {
 		myList(int rows, int columns, boolean multi) { super(rows,columns,multi); }
 
 		//  Allow the caches to be dragged out of the cachelist
-		String wayPoint;
 		int idx;
 
 		public void startDragging(DragContext dc) {
 			 idx=getSelectedIndex(0);
 			 if (idx>=0) {
 				 CacheHolder ch=cacheList.get(idx);
-				 wayPoint=ch.getWayPoint();
 				 IconAndText imgDrag=new IconAndText();
 				 imgDrag.addColumn(CacheType.getTypeImage(ch.getType()));
 				 imgDrag.addColumn(ch.getWayPoint());

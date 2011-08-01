@@ -1,28 +1,28 @@
-    /*
-    GNU General Public License
-    CacheWolf is a software for PocketPC, Win and Linux that
-    enables paperless caching.
-    It supports the sites geocaching.com and opencaching.de
+/*
+GNU General Public License
+CacheWolf is a software for PocketPC, Win and Linux that
+enables paperless caching.
+It supports the sites geocaching.com and opencaching.de
 
-    Copyright (C) 2006  CacheWolf development team
-    See http://developer.berlios.de/projects/cachewolf/
-    for more information.
-    Contact: 	bilbowolf@users.berlios.de
-    			kalli@users.berlios.de
+Copyright (C) 2006  CacheWolf development team
+See http://developer.berlios.de/projects/cachewolf/
+for more information.
+Contact: 	bilbowolf@users.berlios.de
+			kalli@users.berlios.de
 
-    This program is free software; you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation; version 2 of the License.
+This program is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation; version 2 of the License.
 
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
 
-    You should have received a copy of the GNU General Public License
-    along with this program; if not, write to the Free Software
-    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
-    */
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software
+Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+ */
 package CacheWolf.exp;
 
 import CacheWolf.CWPoint;
@@ -60,46 +60,51 @@ public class TomTomExporter {
 	CacheDB cacheDB;
 	Preferences pref;
 	Profile profile;
-	
+
 	public TomTomExporter() {
 		profile = Global.getProfile();
 		pref = Global.getPref();
 		cacheDB = profile.cacheDB;
 	}
-	
-	public void doIt(){
+
+	public void doIt() {
 		String fileName, dirName, prefix;
 		int fileFormat;
 
 		TomTomExporterScreen infoScreen = new TomTomExporterScreen("TomTomExport");
-		if (infoScreen.execute() == FormBase.IDCANCEL) return;
+		if (infoScreen.execute() == FormBase.IDCANCEL)
+			return;
 		fileFormat = infoScreen.getFormat();
 
 		dirName = pref.getExportPath(expName);
-		
-		if (infoScreen.oneFilePerType()){
+
+		if (infoScreen.oneFilePerType()) {
 			FileChooser fc = new FileChooser(FileChooserBase.DIRECTORY_SELECT, dirName);
 			fc.setTitle("Select target dir:");
-			if(fc.execute() == FormBase.IDCANCEL) return;
+			if (fc.execute() == FormBase.IDCANCEL)
+				return;
 			dirName = fc.getChosen();
 			pref.setExportPath(expName, dirName);
 			prefix = infoScreen.getPrefix();
 			writeOneFilePerType(fileFormat, dirName, prefix);
-		} else{
+		} else {
 			FileChooser fc = new FileChooser(FileChooserBase.SAVE, dirName);
 			fc.setTitle("Select target file:");
-	
-			if (fileFormat == TT_ASC) fc.addMask("*.asc");
-			else fc.addMask("*.ov2");
-			
-			if(fc.execute() == FormBase.IDCANCEL) return;
+
+			if (fileFormat == TT_ASC)
+				fc.addMask("*.asc");
+			else
+				fc.addMask("*.ov2");
+
+			if (fc.execute() == FormBase.IDCANCEL)
+				return;
 			fileName = fc.getChosen();
 			pref.setExportPathFromFileName(expName, fileName);
 			writeSingleFile(fileFormat, fileName);
 		}
 	}
-	
-	public void writeOneFilePerType(int format, String dirName, String prefix){
+
+	public void writeOneFilePerType(int format, String dirName, String prefix) {
 		RandomAccessFile out = null;
 		File dfile;
 		String ext, fileName = null;
@@ -108,63 +113,64 @@ public class TomTomExporter {
 		ProgressBarForm progressForm = new ProgressBarForm();
 		Handle h = new Handle();
 		int currExp, counter;
-		
+
 		progressForm.showMainTask = false;
-		progressForm.setTask(h,"Exporting ...");
+		progressForm.setTask(h, "Exporting ...");
 		progressForm.exec();
-		
+
 		currExp = 0;
 		counter = cacheDB.countVisible();
-		
-		ext = format==TT_ASC?".asc":".ov2";
 
-		try{
-			//loop through type
-			for(int j = 0; j < CacheType.guiTypeStrings().length; j++){
+		ext = format == TT_ASC ? ".asc" : ".ov2";
+
+		try {
+			// loop through type
+			for (int j = 0; j < CacheType.guiTypeStrings().length; j++) {
 				/*
-				String typeName = CacheType.guiTypeStrings()[j];
-				if (typeName.startsWith("Addi: ")) {
-					typeName = typeName.substring(6);
-				}
-				*/
+				 * String typeName = CacheType.guiTypeStrings()[j];
+				 * if (typeName.startsWith("Addi: ")) {
+				 * typeName = typeName.substring(6);
+				 * }
+				 */
 				String typeName = CacheType.typeImageForId(CacheType.guiSelect2Cw(j));
-				typeName=typeName.substring(0, typeName.length()-4);		
-				
+				typeName = typeName.substring(0, typeName.length() - 4);
+
 				fileName = dirName + "/" + prefix + typeName + ext;
 				dfile = new File(fileName);
 				dfile.delete();
-				out =  new RandomAccessFile(fileName,"rw");
-				for(int i = 0; i<cacheDB.size(); i++){
-					holder=cacheDB.get(i);
+				out = new RandomAccessFile(fileName, "rw");
+				for (int i = 0; i < cacheDB.size(); i++) {
+					holder = cacheDB.get(i);
 
-					if(holder.getType() == CacheType.guiSelect2Cw(j) && holder.isVisible()){
+					if (holder.getType() == CacheType.guiSelect2Cw(j) && holder.isVisible()) {
 						currExp++;
-						h.progress = (float)currExp/(float)counter;
+						h.progress = (float) currExp / (float) counter;
 						h.changed();
-						if (holder.pos.isValid() == false) continue;
-						if (format == TT_ASC){
-							writeRecordASCII(out, holder,holder.pos.getLatDeg(CWPoint.DD),holder.pos.getLonDeg(CWPoint.DD));
+						if (holder.getPos().isValid() == false)
+							continue;
+						if (format == TT_ASC) {
+							writeRecordASCII(out, holder, holder.getPos().getLatDeg(CWPoint.DD), holder.getPos().getLonDeg(CWPoint.DD));
 						} else {
-							writeRecordBinary(out, holder,holder.pos.getLatDeg(CWPoint.DD),holder.pos.getLonDeg(CWPoint.DD));
+							writeRecordBinary(out, holder, holder.getPos().getLatDeg(CWPoint.DD), holder.getPos().getLonDeg(CWPoint.DD));
 						}
-					}//if
-				}//for cacheDB
+					}// if
+				}// for cacheDB
 				out.close();
 				// check for empty files and delete them
 				dfile = new File(fileName);
-				if (dfile.length()==0) {
+				if (dfile.length() == 0) {
 					dfile.delete();
 				} else {
-					copyIcon(j, dirName + "/" + prefix,typeName); 
+					copyIcon(j, dirName + "/" + prefix, typeName);
 				}
-			}//for wayType
+			}// for wayType
 			progressForm.exit(0);
-		} catch (IOException e){
-			pref.log("Problem creating file! " + fileName,e,true);
-		}//try
+		} catch (IOException e) {
+			pref.log("Problem creating file! " + fileName, e, true);
+		}// try
 	}
-	
-	public void writeSingleFile(int format, String fileName){
+
+	public void writeSingleFile(int format, String fileName) {
 		RandomAccessFile out = null;
 		File dfile;
 
@@ -173,53 +179,53 @@ public class TomTomExporter {
 		Handle h = new Handle();
 
 		pbf.showMainTask = false;
-		pbf.setTask(h,"Exporting ...");
+		pbf.setTask(h, "Exporting ...");
 		pbf.exec();
 
 		int counter = cacheDB.countVisible();
 		int expCount = 0;
 
-		try{
+		try {
 			dfile = new File(fileName);
 			dfile.delete();
-			out =  new RandomAccessFile(fileName,"rw");
-			for(int i = 0; i<cacheDB.size(); i++){
-				holder=cacheDB.get(i);
-				if(holder.isVisible()){
+			out = new RandomAccessFile(fileName, "rw");
+			for (int i = 0; i < cacheDB.size(); i++) {
+				holder = cacheDB.get(i);
+				if (holder.isVisible()) {
 					expCount++;
-					h.progress = (float)expCount/(float)counter;
+					h.progress = (float) expCount / (float) counter;
 					h.changed();
-					if (holder.pos.isValid() == false) continue;
-					if (format == TT_ASC){
-						writeRecordASCII(out, holder,holder.pos.getLatDeg(CWPoint.DD),holder.pos.getLonDeg(CWPoint.DD));
+					if (holder.getPos().isValid() == false)
+						continue;
+					if (format == TT_ASC) {
+						writeRecordASCII(out, holder, holder.getPos().getLatDeg(CWPoint.DD), holder.getPos().getLonDeg(CWPoint.DD));
 					} else {
-						writeRecordBinary(out, holder,holder.pos.getLatDeg(CWPoint.DD),holder.pos.getLonDeg(CWPoint.DD));
+						writeRecordBinary(out, holder, holder.getPos().getLatDeg(CWPoint.DD), holder.getPos().getLonDeg(CWPoint.DD));
 					}
-				}//if
-			}//for
+				}// if
+			}// for
 			out.close();
-			copyIcon(0, fileName.substring(0,fileName.indexOf(".")),"");
+			copyIcon(0, fileName.substring(0, fileName.indexOf(".")), "");
 			pbf.exit(0);
-		}catch (Exception e){
-			pref.log("Problem writing to file! " + fileName,e,true);
-		}//try
+		} catch (Exception e) {
+			pref.log("Problem writing to file! " + fileName, e, true);
+		}// try
 	}
-	
-	
-	public void writeRecordASCII(RandomAccessFile outp, CacheHolder ch, String lat, String lon){
+
+	public void writeRecordASCII(RandomAccessFile outp, CacheHolder ch, String lat, String lon) {
 		try {
 			outp.writeBytes(lon);
 			outp.writeBytes(",");
 			outp.writeBytes(lat);
 			outp.writeBytes(",");
-			//outp.writeBytes("\"" + ch.CacheName.replace(',',' ') + "\"\r\n");
+			// outp.writeBytes("\"" + ch.CacheName.replace(',',' ') + "\"\r\n");
 			outp.writeBytes("\"");
 			outp.writeBytes(ch.getWayPoint());
 			outp.writeBytes(" - ");
-			outp.writeBytes(ch.getCacheName().replace(',',' '));
+			outp.writeBytes(ch.getCacheName().replace(',', ' '));
 			outp.writeBytes(" by ");
 			outp.writeBytes(ch.getCacheOwner());
-			outp.writeBytes("- ");             
+			outp.writeBytes("- ");
 			outp.writeBytes(String.valueOf(ch.getHard()));
 			outp.writeBytes("/");
 			outp.writeBytes(String.valueOf(ch.getTerrain()));
@@ -227,52 +233,53 @@ public class TomTomExporter {
 			outp.writeBytes(CacheSize.cw2ExportString(ch.getCacheSize()));
 			outp.writeBytes("\"\r\n");
 		} catch (IOException e) {
-			pref.log("Error writing to file",e,true);
+			pref.log("Error writing to file", e, true);
 		}
 		return;
 	}
 
-	public void writeRecordBinary(RandomAccessFile outp, CacheHolder ch, String lat, String lon){
-		int d,data;
+	public void writeRecordBinary(RandomAccessFile outp, CacheHolder ch, String lat, String lon) {
+		int d, data;
 		double latlon;
-		
+
 		try {
 			d = 2;
-			outp.writeByte((byte)d);
-			data = ch.getWayPoint().length()+ch.getCacheName().length()+ch.getCacheOwner().length()+String.valueOf(ch.getHard()).length()+String.valueOf(ch.getTerrain()).length()+CacheSize.cw2ExportString(ch.getCacheSize()).length()+27;
+			outp.writeByte((byte) d);
+			data = ch.getWayPoint().length() + ch.getCacheName().length() + ch.getCacheOwner().length() + String.valueOf(ch.getHard()).length() + String.valueOf(ch.getTerrain()).length() + CacheSize.cw2ExportString(ch.getCacheSize()).length() + 27;
 			writeIntBinary(outp, data);
 			latlon = Common.parseDouble(lon);
-			latlon *=100000;
+			latlon *= 100000;
 			writeIntBinary(outp, (int) latlon);
-			latlon = Common.parseDouble(lat);;
-			latlon *=100000;
+			latlon = Common.parseDouble(lat);
+			;
+			latlon *= 100000;
 			writeIntBinary(outp, (int) latlon);
 			outp.writeBytes(ch.getWayPoint());
 			outp.writeBytes(" - ");
 			outp.writeBytes(ch.getCacheName());
 			outp.writeBytes(" by ");
 			outp.writeBytes(ch.getCacheOwner());
-			//Wenn Leerzeichen am Ende von Cache.Owner entfernt: 
-			//Hier wieder einfügen
-			//und data = holder.wayPoint.length()+holder.CacheName.length()+.....
-			//wider um 1 erhöhen
-			outp.writeBytes("- ");             
+			// Wenn Leerzeichen am Ende von Cache.Owner entfernt:
+			// Hier wieder einfügen
+			// und data = holder.wayPoint.length()+holder.CacheName.length()+.....
+			// wider um 1 erhöhen
+			outp.writeBytes("- ");
 			outp.writeBytes(String.valueOf(ch.getHard()));
 			outp.writeBytes("/");
 			outp.writeBytes(String.valueOf(ch.getTerrain()));
 			outp.writeBytes(" - ");
 			outp.writeBytes(CacheSize.cw2ExportString(ch.getCacheSize()));
 			d = 0;
-			outp.writeByte((byte)d);
+			outp.writeByte((byte) d);
 		} catch (IOException e) {
-			pref.log("Error writing to file",e,true);
+			pref.log("Error writing to file", e, true);
 		}
 
 		return;
 	}
 
-	public void writeIntBinary(RandomAccessFile outp, int data){
-		
+	public void writeIntBinary(RandomAccessFile outp, int data) {
+
 		ByteArray buf = new ByteArray();
 		buf.appendInt(data);
 		try {
@@ -281,42 +288,44 @@ public class TomTomExporter {
 			outp.writeByte(buf.data[1]);
 			outp.writeByte(buf.data[0]);
 		} catch (IOException e) {
-			pref.log("Error writing to file",e,true);
+			pref.log("Error writing to file", e, true);
 		}
 
 		return;
 	}
-	
-	public void copyIcon(int intWayType, String prefix, String typeName){
-		ZipFile zif=null;
+
+	public void copyIcon(int intWayType, String prefix, String typeName) {
+		ZipFile zif = null;
 		try {
-			zif = new ZipFile (FileBase.getProgramDirectory() + FileBase.separator+"exporticons"+FileBase.separator+"TomTom.zip");
-		} catch (IOException e) {}
+			zif = new ZipFile(FileBase.getProgramDirectory() + FileBase.separator + "exporticons" + FileBase.separator + "TomTom.zip");
+		} catch (IOException e) {
+		}
 		try {
 			if (zif == null) {
-				zif = new ZipFile (FileBase.getProgramDirectory() + FileBase.separator+"exporticons"+ FileBase.separator+"exporticons"+FileBase.separator+"TomTom.zip");
+				zif = new ZipFile(FileBase.getProgramDirectory() + FileBase.separator + "exporticons" + FileBase.separator + "exporticons" + FileBase.separator + "TomTom.zip");
 			}
 			ZipEntry zipEnt;
 			int len;
-			String entName; 
-			
+			String entName;
+
 			entName = "GC-" + typeName + ".bmp";
 			zipEnt = zif.getEntry(entName);
-			if (zipEnt == null) return;
-			
-		    byte[] buff = new byte[ zipEnt.getSize() ];
-		    InputStream  fis = zif.getInputStream(zipEnt);
-		    FileOutputStream fos = new FileOutputStream( prefix + typeName + ".bmp");
-		    while( 0 < (len = fis.read( buff )) )
-		      fos.write( buff, 0, len );
-		    fos.flush();
-		    fos.close();
-		    fis.close();
+			if (zipEnt == null)
+				return;
+
+			byte[] buff = new byte[zipEnt.getSize()];
+			InputStream fis = zif.getInputStream(zipEnt);
+			FileOutputStream fos = new FileOutputStream(prefix + typeName + ".bmp");
+			while (0 < (len = fis.read(buff)))
+				fos.write(buff, 0, len);
+			fos.flush();
+			fos.close();
+			fis.close();
 		} catch (ZipException e) {
-			pref.log("Problem copying Icon " + "GC-" + typeName + ".bmp" ,e,true);
+			pref.log("Problem copying Icon " + "GC-" + typeName + ".bmp", e, true);
 		} catch (IOException e) {
-			pref.log("Problem copying Icon " + "GC-" + typeName + ".bmp" ,e,true);
+			pref.log("Problem copying Icon " + "GC-" + typeName + ".bmp", e, true);
 		}
 	}
-	
+
 }

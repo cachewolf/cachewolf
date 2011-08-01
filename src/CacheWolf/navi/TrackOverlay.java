@@ -107,9 +107,9 @@ public class TrackOverlay extends MapImage {
 		int tri, i;
 		Track tr;
 		int numberOfTracks = tracks.size();
-		int numberOfPoints = ((Track)tracks.get(numberOfTracks - 1)).num;
+		int numberOfPoints = ((Track)tracks.get(numberOfTracks - 1)).size();
 		if (numberOfTracks > 1){
-			numberOfPoints += (numberOfTracks - 1) * ((Track)tracks.get(0)).num;
+			numberOfPoints += (numberOfTracks - 1) * ((Track)tracks.get(0)).size();
 		}
 		int n = 0;
 		
@@ -117,13 +117,13 @@ public class TrackOverlay extends MapImage {
 			tr = (Track)tracks.get(tri);
 			//draw.setPen(new Pen((Color) tr.trackColor,Pen.SOLID,3));
 			draw.setColor(tr.trackColor);
-			if (tr.num > 0) {
-				for (i=0; i < tr.num; i++) {
+			if (tr.size() > 0) {
+				for (i=0; i < tr.size(); i++) {
 					n++;
 					if  ((numberOfPoints - n > 5*60) && ((n & 1) == 0)) continue;
 					if  ((numberOfPoints - n > 15*60) && ((n & 2) == 0)) continue;
 					if  ((numberOfPoints - n > 30*60) && ((n & 4) == 0)) continue;
-					paintPoint(tr.trackColor, tr.TrackPoints[i]);
+					paintPoint(tr.trackColor, tr.get(i));
 				}
 			}
 		}
@@ -195,7 +195,7 @@ public class TrackOverlay extends MapImage {
 	public void paintLastAddedPoint(Track tr) { 
 		//draw.setPen(new Pen((Color) tr.trackColor,Pen.SOLID,3));
 		draw.setColor(tr.trackColor);
-		if (paintPoint(tr.trackColor, tr.TrackPoints[tr.num-1])) notOnThisOverlaySince = 0;
+		if (paintPoint(tr.trackColor, tr.get(tr.size()-1))) notOnThisOverlaySince = 0;
 		else notOnThisOverlaySince++;
 		if (notOnThisOverlaySince > FIXATE_IF_NO_PIXELS_NUM) { // zur Performanceverbesserung: wenn in den letzten 60 Updates keines mehr für dieses Overlay dabei war, Overlay Pixels fest schreiben, damit doDraw entlastet wird.
 			fixate();
