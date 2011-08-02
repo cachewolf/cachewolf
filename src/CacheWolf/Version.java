@@ -27,6 +27,7 @@ package CacheWolf;
 
 import com.stevesoft.ewe_pat.Regex;
 
+import ewe.io.ByteArrayInputStream;
 import ewe.io.IOException;
 import ewe.sys.Convert;
 import ewe.sys.Vm;
@@ -71,7 +72,9 @@ public class Version {
 	 * @throws IOException
 	 */
 	public static void checkForUpdates() throws IOException {
-		Properties curvers = UrlFetcher.fetchPropertyList("http://svn.berlios.de/svnroot/repos/cachewolf/trunk/currentversions.txt");
+		String currentVersionsUrl="http://svn.berlios.de/svnroot/repos/cachewolf/trunk/currentversions.txt";
+		Properties curvers = new Properties();
+		curvers.load(new ByteArrayInputStream(UrlFetcher.fetchData(currentVersionsUrl)));
 		versionnumbers = new String[updateavailabe.length];
 		for (int i = updateavailabe.length-1; i >=1; i--) {
 			updateavailabe[i] = checkVersion(curvers, "T"+(i-1), i); // this also sets versionnumber[i]
@@ -132,7 +135,7 @@ public class Version {
 				Regex s;
 				int i = svnRString.indexOf(' ');
 				if (i > 0) {
-					tmp = UrlFetcher.fetchString(svnRString.substring(0, i));
+					tmp = UrlFetcher.fetch(svnRString.substring(0, i));
 					s = new Regex (svnRString.substring(i+1, svnRString.length())); // flyingfish works 3/2008 with ("(?i)Revision[\\s]*[:=][\\s]*[\\\\r]*[\\\\n]*[\\s]*([0-9]*)");
 				} else { versionnumbers[t] = "error: no RegEx"; return 3; }
 				s.search(tmp);

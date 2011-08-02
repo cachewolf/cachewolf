@@ -162,12 +162,12 @@ public final class TransformCoordinates {
 	private static final TransformParameters GB_ITALIAN_SARDINIA_TO_WGS84 =  new TransformParameters(-168.6, -34.0, 38.6, 0.374, 0.679, 1.379, 9.48, HAYFORD1909);
 	private static final Area ITALY_SARDINIA = new Area(new CWPoint(42, 6), new CWPoint(38, 11));
 	private static final Area ITALY_SARDINIA_GK = new Area(wgs84ToEpsg(ITALY_SARDINIA.topleft, EPSG_ITALIAN_GB_EW1).toTrackPoint(TransformCoordinates.LOCALSYSTEM_ITALIAN_GB),
-			wgs84ToEpsg(ITALY_SARDINIA.buttomright, EPSG_ITALIAN_GB_EW1).toTrackPoint(TransformCoordinates.LOCALSYSTEM_ITALIAN_GB));
+			wgs84ToEpsg(ITALY_SARDINIA.bottomright, EPSG_ITALIAN_GB_EW1).toTrackPoint(TransformCoordinates.LOCALSYSTEM_ITALIAN_GB));
 
 	private static final TransformParameters GB_ITALIAN_SICILIA_TO_WGS84 =  new TransformParameters(-50.2, -50.4, 84.8, 0.690, 2.012, -0.459, 28.08, HAYFORD1909);
 	private static final Area ITALY_SICILIA = new Area(new CWPoint(39, 12), new CWPoint(36.3, 15.6));
 	private static final Area ITALY_SICILIA_GK = new Area(wgs84ToEpsg(ITALY_SICILIA.topleft, EPSG_ITALIAN_GB_EW2).toTrackPoint(TransformCoordinates.LOCALSYSTEM_ITALIAN_GB),
-			wgs84ToEpsg(ITALY_SICILIA.buttomright, EPSG_ITALIAN_GB_EW2).toTrackPoint(TransformCoordinates.LOCALSYSTEM_ITALIAN_GB));
+			wgs84ToEpsg(ITALY_SICILIA.bottomright, EPSG_ITALIAN_GB_EW2).toTrackPoint(TransformCoordinates.LOCALSYSTEM_ITALIAN_GB));
 
 	// see also http://hal.gis.univie.ac.at/karto/lehr/fachbereiche/geoinfo/givi0304/tutorials/ersteschritte/projectionen.htm#ParMGIWGS84 
 	// taken from taken from http://www.crs-geo.eu/crseu/EN/Home/homepage__node.html?__nnn=true click on "national CRS" -> Austria -> AT (translation *-1 as of 11-8-2009)
