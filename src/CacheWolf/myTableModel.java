@@ -578,14 +578,21 @@ public class myTableModel extends TableModel {
 			ch.is_Checked = !ch.is_Checked;
 			tcControl.repaintCell(j, x);
 			// set the ceckbox also for addi wpts
-			if (ch.hasAddiWpt() && singleRow) {
+			if (ch.hasAddiWpt()) {
 				CacheHolder addiWpt;
 				int addiCount = ch.addiWpts.getCount();
 				for (int i = 0; i < addiCount; i++) {
 					addiWpt = (CacheHolder) ch.addiWpts.get(i);
-					addiWpt.is_Checked = ch.is_Checked;
-					if (addiWpt.isVisible()) {
-						tcControl.repaintCell(cacheDB.getIndex(addiWpt), x);
+					int addiIdx = cacheDB.getIndex(addiWpt);
+					// Change check state of addi wpt only if
+					// it is outside the selected range and not visible
+					// - otherwise it will be touched by this 
+					// algorithm
+					if (! addiWpt.isVisible() && (addiIdx > to || addiIdx < from)){
+						addiWpt.is_Checked = ch.is_Checked;
+						if (addiWpt.isVisible()) {
+							tcControl.repaintCell(cacheDB.getIndex(addiWpt), x);
+						}
 					}
 				}
 
