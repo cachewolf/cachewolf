@@ -276,7 +276,7 @@ public class Preferences extends MinML {
 	 * Max. length for Garmin waypoint names (for etrex which can only accept 6 chars)
 	 */
 	public int garminMaxLen = 0;
-	/** OC true = alle neu Laden false = wenn Änderungsdatum neuer */
+	/** OC true = alle neu Laden false = wenn ï¿½nderungsdatum neuer */
 	public boolean downloadAllOC = false;
 	public String lastOCSite = OC.OCSites[0][OC.OC_HOSTNAME];
 	/**
@@ -343,7 +343,7 @@ public class Preferences extends MinML {
 	/** Selected Size of map tiles */
 	public int mapTileSize = 1;
 	/** How many should maptiles overlap */
-	public int mapOverlapping = 100;
+	public int mapOverlapping = 2;
 	/** Width and height of free defined tile size */
 	public int tilewidth;
 	public int tileheight;
@@ -710,7 +710,7 @@ public class Preferences extends MinML {
 			mapTileSize = Convert.parseInt(tmp);
 			tmp = atts.getValue("overlapping");
 			if (tmp == null || tmp.length() == 0)
-				tmp = "100";
+				tmp = "2";
 			mapOverlapping = Convert.parseInt(tmp);
 			tmp = atts.getValue("tilewidth");
 			tilewidth = (tmp != null && tmp.length() > 0) ? Convert.parseInt(tmp) : 0;
@@ -1210,7 +1210,7 @@ public class Preferences extends MinML {
 			return; // no select
 		// check selection
 		if (lastProfile.equals(f.newSelectedProfile)) {
-			// aktives Profil kann nicht gelöscht / umbenannt werden;
+			// aktives Profil kann nicht gelï¿½scht / umbenannt werden;
 			new MessageBox(MyLocale.getMsg(321, "Error"), MyLocale.getMsg(ErrorMsgActive, "[Profile active...]"), FormBase.MBOK).execute();
 		} else {
 			boolean err = true;
@@ -1224,7 +1224,7 @@ public class Preferences extends MinML {
 				p.dataDir = absoluteBaseDir + f.newSelectedProfile + "/";
 				p.readIndex();
 				String mapsPath = absoluteBaseDir + "maps" + p.getRelativeCustomMapsPath();
-				int answer = new MessageBox("", mapsPath + " " + MyLocale.getMsg(143, "löschen ?"), FormBase.MBYESNO).execute();
+				int answer = new MessageBox("", mapsPath + " " + MyLocale.getMsg(143, "lï¿½schen ?"), FormBase.MBYESNO).execute();
 				if (answer == 1) {
 					deleteDirectory(new FileBugfix(mapsPath));
 				}
