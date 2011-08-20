@@ -128,22 +128,22 @@ cacheLocationRex   = tBody_Location">In\ ([^<]*?)<
 # blockRex extrahiert zunächst aus der gesamten Seite den Logbereich
 blockRex           = <table class="LogsTable">((?s).*?)</table>\\s+<p>
 # singleLogEx extrahiert in einer Schleife alle Logs aus dem Logbereich
-singleLogExStart   = ><strong><img src=
-singleLogExEnd     = <small><a\ href="
+singleLogExStart   = class="logOwnerProfileName"
+singleLogExEnd     = class="AlignRight">
 # iconEx, nameTempEx, dateEx, singleLogEx werden auf einen singleLog angewendet
 iconExStart        = www.geocaching.com/images/icons/
 iconExEnd          = \ alt="
-nameTempExStart    = <a\ href='
+nameTempExStart    = <a\ href=
 nameTempExEnd      = /a>
 # Name extrahiert aus nameTemp
 nameExStart        = >
 nameExEnd          = <
-dateExStart        = "\ />&nbsp;
-dateExEnd          = \ by\ <a\ href='/profile/?guid=
-logExStart         = found)<br\ /><br\ />
-logExEnd           = <br\ /><br\ /><small><a\ href="
-logIdExStart         = '\ id='
-logIdExEnd           = '>
+dateExStart        = LogDate">
+dateExEnd          = </span>
+logExStart         = class="LogText">
+logExEnd           = </p>
+logIdExStart       = '\ id='
+logIdExEnd         = '>
 # Die Icons, die einen erfolgreichen Fund signalisieren
 icon_smile         = icon_smile.gif
 icon_camera        = icon_camera.gif
