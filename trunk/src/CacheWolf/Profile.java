@@ -574,13 +574,36 @@ public class Profile {
 		return "Profile: Name=" + name + "\nCentre=" + centre.toString() + "\ndataDir=" + dataDir + "\nlastSyncOC=" + getLast_sync_opencaching() + "\ndistOC=" + getDistOC() + "\ndistGC=" + getDistGC();
 	}
 
+	/**
+	 * Sets the selection state for all caches to the given state <code>selectStatus</code>.
+	 * There is a little distinction for the <code>true</code> and <code>false</code> case:<br>
+	 * selectStatus <code>true</code>: All <i>visible</i> caches are checked, and their addi
+	 * wpts, regardless if they are visible or not.<br>
+	 * selectStatus <code>false</code>: All caches are unchecked, regardless if they are visible 
+	 * or not. 
+	 * @param selectStatus If <code>true</code> all caches are checked, if <code>false</code>
+	 * all caches are unchecked.
+	 */
 	public void setSelectForAll(boolean selectStatus) {
-		selectionChanged = true;
 		CacheHolder ch;
+		selectionChanged = true;
 		for (int i = cacheDB.size() - 1; i >= 0; i--) {
 			ch = cacheDB.get(i);
-			if (ch.isVisible())
+			if (selectStatus) {
+				if (ch.isVisible()) {
+					ch.is_Checked = selectStatus; // set the ceckbox also for addi wpts
+					if (ch.hasAddiWpt()) {
+						CacheHolder addiWpt;
+						int addiCount = ch.addiWpts.getCount();
+						for (int j = 0; j < addiCount; j++) {
+							addiWpt = (CacheHolder) ch.addiWpts.get(j);
+							addiWpt.is_Checked = selectStatus;
+						}
+					}					
+				}
+			} else /* selectStatus==false */ {
 				ch.is_Checked = selectStatus;
+			}
 		}
 	}
 
