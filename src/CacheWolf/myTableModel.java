@@ -588,7 +588,10 @@ public class myTableModel extends TableModel {
 					// it is outside the selected range and not visible
 					// - otherwise it will be touched by this 
 					// algorithm
-					if (! addiWpt.isVisible() && (addiIdx > to || addiIdx < from)){
+					// Exception: If just one cache is clicked, then check all
+					// addi wpts it has, regardless of their position.
+					if ((! addiWpt.isVisible() && (addiIdx > to || addiIdx < from))
+							|| singleRow){
 						addiWpt.is_Checked = ch.is_Checked;
 						if (addiWpt.isVisible()) {
 							tcControl.repaintCell(cacheDB.getIndex(addiWpt), x);
