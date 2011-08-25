@@ -109,9 +109,13 @@ public class UrlFetcher {
 	}
 
 	public static void fetchDataFile(String address, String target) throws IOException {
-		FileOutputStream outp = new FileOutputStream(new File(target));
+		FileOutputStream outp = null;
+		try {
+		outp = new FileOutputStream(new File(target));
 		outp.write(fetchByteArray(address).toBytes());
-		outp.close();
+		} finally {
+		if (outp != null) outp.close();
+		}
 	}
 
 	/**
@@ -133,7 +137,7 @@ public class UrlFetcher {
 				i = i - 1;
 			}
 			realUrl = urltmp;
-			if (!urltmp.startsWith("http")) {
+			if (!( urltmp.startsWith("http") || urltmp.startsWith("https") )) {
 				url = FileBase.fixupPath(url);
 				String uu = url.toLowerCase();
 				String host;
@@ -145,7 +149,7 @@ public class UrlFetcher {
 				}
 				if (!urltmp.startsWith("/"))
 					host = host + "/";
-				urltmp = "http://" + host + urltmp;
+				urltmp = "http://" + host + urltmp; // TODO https?
 			}
 			conn.setUrl(urltmp);
 			conn.documentIsEncoded = isUrlEncoded(urltmp);
@@ -226,7 +230,7 @@ public class UrlFetcher {
 	 * This method encodes an URL containing special characters using the UTF-8 codec in %nn%nn notation<br>
 	 * Note that the encoding for URLs is not generally defined. Usually cp1252 or UTF-8 is used. It depends on what the
 	 * server expects, what encoding you must use.
-	 * 
+	 *
 	 * @param cc
 	 * @return
 	 * @throws IOException
@@ -246,7 +250,7 @@ public class UrlFetcher {
 	/**
 	 * Encode the URL using %## notation. Note: this fixes a bug in ewe.net.URL.encodeURL(): that routine assumes all
 	 * chars to be < 127. This method is mainly copied from there
-	 * 
+	 *
 	 * @param url
 	 *            The unencoded URL.
 	 * @param spaceToPlus
