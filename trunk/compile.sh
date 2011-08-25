@@ -15,6 +15,11 @@ do_compile() {
 
 do_compile \
    -d ./bin/ \
+   ./src/org/bouncycastle/*/*.java \
+   ./src/org/bouncycastle/*/*/*.java \
+   ./src/org/bouncycastle/*/*/*/*.java \
+   ./src/CacheWolf/*/*/*.java \
+   ./src/CacheWolf/*/*.java
    ./src/CacheWolf/*.java \
    ./src/CacheWolf/*/*/*.java \
    ./src/CacheWolf/*/*.java
