@@ -1094,7 +1094,7 @@ public class SpiderGC {
 		if (loggedIn && !pref.forceLogin) {
 			return true;
 		}
-		if (pref.userID.length() > 0) {
+		/*if (pref.userID.length() > 0) {
 			UrlFetcher.setPermanentRequestorProperty("Cookie", null);
 			loggedIn = switchToEnglish();
 			if (loggedIn)
@@ -1103,13 +1103,13 @@ public class SpiderGC {
 				(new MessageBox("Login", "Check UserID in preferences | Einstellungen.\nsee http://cachewolf.aldos.de/userid.html", FormBase.OKB)).execute();
 				return false;
 			}
-		} else {
-			UrlFetcher.setPermanentRequestorProperty("Cookie", null);
-			if (true) {
+		} else {*/
+		//	UrlFetcher.setPermanentRequestorProperty("Cookie", null);
+		/*	if (true) {
 				(new MessageBox("Login", "Check UserID in preferences| Einstellungen.\nsee http://cachewolf.aldos.de/userid.html", FormBase.OKB)).execute();
 				return false; // until SSL/https works
 			}
-		}
+		}*/
 		loggedIn = false;
 		String loginPage, loginPageUrl, loginSuccess;
 		try {
@@ -1178,23 +1178,26 @@ public class SpiderGC {
 					rexViewstate.search(loginPage);
 					if (rexViewstate.didMatch()) {
 						viewstate = rexViewstate.stringMatched(1);
-					} else {
+					} else {;
 						localInfB.close(0);
 						pref.log("[login]:__VIEWSTATE not found (before login): no login possible.", null);
 						// we need the __VIEWSTATE for sending loginData, so we should abort here
 						return false;
 					}
+					
 					final StringBuffer sb = new StringBuffer(1000);
-					sb.append("__VIEWSTATE=" + URL.encodeURL(viewstate, false));
-					sb.append("&ctl00%24ContentBody%24");
-					sb.append("myUsername=" + encodeUTF8URL(Utils.encodeJavaUtf8String(pref.myAlias)));
-					sb.append("&ctl00%24ContentBody%24");
-					sb.append("myPassword=" + encodeUTF8URL(Utils.encodeJavaUtf8String(passwort)));
-					sb.append("&ctl00%24ContentBody%24");
-					sb.append("cookie=on");
-					sb.append("&ctl00%24ContentBody%24");
-					sb.append("Button1=Login");
+					sb.append("__EVENTTARGET=&__EVENTARGUMENT=&"); // added for testing 
+					sb.append("__VIEWSTATE=" + URL.encodeURL(viewstate, false));				
+					sb.append("&ctl00%24SiteContent%24"); // changed from 24BodyContent to 24SiteContent
+					sb.append("tbUsername=" + encodeUTF8URL(Utils.encodeJavaUtf8String(pref.myAlias))); // changed myUsername to tbUsername
+					sb.append("&ctl00%24SiteContent%24");
+					sb.append("tbPassword=" + encodeUTF8URL(Utils.encodeJavaUtf8String(passwort))); // changed myPassword to tbPassword
+					sb.append("&ctl00%24SiteContent%24");
+					sb.append("cbRememberMe=on");
+					sb.append("&ctl00%24SiteContent%24");
+					sb.append("btnSignIn=Login"); // changed Button1 to btnSignIn
 					UrlFetcher.setpostData(sb.toString());
+					
 					loginPage = UrlFetcher.fetch(loginPageUrl);
 					if (loginPage.indexOf(loginSuccess) > 0) {
 						pref.log("Login successful: " + pref.myAlias);
