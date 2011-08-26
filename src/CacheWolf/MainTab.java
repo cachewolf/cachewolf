@@ -44,7 +44,7 @@ import ewe.ui.mTabbedPanel;
  * This class creates the tabbed panel and sets the tabs to the respective other panels. Important is to have a look at
  * the event handler!<br>
  * Class ID = 1200
- * 
+ *
  * @see MainForm
  * @see MainMenu
  */
@@ -200,7 +200,7 @@ public class MainTab extends mTabbedPanel {
 
 	/**
 	 * Code to execute when leaving a panel (oldCard is the panel number)
-	 * 
+	 *
 	 */
 	private void onLeavingPanel(int panelNo) {
 		if (panelNo == MainTab.LIST_CARD) { // Leaving the list view
@@ -268,7 +268,7 @@ public class MainTab extends mTabbedPanel {
 
 	/**
 	 * Code to execute when entering a panel (getSelectedItem() is the panel number)
-	 * 
+	 *
 	 */
 	private void onEnteringPanel(int panelNo) {
 		MyLocale.setSIPOff();
@@ -341,7 +341,7 @@ public class MainTab extends mTabbedPanel {
 
 	/**
 	 * this is called from MovingMap Cache context menu
-	 * 
+	 *
 	 * @param chi
 	 *            ,
 	 *            the CacheHolder for the Cache to switch to
@@ -349,14 +349,19 @@ public class MainTab extends mTabbedPanel {
 	 *            1=DetailsPanel 2=Description Panel
 	 */
 	public void openPanel(CacheHolder chi, int panelNo) {
-		// To change cache we need to be in panel LIST_CARD
-		onLeavingPanel(oldCard);
-		onEnteringPanel(LIST_CARD);
-		int row = profile.getCacheIndex(chi.getWayPoint());
-		tbP.selectRow(row);
+		// oldCard could have been DETAILS_CARD or GOTO_CARD
+		// on DETAILS_CARD changes already should have been applied before entering map
+		// on GOTO_CARD there is no action
+		// onLeavingPanel(oldCard);
+
+		// do we really need this actions ???
+		// onEnteringPanel(LIST_CARD);
+
+		// to switch to cache selected on map we do action as if leaving LIST_CARD
+		tbP.selectRow(profile.getCacheIndex(chi.getWayPoint()));
+		onLeavingPanel(LIST_CARD);
+
 		if (panelNo == DETAILS_CARD) {
-			ch = chi; // possibly wrong (old) detail if map is called
-			// directly
 			onEnteringPanel(DETAILS_CARD);
 			select(detP);
 		} else if (panelNo == DESCRIPTION_CARD) {
@@ -369,7 +374,7 @@ public class MainTab extends mTabbedPanel {
 	/**
 	 * this is called from goto / MovingMap / CalcPanel / DetailsPanel and so on to offer the user the possibility of
 	 * entering an new waypoint at a given position. pCh must already been preset with a valid CacheHolder object
-	 * 
+	 *
 	 * @param pCh
 	 */
 	public void newWaypoint(CacheHolder pCh) {
@@ -425,7 +430,7 @@ public class MainTab extends mTabbedPanel {
 
 	/**
 	 * sets posCircle Lat/Lon to centerTo
-	 * 
+	 *
 	 * @param centerTo
 	 *            true: centers centerTo on the screen and disconnects MovingMap from GPS if Gps-pos is not on the
 	 *            loaded map
@@ -433,6 +438,7 @@ public class MainTab extends mTabbedPanel {
 	 */
 	public void SwitchToMovingMap(CWPoint centerTo, boolean forceCenter) {
 		try {
+			onLeavingPanel(oldCard); // mainly for doing changes from DETAILS_CARD
 			if (!centerTo.isValid()) {
 				(new MessageBox("Error", "No valid coordinates", FormBase.OKB)).execute();
 				return;
@@ -481,7 +487,7 @@ public class MainTab extends mTabbedPanel {
 
 	/**
 	 * Save the index file
-	 * 
+	 *
 	 * @param askForConfirmation
 	 *            is ignored, old: If true, the save can be cancelled by user
 	 */
