@@ -573,7 +573,6 @@ public class DetailsPanel extends CellPanel {
 				ch.setCacheSize(CacheSize.CW_SIZE_NOTCHOSEN);
 				Global.mainTab.newWaypoint(ch);
 			} else if (ev.target == btnGoto) {
-				// FIXME: if something changed saveDirtyWaypoint();
 				Global.mainTab.gotoP.setDestinationAndSwitch(cache);
 			} else if (ev.target == btnCoordinates) {
 				CWPoint coords = new CWPoint(btnCoordinates.getText(), TransformCoordinates.CW);
