@@ -1087,36 +1087,77 @@ public class SpiderGC {
 	} // getCacheCoordinates
 
 	/**
-	 * Method to login the user to gc.com It will request a password and use the alias defined in preferences If the
-	 * login page cannot be fetched, the password is cleared. If the login fails, an appropriate message is displayed.
+	 * create alias Method from login for auto retry
+	 * TODO: Translation for status text!
 	 */
 	private boolean login() {
-		if (loggedIn && !pref.forceLogin) {
-			return true;
+		
+		int counter = 5;
+		boolean real_return = false;
+		InfoBox localInfB = new InfoBox(MyLocale.getMsg(5507, "Status"), MyLocale.getMsg(5508, "Logging in..."));
+		localInfB.exec();
+		
+		while (counter > 0) {
+			counter--;
+			switch( origin_login() ) {
+				case 1:
+					real_return = true;
+					counter = 0;
+					break;
+				case 0:
+					localInfB.setInfo(MyLocale.getMsg(5523, "Login error! next try...")+ "(" + (5 - counter) + "/5)");
+					break;
+				case 2:
+					(new MessageBox(MyLocale.getMsg(5500, "Error"), MyLocale.getMsg(5501, "Login failed! Wrong account or password?"), FormBase.OKB)).execute();
+					counter = 0;
+					break;
+				case 3:
+					localInfB.setInfo(MyLocale.getMsg(5523, "Login error! next try...")+ "(" + (5 - counter) + "/5)");
+					break;
+				case 4:
+					localInfB.setInfo(MyLocale.getMsg(5523, "Login error! next try...") + "(" + (5 - counter) + "/5)");
+					break;
+			}			
 		}
-		/*if (pref.userID.length() > 0) {
+		
+		localInfB.close(0);
+		return real_return;
+		
+	}
+
+	/**
+	 * Method to login the user to gc.com It will request a password and use the alias defined in preferences If the
+	 * login page cannot be fetched, the password is cleared. If the login fails, an appropriate message is displayed.
+	 * changed return type from boolean to int
+	 * 0 = false / abort
+	 * 1 = true
+	 * 2 = wrong username or password
+	 * 3 = login exception
+	 * 4 = fetch error / offline
+	 * remove messagebox and infobox
+	 */
+	private int origin_login() {
+		if (loggedIn && !pref.forceLogin) {
+			return 1;
+		}
+
+		if (pref.userID.length() > 0) {
 			UrlFetcher.setPermanentRequestorProperty("Cookie", null);
 			loggedIn = switchToEnglish();
-			if (loggedIn)
-				return true;
-			else {
-				(new MessageBox("Login", "Check UserID in preferences | Einstellungen.\nsee http://cachewolf.aldos.de/userid.html", FormBase.OKB)).execute();
-				return false;
-			}
-		} else {*/
-		//	UrlFetcher.setPermanentRequestorProperty("Cookie", null);
-		/*	if (true) {
-				(new MessageBox("Login", "Check UserID in preferences| Einstellungen.\nsee http://cachewolf.aldos.de/userid.html", FormBase.OKB)).execute();
-				return false; // until SSL/https works
-			}
-		}*/
+			if (loggedIn) return 1;
+			//else {
+			//  (new MessageBox("Login", "Check UserID in preferences | Einstellungen.\nsee http://cachewolf.aldos.de/userid.html", FormBase.OKB)).execute();
+			//	return false;
+			//}
+		} 
+
 		loggedIn = false;
 		String loginPage, loginPageUrl, loginSuccess;
 		try {
 			loginPageUrl = p.getProp("loginPage");
 			loginSuccess = p.getProp("loginSuccess");
 		} catch (final Exception ex) { // Tag not found in spider.def
-			return false;
+			return 0;
 		}
 
 		// **0 Get password
@@ -1131,24 +1172,20 @@ public class SpiderGC {
 		}
 		localInfB.close(0);
 		if (code != FormBase.IDOK)
-			return false;
+			return 0;
 
 		// **1 now we have user and password for login
-		localInfB = new InfoBox(MyLocale.getMsg(5507, "Status"), MyLocale.getMsg(5508, "Logging in..."));
-		localInfB.exec();
+		//localInfB = new InfoBox(MyLocale.getMsg(5507, "Status"), MyLocale.getMsg(5508, "Logging in..."));
+		//localInfB.exec();
 		try {
 			loginPage = UrlFetcher.fetch(loginPageUrl); // http://www.geocaching.com/login/default.aspx
 			if (loginPage.equals("")) {
-				localInfB.close(0);
-				(new MessageBox(MyLocale.getMsg(5500, "Error"), MyLocale.getMsg(5499, "Error loading login page.%0aPlease check your internet connection."), FormBase.OKB)).execute();
 				pref.log("[login]:Could not fetch: gc.com login page " + loginPageUrl, null);
-				return false;
+				return 4;
 			}
 		} catch (final Exception ex) {
-			localInfB.close(0);
-			(new MessageBox(MyLocale.getMsg(5500, "Error"), MyLocale.getMsg(5499, "Error loading login page.%0aPlease check your internet connection."), FormBase.OKB)).execute();
 			pref.log("[login]:Could not fetch: gc.com login page", ex);
-			return false;
+			return 4;
 		}
 
 		// **2 now we can check the loginpage if logged in else log in
@@ -1163,10 +1200,8 @@ public class SpiderGC {
 					try {
 						loginPage = UrlFetcher.fetch("http://www.geocaching.com/login/default.aspx?RESETCOMPLETE=Y");
 					} catch (final Exception ex) {
-						localInfB.close(0);
-						(new MessageBox(MyLocale.getMsg(5500, "Error"), MyLocale.getMsg(5499, "Error loading login page.%0aPlease check your internet connection."), FormBase.OKB)).execute();
 						pref.log("[login]:Could not fetch: gc.com login page", ex);
-						return false;
+						return 4;
 					}
 
 				}
@@ -1179,10 +1214,8 @@ public class SpiderGC {
 					if (rexViewstate.didMatch()) {
 						viewstate = rexViewstate.stringMatched(1);
 					} else {;
-						localInfB.close(0);
 						pref.log("[login]:__VIEWSTATE not found (before login): no login possible.", null);
-						// we need the __VIEWSTATE for sending loginData, so we should abort here
-						return false;
+						return 0;
 					}
 					
 					final StringBuffer sb = new StringBuffer(1000);
@@ -1215,18 +1248,19 @@ public class SpiderGC {
 						if (rexCookieSession.didMatch()) {
 							cookie = "ASP.NET_SessionId=" + rexCookieSession.stringMatched(1);
 						} else {
-							localInfB.close(0);
 							pref.log("[login]:SessionID not found.", null);
-							return false;
+							return 0;
 						}
 						final Regex rexCookieID = new Regex("(?i)userid=(.*?);.*");
 						rexCookieID.search(docprops);
 						if (rexCookieID.didMatch()) {
 							cookie += "; userid=" + rexCookieID.stringMatched(1);
+							// set the user id in user pref
+							pref.userID = rexCookieID.stringMatched(1);
+							pref.savePreferences();
 						} else {
-							localInfB.close(0);
 							pref.log("[login]:userID not found.", null);
-							return false;
+							return 0;
 						}
 						UrlFetcher.setPermanentRequestorProperty("Cookie", cookie);
 					} else {
@@ -1234,29 +1268,25 @@ public class SpiderGC {
 						pref.log("[login.url]:" + loginPageUrl, null);
 						pref.log("[login.postData]:" + sb.toString(), null);
 						pref.log("[login.Answer]:" + loginPage, null);
-						localInfB.close(0);
-						(new MessageBox(MyLocale.getMsg(5500, "Error"), MyLocale.getMsg(5501, "Login failed! Wrong account or password?"), FormBase.OKB)).execute();
-						return false;
+						return 2;
 					}
 					if (!this.switchToEnglish())
-						return false;
+						return 0;
 				} catch (final Exception ex) {
 					pref.log("[login]:Login failed with exception.", ex);
-					localInfB.close(0);
-					(new MessageBox(MyLocale.getMsg(5500, "Error"), MyLocale.getMsg(5501, "Login failed. Error loading page after login."), FormBase.OKB)).execute();
-					return false;
+					return 3;
 				}
 			}
 		}
 
-		final boolean loginAborted = localInfB.isClosed;
-		localInfB.close(0);
-		if (loginAborted)
-			return false;
-		else {
+		//final boolean loginAborted = localInfB.isClosed;
+		//localInfB.close(0);
+		//if (loginAborted)
+		//	return 0;
+		//else {
 			loggedIn = true;
-			return true;
-		}
+			return 1;
+		//}
 	}
 
 	private boolean switchToEnglish() {
