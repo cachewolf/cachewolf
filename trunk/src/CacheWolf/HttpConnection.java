@@ -342,13 +342,13 @@ addRequestorProperty();
 		} else {
 			url = FileBase.fixupPath(url);
 			port = 80;
-			String uu = url.toLowerCase();
-			if (uu.startsWith("https://")) {
+			String uu = url;
+			if (uu.toLowerCase().startsWith("https://")) {
 				useSslTls = true;
 				port = 443;
 				uu = "http://" + uu.substring(8);
 			} else useSslTls = false;
-			if (uu.startsWith("http://")){
+			if (uu.toLowerCase().startsWith("http://")){
 				uu = uu.replace('\\','/');
 				host = uu.substring(7);
 				int first = host.indexOf('/');
