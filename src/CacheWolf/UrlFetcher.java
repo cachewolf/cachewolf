@@ -77,8 +77,8 @@ public class UrlFetcher {
 	private static void initPermanentRequestorProperty() {
 		permanentRequestorProperties = new PropertyList();
 		permanentRequestorProperties.add("User-Agent", "Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.7.5) Gecko/20041107 Firefox/1.0");
-		// permanentRequestorProperties.add("Connection", "close");
-		permanentRequestorProperties.add("Connection", "keep-alive");
+		permanentRequestorProperties.add("Connection", "close");
+		// permanentRequestorProperties.add("Connection", "keep-alive");
 	}
 
 	public static void setPermanentRequestorProperty(String name, String property) {
