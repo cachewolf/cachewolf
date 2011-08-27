@@ -507,7 +507,7 @@ addRequestorProperty();
 	public void transfer(Stream in, OutputStream out) throws IOException
 //	===================================================================
 	{
-		int bufferSize = 1;
+		int bufferSize = 1024;
 		byte [] buff = new byte[bufferSize];
 		while(true){
 			/**
