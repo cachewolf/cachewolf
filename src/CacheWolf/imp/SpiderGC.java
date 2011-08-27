@@ -1092,6 +1092,10 @@ public class SpiderGC {
 	 */
 	private boolean login() {
 		
+		if (loggedIn && !pref.forceLogin) {
+			return true;
+		}
+
 		int counter = 5;
 		boolean real_return = false;
 		InfoBox localInfB = new InfoBox(MyLocale.getMsg(5507, "Status"), MyLocale.getMsg(5508, "Logging in..."));
@@ -1137,10 +1141,6 @@ public class SpiderGC {
 	 * remove messagebox and infobox
 	 */
 	private int origin_login() {
-		if (loggedIn && !pref.forceLogin) {
-			return 1;
-		}
-
 		if (pref.userID.length() > 0) {
 			UrlFetcher.setPermanentRequestorProperty("Cookie", null);
 			loggedIn = switchToEnglish();
