@@ -561,7 +561,9 @@ public class myTableModel extends TableModel {
 	}
 
 	/**
-	 * Toggle the select status for a group of caches If from==to, the addi Waypoints are also toggled if the cache is a main waypoint If from!=to, each cache is toggled irrespective of its type (main or addi)
+	 * Toggle the select status for a group of caches. Addi waypoints are set to the same state
+	 * as their main cache. (Exception: Their main cache is not in the range of toggled caches,
+	 * then they are toggled independently.)
 	 * 
 	 * @param from
 	 *            index of first cache to toggle
@@ -574,34 +576,53 @@ public class myTableModel extends TableModel {
 		CacheHolder ch;
 		boolean singleRow = from == to;
 		for (int j = from; j <= to; j++) {
+			boolean checkAddiWpts = false;
 			ch = cacheDB.get(j);
-			ch.is_Checked = !ch.is_Checked;
+			if (singleRow) {
+				// If its a single row click, then toggle the cache. Remember to 
+				// toggle addis too, if there are.
+				ch.is_Checked = !ch.is_Checked;
+				checkAddiWpts = true;
+			} else {
+				// If not a single row click...
+				if (ch.isAddiWpt()) {
+					// Only toggle addis, if their main cache is not within the
+					// range that will be toggled
+					int mainIdx = cacheDB.getIndex(ch.mainCache);
+					if (mainIdx < from-1 || mainIdx > to) {
+						ch.is_Checked = !ch.is_Checked;
+					} else {
+						// Otherwise the addis will be toggled along with their 
+						// main caches, so nothing is to do here.
+					}
+				} else {
+					// If its a main cache, then toggle it and remember to 
+					// toggle the addis, too.
+					ch.is_Checked = !ch.is_Checked;
+					checkAddiWpts = true;
+				}
+			}
 			tcControl.repaintCell(j, x);
-			// set the ceckbox also for addi wpts
-			if (ch.hasAddiWpt()) {
+			// Now look for addi wpts.
+			if (checkAddiWpts) {
 				CacheHolder addiWpt;
 				int addiCount = ch.addiWpts.getCount();
 				for (int i = 0; i < addiCount; i++) {
+					// This code will only run when the main cache
+					// has been toggled.
 					addiWpt = (CacheHolder) ch.addiWpts.get(i);
-					int addiIdx = cacheDB.getIndex(addiWpt);
-					// Change check state of addi wpt only if
-					// it is outside the selected range and not visible
-					// - otherwise it will be touched by this 
-					// algorithm
-					// Exception: If just one cache is clicked, then check all
-					// addi wpts it has, regardless of their position.
-					if ((! addiWpt.isVisible() && (addiIdx > to || addiIdx < from))
-							|| singleRow){
-						addiWpt.is_Checked = ch.is_Checked;
-						if (addiWpt.isVisible()) {
-							tcControl.repaintCell(cacheDB.getIndex(addiWpt), x);
-						}
+					// Set all addi check states to the state of the 
+					// main cache. 
+					addiWpt.is_Checked = ch.is_Checked;
+					if (addiWpt.isVisible()) {
+						tcControl.repaintCell(cacheDB.getIndex(addiWpt), x);
 					}
 				}
-
 			}
+
 		}
 	}
+	
 
 	public void select(int row, int col, boolean selectOn) {
 		// super.select(row, col, selectOn);
