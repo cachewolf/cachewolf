@@ -1,12 +1,12 @@
 package CacheWolf.view.pda;
 
+import CacheWolf.Global;
 import CacheWolf.MyLocale;
 import CacheWolf.model.DefaultListModel;
 import ewe.sys.Vm;
 import ewe.ui.CellConstants;
 import ewe.ui.ControlEvent;
 import ewe.ui.Form;
-import ewe.util.Vector;
 
 public abstract class PDAList extends Form {
 	protected static final String LINE = "Line";
@@ -16,6 +16,8 @@ public abstract class PDAList extends Form {
 	protected static final String PREV_PAGE = "PrevPage";
 
 	protected static final String MENUE = "Menue";
+
+	private static final String NONE = "none";
 
 	public DefaultListModel model;
 	private int linesOnScreen=7;
@@ -31,7 +33,7 @@ public abstract class PDAList extends Form {
 
 		firstLine = 0;
 		for (int i = 0; i < linesOnScreen; i++) {
-			listButtons[i] = new PDAListButton("", LINE + i);
+			listButtons[i]  = createListButton(i);
 			addLast(listButtons[i], CellConstants.STRETCH, CellConstants.FILL);
 		}
 		setupTBButtons();
@@ -43,6 +45,10 @@ public abstract class PDAList extends Form {
 		b1 = new PDAMenuButton(">>>", NEXT_PAGE);
 		b1.anchor = CellConstants.EAST;
 		addLast(b1, CellConstants.HSTRETCH, CellConstants.HFILL);
+	}
+
+	protected PDAListButton createListButton(int i) {
+		return new PDAListButton("", LINE + i);
 	}
 
 	public void onControlEvent(ControlEvent ev) {
@@ -77,8 +83,10 @@ public abstract class PDAList extends Form {
 			if (model != null && i + firstLine < model.size()) {
 				Object modelElement = model.get(i + firstLine);
 				listButtons[i].text = modelElement.toString();
+				listButtons[i].action = LINE+i;
 			} else {
 				listButtons[i].text = listButtons[i].fromText = listButtons[i].toText = "";
+				listButtons[i].action = NONE;
 			}
 			listButtons[i].repaint();
 		}
