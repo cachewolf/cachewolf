@@ -15,7 +15,7 @@ public class PDAListButton extends mButton {
 	public PDAListButton(String newText, String newAction) {
 		super(newText);
 		action = newAction;
-		buttonObject = new PDAListButtonObject(this);
+		createButtonObject();
 
 		backGround = Color.White;
 		foreGround = Color.Black;
@@ -25,10 +25,14 @@ public class PDAListButton extends mButton {
 		textPosition=2;
 	}
 
+	protected void createButtonObject() {
+		buttonObject = new PDAListButtonObject(this);
+	}
+
 	public void make(boolean paramBoolean) {
 		if (this.buttonObject != null)
 			return;
-		this.buttonObject = new PDAListButtonObject(this);
+		createButtonObject();
 	}
 	
 }
