@@ -1008,7 +1008,7 @@ public class SpiderGC {
 
 	/**
 	 * Method to spider a single cache. It assumes a login has already been performed!
-	 * 
+	 *
 	 * @return 1 if spider was successful, -1 if spider was cancelled by closing the infobox, 0 error, but continue with
 	 *         next cache
 	 */
@@ -1055,7 +1055,7 @@ public class SpiderGC {
 
 	/**
 	 * Fetch the coordinates of a waypoint from GC
-	 * 
+	 *
 	 * @param wayPoint
 	 *            the name of the waypoint
 	 * @return the cache coordinates
@@ -1091,19 +1091,41 @@ public class SpiderGC {
 	 * TODO: Translation for status text!
 	 */
 	private boolean login() {
-		
+
 		if (loggedIn && !pref.forceLogin) {
 			return true;
+		}
+		
+		if (pref.userID.length() > 0) {
+			UrlFetcher.setPermanentRequestorProperty("Cookie", null);
+			loggedIn = switchToEnglish();
+			if (loggedIn)
+				return true;
 		}
 
 		int counter = 5;
 		boolean real_return = false;
-		InfoBox localInfB = new InfoBox(MyLocale.getMsg(5507, "Status"), MyLocale.getMsg(5508, "Logging in..."));
+
+		// **0 Get password
+		String passwort = pref.password;
+		InfoBox localInfB = new InfoBox(MyLocale.getMsg(5506, "Password"), MyLocale.getMsg(5505, "Enter Password"), InfoBox.INPUT);
+		localInfB.feedback.setText(passwort);
+		localInfB.feedback.isPassword = true;
+		int code = FormBase.IDOK;
+		if (passwort.equals("")) {
+			code = localInfB.execute();
+			passwort = localInfB.getInput();
+		}
+		localInfB.close(0);
+		if (code != FormBase.IDOK)
+			return false;
+
+		localInfB = new InfoBox(MyLocale.getMsg(5507, "Status"), MyLocale.getMsg(5508, "Logging in..."));
 		localInfB.exec();
-		
+
 		while (counter > 0) {
 			counter--;
-			switch( origin_login() ) {
+			switch( origin_login(passwort) ) {
 				case 1:
 					real_return = true;
 					counter = 0;
@@ -1121,12 +1143,12 @@ public class SpiderGC {
 				case 4:
 					localInfB.setInfo(MyLocale.getMsg(5523, "Login error! next try...") + "(" + (5 - counter) + "/5)");
 					break;
-			}			
+			}
 		}
-		
+
 		localInfB.close(0);
 		return real_return;
-		
+
 	}
 
 	/**
@@ -1140,16 +1162,7 @@ public class SpiderGC {
 	 * 4 = fetch error / offline
 	 * remove messagebox and infobox
 	 */
-	private int origin_login() {
-		if (pref.userID.length() > 0) {
-			UrlFetcher.setPermanentRequestorProperty("Cookie", null);
-			loggedIn = switchToEnglish();
-			if (loggedIn) return 1;
-			//else {
-			//  (new MessageBox("Login", "Check UserID in preferences | Einstellungen.\nsee http://cachewolf.aldos.de/userid.html", FormBase.OKB)).execute();
-			//	return false;
-			//}
-		} 
+	private int origin_login(String passwort) {
 
 		loggedIn = false;
 		String loginPage, loginPageUrl, loginSuccess;
@@ -1160,25 +1173,9 @@ public class SpiderGC {
 			return 0;
 		}
 
-		// **0 Get password
-		String passwort = pref.password;
-		InfoBox localInfB = new InfoBox(MyLocale.getMsg(5506, "Password"), MyLocale.getMsg(5505, "Enter Password"), InfoBox.INPUT);
-		localInfB.feedback.setText(passwort);
-		localInfB.feedback.isPassword = true;
-		int code = FormBase.IDOK;
-		if (passwort.equals("")) {
-			code = localInfB.execute();
-			passwort = localInfB.getInput();
-		}
-		localInfB.close(0);
-		if (code != FormBase.IDOK)
-			return 0;
-
-		// **1 now we have user and password for login
-		//localInfB = new InfoBox(MyLocale.getMsg(5507, "Status"), MyLocale.getMsg(5508, "Logging in..."));
-		//localInfB.exec();
+		// **1 we have user and password for login
 		try {
-			loginPage = UrlFetcher.fetch(loginPageUrl); // http://www.geocaching.com/login/default.aspx
+			loginPage = UrlFetcher.fetch(loginPageUrl); // https://www.geocaching.com/login/default.aspx
 			if (loginPage.equals("")) {
 				pref.log("[login]:Could not fetch: gc.com login page " + loginPageUrl, null);
 				return 4;
@@ -1189,104 +1186,95 @@ public class SpiderGC {
 		}
 
 		// **2 now we can check the loginpage if logged in else log in
-		if (!localInfB.isClosed) {
-			if (loginPage.indexOf(loginSuccess) > 0) {
-				if (loginPage.indexOf(pref.myAlias) > 0) {
-					loggedIn = true;
-					// assume language is already set to EN
-					pref.log("[login]:Already logged in as " + pref.myAlias);
-				} else {
-					// it is another user, whom we should logout
-					try {
-						loginPage = UrlFetcher.fetch("http://www.geocaching.com/login/default.aspx?RESETCOMPLETE=Y");
-					} catch (final Exception ex) {
-						pref.log("[login]:Could not fetch: gc.com login page", ex);
-						return 4;
-					}
-
-				}
-			}
-			if (!loggedIn) {
+		// assume language is already set to EN (loginSuccess has EN - Text)
+		if (loginPage.indexOf(loginSuccess) > 0) {
+			if (loginPage.indexOf(pref.myAlias) > 0) {
+				loggedIn = true;
+				pref.log("[login]:Already logged in as " + pref.myAlias);
+			} else {
+				// it is another user, whom we should logout
 				try {
-					final Regex rexViewstate = new Regex("id=\"__VIEWSTATE\" value=\"(.*?)\" />");
-					String viewstate = "";
-					rexViewstate.search(loginPage);
-					if (rexViewstate.didMatch()) {
-						viewstate = rexViewstate.stringMatched(1);
-					} else {;
-						pref.log("[login]:__VIEWSTATE not found (before login): no login possible.", null);
-						return 0;
-					}
-					
-					final StringBuffer sb = new StringBuffer(1000);
-					sb.append("__EVENTTARGET=&__EVENTARGUMENT=&"); // added for testing 
-					sb.append("__VIEWSTATE=" + URL.encodeURL(viewstate, false));				
-					sb.append("&ctl00%24SiteContent%24"); // changed from 24BodyContent to 24SiteContent
-					sb.append("tbUsername=" + encodeUTF8URL(Utils.encodeJavaUtf8String(pref.myAlias))); // changed myUsername to tbUsername
-					sb.append("&ctl00%24SiteContent%24");
-					sb.append("tbPassword=" + encodeUTF8URL(Utils.encodeJavaUtf8String(passwort))); // changed myPassword to tbPassword
-					sb.append("&ctl00%24SiteContent%24");
-					sb.append("cbRememberMe=on");
-					sb.append("&ctl00%24SiteContent%24");
-					sb.append("btnSignIn=Login"); // changed Button1 to btnSignIn
-					UrlFetcher.setpostData(sb.toString());
-					
-					loginPage = UrlFetcher.fetch(loginPageUrl);
-					if (loginPage.indexOf(loginSuccess) > 0) {
-						pref.log("Login successful: " + pref.myAlias);
-						// **3 now we are logged in and get the Cookie (there are two)
-						final PropertyList pl = UrlFetcher.getDocumentProperties();
-						String docprops = "";
-						for (int i = 0; i < pl.size(); i++) {
-							final Property p = (Property) pl.get(i);
-							if (p.name.equalsIgnoreCase("Set-Cookie")) {
-								docprops += p.value;
-							}
-						}
-						final Regex rexCookieSession = new Regex("(?i)ASP.NET_SessionId=(.*?);.*");
-						rexCookieSession.search(docprops);
-						if (rexCookieSession.didMatch()) {
-							cookie = "ASP.NET_SessionId=" + rexCookieSession.stringMatched(1);
-						} else {
-							pref.log("[login]:SessionID not found.", null);
-							return 0;
-						}
-						final Regex rexCookieID = new Regex("(?i)userid=(.*?);.*");
-						rexCookieID.search(docprops);
-						if (rexCookieID.didMatch()) {
-							cookie += "; userid=" + rexCookieID.stringMatched(1);
-							// set the user id in user pref
-							pref.userID = rexCookieID.stringMatched(1);
-							pref.savePreferences();
-						} else {
-							pref.log("[login]:userID not found.", null);
-							return 0;
-						}
-						UrlFetcher.setPermanentRequestorProperty("Cookie", cookie);
-					} else {
-						pref.log("Login failed. Wrong Account or Password? " + pref.myAlias, null);
-						pref.log("[login.url]:" + loginPageUrl, null);
-						pref.log("[login.postData]:" + sb.toString(), null);
-						pref.log("[login.Answer]:" + loginPage, null);
-						return 2;
-					}
-					if (!this.switchToEnglish())
-						return 0;
+					loginPage = UrlFetcher.fetch("https://www.geocaching.com/login/default.aspx?RESET=Y");
 				} catch (final Exception ex) {
-					pref.log("[login]:Login failed with exception.", ex);
-					return 3;
+					pref.log("[login]:Could not fetch: gc.com login page", ex);
+					return 4;
 				}
+
 			}
 		}
+		if (!loggedIn) {
+			try {
+				final Regex rexViewstate = new Regex("id=\"__VIEWSTATE\" value=\"(.*?)\" />");
+				String viewstate = "";
+				rexViewstate.search(loginPage);
+				if (rexViewstate.didMatch()) {
+					viewstate = rexViewstate.stringMatched(1);
+				} else {;
+					pref.log("[login]:__VIEWSTATE not found (before login): no login possible.", null);
+					return 0;
+				}
 
-		//final boolean loginAborted = localInfB.isClosed;
-		//localInfB.close(0);
-		//if (loginAborted)
-		//	return 0;
-		//else {
-			loggedIn = true;
-			return 1;
-		//}
+				final StringBuffer sb = new StringBuffer(1000);
+				sb.append("__EVENTTARGET=&__EVENTARGUMENT=&"); // added for testing
+				sb.append("__VIEWSTATE=" + URL.encodeURL(viewstate, false));
+				sb.append("&ctl00%24SiteContent%24"); // changed from 24BodyContent to 24SiteContent
+				sb.append("tbUsername=" + encodeUTF8URL(Utils.encodeJavaUtf8String(pref.myAlias))); // changed myUsername to tbUsername
+				sb.append("&ctl00%24SiteContent%24");
+				sb.append("tbPassword=" + encodeUTF8URL(Utils.encodeJavaUtf8String(passwort))); // changed myPassword to tbPassword
+				sb.append("&ctl00%24SiteContent%24");
+				sb.append("cbRememberMe=on");
+				sb.append("&ctl00%24SiteContent%24");
+				sb.append("btnSignIn=Login"); // changed Button1 to btnSignIn
+				UrlFetcher.setpostData(sb.toString());
+
+				loginPage = UrlFetcher.fetch(loginPageUrl);
+			} catch (final Exception ex) {
+				pref.log("[login]:Login failed with exception.", ex);
+				return 3;
+			}
+		}
+		
+		if (loginPage.indexOf(loginSuccess) > 0) {
+			pref.log("Login successful: " + pref.myAlias);
+			// **3 now we are logged in and get the Cookie (there are two)
+			final PropertyList pl = UrlFetcher.getDocumentProperties();
+			String docprops = "";
+			for (int i = 0; i < pl.size(); i++) {
+				final Property p = (Property) pl.get(i);
+				if (p.name.equalsIgnoreCase("Set-Cookie")) {
+					docprops += p.value;
+				}
+			}
+			final Regex rexCookieSession = new Regex("(?i)ASP.NET_SessionId=(.*?);.*");
+			rexCookieSession.search(docprops);
+			if (rexCookieSession.didMatch()) {
+				cookie = "ASP.NET_SessionId=" + rexCookieSession.stringMatched(1);
+			} else {
+				pref.log("[login]:SessionID not found.", null);
+				return 0;
+			}
+			final Regex rexCookieID = new Regex("(?i)userid=(.*?);.*");
+			rexCookieID.search(docprops);
+			if (rexCookieID.didMatch()) {
+				cookie += "; userid=" + rexCookieID.stringMatched(1);
+				// set the user id in user pref
+				pref.userID = rexCookieID.stringMatched(1);
+				pref.savePreferences();
+			} else {
+				pref.log("[login]:userID not found.", null);
+				return 0;
+			}
+			UrlFetcher.setPermanentRequestorProperty("Cookie", cookie);
+		} else {
+			pref.log("Login failed. Wrong Account or Password? " + pref.myAlias, null);
+			return 2;
+		}
+		
+		if (!this.switchToEnglish())
+			return 0;
+
+		loggedIn = true;
+		return 1;
 	}
 
 	private boolean switchToEnglish() {
@@ -1780,7 +1768,7 @@ public class SpiderGC {
 
 	/**
 	 * check if new Update exists
-	 * 
+	 *
 	 * @param ch
 	 *            CacheHolder
 	 * @param CacheDescription
@@ -1865,7 +1853,7 @@ public class SpiderGC {
 
 	/**
 	 * Get num found
-	 * 
+	 *
 	 * @param doc
 	 *            A previously fetched cachepage
 	 * @return numFound
@@ -1985,7 +1973,7 @@ public class SpiderGC {
 
 	/**
 	 * Get the waypoint name
-	 * 
+	 *
 	 * @param doc
 	 *            A previously fetched cachepage
 	 * @return Name of waypoint to add to list
@@ -2210,9 +2198,9 @@ public class SpiderGC {
 
 	/*
 	 * @param CacheHolder ch
-	 * 
+	 *
 	 * @param String cacheDescGC
-	 * 
+	 *
 	 * @return boolean newLogExists
 	 */
 	private boolean newFoundExists(CacheHolder ch, String cacheDescription) {
@@ -2254,9 +2242,9 @@ public class SpiderGC {
 	 * Read a complete cachepage from geocaching.com including all logs. This is used both when updating already
 	 * existing caches (via spiderSingle) and when spidering around a centre. It is also used when reading a GPX file
 	 * and fetching the images.
-	 * 
+	 *
 	 * This is the workhorse function of the spider.
-	 * 
+	 *
 	 * @param CacheHolderDetail
 	 *            chD The element wayPoint must be set to the name of a waypoint
 	 * @param boolean
@@ -2462,7 +2450,7 @@ public class SpiderGC {
 
 	/**
 	 * Get the coordinates of the cache
-	 * 
+	 *
 	 * @param doc
 	 *            A previously fetched cachepage
 	 * @return Cache coordinates
@@ -2481,7 +2469,7 @@ public class SpiderGC {
 
 	/**
 	 * Get the long description
-	 * 
+	 *
 	 * @param doc
 	 *            A previously fetched cachepage
 	 * @return the long description
@@ -2516,7 +2504,7 @@ public class SpiderGC {
 
 	/**
 	 * Get the cache location (country and state)
-	 * 
+	 *
 	 * @param doc
 	 *            A previously fetched cachepage
 	 * @return the location (country and state) of the cache
@@ -2533,7 +2521,7 @@ public class SpiderGC {
 
 	/**
 	 * Get the cache name
-	 * 
+	 *
 	 * @param doc
 	 *            A previously fetched cachepage
 	 * @return the name of the cache
@@ -2550,7 +2538,7 @@ public class SpiderGC {
 
 	/**
 	 * Get the cache owner
-	 * 
+	 *
 	 * @param doc
 	 *            A previously fetched cachepage
 	 * @return the cache owner
@@ -2567,7 +2555,7 @@ public class SpiderGC {
 
 	/**
 	 * Get the date when the cache was hidden
-	 * 
+	 *
 	 * @param doc
 	 *            A previously fetched cachepage
 	 * @return Hidden date
@@ -2584,7 +2572,7 @@ public class SpiderGC {
 
 	/**
 	 * Get the hints
-	 * 
+	 *
 	 * @param doc
 	 *            A previously fetched cachepage
 	 * @return Cachehints
@@ -2601,7 +2589,7 @@ public class SpiderGC {
 
 	/**
 	 * Get the cache size
-	 * 
+	 *
 	 * @param doc
 	 *            A previously fetched cachepage
 	 * @return Cache size
@@ -2619,7 +2607,7 @@ public class SpiderGC {
 
 	/**
 	 * Get the Difficulty
-	 * 
+	 *
 	 * @param doc
 	 *            A previously fetched cachepage
 	 * @return The cache difficulty
@@ -2637,7 +2625,7 @@ public class SpiderGC {
 
 	/**
 	 * Get the terrain rating
-	 * 
+	 *
 	 * @param doc
 	 *            A previously fetched cachepage
 	 * @return Terrain rating
@@ -2655,7 +2643,7 @@ public class SpiderGC {
 
 	/**
 	 * Get the waypoint type
-	 * 
+	 *
 	 * @param doc
 	 *            A previously fetched cachepage
 	 * @return the waypoint type (Tradi, Multi, etc.)
@@ -2672,7 +2660,7 @@ public class SpiderGC {
 
 	/**
 	 * Get the logs
-	 * 
+	 *
 	 * @param doc
 	 *            A previously fetched cachepage
 	 * @param chD
@@ -2739,7 +2727,7 @@ public class SpiderGC {
 
 	/**
 	 * This methods cleans up the path for inlined smilies in logtexts.
-	 * 
+	 *
 	 * @param logText
 	 * @return
 	 */
@@ -2757,7 +2745,7 @@ public class SpiderGC {
 	/**
 	 * Read the travelbug names from a previously fetched Cache page and then read the travelbug purpose for each
 	 * travelbug
-	 * 
+	 *
 	 * @param doc
 	 *            The previously fetched cachepage
 	 * @return A HTML formatted string with bug names and there purpose
@@ -2815,7 +2803,7 @@ public class SpiderGC {
 	/**
 	 * Get the images for a previously fetched cache page. Images are extracted from two areas: The long description and
 	 * the pictures section (including the spoiler)
-	 * 
+	 *
 	 * @param doc
 	 *            The previously fetched cachepage
 	 * @param chD
@@ -3002,7 +2990,7 @@ public class SpiderGC {
 
 	/**
 	 * Read an image from the server
-	 * 
+	 *
 	 * @param imgUrl
 	 *            The Url of the image
 	 * @param target
@@ -3024,7 +3012,7 @@ public class SpiderGC {
 
 	/**
 	 * Read all additional waypoints from a previously fetched cachepage.
-	 * 
+	 *
 	 * @param doc
 	 *            The previously fetched cachepage
 	 * @param wayPoint
@@ -3159,7 +3147,7 @@ public class SpiderGC {
 	 * Load the bug id for a given name. This method is not ideal, as there are sometimes several bugs with identical
 	 * names but different IDs. Normally the bug GUID is used which can be obtained from the cache page.<br>
 	 * Note that each bug has both an ID and a GUID.
-	 * 
+	 *
 	 * @param name
 	 *            The name (or partial name) of a travelbug
 	 * @return the id of the bug
@@ -3195,7 +3183,7 @@ public class SpiderGC {
 	/**
 	 * Fetch a bug's mission for a given GUID or ID. If the guid String is longer than 10 characters it is assumed to be
 	 * a GUID, otherwise it is an ID.
-	 * 
+	 *
 	 * @param guid
 	 *            the guid or id of the travelbug
 	 * @return The mission
@@ -3228,7 +3216,7 @@ public class SpiderGC {
 
 	/**
 	 * Fetch a bug's mission for a given tracking number
-	 * 
+	 *
 	 * @param trackNr
 	 *            the tracking number of the travelbug
 	 * @return The mission
@@ -3260,7 +3248,7 @@ public class SpiderGC {
 
 	/**
 	 * Fetch a bug's mission and namefor a given tracking number
-	 * 
+	 *
 	 * @param TB
 	 *            the travelbug
 	 * @return true if suceeded
@@ -3307,7 +3295,7 @@ public class SpiderGC {
 
 		/**
 		 * Gets an entry in spider.def by its key (tag)
-		 * 
+		 *
 		 * @param key
 		 *            The key which is attributed to a specific entry
 		 * @return The value for the key
