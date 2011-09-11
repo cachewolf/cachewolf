@@ -530,7 +530,7 @@ public class SpiderGC {
 				ch.initStates(false);
 		}
 
-		// halbe Seitenl‰nge eines Quadrats ums Zentrum in km
+		// halbe Seitenl√§nge eines Quadrats ums Zentrum in km
 		double halfSideLength = maxDistance;
 		if (pref.metricSystem == Metrics.IMPERIAL) {
 			halfSideLength = Metrics.convertUnit(maxDistance, Metrics.MILES, Metrics.KILOMETER);
@@ -991,7 +991,7 @@ public class SpiderGC {
 				break;
 			final CacheHolder ch = (CacheHolder) e.nextElement();
 			infB.setInfo(MyLocale.getMsg(5513, "Loading: ") + ch.getWayPoint() + " (" + (cachesToLoad.size() + j) + " / " + totalCachesToLoad + ")");
-			final int test = spiderSingle(cacheDB.getIndex(ch), infB, false, loadAllLogs);
+			final int test = spiderSingle(cacheDB.getIndex(ch), infB, loadAllLogs);
 			if (test == SPIDER_CANCEL) {
 				break;
 			} else {
@@ -1012,7 +1012,7 @@ public class SpiderGC {
 	 * @return 1 if spider was successful, -1 if spider was cancelled by closing the infobox, 0 error, but continue with
 	 *         next cache
 	 */
-	public int spiderSingle(int number, InfoBox pInfB, boolean forceLogin, boolean loadAllLogs) {
+	public int spiderSingle(int number, InfoBox pInfB, boolean loadAllLogs) {
 		int ret = -1;
 		this.infB = pInfB;
 		final CacheHolder ch = new CacheHolder(); // cacheDB.get(number);
@@ -1092,10 +1092,10 @@ public class SpiderGC {
 	 */
 	private boolean login() {
 
-		if (loggedIn && !pref.forceLogin) {
+		if (loggedIn && !pref.switchGCLanguageToEnglish) {
 			return true;
 		}
-		
+
 		if (pref.userID.length() > 0) {
 			UrlFetcher.setPermanentRequestorProperty("Cookie", null);
 			loggedIn = switchToEnglish();
@@ -1233,7 +1233,7 @@ public class SpiderGC {
 				return 3;
 			}
 		}
-		
+
 		if (loginPage.indexOf(loginSuccess) > 0) {
 			pref.log("Login successful: " + pref.myAlias);
 			// **3 now we are logged in and get the Cookie (there are two)
@@ -1269,7 +1269,7 @@ public class SpiderGC {
 			pref.log("Login failed. Wrong Account or Password? " + pref.myAlias, null);
 			return 2;
 		}
-		
+
 		if (!this.switchToEnglish())
 			return 0;
 
@@ -1323,24 +1323,18 @@ public class SpiderGC {
 		ext.set(ext.findNext(), ">", "<", 0, true);
 		String oldLanguage = ext.findNext();
 		if (oldLanguage.equals("English")) {
+			pref.switchGCLanguageToEnglish=false;
 			pref.log("already English");
-			pref.oldLanguageCtl = ""; // nothing to reset
 			return true;
 		}
 		// switch to english now goes into gc account Display Preferences
 		// (is permanent, must be reset)
-		// todo as long as Textfile Encoding is CP1252 we compare with
-		// substring(1) and think koreanisch if no merge at all
-		String languages[] = { "English", "Deutsch", "FranÁais", "PortuguÍs", "Ceötina", "Svenska", "Nederlands", "Catal‡", "Polski", "Eesti", "Norsk, BokmÂl", "???", "EspaÒol" };
+		String languages[] = { "English", "Deutsch", "Fran&#231;ais", "Portugu&#234;s", "ƒåe≈°tina", "Svenska", "Nederlands", "Catal&#224;", "Polski", "Eesti", "Norsk, Bokm&#229;l", "ÌïúÍµ≠Ïñ¥", "Espa&#241;ol", "Magyar" };
 		for (int i = 0; i < languages.length; i++) {
-			if (oldLanguage.substring(1).equals(languages[i].substring(1))) {
+			if (oldLanguage.equals(languages[i])) {
 				pref.oldLanguageCtl = url + "?__EVENTTARGET=" + UrlFetcher.encodeURL("ctl00$uxLocaleList$uxLocaleList$ctl" + MyLocale.formatLong(i, "00") + "$uxLocaleItem", false);
 				break;
 			}
-		}
-		if (pref.oldLanguageCtl.length() == 0) {
-			// koreanisch
-			pref.oldLanguageCtl = url + "?__EVENTTARGET=" + UrlFetcher.encodeURL("ctl00$uxLocaleList$uxLocaleList$ctl" + "11" + "$uxLocaleItem", false);
 		}
 		final String strEnglishPage = "ctl00$uxLocaleList$uxLocaleList$ctl00$uxLocaleItem";
 		url += "?__EVENTTARGET=" + UrlFetcher.encodeURL(strEnglishPage, false);
@@ -1541,7 +1535,7 @@ public class SpiderGC {
 				ch.initStates(false);
 		}
 
-		// halbe Seitenl‰nge eines Quadrats ums Zentrum in km
+		// halbe Seitenl√§nge eines Quadrats ums Zentrum in km
 		double halfSideLength = maxDistance;
 		if (pref.metricSystem == Metrics.IMPERIAL) {
 			halfSideLength = Metrics.convertUnit(maxDistance, Metrics.MILES, Metrics.KILOMETER);
@@ -1909,8 +1903,8 @@ public class SpiderGC {
 			if (ret.indexOf("ere") > -1)
 				return distanceAndDirection; // zur Zeit " Here -1"
 			// Versuch den DistanceCodeKey automatisch zu bestimmen
-			// da dieser von gc mal wieder ge√É¬§ndert wurde.
-			// todo Benˆtigt ev noch weitere Anpassungen: | am Anfang, and calc of keylength
+			// da dieser von gc mal wieder ge√§ndert wurde.
+			// todo Ben√∂tigt ev noch weitere Anpassungen: | am Anfang, and calc of keylength
 			// String thereitis="|0.34 km|102.698";
 			// String page =
 			// fetchText("http://www.geocaching.com/seek/nearest.aspx?lat=48.48973&lng=009.26313&dist=2&f=1",false);
@@ -1942,7 +1936,7 @@ public class SpiderGC {
 			final String coded = ewe.net.URL.decodeURL(RexPropDistanceCode.stringMatched(1));
 			final String newkey = decodeXor(coded, thereitis);
 			final int keylength = 13;
-			// wenn nicht 13 dann newkey auf wiederholung pr√É¬ºfen
+			// wenn nicht 13 dann newkey auf wiederholung pr√ºfen
 			DistanceCodeKey = newkey.substring(0, keylength);
 			ret = decodeXor(stmp, DistanceCodeKey).replace('|', ' ');
 			pref.log("Automatic key: " + DistanceCodeKey + " result: " + ret + Preferences.NEWLINE);
