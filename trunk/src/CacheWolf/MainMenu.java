@@ -89,7 +89,7 @@ public class MainMenu extends MenuBar {
 	private MenuItem filtCreate, filtClear, filtInvert, filtSelected, filtNonSelected, filtBlack, filtApply;
 	private MenuItem exportLOC, exportGPS, mnuSeparator = new MenuItem("-");
 	private MenuItem orgNewWP, orgCopy, orgMove, orgDelete, orgRebuild, orgCheckNotesAndSolver;
-	public MenuItem cacheTour, orgTravelbugs, mnuForceLogin;
+	public MenuItem cacheTour, orgTravelbugs;
 	private MenuItem mnuNewProfile, mnuOpenProfile, mnuDeleteProfile, mnuRenameProfile, mnuEditCenter;
 	private Form father;
 	private TablePanel tbp;
@@ -134,12 +134,8 @@ public class MainMenu extends MenuBar {
 				mnuSeparator, //
 				loadGCVotes = new MenuItem(MyLocale.getMsg(1208, "Import ratings from GCVote")), //
 				fetchOCLink = new MenuItem(MyLocale.getMsg(1209, "Fetch link to OC - Cache")), //
-				mnuSeparator, //
-				mnuForceLogin = new MenuItem(MyLocale.getMsg(216, "Always login to GC")), //
 		};
 		Menu importMenu = new Menu(mnuImport, MyLocale.getMsg(175, "Import"));
-		if (Global.getPref().forceLogin)
-			mnuForceLogin.modifiers ^= MenuItem.Checked;
 
 		// /////////////////////////////////////////////////////////////////////
 		// subMenu for export, part of "Application" menu below
@@ -439,11 +435,6 @@ public class MainMenu extends MenuBar {
 			if (mev.selectedItem == update) {
 				updateSelectedCaches(tbp);
 				pref.setOldGCLanguage();
-			}
-			if (mev.selectedItem == mnuForceLogin) {
-				mnuForceLogin.modifiers ^= MenuItem.Checked;
-				Global.getPref().forceLogin = (mnuForceLogin.modifiers & MenuItem.Checked) != 0;
-				Global.getPref().savePreferences();
 			}
 			// /////////////////////////////////////////////////////////////////////
 			// subMenu for export, part of "Application" menu
@@ -885,7 +876,6 @@ public class MainMenu extends MenuBar {
 		}
 
 		int spiderErrors = 0;
-		boolean forceLogin = Global.getPref().forceLogin; // To ensure that spiderSingle only logs in once if forcedLogin=true
 		for (int j = 0; j < cachesToUpdate.size(); j++) {
 			int i = ((Integer) cachesToUpdate.get(j)).intValue();
 			ch = cacheDB.get(i);
@@ -893,7 +883,7 @@ public class MainMenu extends MenuBar {
 			infB.setInfo(MyLocale.getMsg(5513, "Loading: ") + ch.getWayPoint() + " (" + (j + 1) + " / " + cachesToUpdate.size() + ")");
 			infB.redisplay();
 			if (ch.getWayPoint().substring(0, 2).equalsIgnoreCase("GC")) {
-				int test = spider.spiderSingle(i, infB, forceLogin, loadAllLogs || ch.is_found());
+				int test = spider.spiderSingle(i, infB, loadAllLogs || ch.is_found());
 				if (test == SpiderGC.SPIDER_CANCEL) {
 					infB.close(0);
 					break;
@@ -902,7 +892,6 @@ public class MainMenu extends MenuBar {
 				} else {
 					// profile.hasUnsavedChanges=true;
 				}
-				forceLogin = false;
 			} else {
 				if (!ocSync.syncSingle(i, infB)) {
 					infB.close(0);
