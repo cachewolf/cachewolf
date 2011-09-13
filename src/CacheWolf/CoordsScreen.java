@@ -1,4 +1,4 @@
-/*
+ï»¿/*
 GNU General Public License
 CacheWolf is a software for PocketPC, Win and Linux that
 enables paperless caching.
@@ -96,9 +96,9 @@ public class CoordsScreen extends Form {
 	private void InitCoordsScreen() {
 		this.setTitle("");
 		// Radiobuttons for format
-		topLinePanel.addNext(chkDD = new mCheckBox("d.d°"), CellConstants.DONTSTRETCH, CellConstants.WEST);
-		topLinePanel.addNext(chkDMM = new mCheckBox("d°m.m\'"), CellConstants.DONTSTRETCH, CellConstants.WEST);
-		topLinePanel.addNext(chkDMS = new mCheckBox("d°m\'s\""), CellConstants.DONTSTRETCH, CellConstants.WEST);
+		topLinePanel.addNext(chkDD = new mCheckBox("d.dÂ°"), CellConstants.DONTSTRETCH, CellConstants.WEST);
+		topLinePanel.addNext(chkDMM = new mCheckBox("dÂ°m.m\'"), CellConstants.DONTSTRETCH, CellConstants.WEST);
+		topLinePanel.addNext(chkDMS = new mCheckBox("dÂ°m\'s\""), CellConstants.DONTSTRETCH, CellConstants.WEST);
 		// topLinePanel.addNext(chkUTM =new mCheckBox("UTM"),CellConstants.DONTSTRETCH, CellConstants.WEST);
 		topLinePanel.addNext(chkCustom = new mCheckBox(""), CellConstants.DONTSTRETCH, CellConstants.WEST);
 
@@ -269,7 +269,7 @@ public class CoordsScreen extends Form {
 
 	public void setFields(CWPoint coords, int format) {
 		int formatsel = localSystemToformatSel(format);
-		if (formatsel >= formatSelToLocalSystem.length) { // projected point = neither dd, dd° mm.mm nor dd° mm' ss.s"
+		if (formatsel >= formatSelToLocalSystem.length) { // projected point = neither dd, ddÂ° mm.mm nor ddÂ° mm' ss.s"
 			if (coords.isValid()) {
 				localCooSystem.setInt(formatsel - formatSelToLocalSystem.length);
 				ProjectedPoint pp = TransformCoordinates.wgs84ToLocalsystem(coords, format);
@@ -359,7 +359,7 @@ public class CoordsScreen extends Form {
 			}
 
 			if (ev.target == btnCopy) {
-				readFields(coordInp); // TODO was anderes als Gauß-Krüger unterstützen
+				readFields(coordInp); // TODO was anderes als GauÃŸ-KrÃ¼ger unterstÃ¼tzen
 				Vm.setClipboardText(coordInp.toString(currFormat));
 			}
 

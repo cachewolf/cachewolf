@@ -1,4 +1,4 @@
-package CacheWolf.view.pda;
+﻿package CacheWolf.view.pda;
 
 import CacheWolf.Preferences;
 import ewe.fx.Color;

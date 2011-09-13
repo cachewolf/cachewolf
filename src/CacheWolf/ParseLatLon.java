@@ -1,4 +1,4 @@
-    /*
+ï»¿    /*
     GNU General Public License
     CacheWolf is a software for PocketPC, Win and Linux that
     enables paperless caching.
@@ -96,11 +96,11 @@ public class ParseLatLon {
 			String lonEW=getNext();
 			String lonDeg=getNext();
 			String lonMin=getNext();
-			if (lonDeg.endsWith("°")){
-				lonDeg = lonDeg.substring(0,lonDeg.length()-1); // remove °
+			if (lonDeg.endsWith("Â°")){
+				lonDeg = lonDeg.substring(0,lonDeg.length()-1); // remove Â°
 			}
-			if (latDeg.endsWith("°")){
-				latDeg = latDeg.substring(0,latDeg.length()-1);// remove °
+			if (latDeg.endsWith("Â°")){
+				latDeg = latDeg.substring(0,latDeg.length()-1);// remove Â°
 			}
 			lat2 = Convert.parseDouble(latDeg) + Convert.parseDouble(latMin)/60.0;
 			if(latNS.charAt(0)=='S') lat2= -lat2 ;

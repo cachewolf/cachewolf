@@ -1,4 +1,4 @@
-/*********************************************************************************
+﻿/*********************************************************************************
  *  Ewe Virtual Machine - Version 1.14, January 24, 2002                         *
  *  Copyright (C) 1999-2002 Michael L Brereton <michael_brereton@ewesoft.com>    *
  *  All Rights Reserved                                                          *

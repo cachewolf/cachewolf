@@ -1,4 +1,4 @@
-    /*
+﻿    /*
     GNU General Public License
     CacheWolf is a software for PocketPC, Win and Linux that
     enables paperless caching.
@@ -34,7 +34,7 @@ import CacheWolf.Profile;
 /**
  * Class to export the cache database (index) to an CSV File which can bei easy
  * importet bei MS AutoRoute (testet with AR 2001 German) Format of the file:
- * Name;Breitengrad;L�ngengrad;Typ1;Typ2;Waypoint;Datum;Hyperlink
+ * Name;Breitengrad;Längengrad;Typ1;Typ2;Waypoint;Datum;Hyperlink
  *
  */
 public class MSARCSVExporter extends Exporter {

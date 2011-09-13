@@ -1,4 +1,4 @@
-    /*
+ï»¿    /*
     GNU General Public License
     CacheWolf is a software for PocketPC, Win and Linux that
     enables paperless caching.
@@ -51,7 +51,7 @@ public class SkyOrientation {
 	public static final int DENEB = 5;
 	public static final int CYGNUS = DENEB; // Cygnus = Schwan
 	public static final int MIMOSA = 6; // second brightest star in Southern Cross
-	public static final int SOUTHERN_CROSS = MIMOSA; // SOUTHERN_CROSS = Kreus des Südens = Crux australia
+	public static final int SOUTHERN_CROSS = MIMOSA; // SOUTHERN_CROSS = Kreus des SÃ¼dens = Crux australia
 	
 	public static final CWPoint[] STARS = {
 		// (Deklination, Rektaszension)
@@ -142,7 +142,7 @@ public class SkyOrientation {
 			//double jd0 = java.lang.Math.floor(365.25*(jahr + 4716.)) + java.lang.Math.floor(30.6001*((double)monat+1.)) +(double)tag + b - 1524.5;
 		} catch (IndexOutOfBoundsException e) {
 			// wird von substring geworfen wenn datum / utc nicht genug Ziffern haben
-			// NumberFormatException wird außerdem von Convert.ParseInt direkt geworfen wenn
+			// NumberFormatException wird auÃŸerdem von Convert.ParseInt direkt geworfen wenn
 			// nicht in Int konvertiert werden kann
 			throw new NumberFormatException();
 		}
@@ -226,7 +226,7 @@ public class SkyOrientation {
 	}
 
 	public static CWPoint getAlnilamDir(double jd, CWPoint onEarth) {
-		// Koordinaten Alnilam (mittlerer Guertelstern des Orion), Rektaszension 5h36m13s; Deklination -1°12'7 TODO Aequinoktium 2000
+		// Koordinaten Alnilam (mittlerer Guertelstern des Orion), Rektaszension 5h36m13s; Deklination -1Â°12'7 TODO Aequinoktium 2000
 		// Source: wikipedia
 		return equatorial2AzimutCoos(onEarth, jd, new CWPoint(-1. -12./60. -7./3600., (5. + 36./60. + 13./3600.)*15.) ); // (-1. -12./60. -7./3600., (5. + 36./60. + 13./3600.)*15.) <- wikipedia // -1.19748, 5.60978 * 15.) <- www.... // (-1. -11./60. -52./3600., (5. + 36./60. + 35./3600.)*15.)  <- Stellarium
 	}

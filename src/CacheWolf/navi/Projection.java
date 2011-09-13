@@ -1,4 +1,4 @@
-    /*
+﻿    /*
     GNU General Public License
     CacheWolf is a software for PocketPC, Win and Linux that
     enables paperless caching.
