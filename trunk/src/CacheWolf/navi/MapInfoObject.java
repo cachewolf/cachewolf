@@ -1,4 +1,4 @@
-/*
+Ôªø/*
 GNU General Public License
 CacheWolf is a software for PocketPC, Win and Linux that
 enables paperless caching.
@@ -233,7 +233,7 @@ public class MapInfoObject extends Area {
 				throw (new IOException(MyLocale.getMsg(4301, "Lat/Lon out of range while reading ") + mapsPath + thisMap + ".wfl"));
 			}
 		} catch (final NullPointerException e) { // in.readline liefert null
-													// zur¸ck, wenn keine Daten
+													// zur√ºck, wenn keine Daten
 													// mehr vorhanden sind
 			throw (new IOException(MyLocale.getMsg(4303, "not enough lines in file ") + mapsPath + thisMap + ".wfl"));
 		}
@@ -338,7 +338,7 @@ public class MapInfoObject extends Area {
 			c.y -= 1000;
 			rotationRad = (float) (center.getBearing(calcLatLon(c)) / 180 * Math.PI);
 			// note: the direction of nord can vary across the image.
-			// In Gauﬂ-Kr¸ger Projection it does change about 1 degree per 10km!
+			// In Gau√ü-Kr√ºger Projection it does change about 1 degree per 10km!
 			// (float)java.lang.Math.atan(rotationX2y);
 			if (rotationRad > Math.PI)
 				rotationRad -= 2 * Math.PI;
@@ -499,7 +499,7 @@ class GCPoint extends CWPoint {
 	}
 
 	/**
-	 * If you are using Gauﬂ-Kr¸ger, put lat = northing, lon = easting
+	 * If you are using Gau√ü-Kr√ºger, put lat = northing, lon = easting
 	 * 
 	 * @param lat
 	 * @param lon

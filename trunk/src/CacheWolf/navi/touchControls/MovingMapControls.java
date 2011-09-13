@@ -1,4 +1,4 @@
-    /*
+﻿    /*
     GNU General Public License
     CacheWolf is a software for PocketPC, Win and Linux that
     enables paperless caching.
@@ -36,7 +36,7 @@ import ewe.util.Hashtable;
 import ewe.util.Vector;
 
 /**
- * @author H�lmchen
+ * @author Hälmchen
  */
 
 public class MovingMapControls implements ICommandListener {

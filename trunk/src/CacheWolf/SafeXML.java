@@ -1,4 +1,4 @@
-/*
+ï»¿/*
 GNU General Public License
 CacheWolf is a software for PocketPC, Win and Linux that
 enables paperless caching.
@@ -42,13 +42,13 @@ public final class SafeXML {
 		final String[] mappingArray = new String[] {
 				"&apos;",
 				"'", // Added 20061227 - not a valid HTML entity but used in XML
-				"&quot;", "\"", "&amp;", "&", "&lt;", "<", "&gt;", ">", "&nbsp;", " ", "&iexcl;", "¡", "&cent;", "¢", "&pound;", "£", "&curren;", "¤", "&yen;", "¥", "&brvbar;", "¦", "&sect;", "§", "&uml;", "¨", "&copy;", "©", "&ordf;", "ª", "&laquo;",
-				"«", "&not;", "¬", "&shy;", "­", "&reg;", "®", "&macr;", "¯", "&deg;", "°", "&plusmn;", "±", "&sup2;", "²", "&sup3;", "³", "&acute;", "´", "&micro;", "µ", "&para;", "¶", "&middot;", "·", "&cedil;", "¸", "&sup1;", "¹", "&ordm;", "º",
-				"&raquo;", "»", "&frac14;", "¼", "&frac12;", "½", "&frac34;", "¾", "&iquest;", "¿", "&Agrave;", "À", "&Aacute;", "Á", "&Acirc;", "Â", "&Atilde;", "Ã", "&Auml;", "Ä", "&Aring;", "Å", "&AElig;", "Æ", "&Ccedil;", "Ç", "&Egrave;", "È",
-				"&Eacute;", "É", "&Ecirc;", "Ê", "&Euml;", "Ë", "&Igrave;", "Ì", "&Iacute;", "Í", "&Icirc;", "Î", "&Iuml;", "Ï", "&ETH;", "Ğ", "&Ntilde;", "Ñ", "&Ograve;", "Ò", "&Oacute;", "Ó", "&Ocirc;", "Ô", "&Otilde;", "Õ", "&Ouml;", "Ö", "&times;",
-				"×", "&Oslash;", "Ø", "&Ugrave;", "Ù", "&Uacute;", "Ú", "&Ucirc;", "Û", "&Uuml;", "Ü", "&Yacute;", "İ", "&THORN;", "Ş", "&szlig;", "ß", "&agrave;", "à", "&aacute;", "á", "&acirc;", "â", "&atilde;", "ã", "&auml;", "ä", "&aring;", "å",
-				"&aelig;", "æ", "&ccedil;", "ç", "&egrave;", "è", "&eacute;", "é", "&ecirc;", "ê", "&euml;", "ë", "&igrave;", "ì", "&iacute;", "í", "&icirc;", "î", "&iuml;", "ï", "&eth;", "ğ", "&ntilde;", "ñ", "&ograve;", "ò", "&oacute;", "ó",
-				"&ocirc;", "ô", "&otilde;", "õ", "&ouml;", "ö", "&divide;", "÷", "&oslash;", "ø", "&ugrave;", "ù", "&uacute;", "ú", "&ucirc;", "û", "&uuml;", "ü", "&yacute;", "ı", "&thorn;", "ş", "&yuml;", "ÿ", "&ndash;", "–" };
+				"&quot;", "\"", "&amp;", "&", "&lt;", "<", "&gt;", ">", "&nbsp;", " ", "&iexcl;", "Â¡", "&cent;", "Â¢", "&pound;", "Â£", "&curren;", "Â¤", "&yen;", "Â¥", "&brvbar;", "Â¦", "&sect;", "Â§", "&uml;", "Â¨", "&copy;", "Â©", "&ordf;", "Âª", "&laquo;",
+				"Â«", "&not;", "Â¬", "&shy;", "Â­", "&reg;", "Â®", "&macr;", "Â¯", "&deg;", "Â°", "&plusmn;", "Â±", "&sup2;", "Â²", "&sup3;", "Â³", "&acute;", "Â´", "&micro;", "Âµ", "&para;", "Â¶", "&middot;", "Â·", "&cedil;", "Â¸", "&sup1;", "Â¹", "&ordm;", "Âº",
+				"&raquo;", "Â»", "&frac14;", "Â¼", "&frac12;", "Â½", "&frac34;", "Â¾", "&iquest;", "Â¿", "&Agrave;", "Ã€", "&Aacute;", "Ã", "&Acirc;", "Ã‚", "&Atilde;", "Ãƒ", "&Auml;", "Ã„", "&Aring;", "Ã…", "&AElig;", "Ã†", "&Ccedil;", "Ã‡", "&Egrave;", "Ãˆ",
+				"&Eacute;", "Ã‰", "&Ecirc;", "ÃŠ", "&Euml;", "Ã‹", "&Igrave;", "ÃŒ", "&Iacute;", "Ã", "&Icirc;", "Ã", "&Iuml;", "Ã", "&ETH;", "Ã", "&Ntilde;", "Ã‘", "&Ograve;", "Ã’", "&Oacute;", "Ã“", "&Ocirc;", "Ã”", "&Otilde;", "Ã•", "&Ouml;", "Ã–", "&times;",
+				"Ã—", "&Oslash;", "Ã˜", "&Ugrave;", "Ã™", "&Uacute;", "Ãš", "&Ucirc;", "Ã›", "&Uuml;", "Ãœ", "&Yacute;", "Ã", "&THORN;", "Ã", "&szlig;", "ÃŸ", "&agrave;", "Ã ", "&aacute;", "Ã¡", "&acirc;", "Ã¢", "&atilde;", "Ã£", "&auml;", "Ã¤", "&aring;", "Ã¥",
+				"&aelig;", "Ã¦", "&ccedil;", "Ã§", "&egrave;", "Ã¨", "&eacute;", "Ã©", "&ecirc;", "Ãª", "&euml;", "Ã«", "&igrave;", "Ã¬", "&iacute;", "Ã­", "&icirc;", "Ã®", "&iuml;", "Ã¯", "&eth;", "Ã°", "&ntilde;", "Ã±", "&ograve;", "Ã²", "&oacute;", "Ã³",
+				"&ocirc;", "Ã´", "&otilde;", "Ãµ", "&ouml;", "Ã¶", "&divide;", "Ã·", "&oslash;", "Ã¸", "&ugrave;", "Ã¹", "&uacute;", "Ãº", "&ucirc;", "Ã»", "&uuml;", "Ã¼", "&yacute;", "Ã½", "&thorn;", "Ã¾", "&yuml;", "Ã¿", "&ndash;", "â€“" };
 		for (int i = 0; i < mappingArray.length; i = i + 2) {
 			iso2htmlMappings.put(mappingArray[i], mappingArray[i + 1]);
 		}

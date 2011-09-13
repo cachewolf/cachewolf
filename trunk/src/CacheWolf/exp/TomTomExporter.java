@@ -1,4 +1,4 @@
-/*
+ï»¿/*
 GNU General Public License
 CacheWolf is a software for PocketPC, Win and Linux that
 enables paperless caching.
@@ -260,9 +260,9 @@ public class TomTomExporter {
 			outp.writeBytes(" by ");
 			outp.writeBytes(ch.getCacheOwner());
 			// Wenn Leerzeichen am Ende von Cache.Owner entfernt:
-			// Hier wieder einfügen
+			// Hier wieder einfÃ¼gen
 			// und data = holder.wayPoint.length()+holder.CacheName.length()+.....
-			// wider um 1 erhöhen
+			// wider um 1 erhÃ¶hen
 			outp.writeBytes("- ");
 			outp.writeBytes(String.valueOf(ch.getHard()));
 			outp.writeBytes("/");

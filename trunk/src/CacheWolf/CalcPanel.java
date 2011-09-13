@@ -1,4 +1,4 @@
-/*
+ï»¿/*
 GNU General Public License
 CacheWolf is a software for PocketPC, Win and Linux that
 enables paperless caching.
@@ -101,9 +101,9 @@ public final class CalcPanel extends CellPanel {
 		mainT = Global.mainTab;
 		cacheDB = profile.cacheDB;
 
-		TopP.addNext(chkDD = new mCheckBox("d.d°"), CellConstants.DONTSTRETCH, CellConstants.WEST);
-		TopP.addNext(chkDMM = new mCheckBox("d°m.m\'"), CellConstants.DONTSTRETCH, CellConstants.WEST);
-		TopP.addNext(chkDMS = new mCheckBox("d°m\'s\""), CellConstants.DONTSTRETCH, CellConstants.WEST);
+		TopP.addNext(chkDD = new mCheckBox("d.dÂ°"), CellConstants.DONTSTRETCH, CellConstants.WEST);
+		TopP.addNext(chkDMM = new mCheckBox("dÂ°m.m\'"), CellConstants.DONTSTRETCH, CellConstants.WEST);
+		TopP.addNext(chkDMS = new mCheckBox("dÂ°m\'s\""), CellConstants.DONTSTRETCH, CellConstants.WEST);
 		TopP.addNext(chkCustom = new mCheckBox(""), CellConstants.DONTSTRETCH, CellConstants.WEST);
 
 		chkDD.setGroup(chkFormat);

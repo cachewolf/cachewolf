@@ -1,4 +1,4 @@
-package CacheWolf.view.ewe;
+﻿package CacheWolf.view.ewe;
 
 import CacheWolf.Global;
 import CacheWolf.MyLocale;
