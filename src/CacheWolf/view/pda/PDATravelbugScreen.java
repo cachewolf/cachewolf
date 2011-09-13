@@ -21,16 +21,20 @@ public class PDATravelbugScreen extends PDAList implements ITravelbugScreen{
 	public PDATravelbugScreen(TravelbugList tbl, String title, boolean allowNew) {
 		super();
 		model = new DefaultListModel();
-		for (int i=0;i < tbl.size();i++){
+		for (int i = 0; i < tbl.size(); i++) {
 			Travelbug tb = tbl.getTB(i);
 			model.add(tb.getName());
 		}
-		if (allowNew){
-			model.add(MyLocale.getMsg(6015,"*** OTHER ***"));
+		if (allowNew) {
+			model.add(MyLocale.getMsg(6015, "*** OTHER ***"));
 		}
 		model.createShowSet();
 		setupTBButtons();
-}
+	}
+
+	protected PDAListButton createListButton(int i) {
+		return new PDAListButton("", LINE + i);
+	}
 
 	public void onControlEvent(ControlEvent ev) {
 		if (ev instanceof ControlEvent) {
@@ -40,19 +44,8 @@ public class PDATravelbugScreen extends PDAList implements ITravelbugScreen{
 					super.onControlEvent(ev);	
 				} else if (ev.action.startsWith(LINE)) {
 					selectedItem = ev.action.charAt(LINE.length()) - '0';
-//					Object clickedItem =  model.get(line + firstLine);
-//					Form form = new PDATravelbugDetailPanel(tbJourney, this);
-//					form.setPreferredSize(800, 600);
-//					form.execute();
-//					setupTBButtons();
 					exit(0);
 				} else if (ev.action.equals(MENUE)) {
-//					Form form = new PDATravelbugMenuPanel(this);
-//					form.setPreferredSize(800, 600);
-//					int execute = form.execute();
-//					if (execute == 1){
-//						exit(0);
-//					}
 					setupTBButtons();
 				}
 				break;
