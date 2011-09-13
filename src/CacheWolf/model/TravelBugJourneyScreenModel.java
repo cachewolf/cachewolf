@@ -1,4 +1,4 @@
-package CacheWolf.model;
+﻿package CacheWolf.model;
 
 import CacheWolf.CacheHolder;
 import CacheWolf.Global;

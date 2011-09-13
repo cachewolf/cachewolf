@@ -1,4 +1,4 @@
-/*
+ï»¿/*
 GNU General Public License
 CacheWolf is a software for PocketPC, Win and Linux that
 enables paperless caching.
@@ -141,12 +141,12 @@ public final class GotoPanel extends CellPanel {
 		// Format selection for coords
 		// context menu
 		mnuContextFormt = new Menu();
-		currFormatSel = 1; // default to d° m.m
-		mnuContextFormt.addItem(miCooformat[0] = new MenuItem("d.d°"));
+		currFormatSel = 1; // default to dÂ° m.m
+		mnuContextFormt.addItem(miCooformat[0] = new MenuItem("d.dÂ°"));
 		miCooformat[0].modifiers &= ~MenuItem.Checked;
-		mnuContextFormt.addItem(miCooformat[1] = new MenuItem("d°m.m\'"));
+		mnuContextFormt.addItem(miCooformat[1] = new MenuItem("dÂ°m.m\'"));
 		miCooformat[1].modifiers |= MenuItem.Checked; // default
-		mnuContextFormt.addItem(miCooformat[2] = new MenuItem("d°m\'s\""));
+		mnuContextFormt.addItem(miCooformat[2] = new MenuItem("dÂ°m\'s\""));
 		miCooformat[2].modifiers &= ~MenuItem.Checked;
 		mnuContextFormt.addItems(TransformCoordinates.getProjectedSystemNames());
 

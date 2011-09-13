@@ -1,4 +1,4 @@
-    /*
+Ôªø    /*
     GNU General Public License
     CacheWolf is a software for PocketPC, Win and Linux that
     enables paperless caching.
@@ -148,7 +148,7 @@ public final class ProjectedPoint {
 
 
 	/**
-	 * This will give you the normal projected (e.g.Gauﬂ-Kr¸ger) easting value
+	 * This will give you the normal projected (e.g.Gau√ü-Kr√ºger) easting value
 	 * (that means including the stripe number)
 	 * @return
 	 */

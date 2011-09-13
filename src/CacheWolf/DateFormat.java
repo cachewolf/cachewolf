@@ -1,4 +1,4 @@
-/*
+﻿/*
 GNU General Public License
 CacheWolf is a software for PocketPC, Win and Linux that
 enables paperless caching.
@@ -142,7 +142,7 @@ public class DateFormat {
 				return m + 1;
 			}
 		}
-		final String deMonthNames[] = { "Januar", "Februar", "M�rz", "April", "Mai", "Juni", "Juli", "August", "September", "Oktober", "November", "Dezember" };
+		final String deMonthNames[] = { "Januar", "Februar", "März", "April", "Mai", "Juni", "Juli", "August", "September", "Oktober", "November", "Dezember" };
 		for (int m = 0; m < 12; m++) {
 			if (deMonthNames[m].startsWith(month)) {
 				return m + 1;

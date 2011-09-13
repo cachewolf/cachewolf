@@ -1,4 +1,4 @@
-package CacheWolf.view;
+﻿package CacheWolf.view;
 
 public interface ITravelbugScreen {
 

@@ -1,4 +1,4 @@
-    /*
+Ôªø    /*
     GNU General Public License
     CacheWolf is a software for PocketPC, Win and Linux that
     enables paperless caching.
@@ -43,7 +43,7 @@ public final class TransformCoordinatesProperties {
 
 	/**
 	 * return ll transformed into the desired coordinate reference system
-	 * if the prjection is Gauﬂ-Kr¸ger, easting will be put in lonDec and
+	 * if the prjection is Gau√ü-Kr√ºger, easting will be put in lonDec and
 	 * northing in latDec
 	 * @param ll
 	 * @return
@@ -72,7 +72,7 @@ public final class TransformCoordinatesProperties {
 
 	/**
 	 * convert any supported coordinate reference system WGS84
-	 * if p is a Gauﬂ-Kr¸ger point, put latdec = northing, londec = easting 
+	 * if p is a Gau√ü-Kr√ºger point, put latdec = northing, londec = easting 
 	 * @param p
 	 * @return
 	 */

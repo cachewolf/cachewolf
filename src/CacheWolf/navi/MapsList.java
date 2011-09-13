@@ -1,4 +1,4 @@
-/*
+ï»¿/*
 GNU General Public License
 CacheWolf is a software for PocketPC, Win and Linux that
 enables paperless caching.
@@ -91,7 +91,7 @@ public final class MapsList extends Vector {
 						tempMIO = new MapListEntry(mapsPath+"/", rawFileName);
 					else tempMIO = new MapListEntry(mapsPath+"/"+dirs.get(j)+"/", rawFileName);
 					if (tempMIO.sortEntryBBox != null) add(tempMIO);
-				}catch(Exception ex){ // TODO exception ist, glaub ich evtl überflüssig
+				}catch(Exception ex){ // TODO exception ist, glaub ich evtl Ã¼berflÃ¼ssig
 					if (f == null) (f=new MessageBox(MyLocale.getMsg(144, "Warning"), MyLocale.getMsg(4700, "Ignoring error while \n reading calibration file \n")+ex.toString(), FormBase.OKB)).exec();
 				} /* catch(ArithmeticException ex){ // affine contain not allowed values
 					if (f == null) (f=new MessageBox("Warning", "Ignoring error while \n reading calibration file \n"+ex.toString(), MessageBox.OKB)).exec();
@@ -116,9 +116,9 @@ public final class MapsList extends Vector {
 		add(tempMIO);
 	}
 
-	/* diese Routine wird gegenwärtig für 3 ZWecke verwendet:
-	 * a) normal - keep given resolution --> Lösung: übergebene scale nutzen für screen
-	 * b) highest res: Ziel: Karte mit höchster Auflösung, die im screen ist und möglichst nah an lat/lon -> ich muss auflösung noch in Dateinamen schreiben
+	/* diese Routine wird gegenwÃ¤rtig fÃ¼r 3 ZWecke verwendet:
+	 * a) normal - keep given resolution --> LÃ¶sung: Ã¼bergebene scale nutzen fÃ¼r screen
+	 * b) highest res: Ziel: Karte mit hÃ¶chster AuflÃ¶sung, die im screen ist und mÃ¶glichst nah an lat/lon -> ich muss auflÃ¶sung noch in Dateinamen schreiben
 	 * c) gegenteil von b)
 	 */
 	/**

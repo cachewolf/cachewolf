@@ -1,4 +1,4 @@
-    /*
+﻿    /*
     GNU General Public License
     CacheWolf is a software for PocketPC, Win and Linux that
     enables paperless caching.
@@ -341,7 +341,7 @@ public class FilterScreen extends Form{
 		pnlButtons.addLast(btnAddi=new mButton(MyLocale.getMsg(733,"Add. Wpt"))); 
 		pnlButtons.addLast(btnContainer=new mButton(MyLocale.getMsg(724,"Container")));
 		pnlButtons.addLast(btnCacheAttributes=new mButton(MyLocale.getMsg(738,"Attributes")));
-		// Search ist f�r 0.9n noch deaktiviert
+		// Search ist für 0.9n noch deaktiviert
 		//pnlButtons.addLast(btnSearch=new mButton("Search")); btnSearch.modify(Disabled,0);
 		addNext(pnlButtons,HSTRETCH,FILL);
 

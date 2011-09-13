@@ -1,4 +1,4 @@
-    /*
+ï»¿    /*
     GNU General Public License
     CacheWolf is a software for PocketPC, Win and Linux that
     enables paperless caching.
@@ -82,7 +82,7 @@ public class CWPoint extends TrackPoint{
 	
 	/**
 	 * Create CWPoint by using coordinates in "CacheWolf" format 
-	 * @param coord  String of type N 49° 33.167 E 011° 21.608
+	 * @param coord  String of type N 49Â° 33.167 E 011Â° 21.608
 	 * @param format only CWPoint.CW or CWPoint.REGEX is supported
 	 */
 	public CWPoint(String coord, int format) {
@@ -115,7 +115,7 @@ public class CWPoint extends TrackPoint{
 	
 	/**
 	 * set lat and lon by parsing coordinates with Regex 
-	 * @param coord  String like N 49° 33.167 E 011° 21.608
+	 * @param coord  String like N 49Â° 33.167 E 011Â° 21.608
 	 */
 	public CWPoint(String coord) {
 		set(coord);
@@ -148,7 +148,7 @@ public class CWPoint extends TrackPoint{
 	
 	/**
 	 * set lat and lon by using coordinates in "CacheWolf" format 
-	 * @param coord  String of type N 49° 33.167 E 011° 21.608
+	 * @param coord  String of type N 49Â° 33.167 E 011Â° 21.608
 	 * @param format only CWPoint.CW is supported
 	 */
 	public void set (String coord, int format) {
@@ -179,7 +179,7 @@ public class CWPoint extends TrackPoint{
 
 	/**
 	 * set lat and lon by parsing coordinates with regular expression 
-	 * @param coord  String of type N 49° 33.167 E 011° 21.608
+	 * @param coord  String of type N 49Â° 33.167 E 011Â° 21.608
 	 * 				 	or 			-12.3456 23.4567
 	 * 					or			32U 2345234 8902345
 	 */
@@ -187,10 +187,10 @@ public class CWPoint extends TrackPoint{
 	//replace non-breaking-spaces by normal spaces
 	coord = coord.replace((char)0xA0, ' ');
 		/*		(?: 
-					([NSns])\s*([0-9]{1,2})[\s°]+([0-9]{1,2})(?:\s+([0-9]{1,2}))?[,.]([0-9]{1,8})\s* 
-					([EWewOo])\s*([0-9]{1,3})[\s°]+([0-9]{1,2})(?:\s+([0-9]{1,2}))?[,.]([0-9]{1,8}) 
+					([NSns])\s*([0-9]{1,2})[\sÂ°]+([0-9]{1,2})(?:\s+([0-9]{1,2}))?[,.]([0-9]{1,8})\s* 
+					([EWewOo])\s*([0-9]{1,3})[\sÂ°]+([0-9]{1,2})(?:\s+([0-9]{1,2}))?[,.]([0-9]{1,8}) 
 					)|(?: 
-					  ([+-NnSs]?[0-9]{1,2})[,.]([0-9]{1,8})(?:(?=\+)|(?=-)|\s+|\s*°\s*)([+-WwEeOo]?[0-9]{1,3})[,.]([0-9]{1,8})\s*[°]? 
+					  ([+-NnSs]?[0-9]{1,2})[,.]([0-9]{1,8})(?:(?=\+)|(?=-)|\s+|\s*Â°\s*)([+-WwEeOo]?[0-9]{1,3})[,.]([0-9]{1,8})\s*[Â°]? 
 					)|(?: 
 					   ([0-9]{1,2}[C-HJ-PQ-X])\s*[EeOo]?\s*([0-9]{1,7})\s+[Nn]?\s*([0-9]{1,7}) 
 					)
@@ -203,13 +203,13 @@ public class CWPoint extends TrackPoint{
 		}
 	}
 				Regex rex=new Regex("(?:" +
-									"([NSns])\\s*([0-9]{1,2})(?:[°\uC2B0]\\s*|\\s+[°\uC2B0]?\\s*)([0-9]{1,2})(?:(?:['’]\\s*|\\s+['’]?\\s*)([0-9]{1,2}))?(?:[,.]([0-9]{1,8}))?\\s*['’\"]?\\s*" +
+									"([NSns])\\s*([0-9]{1,2})(?:[Â°\uC2B0]\\s*|\\s+[Â°\uC2B0]?\\s*)([0-9]{1,2})(?:(?:['â€™]\\s*|\\s+['â€™]?\\s*)([0-9]{1,2}))?(?:[,.]([0-9]{1,8}))?\\s*['â€™\"]?\\s*" +
 									"[,./_;+:-]*\\s*" + // allow N xx xx.xxx / E xxx xx.xxx
-									"([EWewOo])\\s*([0-9]{1,3})(?:[°\uC2B0]\\s*|\\s+[°\uC2B0]?\\s*)([0-9]{1,2})(?:(?:['’]\\s*|\\s+['’]?\\s*)([0-9]{1,2}))?(?:[,.]([0-9]{1,8}))?\\s*['’\"]?" +
+									"([EWewOo])\\s*([0-9]{1,3})(?:[Â°\uC2B0]\\s*|\\s+[Â°\uC2B0]?\\s*)([0-9]{1,2})(?:(?:['â€™]\\s*|\\s+['â€™]?\\s*)([0-9]{1,2}))?(?:[,.]([0-9]{1,8}))?\\s*['â€™\"]?" +
 									")|(?:" +
-                  "(?:([NnSs])\\s*(?![+-]))?"   +     "([+-]?[0-9]{1,2})[,.]([0-9]{1,8})(?:(?=[+-EeWwOo])|\\s+|\\s*[°\uC2B0]\\s*)" +
+                  "(?:([NnSs])\\s*(?![+-]))?"   +     "([+-]?[0-9]{1,2})[,.]([0-9]{1,8})(?:(?=[+-EeWwOo])|\\s+|\\s*[Â°\uC2B0]\\s*)" +
                   "[,./_;:]*\\s*" +
-                  "(?:([EeWwOo])\\s*(?![+-]))?"    +     "([+-]?[0-9]{1,3})[,.]([0-9]{1,8})\\s*[°\uC2B0]?" +
+                  "(?:([EeWwOo])\\s*(?![+-]))?"    +     "([+-]?[0-9]{1,3})[,.]([0-9]{1,8})\\s*[Â°\uC2B0]?" +
 									")|(?:" +
 									"([0-9]{1,2}[C-HJ-PQ-X])\\s*[EeOo]?\\s*([0-9]{1,7})\\s+[Nn]?\\s*([0-9]{1,7})" +
 									")|(?:" +
@@ -556,9 +556,9 @@ public class CWPoint extends TrackPoint{
 
 	/**
 	 * Returns the string reprenstation of the CWPoint
-	 * Format ist CacheWolf (N 49° 33.167 E 011° 21.608), which can be used 
+	 * Format ist CacheWolf (N 49Â° 33.167 E 011Â° 21.608), which can be used 
 	 * with parseLatLon
-	 * @return  string like N 49° 33.167 E 011° 21.608 
+	 * @return  string like N 49Â° 33.167 E 011Â° 21.608 
 	 */	
 	public String toString(){
 		return toString(TransformCoordinates.CW);
@@ -572,12 +572,12 @@ public class CWPoint extends TrackPoint{
 	public String toString(int format){
 		if (!isValid()) return MyLocale.getMsg(999,"not set");
 		switch (format) {
-		case TransformCoordinates.DD:	return getNSLetter() + " " + STRreplace.replace(getLatDeg(format),"-","") + "° "
-						+  getEWLetter() + " " + STRreplace.replace(getLonDeg(format),"-","")+ "°";
-		case TransformCoordinates.DMM:	return getNSLetter() + " " + getLatDeg(format) + "° " + getLatMin(format) + " "
-						+  getEWLetter() + " " + getLonDeg(format) + "° " + getLonMin(format);
-		case TransformCoordinates.DMS:	return getNSLetter() + " " + getLatDeg(format) + "° " + getLatMin(format) + "\' " + getLatSec(format) + "\" " 
-						+  getEWLetter() + " " + getLonDeg(format) + "° " + getLonMin(format) + "\' " + getLonSec(format) + "\"";
+		case TransformCoordinates.DD:	return getNSLetter() + " " + STRreplace.replace(getLatDeg(format),"-","") + "Â° "
+						+  getEWLetter() + " " + STRreplace.replace(getLonDeg(format),"-","")+ "Â°";
+		case TransformCoordinates.DMM:	return getNSLetter() + " " + getLatDeg(format) + "Â° " + getLatMin(format) + " "
+						+  getEWLetter() + " " + getLonDeg(format) + "Â° " + getLonMin(format);
+		case TransformCoordinates.DMS:	return getNSLetter() + " " + getLatDeg(format) + "Â° " + getLatMin(format) + "\' " + getLatSec(format) + "\" " 
+						+  getEWLetter() + " " + getLonDeg(format) + "Â° " + getLonMin(format) + "\' " + getLonSec(format) + "\"";
 		case TransformCoordinates.LAT_LON: 	return getLatDeg(DD)+","+getLonDeg(DD);
 		case TransformCoordinates.LON_LAT: 	return getLonDeg(DD)+","+getLatDeg(DD);
 		//case TransformCoordinates.CUSTOM:	return getGermanGkCoordinates();

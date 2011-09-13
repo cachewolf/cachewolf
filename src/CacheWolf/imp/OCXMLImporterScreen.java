@@ -1,4 +1,4 @@
-/*
+ï»¿/*
 GNU General Public License
 CacheWolf is a software for PocketPC, Win and Linux that
 enables paperless caching.
@@ -88,7 +88,7 @@ public class OCXMLImporterScreen extends Form {
 
 	public OCXMLImporterScreen(String title, int options) {
 		super();
-		pref = Global.getPref(); // myPreferences sollte später auch diese Einstellungen speichern
+		pref = Global.getPref(); // myPreferences sollte spÃ¤ter auch diese Einstellungen speichern
 
 		isGC = ((options & ISGC) > 0);
 
@@ -227,7 +227,7 @@ public class OCXMLImporterScreen extends Form {
 				this.close(FormBase.IDCANCEL);
 			}
 			if (ev.target == okB) {
-				// distOC wird hier noch nicht in Pref eingetragen, damit noch geprüft werden kann, ob es größer oder kleiner ist als vorher
+				// distOC wird hier noch nicht in Pref eingetragen, damit noch geprÃ¼ft werden kann, ob es grÃ¶ÃŸer oder kleiner ist als vorher
 				if (missingCheckBox != null)
 					pref.downloadAllOC = missingCheckBox.state;
 				if (imagesCheckBox != null)
