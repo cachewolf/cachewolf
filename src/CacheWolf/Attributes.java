@@ -46,7 +46,7 @@ public class Attributes {
 
 	/**
 	 * Get the number of attributes in the list
-	 * 
+	 *
 	 * @return number of attributes
 	 */
 	public int count() {
@@ -93,7 +93,7 @@ public class Attributes {
 
 	/**
 	 * Add a new attribute to the array by Name, meaning its icon picture name
-	 * 
+	 *
 	 * @param attributeName
 	 */
 	public void add(String attributeName) {
@@ -109,7 +109,7 @@ public class Attributes {
 
 	/**
 	 * Add a new attribute to the array by ID and Inc as you get it from GC gpx-File
-	 * 
+	 *
 	 * @param GC
 	 *          attribute ID
 	 * @param GC
@@ -140,7 +140,7 @@ public class Attributes {
 
 	/**
 	 * Add a new attribute to the array by OC-IDas you get it from OC xml/zip-download
-	 * 
+	 *
 	 * @param OC
 	 *          attribute ID
 	 */
@@ -159,7 +159,7 @@ public class Attributes {
 
 	/**
 	 * to get the Bit Representation of the Attributs of this Cache
-	 * 
+	 *
 	 * @return the Long array representing the Attributes of this Cache
 	 */
 	public long[] getAttribsAsBits() {
@@ -173,7 +173,7 @@ public class Attributes {
 
 	/**
 	 * Get the i-th attribute
-	 * 
+	 *
 	 * @param i
 	 *          The number for which the attribute is to be retrieved
 	 * @return The attribute
