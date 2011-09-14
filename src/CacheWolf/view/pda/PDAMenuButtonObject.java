@@ -2,6 +2,7 @@
 
 import ewe.fx.Dimension;
 import ewe.ui.ButtonObject;
+import ewe.ui.Gui;
 
 public class PDAMenuButtonObject extends ButtonObject{
 	private PDAMenuButton pdaMenuButton;
@@ -12,13 +13,12 @@ public class PDAMenuButtonObject extends ButtonObject{
 		this.pdaMenuButton = pdaListButton;
 	}
 
-	  public Dimension calculateSize(Dimension paramDimension){
-		  calculateSize = super.calculateSize(paramDimension);
-		  if (calculateSize.height < 100){
-			  calculateSize.height=100;
-			  paramDimension.height=100;
-		  }
-		  return calculateSize;
-	  }
+	public Dimension calculateSize(Dimension paramDimension) {
+		calculateSize = super.calculateSize(paramDimension);
+		if (calculateSize.height < Gui.screenSize.height / 8) {
+			calculateSize.height = paramDimension.height = Gui.screenSize.height / 8;
+		}
+		return calculateSize;
+	}
 
 }
