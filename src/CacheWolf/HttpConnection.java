@@ -455,7 +455,7 @@ addRequestorProperty();
 		ba.clear();
 		while(true){
 			int got = is.read();
-			if (got == -1) throw new IOException("Unexpected end of stream.");
+			if (got == -1) break; // throw new IOException("Unexpected end of stream." + ba.toString());
 			if (got == 10){
 				if (lastReceived == 10) break; //Got all the data now.
 			}else if (got == 13) continue; //Ignore CR.
