@@ -1,4 +1,4 @@
-﻿/*
+/*
     CacheWolf is a software for PocketPC, Win and Linux that
     enables paperless caching.
     It supports the sites geocaching.com and opencaching.de
