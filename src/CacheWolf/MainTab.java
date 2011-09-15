@@ -148,7 +148,7 @@ public class MainTab extends mTabbedPanel {
 		if (pref.isBigScreen || !pref.useRadar) {
 			c = this.addCard(mapP = new ewe.ui.CellPanel(), MyLocale.getMsg(347, "Show map"), null);
 			MAP_CARD = this.cardPanel.cards.size() - 1;
-			c.iconize(new Image("globe_small" + imagesize + ".gif"), true);
+			c.iconize(new Image("globe_tab" + imagesize + ".gif"), true);
 		}
 
 		if (pref.isBigScreen || pref.useRadar) {
