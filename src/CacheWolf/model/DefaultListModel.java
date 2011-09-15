@@ -1,4 +1,4 @@
-﻿package CacheWolf.model;
+package CacheWolf.model;
 
 import ewe.util.Vector;
 

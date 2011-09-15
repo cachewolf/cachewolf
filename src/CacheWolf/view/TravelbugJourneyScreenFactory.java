@@ -1,4 +1,4 @@
-﻿package CacheWolf.view;
+package CacheWolf.view;
 
 import java.lang.reflect.Constructor;
 

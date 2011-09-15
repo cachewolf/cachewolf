@@ -1,4 +1,4 @@
-﻿package CacheWolf.exp;
+package CacheWolf.exp;
 
 import CacheWolf.CacheDB;
 import CacheWolf.CacheHolder;
