@@ -1,4 +1,4 @@
-﻿package CacheWolf.imp;
+package CacheWolf.imp;
 
 import CacheWolf.Global;
 import CacheWolf.MyLocale;

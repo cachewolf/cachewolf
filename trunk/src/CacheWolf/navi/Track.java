@@ -1,4 +1,4 @@
-﻿package CacheWolf.navi;
+package CacheWolf.navi;
 
 import ewe.fx.Color;
 import ewe.io.BufferedWriter;

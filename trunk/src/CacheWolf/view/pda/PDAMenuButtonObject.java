@@ -1,4 +1,4 @@
-﻿package CacheWolf.view.pda;
+package CacheWolf.view.pda;
 
 import ewe.fx.Dimension;
 import ewe.ui.ButtonObject;
