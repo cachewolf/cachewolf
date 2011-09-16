@@ -1177,11 +1177,11 @@ public class SpiderGC {
 		try {
 			loginPage = UrlFetcher.fetch(loginPageUrl); // https://www.geocaching.com/login/default.aspx
 			if (loginPage.equals("")) {
-				pref.log("[login]:Could not fetch: gc.com login page " + loginPageUrl, null);
+				pref.log("[login]:empty gc.com login page " + loginPageUrl, null);
 				return 4;
 			}
 		} catch (final Exception ex) {
-			pref.log("[login]:Could not fetch: gc.com login page", ex);
+			pref.log("[login]:Exception gc.com login page", ex, true);
 			return 4;
 		}
 
@@ -1196,7 +1196,7 @@ public class SpiderGC {
 				try {
 					loginPage = UrlFetcher.fetch("https://www.geocaching.com/login/default.aspx?RESET=Y");
 				} catch (final Exception ex) {
-					pref.log("[login]:Could not fetch: gc.com login page", ex);
+					pref.log("[login]:Exception logout user from gc", ex);
 					return 4;
 				}
 
@@ -1229,44 +1229,22 @@ public class SpiderGC {
 
 				loginPage = UrlFetcher.fetch(loginPageUrl);
 			} catch (final Exception ex) {
-				pref.log("[login]:Login failed with exception.", ex);
+				pref.log("[login]:Exception login with post Data.", ex);
 				return 3;
 			}
 		}
 
+		// formerly this part was not executed if already logged in
+		// but as https login post sometimes/often gives faulty EOF (https implementation program error),
+		// though the call was successful, the second call (repeating login()) of loginpage get
+		// gives us the following data used as cookie : sessionId and userid
+		// hopefully pfeffer or someone else fixes this EOF some time
 		if (loginPage.indexOf(loginSuccess) > 0) {
 			pref.log("Login successful: " + pref.myAlias);
-			// **3 now we are logged in and get the Cookie (there are two)
-			final PropertyList pl = UrlFetcher.getDocumentProperties();
-			String docprops = "";
-			for (int i = 0; i < pl.size(); i++) {
-				final Property p = (Property) pl.get(i);
-				if (p.name.equalsIgnoreCase("Set-Cookie")) {
-					docprops += p.value;
-				}
-			}
-			final Regex rexCookieSession = new Regex("(?i)ASP.NET_SessionId=(.*?);.*");
-			rexCookieSession.search(docprops);
-			if (rexCookieSession.didMatch()) {
-				cookie = "ASP.NET_SessionId=" + rexCookieSession.stringMatched(1);
-			} else {
-				pref.log("[login]:SessionID not found.", null);
-				return 0;
-			}
-			final Regex rexCookieID = new Regex("(?i)userid=(.*?);.*");
-			rexCookieID.search(docprops);
-			if (rexCookieID.didMatch()) {
-				cookie += "; userid=" + rexCookieID.stringMatched(1);
-				// set the user id in user pref
-				pref.userID = rexCookieID.stringMatched(1);
-				pref.savePreferences();
-			} else {
-				pref.log("[login]:userID not found.", null);
-				return 0;
-			}
-			UrlFetcher.setPermanentRequestorProperty("Cookie", cookie);
+			// **3 now we are logged in and get the userId and sessionId
+			getSessionIdAndSetCookie("");
 		} else {
-			pref.log("Login failed. Wrong Account or Password? " + pref.myAlias, null);
+			pref.log("[login]: Wrong Account or Password? " + pref.myAlias, null);
 			return 2;
 		}
 
@@ -1277,19 +1255,8 @@ public class SpiderGC {
 		return 1;
 	}
 
-	private boolean switchToEnglish() {
-		// change language to EN , further operations relay on English
-		String url = "http://www.geocaching.com/account/ManagePreferences.aspx";
-		String page = "";
-		String userID = "userid=" + pref.userID;
-		try {
-			UrlFetcher.setPermanentRequestorProperty("Cookie", userID);
-			page = UrlFetcher.fetch(url); // getting the sessionid
-			if (page.length() == 0)
-				return false;
-		} catch (final Exception ex) {
-			return false;
-		}
+	private boolean getSessionIdAndSetCookie(String userId) {
+
 		PropertyList pl = UrlFetcher.getDocumentProperties();
 		String docprops = "";
 		for (int i = 0; i < pl.size(); i++) {
@@ -1298,15 +1265,56 @@ public class SpiderGC {
 				docprops += p.value;
 			}
 		}
+
 		final Regex rexCookieSession = new Regex("(?i)ASP.NET_SessionId=(.*?);.*");
 		rexCookieSession.search(docprops);
 		if (rexCookieSession.didMatch()) {
-			cookie = "ASP.NET_SessionId=" + rexCookieSession.stringMatched(1) + "; " + userID;
-			UrlFetcher.setPermanentRequestorProperty("Cookie", cookie);
+			cookie = "ASP.NET_SessionId=" + rexCookieSession.stringMatched(1);
 		} else {
-			pref.log("[switchToEnglish]:SessionID not found.", null);
+			pref.log("[login]:SessionID not found.", null);
 			return false;
 		}
+
+		if (userId.length() == 0) {
+			final Regex rexCookieID = new Regex("(?i)userid=(.*?);.*");
+			rexCookieID.search(docprops);
+			if (rexCookieID.didMatch()) {
+				cookie += "; userid=" + rexCookieID.stringMatched(1);
+				// set the user id in user pref
+				pref.userID = rexCookieID.stringMatched(1);
+				pref.savePreferences();
+			} else {
+				pref.log("[login]:userID not found.", null);
+				return false;
+			}
+		}
+		else {
+			cookie += "; userid=" + userId;
+		}
+
+		UrlFetcher.setPermanentRequestorProperty("Cookie", cookie);
+		return true;
+
+	}
+
+	private boolean switchToEnglish() {
+		// change language to EN , further operations relay on English
+		String url = "http://www.geocaching.com/account/ManagePreferences.aspx";
+		String page = "";
+		try {
+			UrlFetcher.setPermanentRequestorProperty("Cookie", "userid=" + pref.userID);
+			page = UrlFetcher.fetch(url); // getting the sessionid
+			if (page.length() == 0) {
+				pref.log("[switchToEnglish]:empty page getting SessionID.", null);
+				return false;
+			}
+		} catch (final Exception ex) {
+			pref.log("[switchToEnglish]:Exception getting SessionID.", ex);
+			return false;
+		}
+
+		getSessionIdAndSetCookie(pref.userID);
+
 		try {
 			page = UrlFetcher.fetch(url);
 			if (page.length() == 0)
@@ -1314,6 +1322,7 @@ public class SpiderGC {
 		} catch (IOException e) {
 			return false;
 		}
+
 		Extractor ext = new Extractor(page, "ctl00$ContentBody$uxLanguagePreference", "</select>", 0, true);
 		String languageBlock = ext.findNext();
 		ext.set(ext.findNext("ctl00$ContentBody$uxDateTimeFormat"), "selected\" value=\"", "\">", 0, true);
