@@ -82,6 +82,8 @@ import ewe.util.mString;
 import ewesoft.xml.MinML;
 import ewesoft.xml.sax.AttributeList;
 
+import org.json.*;
+
 /**
  * Class to spider caches from gc.com
  */
@@ -164,7 +166,7 @@ public class SpiderGC {
 	private static Regex RexPropType;
 	private static Regex RexPropDTS;
 	private static Regex RexPropOwn;
-	private static Regex RexLogBlock;
+	private static Regex RexUserToken;
 	private static Extractor exSingleLog;
 	private static Extractor exIcon;
 	private static Extractor exNameTemp;
@@ -1390,14 +1392,7 @@ public class SpiderGC {
 			RexPropType = new Regex(p.getProp("TypeRex"));
 			RexPropDTS = new Regex(p.getProp("DTSRex"));
 			RexPropOwn = new Regex(p.getProp("own"));
-			RexLogBlock = new Regex(p.getProp("blockRex"));
-			exSingleLog = new Extractor("", p.getProp("singleLogExStart"), p.getProp("singleLogExEnd"), 0, false);
-			exIcon = new Extractor("", p.getProp("iconExStart"), p.getProp("iconExEnd"), 0, true);
-			exNameTemp = new Extractor("", p.getProp("nameTempExStart"), p.getProp("nameTempExEnd"), 0, true);
-			exName = new Extractor("", p.getProp("nameExStart"), p.getProp("nameExEnd"), 0, true);
-			exDate = new Extractor("", p.getProp("dateExStart"), p.getProp("dateExEnd"), 0, true);
-			exLog = new Extractor("", p.getProp("logExStart"), p.getProp("logExEnd"), 0, true);
-			exLogId = new Extractor("", p.getProp("logIdExStart"), p.getProp("logIdExEnd"), 0, true);
+			RexUserToken = new Regex(p.getProp("UserTokenRex"));
 			icon_smile = p.getProp("icon_smile");
 			icon_camera = p.getProp("icon_camera");
 			icon_attended = p.getProp("icon_attended");
@@ -2671,61 +2666,66 @@ public class SpiderGC {
 	 * @return A HTML string containing the logs
 	 */
 	private void getLogs(String completeWebPage, CacheHolderDetail chD) throws Exception {
-		String icon = "";
-		String name = "";
-		String logText = "";
-		String logId = "";
-		String singleLog = "";
-		final LogList reslts = chD.CacheLogs;
-		RexLogBlock.search(completeWebPage);
-		if (!RexLogBlock.didMatch()) {
-			pref.log("[SpiderGC.java:getLogs]check blockRex!", null);
-		}
-		final String LogBlock = RexLogBlock.stringMatched(1);
 
-		exSingleLog.set(LogBlock);
+		final LogList reslts = chD.CacheLogs;
+
+		RexUserToken.search(completeWebPage);
+		if (!RexUserToken.didMatch()) {
+			pref.log("[SpiderGC.java:getLogs]check RexUserToken!", null);
+		}
+		final String userToken = RexUserToken.stringMatched(1);
+		int idx = 0;
 		int nLogs = 0;
 		boolean foundown = false;
-		while ((singleLog = exSingleLog.findNext()).length() > 0) {
-			nLogs++;
-
-			icon = exIcon.findFirst(singleLog);
-			// ' changes to " in UMTS-connection! first char in iconExEnd.
-			icon = icon.substring(0, icon.length() - 1);
-
-			name = exName.findFirst(exNameTemp.findFirst(singleLog));
-
-			logText = exLog.findFirst(singleLog);
-			logText = correctSmilies(logText);
-
-			logId = exLogId.findFirst(singleLog);
-
-			final String ed = exDate.findFirst(singleLog);
-			final String d = DateFormat.toYYMMDD(ed);
-
-			// if this log says this Cache is found by me
-			if ((icon.equals(icon_smile) || icon.equals(icon_camera) || icon.equals(icon_attended)) && (name.equalsIgnoreCase(SafeXML.clean(pref.myAlias)) || (pref.myAlias2.length() > 0 && name.equalsIgnoreCase(SafeXML.clean(pref.myAlias2))))) {
-				chD.getParent().setFound(true);
-				chD.getParent().setCacheStatus(d);
-				chD.OwnLogId = logId;
-				chD.OwnLog = new Log(icon, d, name, logText);
-				foundown = true;
-				// pref.log("own log detected!");
+		boolean fertig = false;
+		do {
+			idx++;
+			String url="http://www.geocaching.com/seek/geocache.logbook?tkn="+userToken+"&idx="+idx+"&num=10&decrypt=false";
+			UrlFetcher.setRequestorProperty("Content-Type", "application/json; charset=UTF-8");
+			String page=UrlFetcher.fetch(url);
+			final JSONObject resp = new JSONObject(page);
+			if (!resp.getString("status").equals("success")) {
+				pref.log("status is " + resp.getString("status"));
 			}
-			if (nLogs <= pref.maxLogsToSpider) {
-				reslts.add(new Log(icon, d, name, logText));
-			} else {
-				if (foundown) {
-					break;
+			final JSONArray data = resp.getJSONArray("data");
+			fertig = data.length() < 10;
+			for (int index = 0; index < data.length(); index++) {
+				nLogs++;
+				final JSONObject entry = data.getJSONObject(index);
+
+				final String icon = entry.getString("LogTypeImage");
+				final String name = entry.getString("UserName");
+				String logText = entry.getString("LogText");
+				logText = STRreplace.replace(logText, "<br/>", "<br>");
+				logText = correctSmilies(logText);
+				final String d = DateFormat.toYYMMDD(entry.getString("Visited"));
+				final String logId = entry.getString("LogID");
+
+				// if this log says this Cache is found by me
+				if ((icon.equals(icon_smile) || icon.equals(icon_camera) || icon.equals(icon_attended)) && (name.equalsIgnoreCase(SafeXML.clean(pref.myAlias)) || (pref.myAlias2.length() > 0 && name.equalsIgnoreCase(SafeXML.clean(pref.myAlias2))))) {
+					chD.getParent().setFound(true);
+					chD.getParent().setCacheStatus(d);
+					// final String logId = entry.getString("LogID");
+					chD.OwnLogId = logId;
+					chD.OwnLog = new Log(icon, d, name, logText);
+					foundown = true;
+				}
+				if (nLogs <= pref.maxLogsToSpider) {
+					reslts.add(new Log(icon, d, name, logText));
+				} else {
+					if (foundown) {
+						fertig=true;
+						break;
+					}
 				}
 			}
-		}
+		} while (!fertig);
+
 		if (nLogs > pref.maxLogsToSpider) {
+			// there are more logs
 			reslts.add(Log.maxLog());
-			// pref.log("MAXLOGS reached ("+pref.maxLogsToSpider+")");
 		}
-		// pref.log(nLogs+" checked!");
-		// return reslts;
+
 	}
 
 	/**
