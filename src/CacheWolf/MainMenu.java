@@ -127,13 +127,13 @@ public class MainMenu extends MenuBar {
 				loadOCFinds = new MenuItem(MyLocale.getMsg(163, "Finds from opencaching")), //
 				mnuSeparator, //
 				spider = new MenuItem(MyLocale.getMsg(131, "Download from geocaching.com")), //
-				spiderRoute, //
 				spiderAllFinds = new MenuItem(MyLocale.getMsg(217, "Spider all finds from geocaching.com")), //
+				spiderRoute, //
 				spiderQuick = new MenuItem(MyLocale.getMsg(138, "from GC quick")), //
-				update = new MenuItem(MyLocale.getMsg(1014, "Update cache data")), //
-				mnuSeparator, //
 				loadGCVotes = new MenuItem(MyLocale.getMsg(1208, "Import ratings from GCVote")), //
 				fetchOCLink = new MenuItem(MyLocale.getMsg(1209, "Fetch link to OC - Cache")), //
+				mnuSeparator, //
+				update = new MenuItem(MyLocale.getMsg(1014, "Update cache data")), //
 		};
 		Menu importMenu = new Menu(mnuImport, MyLocale.getMsg(175, "Import"));
 
