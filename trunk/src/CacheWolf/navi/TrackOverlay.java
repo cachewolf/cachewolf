@@ -197,7 +197,7 @@ public class TrackOverlay extends MapImage {
 		draw.setColor(tr.trackColor);
 		if (paintPoint(tr.trackColor, tr.get(tr.size()-1))) notOnThisOverlaySince = 0;
 		else notOnThisOverlaySince++;
-		if (notOnThisOverlaySince > FIXATE_IF_NO_PIXELS_NUM) { // zur Performanceverbesserung: wenn in den letzten 60 Updates keines mehr fÃ¼r dieses Overlay dabei war, Overlay Pixels fest schreiben, damit doDraw entlastet wird.
+		if (notOnThisOverlaySince > FIXATE_IF_NO_PIXELS_NUM) { // zur Performanceverbesserung: wenn in den letzten 60 Updates keines mehr für dieses Overlay dabei war, Overlay Pixels fest schreiben, damit doDraw entlastet wird.
 			fixate();
 			notOnThisOverlaySince = 0;
 		}
@@ -223,35 +223,35 @@ public class TrackOverlay extends MapImage {
 
 /* draw zeichnet auf _awtImage
  * image.drawImage erzeugt bufferedImage, wenn es vorher null war 
- * und kopiert den entsprechenden Teil in das Ã¼bergebene Surface
+ * und kopiert den entsprechenden Teil in das übergebene Surface
  * Das Problem ist, dass bufferedImage nicht mehr upgedatet wird, wenn
  * es einmal erzugt wurde. Es wird nur dann upgedatet, wenn das Image ein anderes wird
- * oder die Maske eine andere. Das Update erfolgt dann Ã¼ber doDraw, was doCheckMask aufruft,
+ * oder die Maske eine andere. Das Update erfolgt dann über doDraw, was doCheckMask aufruft,
  * das das eigentliche kopieren aus _awtImage vornimmt.
  * 
- *  Problem: das kopieren von _awtImage in BufferedImage ist sehr zeitaufwÃ¤ndig, weil
- *  es keine native Routine ist und jedes Pixel einzeln geprÃ¼ft wird.
- *  Deswegen wÃ¤re die beste LÃ¶sung, wenn ich bufferedImage direkt updaten kÃ¶nnte.
+ *  Problem: das kopieren von _awtImage in BufferedImage ist sehr zeitaufwändig, weil
+ *  es keine native Routine ist und jedes Pixel einzeln geprüft wird.
+ *  Deswegen wäre die beste Lösung, wenn ich bufferedImage direkt updaten könnte.
  *  Aber bufferedImage ist privat, ich kann auch in abgeleiteten Klassen nicht drauf
  *  zugreifen. 
  *  
- *  Zur Not wÃ¤re auch denkbar, doDraw zu Ã¼berschreiben, um bei jedem Aufruf alle 
+ *  Zur Not wäre auch denkbar, doDraw zu überschreiben, um bei jedem Aufruf alle 
  *  Trackpoints neu zu zeichnen.
  *  Work-Aorund: draw.drawImage(image,null,Color.Pink,0,0,1,1); bewirkt, dass awtImage ins
- *  bufferedImage kopiert wird. Dabei wird die transparentColor (in mImage) nicht geÃ¤ndert
- *  und beim Aufruf von doDraw wird wieder die ursprÃ¼ngliche transparentColor verwendet
+ *  bufferedImage kopiert wird. Dabei wird die transparentColor (in mImage) nicht geändert
+ *  und beim Aufruf von doDraw wird wieder die ursprüngliche transparentColor verwendet
  *  
  */
 //was alles nicht funktioniert:
 //drawmask.setDrawOp(Graphics.DRAW_OVER);
 //drawmask.drawRect(x-1, y-1, 2, 2, 1);
 //this.setImage(image, mask);
-//nÃ¤chster Versuch: image.bufferedImage in ewe.fx.Image public definieren !!!
+//nächster Versuch: image.bufferedImage in ewe.fx.Image public definieren !!!
 //image.rgb
 //draw._g.surfaceData.bufImg.raster.data[y*this.location.width + x] = -65536; := image._awtImage
 //((Image)image).eImage(colorOrMask)._awtImage.raster.data[0]=0;
 //image
-//((BufferedImage)(image).se.^.bufferedImage.raster.data[y*this.location.width + x]=-65536; //was dort steht wird tatsÃ¤chlich angezeigt, allerdings kann ich es nicht direkt setzen :-(
+//((BufferedImage)(image).se.^.bufferedImage.raster.data[y*this.location.width + x]=-65536; //was dort steht wird tatsächlich angezeigt, allerdings kann ich es nicht direkt setzen :-(
 //int[] markPixels = new int[4];
 //for (int i = 0; i<markPixels.length; i++) { markPixels[i] = -65536; }
 //image.transparent = null; hilft auhc nicht
@@ -277,8 +277,8 @@ public class TrackOverlay extends MapImage {
 //imageMayChange = true; // hilft auch nicht :-(
 
 /*
- * In der ewe-VM fÃ¼r PocketPC-ARM funktioniert die Festlegung einer 
- * transparenten Farbe nicht (Hintergrund wird weiÃŸ statt durchsichtig)
+ * In der ewe-VM für PocketPC-ARM funktioniert die Festlegung einer 
+ * transparenten Farbe nicht (Hintergrund wird weiß statt durchsichtig)
  * deswegen (und weil in ewe-VM effizienter) Umstellung auf Transparenzmaske
  * statt transparenter Farbe
  * TODO Dies ist in Java-VM allerdings extrem Speicher fressend -> evtl abfragen 

@@ -275,7 +275,7 @@ public class MapLoaderGui extends Form {
 		String ret = Global.getPref().getMapDownloadSavePath(mapLoader.currentOnlineMapService.getMapType());
 		Global.getPref().saveCustomMapsPath(getLeadingPath(ret, Global.getPref().getMapLoadPath()));
 		// Global.getPref().saveCustomMapsPath(ret);
-		// eigentlich dÃ¼rft das erst gespeichert werden, wenn erfolgreich heruntergeladen wurde
+		// eigentlich dürft das erst gespeichert werden, wenn erfolgreich heruntergeladen wurde
 		return ret;
 	}
 
@@ -355,7 +355,7 @@ public class MapLoaderGui extends Form {
 			for (int i = cacheDB.size() - 1; i >= 0; i--) {
 				ch = cacheDB.get(i);
 				if (!this.onlySelected || ch.is_Checked) {
-					if (ch.getPos().isValid() && ch.getPos().latDec != 0 && ch.getPos().lonDec != 0) { // TODO != 0 sollte verschwinden, sobald das handling von nicht gesetzten Koos Ã¼berall korrekt ist
+					if (ch.getPos().isValid() && ch.getPos().latDec != 0 && ch.getPos().lonDec != 0) { // TODO != 0 sollte verschwinden, sobald das handling von nicht gesetzten Koos überall korrekt ist
 						numdownloaded++;
 						progressBox.setInfo(MyLocale.getMsg(1820, "Downloading map '") + mapLoader.currentOnlineMapService.getName() + "'\n" + numdownloaded + " / " + numCaches + MyLocale.getMsg(1821, "\n for cache:\n") + ch.getCacheName());
 						try {

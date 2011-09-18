@@ -93,7 +93,7 @@ public class Profile {
 	private boolean showBlacklisted = false;
 	private boolean showSearchResult = false;
 
-	public boolean selectionChanged = true; // ("HÃ¤ckchen") used by movingMap to get to knao if it should update the caches in the map
+	public boolean selectionChanged = true; // ("Häckchen") used by movingMap to get to knao if it should update the caches in the map
 	/**
 	 * True if the profile has been modified and not saved
 	 * The following modifications set this flag: New profile centre, Change of waypoint data
@@ -620,7 +620,7 @@ public class Profile {
 		for (int i = cacheDB.size() - 1; i >= 0; i--) {
 			ch = cacheDB.get(i);
 			if (!onlyOfSelected || ch.is_Checked) {
-				if (ch.getPos().isValid()) { // done: && ch.pos.latDec != 0 && ch.pos.lonDec != 0 TO-DO != 0 sollte rausgenommen werden sobald in der Liste vernÃ¼nftig mit nicht gesetzten pos umgegangen wird
+				if (ch.getPos().isValid()) { // done: && ch.pos.latDec != 0 && ch.pos.lonDec != 0 TO-DO != 0 sollte rausgenommen werden sobald in der Liste vernünftig mit nicht gesetzten pos umgegangen wird
 					isAddi = ch.isAddiWpt();
 					// test for plausiblity of coordinates of Additional Waypoints: more then 1000 km away from main Waypoint is unplausible ->
 					// ignore it //

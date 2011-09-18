@@ -244,7 +244,7 @@ public class Navigate {
 				SkyOrientation.getSunAzimut(gpsPos.Time, gpsPos.Date, gpsPos.latDec, gpsPos.lonDec);
 				double jd = SkyOrientation.utc2juliandate(gpsPos.Time, gpsPos.Date);
 				skyOrientationDir = SkyOrientation.getLuminaryDir(luminary, jd, gpsPos);
-			} catch (NumberFormatException e) { // irgendeine Info zu Berechnung des Sonnenaziumt fehlt (insbesondere Datum und Uhrzeit sind nicht unbedingt gleichzeitig verfÃ¼gbar wenn es einen Fix gibt)
+			} catch (NumberFormatException e) { // irgendeine Info zu Berechnung des Sonnenaziumt fehlt (insbesondere Datum und Uhrzeit sind nicht unbedingt gleichzeitig verfügbar wenn es einen Fix gibt)
 				skyOrientationDir.set(-361, -361); // any value out of range (bigger than 360) will prevent drawArrows from drawing it
 			}
 

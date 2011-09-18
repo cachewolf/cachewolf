@@ -36,7 +36,7 @@ import ewe.util.Hashtable;
 import ewe.util.Vector;
 
 /**
- * @author HÃ¤lmchen
+ * @author Hälmchen
  */
 
 public class MovingMapControls implements ICommandListener {

@@ -99,7 +99,7 @@ public class InputScreen extends Form {
 	private mLabel lblBearing = new mLabel(MyLocale.getMsg(1403,"Bearing"));
 	private mButtonPos btnBearing, btnDistanc;
 	private mLabel lblDist = new mLabel("m");
-	private mLabel lblBear = new mLabel("Â°");
+	private mLabel lblBear = new mLabel("°");
 	private int[] iPointPos = {0,0,0,0,0,0};
 	
 	private boolean allowInvalid = false;
@@ -217,7 +217,7 @@ public class InputScreen extends Form {
 		btnNorth = new mButton("N");
 		btnNorth.borderStyle = BDR_NOBORDER;
 		TopP.addNext(btnNorth,CellConstants.STRETCH, (CellConstants.FILL));
-		btnNorthDD = new mButtonPos("DDÂ°");
+		btnNorthDD = new mButtonPos("DD°");
 		btnNorthDD.borderStyle = BDR_NOBORDER;
 		TopP.addNext(btnNorthDD,CellConstants.STRETCH, (CellConstants.FILL));
 		btnNorthMM = new mButtonPos("MM.");
@@ -230,7 +230,7 @@ public class InputScreen extends Form {
 		btnWest = new mButton("E");
 		btnWest.borderStyle = BDR_NOBORDER;
 		TopP.addNext(btnWest,CellConstants.STRETCH, (CellConstants.FILL));
-		btnEastDDD = new mButtonPos("DDDÂ°");
+		btnEastDDD = new mButtonPos("DDD°");
 		btnEastDDD.borderStyle = BDR_NOBORDER;
 		TopP.addNext(btnEastDDD,CellConstants.STRETCH, (CellConstants.FILL));
 		btnEastMM = new mButtonPos("MM.");
@@ -351,7 +351,7 @@ public class InputScreen extends Form {
 			strBufCoords.append(strBufTemp.toString());
 			CoordsInput = coords;
 		} else {
-			strBufCoords.append("N 91Â° 00.000 E 361Â° 00.000");
+			strBufCoords.append("N 91° 00.000 E 361° 00.000");
 			CoordsInput = coords;
 		}
 		if(setFocus){
@@ -371,7 +371,7 @@ public class InputScreen extends Form {
 			}
 
 		}else{
-		//'Â°' und '.' filtern
+		//'°' und '.' filtern
 			if(iPosition == POS_NMM-2
 				|| iPosition == POS_EMM-2
 				|| iPosition == POS_ESSS-1
@@ -441,7 +441,7 @@ public class InputScreen extends Form {
 
 	/*
 	 * set lat and lon by using coordinates in "CacheWolf" format
-	 * @param coord  String of type N 49Â° 33.167 E 011Â° 21.608
+	 * @param coord  String of type N 49° 33.167 E 011° 21.608
 	 * @param format only CWPoint.CW is supported
 	 */
 	public CWPoint getCoords(){

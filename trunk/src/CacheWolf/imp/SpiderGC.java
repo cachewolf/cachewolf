@@ -532,7 +532,7 @@ public class SpiderGC {
 				ch.initStates(false);
 		}
 
-		// halbe SeitenlÃ¤nge eines Quadrats ums Zentrum in km
+		// halbe Seitenlänge eines Quadrats ums Zentrum in km
 		double halfSideLength = maxDistance;
 		if (pref.metricSystem == Metrics.IMPERIAL) {
 			halfSideLength = Metrics.convertUnit(maxDistance, Metrics.MILES, Metrics.KILOMETER);
@@ -1342,7 +1342,7 @@ public class SpiderGC {
 		}
 		// switch to english now goes into gc account Display Preferences
 		// (is permanent, must be reset)
-		String languages[] = { "English", "Deutsch", "Fran&#231;ais", "Portugu&#234;s", "ÄŒeÅ¡tina", "Svenska", "Nederlands", "Catal&#224;", "Polski", "Eesti", "Norsk, Bokm&#229;l", "í•œêµ­ì–´", "Espa&#241;ol", "Magyar" };
+		String languages[] = { "English", "Deutsch", "Fran&#231;ais", "Portugu&#234;s", "Ceština", "Svenska", "Nederlands", "Catal&#224;", "Polski", "Eesti", "Norsk, Bokm&#229;l", "???", "Espa&#241;ol", "Magyar" };
 		for (int i = 0; i < languages.length; i++) {
 			if (oldLanguage.equals(languages[i])) {
 				pref.oldLanguageCtl = url + "?__EVENTTARGET=" + UrlFetcher.encodeURL("ctl00$uxLocaleList$uxLocaleList$ctl" + MyLocale.formatLong(i, "00") + "$uxLocaleItem", false);
@@ -1541,7 +1541,7 @@ public class SpiderGC {
 				ch.initStates(false);
 		}
 
-		// halbe SeitenlÃ¤nge eines Quadrats ums Zentrum in km
+		// halbe Seitenlänge eines Quadrats ums Zentrum in km
 		double halfSideLength = maxDistance;
 		if (pref.metricSystem == Metrics.IMPERIAL) {
 			halfSideLength = Metrics.convertUnit(maxDistance, Metrics.MILES, Metrics.KILOMETER);
@@ -1909,8 +1909,8 @@ public class SpiderGC {
 			if (ret.indexOf("ere") > -1)
 				return distanceAndDirection; // zur Zeit " Here -1"
 			// Versuch den DistanceCodeKey automatisch zu bestimmen
-			// da dieser von gc mal wieder geÃ¤ndert wurde.
-			// todo BenÃ¶tigt ev noch weitere Anpassungen: | am Anfang, and calc of keylength
+			// da dieser von gc mal wieder geändert wurde.
+			// todo Benötigt ev noch weitere Anpassungen: | am Anfang, and calc of keylength
 			// String thereitis="|0.34 km|102.698";
 			// String page =
 			// fetchText("http://www.geocaching.com/seek/nearest.aspx?lat=48.48973&lng=009.26313&dist=2&f=1",false);
@@ -1942,7 +1942,7 @@ public class SpiderGC {
 			final String coded = ewe.net.URL.decodeURL(RexPropDistanceCode.stringMatched(1));
 			final String newkey = decodeXor(coded, thereitis);
 			final int keylength = 13;
-			// wenn nicht 13 dann newkey auf wiederholung prÃ¼fen
+			// wenn nicht 13 dann newkey auf wiederholung prüfen
 			DistanceCodeKey = newkey.substring(0, keylength);
 			ret = decodeXor(stmp, DistanceCodeKey).replace('|', ' ');
 			pref.log("Automatic key: " + DistanceCodeKey + " result: " + ret + Preferences.NEWLINE);

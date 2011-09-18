@@ -643,14 +643,14 @@ public class GPXImporter extends MinML {
 		int descIndex = 0;
 		while (imgRegexUrl.searchFrom(html, descIndex)) {
 			descIndex = imgRegexUrl.matchedTo();
-			String fetchUrl = imgRegexUrl.stringMatched(2); // URL in AnfÃ¼hrungszeichen in (2)
+			String fetchUrl = imgRegexUrl.stringMatched(2); // URL in Anführungszeichen in (2)
 			if (fetchUrl == null) {
 				fetchUrl = imgRegexUrl.stringMatched(3);
 			} // falls ohne in (3)
 			if (fetchUrl == null) {
 				continue;
 			} // schlechtes html
-				// fetchUrl ist auf jeden Fall ohne AnfÃ¼hrungszeichen
+				// fetchUrl ist auf jeden Fall ohne Anführungszeichen
 			if (fetchUrl.startsWith("resource"))
 				continue; //
 			if (fetchUrl.startsWith("images")) // z.B. Flaggen
