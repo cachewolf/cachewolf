@@ -1,19 +1,31 @@
 #!/bin/sh
 
-ENCODING=${ENCODING:-windows-1252}
+CP1252=${ENCODING:-windows-1252}
+UTF8=${ENCODING:-UTF-8}
 
-do_compile() {
+compile_cw() {
    javac \
       -source 1.3 \
       -target 1.1 \
-      -encoding "${ENCODING}" \
+      -encoding "${UTF-8}" \
       -cp ./lib/CompileEwe.zip:./lib/ \
       -deprecation \
       -nowarn \
       "$@"
 }
 
-do_compile \
+compile_json() {
+   javac \
+      -source 1.3 \
+      -target 1.1 \
+      -encoding "${cp1252}" \
+      -cp ./lib/CompileEwe.zip:./lib/ \
+      -deprecation \
+      -nowarn \
+      "$@"
+}
+
+compile_cw \
    -d ./bin/ \
    ./src/org/bouncycastle/*/*.java \
    ./src/org/bouncycastle/*/*/*.java \
@@ -23,6 +35,6 @@ do_compile \
    ./src/CacheWolf/*.java \
    ./src/CacheWolf/*/*/*.java \
    ./src/CacheWolf/*/*.java
-do_compile \
+compile_json \
    lib/net/*/*.java \
    lib/org/*/*.java
