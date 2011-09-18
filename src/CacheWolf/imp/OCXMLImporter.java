@@ -452,7 +452,7 @@ public class OCXMLImporter extends MinML {
 		if (name.equals("status")) {
 			// meaning of OC status :
 			// 1=Kann gesucht werden ;
-			// 2=Momentan nicht verfÃ¼gbar ;
+			// 2=Momentan nicht verfügbar ;
 			// 3=Archiviert ;
 			// 4= ;
 			// 5= ;
@@ -468,7 +468,7 @@ public class OCXMLImporter extends MinML {
 						holder = null;
 						numCacheImported--;
 					} else {
-						// Umsetzung wie in gpx fÃ¼r Status 6
+						// Umsetzung wie in gpx für Status 6
 						if (atts.getValue("id").equals("6")) {
 							holder.setArchived(false);
 						} else {
@@ -728,7 +728,7 @@ public class OCXMLImporter extends MinML {
 					// if (holder.is_new())
 					cacheDB.removeElementAt(cacheDB.getIndex(holder));
 					DBindexID.remove(holder.GetCacheID());
-					// und Dateien lÃ¶schen?
+					// und Dateien löschen?
 					final File tmpFile = new File(profile.dataDir + holder.getWayPoint() + ".xml");
 					tmpFile.delete();
 					// todo: was ist mit den schon heruntergeladenen Bildern?

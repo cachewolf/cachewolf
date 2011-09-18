@@ -43,7 +43,7 @@ public final class TransformCoordinatesProperties {
 
 	/**
 	 * return ll transformed into the desired coordinate reference system
-	 * if the prjection is GauÃŸ-KrÃ¼ger, easting will be put in lonDec and
+	 * if the prjection is Gauß-Krüger, easting will be put in lonDec and
 	 * northing in latDec
 	 * @param ll
 	 * @return
@@ -72,7 +72,7 @@ public final class TransformCoordinatesProperties {
 
 	/**
 	 * convert any supported coordinate reference system WGS84
-	 * if p is a GauÃŸ-KrÃ¼ger point, put latdec = northing, londec = easting 
+	 * if p is a Gauß-Krüger point, put latdec = northing, londec = easting 
 	 * @param p
 	 * @return
 	 */

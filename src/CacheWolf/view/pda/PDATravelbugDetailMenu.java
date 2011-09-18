@@ -119,7 +119,7 @@ public class PDATravelbugDetailMenu extends PDAMenu {
 		} else if (action.equals(DELETE)) {
 			// LOESCHEN DES TB's aus der Datenbank ist Boese!!!
 			// Erst mal eine Sicherheitesabfrage bauen:
-			int r = PDAOptionPane.showConfirmDialog(this.getFrame(), "Sind Sie Sicher???", "Wollen Sie wirklich den TB lÃ¶schen??");
+			int r = PDAOptionPane.showConfirmDialog(this.getFrame(), "Sind Sie Sicher???", "Wollen Sie wirklich den TB löschen??");
 			if (r == PDAOptionPane.OK) {
 				for (int i = 0; i < journeyScreen.model.allTravelbugJourneys.size(); i++) {
 					TravelbugJourney tbJourney = journeyScreen.model.allTravelbugJourneys.getTBJourney(i);

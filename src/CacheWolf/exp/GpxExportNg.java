@@ -742,7 +742,7 @@ public class GpxExportNg {
 		StringBuffer ret = new StringBuffer();
 		Attribute attrib;
 		for (int i = 0; i < ch.getCacheDetails(true).attributes.count(); i++) {
-			// <groundspeak:attribute id="X" inc="Y">text fÃ¼r X</groundspeak:attribute>
+			// <groundspeak:attribute id="X" inc="Y">text für X</groundspeak:attribute>
 			attrib = ch.getCacheDetails(true).attributes.getAttribute(i);
 			if (attrib.getGCId().length() > 0) {
 				ret.append("        <groundspeak:attribute id=\"").//
@@ -906,7 +906,7 @@ public class GpxExportNg {
 		if (pos.isValid()) {
 			return pos.toString();
 		} else {
-			return "N/S  __ Â° __ . ___ W/E ___ Â° __ . ___";
+			return "N/S  __ ° __ . ___ W/E ___ ° __ . ___";
 		}
 	}
 

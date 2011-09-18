@@ -148,7 +148,7 @@ public final class ProjectedPoint {
 
 
 	/**
-	 * This will give you the normal projected (e.g.GauÃŸ-KrÃ¼ger) easting value
+	 * This will give you the normal projected (e.g.Gauß-Krüger) easting value
 	 * (that means including the stripe number)
 	 * @return
 	 */

@@ -60,7 +60,7 @@ public final class GkProjection extends Projection{
 	}
 
 	/**
-	 * Project latlon to Gau√ü-Kr√ºger-Coordinates on ellipsoid
+	 * Project latlon to Gauﬂ-Kr¸ger-Coordinates on ellipsoid
 	 * @param latlon
 	 * @param ellipsoid
 	 * @return
@@ -89,10 +89,10 @@ public final class GkProjection extends Projection{
 	}
 
 	/**
-	 * Converts Gau√ü-Kr√ºger-coordinates into lat/lon on the respective ellipsoid
+	 * Converts Gauﬂ-Kr¸ger-coordinates into lat/lon on the respective ellipsoid
 	 * @param gkp
 	 * @param ellipsoid
-	 * @param stripewidth width in degree of the stripe of the Gau√ü-Kr√ºger-System (3 degreee usually used in Gau√ü-Kr√ºger, 6 degree usually in UTM)
+	 * @param stripewidth width in degree of the stripe of the Gauﬂ-Kr¸ger-System (3 degreee usually used in Gauﬂ-Kr¸ger, 6 degree usually in UTM)
 	 * @return
 	 */
 	public CWPoint unproject(ProjectedPoint gkp) {
@@ -100,11 +100,11 @@ public final class GkProjection extends Projection{
 		return unproject(gkp, L0, ellip, scale);
 	}
 	/**
-	 * Converts Gau√ü-Kr√ºger-coordinates into lat/lon on the respective ellipsoid
+	 * Converts Gauﬂ-Kr¸ger-coordinates into lat/lon on the respective ellipsoid
 	 * @param gkp
 	 * @param stripelon: Lon of the center of the stripe
 	 * @param ellipsoid
-	 * @param stripewidth width in degree of the stripe of the Gau√ü-Kr√ºger-System (3 degreee usually used in Gau√ü-Kr√ºger, 6 degree usually in UTM)
+	 * @param stripewidth width in degree of the stripe of the Gauﬂ-Kr¸ger-System (3 degreee usually used in Gauﬂ-Kr¸ger, 6 degree usually in UTM)
 	 * @return
 	 */
 	public static CWPoint unproject(ProjectedPoint gkp, double stripelon, Ellipsoid ellipsoid, double scale) {
