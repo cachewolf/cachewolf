@@ -1244,7 +1244,8 @@ public class SpiderGC {
 		if (loginPage.indexOf(loginSuccess) > 0) {
 			pref.log("Login successful: " + pref.myAlias);
 			// **3 now we are logged in and get the userId and sessionId
-			getSessionIdAndSetCookie("");
+			if (!getSessionIdAndSetCookie(""))
+				return 2;
 		} else {
 			pref.log("[login]: Wrong Account or Password? " + pref.myAlias, null);
 			return 2;
@@ -1315,7 +1316,8 @@ public class SpiderGC {
 			return false;
 		}
 
-		getSessionIdAndSetCookie(pref.userID);
+		if (!getSessionIdAndSetCookie(pref.userID))
+			return false;
 
 		try {
 			page = UrlFetcher.fetch(url);
@@ -2678,17 +2680,17 @@ public class SpiderGC {
 		int nLogs = 0;
 		boolean foundown = false;
 		boolean fertig = false;
+		int num = 100;
 		do {
 			idx++;
-			String url="http://www.geocaching.com/seek/geocache.logbook?tkn="+userToken+"&idx="+idx+"&num=10&decrypt=false";
+			String url="http://www.geocaching.com/seek/geocache.logbook?tkn="+userToken+"&idx="+idx+"&num="+num+"&decrypt=false";
 			UrlFetcher.setRequestorProperty("Content-Type", "application/json; charset=UTF-8");
-			String page=UrlFetcher.fetch(url);
-			final JSONObject resp = new JSONObject(page);
+			final JSONObject resp = new JSONObject(UrlFetcher.fetch(url));
 			if (!resp.getString("status").equals("success")) {
 				pref.log("status is " + resp.getString("status"));
 			}
 			final JSONArray data = resp.getJSONArray("data");
-			fertig = data.length() < 10;
+			fertig = data.length() < num;
 			for (int index = 0; index < data.length(); index++) {
 				nLogs++;
 				final JSONObject entry = data.getJSONObject(index);
