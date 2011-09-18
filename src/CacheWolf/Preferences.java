@@ -276,7 +276,7 @@ public class Preferences extends MinML {
 	 * Max. length for Garmin waypoint names (for etrex which can only accept 6 chars)
 	 */
 	public int garminMaxLen = 0;
-	/** OC true = alle neu Laden false = wenn �nderungsdatum neuer */
+	/** OC true = alle neu Laden false = wenn ?nderungsdatum neuer */
 	public boolean downloadAllOC = false;
 	public String lastOCSite = OC.OCSites[0][OC.OC_HOSTNAME];
 	/**
@@ -1207,7 +1207,7 @@ public class Preferences extends MinML {
 			return; // no select
 		// check selection
 		if (lastProfile.equals(f.newSelectedProfile)) {
-			// aktives Profil kann nicht gel�scht / umbenannt werden;
+			// aktives Profil kann nicht gel?scht / umbenannt werden;
 			new MessageBox(MyLocale.getMsg(321, "Error"), MyLocale.getMsg(ErrorMsgActive, "[Profile active...]"), FormBase.MBOK).execute();
 		} else {
 			boolean err = true;
@@ -1221,7 +1221,7 @@ public class Preferences extends MinML {
 				p.dataDir = absoluteBaseDir + f.newSelectedProfile + "/";
 				p.readIndex();
 				String mapsPath = absoluteBaseDir + "maps" + p.getRelativeCustomMapsPath();
-				int answer = new MessageBox("", mapsPath + " " + MyLocale.getMsg(143, "l�schen ?"), FormBase.MBYESNO).execute();
+				int answer = new MessageBox("", mapsPath + " " + MyLocale.getMsg(143, "l?schen ?"), FormBase.MBYESNO).execute();
 				if (answer == 1) {
 					deleteDirectory(new FileBugfix(mapsPath));
 				}

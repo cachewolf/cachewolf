@@ -1762,7 +1762,7 @@ public final class MovingMap extends Form implements ICommandListener {
 								// evtl. Kartenwechsel PosCircle on Screen
 								// ist. So wie es jetzt ist, kann 2mal der
 								// gleiche Aufruf zum laden
-								// unterschiedlicher Karten f�hren, wenn
+								// unterschiedlicher Karten f?hren, wenn
 								// vorher PosCircle nicht auf dem
 			// SChirm war, nach dem ersten Laden aber schon.
 			cll = new CWPoint(ll);
@@ -1823,7 +1823,7 @@ public final class MovingMap extends Form implements ICommandListener {
 	public void loadMapForAllCaches() {
 		final Area sur = Global.getProfile().getSourroundingArea(true);
 		if (sur == null) {
-			(new MessageBox(MyLocale.getMsg(4207, "Error"), MyLocale.getMsg(4215, "Keine  Caches mit H�ckchen ausgew�hlt"), FormBase.OKB)).execute();
+			(new MessageBox(MyLocale.getMsg(4207, "Error"), MyLocale.getMsg(4215, "Keine  Caches mit H?ckchen ausgew?hlt"), FormBase.OKB)).execute();
 			return;
 		}
 		MapInfoObject newmap = maps.getMapForArea(sur.topleft, sur.bottomright);

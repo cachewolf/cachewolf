@@ -886,7 +886,7 @@ class WebMapService extends OnlineMapService {
 	/**
 	 * This method gives the number in the array of coordinateReferenceSystems, which should be used
 	 * a) if only one is in the array 0 is returned
-	 * b) if there are more, find out which one matches the correct zone (e.g. Gau�-K�ger stripe)
+	 * b) if there are more, find out which one matches the correct zone (e.g. Gau?-K?ger stripe)
 	 * Call this routine with center of the area (use Area.getcenter())
 	 * 
 	 * @param p
@@ -897,7 +897,7 @@ class WebMapService extends OnlineMapService {
 		int crsindex = 0;
 		if (coordinateReferenceSystem.length > 1) {
 			int ls = TransformCoordinates.getLocalProjectionSystem(coordinateReferenceSystem[0]);
-			ProjectedPoint gkbl = TransformCoordinates.wgs84ToLocalsystem(p, ls); // TODO: think / read about what to do if bottom left and top right are not in the same Gau�-Kr�ger stripe?
+			ProjectedPoint gkbl = TransformCoordinates.wgs84ToLocalsystem(p, ls); // TODO: think / read about what to do if bottom left and top right are not in the same Gau?-Kr?ger stripe?
 			int wantepsg = gkbl.getEpsgCode();
 			for (crsindex = 0; crsindex < coordinateReferenceSystem.length; crsindex++) {
 				if (coordinateReferenceSystem[crsindex] == wantepsg)
@@ -913,7 +913,7 @@ class WebMapService extends OnlineMapService {
 
 			}
 			if (crsindex < 0)
-				throw new IllegalArgumentException(MyLocale.getMsg(4829, "getUrlForBoundingBox: Point:") + " " + gkbl.toString() + MyLocale.getMsg(4830, "no matching Gau�-Kr�ger-Stripe in the EPSG-code list in the .wms"));
+				throw new IllegalArgumentException(MyLocale.getMsg(4829, "getUrlForBoundingBox: Point:") + " " + gkbl.toString() + MyLocale.getMsg(4830, "no matching Gau?-Kr?ger-Stripe in the EPSG-code list in the .wms"));
 		}
 		return crsindex;
 	}

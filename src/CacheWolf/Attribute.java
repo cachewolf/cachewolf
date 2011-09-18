@@ -275,14 +275,14 @@ public class Attribute {
 			{ "25", "2552", "poisonoak", "16", "17", "Poison plants" },// 52 Giftige Pflanzen
 			{ "26", "2554", "public", "19", "26", "Public transportation" },// 54 public transit available
 			{ "27", "2556", "quads", "0", "34", "Quads" },// 56 quads allowed
-			{ "28", "2558", "rappelling", "49", "3", "Climbing gear" },// 58 climbing gear KletterausrÃ¼stung
+			{ "28", "2558", "rappelling", "49", "3", "Climbing gear" },// 58 climbing gear Kletterausrüstung
 			{ "29", "2560", "restrooms", "21", "28", "Public restrooms nearby" },// 60 restrooms available
 			{ "30", "2562", "scenic", "0", "8", "Scenic view" },// 62 scenic view
-			{ "31", "2564", "scuba", "51", "5", "Scuba gear" },// 64 TauchausrÃ¼stung
+			{ "31", "2564", "scuba", "51", "5", "Scuba gear" },// 64 Tauchausrüstung
 			// {"32","2566","snakes","0","18","Snakes"},//66 araber95 replaced by Dangerous Animals 14.08.10
 			{ "32", "2566", "dangerousanimals", "0", "18", "Dangerous Animals" },// 66
 			{ "33", "2568", "snowmobiles", "0", "36", "Snowmobiles" },// 68
-			{ "34", "2570", "stealth", "0", "40", "Stealth required" },// 70 stealth required (Heimlich,List,SchlÃ¤ue)
+			{ "34", "2570", "stealth", "0", "40", "Stealth required" },// 70 stealth required (Heimlich,List,Schläue)
 			{ "35", "2572", "stroller", "0", "41", "Stroller accessible" },// 72 stroller accessible
 			{ "36", "2574", "swimming", "29", "12", "May require swimming" },// 74
 			{ "37", "2576", "thorn", "13", "39", "Thorns" },// 76 thorns!
@@ -311,13 +311,13 @@ public class Attribute {
 			{ "60", "2622", "othercache", "57", "157", "Other cache type" }, // OC special
 			{ "61", "2624", "overnight", "37", "137", "Overnight stay necessary" }, // OC special
 			{ "62", "2644", "train", "10", "110", "Active railway nearby" }, // OC special
-			{ "63", "2630", "riddle", "55", "0", "" },// 130 RÃ¤tsel
+			{ "63", "2630", "riddle", "55", "0", "" },// 130 Rätsel
 			{ "64", "2646", "webcam", "32", "132", "Webcam" }, // OC special
 			{ "65", "2634", "steep", "27", "127", "Hilly area" }, // OC special
 			{ "66", "2636", "submerged", "34", "134", "In the water" }, // OC special
 			{ "67", "2638", "tide", "41", "141", "Tide" }, // OC special
 			{ "68", "2640", "time", "39", "139", "Only available at specified times" }, // OC special
-			{ "69", "2642", "tools", "46", "0", "Special Tool required" },// 142 Spezielle AusrÃ¼stung
+			{ "69", "2642", "tools", "46", "0", "Special Tool required" },// 142 Spezielle Ausrüstung
 			{ "70", "2648", "wiki", "54", "154", "Investigation" }, // OC special
 			{ "71", "2650", "wwwlink", "7", "107", "Hyperlink to another caching portal only" }, // OC special
 			{ "72", "2652", "landf", "0", "45", "Lost And Found Tour" }, // thx to Kappler and MiK

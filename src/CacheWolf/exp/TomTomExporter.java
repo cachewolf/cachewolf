@@ -260,9 +260,9 @@ public class TomTomExporter {
 			outp.writeBytes(" by ");
 			outp.writeBytes(ch.getCacheOwner());
 			// Wenn Leerzeichen am Ende von Cache.Owner entfernt:
-			// Hier wieder einfÃ¼gen
+			// Hier wieder einfügen
 			// und data = holder.wayPoint.length()+holder.CacheName.length()+.....
-			// wider um 1 erhÃ¶hen
+			// wider um 1 erhöhen
 			outp.writeBytes("- ");
 			outp.writeBytes(String.valueOf(ch.getHard()));
 			outp.writeBytes("/");

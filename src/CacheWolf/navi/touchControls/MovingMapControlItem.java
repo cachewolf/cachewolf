@@ -37,7 +37,7 @@ import ewe.util.mString;
 /**
  * class which represents a item which can be displayed on the map
  * 
- * @author HÃ¤lmchen
+ * @author Hälmchen
  */
 public abstract class MovingMapControlItem {
 

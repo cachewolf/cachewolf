@@ -196,7 +196,7 @@ public class KMLExporter extends Exporter {
 		// fill structure with data from cacheDB
 		for (int i = 0; i < cacheDB.size(); i++) {
 			ch = cacheDB.get(i);
-			// TODO Das Argument nach STring zu casten gef�llt mir nicht ganz...
+			// TODO Das Argument nach STring zu casten gef?llt mir nicht ganz...
 			if (ch.isVisible() && !ch.isAddiWpt()) {
 				if (ch.is_found()) {
 					tmp = (Vector) outCacheDB[FOUND].get(String.valueOf(ch.getType()));
