@@ -1331,18 +1331,17 @@ public class SpiderGC {
 		String languageBlock = ext.findNext();
 		ext.set(ext.findNext("ctl00$ContentBody$uxDateTimeFormat"), "selected\" value=\"", "\">", 0, true);
 		DateFormat.GCDateFormat = ext.findNext();
-		// <option selected="selected" value="de-DE">Deutsch</option>
-		ext.set(languageBlock, "<option selected=", "/option>", 0, true);
-		ext.set(ext.findNext(), ">", "<", 0, true);
+		// <option selected=\"selected\" value=\"de-DE">Deutsch</option>
+		ext.set(languageBlock, "<option selected=\"selected\" value=\"", "\">", 0, true);
 		String oldLanguage = ext.findNext();
-		if (oldLanguage.equals("English")) {
+		if (oldLanguage.equals("en-US")) {
 			pref.switchGCLanguageToEnglish=false;
 			pref.log("already English");
 			return true;
 		}
 		// switch to english now goes into gc account Display Preferences
 		// (is permanent, must be reset)
-		String languages[] = { "English", "Deutsch", "Fran&#231;ais", "Portugu&#234;s", "Ceština", "Svenska", "Nederlands", "Catal&#224;", "Polski", "Eesti", "Norsk, Bokm&#229;l", "???", "Espa&#241;ol", "Magyar" };
+		String languages[] = { "en-US", "de-DE", "fr-FR", "pt-PT", "cs-CZ", "sv-SE", "nl-NL", "ca-ES", "pl-PL", "et-EE", "nb-NO", "ko-KR", "es-ES", "hu-HU" };
 		for (int i = 0; i < languages.length; i++) {
 			if (oldLanguage.equals(languages[i])) {
 				pref.oldLanguageCtl = url + "?__EVENTTARGET=" + UrlFetcher.encodeURL("ctl00$uxLocaleList$uxLocaleList$ctl" + MyLocale.formatLong(i, "00") + "$uxLocaleItem", false);
