@@ -2703,7 +2703,7 @@ public class SpiderGC {
 				final String logId = entry.getString("LogID");
 
 				// if this log says this Cache is found by me
-				if ((icon.equals(icon_smile) || icon.equals(icon_camera) || icon.equals(icon_attended)) && (name.equalsIgnoreCase(SafeXML.clean(pref.myAlias)) || (pref.myAlias2.length() > 0 && name.equalsIgnoreCase(SafeXML.clean(pref.myAlias2))))) {
+				if ((icon.equals(icon_smile) || icon.equals(icon_camera) || icon.equals(icon_attended)) && (name.equalsIgnoreCase(pref.myAlias) || (pref.myAlias2.length() > 0 && name.equalsIgnoreCase(pref.myAlias2)))) {
 					chD.getParent().setFound(true);
 					chD.getParent().setCacheStatus(d);
 					// final String logId = entry.getString("LogID");
