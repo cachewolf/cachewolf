@@ -1,13 +1,12 @@
 #!/bin/sh
 
-CP1252=${ENCODING:-windows-1252}
-UTF8=${ENCODING:-UTF-8}
+ENCODING=${ENCODING:-windows-1252}
 
 compile_cw() {
    javac \
       -source 1.3 \
       -target 1.1 \
-      -encoding "${UTF-8}" \
+      -encoding "${ENCODING}" \
       -cp ./lib/CompileEwe.zip:./lib/ \
       -deprecation \
       -nowarn \
@@ -18,7 +17,7 @@ compile_json() {
    javac \
       -source 1.3 \
       -target 1.1 \
-      -encoding "${cp1252}" \
+      -encoding "${ENCODING}" \
       -cp ./lib/CompileEwe.zip:./lib/ \
       -deprecation \
       -nowarn \
