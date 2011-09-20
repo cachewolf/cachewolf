@@ -122,14 +122,15 @@ bugNameEnd         = </span>
 imgBlockExStart    = <IMG
 imgBlockExEnd      = >
 # imgSpanEx searches for images in the image section
-imgSpanExStart     = ">Open Street Maps</a>
+imgSpanExStart     = ctl00_ContentBody_MapLinks_MapLinks
+imgSpanExStart2    = <p class="NoPrint">
 imgSpanExEnd       = InformationWidget Clear
-imgNameExStart     = <span>
-imgNameExEnd       = </span>
 imgSrcExStart      = <a href="http://
 imgSrcExEnd        = " rel="lightbox"
-imgCommentExStart  = </a><br\ /><br\ />
-imgCommentExEnd    = <
+imgNameExStart     = <span>
+imgNameExEnd       = </span>
+imgCommentExStart  = </a><br />
+imgCommentExEnd    = <br /><br />
 
 #--------------------------------------
 #Section2d: Additional waypoints
