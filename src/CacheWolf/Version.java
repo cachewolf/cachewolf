@@ -124,7 +124,6 @@ public class Version {
 	 * @param url
 	 * @return: 1 = newer Version available, 0 = this is up to date, 3 = check failed
 	 */
-
 	private static int checkVersion(Properties curvers, String prefix, int t) {
 		try {
 			int curvmaj = Convert.toInt(curvers.getProperty(prefix + "VersionMajor", "0"));
