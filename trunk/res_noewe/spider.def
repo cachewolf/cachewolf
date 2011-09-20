@@ -122,12 +122,12 @@ bugNameEnd         = </span>
 imgBlockExStart    = <IMG
 imgBlockExEnd      = >
 # imgSpanEx searches for images in the image section
-imgSpanExStart     = <span id="ctl00_ContentBody_Images">
-imgSpanExEnd       = </p>
-imgNameExStart     = "\ />\ <span>
-imgNameExEnd       = </span></a>
-imgSrcExStart      = <a\ href="http://
-imgSrcExEnd        = "\ rel="lightbox"
+imgSpanExStart     = ">Open Street Maps</a>
+imgSpanExEnd       = InformationWidget Clear
+imgNameExStart     = <span>
+imgNameExEnd       = </span>
+imgSrcExStart      = <a href="http://
+imgSrcExEnd        = " rel="lightbox"
 imgCommentExStart  = </a><br\ /><br\ />
 imgCommentExEnd    = <
 
