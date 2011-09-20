@@ -2891,19 +2891,26 @@ public class SpiderGC {
 		// ========
 		// In the image span
 		// ========
-		Extractor spanBlock, exImgName;
+		Extractor spanBlock;
+		String imgSrcExStart, imgSrcExEnd;
+		String imgNameExStart, imgNameExEnd;
+		String imgCommentExStart, imgCommentExEnd;
 		try {
-			spanBlock = new Extractor(doc, p.getProp("imgSpanExStart"), p.getProp("imgSpanExEnd"), 0, true);
-			tst = spanBlock.findNext();
-			exImgName = new Extractor(tst, p.getProp("imgNameExStart"), p.getProp("imgNameExEnd"), 0, true);
-			exImgSrc = new Extractor(tst, p.getProp("imgSrcExStart"), p.getProp("imgSrcExEnd"), 0, true);
-			exImgComment = new Extractor(tst, p.getProp("imgCommentExStart"), p.getProp("imgCommentExEnd"), 0, true);
+			imgSrcExStart=p.getProp("imgSrcExStart");
+			imgSrcExEnd=p.getProp("imgSrcExEnd");
+			imgNameExStart=p.getProp("imgNameExStart");
+			imgNameExEnd=p.getProp("imgNameExEnd");
+			imgCommentExStart= p.getProp("imgCommentExStart");
+			imgCommentExEnd=p.getProp("imgCommentExEnd");
+			spanBlock = new Extractor(doc, p.getProp("imgSpanExStart"), p.getProp("imgSpanExEnd"), 0, false);
+			spanBlock.set(spanBlock.findNext(), p.getProp("imgSpanExStart2"), p.getProp("imgSpanExEnd"), 0, true);
+			spanBlock.set(spanBlock.findNext()+imgSrcExStart, imgSrcExStart, imgSrcExStart, 0, false);
 		} catch (final Exception ex) {
 			return;
 		}
-		while ((imgUrl = exImgSrc.findNext()).length() > 0) {
-			imgComment = exImgComment.findNext();
-			imgUrl = "http://" + imgUrl;
+		while ((tst = spanBlock.findNext()).length() > 0) {
+			exImgSrc.set(tst, imgSrcExStart, imgSrcExEnd, 0, true);
+			imgUrl = "http://" + exImgSrc.findNext();
 			try {
 				imgType = (imgUrl.substring(imgUrl.lastIndexOf('.')).toLowerCase() + "    ").substring(0, 4).trim();
 				// imgType is now max 4 chars, starting with .
@@ -2935,7 +2942,8 @@ public class SpiderGC {
 						imageInfo.setFilename(fileName + imgType);
 						imageInfo.setURL(imgUrl);
 					}
-					imageInfo.setTitle(exImgName.findNext());
+					imageInfo.setTitle(exImgSrc.findNext(imgNameExStart, imgNameExEnd));
+					imgComment = exImgSrc.findNext(imgCommentExStart, imgCommentExEnd);
 					while (imgComment.startsWith("<br />"))
 						imgComment = imgComment.substring(6);
 					while (imgComment.endsWith("<br />"))
