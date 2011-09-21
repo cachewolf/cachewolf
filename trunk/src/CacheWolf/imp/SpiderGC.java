@@ -825,6 +825,12 @@ public class SpiderGC {
 			if (pref.metricSystem == Metrics.IMPERIAL) {
 				distanceInKm = Metrics.convertUnit(toDistance, Metrics.MILES, Metrics.KILOMETER);
 			}
+			
+			double fromDistanceInKm = fromDistance;
+			if (pref.metricSystem == Metrics.IMPERIAL) {
+				fromDistanceInKm = Metrics.convertUnit(fromDistance, Metrics.MILES, Metrics.KILOMETER);
+			}
+			
 			// expecting all are changed (archived caches remain always)
 			for (int i = 0; i < cacheDB.size(); i++) {
 				final CacheHolder ch = cacheDB.get(i);
@@ -833,7 +839,7 @@ public class SpiderGC {
 						cExpectedForUpdate.put(ch.getWayPoint(), ch);
 					}
 				} else {
-					if ((!ch.is_archived()) && (ch.kilom <= distanceInKm) && !(doNotgetFound && (ch.is_found() || ch.is_owned())) && (ch.getWayPoint().substring(0, 2).equalsIgnoreCase("GC"))
+					if ((!ch.is_archived()) && (ch.kilom >= fromDistanceInKm) && (ch.kilom <= distanceInKm) && !(doNotgetFound && (ch.is_found() || ch.is_owned())) && (ch.getWayPoint().substring(0, 2).equalsIgnoreCase("GC"))
 							&& ((restrictedCacheType == CacheType.CW_TYPE_ERROR) || (ch.getType() == restrictedCacheType)) && !ch.is_black()) {
 						cExpectedForUpdate.put(ch.getWayPoint(), ch);
 					}
