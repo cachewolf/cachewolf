@@ -46,7 +46,7 @@ public class Attributes {
 
 	/**
 	 * Get the number of attributes in the list
-	 * 
+	 *
 	 * @return number of attributes
 	 */
 	public int count() {
@@ -65,8 +65,7 @@ public class Attributes {
 	}
 
 	/**
-	 * Filling the Attributes from Cache.xml (CacheHolderDetail)
-	 * todo : remove this "historic" reprensentation , saving as Bits should be enough (araber95)
+	 * Filling the Attributes from Cache.xml (CacheHolderDetail) todo : remove this "historic" reprensentation , saving as Bits should be enough (araber95)
 	 */
 	public void XmlAttributesEnd(String elem) {
 		clear();
@@ -78,8 +77,7 @@ public class Attributes {
 	}
 
 	/**
-	 * Prepare for attributes to be written to cache.xml file
-	 * todo : remove this "historic" reprensentation , saving as Bits should be enough (araber95)
+	 * Prepare for attributes to be written to cache.xml file todo : remove this "historic" reprensentation , saving as Bits should be enough (araber95)
 	 */
 	public String XmlAttributesWrite() {
 		StringBuffer sb = new StringBuffer(1000);
@@ -95,7 +93,7 @@ public class Attributes {
 
 	/**
 	 * Add a new attribute to the array by Name, meaning its icon picture name
-	 * 
+	 *
 	 * @param attributeName
 	 */
 	public void add(String attributeName) {
@@ -111,11 +109,11 @@ public class Attributes {
 
 	/**
 	 * Add a new attribute to the array by ID and Inc as you get it from GC gpx-File
-	 * 
+	 *
 	 * @param GC
-	 *            attribute ID
+	 *          attribute ID
 	 * @param GC
-	 *            attribute Inc (attribute set = 0 ,attribute not set = 1)
+	 *          attribute Inc (attribute set = 0 ,attribute not set = 1)
 	 */
 	public void add(int attIdGC, String Yes1No0) {
 		if (_count < attribs.length) {
@@ -142,9 +140,9 @@ public class Attributes {
 
 	/**
 	 * Add a new attribute to the array by OC-IDas you get it from OC xml/zip-download
-	 * 
+	 *
 	 * @param OC
-	 *            attribute ID
+	 *          attribute ID
 	 */
 	public void add(int attIdOC) {
 		Attribute attr = new Attribute(attIdOC);
@@ -161,7 +159,7 @@ public class Attributes {
 
 	/**
 	 * to get the Bit Representation of the Attributs of this Cache
-	 * 
+	 *
 	 * @return the Long array representing the Attributes of this Cache
 	 */
 	public long[] getAttribsAsBits() {
@@ -175,9 +173,9 @@ public class Attributes {
 
 	/**
 	 * Get the i-th attribute
-	 * 
+	 *
 	 * @param i
-	 *            The number for which the attribute is to be retrieved
+	 *          The number for which the attribute is to be retrieved
 	 * @return The attribute
 	 */
 	public Attribute getAttribute(int i) {

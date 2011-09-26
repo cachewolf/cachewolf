@@ -43,7 +43,7 @@ public class Version {
 	static final int VER_MINOR = 2;
 	static final String VER_SVN ="$LastChangedRevision$"; // the number is automatically replaced by subversion to the latest versionnumer of this file (svn:keywords LastChangedRevision)
 	static final int SVN_REVISION = Common.parseInt(VER_SVN.substring(VER_SVN.indexOf(" ")+1, VER_SVN.lastIndexOf(" ")));
-	static final int VERSION_TYPE = 0;
+	static final int VERSION_TYPE = 3;
 	public static final String VERSION_TYPES(int i) {
 		if (i==0) return MyLocale.getMsg(7000,"Release");
 		if (i==1) return MyLocale.getMsg(7001,"Release candidate");
@@ -61,8 +61,8 @@ public class Version {
 	}
 
 	public static String getReleaseDetailed() {
-		// habe die SVN-Nummer doch aus der Anzeige erstmal wieder herausgenommen, weil es in einem final Release doch recht seltsam auss�he.
-		// Sinnvoll w�re daher vielleicht, eine Methode getReleaseDatail, die die SVN-Versionnummer mit angibt und z.B. im "�ber"-Dialog angezeigt werden k�nnte.
+		// habe die SVN-Nummer doch aus der Anzeige erstmal wieder herausgenommen, weil es in einem final Release doch recht seltsam auss?he.
+		// Sinnvoll w?re daher vielleicht, eine Methode getReleaseDatail, die die SVN-Versionnummer mit angibt und z.B. im "?ber"-Dialog angezeigt werden k?nnte.
 		return getRelease() + " " + VERSION_TYPES(VERSION_TYPE);
 	}
 
@@ -124,7 +124,6 @@ public class Version {
 	 * @param url
 	 * @return: 1 = newer Version available, 0 = this is up to date, 3 = check failed
 	 */
-
 	private static int checkVersion(Properties curvers, String prefix, int t) {
 		try {
 			int curvmaj = Convert.toInt(curvers.getProperty(prefix + "VersionMajor", "0"));

@@ -139,7 +139,7 @@ public class OCXMLImporter extends MinML {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param number
 	 * @param infB
 	 * @return true, if some change was made to the cacheDB
@@ -630,6 +630,7 @@ public class OCXMLImporter extends MinML {
 		}
 		if (name.equals("latitude")) {
 			holder.setPos(new TrackPoint(Common.parseDouble(strData), longitude));
+			holder.setUpdated(false); // todo : correct definition of usage for this 
 			return;
 		}
 		if (name.equals("difficulty")) {
@@ -670,8 +671,9 @@ public class OCXMLImporter extends MinML {
 				linebraek = "<br>\n";
 			else
 				linebraek = "\n";
-
-			// this is set by "hint" a few lines down: if a long description is already updated, then this one is likely to be in another language
+			// if a long description has been entered in this run (==holder.cache_updated is true), 
+			// then this one is added (for another language)
+			// otherwise all previous descriptions will be overwritten ( or there are none yet) 
 			if (holder.is_updated())
 				holder.getCacheDetails(false).LongDescription += linebraek + processingDescLang + ":" + linebraek + strData + linebraek;
 			else
@@ -679,7 +681,7 @@ public class OCXMLImporter extends MinML {
 			return;
 		}
 
-		if (name.equals("desc")) { // </desc>
+		if (name.equals("desc")) { // </desc> 
 			if (isHTML)
 				holder.getCacheDetails(false).LongDescription += SafeXML.cleanback(strData);
 			else
@@ -696,7 +698,12 @@ public class OCXMLImporter extends MinML {
 				holder.getCacheDetails(false).Hints += linebreak + "[" + processingDescLang + ":]" + linebreak + Common.rot13(strData) + linebreak;
 			else
 				holder.getCacheDetails(false).Hints = "[" + processingDescLang + ":]" + linebreak + Common.rot13(strData) + linebreak;
-			holder.setUpdated(true); // remark: this is used in "shortdesc" to decide weather the description should be appended or replaced
+			// remark: 
+			// holder.cache_updated will be set to true
+			// after the subtag-infos of tag <cachedesc> have been entered 
+			// (ending with the subtag </hint>) 
+			// to possibly add the <cachedesc> for an additional language
+			holder.setUpdated(true);
 			return;
 		}
 	}

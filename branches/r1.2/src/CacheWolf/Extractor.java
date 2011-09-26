@@ -47,7 +47,7 @@ public class Extractor {
 	 * startOffset = The beginning offset from which to start the search in sTxt<br>
 	 * betweenonly = if false the string returned will inlcude st and e;
 	 * if true it will not include st and e.
-	 * 
+	 *
 	 */
 	public Extractor(String searchText, String st, String e, int startOffset, boolean betweenonly) {
 		_startOffset = startOffset;
@@ -59,7 +59,7 @@ public class Extractor {
 
 	/**
 	 * Mehtod to set the source text to be searched through
-	 * 
+	 *
 	 */
 	public void set(String searchText, String st, String e, int startOffset, boolean betweenonly) {
 		_startOffset = startOffset;
@@ -72,11 +72,6 @@ public class Extractor {
 	public void set(String searchText) {
 		_searchText = searchText;
 		_startOffset = 0;
-	}
-
-	public void set(String searchText, int startOffset) {
-		_searchText = searchText;
-		_startOffset = startOffset;
 	}
 
 	public String findFirst(String searchText) {
