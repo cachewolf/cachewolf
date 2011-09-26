@@ -48,7 +48,7 @@ import ewe.util.Vector;
 /**
  * A class to hold information on a cache.<br>
  * Not all attributes are filled at once. You will have to look at other classes and methods to get more information.
- * 
+ *
  */
 public class CacheHolder {
 	protected static final String NOBEARING = "?";
@@ -425,7 +425,7 @@ public class CacheHolder {
 
 	/**
 	 * Returns the distance in formatted output. Using kilometers when metric system is active, using miles when imperial system is active.
-	 * 
+	 *
 	 * @return The current distance.
 	 */
 	public String getDistance() {
@@ -463,7 +463,7 @@ public class CacheHolder {
 	/**
 	 * Updates Cache information with information provided by cache given as argument. This is used to update the cache with the information retrieved from files or web: The argument cache is the one that is filled with the read information,
 	 * <code>this</code> is the cache that is already in the database and subject to update.
-	 * 
+	 *
 	 * @param ch
 	 *            The cache who's information is updating the current one
 	 * @param overwrite
@@ -612,7 +612,14 @@ public class CacheHolder {
 		if (isAddiWpt()) {
 			CacheHolder ch = this.mainCache;
 			varParams.put("MAINWP", ch.getWayPoint());
-			varParams.put("MAINWPNAME", ch.getCacheName());
+			String cn = ch.getCacheName();
+			if (codec instanceof AsciiCodec) {
+				cn = Exporter.simplifyString(cn);
+			} // use for "NAME"
+			if (badChars != null) {
+				cn = badChars.replaceAll(cn);
+			} // use for "NAME"
+			varParams.put("MAINWPNAME", cn);
 			varParams.put("DIFFICULTY", (ch.hard < 0) ? "!<!" : decSep.replaceAll(CacheTerrDiff.longDT(ch.hard)));
 			String sHard = Integer.toString(ch.hard);
 			varParams.put("SHORTDIFFICULTY", (ch.hard < 0) ? "" : sHard);
@@ -697,6 +704,7 @@ public class CacheHolder {
 			varParams.put("COUNTRY", "");
 			varParams.put("STATE", "");
 		} else {
+			// todo &lt;br&gt;
 			varParams.put("URL", det.URL);
 			if (html) {
 				if (ModTyp == 0) {
@@ -844,7 +852,7 @@ public class CacheHolder {
 
 	/**
 	 * generate a gc.com compatible string representation of log derived from the internally stored image
-	 * 
+	 *
 	 * @param image
 	 *            name of the image to display
 	 * @return log type. will default to "Write note" for unknown logtypes
@@ -887,7 +895,7 @@ public class CacheHolder {
 
 	/**
 	 * Modify the image links in the long description so that they point to image files in the local directory Also copy the image file to the target directory so that it can be displayed.
-	 * 
+	 *
 	 * @param chD
 	 *            CacheHolderDetail
 	 * @param int ModTypLongDesc == 1 get image from profile path, == 2 get image from html-path
@@ -1045,7 +1053,7 @@ public class CacheHolder {
 
 	/**
 	 * True if ch and this belong to the same main cache.
-	 * 
+	 *
 	 * @param ch
 	 * @return
 	 */
@@ -1070,7 +1078,7 @@ public class CacheHolder {
 
 	/**
 	 * Find out of detail object of Cache is loaded. Returns <code>true</code> if this is the case.
-	 * 
+	 *
 	 * @return True when details object is present
 	 */
 	public boolean detailsLoaded() {
@@ -1081,7 +1089,7 @@ public class CacheHolder {
 	 * Gets the detail object of a cache. The detail object stores information which is not needed for every cache instantaneously, but can be loaded if the user decides to look at this cache. If the cache object is already existing, the method will
 	 * return this object, otherwise it will create it and try to read it from the corresponding <waypoint>.xml file. Depending on the parameters it is allowed that the <waypoint>.xml file does not yet exist, or the user is warned that the file doesn't
 	 * exist. If more than <code>maxdetails</code> details are loaded, then the 5 last recently loaded caches are unloaded (to save ram).
-	 * 
+	 *
 	 * @param alarmuser
 	 *            If true an error message will be displayed to the user, if the details could not be read, and the method returns null
 	 * @return The respective CacheHolderDetail, or null
@@ -1328,7 +1336,7 @@ public class CacheHolder {
 
 	/**
 	 * Initializes the caches states (and its addis) before updating, so that the "new", "updated", "log_updated" and "incomplete" properties are properly set.
-	 * 
+	 *
 	 * @param pNewCache
 	 *            <code>true</code> if it is a new cache (i.e. a cache not existing in CacheDB), <code>false</code> otherwise.
 	 */
@@ -1346,7 +1354,7 @@ public class CacheHolder {
 
 	/**
 	 * Creates a bit field of boolean values of the cache, represented as a long value. Boolean value of <code>true</code> results in <code>1</code> in the long values bits, and, vice versa, 0 for false.
-	 * 
+	 *
 	 * @return long value representing the boolean bit field
 	 */
 	private long boolFields2long() {
@@ -1362,7 +1370,7 @@ public class CacheHolder {
 	/**
 	 * Creates a field of byte values of certain properties of the cache, represented as a long value. As a long is 8 bytes wide, one might pack 8 bytes into a long, one every 8 bits. The position indicates the group of bits where the byte is packed,
 	 * counting starting from one by the right side of the long.
-	 * 
+	 *
 	 * @return long value representing the byte field
 	 */
 	private long byteFields2long() {
@@ -1372,7 +1380,7 @@ public class CacheHolder {
 
 	/**
 	 * Evaluates byte values from a long value for certain properties of the cache.
-	 * 
+	 *
 	 * @param value
 	 *            The long value which contains up to 8 bytes.
 	 */
@@ -1390,7 +1398,7 @@ public class CacheHolder {
 
 	/**
 	 * convert a v2 byte filed to the current structures
-	 * 
+	 *
 	 * @param value
 	 */
 	private void long2byteFieldsv2(long value) {
@@ -1418,7 +1426,7 @@ public class CacheHolder {
 
 	/**
 	 * Extracts a byte from a long value. The position is the number of the 8-bit block of the long (which contains 8 8-bit blocks), counted from 1 to 8, starting from the right side of the long.
-	 * 
+	 *
 	 * @param value
 	 *            The long value which contains the bytes
 	 * @param position
@@ -1432,7 +1440,7 @@ public class CacheHolder {
 
 	/**
 	 * Evaluates boolean values from a long value, which is seen as bit field.
-	 * 
+	 *
 	 * @param value
 	 *            The bit field as long value
 	 */
@@ -1455,7 +1463,7 @@ public class CacheHolder {
 
 	/**
 	 * Represents a bit mask as long value for a boolean value which is saved at a specified position in the long field.
-	 * 
+	 *
 	 * @param value
 	 *            The boolean value we want to code
 	 * @param position
@@ -1472,7 +1480,7 @@ public class CacheHolder {
 
 	/**
 	 * Coding a long field which has only the bits of the byte value set. The position is the number (from 1 to 8) of the byte block which is used from the long.
-	 * 
+	 *
 	 * @param value
 	 *            Byte to encode
 	 * @param position
@@ -1487,7 +1495,7 @@ public class CacheHolder {
 	/**
 	 * Returns <code>true</code> if the waypoint should appear in the cache list, <code>false</code> if it should not appear.<br>
 	 * The method takes into account blacklist, filters, search results - everything that determines if a cache is visible in the list or not.
-	 * 
+	 *
 	 * @return
 	 */
 	public boolean isVisible() {
@@ -1518,7 +1526,7 @@ public class CacheHolder {
 
 	/**
 	 * Gets an IconAndText object for the cache. If the level of the Icon is equal to the last call of the method, the same (cached) object is returned. If the object is null or the level is different, a new object is created.<br>
-	 * 
+	 *
 	 * @param level
 	 *            4=is_incomplete(), 3=is_new(), 2=is_updated(), 1=is_log_updated
 	 * @param fm
@@ -1626,7 +1634,7 @@ public class CacheHolder {
 
 	/**
 	 * Gets the type of cache as integer.
-	 * 
+	 *
 	 * @return Cache type
 	 */
 	public byte getType() {
@@ -1635,7 +1643,7 @@ public class CacheHolder {
 
 	/**
 	 * Sets the type of the cache. As the cache type values are int for the rest of CacheWolf and byte internally of CacheHolder, some conversion has to be done.
-	 * 
+	 *
 	 * @param typeId
 	 *            Cache Type
 	 */
@@ -1698,7 +1706,7 @@ public class CacheHolder {
 	/**
 	 * If this returns <code>true</code>, then the additional waypoints for this cache should be displayed regardless how the filter is set. If it is <code>false</code>, then the normal filter settings apply.<br>
 	 * This property is not saved in index.xml, so if you reload the data, then this information is gone.
-	 * 
+	 *
 	 * @return <code>True</code>: Always display additional waypoints for cache.
 	 */
 	public boolean showAddis() {
@@ -1708,7 +1716,7 @@ public class CacheHolder {
 	/**
 	 * Setter for <code>showAddis()</code>. If this returns <code>true</code>, then the additional waypoints for this cache should be displayed regardless how the filter is set. If it is <code>false</code>, then the normal filter settings apply.<br>
 	 * This property is not saved in index.xml, so if you reload the data, then this information is gone.
-	 * 
+	 *
 	 * @param value
 	 *            <code>True</code>: Always display additional waypoints for cache.
 	 */
@@ -1748,7 +1756,7 @@ public class CacheHolder {
 	 * </ul>
 	 * The new method for deciding if a cache is visible or not is <code>isVisible()
 	 * </code>.
-	 * 
+	 *
 	 * @return <code>True</code> if filter criteria are matched
 	 */
 	public boolean is_filtered() {
@@ -1835,7 +1843,7 @@ public class CacheHolder {
 	/**
 	 * Determines if the blacklist status is set for the cache. Do not use this method to check if the cache should be displayed. Use <code>isVisible()</code> for this, which already does this (and other) checks.<br>
 	 * Only use this method if you really want to inform yourself about the black status of the cache!
-	 * 
+	 *
 	 * @return <code>true</code> if he black status of the cache is set.
 	 */
 	public boolean is_black() {
@@ -1967,7 +1975,7 @@ public class CacheHolder {
 
 	/**
 	 * rename a waypoint and all its associated files
-	 * 
+	 *
 	 * @param newWptId
 	 *            new waypoint id (will be converted to upper case)
 	 * @return true on success, false on error
