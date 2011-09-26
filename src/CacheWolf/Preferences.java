@@ -90,7 +90,7 @@ public class Preferences extends MinML {
 
 	/**
 	 * Singleton pattern - return reference to Preferences
-	 * 
+	 *
 	 * @return Singleton Preferences object
 	 */
 	public static Preferences getPrefObject() {
@@ -108,7 +108,7 @@ public class Preferences extends MinML {
 	 * Call this method to set the path of the config file <br>
 	 * If you call it with null it defaults to [program-dir]/pref.xml if p is a directory "pref.xml" will automatically
 	 * appended
-	 * 
+	 *
 	 * @param p
 	 */
 	public void setPathToConfigFile(String p) {
@@ -276,15 +276,14 @@ public class Preferences extends MinML {
 	 * Max. length for Garmin waypoint names (for etrex which can only accept 6 chars)
 	 */
 	public int garminMaxLen = 0;
-	/** OC true = alle neu Laden false = wenn Änderungsdatum neuer */
+	/** OC true = alle neu Laden false = wenn ?nderungsdatum neuer */
 	public boolean downloadAllOC = false;
 	public String lastOCSite = OC.OCSites[0][OC.OC_HOSTNAME];
 	/**
 	 * The currently used centre point, can be different from the profile's centrepoint. This is used for spidering
 	 */
 	private CWPoint curCentrePt = new CWPoint();
-	/** True if a login screen is displayed on each spider operation */
-	public boolean forceLogin = true;
+	public boolean switchGCLanguageToEnglish = false;
 	/** True if the goto panel is North centered */
 	public boolean northCenteredGoto = true;
 	/** If not null, a customs map path has been specified by the user */
@@ -343,7 +342,7 @@ public class Preferences extends MinML {
 	/** Selected Size of map tiles */
 	public int mapTileSize = 1;
 	/** How many should maptiles overlap */
-	public int mapOverlapping = 100;
+	public int mapOverlapping = 2;
 	/** Width and height of free defined tile size */
 	public int tilewidth;
 	public int tileheight;
@@ -362,11 +361,11 @@ public class Preferences extends MinML {
 	// ////////////////////////////////////////////
 	/**
 	 * The debug switch (Can be used to activate dormant code) by adding the line:
-	 * 
+	 *
 	 * <pre>
 	 * &lt;debug value=&quot;true&quot; /&gt;
 	 * </pre>
-	 * 
+	 *
 	 * to the pref.xml file.
 	 */
 	public boolean debug = false;
@@ -422,7 +421,7 @@ public class Preferences extends MinML {
 
 	/**
 	 * Tries to find a executable browser return "" if no browser found
-	 * 
+	 *
 	 * @return
 	 */
 	private String getDefaultBrowser() {
@@ -609,7 +608,6 @@ public class Preferences extends MinML {
 			northCenteredGoto = Boolean.valueOf(atts.getValue("northcentered")).booleanValue();
 		} else if (name.equals("spider")) {
 			doNotGetFound = !Boolean.valueOf(atts.getValue("getFinds")).booleanValue();
-			forceLogin = Boolean.valueOf(atts.getValue("forcelogin")).booleanValue();
 			checkLog = Boolean.valueOf(atts.getValue("checkLog")).booleanValue();
 			tmp = atts.getValue("checkTBs");
 			if (tmp != null)
@@ -710,7 +708,7 @@ public class Preferences extends MinML {
 			mapTileSize = Convert.parseInt(tmp);
 			tmp = atts.getValue("overlapping");
 			if (tmp == null || tmp.length() == 0)
-				tmp = "100";
+				tmp = "2";
 			mapOverlapping = Convert.parseInt(tmp);
 			tmp = atts.getValue("tilewidth");
 			tilewidth = (tmp != null && tmp.length() > 0) ? Convert.parseInt(tmp) : 0;
@@ -861,7 +859,6 @@ public class Preferences extends MinML {
 			outp.print("    <opencaching lastSite=\"" + lastOCSite + "\" downloadMissing=\"" + SafeXML.strxmlencode(downloadAllOC) + "\" />\n");
 			outp.print("    <location lat=\"" + SafeXML.clean(curCentrePt.getLatDeg(TransformCoordinates.DD)) + "\" long=\"" + SafeXML.clean(curCentrePt.getLonDeg(TransformCoordinates.DD)) + "\" />\n");
 			outp.print("    <spider" //
-					+ " forcelogin=\"" + SafeXML.strxmlencode(forceLogin) + "\"" //
 					+ " spiderUpdates=\"" + SafeXML.strxmlencode(spiderUpdates) + "\"" //
 					+ " checkLog=\"" + SafeXML.strxmlencode(checkLog) + "\"" //
 					+ " checkTBs=\"" + SafeXML.strxmlencode(checkTBs) + "\"" //
@@ -926,7 +923,7 @@ public class Preferences extends MinML {
 
 	/**
 	 * custom = set by the user
-	 * 
+	 *
 	 * @return custom Maps Path, null if not set
 	 */
 	public String getCustomMapsPath() {
@@ -983,8 +980,8 @@ public class Preferences extends MinML {
 	 * gets the path to the calibrated maps it first tries if there are manually imported maps in
 	 * <baseDir>/maps/standard then it tries the legacy dir: <program-dir>/maps In case in both locations are no
 	 * .wfl-files it returns <baseDir>/maps/expedia - the place where the automatically downloaded maps are placed.
-	 * 
-	 * 
+	 *
+	 *
 	 */
 	public String getMapLoadPath() {
 		saveCustomMapsPath(getMapLoadPathInternal());
@@ -1100,7 +1097,7 @@ public class Preferences extends MinML {
 	/**
 	 * tries to get the home data dir of the user e.g. "c:\documents and...\<user>\my documents" or "/home/<user>" in
 	 * linux if none could be identified, "/" is returned.
-	 * 
+	 *
 	 * @return
 	 */
 	public String getHomeDir() {
@@ -1139,7 +1136,7 @@ public class Preferences extends MinML {
 
 	/**
 	 * Open Profile selector screen
-	 * 
+	 *
 	 * @param prof
 	 * @param showProfileSelector
 	 * @return True if a profile was selected
@@ -1210,7 +1207,7 @@ public class Preferences extends MinML {
 			return; // no select
 		// check selection
 		if (lastProfile.equals(f.newSelectedProfile)) {
-			// aktives Profil kann nicht gelöscht / umbenannt werden;
+			// aktives Profil kann nicht gel?scht / umbenannt werden;
 			new MessageBox(MyLocale.getMsg(321, "Error"), MyLocale.getMsg(ErrorMsgActive, "[Profile active...]"), FormBase.MBOK).execute();
 		} else {
 			boolean err = true;
@@ -1224,7 +1221,7 @@ public class Preferences extends MinML {
 				p.dataDir = absoluteBaseDir + f.newSelectedProfile + "/";
 				p.readIndex();
 				String mapsPath = absoluteBaseDir + "maps" + p.getRelativeCustomMapsPath();
-				int answer = new MessageBox("", mapsPath + " " + MyLocale.getMsg(143, "löschen ?"), FormBase.MBYESNO).execute();
+				int answer = new MessageBox("", mapsPath + " " + MyLocale.getMsg(143, "l?schen ?"), FormBase.MBYESNO).execute();
 				if (answer == 1) {
 					deleteDirectory(new FileBugfix(mapsPath));
 				}
@@ -1266,13 +1263,13 @@ public class Preferences extends MinML {
 	/**
 	 * Method to log messages to a file called log.txt It will always append to an existing file. To show the message on
 	 * the console, the global variable debug must be set. This can be done by adding
-	 * 
+	 *
 	 * <pre>
 	 * &lt;debug value=&quot;true&quot;&gt;
 	 * </pre>
-	 * 
+	 *
 	 * to the pref.xml file
-	 * 
+	 *
 	 * @param text
 	 *            to log
 	 */
@@ -1305,7 +1302,7 @@ public class Preferences extends MinML {
 
 	/**
 	 * Log an exception to the log file with or without a stack trace
-	 * 
+	 *
 	 * @param text
 	 *            Optional message (Can be empty string)
 	 * @param e
@@ -1314,11 +1311,11 @@ public class Preferences extends MinML {
 	 *            If true and the debug switch is true, the stack trace is appended to the log The debug switch can be
 	 *            set by including the line <i>&lt;debug value="true"&gt;&lt;/debug&gt;</i> in the pref.xml file or by
 	 *            manually setting it (i.e. in BE versions or RC versions) by including the line
-	 * 
+	 *
 	 *            <pre>
 	 * Global.getPref().debug = true;
 	 * </pre>
-	 * 
+	 *
 	 *            in Version.getRelease()
 	 */
 	public void log(String text, Throwable e, boolean withStackTrace) {
@@ -1337,7 +1334,7 @@ public class Preferences extends MinML {
 	/**
 	 * Log an exception to the log file without a stack trace, i.e. where a stack trace is not needed because the
 	 * location/cause of the error is clear
-	 * 
+	 *
 	 * @param message
 	 *            Optional message (Can be empty string)
 	 * @param e
@@ -1390,7 +1387,7 @@ public class Preferences extends MinML {
 	/**
 	 * <code>True</code> or <code>false</code>, depending if a filter with the given ID is saved in the
 	 * preferences.
-	 * 
+	 *
 	 * @param filterID
 	 *            ID of the filter to check
 	 * @return True or false
@@ -1402,7 +1399,7 @@ public class Preferences extends MinML {
 	/**
 	 * Returns the FilterData object saved with the given ID. The ID is not saved in the object, so it may be resaved
 	 * under another ID.
-	 * 
+	 *
 	 * @param filterID
 	 *            ID of the FilterData object
 	 * @return FilterData object
@@ -1414,7 +1411,7 @@ public class Preferences extends MinML {
 	/**
 	 * Adds a FilterData object to the list. If a FilterData object is already saved unter the given ID, the old object
 	 * is removed and the new one is set at its place.
-	 * 
+	 *
 	 * @param filterID
 	 *            ID to associate with the filter object
 	 * @param filter
@@ -1427,7 +1424,7 @@ public class Preferences extends MinML {
 	/**
 	 * Removed the FilterData object which is saved with the given ID. If no such FilterData object exists, nothing
 	 * happens.
-	 * 
+	 *
 	 * @param filterID
 	 *            ID of FilterData object to remove
 	 */
@@ -1437,7 +1434,7 @@ public class Preferences extends MinML {
 
 	/**
 	 * Returns a alphabetically sorted array of ID of saved FilterData objects.
-	 * 
+	 *
 	 * @return Array of IDs
 	 */
 	public String[] getFilterIDs() {
@@ -1502,6 +1499,7 @@ public class Preferences extends MinML {
 		if (oldLanguageCtl.length() != 0)
 			try {
 				UrlFetcher.fetch(oldLanguageCtl);
+				switchGCLanguageToEnglish=true;
 			} catch (IOException e) {
 				// dann halt nicht
 			}

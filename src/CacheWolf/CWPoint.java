@@ -357,10 +357,13 @@ public class CWPoint extends TrackPoint{
 	 */
 	public String getLatDeg(int format) {
 		switch (format) {
-		case TransformCoordinates.DD: 	return MyLocale.formatDouble(this.latDec, "00.00000").replace(',','.');
+		case TransformCoordinates.DD: 	
+			return MyLocale.formatDouble(this.latDec, "00.00000").replace(',','.');
 		case TransformCoordinates.DMM:
-		case TransformCoordinates.DMS:	return getDMS(latDec,0,format);
-		default: return "";
+		case TransformCoordinates.DMS:	
+			return getDMS(latDec,0,format);
+		default: 
+			return "";
 		}
 	}
 	
@@ -572,7 +575,8 @@ public class CWPoint extends TrackPoint{
 	public String toString(int format){
 		if (!isValid()) return MyLocale.getMsg(999,"not set");
 		switch (format) {
-		case TransformCoordinates.DD:	return getNSLetter() + " " + STRreplace.replace(getLatDeg(format),"-","") + "° "
+		case TransformCoordinates.DD:	
+			return getNSLetter() + " " + STRreplace.replace(getLatDeg(format),"-","") + "° "
 						+  getEWLetter() + " " + STRreplace.replace(getLonDeg(format),"-","")+ "°";
 		case TransformCoordinates.DMM:	return getNSLetter() + " " + getLatDeg(format) + "° " + getLatMin(format) + " "
 						+  getEWLetter() + " " + getLonDeg(format) + "° " + getLonMin(format);
