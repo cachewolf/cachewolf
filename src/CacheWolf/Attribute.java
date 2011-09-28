@@ -259,8 +259,8 @@ public class Attribute {
 			{ "10", "2522", "danger", "9", "23", "Dangerous area" },// 22 dangerous area
 			{ "11", "2524", "dogs", "0", "1", "Dogs" },// 24 dogs allowed
 			{ "12", "2526", "fee", "36", "2", "Access or parking fee" },// 26 access/parking fees
-			// {"13","2528","hiking","0","9","Significant hike"},//28 significant hike : removed
-			{ "13", "2528", "hiking", "25", "125", "Long walk" }, // OC special
+			{ "13", "2528", "hiking", "25", "9","Significant hike"},//28 significant hike
+			//{ "13", "2528", "hiking", "25", "125", "Long walk" }, // OC special
 			{ "14", "2530", "horses", "0", "37", "Horses" },// 30 horses allowed
 			{ "15", "2532", "hunting", "12", "22", "Hunting" },// 32 hunting area
 			{ "16", "2534", "jeeps", "0", "35", "Off-road vehicles" },// 34 off-road vehicles allowed
@@ -335,9 +335,14 @@ public class Attribute {
 			{ "84", "2676", "hike_long", "0", "57", "Long Hike" }, // added by araber95 14.8.10
 			{ "85", "2678", "fuel", "0", "58", "Fuel nearby" }, // changed by araber95 14.08.10
 			{ "86", "2680", "food", "0", "59", "Food nearby" }, // changed by araber95 14.08.10
-			{ "87", "2681", "wirelessbeacon", "0", "60", "Wireless Beacon" }, // added by araber95 27.10.10
-			{ "88", "2588", "firstaid", "23", "123", "First aid available" }, // OC special
-			{ "89", "2685", "sponsored", "0", "61", "Sponsored Cache" },
+			{ "87", "2682", "wirelessbeacon", "0", "60", "Wireless Beacon" }, // added by araber95 27.10.10
+			{ "88", "2584", "firstaid", "23", "123", "First aid available" }, // OC special
+			{ "89", "2686", "sponsored", "0", "61", "Sponsored Cache" },
+			{ "90", "2688", "frontyard", "0", "65", "Front Yard (Private Residence)" },
+			{ "91", "2690", "seasonal", "0", "62", "Seasonal Access" },
+			{ "92", "2692", "teamwork", "0", "66", "Teamwork Required" },
+			{ "93", "2694", "touristOK", "0", "63", "Tourist Friendly" },
+			{ "94", "2696", "treeclimbing", "0", "64", "Tree Climbing" },
 	// {"-1","2500","error","0","0",""}, //
 
 	};
