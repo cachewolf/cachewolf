@@ -127,6 +127,8 @@ public class UrlFetcher {
 		int i = 0;
 		conn = new HttpConnection(url); // todo reuse: don#t reuse, some params are not correctly reset with SetUrl
 		urltmp = url;
+		String lastScheme="http";
+		if (urltmp.startsWith("https")) lastScheme="https";
 		do { // allow max 5 redirections (http 302 location)
 			i++;
 			if (urltmp == null) {
@@ -143,13 +145,22 @@ public class UrlFetcher {
 				String host;
 				uu = url.replace('\\', '/');
 				host = uu.substring(7);
+				if (uu.startsWith("https")) {
+					host = uu.substring(8);
+				}
 				int first = host.indexOf('/');
 				if (first != -1) {
 					host = host.substring(0, first);
 				}
 				if (!urltmp.startsWith("/"))
 					host = host + "/";
-				urltmp = "http://" + host + urltmp; // TODO https?
+				urltmp = lastScheme + "://" + host + urltmp;
+			}
+			if (urltmp.startsWith("https")) {
+				lastScheme="https";
+			}
+			else {
+				lastScheme="http";
 			}
 			conn.setUrl(urltmp);
 			conn.documentIsEncoded = isUrlEncoded(urltmp);
@@ -185,7 +196,8 @@ public class UrlFetcher {
 							setRequestorProperty("Cookie", cookie);
 						else
 							// needed for opencaching.de ... login
-							setPermanentRequestorProperty("Cookie", cookie);
+							// setPermanentRequestorProperty("Cookie", cookie);
+							;
 					}
 				}
 				conn = conn.getRedirectedConnection(urltmp);
