@@ -63,7 +63,7 @@ import ewesoft.xml.sax.AttributeList;
  */
 public class Preferences extends MinML {
 
-	public final int DEFAULT_MAX_LOGS_TO_SPIDER = 250;
+	public final int DEFAULT_MAX_LOGS_TO_SPIDER = 99;
 	public final int DEFAULT_LOGS_PER_PAGE = 5;
 	public final int DEFAULT_INITIAL_HINT_HEIGHT = 10;
 	public final int DEFAULT_GPSD_PORT = 2947;
