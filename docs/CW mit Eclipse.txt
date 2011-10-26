@@ -1,4 +1,4 @@
-﻿How to build your own development environment for CacheWolf
+How to build your own development environment for CacheWolf
 ===========================================================
 
 It is quite easy. All you need is 
@@ -20,7 +20,7 @@ Steps:
 a) click: File -> new -> Projet, 
 b) select SVN, and "Check out projects from SVN" -> next
 c) select "Create a new repositoy location" -> next
-d) enter: http://svn.berlios.de/svnroot/repos/cachewolf -> next
+d) enter: https://cachewolf.googlecode.com/svn/trunk -> next
 e) wait until the directories appear, select the first item, ending with "trunk" -> next
 f) select "Check out as project using new project wizard" 
 g) new project wizard appears. Select Java Project and enter a project name, e.g. "cachewolf" -> finish, wait until all the source code and supplemental programs from the svn is downloaded
