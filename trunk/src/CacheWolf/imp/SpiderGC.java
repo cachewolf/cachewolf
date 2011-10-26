@@ -825,12 +825,12 @@ public class SpiderGC {
 			if (pref.metricSystem == Metrics.IMPERIAL) {
 				distanceInKm = Metrics.convertUnit(toDistance, Metrics.MILES, Metrics.KILOMETER);
 			}
-			
+
 			double fromDistanceInKm = fromDistance;
 			if (pref.metricSystem == Metrics.IMPERIAL) {
 				fromDistanceInKm = Metrics.convertUnit(fromDistance, Metrics.MILES, Metrics.KILOMETER);
 			}
-			
+
 			// expecting all are changed (archived caches remain always)
 			for (int i = 0; i < cacheDB.size(); i++) {
 				final CacheHolder ch = cacheDB.get(i);
@@ -1223,16 +1223,13 @@ public class SpiderGC {
 				}
 
 				final StringBuffer sb = new StringBuffer(1000);
-				sb.append("__EVENTTARGET=&__EVENTARGUMENT=&"); // added for testing
-				sb.append("__VIEWSTATE=" + URL.encodeURL(viewstate, false));
-				sb.append("&ctl00%24SiteContent%24"); // changed from 24BodyContent to 24SiteContent
-				sb.append("tbUsername=" + encodeUTF8URL(Utils.encodeJavaUtf8String(pref.myAlias))); // changed myUsername to tbUsername
-				sb.append("&ctl00%24SiteContent%24");
-				sb.append("tbPassword=" + encodeUTF8URL(Utils.encodeJavaUtf8String(passwort))); // changed myPassword to tbPassword
-				sb.append("&ctl00%24SiteContent%24");
-				sb.append("cbRememberMe=on");
-				sb.append("&ctl00%24SiteContent%24");
-				sb.append("btnSignIn=Login"); // changed Button1 to btnSignIn
+				sb.append("__EVENTTARGET=");
+				sb.append("&__EVENTARGUMENT=");
+				sb.append("&__VIEWSTATE=" + URL.encodeURL(viewstate, false));
+				sb.append("&ctl00%24ContentBody%24tbUsername=" + encodeUTF8URL(Utils.encodeJavaUtf8String(pref.myAlias)));
+				sb.append("&ctl00%24ContentBody%24tbPassword=" + encodeUTF8URL(Utils.encodeJavaUtf8String(passwort)));
+				sb.append("&ctl00%24ContentBody%24cbRememberMe=true");
+				sb.append("&ctl00%24ContentBody%24btnSignIn=Login");
 				UrlFetcher.setpostData(sb.toString());
 
 				loginPage = UrlFetcher.fetch(loginPageUrl);
@@ -1318,7 +1315,7 @@ public class SpiderGC {
 				return false;
 			}
 		} catch (final Exception ex) {
-			pref.log("[switchToEnglish]:Exception getting SessionID.", ex);
+			pref.log("[switchToEnglish]:Exception getting SessionID.", ex,true);
 			return false;
 		}
 
@@ -2706,14 +2703,13 @@ public class SpiderGC {
 				logText = STRreplace.replace(logText, "<br/>", "<br>");
 				logText = correctSmilies(logText);
 				final String d = DateFormat.toYYMMDD(entry.getString("Visited"));
-				final String logId = entry.getString("LogID");
 
 				// if this log says this Cache is found by me
 				if ((icon.equals(icon_smile) || icon.equals(icon_camera) || icon.equals(icon_attended)) && (name.equalsIgnoreCase(pref.myAlias) || (pref.myAlias2.length() > 0 && name.equalsIgnoreCase(pref.myAlias2)))) {
 					chD.getParent().setFound(true);
 					chD.getParent().setCacheStatus(d);
 					// final String logId = entry.getString("LogID");
-					chD.OwnLogId = logId;
+					chD.OwnLogId = entry.getString("LogID");
 					chD.OwnLog = new Log(icon, d, name, logText);
 					foundown = true;
 				}
