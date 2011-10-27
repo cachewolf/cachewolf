@@ -1,6 +1,6 @@
 TakenFromUrl:       http://mapas.igeo.pt/wms/produtos?
 GetCapabilitiesUrl: http://mapas.igeo.pt/wms/produtos?SERVICE=WMS&VERSION=1.1.1&REQUEST=GetCapabilities
-Name:               pt.igeo t50
+Name:               pt.igeo t50k
 MapType:                        topo
 MainUrl:            http://mapas.igeo.pt/wms/produtos?
 ServiceTypeUrlPart: SERVICE=WMS
