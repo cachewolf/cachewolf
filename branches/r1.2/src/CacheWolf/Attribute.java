@@ -5,9 +5,10 @@ enables paperless caching.
 It supports the sites geocaching.com and opencaching.de
 
 Copyright (C) 2006  CacheWolf development team
-See https://code.google.com/p/cachewolf/
+See http://developer.berlios.de/projects/cachewolf/
 for more information.
-Contact: 	araber95@gmail.com
+Contact: 	bilbowolf@users.berlios.de
+			kalli@users.berlios.de
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -29,9 +30,9 @@ import ewe.io.FileBase;
 
 /**
  * This class represents a single attribute
- *
+ * 
  * @author skg
- *
+ * 
  */
 public class Attribute {
 	// Constructors
@@ -140,7 +141,7 @@ public class Attribute {
 	}
 
 	/*
-     *
+     * 
      */
 	public static String getIdFromGCText(String t) {
 		for (int i = 0; i < maxAttRef; i++) {
@@ -245,100 +246,105 @@ public class Attribute {
 	private final static int OC_ID = 3; // OC - XML
 	private final static int GC_ID = 4; // auch OC neues gpx
 	private final static int GC_TEXT = 5; // for export , didn't extract by myself, copied from forum
-	private static final String[][] attRef = { { "00", "2502", "available", "38", "13", "Available at all times" },// 02 available 24-7
-			{ "01", "2504", "bicycles", "0", "32", "Bicycles" },// 04 bikes allowed
-			{ "02", "2506", "boat", "52", "4", "Boat" },// 06 Wasserfahrzeug
-			// {"03","2508","cactus","0","0",""},//08 removed 14.08.10 araber95
-			{ "04", "2510", "campfires", "0", "38", "Campfires" },// 10 campfires allowed
-			{ "05", "2512", "camping", "0", "31", "Camping available" },// 12 Camping allowed
-			{ "06", "2514", "cliff", "11", "21", "Cliff / falling rocks" },// 14 falling-rocks nearby
-			{ "07", "2516", "climbing", "28", "10", "Difficult climbing" },// 16 easy climbing(OC-28), difficult climbing(GC-10)
-			{ "08", "2518", "compass", "47", "147", "Compass" }, // OC special
-			{ "09", "2520", "cow", "0", "43", "Watch for livestock" },// 20 watch for livestock
-			{ "10", "2522", "danger", "9", "23", "Dangerous area" },// 22 dangerous area
-			{ "11", "2524", "dogs", "0", "1", "Dogs" },// 24 dogs allowed
-			{ "12", "2526", "fee", "36", "2", "Access or parking fee" },// 26 access/parking fees
-			// {"13","2528","hiking","0","9","Significant hike"},//28 significant hike : removed
-			{ "13", "2528", "hiking", "25", "125", "Long walk" }, // OC special
-			{ "14", "2530", "horses", "0", "37", "Horses" },// 30 horses allowed
-			{ "15", "2532", "hunting", "12", "22", "Hunting" },// 32 hunting area
-			{ "16", "2534", "jeeps", "0", "35", "Off-road vehicles" },// 34 off-road vehicles allowed
-			{ "17", "2536", "kids", "59", "6", "Recommended for kids" },// 36 kid friendly
-			{ "18", "2538", "mine", "15", "20", "Abandoned mines" },// 38
-			{ "19", "2540", "motorcycles", "0", "33", "Motorcycles" },// 40 motorcycles allowed
-			{ "20", "2542", "night", "1", "14", "Recommended at night" },// 42 recommended at night
-			{ "21", "2544", "onehour", "0", "7", "Takes less than an hour" },// 44 takes less than one hour
-			{ "22", "2546", "parking", "18", "25", "Parking available" },// 46 parking available
-			{ "23", "2548", "phone", "22", "29", "Telephone nearby" },// 48 telephone nearby
-			{ "24", "2550", "picnic", "0", "30", "Picnic tables nearby" },// 50 picnic tables available
-			{ "25", "2552", "poisonoak", "16", "17", "Poison plants" },// 52 Giftige Pflanzen
-			{ "26", "2554", "public", "19", "26", "Public transportation" },// 54 public transit available
-			{ "27", "2556", "quads", "0", "34", "Quads" },// 56 quads allowed
-			{ "28", "2558", "rappelling", "49", "3", "Climbing gear" },// 58 climbing gear Kletterausrüstung
-			{ "29", "2560", "restrooms", "21", "28", "Public restrooms nearby" },// 60 restrooms available
-			{ "30", "2562", "scenic", "0", "8", "Scenic view" },// 62 scenic view
-			{ "31", "2564", "scuba", "51", "5", "Scuba gear" },// 64 Tauchausrüstung
-			// {"32","2566","snakes","0","18","Snakes"},//66 araber95 replaced by Dangerous Animals 14.08.10
-			{ "32", "2566", "dangerousanimals", "0", "18", "Dangerous Animals" },// 66
-			{ "33", "2568", "snowmobiles", "0", "36", "Snowmobiles" },// 68
-			{ "34", "2570", "stealth", "0", "40", "Stealth required" },// 70 stealth required (Heimlich,List,Schläue)
-			{ "35", "2572", "stroller", "0", "41", "Stroller accessible" },// 72 stroller accessible
-			{ "36", "2574", "swimming", "29", "12", "May require swimming" },// 74
-			{ "37", "2576", "thorn", "13", "39", "Thorns" },// 76 thorns!
-			{ "38", "2578", "ticks", "14", "19", "Ticks" },// 78 ticks!
-			{ "39", "2580", "wading", "26", "11", "May require wading" },// 80 may require wading
-			{ "40", "2582", "water", "20", "27", "Drinking water nearby" },// 82 drinking water nearby
-			{ "41", "2584", "wheelchair", "0", "24", "Wheelchair accessible" },// 84 wheelchair accessible
-			{ "42", "2586", "winter", "44", "15", "Available during winter" },// 86 available in winter 132 Schneesicheres Versteck
-			{ "43", "2588", "firstaid", "0", "42", "Firstaid" }, // GC: Cachewartung notwendig (Auto Attribut) , OC: erste Hilfe
-			{ "44", "2590", "flashlight", "48", "44", "Flashlight required" }, // 90 Flashlight required
-			{ "45", "2592", "aircraft", "53", "153", "Aircraft" }, // OC special //38 GC removed
-			{ "46", "2594", "animals", "17", "0", "" },// 94 Giftige/gef%e4hrliche Tiere
-			{ "47", "2596", "arith_prob", "56", "156", "Arithmetical problem" }, // OC special
-			{ "48", "2598", "ask", "58", "158", "Ask owner for start conditions" }, // OC special
-			{ "49", "2600", "car", "24", "0", "" },// 100 Nahe beim Auto
-			{ "50", "2602", "cave", "50", "150", "Cave equipment" }, // OC special
-			{ "51", "2604", "date", "42", "142", "All seasons" }, // OC special
-			{ "52", "2606", "day", "40", "140", "by day only" }, // OC special
-			{ "53", "2608", "indoor", "33", "133", "Within enclosed rooms (caves, buildings etc.)" }, // OC special
-			{ "54", "2610", "interestsign", "30", "130", "Point of interest" }, // OC special
-			{ "55", "2612", "letter", "8", "108", "Letterbox (needs stamp)" }, // OC special
-			{ "56", "2614", "moving", "31", "131", "Moving target" }, // OC special
-			{ "57", "2616", "naturschutz", "43", "143", "Breeding season / protected nature" }, // OC special
-			{ "58", "2618", "nogps", "35", "135", "Without GPS (letterboxes, cistes, compass juggling ...)" }, // OC special
-			{ "59", "2620", "oconly", "6", "106", "Only loggable at Opencaching" },// 120 Nur bei Opencaching logbar
-			{ "60", "2622", "othercache", "57", "157", "Other cache type" }, // OC special
-			{ "61", "2624", "overnight", "37", "137", "Overnight stay necessary" }, // OC special
-			{ "62", "2644", "train", "10", "110", "Active railway nearby" }, // OC special
-			{ "63", "2630", "riddle", "55", "0", "" },// 130 Rätsel
-			{ "64", "2646", "webcam", "32", "132", "Webcam" }, // OC special
-			{ "65", "2634", "steep", "27", "127", "Hilly area" }, // OC special
-			{ "66", "2636", "submerged", "34", "134", "In the water" }, // OC special
-			{ "67", "2638", "tide", "41", "141", "Tide" }, // OC special
-			{ "68", "2640", "time", "39", "139", "Only available at specified times" }, // OC special
-			{ "69", "2642", "tools", "46", "0", "Special Tool required" },// 142 Spezielle Ausrüstung
-			{ "70", "2648", "wiki", "54", "154", "Investigation" }, // OC special
-			{ "71", "2650", "wwwlink", "7", "107", "Hyperlink to another caching portal only" }, // OC special
-			{ "72", "2652", "landf", "0", "45", "Lost And Found Tour" }, // thx to Kappler and MiK
-			{ "73", "2654", "rv", "0", "46", "Truck Driver/RV" },// changed by Moorteufel 12.07.10
-			{ "74", "2656", "field_puzzle", "0", "47", "Field Puzzle" },// changed by Moorteufel 12.07.10
-			{ "75", "2658", "uv", "0", "48", "UV Light required" }, // added by araber95 14.8.10
-			{ "76", "2660", "snowshoes", "0", "49", "Snowshoes" }, // added by araber95 14.8.10"
-			{ "77", "2662", "skiis", "0", "50", "Cross Country Skis" }, // added by araber95 14.8.10
-			{ "78", "2664", "s-tool", "0", "51", "Special Tool required" }, // added by araber95 14.8.10
-			{ "79", "2666", "nightcache", "0", "52", "Night Cache" }, // added by araber95 14.8.10
-			{ "80", "2668", "parkngrab", "0", "53", "Park and grab" }, // added by araber95 14.8.10
-			{ "81", "2670", "abandonedbuilding", "0", "54", "Abandoned structure" }, // added by araber95 14.8.10
-			{ "82", "2672", "hike_short", "0", "55", "Short hike" }, // added by araber95 14.8.10
-			{ "83", "2674", "hike_med", "0", "56", "Medium Hike" }, // added by araber95 14.8.10
-			{ "84", "2676", "hike_long", "0", "57", "Long Hike" }, // added by araber95 14.8.10
-			{ "85", "2678", "fuel", "0", "58", "Fuel nearby" }, // changed by araber95 14.08.10
-			{ "86", "2680", "food", "0", "59", "Food nearby" }, // changed by araber95 14.08.10
-			{ "87", "2681", "wirelessbeacon", "0", "60", "Wireless Beacon" }, // added by araber95 27.10.10
-			{ "88", "2588", "firstaid", "23", "123", "First aid available" }, // OC special
-			{ "89", "2685", "sponsored", "0", "61", "Sponsored Cache" },
-	// {"-1","2500","error","0","0",""}, //
-
+	private static final String[][] attRef = { // 
+		{ "00", "2502", "available", "38", "13", "Available at all times" },//
+		{ "01", "2504", "bicycles", "0", "32", "Bicycles" },//
+		{ "02", "2506", "boat", "52", "4", "Boat" },//
+		// {"03","2508","cactus","0","0",""},//
+		{ "04", "2510", "campfires", "0", "38", "Campfires" },//
+		{ "05", "2512", "camping", "0", "31", "Camping available" },//
+		{ "06", "2514", "cliff", "11", "21", "Cliff / falling rocks" },//
+		{ "07", "2516", "climbing", "28", "10", "Difficult climbing" },//
+		{ "08", "2518", "compass", "47", "147", "Compass" }, // OC special
+		{ "09", "2520", "cow", "0", "43", "Watch for livestock" },//
+		{ "10", "2522", "danger", "9", "23", "Dangerous area" },//
+		{ "11", "2524", "dogs", "0", "1", "Dogs" },//
+		{ "12", "2526", "fee", "36", "2", "Access or parking fee" },//
+		{ "13", "2528", "hiking", "25", "9","Significant hike"},//
+		//{ "13", "2528", "hiking", "25", "125", "Long walk" }, // OC special
+		{ "14", "2530", "horses", "0", "37", "Horses" },//
+		{ "15", "2532", "hunting", "12", "22", "Hunting" },//
+		{ "16", "2534", "jeeps", "0", "35", "Off-road vehicles" },//
+		{ "17", "2536", "kids", "59", "6", "Recommended for kids" },//
+		{ "18", "2538", "mine", "15", "20", "Abandoned mines" },//
+		{ "19", "2540", "motorcycles", "0", "33", "Motorcycles" },//
+		{ "20", "2542", "night", "1", "14", "Recommended at night" },//
+		{ "21", "2544", "onehour", "0", "7", "Takes less than an hour" },//
+		{ "22", "2546", "parking", "18", "25", "Parking available" },//
+		{ "23", "2548", "phone", "22", "29", "Telephone nearby" },//
+		{ "24", "2550", "picnic", "0", "30", "Picnic tables nearby" },//
+		{ "25", "2552", "poisonoak", "16", "17", "Poison plants" },//
+		{ "26", "2554", "public", "19", "26", "Public transportation" },//
+		{ "27", "2556", "quads", "0", "34", "Quads" },//
+		{ "28", "2558", "rappelling", "49", "3", "Climbing gear" },//
+		{ "29", "2560", "restrooms", "21", "28", "Public restrooms nearby" },//
+		{ "30", "2562", "scenic", "0", "8", "Scenic view" },//
+		{ "31", "2564", "scuba", "51", "5", "Scuba gear" },//
+		// {"32","2566","snakes","0","18","Snakes"},//replaced by Dangerous Animals 14.08.10
+		{ "32", "2566", "dangerousanimals", "0", "18", "Dangerous Animals" },//
+		{ "33", "2568", "snowmobiles", "0", "36", "Snowmobiles" },//
+		{ "34", "2570", "stealth", "0", "40", "Stealth required" },//
+		{ "35", "2572", "stroller", "0", "41", "Stroller accessible" },//
+		{ "36", "2574", "swimming", "29", "12", "May require swimming" },//
+		{ "37", "2576", "thorn", "13", "39", "Thorns" },//
+		{ "38", "2578", "ticks", "14", "19", "Ticks" },//
+		{ "39", "2580", "wading", "26", "11", "May require wading" },//
+		{ "40", "2582", "water", "20", "27", "Drinking water nearby" },//
+		{ "41", "2584", "wheelchair", "0", "24", "Wheelchair accessible" },//
+		{ "42", "2586", "winter", "44", "15", "Available during winter" },//
+		{ "43", "2588", "firstaid", "0", "42", "Firstaid" },// GC: Cachewartung notwendig (Auto Attribut) , OC: erste Hilfe
+		{ "44", "2590", "flashlight", "48", "44", "Flashlight required" },//
+		{ "45", "2592", "aircraft", "53", "153", "Aircraft" },// OC special
+		{ "46", "2594", "animals", "17", "0", "" },// OC ?
+		{ "47", "2596", "arith_prob", "56", "156", "Arithmetical problem" }, // OC special
+		{ "48", "2598", "ask", "58", "158", "Ask owner for start conditions" }, // OC special
+		{ "49", "2600", "car", "24", "0", "" },//
+		{ "50", "2602", "cave", "50", "150", "Cave equipment" }, // OC special
+		{ "51", "2604", "date", "42", "142", "All seasons" }, // OC special
+		{ "52", "2606", "day", "40", "140", "by day only" }, // OC special
+		{ "53", "2608", "indoor", "33", "133", "Within enclosed rooms (caves, buildings etc.)" }, // OC special
+		{ "54", "2610", "interestsign", "30", "130", "Point of interest" }, // OC special
+		{ "55", "2612", "letter", "8", "108", "Letterbox (needs stamp)" }, // OC special
+		{ "56", "2614", "moving", "31", "131", "Moving target" }, // OC special
+		{ "57", "2616", "naturschutz", "43", "143", "Breeding season / protected nature" }, // OC special
+		{ "58", "2618", "nogps", "35", "135", "Without GPS (letterboxes, cistes, compass juggling ...)" }, // OC special
+		{ "59", "2620", "oconly", "6", "106", "Only loggable at Opencaching" },//
+		{ "60", "2622", "othercache", "57", "157", "Other cache type" }, // OC special
+		{ "61", "2624", "overnight", "37", "137", "Overnight stay necessary" }, // OC special
+		{ "62", "2644", "train", "10", "110", "Active railway nearby" }, // OC special
+		{ "63", "2630", "riddle", "55", "0", "" },//OC ?
+		{ "64", "2646", "webcam", "32", "132", "Webcam" }, // OC special
+		{ "65", "2634", "steep", "27", "127", "Hilly area" }, // OC special
+		{ "66", "2636", "submerged", "34", "134", "In the water" }, // OC special
+		{ "67", "2638", "tide", "41", "141", "Tide" }, // OC special
+		{ "68", "2640", "time", "39", "139", "Only available at specified times" }, // OC special
+		{ "69", "2642", "tools", "46", "0", "Special Tool required" },//
+		{ "70", "2648", "wiki", "54", "154", "Investigation" }, // OC special
+		{ "71", "2650", "wwwlink", "7", "107", "Hyperlink to another caching portal only" }, // OC special
+		{ "72", "2652", "landf", "0", "45", "Lost And Found Tour" },
+		{ "73", "2654", "rv", "0", "46", "Truck Driver/RV" },
+		{ "74", "2656", "field_puzzle", "0", "47", "Field Puzzle" },//
+		{ "75", "2658", "uv", "0", "48", "UV Light required" }, //
+		{ "76", "2660", "snowshoes", "0", "49", "Snowshoes" }, //
+		{ "77", "2662", "skiis", "0", "50", "Cross Country Skis" }, //
+		{ "78", "2664", "s-tool", "0", "51", "Special Tool required" }, //
+		{ "79", "2666", "nightcache", "0", "52", "Night Cache" }, //
+		{ "80", "2668", "parkngrab", "0", "53", "Park and grab" }, //
+		{ "81", "2670", "abandonedbuilding", "0", "54", "Abandoned structure" }, //
+		{ "82", "2672", "hike_short", "0", "55", "Short hike" }, //
+		{ "83", "2674", "hike_med", "0", "56", "Medium Hike" }, //
+		{ "84", "2676", "hike_long", "0", "57", "Long Hike" }, //
+		{ "85", "2678", "fuel", "0", "58", "Fuel nearby" }, //
+		{ "86", "2680", "food", "0", "59", "Food nearby" }, //
+		{ "87", "2682", "wirelessbeacon", "0", "60", "Wireless Beacon" }, //
+		{ "88", "2584", "firstaid", "23", "123", "First aid available" }, // OC special
+		{ "89", "2686", "sponsored", "0", "61", "Sponsored Cache" },
+		{ "90", "2688", "frontyard", "0", "65", "Front Yard (Private Residence)" },
+		{ "91", "2690", "seasonal", "0", "62", "Seasonal Access" },
+		{ "92", "2692", "teamwork", "0", "66", "Teamwork Required" },
+		{ "93", "2694", "touristOK", "0", "63", "Tourist Friendly" },
+		{ "94", "2696", "treeclimbing", "0", "64", "Tree Climbing" },	
+		// {"-1","2500","error","0","0",""}, //
 	};
 	public static int maxAttRef = attRef.length;
 	private static String IMAGEDIR = STRreplace.replace(FileBase.getProgramDirectory() + "/attributes/", "//", "/");
@@ -364,7 +370,7 @@ public class Attribute {
 
 	/**
 	 * Returns the width of the attribute icons
-	 *
+	 * 
 	 * @return The width of the images
 	 */
 	public static int getImageWidth() {
@@ -373,7 +379,7 @@ public class Attribute {
 
 	/**
 	 * Get the image for a given attribute number. We use lazy initialisation here, i.e. the images are only loaded when they are requested.
-	 *
+	 * 
 	 * @return
 	 */
 	public mImage getImage() {

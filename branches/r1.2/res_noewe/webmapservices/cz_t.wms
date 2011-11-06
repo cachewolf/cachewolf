@@ -1,4 +1,4 @@
-﻿TakenFromUrl:       
+﻿TakenFromUrl:       http://geoportal.cuzk.cz
 GetCapabilitiesUrl: http://geoportal.cuzk.cz/WMS_ZM50_PUB/service.svc/get?SERVICE=WMS&VERSION=1.1.1&REQUEST=GetCapabilities
 Name:               cz.Tschechien t50k
 MapType:                        topo
