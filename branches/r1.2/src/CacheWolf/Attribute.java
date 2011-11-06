@@ -5,10 +5,9 @@ enables paperless caching.
 It supports the sites geocaching.com and opencaching.de
 
 Copyright (C) 2006  CacheWolf development team
-See http://developer.berlios.de/projects/cachewolf/
+See https://code.google.com/p/cachewolf/
 for more information.
-Contact: 	bilbowolf@users.berlios.de
-			kalli@users.berlios.de
+Contact: 	araber95@gmail.com
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -30,9 +29,9 @@ import ewe.io.FileBase;
 
 /**
  * This class represents a single attribute
- * 
+ *
  * @author skg
- * 
+ *
  */
 public class Attribute {
 	// Constructors
@@ -141,7 +140,7 @@ public class Attribute {
 	}
 
 	/*
-     * 
+     *
      */
 	public static String getIdFromGCText(String t) {
 		for (int i = 0; i < maxAttRef; i++) {
@@ -365,7 +364,7 @@ public class Attribute {
 
 	/**
 	 * Returns the width of the attribute icons
-	 * 
+	 *
 	 * @return The width of the images
 	 */
 	public static int getImageWidth() {
@@ -374,7 +373,7 @@ public class Attribute {
 
 	/**
 	 * Get the image for a given attribute number. We use lazy initialisation here, i.e. the images are only loaded when they are requested.
-	 * 
+	 *
 	 * @return
 	 */
 	public mImage getImage() {
