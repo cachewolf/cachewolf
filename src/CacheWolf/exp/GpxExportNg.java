@@ -1,28 +1,24 @@
 /*
-GNU General Public License
-CacheWolf is a software for PocketPC, Win and Linux that
-enables paperless caching.
-It supports the sites geocaching.com and opencaching.de
+    GNU General Public License
+    CacheWolf is a software for PocketPC, Win and Linux that
+    enables paperless caching.
+    It supports the sites geocaching.com and opencaching.de
 
-Copyright (C) 2006  CacheWolf development team
-See http://developer.berlios.de/projects/cachewolf/
-for more information.
-Contact: 	bilbowolf@users.berlios.de
-			kalli@users.berlios.de
+    Copyright (C) 2006  CacheWolf development team
+	See http://www.cachewolf.de/ for more information.
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; version 2 of the License.
 
-This program is free software; you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation; version 2 of the License.
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
 
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with this program; if not, write to the Free Software
-Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
- */
+    You should have received a copy of the GNU General Public License
+    along with this program; if not, write to the Free Software
+    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+*/
 package CacheWolf.exp;
 
 import CacheWolf.Attribute;
@@ -519,7 +515,7 @@ public class GpxExportNg {
 
 	/**
 	 * wrapper for formatting a cache. will call some subroutines to do the actual work
-	 * 
+	 *
 	 * @param ch
 	 * @return
 	 */
@@ -559,7 +555,7 @@ public class GpxExportNg {
 
 	/**
 	 * generate minimal waypoint information according to GPX specification
-	 * 
+	 *
 	 * @param ch
 	 * @return
 	 */
@@ -671,7 +667,7 @@ public class GpxExportNg {
 
 	/**
 	 * format gc.com extended cache information as found in a PQ
-	 * 
+	 *
 	 * @param ch
 	 *            cacheholder
 	 * @return formatted cache information for cache waypoints or emty string for all other waypoints (additional /
@@ -713,7 +709,7 @@ public class GpxExportNg {
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	private String formatTbs(CacheHolder ch) {
 		StringBuffer ret = new StringBuffer();
@@ -736,7 +732,7 @@ public class GpxExportNg {
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	private String formatAttributes(CacheHolder ch) {
 		StringBuffer ret = new StringBuffer();
@@ -760,7 +756,7 @@ public class GpxExportNg {
 
 	/**
 	 * format cache logs as found in a gc.com GPX file
-	 * 
+	 *
 	 * @param ch
 	 *            CacheHolder containing the logs
 	 * @return formatted logs or empty string if no logs are present
@@ -775,18 +771,25 @@ public class GpxExportNg {
 		} else {
 			exportlogs = logs.size();
 		}
-		if (exportStyle == STYLE_GPX_MYFINDS) {
-			// only own log
-			if (chD.OwnLogId.equals("") || chD.OwnLog == null) {
+		// own log always (found)
+		if (chD.OwnLogId.equals("") || chD.OwnLog == null) {
+			if (chD.OwnLog != null) {
 				Global.getPref().log(chD.getParent().getWayPoint() + " missing own LogID", null);
-				return "";
 			}
+			if (exportStyle == STYLE_GPX_MYFINDS) return "";
+			if (chD.OwnLog != null) {
+				addLog("4711", chD.OwnLog, finderid, ret);
+			}
+		}
+		else {
 			addLog(chD.OwnLogId, chD.OwnLog, finderid, ret);
-		} else {
+		}
+		if (exportStyle != STYLE_GPX_MYFINDS) {
 			// add log with attributes
 			if (attrib2Log) {
 				addLog(ch.GetCacheID() + Integer.toString(exportlogs), createAttrLog(ch), "", ret);
 			}
+			// todo dont export ownlog
 			for (int i = 0; i < exportlogs; i++) {
 				addLog(ch.GetCacheID() + Integer.toString(i), logs.getLog(i), "", ret);
 			}
@@ -825,7 +828,7 @@ public class GpxExportNg {
 
 	/**
 	 * format the header of the GPX file
-	 * 
+	 *
 	 * @return
 	 */
 	private String formatHeader() {
@@ -851,7 +854,7 @@ public class GpxExportNg {
 
 	/**
 	 * format a long description as found in the gc.com GPX files
-	 * 
+	 *
 	 * @param ch
 	 *            CacheHolder to format
 	 * @return formatted output
@@ -897,7 +900,7 @@ public class GpxExportNg {
 
 	/**
 	 * create a position information suitable for a gc.com PQlike export
-	 * 
+	 *
 	 * @param pos
 	 *            position
 	 * @return if position is valid return the cachewolf formatted position, otherwise return teh string used in PQs
@@ -912,7 +915,7 @@ public class GpxExportNg {
 
 	/**
 	 * copy the bitmap identified by <code>prefix</code> and <code>type</code> from <code>poiZip</code> to <code>outdir</code>
-	 * 
+	 *
 	 * @param outdir
 	 * @param type
 	 * @param prefix
@@ -949,7 +952,7 @@ public class GpxExportNg {
 
 	/**
 	 * Execute the command defined by cmd
-	 * 
+	 *
 	 * @param cmd
 	 *            command and options to execute. if command or options include a space quatation marks are added. this
 	 *            will not wirk with the java version on unix systems
@@ -1285,7 +1288,7 @@ public class GpxExportNg {
 
 		/**
 		 * amount of data to be exported
-		 * 
+		 *
 		 * @return 0 Compact, 1 PQ like, 2 MyFinds
 		 */
 		private int getExportStyle() {
@@ -1294,7 +1297,7 @@ public class GpxExportNg {
 
 		/**
 		 * style of waypoint identifiers
-		 * 
+		 *
 		 * @return 0 Classic IDs, 1 Smart IDs, 3 Smart Names (should only be used with gpsbabel)
 		 */
 		private int getWpNameStyle() {
@@ -1303,7 +1306,7 @@ public class GpxExportNg {
 
 		/**
 		 * what kind of output should be generated
-		 * 
+		 *
 		 * @return 0 single file, 1 separate files, 2 POI (GPI) files
 		 */
 		private int getOutputTarget() {
@@ -1312,7 +1315,7 @@ public class GpxExportNg {
 
 		/**
 		 * check if user wants to send output straight to a Garmin GPSr
-		 * 
+		 *
 		 * @return true for GPSr transfer, false otherwise
 		 */
 		private boolean getSendToGarmin() {
@@ -1321,7 +1324,7 @@ public class GpxExportNg {
 
 		/**
 		 * check if user wants custom icons
-		 * 
+		 *
 		 * @return true if user wants custom icons, false otherwise
 		 */
 		private boolean getCustomIcons() {
@@ -1330,7 +1333,7 @@ public class GpxExportNg {
 
 		/**
 		 * get the number of logs to export. used in PQlike export.
-		 * 
+		 *
 		 * @return number of logs to export
 		 */
 		private int getMaxLogs() {
@@ -1339,7 +1342,7 @@ public class GpxExportNg {
 
 		/**
 		 * get prefix for separate file export
-		 * 
+		 *
 		 * @return prefix for separate file export
 		 */
 		private String getPrefix() {
@@ -1348,7 +1351,7 @@ public class GpxExportNg {
 
 		/**
 		 * check if user wants to export attributes as log
-		 * 
+		 *
 		 * @return true if attributes should exported as log, false otherwise
 		 */
 		private boolean getAttrib2Log() {

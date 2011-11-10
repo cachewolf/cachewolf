@@ -5,11 +5,7 @@ enables paperless caching.
 It supports the sites geocaching.com and opencaching.de
 
 Copyright (C) 2006  CacheWolf development team
-See http://developer.berlios.de/projects/cachewolf/
-for more information.
-Contact: 	bilbowolf@users.berlios.de
-			kalli@users.berlios.de
-
+See http://www.cachewolf.de/ for more information.
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation; version 2 of the License.
@@ -63,7 +59,7 @@ import ewesoft.xml.sax.AttributeList;
  */
 public class Preferences extends MinML {
 
-	public final int DEFAULT_MAX_LOGS_TO_SPIDER = 250;
+	public final int DEFAULT_MAX_LOGS_TO_SPIDER = 99;
 	public final int DEFAULT_LOGS_PER_PAGE = 5;
 	public final int DEFAULT_INITIAL_HINT_HEIGHT = 10;
 	public final int DEFAULT_GPSD_PORT = 2947;

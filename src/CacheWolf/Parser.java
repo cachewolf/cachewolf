@@ -5,11 +5,7 @@ enables paperless caching.
 It supports the sites geocaching.com and opencaching.de
 
 Copyright (C) 2006  CacheWolf development team
-See http://developer.berlios.de/projects/cachewolf/
-for more information.
-Contact: 	bilbowolf@users.berlios.de
-			kalli@users.berlios.de
-
+See http://www.cachewolf.de/ for more information.
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation; version 2 of the License.
