@@ -1,28 +1,24 @@
 /*
-GNU General Public License
-CacheWolf is a software for PocketPC, Win and Linux that
-enables paperless caching.
-It supports the sites geocaching.com and opencaching.de
+    GNU General Public License
+    CacheWolf is a software for PocketPC, Win and Linux that
+    enables paperless caching.
+    It supports the sites geocaching.com and opencaching.de
 
-Copyright (C) 2006  CacheWolf development team
-See http://developer.berlios.de/projects/cachewolf/
-for more information.
-Contact: 	bilbowolf@users.berlios.de
-			kalli@users.berlios.de
+    Copyright (C) 2006  CacheWolf development team
+	See http://www.cachewolf.de/ for more information.
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; version 2 of the License.
 
-This program is free software; you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation; version 2 of the License.
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
 
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with this program; if not, write to the Free Software
-Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
- */
+    You should have received a copy of the GNU General Public License
+    along with this program; if not, write to the Free Software
+    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+*/
 package CacheWolf.exp;
 
 import CacheWolf.Attribute;
@@ -765,7 +761,7 @@ public class GpxExportNg {
 	 *            CacheHolder containing the logs
 	 * @return formatted logs or empty string if no logs are present
 	 */
-	private String formatLogs(CacheHolder ch) {
+		private String formatLogs(CacheHolder ch) {
 		CacheHolderDetail chD = ch.getCacheDetails(false);
 		LogList logs = chD.CacheLogs;
 		StringBuffer ret = new StringBuffer();
@@ -777,10 +773,17 @@ public class GpxExportNg {
 		}
 		// own log always (found)
 		if (chD.OwnLogId.equals("") || chD.OwnLog == null) {
-			Global.getPref().log(chD.getParent().getWayPoint() + " missing own LogID", null);
-			return "";
+			if (chD.OwnLog != null) {
+				Global.getPref().log(chD.getParent().getWayPoint() + " missing own LogID", null);
+			}
+			if (exportStyle == STYLE_GPX_MYFINDS) return "";
+			if (chD.OwnLog != null) {
+				addLog("4711", chD.OwnLog, finderid, ret);
+			}
 		}
-		addLog(chD.OwnLogId, chD.OwnLog, finderid, ret);
+		else {
+			addLog(chD.OwnLogId, chD.OwnLog, finderid, ret);
+		}
 		if (exportStyle != STYLE_GPX_MYFINDS) {
 			// add log with attributes
 			if (attrib2Log) {
