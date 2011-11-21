@@ -141,7 +141,8 @@ public class SpiderGC {
 	private static String propFirstPageFinds;
 	private static String gotoNextPage = "ctl00$ContentBody$pgrTop$ctl08";
 	// change to the block (10pages) of the wanted page
-	private static String gotoNextBlock = "ctl00$ContentBody$pgrTop$ctl06";
+	private static String gotoPreviousBlock = "ctl00$ContentBody$pgrTop$ctl05";
+	private static String gotoNextBlock =     "ctl00$ContentBody$pgrTop$ctl06";
 	// add pagenumber
 	private static String gotoPage = "ctl00$ContentBody$pgrTop$lbGoToPage_";
 	private static String propMaxDistance;
@@ -770,6 +771,7 @@ public class SpiderGC {
 
 		int numFinds;
 		int startPage = 1;
+
 		// get pagenumber of page with fromDistance , to skip reading of pages < fromDistance
 		if (fromDistance > 0) {
 			// distance in miles for URL
@@ -780,9 +782,8 @@ public class SpiderGC {
 			// - a mile to be save to get a page with fromDistance
 			getFirstListPage(java.lang.Math.max(fromDistanceInMiles - 1, 1));
 			// Number of caches from gc Listpage calc the number of the startpage
-			numFinds = getNumFound(htmlListPage);
-			startPage = (int) java.lang.Math.ceil(numFinds / 20);
-		}
+			startPage = (int) java.lang.Math.ceil(getNumFound(htmlListPage) / 20);
+		}		
 
 		// max distance in miles for URL, so we can get more than 80km
 		int toDistanceInMiles = (int) java.lang.Math.ceil(toDistance);
@@ -794,14 +795,18 @@ public class SpiderGC {
 		getFirstListPage(toDistanceInMiles);
 		// Number of caches from gcfirst Listpage
 		numFinds = getNumFound(htmlListPage);
-
+		
 		if (fromDistance > 0) {
 			// skip (most of) the pages with distance < fromDistance
 			for (int i = 0; i < (startPage / 10); i++) {
 				getAListPage(toDistanceInMiles, gotoNextBlock);
 			}
-			if (startPage > 1)
-				getAListPage(toDistanceInMiles, gotoPage + startPage);
+			if (startPage > 1 ) {
+				if (startPage % 10 == 1)
+					getAListPage(toDistanceInMiles, gotoNextPage);
+				else 
+					getAListPage(toDistanceInMiles, gotoPage + startPage);
+			}
 		}
 
 		int numFoundInDB = 0; // Number of GC-founds already in this profile
@@ -852,6 +857,7 @@ public class SpiderGC {
 		try {
 			// Loop pages till maximum distance has been found or no more caches are in the list
 			while (toDistance > 0) {
+				double[] DistanceAndDirection = { (0.0), (0.0) }; 
 				RexPropListBlock.search(htmlListPage);
 				String tableOfHtmlListPage;
 				if (RexPropListBlock.didMatch()) {
@@ -871,7 +877,7 @@ public class SpiderGC {
 					if (Global.mainTab.statBar != null)
 						Global.mainTab.statBar.updateDisplay("working " + page_number + " / " + found_on_page);
 					final String CacheDescriptionGC = RexPropLine.stringMatched(1);
-					final double[] DistanceAndDirection = getDistanceAndDirection(CacheDescriptionGC);
+					DistanceAndDirection = getDistanceAndDirection(CacheDescriptionGC);
 					String chWaypoint = getWP(CacheDescriptionGC);
 					if (DistanceAndDirection[0] <= toDistance) {
 						final CacheHolder ch = cacheDB.get(chWaypoint);
@@ -932,9 +938,22 @@ public class SpiderGC {
 						toDistance = 0; // last page (has less than 20 entries!?) to check reached
 				}
 				if (toDistance > 0) {
-					getAListPage(toDistanceInMiles, gotoNextPage);
-					page_number++;
-					found_on_page = 0;
+					if (page_number % 100 == 45) {
+						getAListPage(toDistanceInMiles,gotoPreviousBlock);
+						getAListPage(toDistanceInMiles,gotoNextBlock);
+					}
+					if (getAListPage(toDistanceInMiles, gotoNextPage)) {
+						page_number++;
+						found_on_page = 0;
+					}
+					else {
+						// stop, but download new ones if possible
+						cExpectedForUpdate.clear();
+						pref.log("[SpiderGC:fillDownloadLists] Stopped at page number: " + page_number
+								+ " this is distance: " + DistanceAndDirection[0], null);
+						found_on_page = 0;
+						toDistance=0;
+					}
 				}
 			} // loop pages
 		} // try
@@ -959,7 +978,7 @@ public class SpiderGC {
 		return cExpectedForUpdate;
 
 	}
-
+	
 	private int downloadCaches(Vector cachesToLoad, int spiderErrors, int totalCachesToLoad, boolean loadAllLogs) {
 		for (int i = 0; i < cachesToLoad.size(); i++) {
 			if (infB.isClosed)
@@ -1433,7 +1452,8 @@ public class SpiderGC {
 	/**
 	 * in: ... out: page_number,htmlPage
 	 */
-	private void getAListPage(int distance, String whatPage) {
+	private boolean getAListPage(int distance, String whatPage) {
+		boolean ret = true;
 		String url;
 		if (spiderAllFinds) {
 			url = propFirstPage;
@@ -1464,15 +1484,20 @@ public class SpiderGC {
 			pref.log("[SpiderGC.java:getAListPage] check rexViewstate1!", null);
 		}
 
-		final String postData = "__EVENTTARGET=" + URL.encodeURL(whatPage, false) + "&" + "__EVENTARGUMENT=" + "&" + "__VIEWSTATEFIELDCOUNT=2" + "&" + "__VIEWSTATE=" + URL.encodeURL(viewstate, false) + "&" + "__VIEWSTATE1="
-				+ URL.encodeURL(viewstate1, false);
+		final String postData = "__EVENTTARGET=" + URL.encodeURL(whatPage, false) 
+			+ "&" + "__EVENTARGUMENT=" 
+			+ "&" + "__VIEWSTATEFIELDCOUNT=2" 
+			+ "&" + "__VIEWSTATE=" + URL.encodeURL(viewstate, false) 
+			+ "&" + "__VIEWSTATE1=" + URL.encodeURL(viewstate1, false);
 		try {
 			UrlFetcher.setpostData(postData);
 			htmlListPage = UrlFetcher.fetch(url);
-			pref.log("[getAListPage] Got list page: " + url);
+			pref.log("[getAListPage] " + whatPage);
 		} catch (final Exception ex) {
-			pref.log("[getAListPage] Error getting a list page" + url, ex);
+			pref.log("[getAListPage] Error at " + whatPage, ex);
+			ret=false;
 		}
+		return ret;
 	}
 
 	/* */
@@ -1778,7 +1803,6 @@ public class SpiderGC {
 		boolean save = false;
 		boolean is_archived_GC = false;
 		boolean is_found_GC = false;
-		final CacheHolderDetail chd = ch.getCacheDetails(false);
 		if (spiderAllFinds) {
 			if (!ch.is_found()) {
 				ch.setFound(true);
@@ -1801,9 +1825,12 @@ public class SpiderGC {
 				ret = true;
 			}
 		}
-		if (ch.is_found() && chd.OwnLogId.equals("")) {
-			ret = true;
-		} // missing ownLogID
+		
+		if (ch.is_found()) {
+			 // check for missing ownLogID (and logtext)
+			 if (ch.getCacheDetails(false).OwnLogId.equals(""))
+				 ret = true;
+		}
 		final boolean is_available_GC = !is_archived_GC && CacheDescription.indexOf(propAvailable) == -1;
 		if (is_available_GC != ch.is_available()) {
 			ch.setAvailable(is_available_GC);
@@ -2204,6 +2231,17 @@ public class SpiderGC {
 	private boolean newFoundExists(CacheHolder ch, String cacheDescription) {
 		if (!pref.checkLog || pref.maxLogsToSpider == 0)
 			return false;
+		final Time lastUpdateCW = new Time();
+		String stmp = ch.getLastSync();
+		if (stmp.length() > 0) {
+			try {
+				lastUpdateCW.parse(stmp, "yyyyMMddHHmmss");
+			} catch (Exception e) {
+				// lastUpdateCW = now
+			}
+		}
+
+		/* don't use real log --> don't read CacheDetails
 		final Time lastLogCW = new Time();
 		final Log lastLog = ch.getCacheDetails(true).CacheLogs.getLog(0);
 		if (lastLog == null)
@@ -2212,8 +2250,8 @@ public class SpiderGC {
 		if (slastLogCW.equals("") || slastLogCW.equals("1900-00-00"))
 			return true; // or check cacheDescGC also no log?
 		lastLogCW.parse(slastLogCW, "yyyy-MM-dd");
+		*/
 
-		String stmp = "";
 		RexPropLogDate.search(cacheDescription);
 		if (RexPropLogDate.didMatch()) {
 			stmp = RexPropLogDate.stringMatched(1);
@@ -2223,7 +2261,7 @@ public class SpiderGC {
 		}
 		final Time lastLogGC = DateFormat.toDate(stmp);
 		// String timecheck = DateFormat.toYYMMDD(lastLogGC);
-		final boolean ret = lastLogCW.compareTo(lastLogGC) < 0;
+		final boolean ret = lastUpdateCW.compareTo(lastLogGC) < 0;
 		return ret;
 	}
 
