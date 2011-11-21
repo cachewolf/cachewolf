@@ -179,6 +179,7 @@ public class UrlFetcher {
 			}
 			urltmp = conn.getRedirectTo();
 			if (urltmp != null) {
+				// this is a redirect
 				conn.disconnect();
 				// mainly implemented for opencaching.de ... login
 				final PropertyList pl = UrlFetcher.getDocumentProperties();
@@ -192,7 +193,7 @@ public class UrlFetcher {
 							setRequestorProperty("Cookie", cookie);
 						else
 							// needed for opencaching.de ... login
-							// setPermanentRequestorProperty("Cookie", cookie);
+							setPermanentRequestorProperty("Cookie", cookie);
 							;
 					}
 				}
