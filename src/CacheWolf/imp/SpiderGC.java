@@ -246,20 +246,6 @@ public class SpiderGC {
 			// Now ready to spider each cache in the lists
 			// =======
 
-			if (cachesToUpdate.size() > 0) {
-				switch (pref.spiderUpdates) {
-				case Preferences.NO:
-					cachesToUpdate.clear();
-					break;
-				case Preferences.ASK:
-					final MessageBox mBox = new MessageBox(MyLocale.getMsg(5517, "Spider Updates?"), cachesToUpdate.size() + MyLocale.getMsg(5518, " caches in database need an update. Update now?"), FormBase.IDYES | FormBase.IDNO);
-					if (mBox.execute() != FormBase.IDOK) {
-						cachesToUpdate.clear();
-					}
-					break;
-				}
-			}
-
 			int spiderErrors = 0;
 			final int totalCachesToLoad = cachesToLoad.size() + cachesToUpdate.size();
 			final boolean loadAllLogs = (pref.maxLogsToSpider > 5) || spiderAllFinds;
@@ -271,6 +257,21 @@ public class SpiderGC {
 
 			if (!infB.isClosed) {
 				spiderErrors = downloadCaches(cachesToLoad, spiderErrors, totalCachesToLoad, loadAllLogs);
+
+				if (cachesToUpdate.size() > 0) {
+					switch (pref.spiderUpdates) {
+					case Preferences.NO:
+						cachesToUpdate.clear();
+						break;
+					case Preferences.ASK:
+						final MessageBox mBox = new MessageBox(MyLocale.getMsg(5517, "Spider Updates?"), cachesToUpdate.size() + MyLocale.getMsg(5518, " caches in database need an update. Update now?"), FormBase.IDYES | FormBase.IDNO);
+						if (mBox.execute() != FormBase.IDOK) {
+							cachesToUpdate.clear();
+						}
+						break;
+					}
+				}
+
 				spiderErrors = updateCaches(cachesToUpdate, spiderErrors, totalCachesToLoad, loadAllLogs);
 			}
 
@@ -783,7 +784,7 @@ public class SpiderGC {
 			getFirstListPage(java.lang.Math.max(fromDistanceInMiles - 1, 1));
 			// Number of caches from gc Listpage calc the number of the startpage
 			startPage = (int) java.lang.Math.ceil(getNumFound(htmlListPage) / 20);
-		}		
+		}
 
 		// max distance in miles for URL, so we can get more than 80km
 		int toDistanceInMiles = (int) java.lang.Math.ceil(toDistance);
@@ -795,7 +796,7 @@ public class SpiderGC {
 		getFirstListPage(toDistanceInMiles);
 		// Number of caches from gcfirst Listpage
 		numFinds = getNumFound(htmlListPage);
-		
+
 		if (fromDistance > 0) {
 			// skip (most of) the pages with distance < fromDistance
 			for (int i = 0; i < (startPage / 10); i++) {
@@ -804,7 +805,7 @@ public class SpiderGC {
 			if (startPage > 1 ) {
 				if (startPage % 10 == 1)
 					getAListPage(toDistanceInMiles, gotoNextPage);
-				else 
+				else
 					getAListPage(toDistanceInMiles, gotoPage + startPage);
 			}
 		}
@@ -857,7 +858,7 @@ public class SpiderGC {
 		try {
 			// Loop pages till maximum distance has been found or no more caches are in the list
 			while (toDistance > 0) {
-				double[] DistanceAndDirection = { (0.0), (0.0) }; 
+				double[] DistanceAndDirection = { (0.0), (0.0) };
 				RexPropListBlock.search(htmlListPage);
 				String tableOfHtmlListPage;
 				if (RexPropListBlock.didMatch()) {
@@ -924,6 +925,7 @@ public class SpiderGC {
 					RexPropLine.searchFrom(tableOfHtmlListPage, RexPropLine.matchedTo());
 					if (infB.isClosed) {
 						toDistance = 0;
+						cExpectedForUpdate.clear();
 						break;
 					}
 				} // next Cache
@@ -978,7 +980,7 @@ public class SpiderGC {
 		return cExpectedForUpdate;
 
 	}
-	
+
 	private int downloadCaches(Vector cachesToLoad, int spiderErrors, int totalCachesToLoad, boolean loadAllLogs) {
 		for (int i = 0; i < cachesToLoad.size(); i++) {
 			if (infB.isClosed)
@@ -1484,10 +1486,10 @@ public class SpiderGC {
 			pref.log("[SpiderGC.java:getAListPage] check rexViewstate1!", null);
 		}
 
-		final String postData = "__EVENTTARGET=" + URL.encodeURL(whatPage, false) 
-			+ "&" + "__EVENTARGUMENT=" 
-			+ "&" + "__VIEWSTATEFIELDCOUNT=2" 
-			+ "&" + "__VIEWSTATE=" + URL.encodeURL(viewstate, false) 
+		final String postData = "__EVENTTARGET=" + URL.encodeURL(whatPage, false)
+			+ "&" + "__EVENTARGUMENT="
+			+ "&" + "__VIEWSTATEFIELDCOUNT=2"
+			+ "&" + "__VIEWSTATE=" + URL.encodeURL(viewstate, false)
 			+ "&" + "__VIEWSTATE1=" + URL.encodeURL(viewstate1, false);
 		try {
 			UrlFetcher.setpostData(postData);
@@ -1775,6 +1777,7 @@ public class SpiderGC {
 			ch.setTerrain(CacheTerrDiff.v1Converter(terrain));
 			ch.setCacheSize(CacheSize.gcGpxString2Cw(container));
 			ch.setType(cacheType);
+			ch.setLastSync((new Time()).format("yyyyMMddHHmmss"));
 			num_added++;
 			cacheDB.add(ch);
 			if (setCachesToLoad) {
@@ -1825,7 +1828,7 @@ public class SpiderGC {
 				ret = true;
 			}
 		}
-		
+
 		if (ch.is_found()) {
 			 // check for missing ownLogID (and logtext)
 			 if (ch.getCacheDetails(false).OwnLogId.equals(""))
