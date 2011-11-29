@@ -21,21 +21,11 @@ See http://www.cachewolf.de/ for more information.
     */
 package CacheWolf;
 
-import CacheWolf.utils.FileBugfix;
-import ewe.io.ByteArrayInputStream;
-import ewe.io.File;
-import ewe.io.FileInputStream;
-import ewe.io.IO;
-import ewe.io.IOException;
 import ewe.io.InputStreamReader;
 import ewe.io.StringStream;
-import ewe.sys.Handle;
-import ewe.sys.HandleStoppedException;
-import ewe.util.ByteArray;
 import ewe.util.Vector;
 import ewesoft.xml.XMLDecoder;
 import ewesoft.xml.XMLElement;
-import ewesoft.xml.sax.SAXException;
 
 public class GeocoderOsm {
 

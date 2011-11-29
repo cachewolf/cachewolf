@@ -21,6 +21,10 @@ See http://www.cachewolf.de/ for more information.
  */
 package CacheWolf;
 
+import org.bouncycastle.crypto.tls.AlwaysValidVerifyer;
+import org.bouncycastle.crypto.tls.TlsSocket;
+
+import CacheWolf.utils.CWPartialInputStream;
 import ewe.data.Property;
 import ewe.data.PropertyList;
 import ewe.io.AsciiCodec;
@@ -45,12 +49,6 @@ import ewe.util.CharArray;
 import ewe.util.SubString;
 import ewe.util.Vector;
 import ewe.util.mString;
-
-import org.bouncycastle.crypto.tls.AlwaysValidVerifyer;
-import org.bouncycastle.crypto.tls.TlsProtocolHandler;
-
-import org.bouncycastle.crypto.tls.TlsSocket;
-import CacheWolf.utils.CWPartialInputStream;
 
 /**
 Use this class to create an HttpConnection with a Web Server and to read
