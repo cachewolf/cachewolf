@@ -151,6 +151,7 @@ public class UrlFetcher {
 				if (!urltmp.startsWith("/"))
 					host = host + "/";
 				urltmp = lastScheme + "://" + host + urltmp;
+				Global.getPref().log("[UrlFetcher:Redirect] changed to: " + urltmp);
 			}
 			if (urltmp.startsWith("https")) {
 				lastScheme="https";
@@ -163,6 +164,7 @@ public class UrlFetcher {
 			if (permanentRequestorProperties == null)
 				initPermanentRequestorProperty();
 			if (postData != null) {
+				Global.getPref().log("[UrlFetcher:] changed to POST ");
 				conn.setPostData(postData);
 				conn.setRequestorProperty("Content-Type", "application/x-www-form-urlencoded");
 			}
@@ -180,6 +182,7 @@ public class UrlFetcher {
 			urltmp = conn.getRedirectTo();
 			if (urltmp != null) {
 				// this is a redirect
+				Global.getPref().log("[UrlFetcher:Redirect] to " + urltmp);
 				conn.disconnect();
 				// mainly implemented for opencaching.de ... login
 				final PropertyList pl = UrlFetcher.getDocumentProperties();
