@@ -27,7 +27,6 @@ import ewe.ui.CellPanel;
 import ewe.ui.ControlEvent;
 import ewe.ui.Event;
 import ewe.ui.Form;
-import ewe.ui.HtmlDisplay;
 import ewe.ui.IKeys;
 import ewe.ui.ScrollBarPanel;
 import ewe.ui.mButton;
