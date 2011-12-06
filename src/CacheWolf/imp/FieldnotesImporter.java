@@ -49,12 +49,12 @@ public class FieldnotesImporter {
 
 	public void doIt() {
 		try {
-			Vm.showWait(true);	
+			Vm.showWait(true);
 			FileReader r = null;
 
 			try {
 				r = new FileReader(file);
-				r.codec=new NoCodec();				
+				r.codec=new NoCodec();
 				r.read(); // for checking of Codec
 			}
 			catch (Error e) {
@@ -80,7 +80,7 @@ public class FieldnotesImporter {
 			Vm.showWait(false);
 		}
 	}
-	
+
 	private void parse(String s) {
 		final byte WPPOS=0;
 		final byte DATEPOS=1;
@@ -106,11 +106,11 @@ public class FieldnotesImporter {
 					ch.setFound(true);
 				} else {
 					String stmp=ch.getCWLogText(l1[LOGTYPPOS]);
-					if(stmp.equals("")) 
-						ch.setCacheStatus(l1[LOGTYPPOS]); // eingelesener 
+					if(stmp.equals(""))
+						ch.setCacheStatus(l1[LOGTYPPOS]); // eingelesener
 					else ch.setCacheStatus(stmp); // Statustext (ohne Datum/Uhrzeit)
 					ch.setFound(false);
-				}				
+				}
 				if (!logText.equals("")) ch.getCacheDetails(false).setCacheNotes(logText);
 				ch.save();
 			}

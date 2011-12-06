@@ -393,6 +393,9 @@ public class GPXImporter extends MinML {
 					holder.getCacheDetails(false).images = oldCh.getCacheDetails(true).images;
 				}
 				oldCh.initStates(false);
+				if (!oldCh.isOC()) {
+					holder.setNumRecommended(oldCh.getNumRecommended()); //gcvote Bewertung bleibt
+				}
 				oldCh.update(holder);
 				oldCh.save();
 			}
