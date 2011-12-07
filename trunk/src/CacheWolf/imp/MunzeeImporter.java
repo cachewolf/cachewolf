@@ -24,23 +24,17 @@ package CacheWolf.imp;
 import CacheWolf.CWPoint;
 import CacheWolf.CacheDB;
 import CacheWolf.CacheHolder;
+import CacheWolf.CacheHolderDetail;
+import CacheWolf.CacheSize;
+import CacheWolf.CacheTerrDiff;
+import CacheWolf.CacheType;
 import CacheWolf.Common;
-import CacheWolf.MyLocale;
 import CacheWolf.Preferences;
 import CacheWolf.Profile;
-import ewe.io.FileReader;
-import ewe.io.IOException;
-import ewe.io.JavaUtf8Codec;
-import ewe.io.TextCodec;
+import CacheWolf.STRreplace;
 import ewe.sys.Vm;
 import ewe.ui.FormBase;
-import ewe.util.ByteArray;
-import ewe.util.CharArray;
 import ewe.util.mString;
-import CacheWolf.STRreplace;
-import CacheWolf.CacheType;
-import CacheWolf.navi.TrackPoint;
-import CacheWolf.CacheHolderDetail;
 
 public class MunzeeImporter {
 	CacheDB cacheDB;
@@ -112,15 +106,18 @@ public class MunzeeImporter {
 					} while (l.length < nr_of_elements);
 					if (t != null) {
 						if (!l[8].endsWith("\"") || !l[0].startsWith("\"") ) {
-							pref.log("error MunzeeImporter at: " + s, null);
+							pref.log("Error MunzeeImporter at: " + s, null);
 							// return;
 						}
 						else parse(l);
 					}
 				} while (t != null);
 			}
-			catch (Error e) {
+			catch (Exception e) {
+				pref.log("Error MunzeeImporter: ", e);
 				r.close();
+				profile.saveIndex(pref, Profile.NO_SHOW_PROGRESS_BAR);
+				Vm.showWait(false);
 				return;
 			}
 			r.close();
@@ -149,13 +146,16 @@ public class MunzeeImporter {
 		String wayPoint="MZ"+l[USERNAME].toUpperCase()+l[CODE];
 		CWPoint tmpPos = new CWPoint();
 		try {
-			double lat = Double.parseDouble(l[LAT]);
-			double lon = Double.parseDouble(l[LON]);
+			double lat = Common.parseDoubleException(l[LAT]);
+			double lon = Common.parseDoubleException(l[LON]);
 			tmpPos.set(lat, lon);
-			final double tmpDistance = tmpPos.getDistance(startPos);
-			if (tmpDistance > maxDistance)
+			double tmpDistance = tmpPos.getDistance(startPos);
+			if (tmpDistance > maxDistance) {
+				// pref.log("MunzeeImporter: not imported " + l[FRIENDLYNAME] + ", Distance = "+ tmpDistance);
 				return false;
+			}
 		} catch (Exception e) {
+			pref.log("Error MunzeeImporter at: " + l[FRIENDLYNAME], e);
 			return false;
 		}
 
@@ -167,10 +167,13 @@ public class MunzeeImporter {
 		ch.setCacheOwner(l[USERNAME]);
 		ch.setCacheName(l[FRIENDLYNAME] + " " + l[LOCATION]);
 		ch.setDateHidden(l[CREATED]);
-		ch.setType(CacheType.CW_TYPE_CUSTOM);
+		ch.setType(CacheType.CW_TYPE_TRADITIONAL);
 		ch.setPos(tmpPos);
 		CacheHolderDetail chd = ch.getCacheDetails(false);
 		chd.setLongDescription(l[NOTES]);
+		ch.setCacheSize(CacheSize.CW_SIZE_OTHER);
+		ch.setHard(CacheTerrDiff.CW_DT_10);
+		ch.setTerrain(CacheTerrDiff.CW_DT_10);
 		ch.save();
 		return true;
 	}
