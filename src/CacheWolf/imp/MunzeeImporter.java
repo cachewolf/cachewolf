@@ -29,6 +29,7 @@ import CacheWolf.CacheSize;
 import CacheWolf.CacheTerrDiff;
 import CacheWolf.CacheType;
 import CacheWolf.Common;
+import CacheWolf.DateFormat;
 import CacheWolf.Preferences;
 import CacheWolf.Profile;
 import CacheWolf.STRreplace;
@@ -141,6 +142,9 @@ public class MunzeeImporter {
 		final byte LOCATION=6;
 		final byte USERNAME=7;
 		final byte CODE=8;
+		if (l[DEPLOYED].charAt(0) == '0') {
+			return false;
+		}
 		l[LAT] = l[LAT].substring(1); // " weg
 		l[CODE] = l[CODE].substring(0, l[CODE].length()-1);
 		String wayPoint="MZ"+l[USERNAME].toUpperCase()+l[CODE];
@@ -166,7 +170,7 @@ public class MunzeeImporter {
 		}
 		ch.setCacheOwner(l[USERNAME]);
 		ch.setCacheName(l[FRIENDLYNAME] + " " + l[LOCATION]);
-		ch.setDateHidden(l[CREATED]);
+		ch.setDateHidden(DateFormat.toYYMMDD(l[DEPLOYED].substring(0, 10)));
 		ch.setType(CacheType.CW_TYPE_TRADITIONAL);
 		ch.setPos(tmpPos);
 		CacheHolderDetail chd = ch.getCacheDetails(false);
