@@ -33,6 +33,7 @@ import CacheWolf.DateFormat;
 import CacheWolf.Preferences;
 import CacheWolf.Profile;
 import CacheWolf.STRreplace;
+import CacheWolf.SafeXML;
 import ewe.sys.Vm;
 import ewe.ui.FormBase;
 import ewe.util.mString;
@@ -143,7 +144,8 @@ public class MunzeeImporter {
 		final byte USERNAME=7;
 		final byte CODE=8;
 		if (l[DEPLOYED].charAt(0) == '0') {
-			return false;
+			// return false;
+			l[DEPLOYED] = l[CREATED];
 		}
 		l[LAT] = l[LAT].substring(1); // " weg
 		l[CODE] = l[CODE].substring(0, l[CODE].length()-1);
@@ -169,7 +171,7 @@ public class MunzeeImporter {
 			cacheDB.add(ch);
 		}
 		ch.setCacheOwner(l[USERNAME]);
-		ch.setCacheName(l[FRIENDLYNAME] + " " + l[LOCATION]);
+		ch.setCacheName("MZ - " + l[FRIENDLYNAME]);
 		ch.setDateHidden(DateFormat.toYYMMDD(l[DEPLOYED].substring(0, 10)));
 		ch.setType(CacheType.CW_TYPE_TRADITIONAL);
 		ch.setPos(tmpPos);
@@ -178,6 +180,20 @@ public class MunzeeImporter {
 		ch.setCacheSize(CacheSize.CW_SIZE_OTHER);
 		ch.setHard(CacheTerrDiff.CW_DT_10);
 		ch.setTerrain(CacheTerrDiff.CW_DT_10);
+		final String location = l[LOCATION];
+		if (location.length() != 0) {
+			final int countryStart = location.lastIndexOf(" ");
+			if (countryStart > -1) {
+				chd.Country = SafeXML.cleanback(location.substring(countryStart + 1).trim());
+				chd.State = SafeXML.cleanback(location.substring(0, countryStart).trim());
+			} else {
+				chd.Country = location.trim();
+				chd.State = "";
+			}
+		} else {
+			ch.getCacheDetails(false).Country = "";
+			ch.getCacheDetails(false).State = "";
+		}
 		ch.save();
 		return true;
 	}
