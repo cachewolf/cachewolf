@@ -1,4 +1,4 @@
-TakenFromUrl:       http://www.ngi.be/testbed/
+TakenFromUrl:       http://www.ngi.be/testbed/pages
 GetCapabilitiesUrl: http://www.ngi.be/testbed/wms/top50r_l08_nl?SERVICE=WMS&VERSION=1.1.1&REQUEST=GetCapabilities
 Name:               be.ngi topo
 MapType:                        topo
