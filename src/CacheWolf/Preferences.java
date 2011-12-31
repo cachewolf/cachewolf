@@ -1207,21 +1207,31 @@ public class Preferences extends MinML {
 			new MessageBox(MyLocale.getMsg(321, "Error"), MyLocale.getMsg(ErrorMsgActive, "[Profile active...]"), FormBase.MBOK).execute();
 		} else {
 			boolean err = true;
+			FileBugfix profilePath = new FileBugfix(absoluteBaseDir + f.newSelectedProfile);
 			if (operation == 3) {
 				String newName = new InputBox("Bitte neuen Verzeichnisnamen eingeben : ").input("", 50);
 				if (!newName.equals(null)) {
-					err = !renameDirectory(new FileBugfix(absoluteBaseDir + f.newSelectedProfile), new FileBugfix(absoluteBaseDir + newName));
+					err = !renameDirectory(profilePath, new FileBugfix(absoluteBaseDir + newName));
 				}
 			} else if (operation == 2) {
 				Profile p = new Profile();
 				p.dataDir = absoluteBaseDir + f.newSelectedProfile + "/";
 				p.readIndex();
 				String mapsPath = absoluteBaseDir + "maps" + p.getRelativeCustomMapsPath();
-				int answer = new MessageBox("", mapsPath + " " + MyLocale.getMsg(143, "l?schen ?"), FormBase.MBYESNO).execute();
+				//Really check if the user wants to delete the profile
+				String questionText = MyLocale.getMsg(276, "Do You really want to delete profile '")+
+						f.newSelectedProfile + MyLocale.getMsg(277, "' ?");
+				int answer = new MessageBox("", questionText, FormBase.MBYESNO).execute();
+				if (answer != 1){
+					//No? Exit!
+					return;
+				}
+				
+				answer = new MessageBox("", mapsPath + " " + MyLocale.getMsg(143, "l?schen ?"), FormBase.MBYESNO).execute();
 				if (answer == 1) {
 					deleteDirectory(new FileBugfix(mapsPath));
 				}
-				err = !deleteDirectory(new FileBugfix(absoluteBaseDir + f.newSelectedProfile));
+				err = !deleteDirectory(profilePath);
 				// ? wait until deleted ?
 			}
 			if (err) {
