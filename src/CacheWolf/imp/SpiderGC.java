@@ -1777,7 +1777,7 @@ public class SpiderGC {
 			ch.setTerrain(CacheTerrDiff.v1Converter(terrain));
 			ch.setCacheSize(CacheSize.gcGpxString2Cw(container));
 			ch.setType(cacheType);
-			ch.setLastSync((new Time()).format("yyyyMMddHHmmss"));
+			// ch.setLastSync((new Time()).format("yyyyMMddHHmmss"));
 			num_added++;
 			cacheDB.add(ch);
 			if (setCachesToLoad) {
