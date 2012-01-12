@@ -530,7 +530,7 @@ public class SpiderGC {
 				ch.initStates(false);
 		}
 
-		// halbe Seitenlänge eines Quadrats ums Zentrum in km
+		// halbe Seitenlï¿½nge eines Quadrats ums Zentrum in km
 		double halfSideLength = maxDistance;
 		if (pref.metricSystem == Metrics.IMPERIAL) {
 			halfSideLength = Metrics.convertUnit(maxDistance, Metrics.MILES, Metrics.KILOMETER);
@@ -1566,7 +1566,7 @@ public class SpiderGC {
 				ch.initStates(false);
 		}
 
-		// halbe Seitenlänge eines Quadrats ums Zentrum in km
+		// halbe Seitenlï¿½nge eines Quadrats ums Zentrum in km
 		double halfSideLength = maxDistance;
 		if (pref.metricSystem == Metrics.IMPERIAL) {
 			halfSideLength = Metrics.convertUnit(maxDistance, Metrics.MILES, Metrics.KILOMETER);
@@ -1937,8 +1937,8 @@ public class SpiderGC {
 			if (ret.indexOf("ere") > -1)
 				return distanceAndDirection; // zur Zeit " Here -1"
 			// Versuch den DistanceCodeKey automatisch zu bestimmen
-			// da dieser von gc mal wieder geändert wurde.
-			// todo Benötigt ev noch weitere Anpassungen: | am Anfang, and calc of keylength
+			// da dieser von gc mal wieder geï¿½ndert wurde.
+			// todo Benï¿½tigt ev noch weitere Anpassungen: | am Anfang, and calc of keylength
 			// String thereitis="|0.34 km|102.698";
 			// String page =
 			// fetchText("http://www.geocaching.com/seek/nearest.aspx?lat=48.48973&lng=009.26313&dist=2&f=1",false);
@@ -1970,7 +1970,7 @@ public class SpiderGC {
 			final String coded = ewe.net.URL.decodeURL(RexPropDistanceCode.stringMatched(1));
 			final String newkey = decodeXor(coded, thereitis);
 			final int keylength = 13;
-			// wenn nicht 13 dann newkey auf wiederholung prüfen
+			// wenn nicht 13 dann newkey auf wiederholung prï¿½fen
 			DistanceCodeKey = newkey.substring(0, keylength);
 			ret = decodeXor(stmp, DistanceCodeKey).replace('|', ' ');
 			pref.log("Automatic key: " + DistanceCodeKey + " result: " + ret + Preferences.NEWLINE);
@@ -2951,6 +2951,13 @@ public class SpiderGC {
 			exImgSrc.set(tst, imgSrcExStart, imgSrcExEnd, 0, true);
 			imgUrl = "http://" + exImgSrc.findNext();
 			try {
+				//links to images in the description directs to one which has reduced in their size.
+				//We like to load the images in their original size:
+				if (imgUrl.startsWith("http://img.geocaching.com/cache/display")){
+					imgUrl = "http://img.geocaching.com/cache"+imgUrl.substring("http://img.geocaching.com/cache/display".length());
+				}
+				//end
+				
 				imgType = (imgUrl.substring(imgUrl.lastIndexOf('.')).toLowerCase() + "    ").substring(0, 4).trim();
 				// imgType is now max 4 chars, starting with .
 				if (imgType.startsWith(".png") || imgType.startsWith(".jpg") || imgType.startsWith(".gif")) {
