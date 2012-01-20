@@ -148,8 +148,13 @@ public class MunzeeImporter {
 			l[DEPLOYED] = l[CREATED];
 		}
 		l[LAT] = l[LAT].substring(1); // " weg
-		l[CODE] = l[CODE].substring(0, l[CODE].length()-1);
-		String wayPoint="MZ"+l[USERNAME].toUpperCase()+l[CODE];
+		l[CODE] = "0000"+l[CODE];
+		l[CODE] = l[CODE].substring(l[CODE].length()-5,l[CODE].length()-1);
+		String wayPoint=l[USERNAME].toUpperCase();
+		if (wayPoint.length() > 8) {
+			wayPoint=wayPoint.substring(0, 8);
+		}
+		wayPoint="MZ"+wayPoint+l[CODE];
 		CWPoint tmpPos = new CWPoint();
 		try {
 			double lat = Common.parseDoubleException(l[LAT]);
