@@ -65,7 +65,7 @@ getPageByName      = http://www.geocaching.com/seek/cache_details.aspx?wp=
 fetchAllLogs       = &log=y
 cacheUnavailable   = class="OldWarning"><li>This\ cache\ is\ temporarily\ unavailable
 cacheArchived      = class="OldWarning"><li>This\ cache\ has\ been\ archived
-premiumCachepage   = class="Warning">listing\ visible\ to\ Premium
+premiumCachepage   = > Premium Member Only Cache
 latLonRex          = uxLatLon" style="font-weight:bold;">((?s).*?)</span>
 shortDescRex       = tBody_ShortDescription">((?s).*?)</span>
 longDescRex        = tBody_LongDescription">((?s).*?)<strong>\\s+Additional\ Hints</strong>
