@@ -2025,9 +2025,9 @@ public class SpiderGC {
 			return true;
 		} else {
 			numPrivate = numPrivate + 1;
-			if (spiderAllFinds) {
-				pref.log(chWaypoint + " is private.", null);
-			}
+			// if (spiderAllFinds) {
+			pref.log(chWaypoint + " is private.", null);
+			//}
 			return false;
 		}
 	}
