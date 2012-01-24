@@ -1025,6 +1025,7 @@ public class SpiderGC {
 					pref.log("[updateCaches] could not spider " + ch.getWayPoint(), null);
 				} else {
 					// profile.hasUnsavedChanges=true;
+					if (test == SPIDER_IGNORE_PREMIUM) spiderErrors++;
 				}
 			}
 		}
@@ -2341,7 +2342,7 @@ public class SpiderGC {
 						if (latLon.equals("???")) {
 							if (completeWebPage.indexOf(p.getProp("premiumCachepage")) > 0) {
 								// Premium cache spidered by non premium member
-								pref.log("Ignoring premium member cache: " + ch.getWayPoint());
+								pref.log("Ignoring premium member cache: " + ch.getWayPoint(),null);
 								spiderTrys = MAX_SPIDER_TRYS;
 								ret = SPIDER_IGNORE_PREMIUM;
 								continue;
