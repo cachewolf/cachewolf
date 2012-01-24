@@ -887,7 +887,7 @@ public class MainMenu extends MenuBar {
 				if (test == SpiderGC.SPIDER_CANCEL) {
 					infB.close(0);
 					break;
-				} else if (test == SpiderGC.SPIDER_ERROR) {
+				} else if (test == SpiderGC.SPIDER_ERROR || test == SpiderGC.SPIDER_IGNORE_PREMIUM) {
 					spiderErrors++;
 				} else {
 					// profile.hasUnsavedChanges=true;
