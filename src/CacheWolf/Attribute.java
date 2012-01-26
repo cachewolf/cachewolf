@@ -62,7 +62,7 @@ public class Attribute {
 	// for GC Constructor Spider
 	private void attName2attNo(String attributeName) {
 		for (int i = 0; i < maxAttRef; i++) {
-			if (attributeName.toLowerCase().startsWith(attRef[i][PIC_NAME])) {
+			if (attributeName.toLowerCase().startsWith(attRef[i][PIC_NAME].toLowerCase())) {
 				_Id = i;
 				_Inc = attributeName.toLowerCase().endsWith("-no.gif") ? 0 : 1;
 				_ImageName = attRef[i][PIC_NAME] + (_Inc == 0 ? "-no.gif" : "-yes.gif");
