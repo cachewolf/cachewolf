@@ -25,7 +25,7 @@ public class Attributes {
 	public Attributes() {
 	} // Just a public constructor
 
-	public final static int MAXATTRIBS = 12;
+	public final static int MAXATTRIBS = 15;
 	/**
 	 * The number of attributes for this cache (=number of array elements in use in attribs)
 	 */
