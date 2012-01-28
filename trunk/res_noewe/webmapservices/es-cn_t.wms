@@ -1,20 +1,29 @@
-TakenFromUrl:   http://www.idecan.grafcan.es/idecan/content/view/24/36/#servicio2
-GetCapabilitiesUrl:   http://idecan2.grafcan.es/ServicioWMS/carto5?REQUEST=GetCapabilities&SERVICE=WMS
-Name:   es.Canarias topo
-MapType:   topo
-MainUrl:   http://idecan2.grafcan.es/ServicioWMS/carto5?
-LayersName:
-ServiceTypeUrlPart:   SERVICE=WMS
-VersionUrlPart:   VERSION=1.1.1
-CoordinateReferenceSystemCacheWolf:   4326
-CoordinateReferenceSystemUrlPart:   SRS=EPSG:4326
-RequestUrlPart:   REQUEST=GetMap
-LayersUrlPart:   LAYERS=WMS_CARTO5
-StylesUrlPart:   STYLES=
-ImageFormatUrlPart:   FORMAT=image/png
-BoundingBoxTopLeftWGS84:   N 29.8305 W 18.3099
-BoundingBoxBottomRightWGS84:   N 26.1839 W 13.137
-MinScale:   1.49671
-MaxScale:   174.0000
-RecommendedScale:   5.000
+﻿TakenFromUrl:       http://idecan2.grafcan.es/ServicioWMS/MT5?
+GetCapabilitiesUrl: http://idecan2.grafcan.es/ServicioWMS/MT5?SERVICE=WMS&VERSION=1.1.1&REQUEST=GetCapabilities
+Name:               es.Canarias t
+MapType:                        topo
+MainUrl:            http://idecan2.grafcan.es/ServicioWMS/MT5?
+ServiceTypeUrlPart: SERVICE=WMS
+VersionUrlPart:     VERSION=1.1.1
+CoordinateReferenceSystemCacheWolf:  4326
+CoordinateReferenceSystemUrlPart: SRS=EPSG:4326 
+RequestUrlPart:     REQUEST=GetMap
+#LayersUrlPart:     LAYERS=WMS_MT5|IDECanarias Mapa Topográfico 1:5.000||
+#LayersUrlPart:     LAYERS=MUN|Municipios||
+#LayersUrlPart:     LAYERS=FONDO|Recintos fondo|9.97855587144117|0
+#LayersUrlPart:     LAYERS=CN|Curvas de nivel|49.8907837458121|174.615996950373
+#LayersUrlPart:     LAYERS=HID|Hidrografia|9.97855587144117|99.7805696859274
+#LayersUrlPart:     LAYERS=VIAL|Vial|7.48354272644456|24.9446435186334
+#LayersUrlPart:     LAYERS=CONS|Construcciones|0|9.97755806574431
+#LayersUrlPart:     LAYERS=PA|Puntos acotados|0|1.99561139371855
+#LayersUrlPart:     LAYERS=TEXTOS|Toponimia|0|9.97805696859274
+LayersUrlPart:     LAYERS=WMS_MT5
+StylesUrlPart:     STYLES=
+ImageFormatUrlPart:FORMAT=image/png
+BoundingBoxTopLeftWGS84: N 29.8305 W 18.3099
+BoundingBoxBottomRightWGS84: N 26.1839 W 13.1373
+#BBox_Mitte: N 28.0072 W 15.7236
+MinScale:   0
+MaxScale:   140
+RecommendedScale:    5 1 10 16 32
 ImageFileExtension: .png
