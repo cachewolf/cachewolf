@@ -34,6 +34,7 @@ import CacheWolf.exp.OziExporter;
 import CacheWolf.exp.SpoilerPOIExporter;
 import CacheWolf.exp.TPLExporter;
 import CacheWolf.exp.TomTomExporter;
+import CacheWolf.exp.GarminPicExporter;
 import CacheWolf.imp.FieldnotesImporter;
 import CacheWolf.imp.MunzeeImporter;
 import CacheWolf.imp.GCVoteImporter;
@@ -72,7 +73,7 @@ import ewe.util.Vector;
 /**
  * This class creates the menu for cachewolf. It is also responsible for reacting to user inputs in the menu.<br>
  * This class id=100
- * 
+ *
  * @see MainForm
  * @see MainTab Last change: 20061123 salzkammergut Tidied up, added MyLocale, added additional internationalisation, combine save/filter for small screens, garminConn
  */
@@ -83,6 +84,7 @@ public class MainMenu extends MenuBar {
 	private MenuItem about, wolflang, sysinfo, legend;
 	private MenuItem exportGpxNg, exporthtml, exporttop50, exportASC, exportTomTom, exportMSARCSV, exportSpoilerPOI;
 	private MenuItem exportOZI, exportKML, exportTPL, exportExplorist, exportOCLog;
+	private MenuItem exportGarminPic;
 	private MenuItem filtCreate, filtClear, filtInvert, filtSelected, filtNonSelected, filtBlack, filtApply;
 	private MenuItem exportLOC, exportGPS, mnuSeparator = new MenuItem("-");
 	private MenuItem orgNewWP, orgCopy, orgMove, orgDelete, orgRebuild, orgCheckNotesAndSolver;
@@ -151,6 +153,7 @@ public class MainMenu extends MenuBar {
 				exportSpoilerPOI = new MenuItem(MyLocale.getMsg(135, "to SpoilerPOI")), //
 				exportTPL = new MenuItem(MyLocale.getMsg(128, "via Template")), //
 				exportOCLog = new MenuItem(MyLocale.getMsg(1210, "logs to OC")), //
+				exportGarminPic = new MenuItem("Garmin pictures"),
 		};
 		if (Global.getPref().gpsbabel == null) {
 			exportGPS.modifiers = MenuItem.Disabled;
@@ -522,6 +525,10 @@ public class MainMenu extends MenuBar {
 			if (mev.selectedItem == exportSpoilerPOI) {
 				SpoilerPOIExporter spoilerpoi = new SpoilerPOIExporter(pref, profile);
 				spoilerpoi.doIt();
+			}
+			if(mev.selectedItem == exportGarminPic) {
+				GarminPicExporter garminpic = new GarminPicExporter( pref, profile);
+				garminpic.doIt();
 			}
 
 			// /////////////////////////////////////////////////////////////////////
