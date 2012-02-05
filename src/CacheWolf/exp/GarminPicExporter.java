@@ -52,6 +52,7 @@ import ewe.ui.Form;
 import ewe.ui.Panel;
 import ewe.ui.mLabel;
 import ewe.ui.mInput;
+import com.stevesoft.ewe_pat.Regex;
 
 
 
@@ -60,6 +61,8 @@ public class GarminPicExporter {
  * Exports pictures and spoiler pictures into a directory structure                 *
  * See: http://garmin.blogs.com/softwareupdates/2012/01/geocaching-with-photos.html *
  ************************************************************************************/
+	private static String SPOILERREGEX="Spoiler|Hilfe|Help|Hinweis|Hint[^a-zA-Z]";
+
 	CacheDB cacheDB;
 	Preferences pref;
 	Profile profile;
@@ -71,8 +74,10 @@ public class GarminPicExporter {
 	 */
 	int nonJPGimages=0;
 	int whichPics; // 0=ALL, 1=SPOILER ONLY, 2=OTHERS ONLY, 3=SPOILERS + ALL PICS for non TRADIS
+	boolean removeGC;
 	boolean resizeLongEdge;
 	int maxLongEdge;
+	Regex spoilerRex;
 
 	public GarminPicExporter(Preferences p, Profile prof){
 		pref = p;
@@ -97,6 +102,8 @@ public class GarminPicExporter {
 		whichPics=options.getWhichPics();
 		resizeLongEdge=options.getResizeLongEdge();
 		maxLongEdge=options.getMaxLongEdge();
+		spoilerRex=new Regex(options.getSplrRegex());
+		spoilerRex.setIgnoreCase(true);
 
 		// Keep user updated about our progress
 		ProgressBarForm pbf = new ProgressBarForm();
@@ -134,40 +141,52 @@ public class GarminPicExporter {
 	}
 
 	private int copyImages(CacheHolder ch, String targetDir) {
-		String dirName;
+		String dirName="";
 		CacheHolderDetail det=ch.getCacheDetails(false);
 		if (det==null) return 1; // No details; increment export errors
 		int nImg=det.images.size();
 		if (nImg==0) return 0;  // Nothing to copy
 		int retCode=0;
-		dirName=createPicDir(targetDir, ch.getWayPoint());
-		if (dirName==null) return 1; // Failed to create dir
+		boolean need2CreateDir=true; // Flag to remember whether dirs have been created
 
 		picsCopied.clear(); // Clear the hashtable which keeps track of pictures copied
 		for (int i=nImg-1; i>=0; i--) { // Start from top to get more pics with sensible names
 			// The pictures embedded in the text description have no title and are at the beginning
 			ImageInfo imgInfo=det.images.get(i);
-			if (!imgInfo.getFilename().endsWith("jpg")) { // relies on filename being lower case
-				// Garmin GPS can only handle jpg files
-				Global.getPref().log("GarminPicExporter: Warning: Picture "+imgInfo.getFilename()+" not copied as Garmin GPS can only handle jpg files");
-				nonJPGimages++;
-				continue; // Move to next pic
-			}
 			// Skip this pic if it was already copied
 			if (picsCopied.containsKey(imgInfo.getFilename())) {
 				continue;
 			}
 			try {
-				if (imgInfo.getTitle().toUpperCase().indexOf("SPOILER")>=0) {
-					if (whichPics!=2) {// Copy image to spoiler dir
-						picsCopied.put(imgInfo.getFilename(), null); // Remember that we copied this picture
-						appendDir(dirName,"Spoilers/");
-
-						DataMover.copy(profile.dataDir +imgInfo.getFilename(),dirName+"Spoilers/"+sanitizeFileName(imgInfo.getTitle())+".JPG");
+				boolean copyPic=false; // Does the pic satisfy the criteria for copying?
+				boolean isSpoiler=false;
+				if (spoilerRex.search(imgInfo.getTitle())) {
+					isSpoiler=true;
+					if (whichPics!=2) copyPic=true;
+				} else { // Normal Pic
+					if (whichPics==0 || whichPics==2 ||
+					   (whichPics==3 && ch.getType()!=CacheWolf.CacheType.CW_TYPE_TRADITIONAL))
+						copyPic=true;
+				}
+				if (copyPic) { // We have to copy this picture
+					if (!imgInfo.getFilename().endsWith("jpg")) { // relies on filename being lower case
+						// Garmin GPS can only handle jpg files
+						Global.getPref().log("GarminPicExporter: Warning: Picture "+imgInfo.getFilename()+" not copied as Garmin GPS can only handle jpg files");
+						nonJPGimages++;
+						continue; // Move to next pic
 					}
-				} else { // Normal picture
-					if (whichPics==0 || whichPics==2 || ch.getType()!=CacheWolf.CacheType.CW_TYPE_TRADITIONAL) {// Copy image to spoiler dir
-						picsCopied.put(imgInfo.getFilename(), null); // Remember that we copied this picture
+					// Now we have a jpg and need to ensure that the directory structure
+					// has been created before copying the picture
+					if (need2CreateDir) {
+						dirName=createPicDir(targetDir, ch.getWayPoint());
+						if (dirName==null) return 1; // Failed to create dir
+						need2CreateDir=false;
+					}
+					picsCopied.put(imgInfo.getFilename(), null); // Remember that we copied this picture
+					if (isSpoiler) {
+						appendDir(dirName,"Spoilers/");
+						DataMover.copy(profile.dataDir +imgInfo.getFilename(),dirName+"Spoilers/"+sanitizeFileName(imgInfo.getTitle())+".JPG");
+					} else {
 						DataMover.copy(profile.dataDir +imgInfo.getFilename(),dirName+sanitizeFileName(imgInfo.getTitle())+".JPG");
 					}
 				}
@@ -254,6 +273,7 @@ public class GarminPicExporter {
 		mCheckBox chkAllPics, chkSplrOnly, chkPicsOnly, chkSplrPlusNonTradi;
 		CheckBoxGroup chkPics2Copy = new CheckBoxGroup();
 		int pics2Copy;
+		mInput inpSplrRegex;
 		mCheckBox chkResizeLongEdge;
 		mLabel lblMaxLongEdge;
 		mInput inpMaxLongEdge;
@@ -279,6 +299,8 @@ public class GarminPicExporter {
 			pnlWhichPics.setBorder(BDR_OUTLINE|BF_RECT, 3);
 
 			addLast(pnlWhichPics,CellConstants.HSTRETCH,CellConstants.TOP|CellConstants.WEST);
+			addLast(new mLabel("Regular Expression to identify spoiler pictures (ignore case):"));
+			addLast(inpSplrRegex=new mInput(SPOILERREGEX),CellConstants.HSTRETCH,CellConstants.HFILL|CellConstants.TOP|CellConstants.WEST);
 
 			// Should the longest edge be resized and if so to which max length
 			//TODO addLast(chkResizeLongEdge=new mCheckBox("Resize long edge of large pictures (takes much longer)"));
@@ -316,6 +338,9 @@ public class GarminPicExporter {
 		}
 		public int getWhichPics() {
 			return chkPics2Copy.getInt();
+		}
+		public String getSplrRegex() {
+			return inpSplrRegex.getText();
 		}
 		public boolean getResizeLongEdge() {
 			return false;
