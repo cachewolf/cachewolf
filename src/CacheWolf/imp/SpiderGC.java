@@ -936,8 +936,13 @@ public class SpiderGC {
 						if (((page_number - 1) * 20 + found_on_page) >= numFinds) {
 							toDistance = 0;
 						}
-					} else
-						toDistance = 0; // last page (has less than 20 entries!?) to check reached
+					} else {
+						// toDistance = 0; // last page (has less than 20 entries!?) to check reached
+						// ??? http://www.geoclub.de/viewtopic.php?f=40&t=61614
+						if (((page_number - 1) * 20 + found_on_page) >= numFinds) {
+							toDistance = 0;
+						}
+					}
 				}
 				if (toDistance > 0) {
 					if (page_number % 100 == 45) {
@@ -2958,7 +2963,7 @@ public class SpiderGC {
 					imgUrl = "http://img.geocaching.com/cache"+imgUrl.substring("http://img.geocaching.com/cache/display".length());
 				}
 				//end
-				
+
 				imgType = (imgUrl.substring(imgUrl.lastIndexOf('.')).toLowerCase() + "    ").substring(0, 4).trim();
 				// imgType is now max 4 chars, starting with .
 				if (imgType.startsWith(".png") || imgType.startsWith(".jpg") || imgType.startsWith(".gif")) {
