@@ -1,5 +1,5 @@
 package org.bouncycastle.util;
-
+ 
 import ewe.io.ByteArrayOutputStream;
 import ewe.util.Vector;
 
