@@ -99,6 +99,7 @@ public abstract class PDAList extends Form {
 		}
 	}
 
+	
 	public void setupTBButtons() {
 		for (int i = 0; i < linesOnScreen; i++) {
 			if (model != null && i + firstLine < model.size()) {
