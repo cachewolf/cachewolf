@@ -118,10 +118,17 @@ public class CacheHolderDetail {
 	}
 
 	public void setCacheLogs(LogList newLogs) {
-		int size = newLogs.size();
-		for (int i = size - 1; i >= 0; i--) { // Loop over all new logs, must start with oldest log
-			if (CacheLogs.merge(newLogs.getLog(i)) >= 0)
-				getParent().setLog_updated(true);
+		if (Global.getPref().overwriteLogs) {
+			CacheLogs=newLogs;
+			getParent().setLog_updated(true);
+			hasUnsavedChanges = true;
+		}
+		else {
+			int size = newLogs.size();
+			for (int i = size - 1; i >= 0; i--) { // Loop over all new logs, must start with oldest log
+				if (CacheLogs.merge(newLogs.getLog(i)) >= 0)
+					getParent().setLog_updated(true);
+			}
 		}
 		if (CacheLogs.purgeLogs() > 0)
 			hasUnsavedChanges = true;
@@ -131,7 +138,7 @@ public class CacheHolderDetail {
 	/**
 	 * Method to update an existing cache with new data. This is
 	 * necessary to avoid missing old logs. Called from GPX Importer
-	 * 
+	 *
 	 * @param newCh
 	 *            new cache data
 	 * @return CacheHolder with updated data
@@ -182,7 +189,7 @@ public class CacheHolderDetail {
 
 	/**
 	 * Adds a user image to the cache data
-	 * 
+	 *
 	 * @param profile
 	 */
 	public void addUserImage(Profile profile) {
@@ -490,7 +497,7 @@ public class CacheHolderDetail {
 
 	/**
 	 * Return true if this cache has additional info for some pictures
-	 * 
+	 *
 	 * @return true if cache has additional info, false otherwise
 	 */
 	public boolean hasImageInfo() {
@@ -502,7 +509,7 @@ public class CacheHolderDetail {
 
 	/**
 	 * change id in waypoint details and rename associated files. Function should only be called by CacheHolder
-	 * 
+	 *
 	 * @param newWptId
 	 *            new id of the waypoint
 	 * @return true on success, false for failure
