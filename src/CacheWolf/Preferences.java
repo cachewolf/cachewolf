@@ -331,6 +331,7 @@ public class Preferences extends MinML {
 	public int maxLogsToKeep = DEFAULT_MAX_LOGS_TO_SPIDER;
 	/** keep own logs even when excessing <code>maxLogsToKeep</code> */
 	public boolean alwaysKeepOwnLogs = true;
+	public boolean overwriteLogs = false;
 
 	/** Determines whether to fill the white areas on the map */
 	public boolean fillWhiteArea = false;
@@ -605,6 +606,7 @@ public class Preferences extends MinML {
 		} else if (name.equals("spider")) {
 			doNotGetFound = !Boolean.valueOf(atts.getValue("getFinds")).booleanValue();
 			checkLog = Boolean.valueOf(atts.getValue("checkLog")).booleanValue();
+			overwriteLogs  = Boolean.valueOf(atts.getValue("overwriteLogs")).booleanValue();
 			tmp = atts.getValue("checkTBs");
 			if (tmp != null)
 				checkTBs = Boolean.valueOf(atts.getValue("checkTBs")).booleanValue();
@@ -857,6 +859,7 @@ public class Preferences extends MinML {
 			outp.print("    <spider" //
 					+ " spiderUpdates=\"" + SafeXML.strxmlencode(spiderUpdates) + "\"" //
 					+ " checkLog=\"" + SafeXML.strxmlencode(checkLog) + "\"" //
+					+ " overwriteLogs=\"" + SafeXML.strxmlencode(overwriteLogs) + "\"" //
 					+ " checkTBs=\"" + SafeXML.strxmlencode(checkTBs) + "\"" //
 					+ " checkDTS=\"" + SafeXML.strxmlencode(checkDTS) + "\"" //
 					+ " spiderRoute=\"" + SafeXML.strxmlencode(spiderRoute) + "\"" //
@@ -1226,7 +1229,7 @@ public class Preferences extends MinML {
 					//No? Exit!
 					return;
 				}
-				
+
 				answer = new MessageBox("", mapsPath + " " + MyLocale.getMsg(143, "l?schen ?"), FormBase.MBYESNO).execute();
 				if (answer == 1) {
 					deleteDirectory(new FileBugfix(mapsPath));
