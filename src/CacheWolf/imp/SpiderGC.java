@@ -147,7 +147,7 @@ public class SpiderGC {
 	// add pagenumber
 	private static String gotoPage = "ctl00$ContentBody$pgrTop$lbGoToPage_";
 	private static String propMaxDistance;
-	private static String propShowOnlyFound;
+	private static String propDoNotGetFound;
 	private static Regex RexPropListBlock;
 	private static Regex RexPropLine;
 	private static Regex RexNumFinds;
@@ -336,6 +336,7 @@ public class SpiderGC {
 				startPos = null;
 		}
 
+		/*
 		final int answer = new MessageBox(MyLocale.getMsg(651, "Question"), MyLocale.getMsg(652, "Update caches with all details?"), MessageBox.YESB | MessageBox.NOB | MessageBox.CANCELB).execute();
 		final boolean complete = answer == MessageBox.YESB;
 		if (answer == MessageBox.IDCANCEL) {
@@ -343,6 +344,8 @@ public class SpiderGC {
 				pref.setCurCentrePt(startPos);
 			return;
 		}
+		 */
+		final boolean complete =true;
 
 		if (startPos != null && !startPos.isValid()) {
 			(new MessageBox(MyLocale.getMsg(5500, "Error"), MyLocale.getMsg(5509, "Coordinates for centre must be set"), FormBase.OKB)).execute();
@@ -368,6 +371,9 @@ public class SpiderGC {
 		if (pref.metricSystem == Metrics.IMPERIAL) {
 			lateralDistance = Metrics.convertUnit(maxDistance, Metrics.MILES, Metrics.KILOMETER);
 		}
+		// bis der Load über die Map wieder implentiert ist mach ichs mal wieder über die Kreise
+		// daher Faktor 1.2
+		lateralDistance = 1.2 * lateralDistance;
 		cachesToLoad.clear();
 
 		origin = startPos;
@@ -393,8 +399,9 @@ public class SpiderGC {
 			}
 
 			if (nextPos != null) {
-				sq = getSquare(startPos, lateralDistance);
-				getCaches(sq.topleft.latDec, sq.topleft.lonDec, sq.bottomright.latDec, sq.bottomright.lonDec, complete);
+				// sq = getSquare(startPos, lateralDistance);
+				// getCaches(sq.topleft.latDec, sq.topleft.lonDec, sq.bottomright.latDec, sq.bottomright.lonDec, complete);
+				getCaches(startPos, lateralDistance);
 				// pref.log("next WP = " + startPos.toString(), null);
 
 				final double degrees = startPos.getBearing(nextPos);
@@ -404,8 +411,9 @@ public class SpiderGC {
 					final CWPoint nextCheckPoint = startPos.project(degrees, lateralDistance);
 					startPos = nextCheckPoint;
 					origin = nextCheckPoint;
-					sq = getSquare(origin, lateralDistance);
-					getCaches(sq.topleft.latDec, sq.topleft.lonDec, sq.bottomright.latDec, sq.bottomright.lonDec, complete);
+					// sq = getSquare(origin, lateralDistance);
+					// getCaches(sq.topleft.latDec, sq.topleft.lonDec, sq.bottomright.latDec, sq.bottomright.lonDec, complete);
+					getCaches(startPos, lateralDistance);
 					// pref.log("next CP = " + origin.toString(), null);
 					if (infB.isClosed) {
 						break;
@@ -417,8 +425,9 @@ public class SpiderGC {
 				break;
 			}
 		}
-		sq = getSquare(startPos, lateralDistance);
-		getCaches(sq.topleft.latDec, sq.topleft.lonDec, sq.bottomright.latDec, sq.bottomright.lonDec, complete);
+		// sq = getSquare(startPos, lateralDistance);
+		// getCaches(sq.topleft.latDec, sq.topleft.lonDec, sq.bottomright.latDec, sq.bottomright.lonDec, complete);
+		getCaches(startPos, lateralDistance);
 		// pref.log("last WP = " + startPos.toString(), null);
 		if (infB.isClosed) {
 			Vm.showWait(false);
@@ -427,6 +436,7 @@ public class SpiderGC {
 
 		int spiderErrors = 0;
 		if (complete) {
+			// vorhandene Cache werden aus der DB gelöscht
 			for (int i = 0; i < cachesToLoad.size(); i++) {
 				String wpt = (String) cachesToLoad.get(i);
 				final boolean is_found = wpt.indexOf("found") != -1;
@@ -436,9 +446,11 @@ public class SpiderGC {
 				if (j != -1)
 					cacheDB.removeElementAt(j);
 			}
+			// und frisch geladen
 			spiderErrors = downloadCaches(cachesToLoad, spiderErrors, cachesToLoad.size(), true);
-
-		} else {
+		}
+		else {
+			// man könnte auch aus der Liste einen Quick - Import erstellen
 		}
 
 		infB.close(0);
@@ -510,107 +522,69 @@ public class SpiderGC {
 		return ret;
 	}
 
-	
-	private void getCaches(double north, double west, double south, double east, boolean setCachesToLoad) {
-		if (infB.isClosed)
+	private void getCaches(CWPoint centre, double radiusKm) {
+
+		// kein update vorhandener Cache, da
+		int toDistance = (int) java.lang.Math.ceil(radiusKm);
+		getFirstListPage(toDistance);
+		// Number of caches from gcfirst Listpage
+		int numFinds = getNumFound(htmlListPage);
+		if (numFinds==0)
 			return;
-		final double lm = (north + south) / 2.0;
-		final CWPoint middle = new CWPoint(lm, (west + east) / 2.0);
-		final CWPoint rm = new CWPoint(lm, east);
-		final double len = middle.getDistance(rm) * 2.0;
-		page_number++;
-		final String listPage = getMapListPage(middle, north, west, south, east);
-		final int i = listPage.indexOf("\"count\\\":"); // \"count\":
-		if (i == -1) {
-			pref.log("[getCaches:getMapListPage]got nothing!" + listPage, null);
-			return;
-		}
-		pref.log("" + north + " " + west + " " + south + " " + east + " " + listPage.substring(i) + "\n len=" + len);
-		if ((listPage.indexOf("\"count\\\":501") > -1) || (listPage.indexOf("\"count\\\":0") > -1 && len > 30)) {
-			final double northsouthmiddle = (north + south) / 2.0;
-			final double westeastmiddle = (west + east) / 2.0;
-			getCaches(north, west, northsouthmiddle, westeastmiddle, setCachesToLoad);
-			getCaches(north, westeastmiddle, northsouthmiddle, east, setCachesToLoad);
-			getCaches(northsouthmiddle, west, south, westeastmiddle, setCachesToLoad);
-			getCaches(northsouthmiddle, westeastmiddle, south, east, setCachesToLoad);
-		} else {
-			addCaches(listPage, setCachesToLoad);
-		}
-	}
-
-	private void addCaches(String listPage, boolean setCachesToLoad) {
-		final String[] caches = mString.split(listPage, '{');
-		// int posId=0; //id egal
-		// int posName=1; //nn
-
-		// positions decreased by 2, because we cut away the name to prevent
-		// parsing errors
-		final int posWP = 0; // gc
-		final int posLat = 1; // lat
-		final int posLon = 2; // lon
-		final int posType = 3; // ctid
-		final int posFound = 4; // f
-		final int posOwn = 5; // o
-		final int posAvailable = 6; // ia
-		// ignoring first 3 lines
-		for (int i = 4; i < caches.length; i++) {
-			if (infB.isClosed)
-				return;
-
-			// cut away name to prevent parsing errors
-			final int WpIndex = caches[i].indexOf("\"gc\\\"");
-			final String elements[] = mString.split(caches[i].substring(WpIndex), ',');
-
-			final boolean found = (elements[posFound].indexOf("true") > -1 ? true : false);
-			if (found && doNotgetFound)
-				continue;
-
-			final byte cacheType = CacheType.gcSpider2CwType(mString.split(elements[posType], ':')[1]);
-			if (restrictedCacheType != CacheType.CW_TYPE_ERROR) {
-				if (restrictedCacheType != cacheType)
-					continue;
-			}
-
-			String wp = mString.split(elements[posWP], '\"')[3];
-			wp = wp.substring(0, wp.length() - 1);
-			CacheHolder ch = cacheDB.get(wp);
-			if (ch == null) {
-
-				final String lat = mString.split(elements[posLat], ':')[1];
-				final String lon = mString.split(elements[posLon], ':')[1];
-				final String own = mString.split(elements[posOwn], ':')[1];
-				final boolean available = (elements[posAvailable].indexOf("true") > -1 ? true : false);
-
-				final int NameIndex = caches[i].indexOf("\"nn\\\"");
-				String cacheName = caches[i].substring(NameIndex + 8, WpIndex - 4);
-				cacheName = STRreplace.replace(cacheName, "\\\"", "\"");
-
-				ch = new CacheHolder();
-				ch.setWayPoint(wp);
-				ch.setPos(new CWPoint(lat + " " + lon));
-				ch.setType(cacheType);
-				if (own.equals("true")) {
-					ch.setOwned(true);
+		page_number = 1;
+		int found_on_page = 0;
+		try {
+			// Loop pages till maximum distance has been found or no more caches are in the list
+			while (toDistance > 0) {
+				double[] DistanceAndDirection = { (0.0), (0.0) };
+				RexPropListBlock.search(htmlListPage);
+				String tableOfHtmlListPage;
+				if (RexPropListBlock.didMatch()) {
+					tableOfHtmlListPage = RexPropListBlock.stringMatched(1);
 				} else {
-					if (found) {
-						ch.setFound(true);
-						ch.setCacheStatus(ch.getFoundText());
+					pref.log("[SpiderGC.java:fillDownloadLists]check listBlockRex!");
+					tableOfHtmlListPage = "";
+				}
+				RexPropLine.search(tableOfHtmlListPage);
+				while (toDistance > 0) {
+					if (!RexPropLine.didMatch()) {
+						if (page_number == 1 && found_on_page == 0)
+							pref.log("[SpiderGC.java:fillDownloadLists]check lineRex!");
+						break;
 					}
-				}
-				ch.setAvailable(available);
-				ch.setCacheName(cacheName);
-				num_added++;
-				cacheDB.add(ch);
-				if (setCachesToLoad) {
-					cachesToLoad.add(wp + "found");
-				} else {
-					ch.getCacheDetails(false).URL = "http://www.geocaching.com/seek/cache_details.aspx?wp=" + wp;
-					ch.save();
-				}
-				if (Global.mainTab.statBar != null)
-					Global.mainTab.statBar.updateDisplay("GC pages: " + page_number + " Caches added to CW: " + num_added);
-			} else {
-			}
+					found_on_page++;
+					if (Global.mainTab.statBar != null)
+						Global.mainTab.statBar.updateDisplay("working " + page_number + " / " + found_on_page);
+					final String CacheDescriptionGC = RexPropLine.stringMatched(1);
+					DistanceAndDirection = getDistanceAndDirection(CacheDescriptionGC);
+					String chWaypoint = getWP(CacheDescriptionGC);
+					if (DistanceAndDirection[0] <= radiusKm) {
+						final CacheHolder ch = cacheDB.get(chWaypoint);
+						if (ch == null) { // not in DB
+								if (CacheDescriptionGC.indexOf(propFound) != -1)
+									chWaypoint = chWaypoint + "found";
+								if (!cachesToLoad.contains(chWaypoint)) {
+									cachesToLoad.add(chWaypoint);
+									infB.setInfo(MyLocale.getMsg(5511, "Found ") + cachesToLoad.size());
+								}
+							}
+						}
+					else // finish this htmlListPage
+						toDistance = 0;
+					RexPropLine.searchFrom(tableOfHtmlListPage, RexPropLine.matchedTo());
+					if (infB.isClosed) {
+						toDistance = 0;
+						break;
+					}
+				} // next Cache
+				if (found_on_page < 20)
+					toDistance = 0;
+			} // loop pages
+		} // try
+		catch (final Exception ex) {
+			pref.log("Download error : ", ex, true);
+			infB.close(0);
+			Vm.showWait(false);
 		}
 	}
 
@@ -1283,7 +1257,7 @@ public class SpiderGC {
 
 	}
 
-	private boolean switchToEnglish() {		
+	private boolean switchToEnglish() {
 		String page = "";
 		String url = "http://www.geocaching.com/account/ManagePreferences.aspx";
 		try {
@@ -1358,7 +1332,7 @@ public class SpiderGC {
 			propFirstPage2 = p.getProp("firstPage2");
 			propFirstPageFinds = p.getProp("firstPageFinds");
 			propMaxDistance = p.getProp("maxDistance");
-			propShowOnlyFound = p.getProp("showOnlyFound");
+			propDoNotGetFound = p.getProp("showOnlyFound");
 			RexPropListBlock = new Regex(p.getProp("listBlockRex"));
 			RexPropLine = new Regex(p.getProp("lineRex"));
 			RexNumFinds = new Regex("Total Records: <b>(.*?)</b>");
@@ -1397,7 +1371,7 @@ public class SpiderGC {
 		} else {
 			url = propFirstPage + origin.getLatDeg(TransformCoordinates.DD) + propFirstPage2 + origin.getLonDeg(TransformCoordinates.DD) + propMaxDistance + Integer.toString(distance);
 			if (doNotgetFound)
-				url = url + propShowOnlyFound;
+				url = url + propDoNotGetFound;
 		}
 		url = url + cacheTypeRestriction;
 
@@ -1424,7 +1398,7 @@ public class SpiderGC {
 		} else {
 			url = propFirstPage + origin.getLatDeg(TransformCoordinates.DD) + propFirstPage2 + origin.getLonDeg(TransformCoordinates.DD) + propMaxDistance + Integer.toString(distance);
 			if (doNotgetFound)
-				url = url + propShowOnlyFound;
+				url = url + propDoNotGetFound;
 		}
 		url = url + cacheTypeRestriction;
 
@@ -2270,7 +2244,7 @@ public class SpiderGC {
 	 */
 	private int getCacheByWaypointName(CacheHolder ch, boolean isUpdate, boolean fetchImages, boolean fetchTBs, boolean doNotGetFound, boolean fetchAllLogs) {
 		int ret = SPIDER_OK; // initialize value;
-		
+
 		while (true) { // retry even if failure
 			pref.log(""); // new line for more overview
 			String completeWebPage;
@@ -2685,13 +2659,13 @@ public class SpiderGC {
 			pref.log("[SpiderGC.java:getLogs]check RexUserToken!", null);
 		}
 		final String userToken = RexUserToken.stringMatched(1);
-		
+
 		int idx = 0;
 		int nLogs = 0;
 		boolean foundown = false;
 		boolean fertig = false;
 		int num = 100;
-		
+
 		boolean foundByMe = false;
 		if (completeWebPage.indexOf("ctl00_ContentBody_hlFoundItLog") > -1) {
 			foundByMe=true;
