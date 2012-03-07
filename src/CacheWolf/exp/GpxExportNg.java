@@ -761,7 +761,7 @@ public class GpxExportNg {
 	 *            CacheHolder containing the logs
 	 * @return formatted logs or empty string if no logs are present
 	 */
-	private String formatLogs(CacheHolder ch) {
+		private String formatLogs(CacheHolder ch) {
 		CacheHolderDetail chD = ch.getCacheDetails(false);
 		LogList logs = chD.CacheLogs;
 		StringBuffer ret = new StringBuffer();

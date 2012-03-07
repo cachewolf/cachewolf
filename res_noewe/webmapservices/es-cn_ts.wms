@@ -10,7 +10,7 @@ CoordinateReferenceSystemCacheWolf:   4326
 CoordinateReferenceSystemUrlPart:   SRS=EPSG:4326
 RequestUrlPart:   REQUEST=GetMap
 #LayersUrlPart:   LAYERS=TOPO,CONS,VIAS,MUN,FONDO,NUMP,POI
-LayersUrlPart:   LAYERS=WMS_CA
+LayersUrlPart:   LAYERS=TOPO
 StylesUrlPart:   STYLES=
 ImageFormatUrlPart:   FORMAT=image/png
 BoundingBoxTopLeftWGS84:   N 29.8305 W 18.3099
