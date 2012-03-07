@@ -1511,7 +1511,7 @@ public class CacheHolder {
 	}
 
 	public void setPos(TrackPoint _pos) {
-		if (!_pos.toString().equals(pos.toString()))
+		if (_pos.latDec != pos.latDec || _pos.lonDec != pos.lonDec)
 			setUpdated(true);
 		pos.set(_pos);
 	}

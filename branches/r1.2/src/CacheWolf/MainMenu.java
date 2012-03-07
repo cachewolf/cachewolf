@@ -34,7 +34,9 @@ import CacheWolf.exp.OziExporter;
 import CacheWolf.exp.SpoilerPOIExporter;
 import CacheWolf.exp.TPLExporter;
 import CacheWolf.exp.TomTomExporter;
+import CacheWolf.exp.GarminPicExporter;
 import CacheWolf.imp.FieldnotesImporter;
+import CacheWolf.imp.MunzeeImporter;
 import CacheWolf.imp.GCVoteImporter;
 import CacheWolf.imp.GPXImporter;
 import CacheWolf.imp.LOCXMLImporter;
@@ -71,7 +73,7 @@ import ewe.util.Vector;
 /**
  * This class creates the menu for cachewolf. It is also responsible for reacting to user inputs in the menu.<br>
  * This class id=100
- * 
+ *
  * @see MainForm
  * @see MainTab Last change: 20061123 salzkammergut Tidied up, added MyLocale, added additional internationalisation, combine save/filter for small screens, garminConn
  */
@@ -82,6 +84,7 @@ public class MainMenu extends MenuBar {
 	private MenuItem about, wolflang, sysinfo, legend;
 	private MenuItem exportGpxNg, exporthtml, exporttop50, exportASC, exportTomTom, exportMSARCSV, exportSpoilerPOI;
 	private MenuItem exportOZI, exportKML, exportTPL, exportExplorist, exportOCLog;
+	private MenuItem exportGarminPic;
 	private MenuItem filtCreate, filtClear, filtInvert, filtSelected, filtNonSelected, filtBlack, filtApply;
 	private MenuItem exportLOC, exportGPS, mnuSeparator = new MenuItem("-");
 	private MenuItem orgNewWP, orgCopy, orgMove, orgDelete, orgRebuild, orgCheckNotesAndSolver;
@@ -125,7 +128,8 @@ public class MainMenu extends MenuBar {
 				spider = new MenuItem(MyLocale.getMsg(131, "Download from geocaching.com")), //
 				spiderAllFinds = new MenuItem(MyLocale.getMsg(217, "Spider all finds from geocaching.com")), //
 				spiderRoute, //
-				spiderQuick = new MenuItem(MyLocale.getMsg(138, "from GC quick")), //
+				mnuSeparator, // diese Zeile entfernen, wenn spiderQuick wieder aktiviert wird
+				// spiderQuick = new MenuItem(MyLocale.getMsg(138, "from GC quick")), //
 				loadGCVotes = new MenuItem(MyLocale.getMsg(1208, "Import ratings from GCVote")), //
 				fetchOCLink = new MenuItem(MyLocale.getMsg(1209, "Fetch link to OC - Cache")), //
 				mnuSeparator, //
@@ -150,6 +154,7 @@ public class MainMenu extends MenuBar {
 				exportSpoilerPOI = new MenuItem(MyLocale.getMsg(135, "to SpoilerPOI")), //
 				exportTPL = new MenuItem(MyLocale.getMsg(128, "via Template")), //
 				exportOCLog = new MenuItem(MyLocale.getMsg(1210, "logs to OC")), //
+				exportGarminPic = new MenuItem("Garmin pictures"),
 		};
 		if (Global.getPref().gpsbabel == null) {
 			exportGPS.modifiers = MenuItem.Disabled;
@@ -388,7 +393,7 @@ public class MainMenu extends MenuBar {
 			if (mev.selectedItem == loadcaches) {
 				String dir = pref.getImporterPath("LocGpxImporter");
 				FileChooser fc = new FileChooser(FileChooserBase.OPEN | FileChooserBase.MULTI_SELECT, dir);
-				fc.addMask("*.gpx,*.zip,*.loc,fieldnotes.txt,geocache_visits.txt,FieldNotes.log,newlogs.txt");
+				fc.addMask("*.gpx,*.zip,*.loc,*.txt,*.log,*.csv");
 				fc.setTitle(MyLocale.getMsg(909, "Select file(s)"));
 				if (fc.execute() != FormBase.IDCANCEL) {
 					dir = fc.getChosenDirectory().toString();
@@ -403,6 +408,9 @@ public class MainMenu extends MenuBar {
 						} else if (file.endsWith("loc")) {
 							LOCXMLImporter loc = new LOCXMLImporter(pref, profile, file);
 							loc.doIt();
+						} else if (file.endsWith("csv")) {
+								MunzeeImporter mn = new MunzeeImporter(pref, profile, file);
+								mn.doIt();
 						} else { // gpx + zip
 							GPXImporter gpx = new GPXImporter(pref, profile, file);
 							gpx.doIt(how);
@@ -518,6 +526,10 @@ public class MainMenu extends MenuBar {
 			if (mev.selectedItem == exportSpoilerPOI) {
 				SpoilerPOIExporter spoilerpoi = new SpoilerPOIExporter(pref, profile);
 				spoilerpoi.doIt();
+			}
+			if(mev.selectedItem == exportGarminPic) {
+				GarminPicExporter garminpic = new GarminPicExporter( pref, profile);
+				garminpic.doIt();
 			}
 
 			// /////////////////////////////////////////////////////////////////////
@@ -883,7 +895,7 @@ public class MainMenu extends MenuBar {
 				if (test == SpiderGC.SPIDER_CANCEL) {
 					infB.close(0);
 					break;
-				} else if (test == SpiderGC.SPIDER_ERROR) {
+				} else if (test == SpiderGC.SPIDER_ERROR || test == SpiderGC.SPIDER_IGNORE_PREMIUM) {
 					spiderErrors++;
 				} else {
 					// profile.hasUnsavedChanges=true;
