@@ -394,7 +394,7 @@ public class SpiderGC {
 					nextPos = null;
 				else {
 					if (Global.mainTab.statBar != null)
-						Global.mainTab.statBar.updateDisplay("GC pages: " + page_number + " Caches added to CW: " + num_added + " at " + pointsIndex + "(" + points.size() + ")" + nextPos);
+						Global.mainTab.statBar.updateDisplay("" + pointsIndex + "(" + points.size() + ")" + nextPos);
 				}
 			}
 
@@ -579,6 +579,16 @@ public class SpiderGC {
 				} // next Cache
 				if (found_on_page < 20)
 					toDistance = 0;
+				if (toDistance > 0) {
+					if (page_number % 100 == 45) {
+						getAListPage(toDistance,gotoPreviousBlock);
+						getAListPage(toDistance,gotoNextBlock);
+					}
+					if (getAListPage(toDistance, gotoNextPage)) {
+						page_number++;
+						found_on_page = 0;
+					}
+				}
 			} // loop pages
 		} // try
 		catch (final Exception ex) {
