@@ -28,34 +28,34 @@ import CacheWolf.Matrix;
 /**
  * Class to transform coordinates and shift datums
  * it uses the 7 parameter Helmert Transformation
- * programmed according to http://www.geoclub.de/files/GK_nach_GPS.xls 
+ * programmed according to http://www.geoclub.de/files/GK_nach_GPS.xls
  * and http://www.geoclub.de/files/GPS_nach_GK.xls
  * The only difference to the excel-model is that shifting is done before rotation
  * this makes calculations easier, without changing the output.
- * 
- * For verification data see: 
+ *
+ * For verification data see:
  *  * http://crs.bkg.bund.de/crseu/crs/descrtrans/BeTA/BETA2007testdaten.csv
  *  * http://www.lverma.nrw.de/produkte/raumbezug/koordinatentransformation/Koordinatentransformation.htm
  * Now, that this is completed: there is a much more precise method right now published
  * by the Bundesamt für Kartographie und Geodäsie for whole Germany: see:
  *  * http://crs.bkg.bund.de/crseu/crs/descrtrans/BeTA/BETA2007dokumentation.pdf
  *  * http://crs.bkg.bund.de/crs-eu/ click on "national CRS" -> germany -> DE_DHDN / GK_3 -> DE_DHDN (BeTA, 2007) to ETRS89
- *  
+ *
  *  Start offset in languages file: 4900
  * @author Pfeffer
  *
  */
 public final class TransformCoordinates {
 
-	public static final int EPSG_WGS84 					= 4326; 
-	public static final int EPSG_ETRS89 				= 25832; // TODO support it anyhow 
+	public static final int EPSG_WGS84 					= 4326;
+	public static final int EPSG_ETRS89 				= 25832; // TODO support it anyhow
 	/** Gauß-Krüger, Bessel 1841, Potsdam (DHDN)  */
-	public static final int EPSG_GERMAN_GK2 			= 31466; 
-	public static final int EPSG_GERMAN_GK3 			= 31467; 
-	public static final int EPSG_GERMAN_GK4 			= 31468; 
+	public static final int EPSG_GERMAN_GK2 			= 31466;
+	public static final int EPSG_GERMAN_GK3 			= 31467;
+	public static final int EPSG_GERMAN_GK4 			= 31468;
 	public static final int EPSG_GERMAN_GK5 			= 31469;
 	/** Gauß-Boaga, Monte Mario, Roma 1940, IT_ROMA1940 */
-	public static final int EPSG_ITALIAN_GB_EW1 		= 3003; 
+	public static final int EPSG_ITALIAN_GB_EW1 		= 3003;
 	public static final int EPSG_ITALIAN_GB_EW2 		= 3004;
 	/** Austrian Lambert, Bessel 1841, Hermannskogel */
 	public static final int EPSG_AUSTRIAN_LAMBERT_OLD 	= 31287;
@@ -68,7 +68,8 @@ public final class TransformCoordinates {
 	public static final int EPSG_FRENCH_LAMBERT_NTF_IV 	= 27574;
 	public static final int EPSG_TEST				 	= -5;
 	public static final int EPSG_SwedenUTM              = 3006;
-	
+	public static final int EPSG_DenmarkUTM             = 25832;
+
 	/**
 	 * localsystem is used because in bigger countries several stripes
 	 * are used. Localsystem refers to all these stripes. Usually each
@@ -77,7 +78,7 @@ public final class TransformCoordinates {
 	 * The constants start with the telephone country code and have
 	 * two digits after that which can be used in order to distinguish
 	 * between several local systems which are in use in one country.
-	 * In Austria, for example, there is a new and an old one. 
+	 * In Austria, for example, there is a new and an old one.
 	 */
 	public static final int LOCALSYSTEM_GERMAN_GK           	= 4900;
 	public static final int LOCALSYSTEM_ITALIAN_GB          	= 3900;
@@ -85,6 +86,7 @@ public final class TransformCoordinates {
 	public static final int LOCALSYSTEM_AUSTRIAN_LAMBERT_NEW	= 4301;
 	public static final int LOCALSYSTEM_FRANCE_LAMBERT_IIE  	= 3300;
 	public static final int LOCALSYSTEM_SWEDEN					= 4600;
+	public static final int LOCALSYSTEM_DENMARK					= 4500;
 	public static final int LOCALSYSTEM_UTM_WGS84            	= 10000;
 	/** returned from some methods if not supported */
 	public static final int LOCALSYSTEM_NOT_SUPPORTED			= -1;
@@ -109,7 +111,7 @@ public final class TransformCoordinates {
 	public static final Ellipsoid CLARKE1866    = new Ellipsoid(6378206.4  , 294.97870  , false);
 
 	public static final class LocalSystem {
-		public int code; 
+		public int code;
 		public String friendlyShortname;
 		public String id;
 		public boolean zoneSeperatly;
@@ -127,9 +129,10 @@ public final class TransformCoordinates {
 		new LocalSystem(TransformCoordinates.LOCALSYSTEM_AUSTRIAN_LAMBERT_OLD,  "at Lamb.",    "at.lb",  ProjectedPoint.PJ_AUSTRIAN_LAMBERT_OLD.zoneSeperately),
 		new LocalSystem(TransformCoordinates.LOCALSYSTEM_ITALIAN_GB,            "it Gauß-B.",  "it.gb",  ProjectedPoint.PJ_ITALIAN_GB.zoneSeperately),
 		new LocalSystem(TransformCoordinates.LOCALSYSTEM_FRANCE_LAMBERT_IIE,    "fr Lamb-IIe", "fr.l2",  ProjectedPoint.PJ_FRENCH_LAMBERT_NTF_II.zoneSeperately),
-		new LocalSystem(TransformCoordinates.LOCALSYSTEM_SWEDEN,                "se UTM",      "se.utm", ProjectedPoint.PJ_UTM_WGS84FZ.zoneSeperately)
+		new LocalSystem(TransformCoordinates.LOCALSYSTEM_SWEDEN,                "se UTM",      "se.utm", ProjectedPoint.PJ_UTM_WGS84FZ.zoneSeperately),
+		new LocalSystem(TransformCoordinates.LOCALSYSTEM_DENMARK,               "dk UTM",      "dk.utm", ProjectedPoint.PJ_UTM_WGS84FZ.zoneSeperately)
 			};
-	
+
 
 	//	 taken from http://www.crs-geo.eu/crseu/EN/Home/homepage__node.html?__nnn=true click on "national CRS" -> germany -> DE_DHDN / GK_3 -> DE_DHDN (North) to ETRS89
 	//	 they are the same as http://www.geoclub.de/files/GK_nach_GPS.xls "Parametersatz 4 = Deutschland Nord" (rotation *-1)
@@ -144,7 +147,7 @@ public final class TransformCoordinates {
 	/** use this for south Germany, maximum deviation sub meter, valid in the former BRD (west germany) in 47°00' N ... 50°20' N */
 	private static final TransformParameters GK_SOUTH_GERMANY_TO_WGS84 = new TransformParameters(597.1, 71.4, 412.1, -0.894, -0.068, 1.563, -7.580, BESSEL);
 
-	private static Area FORMER_GDR = new Area(new CWPoint(54.923414, 10.503013), new CWPoint(50.402578, 14.520637)); 
+	private static Area FORMER_GDR = new Area(new CWPoint(54.923414, 10.503013), new CWPoint(50.402578, 14.520637));
 
 	// taken from http://www.lverma.nrw.de/produkte/druckschriften/verwaltungsvorschriften/images/gps/TrafopsNRW.pdf for NRW this transform has deviations lower than 34cm.
 	/** use this for NRW in Germany. Deviations less than 34 cm */
@@ -177,7 +180,7 @@ public final class TransformCoordinates {
 	private static final Area ITALY_SICILIA_GK = new Area(wgs84ToEpsg(ITALY_SICILIA.topleft, EPSG_ITALIAN_GB_EW2).toTrackPoint(TransformCoordinates.LOCALSYSTEM_ITALIAN_GB),
 			wgs84ToEpsg(ITALY_SICILIA.bottomright, EPSG_ITALIAN_GB_EW2).toTrackPoint(TransformCoordinates.LOCALSYSTEM_ITALIAN_GB));
 
-	// see also http://hal.gis.univie.ac.at/karto/lehr/fachbereiche/geoinfo/givi0304/tutorials/ersteschritte/projectionen.htm#ParMGIWGS84 
+	// see also http://hal.gis.univie.ac.at/karto/lehr/fachbereiche/geoinfo/givi0304/tutorials/ersteschritte/projectionen.htm#ParMGIWGS84
 	// taken from taken from http://www.crs-geo.eu/crseu/EN/Home/homepage__node.html?__nnn=true click on "national CRS" -> Austria -> AT (translation *-1 as of 11-8-2009)
 	/** Austria Datum Hermannskogel, AT_MGI accuracy about 1.5m */
 	private static final TransformParameters LAMBERT_AUSTRIAN_OLD_TO_WGS84 = new TransformParameters(577.326, 90.129, 463.919, -5.136599, -1.4742, -5.297044, 2.4232, BESSEL);
@@ -189,7 +192,7 @@ public final class TransformCoordinates {
 
 	private TransformCoordinates() {
 		// as all members are static, so avoid instantiation
-	} 
+	}
 
 	/**
 	 * @return String[] of short friendly names all supported projected systems
@@ -202,7 +205,7 @@ public final class TransformCoordinates {
 		}
 		return ls;
 	}
-	
+
 	public static final int getLocalSystemCode(String id) {
     	String idl = id.toLowerCase();
     	if (idl.equals("dd")) 		return TransformCoordinates.DD;
@@ -217,10 +220,10 @@ public final class TransformCoordinates {
     	}
     	return LOCALSYSTEM_NOT_SUPPORTED;
 	}
-	
+
 	public static final LocalSystem getLocalSystem(int localsystemcode) {
 		for (int i=0; i < TransformCoordinates.localSystems.length; i++) {
-			if (TransformCoordinates.localSystems[i].code == localsystemcode) return TransformCoordinates.localSystems[i]; 
+			if (TransformCoordinates.localSystems[i].code == localsystemcode) return TransformCoordinates.localSystems[i];
 		}
 		throw new IllegalArgumentException("TransformCoordinate.getLocalSystem(int): localsystemcode " + localsystemcode + " not supported");
 	}
@@ -238,7 +241,7 @@ public final class TransformCoordinates {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param epsgcode
 	 * @return region code as needed for GkPoint, -1 if not Gauß-Krüger or not supported
 	 * Inside one ProjectedRegion the epsg-code (zone / stripe) can be automatically choosen
@@ -256,7 +259,8 @@ public final class TransformCoordinates {
 		case EPSG_AUSTRIAN_LAMBERT_OLD:  ret = TransformCoordinates.LOCALSYSTEM_AUSTRIAN_LAMBERT_OLD; break;
 		case EPSG_AUSTRIAN_LAMBERT_NEW:  ret = TransformCoordinates.LOCALSYSTEM_AUSTRIAN_LAMBERT_NEW; break;
 		case EPSG_FRENCH_LAMBERT_NTF_II: ret = TransformCoordinates.LOCALSYSTEM_FRANCE_LAMBERT_IIE; break;
-		case EPSG_SwedenUTM:             ret = TransformCoordinates.LOCALSYSTEM_FRANCE_LAMBERT_IIE; break;
+		case EPSG_SwedenUTM:             ret = TransformCoordinates.LOCALSYSTEM_SWEDEN; break;
+		case EPSG_DenmarkUTM:            ret = TransformCoordinates.LOCALSYSTEM_DENMARK; break;
 		default: ret = -1;
 		}
 		return ret;
@@ -277,7 +281,7 @@ public final class TransformCoordinates {
 		int ls = (isLocalSystem ? epsg_localsystem : getLocalProjectionSystem(epsg_localsystem));
 		TransformParameters transparams = getTransParams(lp, ls);
 		CWPoint ret;
-		if (transparams == NO_DATUM_SHIFT) ret = ll; 
+		if (transparams == NO_DATUM_SHIFT) ret = ll;
 		else {
 			XyzCoordinates xyzorig = latLon2xyz(ll, 0, transparams.ellip);
 			XyzCoordinates xyzwgs84 = transform(xyzorig, transparams);
@@ -288,11 +292,11 @@ public final class TransformCoordinates {
 
 
 	/**
-	 * This is the most abstract method: If you don't know 
+	 * This is the most abstract method: If you don't know
 	 * when to use another one (if you are in need to do so, you will
 	 * know), use this one. This routine chooses automatically the best known
 	 * transformation parameters. Currently the maximal deviation is 1m for the
-	 * former BRD and 1.13m for the former GDR 
+	 * former BRD and 1.13m for the former GDR
 	 * It also chooses automatically the correct stripe
 	 * @param gk
 	 * @return
@@ -347,11 +351,11 @@ public final class TransformCoordinates {
 	 * @throws IllegalArgumentException if EPSG code is not supported GK or unsupported
 	 */
 	private static final ProjectedPoint wgs84ToEpsgLocalsystem(TrackPoint wgs84, int epsg_localsystem, boolean isLocalsystem) throws IllegalArgumentException {
-		//wgs84.latDec = 47.07472; // Testkoordinaten von http://www.geoclub.de/viewtopic.php?f=54&t=23912&start=30 
+		//wgs84.latDec = 47.07472; // Testkoordinaten von http://www.geoclub.de/viewtopic.php?f=54&t=23912&start=30
 		//wgs84.lonDec = 12.69417;
 		// xyzWgs.x = 3657660.66; // test case http://www.epsg.org/ p. 109 WGS72_TO_WGS84
 		// xyzWgs.y =  255768.55;
-		// xyzWgs.z = 5201382.11; 
+		// xyzWgs.z = 5201382.11;
 		XyzCoordinates xyzWgs = latLon2xyz(wgs84, 0, WGS84);
 		int lps = (isLocalsystem ? epsg_localsystem : getLocalProjectionSystem(epsg_localsystem));
 		TransformParameters transparams = getTransParams(wgs84, lps);
@@ -363,19 +367,20 @@ public final class TransformCoordinates {
 
 	private static final TransformParameters getTransParams(TrackPoint wgs84, int localsystem) {
 		switch(localsystem) {
-		case TransformCoordinates.LOCALSYSTEM_GERMAN_GK: 
-			return getGermanGkTransformParameters(wgs84); 
-		case TransformCoordinates.LOCALSYSTEM_ITALIAN_GB: 
+		case TransformCoordinates.LOCALSYSTEM_GERMAN_GK:
+			return getGermanGkTransformParameters(wgs84);
+		case TransformCoordinates.LOCALSYSTEM_ITALIAN_GB:
 			return getItalianGkTransformParameters(wgs84);
 		case TransformCoordinates.LOCALSYSTEM_AUSTRIAN_LAMBERT_OLD:
 			return LAMBERT_AUSTRIAN_OLD_TO_WGS84;
 		case TransformCoordinates.LOCALSYSTEM_FRANCE_LAMBERT_IIE:
 			return LAMBERT_FRENCH_NTF_TO_WGS84;
 		case TransformCoordinates.LOCALSYSTEM_UTM_WGS84:
-		case TransformCoordinates.LOCALSYSTEM_AUSTRIAN_LAMBERT_NEW: 	
-		case TransformCoordinates.LOCALSYSTEM_SWEDEN: 	
+		case TransformCoordinates.LOCALSYSTEM_AUSTRIAN_LAMBERT_NEW:
+		case TransformCoordinates.LOCALSYSTEM_SWEDEN:
+		case TransformCoordinates.LOCALSYSTEM_DENMARK:
 			return NO_DATUM_SHIFT;
-		default: 
+		default:
 			throw new IllegalArgumentException("TransformCoordinates.getTransParams(wgs84): localsystem: " + localsystem + "not supported");
 		}
 	}
@@ -384,15 +389,19 @@ public final class TransformCoordinates {
 		switch (localsystem) {
 		case TransformCoordinates.LOCALSYSTEM_GERMAN_GK:
 			transparams = getGermanTransformParams(pp);  break;
-		case TransformCoordinates.LOCALSYSTEM_ITALIAN_GB: 
+		case TransformCoordinates.LOCALSYSTEM_ITALIAN_GB:
 			transparams = getItalianTransformParams(pp); break;
-		case TransformCoordinates.LOCALSYSTEM_AUSTRIAN_LAMBERT_OLD:	
+		case TransformCoordinates.LOCALSYSTEM_AUSTRIAN_LAMBERT_OLD:
 			transparams = LAMBERT_AUSTRIAN_OLD_TO_WGS84; break;
 		case TransformCoordinates.LOCALSYSTEM_FRANCE_LAMBERT_IIE:
 			transparams = LAMBERT_FRENCH_NTF_TO_WGS84; break;
 		case TransformCoordinates.LOCALSYSTEM_UTM_WGS84:
+			transparams = NO_DATUM_SHIFT; break;
 		case TransformCoordinates.LOCALSYSTEM_AUSTRIAN_LAMBERT_NEW:
+			transparams = NO_DATUM_SHIFT; break;
 		case TransformCoordinates.LOCALSYSTEM_SWEDEN:
+			transparams = NO_DATUM_SHIFT; break;
+		case TransformCoordinates.LOCALSYSTEM_DENMARK:
 			transparams = NO_DATUM_SHIFT; break;
 		default: throw new IllegalArgumentException("TransformCoordinates.getTransParams(ProjectedPoint): local projection system code: " + localsystem + " not supported");
 		}
@@ -468,7 +477,7 @@ final class XyzCoordinates {
 
 final class TransformParameters {
 	// shift parameter in meter
-	double dx, dy, dz, 
+	double dx, dy, dz,
 	// rotation parameter in rad
 	ex, ey, ez,
 	// scale as multiplicator
@@ -477,10 +486,10 @@ final class TransformParameters {
 	public TransformParameters inverted = null;
 
 	/**
-	 * 
+	 *
 	 * @param d shift in meter
 	 * @param exi rotation in seconds (change the sign of the values from http://crs.bkg.bund.de/crs-eu/ )
-	 * @param si deviation of scale multiplied by 10^6 
+	 * @param si deviation of scale multiplied by 10^6
 	 * @param addinverted
 	 */
 	public TransformParameters(double dxi, double dyi, double dzi, double exi, double eyi, double ezi, double si, Ellipsoid ellip_) {
@@ -489,9 +498,9 @@ final class TransformParameters {
 	}
 
 	protected final void set(double dxi, double dyi, double dzi, double exi, double eyi, double ezi, double si, boolean addinverted) {
-		dx = dxi; dy = dyi; dz = dzi; 
+		dx = dxi; dy = dyi; dz = dzi;
 		ex = exi * Math.PI/180/3600;
-		ey = eyi * Math.PI/180/3600; 
+		ey = eyi * Math.PI/180/3600;
 		ez = ezi * Math.PI/180/3600;
 		s = 1 + si* Math.pow(10, -6); // 1/(1 - si * Math.pow(10, -6));
 		if (addinverted) {
