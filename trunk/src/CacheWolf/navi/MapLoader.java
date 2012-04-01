@@ -572,6 +572,7 @@ class OnlineMapService {
 	double minscale;
 	double maxscale;
 	Area boundingBox;
+	int maxPixelSize;
 
 	/**
 	 * This method is used in case the online map service provides only certain steps of
@@ -783,6 +784,10 @@ class WebMapService extends OnlineMapService {
 					preselectedRecScaleIndex = i;
 			}
 		}
+		// some WMS limit the size of images they deliver - a swedish WMS delivers just 256x256 even if 500x500 or 1000x1000 was requested.
+		
+		maxPixelSize = Integer.parseInt(wms.getProperty("MaxPixelSize", "-1").trim());
+		if (maxPixelSize == -1) maxPixelSize = Integer.MAX_VALUE;
 	}
 
 	private static final int TOPLEFT_INDEX = 0;
