@@ -25,12 +25,13 @@ import CacheWolf.CWPoint;
 import ewe.sys.Convert;
 
 
-public final class UTMProjection extends Projection {
+public class UTMProjection extends Projection {
 	Ellipsoid ellip;
 	
 	public UTMProjection(Ellipsoid ellip_) {
 		ellip = ellip_;
 		zoneSeperately = true;
+		epsgCode = -1; // set to something else than 0 causes ProjectedPoint not to set epsgCode. 
 	}
 	public double getEasting(ProjectedPoint pp) {
 		return pp.easting + 500000;
@@ -66,6 +67,7 @@ public final class UTMProjection extends Projection {
 	}
 
 	public ProjectedPoint project(CWPoint ll, ProjectedPoint pp, int epsg) {
+		if (epsg == TransformCoordinates.LOCALSYSTEM_UTM_WGS84) return project(ll, pp);
 		throw new UnsupportedOperationException("UTMProjection: prject by epsg-code not supported");
 	}
 
@@ -74,9 +76,6 @@ public final class UTMProjection extends Projection {
 	}
 	
 	public ProjectedPoint set(double northing, double easting, String zone, ProjectedPoint pp) {
-		pp.easting = easting - 500000;
-		if (northing > 10000000) pp.northing = northing - 10000000;
-		else pp.northing = northing;
 		if (zone.length() < 1) throw new IllegalArgumentException("UTMProjection.set: zone must be set");
 		if (zone.length() > 3) throw new IllegalArgumentException("UTMProjection.set: zone must not have more than 3 letters");
 		char lastletter = zone.charAt(zone.length()-1); 
@@ -93,7 +92,22 @@ public final class UTMProjection extends Projection {
 			zonenumer = Convert.parseInt(zone.substring(0, zone.length()-1));
 		}
 		if (zonenumer == -1) throw new IllegalArgumentException("UTMProjection.set: could not parse zone number");
-		pp.zone = zonenumer -1 + zoneletter * 200; // internally zone number starts with 0
+		return set(northing, easting, zonenumer, zoneletter, pp);
+	}
+	/**
+	 * 
+	 * @param northing
+	 * @param easting
+	 * @param zone: official stripe number (internally it starts by 0, officially by 1)
+	 * @param zoneletternumber
+	 * @param pp
+	 * @return
+	 */
+	public ProjectedPoint set(double northing, double easting, int zone, int zoneletternumber, ProjectedPoint pp) {
+		pp.easting = easting - 500000;
+		if (northing > 10000000) pp.northing = northing - 10000000;
+		                    else pp.northing = northing;
+		pp.zone = zone -1 + zoneletternumber * 200; // internally zone number starts with 0
 		return pp;
 	}
 
