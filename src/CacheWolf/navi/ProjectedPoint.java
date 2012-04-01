@@ -78,6 +78,10 @@ public final class ProjectedPoint {
 		if (isProjected) set(p, null, epsg_localsystem, isLocalsystem); 
 		else {
 			projection = (isLocalsystem ? getProjectionFromLs(epsg_localsystem) : getProjection(epsg_localsystem) );
+			if (projection.epsgCode == 0) { 
+				if (isLocalsystem) projection.epsgCode = projection.getEpsgcode(epsg_localsystem);
+				              else projection.epsgCode = epsg_localsystem; // pass the epsg code to the projection if the projection works for several epsg code which are not directly one after the other 
+			}
 			if (isLocalsystem)	projection.project(p, this);
 			else				projection.project(p, this, epsg_localsystem); // the epsg is requiered here because each zone has a different epsg, so the zone is already fixed
 		}
@@ -116,6 +120,7 @@ public final class ProjectedPoint {
 		case TransformCoordinates.LOCALSYSTEM_FRANCE_LAMBERT_IIE:	return PJ_FRENCH_LAMBERT_NTF_II;
 		case TransformCoordinates.LOCALSYSTEM_UTM_WGS84:			return PJ_UTM_WGS84;
 		case TransformCoordinates.LOCALSYSTEM_SWEDEN:			    return PJ_UTM_WGS84FZ;
+		case TransformCoordinates.LOCALSYSTEM_DENMARK:			    return PJ_UTM_WGS84FZ;
 		default: throw new IllegalArgumentException("ProjectedPoint(CWPoint, int): region "+localsystem+" not supported");
 		}
 	}
