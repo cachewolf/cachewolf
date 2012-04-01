@@ -27,7 +27,6 @@ public class UTMProjectionFixZone extends UTMProjection {
 	public ProjectedPoint set(double northing, double easting, ProjectedPoint pp) {
 		if (epsgCode == 0)	throw new UnsupportedOperationException("UTMProjectionFixZone.set: set() requires zone/epsg code, set projection.epsgcode first");
 		int stripe = getStripeByEpsg(epsgCode);
-		if (stripe == Integer.MAX_VALUE) throw new UnsupportedOperationException("UTMProjectionFixZone.set: set by epsg-code " + epsgCode + " not supported");
 		return set(northing, easting, stripe, 0, pp);
 	}
 
@@ -41,7 +40,8 @@ public class UTMProjectionFixZone extends UTMProjection {
 		switch (epsg) {
 		case TransformCoordinates.EPSG_SwedenUTM:  return 33;
 		case TransformCoordinates.EPSG_DenmarkUTM: return 32;
-		default: return Integer.MAX_VALUE;
+		default: 
+			throw new IllegalArgumentException("UTMProjectionFixZone.getStripeByEpsg: epsg-code " + epsgCode + " not supported");
 		}
 	}
 	
