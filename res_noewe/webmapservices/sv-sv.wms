@@ -1,0 +1,20 @@
+TakenFromUrl:       
+GetCapabilitiesUrl: http://kso.lantmateriet.se/wmsproxy/wmsproxy?SERVICE=WMS&VERSION=1.1.1&REQUEST=GetCapabilities
+Name:               Schweden t
+MapType:                        topo
+MainUrl:            http://kso.lantmateriet.se/wmsproxy/wmsproxy?
+ServiceTypeUrlPart: SERVICE=WMS
+VersionUrlPart:     VERSION=1.1.1
+CoordinateReferenceSystemCacheWolf:  3006
+CoordinateReferenceSystemUrlPart: SRS=EPSG:3006 
+RequestUrlPart:     REQUEST=GetMap
+LayersUrlPart:     LAYERS=terrangkartan
+StylesUrlPart:     STYLES=
+ImageFormatUrlPart:FORMAT=image/jpeg
+BoundingBoxTopLeftWGS84: N 69.1000 W 10.5700
+BoundingBoxBottomRightWGS84: N 55.2000 E 24.1800
+#BBox : 10.5700, 55.2000, 24.1800, 69.1000
+MinScale:   0
+MaxScale:   1000
+RecommendedScale:    5 2 10 20
+ImageFileExtension: .jpg
