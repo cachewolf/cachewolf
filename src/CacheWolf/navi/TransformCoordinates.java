@@ -68,6 +68,7 @@ public final class TransformCoordinates {
 	public static final int EPSG_FRENCH_LAMBERT_NTF_IV 	= 27574;
 	public static final int EPSG_TEST				 	= -5;
 	public static final int EPSG_SwedenUTM              = 3006;
+	public static final int EPSG_DenmarkUTM             = 25832;
 	
 	/**
 	 * localsystem is used because in bigger countries several stripes
@@ -85,6 +86,7 @@ public final class TransformCoordinates {
 	public static final int LOCALSYSTEM_AUSTRIAN_LAMBERT_NEW	= 4301;
 	public static final int LOCALSYSTEM_FRANCE_LAMBERT_IIE  	= 3300;
 	public static final int LOCALSYSTEM_SWEDEN					= 4600;
+	public static final int LOCALSYSTEM_DENMARK					= 4500;
 	public static final int LOCALSYSTEM_UTM_WGS84            	= 10000;
 	/** returned from some methods if not supported */
 	public static final int LOCALSYSTEM_NOT_SUPPORTED			= -1;
@@ -127,7 +129,8 @@ public final class TransformCoordinates {
 		new LocalSystem(TransformCoordinates.LOCALSYSTEM_AUSTRIAN_LAMBERT_OLD,  "at Lamb.",    "at.lb",  ProjectedPoint.PJ_AUSTRIAN_LAMBERT_OLD.zoneSeperately),
 		new LocalSystem(TransformCoordinates.LOCALSYSTEM_ITALIAN_GB,            "it Gauﬂ-B.",  "it.gb",  ProjectedPoint.PJ_ITALIAN_GB.zoneSeperately),
 		new LocalSystem(TransformCoordinates.LOCALSYSTEM_FRANCE_LAMBERT_IIE,    "fr Lamb-IIe", "fr.l2",  ProjectedPoint.PJ_FRENCH_LAMBERT_NTF_II.zoneSeperately),
-		new LocalSystem(TransformCoordinates.LOCALSYSTEM_SWEDEN,                "se UTM",      "se.utm", ProjectedPoint.PJ_UTM_WGS84FZ.zoneSeperately)
+		new LocalSystem(TransformCoordinates.LOCALSYSTEM_SWEDEN,                "se UTM",      "se.utm", ProjectedPoint.PJ_UTM_WGS84FZ.zoneSeperately),
+		new LocalSystem(TransformCoordinates.LOCALSYSTEM_DENMARK,               "dk UTM",      "dk.utm", ProjectedPoint.PJ_UTM_WGS84FZ.zoneSeperately)
 			};
 	
 
@@ -256,7 +259,8 @@ public final class TransformCoordinates {
 		case EPSG_AUSTRIAN_LAMBERT_OLD:  ret = TransformCoordinates.LOCALSYSTEM_AUSTRIAN_LAMBERT_OLD; break;
 		case EPSG_AUSTRIAN_LAMBERT_NEW:  ret = TransformCoordinates.LOCALSYSTEM_AUSTRIAN_LAMBERT_NEW; break;
 		case EPSG_FRENCH_LAMBERT_NTF_II: ret = TransformCoordinates.LOCALSYSTEM_FRANCE_LAMBERT_IIE; break;
-		case EPSG_SwedenUTM:             ret = TransformCoordinates.LOCALSYSTEM_FRANCE_LAMBERT_IIE; break;
+		case EPSG_SwedenUTM:             ret = TransformCoordinates.LOCALSYSTEM_SWEDEN; break;
+		case EPSG_DenmarkUTM:            ret = TransformCoordinates.LOCALSYSTEM_DENMARK; break;
 		default: ret = -1;
 		}
 		return ret;
