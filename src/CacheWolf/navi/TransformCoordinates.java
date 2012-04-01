@@ -378,6 +378,7 @@ public final class TransformCoordinates {
 		case TransformCoordinates.LOCALSYSTEM_UTM_WGS84:
 		case TransformCoordinates.LOCALSYSTEM_AUSTRIAN_LAMBERT_NEW: 	
 		case TransformCoordinates.LOCALSYSTEM_SWEDEN: 	
+		case TransformCoordinates.LOCALSYSTEM_DENMARK: 	
 			return NO_DATUM_SHIFT;
 		default: 
 			throw new IllegalArgumentException("TransformCoordinates.getTransParams(wgs84): localsystem: " + localsystem + "not supported");
@@ -397,6 +398,7 @@ public final class TransformCoordinates {
 		case TransformCoordinates.LOCALSYSTEM_UTM_WGS84:
 		case TransformCoordinates.LOCALSYSTEM_AUSTRIAN_LAMBERT_NEW:
 		case TransformCoordinates.LOCALSYSTEM_SWEDEN:
+		case TransformCoordinates.LOCALSYSTEM_DENMARK:
 			transparams = NO_DATUM_SHIFT; break;
 		default: throw new IllegalArgumentException("TransformCoordinates.getTransParams(ProjectedPoint): local projection system code: " + localsystem + " not supported");
 		}
