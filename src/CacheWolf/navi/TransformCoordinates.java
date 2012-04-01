@@ -67,13 +67,24 @@ public final class TransformCoordinates {
 	public static final int EPSG_FRENCH_LAMBERT_NTF_III	= 27573;
 	public static final int EPSG_FRENCH_LAMBERT_NTF_IV 	= 27574;
 	public static final int EPSG_TEST				 	= -5;
+	public static final int EPSG_SwedenUTM              = 3006;
 	
-	
+	/**
+	 * localsystem is used because in bigger countries several stripes
+	 * are used. Localsystem refers to all these stripes. Usually each
+	 * stripe has its own EPSG-code which must be choosen automatically
+	 * in some cirmstances. That's why I implementet "localsystem". <br>
+	 * The constants start with the telephone country code and have
+	 * two digits after that which can be used in order to distinguish
+	 * between several local systems which are in use in one country.
+	 * In Austria, for example, there is a new and an old one. 
+	 */
 	public static final int LOCALSYSTEM_GERMAN_GK           	= 4900;
 	public static final int LOCALSYSTEM_ITALIAN_GB          	= 3900;
 	public static final int LOCALSYSTEM_AUSTRIAN_LAMBERT_OLD	= 4300;
 	public static final int LOCALSYSTEM_AUSTRIAN_LAMBERT_NEW	= 4301;
 	public static final int LOCALSYSTEM_FRANCE_LAMBERT_IIE  	= 3300;
+	public static final int LOCALSYSTEM_SWEDEN					= 4600;
 	public static final int LOCALSYSTEM_UTM_WGS84            	= 10000;
 	/** returned from some methods if not supported */
 	public static final int LOCALSYSTEM_NOT_SUPPORTED			= -1;
@@ -111,12 +122,13 @@ public final class TransformCoordinates {
 	};
 
 	public static final LocalSystem[] localSystems = {
-		new LocalSystem(TransformCoordinates.LOCALSYSTEM_UTM_WGS84,             "UTM",         "utm",   ProjectedPoint.PJ_UTM_WGS84.zoneSeperately),
-		new LocalSystem(TransformCoordinates.LOCALSYSTEM_GERMAN_GK, 			"de Gauß-K.",  "de.gk", ProjectedPoint.PJ_GERMAN_GK.zoneSeperately),
-		new LocalSystem(TransformCoordinates.LOCALSYSTEM_AUSTRIAN_LAMBERT_OLD,  "at Lamb.",    "at.lb", ProjectedPoint.PJ_AUSTRIAN_LAMBERT_OLD.zoneSeperately),
-		new LocalSystem(TransformCoordinates.LOCALSYSTEM_ITALIAN_GB,            "it Gauß-B.",  "it.gb", ProjectedPoint.PJ_ITALIAN_GB.zoneSeperately),
-		new LocalSystem(TransformCoordinates.LOCALSYSTEM_FRANCE_LAMBERT_IIE,    "fr Lamb-IIe", "fr.l2", ProjectedPoint.PJ_FRENCH_LAMBERT_NTF_II.zoneSeperately)
-	};
+		new LocalSystem(TransformCoordinates.LOCALSYSTEM_UTM_WGS84,             "UTM",         "utm",    ProjectedPoint.PJ_UTM_WGS84.zoneSeperately),
+		new LocalSystem(TransformCoordinates.LOCALSYSTEM_GERMAN_GK, 			"de Gauß-K.",  "de.gk",  ProjectedPoint.PJ_GERMAN_GK.zoneSeperately),
+		new LocalSystem(TransformCoordinates.LOCALSYSTEM_AUSTRIAN_LAMBERT_OLD,  "at Lamb.",    "at.lb",  ProjectedPoint.PJ_AUSTRIAN_LAMBERT_OLD.zoneSeperately),
+		new LocalSystem(TransformCoordinates.LOCALSYSTEM_ITALIAN_GB,            "it Gauß-B.",  "it.gb",  ProjectedPoint.PJ_ITALIAN_GB.zoneSeperately),
+		new LocalSystem(TransformCoordinates.LOCALSYSTEM_FRANCE_LAMBERT_IIE,    "fr Lamb-IIe", "fr.l2",  ProjectedPoint.PJ_FRENCH_LAMBERT_NTF_II.zoneSeperately),
+		new LocalSystem(TransformCoordinates.LOCALSYSTEM_SWEDEN,                "se UTM",      "se.utm", ProjectedPoint.PJ_UTM_WGS84FZ.zoneSeperately)
+			};
 	
 
 	//	 taken from http://www.crs-geo.eu/crseu/EN/Home/homepage__node.html?__nnn=true click on "national CRS" -> germany -> DE_DHDN / GK_3 -> DE_DHDN (North) to ETRS89
@@ -238,12 +250,13 @@ public final class TransformCoordinates {
 		case EPSG_GERMAN_GK2:
 		case EPSG_GERMAN_GK3:
 		case EPSG_GERMAN_GK4:
-		case EPSG_GERMAN_GK5: 					 ret = TransformCoordinates.LOCALSYSTEM_GERMAN_GK; break;
+		case EPSG_GERMAN_GK5: 			 ret = TransformCoordinates.LOCALSYSTEM_GERMAN_GK; break;
 		case EPSG_ITALIAN_GB_EW1:
 		case EPSG_ITALIAN_GB_EW2:        ret = TransformCoordinates.LOCALSYSTEM_ITALIAN_GB; break;
 		case EPSG_AUSTRIAN_LAMBERT_OLD:  ret = TransformCoordinates.LOCALSYSTEM_AUSTRIAN_LAMBERT_OLD; break;
 		case EPSG_AUSTRIAN_LAMBERT_NEW:  ret = TransformCoordinates.LOCALSYSTEM_AUSTRIAN_LAMBERT_NEW; break;
 		case EPSG_FRENCH_LAMBERT_NTF_II: ret = TransformCoordinates.LOCALSYSTEM_FRANCE_LAMBERT_IIE; break;
+		case EPSG_SwedenUTM:             ret = TransformCoordinates.LOCALSYSTEM_FRANCE_LAMBERT_IIE; break;
 		default: ret = -1;
 		}
 		return ret;
@@ -360,6 +373,7 @@ public final class TransformCoordinates {
 			return LAMBERT_FRENCH_NTF_TO_WGS84;
 		case TransformCoordinates.LOCALSYSTEM_UTM_WGS84:
 		case TransformCoordinates.LOCALSYSTEM_AUSTRIAN_LAMBERT_NEW: 	
+		case TransformCoordinates.LOCALSYSTEM_SWEDEN: 	
 			return NO_DATUM_SHIFT;
 		default: 
 			throw new IllegalArgumentException("TransformCoordinates.getTransParams(wgs84): localsystem: " + localsystem + "not supported");
@@ -377,7 +391,8 @@ public final class TransformCoordinates {
 		case TransformCoordinates.LOCALSYSTEM_FRANCE_LAMBERT_IIE:
 			transparams = LAMBERT_FRENCH_NTF_TO_WGS84; break;
 		case TransformCoordinates.LOCALSYSTEM_UTM_WGS84:
-		case TransformCoordinates.LOCALSYSTEM_AUSTRIAN_LAMBERT_NEW: 	
+		case TransformCoordinates.LOCALSYSTEM_AUSTRIAN_LAMBERT_NEW:
+		case TransformCoordinates.LOCALSYSTEM_SWEDEN:
 			transparams = NO_DATUM_SHIFT; break;
 		default: throw new IllegalArgumentException("TransformCoordinates.getTransParams(ProjectedPoint): local projection system code: " + localsystem + " not supported");
 		}

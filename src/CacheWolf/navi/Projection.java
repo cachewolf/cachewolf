@@ -18,7 +18,7 @@
     You should have received a copy of the GNU General Public License
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
-*/
+ */
 package CacheWolf.navi;
 
 import CacheWolf.CWPoint;
@@ -67,11 +67,21 @@ abstract class Projection{
 	}
 	public String getZone(ProjectedPoint pp) {
 		throw new UnsupportedOperationException("Projection.getZone (double, double String, ProjectedPoint): This projection uses no seperate zones");
-		
 	}
 
 	public String toHumanReadableString(ProjectedPoint pp) {
-	 	return pp.toString(0, "", " ");
+		return pp.toString(0, "", " ");
 	}
-	
+
+	/**
+	 * In case the same Projection-class is used for several epsg codes, this
+	 * method translates the localsystem to the corresponding epsg code.  
+	 * It is used by UTMProjectionFixZone which can be used to project all
+	 * epsg codes which represent just one UTM stripe, like Sweden. 
+	 * ProjectedPoint sets projection.epsgCode, if it is zero. 
+	 */
+	public int getEpsgcode(int localsystem) {
+		throw new UnsupportedOperationException("Projection.getEpsg(localsystem): This projection has getEpsg not implemented.");
+	}
+
 }

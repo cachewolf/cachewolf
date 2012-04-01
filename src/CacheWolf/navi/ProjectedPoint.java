@@ -38,6 +38,7 @@ public final class ProjectedPoint {
 	public static final GkProjection PJ_GERMAN_GK  = new GkProjection(TransformCoordinates.EPSG_GERMAN_GK2 -2           , 0, 500000, 3, 1000000, 0, 1     , TransformCoordinates.BESSEL);
 	public static final GkProjection PJ_ITALIAN_GB = new GkProjection(TransformCoordinates.EPSG_ITALIAN_GB_EW1 -1, 0, 500000, 6, 1000000, 0, 0.9996, TransformCoordinates.HAYFORD1909);
 	public static final UTMProjection PJ_UTM_WGS84 = new UTMProjection(TransformCoordinates.WGS84);
+	public static final UTMProjectionFixZone PJ_UTM_WGS84FZ = new UTMProjectionFixZone(TransformCoordinates.WGS84);
 
 	protected double northing; // TODO make these private
 	protected double easting; // because it is not clear for routines from outside if the stripe number is included, make this available only through methods
@@ -100,6 +101,8 @@ public final class ProjectedPoint {
 		case TransformCoordinates.EPSG_ITALIAN_GB_EW1:
 		case TransformCoordinates.EPSG_ITALIAN_GB_EW2: return PJ_ITALIAN_GB;
 		case TransformCoordinates.EPSG_FRENCH_LAMBERT_NTF_II : return PJ_FRENCH_LAMBERT_NTF_II;
+		case TransformCoordinates.LOCALSYSTEM_UTM_WGS84:       return PJ_UTM_WGS84;
+		case TransformCoordinates.EPSG_SwedenUTM:              return PJ_UTM_WGS84FZ;
 		default: throw new IllegalArgumentException("ProjectedPoint.getProjection: epsg-code: " + epsg + "not supported");
 		}
 	}
@@ -108,10 +111,11 @@ public final class ProjectedPoint {
 		switch (localsystem) {
 		case TransformCoordinates.LOCALSYSTEM_AUSTRIAN_LAMBERT_OLD:	return PJ_AUSTRIAN_LAMBERT_OLD;
 		case TransformCoordinates.LOCALSYSTEM_AUSTRIAN_LAMBERT_NEW:	return PJ_AUSTRIAN_LAMBERT_NEW;
-		case TransformCoordinates.LOCALSYSTEM_GERMAN_GK:	          	return PJ_GERMAN_GK; 
+		case TransformCoordinates.LOCALSYSTEM_GERMAN_GK:	        return PJ_GERMAN_GK; 
 		case TransformCoordinates.LOCALSYSTEM_ITALIAN_GB:			return PJ_ITALIAN_GB;
-		case TransformCoordinates.LOCALSYSTEM_FRANCE_LAMBERT_IIE:		return PJ_FRENCH_LAMBERT_NTF_II;
-		case TransformCoordinates.LOCALSYSTEM_UTM_WGS84:				return PJ_UTM_WGS84;
+		case TransformCoordinates.LOCALSYSTEM_FRANCE_LAMBERT_IIE:	return PJ_FRENCH_LAMBERT_NTF_II;
+		case TransformCoordinates.LOCALSYSTEM_UTM_WGS84:			return PJ_UTM_WGS84;
+		case TransformCoordinates.LOCALSYSTEM_SWEDEN:			    return PJ_UTM_WGS84FZ;
 		default: throw new IllegalArgumentException("ProjectedPoint(CWPoint, int): region "+localsystem+" not supported");
 		}
 	}
@@ -209,6 +213,10 @@ public final class ProjectedPoint {
 	 */
 	public void set(CWPoint projected, String zone, int epsg_localsystem, boolean isLocalsystem) {
 		projection = (isLocalsystem ? getProjectionFromLs(epsg_localsystem) : getProjection(epsg_localsystem) );
+		if (projection.epsgCode == 0) { 
+			if (isLocalsystem) projection.epsgCode = projection.getEpsgcode(epsg_localsystem);
+			              else projection.epsgCode = epsg_localsystem; // pass the epsg code to the projection if the projection works for several epsg code which are not directly one after the other 
+		}
 		set(projected.latDec, projected.lonDec, zone);
 	}
 
