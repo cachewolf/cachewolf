@@ -1,6 +1,6 @@
 TakenFromUrl:       
 GetCapabilitiesUrl: http://kso.lantmateriet.se/wmsproxy/wmsproxy?SERVICE=WMS&VERSION=1.1.1&REQUEST=GetCapabilities
-Name:               Schweden t
+Name:               se.Schweden t
 MapType:                        topo
 MainUrl:            http://kso.lantmateriet.se/wmsproxy/wmsproxy?
 ServiceTypeUrlPart: SERVICE=WMS
@@ -18,3 +18,5 @@ MinScale:   0
 MaxScale:   1000
 RecommendedScale:    5 2 10 20
 ImageFileExtension: .jpg
+MaxPixelSize:	256
+
