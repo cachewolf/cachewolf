@@ -39,14 +39,16 @@ public class UTMProjectionFixZone extends UTMProjection {
 	 */
 	public int getStripeByEpsg(int epsg) {
 		switch (epsg) {
-		case TransformCoordinates.EPSG_SwedenUTM: return 33;
+		case TransformCoordinates.EPSG_SwedenUTM:  return 33;
+		case TransformCoordinates.EPSG_DenmarkUTM: return 32;
 		default: return Integer.MAX_VALUE;
 		}
 	}
 	
 	public int getEpsgcode(int localsystem) {
 		switch (localsystem) {
-		case TransformCoordinates.LOCALSYSTEM_SWEDEN: return TransformCoordinates.EPSG_SwedenUTM; 
+		case TransformCoordinates.LOCALSYSTEM_SWEDEN:  return TransformCoordinates.EPSG_SwedenUTM; 
+		case TransformCoordinates.LOCALSYSTEM_DENMARK: return TransformCoordinates.EPSG_DenmarkUTM; 
 		default:
 			throw new IllegalArgumentException("UTMProjectionFixZone: local system: " + localsystem + " not implemented.");
 		}
