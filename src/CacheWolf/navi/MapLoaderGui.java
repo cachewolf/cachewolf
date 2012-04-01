@@ -303,21 +303,24 @@ public class MapLoaderGui extends Form {
 		progressBox.exec();
 		mapLoader.setProgressInfoBox(progressBox);
 		Vm.showWait(true);
-		int length;
+		int lengthw, lengthh;
 		switch (tileSize.getSelectedIndex()) {
 		// Perhaps introduce a medium size??
 		case 0:
-			length = 500;
+			lengthw = 500; lengthh = 500;
 			break;
 		default:
-			length = 1000;
+			lengthw = 1000; lengthh = 1000;
 		}
 		// Override size if one tile for each cache is wanted
-		Point size = new Point(length, length);
 		if (perCache) {
-			length = 1000;
-			size = new Point(tileWidth, tileHeight);
+			lengthw = tileWidth;
+			lengthh = tileHeight;
+			// size = new Point(tileWidth, tileHeight);
 		}
+		if (mapLoader.currentOnlineMapService.maxPixelSize < lengthw) lengthw = mapLoader.currentOnlineMapService.maxPixelSize; // shrink pixel size to the maximum which the service allows for. 
+		if (mapLoader.currentOnlineMapService.maxPixelSize < lengthh) lengthh = mapLoader.currentOnlineMapService.maxPixelSize; // shrink pixel size to the maximum which the service allows for. 
+		Point size = new Point(lengthw, lengthh);
 		if (forCachesChkBox.getState() || perCache) {
 			Area surArea = Global.getProfile().getSourroundingArea(onlySelected); // calculate map boundaries from cacheDB
 			if (surArea == null) {
