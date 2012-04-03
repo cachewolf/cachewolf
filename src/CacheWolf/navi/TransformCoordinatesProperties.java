@@ -48,7 +48,6 @@ public final class TransformCoordinatesProperties {
 		TrackPoint ret = null;
 		switch (epsgCode) {
 		case TransformCoordinates.EPSG_WGS84:
-		case TransformCoordinates.EPSG_ETRS89:
 			ret = ll;
 		}
 		if (ret == null) {
@@ -76,7 +75,6 @@ public final class TransformCoordinatesProperties {
 		CWPoint ret = null;
 		switch (epsgCode) {
 		case TransformCoordinates.EPSG_WGS84:
-		case TransformCoordinates.EPSG_ETRS89:
 			ret = p;
 			break;
 		}
