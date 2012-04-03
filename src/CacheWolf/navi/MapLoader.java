@@ -836,7 +836,6 @@ class WebMapService extends OnlineMapService {
 			bbox.bottomright = TransformCoordinates.ProjectedEpsgToWgs84(brgk, epsg); // TransformCoordinates.GkToWgs84(brgk, region);
 		} else {
 			switch (coordinateReferenceSystem[0]) {
-			case TransformCoordinates.EPSG_ETRS89:
 			case TransformCoordinates.EPSG_WGS84:
 				bbox.topleft.set(center);
 				bbox.topleft.shift(-pixelsize.x * scale / 2, 1);

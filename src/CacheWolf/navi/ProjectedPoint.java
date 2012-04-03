@@ -107,7 +107,7 @@ public final class ProjectedPoint {
 		case TransformCoordinates.EPSG_FRENCH_LAMBERT_NTF_II : return PJ_FRENCH_LAMBERT_NTF_II;
 		case TransformCoordinates.LOCALSYSTEM_UTM_WGS84:       return PJ_UTM_WGS84;
 		case TransformCoordinates.EPSG_SwedenUTM:              return PJ_UTM_WGS84FZ;
-		case TransformCoordinates.EPSG_DenmarkUTM:         return PJ_UTM_WGS84FZ;
+		case TransformCoordinates.EPSG_DenmarkUTM:             return PJ_UTM_WGS84FZ;
 		default: throw new IllegalArgumentException("ProjectedPoint.getProjection: epsg-code: " + epsg + "not supported");
 		}
 	}
