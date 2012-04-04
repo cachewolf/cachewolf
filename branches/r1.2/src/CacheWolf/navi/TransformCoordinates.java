@@ -48,7 +48,6 @@ import CacheWolf.Matrix;
 public final class TransformCoordinates {
 
 	public static final int EPSG_WGS84 					= 4326;
-	public static final int EPSG_ETRS89 				= 25832; // TODO support it anyhow
 	/** Gauß-Krüger, Bessel 1841, Potsdam (DHDN)  */
 	public static final int EPSG_GERMAN_GK2 			= 31466;
 	public static final int EPSG_GERMAN_GK3 			= 31467;
@@ -267,7 +266,7 @@ public final class TransformCoordinates {
 	}
 
 	public static final boolean isSupported(int epsgcode) {
-		if ((epsgcode == EPSG_WGS84) || epsgcode == EPSG_ETRS89) return true;
+		if ((epsgcode == EPSG_WGS84)) return true;
 		return (getLocalProjectionSystem(epsgcode) >= 0);
 	}
 
