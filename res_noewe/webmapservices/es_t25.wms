@@ -1,4 +1,4 @@
-TakenFromUrl:       http://www.idee.es
+TakenFromUrl:       http://www.idee.es/CatalogoServicios/CatServ/directorio_servicios.html
 GetCapabilitiesUrl: http://www.idee.es/wms/MTN-Raster/MTN-Raster?SERVICE=WMS&VERSION=1.1.0&REQUEST=GetCapabilities
 Name:               Spanien t25
 MapType:                        topo
