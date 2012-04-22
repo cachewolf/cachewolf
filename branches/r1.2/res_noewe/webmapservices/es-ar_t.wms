@@ -1,4 +1,4 @@
-TakenFromUrl:   http://www.idee.es/CatalogoServicios/cat2/indexWMS.html
+TakenFromUrl:   http://www.idee.es/CatalogoServicios/CatServ/directorio_servicios.html
 GetCapabilitiesUrl:   http://sitar.aragon.es/AragonWMS?SERVICE=WMS&VERSION=1.1.1&REQUEST=GetCapabilities
 Name:   es.aragon topo
 MapType:   topo

@@ -471,7 +471,10 @@ public class CacheHolder {
 		this.setNumRecommended(ch.getNumRecommended());
 		boolean mayChangeCoordinates = !this.cacheStatus.startsWith(MyLocale.getMsg(362, "solved"));
 		/*
-		 * Here we have to distinguish several cases: this.is_found this ch Update 'this' (values are empty or yyyy-mm-dd) ---------------------------------------------------------------------- false any yyyy-mm-dd yes true "Found" yyyy-mm-dd yes true
+		 * Here we have to distinguish several cases: 
+		 * this.is_found this ch Update 'this' (values are empty or yyyy-mm-dd) 
+		 * ---------------------------------------------------------------------- 
+		 * false any yyyy-mm-dd yes true "Found" yyyy-mm-dd yes true
 		 * yyyy-mm-dd yyyy-mm-dd yes (or no) true yyyy-mm-dd hh:mm yyyy-mm-dd no
 		 */
 		if (!this.found || this.cacheStatus.indexOf(":") < 0) {

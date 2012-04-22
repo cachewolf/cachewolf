@@ -128,8 +128,8 @@ public class MainMenu extends MenuBar {
 				spider = new MenuItem(MyLocale.getMsg(131, "Download from geocaching.com")), //
 				spiderAllFinds = new MenuItem(MyLocale.getMsg(217, "Spider all finds from geocaching.com")), //
 				spiderRoute, //
-				mnuSeparator, // diese Zeile entfernen, wenn spiderQuick wieder aktiviert wird
-				// spiderQuick = new MenuItem(MyLocale.getMsg(138, "from GC quick")), //
+				// mnuSeparator, // diese Zeile entfernen, wenn spiderQuick wieder aktiviert wird
+				spiderQuick = new MenuItem(MyLocale.getMsg(138, "from GC quick")), //
 				loadGCVotes = new MenuItem(MyLocale.getMsg(1208, "Import ratings from GCVote")), //
 				fetchOCLink = new MenuItem(MyLocale.getMsg(1209, "Fetch link to OC - Cache")), //
 				mnuSeparator, //

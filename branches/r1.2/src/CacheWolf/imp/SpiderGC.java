@@ -48,9 +48,11 @@ import CacheWolf.navi.Area;
 import CacheWolf.navi.Metrics;
 import CacheWolf.navi.MovingMap;
 import CacheWolf.navi.Navigate;
+import CacheWolf.navi.ProjectedPoint;
 import CacheWolf.navi.Track;
 import CacheWolf.navi.TrackPoint;
 import CacheWolf.navi.TransformCoordinates;
+import CacheWolf.navi.UTMProjection;
 import HTML.Tmpl.Element.Loop;
 
 import com.stevesoft.ewe_pat.Regex;
@@ -1538,72 +1540,252 @@ public class SpiderGC {
 
 	private void getCachesNewMap(Area square, boolean setCachesToLoad) {
 
-		if (userToken.equals("")) {
-			String url;
-			String ret;
-			try {
-				page_number++;
-				//http://www.geocaching.com/map/default.aspx?lat=47.50557&lng=009.74567
-				url = "http://www.geocaching.com/map/default.aspx" + "?lat=" + square.topleft.getLatDeg(TransformCoordinates.DD) + "&lng=" + square.topleft.getLonDeg(TransformCoordinates.DD) + "&z=15";
-				ret = UrlFetcher.fetch(url);
-			} catch (final IOException e) {
-				ret = "";
-			}
-			int i = ret.indexOf("GSPK.UserSession('");
-			i = i + 18;
-			int j = ret.indexOf("'", i);
-			userToken = ret.substring(i, j);
-			i = ret.indexOf("sessionToken:'", i);
-			i = i + 14;
-			j = ret.indexOf("'", i);
-			sessionToken = ret.substring(i, j);
-		}
-		TrackPoint tl;
-		TrackPoint br;
-		int lonmin;
-		int lonmax;
-		int latmin;
-		int latmax;
-		int scale = 19;
-		do {
-			scale = scale - 1;
-			tl = getKachelLatLon(square.topleft, scale);
-			br = getKachelLatLon(square.bottomright, scale);
-			lonmin = (int) tl.lonDec;
-			lonmax = (int) br.lonDec;
-			latmin = (int) tl.latDec;
-			latmax = (int) br.latDec;
-		} while ((lonmax - lonmin > 1) && (latmax - latmin > 1) && (scale > 10));
+		int scale = 14; // z
+		CWPoint cw = new CWPoint(59.325697,18.072912);
 
-		String cachelist;
+		TrackPoint k = this.getKachelLatLon(cw, scale);
+		double y_lat = Math.round(k.latDec);
+		double x_lon = Math.round(k.lonDec);
 
-		for (int i = lonmin; i <= lonmax; i++) {
-			for (int j = latmin; j <= latmax; j++) {
-				cachelist = getNewMapListPage("" + j, "" + i, scale);
-				if (cachelist.length() > 0) {
-					final String[] caches = mString.split(cachelist, ']');
-					// final double baseX = Common.parseDouble(caches[1].substring(8, caches[1].indexOf(',')));
-					// final double baseY = Common.parseDouble(caches[1].substring(caches[1].indexOf(',') + 1, caches[1].indexOf(']')));
-					for (int k = 4; k < caches.length; k++) {
-						final String[] cacheInfos = mString.split(STRreplace.replace(caches[k], "\\\"", ""), '\"');
-						final String cacheID = cacheInfos[5];
-						final String cacheXY = cacheInfos[1];
-						//final String[] xy = mString.split(cacheXY, ',');
-						//final int cacheX = Common.parseInt(xy[0].substring(2));
-						//final int cacheY = Common.parseInt(xy[1].substring(0, xy[1].indexOf(']')));
-						String cachePage = getCacheInfoNewMap(cacheID);
-						// final CWPoint p = getLatLon(baseX, baseY, cacheX, cacheY, scale);
-						/*
-						if (square.isInBound(p)) {
-							String cachePage = getCacheInfoNewMap(cacheID);
-							addCacheNewMap(cachePage, p, setCachesToLoad);
-						}
-						*/
-					}
-				}
-			}
-		}
+		long nTiles = 1 << scale;
+		double lonUnit = 360.0 / nTiles;
+		double latUnit = 1.0 / nTiles;
+
+		double llon = -180 + (x_lon+0.5) * lonUnit;
+		double rlon = -180 + (x_lon+1.5) * lonUnit;
+		double rlat = y2m(Math.PI * (1 - 2 * (y_lat+1.5) * latUnit));
+		double llat = y2m(Math.PI * (1 - 2 * (y_lat+0.5) * latUnit));
+
+		UTMProjection(llat, llon);
+		long mitteEasting = ieasting;
+		long mitteNorthing = inorthing;
+		UTMProjection(rlat,rlon);
+		long r = (ieasting - mitteEasting) / 2;
+		long west = mitteEasting - r;
+		long ost = mitteEasting + r;
+		long nord = mitteNorthing + r;
+		long sued = mitteNorthing - r;
+
 	}
+
+	long inorthing;
+	long ieasting;
+
+	private double y2m(double lat){
+		return (180.0 / Math.PI) * ((2.0 * Math.atan(Math.exp(lat))) - (Math.PI / 2.0));
+	}
+
+	String EPSG4326toEPSG31467(double lat, double lon) {
+		// Hoehe = 0;
+		// Ellipsoid WGS84
+				double gA = 6378137.000; // grosse Achse
+				double kA = 6356752.314; // kleine Achse
+		// xyz of Ellipsoid WGS84 at latlon
+				double e2=(gA * gA - kA * kA)/(gA * gA);
+				double N = gA / Math.sqrt(1 - e2 * Math.pow(Math.sin(lat / 180 * Math.PI),2));
+				double x = N * Math.cos(lat / 180 * Math.PI) * Math.cos(lon / 180 * Math.PI);
+				double y = N * Math.cos(lat / 180 * Math.PI) * Math.sin(lon / 180 * Math.PI);
+				double z = (N * Math.pow(kA, 2) / Math.pow(gA, 2)) * Math.sin(lat / 180 * Math.PI);
+		// transform
+			// Transformationsparameter EPSG 31467 (GK Deutschland Sued)
+				// d = shift in meter
+				double dx = -597.1;
+				double dy = -71.4;
+				double dz = -412.1;
+				// e = rotation in seconds
+				double ex = 0.894 * Math.PI / 180 / 3600;
+				ex = 4.334234309119251E-6;
+				double ey = 0.068 * Math.PI / 180 / 3600;
+				ey = 3.296733031544845E-7;
+				double ez = 1.563 * Math.PI / 180 / 3600;
+				ez = -7.577637835742048E-6;
+				// s = deviation of scale multiplied by 10^6
+				double s = 1 + 7.580 * Math.pow(10, -6);
+				s = 1.0000075800574568;
+
+				double coords[][]= new double[3][1];
+				coords[0][0] = x;
+				coords[1][0] = y;
+				coords[2][0] = z;
+				double shift[][] = new double[3][1];
+				shift[0][0] = dx;
+				shift[1][0] = dy;
+				shift[2][0] = dz;
+				double rotate[][] = new double[3][3];
+				rotate[0][0] = s;
+				rotate[0][1] = ez * s;
+				rotate[0][2] = -ey * s;
+				rotate[1][0] = -rotate[0][1];
+				rotate[1][1] = s;
+				rotate[1][2] = ex * s;
+				rotate[2][0] = -rotate[0][2];
+				rotate[2][1] = -rotate[1][2];
+				rotate[2][2] = s;
+
+				double result[][] = new double[rotate.length][coords[0].length];
+				for (int i = 0; i < result.length; i++)
+					for (int j = 0; j < result[i].length; j++){
+						result[i][j] = calculateRowColumnProduct(rotate,i,coords,j);
+					}
+				for (int i = 0; i < result.length; i++)
+					for (int j = 0; j < result[0].length; j++)
+						result[i][j] = result[i][j] + shift[i][j];
+				x=result[0][0];
+				y=result[1][0];
+				z=result[2][0];
+		// latlon with Ellipsoid Bessel
+				// Ellipsoid BESSEL
+				gA = 6377397.155; // gA = grosse Achse
+				kA = 6356078.962; // kA = kleine Achse
+				e2=(gA * gA - kA * kA)/(gA * gA);
+				s = Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2));
+				double T = Math.atan(z * gA / (s * kA));
+				double B = Math.atan((z + e2 * Math.pow(gA, 2) / kA * Math.pow(Math.sin(T), 3)) / (s - e2 * gA * Math.pow(Math.cos(T), 3)));
+				double L = Math.atan(y / x);
+				lat = B * 180 / Math.PI;
+				lon = L * 180 / Math.PI;
+				return GKProjection(lat,lon);
+		}
+
+	double calculateRowColumnProduct(double[][] A, int row, double[][] B, int col){
+				double product = 0;
+				for(int i = 0; i < A[row].length; i++){
+					product = product + A[row][i]*B[i][col];
+				}
+				return product;
+			}
+
+	String GKProjection(double lat, double lon) {
+			// 31467 Parameters
+			double falseNorthing  = 0;
+			double falseEasting   = 500000;
+			int stripewidth = 3;
+			double stripeFactor   = 1000000;
+			int degreeOfStripe0 = 0;
+			int scale = 1;
+			// Hoehe = 0;
+			// Ellipsoid BESSEL
+			double gA = 6377397.155; // gA = grosse Achse
+			double kA = 6356078.962; // kA = kleine Achse
+
+			double e2=(gA * gA - kA * kA)/(gA * gA);
+
+			 // zone = stripe
+			double l = lon - degreeOfStripe0 + stripewidth / 2;
+			if (l<0) l+=360;
+			double stripe = Math.floor(l / stripewidth);
+
+			// Abstand vom Mittelmeridian
+			l = lon;
+			if (l<0) l+=360;
+			l = (l - degreeOfStripe0 - stripe * stripewidth) / 180 * Math.PI;
+
+			double B = lat / 180 * Math.PI;
+			double N = gA / Math.sqrt(1 - e2 * Math.pow(Math.sin(B), 2));
+			double nue = Math.sqrt(Math.pow(gA, 2) / Math.pow(kA, 2) * e2 * Math.pow(Math.cos(B), 2));
+			double t = Math.tan(B);
+
+			double n1 = (gA-kA) / (gA+kA);
+			double n2 = (gA+kA) / 2 * (1+ Math.pow(n1, 2)/4 + Math.pow(n1, 4) / 64);
+			double n3 = n1 * -3/2 + Math.pow(n1, 3) * 9 / 16  - Math.pow(n1, 5) * 3 / 32;
+			double n4 = Math.pow(n1, 2) * 15 / 16 - Math.pow(n1, 4) * 15 / 32;
+			double n5 = Math.pow(n1, 3) * -35 / 48 + Math.pow(n1, 5) * 105 / 256;
+			double n6 = Math.pow(n1, 4) * 315 / 512;
+			double arclength = n2 * (B + n3 * Math.sin(B*2) + n4 * Math.sin(B*4) + n5 * Math.sin(B*6) + n6 * Math.sin(B*8));
+
+			double h1 = t / 2 * N * Math.pow(Math.cos(B), 2) * l * l;
+			double h2 = t / 24 * N * Math.pow(Math.cos(B),4) * (5 - t * t + 9 * nue * nue + 4 * Math.pow(nue, 4)) * Math.pow(l,4);
+			double northing = (arclength + h1 + h2) * scale;
+			inorthing = Math.round(northing + falseNorthing);
+
+			double r1 = N * Math.cos(B) * l;
+			double r2 = N/6 * Math.pow(Math.cos(B), 3) * (1-t * t + nue * nue) * l * l * l;
+			double easting = (r1 + r2) * scale;
+			ieasting = Math.round(easting + falseEasting + stripe * stripeFactor);
+
+			return  ieasting + "," + inorthing;
+		}
+
+	String UTMProjection(double lat, double lon) {
+		// setze ellipsoid, stripewidth, stripe, degreeOfStripe0, scale
+		double falseNorthing  = 10000000;
+		double falseEasting   = 500000;
+		int stripewidth = 6;
+		int degreeOfStripe0 = 3;
+		double scale = 0.9996;
+		// Ellipsoid WGS84
+		double gA = 6378137.000; // grosse Achse
+		double kA = 6356752.314; // kleine Achse
+		double gA2 = gA * gA;
+		double kA2 = kA * kA;
+		double e2=(gA2 - kA2) / gA2;
+
+
+		// wir fangen die Steifen bei 0 an zu zählen ( startet eigentlich bei 1)
+		double stripe = Math.floor((lon - 180) / 6);
+		if (stripe < 0) stripe += 60;
+		double zone = stripe;
+		if (stripe >= 30) {
+			stripe = stripe - 30;
+		}
+		else {
+			stripe = stripe + 30;
+		}
+
+		// Abstand vom Mittelmeridian
+		double l = lon;
+		if (l<0) l+=360;
+		l = (l - degreeOfStripe0 - stripe * stripewidth) / 180 * Math.PI;
+
+		double B = lat / 180 * Math.PI;
+		double sinB = Math.sin(B);
+		double N = gA / Math.sqrt(1 - e2 * sinB * sinB);
+		double cosB = Math.cos(B);
+		double nue = Math.sqrt(gA2 / kA2 * e2 * cosB * cosB);
+		double t = Math.tan(B);
+
+		double n1 = (gA-kA) / (gA+kA);
+		double n2 = (gA+kA) / 2 * (1+ Math.pow(n1, 2)/4 + Math.pow(n1, 4) / 64);
+		double n3 = n1 * -3/2 + Math.pow(n1, 3) * 9 / 16  - Math.pow(n1, 5) * 3 / 32;
+		double n4 = Math.pow(n1, 2) * 15 / 16 - Math.pow(n1, 4) * 15 / 32;
+		double n5 = Math.pow(n1, 3) * -35 / 48 + Math.pow(n1, 5) * 105 / 256;
+		double n6 = Math.pow(n1, 4) * 315 / 512;
+		double arclength = n2 * (B + n3 * Math.sin(B*2) + n4 * Math.sin(B*4) + n5 * Math.sin(B*6) + n6 * Math.sin(B*8));
+
+		double h1 = t / 2 * N * Math.pow(Math.cos(B), 2) * l * l;
+		double h2 = t / 24 * N * Math.pow(Math.cos(B),4) * (5 - t * t + 9 * nue * nue + 4 * Math.pow(nue, 4)) * Math.pow(l,4);
+		double northing = (arclength + h1 + h2) * scale;
+
+		// nach lesbarem String
+		if (northing >= 0) {
+			inorthing = Math.round(northing);
+		}
+		else {
+			inorthing = Math.round(northing + falseNorthing);
+		}
+
+		double r1 = N * Math.cos(B) * l;
+		double r2 = N/6 * Math.pow(Math.cos(B), 3) * (1-t * t + nue * nue) * l * l * l;
+		double easting = (r1 + r2) * scale;
+
+		// nach lesbarem String
+		ieasting = Math.round(easting + falseEasting);
+
+		// nach lesbarem String
+		int zoneLetter = (int) Math.round(zone + (Math.floor((lat)/8)+13) * 200);
+		int zl = (int)Math.floor(zoneLetter / 200);
+		String z = "" + (zoneLetter - zl * 200 +1) + getZoneLetter(zl);
+
+		return  z  + ieasting + " " + inorthing;
+	}
+
+	private char getZoneLetter(int number){
+		if (((char)(number)) >= 'i' - 'a') number++; // skip I
+		if (((char)(number)) >= 'o' - 'a') number++; // skip O
+		char ret = (char)( number  + (int)'A' -1);
+		return ret;
+	}
+
 
 	private TrackPoint getKachelLatLon(CWPoint p, int scale) {
 		double lat = p.latDec;
@@ -2399,7 +2581,7 @@ public class SpiderGC {
 						// ==========
 						// Addi waypoints
 						// ==========
-						getAddWaypoints(completeWebPage, ch.getWayPoint(), ch.is_found());
+						getAddWaypoints(completeWebPage, ch);
 						pref.log("Got additional waypoints");
 						// ==========
 						// Attributes
@@ -3045,7 +3227,9 @@ public class SpiderGC {
 	 */
 	boolean koords_not_yet_found = true;
 
-	private void getAddWaypoints(String doc, String wayPoint, boolean is_found) throws Exception {
+	private void getAddWaypoints(String doc, CacheHolder ch) throws Exception {
+		String wayPoint=ch.getWayPoint();
+		boolean is_found=ch.is_found();
 		final Extractor exWayBlock = new Extractor(doc, p.getProp("wayBlockExStart"), p.getProp("wayBlockExEnd"), 0, false);
 		String wayBlock;
 		if ((wayBlock = exWayBlock.findNext()).length() > 0) {
