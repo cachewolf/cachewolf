@@ -1,9 +1,9 @@
 ﻿TakenFromUrl:       http://kortforsyningen.kms.dk/orto_foraar?
-GetCapabilitiesUrl: http://kortforsyningen.kms.dk/service?servicename=orto_foraar&&login=kfmonitor&password=kfmonitor&SERVICE=WMS&VERSION=1.1.1&REQUEST=GetCapabilities
+GetCapabilitiesUrl: http://kortforsyningen.kms.dk/service?servicename=orto_foraar&login=kfmonitor&password=kfmonitor&SERVICE=WMS&VERSION=1.1.1&REQUEST=GetCapabilities
 Name:               dk p
 MapType:                        photo
-MainUrl:            http://kortforsyningen.kms.dk/service?servicename=orto_foraar&&login=kfmonitor&password=kfmonitor&
-ServiceTypeUrlPart: SERVICE=WMS
+MainUrl:            http://kortforsyningen.kms.dk/service?
+ServiceTypeUrlPart: servicename=orto_foraar&login=kfmonitor&password=kfmonitor&SERVICE=WMS
 VersionUrlPart:     VERSION=1.1.1
 CoordinateReferenceSystemCacheWolf:  4326
 CoordinateReferenceSystemUrlPart: SRS=EPSG:4326 
