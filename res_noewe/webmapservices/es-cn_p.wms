@@ -1,4 +1,4 @@
-TakenFromUrl:       http://idecan1.grafcan.es/ServicioWMS/OrtoExpress?
+TakenFromUrl:       http://www.idee.es/CatalogoServicios/CatServ/directorio_servicios.html
 GetCapabilitiesUrl: http://idecan1.grafcan.es/ServicioWMS/OrtoExpress?SERVICE=WMS&VERSION=1.1.1&REQUEST=GetCapabilities
 Name:               es.Canarias photo
 MapType:                        photo

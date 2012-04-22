@@ -1,4 +1,4 @@
-TakenFromUrl:   http://www.idee.es/CatalogoServicios/cat2/indexWMS.html
+TakenFromUrl:   http://www.idee.es/CatalogoServicios/CatServ/directorio_servicios.html
 GetCapabilitiesUrl:   http://www.juntadeandalucia.es/medioambiente/servmap/wms/LANDSAT2004?REQUEST=GetCapabilities&SERVICE=WMS
 Name:   es.andalucia photo
 MapType:   photo

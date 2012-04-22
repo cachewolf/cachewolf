@@ -1,4 +1,4 @@
-TakenFromUrl:   http://www.andaluciajunta.es/IDEAndalucia/OGC.shtml#ogc2
+TakenFromUrl:   http://www.idee.es/CatalogoServicios/CatServ/directorio_servicios.html
 GetCapabilitiesUrl:   http://andaluciajunta.es/IDEAndalucia/IDEAwms/wms/mta10r?REQUEST=GetCapabilities&SERVICE=WMS
 Name:   es.andalucia topo 10
 MapType:   topo

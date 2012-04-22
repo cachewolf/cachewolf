@@ -1,4 +1,4 @@
-﻿TakenFromUrl:       http://idecan2.grafcan.es/ServicioWMS/MT5?
+﻿TakenFromUrl:       http://www.idee.es/CatalogoServicios/CatServ/directorio_servicios.html
 GetCapabilitiesUrl: http://idecan2.grafcan.es/ServicioWMS/MT5?SERVICE=WMS&VERSION=1.1.1&REQUEST=GetCapabilities
 Name:               es.Canarias t
 MapType:                        topo

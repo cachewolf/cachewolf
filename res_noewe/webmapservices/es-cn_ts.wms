@@ -1,4 +1,4 @@
-TakenFromUrl:   http://www.idee.es/CatalogoServicios/cat2/indexWMS.html
+TakenFromUrl:   http://www.idee.es/CatalogoServicios/CatServ/directorio_servicios.html
 GetCapabilitiesUrl:   http://idecan2.grafcan.es/ServicioWMS/Callejero?REQUEST=GetCapabilities&SERVICE=WMS
 Name:   es.Canarias streets
 MapType:   topo
