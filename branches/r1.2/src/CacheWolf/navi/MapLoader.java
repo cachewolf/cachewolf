@@ -990,7 +990,6 @@ class ExpediaMapService extends OnlineMapService {
 		minscale = getMetersPerPixel(0.00000000000000000000001f);
 		maxscale = getMetersPerPixel((float) new CWPoint(0, 0).getDistance(new CWPoint(0, 180)) * 2 * 1000 / 1000); // whole world * 1000 because of km -> m. /1000 because we have 1000x1000 Pixel usually
 		boundingBox = new Area(new CWPoint(90, -180), new CWPoint(-90, 180));
-		maxPixelSize = 1000;
 	}
 
 	public float getMetersPerPixel(float scale) {
