@@ -1073,8 +1073,19 @@ public class SpiderGC {
 			loggedIn = switchToEnglish();
 			if (loggedIn)
 				return true;
+
+			else {
+				(new MessageBox(MyLocale.getMsg(5523, "Login error!"), "Die userID ist vermutlich nicht mehr gültig. Siehe http://cachewolf.aldos.de/userid.html !", FormBase.OKB)).execute();
+				return false;
+			}
+		}
+		else {
+			(new MessageBox(MyLocale.getMsg(5523, "Login error!"), "Siehe http://cachewolf.aldos.de/userid.html !", FormBase.OKB)).execute();
+			return false;
 		}
 
+		/*
+		 *
 		int counter = 5;
 		boolean real_return = false;
 
@@ -1120,6 +1131,7 @@ public class SpiderGC {
 
 		localInfB.close(0);
 		return real_return;
+		 */
 
 	}
 
