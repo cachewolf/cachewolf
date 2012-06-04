@@ -25,6 +25,7 @@ import CacheWolf.CacheDB;
 import CacheWolf.CacheHolder;
 import CacheWolf.Preferences;
 import CacheWolf.Profile;
+import CacheWolf.STRreplace;
 import ewe.io.FileReader;
 import ewe.io.IOException;
 import ewe.io.JavaUtf8Codec;
@@ -64,7 +65,8 @@ public class FieldnotesImporter {
 					r.codec=new JavaUtf8Codec();
 				}
 				else if (e.getMessage().equals("ASCII")){
-					r.codec=new NoCodec(true);
+					// r.codec=new NoCodec(true);
+					r.codec = new ewe.io.AsciiCodec();
 				}
 				else {
 					Vm.showWait(false);
@@ -82,6 +84,8 @@ public class FieldnotesImporter {
 	}
 
 	private void parse(String s) {
+		//s = STRreplace.replace(s, "\r\n", "\n");
+		//s = STRreplace.replace(s, "\n", "\r\n");
 		final byte WPPOS=0;
 		final byte DATEPOS=1;
 		final byte LOGTYPPOS=2;
