@@ -60,6 +60,7 @@ public final class CacheSize {
 	public static final String GC_SIZE_MICRO = "Micro";
 	public static final String GC_SIZE_SMALL = "Small";
 	public static final String GC_SIZE_REGULAR = "Regular";
+	public static final String GC_SIZE_MEDIUM= "Medium";
 	public static final String GC_SIZE_LARGE = "Large";
 	public static final String GC_SIZE_NOTCHOSEN = "Not chosen";
 	public static final String GC_SIZE_OTHER = "Other";
@@ -249,7 +250,7 @@ public final class CacheSize {
 			return CW_SIZE_MICRO;
 		} else if (gcstring.equalsIgnoreCase(GC_SIZE_SMALL)) {
 			return CW_SIZE_SMALL;
-		} else if (gcstring.equalsIgnoreCase(GC_SIZE_REGULAR)) {
+		} else if (gcstring.equalsIgnoreCase(GC_SIZE_REGULAR)||gcstring.equalsIgnoreCase(GC_SIZE_MEDIUM)) {
 			return CW_SIZE_REGULAR;
 		} else if (gcstring.equalsIgnoreCase(GC_SIZE_LARGE)) {
 			return CW_SIZE_LARGE;
