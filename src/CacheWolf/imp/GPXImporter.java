@@ -19,6 +19,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
+
 package CacheWolf.imp;
 
 import CacheWolf.Attribute;
@@ -185,7 +186,15 @@ public class GPXImporter extends MinML {
 			}
 			Vm.showWait(false);
 		} catch (Exception e) {
-			if (holder.getWayPoint().length() > 0) {
+			
+			if (holder == null) {
+				
+				pref.log("[GPXImporter:DoIt] no holder LogID=" + logId, e, true);
+			} else if (holder.getWayPoint() == null) {
+
+				pref.log("[GPXImporter:DoIt] no waypoint LogID=" + logId, e, true);
+			} else if (holder.getWayPoint().length() > 0) {
+	
 				pref.log("[GPXImporter:DoIt] " + holder.getWayPoint() + " LogID=" + logId, e, true);
 			} else {
 				pref.log("[GPXImporter:DoIt] " + holder.getPos().toString() + " LogID=" + logId, e, true);
@@ -200,19 +209,29 @@ public class GPXImporter extends MinML {
 	}
 
 	public void startElement(String name, AttributeList atts) {
+		
 		strBuf = new StringBuffer(300);
 		if (infB.isClosed)
 			return;
 		if (name.equals("gpx")) {
 			// check for opencaching
-			if (atts.getValue("creator").indexOf("opencaching") > 0)
-				fromOC = true;
-			else
+			
+			String strCreator = atts.getValue("creator");
+			if (strCreator == null) {
+				
 				fromOC = false;
-			if (atts.getValue("creator").startsWith("TerraCaching"))
-				fromTC = true;
-			else
 				fromTC = false;
+			} else {
+				
+				if (strCreator.indexOf("opencaching") > 0)
+					fromOC = true;
+				else
+					fromOC = false;
+				if (strCreator.startsWith("TerraCaching"))
+					fromTC = true;
+				else
+					fromTC = false;
+			}
 
 			// if (fromOC && doSpider) (new MessageBox("Warnung", MyLocale.getMsg(4001,
 			// "GPX files from opencaching don't contain information of images, they cannot be laoded. Best you get caches from opencaching by menu /Application/Import/Download from Opencaching"), FormBase.OKB)).execute();
@@ -238,8 +257,10 @@ public class GPXImporter extends MinML {
 
 		if (name.equals("groundspeak:cache")) {
 			inCache = true;
-			holder.setAvailable(atts.getValue("available").equals("True"));
-			holder.setArchived(atts.getValue("archived").equals("True"));
+			String strAvailable = atts.getValue("available");
+			String strArchived = atts.getValue("archived");
+			holder.setAvailable(strAvailable != null && strAvailable.equals("True"));
+			holder.setArchived(strArchived != null && strArchived.equals("True"));
 			// OC now has GC - Format, get CacheID -- missing p.ex. on GcTour gpx
 			for (int i = 0; i < atts.getLength(); i++) {
 				if (atts.getName(i).equals("id")) {
@@ -263,13 +284,13 @@ public class GPXImporter extends MinML {
 			}
 			// get status
 			String status = atts.getValue("status");
-			if (status.equals("Available"))
+			if ("Available".equals(status))
 				available = true;
-			else if (status.equals("Unavailable"))
+			else if ("Unavailable".equals(status))
 				available = false;
-			else if (status.equals("Draft"))
+			else if ("Draft".equals(status))
 				available = false;
-			else if (status.equals("Archived"))
+			else if ("Archived".equals(status))
 				archived = true;
 			holder.setArchived(archived);
 			holder.setAvailable(available);
@@ -497,11 +518,21 @@ public class GPXImporter extends MinML {
 			return;
 		}
 		if (name.equals("groundspeak:difficulty") || name.equals("difficulty") || name.equals("terra:mental_challenge")) {
-			holder.setHard(CacheTerrDiff.v1Converter(strData));
+			try {
+				holder.setHard(CacheTerrDiff.v1Converter(strData));
+			} catch (IllegalArgumentException e) {
+				
+				pref.log(holder.getCacheName()+": illegal difficulty value: "+strData);
+			}
 			return;
 		}
 		if (name.equals("groundspeak:terrain") || name.equals("terrain") || name.equals("terra:physical_challenge")) {
-			holder.setTerrain(CacheTerrDiff.v1Converter(strData));
+			try {
+				holder.setTerrain(CacheTerrDiff.v1Converter(strData));
+			}catch (IllegalArgumentException e) {
+
+				pref.log(holder.getCacheName()+": illegal terrain value: "+strData);
+			}
 			return;
 		}
 		if ((name.equals("groundspeak:type") || name.equals("type") || name.equals("terra:style")) && inCache) {
