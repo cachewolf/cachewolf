@@ -347,7 +347,7 @@ public class SpiderGC {
 		 */
 		final boolean complete =true;
 
-		if (startPos != null && !startPos.isValid()) {
+		if ((startPos == null) || (startPos != null && !startPos.isValid())) {
 			(new MessageBox(MyLocale.getMsg(5500, "Error"), MyLocale.getMsg(5509, "Coordinates for centre must be set"), FormBase.OKB)).execute();
 			return; //
 		}
@@ -1073,8 +1073,19 @@ public class SpiderGC {
 			loggedIn = switchToEnglish();
 			if (loggedIn)
 				return true;
+
+			else {
+				(new MessageBox(MyLocale.getMsg(5523, "Login error!"), "Die userID ist vermutlich nicht mehr gültig. Siehe http://cachewolf.aldos.de/userid.html !", FormBase.OKB)).execute();
+				return false;
+			}
+		}
+		else {
+			(new MessageBox(MyLocale.getMsg(5523, "Login error!"), "Siehe http://cachewolf.aldos.de/userid.html !", FormBase.OKB)).execute();
+			return false;
 		}
 
+		/*
+		 *
 		int counter = 5;
 		boolean real_return = false;
 
@@ -1120,6 +1131,7 @@ public class SpiderGC {
 
 		localInfB.close(0);
 		return real_return;
+		 */
 
 	}
 
@@ -2701,7 +2713,8 @@ public class SpiderGC {
 
 				final String icon = entry.getString("LogTypeImage");
 				final String name = entry.getString("UserName");
-				String logText = entry.getString("LogText");
+				String logText = SafeXML.cleanback(entry.getString("LogText"));
+				logText = STRreplace.replace(logText, "\u000b", " ");
 				logText = STRreplace.replace(logText, "<br/>", "<br>");
 				logText = correctSmilies(logText);
 				final String d = DateFormat.toYYMMDD(entry.getString("Visited"));
@@ -3368,7 +3381,7 @@ public class SpiderGC {
 		}
 
 		public void startElement(String name, AttributeList atts) {
-			if (name.equals("trkpt") || name.equals("rtept") || name.equals("gpxx:rpt")) {
+			if (name.equals("wpt") || name.equals("trkpt") || name.equals("rtept") || name.equals("gpxx:rpt")) {
 				final double lat = Common.parseDouble(atts.getValue("lat"));
 				final double lon = Common.parseDouble(atts.getValue("lon"));
 				final TrackPoint tp = new TrackPoint(lat, lon);
