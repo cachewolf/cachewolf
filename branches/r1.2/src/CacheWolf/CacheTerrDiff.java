@@ -104,7 +104,7 @@ public final class CacheTerrDiff {
 		case CW_DT_45: return "4.5";
 		case CW_DT_50: return "5.0";
 		case CW_DT_UNSET: return "-.-";
-		default: throw new IllegalArgumentException("unmapped terrain or diffulty "+terrdiff);
+		default: return "-.-";
 		}
 	}
 
