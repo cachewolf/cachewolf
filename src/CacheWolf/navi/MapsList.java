@@ -280,13 +280,13 @@ public final class MapsList extends Vector {
 					ulimit = test;
 				}
 			}
-		} // searchfor is between llimit and ulimit OR is at ulimit or higher OR at llimit or lower 
-		// we want to return the highest index of the map which starts with searchfor 
+		} // searchfor is between llimit and ulimit OR is at ulimit or higher OR at llimit or lower
+		// we want to return the highest index of the map which starts with searchfor
 		comp = ((MapListEntry)this.get(ulimit)).sortEntryBBox.compareTo(searchfor);
-		if ( (comp <= 0) && searchfor.startsWith(((MapListEntry)this.get(ulimit)).sortEntryBBox) ) 
+		if ( (comp <= 0) && searchfor.startsWith(((MapListEntry)this.get(ulimit)).sortEntryBBox) )
 			llimit = ulimit; // search for is on ulimit or higher
-	     
-		if (!searchfor.startsWith(((MapListEntry)this.get(llimit)).sortEntryBBox)) 
+
+		if (!searchfor.startsWith(((MapListEntry)this.get(llimit)).sortEntryBBox))
 			llimit = llimitorig; // if the found mapListEntry doesn't contain the searchfor, then there is no map containing it.
 		return llimit;
 	}
@@ -533,7 +533,7 @@ public final class MapsList extends Vector {
 	public String getMapsPath() {
 		return _mapsPath;
 	}
-	
+
 }
 
 final class MapListEntry /*implements Comparable */ {
@@ -542,7 +542,7 @@ final class MapListEntry /*implements Comparable */ {
 	public String filename;
 	String path;
 	MapInfoObject map;
-	
+
 	static int rename = 0;
 	static int renameCounter = 0;
 	static InfoBox renameProgressInfoB = null;
@@ -577,13 +577,13 @@ final class MapListEntry /*implements Comparable */ {
 					String f = path+filename+".wfl";
 					String to = sortEntryBBox+"E-"+filename+".wfl";
 					if (!new File(f).rename(to))
-						(new MessageBox(MyLocale.getMsg(321,"Error"), MyLocale.getMsg(4705,"Failed to rename:\n")+f+".wfl"+MyLocale.getMsg(4706,"\nto:\n")+to, FormBase.OKB)).exec();
+						(new MessageBox(MyLocale.getMsg(321,"Error"), MyLocale.getMsg(4705,"Failed to rename:\n")+f+MyLocale.getMsg(4706,"\nto:\n")+to, FormBase.OKB)).exec();
 					f = Common.getImageName(path+filename);
 					if (f != null) {
 						to = sortEntryBBox+"E-"+filename+Common.getFilenameExtension(f);
 						if (!new File(f).rename(to)) {
-							Global.getPref().log("MapListEntry (String pathi, String filenamei): Failed to rename: "+path+filename+": "+f+".wfl to: "+to,null);
-							(new MessageBox(MyLocale.getMsg(321,"Error"), MyLocale.getMsg(4705,"Failed to rename:\n")+f+".wfl"+MyLocale.getMsg(4706,"\nto:\n")+to, FormBase.OKB)).exec();
+							Global.getPref().log("MapListEntry (String pathi, String filenamei): Failed to rename: "+path+filename+": "+f+" to: "+to,null);
+							(new MessageBox(MyLocale.getMsg(321,"Error"), MyLocale.getMsg(4705,"Failed to rename:\n")+f+MyLocale.getMsg(4706,"\nto:\n")+to, FormBase.OKB)).exec();
 						}
 					} else {
 						Global.getPref().log("MapListEntry (String pathi, String filenamei): Could not find image assiciated to: "+path+filename+".wfl",null);
