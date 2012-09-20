@@ -534,7 +534,8 @@ public class GpxExportNg {
 		try {
 			ret.append(formatCompact(ch));
 
-			if (exportStyle != STYLE_GPX_COMPACT && !(ch.isCustomWpt() || ch.isAddiWpt())) {
+			//if (exportStyle != STYLE_GPX_COMPACT && !(ch.isCustomWpt() || ch.isAddiWpt())) {
+			if (exportStyle != STYLE_GPX_COMPACT) {
 				ret.append(formatPqExtensions(ch));
 			}
 
@@ -676,7 +677,8 @@ public class GpxExportNg {
 	private String formatPqExtensions(CacheHolder ch) {
 
 		// no details for addis or custom waypoints
-		if (ch.isCustomWpt() || ch.isAddiWpt())
+		// if (ch.isCustomWpt() || ch.isAddiWpt())
+		if (ch.isAddiWpt())
 			return "";
 		StringBuffer ret = new StringBuffer();
 		ret.append("    <groundspeak:cache id=\"").append(ch.GetCacheID())//
