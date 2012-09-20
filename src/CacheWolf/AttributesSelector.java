@@ -155,17 +155,19 @@ public class AttributesSelector extends Panel {
 			else
 				inc = 2;
 			Attribute att = new Attribute(i, inc);
-			mImage rawImg = att.getImage();
-			attImage img = new attImage(rawImg.getHeight() != TILESIZE - 2 ? rawImg.scale(TILESIZE - 2, TILESIZE - 2, null, Image.FOR_DISPLAY) : rawImg, att);
+			mImage rawImg = att.getImage();		
+			int iHeight = rawImg.getHeight();
+			if (iHeight > 0) {
+				attImage img = new attImage(iHeight != TILESIZE - 2 ? rawImg.scale(TILESIZE - 2, TILESIZE - 2, null, Image.FOR_DISPLAY) : rawImg, att);
 
-			if (myX + TILESIZE > myWidth) {
-				myX = 2;
-				myY += TILESIZE;
+				if (myX + TILESIZE > myWidth) {
+					myX = 2;
+					myY += TILESIZE;
+				}
+				img.location = new Rect(myX, myY, TILESIZE, TILESIZE);
+				iap.addImage(img);
+				myX += TILESIZE;
 			}
-			img.location = new Rect(myX, myY, TILESIZE, TILESIZE);
-			iap.addImage(img);
-			myX += TILESIZE;
-
 		}
 		iap.repaintNow();
 	}
