@@ -72,18 +72,22 @@ public class CacheHolderDetail {
 	}
 
 	public void setLongDescription(String longDescription) {
+		String s = stripControlChars(longDescription);
 		if (LongDescription.equals(""))
 			getParent().setNew(true);
-		else if (!stripControlChars(LongDescription).equals(stripControlChars(longDescription)))
-			getParent().setUpdated(true);
-		LongDescription = longDescription;
+		else {
+			if (!s.equals(LongDescription)) {
+				getParent().setUpdated(true);
+			}
+		}
+		LongDescription = s;
 	}
 
 	private String stripControlChars(String desc) {
 		StringBuffer sb = new StringBuffer(desc.length());
 		for (int i = 0; i < desc.length(); i++) {
 			char c = desc.charAt(i);
-			if (c > ' ')
+			if (c >= ' ')
 				sb.append(c);
 		}
 		return sb.toString();
