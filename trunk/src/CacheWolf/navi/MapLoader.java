@@ -53,7 +53,7 @@ import ewe.util.Vector;
 import ewe.util.mString;
 
 /**
- * 
+ *
  * start offset for language file: 4800
  */
 
@@ -78,7 +78,7 @@ public class MapLoader {
 	boolean fetchOnlyMapWithCache = false;
 
 	/**
-	 * 
+	 *
 	 * @param prxy
 	 * @param prt
 	 * @param wmspath
@@ -142,7 +142,7 @@ public class MapLoader {
 
 	/**
 	 * calculates the Expedia Alti = scale which fits in distance to its edges
-	 * 
+	 *
 	 * @param center
 	 * @param distance
 	 *            in meters
@@ -160,7 +160,7 @@ public class MapLoader {
 	/**
 	 * download maps from expedia at zoomlevel alti and save the maps and the .wfl
 	 * in path
-	 * 
+	 *
 	 * @param center
 	 *            centre of all tiles
 	 * @param radius
@@ -173,7 +173,7 @@ public class MapLoader {
 	 *            in pixels
 	 * @param path
 	 *            without "/" at the end
-	 * 
+	 *
 	 */
 	public void setTiles(CWPoint center, float radius, float scale, Point size, int overlapping) {
 		double metersPerLat = (1000 * (new CWPoint(0, 0)).getDistance(new CWPoint(1, 0)));
@@ -291,7 +291,7 @@ public class MapLoader {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param center
 	 * @param scale
 	 * @param pixelsize
@@ -366,7 +366,7 @@ public class MapLoader {
 							}
 
 							String koords = bottomleft.toString(TransformCoordinates.LON_LAT) + "," + topright.toString(TransformCoordinates.LON_LAT);
-							outp.println("bounds-set " + koords);
+							outp.println("set-geo-bounds " + koords);
 							outp.println("zoom-bounds");
 							if (path.indexOf(':') == 1) {
 								outp.print("export-bitmap file=" + "\"" + fName + "\"");
@@ -578,7 +578,7 @@ class OnlineMapService {
 	 * This method is used in case the online map service provides only certain steps of
 	 * zoomlevels. In this case the scale in meters per pixel must be returned, which
 	 * will be used instead of the wished scale.
-	 * 
+	 *
 	 * @param scale
 	 * @return
 	 */
@@ -592,7 +592,7 @@ class OnlineMapService {
 
 	/**
 	 * Overlaod this to integrate name of layers
-	 * 
+	 *
 	 * @return friendly service name
 	 */
 	public String getName() {
@@ -603,7 +603,7 @@ class OnlineMapService {
 	 * This method is called to get a name of the
 	 * online map service which will be part of the filename
 	 * used for the downloaded image
-	 * 
+	 *
 	 * @return friendly service name
 	 */
 	public String getNameForFileSystem() {
@@ -618,7 +618,7 @@ class OnlineMapService {
 	 * Overload this and return the URL to the map image, don't call super
 	 * Alternatively overload getUrlForBoundingBoxInternal
 	 * You must overload either this method or getUrlForBoundingBox
-	 * 
+	 *
 	 * @param center
 	 * @param scale
 	 * @param pixelsize
@@ -634,7 +634,7 @@ class OnlineMapService {
 	 * This is made protected and named "...Internal" because a lot of services
 	 * don't work correctly when a map is requested, that is not exactly quadratic
 	 * --> alway use getUrlForCenter...
-	 * 
+	 *
 	 * @param surArea
 	 * @param pixelsize
 	 * @return
@@ -646,7 +646,7 @@ class OnlineMapService {
 	/**
 	 * overload this if your map service uses a special projection
 	 * an return an Area that is quadratic in that projection
-	 * 
+	 *
 	 * @param center
 	 * @param scale
 	 * @param pixelsize
@@ -666,7 +666,7 @@ class OnlineMapService {
 
 	/**
 	 * Overload this (don't call super()) or alternatively overload getMapInfoObjectInternal
-	 * 
+	 *
 	 * @param center
 	 * @param scale
 	 * @param pixelsize
@@ -694,7 +694,7 @@ class WebMapService extends OnlineMapService {
 	double maxscaleWMS;
 
 	/**
-	 * 
+	 *
 	 * @param filename
 	 *            without file extension
 	 * @throws IOException
@@ -785,7 +785,7 @@ class WebMapService extends OnlineMapService {
 			}
 		}
 		// some WMS limit the size of images they deliver - a swedish WMS delivers just 256x256 even if 500x500 or 1000x1000 was requested.
-		
+
 		maxPixelSize = Integer.parseInt(wms.getProperty("MaxPixelSize", "-1").trim());
 		if (maxPixelSize == -1) maxPixelSize = Integer.MAX_VALUE;
 	}
@@ -796,7 +796,7 @@ class WebMapService extends OnlineMapService {
 	private static final int BOTTOMLEFT_INDEX = 3;
 
 	/**
-	 * 
+	 *
 	 * @param maparea
 	 * @return [0] = topleft, [1] = bottomright, [2] = topright, [3] = bottomleft
 	 */
@@ -888,7 +888,7 @@ class WebMapService extends OnlineMapService {
 	 * a) if only one is in the array 0 is returned
 	 * b) if there are more, find out which one matches the correct zone (e.g. Gau?-K?ger stripe)
 	 * Call this routine with center of the area (use Area.getcenter())
-	 * 
+	 *
 	 * @param p
 	 *            Point for which the epsg code is searched for
 	 * @return
