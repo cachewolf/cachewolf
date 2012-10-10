@@ -215,7 +215,8 @@ Cachetypegroups value is either “main” or “addi” or “parking” else all (here
 all = default ) is assumed<br>
 &lt;tmpl_par name=&quot;CopyCacheImages&quot; value=&quot;yes&quot;&gt;<span
 style='mso-tab-count:2'>                   </span>CacheImages are copied to the
-output directory (copy attribs and icons manually, they are fix)<br>
+output directory (copy attribs and icons manually, they are fix). Value=”CBX”
+for CacheBox<br>
 &lt;tmpl_par name=&quot;inputEingabe&quot; value=&quot;default&quot;&gt;<span
 style='mso-tab-count:2'>                       </span>calls input with a
 “default” value and makes a tmpl_var with the name Eingabe (Eingabe is
@@ -224,8 +225,8 @@ placeholder) (!dont use umlauts in defaults)<br>
 style='mso-tab-count:2'>                     </span>sets a tmpl_var with the
 name Konstante (Konstante is placeholder) (!dont use umlauts in value)<br>
 &lt;tmpl_par name=&quot;sortedBy&quot; value=&quot;-1&quot;&gt;<span
-style='mso-tab-count:3'>                                    </span>sets a
-tmpl_var with the name sortedBy: values are 1..19.
+style='mso-tab-count:3'>                                    </span>sets a tmpl_var
+with the name sortedBy: values are 1..19.
 (4=Waypoint,5=Name,9=Status,10=Distance… see myComparer.java)<o:p></o:p></span></p>
 
 <p class=MsoNormal style='mso-margin-top-alt:auto;mso-margin-bottom-alt:auto'><u><span
@@ -337,8 +338,7 @@ gekürzt wird. <br>
 <span style='mso-tab-count:9'>                                                                                                          </span>:
 dann kriegen sie noch Infos wie Difficulty etc. rein)<br>
 CACHEID<span style='mso-tab-count:8'>                                                                                            </span>:<br>
-ARCHIVED<span style='mso-tab-count:4'>                                          </span><span
-style='mso-tab-count:4'>                                               </span>:<br>
+ARCHIVED<span style='mso-tab-count:8'>                                                                                         </span>:<br>
 AVAILABLE<span style='mso-tab-count:8'>                                                                                        </span>:
 <br>
 TRAVELBUG<span style='mso-tab-count:8'>                                                                                      </span>:
@@ -401,7 +401,8 @@ lang=EN-GB style='font-size:10.0pt;font-family:Arial;mso-ansi-language:EN-GB'><o
 
 <p class=MsoNormal style='mso-margin-top-alt:auto;mso-margin-bottom-alt:auto'><span
 lang=EN-GB style='font-size:10.0pt;font-family:Arial;mso-ansi-language:EN-GB'>LOGS<span
-style='mso-tab-count:9'>                                                                                                 </span>:
+style='mso-tab-count:5'>                                                  </span><span
+style='mso-tab-count:4'>                                               </span>:
 the &lt;tmpl_loop LOGS &gt;, example see GCTemplate.html / show cache in
 browser offline<br>
 ICON<span style='mso-tab-count:9'>                                                                                                  </span>:
@@ -492,8 +493,8 @@ Name;Breitengrad;Längengrad;Typ1;Typ2;Waypoint;Datum;Hyperlink&lt;br /&gt;<br>
 &quot;&lt;tmpl_var name=SHORTTYPE&gt;-&lt;tmpl_var
 name=SHORTSIZE&gt;-&lt;tmpl_var name=DIFFICULTY&gt;-&lt;tmpl_var
 name=TERRAIN&gt; &lt;tmpl_var name=NAME&gt;&quot;;&lt;tmpl_var
-name=LAT&gt;;&lt;tmpl_var name=LON&gt;;&quot;&lt;tmpl_var
-name=TYPE&gt;&quot;;&quot;&lt;tmpl_var name=SIZE&gt;&quot;;&quot;&lt;tmpl_var
+name=LAT&gt;;&lt;tmpl_var name=LON&gt;;&quot;&lt;tmpl_var name=TYPE&gt;&quot;;&quot;&lt;tmpl_var
+name=SIZE&gt;&quot;;&quot;&lt;tmpl_var
 name=WAYPOINT&gt;&quot;;&quot;&lt;tmpl_var name=DATE&gt;&quot;;&quot;&lt;tmpl_var
 name=URL&gt;&quot;&lt;br /&gt;<br>
 &lt;/tmpl_loop&gt;<br style='mso-special-character:line-break'>
@@ -640,8 +641,8 @@ example above. </b></span><span lang=EN-GB style='mso-ansi-language:EN-GB'><o:p>
 mso-outline-level:1'><st1:place><u><span lang=EN-GB style='font-size:10.0pt;
  font-family:Arial;mso-ansi-language:EN-GB'>Loop</span></u></st1:place><u><span
 lang=EN-GB style='mso-ansi-language:EN-GB'> </span></u><u><span lang=EN-GB
-style='font-size:10.0pt;font-family:Arial;mso-ansi-language:EN-GB'>context variables</span></u><u><span
-lang=EN-GB style='mso-ansi-language:EN-GB'><o:p></o:p></span></u></p>
+style='font-size:10.0pt;font-family:Arial;mso-ansi-language:EN-GB'>context
+variables</span></u><u><span lang=EN-GB style='mso-ansi-language:EN-GB'><o:p></o:p></span></u></p>
 
 <p class=MsoNormal style='mso-margin-top-alt:auto;mso-margin-bottom-alt:auto'><span
 lang=EN-GB style='font-size:10.0pt;font-family:Arial;mso-ansi-language:EN-GB'>If
@@ -671,8 +672,8 @@ lang=EN-GB style='font-size:10.0pt;font-family:Arial;mso-ansi-language:EN-GB'>Tr
 if both __FIRST__ and __LAST__ are false<br>
 __COUNTER__<span style='mso-tab-count:1'> </span></span><span lang=EN-GB
 style='mso-ansi-language:EN-GB'>&nbsp;&nbsp;&nbsp; </span><span lang=EN-GB
-style='font-size:10.0pt;font-family:Arial;mso-ansi-language:EN-GB'>Which
-iteration is currently on. Starts at 1<br style='mso-special-character:line-break'>
+style='font-size:10.0pt;font-family:Arial;mso-ansi-language:EN-GB'>Which iteration
+is currently on. Starts at 1<br style='mso-special-character:line-break'>
 <![if !supportLineBreakNewLine]><br style='mso-special-character:line-break'>
 <![endif]></span><span lang=EN-GB style='mso-ansi-language:EN-GB'><o:p></o:p></span></p>
 
