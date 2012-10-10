@@ -22,6 +22,7 @@ See http://www.cachewolf.de/ for more information.
 package CacheWolf;
 
 
+import ewe.io.File;
 import CacheWolf.utils.FileBugfix;
 
 public final class Common {
@@ -171,6 +172,16 @@ public final class Common {
 		int dot = fn.lastIndexOf('.');
 		if (dot < 0) return "";
 		return fn.substring(dot, fn.length());
+	}
+	/** get the File.getDrivePath of a filename
+	 * @param fn
+	 * @return
+	 */
+	public static String getFilename (String fn) {
+		if (fn == null || fn.length() == 0) return "";
+		int dot = fn.lastIndexOf('.');
+		if (dot < 0) return fn;
+		return fn.substring(0, dot);
 	}
 	
 	public static String DoubleToString(double d, int length, int decimalplaces) {

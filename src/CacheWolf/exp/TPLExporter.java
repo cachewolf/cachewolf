@@ -69,7 +69,7 @@ class TplFilter implements HTML.Tmpl.Filter {
 	boolean getAddiWp = false;
 	boolean getMainWp = false;
 	boolean getParking = false;
-	boolean copyCacheImages = false;
+	int copyCacheImages = 0;
 	Hashtable additionalVarParams = new Hashtable();
 	String userValue = "";
 	String out = "*.gpx";
@@ -139,7 +139,9 @@ class TplFilter implements HTML.Tmpl.Filter {
 				sortedBy = Integer.valueOf(value).intValue();
 			} else if (param.equals("CopyCacheImages")) {
 				if (value.equals("yes"))
-					copyCacheImages = true;
+					copyCacheImages = 1;
+				if (value.equals("CBX"))
+					copyCacheImages = 2;
 			} else if (param.startsWith("input")) {
 				String par = param.substring(5);
 				InfoBox inf = new InfoBox("Eingabe", par, InfoBox.INPUT);
@@ -242,8 +244,10 @@ public class TPLExporter {
 
 			Vector cache_index = new Vector();
 			String imgExpName = "";
-			if (myFilter.copyCacheImages)
+			if (myFilter.copyCacheImages == 1)
 				imgExpName = expName;
+			if (myFilter.copyCacheImages == 2)
+				imgExpName = expName + "*";
 			for (int i = 0; i < counter; i++) {
 				CacheHolder ch = cacheDB.get(i);
 				if (ch.isVisible() && (ch.getPos().isValid() || myFilter.formatModifier > 0)) {

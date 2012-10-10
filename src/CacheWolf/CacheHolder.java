@@ -831,7 +831,22 @@ public class CacheHolder {
 					imgs.put("URL", det.images.get(i).getURL());
 					if (!expName.equals("")) {
 						String src = Global.getProfile().dataDir + imgFile;
-						String dest = Global.getPref().getExportPath(expName) + imgFile;
+						String dest;
+						if (expName.endsWith("*")) {
+							String d1 = Global.getPref().getExportPath(expName.substring(0,expName.length()-1));
+							d1 = d1 + imgFile.substring(0,4).toUpperCase() + "/";
+							dest = d1 + imgFile.toUpperCase();
+							if (imgFile.toUpperCase().startsWith(title.toUpperCase())) {
+								d1 = Common.getFilename(dest);
+							}
+							else {
+								d1 = Common.getFilename(dest) + " - " + Common.ClearForFileName(title);
+							}
+							dest = d1 + Common.getFilenameExtension(dest).toLowerCase();
+						}
+						else {
+							dest = Global.getPref().getExportPath(expName) + imgFile;
+						}
 						if (!DataMover.copy(src, dest)) {
 							Global.getPref().log("[CacheHolder:toHashtable]error copying " + imgFile + " to " + Global.getPref().getExportPath(expName));
 						}
