@@ -2,6 +2,7 @@
 <tmpl_par name="newline" value="CRLF">
 <tmpl_par name="decsep" value=".">
 <tmpl_par name="Out" value="*.gpx">
+<tmpl_par name="CopyCacheImages" value="CBX">
 <?xml version="1.0" encoding="utf-8"?><br>
 <gpx xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" version="1.0" creator="Groundspeak Pocket Query" xsi:schemaLocation="http://www.topografix.com/GPX/1/0 http://www.topografix.com/GPX/1/0/gpx.xsd http://www.groundspeak.com/cache/1/0/1 http://www.groundspeak.com/cache/1/0/1/cache.xsd" xmlns="http://www.topografix.com/GPX/1/0"><br>
   <name>TPL-Export</name><br>
