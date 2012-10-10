@@ -326,6 +326,10 @@ public class DataMover {
 			int    len  = 32768;
 			byte[] buff = new byte[ (int)java.lang.Math.min( len, fSrc.length() ) ];
 			FileInputStream  fis = new FileInputStream(  fSrc );
+			File   dDst = new File( File.getDrivePath(sFileDst) );
+			if (!dDst.exists()) {
+				dDst.createDir();
+			}
 			FileOutputStream fos = new FileOutputStream( sFileDst);
 			while( 0 < (len = fis.read( buff )) )
 				fos.write( buff, 0, len );
@@ -436,7 +440,7 @@ public class DataMover {
 			 destFileList= destPath.list(null,FileBase.LIST_FILES_ONLY|FileBase.LIST_DONT_SORT);
 			 pbf.exit(0);
 		 }
-		 
+
 		 public void doIt(int i,CacheHolder srcHolder) {
 			 srcDB.removeElementAt(i);
 			 deleteCacheFiles(srcHolder.getWayPoint(),dstProfile.dataDir, destFileList);
