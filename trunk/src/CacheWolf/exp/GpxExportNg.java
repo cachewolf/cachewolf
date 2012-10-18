@@ -816,14 +816,31 @@ public class GpxExportNg {
 	}
 
 	private StringBuffer addLog(String logId, Log log, String FinderID, StringBuffer ret) {
+
+		String logMessage = log.getMessage();
 		Transformer trans = new Transformer(true);
+
+		if ( Global.getPref().exportLogsAsPlainText ) {
+			trans.add(new Regex("\r", ""));
+			trans.add(new Regex("\n", " "));
+			trans.add(new Regex("<br>", "\n"));
+			trans.add(new Regex("<p>", "\n"));
+			trans.add(new Regex("<hr>", "\n"));
+			trans.add(new Regex("<br />", "\n"));
+			trans.add(new Regex("<(.*?)>", ""));
+			Transformer ttrans=new Transformer(true);
+			ttrans.add(new Regex("<(.*?)>", ""));
+			logMessage = ttrans.replaceAll(trans.replaceAll(logMessage));
+		}
+
+		trans = new Transformer(true);
 		trans.add(new Regex("@@LOGID@@", logId));
 		trans.add(new Regex("@@LOGDATE@@", log.getDate()));
 		trans.add(new Regex("@@LOGTYPE@@", CacheHolder.image2TypeText(log.getIcon())));
 		trans.add(new Regex("@@LOGFINDERID@@", FinderID));
 		trans.add(new Regex("@@LOGFINDER@@", SafeXML.cleanGPX(log.getLogger())));
 		trans.add(new Regex("@@LOGENCODE@@", ""));
-		trans.add(new Regex("@@LOGTEXT@@", SafeXML.cleanGPX(log.getMessage())));
+		trans.add(new Regex("@@LOGTEXT@@", SafeXML.cleanGPX(logMessage)));
 		ret.append(trans.replaceAll(GPXLOG));
 		return ret;
 	}
