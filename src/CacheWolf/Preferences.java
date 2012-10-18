@@ -308,6 +308,7 @@ public class Preferences extends MinML {
 	public boolean isPremium = true;
 	/** The maximum number of logs to export */
 	public int numberOfLogsToExport = 5;
+	public boolean exportLogsAsPlainText = true;
 	/** Add Travelbugs when exporting */
 	public boolean exportTravelbugs = false;
 	/** Try to make a MyFinds GPX when exporting to GPX */
@@ -645,9 +646,15 @@ public class Preferences extends MinML {
 			tmp = atts.getValue("numberOfLogsToExport");
 			if (tmp != null)
 				numberOfLogsToExport = Convert.parseInt(tmp);
+
+			tmp = atts.getValue("exportLogsAsPlainText");
+			if (tmp != null)
+				exportLogsAsPlainText = Boolean.valueOf(tmp).booleanValue();
+
 			tmp = atts.getValue("exportTravelbugs");
 			if (tmp != null)
 				exportTravelbugs = Boolean.valueOf(tmp).booleanValue();
+
 			tmp = atts.getValue("exportGpxAsMyFinds");
 			if (tmp != null)
 				exportGpxAsMyFinds = Boolean.valueOf(tmp).booleanValue();
@@ -872,7 +879,10 @@ public class Preferences extends MinML {
 			outp.print("    <gotopanel northcentered=\"" + SafeXML.strxmlencode(northCenteredGoto) + "\" />\n");
 			outp.print("    <details cacheSize=\"" + SafeXML.strxmlencode(maxDetails) + "\" delete=\"" + SafeXML.strxmlencode(deleteDetails) + "\" />\n");
 			outp.print("    <metric type=\"" + SafeXML.strxmlencode(metricSystem) + "\" />\n");
-			outp.print("    <export numberOfLogsToExport=\"" + SafeXML.strxmlencode(numberOfLogsToExport) + "\" exportTravelbugs=\"" + SafeXML.strxmlencode(exportTravelbugs) + "\" exportGpxAsMyFinds=\"" + SafeXML.strxmlencode(exportGpxAsMyFinds)
+			outp.print("    <export numberOfLogsToExport=\"" + SafeXML.strxmlencode(numberOfLogsToExport)
+					+ "\" exportTravelbugs=\"" + SafeXML.strxmlencode(exportTravelbugs)
+					+ "\" exportLogsAsPlainText=\"" + SafeXML.strxmlencode(exportLogsAsPlainText)
+					+ "\" exportGpxAsMyFinds=\"" + SafeXML.strxmlencode(exportGpxAsMyFinds)
 					+ "\" />\n");
 			outp.print("    <datamover processorMode=\"" + SafeXML.strxmlencode(processorMode) + "\" />\n");
 			if (customMapsPath != null)
