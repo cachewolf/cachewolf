@@ -775,9 +775,7 @@ public class GpxExportNg {
 		}
 		// own log always (found)
 		if (chD.OwnLogId.equals("") || chD.OwnLog == null) {
-			if (chD.OwnLog != null) {
-				Global.getPref().log(chD.getParent().getWayPoint() + " missing own LogID", null);
-			}
+			Global.getPref().log(chD.getParent().getWayPoint() + " missing own LogID or Log", null);
 			if (exportStyle == STYLE_GPX_MYFINDS) return "";
 			if (chD.OwnLog != null) {
 				addLog("4711", chD.OwnLog, finderid, ret);
