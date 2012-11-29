@@ -131,7 +131,7 @@ public class SpiderGC {
 	private boolean spiderAllFinds;
 	private String htmlListPage;
 	private int maxUpdate;
-	private boolean maxNumberAbort;
+	// private boolean maxNumberAbort;
 	private byte restrictedCacheType = 0;
 	private String fileName = "";
 	private String userToken = "";
@@ -230,59 +230,84 @@ public class SpiderGC {
 					+ Preferences.NEWLINE + "alias is premium memb: " + (!pref.isPremium ? "no" : "yes") + Preferences.NEWLINE + "Update if new Log    : " + (pref.checkLog ? "yes" : "no") + Preferences.NEWLINE + "Update if TB changed : "
 					+ (pref.checkTBs ? "yes" : "no") + Preferences.NEWLINE + "Update if DTS changed: " + (pref.checkDTS ? "yes" : "no") + Preferences.NEWLINE, null);
 
-			Hashtable cachesToUpdate = new Hashtable(cacheDB.size());
-
-			cachesToUpdate = fillDownloadLists(pref.maxSpiderNumber, maxUpdate, maxDistance, minDistance, directions, cachesToUpdate);
-			if (cachesToUpdate == null) {
-				cachesToUpdate = new Hashtable();
+			double lowerDistance = minDistance;
+			double upperDistance = minDistance;
+			int completeSpiderErrors = 0;
+			boolean alreadyAnswered = false;
+			boolean lastAnswer = true;
+			int pageLimit = 20;
+			int maxPages=0;
+			if (!login()) upperDistance = maxDistance;
+			else {
+				getFirstListPage(this.getDistanceInMiles(maxDistance));
+				maxPages = (int) java.lang.Math.ceil(getNumFound(htmlListPage) / 20);
 			}
-			;
-			if (!infB.isClosed) {
-				infB.setInfo(MyLocale.getMsg(5511, "Found ") + cachesToLoad.size() + MyLocale.getMsg(5512, " caches"));
-			}
-			// continue to update index to changed cache.xml things
-			// (size,terrain,difficulty,...?)
-
-			// =======
-			// Now ready to spider each cache in the lists
-			// =======
-
-			int spiderErrors = 0;
-			final int totalCachesToLoad = cachesToLoad.size() + cachesToUpdate.size();
-			final boolean loadAllLogs = (pref.maxLogsToSpider > 5) || spiderAllFinds;
-			pref.log("Download properties : " + Preferences.NEWLINE + "maxLogs: " + (loadAllLogs ? "completepage " : "shortpage") + "nr.:" + pref.maxLogsToSpider + Preferences.NEWLINE + "with pictures     : " + (!pref.downloadPics ? "no" : "yes")
-					+ Preferences.NEWLINE + "with tb           : " + (!pref.downloadTBs ? "no" : "yes") + Preferences.NEWLINE, null);
-
-			if (Global.mainTab.statBar != null)
-				Global.mainTab.statBar.updateDisplay("");
-
-			if (!infB.isClosed) {
-				spiderErrors = downloadCaches(cachesToLoad, spiderErrors, totalCachesToLoad, loadAllLogs);
-
-				if (cachesToUpdate.size() > 0) {
-					switch (pref.spiderUpdates) {
-					case Preferences.NO:
-						cachesToUpdate.clear();
-						break;
-					case Preferences.ASK:
-						final MessageBox mBox = new MessageBox(MyLocale.getMsg(5517, "Spider Updates?"), cachesToUpdate.size() + MyLocale.getMsg(5518, " caches in database need an update. Update now?"), FormBase.IDYES | FormBase.IDNO);
-						if (mBox.execute() != FormBase.IDOK) {
-							cachesToUpdate.clear();
-						}
-						break;
-					}
+			while (upperDistance < maxDistance) {
+				lowerDistance = upperDistance;
+				if ((int) lowerDistance < ((int) maxDistance - 1)) {
+					upperDistance = this.getUpperDistance(lowerDistance, maxDistance, maxPages, pageLimit);
 				}
+				else {
+					upperDistance = maxDistance;
+				}
+				Hashtable cachesToUpdate = new Hashtable(cacheDB.size());
+				cachesToUpdate = fillDownloadLists(pref.maxSpiderNumber, maxUpdate, upperDistance, lowerDistance, directions, cachesToUpdate);
+				if (cachesToUpdate == null) {
+					cachesToUpdate = new Hashtable();
+				}
+				if (!infB.isClosed) {
+					infB.setInfo(MyLocale.getMsg(5511, "Found ") + cachesToLoad.size() + MyLocale.getMsg(5512, " caches"));
+				}
+				// continue to update index to changed cache.xml things
+				// (size,terrain,difficulty,...?)
 
-				spiderErrors = updateCaches(cachesToUpdate, spiderErrors, totalCachesToLoad, loadAllLogs);
+				// =======
+				// Now ready to spider each cache in the lists
+				// =======
+
+				int spiderErrors = 0;
+				final int totalCachesToLoad = cachesToLoad.size() + cachesToUpdate.size();
+				final boolean loadAllLogs = (pref.maxLogsToSpider > 5) || spiderAllFinds;
+				pref.log("Download properties : " + Preferences.NEWLINE + "maxLogs: " + (loadAllLogs ? "completepage " : "shortpage") + "nr.:" + pref.maxLogsToSpider + Preferences.NEWLINE + "with pictures     : " + (!pref.downloadPics ? "no" : "yes")
+						+ Preferences.NEWLINE + "with tb           : " + (!pref.downloadTBs ? "no" : "yes") + Preferences.NEWLINE, null);
+
+				if (Global.mainTab.statBar != null)
+					Global.mainTab.statBar.updateDisplay("");
+
+				if (!infB.isClosed) {
+					spiderErrors = downloadCaches(cachesToLoad, spiderErrors, totalCachesToLoad, loadAllLogs);
+
+					if (cachesToUpdate.size() > 0) {
+						switch (pref.spiderUpdates) {
+						case Preferences.NO:
+							cachesToUpdate.clear();
+							break;
+						case Preferences.ASK:
+							if (!alreadyAnswered) {
+								final MessageBox mBox = new MessageBox(MyLocale.getMsg(5517, "Spider Updates?"), cachesToUpdate.size() + MyLocale.getMsg(5518, " caches in database need an update. Update now?"), FormBase.IDYES | FormBase.IDNO);
+								lastAnswer = mBox.execute() != FormBase.IDOK;
+							}
+							if (lastAnswer) {
+								cachesToUpdate.clear();
+							}
+							break;
+						}
+					}
+
+					spiderErrors = updateCaches(cachesToUpdate, spiderErrors, totalCachesToLoad, loadAllLogs);
+				}
+				completeSpiderErrors = completeSpiderErrors + spiderErrors;
+			}
+			if (completeSpiderErrors > 0) {
+				new MessageBox(MyLocale.getMsg(5500, "Error"), completeSpiderErrors + MyLocale.getMsg(5516, " cache descriptions%0acould not be loaded."), FormBase.DEFOKB).execute();
 			}
 
-			if (spiderErrors > 0) {
-				new MessageBox(MyLocale.getMsg(5500, "Error"), spiderErrors + MyLocale.getMsg(5516, " cache descriptions%0acould not be loaded."), FormBase.DEFOKB).execute();
-			}
+			/*
 			if (maxNumberAbort) {
 				new MessageBox(MyLocale.getMsg(5519, "Information"), MyLocale.getMsg(5520, "Only the given maximum of caches were loaded.%0aRepeat spidering later to load more caches.%0aNo already existing caches were updated."), FormBase.DEFOKB)
 						.execute();
 			}
+			*/
 			Global.getProfile().restoreFilter();
 			Global.getProfile().saveIndex(Global.getPref(), true);
 
@@ -293,6 +318,37 @@ public class SpiderGC {
 		}
 	} // End of DoIt
 
+	private int getDistanceInMiles(double value) {
+		// max distance in miles for URL, so we can get more than 80km
+		int toDistanceInMiles = (int) java.lang.Math.ceil(value);
+		if (pref.metricSystem != Metrics.IMPERIAL) {
+			toDistanceInMiles = (int) java.lang.Math.ceil(Metrics.convertUnit(value, Metrics.KILOMETER, Metrics.MILES));
+		}
+		return toDistanceInMiles;
+	}
+
+	private double getUpperDistance(double fromDistance, double toDistance, int maxPages, int pageLimit) {
+
+		int startPage;
+		if (fromDistance > 0) {
+			getFirstListPage(this.getDistanceInMiles(fromDistance));
+			startPage = (int) java.lang.Math.ceil(getNumFound(htmlListPage) / 20);
+		}
+		else {
+			startPage = 1;
+		}
+
+		int endPage = maxPages;
+
+		while ((1 + endPage - startPage) > pageLimit) {
+			toDistance = fromDistance + (toDistance - fromDistance) / 2;
+			if ((int)toDistance <= ((int)fromDistance + 1)) return toDistance;
+			getFirstListPage(this.getDistanceInMiles(toDistance));
+			endPage = (int) java.lang.Math.ceil(getNumFound(htmlListPage) / 20);
+		}
+		return toDistance;
+
+	}
 	public void doItAlongARoute() {
 		Area sq;
 		Vector points = null;
@@ -458,9 +514,11 @@ public class SpiderGC {
 		if (spiderErrors > 0) {
 			new MessageBox(MyLocale.getMsg(5500, "Error"), spiderErrors + MyLocale.getMsg(5516, " cache descriptions%0acould not be loaded."), FormBase.DEFOKB).execute();
 		}
+		/*
 		if (maxNumberAbort) {
 			new MessageBox(MyLocale.getMsg(5519, "Information"), MyLocale.getMsg(5520, "Only the given maximum of caches were loaded.\nRepeat spidering later to load more caches.\nNo already existing caches were updated."), FormBase.DEFOKB).execute();
 		}
+		*/
 		Global.getProfile().restoreFilter();
 		Global.getProfile().saveIndex(Global.getPref(), true);
 	}
@@ -714,26 +772,15 @@ public class SpiderGC {
 		int numFinds;
 		int startPage = 1;
 
+		// max distance in miles for URL, so we can get more than 80km
 		// get pagenumber of page with fromDistance , to skip reading of pages < fromDistance
 		if (fromDistance > 0) {
-			// distance in miles for URL
-			int fromDistanceInMiles = (int) java.lang.Math.ceil(fromDistance);
-			if (pref.metricSystem != Metrics.IMPERIAL) {
-				fromDistanceInMiles = (int) java.lang.Math.ceil(Metrics.convertUnit(fromDistance, Metrics.KILOMETER, Metrics.MILES));
-			}
-			// - a mile to be save to get a page with fromDistance
-			getFirstListPage(java.lang.Math.max(fromDistanceInMiles - 1, 1));
+			getFirstListPage(java.lang.Math.max(this.getDistanceInMiles(fromDistance), 1));
 			// Number of caches from gc Listpage calc the number of the startpage
 			startPage = (int) java.lang.Math.ceil(getNumFound(htmlListPage) / 20);
 		}
-
-		// max distance in miles for URL, so we can get more than 80km
-		int toDistanceInMiles = (int) java.lang.Math.ceil(toDistance);
-		if (pref.metricSystem != Metrics.IMPERIAL) {
-			toDistanceInMiles = (int) java.lang.Math.ceil(Metrics.convertUnit(toDistance, Metrics.KILOMETER, Metrics.MILES));
-		}
 		// add a mile to be save from different distance calculations in CW and at GC
-		toDistanceInMiles++;
+		int toDistanceInMiles = this.getDistanceInMiles(toDistance) + 1;
 		getFirstListPage(toDistanceInMiles);
 		// Number of caches from gcfirst Listpage
 		numFinds = getNumFound(htmlListPage);
@@ -751,6 +798,12 @@ public class SpiderGC {
 			}
 		}
 
+		int endPage = (int) (numFinds / 20);
+		int anzPages = 1 + endPage - startPage;
+		pref.log("List up to " + anzPages + " pages (" + startPage + ".." + endPage +
+				"). From " + this.getDistanceInMiles(fromDistance) + " miles (" + fromDistance + " km/miles)" +
+				" to " + toDistanceInMiles + " miles (" + toDistance + " km/miles)"
+				, null);
 		int numFoundInDB = 0; // Number of GC-founds already in this profile
 		if (spiderAllFinds) {
 			numFoundInDB = getFoundInDB();
@@ -886,7 +939,7 @@ public class SpiderGC {
 					}
 				}
 				if (toDistance > 0) {
-					if (page_number % 100 == 45) {
+					if (page_number % 100 == 17) {
 						getAListPage(toDistanceInMiles,gotoPreviousBlock);
 						getAListPage(toDistanceInMiles,gotoNextBlock);
 					}
@@ -990,7 +1043,7 @@ public class SpiderGC {
 		final CacheHolder ch = new CacheHolder(); // cacheDB.get(number);
 		ch.setWayPoint(cacheDB.get(number).getWayPoint());
 		if (ch.isAddiWpt())
-			return -1; // No point re-spidering an addi waypoint, comes with parent
+			return -1; // addi waypoint, comes with parent cache
 
 		if (!login())
 			return -1;
@@ -2720,13 +2773,18 @@ public class SpiderGC {
 				final String d = DateFormat.toYYMMDD(entry.getString("Visited"));
 
 				// if this log says this Cache is found by me
-				if ((icon.equals(icon_smile) || icon.equals(icon_camera) || icon.equals(icon_attended)) && (name.equalsIgnoreCase(pref.myAlias) || (pref.myAlias2.length() > 0 && name.equalsIgnoreCase(pref.myAlias2)))) {
+				// if ((icon.equals(icon_smile) || icon.equals(icon_camera) || icon.equals(icon_attended)) && (name.equalsIgnoreCase(pref.myAlias) || (pref.myAlias2.length() > 0 && name.equalsIgnoreCase(pref.myAlias2)))) {
+				if ((icon.equals(icon_smile) || icon.equals(icon_camera) || icon.equals(icon_attended)) &&
+						(name.equalsIgnoreCase(pref.myAlias) ||
+						(pref.myAlias2.length() > 0 && name.equalsIgnoreCase(pref.myAlias2)))
+					) {
 					chD.getParent().setFound(true);
 					chD.getParent().setCacheStatus(d);
 					// final String logId = entry.getString("LogID");
 					chD.OwnLogId = entry.getString("LogID");
 					chD.OwnLog = new Log(icon, d, name, logText);
 					foundown = true;
+					reslts.add(new Log(icon, d, name, logText));
 				}
 				if (nLogs <= pref.maxLogsToSpider) {
 					reslts.add(new Log(icon, d, name, logText));
