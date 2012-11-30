@@ -285,7 +285,8 @@ public class SpiderGC {
 						case Preferences.ASK:
 							if (!alreadyAnswered) {
 								final MessageBox mBox = new MessageBox(MyLocale.getMsg(5517, "Spider Updates?"), cachesToUpdate.size() + MyLocale.getMsg(5518, " caches in database need an update. Update now?"), FormBase.IDYES | FormBase.IDNO);
-								lastAnswer = mBox.execute() != FormBase.IDOK;
+								lastAnswer = (mBox.execute() != FormBase.IDOK);
+								alreadyAnswered = true;
 							}
 							if (lastAnswer) {
 								cachesToUpdate.clear();
