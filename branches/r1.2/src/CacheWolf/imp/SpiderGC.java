@@ -108,7 +108,7 @@ public class SpiderGC {
 	/**
 	 * This is the pattern for inlined smilies
 	 */
-	private static final String string = "<img src=\"/images/icons/";
+	private static final String iconsRelativePath = "<img src=\"/images/icons/";
 
 	private static int ERR_LOGIN = -10;
 	private static Preferences pref;
@@ -2812,12 +2812,12 @@ public class SpiderGC {
 	 * @return
 	 */
 	private String correctSmilies(String logText) {
-		int indexOf = logText.indexOf(string);
+		int indexOf = logText.indexOf(iconsRelativePath);
 		while (indexOf >= 0) {
 			final String prefix = logText.substring(0, indexOf);
-			final String postFix = logText.substring(indexOf + string.length());
+			final String postFix = logText.substring(indexOf + iconsRelativePath.length());
 			logText = prefix + "<img src=\"" + postFix;
-			indexOf = logText.indexOf(string);
+			indexOf = logText.indexOf(iconsRelativePath);
 		}
 		return logText;
 	}

@@ -901,6 +901,44 @@ public class CacheHolder {
 			return "Needs Archived";
 		if (image.equals("icon_redlight.gif"))
 			return "Retract Listing";
+
+		if (image.equals("2.png"))
+			return "Found it";
+		if (image.equals("3.png"))
+			return "Didn't find it";
+		if (image.equals("4.png"))
+			return "Write note";
+		if (image.equals("5.png"))
+			return "Archive";
+		if (image.equals("7.png"))
+			return "Needs Archived";
+		if (image.equals("9.png"))
+			return "Will Attend";
+		if (image.equals("10.png"))
+			return "Attended";
+		if (image.equals("11.png"))
+			return "Webcam Photo Taken";
+		if (image.equals("12.png"))
+			return "Unarchived"; // new todo check gpx-export/import
+		if (image.equals("18.png"))
+			return "Post Reviewer Note";
+		if (image.equals("22.png"))
+			return "Temporarily Disable Listing";
+		if (image.equals("23.png"))
+			return "Enable Listing";
+		if (image.equals("24.png"))
+			return "Publish Listing";
+		if (image.equals("25.png"))
+			return "Retract Listing";
+		if (image.equals("45.png"))
+			return "Needs Maintenance";
+		if (image.equals("46.png"))
+			return "Owner Maintenance";
+		if (image.equals("47.png"))
+			return "Update Coordinates";
+		if (image.equals("74.png"))
+			return "Announcement"; // new todo check gpx-export/import
+
 		return "unknown logtype " + image;
 	}
 
