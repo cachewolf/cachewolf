@@ -30,7 +30,7 @@ lineRex            = Data\ BorderTop">((?s).*?)</tr>
 logDateRex         = </span>\\s+</td>\\s+<td\ valign="top"\ width="70">\\s+<span\ class="small">\\s+(.*?)<br\ />
 availableRex       = class="lnk\ \ Strike">
 archivedRex        = class="lnk\ OldWarning\ Strike\ Strike">
-PMRex              = small_profile.gif
+PMRex              = premium_only.png
 distCodeRex        = k=(.*?)"
 distCodeKey        = signalthefrog
 distRex            = (.*?)(?:km|mi|ft)
@@ -84,9 +84,9 @@ cacheLocationRex   = tBody_Location">In\ ([^<]*?)<
 #--------------------------------------
 UserTokenRex       = userToken = '((?s).*?)';
 # Die Icons, die einen erfolgreichen Fund signalisieren
-icon_smile         = icon_smile.gif
-icon_camera        = icon_camera.gif
-icon_attended      = icon_attended.gif
+icon_smile         = 2.png
+icon_camera        = 11.png
+icon_attended      = 10.png
 
 #--------------------------------------
 #Section2b: Bugs
