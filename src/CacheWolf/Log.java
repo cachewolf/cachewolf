@@ -84,7 +84,7 @@ public class Log {
 		StringBuffer sb = new StringBuffer(desc.length());
 		for (int i = 0; i < desc.length(); i++) {
 			char c = desc.charAt(i);
-			if (c >= ' ')
+			if (c >= ' ' || c == 10 || c == 13)
 				sb.append(c);
 		}
 		return sb.toString();

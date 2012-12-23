@@ -34,6 +34,7 @@ import CacheWolf.Preferences;
 import CacheWolf.Profile;
 import CacheWolf.STRreplace;
 import CacheWolf.SafeXML;
+import ewe.io.JavaUtf8Codec;
 import ewe.sys.Vm;
 import ewe.ui.FormBase;
 import ewe.util.mString;
@@ -84,6 +85,7 @@ public class MunzeeImporter {
 
 			try {
 				r = new ewe.io.TextReader(file);
+				r.codec=new JavaUtf8Codec();
 				// first line -- Heading number of ,
 				String s = r.readLine();
 				String t = "";
@@ -99,15 +101,25 @@ public class MunzeeImporter {
 							if (t.length() == 0)
 								s = s + "<br>";
 							else {
+								t=STRreplace.replace(t, "\t", " ");
+								t=STRreplace.replace(t, "\",\"", "\t");
+								t=STRreplace.replace(t, "\"\"", "\"");
 								s = s + t;
-								s=STRreplace.replace(s, "\",\"", "\t");
-								s=STRreplace.replace(s, "\"\"", "\"");
 							}
 							l = mString.split(s,'\t');
 						}
 					} while (l.length < nr_of_elements);
+					if (!l[nr_of_elements - 1].endsWith("\"") && l[l.length - 1].endsWith("\"") ){
+						int d = l.length - nr_of_elements;
+						for (int i = 5; i < 5 + d; i++) {
+							l[4] = l[4] + l[i];
+						}
+						for (int i = 5; i < l.length - d; i++) {
+							l[i] = l[i+d];
+						}
+					}
 					if (t != null) {
-						if (!l[8].endsWith("\"") || !l[0].startsWith("\"") ) {
+						if (!l[10].endsWith("\"") || !l[0].startsWith("\"") ) {
 							pref.log("Error MunzeeImporter at: " + s, null);
 							// return;
 						}
@@ -116,7 +128,7 @@ public class MunzeeImporter {
 				} while (t != null);
 			}
 			catch (Exception e) {
-				pref.log("Error MunzeeImporter: ", e);
+				pref.log("Abort MunzeeImporter: ", e, true);
 				r.close();
 				profile.saveIndex(pref, Profile.NO_SHOW_PROGRESS_BAR);
 				Vm.showWait(false);
@@ -143,8 +155,15 @@ public class MunzeeImporter {
 		final byte LOCATION=6;
 		final byte USERNAME=7;
 		final byte CODE=8;
-		if (l[DEPLOYED].charAt(0) == '0') {
-			// return false;
+		// capture_type_id
+		// special_logo
+		if (l[DEPLOYED].length() > 0){
+			if (l[DEPLOYED].charAt(0) == '0') {
+				// return false;
+				l[DEPLOYED] = l[CREATED];
+			}
+		}
+		else {
 			l[DEPLOYED] = l[CREATED];
 		}
 		l[LAT] = l[LAT].substring(1); // " weg
@@ -163,10 +182,10 @@ public class MunzeeImporter {
 			double tmpDistance = tmpPos.getDistance(startPos);
 			if (tmpDistance > maxDistance) {
 				// pref.log("MunzeeImporter: not imported " + l[FRIENDLYNAME] + ", Distance = "+ tmpDistance);
-				return false;
+				// return false;
 			}
 		} catch (Exception e) {
-			pref.log("Error MunzeeImporter at: " + l[FRIENDLYNAME], e);
+			pref.log("Error MunzeeImporter at: " + l[FRIENDLYNAME] + "("+ l[LAT] + " " + l[LON] + ")", e);
 			return false;
 		}
 
