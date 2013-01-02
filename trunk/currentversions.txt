@@ -6,7 +6,7 @@ T0SvnRevision: http://cachewolf.aldos.de/rc/mostrecentbuild.txt [\\s]*[\\\\r]*[\
 # ReleaseCandidate
 T1VersionMajor: 1
 T1VersionMinor: 3
-T1SvnRevision: http://cachewolf.aldos.de/mostrecentbuild.txt [\\s]*[\\\\r]*[\\\\n]*[\\s]*([0-9]*)
+T1SvnRevision: http://cachewolf.aldos.de/nb/mostrecentbuild.txt [\\s]*[\\\\r]*[\\\\n]*[\\s]*([0-9]*)
 
 # InDevelopmentStable
 T2VersionMajor: 1
@@ -18,7 +18,7 @@ T3VersionMajor: 1
 T3VersionMinor: 3
 #T3SvnRevision: http://flyingfish.freewrt.org:8180/job/Cachewolf/lastBuild/ (?i)Revision[\\s]*[:=][\\s]*[\\\\r]*[\\\\n]*[\\s]*([0-9]*)
 #T3SvnRevision: http://www.naturalnik.de/CacheWolf-BE/zcurrent.txt [\\s]*[\\\\r]*[\\\\n]*[\\s]*([0-9]*)
-T3SvnRevision: http://cachewolf.aldos.de/mostrecentbuild.txt [\\s]*[\\\\r]*[\\\\n]*[\\s]*([0-9]*)
+T3SvnRevision: http://cachewolf.aldos.de/nb/mostrecentbuild.txt [\\s]*[\\\\r]*[\\\\n]*[\\s]*([0-9]*)
 
 RecommendedType: 2
 
