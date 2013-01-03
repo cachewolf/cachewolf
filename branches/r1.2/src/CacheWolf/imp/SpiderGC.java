@@ -965,10 +965,16 @@ public class SpiderGC {
 			Vm.showWait(false);
 			cExpectedForUpdate.clear();
 		}
-		pref.log("Checked " + page_number + " pages" + Preferences.NEWLINE + "with " + ((page_number - 1) * 20 + found_on_page) + " caches" + Preferences.NEWLINE + "Found " + cachesToLoad.size() + " new caches" + Preferences.NEWLINE + "Found "
-				+ cExpectedForUpdate.size() + "/" + cFoundForUpdate.size() + " caches for update" + Preferences.NEWLINE + "Found " + numAvailableUpdates + " caches with changed available status." + Preferences.NEWLINE + "Found " + numLogUpdates
-				+ " caches with new found in log." + Preferences.NEWLINE + "Found " + (cExpectedForUpdate.size() - numAvailableUpdates - numLogUpdates) + " caches possibly archived." + Preferences.NEWLINE + "Found " + cFoundForUpdate.size() + " ?= "
-				+ (numFoundUpdates + numArchivedUpdates + numAvailableUpdates + numArchivedUpdates) + " caches to update." + Preferences.NEWLINE + "Found " + numPrivate + " Premium Caches (for non Premium Member.)", null);
+		pref.log("Checked " + page_number + " pages" + Preferences.NEWLINE
+				+ "with " + ((page_number - 1) * 20 + found_on_page) + " caches" + Preferences.NEWLINE
+				+ "Found " + cachesToLoad.size() + " new caches" + Preferences.NEWLINE
+				+ "Found " + cExpectedForUpdate.size() + "/" + cFoundForUpdate.size() + " caches for update" + Preferences.NEWLINE
+				+ "Found " + numAvailableUpdates + " caches with changed available status." + Preferences.NEWLINE
+				+ "Found " + numLogUpdates + " caches with new found in log." + Preferences.NEWLINE
+				+ "Found " + (cExpectedForUpdate.size() - numAvailableUpdates - numLogUpdates) + " caches possibly archived." + Preferences.NEWLINE
+				+ "Found " + cFoundForUpdate.size() + " ?= " + (numFoundUpdates + numArchivedUpdates + numAvailableUpdates + numArchivedUpdates) + " caches to update." + Preferences.NEWLINE
+				+ "Found " + numPrivate + " Premium Caches (for non Premium Member.)",
+				null);
 		if (spiderAllFinds) {
 			pref.log("Found " + numFoundUpdates + " caches with no found in profile." + Preferences.NEWLINE + "Found " + numArchivedUpdates + " caches with changed archived status." + Preferences.NEWLINE, null);
 		}
