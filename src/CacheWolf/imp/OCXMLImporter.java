@@ -18,7 +18,7 @@
     You should have received a copy of the GNU General Public License
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
-*/
+ */
 package CacheWolf.imp;
 
 import CacheWolf.CWPoint;
@@ -65,11 +65,8 @@ import ewesoft.xml.MinML;
 import ewesoft.xml.sax.AttributeList;
 
 /**
- * Class to import Data from opencaching.
- * It uses the lastmodified parameter to identify new or changed caches.
- * See here: http://www.opencaching.com/phpBB2/viewtopic.php?t=281 (out-dated)
- * See here: http://www.opencaching.de/doc/xml/xml11.htm and http://develforum.opencaching.de/viewtopic.php?t=135&postdays=0&postorder=asc&start=0
- * for more information.
+ * Class to import Data from opencaching. It uses the lastmodified parameter to identify new or changed caches. See here: http://www.opencaching.com/phpBB2/viewtopic.php?t=281 (out-dated) See here:
+ * http://www.opencaching.de/doc/xml/xml11.htm and http://develforum.opencaching.de/viewtopic.php?t=135&postdays=0&postorder=asc&start=0 for more information.
  */
 public class OCXMLImporter extends MinML {
 	static protected final int STAT_INIT = 0;
@@ -128,14 +125,13 @@ public class OCXMLImporter extends MinML {
 		CacheHolder ch;
 		for (int i = 0; i < cacheDB.size(); i++) {
 			ch = cacheDB.get(i);
-			if (!ch.getOcCacheID().equals(""))
-				DBindexID.put(ch.getOcCacheID(), ch.getWayPoint());
+			if (!ch.getOcCacheID().equals("")) DBindexID.put(ch.getOcCacheID(), ch.getWayPoint());
 		}// for
 
 	}
 
 	/**
-	 *
+	 * 
 	 * @param number
 	 * @param infB
 	 * @return true, if some change was made to the cacheDB
@@ -159,9 +155,7 @@ public class OCXMLImporter extends MinML {
 
 		String lastS;
 		/**
-		 * pref.downloadmissingOC = true, if not the last syncdate shall be used,
-		 * but the caches shall be reloaded
-		 * only used in syncSingle
+		 * pref.downloadmissingOC = true, if not the last syncdate shall be used, but the caches shall be reloaded only used in syncSingle
 		 */
 		incUpdate = false;
 		if (pref.downloadAllOC)
@@ -216,8 +210,7 @@ public class OCXMLImporter extends MinML {
 			pref.lastOCSite = hostname;
 		}
 
-		if (dist.length() == 0)
-			return;
+		if (dist.length() == 0) return;
 
 		final Double distDouble = new Double();
 		distDouble.value = Common.parseDouble(dist);
@@ -326,16 +319,10 @@ public class OCXMLImporter extends MinML {
 			success = false;
 			pref.log("", e, true);
 		} finally {
-			if (tmpFile != null)
-				tmpFile.delete();
+			if (tmpFile != null) tmpFile.delete();
 		}
 		/*
-		 * for (int i=cacheDB.size()-1; i >=0; i--) {
-		 * ch = (CacheHolder)cacheDB.get(i);
-		 * if (ch.wayPoint.toUpperCase().startsWith("OC")) { //TODO only handle changed caches
-		 * ch.calcRecommendationScore();
-		 * }
-		 * }
+		 * for (int i=cacheDB.size()-1; i >=0; i--) { ch = (CacheHolder)cacheDB.get(i); if (ch.wayPoint.toUpperCase().startsWith("OC")) { //TODO only handle changed caches ch.calcRecommendationScore(); } }
 		 */
 		inf.setInfo(finalMessage);
 
@@ -414,22 +401,17 @@ public class OCXMLImporter extends MinML {
 		}
 
 		// look for changes in the state
-		if (name.equals("cache"))
-			state = STAT_INIT;
-		if (name.equals("cachedesc"))
-			state = STAT_INIT;
-		if (name.equals("cachelog"))
-			state = STAT_INIT;
-		if (name.equals("picture"))
-			state = STAT_INIT;
+		if (name.equals("cache")) state = STAT_INIT;
+		if (name.equals("cachedesc")) state = STAT_INIT;
+		if (name.equals("cachelog")) state = STAT_INIT;
+		if (name.equals("picture")) state = STAT_INIT;
 
 	}
 
 	public void characters(char[] ch2, int start, int length) {
 		final String chars = new String(ch2, start, length);
 		strData += chars;
-		if (debugGPX)
-			pref.log(strData, null);
+		if (debugGPX) pref.log(strData, null);
 	}
 
 	private void startCache(String name, AttributeList atts) {
@@ -437,8 +419,7 @@ public class OCXMLImporter extends MinML {
 			cacheID = atts.getValue("id");
 			return;
 		}
-		if (holder == null)
-			return;
+		if (holder == null) return;
 		inf.setInfo(MyLocale.getMsg(1609, "Importing Cache:") + " " + numCacheImported + " / " + numCacheUpdated + "\n");
 		if (name.equals("type")) {
 			holder.setType(CacheType.ocType2CwType(atts.getValue("id")));
@@ -491,8 +472,7 @@ public class OCXMLImporter extends MinML {
 				holder.getCacheDetails(false).attributes.add(6); // oconly
 				holder.setAttribsAsBits(holder.getCacheDetails(false).attributes.getAttribsAsBits());
 			}
-			if (holder.getWayPoint().length() == 0)
-				throw new IllegalArgumentException("empty waypointname"); // this should not happen - it is likey a bug in opencaching / it happens on 27-12-2006 on cache OC143E
+			if (holder.getWayPoint().length() == 0) throw new IllegalArgumentException("empty waypointname"); // this should not happen - it is likey a bug in opencaching / it happens on 27-12-2006 on cache OC143E
 			return;
 		}
 
@@ -535,8 +515,7 @@ public class OCXMLImporter extends MinML {
 			holder = getHolder(atts.getValue("id"), false);
 			return;
 		}
-		if (holder == null)
-			return;
+		if (holder == null) return;
 
 		inf.setInfo(MyLocale.getMsg(1612, "Importing Cachlog:") + " " + numLogImported);
 
@@ -574,8 +553,7 @@ public class OCXMLImporter extends MinML {
 			holder.getCacheDetails(false).URL = "http://" + hostname + "/viewcache.php?cacheid=" + cacheID;
 			return;
 		}
-		if (holder == null)
-			return; // id should always be the first for a <cache>
+		if (holder == null) return; // id should always be the first for a <cache>
 		if (name.equals("cache")) {
 			holder.setLastSync(dateOfthisSync.format("yyyyMMddHHmmss"));
 			int index;
@@ -615,8 +593,7 @@ public class OCXMLImporter extends MinML {
 		}
 		if (name.equals("userid")) {
 			holder.setCacheOwner(strData);
-			if (holder.getCacheOwner().equalsIgnoreCase(pref.myAlias) || (pref.myAlias2.length() > 0 && holder.getCacheOwner().equalsIgnoreCase(pref.myAlias2)))
-				holder.setOwned(true);
+			if (holder.getCacheOwner().equalsIgnoreCase(pref.myAlias) || (holder.getCacheOwner().equalsIgnoreCase(pref.myAlias2))) holder.setOwned(true);
 			return;
 		}
 
@@ -626,7 +603,7 @@ public class OCXMLImporter extends MinML {
 		}
 		if (name.equals("latitude")) {
 			holder.setPos(new TrackPoint(Common.parseDouble(strData), longitude));
-			holder.setUpdated(false); // todo : correct definition of usage for this 
+			holder.setUpdated(false); // todo : correct definition of usage for this
 			return;
 		}
 		if (name.equals("difficulty")) {
@@ -648,8 +625,7 @@ public class OCXMLImporter extends MinML {
 	}
 
 	private void endCacheDesc(String name) {
-		if (holder == null)
-			return;
+		if (holder == null) return;
 		if (name.equals("cachedesc")) {
 			numDescImported++;
 			holder.setHTML(isHTML);
@@ -667,9 +643,9 @@ public class OCXMLImporter extends MinML {
 				linebraek = "<br>\n";
 			else
 				linebraek = "\n";
-			// if a long description has been entered in this run (==holder.cache_updated is true), 
+			// if a long description has been entered in this run (==holder.cache_updated is true),
 			// then this one is added (for another language)
-			// otherwise all previous descriptions will be overwritten ( or there are none yet) 
+			// otherwise all previous descriptions will be overwritten ( or there are none yet)
 			if (holder.is_updated())
 				holder.getCacheDetails(false).LongDescription += linebraek + processingDescLang + ":" + linebraek + strData + linebraek;
 			else
@@ -677,7 +653,7 @@ public class OCXMLImporter extends MinML {
 			return;
 		}
 
-		if (name.equals("desc")) { // </desc> 
+		if (name.equals("desc")) { // </desc>
 			if (isHTML)
 				holder.getCacheDetails(false).LongDescription += SafeXML.cleanback(strData);
 			else
@@ -694,10 +670,10 @@ public class OCXMLImporter extends MinML {
 				holder.getCacheDetails(false).Hints += linebreak + "[" + processingDescLang + ":]" + linebreak + Common.rot13(strData) + linebreak;
 			else
 				holder.getCacheDetails(false).Hints = "[" + processingDescLang + ":]" + linebreak + Common.rot13(strData) + linebreak;
-			// remark: 
+			// remark:
 			// holder.cache_updated will be set to true
-			// after the subtag-infos of tag <cachedesc> have been entered 
-			// (ending with the subtag </hint>) 
+			// after the subtag-infos of tag <cachedesc> have been entered
+			// (ending with the subtag </hint>)
 			// to possibly add the <cachedesc> for an additional language
 			holder.setUpdated(true);
 			return;
@@ -705,8 +681,7 @@ public class OCXMLImporter extends MinML {
 	}
 
 	private void endCacheLog(String name) {
-		if (holder == null)
-			return;
+		if (holder == null) return;
 		if (name.equals("cachelog")) { // </cachelog>
 			if (holder.getCacheDetails(false).CacheLogs.merge(new Log(logIcon, logDate, logFinder, logData, loggerRecommended)) > -1) {
 				numLogImported++;
@@ -749,8 +724,7 @@ public class OCXMLImporter extends MinML {
 	}
 
 	private void endPicture(String name) {
-		if (holder == null)
-			return;
+		if (holder == null) return;
 
 		if (name.equals("id")) {
 			picID = strData;
@@ -786,8 +760,7 @@ public class OCXMLImporter extends MinML {
 			// ch = cacheDB.get(INTR.intValue());
 			ch = cacheDB.get(wp);
 		} else {
-			if (create)
-				ch = new CacheHolder();
+			if (create) ch = new CacheHolder();
 		}
 		return ch;
 	}
@@ -815,8 +788,7 @@ public class OCXMLImporter extends MinML {
 			inf.setInfo(MyLocale.getMsg(1611, "Importing cache description:") + " " + numDescImported + "\n" + MyLocale.getMsg(1620, "downloading embedded images: ") + numDownloaded++);
 			if (imgRegexAlt.search(imgTag)) {
 				imgAltText = imgRegexAlt.stringMatched(1);
-				if (imgAltText == null)
-					imgAltText = imgRegexAlt.stringMatched(2);
+				if (imgAltText == null) imgAltText = imgRegexAlt.stringMatched(2);
 				// no alternative text as image title -> use filename
 			} else {
 				if (fetchUrl.toLowerCase().indexOf("opencaching.") > 0 || fetchUrl.toLowerCase().indexOf("geocaching.com") > 0) // wenn von Opencaching oder geocaching ist Dateiname doch nicht so toll, weil nur aus Nummer bestehend

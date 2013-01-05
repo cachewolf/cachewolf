@@ -44,7 +44,7 @@ import ewe.util.Vector;
 /**
  * A class to hold information on a cache.<br>
  * Not all attributes are filled at once. You will have to look at other classes and methods to get more information.
- *
+ * 
  */
 public class CacheHolder {
 	protected static final String NOBEARING = "?";
@@ -183,8 +183,7 @@ public class CacheHolder {
 				end = xmlString.indexOf('"', start + 1);
 				setDateHidden(xmlString.substring(start + 1, end));
 				// Convert the US format to YYYY-MM-DD if necessary
-				if (getDateHidden().indexOf('/') > -1)
-					setDateHidden(DateFormat.toYYMMDD(getDateHidden()));
+				if (getDateHidden().indexOf('/') > -1) setDateHidden(DateFormat.toYYMMDD(getDateHidden()));
 
 				start = xmlString.indexOf('"', end + 1);
 				end = xmlString.indexOf('"', start + 1);
@@ -316,8 +315,7 @@ public class CacheHolder {
 
 					start = xmlString.indexOf('"', end + 1);
 					end = xmlString.indexOf('"', start + 1);
-					if (start > -1 && end > -1)
-						attribsBits[2] = (Convert.parseLong(xmlString.substring(start + 1, end)));
+					if (start > -1 && end > -1) attribsBits[2] = (Convert.parseLong(xmlString.substring(start + 1, end)));
 				}
 				setAttribsAsBits(attribsBits);
 			} else if (version == 3 || version == 2) {
@@ -342,8 +340,7 @@ public class CacheHolder {
 				end = xmlString.indexOf('"', start + 1);
 				setDateHidden(xmlString.substring(start + 1, end));
 				// Convert the US format to YYYY-MM-DD if necessary
-				if (getDateHidden().indexOf('/') > -1)
-					setDateHidden(DateFormat.toYYMMDD(getDateHidden()));
+				if (getDateHidden().indexOf('/') > -1) setDateHidden(DateFormat.toYYMMDD(getDateHidden()));
 
 				start = xmlString.indexOf('"', end + 1);
 				end = xmlString.indexOf('"', start + 1);
@@ -378,8 +375,7 @@ public class CacheHolder {
 
 					start = xmlString.indexOf('"', end + 1);
 					end = xmlString.indexOf('"', start + 1);
-					if (start > -1 && end > -1)
-						attribsBits[2] = (Convert.parseLong(xmlString.substring(start + 1, end)));
+					if (start > -1 && end > -1) attribsBits[2] = (Convert.parseLong(xmlString.substring(start + 1, end)));
 				}
 
 				start = xmlString.indexOf('"', end + 1);
@@ -400,8 +396,7 @@ public class CacheHolder {
 
 					start = xmlString.indexOf('"', end + 1);
 					end = xmlString.indexOf('"', start + 1);
-					if (start > -1 && end > -1)
-						attribsBits[3] = (Convert.parseLong(xmlString.substring(start + 1, end)));
+					if (start > -1 && end > -1) attribsBits[3] = (Convert.parseLong(xmlString.substring(start + 1, end)));
 				}
 				setAttribsAsBits(attribsBits);
 			}
@@ -421,7 +416,7 @@ public class CacheHolder {
 
 	/**
 	 * Returns the distance in formatted output. Using kilometers when metric system is active, using miles when imperial system is active.
-	 *
+	 * 
 	 * @return The current distance.
 	 */
 	public String getDistance() {
@@ -457,9 +452,9 @@ public class CacheHolder {
 	}
 
 	/**
-	 * Updates Cache information with information provided by cache given as argument. This is used to update the cache with the information retrieved from files or web: The argument cache is the one that is filled with the read information,
-	 * <code>this</code> is the cache that is already in the database and subject to update.
-	 *
+	 * Updates Cache information with information provided by cache given as argument. This is used to update the cache with the information retrieved from files or web: The argument cache is the one that is filled with the read
+	 * information, <code>this</code> is the cache that is already in the database and subject to update.
+	 * 
 	 * @param ch
 	 *            The cache who's information is updating the current one
 	 * @param overwrite
@@ -471,8 +466,8 @@ public class CacheHolder {
 		this.setNumRecommended(ch.getNumRecommended());
 		boolean mayChangeCoordinates = !this.cacheStatus.startsWith(MyLocale.getMsg(362, "solved"));
 		/*
-		 * Here we have to distinguish several cases: this.is_found this ch Update 'this' (values are empty or yyyy-mm-dd) ---------------------------------------------------------------------- false any yyyy-mm-dd yes true "Found" yyyy-mm-dd yes true
-		 * yyyy-mm-dd yyyy-mm-dd yes (or no) true yyyy-mm-dd hh:mm yyyy-mm-dd no
+		 * Here we have to distinguish several cases: this.is_found this ch Update 'this' (values are empty or yyyy-mm-dd) ---------------------------------------------------------------------- false any yyyy-mm-dd yes true "Found"
+		 * yyyy-mm-dd yes true yyyy-mm-dd yyyy-mm-dd yes (or no) true yyyy-mm-dd hh:mm yyyy-mm-dd no
 		 */
 		if (!this.found || this.cacheStatus.indexOf(":") < 0) {
 			// don't overwrite with empty data
@@ -506,8 +501,7 @@ public class CacheHolder {
 		this.setIncomplete(ch.is_incomplete());
 		this.addiWpts = ch.addiWpts;
 		this.mainCache = ch.mainCache;
-		if (ch.getOcCacheID().length() > 0)
-			this.setOcCacheID(ch.getOcCacheID());
+		if (ch.getOcCacheID().length() > 0) this.setOcCacheID(ch.getOcCacheID());
 		this.setNoFindLogs(ch.getNoFindLogs());
 		this.setHas_bugs(ch.has_bugs());
 		this.setHTML(ch.is_HTML());
@@ -650,6 +644,12 @@ public class CacheHolder {
 		varParams.put("WAYPOINT", wayPoint); // <name>
 		int wpl = wayPoint.length();
 		int wps = (wpl < shortWaypointLength) ? 0 : wpl - shortWaypointLength;
+		String s = "";
+		for (int i = wayPoint.length() - 1; i >= 0; i--) {
+			s = s + wayPoint.substring(i, i + 1);
+		}
+		s = wayPoint.substring(wayPoint.length() - 2, wayPoint.length());
+		varParams.put("INVERS", s);
 		varParams.put("SHORTWAYPOINT", wayPoint.substring(wps, wpl));
 		varParams.put("DISTANCE", decSep.replaceAll(getDistance()));
 		varParams.put("BEARING", bearing);
@@ -681,8 +681,7 @@ public class CacheHolder {
 		String shortName = shortenName(cn, shortNameLength);
 		varParams.put("SHORTNAME", shortName);
 		varParams.put("TRAVELBUG", (bugs ? "Y" : "N"));
-		if (gm != null)
-			varParams.put("GMTYPE", gm.getIcon(this));
+		if (gm != null) varParams.put("GMTYPE", gm.getIcon(this));
 		varParams.put("NOW_DATE", nowdate().setToCurrentTime().toString());
 		varParams.put("NOW_TIME", nowtime().setToCurrentTime().toString());
 		varParams.put("CACHEID", GetCacheID());
@@ -730,10 +729,8 @@ public class CacheHolder {
 				varParams.put("HINTS", (ModTyp == 0) ? SafeXML.cleanGPX(det.Hints) : det.Hints);
 				varParams.put("DECRYPTEDHINTS", (ModTyp == 0) ? SafeXML.cleanGPX(Common.rot13(det.Hints)) : Common.rot13(det.Hints));
 			}
-			if (det.Travelbugs.size() > 0)
-				varParams.put("BUGS", (ModTyp == 0) ? SafeXML.cleanGPX(det.Travelbugs.toHtml()) : det.Travelbugs.toHtml());
-			if (det.getSolver() != null && det.getSolver().trim().length() > 0)
-				varParams.put("SOLVER", STRreplace.replace(det.getSolver(), "\n", "<br/>\n"));
+			if (det.Travelbugs.size() > 0) varParams.put("BUGS", (ModTyp == 0) ? SafeXML.cleanGPX(det.Travelbugs.toHtml()) : det.Travelbugs.toHtml());
+			if (det.getSolver() != null && det.getSolver().trim().length() > 0) varParams.put("SOLVER", STRreplace.replace(det.getSolver(), "\n", "<br/>\n"));
 			varParams.put("COUNTRY", det.Country);
 			varParams.put("STATE", det.State);
 
@@ -759,8 +756,7 @@ public class CacheHolder {
 			// logs
 			Vector logVect = new Vector(det.CacheLogs.size());
 			int maxlogs = det.CacheLogs.size();
-			if (nrOfLogs > -1 && nrOfLogs < maxlogs)
-				maxlogs = nrOfLogs;
+			if (nrOfLogs > -1 && nrOfLogs < maxlogs) maxlogs = nrOfLogs;
 			for (int i = 0; i < maxlogs; i++) {
 				Hashtable logs = new Hashtable();
 				String stmp;
@@ -833,18 +829,16 @@ public class CacheHolder {
 						String src = Global.getProfile().dataDir + imgFile;
 						String dest;
 						if (expName.endsWith("*")) {
-							String d1 = Global.getPref().getExportPath(expName.substring(0,expName.length()-1));
-							d1 = d1 + imgFile.substring(0,4).toUpperCase() + "/";
+							String d1 = Global.getPref().getExportPath(expName.substring(0, expName.length() - 1));
+							d1 = d1 + imgFile.substring(0, 4).toUpperCase() + "/";
 							dest = d1 + imgFile.toUpperCase();
 							if (imgFile.toUpperCase().startsWith(title.toUpperCase())) {
 								d1 = Common.getFilename(dest);
-							}
-							else {
+							} else {
 								d1 = Common.getFilename(dest) + " - " + Common.ClearForFileName(title);
 							}
 							dest = d1 + Common.getFilenameExtension(dest).toLowerCase();
-						}
-						else {
+						} else {
 							dest = Global.getPref().getExportPath(expName) + imgFile;
 						}
 						if (!DataMover.copy(src, dest)) {
@@ -863,91 +857,58 @@ public class CacheHolder {
 
 	/**
 	 * generate a gc.com compatible string representation of log derived from the internally stored image
-	 *
+	 * 
 	 * @param image
 	 *            name of the image to display
 	 * @return log type. will default to "Write note" for unknown logtypes
 	 */
 	public static final String image2TypeText(String image) {
-		if (image.equals("icon_smile.gif"))
-			return "Found it";
-		if (image.equals("icon_sad.gif"))
-			return "Didn't find it";
-		if (image.equals("icon_note.gif"))
-			return "Write note";
-		if (image.equals("icon_enabled.gif"))
-			return "Enable Listing";
-		if (image.equals("icon_disabled.gif"))
-			return "Temporarily Disable Listing";
-		if (image.equals("icon_camera.gif"))
-			return "Webcam Photo Taken";
-		if (image.equals("icon_attended.gif"))
-			return "Attended";
-		if (image.equals("icon_greenlight.gif"))
-			return "Publish Listing";
-		if (image.equals("icon_rsvp.gif"))
-			return "Will Attend";
-		if (image.equals("big_smile.gif"))
-			return "Post Reviewer Note";
-		if (image.equals("traffic_cone.gif"))
-			return "Archive";
-		if (image.equals("icon_maint.gif"))
-			return "Owner Maintenance";
-		if (image.equals("icon_needsmaint.gif"))
-			return "Needs Maintenance";
-		if (image.equals("coord_update.gif"))
-			return "Update Coordinates";
-		if (image.equals("icon_remove.gif"))
-			return "Needs Archived";
-		if (image.equals("icon_redlight.gif"))
-			return "Retract Listing";
+		if (image.equals("icon_smile.gif")) return "Found it";
+		if (image.equals("icon_sad.gif")) return "Didn't find it";
+		if (image.equals("icon_note.gif")) return "Write note";
+		if (image.equals("icon_enabled.gif")) return "Enable Listing";
+		if (image.equals("icon_disabled.gif")) return "Temporarily Disable Listing";
+		if (image.equals("icon_camera.gif")) return "Webcam Photo Taken";
+		if (image.equals("icon_attended.gif")) return "Attended";
+		if (image.equals("icon_greenlight.gif")) return "Publish Listing";
+		if (image.equals("icon_rsvp.gif")) return "Will Attend";
+		if (image.equals("big_smile.gif")) return "Post Reviewer Note";
+		if (image.equals("traffic_cone.gif")) return "Archive";
+		if (image.equals("icon_maint.gif")) return "Owner Maintenance";
+		if (image.equals("icon_needsmaint.gif")) return "Needs Maintenance";
+		if (image.equals("coord_update.gif")) return "Update Coordinates";
+		if (image.equals("icon_remove.gif")) return "Needs Archived";
+		if (image.equals("icon_redlight.gif")) return "Retract Listing";
 
-		if (image.equals("2.png"))
-			return "Found it";
-		if (image.equals("3.png"))
-			return "Didn't find it";
-		if (image.equals("4.png"))
-			return "Write note";
-		if (image.equals("5.png"))
-			return "Archive";
-		if (image.equals("7.png"))
-			return "Needs Archived";
-		if (image.equals("9.png"))
-			return "Will Attend";
-		if (image.equals("10.png"))
-			return "Attended";
-		if (image.equals("11.png"))
-			return "Webcam Photo Taken";
-		if (image.equals("12.png"))
-			return "Unarchived"; // new todo check gpx-export/import
-		if (image.equals("18.png"))
-			return "Post Reviewer Note";
-		if (image.equals("22.png"))
-			return "Temporarily Disable Listing";
-		if (image.equals("23.png"))
-			return "Enable Listing";
-		if (image.equals("24.png"))
-			return "Publish Listing";
-		if (image.equals("25.png"))
-			return "Retract Listing";
-		if (image.equals("45.png"))
-			return "Needs Maintenance";
-		if (image.equals("46.png"))
-			return "Owner Maintenance";
-		if (image.equals("47.png"))
-			return "Update Coordinates";
-		if (image.equals("74.png"))
-			return "Announcement"; // new todo check gpx-export/import
+		if (image.equals("2.png")) return "Found it";
+		if (image.equals("3.png")) return "Didn't find it";
+		if (image.equals("4.png")) return "Write note";
+		if (image.equals("5.png")) return "Archive";
+		if (image.equals("7.png")) return "Needs Archived";
+		if (image.equals("9.png")) return "Will Attend";
+		if (image.equals("10.png")) return "Attended";
+		if (image.equals("11.png")) return "Webcam Photo Taken";
+		if (image.equals("12.png")) return "Unarchived"; // new todo check gpx-export/import
+		if (image.equals("18.png")) return "Post Reviewer Note";
+		if (image.equals("22.png")) return "Temporarily Disable Listing";
+		if (image.equals("23.png")) return "Enable Listing";
+		if (image.equals("24.png")) return "Publish Listing";
+		if (image.equals("25.png")) return "Retract Listing";
+		if (image.equals("45.png")) return "Needs Maintenance";
+		if (image.equals("46.png")) return "Owner Maintenance";
+		if (image.equals("47.png")) return "Update Coordinates";
+		if (image.equals("74.png")) return "Announcement"; // new todo check gpx-export/import
 
 		return "unknown logtype " + image;
 	}
 
 	/**
 	 * Modify the image links in the long description so that they point to image files in the local directory Also copy the image file to the target directory so that it can be displayed.
-	 *
+	 * 
 	 * @param chD
 	 *            CacheHolderDetail
-	 * @param int ModTypLongDesc == 1 get image from profile path, == 2 get image from html-path
+	 * @param int
+	 *            ModTypLongDesc == 1 get image from profile path, == 2 get image from html-path
 	 * @return The modified long description
 	 */
 	private String modifyLongDesc(CacheHolderDetail chD, int ModTypLongDesc) {
@@ -956,11 +917,9 @@ public class CacheHolder {
 		int pos;
 		int imageNo = 0;
 		String imgsrc = "";
-		if (ModTypLongDesc == 1)
-			imgsrc = "file://" + Global.getProfile().dataDir;
+		if (ModTypLongDesc == 1) imgsrc = "file://" + Global.getProfile().dataDir;
 		while (start >= 0 && (pos = chD.LongDescription.indexOf("<img", start)) > 0) {
-			if (imageNo >= chD.images.size())
-				break;
+			if (imageNo >= chD.images.size()) break;
 			s.append(chD.LongDescription.substring(start, pos));
 			start = chD.LongDescription.indexOf(">", pos) + 1;
 			String oldurl = chD.images.get(imageNo).getURL();
@@ -978,8 +937,7 @@ public class CacheHolder {
 			s.append(STRreplace.replace(imgString, oldurl, newurl));
 			imageNo++;
 		}
-		if (start >= 0)
-			s.append(chD.LongDescription.substring(start));
+		if (start >= 0) s.append(chD.LongDescription.substring(start));
 		return s.toString();
 	}
 
@@ -1009,12 +967,10 @@ public class CacheHolder {
 	}
 
 	private static String removeCharsfromString(String text, int MaxLength, String chars) {
-		if (text == null)
-			return null;
+		if (text == null) return null;
 		int originalTextLength = text.length();
 		int anzToRemove = originalTextLength - MaxLength;
-		if (anzToRemove <= 0)
-			return text;
+		if (anzToRemove <= 0) return text;
 		int anzRemoved = 0;
 		StringBuffer sb = new StringBuffer(50);
 		for (int i = originalTextLength - 1; i >= 0; i--) {
@@ -1102,17 +1058,14 @@ public class CacheHolder {
 
 	/**
 	 * True if ch and this belong to the same main cache.
-	 *
+	 * 
 	 * @param ch
 	 * @return
 	 */
 	public boolean hasSameMainCache(CacheHolder ch) {
-		if (this == ch)
-			return true;
-		if (ch == null)
-			return false;
-		if ((!this.isAddiWpt()) && (!ch.isAddiWpt()))
-			return false;
+		if (this == ch) return true;
+		if (ch == null) return false;
+		if ((!this.isAddiWpt()) && (!ch.isAddiWpt())) return false;
 		CacheHolder main1, main2;
 		if (this.isAddiWpt())
 			main1 = this.mainCache;
@@ -1127,7 +1080,7 @@ public class CacheHolder {
 
 	/**
 	 * Find out of detail object of Cache is loaded. Returns <code>true</code> if this is the case.
-	 *
+	 * 
 	 * @return True when details object is present
 	 */
 	public boolean detailsLoaded() {
@@ -1135,10 +1088,10 @@ public class CacheHolder {
 	}
 
 	/**
-	 * Gets the detail object of a cache. The detail object stores information which is not needed for every cache instantaneously, but can be loaded if the user decides to look at this cache. If the cache object is already existing, the method will
-	 * return this object, otherwise it will create it and try to read it from the corresponding <waypoint>.xml file. Depending on the parameters it is allowed that the <waypoint>.xml file does not yet exist, or the user is warned that the file doesn't
-	 * exist. If more than <code>maxdetails</code> details are loaded, then the 5 last recently loaded caches are unloaded (to save ram).
-	 *
+	 * Gets the detail object of a cache. The detail object stores information which is not needed for every cache instantaneously, but can be loaded if the user decides to look at this cache. If the cache object is already existing, the
+	 * method will return this object, otherwise it will create it and try to read it from the corresponding <waypoint>.xml file. Depending on the parameters it is allowed that the <waypoint>.xml file does not yet exist, or the user is
+	 * warned that the file doesn't exist. If more than <code>maxdetails</code> details are loaded, then the 5 last recently loaded caches are unloaded (to save ram).
+	 * 
 	 * @param alarmuser
 	 *            If true an error message will be displayed to the user, if the details could not be read, and the method returns null
 	 * @return The respective CacheHolderDetail, or null
@@ -1159,8 +1112,7 @@ public class CacheHolder {
 			// for importing/spidering reasons helper objects with same waypoint are created
 			if (details != null && !cachesWithLoadedDetails.contains(this)) {
 				cachesWithLoadedDetails.add(this);
-				if (cachesWithLoadedDetails.size() >= Global.getPref().maxDetails)
-					removeOldestDetails();
+				if (cachesWithLoadedDetails.size() >= Global.getPref().maxDetails) removeOldestDetails();
 			}
 		}
 		return details;
@@ -1191,8 +1143,7 @@ public class CacheHolder {
 			// String wp = (String) cachesWithLoadedDetails.get(i);
 			// CacheHolder ch = Global.getProfile().cacheDB.get(wp);
 			ch = (CacheHolder) cachesWithLoadedDetails.get(i);
-			if (ch != null)
-				ch.releaseCacheDetails();
+			if (ch != null) ch.releaseCacheDetails();
 		}
 	}
 
@@ -1202,8 +1153,7 @@ public class CacheHolder {
 			// String wp = (String) cachesWithLoadedDetails.get(i);
 			// CacheHolder ch = Global.getProfile().cacheDB.get(wp);
 			ch = (CacheHolder) cachesWithLoadedDetails.get(i);
-			if (ch != null && ch.detailsLoaded())
-				ch.releaseCacheDetails();
+			if (ch != null && ch.detailsLoaded()) ch.releaseCacheDetails();
 		}
 	}
 
@@ -1345,8 +1295,8 @@ public class CacheHolder {
 	private final static int IDX_WRITENOTE = 5;
 	private final static String[][] _logType = { { "353", "" }, { "318", "Found it" }, { "355", "Attended" }, { "361", "Webcam Photo Taken" }, { "319", "Didn't find it" },
 			{ "314", "Write note" }, // at change do change IDX_WRITENOTE = 5;
-			{ "315", "Needs Archived" }, { "316", "Needs Maintenance" }, { "317", "Search" }, { "354", "Will Attend" }, { "320", "Owner" }, { "359", "Owner Maintenance" }, { "356", "Temporarily Disable Listing" }, { "357", "Enable Listing" },
-			{ "358", "Post Reviewer Note" }, { "362", "Solved" }, { "313", "Flag 1" }, { "360", "Flag 2" }, };
+			{ "315", "Needs Archived" }, { "316", "Needs Maintenance" }, { "317", "Search" }, { "354", "Will Attend" }, { "320", "Owner" }, { "359", "Owner Maintenance" }, { "356", "Temporarily Disable Listing" },
+			{ "357", "Enable Listing" }, { "358", "Post Reviewer Note" }, { "362", "Solved" }, { "313", "Flag 1" }, { "360", "Flag 2" }, };
 
 	public final static String[] GetGuiLogTypes() {
 		String[] ret = new String[_logType.length];
@@ -1385,7 +1335,7 @@ public class CacheHolder {
 
 	/**
 	 * Initializes the caches states (and its addis) before updating, so that the "new", "updated", "log_updated" and "incomplete" properties are properly set.
-	 *
+	 * 
 	 * @param pNewCache
 	 *            <code>true</code> if it is a new cache (i.e. a cache not existing in CacheDB), <code>false</code> otherwise.
 	 */
@@ -1403,7 +1353,7 @@ public class CacheHolder {
 
 	/**
 	 * Creates a bit field of boolean values of the cache, represented as a long value. Boolean value of <code>true</code> results in <code>1</code> in the long values bits, and, vice versa, 0 for false.
-	 *
+	 * 
 	 * @return long value representing the boolean bit field
 	 */
 	private long boolFields2long() {
@@ -1417,9 +1367,9 @@ public class CacheHolder {
 	}
 
 	/**
-	 * Creates a field of byte values of certain properties of the cache, represented as a long value. As a long is 8 bytes wide, one might pack 8 bytes into a long, one every 8 bits. The position indicates the group of bits where the byte is packed,
-	 * counting starting from one by the right side of the long.
-	 *
+	 * Creates a field of byte values of certain properties of the cache, represented as a long value. As a long is 8 bytes wide, one might pack 8 bytes into a long, one every 8 bits. The position indicates the group of bits where the byte
+	 * is packed, counting starting from one by the right side of the long.
+	 * 
 	 * @return long value representing the byte field
 	 */
 	private long byteFields2long() {
@@ -1429,7 +1379,7 @@ public class CacheHolder {
 
 	/**
 	 * Evaluates byte values from a long value for certain properties of the cache.
-	 *
+	 * 
 	 * @param value
 	 *            The long value which contains up to 8 bytes.
 	 */
@@ -1447,7 +1397,7 @@ public class CacheHolder {
 
 	/**
 	 * convert a v2 byte filed to the current structures
-	 *
+	 * 
 	 * @param value
 	 */
 	private void long2byteFieldsv2(long value) {
@@ -1461,12 +1411,9 @@ public class CacheHolder {
 				// Addis don't have their own values for difficulty, terrain and size
 				// Custom waypoints can't be updated to remove incomplete flag, so we
 				// have to set reasonable values.
-				if (getHard() == CacheTerrDiff.CW_DT_ERROR)
-					setHard(CacheTerrDiff.CW_DT_UNSET);
-				if (getTerrain() == CacheTerrDiff.CW_DT_ERROR)
-					setTerrain(CacheTerrDiff.CW_DT_UNSET);
-				if (getCacheSize() == CacheSize.CW_SIZE_ERROR)
-					setCacheSize(CacheSize.CW_SIZE_NONE);
+				if (getHard() == CacheTerrDiff.CW_DT_ERROR) setHard(CacheTerrDiff.CW_DT_UNSET);
+				if (getTerrain() == CacheTerrDiff.CW_DT_ERROR) setTerrain(CacheTerrDiff.CW_DT_UNSET);
+				if (getCacheSize() == CacheSize.CW_SIZE_ERROR) setCacheSize(CacheSize.CW_SIZE_NONE);
 			} else {
 				setIncomplete(true);
 			}
@@ -1475,7 +1422,7 @@ public class CacheHolder {
 
 	/**
 	 * Extracts a byte from a long value. The position is the number of the 8-bit block of the long (which contains 8 8-bit blocks), counted from 1 to 8, starting from the right side of the long.
-	 *
+	 * 
 	 * @param value
 	 *            The long value which contains the bytes
 	 * @param position
@@ -1489,7 +1436,7 @@ public class CacheHolder {
 
 	/**
 	 * Evaluates boolean values from a long value, which is seen as bit field.
-	 *
+	 * 
 	 * @param value
 	 *            The bit field as long value
 	 */
@@ -1512,7 +1459,7 @@ public class CacheHolder {
 
 	/**
 	 * Represents a bit mask as long value for a boolean value which is saved at a specified position in the long field.
-	 *
+	 * 
 	 * @param value
 	 *            The boolean value we want to code
 	 * @param position
@@ -1529,7 +1476,7 @@ public class CacheHolder {
 
 	/**
 	 * Coding a long field which has only the bits of the byte value set. The position is the number (from 1 to 8) of the byte block which is used from the long.
-	 *
+	 * 
 	 * @param value
 	 *            Byte to encode
 	 * @param position
@@ -1544,13 +1491,14 @@ public class CacheHolder {
 	/**
 	 * Returns <code>true</code> if the waypoint should appear in the cache list, <code>false</code> if it should not appear.<br>
 	 * The method takes into account blacklist, filters, search results - everything that determines if a cache is visible in the list or not.
-	 *
+	 * 
 	 * @return
 	 */
 	public boolean isVisible() {
 		Profile profile = Global.getProfile();
 		int filter = profile.getFilterActive();
-		boolean noShow = ((profile.showBlacklisted() != this.is_black()) || (profile.showSearchResult() && !this.is_flaged) || ((filter == Filter.FILTER_ACTIVE || filter == Filter.FILTER_MARKED_ONLY) && (this.is_filtered()) ^ profile.isFilterInverted()) || (filter == Filter.FILTER_CACHELIST)
+		boolean noShow = ((profile.showBlacklisted() != this.is_black()) || (profile.showSearchResult() && !this.is_flaged)
+				|| ((filter == Filter.FILTER_ACTIVE || filter == Filter.FILTER_MARKED_ONLY) && (this.is_filtered()) ^ profile.isFilterInverted()) || (filter == Filter.FILTER_CACHELIST)
 				&& !Global.mainForm.cacheList.contains(this.getWayPoint()));
 		boolean showAddi = this.showAddis() && this.mainCache != null && this.mainCache.isVisible();
 		noShow = noShow && !showAddi;
@@ -1564,8 +1512,7 @@ public class CacheHolder {
 	}
 
 	public void setPos(TrackPoint _pos) {
-		if (_pos.latDec != pos.latDec || _pos.lonDec != pos.lonDec)
-			setUpdated(true);
+		if (_pos.latDec != pos.latDec || _pos.lonDec != pos.lonDec) setUpdated(true);
 		pos.set(_pos);
 	}
 
@@ -1575,7 +1522,7 @@ public class CacheHolder {
 
 	/**
 	 * Gets an IconAndText object for the cache. If the level of the Icon is equal to the last call of the method, the same (cached) object is returned. If the object is null or the level is different, a new object is created.<br>
-	 *
+	 * 
 	 * @param level
 	 *            4=is_incomplete(), 3=is_new(), 2=is_updated(), 1=is_log_updated
 	 * @param fm
@@ -1683,7 +1630,7 @@ public class CacheHolder {
 
 	/**
 	 * Gets the type of cache as integer.
-	 *
+	 * 
 	 * @return Cache type
 	 */
 	public byte getType() {
@@ -1692,7 +1639,7 @@ public class CacheHolder {
 
 	/**
 	 * Sets the type of the cache. As the cache type values are int for the rest of CacheWolf and byte internally of CacheHolder, some conversion has to be done.
-	 *
+	 * 
 	 * @param typeId
 	 *            Cache Type
 	 */
@@ -1746,8 +1693,7 @@ public class CacheHolder {
 				this.mainCache.setFound(is_found);
 				// done in setCacheStatus this.mainCache.setCacheStatus(this.getCacheStatus());
 				// so setFound should be called after setCacheStatus
-				if (is_found)
-					this.mainCache.setAttributesToAddiWpts();
+				if (is_found) this.mainCache.setAttributesToAddiWpts();
 			}
 		}
 	}
@@ -1755,7 +1701,7 @@ public class CacheHolder {
 	/**
 	 * If this returns <code>true</code>, then the additional waypoints for this cache should be displayed regardless how the filter is set. If it is <code>false</code>, then the normal filter settings apply.<br>
 	 * This property is not saved in index.xml, so if you reload the data, then this information is gone.
-	 *
+	 * 
 	 * @return <code>True</code>: Always display additional waypoints for cache.
 	 */
 	public boolean showAddis() {
@@ -1763,9 +1709,10 @@ public class CacheHolder {
 	}
 
 	/**
-	 * Setter for <code>showAddis()</code>. If this returns <code>true</code>, then the additional waypoints for this cache should be displayed regardless how the filter is set. If it is <code>false</code>, then the normal filter settings apply.<br>
+	 * Setter for <code>showAddis()</code>. If this returns <code>true</code>, then the additional waypoints for this cache should be displayed regardless how the filter is set. If it is <code>false</code>, then the normal filter
+	 * settings apply.<br>
 	 * This property is not saved in index.xml, so if you reload the data, then this information is gone.
-	 *
+	 * 
 	 * @param value
 	 *            <code>True</code>: Always display additional waypoints for cache.
 	 */
@@ -1805,7 +1752,7 @@ public class CacheHolder {
 	 * </ul>
 	 * The new method for deciding if a cache is visible or not is <code>isVisible()
 	 * </code>.
-	 *
+	 * 
 	 * @return <code>True</code> if filter criteria are matched
 	 */
 	public boolean is_filtered() {
@@ -1823,8 +1770,7 @@ public class CacheHolder {
 
 	public void setLog_updated(boolean is_log_updated) {
 		Global.getProfile().notifyUnsavedChanges(is_log_updated != this.log_updated);
-		if (is_log_updated && iconAndTextWPLevel == 1)
-			iconAndTextWP = null;
+		if (is_log_updated && iconAndTextWPLevel == 1) iconAndTextWP = null;
 		this.log_updated = is_log_updated;
 	}
 
@@ -1834,8 +1780,7 @@ public class CacheHolder {
 
 	public void setUpdated(boolean is_updated) {
 		Global.getProfile().notifyUnsavedChanges(is_updated != this.cache_updated);
-		if (is_updated && iconAndTextWPLevel == 2)
-			iconAndTextWP = null;
+		if (is_updated && iconAndTextWPLevel == 2) iconAndTextWP = null;
 		this.cache_updated = is_updated;
 	}
 
@@ -1845,8 +1790,7 @@ public class CacheHolder {
 
 	public void setIncomplete(boolean is_incomplete) {
 		Global.getProfile().notifyUnsavedChanges(is_incomplete != this.incomplete);
-		if (is_incomplete && iconAndTextWPLevel == 4)
-			iconAndTextWP = null;
+		if (is_incomplete && iconAndTextWPLevel == 4) iconAndTextWP = null;
 		this.incomplete = is_incomplete;
 	}
 
@@ -1867,7 +1811,7 @@ public class CacheHolder {
 			// || getHard() != CacheTerrDiff.CW_DT_UNSET
 			if (getHard() != CacheTerrDiff.CW_DT_UNSET || getCacheSize() != CacheSize.CW_SIZE_NOTCHOSEN || getTerrain() != CacheTerrDiff.CW_DT_UNSET || getWayPoint().length() < 3
 			// || getCacheOwner().length() > 0
-			// || getDateHidden().length() > 0
+					// || getDateHidden().length() > 0
 					|| getCacheName().length() == 0)
 				ret = true;
 			else
@@ -1892,7 +1836,7 @@ public class CacheHolder {
 	/**
 	 * Determines if the blacklist status is set for the cache. Do not use this method to check if the cache should be displayed. Use <code>isVisible()</code> for this, which already does this (and other) checks.<br>
 	 * Only use this method if you really want to inform yourself about the black status of the cache!
-	 *
+	 * 
 	 * @return <code>true</code> if he black status of the cache is set.
 	 */
 	public boolean is_black() {
@@ -1910,8 +1854,7 @@ public class CacheHolder {
 
 	public void setNew(boolean is_new) {
 		Global.getProfile().notifyUnsavedChanges(is_new != this.newCache);
-		if (is_new && iconAndTextWPLevel == 3)
-			iconAndTextWP = null;
+		if (is_new && iconAndTextWPLevel == 3) iconAndTextWP = null;
 		this.newCache = is_new;
 	}
 
@@ -1938,8 +1881,7 @@ public class CacheHolder {
 	}
 
 	public String getRecommended() {
-		if (!isCacheWpt())
-			return "";
+		if (!isCacheWpt()) return "";
 		if (isOC()) {
 			return Convert.formatInt(recommendationScore) + " (" + Convert.formatInt(numRecommended) + ")";
 		} else {
@@ -2024,7 +1966,7 @@ public class CacheHolder {
 
 	/**
 	 * rename a waypoint and all its associated files
-	 *
+	 * 
 	 * @param newWptId
 	 *            new waypoint id (will be converted to upper case)
 	 * @return true on success, false on error
