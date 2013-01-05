@@ -18,11 +18,10 @@
     You should have received a copy of the GNU General Public License
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
-*/
+ */
 package CacheWolf.navi;
 
 import CacheWolf.CWPoint;
-import ewe.fx.Image;
 
 public class MapSymbol extends MapImage {
 	Object mapObject;
@@ -30,29 +29,28 @@ public class MapSymbol extends MapImage {
 	String filename;
 	CWPoint where;
 
-	public MapSymbol(String namei, String filenamei, CWPoint where_) {
-		name = namei;
-		filename = filenamei;
-		where = where_;
+	public MapSymbol(String name, String filename, CWPoint where) {
+		this.name = name;
+		this.filename = filename;
+		this.where = where;
 	}
 
-	public MapSymbol(String namei, Object mapObjecti, String filenamei, CWPoint where_) {
-		name = namei;
-		filename = filenamei;
-		where = where_;
-		mapObject = mapObjecti;
+	public MapSymbol(String name, Object mapObject, String filename, CWPoint where) {
+		this.name = name;
+		this.filename = filename;
+		this.where = where;
+		this.mapObject = mapObject;
 	}
 
-	public MapSymbol(String namei, Object mapObjecti, Image fromIm, CWPoint where_) {
-		name = namei;
-		where = where_;
-		mapObject = mapObjecti;
+	public MapSymbol(String name, Object mapObject, ewe.fx.Image fromIm, CWPoint where) {
+		this.name = name;
+		this.where = where;
+		this.mapObject = mapObject;
 		setImage(fromIm);
 	}
 
 	public void loadImage() {
-		setImage(new Image(filename), 0);
+		setImage(new ewe.fx.Image(filename), 0);
 		freeSource();
-		// properties = AniImage.AlwaysOnTop;
 	}
 }

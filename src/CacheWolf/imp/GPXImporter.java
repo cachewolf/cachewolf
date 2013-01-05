@@ -18,7 +18,7 @@
     You should have received a copy of the GNU General Public License
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
-*/
+ */
 
 package CacheWolf.imp;
 
@@ -65,9 +65,7 @@ import ewesoft.xml.XMLElement;
 import ewesoft.xml.sax.AttributeList;
 
 /**
- * Class to import Data from an GPX File. If cache data exists, the data from
- * the GPX-File is ignored.
- * Class ID = 4000
+ * Class to import Data from an GPX File. If cache data exists, the data from the GPX-File is ignored. Class ID = 4000
  */
 public class GPXImporter extends MinML {
 
@@ -156,8 +154,7 @@ public class GPXImporter extends MinML {
 							r = new ewe.io.InputStreamReader(zif.getInputStream(zipEnt));
 							infB = new InfoBox(zipEnt.toString(), (MyLocale.getMsg(4000, "Loaded caches: ") + zaehlerGel));
 							infB.exec();
-							if (r.read() != 65279)
-								r = new ewe.io.InputStreamReader(zif.getInputStream(zipEnt));
+							if (r.read() != 65279) r = new ewe.io.InputStreamReader(zif.getInputStream(zipEnt));
 							parse(r);
 							r.close();
 							infB.close(0);
@@ -186,15 +183,15 @@ public class GPXImporter extends MinML {
 			}
 			Vm.showWait(false);
 		} catch (Exception e) {
-			
+
 			if (holder == null) {
-				
+
 				pref.log("[GPXImporter:DoIt] no holder LogID=" + logId, e, true);
 			} else if (holder.getWayPoint() == null) {
 
 				pref.log("[GPXImporter:DoIt] no waypoint LogID=" + logId, e, true);
 			} else if (holder.getWayPoint().length() > 0) {
-	
+
 				pref.log("[GPXImporter:DoIt] " + holder.getWayPoint() + " LogID=" + logId, e, true);
 			} else {
 				pref.log("[GPXImporter:DoIt] " + holder.getPos().toString() + " LogID=" + logId, e, true);
@@ -209,20 +206,19 @@ public class GPXImporter extends MinML {
 	}
 
 	public void startElement(String name, AttributeList atts) {
-		
+
 		strBuf = new StringBuffer(300);
-		if (infB.isClosed)
-			return;
+		if (infB.isClosed) return;
 		if (name.equals("gpx")) {
 			// check for opencaching
-			
+
 			String strCreator = atts.getValue("creator");
 			if (strCreator == null) {
-				
+
 				fromOC = false;
 				fromTC = false;
 			} else {
-				
+
 				if (strCreator.indexOf("opencaching") > 0)
 					fromOC = true;
 				else
@@ -290,8 +286,7 @@ public class GPXImporter extends MinML {
 				available = false;
 			else if ("Draft".equals(status))
 				available = false;
-			else if ("Archived".equals(status))
-				archived = true;
+			else if ("Archived".equals(status)) archived = true;
 			holder.setArchived(archived);
 			holder.setAvailable(available);
 			return;
@@ -337,8 +332,7 @@ public class GPXImporter extends MinML {
 
 	public void endElement(String name) {
 		strData = strBuf.toString();
-		if (infB.isClosed)
-			return;
+		if (infB.isClosed) return;
 		// logs
 		if (inLogs) {
 			if (name.equals("groundspeak:date") || name.equals("time") || name.equals("date") || name.equals("terra:date")) {
@@ -360,7 +354,7 @@ public class GPXImporter extends MinML {
 			if (name.equals("groundspeak:log") || name.equals("log") || name.equals("terra:log")) {
 				holder.getCacheDetails(false).CacheLogs.add(new Log(logIcon, logDate, logFinder, logData));
 				if ((logIcon.equals("icon_smile.gif") || logIcon.equals("icon_camera.gif") || logIcon.equals("icon_attended.gif"))
-						&& (SafeXML.cleanback(logFinder).equalsIgnoreCase(pref.myAlias) || (pref.myAlias2.length() > 0 && SafeXML.cleanback(logFinder).equalsIgnoreCase(pref.myAlias2)))) {
+						&& (SafeXML.cleanback(logFinder).equalsIgnoreCase(pref.myAlias) || (SafeXML.cleanback(logFinder).equalsIgnoreCase(pref.myAlias2)))) {
 					holder.setCacheStatus(logDate);
 					holder.setFound(true);
 					holder.getCacheDetails(false).OwnLogId = logId;
@@ -392,8 +386,7 @@ public class GPXImporter extends MinML {
 						Extractor ex = new Extractor(orig, "<img src=\"", ">", 0, false);
 						int num = 0;
 						while ((text = ex.findNext()).length() > 0 && spiderOK) {
-							if (num >= holder.getCacheDetails(false).images.size())
-								break;
+							if (num >= holder.getCacheDetails(false).images.size()) break;
 							imgName = holder.getCacheDetails(false).images.get(num).getTitle();
 							holder.getCacheDetails(false).LongDescription = STRreplace.replace(holder.getCacheDetails(false).LongDescription, text, "[[Image: " + imgName + "]]");
 							num++;
@@ -415,7 +408,7 @@ public class GPXImporter extends MinML {
 				}
 				oldCh.initStates(false);
 				if (!oldCh.isOC()) {
-					holder.setNumRecommended(oldCh.getNumRecommended()); //gcvote Bewertung bleibt
+					holder.setNumRecommended(oldCh.getNumRecommended()); // gcvote Bewertung bleibt
 				}
 				oldCh.update(holder);
 				oldCh.save();
@@ -505,15 +498,13 @@ public class GPXImporter extends MinML {
 		}
 		if (name.equals("groundspeak:owner") || name.equals("owner") || name.equals("terra:owner")) {
 			holder.setCacheOwner(strData);
-			if (pref.myAlias.equals(SafeXML.cleanback(strData)) || (pref.myAlias2.length() > 0 && SafeXML.cleanback(strData).equalsIgnoreCase(pref.myAlias2)))
-				holder.setOwned(true);
+			if (pref.myAlias.equals(SafeXML.cleanback(strData)) || (SafeXML.cleanback(strData).equalsIgnoreCase(pref.myAlias2))) holder.setOwned(true);
 			return;
 		}
 		if (name.equals("groundspeak:placed_by")) {
 			if (holder.getCacheOwner().equals("")) {
 				holder.setCacheOwner(strData);
-				if (pref.myAlias.equals(SafeXML.cleanback(strData)) || (pref.myAlias2.length() > 0 && SafeXML.cleanback(strData).equalsIgnoreCase(pref.myAlias2)))
-					holder.setOwned(true);
+				if (pref.myAlias.equals(SafeXML.cleanback(strData)) || (SafeXML.cleanback(strData).equalsIgnoreCase(pref.myAlias2))) holder.setOwned(true);
 			}
 			return;
 		}
@@ -521,17 +512,17 @@ public class GPXImporter extends MinML {
 			try {
 				holder.setHard(CacheTerrDiff.v1Converter(strData));
 			} catch (IllegalArgumentException e) {
-				
-				pref.log(holder.getCacheName()+": illegal difficulty value: "+strData);
+
+				pref.log(holder.getCacheName() + ": illegal difficulty value: " + strData);
 			}
 			return;
 		}
 		if (name.equals("groundspeak:terrain") || name.equals("terrain") || name.equals("terra:physical_challenge")) {
 			try {
 				holder.setTerrain(CacheTerrDiff.v1Converter(strData));
-			}catch (IllegalArgumentException e) {
+			} catch (IllegalArgumentException e) {
 
-				pref.log(holder.getCacheName()+": illegal terrain value: "+strData);
+				pref.log(holder.getCacheName() + ": illegal terrain value: " + strData);
 			}
 			return;
 		}
@@ -583,8 +574,7 @@ public class GPXImporter extends MinML {
 		if (name.equals("terra:hint")) {
 			// remove "&lt;br&gt;<br>" from the end
 			int indexTrash = strData.indexOf("&lt;br&gt;<br>");
-			if (indexTrash > 0)
-				holder.getCacheDetails(false).Hints = STRreplace.replace(STRreplace.replace(Common.rot13(strData.substring(0, indexTrash)), "\n", "<br>"), "\t", "");
+			if (indexTrash > 0) holder.getCacheDetails(false).Hints = STRreplace.replace(STRreplace.replace(Common.rot13(strData.substring(0, indexTrash)), "\n", "<br>"), "\t", "");
 			return;
 		}
 
@@ -602,21 +592,15 @@ public class GPXImporter extends MinML {
 
 	public void characters(char[] ch, int start, int length) {
 		strBuf.append(ch, start, length);
-		if (debugGPX)
-			pref.log("Char: " + strBuf.toString(), null);
+		if (debugGPX) pref.log("Char: " + strBuf.toString(), null);
 	}
 
 	public static String TCSizetoText(String size) {
-		if (size.equals("1"))
-			return "Micro";
-		if (size.equals("2"))
-			return "Medium";
-		if (size.equals("3"))
-			return "Regular";
-		if (size.equals("4"))
-			return "Large";
-		if (size.equals("5"))
-			return "Very Large";
+		if (size.equals("1")) return "Micro";
+		if (size.equals("2")) return "Medium";
+		if (size.equals("3")) return "Regular";
+		if (size.equals("4")) return "Large";
+		if (size.equals("5")) return "Very Large";
 
 		return "None";
 	}
@@ -626,8 +610,7 @@ public class GPXImporter extends MinML {
 		String cacheText;
 
 		// just to be sure to have a spider object
-		if (imgSpider == null)
-			imgSpider = new SpiderGC(pref, profile);
+		if (imgSpider == null) imgSpider = new SpiderGC(pref, profile);
 		if (propsSpider == null) {
 			propsSpider = imgSpider.new SpiderProperties();
 		}
@@ -680,14 +663,11 @@ public class GPXImporter extends MinML {
 			if (fetchUrl == null) {
 				continue;
 			} // schlechtes html
-				// fetchUrl ist auf jeden Fall ohne Anführungszeichen
-			if (fetchUrl.startsWith("resource"))
-				continue; //
+			// fetchUrl ist auf jeden Fall ohne Anführungszeichen
+			if (fetchUrl.startsWith("resource")) continue; //
 			if (fetchUrl.startsWith("images")) // z.B. Flaggen
-				if (!fetchUrl.startsWith("images/uploads"))
-					continue;
-			if (fetchUrl.startsWith("thumbs"))
-				continue; // z.B. Flaggen
+				if (!fetchUrl.startsWith("images/uploads")) continue;
+			if (fetchUrl.startsWith("thumbs")) continue; // z.B. Flaggen
 			try {
 				// TODO this is not quite correct: actually the "base" URL must be known...
 				// but anyway a different baseURL should not happen very often - it doesn't in my area
@@ -732,8 +712,7 @@ public class GPXImporter extends MinML {
 		String imgAltText;
 		if (imgRegexAlt.search(imgTag)) {
 			imgAltText = imgRegexAlt.stringMatched(1);
-			if (imgAltText == null)
-				imgAltText = imgRegexAlt.stringMatched(2);
+			if (imgAltText == null) imgAltText = imgRegexAlt.stringMatched(2);
 		} else { // no alternative text as image title -> use --- or filename
 			// wenn von Opencaching oder geocaching ist Dateiname doch nicht so toll, weil nur aus Nummer bestehend
 			if (fetchUrl.toLowerCase().indexOf("opencaching.") > 0 || fetchUrl.toLowerCase().indexOf("geocaching.com") > 0)

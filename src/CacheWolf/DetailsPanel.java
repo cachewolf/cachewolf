@@ -421,8 +421,7 @@ public class DetailsPanel extends CellPanel {
 	}
 
 	/**
-	 * if is addi -> returns the respective AddiWpt if is main -> returns the
-	 * respective MainWpt
+	 * if is addi -> returns the respective AddiWpt if is main -> returns the respective MainWpt
 	 */
 	public void createWptName() {
 		final String wpt = inpWaypoint.getText().toUpperCase();
@@ -497,7 +496,7 @@ public class DetailsPanel extends CellPanel {
 		if (ev instanceof ControlEvent && ev.type == ControlEvent.PRESSED) {
 			if (ev.target == btnNotes) {
 				dirtyNotes = true; // TODO I think this is redundant, because
-									// the notes are saved separately by the notes screen itself
+				// the notes are saved separately by the notes screen itself
 				final NotesScreen nsc = new NotesScreen(cache.getCacheDetails(true));
 				nsc.execute(this.getFrame(), Gui.CENTER_FRAME);
 				if (pref.isBigScreen) {
@@ -513,18 +512,8 @@ public class DetailsPanel extends CellPanel {
 				final TravelbugInCacheScreen ts = new TravelbugInCacheScreen(cache.getCacheDetails(true).Travelbugs.toHtml(), "Travelbugs");
 				ts.execute(this.getFrame(), Gui.CENTER_FRAME);
 				/*
-				 * not fully implemented
-				 * } else if (ev.target == btnCenter) {
-				 * final CWPoint cp = new CWPoint(cache.LatLon);
-				 * if (cp.isValid()) {
-				 * pref.setCurCentrePt(cp);
-				 * } else {
-				 * final MessageBox tmpMB = new MessageBox(
-				 * MyLocale.getMsg(312, "Error"),
-				 * MyLocale.getMsg(4111, "Coordinates must be entered in the format N DD MM.MMM E DDD MM.MMM"),
-				 * FormBase.OKB);
-				 * tmpMB.exec();
-				 * }
+				 * not fully implemented } else if (ev.target == btnCenter) { final CWPoint cp = new CWPoint(cache.LatLon); if (cp.isValid()) { pref.setCurCentrePt(cp); } else { final MessageBox tmpMB = new MessageBox( MyLocale.getMsg(312,
+				 * "Error"), MyLocale.getMsg(4111, "Coordinates must be entered in the format N DD MM.MMM E DDD MM.MMM"), FormBase.OKB); tmpMB.exec(); }
 				 */
 
 			} else if (ev.target == btnAddDateTime) {
@@ -657,12 +646,11 @@ public class DetailsPanel extends CellPanel {
 				final DateChooser dc = new DateChooser(Vm.getLocale());
 				dc.title = MyLocale.getMsg(329, "Hidden date");
 				dc.setPreferredSize(240, 240);
-				if (inpHidden.getText().length() == 10)
-					try {
-						dc.setDate(new Time(Convert.parseInt(inpHidden.getText().substring(8)), Convert.parseInt(inpHidden.getText().substring(5, 7)), Convert.parseInt(inpHidden.getText().substring(0, 4))));
-					} catch (NumberFormatException e) {
-						dc.reset(new Time());
-					}
+				if (inpHidden.getText().length() == 10) try {
+					dc.setDate(new Time(Convert.parseInt(inpHidden.getText().substring(8)), Convert.parseInt(inpHidden.getText().substring(5, 7)), Convert.parseInt(inpHidden.getText().substring(0, 4))));
+				} catch (NumberFormatException e) {
+					dc.reset(new Time());
+				}
 				if (dc.execute() == ewe.ui.FormBase.IDOK) {
 					inpHidden.setText(Convert.toString(dc.year) + "-" + MyLocale.formatLong(dc.month, "00") + "-" + MyLocale.formatLong(dc.day, "00"));
 					dirtyDetails = true;
@@ -692,14 +680,12 @@ public class DetailsPanel extends CellPanel {
 
 	/** allow user input on control item */
 	private void activateControl(final Control ctrl) {
-		if (ctrl.change(0, ControlConstants.Disabled))
-			ctrl.repaint();
+		if (ctrl.change(0, ControlConstants.Disabled)) ctrl.repaint();
 	}
 
 	/** block user input on control item */
 	private void deactivateControl(final Control ctrl) {
-		if (ctrl.change(ControlConstants.Disabled, 0))
-			ctrl.repaint();
+		if (ctrl.change(ControlConstants.Disabled, 0)) ctrl.repaint();
 	}
 
 	public void saveDirtyWaypoint() {
@@ -743,7 +729,7 @@ public class DetailsPanel extends CellPanel {
 		cache.setOwned(cache.getCacheStatus().equals(MyLocale.getMsg(320, "Owner")));
 		// Avoid setting is_owned if alias is empty and username is empty
 		if (!cache.is_owned()) {
-			cache.setOwned((!pref.myAlias.equals("") && pref.myAlias.equals(cache.getCacheOwner())) || (!pref.myAlias2.equals("") && pref.myAlias2.equals(cache.getCacheOwner())));
+			cache.setOwned((!pref.myAlias.equals("") && pref.myAlias.equalsIgnoreCase(cache.getCacheOwner())) || (pref.myAlias2.equalsIgnoreCase(cache.getCacheOwner())));
 		}
 		cache.setBlack(blackStatus);
 		final String oldWaypoint = cache.getWayPoint();
@@ -758,8 +744,7 @@ public class DetailsPanel extends CellPanel {
 		// Don't allow single letter names=> Problems in updateBearingDistance
 		// This is a hack but faster than slowing down the loop in
 		// updateBearingDistance
-		if (cache.getWayPoint().length() < 2)
-			cache.setWayPoint(cache.getWayPoint() + " ");
+		if (cache.getWayPoint().length() < 2) cache.setWayPoint(cache.getWayPoint() + " ");
 		cache.setCacheName(inpName.getText().trim());
 		if (!cache.isAddiWpt()) {
 			cache.setDateHidden(inpHidden.getText().trim());
@@ -774,9 +759,7 @@ public class DetailsPanel extends CellPanel {
 		cache.checkIncomplete();
 
 		/*
-		 * The references have to be rebuilt if:
-		 * - the cachetype changed from addi->normal or from normal->addi
-		 * - the old cachetype or the new cachetype were 'addi' and the waypointname has changed
+		 * The references have to be rebuilt if: - the cachetype changed from addi->normal or from normal->addi - the old cachetype or the new cachetype were 'addi' and the waypointname has changed
 		 */
 		if (CacheType.isAddiWpt(cache.getType()) != CacheType.isAddiWpt(oldType) || ((CacheType.isAddiWpt(cache.getType()) || CacheType.isAddiWpt(oldType)) && !cache.getWayPoint().equals(oldWaypoint))) {
 			// If we changed the type to addi, check that a parent exists
@@ -814,21 +797,18 @@ public class DetailsPanel extends CellPanel {
 	 */
 	private byte decodeTerrDiff(mButton button, String td, boolean isCache) {
 		// terrain and difficulty are always unset for non cache waypoints
-		if (!isCache)
-			return CacheTerrDiff.CW_DT_UNSET;
+		if (!isCache) return CacheTerrDiff.CW_DT_UNSET;
 
 		// cut off beginning of string
 		String buttonText = button.getText().substring(td.length() + 2);
 		// we now should have a string of length 3
-		if (buttonText.length() != 3)
-			return -1;
+		if (buttonText.length() != 3) return -1;
 
 		final StringBuffer tdv = new StringBuffer(2);
 		buttonText = tdv.append(buttonText.charAt(0)).append(buttonText.charAt(2)).toString();
 
 		// unset value is invalid
-		if ("--".equals(buttonText))
-			return CacheTerrDiff.CW_DT_ERROR;
+		if ("--".equals(buttonText)) return CacheTerrDiff.CW_DT_ERROR;
 
 		return Byte.parseByte(buttonText);
 	}
@@ -872,7 +852,7 @@ public class DetailsPanel extends CellPanel {
 			public void penRightReleased(Point p) {
 				setMenu(mnuPopup);
 				doShowMenu(p); // direct call (not through doMenu) is neccesary
-								// because it will
+				// because it will
 				// exclude the whole table
 			}
 
