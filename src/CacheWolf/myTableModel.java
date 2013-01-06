@@ -59,17 +59,17 @@ public class myTableModel extends TableModel {
 	/** The max number of columns in the list view */
 	public static final int N_COLUMNS = 20;
 	/**
-	 * How the columns are mapped onto the list view. If colMap[i]=j, it means that the element j (as per the list below) is visible in column i. [0]TickBox, [1]Type, [2]Distance, [3]Terrain, [4]waypoint, [5]name, [6]coordinates, [7]owner, [8]datehidden,
-	 * [9]status, [10]distance, [11]bearing, [12] Size, [13] # of OC recommend. [14] OC index, [15] Solver exists, [16] Note exists, [17] # Additionals, [18] # DNF [19] Last Sync Date
+	 * How the columns are mapped onto the list view. If colMap[i]=j, it means that the element j (as per the list below) is visible in column i. [0]TickBox, [1]Type, [2]Distance, [3]Terrain, [4]waypoint, [5]name, [6]coordinates, [7]owner,
+	 * [8]datehidden, [9]status, [10]distance, [11]bearing, [12] Size, [13] # of OC recommend. [14] OC index, [15] Solver exists, [16] Note exists, [17] # Additionals, [18] # DNF [19] Last Sync Date
 	 * 
 	 * Attention: When adding columns here, also add a default width in Preferences.listColWidth
 	 */
 	private int[] colMap;
 	/** The column widths corresponding to the list of columns above */
 	private int[] colWidth;
-	private String[] colName = { " ", "?", MyLocale.getMsg(1000, "D"), MyLocale.getMsg(1001, "T"), MyLocale.getMsg(1002, "Waypoint"), "Name", MyLocale.getMsg(1004, "Location"), MyLocale.getMsg(1005, "Owner"), MyLocale.getMsg(1006, "Hidden"),
-			MyLocale.getMsg(1007, "Status"), MyLocale.getMsg(1008, "Dist"), MyLocale.getMsg(1009, "Bear"), MyLocale.getMsg(1017, "S"), MyLocale.getMsg(1026, "#Rec"), MyLocale.getMsg(1027, "OC-IDX"), MyLocale.getMsg(1038, "S"),
-			MyLocale.getMsg(1040, "N"), MyLocale.getMsg(1047, "A"), MyLocale.getMsg(1049, "DNF"), MyLocale.getMsg(1051, "Last synced") };
+	private String[] colName = { " ", "?", MyLocale.getMsg(1000, "D"), MyLocale.getMsg(1001, "T"), MyLocale.getMsg(1002, "Waypoint"), "Name", MyLocale.getMsg(1004, "Location"), MyLocale.getMsg(1005, "Owner"),
+			MyLocale.getMsg(1006, "Hidden"), MyLocale.getMsg(1007, "Status"), MyLocale.getMsg(1008, "Dist"), MyLocale.getMsg(1009, "Bear"), MyLocale.getMsg(1017, "S"), MyLocale.getMsg(1026, "#Rec"), MyLocale.getMsg(1027, "OC-IDX"),
+			MyLocale.getMsg(1038, "S"), MyLocale.getMsg(1040, "N"), MyLocale.getMsg(1047, "A"), MyLocale.getMsg(1049, "DNF"), MyLocale.getMsg(1051, "Last synced") };
 
 	private static Image noFindLogs[] = new Image[4];
 	public static mImage red, blue, yellow; // skull, green
@@ -79,7 +79,7 @@ public class myTableModel extends TableModel {
 	public boolean sortAscending = false;
 	public int sortedBy = -1; // -1 don't sort
 	public boolean isSorted = false; // true if "sort order indicators" should
-										// be displayed
+	// be displayed
 	private FontMetrics fm;
 	// private mImage
 	// picSizeMicro,picSizeSmall,picSizeReg,picSizeLarge,picSizeVLarge,picSizeNonPhysical;
@@ -178,8 +178,7 @@ public class myTableModel extends TableModel {
 		// Convert to string
 		StringBuffer sb = new StringBuffer(100);
 		for (int i = 0; i < N_COLUMNS; i++) {
-			if (sb.length() != 0)
-				sb.append(',');
+			if (sb.length() != 0) sb.append(',');
 			sb.append(colWidth[i]);
 		}
 		return sb.toString();
@@ -202,10 +201,9 @@ public class myTableModel extends TableModel {
 					if (ch.isAddiWpt()) { // unfiltered Addi Wpt
 						// check if main wpt is filtered
 						if (ch.mainCache != null) { // parent exists
-							if (!ch.mainCache.isVisible())
-								sortDB.add(ch); // Unfiltered Addi Wpt with
-												// filtered Main Wpt, show it on
-												// its own
+							if (!ch.mainCache.isVisible()) sortDB.add(ch); // Unfiltered Addi Wpt with
+							// filtered Main Wpt, show it on
+							// its own
 							// else
 							// Main cache is not filtered, Addi will be added
 							// below main cache further down
@@ -221,8 +219,7 @@ public class myTableModel extends TableModel {
 						if (ch.hasAddiWpt()) {
 							for (int j = 0; j < ch.addiWpts.getCount(); j++) {
 								addiWpt = (CacheHolder) ch.addiWpts.get(j);
-								if (addiWpt.isVisible())
-									sortDB.add(addiWpt);
+								if (addiWpt.isVisible()) sortDB.add(addiWpt);
 							}
 						}// if hasAddiWpt
 					} // if AddiWpt
@@ -266,8 +263,7 @@ public class myTableModel extends TableModel {
 						lineColorBG.set(COLOR_FLAGED);
 					else if (ch.getCacheStatus().indexOf(MyLocale.getMsg(319, "not found")) > -1)
 						lineColorBG.set(COLOR_STATUS);
-					else if (Global.getPref().debug && ch.detailsLoaded())
-						lineColorBG.set(COLOR_DETAILS_LOADED);
+					else if (Global.getPref().debug && ch.detailsLoaded()) lineColorBG.set(COLOR_DETAILS_LOADED);
 
 					if (ch.is_archived()) {
 						if (lineColorBG.equals(COLOR_WHITE)) {
@@ -287,8 +283,7 @@ public class myTableModel extends TableModel {
 					// Now, if a line is selected, blend the determined color
 					// with the selection
 					// color.
-					if (isSelected)
-						mergeColor(lineColorBG, lineColorBG, COLOR_SELECTED);
+					if (isSelected) mergeColor(lineColorBG, lineColorBG, COLOR_SELECTED);
 					ta.fillColor = lineColorBG;
 					lastColorBG.set(ta.fillColor);
 					lastColorFG.set(ta.foreground);
@@ -363,7 +358,7 @@ public class myTableModel extends TableModel {
 		try { // Access to row can fail if many caches are deleted
 			CacheHolder ch = cacheDB.get(row);
 			if (ch != null /* ch.isVisible() */) { // Check of visibility
-													// needed here??
+				// needed here??
 				switch (colMap[col]) { // Faster than using column names
 				case 0: // Checkbox
 					if (ch.is_Checked)
@@ -386,24 +381,18 @@ public class myTableModel extends TableModel {
 					}
 				case 4: // Waypoint
 					if (showExtraWptInfo) {
-						if (ch.is_incomplete())
-							return ch.getIconAndTextWP(4, fm);
-						if (ch.is_new())
-							return ch.getIconAndTextWP(3, fm);
-						if (ch.is_updated())
-							return ch.getIconAndTextWP(2, fm);
-						if (ch.is_log_updated())
-							return ch.getIconAndTextWP(1, fm);
+						if (ch.is_incomplete()) return ch.getIconAndTextWP(4, fm);
+						if (ch.is_new()) return ch.getIconAndTextWP(3, fm);
+						if (ch.is_updated()) return ch.getIconAndTextWP(2, fm);
+						if (ch.is_log_updated()) return ch.getIconAndTextWP(1, fm);
 					}
 					return ch.getWayPoint();
 				case 5: // Cachename
 					// Fast return for majority of case
-					if (!showExtraWptInfo || (ch.has_bugs() == false && ch.getNoFindLogs() == 0))
-						return ch.getCacheName();
+					if (!showExtraWptInfo || (ch.has_bugs() == false && ch.getNoFindLogs() == 0)) return ch.getCacheName();
 					// Now need more checks
 					IconAndText wpVal = new IconAndText();
-					if (ch.has_bugs() == true)
-						wpVal.addColumn(bug);
+					if (ch.has_bugs() == true) wpVal.addColumn(bug);
 					if (ch.getNoFindLogs() > 0) {
 						if (ch.getNoFindLogs() > noFindLogs.length)
 							wpVal.addColumn(noFindLogs[noFindLogs.length - 1]);
@@ -483,8 +472,7 @@ public class myTableModel extends TableModel {
 
 	public boolean penPressed(Point onTable, Point cell) {
 		boolean retval = false;
-		if (cell == null)
-			return false;
+		if (cell == null) return false;
 		try {
 			// Check whether the click is on the checkbox image
 			tcControl.clickedColumn = colMap[cell.x];
@@ -511,8 +499,7 @@ public class myTableModel extends TableModel {
 				boolean sortvalue = true;
 				if (mappedCol == 0)
 					sortvalue = !showExtraWptInfo;
-				else if (mappedCol == sortedBy)
-					sortvalue = !sortAscending;
+				else if (mappedCol == sortedBy) sortvalue = !sortAscending;
 				sortTable(mappedCol, sortvalue);
 				retval = true;
 			}
@@ -530,16 +517,14 @@ public class myTableModel extends TableModel {
 			// Hide/unhide the additional information about a waypoint such as
 			// travelbugs/number of notfound logs/yellow circle/red circle etc.
 			// This helps on small PDA screens
-			if (mappedCol == 0)
-				showExtraWptInfo = howToDo;
+			if (mappedCol == 0) showExtraWptInfo = howToDo;
 		} else {
 			sortAscending = howToDo;
 			Vm.showWait(true);
 			// get selected Cache
 			Point a = tcControl.getSelectedCell(null);
 			CacheHolder ch = null;
-			if ((a != null) && (a.y >= 0) && (a.y < cacheDB.size()))
-				ch = cacheDB.get(a.y);
+			if ((a != null) && (a.y >= 0) && (a.y < cacheDB.size())) ch = cacheDB.get(a.y);
 			cacheDB.sort(new MyComparer(cacheDB, sortedBy, numRows), !sortAscending);
 			updateRows();
 			// = cacheDB.rebuild(sortedVector of ch,
@@ -547,8 +532,7 @@ public class myTableModel extends TableModel {
 			// select previously selected Cache again
 			if (ch != null) {
 				int rownum = Global.getProfile().getCacheIndex(ch.getWayPoint());
-				if (rownum >= 0)
-					tcControl.cursorTo(rownum, 0, true);
+				if (rownum >= 0) tcControl.cursorTo(rownum, 0, true);
 			}
 			this.isSorted = true;
 			Vm.showWait(false);
@@ -557,9 +541,7 @@ public class myTableModel extends TableModel {
 	}
 
 	/**
-	 * Toggle the select status for a group of caches. Addi waypoints are set to the same state
-	 * as their main cache. (Exception: Their main cache is not in the range of toggled caches,
-	 * then they are toggled independently.)
+	 * Toggle the select status for a group of caches. Addi waypoints are set to the same state as their main cache. (Exception: Their main cache is not in the range of toggled caches, then they are toggled independently.)
 	 * 
 	 * @param from
 	 *            index of first cache to toggle
@@ -575,7 +557,7 @@ public class myTableModel extends TableModel {
 			boolean checkAddiWpts = false;
 			ch = cacheDB.get(j);
 			if (singleRow) {
-				// If its a single row click, then toggle the cache. Remember to 
+				// If its a single row click, then toggle the cache. Remember to
 				// toggle addis too, if there are.
 				ch.is_Checked = !ch.is_Checked;
 				checkAddiWpts = true;
@@ -585,14 +567,14 @@ public class myTableModel extends TableModel {
 					// Only toggle addis, if their main cache is not within the
 					// range that will be toggled
 					int mainIdx = cacheDB.getIndex(ch.mainCache);
-					if (mainIdx < from-1 || mainIdx > to) {
+					if (mainIdx < from - 1 || mainIdx > to) {
 						ch.is_Checked = !ch.is_Checked;
 					} else {
-						// Otherwise the addis will be toggled along with their 
+						// Otherwise the addis will be toggled along with their
 						// main caches, so nothing is to do here.
 					}
 				} else {
-					// If its a main cache, then toggle it and remember to 
+					// If its a main cache, then toggle it and remember to
 					// toggle the addis, too.
 					ch.is_Checked = !ch.is_Checked;
 					checkAddiWpts = true;
@@ -607,8 +589,8 @@ public class myTableModel extends TableModel {
 					// This code will only run when the main cache
 					// has been toggled.
 					addiWpt = (CacheHolder) ch.addiWpts.get(i);
-					// Set all addi check states to the state of the 
-					// main cache. 
+					// Set all addi check states to the state of the
+					// main cache.
 					addiWpt.is_Checked = ch.is_Checked;
 					if (addiWpt.isVisible()) {
 						tcControl.repaintCell(cacheDB.getIndex(addiWpt), x);
@@ -618,7 +600,6 @@ public class myTableModel extends TableModel {
 
 		}
 	}
-	
 
 	public void select(int row, int col, boolean selectOn) {
 		// super.select(row, col, selectOn);
