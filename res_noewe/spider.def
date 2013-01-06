@@ -27,7 +27,7 @@ nextListPage       = /seek/nearest.aspx
 # Regex to search for cachenames
 listBlockRex       = <table\ class="SearchResultsTable\ Table">((?s).*?)</table>
 lineRex            = Data\ BorderTop">((?s).*?)</tr>
-logDateRex         = </span>\\s+</td>\\s+<td\ valign="top"\ width="70">\\s+<span\ class="small">\\s+(.*?)<br\ />
+logDateRex         = "small">\\s+(.*?)<br />
 availableRex       = class="lnk\ \ Strike">
 archivedRex        = class="lnk\ OldWarning\ Strike\ Strike">
 PMRex              = premium_only.png

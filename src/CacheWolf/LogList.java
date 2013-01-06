@@ -54,8 +54,7 @@ public class LogList {
 
 	/** Add a Log to the list */
 	public void add(Log log) {
-		if (log.getIcon() != null)
-			logList.add(log); // Don't add invalid logs
+		if (log.getIcon() != null) logList.add(log); // Don't add invalid logs
 	}
 
 	/** Remove a Log from the list */
@@ -85,8 +84,7 @@ public class LogList {
 				logList.insertElementAt(newLog, i);
 				return i;
 			}
-			if (comp == 0)
-				break;
+			if (comp == 0) break;
 		}
 		// Now i points to the first log with same date as the new log or i==size()
 		if (i == size) {
@@ -126,10 +124,20 @@ public class LogList {
 		int currentLog = 0;
 		String currentIcon;
 		while (currentLog < size() && countNoFoundLogs < 5) {
-			currentIcon = getLog(currentLog).getIcon();
-			if (currentIcon.startsWith("icon_sad")) {
+			currentIcon = getLog(currentLog).getIcon().toLowerCase();
+			if (currentIcon.startsWith("icon_sad") || currentIcon.startsWith("3.png")) {
 				countNoFoundLogs++;
-			} else if (currentIcon.startsWith("icon_smile") || currentIcon.startsWith("icon_camera") || currentIcon.startsWith("icon_attended") || currentIcon.startsWith("icon_rsvp") || currentIcon.startsWith("icon_maint")) {
+			} else //
+			if (currentIcon.startsWith("icon_smile") //
+					|| currentIcon.startsWith("icon_camera") //
+					|| currentIcon.startsWith("icon_attended") //
+					|| currentIcon.startsWith("icon_rsvp") //
+					|| currentIcon.startsWith("icon_maint") //
+					|| currentIcon.startsWith("2.png") //
+					|| currentIcon.startsWith("11.png") //
+					|| currentIcon.startsWith("10.png") //
+					|| currentIcon.startsWith("46.png")) //
+			{
 				break;
 			}
 			currentLog++;
@@ -156,14 +164,11 @@ public class LogList {
 		int i;
 		for (i = 0; i < s; i++) {
 			l = getLog(i);
-			// 2007-01-14 is the date when the recommendation system was introdueced in opencaching.de see:
+			// 2007-01-14 is the date when the recommendation system was introduced in opencaching.de see:
 			// http://www.geoclub.de/viewtopic.php?t=14901&highlight=formel
-			if (l.getDate().compareTo("2007-01-14") < 0)
-				break;
-			if (l.isRecomended())
-				numRecommended++;
-			if (l.isFoundLog())
-				foundsSinceRecommendation++;
+			if (l.getDate().compareTo("2007-01-14") < 0) break;
+			if (l.isRecomended()) numRecommended++;
+			if (l.isFoundLog()) foundsSinceRecommendation++;
 		}
 		recommendationRating = getScore(numRecommended, foundsSinceRecommendation);
 	}
