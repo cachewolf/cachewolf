@@ -2697,7 +2697,8 @@ public class SpiderGC {
 			// there are more logs
 			reslts.add(Log.maxLog());
 		}
-
+		// Bei Update ev. doppelt berechnet
+		chD.getParent().setNoFindLogs(reslts.countNotFoundLogs());
 	}
 
 	/**
