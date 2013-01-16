@@ -255,8 +255,8 @@ public class GPXImporter extends MinML {
 			inCache = true;
 			String strAvailable = atts.getValue("available");
 			String strArchived = atts.getValue("archived");
-			holder.setAvailable(strAvailable != null && strAvailable.equals("True"));
-			holder.setArchived(strArchived != null && strArchived.equals("True"));
+			holder.setAvailable(strAvailable != null && strAvailable.equalsIgnoreCase("True"));
+			holder.setArchived(strArchived != null && strArchived.equalsIgnoreCase("True"));
 			// OC now has GC - Format, get CacheID -- missing p.ex. on GcTour gpx
 			for (int i = 0; i < atts.getLength(); i++) {
 				if (atts.getName(i).equals("id")) {
@@ -280,13 +280,13 @@ public class GPXImporter extends MinML {
 			}
 			// get status
 			String status = atts.getValue("status");
-			if ("Available".equals(status))
+			if ("Available".equalsIgnoreCase(status))
 				available = true;
-			else if ("Unavailable".equals(status))
+			else if ("Unavailable".equalsIgnoreCase(status))
 				available = false;
-			else if ("Draft".equals(status))
+			else if ("Draft".equalsIgnoreCase(status))
 				available = false;
-			else if ("Archived".equals(status)) archived = true;
+			else if ("Archived".equalsIgnoreCase(status)) archived = true;
 			holder.setArchived(archived);
 			holder.setAvailable(available);
 			return;
@@ -582,6 +582,7 @@ public class GPXImporter extends MinML {
 			if (attID.equals("")) {
 				attID = Attribute.getIdFromGCText(strData);
 			}
+			if (attInc == null) attInc = "1";
 			int id = Integer.parseInt(attID);
 			holder.getCacheDetails(false).attributes.add(id, attInc);
 			holder.setAttribsAsBits(holder.getCacheDetails(false).attributes.getAttribsAsBits());

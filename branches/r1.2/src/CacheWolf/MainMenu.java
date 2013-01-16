@@ -23,6 +23,7 @@ package CacheWolf;
 
 import CacheWolf.exp.ASCExporter;
 import CacheWolf.exp.ExploristExporter;
+import CacheWolf.exp.GarminPicExporter;
 import CacheWolf.exp.GpxExportNg;
 import CacheWolf.exp.HTMLExporter;
 import CacheWolf.exp.KMLExporter;
@@ -34,9 +35,8 @@ import CacheWolf.exp.OziExporter;
 import CacheWolf.exp.SpoilerPOIExporter;
 import CacheWolf.exp.TPLExporter;
 import CacheWolf.exp.TomTomExporter;
-import CacheWolf.exp.GarminPicExporter;
+import CacheWolf.imp.CSVImporter;
 import CacheWolf.imp.FieldnotesImporter;
-import CacheWolf.imp.MunzeeImporter;
 import CacheWolf.imp.GCVoteImporter;
 import CacheWolf.imp.GPXImporter;
 import CacheWolf.imp.LOCXMLImporter;
@@ -73,7 +73,7 @@ import ewe.util.Vector;
 /**
  * This class creates the menu for cachewolf. It is also responsible for reacting to user inputs in the menu.<br>
  * This class id=100
- *
+ * 
  * @see MainForm
  * @see MainTab Last change: 20061123 salzkammergut Tidied up, added MyLocale, added additional internationalisation, combine save/filter for small screens, garminConn
  */
@@ -154,8 +154,7 @@ public class MainMenu extends MenuBar {
 				exportSpoilerPOI = new MenuItem(MyLocale.getMsg(135, "to SpoilerPOI")), //
 				exportTPL = new MenuItem(MyLocale.getMsg(128, "via Template")), //
 				exportOCLog = new MenuItem(MyLocale.getMsg(1210, "logs to OC")), //
-				exportGarminPic = new MenuItem("Garmin pictures"),
-		};
+				exportGarminPic = new MenuItem("Garmin pictures"), };
 		if (Global.getPref().gpsbabel == null) {
 			exportGPS.modifiers = MenuItem.Disabled;
 			exportGPS.setText(MyLocale.getMsg(136, "to GPS : gpsbabel missing."));
@@ -381,8 +380,7 @@ public class MainMenu extends MenuBar {
 				pref.setOldGCLanguage();
 			}
 			if (mev.selectedItem == loadGCVotes) {
-				if (sGCV == null)
-					sGCV = new GCVoteImporter(pref, profile);
+				if (sGCV == null) sGCV = new GCVoteImporter(pref, profile);
 				sGCV.doIt();
 				tbp.resetModel();
 			}
@@ -409,8 +407,8 @@ public class MainMenu extends MenuBar {
 							LOCXMLImporter loc = new LOCXMLImporter(pref, profile, file);
 							loc.doIt();
 						} else if (file.endsWith("csv")) {
-								MunzeeImporter mn = new MunzeeImporter(pref, profile, file);
-								mn.doIt();
+							CSVImporter mn = new CSVImporter(pref, profile, file);
+							mn.doIt();
 						} else { // gpx + zip
 							GPXImporter gpx = new GPXImporter(pref, profile, file);
 							gpx.doIt(how);
@@ -527,8 +525,8 @@ public class MainMenu extends MenuBar {
 				SpoilerPOIExporter spoilerpoi = new SpoilerPOIExporter(pref, profile);
 				spoilerpoi.doIt();
 			}
-			if(mev.selectedItem == exportGarminPic) {
-				GarminPicExporter garminpic = new GarminPicExporter( pref, profile);
+			if (mev.selectedItem == exportGarminPic) {
+				GarminPicExporter garminpic = new GarminPicExporter(pref, profile);
 				garminpic.doIt();
 			}
 
@@ -618,8 +616,7 @@ public class MainMenu extends MenuBar {
 			if (mev.selectedItem == filtCreate) {
 				scnFilter.setData(profile.getCurrentFilter());
 				scnFilter.setPreferredSize(450, 480);
-				if (Vm.isMobile())
-					scnFilter.setPreferredSize(MyLocale.getScreenWidth(), MyLocale.getScreenHeight()); // Fullscreen
+				if (Vm.isMobile()) scnFilter.setPreferredSize(MyLocale.getScreenWidth(), MyLocale.getScreenHeight()); // Fullscreen
 				scnFilter.execute(father.getFrame(), Gui.CENTER_FRAME);
 				tbp.refreshTable();
 			}
@@ -726,8 +723,7 @@ public class MainMenu extends MenuBar {
 						ch.setHasNote(!ch.getCacheDetails(false).getCacheNotes().equals(""));
 						ch.setHasSolver(!ch.getCacheDetails(false).getSolver().equals(""));
 					}
-					if (cwp.isClosed())
-						break;
+					if (cwp.isClosed()) break;
 				} // for
 				cwp.exit(0);
 				tbp.refreshTable();
@@ -876,7 +872,8 @@ public class MainMenu extends MenuBar {
 					}
 					if (!ch.isAddiWpt() && !alreadySaid) {
 						alreadySaid = true;
-						(new MessageBox(MyLocale.getMsg(327, "Information"), ch.getWayPoint() + MyLocale.getMsg(5002, ": At the moment this function is only applicable for geocaching.com and opencaching.de/.cz/.org.uk ."), FormBase.OKB)).execute();
+						(new MessageBox(MyLocale.getMsg(327, "Information"), ch.getWayPoint() + MyLocale.getMsg(5002, ": At the moment this function is only applicable for geocaching.com and opencaching.de/.cz/.org.uk ."), FormBase.OKB))
+								.execute();
 					}
 				}
 
