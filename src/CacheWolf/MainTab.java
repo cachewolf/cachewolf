@@ -37,10 +37,9 @@ import ewe.ui.TableEvent;
 import ewe.ui.mTabbedPanel;
 
 /**
- * This class creates the tabbed panel and sets the tabs to the respective other panels. Important is to have a look at
- * the event handler!<br>
+ * This class creates the tabbed panel and sets the tabs to the respective other panels. Important is to have a look at the event handler!<br>
  * Class ID = 1200
- *
+ * 
  * @see MainForm
  * @see MainMenu
  */
@@ -90,19 +89,16 @@ public class MainTab extends mTabbedPanel {
 		mnuMain = mainMenu;
 		pref = Global.getPref();
 		profile = Global.getProfile();
-		if (!pref.tabsAtTop)
-			tabLocation = SOUTH;
+		if (!pref.tabsAtTop) tabLocation = SOUTH;
 		cacheDB = profile.cacheDB;
 		this.statBar = statBar;
 		MyLocale.setSIPButton();
 		// Don't expand tabs if the screen is very narrow, i.e. HP IPAQ
 		// 65xx, 69xx
 		int sw = MyLocale.getScreenWidth();
-		if (sw <= 480)
-			this.dontExpandTabs = true;
+		if (sw <= 480) this.dontExpandTabs = true;
 		String imagesize = "";
-		if (pref.useBigIcons)
-			imagesize = "_vga";
+		if (pref.useBigIcons) imagesize = "_vga";
 
 		tbP = new TablePanel(pref, profile, statBar);
 		Card c = this.addCard(listP = new TableForm(tbP), MyLocale.getMsg(1200, "List"), null);
@@ -196,7 +192,7 @@ public class MainTab extends mTabbedPanel {
 
 	/**
 	 * Code to execute when leaving a panel (oldCard is the panel number)
-	 *
+	 * 
 	 */
 	private void onLeavingPanel(int panelNo) {
 		if (panelNo == MainTab.LIST_CARD) { // Leaving the list view
@@ -231,8 +227,7 @@ public class MainTab extends mTabbedPanel {
 				}
 				// was tbP.refreshTable();
 				tbP.tc.update(true); // Update and repaint
-				if (statBar != null)
-					statBar.updateDisplay("");
+				if (statBar != null) statBar.updateDisplay("");
 			}
 		}
 		if (panelNo == MainTab.SOLVER_CARD) { // Leaving the Solver Panel
@@ -244,8 +239,7 @@ public class MainTab extends mTabbedPanel {
 					cacheDirty = true;
 					boolean oldHasSolver = chD.getParent().hasSolver();
 					chD.setSolver(solverP.getInstructions());
-					if (oldHasSolver != chD.getParent().hasSolver())
-						tbP.tc.update(true);
+					if (oldHasSolver != chD.getParent().hasSolver()) tbP.tc.update(true);
 					// For safety reasons: Immediately save solver
 					// instructions when
 					// switching panels
@@ -253,8 +247,7 @@ public class MainTab extends mTabbedPanel {
 				} else {
 					boolean oldHasSolver = chMain.hasSolver();
 					chMain.getCacheDetails(true).setSolver(solverP.getInstructions());
-					if (oldHasSolver != chMain.hasSolver())
-						tbP.tc.update(true);
+					if (oldHasSolver != chMain.hasSolver()) tbP.tc.update(true);
 					chMain.save();
 					chMain = null;
 				}
@@ -264,7 +257,7 @@ public class MainTab extends mTabbedPanel {
 
 	/**
 	 * Code to execute when entering a panel (getSelectedItem() is the panel number)
-	 *
+	 * 
 	 */
 	private void onEnteringPanel(int panelNo) {
 		MyLocale.setSIPOff();
@@ -304,8 +297,7 @@ public class MainTab extends mTabbedPanel {
 				solverP.setInstructions(ch);
 			}
 		} else if (panelNo == CALC_CARD) {
-			if (ch != null)
-				calcP.setFields(ch);
+			if (ch != null) calcP.setFields(ch);
 		} else if (panelNo == MAP_CARD) {
 			gotoP.switchToMovingMap();
 			if (oldCard == LIST_CARD) {
@@ -337,9 +329,8 @@ public class MainTab extends mTabbedPanel {
 
 	/**
 	 * this is called from MovingMap Cache context menu
-	 *
-	 * @param chi
-	 *            ,
+	 * 
+	 * @param chi ,
 	 *            the CacheHolder for the Cache to switch to
 	 * @param panelNo
 	 *            1=DetailsPanel 2=Description Panel
@@ -368,9 +359,8 @@ public class MainTab extends mTabbedPanel {
 	}
 
 	/**
-	 * this is called from goto / MovingMap / CalcPanel / DetailsPanel and so on to offer the user the possibility of
-	 * entering an new waypoint at a given position. pCh must already been preset with a valid CacheHolder object
-	 *
+	 * this is called from goto / MovingMap / CalcPanel / DetailsPanel and so on to offer the user the possibility of entering an new waypoint at a given position. pCh must already been preset with a valid CacheHolder object
+	 * 
 	 * @param pCh
 	 */
 	public void newWaypoint(CacheHolder pCh) {
@@ -406,7 +396,7 @@ public class MainTab extends mTabbedPanel {
 			pCh.setWayPoint(profile.getNewAddiWayPointName(mainCache));
 			profile.setAddiRef(pCh);
 		} else {
-			pCh.setWayPoint(profile.getNewWayPointName());
+			pCh.setWayPoint(profile.getNewWayPointName("CW"));
 			lastselected = pCh.getWayPoint();
 		}
 		pCh.setCacheSize(CacheSize.CW_SIZE_NOTCHOSEN);
@@ -417,8 +407,7 @@ public class MainTab extends mTabbedPanel {
 		tbP.myMod.numRows++;
 		detP.setDetails(pCh, true);
 		oldCard = DETAILS_CARD;
-		if (this.cardPanel.selectedItem != 1)
-			select(detP);
+		if (this.cardPanel.selectedItem != 1) select(detP);
 		solverP.setInstructions(pCh);
 		// tbP.refreshTable(); // moved this instruction to onLeavingPanel
 
@@ -426,10 +415,9 @@ public class MainTab extends mTabbedPanel {
 
 	/**
 	 * sets posCircle Lat/Lon to centerTo
-	 *
+	 * 
 	 * @param centerTo
-	 *            true: centers centerTo on the screen and disconnects MovingMap from GPS if Gps-pos is not on the
-	 *            loaded map
+	 *            true: centers centerTo on the screen and disconnects MovingMap from GPS if Gps-pos is not on the loaded map
 	 * @param forceCenter
 	 */
 	public void SwitchToMovingMap(CWPoint centerTo, boolean forceCenter) {
@@ -453,8 +441,8 @@ public class MainTab extends mTabbedPanel {
 						i++;
 						ewe.sys.mThread.sleep(100);
 					} // wait until the window size of the moving map is
-						// known note: ewe.sys.sleep() will pause the whole
-						// vm - no other thread will run
+					// known note: ewe.sys.sleep() will pause the whole
+					// vm - no other thread will run
 					if (i >= 10 * 60) {
 						(new MessageBox("Error", "MovingMap cannot be displayed - this is most likely a bug - plaese report it on www.geoclub.de", FormBase.OKB)).execute();
 						return;
@@ -475,15 +463,14 @@ public class MainTab extends mTabbedPanel {
 
 	void updatePendingChanges() {
 		if (cacheDirty) {
-			if (chD != null)
-				chD.getParent().save();
+			if (chD != null) chD.getParent().save();
 			cacheDirty = false;
 		}
 	}
 
 	/**
 	 * Save the index file
-	 *
+	 * 
 	 * @param askForConfirmation
 	 *            is ignored, old: If true, the save can be cancelled by user
 	 */
@@ -494,8 +481,7 @@ public class MainTab extends mTabbedPanel {
 			oldCard = LIST_CARD;
 		}
 		updatePendingChanges();
-		if (profile.hasUnsavedChanges())
-			profile.saveIndex(Global.getPref(), true);
+		if (profile.hasUnsavedChanges()) profile.saveIndex(Global.getPref(), true);
 		this.tbP.saveColWidth(pref);
 		Global.getPref().savePreferences();
 	}
