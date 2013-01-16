@@ -47,15 +47,13 @@ import ewe.ui.ProgressBarForm;
 public class Profile {
 
 	/**
-	 * The list of caches (CacheHolder objects). A pointer to this object exists in many classes in parallel to
-	 * this object, i.e. the respective class contains both a {@link Profile} object and a cacheDB Vector.
+	 * The list of caches (CacheHolder objects). A pointer to this object exists in many classes in parallel to this object, i.e. the respective class contains both a {@link Profile} object and a cacheDB Vector.
 	 */
 	public CacheDB cacheDB = new CacheDB();
 	/** The centre point of this group of caches. Read from ans stored to index.xml file */
 	public CWPoint centre = new CWPoint();
 	/**
-	 * The name of the profile. The baseDir in preferences is appended this name to give the dataDir where
-	 * the index.xml and cache files live. (Excuse the English spelling of centre)
+	 * The name of the profile. The baseDir in preferences is appended this name to give the dataDir where the index.xml and cache files live. (Excuse the English spelling of centre)
 	 */
 	public String name = "";
 	/** This is the directory for the profile. It contains a closing /. */
@@ -91,8 +89,7 @@ public class Profile {
 
 	public boolean selectionChanged = true; // ("Häckchen") used by movingMap to get to knao if it should update the caches in the map
 	/**
-	 * True if the profile has been modified and not saved
-	 * The following modifications set this flag: New profile centre, Change of waypoint data
+	 * True if the profile has been modified and not saved The following modifications set this flag: New profile centre, Change of waypoint data
 	 */
 	private boolean hasUnsavedChanges = false;
 	public boolean byPassIndexActive = false;
@@ -120,8 +117,7 @@ public class Profile {
 	}
 
 	/**
-	 * Remember that profile needs to be saved. Flag is set <code>true</code> when parameter is
-	 * true, but it's not set to <code>false</code> when parameter is <code>false</code>.<br>
+	 * Remember that profile needs to be saved. Flag is set <code>true</code> when parameter is true, but it's not set to <code>false</code> when parameter is <code>false</code>.<br>
 	 * This is only done internally on saving the cache.
 	 * 
 	 * @param hasUnsavedChanges
@@ -159,9 +155,7 @@ public class Profile {
 	}
 
 	/**
-	 * Method to save the index.xml file that holds the total information
-	 * on available caches in the database. The database is nothing else
-	 * than the collection of caches in a directory.
+	 * Method to save the index.xml file that holds the total information on available caches in the database. The database is nothing else than the collection of caches in a directory.
 	 * 
 	 * Not sure whether we need to keep 'pref' in method signature. May eventually remove it.
 	 * 
@@ -170,7 +164,6 @@ public class Profile {
 	// public void saveIndex(Preferences pref, boolean showprogress){
 	// saveIndex(pref,showprogress, Filter.filterActive,Filter.filterInverted);
 	// }
-
 	/** Save index with filter settings given */
 	public void saveIndex(Preferences pref, boolean showprogress) {
 		ProgressBarForm pbf = new ProgressBarForm();
@@ -201,15 +194,13 @@ public class Profile {
 			return;
 		}
 		CWPoint savedCentre = centre;
-		if (centre == null || !centre.isValid() || (savedCentre.latDec == 0.0 && savedCentre.lonDec == 0.0))
-			savedCentre = pref.getCurCentrePt();
+		if (centre == null || !centre.isValid() || (savedCentre.latDec == 0.0 && savedCentre.lonDec == 0.0)) savedCentre = pref.getCurCentrePt();
 
 		try {
 			detfile.print("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
 			detfile.print("<CACHELIST format=\"decimal\">\n");
 			detfile.print("    <VERSION value = \"3\"/>\n");
-			if (savedCentre.isValid())
-				detfile.print("    <CENTRE lat=\"" + savedCentre.latDec + "\" lon=\"" + savedCentre.lonDec + "\"/>\n");
+			if (savedCentre.isValid()) detfile.print("    <CENTRE lat=\"" + savedCentre.latDec + "\" lon=\"" + savedCentre.lonDec + "\"/>\n");
 			if (getLast_sync_opencaching() == null || getLast_sync_opencaching().endsWith("null") || getLast_sync_opencaching().equals("")) {
 				setLast_sync_opencaching("20050801000000");
 			}
@@ -245,8 +236,7 @@ public class Profile {
 			for (int i = 0; i < size; i++) {
 				if (showprogress) {
 					h.progress = (float) i / (float) size;
-					if ((i % updFrequ) == 0)
-						h.changed();
+					if ((i % updFrequ) == 0) h.changed();
 				}
 				ch = cacheDB.get(i);
 				if (ch.getWayPoint().length() > 0) {
@@ -256,13 +246,11 @@ public class Profile {
 			detfile.print("</CACHELIST>\n");
 			detfile.close();
 			buildReferences(); // TODO Why is this needed here?
-			if (showprogress)
-				pbf.exit(0);
+			if (showprogress) pbf.exit(0);
 		} catch (Exception e) {
 			pref.log("Problem writing to index file ", e);
 			detfile.close();
-			if (showprogress)
-				pbf.exit(0);
+			if (showprogress) pbf.exit(0);
 		}
 		resetUnsavedChanges();
 	}
@@ -272,9 +260,7 @@ public class Profile {
 	}
 
 	/**
-	 * Method to read the index.xml file that holds the total information
-	 * on available caches in the database. The database in nothing else
-	 * than the collection of caches in a directory.
+	 * Method to read the index.xml file that holds the total information on available caches in the database. The database in nothing else than the collection of caches in a directory.
 	 */
 	public void readIndex(InfoBox infoBox) {
 		int updFrequ = Vm.isMobile() ? 10 : 40; // Number of caches between screen updates
@@ -291,8 +277,7 @@ public class Profile {
 			indexXmlVersion = 1; // Initial guess
 			in.readLine(); // <?xml version= ...
 			String text = in.readLine(); // <CACHELIST>
-			if (text != null && text.indexOf("decimal") > 0)
-				fmtDec = true;
+			if (text != null && text.indexOf("decimal") > 0) fmtDec = true;
 			Extractor ex = new Extractor(null, " = \"", "\" ", 0, true);
 
 			// ewe.sys.Time startT=new ewe.sys.Time();
@@ -305,8 +290,10 @@ public class Profile {
 							convertWarningDisplayed = true;
 							int res = new MessageBox(
 									MyLocale.getMsg(144, "Warning"),
-									MyLocale.getMsg(4407,
-											"The profile files are not in the current format.%0aTherefore they are now converted to the current format. Depending of the size of the profile and the computer involved this may take some minutes. Please bear with us until the conversion is done."),
+									MyLocale
+											.getMsg(
+													4407,
+													"The profile files are not in the current format.%0aTherefore they are now converted to the current format. Depending of the size of the profile and the computer involved this may take some minutes. Please bear with us until the conversion is done."),
 									FormBase.YESB | FormBase.NOB).execute();
 							if (res == MessageBox.NOB) {
 								ewe.sys.Vm.exit(0);
@@ -402,15 +389,12 @@ public class Profile {
 					setFilterSize(ex.findNext());
 					String attr = ex.findNext();
 					long[] filterAttr = { 0l, 0l, 0l, 0l };
-					if (attr != null && !attr.equals(""))
-						filterAttr[0] = Convert.parseLong(attr);
+					if (attr != null && !attr.equals("")) filterAttr[0] = Convert.parseLong(attr);
 					attr = ex.findNext();
-					if (attr != null && !attr.equals(""))
-						filterAttr[2] = Convert.parseLong(attr);
+					if (attr != null && !attr.equals("")) filterAttr[2] = Convert.parseLong(attr);
 					attr = ex.findNext();
 					setFilterAttr(filterAttr);
-					if (attr != null && !attr.equals(""))
-						setFilterAttrChoice(Convert.parseInt(attr));
+					if (attr != null && !attr.equals("")) setFilterAttrChoice(Convert.parseInt(attr));
 					setShowBlacklisted(Boolean.valueOf(ex.findNext()).booleanValue());
 				} else if (text.indexOf("<FILTERDATA") >= 0) {
 					setFilterRose(ex.findFirst(text.substring(text.indexOf("<FILTERDATA"))));
@@ -422,11 +406,9 @@ public class Profile {
 					setFilterSize(ex.findNext());
 					String attr = ex.findNext();
 					long[] filterAttr = { 0l, 0l, 0l, 0l };
-					if (attr != null && !attr.equals(""))
-						filterAttr[0] = Convert.parseLong(attr);
+					if (attr != null && !attr.equals("")) filterAttr[0] = Convert.parseLong(attr);
 					attr = ex.findNext();
-					if (attr != null && !attr.equals(""))
-						filterAttr[2] = Convert.parseLong(attr);
+					if (attr != null && !attr.equals("")) filterAttr[2] = Convert.parseLong(attr);
 					setFilterAttr(filterAttr);
 					attr = ex.findNext();
 					setFilterAttrChoice(Convert.parseInt(attr));
@@ -440,11 +422,9 @@ public class Profile {
 						setFilterNoCoord(true);
 					}
 					attr = ex.findNext();
-					if (attr != null && !attr.equals(""))
-						filterAttr[1] = Convert.parseLong(attr);
+					if (attr != null && !attr.equals("")) filterAttr[1] = Convert.parseLong(attr);
 					attr = ex.findNext();
-					if (attr != null && !attr.equals(""))
-						filterAttr[3] = Convert.parseLong(attr);
+					if (attr != null && !attr.equals("")) filterAttr[3] = Convert.parseLong(attr);
 					setFilterAttr(filterAttr);
 				} else if (text.indexOf("<FILTERCONFIG") >= 0) {
 					String temp = ex.findFirst(text.substring(text.indexOf("<FILTERCONFIG")));
@@ -472,10 +452,8 @@ public class Profile {
 	}
 
 	/**
-	 * Restore the filter to the values stored in this profile
-	 * Called from Main Form and MainMenu
-	 * The values of Filter.isActive and Filter.isInactive are set by the filter
-	 **/
+	 * Restore the filter to the values stored in this profile Called from Main Form and MainMenu The values of Filter.isActive and Filter.isInactive are set by the filter
+	 */
 	public void restoreFilter() {
 		restoreFilter(true);
 	}
@@ -505,16 +483,15 @@ public class Profile {
 	}
 
 	/** Get a unique name for a new waypoint */
-	public String getNewWayPointName() {
+	public String getNewWayPointName(String prefix) {
 		String strWp = null;
 		long lgWp = 0;
 		int s = cacheDB.size();
-		if (s == 0)
-			return "CW0000";
+		if (s == 0) return prefix + "0000";
 		// Create new waypoint,look if not in db
 		do {
 			lgWp++;
-			strWp = "CW" + MyLocale.formatLong(lgWp, "0000");
+			strWp = prefix + MyLocale.formatLong(lgWp, "0000");
 		} while (cacheDB.getIndex(strWp) >= 0);
 		return strWp;
 	}
@@ -550,8 +527,7 @@ public class Profile {
 				}
 			}
 		}
-		if (mainindex < 0 || !cacheDB.get(mainindex).isCacheWpt())
-			mainindex = getCacheIndex("CW" + mainwpt);
+		if (mainindex < 0 || !cacheDB.get(mainindex).isCacheWpt()) mainindex = getCacheIndex("CW" + mainwpt);
 		if (mainindex < 0 /* || !cacheDB.get(mainindex)..isCacheWpt() */) {
 			ch.setIncomplete(true);
 		} else {
@@ -571,14 +547,12 @@ public class Profile {
 	}
 
 	/**
-	 * Sets the selection state for all caches to the given state <code>selectStatus</code>.
-	 * There is a little distinction for the <code>true</code> and <code>false</code> case:<br>
-	 * selectStatus <code>true</code>: All <i>visible</i> caches are checked, and their addi
-	 * wpts, regardless if they are visible or not.<br>
-	 * selectStatus <code>false</code>: All caches are unchecked, regardless if they are visible 
-	 * or not. 
-	 * @param selectStatus If <code>true</code> all caches are checked, if <code>false</code>
-	 * all caches are unchecked.
+	 * Sets the selection state for all caches to the given state <code>selectStatus</code>. There is a little distinction for the <code>true</code> and <code>false</code> case:<br>
+	 * selectStatus <code>true</code>: All <i>visible</i> caches are checked, and their addi wpts, regardless if they are visible or not.<br>
+	 * selectStatus <code>false</code>: All caches are unchecked, regardless if they are visible or not.
+	 * 
+	 * @param selectStatus
+	 *            If <code>true</code> all caches are checked, if <code>false</code> all caches are unchecked.
 	 */
 	public void setSelectForAll(boolean selectStatus) {
 		CacheHolder ch;
@@ -595,9 +569,9 @@ public class Profile {
 							addiWpt = (CacheHolder) ch.addiWpts.get(j);
 							addiWpt.is_Checked = selectStatus;
 						}
-					}					
+					}
 				}
-			} else /* selectStatus==false */ {
+			} else /* selectStatus==false */{
 				ch.is_Checked = selectStatus;
 			}
 		}
@@ -606,8 +580,7 @@ public class Profile {
 	public int numCachesInArea; // only valid after calling getSourroundingArea
 
 	public Area getSourroundingArea(boolean onlyOfSelected) {
-		if (cacheDB == null || cacheDB.size() == 0)
-			return null;
+		if (cacheDB == null || cacheDB.size() == 0) return null;
 		CacheHolder ch;
 		CWPoint topleft = null;
 		CWPoint bottomright = null;
@@ -622,18 +595,12 @@ public class Profile {
 					// ignore it //
 					// && ch.mainCache != null is only necessary because the data base may be corrupted
 					if (!isAddi || (isAddi && ch.mainCache != null && ch.getPos().getDistance(ch.mainCache.getPos()) < 1000)) {
-						if (topleft == null)
-							topleft = new CWPoint(ch.getPos());
-						if (bottomright == null)
-							bottomright = new CWPoint(ch.getPos());
-						if (topleft.latDec < ch.getPos().latDec)
-							topleft.latDec = ch.getPos().latDec;
-						if (topleft.lonDec > ch.getPos().lonDec)
-							topleft.lonDec = ch.getPos().lonDec;
-						if (bottomright.latDec > ch.getPos().latDec)
-							bottomright.latDec = ch.getPos().latDec;
-						if (bottomright.lonDec < ch.getPos().lonDec)
-							bottomright.lonDec = ch.getPos().lonDec;
+						if (topleft == null) topleft = new CWPoint(ch.getPos());
+						if (bottomright == null) bottomright = new CWPoint(ch.getPos());
+						if (topleft.latDec < ch.getPos().latDec) topleft.latDec = ch.getPos().latDec;
+						if (topleft.lonDec > ch.getPos().lonDec) topleft.lonDec = ch.getPos().lonDec;
+						if (bottomright.latDec > ch.getPos().latDec) bottomright.latDec = ch.getPos().latDec;
+						if (bottomright.lonDec < ch.getPos().lonDec) bottomright.lonDec = ch.getPos().lonDec;
 						numCachesInArea++;
 					}
 				}
@@ -646,8 +613,7 @@ public class Profile {
 	}
 
 	/**
-	 * Method to calculate bearing and distance of a cache in the index
-	 * list.
+	 * Method to calculate bearing and distance of a cache in the index list.
 	 * 
 	 * @see CacheHolder
 	 * @see Extractor
@@ -664,13 +630,11 @@ public class Profile {
 		// The following call is not very clean as it mixes UI with base classes
 		// However, calling it from here allows us to recenter the
 		// radar panel with only one call
-		if (Global.mainTab != null)
-			Global.mainTab.radarP.recenterRadar();
+		if (Global.mainTab != null) Global.mainTab.radarP.recenterRadar();
 	} // updateBearingDistance
 
 	/**
-	 * Method to build the reference between addi wpt
-	 * and main cache.
+	 * Method to build the reference between addi wpt and main cache.
 	 */
 	public void buildReferences() {
 		CacheHolder ch;
@@ -687,8 +651,7 @@ public class Profile {
 		int max = cacheDB.size();
 		for (int i = 0; i < max; i++) {
 			ch = cacheDB.get(i);
-			if (ch.isAddiWpt())
-				setAddiRef(ch);
+			if (ch.isAddiWpt()) setAddiRef(ch);
 		}
 		// sort addi wpts
 		for (int i = 0; i < max; i++) {
@@ -794,8 +757,7 @@ public class Profile {
 	}
 
 	/**
-	 * If <code>true</code> then the cache list will only display the
-	 * caches that are result of a search.
+	 * If <code>true</code> then the cache list will only display the caches that are result of a search.
 	 * 
 	 * @return <code>True</code> if list should only display search results
 	 */
@@ -804,12 +766,10 @@ public class Profile {
 	}
 
 	/**
-	 * Sets parameter if cache list should only display the caches that are
-	 * results of a search.
+	 * Sets parameter if cache list should only display the caches that are results of a search.
 	 * 
 	 * @param showSearchResult
-	 *            <code>True</code>: List should only display search
-	 *            results.
+	 *            <code>True</code>: List should only display search results.
 	 */
 	public void setShowSearchResult(boolean showSearchResult) {
 		this.showSearchResult = showSearchResult;

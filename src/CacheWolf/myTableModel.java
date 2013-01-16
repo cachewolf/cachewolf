@@ -263,7 +263,9 @@ public class myTableModel extends TableModel {
 						lineColorBG.set(COLOR_FLAGED);
 					else if (ch.getCacheStatus().indexOf(MyLocale.getMsg(319, "not found")) > -1)
 						lineColorBG.set(COLOR_STATUS);
-					else if (Global.getPref().debug && ch.detailsLoaded()) lineColorBG.set(COLOR_DETAILS_LOADED);
+					else if (Global.getPref().debug && ch.detailsLoaded()) {
+						lineColorBG.set(COLOR_DETAILS_LOADED);
+					}
 
 					if (ch.is_archived()) {
 						if (lineColorBG.equals(COLOR_WHITE)) {
@@ -281,9 +283,10 @@ public class myTableModel extends TableModel {
 					}
 
 					// Now, if a line is selected, blend the determined color
-					// with the selection
-					// color.
-					if (isSelected) mergeColor(lineColorBG, lineColorBG, COLOR_SELECTED);
+					// with the selection color.
+					if (isSelected) {
+						mergeColor(lineColorBG, lineColorBG, COLOR_SELECTED);
+					}
 					ta.fillColor = lineColorBG;
 					lastColorBG.set(ta.fillColor);
 					lastColorFG.set(ta.foreground);
