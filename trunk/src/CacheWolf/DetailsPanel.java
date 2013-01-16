@@ -425,15 +425,18 @@ public class DetailsPanel extends CellPanel {
 	 */
 	public void createWptName() {
 		final String wpt = inpWaypoint.getText().toUpperCase();
-		if (CacheType.isAddiWpt(CacheType.guiSelect2Cw(chcType.getInt())) && Global.mainTab.mainCache != null && (Global.mainTab.mainCache.startsWith("GC") || OC.isOC(Global.mainTab.mainCache) || Global.mainTab.mainCache.startsWith("CW"))
-				&& wpt.startsWith("CW")) {
+		if (CacheType.isAddiWpt(CacheType.guiSelect2Cw(chcType.getInt())) //
+				&& Global.mainTab.mainCache != null //
+				&& (Global.mainTab.mainCache.startsWith("GC") //
+						|| OC.isOC(Global.mainTab.mainCache) //
+				|| Global.mainTab.mainCache.startsWith("CW")) && wpt.startsWith("CW")) {
 			// for creating the Addiname on creating a new Waypoint
 			Global.mainTab.lastselected = Global.mainTab.mainCache;
 
 			inpWaypoint.setText(Global.getProfile().getNewAddiWayPointName(Global.mainTab.mainCache));
 		}
 		if (!CacheType.isAddiWpt(CacheType.guiSelect2Cw(chcType.getInt())) && !(wpt.startsWith("GC") || OC.isOC(wpt) || wpt.startsWith("CW"))) {
-			inpWaypoint.setText(Global.getProfile().getNewWayPointName());
+			inpWaypoint.setText(Global.getProfile().getNewWayPointName("CW"));
 		}
 	}
 
@@ -739,7 +742,7 @@ public class DetailsPanel extends CellPanel {
 		}
 		// If the waypoint does not have a name, give it one
 		if (cache.getWayPoint().equals("")) {
-			cache.setWayPoint(profile.getNewWayPointName());
+			cache.setWayPoint(profile.getNewWayPointName("CW"));
 		}
 		// Don't allow single letter names=> Problems in updateBearingDistance
 		// This is a hack but faster than slowing down the loop in
