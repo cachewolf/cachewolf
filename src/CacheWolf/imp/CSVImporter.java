@@ -329,15 +329,21 @@ public class CSVImporter {
 			} else {
 				String st = STRreplace.replace(l[NOTES], "# ", "#");
 				int i1 = st.indexOf("#");
-				int i2 = st.indexOf(" ", i1);
-				String std;
-				if (i2 < 0) {
-					std = st.substring(i1);
+				if (i1 > -1) {
+					int i2 = st.indexOf(" ", i1);
+					String std;
+					if (i2 < 0) {
+						std = st.substring(i1);
+					} else {
+						std = st.substring(i1, i2);
+					}
+					std = (std + "    ").substring(0, 4);
+					ch.setCacheName(s + std + " " + l[STATUS] + " " + l[HINT]);
 				} else {
-					std = st.substring(i1, i2);
+					if (ch.getCacheName().length() == 0) {
+
+					}
 				}
-				std = (std + "    ").substring(0, 4);
-				ch.setCacheName(s + std + " " + l[STATUS] + " " + l[HINT]);
 			}
 		} else {
 			ch.setCacheName(l[CACHENAME]);
@@ -358,6 +364,7 @@ public class CSVImporter {
 			if (wayPoint.startsWith("GC")) {
 				if (dnf) {
 					statusText = MyLocale.getMsg(362, "Solved");
+					gefunden = false;
 				} else {
 					gefunden = true;
 					statusText = ch.getFoundText();
@@ -375,10 +382,13 @@ public class CSVImporter {
 		} else {
 			l[DATEHIDDEN] = l[CREATED];
 		}
-		if (l[DATEHIDDEN].length() == 0) {
-			l[DATEHIDDEN] = (new Time()).toString();
+		String dateHidden;
+		try {
+			dateHidden = DateFormat.toYYMMDD(l[DATEHIDDEN].substring(0, 10));
+		} catch (Exception e) {
+			dateHidden = DateFormat.toYYMMDD(new Time());
 		}
-		ch.setDateHidden(DateFormat.toYYMMDD(l[DATEHIDDEN].substring(0, 10)));
+		ch.setDateHidden(dateHidden);
 		// ... fixed to work
 		ch.setType(CacheType.CW_TYPE_TRADITIONAL);
 		ch.setCacheSize(CacheSize.CW_SIZE_OTHER);
