@@ -18,7 +18,7 @@
     You should have received a copy of the GNU General Public License
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
-*/
+ */
 package CacheWolf.navi;
 
 import CacheWolf.CWPoint;
@@ -53,7 +53,7 @@ import ewe.util.Vector;
 import ewe.util.mString;
 
 /**
- *
+ * 
  * start offset for language file: 4800
  */
 
@@ -61,7 +61,6 @@ import ewe.util.mString;
 // http://www.expedia.de/pub/agent.dll?qscr=mrdt&ID=3kQaz.&CenP=48.09901667,11.35688333&Lang=EUR0407&Alti=1&Size=600,600&Offs=0.000000,0.000000&Pins=|5748|
 // oder
 // http://www.expedia.de/pub/agent.dll?qscr=mrdt&ID=3kQaz.&CenP=48.15,11.5833&Alti=2&Lang=EUR0407&Size=900,900&Offs=0,0&MapS=0&Pins=|48.15,11.5833|4|48.15,11.5833&Pins=|48.15,11.5833|1|48.15,%2011.5833||
-
 public class MapLoader {
 	InfoBox progressInfobox;
 
@@ -78,7 +77,7 @@ public class MapLoader {
 	boolean fetchOnlyMapWithCache = false;
 
 	/**
-	 *
+	 * 
 	 * @param prxy
 	 * @param prt
 	 * @param wmspath
@@ -109,8 +108,7 @@ public class MapLoader {
 				tempOMS = new WebMapService(STRreplace.replace(wmspath + "/" + FileName, "//", "/"));
 				onlineMapServices.add(tempOMS);
 			} catch (Exception ex) {
-				if (f == null)
-					(f = new MessageBox(MyLocale.getMsg(144, "Warning"), MyLocale.getMsg(4801, "Ignoring error while \n reading web map service definition file \n") + ex.toString(), FormBase.OKB)).exec();
+				if (f == null) (f = new MessageBox(MyLocale.getMsg(144, "Warning"), MyLocale.getMsg(4801, "Ignoring error while \n reading web map service definition file \n") + ex.toString(), FormBase.OKB)).exec();
 			}
 		}
 		tempOMS = new ExpediaMapService();
@@ -135,19 +133,17 @@ public class MapLoader {
 	}
 
 	public void setCurrentMapService(int index) {
-		if (index == -1)
-			index = 0; // if no center set
+		if (index == -1) index = 0; // if no center set
 		currentOnlineMapService = (OnlineMapService) onlineMapServices.get(index);
 	}
 
 	/**
 	 * calculates the Expedia Alti = scale which fits in distance to its edges
-	 *
+	 * 
 	 * @param center
 	 * @param distance
 	 *            in meters
-	 * @return meters per pixel calculatet in a way that the circle around center
-	 *         is completly within the map
+	 * @return meters per pixel calculatet in a way that the circle around center is completly within the map
 	 */
 
 	public static float getScale(CWPoint center, float distance, Point size) {
@@ -158,9 +154,8 @@ public class MapLoader {
 	}
 
 	/**
-	 * download maps from expedia at zoomlevel alti and save the maps and the .wfl
-	 * in path
-	 *
+	 * download maps from expedia at zoomlevel alti and save the maps and the .wfl in path
+	 * 
 	 * @param center
 	 *            centre of all tiles
 	 * @param radius
@@ -173,7 +168,7 @@ public class MapLoader {
 	 *            in pixels
 	 * @param path
 	 *            without "/" at the end
-	 *
+	 * 
 	 */
 	public void setTiles(CWPoint center, float radius, float scale, Point size, int overlapping) {
 		double metersPerLat = (1000 * (new CWPoint(0, 0)).getDistance(new CWPoint(1, 0)));
@@ -252,15 +247,14 @@ public class MapLoader {
 				center.set(lat, lon);
 				if (!fetchOnlyMapWithCache || hasCache(center, latinc, loninc)) {
 					if (progressInfobox != null)
-						progressInfobox.setInfo(MyLocale.getMsg(4802, "Downloading calibrated (georeferenced) \n map image \n '") + currentOnlineMapService.getName() + MyLocale.getMsg(4803, "' \n Downloading tile \n row") + " " + row + " / " + numMapsY
-								+ MyLocale.getMsg(4804, " column") + " " + col + " / " + numMapsX);
+						progressInfobox.setInfo(MyLocale.getMsg(4802, "Downloading calibrated (georeferenced) \n map image \n '") + currentOnlineMapService.getName() + MyLocale.getMsg(4803, "' \n Downloading tile \n row") + " " + row
+								+ " / " + numMapsY + MyLocale.getMsg(4804, " column") + " " + col + " / " + numMapsX);
 					try {
 						downloadMap(center, tileScale, tilesSize, tilesPath);
 					} catch (Exception e) {
 						this.progressInfobox.addWarning(MyLocale.getMsg(4805, "Tile") + " " + row + "/" + col + MyLocale.getMsg(4806, ": Ignoring error:") + " " + e.getMessage() + "\n");
 					}
-					if (progressInfobox.isClosed)
-						return;
+					if (progressInfobox.isClosed) return;
 				}
 				lon += loninc;
 			}
@@ -291,7 +285,7 @@ public class MapLoader {
 	}
 
 	/**
-	 *
+	 * 
 	 * @param center
 	 * @param scale
 	 * @param pixelsize
@@ -334,8 +328,8 @@ public class MapLoader {
 
 					if (wms.requestUrlPart.equalsIgnoreCase("Kosmos")) {
 						// minx miny maxx maxy + pixelsize.x
-						mapProgramParams = "bitmapgen" + " \"" + FileBase.getProgramDirectory().replace('/', File.separatorChar) + "\\" + wms.serviceTypeUrlPart + "\"" + " \"" + path.replace('/', File.separatorChar) + imagename + imagetype + "\""
-								+ " -mb " + bottomleft.toString(TransformCoordinates.LAT_LON).replace(',', ' ') + " " + topright.toString(TransformCoordinates.LAT_LON).replace(',', ' ') + " -w " + pixelsize.x;
+						mapProgramParams = "bitmapgen" + " \"" + FileBase.getProgramDirectory().replace('/', File.separatorChar) + "\\" + wms.serviceTypeUrlPart + "\"" + " \"" + path.replace('/', File.separatorChar) + imagename + imagetype
+								+ "\"" + " -mb " + bottomleft.toString(TransformCoordinates.LAT_LON).replace(',', ' ') + " " + topright.toString(TransformCoordinates.LAT_LON).replace(',', ' ') + " -w " + pixelsize.x;
 						Vm.exec(mapProgram, mapProgramParams, 0, true);
 					} else {
 						if (wms.requestUrlPart.equalsIgnoreCase("Maperitive")) {
@@ -373,10 +367,9 @@ public class MapLoader {
 							} else {
 								outp.print("export-bitmap file=" + fName);
 							}
-							outp.print(" bounds=" + koords);
 							String pxSize = " width=" + pixelsize.x + " height=" + pixelsize.y;
 							outp.print(pxSize);
-							outp.println(" kml=false");
+							outp.println(" ozi=true");
 							outp.close();
 							// executing the generated script
 							if (mapProgram.indexOf(':') == 1) {
@@ -421,28 +414,22 @@ public class MapLoader {
 						parts = mString.split(line, ',');
 						gcp1.bitMapX = Convert.toInt(parts[2]);
 						gcp1.bitMapY = Convert.toInt(parts[3]);
-						if (gcp1.bitMapX == 0)
-							gcp1.bitMapX = 1;
-						if (gcp1.bitMapY == 0)
-							gcp1.bitMapY = 1;
+						if (gcp1.bitMapX == 0) gcp1.bitMapX = 1;
+						if (gcp1.bitMapY == 0) gcp1.bitMapY = 1;
 
 						line = inMap.readLine();
 						parts = mString.split(line, ',');
 						gcp2.bitMapX = Convert.toInt(parts[2]);
 						gcp2.bitMapY = Convert.toInt(parts[3]);
-						if (gcp2.bitMapX == 0)
-							gcp2.bitMapX = 1;
-						if (gcp2.bitMapY == 0)
-							gcp2.bitMapY = 1;
+						if (gcp2.bitMapX == 0) gcp2.bitMapX = 1;
+						if (gcp2.bitMapY == 0) gcp2.bitMapY = 1;
 
 						line = inMap.readLine();
 						parts = mString.split(line, ',');
 						gcp3.bitMapX = Convert.toInt(parts[2]);
 						gcp3.bitMapY = Convert.toInt(parts[3]);
-						if (gcp3.bitMapX == 0)
-							gcp3.bitMapX = 1;
-						if (gcp3.bitMapY == 0)
-							gcp3.bitMapY = 1;
+						if (gcp3.bitMapX == 0) gcp3.bitMapX = 1;
+						if (gcp3.bitMapY == 0) gcp3.bitMapY = 1;
 						// imageWidth = gcp3.bitMapX;
 						// imageHeight = gcp3.bitMapY;
 
@@ -450,10 +437,8 @@ public class MapLoader {
 						parts = mString.split(line, ',');
 						gcp4.bitMapX = Convert.toInt(parts[2]);
 						gcp4.bitMapY = Convert.toInt(parts[3]);
-						if (gcp4.bitMapX == 0)
-							gcp4.bitMapX = 1;
-						if (gcp4.bitMapY == 0)
-							gcp4.bitMapY = 1;
+						if (gcp4.bitMapX == 0) gcp4.bitMapX = 1;
+						if (gcp4.bitMapY == 0) gcp4.bitMapY = 1;
 
 						line = inMap.readLine();
 						parts = mString.split(line, ',');
@@ -520,10 +505,8 @@ public class MapLoader {
 
 	/**
 	 * @param url
-	 *            usual URL. If a redirect is requiered (as in the case of
-	 *            Expedia, add an "R" before "http://" --> Don't download the url, retry until getting a http-redirect
-	 *            this is necessary for expedia as it delivers the image only after a http-redirect
-	 *            and sometimes doesn't send a redirect on the first try
+	 *            usual URL. If a redirect is requiered (as in the case of Expedia, add an "R" before "http://" --> Don't download the url, retry until getting a http-redirect this is necessary for expedia as it delivers the image only
+	 *            after a http-redirect and sometimes doesn't send a redirect on the first try
 	 * @param datei
 	 *            path and name of file to save to
 	 */
@@ -539,8 +522,7 @@ public class MapLoader {
 		}
 		File dateiF = new FileBugfix(datei);
 		if (!dateiF.exists()) {
-			if (forceredirect)
-				UrlFetcher.setForceRedirect();
+			if (forceredirect) UrlFetcher.setForceRedirect();
 			UrlFetcher.fetchDataFile(realurl, datei);
 			String ct = null;
 			try {
@@ -575,10 +557,8 @@ class OnlineMapService {
 	int maxPixelSize;
 
 	/**
-	 * This method is used in case the online map service provides only certain steps of
-	 * zoomlevels. In this case the scale in meters per pixel must be returned, which
-	 * will be used instead of the wished scale.
-	 *
+	 * This method is used in case the online map service provides only certain steps of zoomlevels. In this case the scale in meters per pixel must be returned, which will be used instead of the wished scale.
+	 * 
 	 * @param scale
 	 * @return
 	 */
@@ -592,7 +572,7 @@ class OnlineMapService {
 
 	/**
 	 * Overlaod this to integrate name of layers
-	 *
+	 * 
 	 * @return friendly service name
 	 */
 	public String getName() {
@@ -600,10 +580,8 @@ class OnlineMapService {
 	}
 
 	/**
-	 * This method is called to get a name of the
-	 * online map service which will be part of the filename
-	 * used for the downloaded image
-	 *
+	 * This method is called to get a name of the online map service which will be part of the filename used for the downloaded image
+	 * 
 	 * @return friendly service name
 	 */
 	public String getNameForFileSystem() {
@@ -615,10 +593,8 @@ class OnlineMapService {
 	}
 
 	/**
-	 * Overload this and return the URL to the map image, don't call super
-	 * Alternatively overload getUrlForBoundingBoxInternal
-	 * You must overload either this method or getUrlForBoundingBox
-	 *
+	 * Overload this and return the URL to the map image, don't call super Alternatively overload getUrlForBoundingBoxInternal You must overload either this method or getUrlForBoundingBox
+	 * 
 	 * @param center
 	 * @param scale
 	 * @param pixelsize
@@ -631,10 +607,8 @@ class OnlineMapService {
 	}
 
 	/**
-	 * This is made protected and named "...Internal" because a lot of services
-	 * don't work correctly when a map is requested, that is not exactly quadratic
-	 * --> alway use getUrlForCenter...
-	 *
+	 * This is made protected and named "...Internal" because a lot of services don't work correctly when a map is requested, that is not exactly quadratic --> alway use getUrlForCenter...
+	 * 
 	 * @param surArea
 	 * @param pixelsize
 	 * @return
@@ -644,9 +618,8 @@ class OnlineMapService {
 	}
 
 	/**
-	 * overload this if your map service uses a special projection
-	 * an return an Area that is quadratic in that projection
-	 *
+	 * overload this if your map service uses a special projection an return an Area that is quadratic in that projection
+	 * 
 	 * @param center
 	 * @param scale
 	 * @param pixelsize
@@ -666,7 +639,7 @@ class OnlineMapService {
 
 	/**
 	 * Overload this (don't call super()) or alternatively overload getMapInfoObjectInternal
-	 *
+	 * 
 	 * @param center
 	 * @param scale
 	 * @param pixelsize
@@ -694,7 +667,7 @@ class WebMapService extends OnlineMapService {
 	double maxscaleWMS;
 
 	/**
-	 *
+	 * 
 	 * @param filename
 	 *            without file extension
 	 * @throws IOException
@@ -708,12 +681,10 @@ class WebMapService extends OnlineMapService {
 		String tmp = FileBase.getFileExt(filename_);
 		this.filename = tmp.substring(0, tmp.lastIndexOf('.'));
 		name = wms.getProperty("Name", "").trim();
-		if (name == "")
-			throw new IllegalArgumentException(MyLocale.getMsg(4812, "WebMapService: property >Name:< missing in file:\n") + filename);
+		if (name == "") throw new IllegalArgumentException(MyLocale.getMsg(4812, "WebMapService: property >Name:< missing in file:\n") + filename);
 		MainUrl = wms.getProperty("MainUrl", "").trim();
 		;
-		if (MainUrl == "")
-			throw new IllegalArgumentException(MyLocale.getMsg(4813, "WebMapService: property >MainUrl:< missing in file:\n") + filename);
+		if (MainUrl == "") throw new IllegalArgumentException(MyLocale.getMsg(4813, "WebMapService: property >MainUrl:< missing in file:\n") + filename);
 		mapType = wms.getProperty("MapType", "maptype_unknown").trim();
 		serviceTypeUrlPart = wms.getProperty("ServiceTypeUrlPart", "SERVICE=WMS").trim();
 		layersUrlPart = wms.getProperty("LayersUrlPart", "").trim();
@@ -721,27 +692,23 @@ class WebMapService extends OnlineMapService {
 		versionUrlPart = wms.getProperty("VersionUrlPart", "").trim();
 		;
 		tmp = wms.getProperty("CoordinateReferenceSystemCacheWolf", "").trim();
-		if (tmp.equals(""))
-			throw new IllegalArgumentException(MyLocale.getMsg(4814, "WebMapService: no CoordinateReferenceSystemCacheWolf given"));
+		if (tmp.equals("")) throw new IllegalArgumentException(MyLocale.getMsg(4814, "WebMapService: no CoordinateReferenceSystemCacheWolf given"));
 		String[] tmp2 = mString.split(tmp, ' ');
 		coordinateReferenceSystem = new int[tmp2.length];
 		for (int i = 0; i < tmp2.length; i++) {
 			coordinateReferenceSystem[i] = Common.parseInt(tmp2[i].trim());
-			if (!TransformCoordinates.isSupported(coordinateReferenceSystem[i]))
-				throw new IllegalArgumentException(MyLocale.getMsg(4815, "Coordinate reference system not supported by CacheWolf:\n") + coordinateReferenceSystem[i]);
+			if (!TransformCoordinates.isSupported(coordinateReferenceSystem[i])) throw new IllegalArgumentException(MyLocale.getMsg(4815, "Coordinate reference system not supported by CacheWolf:\n") + coordinateReferenceSystem[i]);
 		}
 		tmp = wms.getProperty("CoordinateReferenceSystemUrlPart", "").trim();
-		if (tmp == "")
-			throw new IllegalArgumentException(MyLocale.getMsg(4816, "WebMapService: property >CoordinateReferenceSystemUrlPart:< missing in file:\n") + filename);
+		if (tmp == "") throw new IllegalArgumentException(MyLocale.getMsg(4816, "WebMapService: property >CoordinateReferenceSystemUrlPart:< missing in file:\n") + filename);
 		tmp2 = mString.split(tmp, ' ');
 		if (tmp2.length != coordinateReferenceSystem.length)
-			throw new IllegalArgumentException(MyLocale.getMsg(4817, "number of strings in CoordinateReferenceSystemUrlPart (") + tmp2.length + MyLocale.getMsg(4818, ") must match the number of codes in CoordinateReferenceSystemCacheWolf (")
-					+ coordinateReferenceSystem.length + MyLocale.getMsg(4819, ") use normal space as separator"));
+			throw new IllegalArgumentException(MyLocale.getMsg(4817, "number of strings in CoordinateReferenceSystemUrlPart (") + tmp2.length
+					+ MyLocale.getMsg(4818, ") must match the number of codes in CoordinateReferenceSystemCacheWolf (") + coordinateReferenceSystem.length + MyLocale.getMsg(4819, ") use normal space as separator"));
 		coordinateReferenceSystemUrlPart = new String[tmp2.length];
 		for (int i = 0; i < tmp2.length; i++) {
 			coordinateReferenceSystemUrlPart[i] = tmp2[i].trim();
-			if (coordinateReferenceSystemUrlPart[i] == "")
-				throw new IllegalArgumentException(MyLocale.getMsg(4820, "WebMapService: property >CoordinateReferenceSystemUrlPart:< incorrect in file:\n") + filename);
+			if (coordinateReferenceSystemUrlPart[i] == "") throw new IllegalArgumentException(MyLocale.getMsg(4820, "WebMapService: property >CoordinateReferenceSystemUrlPart:< incorrect in file:\n") + filename);
 		}
 		requestUrlPart = wms.getProperty("RequestUrlPart", "REQUEST=GetMap").trim();
 		imageFormatUrlPart = wms.getProperty("ImageFormatUrlPart", "").trim();
@@ -755,18 +722,15 @@ class WebMapService extends OnlineMapService {
 		bottomrightS.trim();
 		CWPoint topleft = new CWPoint(topleftS);
 		CWPoint bottomright = new CWPoint(bottomrightS);
-		if (!topleft.isValid())
-			topleft.set(90, -180);
-		if (!bottomright.isValid())
-			bottomright.set(-90, 180);
+		if (!topleft.isValid()) topleft.set(90, -180);
+		if (!bottomright.isValid()) bottomright.set(-90, 180);
 		boundingBox = new Area(topleft, bottomright);
 		minscaleWMS = Common.parseDouble(wms.getProperty("MinScale", "0").trim());
 		maxscaleWMS = Common.parseDouble(wms.getProperty("MaxScale", Convert.toString(java.lang.Double.MAX_VALUE)).trim());
 		minscale = minscaleWMS / Math.sqrt(2); // in WMS scale is measured diagonal while in CacheWolf it is measured vertical
 		maxscale = maxscaleWMS / Math.sqrt(2);
 		imageFileExt = wms.getProperty("ImageFileExtension", "").trim();
-		if (imageFileExt == "")
-			throw new IllegalArgumentException(MyLocale.getMsg(4821, "WebMapService: property >ImageFileExtension:< missing in file:\n") + filename);
+		if (imageFileExt == "") throw new IllegalArgumentException(MyLocale.getMsg(4821, "WebMapService: property >ImageFileExtension:< missing in file:\n") + filename);
 		String[] recommendedScalesStr = mString.split(wms.getProperty("RecommendedScale", "5").trim(), ' ');
 		// convert recommended scales to doube[], sort them and set preselected recommended scale
 		if (recommendedScalesStr.length > 0) {
@@ -780,8 +744,7 @@ class WebMapService extends OnlineMapService {
 			recommendedScales = new double[recommendedScalesStr.length];
 			for (int i = 0; i < recommendedScales.length; i++) {
 				recommendedScales[i] = recommendedScalesObj[i].value;
-				if (recommendedScales[i] == preselected)
-					preselectedRecScaleIndex = i;
+				if (recommendedScales[i] == preselected) preselectedRecScaleIndex = i;
 			}
 		}
 		// some WMS limit the size of images they deliver - a swedish WMS delivers just 256x256 even if 500x500 or 1000x1000 was requested.
@@ -796,7 +759,7 @@ class WebMapService extends OnlineMapService {
 	private static final int BOTTOMLEFT_INDEX = 3;
 
 	/**
-	 *
+	 * 
 	 * @param maparea
 	 * @return [0] = topleft, [1] = bottomright, [2] = topright, [3] = bottomleft
 	 */
@@ -811,10 +774,10 @@ class WebMapService extends OnlineMapService {
 		ret[BOTTOMRIGHT_INDEX] = TransformCoordinates.wgs84ToEpsg(maparea.bottomright, coordinateReferenceSystem[crs]);
 		ret[TOPRIGHT_INDEX] = ret[BOTTOMRIGHT_INDEX].cloneIt();
 		ret[TOPRIGHT_INDEX].shift(ret[TOPLEFT_INDEX].getNorthing() - ret[BOTTOMRIGHT_INDEX].getNorthing(), 0); // was: new GkPoint(ret[BUTTOMRIGHT_INDEX].getEasting(region), ret[TOPLEFT_INDEX].northing, ret[TOPLEFT_INDEX].stripewidth,
-																												// ret[TOPLEFT_INDEX].lengthOfStripe0);
+		// ret[TOPLEFT_INDEX].lengthOfStripe0);
 		ret[BOTTOMLEFT_INDEX] = ret[BOTTOMRIGHT_INDEX].cloneIt();
 		ret[BOTTOMLEFT_INDEX].shift(ret[TOPLEFT_INDEX].getEasting() - ret[BOTTOMRIGHT_INDEX].getEasting(), 1); // was: new GkPoint(ret[TOPLEFT_INDEX].getEasting(region), ret[BUTTOMRIGHT_INDEX].northing, ret[TOPLEFT_INDEX].stripewidth,
-																												// ret[TOPLEFT_INDEX].lengthOfStripe0);
+		// ret[TOPLEFT_INDEX].lengthOfStripe0);
 		// ret[2] = TransformCoordinates.wgs84ToGermanGk(topright, coordinateReferenceSystem[crs]);
 		// ret[3] = TransformCoordinates.wgs84ToGermanGk(bottomleft, coordinateReferenceSystem[crs]);
 		return ret;
@@ -853,7 +816,8 @@ class WebMapService extends OnlineMapService {
 
 	protected String getUrlForBoundingBoxInternal(Area maparea, Point pixelsize) {
 		if (!boundingBox.isOverlapping(maparea))
-			throw new IllegalArgumentException(MyLocale.getMsg(4822, "area:") + " " + maparea.toString() + MyLocale.getMsg(4823, " not covered by service:") + " " + name + MyLocale.getMsg(4824, ", service area:") + " " + boundingBox.toString());
+			throw new IllegalArgumentException(MyLocale.getMsg(4822, "area:") + " " + maparea.toString() + MyLocale.getMsg(4823, " not covered by service:") + " " + name + MyLocale.getMsg(4824, ", service area:") + " "
+					+ boundingBox.toString());
 		// http://www.geoserver.nrw.de/GeoOgcWms1.3/servlet/TK25?SERVICE=WMS&VERSION=1.1.0&REQUEST=GetMap&SRS=EPSG:31466&BBOX=2577567.0149,5607721.7566,2578567.0077,5608721.7602&WIDTH=500&HEIGHT=500&LAYERS=Raster:TK25_KMF:Farbkombination&STYLES=&FORMAT=image/png
 		CWPoint bottomleft = new CWPoint(maparea.bottomright.latDec, maparea.topleft.lonDec);
 		CWPoint topright = new CWPoint(maparea.topleft.latDec, maparea.bottomright.lonDec);
@@ -877,18 +841,16 @@ class WebMapService extends OnlineMapService {
 			bbox += bottomleft.toString(TransformCoordinates.LON_LAT) + "," + topright.toString(TransformCoordinates.LON_LAT);
 		else
 			throw new IllegalArgumentException(MyLocale.getMsg(4828, "Coordinate system not supported by cachewolf:") + " " + coordinateReferenceSystem.toString());
-		String ret = MainUrl + serviceTypeUrlPart + "&" + versionUrlPart + "&" + requestUrlPart + "&" + coordinateReferenceSystemUrlPart[crs] + "&" + bbox + "&WIDTH=" + pixelsize.x + "&HEIGHT=" + pixelsize.y + "&" + layersUrlPart + "&" + stylesUrlPart
-				+ "&" + imageFormatUrlPart;
+		String ret = MainUrl + serviceTypeUrlPart + "&" + versionUrlPart + "&" + requestUrlPart + "&" + coordinateReferenceSystemUrlPart[crs] + "&" + bbox + "&WIDTH=" + pixelsize.x + "&HEIGHT=" + pixelsize.y + "&" + layersUrlPart + "&"
+				+ stylesUrlPart + "&" + imageFormatUrlPart;
 		Global.getPref().log(ret + " WGS84: Bottom left: " + bottomleft.toString(TransformCoordinates.DD) + "top right: " + topright.toString(TransformCoordinates.DD));
 		return ret;
 	}
 
 	/**
-	 * This method gives the number in the array of coordinateReferenceSystems, which should be used
-	 * a) if only one is in the array 0 is returned
-	 * b) if there are more, find out which one matches the correct zone (e.g. Gau?-K?ger stripe)
+	 * This method gives the number in the array of coordinateReferenceSystems, which should be used a) if only one is in the array 0 is returned b) if there are more, find out which one matches the correct zone (e.g. Gau?-K?ger stripe)
 	 * Call this routine with center of the area (use Area.getcenter())
-	 *
+	 * 
 	 * @param p
 	 *            Point for which the epsg code is searched for
 	 * @return
@@ -900,27 +862,24 @@ class WebMapService extends OnlineMapService {
 			ProjectedPoint gkbl = TransformCoordinates.wgs84ToLocalsystem(p, ls); // TODO: think / read about what to do if bottom left and top right are not in the same Gau?-Kr?ger stripe?
 			int wantepsg = gkbl.getEpsgCode();
 			for (crsindex = 0; crsindex < coordinateReferenceSystem.length; crsindex++) {
-				if (coordinateReferenceSystem[crsindex] == wantepsg)
-					break;
+				if (coordinateReferenceSystem[crsindex] == wantepsg) break;
 			}
 			if (crsindex >= coordinateReferenceSystem.length) { // not match
 				for (crsindex = 0; crsindex < coordinateReferenceSystem.length; crsindex++) {
-					if (Math.abs(coordinateReferenceSystem[crsindex] - wantepsg) == 1)
-						break; // accept 1 zone deviation
+					if (Math.abs(coordinateReferenceSystem[crsindex] - wantepsg) == 1) break; // accept 1 zone deviation
 				}
-				if (crsindex >= coordinateReferenceSystem.length)
-					crsindex = -1;
+				if (crsindex >= coordinateReferenceSystem.length) crsindex = -1;
 
 			}
-			if (crsindex < 0)
-				throw new IllegalArgumentException(MyLocale.getMsg(4829, "getUrlForBoundingBox: Point:") + " " + gkbl.toString() + MyLocale.getMsg(4830, "no matching Gau?-Kr?ger-Stripe in the EPSG-code list in the .wms"));
+			if (crsindex < 0) throw new IllegalArgumentException(MyLocale.getMsg(4829, "getUrlForBoundingBox: Point:") + " " + gkbl.toString() + MyLocale.getMsg(4830, "no matching Gau?-Kr?ger-Stripe in the EPSG-code list in the .wms"));
 		}
 		return crsindex;
 	}
 
 	protected MapInfoObject getMapInfoObjectInternal(Area maparea, Point pixelsize) {
 		if (!boundingBox.isOverlapping(maparea))
-			throw new IllegalArgumentException(MyLocale.getMsg(4822, "area:") + " " + maparea.toString() + MyLocale.getMsg(4823, " not covered by service:") + " " + name + MyLocale.getMsg(4824, ", service area:") + " " + boundingBox.toString());
+			throw new IllegalArgumentException(MyLocale.getMsg(4822, "area:") + " " + maparea.toString() + MyLocale.getMsg(4823, " not covered by service:") + " " + name + MyLocale.getMsg(4824, ", service area:") + " "
+					+ boundingBox.toString());
 		Vector georef = new Vector(4);
 
 		// calculate a rectangle in the according coordinate reference system
@@ -973,8 +932,7 @@ class ExpediaMapService extends OnlineMapService {
 	 * information from: DownloadMouseMode.properties in project GPSylon ( in directory gpsylon_src-0.5.2\plugins\downloadmousemode\auxiliary\org\dinopolis\gpstool\plugin\downloadmousemode and DownloadMapCalculator.java in Dir
 	 * gpsylon_src-0.5.2\plugins\downloadmousemode\src\org\dinopolis\gpstool\plugin\downloadmousemode
 	 * download.map.url.expedia_east=http\://www.expedia.com/pub/agent.dll?qscr=mrdt&ID=3XNsF.&CenP={0,number,#.########},{1,number,#.########}&Lang=EUR0809&Alti={2,number,#}&Size={3,number,#},{4,number,#}&Offs=0.000000,0.000000\&BCheck=1
-	 * download.map.url.expedia_east.title=Url of Expedia Europe
-	 * download.map.scale_factor.expedia_east=3950
+	 * download.map.url.expedia_east.title=Url of Expedia Europe download.map.scale_factor.expedia_east=3950
 	 */
 	final static float downloadMapScaleFactorExpedia_east = 3950;
 	final static float MAPBLAST_METERS_PER_PIXEL = 1.0f / 2817.947378f;
@@ -1008,7 +966,8 @@ class ExpediaMapService extends OnlineMapService {
 		else
 			zone = "EUR0809";
 		String quelle = MainUrl + "&CenP=" + center.toString(TransformCoordinates.LAT_LON);
-		quelle = quelle + "&Alti=" + Convert.toString(zoomlevel) + "&Lang=" + zone + "&Size=" + Convert.toString(pixelsize.x) + "," + Convert.toString(pixelsize.y) + "&Offs=0,0&MapS=0"; // &Pins=|" + latD.toString().replace(',', '.') + "," + lonD.toString().replace(',', '.') + "|5|";
+		quelle = quelle + "&Alti=" + Convert.toString(zoomlevel) + "&Lang=" + zone + "&Size=" + Convert.toString(pixelsize.x) + "," + Convert.toString(pixelsize.y) + "&Offs=0,0&MapS=0"; // &Pins=|" + latD.toString().replace(',', '.') +
+																																															// "," + lonD.toString().replace(',', '.') + "|5|";
 		return quelle;
 	}
 
