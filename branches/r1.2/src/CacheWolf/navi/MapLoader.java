@@ -30,6 +30,7 @@ import CacheWolf.InfoBox;
 import CacheWolf.MyLocale;
 import CacheWolf.STRreplace;
 import CacheWolf.UrlFetcher;
+import CacheWolf.utils.CWWrapper;
 import CacheWolf.utils.FileBugfix;
 import ewe.fx.Point;
 import ewe.io.BufferedWriter;
@@ -345,7 +346,13 @@ public class MapLoader {
 							if (wms.serviceTypeUrlPart.equals("")) {
 								outp.println("add-web-map");
 							} else {
-								outp.println("add-web-map provider=" + wms.serviceTypeUrlPart);
+								String s = STRreplace.replace(wms.serviceTypeUrlPart, ",", " ");
+								String[] t = mString.split(s, ' ');
+								for (int i = 0; i < t.length; i++) {
+									if (t[i].length() > 0) {
+										outp.println("add-web-map provider=" + t[i]);
+									}
+								}
 							}
 
 							if (!wms.stylesUrlPart.equals("")) {
@@ -377,15 +384,17 @@ public class MapLoader {
 							} else {
 								mapProgramParams = "-exitafter " + scriptFileName;
 							}
-							Vm.exec(mapProgram, mapProgramParams, 0, true);
-							// preparation for generating wfl from the ozi map-file
-							Vector GCPs = map2wfl(path + imagename);
-							mio.evalGCP(GCPs, pixelsize.x, pixelsize.y);
-							// can not supress genaration of pgw,jgw-file
-							FileBugfix pgwFile = new FileBugfix(path + imagename + ".pgw"); // seems to bee for png
-							pgwFile.delete();
-							FileBugfix jgwFile = new FileBugfix(path + imagename + ".jgw"); // seems to bee for jpg
-							jgwFile.delete();
+							// Vm.exec(mapProgram, mapProgramParams, 0, true);
+							if (CWWrapper.execute(mapProgram + " " + mapProgramParams)) {
+								// preparation for generating wfl from the ozi map-file
+								Vector GCPs = map2wfl(path + imagename);
+								mio.evalGCP(GCPs, pixelsize.x, pixelsize.y);
+								// can not supress genaration of pgw,jgw-file
+								FileBugfix georefFile = new FileBugfix(fName + ".georef");
+								georefFile.delete();
+							} else {
+								return;
+							}
 						}
 					}
 				}
@@ -967,7 +976,7 @@ class ExpediaMapService extends OnlineMapService {
 			zone = "EUR0809";
 		String quelle = MainUrl + "&CenP=" + center.toString(TransformCoordinates.LAT_LON);
 		quelle = quelle + "&Alti=" + Convert.toString(zoomlevel) + "&Lang=" + zone + "&Size=" + Convert.toString(pixelsize.x) + "," + Convert.toString(pixelsize.y) + "&Offs=0,0&MapS=0"; // &Pins=|" + latD.toString().replace(',', '.') +
-																																															// "," + lonD.toString().replace(',', '.') + "|5|";
+		// "," + lonD.toString().replace(',', '.') + "|5|";
 		return quelle;
 	}
 
