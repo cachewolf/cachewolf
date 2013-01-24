@@ -377,12 +377,17 @@ public class MapLoader {
 							String pxSize = " width=" + pixelsize.x + " height=" + pixelsize.y;
 							outp.print(pxSize);
 							outp.println(" ozi=true");
+							outp.println("exit");
 							outp.close();
 							// executing the generated script
 							if (mapProgram.indexOf(':') == 1) {
-								mapProgramParams = "-exitafter " + "\"" + scriptFileName + "\"";
+								// Windows
+								// mapProgramParams = "-exitafter " + "\"" + scriptFileName + "\"";
+								mapProgramParams = "\"" + scriptFileName + "\"";
 							} else {
-								mapProgramParams = "-exitafter " + scriptFileName;
+								// Linux
+								// mapProgramParams = "-exitafter " + scriptFileName;
+								mapProgramParams = scriptFileName;
 							}
 							// Vm.exec(mapProgram, mapProgramParams, 0, true);
 							if (CWWrapper.execute(mapProgram + " " + mapProgramParams)) {

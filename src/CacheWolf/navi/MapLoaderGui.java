@@ -18,7 +18,7 @@
     You should have received a copy of the GNU General Public License
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
-*/
+ */
 package CacheWolf.navi;
 
 import CacheWolf.CWPoint;
@@ -55,10 +55,7 @@ import ewe.ui.mLabel;
 import ewe.ui.mTabbedPanel;
 
 /**
- * @author pfeffer
- *         This Class is the Dialog for Download calibrated from expedia.com
- *         is called from
- *         * start offset for language file: 1800
+ * @author pfeffer This Class is the Dialog for Download calibrated from expedia.com is called from * start offset for language file: 1800
  */
 
 public class MapLoaderGui extends Form {
@@ -227,9 +224,7 @@ public class MapLoaderGui extends Form {
 	}
 
 	/**
-	 * sort the map services in order to have the services, which cover
-	 * the current center first in the list
-	 * this sets inbound[], sortedMapServices[] and sortingmapServices[]
+	 * sort the map services in order to have the services, which cover the current center first in the list this sets inbound[], sortedMapServices[] and sortingmapServices[]
 	 * 
 	 */
 	private void sortMapServices() {
@@ -261,8 +256,7 @@ public class MapLoaderGui extends Form {
 
 	private int getSortedMapServiceIndex(int originalindex) {
 		for (int i = 0; i < sortingMapServices.length; i++) {
-			if (sortingMapServices[i] == originalindex)
-				return i;
+			if (sortingMapServices[i] == originalindex) return i;
 		}
 		throw new IllegalStateException(MyLocale.getMsg(1818, "getSortedMapServiceIndex: index") + " " + originalindex + MyLocale.getMsg(1819, "not found"));
 	}
@@ -294,8 +288,8 @@ public class MapLoaderGui extends Form {
 
 	public void downloadTiles() {
 		String mapsDir = getMapsDir();
-		if (mapsDir == null)
-			return;
+		if (mapsDir == null) return;
+
 		InfoBox progressBox = new InfoBox(MyLocale.getMsg(1815, "Downloading georeferenced maps"), MyLocale.getMsg(1816, "Downloading georeferenced maps\n \n \n \n \n"), InfoBox.PROGRESS_WITH_WARNINGS);
 		progressBox.setPreferredSize(220, 300);
 		progressBox.setInfoHeight(160);
@@ -303,14 +297,17 @@ public class MapLoaderGui extends Form {
 		progressBox.exec();
 		mapLoader.setProgressInfoBox(progressBox);
 		Vm.showWait(true);
+
 		int lengthw, lengthh;
 		switch (tileSize.getSelectedIndex()) {
 		// Perhaps introduce a medium size??
 		case 0:
-			lengthw = 500; lengthh = 500;
+			lengthw = 500;
+			lengthh = 500;
 			break;
 		default:
-			lengthw = 1000; lengthh = 1000;
+			lengthw = 1000;
+			lengthh = 1000;
 		}
 		// Override size if one tile for each cache is wanted
 		if (perCache) {
@@ -318,11 +315,18 @@ public class MapLoaderGui extends Form {
 			lengthh = tileHeight;
 			// size = new Point(tileWidth, tileHeight);
 		}
-		if (mapLoader.currentOnlineMapService.maxPixelSize < lengthw) lengthw = mapLoader.currentOnlineMapService.maxPixelSize; // shrink pixel size to the maximum which the service allows for. 
-		if (mapLoader.currentOnlineMapService.maxPixelSize < lengthh) lengthh = mapLoader.currentOnlineMapService.maxPixelSize; // shrink pixel size to the maximum which the service allows for. 
+		if (mapLoader.currentOnlineMapService.maxPixelSize < lengthw) {
+			// shrink pixel size to the maximum which the service allows for.
+			lengthw = mapLoader.currentOnlineMapService.maxPixelSize;
+		}
+		if (mapLoader.currentOnlineMapService.maxPixelSize < lengthh) {
+			// shrink pixel size to the maximum which the service allows for.
+			lengthh = mapLoader.currentOnlineMapService.maxPixelSize;
+		}
 		Point size = new Point(lengthw, lengthh);
 		if (forCachesChkBox.getState() || perCache) {
-			Area surArea = Global.getProfile().getSourroundingArea(onlySelected); // calculate map boundaries from cacheDB
+			// calculate map boundaries from cacheDB
+			Area surArea = Global.getProfile().getSourroundingArea(onlySelected);
 			if (surArea == null) {
 				(new MessageBox(MyLocale.getMsg(321, "Error"), MyLocale.getMsg(1817, "No Caches are selected"), FormBase.OKB)).execute();
 				Vm.showWait(false);
@@ -345,7 +349,14 @@ public class MapLoaderGui extends Form {
 		if (!perCache) { // download tiles
 			mapLoader.setProgressInfoBox(progressBox);
 			mapLoader.setFetchOnlyMapWithCache(fetchOnlyMapWithCacheChkBox.getState());
-			mapLoader.downlaodTiles(mapsDir);
+			if (mapLoader.numMapsY == 0) {
+				try {
+					mapLoader.downloadMap(mapLoader.topleft, scale, size, mapsDir);
+				} catch (Exception e) {
+				}
+			} else {
+				mapLoader.downlaodTiles(mapsDir);
+			}
 		} else { // per cache
 			CacheHolder ch;
 			int numdownloaded = 0;
@@ -356,7 +367,8 @@ public class MapLoaderGui extends Form {
 				if (!this.onlySelected || ch.is_Checked) {
 					if (ch.getPos().isValid() && ch.getPos().latDec != 0 && ch.getPos().lonDec != 0) { // TODO != 0 sollte verschwinden, sobald das handling von nicht gesetzten Koos überall korrekt ist
 						numdownloaded++;
-						progressBox.setInfo(MyLocale.getMsg(1820, "Downloading map '") + mapLoader.currentOnlineMapService.getName() + "'\n" + numdownloaded + " / " + numCaches + MyLocale.getMsg(1821, "\n for cache:\n") + ch.getCacheName());
+						progressBox
+								.setInfo(MyLocale.getMsg(1820, "Downloading map '") + mapLoader.currentOnlineMapService.getName() + "'\n" + numdownloaded + " / " + numCaches + MyLocale.getMsg(1821, "\n for cache:\n") + ch.getCacheName());
 						try {
 							mapLoader.downloadMap(ch.getPos(), scale, size, mapsDir);
 						} catch (Exception e) {
@@ -372,8 +384,7 @@ public class MapLoaderGui extends Form {
 		progressBox.waitUntilClosed();
 		mapLoader.setProgressInfoBox(null);
 		// progressBox.close(0);
-		if (Global.mainTab.mm != null)
-			Global.mainTab.mm.mapsloaded = false;
+		if (Global.mainTab.mm != null) Global.mainTab.mm.mapsloaded = false;
 		// (new MessageBox("Download maps", "Downloaded and calibrated the maps successfully", MessageBox.OKB)).execute();
 	}
 
