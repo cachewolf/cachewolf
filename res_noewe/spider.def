@@ -66,7 +66,10 @@ fetchAllLogs       = &log=y
 cacheUnavailable   = class="OldWarning"><li>This\ cache\ is\ temporarily\ unavailable
 cacheArchived      = class="OldWarning"><li>This\ cache\ has\ been\ archived
 premiumCachepage   = > Premium Member Only Cache
-latLonRex          = uxLatLon" style="font-weight:bold;">((?s).*?)</span>
+#Seit der 2.000.000-Caches-Kampagne hat sich dieser Ausdruck geändert. Fall nach dem Ende der Kampagne Problem auftreten, 
+#das Gatter aus nachfolgender Zeile entfernen und vor die dahinter folgende Zeile setzen.
+#latLonRex          = uxLatLon" style="font-weight:bold;">((?s).*?)</span>
+latLonRex          = <span id="uxLatLon">((?s).*?)</span>
 shortDescRex       = tBody_ShortDescription">((?s).*?)</span>
 longDescRex        = tBody_LongDescription">((?s).*?)<strong>\\s+Additional\ Hints</strong>
 cacheNameRex       = tBody_CacheName">((?s).*?)</span>
