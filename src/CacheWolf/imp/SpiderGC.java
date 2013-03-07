@@ -2419,7 +2419,7 @@ public class SpiderGC {
 		final Regex inRex = new Regex(p.getProp("latLonRex"));
 		inRex.search(doc);
 		if (!inRex.didMatch()) {
-			pref.log("[SpiderGC.java:getLatLon]check latLonRex!", null);
+			pref.log("[SpiderGC.java:getLatLon]check latLonRex!" + doc, null);
 			return "???";
 		}
 		return inRex.stringMatched(1);
@@ -2475,7 +2475,8 @@ public class SpiderGC {
 			pref.log("[SpiderGC.java:getLocation]check cacheLocationRex!", null);
 			return "";
 		}
-		return inRex.stringMatched(1);
+		String res2 = inRex.stringMatched(2);
+		return res2;
 	}
 
 	/**
