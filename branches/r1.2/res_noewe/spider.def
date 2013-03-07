@@ -77,7 +77,7 @@ sizeRex            = alt="Size:\ ((?s).*?)"
 difficultyRex      = difficulty\ of\ (.*?),
 terrainRex         = terrain\ of\ (.*?)\\.\\ 
 cacheTypeRex       = /images/WptTypes/(.*?)\\.gif"\ alt="
-cacheLocationRex   = tBody_Location">In\ ([^<]*?)<
+cacheLocationRex   = tBody_Location">In\ (<.*?>)?(.*?)<
 
 #--------------------------------------
 #Section2a: Logs
