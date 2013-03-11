@@ -2655,7 +2655,23 @@ public class SpiderGC {
 			idx++;
 			String url = "http://www.geocaching.com/seek/geocache.logbook?tkn=" + userToken + "&idx=" + idx + "&num=" + num + "&decrypt=false";
 			UrlFetcher.setRequestorProperty("Content-Type", "application/json; charset=UTF-8");
-			final JSONObject resp = new JSONObject(UrlFetcher.fetch(url));
+			JSONObject resp = null;
+			String fetchResult = "";
+			try {
+				fetchResult = UrlFetcher.fetch(url);
+				char[] fr = fetchResult.toCharArray();
+				for (int i = 0; i < fr.length; i++) {
+					if (fr[i] == 0) {
+						fr[i] = ' ';
+					}
+				}
+				fetchResult = String.valueOf(fr);
+				resp = new JSONObject(fetchResult);
+			} catch (Exception e) {
+				if (fetchResult == null) fetchResult = "";
+				pref.log("Error getting Logs. \r\n" + fetchResult, e);
+				return;
+			}
 			if (!resp.getString("status").equals("success")) {
 				pref.log("status is " + resp.getString("status"));
 			}
