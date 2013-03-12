@@ -18,19 +18,35 @@ waypoint           = http://www.geocaching.com/seek/cache_details.aspx?wp=
 #--------------------------------------
 #Section1: First page with list of caches
 #--------------------------------------
-firstPage          = http://www.geocaching.com/seek/nearest.aspx?lat=
-firstPage2         = &lng=
-firstPageFinds     = http://www.geocaching.com/seek/nearest.aspx?ul=
-showOnlyFound      = &f=1
-maxDistance        = &dist=
-nextListPage       = /seek/nearest.aspx
+urlSeek            = http://www.geocaching.com/seek/nearest.aspx
+queryLat           = ?lat=
+queryLon           = &lng=
+queryUserFinds     = ?ul=
+queryDoNotGetFound = &f=1
+queryDistance      = &dist=
+# CachTypRestrictions
+onlyTraditional    = &tx=32bc9333-5e52-4957-b0f6-5a2c8fc7b257
+onlyMulti          = &tx=a5f6d0ad-d2f2-4011-8c14-940a9ebf3c74
+onlyVirtual        = &tx=294d4360-ac86-4c83-84dd-8113ef678d7e
+onlyLetterboxHybrid = &tx=4bdd8fb2-d7bc-453f-a9c5-968563b15d24
+#allEventTypes     == onlyEvent
+onlyEvent          = &tx=69eb8534-b718-4b35-ae3c-a856a55b0874
+onlyMegaEvent      = &tx=69eb8535-b718-4b35-ae3c-a856a55b0874
+onlyCito           = &tx=57150806-bc1a-42d6-9cf0-538d171a2d22
+onlyL_FEvent       = &tx=3ea6533d-bb52-42fe-b2d2-79a3424d4728
+onlyUnknown        = &tx=40861821-1835-4e11-b666-8d41064d03fe
+onlyWebcam         = &tx=31d2ae3c-c358-4b5f-8dcd-2185bf472d3d
+onlyEarth          = &tx=c66f5cf3-9523-4549-b8dd-759cd2f18db8
+onlyWherigo        = &tx=0544fa55-772d-4e5c-96a9-36a51ebcf5c9
+#onlyProjectAPE    = &tx=2555690d-b2bc-4b55-b5ac-0cb704c0b768
+#onlyGPSAdventure  = &tx=72e69af2-7986-4990-afd9-bc16cbbb4ce3
 # Regex to search for cachenames
-listBlockRex       = <table\ class="SearchResultsTable\ Table">((?s).*?)</table>
-lineRex            = Data\ BorderTop">((?s).*?)</tr>
+listBlockRex       = <table class="SearchResultsTable Table">((?s).*?)</table>
+lineRex            = Data BorderTop">((?s).*?)</tr>
 logDateRex         = "small">\\s+(.*?)<br />
-availableRex       = class="lnk\ \ Strike">
-archivedRex        = class="lnk\ OldWarning\ Strike\ Strike">
-PMRex              = premium_only.png
+Available          = lnk  Strike
+Archived           = lnk OldWarning Strike Strike
+PM                 = premium_only.png
 distCodeRex        = k=(.*?)"
 distCodeKey        = signalthefrog
 distRex            = (.*?)(?:km|mi|ft)
@@ -41,22 +57,6 @@ TypeRex            = www.geocaching.com/images/wpttypes/(.*?)\\.gif
 found              = class="Success"
 own                = /WptTypes/name_tag.gif
 TBRex              = /wpttypes/([0-9]+).gif" alt="(.*?)"
-
-onlyTraditional     = &tx=32bc9333-5e52-4957-b0f6-5a2c8fc7b257
-onlyMulti           = &tx=a5f6d0ad-d2f2-4011-8c14-940a9ebf3c74
-onlyVirtual         = &tx=294d4360-ac86-4c83-84dd-8113ef678d7e
-onlyLetterboxHybrid = &tx=4bdd8fb2-d7bc-453f-a9c5-968563b15d24
-#allEventTypes==onlyEvent       = &tx=69eb8534-b718-4b35-ae3c-a856a55b0874
-onlyEvent           = &tx=69eb8534-b718-4b35-ae3c-a856a55b0874
-onlyMegaEvent       = &tx=69eb8535-b718-4b35-ae3c-a856a55b0874
-onlyCito            = &tx=57150806-bc1a-42d6-9cf0-538d171a2d22
-onlyL_FEvent        = &tx=3ea6533d-bb52-42fe-b2d2-79a3424d4728
-onlyUnknown         = &tx=40861821-1835-4e11-b666-8d41064d03fe
-onlyWebcam          = &tx=31d2ae3c-c358-4b5f-8dcd-2185bf472d3d
-onlyEarth           = &tx=c66f5cf3-9523-4549-b8dd-759cd2f18db8
-onlyWherigo         = &tx=0544fa55-772d-4e5c-96a9-36a51ebcf5c9
-#onlyProjectAPE      = &tx=2555690d-b2bc-4b55-b5ac-0cb704c0b768
-#onlyGPSAdventure    = &tx=72e69af2-7986-4990-afd9-bc16cbbb4ce3
 
 #--------------------------------------
 #Section2: Get cachepage by name
