@@ -137,17 +137,18 @@ public class SpiderGC {
 	private String userToken = "";
 	private String sessionToken = "";
 
-	private static String propFirstPage;
-	private static String propFirstPage2;
-	private static String propFirstPageFinds;
+	private static String urlSeek;
+	private static String queryLat;
+	private static String queryLon;
+	private static String queryUserFinds;
+	private static String queryDistance;
 	private static String gotoNextPage = "ctl00$ContentBody$pgrTop$ctl08";
 	// change to the block (10pages) of the wanted page
 	private static String gotoPreviousBlock = "ctl00$ContentBody$pgrTop$ctl05";
 	private static String gotoNextBlock = "ctl00$ContentBody$pgrTop$ctl06";
 	// add pagenumber
 	private static String gotoPage = "ctl00$ContentBody$pgrTop$lbGoToPage_";
-	private static String propMaxDistance;
-	private static String propDoNotGetFound;
+	private static String queryDoNotGetFound;
 	private static Regex RexPropListBlock;
 	private static Regex RexPropLine;
 	private static Regex RexNumFinds;
@@ -202,6 +203,8 @@ public class SpiderGC {
 		doIt(false);
 	}
 
+	int lastPageVisited;
+
 	public void doIt(boolean _spiderAllFinds) {
 		cachesToLoad.clear();
 		spiderAllFinds = _spiderAllFinds;
@@ -251,6 +254,7 @@ public class SpiderGC {
 			s = s + "Update if DTS changed: " + (pref.checkDTS ? "yes" : "no") + Preferences.NEWLINE;
 			s = s + "maxPages for x Miles : " + maxPages + " for " + this.getDistanceInMiles(maxDistance) + Preferences.NEWLINE;
 			pref.log(s, null);
+			lastPageVisited = -1; // for not to double check pages on next group run
 
 			while (upperDistance < maxDistance) {
 				lowerDistance = upperDistance;
@@ -761,9 +765,14 @@ public class SpiderGC {
 		if (fromDistance > 0) {
 			fromDistanceInMiles = this.getDistanceInMiles(fromDistance) - 1;
 			getFirstListPage(java.lang.Math.max(fromDistanceInMiles, 1));
-			// Number of caches from gc Listpage calc the number of the startpage
-			startPage = (int) java.lang.Math.ceil(getNumFound(htmlListPage) / 20);
+			if (lastPageVisited > -1) {
+				startPage = lastPageVisited;
+			} else {
+				// Number of caches from gc Listpage calc the number of the startpage
+				startPage = (int) java.lang.Math.ceil(getNumFound(htmlListPage) / 20);
+			}
 		}
+		lastPageVisited = startPage;
 		// add a mile to be save from different distance calculations in CW and at GC
 		int toDistanceInMiles = this.getDistanceInMiles(toDistance) + 1;
 		getFirstListPage(toDistanceInMiles);
@@ -781,6 +790,7 @@ public class SpiderGC {
 					getAListPage(toDistanceInMiles, gotoPage + startPage);
 			}
 		}
+		pref.log("[SpiderGC:fillDownloadLists] got Listpage: " + startPage, null);
 
 		int endPage = (int) (numFinds / 20);
 		int anzPages = 1 + endPage - startPage;
@@ -917,12 +927,9 @@ public class SpiderGC {
 					}
 				}
 				if (toDistance > 0) {
-					if (page_number % 100 == 17) {
-						// is this enough to simulate a human behaviour
-						getAListPage(toDistanceInMiles, gotoPreviousBlock);
-						getAListPage(toDistanceInMiles, gotoNextBlock);
-					}
 					if (getAListPage(toDistanceInMiles, gotoNextPage)) {
+						lastPageVisited++;
+						pref.log("[SpiderGC:fillDownloadLists] got Listpage: " + lastPageVisited, null);
 						page_number++;
 						found_on_page = 0;
 					} else {
@@ -1012,12 +1019,12 @@ public class SpiderGC {
 	}
 
 	private int updateCaches(Hashtable cachesToUpdate, int spiderErrors, int totalCachesToLoad, boolean loadAllLogs) {
-		int j = 1;
+		int jj = 0;
 		for (final Enumeration e = cachesToUpdate.elements(); e.hasMoreElements();) {
 			if (infB.isClosed) break;
 			final CacheHolder ch = (CacheHolder) e.nextElement();
-			j++;
-			infB.setInfo(MyLocale.getMsg(5513, "Loading: ") + ch.getWayPoint() + " (" + (cachesToLoad.size() + j) + " / " + totalCachesToLoad + ")");
+			jj++;
+			infB.setInfo(MyLocale.getMsg(5513, "Loading: ") + ch.getWayPoint() + " (" + (cachesToLoad.size() + jj) + " / " + totalCachesToLoad + ")");
 			final int test = spiderSingle(cacheDB.getIndex(ch), infB, loadAllLogs);
 			if (test == SPIDER_CANCEL) {
 				break;
@@ -1355,23 +1362,28 @@ public class SpiderGC {
 	 */
 	private void initialiseProperties() {
 		try {
-			propFirstPage = p.getProp("firstPage");
-			propFirstPage2 = p.getProp("firstPage2");
-			propFirstPageFinds = p.getProp("firstPageFinds");
-			propMaxDistance = p.getProp("maxDistance");
-			propDoNotGetFound = p.getProp("showOnlyFound");
+			urlSeek = p.getProp("urlSeek"); // http://www.geocaching.com/seek/nearest.aspx
+			queryLat = p.getProp("queryLat"); // ?lat=
+			queryLon = p.getProp("queryLon"); // &lng=
+			queryUserFinds = p.getProp("queryUserFinds"); // ?ul=
+			queryDistance = p.getProp("queryDistance"); // &dist=
+			queryDoNotGetFound = p.getProp("queryDoNotGetFound"); // &f=1
+
 			RexPropListBlock = new Regex(p.getProp("listBlockRex"));
 			RexPropLine = new Regex(p.getProp("lineRex"));
 			RexNumFinds = new Regex("Total Records: <b>(.*?)</b>");
 			RexPropLogDate = new Regex(p.getProp("logDateRex"));
-			propAvailable = p.getProp("availableRex");
-			propArchived = p.getProp("archivedRex");
+
+			propAvailable = p.getProp("Available");
+			propArchived = p.getProp("Archived");
+			propPM = p.getProp("PM");
 			propFound = p.getProp("found");
-			propPM = p.getProp("PMRex");
+
 			RexPropDistance = new Regex(p.getProp("distRex"));
 			RexPropDistanceCode = new Regex(p.getProp("distCodeRex"));
 			DistanceCodeKey = p.getProp("distCodeKey");
 			DTSCodeKey = p.getProp("DTSCodeKey");
+
 			RexPropWaypoint = new Regex(p.getProp("waypointRex"));
 			RexPropType = new Regex(p.getProp("TypeRex"));
 			RexPropDTS = new Regex(p.getProp("DTSRex"));
@@ -1390,16 +1402,7 @@ public class SpiderGC {
 	 * 
 	 */
 	private void getFirstListPage(int distance) {
-		// Get first page
-
-		String url;
-		if (spiderAllFinds) {
-			url = propFirstPageFinds + encodeUTF8URL(Utils.encodeJavaUtf8String(pref.myAlias));
-		} else {
-			url = propFirstPage + origin.getLatDeg(TransformCoordinates.DD) + propFirstPage2 + origin.getLonDeg(TransformCoordinates.DD) + propMaxDistance + Integer.toString(distance);
-			if (doNotgetFound) url = url + propDoNotGetFound;
-		}
-		url = url + cacheTypeRestriction;
+		String url = makeUrl(distance);
 
 		try {
 			htmlListPage = UrlFetcher.fetch(url);
@@ -1414,18 +1417,11 @@ public class SpiderGC {
 	}
 
 	/**
-	 * in: ... out: page_number,htmlPage
+	 * in: distance whatPage out: htmlListPage
 	 */
 	private boolean getAListPage(int distance, String whatPage) {
 		boolean ret = true;
-		String url;
-		if (spiderAllFinds) {
-			url = propFirstPage;
-		} else {
-			url = propFirstPage + origin.getLatDeg(TransformCoordinates.DD) + propFirstPage2 + origin.getLonDeg(TransformCoordinates.DD) + propMaxDistance + Integer.toString(distance);
-			if (doNotgetFound) url = url + propDoNotGetFound;
-		}
-		url = url + cacheTypeRestriction;
+		String url = makeUrl(distance);
 
 		final Regex rexViewstate = new Regex("id=\"__VIEWSTATE\" value=\"(.*?)\" />");
 		String viewstate;
@@ -1447,8 +1443,11 @@ public class SpiderGC {
 			pref.log("[SpiderGC.java:getAListPage] check rexViewstate1!", null);
 		}
 
-		final String postData = "__EVENTTARGET=" + URL.encodeURL(whatPage, false) + "&" + "__EVENTARGUMENT=" + "&" + "__VIEWSTATEFIELDCOUNT=2" + "&" + "__VIEWSTATE=" + URL.encodeURL(viewstate, false) + "&" + "__VIEWSTATE1="
-				+ URL.encodeURL(viewstate1, false);
+		final String postData = "__EVENTTARGET=" + URL.encodeURL(whatPage, false) //
+				+ "&" + "__EVENTARGUMENT=" //
+				+ "&" + "__VIEWSTATEFIELDCOUNT=2" //
+				+ "&" + "__VIEWSTATE=" + URL.encodeURL(viewstate, false) //
+				+ "&" + "__VIEWSTATE1=" + URL.encodeURL(viewstate1, false);
 		try {
 			UrlFetcher.setpostData(postData);
 			htmlListPage = UrlFetcher.fetch(url);
@@ -1458,6 +1457,22 @@ public class SpiderGC {
 			ret = false;
 		}
 		return ret;
+	}
+
+	private String makeUrl(int distance) {
+		String url;
+		if (spiderAllFinds) {
+			url = urlSeek //
+					+ queryUserFinds + encodeUTF8URL(Utils.encodeJavaUtf8String(pref.myAlias));
+		} else {
+			url = urlSeek //
+					+ queryLat + origin.getLatDeg(TransformCoordinates.DD) //
+					+ queryLon + origin.getLonDeg(TransformCoordinates.DD) //
+					+ queryDistance + Integer.toString(distance); //
+			if (doNotgetFound) url = url + queryDoNotGetFound;
+		}
+		url = url + cacheTypeRestriction;
+		return url;
 	}
 
 	/* */
@@ -2321,7 +2336,7 @@ public class SpiderGC {
 								ch.getCacheDetails(false).Country = location.trim();
 								ch.getCacheDetails(false).State = "";
 							}
-							pref.log("Got location (country/state)");
+							pref.log("Got (country/state)" + ch.getCacheDetails(false).Country + "/" + ch.getCacheDetails(false).State);
 						} else {
 							ch.getCacheDetails(false).Country = "";
 							ch.getCacheDetails(false).State = "";
@@ -2419,7 +2434,9 @@ public class SpiderGC {
 		final Regex inRex = new Regex(p.getProp("latLonRex"));
 		inRex.search(doc);
 		if (!inRex.didMatch()) {
-			pref.log("[SpiderGC.java:getLatLon]check latLonRex!" + doc, null);
+			if (doc.indexOf("Unpublished Geocache") < 0 && doc.indexOf("Premium Member Only Cache") < 0) {
+				pref.log("[SpiderGC.java:getLatLon]check latLonRex!" + doc, null);
+			}
 			return "???";
 		}
 		return inRex.stringMatched(1);
