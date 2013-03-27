@@ -47,7 +47,6 @@ import CacheWolf.STRreplace;
 import CacheWolf.SafeXML;
 import CacheWolf.Travelbug;
 import CacheWolf.UrlFetcher;
-import CacheWolf.navi.Area;
 import CacheWolf.navi.Metrics;
 import CacheWolf.navi.MovingMap;
 import CacheWolf.navi.Navigate;
@@ -110,7 +109,6 @@ public class SpiderGC {
 	 */
 	private static final String iconsRelativePath = "<img src=\"/images/icons/";
 
-	private static int ERR_LOGIN = -10;
 	private static Preferences pref;
 	private final Profile profile;
 
@@ -134,8 +132,6 @@ public class SpiderGC {
 	// private boolean maxNumberAbort;
 	private byte restrictedCacheType = 0;
 	private String fileName = "";
-	private String userToken = "";
-	private String sessionToken = "";
 
 	private static String urlSeek;
 	private static String queryLat;
@@ -160,19 +156,10 @@ public class SpiderGC {
 	private static Regex RexPropDistance;
 	private static Regex RexPropDistanceCode;
 	private static String DistanceCodeKey;
-	private static String DTSCodeKey;
 	private static Regex RexPropWaypoint;
 	private static Regex RexPropType;
 	private static Regex RexPropDTS;
-	private static Regex RexPropOwn;
 	private static Regex RexUserToken;
-	private static Extractor exSingleLog;
-	private static Extractor exIcon;
-	private static Extractor exNameTemp;
-	private static Extractor exName;
-	private static Extractor exDate;
-	private static Extractor exLog;
-	private static Extractor exLogId;
 	private static String icon_smile;
 	private static String icon_camera;
 	private static String icon_attended;
@@ -184,7 +171,6 @@ public class SpiderGC {
 	private int numLogUpdates = 0;
 	private int numPrivate = 0;
 	private int page_number = 1;
-	private int num_added = 0;
 
 	public SpiderGC(Preferences prf, Profile profile) {
 		this.profile = profile;
@@ -362,13 +348,13 @@ public class SpiderGC {
 	}
 
 	public void doItAlongARoute() {
-		Area sq;
 		Vector points = null;
 		final Navigate nav = Global.mainTab.nav;
 		MovingMap mm = Global.mainTab.mm;
 
 		if (!doDownloadGui(1)) return;
 
+		// getting the route
 		CWPoint startPos = pref.getCurCentrePt();
 		if (!fileName.equals("")) {
 			final RouteImporter ri = new RouteImporter(fileName);
@@ -402,10 +388,6 @@ public class SpiderGC {
 				startPos = null;
 		}
 
-		/*
-		 * final int answer = new MessageBox(MyLocale.getMsg(651, "Question"), MyLocale.getMsg(652, "Update caches with all details?"), MessageBox.YESB | MessageBox.NOB | MessageBox.CANCELB).execute(); final boolean complete = answer ==
-		 * MessageBox.YESB; if (answer == MessageBox.IDCANCEL) { if (startPos != null) pref.setCurCentrePt(startPos); return; }
-		 */
 		final boolean complete = true;
 
 		if ((startPos == null) || (startPos != null && !startPos.isValid())) {
@@ -430,7 +412,7 @@ public class SpiderGC {
 		if (pref.metricSystem == Metrics.IMPERIAL) {
 			lateralDistance = Metrics.convertUnit(maxDistance, Metrics.MILES, Metrics.KILOMETER);
 		}
-		// bis der Load über die Map wieder implentiert ist mach ichs mal wieder über die Kreise
+		// Load über die Kreise
 		// daher Faktor 1.2
 		lateralDistance = 1.2 * lateralDistance;
 		cachesToLoad.clear();
@@ -460,11 +442,9 @@ public class SpiderGC {
 			}
 
 			if (nextPos != null) {
-				// sq = getSquare(startPos, lateralDistance);
-				// getCaches(sq.topleft.latDec, sq.topleft.lonDec, sq.bottomright.latDec, sq.bottomright.lonDec, complete);
-				pref.log("m: do " + pointsIndex + " of (" + points.size() + ") at " + nextPos);
-				getCaches(startPos, lateralDistance);
-				// pref.log("next WP = " + startPos.toString(), null);
+				origin = startPos;
+				pref.log("m: do " + pointsIndex + " of (" + points.size() + ") at " + origin);
+				getCaches(lateralDistance);
 
 				final double degrees = startPos.getBearing(nextPos);
 				final double distanceToNextCache = startPos.getDistance(nextPos);
@@ -473,26 +453,14 @@ public class SpiderGC {
 					final CWPoint nextCheckPoint = startPos.project(degrees, lateralDistance);
 					startPos = nextCheckPoint;
 					origin = nextCheckPoint;
-					// sq = getSquare(origin, lateralDistance);
-					// getCaches(sq.topleft.latDec, sq.topleft.lonDec, sq.bottomright.latDec, sq.bottomright.lonDec, complete);
-					pref.log("s: do " + pointsIndex + " of (" + points.size() + ") at " + nextPos);
-					getCaches(startPos, lateralDistance);
-					// pref.log("next CP = " + origin.toString(), null);
-					if (infB.isClosed) {
-						break;
-					}
+					pref.log("s: do " + pointsIndex + " of (" + points.size() + ") at " + origin);
+					getCaches(lateralDistance);
+					if (infB.isClosed) break;
 				}
 				startPos = nextPos;
 			}
-			if (infB.isClosed) {
-				break;
-			}
+			if (infB.isClosed) break;
 		}
-		// sq = getSquare(startPos, lateralDistance);
-		// getCaches(sq.topleft.latDec, sq.topleft.lonDec, sq.bottomright.latDec, sq.bottomright.lonDec, complete);
-		pref.log("t: do " + pointsIndex + " of (" + points.size() + ") at " + nextPos);
-		getCaches(startPos, lateralDistance);
-		// pref.log("last WP = " + startPos.toString(), null);
 		if (infB.isClosed) {
 			Vm.showWait(false);
 			return;
@@ -519,10 +487,7 @@ public class SpiderGC {
 		if (spiderErrors > 0) {
 			new MessageBox(MyLocale.getMsg(5500, "Error"), spiderErrors + MyLocale.getMsg(5516, " cache descriptions%0acould not be loaded."), FormBase.DEFOKB).execute();
 		}
-		/*
-		 * if (maxNumberAbort) { new MessageBox(MyLocale.getMsg(5519, "Information"), MyLocale.getMsg(5520, "Only the given maximum of caches were loaded.\nRepeat spidering later to load more caches.\nNo already existing caches were
-		 * updated."), FormBase.DEFOKB).execute(); }
-		 */
+
 		Global.getProfile().restoreFilter();
 		Global.getProfile().saveIndex(Global.getPref(), true);
 	}
@@ -564,28 +529,8 @@ public class SpiderGC {
 			return null;
 	}
 
-	private Area getSquare(CWPoint centre, double halfSideLengthKm) {
-		final int north = 0;
-		final int east = 1;
-		final int south = 2;
-		final int west = 3;
-		final double halfSideLength = halfSideLengthKm * 1000.0; // in meters
-		final Area ret = new Area();
-		ret.topleft.latDec = centre.latDec;
-		ret.topleft.lonDec = centre.lonDec;
-		ret.topleft.shift(halfSideLength, north);
-		ret.topleft.shift(halfSideLength, west);
-
-		ret.bottomright.latDec = centre.latDec;
-		ret.bottomright.lonDec = centre.lonDec;
-		ret.bottomright.shift(halfSideLength, south);
-		ret.bottomright.shift(halfSideLength, east);
-
-		return ret;
-	}
-
-	private void getCaches(CWPoint centre, double radiusKm) {
-
+	private void getCaches(double radiusKm) {
+		// von origin aus
 		// kein update vorhandener Cache, da
 		int toDistance = (int) java.lang.Math.ceil(radiusKm);
 		getFirstListPage(toDistance);
@@ -1133,6 +1078,7 @@ public class SpiderGC {
 			return true;
 		}
 
+		// the next could be removed, cause switch language now too requires https
 		if (pref.userID.length() > 0) {
 			UrlFetcher.setPermanentRequestorProperty("Cookie", null);
 			loggedIn = switchToEnglish();
@@ -1389,12 +1335,12 @@ public class SpiderGC {
 			RexPropDistance = new Regex(p.getProp("distRex"));
 			RexPropDistanceCode = new Regex(p.getProp("distCodeRex"));
 			DistanceCodeKey = p.getProp("distCodeKey");
-			DTSCodeKey = p.getProp("DTSCodeKey");
+			// DTSCodeKey = p.getProp("DTSCodeKey");
 
 			RexPropWaypoint = new Regex(p.getProp("waypointRex"));
 			RexPropType = new Regex(p.getProp("TypeRex"));
 			RexPropDTS = new Regex(p.getProp("DTSRex"));
-			RexPropOwn = new Regex(p.getProp("own"));
+			// RexPropOwn = new Regex(p.getProp("own"));
 			RexUserToken = new Regex(p.getProp("UserTokenRex"));
 			icon_smile = p.getProp("icon_smile");
 			icon_camera = p.getProp("icon_camera");
@@ -1480,292 +1426,6 @@ public class SpiderGC {
 		}
 		url = url + cacheTypeRestriction;
 		return url;
-	}
-
-	/* */
-	private String getMapListPage(CWPoint middle, double north, double west, double south, double east) {
-		String ret;
-
-		final String referer = "http://www.geocaching.com/map/default.aspx" + "?lat=" + middle.getLatDeg(TransformCoordinates.DD) + "&lng=" + middle.getLonDeg(TransformCoordinates.DD);
-
-		if (userToken.equals("")) {
-			try {
-				ret = UrlFetcher.fetch(referer);
-			} catch (final IOException e) {
-				ret = "";
-			}
-			int i = ret.indexOf("userToken = '");
-			i = i + 13;
-			final int j = ret.indexOf("'", i);
-			userToken = ret.substring(i, j);
-		}
-
-		final String url = "http://www.geocaching.com/map/default.aspx/MapAction";
-
-		final String strLeft = MyLocale.formatDouble(west, "#0.00000").replace(',', '.');
-		final String strUp = MyLocale.formatDouble(north, "#0.00000").replace(',', '.');
-		final String strRight = MyLocale.formatDouble(east, "#0.00000").replace(',', '.');
-		final String strDown = MyLocale.formatDouble(south, "#0.00000").replace(',', '.');
-		final String param1 = "{\"dto\":{\"data\":{\"c\":1,\"m\":\"\",\"d\":\"";
-		final String param2 = strUp + "|" + strDown + "|" + strRight + "|" + strLeft;
-		final String param3 = "\"},\"ut\":\"";
-		final String param4 = "\"}}";
-		final String postData = param1 + param2 + param3 + userToken + param4;
-
-		try {
-			UrlFetcher.setpostData(postData);
-			UrlFetcher.setRequestorProperty("Content-Type", "application/json; charset=UTF-8");
-			ret = UrlFetcher.fetch(url);
-
-		} catch (final Exception ex) {
-			ret = "";
-			pref.log("[SpiderGC:getMapListPage] Error getting map Cachepage" + url + postData, ex);
-		}
-		return ret;
-	}
-
-	/* */
-	public void doItQuickFillFromMapList() {
-
-		final CWPoint origin = pref.getCurCentrePt();
-		if (!origin.isValid()) {
-			(new MessageBox(MyLocale.getMsg(5500, "Error"), MyLocale.getMsg(5509, "Coordinates for centre must be set"), FormBase.OKB)).execute();
-			return; //
-		}
-		if (!doDownloadGui(2)) return;
-
-		Vm.showWait(true);
-		infB = new InfoBox("Status", MyLocale.getMsg(1609, "getting the caches."));
-		infB.exec();
-
-		// Reset states for all caches when spidering (http://tinyurl.com/dzjh7p)
-		for (int i = 0; i < cacheDB.size(); i++) {
-			final CacheHolder ch = cacheDB.get(i);
-			if (ch.mainCache == null) ch.initStates(false);
-		}
-
-		// halbe Seitenlï¿½nge eines Quadrats ums Zentrum in km
-		double halfSideLength = maxDistance;
-		if (pref.metricSystem == Metrics.IMPERIAL) {
-			halfSideLength = Metrics.convertUnit(maxDistance, Metrics.MILES, Metrics.KILOMETER);
-		}
-		if (!login()) return;
-
-		page_number = 0;
-		num_added = 0;
-
-		final Area sq = getSquare(origin, halfSideLength);
-
-		getCachesNewMap(sq, false);
-
-		if (!infB.isClosed) infB.close(0);
-		Vm.showWait(false);
-
-		Global.getProfile().restoreFilter();
-		Global.getProfile().saveIndex(Global.getPref(), true);
-
-	}
-
-	private void getCachesNewMap(Area square, boolean setCachesToLoad) {
-
-		if (userToken.equals("")) {
-			String url;
-			String ret;
-			try {
-				page_number++;
-				// http://www.geocaching.com/map/default.aspx?lat=47.50557&lng=009.74567
-				url = "http://www.geocaching.com/map/default.aspx" + "?lat=" + square.topleft.getLatDeg(TransformCoordinates.DD) + "&lng=" + square.topleft.getLonDeg(TransformCoordinates.DD) + "&z=15";
-				ret = UrlFetcher.fetch(url);
-			} catch (final IOException e) {
-				ret = "";
-			}
-			int i = ret.indexOf("GSPK.UserSession('");
-			i = i + 18;
-			int j = ret.indexOf("'", i);
-			userToken = ret.substring(i, j);
-			i = ret.indexOf("sessionToken:'", i);
-			i = i + 14;
-			j = ret.indexOf("'", i);
-			sessionToken = ret.substring(i, j);
-		}
-		TrackPoint tl;
-		TrackPoint br;
-		int lonmin;
-		int lonmax;
-		int latmin;
-		int latmax;
-		int scale = 19;
-		do {
-			scale = scale - 1;
-			tl = getKachelLatLon(square.topleft, scale);
-			br = getKachelLatLon(square.bottomright, scale);
-			lonmin = (int) tl.lonDec;
-			lonmax = (int) br.lonDec;
-			latmin = (int) tl.latDec;
-			latmax = (int) br.latDec;
-		} while ((lonmax - lonmin > 1) && (latmax - latmin > 1) && (scale > 10));
-
-		String cachelist;
-
-		for (int i = lonmin; i <= lonmax; i++) {
-			for (int j = latmin; j <= latmax; j++) {
-				cachelist = getNewMapListPage("" + j, "" + i, scale);
-				if (cachelist.length() > 0) {
-					final String[] caches = mString.split(cachelist, ']');
-					// final double baseX = Common.parseDouble(caches[1].substring(8, caches[1].indexOf(',')));
-					// final double baseY = Common.parseDouble(caches[1].substring(caches[1].indexOf(',') + 1, caches[1].indexOf(']')));
-					for (int k = 4; k < caches.length; k++) {
-						final String[] cacheInfos = mString.split(STRreplace.replace(caches[k], "\\\"", ""), '\"');
-						final String cacheID = cacheInfos[5];
-						final String cacheXY = cacheInfos[1];
-						// final String[] xy = mString.split(cacheXY, ',');
-						// final int cacheX = Common.parseInt(xy[0].substring(2));
-						// final int cacheY = Common.parseInt(xy[1].substring(0, xy[1].indexOf(']')));
-						String cachePage = getCacheInfoNewMap(cacheID);
-						// final CWPoint p = getLatLon(baseX, baseY, cacheX, cacheY, scale);
-						/*
-						 * if (square.isInBound(p)) { String cachePage = getCacheInfoNewMap(cacheID); addCacheNewMap(cachePage, p, setCachesToLoad); }
-						 */
-					}
-				}
-			}
-		}
-	}
-
-	private TrackPoint getKachelLatLon(CWPoint p, int scale) {
-		double lat = p.latDec;
-		double lon = p.lonDec;
-		if (lon > 180.0) {
-			lon -= 360.0;
-		}
-		lat = 0.5 - Math.log(Math.tan((Math.PI / 4.0) + ((Math.PI * lat) / (2.0 * 180.0)))) / (2.0 * Math.PI);
-		lon = (180.0 + lon) / 360.0;
-
-		final int f = 1 << scale; // 2**scale
-		lat = lat * f;
-		lon = lon * f;
-		return new TrackPoint(lat, lon); // TrackPoint only for returning
-		// values
-	}
-
-	private CWPoint getLatLon(double basex, double basey, int offsetx, int offsety, int scale) {
-
-		double anzPixelX = basex + offsetx;
-		double anzPixelY = basey + offsety;
-
-		final CWPoint p = new CWPoint();
-
-		final double maxPixels = 1 << (scale + 8); // 2**scale*256
-		final double gpp = 360.0 / maxPixels; // Grad pro Pixel
-		final double leftLon = (anzPixelX * gpp); // Grad
-		p.lonDec = leftLon - 180.0; // 0 ist bei greenwich
-
-		final double lat = 1.0 / maxPixels;
-		final double latM = Math.PI * (1.0 + 2.0 * anzPixelY * lat);
-		p.latDec = (180.0 / Math.PI) * ((2.0 * Math.atan(Math.exp(latM))) - (Math.PI / 2.0));
-
-		return p;
-	}
-
-	private String getNewMapListPage(String strLat, String strLon, int scale) {
-		String ret;
-		String url = "";
-
-		try {
-			page_number++;
-			// url = "http://www.geocaching.com/map/map.info?" + "x=" + strLon + "&y=" + strLat + "&z=" + scale + "&k=" + userToken + "&st=" + sessionToken + "&ep=1";
-			url = "http://www.geocaching.com/map/map.info?" + "x=" + strLon + "&y=" + strLat + "&z=" + scale + "&k=falm" + "&st=" + sessionToken + "&ep=1" + "&_=1329348545267";
-			if (doNotgetFound) {
-				url = url + "&hf=1"; // do not get finds
-			}
-			url = url + "&hh=1"; // do not get own
-			UrlFetcher.setRequestorProperty("Content-Type", "application/json; charset=UTF-8");
-			ret = UrlFetcher.fetch(url);
-
-		} catch (final Exception ex) {
-			ret = "";
-			pref.log("[SpiderGC:getMapListPage] Error getting map Cachepage" + url + ex);
-		}
-		return ret;
-	}
-
-	private String getCacheInfoNewMap(String cacheID) {
-		String ret;
-		String url = "";
-
-		try {
-			page_number++;
-			// url = "http://www.geocaching.com/map/map.details?" + "wptid=" + cacheID + "&k=" + userToken + "&st=" + sessionToken + "&ep=1";
-			url = "http://www.geocaching.com/map/map.details?" + "i=" + cacheID + "&_=1329348545267";
-			UrlFetcher.setRequestorProperty("Content-Type", "application/json; charset=UTF-8");
-			ret = UrlFetcher.fetch(url);
-
-		} catch (final Exception ex) {
-			ret = "";
-			pref.log("[SpiderGC:getCacheInfoNewMap] Error getting map Cachepage" + url + ex);
-		}
-		return ret;
-	}
-
-	private void addCacheNewMap(String page, CWPoint p, boolean setCachesToLoad) {
-
-		Extractor ext = new Extractor(page, "{\"name\":\"", "\",", 0, true);
-		String cacheName = ext.findNext(); // Text
-		String wp = ext.findNext("\"gc\":\""); // Text
-		String disabled = ext.findNext("\"disabled\":", ","); // true/false
-		String subrOnly = ext.findNext("\"subrOnly\":"); // true/false
-		ext.findNext("\"li\":"); // true/false (not used, what is that)
-		ext.findNext("\"fp\":"); // int (favorite points)
-		String difficulty = ext.findNext("\"text\":"); // double
-		String terrain = ext.findNext(); // double;
-		String hidden = ext.findNext("\"hidden\":\"", "\","); // string Datum
-		String container = ext.findNext("\"text\":\""); // Text (Micro,...)
-		ext.findNext("\"value\":", "}"); // int dont remove
-		String type = ext.findNext("\"value\":", "}"); // int
-		String owner = ext.findNext("text\":\"", "\","); // Text
-
-		final byte cacheType = CacheType.gcSpider2CwType(type);
-		if (restrictedCacheType != CacheType.CW_TYPE_ERROR) {
-			if (restrictedCacheType != cacheType) return;
-		}
-		CacheHolder ch = cacheDB.get(wp);
-		if (ch == null) {
-			ch = new CacheHolder();
-			ch.setWayPoint(wp);
-			boolean pm = subrOnly.equals("false") ? false : true;
-			if (pm && !pref.isPremium) ch.setCacheStatus("PM");
-			ch.setPos(p);
-			ch.setCacheOwner(owner);
-			// wird nicht mehr geliefert , todo aus Grafik extrahieren.
-			if (owner.equalsIgnoreCase(pref.myAlias) || owner.equalsIgnoreCase(pref.myAlias2)) {
-				ch.setOwned(true);
-			}
-			// DEAD CODE commented out
-			// else if (false) {
-			// ch.setFound(true);
-			// ch.setCacheStatus(ch.getFoundText());
-			// }
-
-			cacheName = STRreplace.replace(cacheName, "\\\"", "\"");
-			ch.setCacheName(cacheName);
-			ch.setAvailable(disabled.equals("true") ? false : true);
-			ch.setDateHidden(DateFormat.toYYMMDD(hidden));
-			ch.setHard(CacheTerrDiff.v1Converter(difficulty));
-			ch.setTerrain(CacheTerrDiff.v1Converter(terrain));
-			ch.setCacheSize(CacheSize.gcGpxString2Cw(container));
-			ch.setType(cacheType);
-			// ch.setLastSync((new Time()).format("yyyyMMddHHmmss"));
-			num_added++;
-			cacheDB.add(ch);
-			if (setCachesToLoad) {
-				cachesToLoad.add(wp + "found");
-			} else {
-				ch.getCacheDetails(false).URL = "http://www.geocaching.com/seek/cache_details.aspx?wp=" + wp;
-				ch.save();
-			}
-			if (Global.mainTab.statBar != null) Global.mainTab.statBar.updateDisplay("GC pages: " + page_number + " Caches added to CW: " + num_added);
-		} else {
-		}
 	}
 
 	/**
