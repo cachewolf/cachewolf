@@ -438,6 +438,9 @@ public class SpiderGC {
 		origin = startPos;
 		CWPoint nextPos = startPos;
 		int pointsIndex = 1;
+
+		pref.log("Start at " + origin + " to check " + points.size() + " points.");
+
 		while (nextPos != null) {
 			if (fileName.equals("")) {
 				nextPos = nextRoutePoint(startPos, lateralDistance);
@@ -459,6 +462,7 @@ public class SpiderGC {
 			if (nextPos != null) {
 				// sq = getSquare(startPos, lateralDistance);
 				// getCaches(sq.topleft.latDec, sq.topleft.lonDec, sq.bottomright.latDec, sq.bottomright.lonDec, complete);
+				pref.log("m: do " + pointsIndex + " of (" + points.size() + ") at " + nextPos);
 				getCaches(startPos, lateralDistance);
 				// pref.log("next WP = " + startPos.toString(), null);
 
@@ -471,6 +475,7 @@ public class SpiderGC {
 					origin = nextCheckPoint;
 					// sq = getSquare(origin, lateralDistance);
 					// getCaches(sq.topleft.latDec, sq.topleft.lonDec, sq.bottomright.latDec, sq.bottomright.lonDec, complete);
+					pref.log("s: do " + pointsIndex + " of (" + points.size() + ") at " + nextPos);
 					getCaches(startPos, lateralDistance);
 					// pref.log("next CP = " + origin.toString(), null);
 					if (infB.isClosed) {
@@ -485,6 +490,7 @@ public class SpiderGC {
 		}
 		// sq = getSquare(startPos, lateralDistance);
 		// getCaches(sq.topleft.latDec, sq.topleft.lonDec, sq.bottomright.latDec, sq.bottomright.lonDec, complete);
+		pref.log("t: do " + pointsIndex + " of (" + points.size() + ") at " + nextPos);
 		getCaches(startPos, lateralDistance);
 		// pref.log("last WP = " + startPos.toString(), null);
 		if (infB.isClosed) {
@@ -641,6 +647,7 @@ public class SpiderGC {
 					}
 				}
 			} // loop pages
+			pref.log("Nr Caches now: " + cachesToLoad.size());
 		} // try
 		catch (final Exception ex) {
 			pref.log("Download error : ", ex, true);
