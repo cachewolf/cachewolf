@@ -80,7 +80,7 @@ import ewe.util.Vector;
 public class MainMenu extends MenuBar {
 	private MenuItem preferences, mnuContext, loadcaches, loadOC, loadOCFinds, savenoxit, exit, search, searchAll, searchClr;
 	private MenuItem downloadmap, kalibmap, importmap, selectMapPath;
-	private MenuItem spider, spiderRoute, spiderQuick, spiderAllFinds, loadGCVotes, fetchOCLink, update, chkVersion;
+	private MenuItem spider, spiderRoute, spiderAllFinds, loadGCVotes, fetchOCLink, update, chkVersion;
 	private MenuItem about, wolflang, sysinfo, legend;
 	private MenuItem exportGpxNg, exporthtml, exporttop50, exportASC, exportTomTom, exportMSARCSV, exportSpoilerPOI;
 	private MenuItem exportOZI, exportKML, exportTPL, exportExplorist, exportOCLog;
@@ -356,15 +356,6 @@ public class MainMenu extends MenuBar {
 				SpiderGC spGC = new SpiderGC(pref, profile);
 				Global.mainTab.saveUnsavedChanges(false);
 				spGC.doItAlongARoute();
-				cacheDB.clear();
-				profile.readIndex();
-				tbp.resetModel();
-				pref.setOldGCLanguage();
-			}
-			if (mev.selectedItem == spiderQuick) {
-				SpiderGC spGC = new SpiderGC(pref, profile);
-				Global.mainTab.saveUnsavedChanges(false);
-				spGC.doItQuickFillFromMapList();
 				cacheDB.clear();
 				profile.readIndex();
 				tbp.resetModel();
