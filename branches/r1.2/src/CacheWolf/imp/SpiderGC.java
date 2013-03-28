@@ -59,10 +59,11 @@ import com.stevesoft.ewe_pat.Regex;
 import ewe.data.Property;
 import ewe.data.PropertyList;
 import ewe.fx.Image;
+import ewe.io.AsciiCodec;
 import ewe.io.FileBase;
 import ewe.io.FileInputStream;
 import ewe.io.IOException;
-import ewe.io.InputStreamReader;
+import ewe.io.JavaUtf8Codec;
 import ewe.net.URL;
 import ewe.net.UnknownHostException;
 import ewe.sys.Convert;
@@ -3010,20 +3011,23 @@ public class SpiderGC {
 		}
 
 		Vector doIt() {
-			FileInputStream rFIS = null;
-			InputStreamReader r = null;
+			ewe.io.TextReader r = null;
 			try {
-				rFIS = new ewe.io.FileInputStream(_fileName);
-				r = new ewe.io.InputStreamReader(rFIS);
-				if (r.read() != 65279) {
+				r = new ewe.io.TextReader(_fileName);
+				r.codec = new AsciiCodec();
+				String s;
+				s = r.readLine();
+				if (s.startsWith("﻿")) {
 					r.close();
-					rFIS.close();
-					rFIS = new ewe.io.FileInputStream(_fileName);
-					r = new ewe.io.InputStreamReader(rFIS);
+					r = new ewe.io.TextReader(_fileName);
+					r.codec = new JavaUtf8Codec();
+				} else {
+					r.close();
+					r = new ewe.io.TextReader(_fileName);
+					r.codec = new AsciiCodec();
 				}
 				parse(r);
 				r.close();
-				rFIS.close();
 			} catch (final Exception e) {
 			}
 			return _routePoints;
