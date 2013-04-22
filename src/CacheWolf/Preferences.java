@@ -770,7 +770,7 @@ public class Preferences extends MinML {
 					+ "    <lastprofile" //
 					+ " autoreload=\"" + SafeXML.strxmlencode(autoReloadLastProfile) + "\"" //
 					+ ">" //
-					+ SafeXML.clean(lastProfile) + "</ lastprofile>\n" //
+					+ SafeXML.clean(lastProfile) + "</lastprofile>\n" //
 
 					+ "    <CurrentCentre" //
 					+ " FromGPSPosition=\"" + SafeXML.strxmlencode(setCurrentCentreFromGPSPosition) + "\"" //
