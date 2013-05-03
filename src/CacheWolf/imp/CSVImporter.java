@@ -366,8 +366,10 @@ public class CSVImporter {
 					statusText = MyLocale.getMsg(362, "Solved");
 					gefunden = false;
 				} else {
-					gefunden = true;
-					statusText = ch.getFoundText();
+					if (l[STATUS].length() == 0) {
+						gefunden = false;
+						statusText = MyLocale.getMsg(362, "Solved");
+					}
 				}
 			}
 		}
