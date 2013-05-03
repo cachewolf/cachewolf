@@ -48,9 +48,10 @@ import CacheWolf.utils.FileBugfix;
 
 import com.stevesoft.ewe_pat.Regex;
 
+import ewe.io.AsciiCodec;
 import ewe.io.File;
-import ewe.io.FileInputStream;
 import ewe.io.IOException;
+import ewe.io.JavaUtf8Codec;
 import ewe.net.MalformedURLException;
 import ewe.net.URL;
 import ewe.sys.Time;
@@ -162,19 +163,24 @@ public class GPXImporter extends MinML {
 					}
 					zif.close();
 				} else {
-					FileInputStream rFIS = new ewe.io.FileInputStream(file);
-					r = new ewe.io.InputStreamReader(rFIS);
 					infB = new InfoBox("Info", (MyLocale.getMsg(4000, "Loaded caches: ") + zaehlerGel));
 					infB.show();
-					if (r.read() != 65279) {
-						r.close();
-						rFIS.close();
-						rFIS = new ewe.io.FileInputStream(file);
-						r = new ewe.io.InputStreamReader(rFIS);
+					ewe.io.TextReader rr = new ewe.io.TextReader(file);
+					ewe.io.TextCodec codec = new AsciiCodec();
+					rr.codec = codec;
+					String s;
+					s = rr.readLine();
+					if (s.startsWith("﻿")) {
+						rr.close();
+						rr = new ewe.io.TextReader(file);
+						rr.codec = new JavaUtf8Codec();
+					} else {
+						rr.close();
+						rr = new ewe.io.TextReader(file);
+						rr.codec = codec;
 					}
-					parse(r);
-					r.close();
-					rFIS.close();
+					parse(rr);
+					rr.close();
 					infB.close(0);
 				}
 				// save Index
