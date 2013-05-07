@@ -44,6 +44,7 @@ import CacheWolf.Travelbug;
 import CacheWolf.UrlFetcher;
 import CacheWolf.imp.SpiderGC.SpiderProperties;
 import CacheWolf.navi.TrackPoint;
+import CacheWolf.utils.BetterUTF8Codec;
 import CacheWolf.utils.FileBugfix;
 
 import com.stevesoft.ewe_pat.Regex;
@@ -51,7 +52,8 @@ import com.stevesoft.ewe_pat.Regex;
 import ewe.io.AsciiCodec;
 import ewe.io.File;
 import ewe.io.IOException;
-import ewe.io.JavaUtf8Codec;
+import ewe.io.InputStreamReader;
+import ewe.io.TextReader;
 import ewe.net.MalformedURLException;
 import ewe.net.URL;
 import ewe.sys.Time;
@@ -97,6 +99,7 @@ public class GPXImporter extends MinML {
 	private String attID;
 	private String attInc;
 
+
 	public GPXImporter(Preferences p, Profile prof, String f) {
 		profile = prof;
 		pref = p;
@@ -112,7 +115,7 @@ public class GPXImporter extends MinML {
 		doitHow = DOIT_ASK;
 	}
 
-	public void doIt(int how) {
+	public void doIt(int how) {		
 		doitHow = how;
 		Filter flt = new Filter();
 		boolean wasFiltered = (profile.getFilterActive() == Filter.FILTER_ACTIVE);
@@ -152,40 +155,44 @@ public class GPXImporter extends MinML {
 						zipEnt = (ZipEntry) zipEnum.nextElement();
 						// skip over PRC-files
 						if (zipEnt.getName().endsWith("gpx")) {
-							r = new ewe.io.InputStreamReader(zif.getInputStream(zipEnt));
+							r = new InputStreamReader(zif.getInputStream(zipEnt));		
+							TextReader tr= new TextReader(zif.getInputStream(zipEnt));
+							tr.codec= new AsciiCodec();
 							infB = new InfoBox(zipEnt.toString(), (MyLocale.getMsg(4000, "Loaded caches: ") + zaehlerGel));
-							infB.exec();
-							if (r.read() != 65279) r = new ewe.io.InputStreamReader(zif.getInputStream(zipEnt));
-							parse(r);
-							r.close();
+							infB.show();
+							
+							String readLine = tr.readLine().toLowerCase();
+							if (readLine.startsWith("﻿") || readLine.indexOf("encoding=\"utf-8\"") > 0){
+								tr.close();
+								r = new InputStreamReader(zif.getInputStream(zipEnt));
+								
+								tr= new TextReader(zif.getInputStream(zipEnt));
+								tr.codec = new BetterUTF8Codec();						
+							}
+							parse(tr);
+							tr.close();
 							infB.close(0);
 						}
 					}
 					zif.close();
 				} else {
+					TextReader tr = new TextReader(file);
+					tr.codec = new AsciiCodec();
 					infB = new InfoBox("Info", (MyLocale.getMsg(4000, "Loaded caches: ") + zaehlerGel));
 					infB.show();
-					ewe.io.TextReader rr = new ewe.io.TextReader(file);
-					ewe.io.TextCodec codec = new AsciiCodec();
-					rr.codec = codec;
-					String s;
-					s = rr.readLine();
-					if (s.startsWith("﻿")) {
-						rr.close();
-						rr = new ewe.io.TextReader(file);
-						rr.codec = new JavaUtf8Codec();
-					} else {
-						rr.close();
-						rr = new ewe.io.TextReader(file);
-						rr.codec = codec;
+					
+					String readLine = tr.readLine().toLowerCase();
+					if (readLine.startsWith("﻿") || readLine.indexOf("encoding=\"utf-8\"") > 0){
+						tr.close();
+						tr = new TextReader(file);
+						tr.codec = new BetterUTF8Codec();						
 					}
-					parse(rr);
-					rr.close();
+					parse(tr);
+					tr.close();
 					infB.close(0);
 				}
 				// save Index
 				profile.saveIndex(pref, Profile.SHOW_PROGRESS_BAR);
-				infB.close(0);
 			}
 			Vm.showWait(false);
 		} catch (Exception e) {
