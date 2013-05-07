@@ -21,6 +21,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 package CacheWolf;
 
+import CacheWolf.utils.BetterUTF8Codec;
 import ewe.data.PropertyList;
 import ewe.io.AsciiCodec;
 import ewe.io.File;
@@ -95,9 +96,8 @@ public class UrlFetcher {
 
 	public static String fetch(String address) throws IOException {
 		ByteArray daten = fetchByteArray(address);
-		JavaUtf8Codec codec = new JavaUtf8Codec();
-		CharArray c_data = codec.decodeText(daten.data, 0, daten.length, true, null);
-		return c_data.toString();
+		StringBuffer sb = new BetterUTF8Codec ().decodeUTF8(daten.data, 0, daten.length);
+		return sb.toString();
 	}
 
 	public static ByteArray fetchData(String address) throws IOException {

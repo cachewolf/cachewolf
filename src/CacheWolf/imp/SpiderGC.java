@@ -2489,7 +2489,7 @@ public class SpiderGC {
 		String fileName, imgName, imgType, imgUrl, imgComment;
 		final Vector spideredUrls = new Vector();
 		ImageInfo imageInfo = null;
-		Extractor exImgBlock, exImgComment;
+		Extractor exImgBlock;
 		int idxUrl; // Index of already spidered Url in list of spideredUrls
 		CacheImages lastImages = null;
 
