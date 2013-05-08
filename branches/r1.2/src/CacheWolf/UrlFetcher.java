@@ -18,9 +18,10 @@
     You should have received a copy of the GNU General Public License
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
-*/
+ */
 package CacheWolf;
 
+import CacheWolf.utils.BetterUTF8Codec;
 import ewe.data.PropertyList;
 import ewe.io.AsciiCodec;
 import ewe.io.File;
@@ -65,8 +66,7 @@ public class UrlFetcher {
 	};
 
 	public static void setRequestorProperty(String name, String property) {
-		if (requestorProperties == null)
-			requestorProperties = new PropertyList();
+		if (requestorProperties == null) requestorProperties = new PropertyList();
 		requestorProperties.set(name, property);
 	}
 
@@ -78,14 +78,12 @@ public class UrlFetcher {
 	}
 
 	public static void setPermanentRequestorProperty(String name, String property) {
-		if (permanentRequestorProperties == null)
-			initPermanentRequestorProperty();
+		if (permanentRequestorProperties == null) initPermanentRequestorProperty();
 		if (property != null)
 			permanentRequestorProperties.set(name, property);
 		else {
 			int index = permanentRequestorProperties.find(name);
-			if (index >= 0)
-				permanentRequestorProperties.del(index);
+			if (index >= 0) permanentRequestorProperties.del(index);
 		}
 	}
 
@@ -95,11 +93,12 @@ public class UrlFetcher {
 
 	public static String fetch(String address) throws IOException {
 		ByteArray daten = fetchByteArray(address);
-		//JavaUtf8Codec codec = new JavaUtf8Codec();
-		//CharArray c_data = codec.decodeText(daten.data, 0, daten.length, true, null);
-		//return c_data.toString();
-		StringBuffer sb = new BetterUTF8Codec ().decodeUTF8(daten.data, 0, daten.length);
-		return sb.toString();	}
+		// JavaUtf8Codec codec = new JavaUtf8Codec();
+		// CharArray c_data = codec.decodeText(daten.data, 0, daten.length, true, null);
+		// return c_data.toString();
+		StringBuffer sb = new BetterUTF8Codec().decodeUTF8(daten.data, 0, daten.length);
+		return sb.toString();
+	}
 
 	public static ByteArray fetchData(String address) throws IOException {
 		return fetchByteArray(address);
@@ -108,10 +107,10 @@ public class UrlFetcher {
 	public static void fetchDataFile(String address, String target) throws IOException {
 		FileOutputStream outp = null;
 		try {
-		outp = new FileOutputStream(new File(target));
-		outp.write(fetchByteArray(address).toBytes());
+			outp = new FileOutputStream(new File(target));
+			outp.write(fetchByteArray(address).toBytes());
 		} finally {
-		if (outp != null) outp.close();
+			if (outp != null) outp.close();
 		}
 	}
 
@@ -134,7 +133,7 @@ public class UrlFetcher {
 				i = i - 1;
 			}
 			realUrl = urltmp;
-			if (!( urltmp.startsWith("http") || urltmp.startsWith("https") )) {
+			if (!(urltmp.startsWith("http") || urltmp.startsWith("https"))) {
 				url = FileBase.fixupPath(url);
 				String uu = url.toLowerCase();
 				String host;
@@ -144,21 +143,18 @@ public class UrlFetcher {
 				if (first != -1) {
 					host = host.substring(0, first);
 				}
-				if (!urltmp.startsWith("/"))
-					host = host + "/";
+				if (!urltmp.startsWith("/")) host = host + "/";
 				urltmp = "http://" + host + urltmp; // TODO https?
 			}
 			conn.setUrl(urltmp);
 			conn.documentIsEncoded = isUrlEncoded(urltmp);
-			if (permanentRequestorProperties == null)
-				initPermanentRequestorProperty();
+			if (permanentRequestorProperties == null) initPermanentRequestorProperty();
 			if (postData != null) {
 				conn.setPostData(postData);
 				conn.setRequestorProperty("Content-Type", "application/x-www-form-urlencoded");
 			}
 			conn.setRequestorProperty(permanentRequestorProperties);
-			if (requestorProperties != null)
-				conn.setRequestorProperty(requestorProperties);
+			if (requestorProperties != null) conn.setRequestorProperty(requestorProperties);
 			conn.connect();
 			if (conn.responseCode >= 400) {
 				maxRedirections = 5;
@@ -189,8 +185,7 @@ public class UrlFetcher {
 				forceRedirect = false; // one time or more redirected
 			}
 		} while (((urltmp != null) || (urltmp == null) && forceRedirect) && i <= maxRedirections);
-		if (i > maxRedirections)
-			throw new IOException("too many http redirections while trying to fetch: " + url + " only " + maxRedirections + " are allowed");
+		if (i > maxRedirections) throw new IOException("too many http redirections while trying to fetch: " + url + " only " + maxRedirections + " are allowed");
 		ByteArray daten;
 		if (conn.isOpen()) {
 			daten = conn.readData();
@@ -206,8 +201,7 @@ public class UrlFetcher {
 
 	/**
 	 * @param url
-	 * @return true, if the string seems to be already URL encoded (that is, it contains only url-allowd chars), false
-	 *         otherwise
+	 * @return true, if the string seems to be already URL encoded (that is, it contains only url-allowd chars), false otherwise
 	 */
 	private static boolean isUrlEncoded(String url) {
 		final String allowed = new String("-_.~!*'();:@&=+$,/?%#[]");
@@ -225,9 +219,8 @@ public class UrlFetcher {
 
 	/**
 	 * This method encodes an URL containing special characters using the UTF-8 codec in %nn%nn notation<br>
-	 * Note that the encoding for URLs is not generally defined. Usually cp1252 or UTF-8 is used. It depends on what the
-	 * server expects, what encoding you must use.
-	 *
+	 * Note that the encoding for URLs is not generally defined. Usually cp1252 or UTF-8 is used. It depends on what the server expects, what encoding you must use.
+	 * 
 	 * @param cc
 	 * @return
 	 * @throws IOException
@@ -245,9 +238,8 @@ public class UrlFetcher {
 	final static String hex = ewe.util.TextEncoder.hex;
 
 	/**
-	 * Encode the URL using %## notation. Note: this fixes a bug in ewe.net.URL.encodeURL(): that routine assumes all
-	 * chars to be < 127. This method is mainly copied from there
-	 *
+	 * Encode the URL using %## notation. Note: this fixes a bug in ewe.net.URL.encodeURL(): that routine assumes all chars to be < 127. This method is mainly copied from there
+	 * 
 	 * @param url
 	 *            The unencoded URL.
 	 * @param spaceToPlus
