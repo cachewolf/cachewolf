@@ -1557,20 +1557,27 @@ public class SpiderGC {
 	private double[] getDistanceAndDirection(String doc) {
 		final double[] distanceAndDirection = { (0.0), (0.0) };
 		if (spiderAllFinds) return distanceAndDirection;
-		RexPropDistanceCode.search(doc);
-		if (!RexPropDistanceCode.didMatch()) {
+
+		RexPropDistance.search(doc);
+		if (!RexPropDistance.didMatch()) {
 			pref.log("[SpiderGC.java:getDistanceAndDirection]check distRex!", null);
 			distanceAndDirection[0] = -1.0; // Abbruch
 			return distanceAndDirection;
 		}
-		final String stmp = ewe.net.URL.decodeURL(RexPropDistanceCode.stringMatched(1));
+		final String stmp = RexPropDistance.stringMatched(1);
+		distanceAndDirection[0] = Convert.toDouble(stmp.replace('.', ','));
+		distanceAndDirection[1] = 0.0; // todo
+		if (true) {
+			return distanceAndDirection;
+		}
+
 		String ret = decodeXor(stmp, DistanceCodeKey).replace('|', ' ');
 		RexPropDistance.search(ret); // km oder mi oder ft
 		if (!RexPropDistance.didMatch()) {
 			if (ret.indexOf("ere") > -1) return distanceAndDirection; // zur Zeit " Here -1"
 			// Versuch den DistanceCodeKey automatisch zu bestimmen
 			// da dieser von gc mal wieder geï¿½ndert wurde.
-			// todo Benï¿½tigt ev noch weitere Anpassungen: | am Anfang, and calc of keylength
+			// todo Benötigt ev noch weitere Anpassungen: | am Anfang, and calc of keylength
 			// String thereitis="|0.34 km|102.698";
 			// String page =
 			// fetchText("http://www.geocaching.com/seek/nearest.aspx?lat=48.48973&lng=009.26313&dist=2&f=1",false);
