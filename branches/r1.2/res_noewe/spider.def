@@ -47,9 +47,11 @@ logDateRex         = "small">\\s+(.*?)<br />
 Available          = lnk  Strike
 Archived           = lnk OldWarning Strike Strike
 PM                 = premium_only.png
-distCodeRex        = k=(.*?)"
+#<span class="small NoWrap"><img src="/images/icons/compass/SW.gif" alt="SW" title="SW" />SW<br />0.31km</span>
+distCodeRex        = 
 distCodeKey        = signalthefrog
-distRex            = (.*?)(?:km|mi|ft)
+distRex            = <br />(.*?)(?:km|mi|ft)</span>
+#Richtung           = "/images/icons/compass/(.*?).gif"
 DTSRex             = v=(.*?)"
 DTSCodeKey         = hbM9fjmrxy7z42LFD58BkKgPGdHscvCqNnw3ptO6lJ
 waypointRex        = \\|\\s+GC(.*?)\\s+
