@@ -48,12 +48,10 @@ Available          = lnk  Strike
 Archived           = lnk OldWarning Strike Strike
 PM                 = premium_only.png
 #<span class="small NoWrap"><img src="/images/icons/compass/SW.gif" alt="SW" title="SW" />SW<br />0.31km</span>
-distCodeRex        = 
-distCodeKey        = signalthefrog
-distRex            = <br />(.*?)(?:km|mi|ft)</span>
-#Richtung           = "/images/icons/compass/(.*?).gif"
-DTSRex             = v=(.*?)"
-DTSCodeKey         = hbM9fjmrxy7z42LFD58BkKgPGdHscvCqNnw3ptO6lJ
+DistDirRex         = compass/(.*?)\.gif(.*?)<br />(.*?)(?:km|mi|ft)
+#<span class="small">3.5/1.5</span><br /><img src="/images/icons/container/other.gif" alt="Size: Other" title="Size: Other" />
+#<span class="small">3/2.5</span><br /><img src="/images/icons/container/not_chosen.gif" alt="Size: Not chosen" title="Size: Not chosen" />
+DTSRex             =>(.*?)/(.*?)<(.*?)container/(.*?)\.gif
 waypointRex        = \\|\\s+GC(.*?)\\s+
 TypeRex            = www.geocaching.com/images/wpttypes/(.*?)\\.gif
 found              = class="Success"
