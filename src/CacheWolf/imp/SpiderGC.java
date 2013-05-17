@@ -58,7 +58,6 @@ import com.stevesoft.ewe_pat.Regex;
 
 import ewe.data.Property;
 import ewe.data.PropertyList;
-import ewe.fx.Image;
 import ewe.io.AsciiCodec;
 import ewe.io.FileBase;
 import ewe.io.FileInputStream;
@@ -71,7 +70,6 @@ import ewe.sys.Time;
 import ewe.sys.Vm;
 import ewe.ui.FormBase;
 import ewe.ui.MessageBox;
-import ewe.util.ByteArray;
 import ewe.util.Enumeration;
 import ewe.util.Hashtable;
 import ewe.util.Properties;
@@ -149,17 +147,17 @@ public class SpiderGC {
 	private static Regex RexPropListBlock;
 	private static Regex RexPropLine;
 	private static Regex RexNumFinds;
-	private static Regex RexPropLogDate;
+	private static Regex logDateRex;
 	private static String propAvailable;
 	private static String propArchived;
 	private static String propFound;
 	private static String propPM;
-	private static Regex RexPropDistance;
-	private static Regex RexPropDistanceCode;
-	private static String DistanceCodeKey;
+
+	private static Regex DistDirRex;
+	private static Regex DTSRex;
+
 	private static Regex RexPropWaypoint;
 	private static Regex RexPropType;
-	private static Regex RexPropDTS;
 	private static Regex RexUserToken;
 	private static String icon_smile;
 	private static String icon_camera;
@@ -1315,6 +1313,7 @@ public class SpiderGC {
 	 * 
 	 */
 	private void initialiseProperties() {
+		String stmp;
 		try {
 			urlSeek = p.getProp("urlSeek"); // http://www.geocaching.com/seek/nearest.aspx
 			queryLat = p.getProp("queryLat"); // ?lat=
@@ -1326,22 +1325,19 @@ public class SpiderGC {
 			RexPropListBlock = new Regex(p.getProp("listBlockRex"));
 			RexPropLine = new Regex(p.getProp("lineRex"));
 			RexNumFinds = new Regex("Total Records: <b>(.*?)</b>");
-			RexPropLogDate = new Regex(p.getProp("logDateRex"));
+			logDateRex = new Regex(p.getProp("logDateRex")); // newFoundExists
 
 			propAvailable = p.getProp("Available");
 			propArchived = p.getProp("Archived");
 			propPM = p.getProp("PM");
 			propFound = p.getProp("found");
 
-			RexPropDistance = new Regex(p.getProp("distRex"));
-			RexPropDistanceCode = new Regex(p.getProp("distCodeRex"));
-			DistanceCodeKey = p.getProp("distCodeKey");
-			// DTSCodeKey = p.getProp("DTSCodeKey");
+			stmp = p.getProp("DistDirRex");
+			DistDirRex = new Regex(stmp);
+			DTSRex = new Regex(p.getProp("DTSRex"));
 
 			RexPropWaypoint = new Regex(p.getProp("waypointRex"));
 			RexPropType = new Regex(p.getProp("TypeRex"));
-			RexPropDTS = new Regex(p.getProp("DTSRex"));
-			// RexPropOwn = new Regex(p.getProp("own"));
 			RexUserToken = new Regex(p.getProp("UserTokenRex"));
 			icon_smile = p.getProp("icon_smile");
 			icon_camera = p.getProp("icon_camera");
@@ -1494,7 +1490,7 @@ public class SpiderGC {
 					ret = true;
 					pref.log("terrainChanged");
 				}
-				if (sizeChanged(ch, (byte) Common.parseInt(dts[2]))) {
+				if (sizeChanged(ch, CacheSize.gcGpxString2Cw(dts[2]))) {
 					save = true;
 					ret = true;
 					pref.log("sizeChanged");
@@ -1543,90 +1539,41 @@ public class SpiderGC {
 		return counter;
 	}
 
-	private String decodeXor(String input, String key) {
-		final byte ctmp[] = input.getBytes();
-		final byte ckey[] = key.getBytes();
-		final int codeLength = input.length();
-		final int keyLength = key.length();
-		for (int i = 0; i < codeLength; i++) {
-			ctmp[i] ^= ckey[i % keyLength];
-		}
-		return new String(ctmp);
-	}
-
 	private double[] getDistanceAndDirection(String doc) {
+		// #<span class="small NoWrap"><img src="/images/icons/compass/SW.gif" alt="SW" title="SW" />SW<br />0.31km</span>
+		// DistDirRex = compass/(.*?)\.gif(.*?)<br />(.*?)(?:km|mi|ft)
 		final double[] distanceAndDirection = { (0.0), (0.0) };
 		if (spiderAllFinds) return distanceAndDirection;
-		RexPropDistanceCode.search(doc);
-		if (!RexPropDistanceCode.didMatch()) {
-			pref.log("[SpiderGC.java:getDistanceAndDirection]check distRex!", null);
+		// <span class="small NoWrap"><br />Here</span>
+		if (doc.indexOf(">Here<")>0)  return distanceAndDirection;
+		String stmp;
+		DistDirRex.search(doc);
+		if (!DistDirRex.didMatch()) {
+			pref.log("[SpiderGC.java:getDistanceAndDirection]check DistDirRex!", null);
 			distanceAndDirection[0] = -1.0; // Abbruch
 			return distanceAndDirection;
 		}
-		final String stmp = ewe.net.URL.decodeURL(RexPropDistanceCode.stringMatched(1));
-		String ret = decodeXor(stmp, DistanceCodeKey).replace('|', ' ');
-		RexPropDistance.search(ret); // km oder mi oder ft
-		if (!RexPropDistance.didMatch()) {
-			if (ret.indexOf("ere") > -1) return distanceAndDirection; // zur Zeit " Here -1"
-			// Versuch den DistanceCodeKey automatisch zu bestimmen
-			// da dieser von gc mal wieder ge�ndert wurde.
-			// todo Ben�tigt ev noch weitere Anpassungen: | am Anfang, and calc of keylength
-			// String thereitis="|0.34 km|102.698";
-			// String page =
-			// fetchText("http://www.geocaching.com/seek/nearest.aspx?lat=48.48973&lng=009.26313&dist=2&f=1",false);
-			final String thereitis = "|0.08 km|223.968";
-			String page;
-			try {
-				page = UrlFetcher.fetch("http://www.geocaching.com/seek/nearest.aspx?lat=45.292&lng=-122.41262&dist=1");
-			} catch (final IOException e) {
-				page = "";
-			}
-			//
-			RexPropListBlock.search(page);
-			String table = "";
-			if (RexPropListBlock.didMatch()) {
-				table = RexPropListBlock.stringMatched(1);
-			}
-
-			RexPropLine.search(table);
-			String row = "";
-			if (RexPropLine.didMatch()) {
-				row = RexPropLine.stringMatched(1);
-			}
-
-			RexPropDistanceCode.search(row);
-			if (!RexPropDistanceCode.didMatch()) {
-				pref.log("Didn't get DistanceCodeKey automaticly." + Preferences.NEWLINE);
-				return distanceAndDirection;
-			}
-			final String coded = ewe.net.URL.decodeURL(RexPropDistanceCode.stringMatched(1));
-			final String newkey = decodeXor(coded, thereitis);
-			final int keylength = 13;
-			// wenn nicht 13 dann newkey auf wiederholung pr�fen
-			DistanceCodeKey = newkey.substring(0, keylength);
-			ret = decodeXor(stmp, DistanceCodeKey).replace('|', ' ');
-			pref.log("Automatic key: " + DistanceCodeKey + " result: " + ret + Preferences.NEWLINE);
-			RexPropDistance.search(ret); // km oder mi
-		}
-
-		if (RexPropDistance.didMatch()) {
-			if (MyLocale.getDigSeparator().equals(",")) {
-				distanceAndDirection[0] = Convert.toDouble(RexPropDistance.stringMatched(1).replace('.', ','));
-				final String r = RexPropDistance.right(1).substring(3);
-				// 3 expexts 2 char which are at moment "km" or "mi"
-				distanceAndDirection[1] = Convert.toDouble(r.replace('.', ','));
-			} else {
-				distanceAndDirection[0] = Convert.toDouble(RexPropDistance.stringMatched(1));
-				final String r = RexPropDistance.right(1).substring(3);
-				distanceAndDirection[1] = Convert.toDouble(r);
-			}
-			if (ret.indexOf("ft") > 0) {
-				// Umrechnung in miles
-				distanceAndDirection[0] = distanceAndDirection[0] / 5280.0;
-			}
-		} else {
-			pref.log("[SpiderGC.java:getDistanceAndDirection](gc Code change ?) check distCodeKey!", null);
-		}
+		stmp = DistDirRex.stringMatched(3);
+		distanceAndDirection[0] = Convert.toDouble(stmp.replace(',', '.'));
+		stmp = DistDirRex.stringMatched(1);
+		if (stmp.equals("N"))
+			distanceAndDirection[1] = 0.0;
+		else if (stmp.equals("NE"))
+			distanceAndDirection[1] = 45.0;
+		else if (stmp.equals("E"))
+			distanceAndDirection[1] = 90.0;
+		else if (stmp.equals("SE"))
+			distanceAndDirection[1] = 135.0;
+		else if (stmp.equals("S"))
+			distanceAndDirection[1] = 180.0;
+		else if (stmp.equals("SW"))
+			distanceAndDirection[1] = 225.0;
+		else if (stmp.equals("W"))
+			distanceAndDirection[1] = 270.0;
+		else if (stmp.equals("NW"))
+			distanceAndDirection[1] = 315.0;
+		else
+			distanceAndDirection[1] = 0.0;
 
 		return distanceAndDirection;
 	}
@@ -1639,12 +1586,21 @@ public class SpiderGC {
 	 * @return Name of waypoint to add to list
 	 */
 	private String getWP(String doc) throws Exception {
+		//#<span class="small">
+		//#                            by OlSiTiNi
+		//#                            |
+		//#                            GC34CQJ
+		//#                            |
+		//#                            Hessen, Germany</span>
+		//#
+		//waypointRex        = \\|\\s+GC(.*?)\\s+\\|
 		RexPropWaypoint.search(doc);
 		if (!RexPropWaypoint.didMatch()) {
 			pref.log("[SpiderGC.java:getWP]check waypointRex!", null);
 			return "???";
 		}
-		return "GC" + RexPropWaypoint.stringMatched(1);
+		String stmp= RexPropWaypoint.stringMatched(1);
+		return "GC" + stmp;
 	}
 
 	/**
@@ -1685,100 +1641,16 @@ public class SpiderGC {
 	}
 
 	private String getDTS(String toCheck) {
-		RexPropDTS.search(toCheck);
-		if (RexPropDTS.didMatch()) {
-			final String code = RexPropDTS.stringMatched(1);
-			/* */
-			final String address = "http://www.geocaching.com/ImgGen/seek/CacheInfo.ashx?v=" + code;
-			ByteArray doc;
-			try {
-				doc = UrlFetcher.fetchData(address);
-			} catch (final IOException e) {
-				return "";
-			}
-			final Image idoc = new Image(doc, 0, null, 0, 0);
-			/*
-			 * FileOutputStream fos; try { fos = new FileOutputStream(new File("temp.png")); fos.write(doc.toBytes()); fos.close(); } catch (IOException e) { } finally { }
-			 */
-			final String ret = getDTfromImage(idoc) + "/" + getSizeFromImage(idoc);
-			return ret;
-			// */
-
-			/*
-			 * int decoded = 0; int pwr = 1; for (int i = code.length()-1 ; i >= 0; i--) { decoded = decoded + DTSCodeKey.indexOf(code.substring(i,i+1)) * pwr; pwr = pwr * 42; } decoded = (decoded - 1386) % 16777216; // size 0=not choosen
-			 * 1=Micro 3=Regular 5=Large 7=Virtual 8=Unknown 12=Small int sizecode = decoded / 74088; // 42 ^ 3 int sizeremove; byte size; switch (sizecode) { case 0: size=CacheSize.CW_SIZE_NOTCHOSEN; sizeremove=0; break; case 1:
-			 * size=CacheSize.CW_SIZE_MICRO; sizeremove=131072; break; case 3: size=CacheSize.CW_SIZE_REGULAR; sizeremove=262144; break; case 5: size=CacheSize.CW_SIZE_LARGE; sizeremove=393217; break; case 7: size=CacheSize.CW_SIZE_VIRTUAL;
-			 * sizeremove=524288; break; case 8: size=CacheSize.CW_SIZE_OTHER; sizeremove=655360; break; case 12: size=CacheSize.CW_SIZE_SMALL; sizeremove=917504; break; default: size=CacheSize.CW_SIZE_ERROR; sizeremove=0; break; } decoded =
-			 * decoded - sizeremove; int terraincode = decoded / 252; // terrain 0=1 1=1.5 2=2 3=2.5 4=3 5=3.5 6=4 7=4.5 8=5 String terrain = "" + (1 + terraincode / 2.0 ); // difficulty 0=1 1=1.5 2=2 3=2.5 4=3 5=3.5 6=4 7=4.5 8=5 String
-			 * difficulty = "" + (1+((decoded % 42) - (terraincode * 4)) / 2.0); if (difficulty.equals("0.5")) { difficulty = "5"; } return difficulty+"/"+terrain+"/"+size;
-			 */
+		// result 3 values separated by /
+		// #<span class="small">3.5/1.5</span><br /><img src="/images/icons/container/other.gif" alt="Size: Other" title="Size: Other" />
+		// #<span class="small">3/2.5</span><br /><img src="/images/icons/container/not_chosen.gif" alt="Size: Not chosen" title="Size: Not chosen" />
+		// DTSRex =>(.*?)/(.*?)<(.*?)container/(.*?)\.gif
+		String res = "";
+		DTSRex.search(toCheck);
+		if (DTSRex.didMatch()) {
+			res = DTSRex.stringMatched(1) + "/" + DTSRex.stringMatched(2) + "/" + DTSRex.stringMatched(4);
 		}
-		pref.log("[SpiderGC.java:getDTS]check DTSRex!", null);
-		return "";
-	}
-
-	static Hashtable validChars = new Hashtable();
-
-	static {
-		validChars.put(".", new int[][] { { 0, 0, 0 }, { 0, 0, 0 }, { 0, 0, 0 }, { 0, 0, 0 }, { 0, 0, 0 }, { 0, 0, 0 }, { 0, 1, 0 }, { 0, 1, 0 } });
-		validChars.put("/", new int[][] { { 0, 0, 0, 0, 1 }, { 0, 0, 0, 1, 0 }, { 0, 0, 0, 1, 0 }, { 0, 0, 1, 0, 0 }, { 0, 0, 1, 0, 0 }, { 0, 1, 0, 0, 0 }, { 0, 1, 0, 0, 0 }, { 1, 0, 0, 0, 0 } });
-		validChars.put("1", new int[][] { { 0, 0, 1, 0, 0 }, { 1, 1, 1, 0, 0 }, { 0, 0, 1, 0, 0 }, { 0, 0, 1, 0, 0 }, { 0, 0, 1, 0, 0 }, { 0, 0, 1, 0, 0 }, { 0, 0, 1, 0, 0 }, { 1, 1, 1, 1, 1 } });
-		validChars.put("2", new int[][] { { 0, 1, 1, 1, 0 }, { 1, 0, 0, 0, 1 }, { 0, 0, 0, 0, 1 }, { 0, 0, 0, 1, 0 }, { 0, 0, 1, 0, 0 }, { 0, 1, 0, 0, 0 }, { 1, 0, 0, 0, 0 }, { 1, 1, 1, 1, 1 } });
-		validChars.put("3", new int[][] { { 0, 1, 1, 1, 0 }, { 1, 0, 0, 0, 1 }, { 0, 0, 0, 0, 1 }, { 0, 0, 1, 1, 0 }, { 0, 0, 0, 0, 1 }, { 0, 0, 0, 0, 1 }, { 1, 0, 0, 0, 1 }, { 0, 1, 1, 1, 0 } });
-		validChars.put("4", new int[][] { { 0, 0, 0, 0, 1, 0 }, { 0, 0, 0, 1, 1, 0 }, { 0, 0, 1, 0, 1, 0 }, { 0, 1, 0, 0, 1, 0 }, { 1, 0, 0, 0, 1, 0 }, { 1, 1, 1, 1, 1, 1 }, { 0, 0, 0, 0, 1, 0 }, { 0, 0, 0, 0, 1, 0 } });
-		validChars.put("5", new int[][] { { 1, 1, 1, 1, 1 }, { 1, 0, 0, 0, 0 }, { 1, 0, 0, 0, 0 }, { 1, 1, 1, 1, 0 }, { 0, 0, 0, 0, 1 }, { 0, 0, 0, 0, 1 }, { 1, 0, 0, 0, 1 }, { 0, 1, 1, 1, 0 } });
-	}
-
-	private static byte getSizeFromImage(Image bild) {
-		int[] argb = bild.getPixels(null, 0, 5, 23, 1, 1, 0);
-		if (argb[0] == -7005927) return CacheSize.CW_SIZE_MICRO;
-		argb = bild.getPixels(null, 0, 10, 23, 1, 1, 0);
-		if (argb[0] == -7005927) return CacheSize.CW_SIZE_SMALL;
-		argb = bild.getPixels(null, 0, 17, 23, 1, 1, 0);
-		if (argb[0] == -7005927) return CacheSize.CW_SIZE_REGULAR;
-		argb = bild.getPixels(null, 0, 26, 23, 1, 1, 0);
-		if (argb[0] == -7005927) return CacheSize.CW_SIZE_LARGE;
-		argb = bild.getPixels(null, 0, 40, 23, 1, 1, 0);
-		if (argb[0] == -6735302) return CacheSize.CW_SIZE_NOTCHOSEN;
-		argb = bild.getPixels(null, 0, 41, 24, 1, 1, 0);
-		if (argb[0] == -7005927) return CacheSize.CW_SIZE_OTHER;
-		return CacheSize.CW_SIZE_ERROR;
-	}
-
-	private static String getDTfromImage(Image bild) {
-		final StringBuffer sb = new StringBuffer();
-		for (int startX = 0; startX < bild.getWidth(); startX++) {
-			for (final Enumeration e = validChars.keys(); e.hasMoreElements();) {
-				final String key = (String) e.nextElement();
-				if (testValidChar(bild, startX, 4, (int[][]) validChars.get(key))) {
-					sb.append(key);
-				}
-			}
-		}
-		return sb.toString();
-	}
-
-	private static boolean testValidChar(Image bild, int startX, int startY, int[][] validChar) {
-		for (int y = 0; y < validChar.length; y++) {
-			if (bild.getHeight() > startY + y) {
-				for (int x = 0; x < validChar[0].length; x++) {
-					if (bild.getWidth() > startX + x) {
-						// int[] alpha = bild.getAlphaRaster().getPixel(startX+x, startY+y, new int[1]);
-						final int[] argb = bild.getPixels(null, 0, startX + x, startY + y, 1, 1, 0);
-						if ((argb[0] == 0 && validChar[y][x] == 0) || (argb[0] != 0 && validChar[y][x] > 0)) {
-							// matches
-						} else {
-							return false;
-						}
-					} else {
-						return false;
-					}
-				}
-			} else {
-				return false;
-			}
-		}
-		return true;
+		return res;
 	}
 
 	/*
@@ -1863,9 +1735,9 @@ public class SpiderGC {
 		 * (slastLogCW.equals("") || slastLogCW.equals("1900-00-00")) return true; // or check cacheDescGC also no log? lastLogCW.parse(slastLogCW, "yyyy-MM-dd");
 		 */
 
-		RexPropLogDate.search(cacheDescription);
-		if (RexPropLogDate.didMatch()) {
-			stmp = RexPropLogDate.stringMatched(1);
+		logDateRex.search(cacheDescription);
+		if (logDateRex.didMatch()) {
+			stmp = logDateRex.stringMatched(1);
 		} else {
 			pref.log("[SpiderGC.java:newFoundExists]check logDateRex!", null);
 			return false;

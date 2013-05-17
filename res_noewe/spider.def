@@ -47,12 +47,16 @@ logDateRex         = "small">\\s+(.*?)<br />
 Available          = lnk  Strike
 Archived           = lnk OldWarning Strike Strike
 PM                 = premium_only.png
-distCodeRex        = k=(.*?)"
-distCodeKey        = signalthefrog
-distRex            = (.*?)(?:km|mi|ft)
-DTSRex             = v=(.*?)"
-DTSCodeKey         = hbM9fjmrxy7z42LFD58BkKgPGdHscvCqNnw3ptO6lJ
-waypointRex        = \\|\\s+GC(.*?)\\s+
+#<span class="small NoWrap"><img src="/images/icons/compass/SW.gif" alt="SW" title="SW" />SW<br />0.31km</span>
+#<span class="small NoWrap"><br />Here</span> !!! not handled by Rex
+DistDirRex         = compass/(.*?)\.gif(.*?)<br />(.*?)(?:km|mi|ft)
+#<span class="small">3.5/1.5</span><br /><img src="/images/icons/container/other.gif" alt="Size: Other" title="Size: Other" />
+#<span class="small">3/2.5</span><br /><img src="/images/icons/container/not_chosen.gif" alt="Size: Not chosen" title="Size: Not chosen" />
+DTSRex             =>(.*?)/(.*?)<(.*?)container/(.*?)\.gif
+#                            |
+#                            GC34CQJ
+#                            |
+waypointRex        = \\|\\s+GC(.*?)\\s+\\|
 TypeRex            = www.geocaching.com/images/wpttypes/(.*?)\\.gif
 found              = class="Success"
 own                = /WptTypes/name_tag.gif
