@@ -1544,7 +1544,8 @@ public class SpiderGC {
 		// DistDirRex = compass/(.*?)\.gif(.*?)<br />(.*?)(?:km|mi|ft)
 		final double[] distanceAndDirection = { (0.0), (0.0) };
 		if (spiderAllFinds) return distanceAndDirection;
-
+		// <span class="small NoWrap"><br />Here</span>
+		if (doc.indexOf(">Here<")>0)  return distanceAndDirection;
 		String stmp;
 		DistDirRex.search(doc);
 		if (!DistDirRex.didMatch()) {
@@ -1585,12 +1586,21 @@ public class SpiderGC {
 	 * @return Name of waypoint to add to list
 	 */
 	private String getWP(String doc) throws Exception {
+		//#<span class="small">
+		//#                            by OlSiTiNi
+		//#                            |
+		//#                            GC34CQJ
+		//#                            |
+		//#                            Hessen, Germany</span>
+		//#
+		//waypointRex        = \\|\\s+GC(.*?)\\s+\\|
 		RexPropWaypoint.search(doc);
 		if (!RexPropWaypoint.didMatch()) {
 			pref.log("[SpiderGC.java:getWP]check waypointRex!", null);
 			return "???";
 		}
-		return "GC" + RexPropWaypoint.stringMatched(1);
+		String stmp= RexPropWaypoint.stringMatched(1);
+		return "GC" + stmp;
 	}
 
 	/**
