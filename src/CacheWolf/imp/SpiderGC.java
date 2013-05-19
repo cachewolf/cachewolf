@@ -1554,7 +1554,7 @@ public class SpiderGC {
 			return distanceAndDirection;
 		}
 		stmp = DistDirRex.stringMatched(3);
-		distanceAndDirection[0] = Convert.toDouble(stmp.replace(',', '.'));
+		distanceAndDirection[0] = Common.parseDouble(stmp);
 		stmp = DistDirRex.stringMatched(1);
 		if (stmp.equals("N"))
 			distanceAndDirection[1] = 0.0;
