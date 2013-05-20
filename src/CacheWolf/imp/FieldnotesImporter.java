@@ -57,6 +57,9 @@ public class FieldnotesImporter {
 				r = new FileReader(file);
 				r.codec=new NoCodec();
 				r.read(); // for checking of Codec
+				r.close();
+				r = new FileReader(file);
+				r.codec=new NoCodec(true);
 			}
 			catch (Error e) {
 				r.close();
@@ -65,7 +68,6 @@ public class FieldnotesImporter {
 					r.codec=new JavaUtf8Codec();
 				}
 				else if (e.getMessage().equals("ASCII")){
-					// r.codec=new NoCodec(true);
 					r.codec = new ewe.io.AsciiCodec();
 				}
 				else {
@@ -195,7 +197,11 @@ public CharArray decodeText(byte [] encoded, int start, int length, boolean endO
 		if (magicNumber!=-513) {
 			if (magicNumber==-17681) {
 				throw new Error("UTF-8");}
-			else {throw new Error("ASCII");}
+			else {
+				if (encoded[start+1] != 0)
+				throw new Error("ASCII");
+				else return null;
+				}
 		}
 	}
 	for (int i = start; i < start+length; i++) {
