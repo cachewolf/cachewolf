@@ -64,6 +64,7 @@ public class BetterUTF8Codec extends JavaUtf8Codec implements TextCodec {
 					else {
 						readbackBuffer = new byte[1];
 						readbackBuffer[0] = b1;
+						break;
 					}
 				}
 				else if ((b1 & 0xf0) == 0xe0) {
@@ -76,7 +77,8 @@ public class BetterUTF8Codec extends JavaUtf8Codec implements TextCodec {
 					}
 					else {
 						readbackBuffer = new byte[paramArrayOfByte.length - i];
-						Vm.arraycopy(readbackBuffer, 0, paramArrayOfByte, i, readbackBuffer.length);
+						Vm.arraycopy(paramArrayOfByte, i, readbackBuffer, 0,readbackBuffer.length);
+						break;
 					}
 				}
 				else if ((b1 & 0xf8) == 0xf0) {
@@ -86,7 +88,8 @@ public class BetterUTF8Codec extends JavaUtf8Codec implements TextCodec {
 					}
 					else {
 						readbackBuffer = new byte[paramArrayOfByte.length - i];
-						Vm.arraycopy(readbackBuffer, 0, paramArrayOfByte, i, readbackBuffer.length);
+						Vm.arraycopy(paramArrayOfByte, i,readbackBuffer, 0, readbackBuffer.length);
+						break;
 					}
 				}
 				else {
