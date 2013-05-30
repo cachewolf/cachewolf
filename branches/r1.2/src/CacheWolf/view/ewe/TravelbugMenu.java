@@ -28,7 +28,6 @@ import CacheWolf.TravelbugJourney;
 import CacheWolf.TravelbugList;
 import CacheWolf.TravelbugPickup;
 import CacheWolf.imp.SpiderGC;
-import CacheWolf.model.DefaultListModel;
 import CacheWolf.model.TravelBugJourneyScreenModel;
 import CacheWolf.utils.CWWrapper;
 import ewe.fx.Rect;

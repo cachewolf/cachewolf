@@ -43,11 +43,11 @@
 package CacheWolf.utils;
 // import ewe.sys.*;
 // import ewe.util.ByteArray;
-import ewe.io.InputStream;
-import ewe.io.StreamAdapter;
 import ewe.io.BufferedStream;
-import ewe.io.RandomAccessStream;
 import ewe.io.IOException;
+import ewe.io.InputStream;
+import ewe.io.RandomAccessStream;
+import ewe.io.StreamAdapter;
 
 /**
 * This class is used to get a "sub-stream" of data from another Stream. The

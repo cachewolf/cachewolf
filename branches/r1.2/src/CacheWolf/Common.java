@@ -22,7 +22,6 @@ See http://www.cachewolf.de/ for more information.
 package CacheWolf;
 
 
-import ewe.io.File;
 import CacheWolf.utils.FileBugfix;
 
 public final class Common {

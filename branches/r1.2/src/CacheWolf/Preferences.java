@@ -47,9 +47,9 @@ import ewe.util.Comparer;
 import ewe.util.Enumeration;
 import ewe.util.Hashtable;
 import ewe.util.Iterator;
+import ewe.util.Map.MapEntry;
 import ewe.util.StringTokenizer;
 import ewe.util.Utils;
-import ewe.util.Map.MapEntry;
 import ewesoft.xml.MinML;
 import ewesoft.xml.sax.AttributeList;
 

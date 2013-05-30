@@ -143,6 +143,8 @@ public class GPXImporter extends MinML {
 			}
 
 			Vm.showWait(true);
+			infB = new InfoBox("","");
+			infB.show();
 			for (int i = 0; i < files.size(); i++) {
 				// Test for zip.file
 				file = (String) files.get(i);
@@ -158,8 +160,8 @@ public class GPXImporter extends MinML {
 							r = new InputStreamReader(zif.getInputStream(zipEnt));		
 							TextReader tr= new TextReader(zif.getInputStream(zipEnt));
 							tr.codec= new AsciiCodec();
-							infB = new InfoBox(zipEnt.toString(), (MyLocale.getMsg(4000, "Loaded caches: ") + zaehlerGel));
-							infB.show();
+							infB.setTitle(zipEnt.toString());
+							infB.setInfo(MyLocale.getMsg(4000, "Loaded caches: ") + zaehlerGel);
 							
 							String readLine = tr.readLine().toLowerCase();
 							if (readLine.startsWith("﻿") || readLine.indexOf("encoding=\"utf-8\"") > 0){
@@ -171,15 +173,14 @@ public class GPXImporter extends MinML {
 							}
 							parse(tr);
 							tr.close();
-							infB.close(0);
 						}
 					}
 					zif.close();
 				} else {
 					TextReader tr = new TextReader(file);
 					tr.codec = new AsciiCodec();
-					infB = new InfoBox("Info", (MyLocale.getMsg(4000, "Loaded caches: ") + zaehlerGel));
-					infB.show();
+					infB.setTitle("Info");
+					infB.setInfo(MyLocale.getMsg(4000, "Loaded caches: ") + zaehlerGel);
 					
 					String readLine = tr.readLine().toLowerCase();
 					if (readLine.startsWith("﻿") || readLine.indexOf("encoding=\"utf-8\"") > 0){
@@ -189,12 +190,12 @@ public class GPXImporter extends MinML {
 					}
 					parse(tr);
 					tr.close();
-					infB.close(0);
 				}
 				// save Index
 				profile.saveIndex(pref, Profile.SHOW_PROGRESS_BAR);
 			}
 			Vm.showWait(false);
+			infB.close(0);
 		} catch (Exception e) {
 
 			if (holder == null) {

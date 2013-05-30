@@ -24,7 +24,6 @@ package CacheWolf.exp;
 import CacheWolf.CacheDB;
 import CacheWolf.CacheHolder;
 import CacheWolf.CacheHolderDetail;
-import CacheWolf.Common;
 import CacheWolf.DataMover;
 import CacheWolf.Global;
 import CacheWolf.ImageInfo;
@@ -32,27 +31,28 @@ import CacheWolf.MyLocale;
 import CacheWolf.Preferences;
 import CacheWolf.Profile;
 import CacheWolf.utils.FileBugfix;
+
+import com.stevesoft.ewe_pat.Regex;
+
 import ewe.filechooser.FileChooser;
 import ewe.filechooser.FileChooserBase;
 import ewe.io.File;
 import ewe.sys.Handle;
-import ewe.util.CharArray;
 import ewe.ui.CellConstants;
 import ewe.ui.CheckBoxGroup;
 import ewe.ui.ControlEvent;
 import ewe.ui.Event;
+import ewe.ui.Form;
 import ewe.ui.FormBase;
 import ewe.ui.IKeys;
 import ewe.ui.MessageBox;
+import ewe.ui.Panel;
 import ewe.ui.ProgressBarForm;
 import ewe.ui.mButton;
 import ewe.ui.mCheckBox;
-import ewe.util.Hashtable;
-import ewe.ui.Form;
-import ewe.ui.Panel;
-import ewe.ui.mLabel;
 import ewe.ui.mInput;
-import com.stevesoft.ewe_pat.Regex;
+import ewe.ui.mLabel;
+import ewe.util.Hashtable;
 
 
 
