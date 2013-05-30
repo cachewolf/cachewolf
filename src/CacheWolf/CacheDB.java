@@ -25,8 +25,8 @@ import CacheWolf.utils.MutableInteger;
 import ewe.util.Comparer;
 import ewe.util.Hashtable;
 import ewe.util.Iterator;
-import ewe.util.Vector;
 import ewe.util.Map.MapEntry;
+import ewe.util.Vector;
 
 /**
  * @author torsti

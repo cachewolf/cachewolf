@@ -25,8 +25,8 @@ import ewe.fx.Dimension;
 import ewe.util.Hashtable;
 import ewe.util.Iterator;
 import ewe.util.Map;
-import ewe.util.Vector;
 import ewe.util.Map.MapEntry;
+import ewe.util.Vector;
 
 public class MovingMapCache {
 

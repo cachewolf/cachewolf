@@ -25,7 +25,6 @@ import CacheWolf.CacheDB;
 import CacheWolf.CacheHolder;
 import CacheWolf.Preferences;
 import CacheWolf.Profile;
-import CacheWolf.STRreplace;
 import ewe.io.FileReader;
 import ewe.io.IOException;
 import ewe.io.JavaUtf8Codec;
