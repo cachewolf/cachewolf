@@ -31,6 +31,7 @@ import CacheWolf.CacheType;
 import CacheWolf.Common;
 import CacheWolf.Extractor;
 import CacheWolf.Filter;
+import CacheWolf.Global;
 import CacheWolf.ImageInfo;
 import CacheWolf.InfoBox;
 import CacheWolf.Log;
@@ -143,7 +144,7 @@ public class GPXImporter extends MinML {
 			}
 
 			Vm.showWait(true);
-			infB = new InfoBox("","");
+			infB = new InfoBox("Info",MyLocale.getMsg(4000, "Loaded caches: "));
 			infB.show();
 			for (int i = 0; i < files.size(); i++) {
 				// Test for zip.file
@@ -160,8 +161,10 @@ public class GPXImporter extends MinML {
 							r = new InputStreamReader(zif.getInputStream(zipEnt));		
 							TextReader tr= new TextReader(zif.getInputStream(zipEnt));
 							tr.codec= new AsciiCodec();
-							infB.setTitle(zipEnt.toString());
-							infB.setInfo(MyLocale.getMsg(4000, "Loaded caches: ") + zaehlerGel);
+							// infB.setTitle(zipEnt.toString());
+							// infB.setInfo(MyLocale.getMsg(4000, "Loaded caches: ") + zaehlerGel);
+							if (Global.mainTab.statBar != null)
+								Global.mainTab.statBar.updateDisplay(MyLocale.getMsg(4000, "Loaded caches: ") + zaehlerGel);
 							
 							String readLine = tr.readLine().toLowerCase();
 							if (readLine.startsWith("﻿") || readLine.indexOf("encoding=\"utf-8\"") > 0){
@@ -179,8 +182,10 @@ public class GPXImporter extends MinML {
 				} else {
 					TextReader tr = new TextReader(file);
 					tr.codec = new AsciiCodec();
-					infB.setTitle("Info");
-					infB.setInfo(MyLocale.getMsg(4000, "Loaded caches: ") + zaehlerGel);
+					// infB.setTitle("Info");
+					// infB.setInfo(MyLocale.getMsg(4000, "Loaded caches: ") + zaehlerGel);
+					if (Global.mainTab.statBar != null)
+						Global.mainTab.statBar.updateDisplay(MyLocale.getMsg(4000, "Loaded caches: ") + zaehlerGel);
 					
 					String readLine = tr.readLine().toLowerCase();
 					if (readLine.startsWith("﻿") || readLine.indexOf("encoding=\"utf-8\"") > 0){
@@ -255,7 +260,9 @@ public class GPXImporter extends MinML {
 			inBug = false;
 			nameFound = false;
 			zaehlerGel++;
-			infB.setInfo(MyLocale.getMsg(4000, "Loaded caches: ") + zaehlerGel);
+			// infB.setInfo(MyLocale.getMsg(4000, "Loaded caches: ") + zaehlerGel);
+			if (Global.mainTab.statBar != null)
+				Global.mainTab.statBar.updateDisplay(MyLocale.getMsg(4000, "Loaded caches: ") + zaehlerGel);
 			logId = "";
 			return;
 		}
