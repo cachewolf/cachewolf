@@ -1943,8 +1943,8 @@ public class SpiderGC {
 				}
 			} // spiderTrys
 			if ((spiderTrys >= MAX_SPIDER_TRYS) && (ret == SPIDER_OK)) {
-				pref.log(">>> Failed to spider cache. Number of retrys exhausted.", null);
-				final int decision = (new MessageBox(MyLocale.getMsg(5500, "Error"), MyLocale.getMsg(5515, "Failed to load cache.%0aPleas check your internet connection.%0aRetry?"), FormBase.DEFOKB | FormBase.NOB | FormBase.CANCELB))
+				pref.log(">>> Failed to spider cache. Number of retries exhausted.", null);
+				final int decision = (new MessageBox(MyLocale.getMsg(5500, "Error"), MyLocale.getMsg(5515, "Failed to load cache.%0aPlease check your internet connection.%0aRetry?"), FormBase.DEFOKB | FormBase.NOB | FormBase.CANCELB))
 						.execute();
 				if (decision == FormBase.IDOK) {
 					continue; // retry even if failure
