@@ -20,8 +20,8 @@ RequestUrlPart:     REQUEST=GetMap
 LayersUrlPart:     LAYERS=rlp%3Atk50
 StylesUrlPart:     STYLES=
 ImageFormatUrlPart:FORMAT=image/png
-BoundingBoxTopLeftWGS84: N 51.0000 E 6.0000
-BoundingBoxBottomRightWGS84: N 48.8000 E 8.7000
+BoundingBoxTopLeftWGS84: N 51.0191 E 5.9086
+BoundingBoxBottomRightWGS84: N 48.7512 E 8.68687
 MinScale:   1
 MaxScale:   50
 RecommendedScale:   5
