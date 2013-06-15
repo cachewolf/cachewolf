@@ -1,8 +1,8 @@
 TakenFromUrl:       http://www.vermkv.rlp.de
 GetCapabilitiesUrl: http://geodaten.service24.rlp.de/cgi-bin/wms.cgi?SERVICE=WMS&VERSION=1.1.1&REQUEST=GetCapabilities
-Name:               de.Rheinland-Pfalz t25 sf=0,5..6
+Name:               de.Rheinland-Pfalz x25 sf=0,5..6
 MapType:                        topo
-MainUrl:            http://geodaten.service24.rlp.de/cgi-bin/wms.cgi?
+MainUrl:            http://geo4.service24.rlp.de/wms/dtk25.fcgi?
 ServiceTypeUrlPart: SERVICE=WMS
 VersionUrlPart:     VERSION=1.1.1
 CoordinateReferenceSystemCacheWolf:  31466 31467
@@ -17,7 +17,7 @@ RequestUrlPart:     REQUEST=GetMap
 #LayersUrlPart:     LAYERS=rlp:tk50|TK 1:50.000|8.001|15
 #LayersUrlPart:     LAYERS=rlp:tk25|TK 1:25.000|1|8
 #LayersUrlPart:     LAYERS=likar:likar|Liegenschaftskarte-WA|0.001|3
-LayersUrlPart:     LAYERS=rlp%3Atk25
+LayersUrlPart:     LAYERS=rp_dtk25
 StylesUrlPart:     STYLES=
 ImageFormatUrlPart:FORMAT=image/png
 BoundingBoxTopLeftWGS84: N 51.0000 E 6.0000
