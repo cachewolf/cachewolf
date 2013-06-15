@@ -1,8 +1,8 @@
 TakenFromUrl:	http://deutschlandviewer.bayern.de/deutschlandviewer/D_Viewer_Hilfe/Hilfe_D_Viewer.htm#Geodaten
-GetCapabilitiesUrl:	http://geodaten.service24.rlp.de/cgi-bin/wms.cgi?REQUEST=GetCapabilities&VERSION=1.1.0&SERVICE=WMS
-Name:	de.Rheinland-Pfalz photo SF=0,36..17,6
+GetCapabilitiesUrl:	http://geo4.service24.rlp.de/wms/dop_basis.fcgi?REQUEST=GetCapabilities&VERSION=1.1.0&SERVICE=WMS
+Name:	de.Rheinland-Pfalz photox SF=0,36..17,6
 MapType:	photo
-MainUrl:	http://geodaten.service24.rlp.de/cgi-bin/wms.cgi?
+MainUrl:	http://geo4.service24.rlp.de/wms/dop_basis.fcgi?
 ServiceTypeUrlPart:	SERVICE=WMS 
 VersionUrlPart:	VERSION=1.1.1 
 CoordinateReferenceSystemCacheWolf:   31466 31467
@@ -17,13 +17,13 @@ RequestUrlPart:   REQUEST=GetMap
 #LayersUrlPart:     LAYERS=rlp:tk50|TK 1:50.000|8.001|15
 #LayersUrlPart:     LAYERS=rlp:tk25|TK 1:25.000|1|8
 #LayersUrlPart:     LAYERS=likar:likar|Liegenschaftskarte-WA|0.001|3
-LayersUrlPart:   LAYERS=freedop%3Adop
+LayersUrlPart:   LAYERS=rp_dop
 StylesUrlPart:   STYLES=
-ImageFormatUrlPart:   FORMAT=image/jpeg
+ImageFormatUrlPart:   FORMAT=image/png
 BoundingBoxTopLeftWGS84: N 51.0000 E 6.0000
 BoundingBoxBottomRightWGS84: N 48.8000 E 8.7000
 MinScale:   0.5
 MaxScale:   24.95
-RecommendedScale:	0.4
+RecommendedScale:	0.5 0.4
 ImageFileExtension: .jpg 
 # weitergehende Skaliwerungen nicht geprüft
