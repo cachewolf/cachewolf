@@ -86,6 +86,8 @@ public class Profile {
 	private boolean filterInverted = false;
 	private boolean showBlacklisted = false;
 	private boolean showSearchResult = false;
+	private String timeZoneOffset = "0";
+	private boolean timeZoneAutoDST = false;
 
 	public boolean selectionChanged = true; // ("Häckchen") used by movingMap to get to knao if it should update the caches in the map
 	/**
@@ -232,6 +234,7 @@ public class Profile {
 			detfile.print("    <SPIDERGC dist = \"" + getDistGC() + "\" mindist = \"" + getMinDistGC() + "\" direction = \"" + getDirectionGC() + "\"/>\n");
 			detfile.print("    <EXPORT style = \"" + getGpxStyle() + "\" target = \"" + getGpxTarget() + "\" id = \"" + getGpxId() + "\"/>\n");
 			detfile.print("    <mapspath relativeDir = \"" + SafeXML.clean(relativeCustomMapsPath) + "\"/>\n");
+			detfile.print("    <TIMEZONE timeZoneOffset = \"" + getTimeZoneOffset() + "\" timeZoneAutoDST = \"" + getTimeZoneAutoDST() + "\"/>\n");
 			int size = cacheDB.size();
 			for (int i = 0; i < size; i++) {
 				if (showprogress) {
@@ -368,6 +371,19 @@ public class Profile {
 						setGpxId("0");
 					} else
 						setGpxId(text.substring(start, text.indexOf("\"", start)));
+				} else if (text.indexOf("<TIMEZONE") >= 0) {
+					int start = text.indexOf("timeZoneOffset = \"") + 18;
+					if (start == 17) {
+						setTimeZoneOffset("0");
+					} else {
+						setTimeZoneOffset(text.substring(start, text.indexOf("\"", start)));
+					}
+					start = text.indexOf("timeZoneAutoDST = \"") + 19;
+					if (start == 18) {
+						setTimeZoneAutoDST(false);
+					} else {
+						setTimeZoneAutoDST(text.substring(start, text.indexOf("\"", start)));
+					}
 				} else if (indexXmlVersion <= 2 && text.indexOf("<FILTER") >= 0) {
 					// Read filter data of file versions 1 and 2. (Legacy code)
 					String temp = ex.findFirst(text.substring(text.indexOf("<FILTER"))); // Filter status is now first, need to deal with old versions which don't have filter status
@@ -900,6 +916,50 @@ public class Profile {
 	public void setRelativeCustomMapsPath(String rCMPath) {
 		this.notifyUnsavedChanges(!rCMPath.equals(this.relativeCustomMapsPath));
 		this.relativeCustomMapsPath = rCMPath;
+	}
+	
+	public long getTimeZoneOffsetLong() {
+		long offset = 0;
+		if ( timeZoneOffset.equalsIgnoreCase("auto") ) {
+			offset = 100;
+		} else {
+			try {
+				offset = Convert.toInt(timeZoneOffset);
+			} catch (Exception e) {
+				offset = 0;
+			}
+		}
+		return offset;
+	}
+
+	public String getTimeZoneOffset() {
+		return timeZoneOffset;
+	}
+	
+	public void setTimeZoneOffset(String offset) {
+		this.notifyUnsavedChanges(!offset.equals(this.timeZoneOffset));
+		this.timeZoneOffset = offset;
+	}
+	
+	public boolean getTimeZoneAutoDST() {
+		return timeZoneAutoDST;
+	}
+	
+	public void setTimeZoneAutoDST(boolean autoDST) {
+		this.notifyUnsavedChanges( autoDST != this.timeZoneAutoDST);
+		this.timeZoneAutoDST = autoDST;
+	}
+	
+	public void setTimeZoneAutoDST(String autoDST) {
+		boolean newAutoDST = false;
+		
+		try {
+			newAutoDST = Convert.toBoolean(autoDST);
+		} catch (Exception e) {
+			newAutoDST = false;
+		}
+		
+		setTimeZoneAutoDST(newAutoDST);		
 	}
 
 	/**

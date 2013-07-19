@@ -23,12 +23,14 @@ package CacheWolf.imp;
 
 import CacheWolf.CacheDB;
 import CacheWolf.CacheHolder;
+import CacheWolf.Global;
 import CacheWolf.Preferences;
 import CacheWolf.Profile;
 import ewe.io.FileReader;
 import ewe.io.IOException;
 import ewe.io.JavaUtf8Codec;
 import ewe.io.TextCodec;
+import ewe.sys.Time;
 import ewe.sys.Vm;
 import ewe.util.ByteArray;
 import ewe.util.CharArray;
@@ -91,6 +93,9 @@ public class FieldnotesImporter {
 		final byte DATEPOS=1;
 		final byte LOGTYPPOS=2;
 		String[] l=mString.split(s,'"');
+		
+		long timeZoneOffset = Global.getProfile().getTimeZoneOffsetLong();
+
 		for (int i = 0; i < l.length; i++) {
 			String s1=l[i];
 			i++;
@@ -107,7 +112,46 @@ public class FieldnotesImporter {
 			if (ch!=null) {
 				if (l1[LOGTYPPOS].equals(ch.getGCFoundText())) {
 					// String stmp=ch.getCacheStatus();
-					ch.setCacheStatus(l1[DATEPOS].replace('T',' ').replace('Z', ' ').trim());
+
+					String logTimeString = l1[DATEPOS].replace('T',' ').replace('Z', ' ').trim();
+										
+					if ( timeZoneOffset != 0 || Global.getProfile().getTimeZoneAutoDST() ) {
+						try {
+							Time logTime = new Time();
+							logTime.parse(logTimeString, "yyyy-MM-dd HH:mm");
+							
+							long timeZoneOffsetMillis = 0;
+							
+							if (timeZoneOffset == 100) { //autodetect
+								timeZoneOffsetMillis = Time.convertSystemTime(logTime.getTime(), false) - logTime.getTime();
+							} else {
+								timeZoneOffsetMillis = timeZoneOffset*3600000;							
+							}
+							
+							if ( Global.getProfile().getTimeZoneAutoDST() ) {
+								int lsM = (byte) (31 - ((int)(5 * logTime.year / 4) + 4) % 7);//last Sunday in March
+								int lsO = (byte) (31 - ((int)(5 * logTime.year / 4) + 1) % 7);//last Sunday in October
+								
+								Time dstStart = new Time(lsM, 3, logTime.year);
+								dstStart.hour = 2;
+								dstStart.setTime( dstStart.getTime() - timeZoneOffsetMillis );
+								Time dstEnd = new Time(lsO, 10, logTime.year);
+								dstEnd.hour = 1;
+								dstEnd.minute = 59;
+								dstEnd.setTime( dstEnd.getTime() - timeZoneOffsetMillis );
+								
+								if ( logTime.after(dstStart) && logTime.before(dstEnd) ) {
+									timeZoneOffsetMillis += 3600000;
+								}							
+							}
+							
+							logTime.setTime(logTime.getTime() + timeZoneOffsetMillis );							
+							logTimeString = logTime.format("yyyy-MM-dd HH:mm");
+						} catch (IllegalArgumentException e) {
+						}
+					}
+					
+					ch.setCacheStatus(logTimeString);
 					ch.setFound(true);
 				} else {
 					String stmp=ch.getCWLogText(l1[LOGTYPPOS]);
