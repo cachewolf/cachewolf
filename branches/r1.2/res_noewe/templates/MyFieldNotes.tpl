@@ -1,4 +1,4 @@
-﻿<#-- My Field Notes for uploading by http://www.geocaching.com/my/uploadfieldnotes.aspx -->
+<#-- My Field Notes for uploading by http://www.geocaching.com/my/uploadfieldnotes.aspx -->
 <tmpl_par name="Out" value="*.txt">
 <tmpl_par name="charset" value="UTF8">
 <tmpl_par name="newline" value="CRLF">
@@ -10,7 +10,7 @@
 <tmpl_unless MAINWP>
 <tmpl_if STATUS>
 <tmpl_if STATUS_DATE>
-<tmpl_var name=WAYPOINT>,<tmpl_var name=STATUS_DATE>T<tmpl_var name=STATUS_TIME>Z,<tmpl_var name=GC_LOGTYPE>,"#<tmpl_var __COUNTER__> <tmpl_var name=STATUS><br>
+<tmpl_var name=WAYPOINT>,<tmpl_var name=STATUS_UTC_DATE>T<tmpl_var name=STATUS_UTC_TIME>Z,<tmpl_var name=GC_LOGTYPE>,"#<tmpl_var __COUNTER__> <tmpl_var name=STATUS><br>
 <tmpl_var name=NOTES>
 DfdC sagt <tmpl_var name=ALIAS>
 "<br>
