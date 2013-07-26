@@ -669,6 +669,8 @@ public class CacheHolder {
 		varParams.put("GC_LOGTYPE", getGCLogType());
 		varParams.put("STATUS_DATE", getStatusDate());
 		varParams.put("STATUS_TIME", getStatusTime());
+		varParams.put("STATUS_UTC_DATE", getStatusUtcDate());
+		varParams.put("STATUS_UTC_TIME", getStatusUtcTime());
 		varParams.put("CACHE_NAME", cacheName);
 		String cn = cacheName;
 		if (codec instanceof AsciiCodec) {
@@ -1256,6 +1258,111 @@ public class CacheHolder {
 
 		return statusTime;
 	}
+	
+	public String getStatusUtcDate() {
+		String statusDate = getStatusDate();
+
+		long timeZoneOffset = Global.getProfile().getTimeZoneOffsetLong();
+
+		if ( timeZoneOffset != 0 || Global.getProfile().getTimeZoneAutoDST() ) {
+			//convert to UTC only if time is set
+			Regex rexTime = new Regex("([0-9]{1,2}:[0-9]{2})");
+			rexTime.search(getCacheStatus());
+			if (rexTime.stringMatched(1) != null) {
+				String statusDateTime = (statusDate + " " + getStatusTime()).trim();	
+				if ( statusDateTime.length() > 0) {
+					try {
+						Time logTime = new Time();
+						logTime.parse(statusDateTime, "yyyy-MM-dd HH:mm");
+
+						long timeZoneOffsetMillis = 0;
+
+						if (timeZoneOffset == 100) { //autodetect
+							timeZoneOffsetMillis = Time.convertSystemTime(logTime.getTime(), false) - logTime.getTime();
+						} else {
+							timeZoneOffsetMillis = timeZoneOffset*3600000;							
+						}
+
+						if ( Global.getProfile().getTimeZoneAutoDST() ) {
+							int lsM = (byte) (31 - ((int)(5 * logTime.year / 4) + 4) % 7);//last Sunday in March
+							int lsO = (byte) (31 - ((int)(5 * logTime.year / 4) + 1) % 7);//last Sunday in October
+
+							Time dstStart = new Time(lsM, 3, logTime.year);
+							dstStart.hour = 2;
+							dstStart.setTime( dstStart.getTime() - timeZoneOffsetMillis );
+							Time dstEnd = new Time(lsO, 10, logTime.year);
+							dstEnd.hour = 1;
+							dstEnd.minute = 59;
+							dstEnd.setTime( dstEnd.getTime() - timeZoneOffsetMillis );
+
+							if ( logTime.after(dstStart) && logTime.before(dstEnd) ) {
+								timeZoneOffsetMillis += 3600000;
+							}							
+						}
+
+						logTime.setTime(logTime.getTime() - timeZoneOffsetMillis );							
+						statusDate = logTime.format("yyyy-MM-dd");
+					} catch (IllegalArgumentException e) {
+					}
+				}
+			}
+		}
+
+		return statusDate;
+	}
+
+	public String getStatusUtcTime() {
+		String statusTime = getStatusTime();
+
+		long timeZoneOffset = Global.getProfile().getTimeZoneOffsetLong();
+
+		if ( timeZoneOffset != 0 || Global.getProfile().getTimeZoneAutoDST() ) {
+			//convert to UTC only if time is set
+			Regex rexTime = new Regex("([0-9]{1,2}:[0-9]{2})");
+			rexTime.search(getCacheStatus());
+			if (rexTime.stringMatched(1) != null) {
+				String statusDateTime = (getStatusDate() + " " + statusTime).trim();	
+				if ( statusDateTime.length() > 0) {
+					try {
+						Time logTime = new Time();
+						logTime.parse(statusDateTime, "yyyy-MM-dd HH:mm");
+
+						long timeZoneOffsetMillis = 0;
+
+						if (timeZoneOffset == 100) { //autodetect
+							timeZoneOffsetMillis = Time.convertSystemTime(logTime.getTime(), false) - logTime.getTime();
+						} else {
+							timeZoneOffsetMillis = timeZoneOffset*3600000;							
+						}
+
+						if ( Global.getProfile().getTimeZoneAutoDST() ) {
+							int lsM = (byte) (31 - ((int)(5 * logTime.year / 4) + 4) % 7);//last Sunday in March
+							int lsO = (byte) (31 - ((int)(5 * logTime.year / 4) + 1) % 7);//last Sunday in October
+
+							Time dstStart = new Time(lsM, 3, logTime.year);
+							dstStart.hour = 2;
+							dstStart.setTime( dstStart.getTime() - timeZoneOffsetMillis );
+							Time dstEnd = new Time(lsO, 10, logTime.year);
+							dstEnd.hour = 1;
+							dstEnd.minute = 59;
+							dstEnd.setTime( dstEnd.getTime() - timeZoneOffsetMillis );
+
+							if ( logTime.after(dstStart) && logTime.before(dstEnd) ) {
+								timeZoneOffsetMillis += 3600000;
+							}							
+						}
+
+						logTime.setTime(logTime.getTime() - timeZoneOffsetMillis );							
+						statusTime = logTime.format("HH:mm");
+					} catch (IllegalArgumentException e) {
+					}
+				}
+			}
+		}
+
+		return statusTime;
+	}
+
 
 	public String GetCacheID() {
 		String result = "";
