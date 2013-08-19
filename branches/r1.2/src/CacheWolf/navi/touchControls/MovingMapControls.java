@@ -22,7 +22,6 @@
 package CacheWolf.navi.touchControls;
 
 import CacheWolf.Global;
-import CacheWolf.Preferences;
 import CacheWolf.navi.MovingMap;
 import ewe.fx.Dimension;
 import ewe.fx.Point;
@@ -45,26 +44,25 @@ public class MovingMapControls implements ICommandListener {
 	public static final String ROLE_WORKING = "working";
 	Vector buttons = null;
 	Vector visibleImages = null;
-	private boolean vga;
 	private MovingMap movingMap;
 	private int lastTime = Vm.getTimeStamp();
 	private Hashtable roles = new Hashtable();
+
 	public MovingMapControls(MovingMap movingMap) {
 		if (movingMap == null) {
 			throw new IllegalArgumentException("moving map not set");
 		}
 		Vm.showWait(movingMap, true);
-		this.vga = movingMap.isMobileVga();
 		this.movingMap = movingMap;
 		Dimension di = new Dimension();
 		movingMap.getDisplayedSize(di);
-		MovingMapControlSettings movingMapControlSettings = new MovingMapControlSettings(vga, roles);
+		MovingMapControlSettings movingMapControlSettings = new MovingMapControlSettings(this.movingMap.isMobileVGA(), roles);
 
 		movingMapControlSettings.readFile();
 		buttons = movingMapControlSettings.getMenuItems();
-		
-		checkStatesofRole(Global.getPref());
-				
+
+		checkStatesofRole();
+
 		visibleImages = new Vector();
 
 		roles.put(ROLE_WORKING, new Role());
@@ -76,23 +74,24 @@ public class MovingMapControls implements ICommandListener {
 
 	/**
 	 * some roles are active at start
-	 * @param pref 
+	 * 
+	 * @param pref
 	 */
-	private void checkStatesofRole(Preferences pref) {
+	private void checkStatesofRole() {
 		Role role = getRole(ROLE_FILL_WHITE);
-		if (role!=null) {
-			role.setState(pref.fillWhiteArea);
+		if (role != null) {
+			role.setState(Global.pref.fillWhiteArea);
 		}
 		role = getRole(ROLE_SHOW_CACHES);
-		if (role!=null) {
-			role.setState(pref.showCachesOnMap);
+		if (role != null) {
+			role.setState(Global.pref.showCachesOnMap);
 		}
 	}
 
 	private void setStateOfIcons() {
 		for (int i = 0; i < visibleImages.size(); i++) {
 			AniImage ani = (AniImage) visibleImages.get(i);
-			movingMap.getMmp().removeImage(ani);
+			movingMap.removeImage(ani);
 		}
 		for (int i = 0; i < buttons.size(); i++) {
 			MovingMapControlItem item = (MovingMapControlItem) buttons.get(i);
@@ -104,7 +103,7 @@ public class MovingMapControls implements ICommandListener {
 			if (ani == null) {
 				continue;
 			}
-			movingMap.getMmp().addImage(ani);
+			movingMap.addImage(ani);
 			visibleImages.add(ani);
 		}
 	}
@@ -117,19 +116,21 @@ public class MovingMapControls implements ICommandListener {
 		Role r = (Role) object;
 		if (r.getState() == true) {
 			return changeRoleState(role, r, false);
-		} else {
+		}
+		else {
 			return changeRoleState(role, r, true);
 		}
 	}
 
 	public boolean getStateOfRole(String role) {
-		Role r =getRole(role);
+		Role r = getRole(role);
 		if (r == null) {
 			return false;
 		}
 		return r.getState();
 
 	}
+
 	public Role getRole(String role) {
 		Object object = roles.get(role);
 		if (object == null) {
@@ -138,6 +139,7 @@ public class MovingMapControls implements ICommandListener {
 		return (Role) object;
 
 	}
+
 	public boolean changeRoleState(String role, boolean b) {
 		Object object = roles.get(role);
 		if (object == null) {
@@ -158,9 +160,10 @@ public class MovingMapControls implements ICommandListener {
 					changeRoleState(roleToDis, false);
 				}
 			}
-		}else if (ROLE_MENU.equals(roleName)) {
+		}
+		else if (ROLE_MENU.equals(roleName)) {
 			Role done = getRole(ROLE_DONE);
-			if ( done != null ) { // I (pfeffer) added this because it caused an NullPointerException on PPC2003. I guess that "if (ROLE_MENU.equals(..." is not needed any more - old code? 
+			if (done != null) { // I (pfeffer) added this because it caused an NullPointerException on PPC2003. I guess that "if (ROLE_MENU.equals(..." is not needed any more - old code? 
 				String[] rToDis = done.getRolesToDisable();
 				if (rToDis != null) {
 					for (int i = 0; i < rToDis.length; i++) {
@@ -170,13 +173,13 @@ public class MovingMapControls implements ICommandListener {
 				}
 			}
 		}
-			
+
 		setStateOfIcons();
 
 		boolean action = checkRolesForAction(roleName, b);
-//		if (action) {
-//
-//		}
+		//		if (action) {
+		//
+		//		}
 		if (getStateOfRole(ROLE_WORKING)) {
 			changeRoleState(ROLE_WORKING, false);
 		}
@@ -193,14 +196,16 @@ public class MovingMapControls implements ICommandListener {
 			changeRoleState(ROLE_WORKING, true);
 			if (state) {
 				return movingMap.handleCommand(SHOW_MAP);
-			} else
+			}
+			else
 				return movingMap.handleCommand(HIDE_MAP);
 		}
 		if (ROLE_SHOW_CACHES.equals(role)) {
 			changeRoleState(ROLE_WORKING, true);
 			if (state) {
 				return movingMap.handleCommand(SHOW_CACHES);
-			} else
+			}
+			else
 				return movingMap.handleCommand(HIDE_CACHES);
 		}
 
@@ -208,7 +213,8 @@ public class MovingMapControls implements ICommandListener {
 			changeRoleState(ROLE_WORKING, true);
 			if (state) {
 				return movingMap.handleCommand(FILL_MAP);
-			} else
+			}
+			else
 				return movingMap.handleCommand(NO_FILL_MAP);
 		}
 
@@ -216,7 +222,8 @@ public class MovingMapControls implements ICommandListener {
 			changeRoleState(ROLE_WORKING, true);
 			if (state) {
 				movingMap.setZoomingMode(true);
-			} else
+			}
+			else
 				movingMap.setZoomingMode(false);
 			return true;
 		}
@@ -224,7 +231,8 @@ public class MovingMapControls implements ICommandListener {
 		if (ROLE_MENU.equals(role)) {
 			if (state) {
 				movingMap.setPaintPosDestLine(false);
-			} else
+			}
+			else
 				movingMap.setPaintPosDestLine(true);
 			return false;
 		}
@@ -240,7 +248,7 @@ public class MovingMapControls implements ICommandListener {
 	// }
 	// }
 	// if (MOVE_TO_CENTER.equals(item.getActionCommand())) {
-	// if (Global.getPref().getCurCentrePt().isValid())
+	// if (Global.pref.getCurCentrePt().isValid())
 	// ani.properties &= ~mImage.IsNotHot;
 	// else {
 	// ani.properties |= mImage.IsNotHot;
@@ -262,7 +270,7 @@ public class MovingMapControls implements ICommandListener {
 
 			if ((item.xProperties & MovingMapControlItem.IS_ICON_WITH_TEXT) != 0) {
 				if (contentName.equals(item.getContent())) {
-					item.setText(item.getText()+text);
+					item.setText(item.getText() + text);
 				}
 			}
 			if ((item.xProperties & MovingMapControlItem.IS_ICON_WITH_FRONTLINE) != 0) {
@@ -280,8 +288,7 @@ public class MovingMapControls implements ICommandListener {
 		for (int i = 0; i < buttons.size(); i++) {
 			MovingMapControlItem item = (MovingMapControlItem) buttons.get(i);
 
-			if ((item.xProperties & MovingMapControlItem.IS_ICON_WITH_COMMAND) == 0
-					&& (item.xProperties & MovingMapControlItem.IS_ICON_WITH_TEXT) == 0) {
+			if ((item.xProperties & MovingMapControlItem.IS_ICON_WITH_COMMAND) == 0 && (item.xProperties & MovingMapControlItem.IS_ICON_WITH_TEXT) == 0) {
 			}
 
 			AniImage ani = item.getImage();
@@ -291,13 +298,15 @@ public class MovingMapControls implements ICommandListener {
 
 			if ((item.xProperties & MovingMapControlItem.DISPLAY_FROM_TOP) != 0) {
 				ypos = item.getyPos();
-			} else
+			}
+			else
 				ypos = h - item.getyPos();
 
 			if ((item.xProperties & MovingMapControlItem.DISPLAY_FROM_LEFT) != 0) {
 
 				xpos = item.getxPos();
-			} else
+			}
+			else
 				xpos = w - item.getxPos();
 
 			ani.setLocation(xpos, ypos);
@@ -313,15 +322,15 @@ public class MovingMapControls implements ICommandListener {
 		if (timenow < 40 + lastTime) {
 			return false;
 		}
-		
+
 		boolean result = handleImageClicked(which);
-		
+
 		lastTime = Vm.getTimeStamp();
 		return result;
 	}
 
 	private boolean handleImageClicked(AniImage which) {
-	
+
 		for (int i = 0; i < buttons.size(); i++) {
 			MovingMapControlItem item = (MovingMapControlItem) buttons.get(i);
 			AniImage ani = item.getImage();

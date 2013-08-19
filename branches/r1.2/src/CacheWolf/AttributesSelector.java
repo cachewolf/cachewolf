@@ -34,8 +34,8 @@ import ewe.ui.mLabel;
 
 public class AttributesSelector extends Panel {
 	protected static int TILESIZE;
-	protected static int W_OFFSET; // depends on Global.getPref().fontSize ?
-	protected static int H_OFFSET; // depends on Global.getPref().fontSize ?
+	protected static int W_OFFSET; // depends on Global.pref.fontSize ?
+	protected static int H_OFFSET; // depends on Global.pref.fontSize ?
 	private long[] selectionMaskYes = { 0l, 0l };
 	private long[] selectionMaskNo = { 0l, 0l };
 	protected mLabel mInfo;
@@ -174,19 +174,19 @@ public class AttributesSelector extends Panel {
 
 	private void setIapSize(int width, int height) {
 		iap.setPreferredSize(width, height);
-		Global.getPref().log("[AttributesSelector:changeIapSize]  pref. area: " + width + "x" + height);
+		Global.pref.log("[AttributesSelector:changeIapSize]  pref. area: " + width + "x" + height);
 
 		int anzPerWidth = width / (TILESIZE + 2) - 1;
 		virtualWidth = anzPerWidth * (TILESIZE + 2);
 		double max = Attribute.maxAttRef;
 		int anzPerHeight = (int) java.lang.Math.ceil(max / anzPerWidth);
 		iap.virtualSize.set(0, 0, virtualWidth, anzPerHeight * (TILESIZE + 2));
-		Global.getPref().log("[AttributesSelector:setIapSize] virt. area: " + virtualWidth + "x" + anzPerHeight * (TILESIZE + 2));
+		Global.pref.log("[AttributesSelector:setIapSize] virt. area: " + virtualWidth + "x" + anzPerHeight * (TILESIZE + 2));
 
 	}
 
 	public void changeIapSize(int width, int height) {
-		Global.getPref().log("[AttributesSelector:changeIapSize]  max. area: " + width + "x" + height);
+		Global.pref.log("[AttributesSelector:changeIapSize]  max. area: " + width + "x" + height);
 		setIapSize(width - W_OFFSET, height - H_OFFSET);
 		showAttributePalette();
 	}

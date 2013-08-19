@@ -26,7 +26,6 @@ import CacheWolf.Common;
 import CacheWolf.Global;
 import CacheWolf.MyLocale;
 import CacheWolf.OC;
-import CacheWolf.Preferences;
 import CacheWolf.imp.SpiderGC.SpiderProperties;
 import ewe.filechooser.FileChooser;
 import ewe.filechooser.FileChooserBase;
@@ -51,7 +50,6 @@ import ewe.ui.mLabel;
  */
 public class OCXMLImporterScreen extends Form {
 	mButton cancelB, okB;
-	Preferences pref;
 	mChoice chcType;
 	mInput maxDistanceInput;
 	mInput minDistanceInput;
@@ -84,14 +82,13 @@ public class OCXMLImporterScreen extends Form {
 
 	public OCXMLImporterScreen(String title, int options) {
 		super();
-		pref = Global.getPref(); // myPreferences sollte später auch diese Einstellungen speichern
 
 		isGC = ((options & ISGC) > 0);
 
 		this.title = title;
 
 		if ((options & HOST) > 0) {
-			domains = new mChoice(OC.OCHostNames(), OC.getSiteIndex(pref.lastOCSite));
+			domains = new mChoice(OC.OCHostNames(), OC.getSiteIndex(Global.pref.lastOCSite));
 			domains.setTextSize(25, 1);
 			this.addLast(domains, CellConstants.DONTSTRETCH, CellConstants.DONTFILL | CellConstants.WEST);
 		}
@@ -105,7 +102,7 @@ public class OCXMLImporterScreen extends Form {
 		if ((options & MINDIST) > 0) {
 			this.addNext(distLbl = new mLabel(MyLocale.getMsg(1628, "min. Distance:")), CellConstants.DONTSTRETCH, (CellConstants.DONTFILL | CellConstants.WEST));
 			minDistanceInput = new mInput();
-			minDistanceInput.setText(Global.getProfile().getMinDistGC());
+			minDistanceInput.setText(Global.profile.getMinDistGC());
 			this.addNext(minDistanceInput, CellConstants.DONTSTRETCH, (CellConstants.DONTFILL | CellConstants.WEST));
 			this.addLast(new mLabel(" km/mi."), CellConstants.DONTSTRETCH, (CellConstants.DONTFILL | CellConstants.WEST));
 		}
@@ -116,11 +113,12 @@ public class OCXMLImporterScreen extends Form {
 			String dist1;
 			String dist2;
 			if (isGC) {
-				dist1 = Global.getProfile().getDistGC();
-				dist2 = Global.getProfile().getDistOC();
-			} else {
-				dist1 = Global.getProfile().getDistOC();
-				dist2 = Global.getProfile().getDistGC();
+				dist1 = Global.profile.getDistGC();
+				dist2 = Global.profile.getDistOC();
+			}
+			else {
+				dist1 = Global.profile.getDistOC();
+				dist2 = Global.profile.getDistGC();
 			}
 			if (dist1.equals("") || dist1.equals("0") || dist1.equals("0.0")) {
 				dist1 = dist2;
@@ -133,7 +131,7 @@ public class OCXMLImporterScreen extends Form {
 		if ((options & DIRECTION) > 0) {
 			this.addNext(new mLabel(MyLocale.getMsg(1629, "Richtung:")), CellConstants.DONTSTRETCH, (CellConstants.DONTFILL | CellConstants.WEST));
 			directionInput = new mInput();
-			directionInput.setText(Global.getProfile().getDirectionGC());
+			directionInput.setText(Global.profile.getDirectionGC());
 			directionInput.toolTip = MyLocale.getMsg(1630, "z.B. leer oder von-bis (Grad)");
 			this.addLast(directionInput, CellConstants.DONTSTRETCH, (CellConstants.DONTFILL | CellConstants.WEST));
 		}
@@ -141,10 +139,11 @@ public class OCXMLImporterScreen extends Form {
 		if ((options & MAXNUMBER) > 0) {
 			this.addNext(maxNumberLbl = new mLabel(MyLocale.getMsg(1623, "Max. number:")), CellConstants.DONTSTRETCH, (CellConstants.DONTFILL | CellConstants.WEST));
 			maxNumberInput = new mInput();
-			if (pref.maxSpiderNumber < 0 || pref.maxSpiderNumber == Integer.MAX_VALUE) {
+			if (Global.pref.maxSpiderNumber < 0 || Global.pref.maxSpiderNumber == Integer.MAX_VALUE) {
 				maxNumberInput.setText("");
-			} else {
-				maxNumberInput.setText(Integer.toString(pref.maxSpiderNumber));
+			}
+			else {
+				maxNumberInput.setText(Integer.toString(Global.pref.maxSpiderNumber));
 			}
 			this.addNext(maxNumberInput, CellConstants.DONTSTRETCH, (CellConstants.DONTFILL | CellConstants.WEST));
 			this.addLast(new mLabel(MyLocale.getMsg(1624, " caches")), CellConstants.DONTSTRETCH, (CellConstants.DONTFILL | CellConstants.WEST));
@@ -161,49 +160,50 @@ public class OCXMLImporterScreen extends Form {
 		if ((options & MAXLOGS) > 0) {
 			this.addNext(new mLabel(MyLocale.getMsg(1626, "Max. logs:")), CellConstants.DONTSTRETCH, (CellConstants.DONTFILL | CellConstants.WEST));
 			maxLogsInput = new mInput();
-			maxLogsInput.setText(Convert.toString(pref.maxLogsToSpider));
+			maxLogsInput.setText(Convert.toString(Global.pref.maxLogsToSpider));
 			this.addLast(maxLogsInput, CellConstants.DONTSTRETCH, (CellConstants.DONTFILL | CellConstants.WEST));
 		}
 
 		if ((options & IMAGES) > 0) {
 			imagesCheckBox = new mCheckBox();
 			imagesCheckBox.setText(MyLocale.getMsg(1602, "Download Images"));
-			imagesCheckBox.setState(pref.downloadPics);
+			imagesCheckBox.setState(Global.pref.downloadPics);
 			this.addLast(imagesCheckBox, CellConstants.DONTSTRETCH, CellConstants.DONTFILL | CellConstants.WEST);
 		}
 
 		if ((options & TRAVELBUGS) > 0) {
 			travelbugsCheckBox = new mCheckBox();
 			travelbugsCheckBox.setText(MyLocale.getMsg(1625, "Download TBs"));
-			travelbugsCheckBox.setState(pref.downloadTBs);
+			travelbugsCheckBox.setState(Global.pref.downloadTBs);
 			this.addLast(travelbugsCheckBox, CellConstants.DONTSTRETCH, CellConstants.DONTFILL | CellConstants.WEST);
 		}
 
 		if ((options & INCLUDEFOUND) > 0) {
 			foundCheckBox = new mCheckBox();
 			foundCheckBox.setText(MyLocale.getMsg(1622, "Exclude found caches"));
-			foundCheckBox.setState(pref.doNotGetFound);
+			foundCheckBox.setState(Global.pref.doNotGetFound);
 			this.addLast(foundCheckBox, CellConstants.DONTSTRETCH, CellConstants.DONTFILL | CellConstants.WEST);
 		}
 
 		if ((options & ALL) > 0) {
 			missingCheckBox = new mCheckBox();
 			missingCheckBox.setText(MyLocale.getMsg(1606, "Alle erneut downloaden"));
-			missingCheckBox.setState(pref.downloadAllOC);
+			missingCheckBox.setState(Global.pref.downloadAllOC);
 			this.addLast(missingCheckBox, CellConstants.DONTSTRETCH, CellConstants.DONTFILL | CellConstants.WEST);
 		}
 
 		if ((options & FILENAME) > 0) {
-			String dir = pref.getImporterPath("LocGpxImporter");
+			String dir = Global.pref.getImporterPath("LocGpxImporter");
 			FileChooser fc = new FileChooser(FileChooserBase.OPEN, dir);
 			fc.addMask("*.gpx");
 			fc.setTitle(MyLocale.getMsg(909, "Select file(s)"));
 			if (fc.execute() != FormBase.IDCANCEL) {
 				dir = fc.getChosenDirectory().toString();
-				pref.setImporterPath("LocGpxImporter", dir);
+				Global.pref.setImporterPath("LocGpxImporter", dir);
 				// String files[] = fc.getAllChosen();
 				fileName = fc.file;
-			} else {
+			}
+			else {
 				fileName = "";
 			}
 		}
@@ -225,14 +225,14 @@ public class OCXMLImporterScreen extends Form {
 			if (ev.target == okB) {
 				// distOC wird hier noch nicht in Pref eingetragen, damit noch geprüft werden kann, ob es größer oder kleiner ist als vorher
 				if (missingCheckBox != null)
-					pref.downloadAllOC = missingCheckBox.state;
+					Global.pref.downloadAllOC = missingCheckBox.state;
 				if (imagesCheckBox != null)
-					pref.downloadPics = imagesCheckBox.state;
+					Global.pref.downloadPics = imagesCheckBox.state;
 				if (travelbugsCheckBox != null)
-					pref.downloadTBs = travelbugsCheckBox.state;
+					Global.pref.downloadTBs = travelbugsCheckBox.state;
 				if (maxLogsInput != null)
-					pref.maxLogsToSpider = Common.parseInt(maxLogsInput.getText());
-				pref.savePreferences();
+					Global.pref.maxLogsToSpider = Common.parseInt(maxLogsInput.getText());
+				Global.pref.savePreferences();
 				this.close(FormBase.IDOK);
 			}
 		}
@@ -284,7 +284,8 @@ public class OCXMLImporterScreen extends Form {
 				default:
 					cacheTypeRestriction = "";
 				}
-			} catch (Exception ex) { // Some tag missing from spider.def
+			}
+			catch (Exception ex) { // Some tag missing from spider.def
 			}
 		}
 		return cacheTypeRestriction;
@@ -335,7 +336,8 @@ public class OCXMLImporterScreen extends Form {
 				default:
 					RestrictedType = CacheType.CW_TYPE_ERROR;
 				}
-			} catch (Exception ex) { // Some tag missing from spider.def
+			}
+			catch (Exception ex) { // Some tag missing from spider.def
 			}
 		}
 		return RestrictedType;

@@ -38,8 +38,8 @@ public class TravelBugJourneyScreenModel {
 	public void toggleOnlyLogged() {
 		onlyLogged = !onlyLogged;
 		createShowSet();
-		Global.getPref().travelbugShowOnlyNonLogged = onlyLogged;
-		Global.getPref().savePreferences();
+		Global.pref.travelbugShowOnlyNonLogged = onlyLogged;
+		Global.pref.savePreferences();
 	}
 
 	public void createShowSet() {

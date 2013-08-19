@@ -22,10 +22,10 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 package CacheWolf;
 
 import CacheWolf.imp.KMLImporter;
+import CacheWolf.utils.FileBugfix;
 
 import com.stevesoft.ewe_pat.Regex;
 
-import ewe.io.File;
 import ewe.io.FileNotFoundException;
 import ewe.io.FileReader;
 import ewe.io.IOException;
@@ -116,9 +116,9 @@ public class Filter {
 	 * We use a regex method to allow for different formats of waypoints:
 	 * possible is currently: DD MM.mmm
 	 */
-	public void doFilterRoute(File routeFile, double distance) {
-		Global.getProfile().selectionChanged = true;
-		CacheDB cacheDB = Global.getProfile().cacheDB;
+	public void doFilterRoute(FileBugfix routeFile, double distance) {
+		Global.profile.selectionChanged = true;
+		CacheDB cacheDB = Global.profile.cacheDB;
 		// load file into a vector:
 		Vector wayPoints = new Vector();
 		Regex rex = new Regex("(N|S).*?([0-9]{1,2}).*?([0-9]{1,3})(,|.)([0-9]{1,3}).*?(E|W).*?([0-9]{1,2}).*?([0-9]{1,3})(,|.)([0-9]{1,3})");
@@ -130,7 +130,8 @@ public class Filter {
 				KMLImporter kml = new KMLImporter(routeFile.getFullPath());
 				kml.importFile();
 				wayPoints = kml.getPoints();
-			} else {
+			}
+			else {
 				FileReader in = new FileReader(routeFile);
 				String line;
 				while ((line = in.readLine()) != null) {
@@ -180,9 +181,11 @@ public class Filter {
 				if (ch.is_filtered() == false && ch.in_range == false)
 					ch.setFiltered(true);
 			}
-		} catch (FileNotFoundException fnex) {
+		}
+		catch (FileNotFoundException fnex) {
 			(new MessageBox("Error", "File not found", FormBase.OKB)).execute();
-		} catch (IOException ioex) {
+		}
+		catch (IOException ioex) {
 			(new MessageBox("Error", "Problem reading file!", FormBase.OKB)).execute();
 		}
 	}
@@ -219,27 +222,26 @@ public class Filter {
 	}
 
 	/**
-	 * Set the filter from the filter data stored in the profile
-	 * (the filterscreen also updates the profile)
+	 * Set the filter from the filter data stored in the Global.profile
+	 * (the filterscreen also updates the Global.profile)
 	 */
 	public void setFilter() {
-		Profile profile = Global.getProfile();
-		archived = profile.getFilterVar().charAt(0) == '1';
-		available = profile.getFilterVar().charAt(1) == '1';
-		foundByMe = profile.getFilterVar().charAt(2) == '1';
-		ownedByMe = profile.getFilterVar().charAt(3) == '1';
-		notArchived = profile.getFilterVar().charAt(4) == '1';
-		notAvailable = profile.getFilterVar().charAt(5) == '1';
-		notFoundByMe = profile.getFilterVar().charAt(6) == '1';
-		notOwnedByMe = profile.getFilterVar().charAt(7) == '1';
-		cacheStatus = profile.getFilterStatus();
-		useRegexp = profile.getFilterUseRegexp();
-		filterNoCoord = profile.getFilterNoCoord();
+		archived = Global.profile.getFilterVar().charAt(0) == '1';
+		available = Global.profile.getFilterVar().charAt(1) == '1';
+		foundByMe = Global.profile.getFilterVar().charAt(2) == '1';
+		ownedByMe = Global.profile.getFilterVar().charAt(3) == '1';
+		notArchived = Global.profile.getFilterVar().charAt(4) == '1';
+		notAvailable = Global.profile.getFilterVar().charAt(5) == '1';
+		notFoundByMe = Global.profile.getFilterVar().charAt(6) == '1';
+		notOwnedByMe = Global.profile.getFilterVar().charAt(7) == '1';
+		cacheStatus = Global.profile.getFilterStatus();
+		useRegexp = Global.profile.getFilterUseRegexp();
+		filterNoCoord = Global.profile.getFilterNoCoord();
 
-		typeMatchPattern = CacheType.Type_FilterString2Type_FilterPattern(profile.getFilterType());
+		typeMatchPattern = CacheType.Type_FilterString2Type_FilterPattern(Global.profile.getFilterType());
 		hasTypeMatchPattern = CacheType.hasTypeMatchPattern(typeMatchPattern);
 		roseMatchPattern = 0;
-		String filterRose = profile.getFilterRose();
+		String filterRose = Global.profile.getFilterRose();
 		if (filterRose.charAt(0) == '1')
 			roseMatchPattern |= NW;
 		if (filterRose.charAt(1) == '1')
@@ -274,7 +276,7 @@ public class Filter {
 			roseMatchPattern |= WNW;
 		hasRoseMatchPattern = roseMatchPattern != ROSE_ALL;
 		sizeMatchPattern = 0;
-		String filterSize = profile.getFilterSize();
+		String filterSize = Global.profile.getFilterSize();
 		if (filterSize.charAt(0) == '1')
 			sizeMatchPattern |= CacheSize.CW_FILTER_MICRO;
 		if (filterSize.charAt(1) == '1')
@@ -288,14 +290,14 @@ public class Filter {
 		if (filterSize.charAt(5) == '1')
 			sizeMatchPattern |= CacheSize.CW_FILTER_NONPHYSICAL;
 		hasSizeMatchPattern = sizeMatchPattern != CacheSize.CW_FILTER_ALL;
-		distdirec = profile.getFilterDist().charAt(0) == 'L' ? SMALLER : GREATER;
-		fscDist = Common.parseDouble(profile.getFilterDist().substring(1)); // Distance
-		diffdirec = profile.getFilterDiff().charAt(0) == 'L' ? SMALLER : (profile.getFilterDiff().charAt(0) == '=' ? EQUAL : GREATER);
-		fscDiff = Common.parseDouble(profile.getFilterDiff().substring(1)); // Difficulty
-		terrdirec = profile.getFilterTerr().charAt(0) == 'L' ? SMALLER : (profile.getFilterTerr().charAt(0) == '=' ? EQUAL : GREATER);
-		fscTerr = Common.parseDouble(profile.getFilterTerr().substring(1)); // Terrain
-		attributesPattern = profile.getFilterAttr();
-		attributesChoice = profile.getFilterAttrChoice();
+		distdirec = Global.profile.getFilterDist().charAt(0) == 'L' ? SMALLER : GREATER;
+		fscDist = Common.parseDouble(Global.profile.getFilterDist().substring(1)); // Distance
+		diffdirec = Global.profile.getFilterDiff().charAt(0) == 'L' ? SMALLER : (Global.profile.getFilterDiff().charAt(0) == '=' ? EQUAL : GREATER);
+		fscDiff = Common.parseDouble(Global.profile.getFilterDiff().substring(1)); // Difficulty
+		terrdirec = Global.profile.getFilterTerr().charAt(0) == 'L' ? SMALLER : (Global.profile.getFilterTerr().charAt(0) == '=' ? EQUAL : GREATER);
+		fscTerr = Common.parseDouble(Global.profile.getFilterTerr().substring(1)); // Terrain
+		attributesPattern = Global.profile.getFilterAttr();
+		attributesChoice = Global.profile.getFilterAttrChoice();
 	}
 
 	/**
@@ -304,7 +306,7 @@ public class Filter {
 	 * not displaying a cache that is filtered.
 	 */
 	public void doFilter() {
-		CacheDB cacheDB = Global.getProfile().cacheDB;
+		CacheDB cacheDB = Global.profile.cacheDB;
 		Hashtable examinedCaches;
 		if (cacheDB.size() == 0)
 			return;
@@ -312,7 +314,7 @@ public class Filter {
 			clearFilter();
 			return;
 		}
-		Global.getProfile().selectionChanged = true;
+		Global.profile.selectionChanged = true;
 		CacheHolder ch;
 		examinedCaches = new Hashtable(cacheDB.size());
 
@@ -325,7 +327,8 @@ public class Filter {
 			if (!filterCache && ch.mainCache != null && CacheType.hasMainTypeMatchPattern(typeMatchPattern)) {
 				if (examinedCaches.containsKey(ch.mainCache)) {
 					filterCache = ch.mainCache.is_filtered();
-				} else {
+				}
+				else {
 					ch.mainCache.setFiltered(excludedByFilter(ch.mainCache));
 					filterCache = ch.mainCache.is_filtered();
 					examinedCaches.put(ch.mainCache, null);
@@ -333,9 +336,9 @@ public class Filter {
 			}
 			ch.setFiltered(filterCache);
 		}
-		Global.getProfile().setFilterActive(FILTER_ACTIVE);
+		Global.profile.setFilterActive(FILTER_ACTIVE);
 		examinedCaches = null;
-		// Global.getProfile().hasUnsavedChanges=true;
+		// Global.profile.hasUnsavedChanges=true;
 	}
 
 	public boolean excludedByFilter(CacheHolder ch) {
@@ -381,14 +384,16 @@ public class Filter {
 						cacheRosePattern = NNE;
 					else
 						cacheRosePattern = NE;
-				} else if (ch.getBearing().startsWith("E")) {
+				}
+				else if (ch.getBearing().startsWith("E")) {
 					if (ch.getBearing().equals("ENE"))
 						cacheRosePattern = ENE;
 					else if (ch.getBearing().equals("E"))
 						cacheRosePattern = E;
 					else
 						cacheRosePattern = ESE;
-				} else if (ch.getBearing().startsWith("S")) {
+				}
+				else if (ch.getBearing().startsWith("S")) {
 					if (ch.getBearing().equals("SW"))
 						cacheRosePattern = SW;
 					else if (ch.getBearing().equals("SSW"))
@@ -399,7 +404,8 @@ public class Filter {
 						cacheRosePattern = SSE;
 					else
 						cacheRosePattern = SE;
-				} else {
+				}
+				else {
 					if (ch.getBearing().equals("WNW"))
 						cacheRosePattern = WNW;
 					else if (ch.getBearing().equals("W"))
@@ -515,13 +521,15 @@ public class Filter {
 						cacheFiltered = true;
 						break;
 					}
-				} else if (attributesChoice == 1) {
+				}
+				else if (attributesChoice == 1) {
 					// OR-condition:
 					if ((chAtts[0] & attributesPattern[0]) == 0 && (chAtts[1] & attributesPattern[1]) == 0 && (chAtts[2] & attributesPattern[2]) == 0 && (chAtts[3] & attributesPattern[3]) == 0) {
 						cacheFiltered = true;
 						break;
 					}
-				} else {
+				}
+				else {
 					// NOT-condition:
 					if ((chAtts[0] & attributesPattern[0]) != 0 || (chAtts[1] & attributesPattern[1]) != 0 || (chAtts[2] & attributesPattern[2]) != 0 || (chAtts[3] & attributesPattern[3]) != 0) {
 						cacheFiltered = true;
@@ -538,7 +546,8 @@ public class Filter {
 						cacheFiltered = true;
 						break;
 					}
-				} else {
+				}
+				else {
 					Regex rex = new Regex(cacheStatus.toLowerCase());
 					rex.search(ch.getStatusText().toLowerCase());
 					if (rex.stringMatched() == null) {
@@ -556,7 +565,8 @@ public class Filter {
 			}
 
 			break;
-		} while (true);
+		}
+		while (true);
 		return cacheFiltered;
 	}
 
@@ -564,28 +574,27 @@ public class Filter {
 	 * Switches flag to invert filter property.
 	 */
 	public void invertFilter() {
-		Global.getProfile().setFilterInverted(!Global.getProfile().isFilterInverted());
+		Global.profile.setFilterInverted(!Global.profile.isFilterInverted());
 	}
 
 	/**
 	 * Clear the is_filtered flag from the cache database.
 	 */
 	public void clearFilter() {
-		Global.getProfile().selectionChanged = true;
-		CacheDB cacheDB = Global.getProfile().cacheDB;
+		Global.profile.selectionChanged = true;
+		CacheDB cacheDB = Global.profile.cacheDB;
 		for (int i = cacheDB.size() - 1; i >= 0; i--) {
 			CacheHolder ch = cacheDB.get(i);
 			ch.setFiltered(false);
 		}
-		Global.getProfile().setFilterActive(FILTER_INACTIVE);
+		Global.profile.setFilterActive(FILTER_INACTIVE);
 	}
 
 	public boolean hasFilter() {
-		Profile prof = Global.getProfile();
-		long[] attribs = prof.getFilterAttr();
-		return !(prof.getFilterType().equals(FilterData.FILTERTYPE) && prof.getFilterRose().equals(FilterData.FILTERROSE) && prof.getFilterVar().equals(FilterData.FILTERVAR) && prof.getFilterSize().equals(FilterData.FILTERSIZE)
-				&& prof.getFilterDist().equals("L") && prof.getFilterDiff().equals("L") && prof.getFilterTerr().equals("L") && attribs[0] == 0l && attribs[1] == 0l && attribs[2] == 0l && attribs[3] == 0l && prof.getFilterStatus().equals("") && prof
-					.getFilterNoCoord());
+		long[] attribs = Global.profile.getFilterAttr();
+		return !(Global.profile.getFilterType().equals(FilterData.FILTERTYPE) && Global.profile.getFilterRose().equals(FilterData.FILTERROSE) && Global.profile.getFilterVar().equals(FilterData.FILTERVAR)
+				&& Global.profile.getFilterSize().equals(FilterData.FILTERSIZE) && Global.profile.getFilterDist().equals("L") && Global.profile.getFilterDiff().equals("L") && Global.profile.getFilterTerr().equals("L") && attribs[0] == 0l
+				&& attribs[1] == 0l && attribs[2] == 0l && attribs[3] == 0l && Global.profile.getFilterStatus().equals("") && Global.profile.getFilterNoCoord());
 	}
 
 }

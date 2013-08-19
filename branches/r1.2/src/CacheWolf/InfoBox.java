@@ -80,8 +80,7 @@ public class InfoBox extends Form {
 		type = ty;
 		// this.setPreferredSize(150,50);
 		// Resize InfoBox with Fontsize
-		Preferences pref = Global.getPref();
-		int fs = pref.fontSize;
+		int fs = Global.pref.fontSize;
 		int sw = MyLocale.getScreenWidth();
 		int psx;
 		int psy;

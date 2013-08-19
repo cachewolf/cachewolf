@@ -31,8 +31,6 @@ import CacheWolf.Global;
 import CacheWolf.InputScreen;
 import CacheWolf.MainTab;
 import CacheWolf.MyLocale;
-import CacheWolf.Preferences;
-import CacheWolf.Profile;
 import ewe.fx.Brush;
 import ewe.fx.Color;
 import ewe.fx.Dimension;
@@ -85,8 +83,6 @@ public final class GotoPanel extends CellPanel {
 	CacheDB cacheDB;
 	DetailsPanel detP;
 
-	Preferences pref;
-	Profile profile;
 	// different panels to avoid spanning
 	CellPanel HeadP = new CellPanel();
 	CellPanel ButtonP = new CellPanel();
@@ -122,11 +118,9 @@ public final class GotoPanel extends CellPanel {
 	 */
 	public GotoPanel(Navigate nav) {
 		myNavigation = nav;
-		pref = Global.getPref();
-		profile = Global.getProfile();
 		mainT = Global.mainTab;
 		detP = mainT.detP;
-		cacheDB = profile.cacheDB;
+		cacheDB = Global.profile.cacheDB;
 
 		// Button
 		ButtonP.addNext(btnGPS = new mButton(MyLocale.getMsg(1504, "Start")), CellConstants.DONTSTRETCH, (CellConstants.DONTFILL | CellConstants.WEST));
@@ -310,7 +304,7 @@ public final class GotoPanel extends CellPanel {
 	}
 
 	public void startGps() {
-		myNavigation.startGps(pref.logGPS, Convert.toInt(pref.logGPSTimer));
+		myNavigation.startGps(Global.pref.logGPS, Convert.toInt(Global.pref.logGPSTimer));
 	}
 
 	public void gpsStoped() {
@@ -339,8 +333,8 @@ public final class GotoPanel extends CellPanel {
 				if (mainT.ch != null && mainT.ch.getPos().isValid())
 					centerTo = new CWPoint(mainT.ch.getPos());
 				else {
-					if (pref.getCurCentrePt().isValid())
-						centerTo = new CWPoint(pref.getCurCentrePt());
+					if (Global.pref.getCurCentrePt().isValid())
+						centerTo = new CWPoint(Global.pref.getCurCentrePt());
 				}
 			}
 		}
@@ -372,14 +366,16 @@ public final class GotoPanel extends CellPanel {
 								myNavigation.setLuminary(i);
 								miLuminary[i].modifiers |= MenuItem.Checked;
 								compassRose.setLuminaryName(SkyOrientation.getLuminaryName(myNavigation.luminary));
-							} else
+							}
+							else
 								miLuminary[i].modifiers &= ~MenuItem.Checked;
 						}
 						if (action == miNorthCentered) {
 							if (compassRose.isNorthCentered()) {
 								compassRose.setNorthCentered(false);
 								miNorthCentered.modifiers &= ~MenuItem.Checked;
-							} else {
+							}
+							else {
 								compassRose.setNorthCentered(true);
 								miNorthCentered.modifiers |= MenuItem.Checked;
 							}
@@ -401,8 +397,9 @@ public final class GotoPanel extends CellPanel {
 			// set current position as centre and recalculate distance of caches in MainTab
 			if (ev.target == btnCenter) {
 				if (myNavigation.gpsPos.isValid()) {
-					pref.setCurCentrePt(myNavigation.gpsPos);
-				} else
+					Global.pref.setCurCentrePt(myNavigation.gpsPos);
+				}
+				else
 					(new MessageBox(MyLocale.getMsg(312, "Error"), MyLocale.getMsg(1514, "Cannot recalculate distances, because the GPS position is not set"), FormBase.OKB)).execute();
 			}
 			// Start moving map
@@ -426,7 +423,8 @@ public final class GotoPanel extends CellPanel {
 						InScr.setCoords(new CWPoint(0, 0));
 					if (InScr.execute(null, CellConstants.TOP) == FormBase.IDOK)
 						setDestination(InScr.getCoords());
-				} else {
+				}
+				else {
 					CoordsScreen cs = new CoordsScreen();
 					if (myNavigation.destination.isValid())
 						cs.setFields(myNavigation.destination, CoordsScreen.getLocalSystem(currFormatSel));
@@ -466,7 +464,7 @@ class GotoRose extends AniImage {
 
 	int roseRadius;
 
-	boolean northCentered = Global.getPref().northCenteredGoto;
+	boolean northCentered = Global.pref.northCenteredGoto;
 
 	final static Color RED = new Color(255, 0, 0);
 	final static Color YELLOW = new Color(255, 255, 0);
@@ -544,7 +542,8 @@ class GotoRose extends AniImage {
 			// scale(location.width, location.height, null, 0);
 			// super.doDraw(g, options);
 			drawFullRose(g, 0, new Color(255, 255, 255), new Color(200, 200, 200), new Color(255, 255, 255), new Color(200, 200, 200), new Color(150, 150, 150), new Color(75, 75, 75), 1.0f, true, true);
-		} else {
+		}
+		else {
 			int radius = (int) (roseRadius * 0.75f);
 
 			g.setPen(new Pen(new Color(150, 150, 150), Pen.SOLID, 3));
@@ -567,7 +566,7 @@ class GotoRose extends AniImage {
 
 		g.setColor(Color.Black);
 
-		int metricSystem = Global.getPref().metricSystem;
+		int metricSystem = Global.pref.metricSystem;
 		Double tmp = new Double();
 		strTemp = "";
 		double newDistance = 0;
@@ -581,7 +580,8 @@ class GotoRose extends AniImage {
 			smallUnit = Metrics.FEET;
 			threshold = 0.1;
 			newDistance = Metrics.convertUnit(distance, Metrics.KILOMETER, Metrics.MILES);
-		} else {
+		}
+		else {
 			bigUnit = Metrics.KILOMETER;
 			smallUnit = Metrics.METER;
 			threshold = 1.0;
@@ -591,11 +591,13 @@ class GotoRose extends AniImage {
 			tmp.set(newDistance);
 			if (tmp.value >= threshold) {
 				strTemp = MyLocale.formatDouble(tmp, "0.000") + " " + Metrics.getUnit(bigUnit);
-			} else {
+			}
+			else {
 				tmp.set(Metrics.convertUnit(tmp.value, bigUnit, smallUnit));
 				strTemp = tmp.toString(3, 0, 0) + " " + Metrics.getUnit(smallUnit);
 			}
-		} else
+		}
+		else
 			strTemp = "--- " + Metrics.getUnit(bigUnit);
 		g.drawText(strTemp, 2, lineHeight);
 
@@ -618,11 +620,12 @@ class GotoRose extends AniImage {
 		String unit = null;
 
 		// Allow for different metric systems
-		if (Global.getPref().metricSystem == Metrics.IMPERIAL) {
+		if (Global.pref.metricSystem == Metrics.IMPERIAL) {
 			tmp.set(Metrics.convertUnit(m_speed, Metrics.KILOMETER, Metrics.MILES));
 			unit = " mph";
 			strSpeed = "- mph";
-		} else {
+		}
+		else {
 			tmp.set(m_speed);
 			unit = " km/h";
 			strSpeed = "- km/h";
@@ -630,7 +633,8 @@ class GotoRose extends AniImage {
 		if (tmp.value >= 0) {
 			if (tmp.value >= 100) {
 				strSpeed = MyLocale.formatDouble(tmp, "0") + unit;
-			} else {
+			}
+			else {
 				strSpeed = MyLocale.formatDouble(tmp, "0.0") + unit;
 			}
 		}
@@ -675,11 +679,13 @@ class GotoRose extends AniImage {
 		if ((m_fix > 0) && (m_sats >= 0)) {
 			// Set background to signal quality
 			g.setColor(GREEN);
-		} else
+		}
+		else
 		// receiving data, but signal ist not good
 		if ((m_fix == 0) && (m_sats >= 0)) {
 			g.setColor(YELLOW);
-		} else {
+		}
+		else {
 			g.setColor(RED);
 		}
 
@@ -717,11 +723,14 @@ class GotoRose extends AniImage {
 
 				if (diff <= 12.25f) {
 					moveDirColor = GREEN;
-				} else if (diff <= 22.5f) {
+				}
+				else if (diff <= 22.5f) {
 					moveDirColor = CYAN;
-				} else if (diff <= 45.0f) {
+				}
+				else if (diff <= 45.0f) {
 					moveDirColor = ORANGE;
-				} else if (diff <= 90.0f) {
+				}
+				else if (diff <= 90.0f) {
 					moveDirColor = MAGENTA;
 				}
 			}
@@ -734,7 +743,8 @@ class GotoRose extends AniImage {
 					drawThinArrow(g, moveDir, RED, moveDirColor, 1.0f);
 				if (sunDir < 360 && sunDir > -360)
 					drawSunArrow(g, sunDir, YELLOW, 0.75f);
-			} else {
+			}
+			else {
 				// moveDir centered
 				if (moveDir < 360 && moveDir > -360) {
 					// drawDoubleArrow(g, 360 - moveDir, BLUE, new Color(175,0,0), 1.0f);
@@ -902,9 +912,9 @@ class GotoRose extends AniImage {
 
 	public void setNorthCentered(boolean nc) {
 		northCentered = nc;
-		if (northCentered != Global.getPref().northCenteredGoto) {
-			Global.getPref().northCenteredGoto = northCentered;
-			Global.getPref().savePreferences();
+		if (northCentered != Global.pref.northCenteredGoto) {
+			Global.pref.northCenteredGoto = northCentered;
+			Global.pref.savePreferences();
 		}
 		refresh();
 	}

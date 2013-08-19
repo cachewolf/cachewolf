@@ -26,83 +26,313 @@ import CacheWolf.Common;
 import CacheWolf.Global;
 import CacheWolf.InfoBox;
 import CacheWolf.MyLocale;
+import CacheWolf.utils.BetterUTF8Codec;
 import CacheWolf.utils.FileBugfix;
 import ewe.fx.Point;
 import ewe.fx.Rect;
-import ewe.io.File;
+import ewe.io.DataInputStream;
 import ewe.io.FileBase;
+import ewe.io.FileInputStream;
 import ewe.io.IOException;
 import ewe.sys.Time;
 import ewe.ui.FormBase;
 import ewe.ui.MessageBox;
 import ewe.util.Comparer;
 import ewe.util.Vector;
+import ewe.util.mString;
+
 /**
  * class to handle a list of maps
- * it loads the list, finds the best map for a given location,
+ * it loads the list,
+ * finds the best map for a given location,
  * says if a map is available for a given lat lon at a given scale
  * start offset for language file: 4700
- *
+ * 
  */
 public final class MapsList extends Vector {
-	public static float scaleTolerance = 1.15f; // absolute deviations from this factor are seen to have the same scale
+	// absolute deviations from this factor are seen to have the same scale
+	public static float scaleTolerance = 1.15f;
 
 	/**
 	 * loads all the maps in mapsPath in all subDirs recursive
+	 * 
 	 * @param mapsPath
+	 *            without trailing /
+	 * @param lat
+	 *            only for adding empty maps
 	 */
-	public MapsList(String mapsPath) {
-		super(); // forget already loaded maps
-		//if (mmp.mapImage != null)
+	public MapsList(String mapsPath_, double lat) {
+		String mapsPath;
+		if (mapsPath_.endsWith("/")) {
+			mapsPath = mapsPath_.substring(0, mapsPath_.length() - 1);
+		}
+		else {
+			mapsPath = mapsPath_;
+		}
+		String MapsListPaN = mapsPath + "/MapsList.txt";
+		FileBugfix MapsListFile = new FileBugfix(MapsListPaN);
+		boolean dontBuildMapsListFile = MapsListFile.exists();
+		if (dontBuildMapsListFile) {
+			dontBuildMapsListFile = readMapsListFile(MapsListPaN);
+		}
+		if (!dontBuildMapsListFile) {
+			initMapsList(mapsPath);
+			writeMapsListFile(MapsListPaN);
+		}
+
+		_mapsPath = mapsPath;
+
+		if (this.isEmpty()) {
+			(new MessageBox(MyLocale.getMsg(4201, "Information"), MyLocale.getMsg(4204,
+					"No georeferenced map available \n Please choose a scale \n to show the track and the caches. \n You can get one by the menu: Application/Maps/download calibrated"), FormBase.OKB)).execute();
+		}
+
+		// the empty maps must be added last, otherwise in method setbestMIO, when no map is available, a malfunction will happen, see there
+		this.addEmptyMaps(lat);
+		this.onCompletedRead();
+	}
+
+	/**
+	 * 
+	 * @param mapsPath
+	 *            without trailing /
+	 */
+	private void initMapsList(String mapsPath) {
 		String dateien[];
 		FileBugfix files;
-		String rawFileName;
 		String[] dirstmp;
 		Vector dirs = new Vector();
-		dirs.add(""); // start with the mapsPath (only this one , without its subdirs)
-		MapListEntry tempMIO;
-		MessageBox f = null;
-		// sort(new StandardComparer(), false);
+		dirs.add(""); // start with the mapsPath (only this one , without its subdirs) =  + dirs.get(0)
 
-		files = new FileBugfix(mapsPath+"/"+dirs.get(0));
+		files = new FileBugfix(mapsPath);
 		for (int j = 0; j < dirs.size(); j++) {
-			files.set(null, mapsPath+"/"+dirs.get(j));
+			String aktPath;
 			//add subdirectories
 			if (!dirs.get(j).equals(".")) {
-				dirstmp = files.list(null, FileBase.LIST_DIRECTORIES_ONLY | File.LIST_DONT_SORT | File.LIST_IGNORE_DIRECTORY_STATUS); // the options "File.LIST_DONT_SORT | File.LIST_IGNORE_DIRECTORY_STATUS" make it run about twice as fast in sun-vm. The option File.LIST_IGNORE_DIRECTORY_STATUS influences only the sorting (dirs first)
+				aktPath = mapsPath + dirs.get(j);
+				files.set(null, aktPath);
+				// the options "File.LIST_DONT_SORT | File.LIST_IGNORE_DIRECTORY_STATUS" make it run about twice as fast in sun-vm.
+				// The option File.LIST_IGNORE_DIRECTORY_STATUS influences only the sorting (dirs first)
+				dirstmp = files.list(null, FileBase.LIST_DIRECTORIES_ONLY | FileBase.LIST_DONT_SORT | FileBase.LIST_IGNORE_DIRECTORY_STATUS);
 				if (dirstmp != null) {
 					for (int subDir = 0; subDir < dirstmp.length; subDir++) {
-						dirs.add(j+1+subDir, dirs.get(j)+"/"+dirstmp[subDir]);
+						String toAdd = dirs.get(j) + "/" + dirstmp[subDir];
+						dirs.add(j + 1 + subDir, toAdd);
 					}
 				}
 			}
+			else {
+				// the notation dir/./filename doesn't work on all platforms (in MapListEntry)
+				aktPath = mapsPath;
+			}
+			if (!aktPath.endsWith("/"))
+				aktPath = aktPath + "/";
 
-			dateien = files.list("*.wfl", FileBase.LIST_FILES_ONLY | File.LIST_DONT_SORT | File.LIST_IGNORE_DIRECTORY_STATUS); //"*.xyz" doesn't work on some systems -> use FileBugFix
-			if (dateien == null) continue;
-			for(int i = 0; i < dateien.length;i++){
-				// if (!dateien[i].endsWith(".wfl")) continue;
-				rawFileName = dateien[i].substring(0, dateien[i].lastIndexOf('.'));
-				try {
-					if (dirs.get(j).equals(".")) // the notation dir/./filename doesn't work on all platforms anyhow
-						tempMIO = new MapListEntry(mapsPath+"/", rawFileName);
-					else tempMIO = new MapListEntry(mapsPath+"/"+dirs.get(j)+"/", rawFileName);
-					if (tempMIO.sortEntryBBox != null) add(tempMIO);
-				}catch(Exception ex){ // TODO exception ist, glaub ich evtl überflüssig
-					if (f == null) (f=new MessageBox(MyLocale.getMsg(144, "Warning"), MyLocale.getMsg(4700, "Ignoring error while \n reading calibration file \n")+ex.toString(), FormBase.OKB)).exec();
-				} /* catch(ArithmeticException ex){ // affine contain not allowed values
-					if (f == null) (f=new MessageBox("Warning", "Ignoring error while \n reading calibration file \n"+ex.toString(), MessageBox.OKB)).exec();
-				} */
+			files.set(null, aktPath);
+			dateien = files.list("*.wfl", FileBase.LIST_FILES_ONLY | FileBase.LIST_DONT_SORT | FileBase.LIST_IGNORE_DIRECTORY_STATUS);
+			if (dateien != null) {
+				if (dateien.length == 0) {
+					// check if there is a tiles - structure in directories
+					String p[] = ewe.util.mString.split(aktPath, '/');
+					if (p.length > 3) {
+						String wmsPaN = FileBase.getProgramDirectory() + "/webmapservices/" + p[p.length - 4] + ".wms";
+						FileBugfix wmsFile = new FileBugfix(wmsPaN);
+						// (.../Google/<zoom>/<x>/<y>.png ) und Google.wms existiert
+						// Definition: there is a tiles - structure,
+						// if there exist no wfl - files in the actual directory (aktPath)
+						// but graphic files (at moment only png),
+						// if there exists a wms - file with the same name as the directory 3 steps above the actual directory (aktPath)
+						if (wmsFile.exists()) {
+							// todo image - Erweiterung aus wms-Datei, sprich beliebige Graphikformate
+							String imageExtension = "*.png";
+							dateien = files.list(imageExtension, FileBase.LIST_FILES_ONLY | FileBase.LIST_DONT_SORT | FileBase.LIST_IGNORE_DIRECTORY_STATUS);
+							int zoom = Common.parseInt(p[p.length - 3]);
+							if (zoom > 0) {
+								int x = Common.parseInt(p[p.length - 2]);
+								if (x >= 0) {
+									// int y from dateien
+									for (int i = 0; i < dateien.length; i++) {
+										int y = Common.parseInt(Common.getFilename(dateien[i]));
+										if (y >= 0) {
+											String filename = dateien[i].substring(0, dateien[i].lastIndexOf('.'));
+											MapInfoObject mio = new MapInfoObject(x, y, zoom, aktPath, filename, imageExtension);
+											MapListEntry mle = new MapListEntry(aktPath, filename, "FF1" + mio.getEasyFindString(), (byte) 2);
+											if (mle.sortEntryBBox != null)
+												add(mle);
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+				else {
+					for (int i = 0; i < dateien.length; i++) {
+						MapListEntry mle = new MapListEntry(aktPath, dateien[i].substring(0, dateien[i].lastIndexOf('.')));
+						if (mle.sortEntryBBox != null)
+							add(mle);
+					}
+				}
+			}
+			dateien = files.list("*.pack", FileBase.LIST_FILES_ONLY | FileBase.LIST_DONT_SORT | FileBase.LIST_IGNORE_DIRECTORY_STATUS);
+			if (dateien != null) {
+				if (dateien.length > 0) {
+					for (int i = 0; i < dateien.length; i++) {
+						createMapListEntries(aktPath, dateien[i]);
+					}
+				}
 			}
 		}
-		if (MapListEntry.rename == 1) MapListEntry.loadingFinished();
-		_mapsPath=mapsPath;
+
+		// if (MapListEntry.rename == 1)
+		// reset static changes to initial values
+		MapListEntry.loadingFinished();
+	}
+
+	private void createMapListEntries(String path, String fromPackFile) {
+		FileInputStream stream;
+		DataInputStream reader;
+		String imageExtension = ".pack";
+		try {
+
+			FileBugfix queryFile = new FileBugfix(path + fromPackFile);
+			stream = new FileInputStream(queryFile);
+			reader = new DataInputStream(stream);
+
+			String layerName = readString(reader, 32);
+			String friendlyName = readString(reader, 128);
+			String url = readString(reader, 256);
+			long ticks = readReverseLong(reader);
+			long MaxAge = ticks;
+			int numBoundingBoxes = readReverseInt(reader);
+			for (int i = 0; i < numBoundingBoxes; i++) {
+				try {
+					int zoom = readReverseInt(reader);
+					int MinX = readReverseInt(reader);
+					int MaxX = readReverseInt(reader);
+					int MinY = readReverseInt(reader);
+					int MaxY = readReverseInt(reader);
+					long OffsetToIndex = readReverseLong(reader);
+					int Stride = MaxX - MinX + 1; // length of stripe
+					for (int x = MinX; x <= MaxX; x++) {
+						for (int y = MinY; y <= MaxY; y++) {
+							MapInfoObject mio = new MapInfoObject(x, y, zoom, path, fromPackFile, imageExtension);
+							MapListEntry mle = new MapListEntry(path + fromPackFile, "!" + MinX + "!" + MinY + "!" + Stride + "!" + OffsetToIndex + "!" + zoom + "!" + x + "!" + y, "FF1" + mio.getEasyFindString(), (byte) 3);
+							if (mle.sortEntryBBox != null)
+								add(mle);
+						}
+					}
+				}
+				catch (Exception e) {
+				}
+			}
+			reader.close();
+			stream.close();
+		}
+		catch (Exception e) {
+		}
+	}
+
+	private String readString(DataInputStream reader, int length) throws IOException {
+		byte[] asciiBytes = new byte[length];
+		int last = 0;
+		for (int i = 0; i < length; i++) {
+			asciiBytes[i] = reader.readByte();
+			if (asciiBytes[i] > 32)
+				last = i;
+		}
+		StringBuffer sb = new BetterUTF8Codec().decodeUTF8(asciiBytes, 0, last + 1);
+		return sb.toString().trim();
+	}
+
+	private long readReverseLong(DataInputStream reader) throws IOException {
+		byte byte8 = reader.readByte();
+		byte byte7 = reader.readByte();
+		byte byte6 = reader.readByte();
+		byte byte5 = reader.readByte();
+		byte byte4 = reader.readByte();
+		byte byte3 = reader.readByte();
+		byte byte2 = reader.readByte();
+		byte byte1 = reader.readByte();
+		return (long) (((byte1 & 0xFF) << 56) + ((byte2 & 0xFF) << 48) + ((byte3 & 0xFF) << 40) + ((byte4 & 0xFF) << 32) + ((byte5 & 0xFF) << 24) + ((byte6 & 0xFF) << 16) + ((byte7 & 0xFF) << 8) + (byte8 & 0xFF));
+	}
+
+	private int readReverseInt(DataInputStream reader) throws IOException {
+		byte byte4 = reader.readByte();
+		byte byte3 = reader.readByte();
+		byte byte2 = reader.readByte();
+		byte byte1 = reader.readByte();
+		return (int) (((byte1 & 0xFF) << 24) + ((byte2 & 0xFF) << 16) + ((byte3 & 0xFF) << 8) + (byte4 & 0xFF));
+	}
+
+	private String _mapsPath = "";
+
+	public String getMapsPath() {
+		return _mapsPath;
+	}
+
+	private void writeMapsListFile(String PathAndName) {
+		try {
+			ewe.io.TextWriter w;
+			w = new ewe.io.TextWriter(PathAndName, false);
+			w.codec = new BetterUTF8Codec();
+			for (int z = 0; z < this.size(); z++) {
+				MapListEntry mle = (MapListEntry) this.get(z);
+				w.println(mle.path + ";" + mle.filename + ";" + mle.sortEntryBBox + ";" + mle.mapType);
+			}
+			w.println();
+			w.close();
+		}
+		catch (IOException e) {
+
+		}
+	}
+
+	private boolean readMapsListFile(String PathAndName) {
+		try {
+			ewe.io.TextReader r;
+			r = new ewe.io.TextReader(PathAndName);
+			r.codec = new BetterUTF8Codec();
+			String s;
+			s = r.readLine();
+			String[] S = ewe.util.mString.split(s, ';');
+			FileBugfix test = new FileBugfix(S[0] + S[1] + ".wfl");
+			if (!test.exists()) {
+				r.close();
+				return false;
+			}
+			while (s != null) {
+				S = ewe.util.mString.split(s, ';');
+				if (S.length == 4) {
+					MapListEntry mle = new MapListEntry(S[0], S[1], S[2], (byte) Common.parseInt(S[3]));
+					this.add(mle);
+				}
+				else {
+					if (s.length() > 0) {
+						r.close();
+						return false;
+					}
+				}
+				try {
+					s = r.readLine();
+				}
+				catch (Exception e) {
+					//NPE
+				}
+			}
+			r.close();
+		}
+		catch (IOException e) {
+			return false;
+		}
+		return true;
 	}
 
 	public void addEmptyMaps(double lat) {
 		MapListEntry tempMIO;
 		tempMIO = new MapListEntry(1.0, lat);
 		add(tempMIO);
-		tempMIO = new MapListEntry(5.0, lat); // this one ( the 4th last) is automatically used when no real map is available, see MovingMap.setBestMap
+		tempMIO = new MapListEntry(5.0, lat); // this one ( the 4th last) is automatically used when no real map is available, see MovingMap.setbestMIO
 		add(tempMIO);
 		tempMIO = new MapListEntry(50.0, lat);
 		add(tempMIO);
@@ -118,73 +348,86 @@ public final class MapsList extends Vector {
 	 * c) gegenteil von b)
 	 */
 	/**
-	 * find the best map for lat/lon in the list of maps
-	 * @param lat a point to be inside the map
-	 * @param lon
-	 * @param screen: width, height of the screen. The map must overlap the screen. xy: where is lat/lon on screen
-	 * @param scale scale wanted
-	 * currently the best map is the one, whose center is nearest to lat/lon
-	 * and in Area with its scale nearest to scale.
-	 * it always returns a map (if the list is not empty) as long as it overlaps the screen
-	 * @param forceScale: when true, return null if no map with specified scale could be found
+	 * the best map in the list of maps is the one
+	 * whose center is nearest to ll.latDec/ll.lonDec and
+	 * on screen and
+	 * with its scale nearest to scale.
+	 * 
+	 * @param ll
+	 *            CWPoint: ll.latDec/ll.lonDec a point to be inside the map
+	 * @param screen
+	 *            Rect: width, height of the screen. The map must overlap the screen.
+	 * @param scale
+	 *            float: scale wanted.
+	 * @param forceScale
+	 *            : when true, return null if no map with specified scale could be found
+	 * @param withProgressBox
+	 *            boolean: true -> with ProgressBox
+	 * @return MapInfoObject
+	 *         if a Map in this list (mapsList Vector) overlaps the screen
 	 */
-	public MapInfoObject getBestMap(CWPoint ll, Rect screen, float scale, boolean forceScale,boolean withProgressBox) {
-		if (size() == 0) return null;
+	public MapInfoObject getBest(CWPoint ll, Rect screen, float scale, boolean forceScale, boolean withProgressBox) {
+		if (size() == 0)
+			return null;
 		long start = new Time().getTime();
 		InfoBox progressBox = null;
 		boolean showprogress = false;
-		String cmp = "FF1"+Area.getEasyFindString(ll, MAXDIGITS_IN_FF);
+		String cmp = "FF1" + Area.getEasyFindString(ll, MAXDIGITS_IN_FF);
 		int guess = -1;
-//		int foundkw = -1;
-		MapListEntry ml;
-		MapInfoObject mi;
-		MapInfoObject bestMap = null; // = (MapInfoObject)get(0);
+		MapListEntry mle;
+		MapInfoObject mio;
+		MapInfoObject bestMIO = null;
 		double minDistLat = 1000000000000000000000000000000000000000000000.0;
 		double minDistLon = 1000000000000000000000000000000000000000000000.0;
 		boolean latNearer, lonNearer;
 		boolean better = false;
-		Area screenArea = null; // getAreaForScreen(screen, lat, lon, bestMap.scale, bestMap);
+		Area screenArea = null; // getAreaForScreen(screen, lat, lon, bestMIO.scale, bestMIO);
 		float lastscale = -1;
-		// int testkw = 0;
-		// int testdkw = 0;
 		for (int digitlenght = 0; digitlenght < maxDigits; digitlenght++) {
-			guess = quickfind(cmp, this.numDigitsStartIndex[digitlenght], this.numDigitsStartIndex[digitlenght+1]-1);
-			for (int i=guess; i >= numDigitsStartIndex[digitlenght] ;i--) {
-				// testdkw++;
+			guess = quickfind(cmp, this.numDigitsStartIndex[digitlenght], this.numDigitsStartIndex[digitlenght + 1] - 1);
+			for (int i = guess; i >= numDigitsStartIndex[digitlenght]; i--) {
 				if (withProgressBox) {
-					if (!showprogress && ((i & 31) == 0) && (new Time().getTime()-start  > 100) ) { // reason for (i & 7 == 0): test time only after i is incremented 15 times
+					if (!showprogress && ((i & 31) == 0) && (new Time().getTime() - start > 100)) {
 						showprogress = true;
-						progressBox = new InfoBox(MyLocale.getMsg(327,"Info"), MyLocale.getMsg(4701,"Searching for best map"));
+						progressBox = new InfoBox(MyLocale.getMsg(327, "Info"), MyLocale.getMsg(4701, "Searching for best map"));
 						progressBox.exec();
 						progressBox.waitUntilPainted(100);
 						ewe.sys.Vm.showWait(true);
-						Global.getPref().log(MyLocale.getMsg(4701,"Searching for best map"));
+						Global.pref.log(MyLocale.getMsg(4701, "Searching for best map"));
 					}
 				}
-				ml = (MapListEntry)get(i);
-				try {
-					if (!Area.containsRoughly(ml.sortEntryBBox, cmp)) break; // TODO if no map available
-					else { mi = ml.getMap(); /* testkw++; */}
-				} catch (IOException ex) {continue; } // could not read .wfl-file
+				mle = (MapListEntry) get(i);
+				if (!Area.containsRoughly(mle.sortEntryBBox, cmp))
+					break; // TODO if no map available
+				else {
+					mio = mle.getMap();
+				}
 				better = false;
-				//			mi = (MapInfoObject)get(i);
-				if (screenArea == null || !scaleEquals(lastscale, mi) ) {
-					screenArea = getAreaForScreen(screen, ll, mi.scale, mi);
-					lastscale = mi.scale;
+				if (screenArea == null || !scaleEquals(lastscale, mio)) {
+					screenArea = getAreaForScreen(screen, ll, mio.scale, mio);
+					lastscale = mio.scale;
 				}
 
-				if (screenArea.isOverlapping(mi) ) { // is on screen
-					if (!forceScale || (forceScale && scaleEquals(scale, mi))) { // different scale?
-						if (!forceScale && (mi.isInBound(ll) && (bestMap == null || scaleNearer(mi.scale, bestMap.scale, scale) || !bestMap.isInBound(ll))))
-							better = true; // inbound and resolution nearer at wanted resolution or old one is on screen but lat/long not inbound-> better
+				if (screenArea.isOverlapping(mio)) {
+					// is on screen
+					if (!forceScale || (forceScale && scaleEquals(scale, mio))) {
+						// different scale?
+						// inbound and resolution nearer at wanted resolution
+						// or old one is on screen but lat/long not inbound 
+						// -> better
+						if (!forceScale && (mio.isInBound(ll) && (bestMIO == null || scaleNearer(mio.scale, bestMIO.scale, scale) || !bestMIO.isInBound(ll))))
+							better = true;
 						else {
-							if ( bestMap == null || scaleNearerOrEuqal(mi.scale, bestMap.scale, scale)) {
-								latNearer = java.lang.Math.abs(ll.latDec - mi.center.latDec)/mi.sizeKm < minDistLat ;
-								lonNearer = java.lang.Math.abs(ll.lonDec - mi.center.lonDec)/mi.sizeKm < minDistLon;
-								if ( latNearer && lonNearer) better = true; // for faster processing: if lat and lon are nearer then the distancance doesn't need to be calculated
+							if (bestMIO == null || scaleNearerOrEuqal(mio.scale, bestMIO.scale, scale)) {
+								latNearer = java.lang.Math.abs(ll.latDec - mio.center.latDec) / mio.sizeKm < minDistLat;
+								lonNearer = java.lang.Math.abs(ll.lonDec - mio.center.lonDec) / mio.sizeKm < minDistLon;
+								// for faster processing:
+								// if lat and lon are nearer then the distancance doesn't need to be calculated
+								if (latNearer && lonNearer)
+									better = true;
 								else {
-									if ( (latNearer || lonNearer )) {
-										if (bestMap == null || mi.center.getDistanceRad(ll) < bestMap.center.getDistanceRad(ll) ){
+									if ((latNearer || lonNearer)) {
+										if (bestMIO == null || mio.center.getDistanceRad(ll) < bestMIO.center.getDistanceRad(ll)) {
 											better = true;
 										}
 									}
@@ -192,10 +435,9 @@ public final class MapsList extends Vector {
 							}
 						}
 						if (better) {
-							minDistLat = java.lang.Math.abs(ll.latDec - mi.center.latDec)/mi.sizeKm;
-							minDistLon = java.lang.Math.abs(ll.lonDec - mi.center.lonDec)/mi.sizeKm;
-							bestMap = mi;
-							//foundkw = i;
+							minDistLat = java.lang.Math.abs(ll.latDec - mio.center.latDec) / mio.sizeKm;
+							minDistLon = java.lang.Math.abs(ll.lonDec - mio.center.lonDec) / mio.sizeKm;
+							bestMIO = mio;
 						}
 					}
 				}
@@ -205,44 +447,46 @@ public final class MapsList extends Vector {
 			progressBox.close(0);
 			ewe.sys.Vm.showWait(false);
 		}
-		if (bestMap == null) return null;
-		return new MapInfoObject(bestMap); // return a copy of the MapInfoObject so that zooming won't change the MapInfoObject in the list
+		if (bestMIO == null)
+			return null;
+		// return a copy of the MapInfoObject so that zooming won't change the MapInfoObject in the list
+		return new MapInfoObject(bestMIO);
 	}
+
 	/*
-	public MapInfoObject getBestMapNotStrictSciale(double lat, double lon, Area screen, float scale) {
-		MapInfoObject ret = getBestMap(lat, lon, screen, scale, true);
-		if (ret == null) ret = getBestMap(lat, lon, screen, scale, false);
+	public MapInfoObject getBestNotStrictScale(double lat, double lon, Area screen, float scale) {
+		MapInfoObject ret = getBest(lat, lon, screen, scale, true);
+		if (ret == null) ret = getBest(lat, lon, screen, scale, false);
 		return ret;
 	}
 	 */
 
 	private final static int MAXDIGITS_IN_FF = 30;
-	/** after calling onCompletedRead() this will contain a list of
-	 * indexes at which a new number of digits in the sortEntryBBox start
+	/**
+	 * after calling onCompletedRead() this will contain a list of indexes at which a new number of digits in the sortEntryBBox start
 	 */
 	private int[] numDigitsStartIndex = new int[MAXDIGITS_IN_FF];
 	private int maxDigits = -1;
+
 	public void onCompletedRead() {
-		sort(
-				new Comparer()
-				{
-					public int compare(Object o1, Object o2){
-						String s1 = ((MapListEntry)o1).sortEntryBBox;
-						String s2 = ((MapListEntry)o2).sortEntryBBox;
-						int ret = s1.length() - s2.length(); // sort shorter sortEntryBBox at the beginning
-						if (ret == 0) ret = s1.compareTo(s2);
-						return ret;
-					}
-				}
-				, false);
+		sort(new Comparer() {
+			public int compare(Object o1, Object o2) {
+				String s1 = ((MapListEntry) o1).sortEntryBBox;
+				String s2 = ((MapListEntry) o2).sortEntryBBox;
+				int ret = s1.length() - s2.length(); // sort shorter sortEntryBBox at the beginning
+				if (ret == 0)
+					ret = s1.compareTo(s2);
+				return ret;
+			}
+		}, false);
 		int digits_index = 0;
 		int numdigits = 0;
 		int s = size(); // avoid calling size() for each MaplistEntry (could be some thousand times)
 		for (int i = 0; i < s; i++) {
-			if ( ((MapListEntry)get(i)).sortEntryBBox.length() > numdigits) {
+			if (((MapListEntry) get(i)).sortEntryBBox.length() > numdigits) {
 				numDigitsStartIndex[digits_index] = i;
 				digits_index++;
-				numdigits = ((MapListEntry)get(i)).sortEntryBBox.length();
+				numdigits = ((MapListEntry) get(i)).sortEntryBBox.length();
 			}
 		}
 		numDigitsStartIndex[digits_index] = s;
@@ -250,63 +494,68 @@ public final class MapsList extends Vector {
 	}
 
 	/**
-	 * @param llimitorig lower limit to start the search from
-	 * @param ulimit upper limit to stop the search. llimit and ulimit must be set in a way that
-	 * the sortEntryBBox of each entry betwenn the limits have the same length
-	 * @param searchfor String starting with FF1, it should be longer than any sortEntryBoxString in the list
+	 * @param llimitorig
+	 *            lower limit to start the search from
+	 * @param ulimit
+	 *            upper limit to stop the search. llimit and ulimit must be set in a way that the sortEntryBBox of each entry betwenn the limits have the same length
+	 * @param searchfor
+	 *            String starting with FF1, it should be longer than any sortEntryBoxString in the list
 	 * @return the highest index which matches the searchfor-String. Look downward from there to find the best map, returns llimit if there is no match
 	 */
 	private int quickfind(String searchfor, int llimitorig, int ulimit) {
 		int llimit = llimitorig;
 		int test;
-		String cmp = ((MapListEntry)this.get(llimit)).sortEntryBBox;
+		String cmp = ((MapListEntry) this.get(llimit)).sortEntryBBox;
 		String sshort = searchfor.substring(0, cmp.length());
 		int comp;
-//		int testskw = 0;
-		if ( cmp.compareTo(sshort) > 0 ||
-			 ((MapListEntry)this.get(ulimit)).sortEntryBBox.compareTo(sshort) < 0)
-			return llimit; // if searchfor is not in the range, return llimit (llimit because getBestMap counts downward, so returning llimit will cause it to do only 1 test
-		while (ulimit - llimit > 1) {
-	//		testskw++;
+		if (cmp.compareTo(sshort) > 0 || ((MapListEntry) this.get(ulimit)).sortEntryBBox.compareTo(sshort) < 0)
+			// if searchfor is not in the range, return llimit (llimit because getBest counts downward, so returning llimit will cause it to do only 1 test
+			return llimit;
+		while (llimit < ulimit - 1) {
 			test = (ulimit + llimit) / 2;
-			cmp = ((MapListEntry)this.get(test)).sortEntryBBox;
+			cmp = ((MapListEntry) this.get(test)).sortEntryBBox;
 			comp = cmp.compareTo(searchfor);
-			if ( comp > 0 ) { // test > searchfor
+			if (comp > 0) {
+				// test > searchfor
 				ulimit = test;
-			} else { // test <= searchfor
-				if (comp < 0) llimit = test; // test < serachfor
-				else { // test == searchfor
+			}
+			else {
+				// test <= searchfor
+				if (comp < 0)
+					// test < serachfor
+					llimit = test;
+				else {
+					// test == searchfor
 					llimit = test;
 					ulimit = test;
 				}
 			}
-		} // searchfor is between llimit and ulimit OR is at ulimit or higher OR at llimit or lower
+		}
+		// searchfor is between llimit and ulimit 
+		// OR is at ulimit or higher
+		// OR at llimit or lower
 		// we want to return the highest index of the map which starts with searchfor
-		comp = ((MapListEntry)this.get(ulimit)).sortEntryBBox.compareTo(searchfor);
-		if ( (comp <= 0) && searchfor.startsWith(((MapListEntry)this.get(ulimit)).sortEntryBBox) )
+		comp = ((MapListEntry) this.get(ulimit)).sortEntryBBox.compareTo(searchfor);
+		if ((comp <= 0) && searchfor.startsWith(((MapListEntry) this.get(ulimit)).sortEntryBBox))
 			llimit = ulimit; // search for is on ulimit or higher
 
-		if (!searchfor.startsWith(((MapListEntry)this.get(llimit)).sortEntryBBox))
+		if (!searchfor.startsWith(((MapListEntry) this.get(llimit)).sortEntryBBox))
 			llimit = llimitorig; // if the found mapListEntry doesn't contain the searchfor, then there is no map containing it.
 		return llimit;
 	}
 
-		/**
-	 * @return a map which includs topleft and bottomright,
-	 * if no map includes both it returns null
-	 * @param if more than one map includes topleft and bottomright than the one will
-	 * be returned which has its center nearest to topleft. If you have gps-pos and goto-pos
-	 * as topleft and bottomright use gps as topleft.
-	 * if topleft is really topleft or if it is bottomright is not relevant.
+	/**
+	 * @return a map which includs topleft and bottomright, if no map includes both it returns null
+	 * @param if more than one map includes topleft and bottomright than the one will be returned which has its center nearest to topleft. If you have gps-pos and goto-pos as topleft and bottomright use gps as topleft. if topleft is really topleft or
+	 *        if it is bottomright is not relevant.
 	 */
-
-	public final MapInfoObject getMapForArea(CWPoint topleft, CWPoint bottomright){
+	public final MapInfoObject getMapForArea(CWPoint topleft, CWPoint bottomright) {
 		long start = new Time().getTime();
 		InfoBox progressBox = null;
 		boolean showprogress = false;
 		MapListEntry ml;
 		MapInfoObject mi;
-		String cmp = "FF1"+(new Area(topleft, bottomright)).getEasyFindString();
+		String cmp = "FF1" + (new Area(topleft, bottomright)).getEasyFindString();
 		String cmppadded = Common.rightPad(cmp, 30);
 		MapInfoObject fittingmap = null;
 		int guess;
@@ -315,33 +564,39 @@ public final class MapsList extends Vector {
 		double minDistLat = 10000000000000000000000.0;
 		double minDistLon = 10000000000000000000000.0;
 		for (int digitlength = 0; digitlength < maxDigits; digitlength++) {
-			guess = quickfind(cmppadded, this.numDigitsStartIndex[digitlength], this.numDigitsStartIndex[digitlength+1]-1);
-			if ( ((MapListEntry)get(guess)).sortEntryBBox.length() > cmp.length() ) break; // if the sortEntryBBox indicates that it cannot contain both points, stop searching
-			for (int i=guess; i >= numDigitsStartIndex[digitlength] ;i--) {
-				if (!showprogress && ((i & 31) == 0) && (new Time().getTime()-start  > 100) ) { // reason for (i & 7 == 0): test time only after i is incremented 15 times
+			guess = quickfind(cmppadded, this.numDigitsStartIndex[digitlength], this.numDigitsStartIndex[digitlength + 1] - 1);
+			if (((MapListEntry) get(guess)).sortEntryBBox.length() > cmp.length())
+				break; // if the sortEntryBBox indicates that it cannot contain both points, stop searching
+			for (int i = guess; i >= numDigitsStartIndex[digitlength]; i--) {
+				if (!showprogress && ((i & 31) == 0) && (new Time().getTime() - start > 100)) { // reason for (i & 7 == 0): test time only after i is incremented 15 times
 					showprogress = true;
-					progressBox = new InfoBox(MyLocale.getMsg(327,"Info"), MyLocale.getMsg(4701,"Searching for best map"));
+					progressBox = new InfoBox(MyLocale.getMsg(327, "Info"), MyLocale.getMsg(4701, "Searching for best map"));
 					progressBox.exec();
 					progressBox.waitUntilPainted(100);
 					ewe.sys.Vm.showWait(true);
 				}
-				ml = (MapListEntry)get(i);
-				try {
-					if (!Area.containsRoughly(ml.sortEntryBBox, cmp)) continue; // TODO if no map available
-					else { mi = ml.getMap();}
-				} catch (IOException ex) {continue; } // could not read .wfl-file
+				ml = (MapListEntry) get(i);
+				if (!Area.containsRoughly(ml.sortEntryBBox, cmp))
+					// TODO if no map available
+					continue;
+				else {
+					mi = ml.getMap();
+				}
 				better = false;
 				if (mi.isInBound(topleft) && mi.isInBound(bottomright)) { // both points are inside the map
 					if (fittingmap == null || fittingmap.scale > mi.scale * scaleTolerance) {
 						better = true; // mi map has a better (lower) scale than the last knwon good map
-					} else {
-						if (scaleEquals(mi, fittingmap)) { // same scale as bestmap till now -> test if its center is nearer to the gps-point = topleft
-							latNearer = java.lang.Math.abs(topleft.latDec- mi.center.latDec)/mi.sizeKm < minDistLat ;
-							lonNearer = java.lang.Math.abs(topleft.lonDec - mi.center.lonDec)/mi.sizeKm < minDistLon;
-							if ( latNearer && lonNearer) better = true; // for faster processing: if lat and lon are nearer then the distancance doesn't need to be calculated
+					}
+					else {
+						if (scaleEquals(mi, fittingmap)) { // same scale as bestMIO till now -> test if its center is nearer to the gps-point = topleft
+							latNearer = java.lang.Math.abs(topleft.latDec - mi.center.latDec) / mi.sizeKm < minDistLat;
+							lonNearer = java.lang.Math.abs(topleft.lonDec - mi.center.lonDec) / mi.sizeKm < minDistLon;
+							if (latNearer && lonNearer)
+								better = true; // for faster processing: if lat and lon are nearer then the distancance doesn't need to be calculated
 							else {
-								if ( (latNearer || lonNearer )) {
-									if (mi.center.getDistanceRad(topleft) < fittingmap.center.getDistanceRad(topleft) ) better = true;
+								if ((latNearer || lonNearer)) {
+									if (mi.center.getDistanceRad(topleft) < fittingmap.center.getDistanceRad(topleft))
+										better = true;
 								}
 							}
 
@@ -359,73 +614,90 @@ public final class MapsList extends Vector {
 			progressBox.close(0);
 			ewe.sys.Vm.showWait(false);
 		}
-		if (fittingmap == null) return null;
-		return new MapInfoObject(fittingmap); // TODO in case that this one and the old one are identical this instantiation could eventually be avoided as it is done at every greater shift of the map
+		if (fittingmap == null)
+			return null;
+		// TODO in case that this one and the old one are identical this instantiation could eventually be avoided as it is done at every greater shift of the map
+		return new MapInfoObject(fittingmap);
 	}
 
 	/**
-	 *
-	 * @param lat a point to be inside the map
+	 * 
+	 * @param lat
+	 *            a point to be inside the map
 	 * @param lon
-	 * @param screen: width, height of the screen. The map must overlap the screen. xy: where is lat/lon on screen
-	 * @param curScale reference scale to be changed
-	 * @param moreDetails true: find map with more details == higher resolustion = lower scale / false find map with less details = better overview
+	 * @param screen
+	 *            : width, height of the screen. The map must overlap the screen. xy: where is lat/lon on screen
+	 * @param curScale
+	 *            reference scale to be changed
+	 * @param moreDetails
+	 *            true: find map with more details == higher resolustion = lower scale / false find map with less details = better overview
 	 * @return
 	 */
-	public MapInfoObject getMapChangeResolution(CWPoint ll, Rect screen, float curScale, boolean moreDetails){
-		if (size() == 0) return null;
+	public MapInfoObject getMapChangeResolution(CWPoint ll, Rect screen, float curScale, boolean moreDetails) {
+		if (size() == 0)
+			return null;
 		long start = new Time().getTime();
 		InfoBox progressBox = null;
 		boolean showprogress = false;
 		MapListEntry ml;
 		MapInfoObject mi;
-		MapInfoObject bestMap = null; // = (MapInfoObject)get(0);
+		MapInfoObject bestMIO = null; // = (MapInfoObject)get(0);
 		double minDistLat = 1000000000000000000000000000000000000000000000.0;
 		double minDistLon = 1000000000000000000000000000000000000000000000.0;
 		boolean latNearer, lonNearer;
 		boolean better = false;
-		Area screenArea = null; // getAreaForScreen(screen, lat, lon, bestMap.scale, bestMap);
+		Area screenArea = null; // getAreaForScreen(screen, lat, lon, bestMIO.scale, bestMIO);
 		float lastscale = -1;
-		String cmp = "FF1"+Area.getEasyFindString(ll, MAXDIGITS_IN_FF);
-		for (int i=size()-1; i >= 0 ;i--) {
-			if (!showprogress && ((i & 31) == 0) && (new Time().getTime()-start  > 100) ) { // reason for (i & 7 == 0): test time only after i is incremented 15 times
+		String cmp = "FF1" + Area.getEasyFindString(ll, MAXDIGITS_IN_FF);
+		for (int i = size() - 1; i >= 0; i--) {
+
+			// test time only after i is incremented 31 times
+			if (!showprogress && ((i & 31) == 0) && (new Time().getTime() - start > 100)) {
 				showprogress = true;
-				progressBox = new InfoBox(MyLocale.getMsg(327,"Info"), MyLocale.getMsg(4701,"Searching for best map"));
+				progressBox = new InfoBox(MyLocale.getMsg(327, "Info"), MyLocale.getMsg(4701, "Searching for best map"));
 				progressBox.exec();
 				progressBox.waitUntilPainted(100);
 				ewe.sys.Vm.showWait(true);
 			}
+
 			better = false;
-			ml = (MapListEntry)get(i);
-			try {
-				if (!Area.containsRoughly(ml.sortEntryBBox, cmp)) continue; // TODO if no map available
-				else { mi = ml.getMap();}
-			} catch (IOException ex) {continue; } // could not read .wfl-file
-			if (mi.fileNameWFL == "") continue; // exclude "maps" without image // TODO make this a boolean in MapInfoObject
+			ml = (MapListEntry) get(i);
+			if (!Area.containsRoughly(ml.sortEntryBBox, cmp))
+				// TODO if no map available
+				continue;
+			else {
+				mi = ml.getMap();
+			}
+			if (!mi.hasImage)
+				continue;
 			if (screenArea == null || !scaleEquals(lastscale, mi)) {
 				screenArea = getAreaForScreen(screen, ll, mi.scale, mi);
 				lastscale = mi.scale;
 			}
 			if (screenArea.isOverlapping(mi)) { // is on screen
-				if (bestMap == null || !scaleEquals(mi, bestMap)) { // different scale than known bestMap?
-					if (mi.isInBound(ll) && (      // more details wanted and this map has more details?                                // less details than bestmap
-							(moreDetails && (curScale > mi.scale * scaleTolerance) && (bestMap == null || mi.scale > bestMap.scale * scaleTolerance ) ) // higher resolution wanted and mi has higher res and a lower res than bestmap, because we dont want to overjump one resolution step
-							|| (!moreDetails && (curScale *  scaleTolerance < mi.scale) && (bestMap == null || mi.scale * scaleTolerance < bestMap.scale) ) // lower resolution wanted and mi has lower res and a higher res than bestmap, because we dont want to overjump one resolution step
-					) )	better = true;	// inbound and higher resolution if higher res wanted -> better
-				} else { // same scale as bestmap -> look if naerer
-					latNearer = java.lang.Math.abs(ll.latDec - mi.center.latDec)/mi.sizeKm < minDistLat ;
-					lonNearer = java.lang.Math.abs(ll.lonDec - mi.center.lonDec)/mi.sizeKm < minDistLon;
-					if ( latNearer && lonNearer) better = true; // for faster processing: if lat and lon are nearer then the distancance doesn't need to be calculated
+				if (bestMIO == null || !scaleEquals(mi, bestMIO)) { // different scale than known bestMIO?
+					if (mi.isInBound(ll) && ( // more details wanted and this map has more details?                                // less details than bestMIO
+							(moreDetails && (curScale > mi.scale * scaleTolerance) && (bestMIO == null || mi.scale > bestMIO.scale * scaleTolerance)) // higher resolution wanted and mi has higher res and a lower res than bestMIO, because we dont want to overjump one resolution step
+							|| (!moreDetails && (curScale * scaleTolerance < mi.scale) && (bestMIO == null || mi.scale * scaleTolerance < bestMIO.scale)) // lower resolution wanted and mi has lower res and a higher res than bestMIO, because we dont want to overjump one resolution step
+							))
+						better = true; // inbound and higher resolution if higher res wanted -> better
+				}
+				else { // same scale as bestMIO -> look if naerer
+					latNearer = java.lang.Math.abs(ll.latDec - mi.center.latDec) / mi.sizeKm < minDistLat;
+					lonNearer = java.lang.Math.abs(ll.lonDec - mi.center.lonDec) / mi.sizeKm < minDistLon;
+					if (latNearer && lonNearer)
+						better = true; // for faster processing: if lat and lon are nearer then the distancance doesn't need to be calculated
 					else {
-						if ( (latNearer || lonNearer )) {
-							if (mi.center.getDistanceRad(ll) < bestMap.center.getDistanceRad(ll) ) better = true;
+						if ((latNearer || lonNearer)) {
+							if (mi.center.getDistanceRad(ll) < bestMIO.center.getDistanceRad(ll))
+								better = true;
 						}
 					}
 				} // same scale
 				if (better) {
-					minDistLat = java.lang.Math.abs(ll.latDec - mi.center.latDec)/mi.sizeKm;
-					minDistLon = java.lang.Math.abs(ll.lonDec - mi.center.lonDec)/mi.sizeKm;
-					bestMap = mi;
+					minDistLat = java.lang.Math.abs(ll.latDec - mi.center.latDec) / mi.sizeKm;
+					minDistLon = java.lang.Math.abs(ll.lonDec - mi.center.lonDec) / mi.sizeKm;
+					bestMIO = mi;
 				}
 			}
 		}
@@ -433,38 +705,51 @@ public final class MapsList extends Vector {
 			progressBox.close(0);
 			ewe.sys.Vm.showWait(false);
 		}
-		if (bestMap == null) return null;
-		return new MapInfoObject(bestMap);
+		if (bestMIO == null)
+			return null;
+		return new MapInfoObject(bestMIO);
 	}
+
 	/**
 	 * returns an area in lat/lon of the screen
-	 * @param a screen width / height and position of lat/lon on the screen
-	 * @param lat a (reference) point on the screen
+	 * 
+	 * @param a
+	 *            screen width / height and position of lat/lon on the screen
+	 * @param lat
+	 *            a (reference) point on the screen
 	 * @param lon
-	 * @param scale scale (meters per pixel) of the map for which the screen edges are wanted
-	 * @param map map for which the screen edges are wanted
-	 * @return
+	 * @param scale
+	 *            scale (meters per pixel) of the map for which the screen edges are wanted
+	 * @param map
+	 *            map for which the screen edges are wanted
+	 * @return Area
 	 */
 	private Area getAreaForScreen(Rect a, CWPoint ll, float scale, MapInfoObject map) {
 		Area ret = null;
 		Point xy = map.calcMapXY(ll);
 		Point topleft = new Point(xy.x - a.x, xy.y - a.y);
-		ret = new Area(map.calcLatLon(topleft), map.calcLatLon(topleft.x+a.width, topleft.y+a.height));
+		ret = new Area(map.calcLatLon(topleft), map.calcLatLon(topleft.x + a.width, topleft.y + a.height));
 		return ret;
 	}
+
 	public static boolean scaleEquals(MapInfoObject a, MapInfoObject b) {
 		//return java.lang.Math.abs(a.scale - b.scale) < scaleTolerance;
-		if (a.scale > b.scale) return a.scale / b.scale < scaleTolerance;
-		else return b.scale / a.scale < scaleTolerance;
+		if (a.scale > b.scale)
+			return a.scale / b.scale < scaleTolerance;
+		else
+			return b.scale / a.scale < scaleTolerance;
 	}
+
 	public static boolean scaleEquals(float s, MapInfoObject b) {
 		//return java.lang.Math.abs(s - b.scale) < scaleTolerance;
-		if (s > b.scale) return s / b.scale < scaleTolerance;
-		else return b.scale / s < scaleTolerance;
+		if (s > b.scale)
+			return s / b.scale < scaleTolerance;
+		else
+			return b.scale / s < scaleTolerance;
 	}
 
 	/**
-	 *
+	 * 
 	 * @param test
 	 * @param old
 	 * @param wanted
@@ -475,18 +760,20 @@ public final class MapsList extends Vector {
 		if (test > wanted) { // ensure that first term is greater than 1
 			testa = test;
 			wanta = wanted;
-		} else {
+		}
+		else {
 			testa = wanted;
 			wanta = test;
 		}
 		if (old > wanted) { // ensure that second term is greater than 1
 			olda = old;
 			wantb = wanted;
-		} else {
+		}
+		else {
 			olda = wanted;
 			wantb = old;
 		}
-		return testa/wanta * scaleTolerance < olda/wantb;
+		return testa / wanta * scaleTolerance < olda / wantb;
 	}
 
 	public static boolean scaleNearerOrEuqal(float test, float old, float wanted) {
@@ -494,18 +781,20 @@ public final class MapsList extends Vector {
 		if (test > wanted) { // ensure that first term is greater than 1
 			testa = test;
 			wanta = wanted;
-		} else {
+		}
+		else {
 			testa = wanted;
 			wanta = test;
 		}
 		if (old > wanted) { // ensure that second term is greater than 1
 			olda = old;
 			wantb = wanted;
-		} else {
+		}
+		else {
 			olda = wanted;
 			wantb = old;
 		}
-		return testa/wanta < olda/wantb * scaleTolerance ;
+		return testa / wanta < olda / wantb * scaleTolerance;
 	}
 
 	/* may be the following code is used same time later to further enhance the speed of finding the best map
@@ -521,110 +810,141 @@ public final class MapsList extends Vector {
 		}
 		return 1;
 	}
-*/
-	/** for determining if a new map should be downloaded
-	public boolean isInAmap(CWPoint topleft, CWPoint bottomright) {
-		if (!latRangeList.isInRange(topleft.latDec) || !latRangeList.isInRange(bottomright.latDec)) ||
-			!lonRangeList.inInRange(topleft.lonDec) || !lonRangeList.isInRange(boxsttomright.lonDec)
-			return false;
-	}
+	*/
+
+	/**
+	 * for determining if a new map should be downloaded public boolean isInAmap(CWPoint topleft, CWPoint bottomright) { if (!latRangeList.isInRange(topleft.latDec) || !latRangeList.isInRange(bottomright.latDec)) ||
+	 * !lonRangeList.inInRange(topleft.lonDec) || !lonRangeList.isInRange(boxsttomright.lonDec) return false; }
 	 */
-	private String _mapsPath="";
-	public String getMapsPath() {
-		return _mapsPath;
-	}
 
 }
 
-final class MapListEntry /*implements Comparable */ {
+final class MapListEntry {
 	public String sortEntryBBox;
-	//String sortEntry;
+	public String path;
 	public String filename;
-	String path;
-	MapInfoObject map;
+	public MapInfoObject map = null;
+	public byte mapType = 0; // 0 = has wfl-file (from wms - Server or Maperitive), 1 = with zoom/x/y.imageExtension (from Tile - Server)  
 
 	static int rename = 0;
-	static int renameCounter = 0;
 	static InfoBox renameProgressInfoB = null;
 
-	public MapListEntry (String pathi, String filenamei) {
-		filename = new String(filenamei);
-		path = new String(pathi);
-		sortEntryBBox = null;
-		map = null;
+	/**
+	 * constructes a MapListEntry with given sortEntryBBox
+	 */
+	public MapListEntry(String path, String filename, String sortEntryBBox, byte mapType) {
+		this.filename = filename;
+		this.path = path;
+		this.sortEntryBBox = sortEntryBBox;
+		this.mapType = mapType;
+	}
+
+	/**
+	 * constructes a MapListEntry with given
+	 * sortEntryBBox from Filename (start with FF1, end with E-)
+	 * or is calculated using the MapInfoObject created from wfl - File
+	 */
+	public MapListEntry(String pathi, String filenamei) {
+		this.filename = filenamei;
+		this.path = pathi;
+		this.sortEntryBBox = null;
 		try {
-			if (filenamei.startsWith("FF1")) sortEntryBBox = filenamei.substring(0, filenamei.indexOf("E-"));
-		} catch (IndexOutOfBoundsException ex) {
-			Global.getPref().log("[MapsList:MapListEntry]", ex, true);
+			if (filenamei.startsWith("FF1"))
+				sortEntryBBox = filenamei.substring(0, filenamei.indexOf("E-"));
 		}
-		if (sortEntryBBox == null ) { //|| sortEntryScaleCenterPx.length() < 16) {
+		catch (IndexOutOfBoundsException ex) {
+			Global.pref.log("[MapsList:MapListEntry] Bad File in maps: " + filename);
+		}
+
+		if (sortEntryBBox == null) { //|| sortEntryScaleCenterPx.length() < 16) {
 			try {
 				map = new MapInfoObject(path, filename);
-				sortEntryBBox = "FF1"+map.getEasyFindString();
+				sortEntryBBox = "FF1" + map.getEasyFindString();
+
 				if (rename == 0) { // never asked before
-					if ( (new MessageBox(MyLocale.getMsg(4702,"Optimisation"), MyLocale.getMsg(4703,"Cachewolf can make loading maps much faster by adding a identification mark to the filename. Do you want me to do this now?\n It can take several minutes"),
-							FormBase.YESB | FormBase.NOB)).execute() == FormBase.IDYES)
-					{
-						renameProgressInfoB = new InfoBox(MyLocale.getMsg(327,"Info"), MyLocale.getMsg(4704,"\nRenaming file:")+"    \n");
+					if ((new MessageBox(MyLocale.getMsg(4702, "Optimisation"), MyLocale.getMsg(4703,
+							"Cachewolf can make loading maps much faster by adding a identification mark to the filename. Do you want me to do this now?\n It can take several minutes"), FormBase.YESB | FormBase.NOB)).execute() == FormBase.IDYES) {
+						renameProgressInfoB = new InfoBox(MyLocale.getMsg(327, "Info"), MyLocale.getMsg(4704, "\nRenaming file:") + "    \n");
 						renameProgressInfoB.exec();
 						renameProgressInfoB.waitUntilPainted(100);
 						rename = 1; // rename
-					} else rename = 2; // don't rename
-				}
-				if (rename == 1) {
-					renameCounter++;
-					renameProgressInfoB.setInfo(MyLocale.getMsg(4704,"\nRenaming file:")+" " + renameCounter+"\n");
-					String f = path+filename+".wfl";
-					String to = sortEntryBBox+"E-"+filename+".wfl";
-					if (!new File(f).rename(to))
-						(new MessageBox(MyLocale.getMsg(321,"Error"), MyLocale.getMsg(4705,"Failed to rename:\n")+f+MyLocale.getMsg(4706,"\nto:\n")+to, FormBase.OKB)).exec();
-					f = Common.getImageName(path+filename);
-					if (f != null) {
-						to = sortEntryBBox+"E-"+filename+Common.getFilenameExtension(f);
-						if (!new File(f).rename(to)) {
-							Global.getPref().log("MapListEntry (String pathi, String filenamei): Failed to rename: "+path+filename+": "+f+" to: "+to,null);
-							(new MessageBox(MyLocale.getMsg(321,"Error"), MyLocale.getMsg(4705,"Failed to rename:\n")+f+MyLocale.getMsg(4706,"\nto:\n")+to, FormBase.OKB)).exec();
-						}
-					} else {
-						Global.getPref().log("MapListEntry (String pathi, String filenamei): Could not find image assiciated to: "+path+filename+".wfl",null);
-						(new MessageBox(MyLocale.getMsg(321,"Error"), MyLocale.getMsg(4709,"Could not find image assiciated to:\n")+path+filename+".wfl", FormBase.OKB)).exec();
 					}
-					filename = sortEntryBBox+"E-"+filename;
-					map.mapName = sortEntryBBox+"E-"+map.mapName;
-					map.fileNameWFL = path + filename + ".wfl";
+					else
+						rename = 2; // don't rename
 				}
-			} catch (IOException ioex) { // this should not happen
-				(new MessageBox(MyLocale.getMsg(321,"Error"), MyLocale.getMsg(4707,"I/O-Error while reading:")+" "+path+filename+": "+ ioex.getMessage(), FormBase.OKB)).exec();
-				Global.getPref().log("MapListEntry (String pathi, String filenamei): I/O-Error while reading: "+path+filename+": ", ioex);
-			} catch (Exception ex) {
-				(new MessageBox(MyLocale.getMsg(321,"Error"), MyLocale.getMsg(4706,"Error while reading:")+" "+path+filename+": "+ ex.getMessage(), FormBase.OKB)).exec();
-				Global.getPref().log("MapListEntry (String pathi, String filenamei): Error while reading: "+path+filename+": ", ex);
+
+				if (rename == 1) {
+					String imageExtension = "";
+					String f = path + filename + ".wfl";
+					renameProgressInfoB.setInfo(MyLocale.getMsg(4704, "\nRenaming file: ") + f + "\n");
+					String to = sortEntryBBox + "E-" + filename + ".wfl";
+					if (!new FileBugfix(f).rename(to))
+						(new MessageBox(MyLocale.getMsg(321, "Error"), MyLocale.getMsg(4705, "Failed to rename:\n") + f + MyLocale.getMsg(4706, "\nto:\n") + to, FormBase.OKB)).exec();
+					f = Common.getImageName(path + filename);
+					if (f != null) {
+						imageExtension = Common.getFilenameExtension(f);
+						to = sortEntryBBox + "E-" + filename + imageExtension;
+						if (!new FileBugfix(f).rename(to)) {
+							Global.pref.log("MapListEntry (String pathi, String filenamei): Failed to rename: " + path + filename + ": " + f + " to: " + to, null);
+							(new MessageBox(MyLocale.getMsg(321, "Error"), MyLocale.getMsg(4705, "Failed to rename:\n") + f + MyLocale.getMsg(4706, "\nto:\n") + to, FormBase.OKB)).exec();
+						}
+					}
+					else {
+						Global.pref.log("MapListEntry (String pathi, String filenamei): Could not find image assiciated to: " + path + filename + ".wfl", null);
+						(new MessageBox(MyLocale.getMsg(321, "Error"), MyLocale.getMsg(4709, "Could not find image assiciated to:\n") + path + filename + ".wfl", FormBase.OKB)).exec();
+					}
+					filename = sortEntryBBox + "E-" + filename;
+					map.setMapName(filename);
+					map.setPath(path);
+					map.imageExtension = imageExtension;
+				}
+			}
+			catch (IOException ioex) { // this should not happen
+				(new MessageBox(MyLocale.getMsg(321, "Error"), MyLocale.getMsg(4707, "I/O-Error while reading:") + " " + path + filename + ": " + ioex.getMessage(), FormBase.OKB)).exec();
+				Global.pref.log("MapListEntry (String pathi, String filenamei): I/O-Error while reading: " + path + filename + ": ", ioex);
+			}
+			catch (Exception ex) {
+				(new MessageBox(MyLocale.getMsg(321, "Error"), MyLocale.getMsg(4706, "Error while reading:") + " " + path + filename + ": " + ex.getMessage(), FormBase.OKB)).exec();
+				Global.pref.log("MapListEntry (String pathi, String filenamei): Error while reading: " + path + filename + ": ", ex);
 			}
 		}
 	}
 
+	/**
+	 * constructes a MapListEntry with a MapInfoObject without an associated map but with 1 Pixel = scale meters
+	 */
 	public MapListEntry(double scale, double lat) {
 		map = new MapInfoObject(scale, lat);
-		filename = map.mapName;
-		sortEntryBBox = "FF1";
+		this.filename = map.getMapName();
+		this.path = "";
+		this.sortEntryBBox = "FF1";
+		this.mapType = 1;
 	}
 
-	public MapInfoObject getMap() throws IOException {
-		if (map == null) map = new MapInfoObject(path, filename);
-		return map;
+	public MapInfoObject getMap() {
+		if (this.map != null)
+			return this.map;
+		else
+			// implicit sets this.map
+			return new MapInfoObject(this);
 	}
 
 	public static void loadingFinished() {
-		if (renameProgressInfoB != null) renameProgressInfoB.close(0);
+		if (renameProgressInfoB != null)
+			renameProgressInfoB.close(0);
 		renameProgressInfoB = null;
 		rename = 0;
 	}
 
-	/*
-	// this maybe needed some time later to further enhance the speed of finding the best map
-	public int compareTo(Object other) {
-		if (other == null) return 1;
-		return this.sortEntryBBox.compareTo(((MapListEntry)other).sortEntryBBox);
-	} */
+	public String getMapNameForList() {
+		if (this.mapType == 2) {
+			String s[] = mString.split(path, '/');
+			if (s.length > 2)
+				return s[s.length - 3] + "/" + s[s.length - 2] + "/" + this.filename;
+			else
+				return filename;
+		}
+		else
+			return filename;
+	}
 }
-

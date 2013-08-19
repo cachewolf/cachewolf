@@ -26,7 +26,7 @@ import ewe.ui.Editor;
 
 public class TableForm extends Editor {
 	public TableForm(TablePanel tp) {
-		if (Global.getPref().menuAtTop) {
+		if (Global.pref.menuAtTop) {
 			this.addLast(Global.mainForm.mMenu,CellConstants.DONTSTRETCH, CellConstants.FILL);
 			this.addLast(tp,STRETCH,FILL);
 		} else {

@@ -109,7 +109,7 @@ public class Parser {
 		public String funcName; // the function name in the user input
 		public String alias; // the funcName is mapped to this alias
 		public int nargs; // bitmap for number of args, i.e. 14 = 1 or 2 or 3 args; 5 = 0 or 2 args
-							// i.e. 1<<nargs ORed together
+						  // i.e. 1<<nargs ORed together
 
 		fnType(String funcName, String alias, int nargs) {
 			this.funcName = funcName;
@@ -195,7 +195,7 @@ public class Parser {
 
 	private boolean isVariable(String varName) {
 		return varName.startsWith("$") || // Global variables exist per default
-				symbolTable.containsKey(Global.getPref().solverIgnoreCase ? varName.toUpperCase() : varName);
+				symbolTable.containsKey(Global.pref.solverIgnoreCase ? varName.toUpperCase() : varName);
 	}
 
 	private boolean isInteger(double d) {
@@ -209,7 +209,7 @@ public class Parser {
 
 	private Object getVariable(String varName) throws Exception {
 		if (varName.startsWith("$")) { // Potential coordinate
-			CacheHolder ch = Global.getProfile().cacheDB.get(varName.substring(1));
+			CacheHolder ch = Global.profile.cacheDB.get(varName.substring(1));
 			if (ch != null) { // Found it!
 				// Check whether coordinates are valid
 				cwPt.set(ch.getPos());
@@ -219,13 +219,14 @@ public class Parser {
 					return ""; // Convert invalid coordinates (N 0 0.0 E 0 0.0) into empty string
 			}
 		}
-		Object result = symbolTable.get(Global.getPref().solverIgnoreCase ? varName.toUpperCase() : varName);
+		Object result = symbolTable.get(Global.pref.solverIgnoreCase ? varName.toUpperCase() : varName);
 		if (result == null) {
 			// If it is a global variable, add it with a default value
 			if (varName.startsWith("$")) {
 				result = "";
-				symbolTable.put(Global.getPref().solverIgnoreCase ? varName.toUpperCase() : varName, "");
-			} else
+				symbolTable.put(Global.pref.solverIgnoreCase ? varName.toUpperCase() : varName, "");
+			}
+			else
 				err(MyLocale.getMsg(1702, "Variable not defined: ") + varName);
 		}
 		return result;
@@ -238,7 +239,8 @@ public class Parser {
 			else
 				str = str.replace(',', '.');
 			return java.lang.Double.parseDouble(str);
-		} catch (NumberFormatException e) {
+		}
+		catch (NumberFormatException e) {
 			return java.lang.Double.NaN;
 		}
 	}
@@ -258,7 +260,8 @@ public class Parser {
 				num = defaultForEmptyString;
 			else
 				num = getNumber((String) calcStack.get(calcStack.size() - 1)).doubleValue();
-		} else {
+		}
+		else {
 			num = ((java.lang.Double) calcStack.get(calcStack.size() - 1)).doubleValue();
 		}
 		calcStack.removeElementAt(calcStack.size() - 1);
@@ -276,12 +279,14 @@ public class Parser {
 			if (java.lang.Math.floor(d) == d && d < java.lang.Long.MAX_VALUE && d > java.lang.Long.MIN_VALUE) {
 				java.lang.Long L = new java.lang.Long((long) d);
 				s = L.toString();
-			} else { // Use the default Double format
+			}
+			else { // Use the default Double format
 				s = D.toString().replace(',', '.'); // always show numbers with decimal point;
 				if (s.endsWith(".0"))
 					s = s.substring(0, s.length() - 2);
 			}
-		} else
+		}
+		else
 			s = (String) calcStack.get(calcStack.size() - 1);
 		calcStack.removeElementAt(calcStack.size() - 1);
 		return s;
@@ -291,21 +296,24 @@ public class Parser {
 		if (scanpos < tokenStack.size()) {
 			thisToken = (TokenObj) tokenStack.get(scanpos);
 			scanpos++;
-		} else
+		}
+		else
 			err(MyLocale.getMsg(1704, "Unexpected end of source"));
 	}
 
 	private TokenObj peekToken() {
 		if (scanpos < tokenStack.size()) {
 			return (TokenObj) tokenStack.get(scanpos);
-		} else
+		}
+		else
 			return new TokenObj();
 	}
 
 	private void getNextTokenOtherThanSemi() throws Exception {
 		do {
 			getToken();
-		} while (thisToken.token.equals(";"));
+		}
+		while (thisToken.token.equals(";"));
 	}
 
 	private void skipPastEndif(TokenObj ifToken) throws Exception {
@@ -328,7 +336,8 @@ public class Parser {
 	private boolean checkNextSymIs(String str) throws Exception {
 		if (thisToken.token.toUpperCase().equals(str)) {
 			return true;
-		} else {
+		}
+		else {
 			err(MyLocale.getMsg(1706, "Expected ") + str + "  " + MyLocale.getMsg(1707, "Found: ") + thisToken.token);
 			return false; // Dummy as err does not return
 		}
@@ -359,7 +368,7 @@ public class Parser {
 
 	/** If we are in DEGree mode, convert the argument to RADiants, if not leave it unchanged */
 	private double makeRadiant(double arg) {
-		if (Global.getPref().solverDegMode)
+		if (Global.pref.solverDegMode)
 			return arg * java.lang.Math.PI / 180.0;
 		else
 			return arg;
@@ -367,7 +376,7 @@ public class Parser {
 
 	/** If we are in DEGree mode, convert the argument to degrees */
 	private double makeDegree(double arg) {
-		if (Global.getPref().solverDegMode)
+		if (Global.pref.solverDegMode)
 			return arg / java.lang.Math.PI * 180.0;
 		else
 			return arg;
@@ -384,18 +393,19 @@ public class Parser {
 		cwPt.set(coordA);
 		double angleDeg = cwPt.getBearing(new CWPoint(coordB));
 		// getBearing returns a result in degrees
-		return Global.getPref().solverDegMode ? angleDeg : angleDeg * java.lang.Math.PI / 180.0;
+		return Global.pref.solverDegMode ? angleDeg : angleDeg * java.lang.Math.PI / 180.0;
 	}
 
 	/** Get or set the current centre */
 	private void funcCenter(int nargs) throws Exception {
 		if (nargs == 0) {
-			calcStack.add(Global.getPref().getCurCentrePt().toString());
-		} else {
+			calcStack.add(Global.pref.getCurCentrePt().toString());
+		}
+		else {
 			String coordA = popCalcStackAsString();
 			if (!isValidCoord(coordA))
 				err(MyLocale.getMsg(1712, "Invalid coordinate: ") + coordA);
-			Global.getPref().setCurCentrePt(new CWPoint(coordA));
+			Global.pref.setCurCentrePt(new CWPoint(coordA));
 		}
 	}
 
@@ -423,7 +433,8 @@ public class Parser {
 			err(MyLocale.getMsg(1710, "Cannot count empty string"));
 		if (s2.length() == 1) {
 			calcStack.add(new Double(funcCountChar(s1, s2.charAt(0))));
-		} else {
+		}
+		else {
 			String res = "";
 			for (int i = 0; i < s2.length(); i++) {
 				res += s2.charAt(i) + "=" + funcCountChar(s1, s2.charAt(i)) + " ";
@@ -464,7 +475,7 @@ public class Parser {
 	}
 
 	private void funcDeg(boolean arg) {
-		Global.getPref().solverDegMode = arg;
+		Global.pref.solverDegMode = arg;
 		Global.mainTab.solverP.showSolverMode();
 	}
 
@@ -487,7 +498,7 @@ public class Parser {
 		cwPt.set(coordA);
 		double distKM = cwPt.getDistance(new CWPoint(coordB));
 		result = distKM * 1000.0;
-		if (Global.getPref().metricSystem == Metrics.IMPERIAL) {
+		if (Global.pref.metricSystem == Metrics.IMPERIAL) {
 			result = Metrics.convertUnit(distKM, Metrics.KILOMETER, Metrics.YARDS);
 		}
 		return result;
@@ -510,7 +521,8 @@ public class Parser {
 			int pos;
 			if ((pos = oldChars.indexOf(s.charAt(i))) != -1) {
 				encodedStr += newChars.charAt(pos);
-			} else
+			}
+			else
 				encodedStr += s.charAt(i);
 		}
 		return encodedStr;
@@ -564,24 +576,24 @@ public class Parser {
 		nav.setDestination(coord);
 		if (nargs == 2) { // Now set the value of the addi waypoint (it must exist already)
 			cwPt.set(coord);
-			CacheHolder ch = Global.getProfile().cacheDB.get(waypointName);
+			CacheHolder ch = Global.profile.cacheDB.get(waypointName);
 			if (ch == null) {
 				err(MyLocale.getMsg(1714, "Goto: Waypoint does not exist: ") + waypointName);
 				return;
 			}
 			ch.setPos(cwPt);
-			ch.calcDistance(Global.getPref().getCurCentrePt()); // Update distance/bearing
+			ch.calcDistance(Global.pref.getCurCentrePt()); // Update distance/bearing
 			nav.setDestination(ch);
-			Global.getProfile().selectionChanged = true; // Tell moving map to updated displayed waypoints
+			Global.profile.selectionChanged = true; // Tell moving map to updated displayed waypoints
 		}
 	}
 
 	/** Display or change the case sensitivity of variable names */
 	private void funcIgnoreVariableCase(int nargs) throws Exception {
 		if (nargs == 0)
-			calcStack.add("" + Global.getPref().solverIgnoreCase);
+			calcStack.add("" + Global.pref.solverIgnoreCase);
 		else {
-			Global.getPref().solverIgnoreCase = (popCalcStackAsNumber(0) != 0) ? true : false;
+			Global.pref.solverIgnoreCase = (popCalcStackAsNumber(0) != 0) ? true : false;
 		}
 	}
 
@@ -616,7 +628,8 @@ public class Parser {
 			if (start < 1 || start > s.length())
 				err(MyLocale.getMsg(1717, "mid: Argument out of range"));
 			return s.substring((int) start - 1);
-		} else {
+		}
+		else {
 			double len = popCalcStackAsNumber(0);
 			double start = popCalcStackAsNumber(0);
 			String s = popCalcStackAsString();
@@ -641,12 +654,13 @@ public class Parser {
 	/** Get or set the profile centre */
 	private void funcPz(int nargs) throws Exception {
 		if (nargs == 0) {
-			calcStack.add(Global.getProfile().centre.toString());
-		} else {
+			calcStack.add(Global.profile.centre.toString());
+		}
+		else {
 			String coordA = popCalcStackAsString();
 			if (!isValidCoord(coordA))
 				err(MyLocale.getMsg(1712, "Invalid coordinate: ") + coordA);
-			Global.getProfile().centre.set(coordA);
+			Global.profile.centre.set(coordA);
 		}
 	}
 
@@ -671,14 +685,15 @@ public class Parser {
 
 		// Check parameters: Range
 		if (degrees1 < 0 || degrees1 > 360 || degrees2 < 0 || degrees2 > 360) {
-			if (Global.getPref().solverDegMode) {
+			if (Global.pref.solverDegMode) {
 				err(MyLocale.getMsg(1740, "Crossbearing degrees must be in interval [0;360]"));
-			} else {
+			}
+			else {
 				err(MyLocale.getMsg(1741, "Crossbearing degrees must be in interval [0;2*PI]"));
 			}
 		}
-		double rAN = Global.getPref().solverDegMode ? degrees1 / 180.0 * java.lang.Math.PI : degrees1;
-		double rBN = Global.getPref().solverDegMode ? degrees2 / 180.0 * java.lang.Math.PI : degrees2;
+		double rAN = Global.pref.solverDegMode ? degrees1 / 180.0 * java.lang.Math.PI : degrees1;
+		double rBN = Global.pref.solverDegMode ? degrees2 / 180.0 * java.lang.Math.PI : degrees2;
 
 		CWPoint point1 = new CWPoint(coordinates1);
 		CWPoint point2 = new CWPoint(coordinates2);
@@ -712,10 +727,10 @@ public class Parser {
 		}
 		double distanceInRad = distance / maxRadius;
 		double phiAB = point1.getBearing(point2);
-		if (Global.getPref().solverDegMode)
+		if (Global.pref.solverDegMode)
 			phiAB = phiAB / 180.0 * java.lang.Math.PI;
 		double phiBA = point2.getBearing(point1);
-		if (Global.getPref().solverDegMode)
+		if (Global.pref.solverDegMode)
 			phiBA = phiBA / 180.0 * java.lang.Math.PI;
 
 		double psi = phiAB - rAN;
@@ -752,10 +767,10 @@ public class Parser {
 			err(MyLocale.getMsg(1718, "Cannot project a negative distance"));
 		double degrees = popCalcStackAsNumber(0);
 		// If we are not in degree mode, arg is in radiants ==> convert it
-		if (!Global.getPref().solverDegMode)
+		if (!Global.pref.solverDegMode)
 			degrees = degrees * 180.0 / java.lang.Math.PI;
 		if (degrees < 0 || degrees > 360)
-			if (Global.getPref().solverDegMode)
+			if (Global.pref.solverDegMode)
 				err(MyLocale.getMsg(1719, "Projection degrees must be in interval [0;360]"));
 			else
 				err(MyLocale.getMsg(1739, "Projection degrees must be in interval [0;2*PI]"));
@@ -763,9 +778,10 @@ public class Parser {
 		if (!isValidCoord(coord))
 			err(MyLocale.getMsg(1712, "Invalid coordinate: ") + coord);
 		cwPt.set(coord);
-		if (Global.getPref().metricSystem == Metrics.IMPERIAL) {
+		if (Global.pref.metricSystem == Metrics.IMPERIAL) {
 			distance = Metrics.convertUnit(distance, Metrics.YARDS, Metrics.KILOMETER);
-		} else {
+		}
+		else {
 			distance = distance / 1000.0;
 		}
 		return cwPt.project(degrees, distance).toString();
@@ -804,7 +820,7 @@ public class Parser {
 	 */
 	private void funcSkeleton(int nargs) throws Exception {
 		String waypointName = Global.mainTab.lastselected;
-		CacheHolder c = Global.getProfile().cacheDB.get(waypointName);
+		CacheHolder c = Global.profile.cacheDB.get(waypointName);
 		if (c == null)
 			return;
 		// If it is an addi, find its main cache
@@ -850,8 +866,9 @@ public class Parser {
 				Global.mainTab.updatePendingChanges();
 				Global.mainTab.tbP.refreshTable();
 			}
-		} else {
-			CacheHolder ch = Global.getProfile().cacheDB.get(waypointName);
+		}
+		else {
+			CacheHolder ch = Global.profile.cacheDB.get(waypointName);
 			if (ch == null) {
 				err(MyLocale.getMsg(1714, "Goto: Waypoint does not exist: ") + waypointName);
 				return;
@@ -942,10 +959,12 @@ public class Parser {
 		if (thisToken.token.equals("$")) { // Show all global variables
 			showVars(true);
 			getToken();
-		} else if (thisToken.token.equals("?")) { // Show all local variables
+		}
+		else if (thisToken.token.equals("?")) { // Show all local variables
 			showVars(false);
 			getToken();
-		} else if (thisToken.tt == TokenObj.TT_VARIABLE && lookAheadToken().tt == TokenObj.TT_EQ)
+		}
+		else if (thisToken.tt == TokenObj.TT_VARIABLE && lookAheadToken().tt == TokenObj.TT_EQ)
 			parseAssign();
 		else {
 			parseStringExp();
@@ -963,18 +982,21 @@ public class Parser {
 		if (thisToken.tt == TokenObj.TT_VARIABLE && peekToken().token.toUpperCase().equals("THEN")) {
 			String varName = thisToken.token;
 			getToken(); // THEN
-			Object result = symbolTable.get(Global.getPref().solverIgnoreCase ? varName.toUpperCase() : varName);
+			Object result = symbolTable.get(Global.pref.solverIgnoreCase ? varName.toUpperCase() : varName);
 			if (result == null) { // Var not found check whether it is a waypoint
 				if (varName.startsWith("$")) { // Could be a cachename
 					varName = varName.substring(1);
-					compRes = Global.getProfile().getCacheIndex(varName) != -1;
-				} else
+					compRes = Global.profile.getCacheIndex(varName) != -1;
+				}
+				else
 					compRes = false;
-			} else
+			}
+			else
 				// Found the variable, it must have a value
 				compRes = true;
 			getNextTokenOtherThanSemi();
-		} else { // Normal: IF expression THEN
+		}
+		else { // Normal: IF expression THEN
 			parseStringExp();
 			compOp = thisToken.tt;
 			if (compOp < TokenObj.TT_LT || compOp > TokenObj.TT_NE)
@@ -987,7 +1009,8 @@ public class Parser {
 			// If we can parse the first argument as a double, we will do a numeric comparison
 			try {
 				Common.parseDoubleException((String) calcStack.get(calcStack.size() - 2));
-			} catch (Exception ex) {
+			}
+			catch (Exception ex) {
 				compAsString = true;
 			}
 			// If the first expression is not a double, compare as string.
@@ -1014,7 +1037,8 @@ public class Parser {
 					compRes = a.compareTo(b) >= 0;
 					break;
 				}
-			} else { // First expression is a number, compare as numbers
+			}
+			else { // First expression is a number, compare as numbers
 				double b = popCalcStackAsNumber(0);
 				double a = popCalcStackAsNumber(0);
 				switch (compOp) {
@@ -1051,7 +1075,8 @@ public class Parser {
 				checkNextSymIs("ENDIF");
 			}
 			getToken();
-		} else
+		}
+		else
 			// comparison failed
 			skipPastEndif(ifToken);
 	}
@@ -1066,29 +1091,31 @@ public class Parser {
 			return;
 		parseStringExp();
 		if (varName.startsWith("$")) { // Potential coordinate
-			CacheHolder ch = Global.getProfile().cacheDB.get(varName.substring(1));
+			CacheHolder ch = Global.profile.cacheDB.get(varName.substring(1));
 			if (ch != null) { // Yes, is a coordinate
 				// Check whether new coordinates are valid
 				String coord = popCalcStackAsString();
 				cwPt.set(coord);
 				if (cwPt.isValid() || coord.equals("")) { // Can clear coord with empty string
 					ch.setPos(cwPt);
-					ch.calcDistance(Global.getPref().getCurCentrePt()); // Update distance and bearing
-					Global.getProfile().selectionChanged = true; // Tell moving map to updated displayed waypoints
+					ch.calcDistance(Global.pref.getCurCentrePt()); // Update distance and bearing
+					Global.profile.selectionChanged = true; // Tell moving map to updated displayed waypoints
 					return;
-				} else
+				}
+				else
 					err(MyLocale.getMsg(1712, "Invalid coordinate: ") + coord);
 			}
 			// Name starts with $ but is not a waypoint, fall through and set it as global variable
 		}
-		symbolTable.put(Global.getPref().solverIgnoreCase ? varName.toUpperCase() : varName, popCalcStackAsString());
+		symbolTable.put(Global.pref.solverIgnoreCase ? varName.toUpperCase() : varName, popCalcStackAsString());
 	}
 
 	private void parseStringExp() throws Exception {
 		if (thisToken.tt == TokenObj.TT_STRING) {
 			calcStack.add(thisToken.token);
 			getToken();
-		} else {
+		}
+		else {
 			parseExp();
 		}
 		// calcStack.add(popCalcStackAsString());
@@ -1096,7 +1123,8 @@ public class Parser {
 			if (thisToken.tt == TokenObj.TT_STRING) {
 				calcStack.add(thisToken.token);
 				getToken();
-			} else {
+			}
+			else {
 				parseTailExp('+');
 			}
 			String b = popCalcStackAsString();
@@ -1176,15 +1204,19 @@ public class Parser {
 				funcDef = getFunctionDefinition(thisToken.token); // Does not return if function not defined or ambiguous
 				parseFunction(funcDef);
 			}
-		} else if (thisToken.tt == TokenObj.TT_NUMBER) {
+		}
+		else if (thisToken.tt == TokenObj.TT_NUMBER) {
 			calcStack.add(getNumber(thisToken.token));
-		} else if (thisToken.tt == TokenObj.TT_STRING) {
+		}
+		else if (thisToken.tt == TokenObj.TT_STRING) {
 			calcStack.add(thisToken.token);
-		} else if (thisToken.token.equals("(")) {
+		}
+		else if (thisToken.token.equals("(")) {
 			getToken();
 			parseStringExp();
 			checkNextSymIs(")");
-		} else
+		}
+		else
 			err(MyLocale.getMsg(1725, "Unexpected character(s): ") + thisToken.token);
 		getToken();
 	}
@@ -1307,12 +1339,13 @@ public class Parser {
 		scanpos = 0;
 		try {
 			parseCommand();
-		} catch (Exception ex) {
+		}
+		catch (Exception ex) {
 		}
 	}
 
 	private boolean createWptIfNeeded(String wayPoint, String name, byte type) {
-		int ci = Global.getProfile().getCacheIndex(wayPoint);
+		int ci = Global.profile.getCacheIndex(wayPoint);
 		if (ci >= 0)
 			return false;
 
@@ -1324,7 +1357,7 @@ public class Parser {
 		ch.setTerrain(CacheTerrDiff.CW_DT_UNSET);
 		ch.setCacheName(name);
 
-		Global.getProfile().setAddiRef(ch);
+		Global.profile.setAddiRef(ch);
 
 		Global.mainTab.cacheDB.add(ch);
 		Global.mainTab.tbP.myMod.numRows++;

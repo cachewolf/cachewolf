@@ -42,7 +42,6 @@ import CacheWolf.Log;
 import CacheWolf.LogList;
 import CacheWolf.MyLocale;
 import CacheWolf.Preferences;
-import CacheWolf.Profile;
 import CacheWolf.STRreplace;
 import CacheWolf.SafeXML;
 import CacheWolf.Travelbug;
@@ -53,6 +52,7 @@ import CacheWolf.navi.Navigate;
 import CacheWolf.navi.Track;
 import CacheWolf.navi.TrackPoint;
 import CacheWolf.navi.TransformCoordinates;
+import CacheWolf.utils.BetterUTF8Codec;
 
 import com.stevesoft.ewe_pat.Regex;
 
@@ -62,7 +62,6 @@ import ewe.io.AsciiCodec;
 import ewe.io.FileBase;
 import ewe.io.FileInputStream;
 import ewe.io.IOException;
-import ewe.io.JavaUtf8Codec;
 import ewe.net.URL;
 import ewe.net.UnknownHostException;
 import ewe.sys.Convert;
@@ -107,9 +106,6 @@ public class SpiderGC {
 	 * This is the pattern for inlined smilies
 	 */
 	private static final String iconsRelativePath = "<img src=\"/images/icons/";
-
-	private static Preferences pref;
-	private final Profile profile;
 
 	private static String cookie = "";
 	private static double minDistance = 0;
@@ -171,10 +167,8 @@ public class SpiderGC {
 	private int numPrivate = 0;
 	private int page_number = 1;
 
-	public SpiderGC(Preferences prf, Profile profile) {
-		this.profile = profile;
-		this.cacheDB = profile.cacheDB;
-		pref = prf;
+	public SpiderGC() {
+		this.cacheDB = Global.profile.cacheDB;
 		if (p == null) {
 			p = new SpiderProperties();
 		}
@@ -194,7 +188,7 @@ public class SpiderGC {
 		cachesToLoad.clear();
 		spiderAllFinds = _spiderAllFinds;
 		// No need to copy curCentrePt as it is only read and not written
-		origin = pref.getCurCentrePt();
+		origin = Global.pref.getCurCentrePt();
 		if (!spiderAllFinds && !origin.isValid()) {
 			(new MessageBox(MyLocale.getMsg(5500, "Error"), MyLocale.getMsg(5509, "Coordinates for centre must be set"), FormBase.OKB)).execute();
 			return;
@@ -203,7 +197,8 @@ public class SpiderGC {
 		// Reset states for all caches when spidering (http://tinyurl.com/dzjh7p)
 		for (int i = 0; i < cacheDB.size(); i++) {
 			final CacheHolder ch = cacheDB.get(i);
-			if (ch.mainCache == null) ch.initStates(false);
+			if (ch.mainCache == null)
+				ch.initStates(false);
 		}
 
 		if (doDownloadGui(0)) {
@@ -230,26 +225,27 @@ public class SpiderGC {
 			s = s + "minDistance          : " + minDistance + Preferences.NEWLINE;
 			s = s + "maxDistance          : " + maxDistance + Preferences.NEWLINE;
 			s = s + "directions           : " + direction + Preferences.NEWLINE;
-			s = s + "maxNew               : " + pref.maxSpiderNumber + Preferences.NEWLINE;
+			s = s + "maxNew               : " + Global.pref.maxSpiderNumber + Preferences.NEWLINE;
 			s = s + "maxUpdate            : " + maxUpdate + Preferences.NEWLINE;
 			s = s + "with Founds          : " + (doNotgetFound ? "no" : "yes") + Preferences.NEWLINE;
-			s = s + "alias is premium memb: " + (!pref.isPremium ? "no" : "yes") + Preferences.NEWLINE;
-			s = s + "Update if new Log    : " + (pref.checkLog ? "yes" : "no") + Preferences.NEWLINE;
-			s = s + "Update if TB changed : " + (pref.checkTBs ? "yes" : "no") + Preferences.NEWLINE;
-			s = s + "Update if DTS changed: " + (pref.checkDTS ? "yes" : "no") + Preferences.NEWLINE;
+			s = s + "alias is premium memb: " + (!Global.pref.isPremium ? "no" : "yes") + Preferences.NEWLINE;
+			s = s + "Update if new Log    : " + (Global.pref.checkLog ? "yes" : "no") + Preferences.NEWLINE;
+			s = s + "Update if TB changed : " + (Global.pref.checkTBs ? "yes" : "no") + Preferences.NEWLINE;
+			s = s + "Update if DTS changed: " + (Global.pref.checkDTS ? "yes" : "no") + Preferences.NEWLINE;
 			s = s + "maxPages for x Miles : " + maxPages + " for " + this.getDistanceInMiles(maxDistance) + Preferences.NEWLINE;
-			pref.log(s, null);
+			Global.pref.log(s, null);
 			lastPageVisited = -1; // for not to double check pages on next group run
 
 			while (upperDistance < maxDistance) {
 				lowerDistance = upperDistance;
 				if ((int) lowerDistance < ((int) maxDistance - 1)) {
 					upperDistance = this.getUpperDistance(lowerDistance, maxDistance, maxPages, pageLimit);
-				} else {
+				}
+				else {
 					upperDistance = maxDistance;
 				}
 				Hashtable cachesToUpdate = new Hashtable(cacheDB.size());
-				cachesToUpdate = fillDownloadLists(pref.maxSpiderNumber, maxUpdate, upperDistance, lowerDistance, directions, cachesToUpdate);
+				cachesToUpdate = fillDownloadLists(Global.pref.maxSpiderNumber, maxUpdate, upperDistance, lowerDistance, directions, cachesToUpdate);
 				if (cachesToUpdate == null) {
 					cachesToUpdate = new Hashtable();
 				}
@@ -265,24 +261,24 @@ public class SpiderGC {
 
 				int spiderErrors = 0;
 				final int totalCachesToLoad = cachesToLoad.size() + cachesToUpdate.size();
-				final boolean loadAllLogs = (pref.maxLogsToSpider > 5) || spiderAllFinds;
-				pref.log("Download properties : " + Preferences.NEWLINE + "maxLogs: " + (loadAllLogs ? "completepage " : "shortpage") + "nr.:" + pref.maxLogsToSpider + Preferences.NEWLINE + "with pictures     : "
-						+ (!pref.downloadPics ? "no" : "yes") + Preferences.NEWLINE + "with tb           : " + (!pref.downloadTBs ? "no" : "yes") + Preferences.NEWLINE, null);
+				final boolean loadAllLogs = (Global.pref.maxLogsToSpider > 5) || spiderAllFinds;
+				Global.pref.log("Download properties : " + Preferences.NEWLINE + "maxLogs: " + (loadAllLogs ? "completepage " : "shortpage") + "nr.:" + Global.pref.maxLogsToSpider + Preferences.NEWLINE + "with pictures     : "
+						+ (!Global.pref.downloadPics ? "no" : "yes") + Preferences.NEWLINE + "with tb           : " + (!Global.pref.downloadTBs ? "no" : "yes") + Preferences.NEWLINE, null);
 
-				if (Global.mainTab.statBar != null) Global.mainTab.statBar.updateDisplay("");
+				if (Global.mainTab.statBar != null)
+					Global.mainTab.statBar.updateDisplay("");
 
 				if (!infB.isClosed) {
 					spiderErrors = downloadCaches(cachesToLoad, spiderErrors, totalCachesToLoad, loadAllLogs);
 
 					if (cachesToUpdate.size() > 0) {
-						switch (pref.spiderUpdates) {
+						switch (Global.pref.spiderUpdates) {
 						case Preferences.NO:
 							cachesToUpdate.clear();
 							break;
 						case Preferences.ASK:
 							if (!alreadyAnswered) {
-								final MessageBox mBox = new MessageBox(MyLocale.getMsg(5517, "Spider Updates?"), cachesToUpdate.size() + MyLocale.getMsg(5518, " caches in database need an update. Update now?"), FormBase.IDYES
-										| FormBase.IDNO);
+								final MessageBox mBox = new MessageBox(MyLocale.getMsg(5517, "Spider Updates?"), cachesToUpdate.size() + MyLocale.getMsg(5518, " caches in database need an update. Update now?"), FormBase.IDYES | FormBase.IDNO);
 								lastAnswer = (mBox.execute() != FormBase.IDOK);
 								alreadyAnswered = true;
 							}
@@ -305,8 +301,8 @@ public class SpiderGC {
 			 * if (maxNumberAbort) { new MessageBox(MyLocale.getMsg(5519, "Information"), MyLocale.getMsg(5520, "Only the given maximum of caches were loaded.%0aRepeat spidering later to load more caches.%0aNo already existing caches were
 			 * updated."), FormBase.DEFOKB) .execute(); }
 			 */
-			Global.getProfile().restoreFilter();
-			Global.getProfile().saveIndex(Global.getPref(), true);
+			Global.profile.restoreFilter();
+			Global.profile.saveIndex(true);
 
 			if (!infB.isClosed) {
 				infB.close(0);
@@ -318,7 +314,7 @@ public class SpiderGC {
 	private int getDistanceInMiles(double value) {
 		// max distance in miles for URL, so we can get more than 80km
 		int toDistanceInMiles = (int) java.lang.Math.ceil(value);
-		if (pref.metricSystem != Metrics.IMPERIAL) {
+		if (Global.pref.metricSystem != Metrics.IMPERIAL) {
 			toDistanceInMiles = (int) java.lang.Math.ceil(Metrics.convertUnit(value, Metrics.KILOMETER, Metrics.MILES));
 		}
 		return toDistanceInMiles;
@@ -330,7 +326,8 @@ public class SpiderGC {
 		if (fromDistance > 0) {
 			getFirstListPage(this.getDistanceInMiles(fromDistance));
 			startPage = (int) java.lang.Math.ceil(getNumFound(htmlListPage) / 20);
-		} else {
+		}
+		else {
 			startPage = 1;
 		}
 
@@ -338,7 +335,8 @@ public class SpiderGC {
 
 		while ((1 + endPage - startPage) > pageLimit) {
 			toDistance = fromDistance + (toDistance - fromDistance) / 2;
-			if ((int) toDistance <= ((int) fromDistance + 1)) return toDistance;
+			if ((int) toDistance <= ((int) fromDistance + 1))
+				return toDistance;
 			getFirstListPage(this.getDistanceInMiles(toDistance));
 			endPage = (int) java.lang.Math.ceil(getNumFound(htmlListPage) / 20);
 		}
@@ -351,17 +349,18 @@ public class SpiderGC {
 		final Navigate nav = Global.mainTab.nav;
 		MovingMap mm = Global.mainTab.mm;
 
-		if (!doDownloadGui(1)) return;
+		if (!doDownloadGui(1))
+			return;
 
 		// getting the route
-		CWPoint startPos = pref.getCurCentrePt();
+		CWPoint startPos = Global.pref.getCurCentrePt();
 		if (!fileName.equals("")) {
 			final RouteImporter ri = new RouteImporter(fileName);
 			points = ri.doIt();
 			if (points.size() > 0) {
 				if (nav != null) {
 					if (mm == null) {
-						Global.mainTab.mm = new MovingMap(nav, profile.cacheDB);
+						Global.mainTab.mm = new MovingMap(nav);
 						mm = Global.mainTab.mm;
 						nav.setMovingMap(Global.mainTab.mm);
 					}
@@ -372,18 +371,21 @@ public class SpiderGC {
 					for (int i = 0; i < points.size(); i++) {
 						try {
 							nav.curTrack.add((TrackPoint) points.get(i));
-						} catch (final IndexOutOfBoundsException e) {
+						}
+						catch (final IndexOutOfBoundsException e) {
 							// track full -> create a new one
 							nav.curTrack = new Track(nav.trackColor);
 							nav.curTrack.add((TrackPoint) points.get(i));
-							if (mm != null) mm.addTrack(nav.curTrack);
+							if (mm != null)
+								mm.addTrack(nav.curTrack);
 						}
 
 					}
 				}
 				final TrackPoint tp = (TrackPoint) points.get(0);
 				startPos = new CWPoint(tp.latDec, tp.lonDec);
-			} else
+			}
+			else
 				startPos = null;
 		}
 
@@ -398,17 +400,19 @@ public class SpiderGC {
 		infB = new InfoBox("Status", MyLocale.getMsg(5502, "Fetching pages..."));
 		infB.exec();
 
-		if (!login()) return;
+		if (!login())
+			return;
 
 		// Reset states for all caches when spidering
 		// (http://tinyurl.com/dzjh7p)
 		for (int i = 0; i < cacheDB.size(); i++) {
 			final CacheHolder ch = cacheDB.get(i);
-			if (ch.mainCache == null) ch.initStates(false);
+			if (ch.mainCache == null)
+				ch.initStates(false);
 		}
 
 		double lateralDistance = maxDistance; // Seitenabstand in km
-		if (pref.metricSystem == Metrics.IMPERIAL) {
+		if (Global.pref.metricSystem == Metrics.IMPERIAL) {
 			lateralDistance = Metrics.convertUnit(maxDistance, Metrics.MILES, Metrics.KILOMETER);
 		}
 		// Load über die Kreise
@@ -420,12 +424,13 @@ public class SpiderGC {
 		CWPoint nextPos = startPos;
 		int pointsIndex = 1;
 
-		pref.log("Start at " + origin + " to check " + points.size() + " points.");
+		Global.pref.log("Start at " + origin + " to check " + points.size() + " points.");
 
 		while (nextPos != null) {
 			if (fileName.equals("")) {
 				nextPos = nextRoutePoint(startPos, lateralDistance);
-			} else {
+			}
+			else {
 				double tmpDistance = 0;
 				while (tmpDistance < lateralDistance && pointsIndex < points.size()) {
 					final TrackPoint tp = (TrackPoint) points.get(pointsIndex);
@@ -436,13 +441,14 @@ public class SpiderGC {
 				if (pointsIndex == points.size())
 					nextPos = null;
 				else {
-					if (Global.mainTab.statBar != null) Global.mainTab.statBar.updateDisplay("" + pointsIndex + "(" + points.size() + ")" + nextPos);
+					if (Global.mainTab.statBar != null)
+						Global.mainTab.statBar.updateDisplay("" + pointsIndex + "(" + points.size() + ")" + nextPos);
 				}
 			}
 
 			if (nextPos != null) {
 				origin = startPos;
-				pref.log("m: do " + pointsIndex + " of (" + points.size() + ") at " + origin);
+				Global.pref.log("m: do " + pointsIndex + " of (" + points.size() + ") at " + origin);
 				getCaches(lateralDistance);
 
 				final double degrees = startPos.getBearing(nextPos);
@@ -452,13 +458,15 @@ public class SpiderGC {
 					final CWPoint nextCheckPoint = startPos.project(degrees, lateralDistance);
 					startPos = nextCheckPoint;
 					origin = nextCheckPoint;
-					pref.log("s: do " + pointsIndex + " of (" + points.size() + ") at " + origin);
+					Global.pref.log("s: do " + pointsIndex + " of (" + points.size() + ") at " + origin);
 					getCaches(lateralDistance);
-					if (infB.isClosed) break;
+					if (infB.isClosed)
+						break;
 				}
 				startPos = nextPos;
 			}
-			if (infB.isClosed) break;
+			if (infB.isClosed)
+				break;
 		}
 		if (infB.isClosed) {
 			Vm.showWait(false);
@@ -471,13 +479,16 @@ public class SpiderGC {
 			for (int i = 0; i < cachesToLoad.size(); i++) {
 				String wpt = (String) cachesToLoad.get(i);
 				final boolean is_found = wpt.indexOf("found") != -1;
-				if (is_found) wpt = wpt.substring(0, wpt.indexOf("found"));
+				if (is_found)
+					wpt = wpt.substring(0, wpt.indexOf("found"));
 				final int j = cacheDB.getIndex(wpt);
-				if (j != -1) cacheDB.removeElementAt(j);
+				if (j != -1)
+					cacheDB.removeElementAt(j);
 			}
 			// und frisch geladen
 			spiderErrors = downloadCaches(cachesToLoad, spiderErrors, cachesToLoad.size(), true);
-		} else {
+		}
+		else {
 			// man könnte auch aus der Liste einen Quick - Import erstellen
 		}
 
@@ -487,8 +498,8 @@ public class SpiderGC {
 			new MessageBox(MyLocale.getMsg(5500, "Error"), spiderErrors + MyLocale.getMsg(5516, " cache descriptions%0acould not be loaded."), FormBase.DEFOKB).execute();
 		}
 
-		Global.getProfile().restoreFilter();
-		Global.getProfile().saveIndex(Global.getPref(), true);
+		Global.profile.restoreFilter();
+		Global.profile.saveIndex(true);
 	}
 
 	private CWPoint nextRoutePoint(CWPoint startPos, double lateralDistance) {
@@ -508,7 +519,8 @@ public class SpiderGC {
 					nextDistance = tmpDistance;
 					nextCache = ch;
 					nextCache.is_Checked = false;
-				} else {
+				}
+				else {
 					if (tmpDistance > lateralDistance) {
 						if (tmpDistance < nextDistance) {
 							index = i;
@@ -516,7 +528,8 @@ public class SpiderGC {
 							nextCache = ch;
 							nextCache.is_Checked = false;
 						}
-					} else {
+					}
+					else {
 						ch.is_Checked = false;
 					}
 				}
@@ -524,7 +537,8 @@ public class SpiderGC {
 		}
 		if (index > -1) {
 			return cacheDB.get(index).getPos();
-		} else
+		}
+		else
 			return null;
 	}
 
@@ -535,7 +549,8 @@ public class SpiderGC {
 		getFirstListPage(toDistance);
 		// Number of caches from gcfirst Listpage
 		int numFinds = getNumFound(htmlListPage);
-		if (numFinds == 0) return;
+		if (numFinds == 0)
+			return;
 		page_number = 1;
 		int found_on_page = 0;
 		try {
@@ -546,31 +561,36 @@ public class SpiderGC {
 				String tableOfHtmlListPage;
 				if (RexPropListBlock.didMatch()) {
 					tableOfHtmlListPage = RexPropListBlock.stringMatched(1);
-				} else {
-					pref.log("[SpiderGC.java:fillDownloadLists]check listBlockRex!");
+				}
+				else {
+					Global.pref.log("[SpiderGC.java:fillDownloadLists]check listBlockRex!");
 					tableOfHtmlListPage = "";
 				}
 				RexPropLine.search(tableOfHtmlListPage);
 				while (toDistance > 0) {
 					if (!RexPropLine.didMatch()) {
-						if (page_number == 1 && found_on_page == 0) pref.log("[SpiderGC.java:fillDownloadLists]check lineRex!");
+						if (page_number == 1 && found_on_page == 0)
+							Global.pref.log("[SpiderGC.java:fillDownloadLists]check lineRex!");
 						break;
 					}
 					found_on_page++;
-					if (Global.mainTab.statBar != null) Global.mainTab.statBar.updateDisplay("working " + page_number + " / " + found_on_page);
+					if (Global.mainTab.statBar != null)
+						Global.mainTab.statBar.updateDisplay("working " + page_number + " / " + found_on_page);
 					final String CacheDescriptionGC = RexPropLine.stringMatched(1);
 					DistanceAndDirection = getDistanceAndDirection(CacheDescriptionGC);
 					String chWaypoint = getWP(CacheDescriptionGC);
 					if (DistanceAndDirection[0] <= radiusKm) {
 						final CacheHolder ch = cacheDB.get(chWaypoint);
 						if (ch == null) { // not in DB
-							if (CacheDescriptionGC.indexOf(propFound) != -1) chWaypoint = chWaypoint + "found";
+							if (CacheDescriptionGC.indexOf(propFound) != -1)
+								chWaypoint = chWaypoint + "found";
 							if (!cachesToLoad.contains(chWaypoint)) {
 								cachesToLoad.add(chWaypoint);
 								infB.setInfo(MyLocale.getMsg(5511, "Found ") + cachesToLoad.size());
 							}
 						}
-					} else
+					}
+					else
 						// finish this htmlListPage
 						toDistance = 0;
 					RexPropLine.searchFrom(tableOfHtmlListPage, RexPropLine.matchedTo());
@@ -579,7 +599,8 @@ public class SpiderGC {
 						break;
 					}
 				} // next Cache
-				if (found_on_page < 20) toDistance = 0;
+				if (found_on_page < 20)
+					toDistance = 0;
 				if (toDistance > 0) {
 					if (page_number % 100 == 45) {
 						getAListPage(toDistance, gotoPreviousBlock);
@@ -591,10 +612,10 @@ public class SpiderGC {
 					}
 				}
 			} // loop pages
-			pref.log("Nr Caches now: " + cachesToLoad.size());
+			Global.pref.log("Nr Caches now: " + cachesToLoad.size());
 		} // try
 		catch (final Exception ex) {
-			pref.log("Download error : ", ex, true);
+			Global.pref.log("Download error : ", ex, true);
 			infB.close(0);
 			Vm.showWait(false);
 		}
@@ -616,11 +637,12 @@ public class SpiderGC {
 			// setting default values for options not used (if necessary)
 			maxDistance = 1.0;
 			minDistance = 0.0;
-		} else if (menu == 0) {
-			options = new OCXMLImporterScreen(MyLocale.getMsg(131, "Download from geocaching.com"), OCXMLImporterScreen.ISGC | OCXMLImporterScreen.MAXNUMBER | OCXMLImporterScreen.MAXUPDATE | OCXMLImporterScreen.MINDIST
-					| OCXMLImporterScreen.DIST | OCXMLImporterScreen.DIRECTION | OCXMLImporterScreen.INCLUDEFOUND | OCXMLImporterScreen.IMAGES | OCXMLImporterScreen.TRAVELBUGS | OCXMLImporterScreen.MAXLOGS | OCXMLImporterScreen.TYPE);
+		}
+		else if (menu == 0) {
+			options = new OCXMLImporterScreen(MyLocale.getMsg(131, "Download from geocaching.com"), OCXMLImporterScreen.ISGC | OCXMLImporterScreen.MAXNUMBER | OCXMLImporterScreen.MAXUPDATE | OCXMLImporterScreen.MINDIST | OCXMLImporterScreen.DIST
+					| OCXMLImporterScreen.DIRECTION | OCXMLImporterScreen.INCLUDEFOUND | OCXMLImporterScreen.IMAGES | OCXMLImporterScreen.TRAVELBUGS | OCXMLImporterScreen.MAXLOGS | OCXMLImporterScreen.TYPE);
 			// setting defaults for input
-			if (pref.spiderUpdates == Preferences.NO) {
+			if (Global.pref.spiderUpdates == Preferences.NO) {
 				options.maxNumberUpdates.setText("0");
 			}
 			// doing the input
@@ -631,15 +653,16 @@ public class SpiderGC {
 
 			final String minDist = options.minDistanceInput.getText();
 			minDistance = Common.parseDouble(minDist);
-			profile.setMinDistGC(Double.toString(minDistance).replace(',', '.'));
+			Global.profile.setMinDistGC(Double.toString(minDistance).replace(',', '.'));
 
 			direction = options.directionInput.getText();
 			directions = mString.split(direction, '-');
 
 			doNotgetFound = options.foundCheckBox.getState();
-			profile.setDirectionGC(direction);
+			Global.profile.setDirectionGC(direction);
 
-		} else if (menu == 1) {
+		}
+		else if (menu == 1) {
 			// menu = 1 input values for get Caches along a route
 			options = new OCXMLImporterScreen(MyLocale.getMsg(137, "Download along a Route from geocaching.com"), OCXMLImporterScreen.ISGC | OCXMLImporterScreen.DIST | OCXMLImporterScreen.INCLUDEFOUND | OCXMLImporterScreen.TRAVELBUGS
 					| OCXMLImporterScreen.IMAGES | OCXMLImporterScreen.MAXLOGS | OCXMLImporterScreen.FILENAME | OCXMLImporterScreen.TYPE);
@@ -652,7 +675,8 @@ public class SpiderGC {
 			doNotgetFound = options.foundCheckBox.getState();
 			maxUpdate = 0;
 			fileName = options.fileName;
-		} else { // if (menu == 2) {
+		}
+		else { // if (menu == 2) {
 			options = new OCXMLImporterScreen(MyLocale.getMsg(138, "Qick Import"), OCXMLImporterScreen.ISGC | OCXMLImporterScreen.DIST | OCXMLImporterScreen.INCLUDEFOUND | OCXMLImporterScreen.TYPE);
 			// setting defaults for input doing the input
 			if (options.execute() == FormBase.IDCANCEL) {
@@ -660,7 +684,7 @@ public class SpiderGC {
 			}
 			doNotgetFound = options.foundCheckBox.getState();
 		}
-		pref.doNotGetFound = doNotgetFound;
+		Global.pref.doNotGetFound = doNotgetFound;
 		if (menu == 0) {
 
 			int maxNew = -1;
@@ -669,10 +693,11 @@ public class SpiderGC {
 				maxNew = Common.parseInt(maxNumberString);
 			}
 			// if (maxNew == 0) return false;
-			if (maxNew == -1) maxNew = Integer.MAX_VALUE;
-			if (maxNew != pref.maxSpiderNumber) {
-				pref.maxSpiderNumber = maxNew;
-				pref.savePreferences();
+			if (maxNew == -1)
+				maxNew = Integer.MAX_VALUE;
+			if (maxNew != Global.pref.maxSpiderNumber) {
+				Global.pref.maxSpiderNumber = maxNew;
+				Global.pref.savePreferences();
 			}
 
 			maxUpdate = -1;
@@ -680,7 +705,8 @@ public class SpiderGC {
 			if (maxUpdateString.length() != 0) {
 				maxUpdate = Common.parseInt(maxUpdateString);
 			}
-			if (maxUpdate == -1) maxUpdate = Integer.MAX_VALUE;
+			if (maxUpdate == -1)
+				maxUpdate = Integer.MAX_VALUE;
 		}
 
 		// options for all
@@ -688,11 +714,13 @@ public class SpiderGC {
 		if (options.maxDistanceInput != null) {
 			final String maxDist = options.maxDistanceInput.getText();
 			maxDistance = Common.parseDouble(maxDist);
-			if (maxDistance == 0) return false;
+			if (maxDistance == 0)
+				return false;
 			// zur Sicherheit bei "along the route"
 			// mindenstens 500 meter Umkreis
-			if (maxDistance < 0.5) maxDistance = 0.5;
-			profile.setDistGC(Double.toString(maxDistance));
+			if (maxDistance < 0.5)
+				maxDistance = 0.5;
+			Global.profile.setDistGC(Double.toString(maxDistance));
 		}
 
 		// works even if TYPE not in options
@@ -706,7 +734,8 @@ public class SpiderGC {
 	}
 
 	private Hashtable fillDownloadLists(int maxNew, int maxUpdate, double toDistance, double fromDistance, String[] directions, Hashtable cExpectedForUpdate) {
-		if (!login()) return null;
+		if (!login())
+			return null;
 
 		int numFinds;
 		int startPage = 1;
@@ -718,7 +747,8 @@ public class SpiderGC {
 			getFirstListPage(java.lang.Math.max(fromDistanceInMiles, 1));
 			if (lastPageVisited > -1) {
 				startPage = lastPageVisited;
-			} else {
+			}
+			else {
 				// Number of caches from gc Listpage calc the number of the startpage
 				startPage = (int) java.lang.Math.ceil(getNumFound(htmlListPage) / 20);
 			}
@@ -741,15 +771,15 @@ public class SpiderGC {
 					getAListPage(toDistanceInMiles, gotoPage + startPage);
 			}
 		}
-		pref.log("[SpiderGC:fillDownloadLists] got Listpage: " + startPage, null);
+		Global.pref.log("[SpiderGC:fillDownloadLists] got Listpage: " + startPage, null);
 
 		int endPage = (int) (numFinds / 20);
 		int anzPages = 1 + endPage - startPage;
-		pref.log("List up to " + anzPages + " pages (" + startPage + ".." + endPage + "). From " + fromDistanceInMiles + " miles (" + fromDistance + " km/miles)" + " to " + toDistanceInMiles + " miles (" + toDistance + " km/miles)", null);
+		Global.pref.log("List up to " + anzPages + " pages (" + startPage + ".." + endPage + "). From " + fromDistanceInMiles + " miles (" + fromDistance + " km/miles)" + " to " + toDistanceInMiles + " miles (" + toDistance + " km/miles)", null);
 		int numFoundInDB = 0; // Number of GC-founds already in this profile
 		if (spiderAllFinds) {
 			numFoundInDB = getFoundInDB();
-			pref.log((spiderAllFinds ? "all Finds (DB/GC)" + numFoundInDB + "/" + numFinds : "new and update Caches") + Preferences.NEWLINE, null);
+			Global.pref.log((spiderAllFinds ? "all Finds (DB/GC)" + numFoundInDB + "/" + numFinds : "new and update Caches") + Preferences.NEWLINE, null);
 			maxNew = java.lang.Math.min(numFinds - numFoundInDB, maxNew);
 			if (maxUpdate == 0 && maxNew == 0) {
 				Vm.showWait(false);
@@ -760,12 +790,12 @@ public class SpiderGC {
 
 		if (maxUpdate > 0) {
 			double distanceInKm = toDistance;
-			if (pref.metricSystem == Metrics.IMPERIAL) {
+			if (Global.pref.metricSystem == Metrics.IMPERIAL) {
 				distanceInKm = Metrics.convertUnit(toDistance, Metrics.MILES, Metrics.KILOMETER);
 			}
 
 			double fromDistanceInKm = fromDistance;
-			if (pref.metricSystem == Metrics.IMPERIAL) {
+			if (Global.pref.metricSystem == Metrics.IMPERIAL) {
 				fromDistanceInKm = Metrics.convertUnit(fromDistance, Metrics.MILES, Metrics.KILOMETER);
 			}
 
@@ -776,7 +806,8 @@ public class SpiderGC {
 					if ((ch.getWayPoint().substring(0, 2).equalsIgnoreCase("GC")) && !ch.is_black()) {
 						cExpectedForUpdate.put(ch.getWayPoint(), ch);
 					}
-				} else {
+				}
+				else {
 					if ((!ch.is_archived()) && (ch.kilom >= fromDistanceInKm) && (ch.kilom <= distanceInKm) && !(doNotgetFound && (ch.is_found() || ch.is_owned())) && (ch.getWayPoint().substring(0, 2).equalsIgnoreCase("GC"))
 							&& ((restrictedCacheType == CacheType.CW_TYPE_ERROR) || (ch.getType() == restrictedCacheType)) && !ch.is_black()) {
 						cExpectedForUpdate.put(ch.getWayPoint(), ch);
@@ -799,18 +830,21 @@ public class SpiderGC {
 				String tableOfHtmlListPage;
 				if (RexPropListBlock.didMatch()) {
 					tableOfHtmlListPage = RexPropListBlock.stringMatched(1);
-				} else {
-					pref.log("[SpiderGC.java:fillDownloadLists]check listBlockRex!");
+				}
+				else {
+					Global.pref.log("[SpiderGC.java:fillDownloadLists]check listBlockRex!");
 					tableOfHtmlListPage = "";
 				}
 				RexPropLine.search(tableOfHtmlListPage);
 				while (toDistance > 0) {
 					if (!RexPropLine.didMatch()) {
-						if (page_number == 1 && found_on_page == 0) pref.log("[SpiderGC.java:fillDownloadLists]check lineRex!");
+						if (page_number == 1 && found_on_page == 0)
+							Global.pref.log("[SpiderGC.java:fillDownloadLists]check lineRex!");
 						break;
 					}
 					found_on_page++;
-					if (Global.mainTab.statBar != null) Global.mainTab.statBar.updateDisplay("working " + page_number + " / " + found_on_page);
+					if (Global.mainTab.statBar != null)
+						Global.mainTab.statBar.updateDisplay("working " + page_number + " / " + found_on_page);
 					final String CacheDescriptionGC = RexPropLine.stringMatched(1);
 					DistanceAndDirection = getDistanceAndDirection(CacheDescriptionGC);
 					String chWaypoint = getWP(CacheDescriptionGC);
@@ -818,27 +852,33 @@ public class SpiderGC {
 						final CacheHolder ch = cacheDB.get(chWaypoint);
 						if (ch == null) { // not in DB
 							if (DistanceAndDirection[0] >= fromDistance && directionOK(directions, DistanceAndDirection[1]) && doPMCache(chWaypoint, CacheDescriptionGC) && cachesToLoad.size() < maxNew) {
-								if (CacheDescriptionGC.indexOf(propFound) != -1) chWaypoint = chWaypoint + "found";
+								if (CacheDescriptionGC.indexOf(propFound) != -1)
+									chWaypoint = chWaypoint + "found";
 								if (!cachesToLoad.contains(chWaypoint)) {
 									cachesToLoad.add(chWaypoint);
 								}
-							} else {
-								// pref.log("no load of (Premium Cache/other direction/short
+							}
+							else {
+								// Global.pref.log("no load of (Premium Cache/other direction/short
 								// Distance ?) " + chWaypoint);
 								cExpectedForUpdate.remove(chWaypoint);
 							}
-						} else {
+						}
+						else {
 							if (maxUpdate > 0) {
 								// regardless of fromDistance
 								if (!ch.is_black()) {
 									if (doPMCache(chWaypoint, CacheDescriptionGC) && updateExists(ch, CacheDescriptionGC)) {
 										if (cFoundForUpdate.size() < maxUpdate) {
 											cFoundForUpdate.put(chWaypoint, ch);
-										} else
+										}
+										else
 											cExpectedForUpdate.remove(chWaypoint);
-									} else
+									}
+									else
 										cExpectedForUpdate.remove(chWaypoint);
-								} else
+								}
+								else
 									cExpectedForUpdate.remove(chWaypoint);
 							}
 						}
@@ -846,13 +886,15 @@ public class SpiderGC {
 							if (cFoundForUpdate.size() >= maxUpdate) {
 								toDistance = 0;
 								cExpectedForUpdate.clear();
-							} else {
+							}
+							else {
 								if (cExpectedForUpdate.size() <= cFoundForUpdate.size()) {
 									toDistance = 0;
 								}
 							}
 						}
-					} else
+					}
+					else
 						// finish listing get next row of table (next Cache Description) of this htmlListPage
 						toDistance = 0;
 					RexPropLine.searchFrom(tableOfHtmlListPage, RexPropLine.matchedTo());
@@ -869,7 +911,8 @@ public class SpiderGC {
 						if (((page_number - 1) * 20 + found_on_page) >= numFinds) {
 							toDistance = 0;
 						}
-					} else {
+					}
+					else {
 						// toDistance = 0; // last page (has less than 20 entries!?) to check reached
 						// ??? http://www.geoclub.de/viewtopic.php?f=40&t=61614
 						if (((page_number - 1) * 20 + found_on_page) >= numFinds) {
@@ -880,13 +923,14 @@ public class SpiderGC {
 				if (toDistance > 0) {
 					if (getAListPage(toDistanceInMiles, gotoNextPage)) {
 						lastPageVisited++;
-						pref.log("[SpiderGC:fillDownloadLists] got Listpage: " + lastPageVisited, null);
+						Global.pref.log("[SpiderGC:fillDownloadLists] got Listpage: " + lastPageVisited, null);
 						page_number++;
 						found_on_page = 0;
-					} else {
+					}
+					else {
 						// stop, but download new ones if possible
 						cExpectedForUpdate.clear();
-						pref.log("[SpiderGC:fillDownloadLists] Stopped at page number: " + page_number + " this is distance: " + DistanceAndDirection[0], null);
+						Global.pref.log("[SpiderGC:fillDownloadLists] Stopped at page number: " + page_number + " this is distance: " + DistanceAndDirection[0], null);
 						found_on_page = 0;
 						toDistance = 0;
 					}
@@ -894,7 +938,7 @@ public class SpiderGC {
 			} // loop pages
 		} // try
 		catch (final Exception ex) {
-			pref.log("Download error : ", ex, true);
+			Global.pref.log("Download error : ", ex, true);
 			infB.close(0);
 			Vm.showWait(false);
 			cExpectedForUpdate.clear();
@@ -909,25 +953,27 @@ public class SpiderGC {
 		s = s + "Found " + numLogUpdates + " caches with new found in log." + Preferences.NEWLINE;
 		s = s + "Found " + numFoundUpdates + " own Finds" + Preferences.NEWLINE;
 		s = s + "Found " + numArchivedUpdates + " unarchived." + Preferences.NEWLINE;
-		pref.log(s, null);
+		Global.pref.log(s, null);
 
 		if (spiderAllFinds) {
-			pref.log("Found " + numFoundUpdates + " caches with no found in profile." + Preferences.NEWLINE + "Found " + numArchivedUpdates + " caches with changed archived status." + Preferences.NEWLINE, null);
+			Global.pref.log("Found " + numFoundUpdates + " caches with no found in Global.profile." + Preferences.NEWLINE + "Found " + numArchivedUpdates + " caches with changed archived status." + Preferences.NEWLINE, null);
 		}
 
-		if (cExpectedForUpdate.size() == startSize) cExpectedForUpdate.clear(); // there must be something wrong
+		if (cExpectedForUpdate.size() == startSize)
+			cExpectedForUpdate.clear(); // there must be something wrong
 		if (cExpectedForUpdate.size() == 0 // prima, alle tauchen in der gc-Liste auf
 				|| cExpectedForUpdate.size() > maxUpdate // Restmenge zu gross, wir nehmen nur die sicher geänderten.
 		) {
 			cExpectedForUpdate = cFoundForUpdate;
-		} else {
+		}
+		else {
 			// checking if all is in List by adding the known changed ones
-			pref.log("possibly " + cExpectedForUpdate.size() + " + known " + cFoundForUpdate.size(), null);
+			Global.pref.log("possibly " + cExpectedForUpdate.size() + " + known " + cFoundForUpdate.size(), null);
 			for (final Enumeration e = cFoundForUpdate.elements(); e.hasMoreElements();) {
 				final CacheHolder ch = (CacheHolder) e.nextElement();
 				cExpectedForUpdate.put(ch.getWayPoint(), ch);
 			}
-			pref.log("now will update: " + cExpectedForUpdate.size(), null);
+			Global.pref.log("now will update: " + cExpectedForUpdate.size(), null);
 		}
 		s = "These Caches will be updated :" + Preferences.NEWLINE;
 		s = s + "Out of " + startSize + Preferences.NEWLINE;
@@ -939,28 +985,32 @@ public class SpiderGC {
 			}
 			s = s + Preferences.NEWLINE;
 		}
-		pref.log(s, null);
+		Global.pref.log(s, null);
 		return cExpectedForUpdate;
 	}
 
 	private int downloadCaches(Vector cachesToLoad, int spiderErrors, int totalCachesToLoad, boolean loadAllLogs) {
 		for (int i = 0; i < cachesToLoad.size(); i++) {
-			if (infB.isClosed) break;
+			if (infB.isClosed)
+				break;
 			String wpt = (String) cachesToLoad.get(i);
 			final boolean is_found = wpt.indexOf("found") != -1;
-			if (is_found) wpt = wpt.substring(0, wpt.indexOf("found"));
+			if (is_found)
+				wpt = wpt.substring(0, wpt.indexOf("found"));
 			// Get only caches not already available in the DB
 			if (cacheDB.getIndex(wpt) == -1) {
 				infB.setInfo(MyLocale.getMsg(5513, "Loading: ") + wpt + " (" + (i + 1) + " / " + totalCachesToLoad + ")");
 				final CacheHolder holder = new CacheHolder();
 				holder.setWayPoint(wpt);
-				final int test = getCacheByWaypointName(holder, false, pref.downloadPics, pref.downloadTBs, doNotgetFound, loadAllLogs || is_found | !doNotgetFound);
+				final int test = getCacheByWaypointName(holder, false, Global.pref.downloadPics, Global.pref.downloadTBs, doNotgetFound, loadAllLogs || is_found | !doNotgetFound);
 				if (test == SPIDER_CANCEL) {
 					infB.close(0);
 					break;
-				} else if (test == SPIDER_ERROR) {
+				}
+				else if (test == SPIDER_ERROR) {
 					spiderErrors++;
-				} else if (test == SPIDER_OK) {
+				}
+				else if (test == SPIDER_OK) {
 					cacheDB.add(holder);
 					holder.save();
 				} // For test == SPIDER_IGNORE_PREMIUM and SPIDER_IGNORE there is nothing to do
@@ -972,20 +1022,24 @@ public class SpiderGC {
 	private int updateCaches(Hashtable cachesToUpdate, int spiderErrors, int totalCachesToLoad, boolean loadAllLogs) {
 		int jj = 0;
 		for (final Enumeration e = cachesToUpdate.elements(); e.hasMoreElements();) {
-			if (infB.isClosed) break;
+			if (infB.isClosed)
+				break;
 			final CacheHolder ch = (CacheHolder) e.nextElement();
 			jj++;
 			infB.setInfo(MyLocale.getMsg(5513, "Loading: ") + ch.getWayPoint() + " (" + (cachesToLoad.size() + jj) + " / " + totalCachesToLoad + ")");
 			final int test = spiderSingle(cacheDB.getIndex(ch), infB, loadAllLogs);
 			if (test == SPIDER_CANCEL) {
 				break;
-			} else {
+			}
+			else {
 				if (test == SPIDER_ERROR) {
 					spiderErrors++;
-					pref.log("[updateCaches] could not spider " + ch.getWayPoint(), null);
-				} else {
-					// profile.hasUnsavedChanges=true;
-					if (test == SPIDER_IGNORE_PREMIUM) spiderErrors++;
+					Global.pref.log("[updateCaches] could not spider " + ch.getWayPoint(), null);
+				}
+				else {
+					// Global.profile.hasUnsavedChanges=true;
+					if (test == SPIDER_IGNORE_PREMIUM)
+						spiderErrors++;
 				}
 			}
 		}
@@ -1002,12 +1056,14 @@ public class SpiderGC {
 		this.infB = pInfB;
 		final CacheHolder ch = new CacheHolder(); // cacheDB.get(number);
 		ch.setWayPoint(cacheDB.get(number).getWayPoint());
-		if (ch.isAddiWpt()) return -1; // addi waypoint, comes with parent cache
+		if (ch.isAddiWpt())
+			return -1; // addi waypoint, comes with parent cache
 
-		if (!login()) return -1;
+		if (!login())
+			return -1;
 		try {
 			// Read the cache data from GC.COM and compare to old data
-			ret = getCacheByWaypointName(ch, true, pref.downloadPics, pref.downloadTBs, false, loadAllLogs);
+			ret = getCacheByWaypointName(ch, true, Global.pref.downloadPics, Global.pref.downloadTBs, false, loadAllLogs);
 			// Save the spidered data
 			if (ret == SPIDER_OK) {
 				final CacheHolder cacheInDB = cacheDB.get(number);
@@ -1020,18 +1076,20 @@ public class SpiderGC {
 				}
 				// preserve rating information
 				ch.setNumRecommended(cacheInDB.getNumRecommended());
-				if (pref.downloadPics) {
+				if (Global.pref.downloadPics) {
 					// delete obsolete images when we have current set
 					CacheImages.cleanupOldImages(cacheInDB.getCacheDetails(true).images, ch.getCacheDetails(false).images);
-				} else {
+				}
+				else {
 					// preserve images if not downloaded
 					ch.getCacheDetails(false).images = cacheInDB.getCacheDetails(true).images;
 				}
 				cacheInDB.update(ch);
 				cacheInDB.save();
 			}
-		} catch (final Exception ex) {
-			pref.log("[spiderSingle] Error spidering " + ch.getWayPoint() + " in spiderSingle", ex);
+		}
+		catch (final Exception ex) {
+			Global.pref.log("[spiderSingle] Error spidering " + ch.getWayPoint() + " in spiderSingle", ex);
 		}
 		return ret;
 	} // spiderSingle
@@ -1048,22 +1106,25 @@ public class SpiderGC {
 		// Check whether spider definitions could be loaded,
 		// if not issue appropriate message and terminate
 		// Try to login. If login fails, issue appropriate message and terminate
-		if (!login()) return "";
+		if (!login())
+			return "";
 		final InfoBox localInfB = new InfoBox("Info", "Loading", InfoBox.PROGRESS_WITH_WARNINGS);
 		localInfB.exec();
 		try {
 			final String doc = p.getProp("waypoint") + wayPoint;
 			completeWebPage = UrlFetcher.fetch(doc);
-			pref.log("Fetched " + wayPoint);
-		} catch (final Exception ex) {
+			Global.pref.log("Fetched " + wayPoint);
+		}
+		catch (final Exception ex) {
 			localInfB.close(0);
-			pref.log("[getCacheCoordinates] Could not fetch " + wayPoint, ex);
+			Global.pref.log("[getCacheCoordinates] Could not fetch " + wayPoint, ex);
 			return "";
 		}
 		localInfB.close(0);
 		try {
 			return getLatLon(completeWebPage);
-		} catch (final Exception ex) {
+		}
+		catch (final Exception ex) {
 			return "????";
 		}
 	} // getCacheCoordinates
@@ -1073,12 +1134,12 @@ public class SpiderGC {
 	 */
 	private boolean login() {
 
-		if (loggedIn && !pref.switchGCLanguageToEnglish) {
+		if (loggedIn && !Global.pref.switchGCLanguageToEnglish) {
 			return true;
 		}
 
 		// the next could be removed, cause switch language now too requires https
-		if (pref.userID.length() > 0) {
+		if (Global.pref.userID.length() > 0) {
 			UrlFetcher.setPermanentRequestorProperty("Cookie", null);
 			loggedIn = switchToEnglish();
 			if (loggedIn)
@@ -1088,122 +1149,158 @@ public class SpiderGC {
 				(new MessageBox(MyLocale.getMsg(5523, "Login error!"), "Die userID ist vermutlich nicht mehr gültig. Siehe http://cachewolf.aldos.de/userid.html !", FormBase.OKB)).execute();
 				return false;
 			}
-		} else {
+		}
+		else {
 			(new MessageBox(MyLocale.getMsg(5523, "Login error!"), "Siehe http://cachewolf.aldos.de/userid.html !", FormBase.OKB)).execute();
 			return false;
 		}
 
 		/*
-		 * 
-		 * int counter = 5; boolean real_return = false; // **0 Get password String passwort = pref.password; InfoBox localInfB = new InfoBox(MyLocale.getMsg(5506, "Password"), MyLocale.getMsg(5505, "Enter Password"), InfoBox.INPUT);
-		 * localInfB.feedback.setText(passwort); localInfB.feedback.isPassword = true; int code = FormBase.IDOK; if (passwort.equals("")) { code = localInfB.execute(); passwort = localInfB.getInput(); } localInfB.close(0); if (code !=
-		 * FormBase.IDOK) return false;
-		 * 
-		 * localInfB = new InfoBox(MyLocale.getMsg(5507, "Status"), MyLocale.getMsg(5508, "Logging in...")); localInfB.exec();
-		 * 
-		 * while (counter > 0) { counter--; switch( origin_login(passwort) ) { case 1: real_return = true; counter = 0; break; case 0: localInfB.setInfo(MyLocale.getMsg(5523, "Login error! next try...")+ "(" + (5 - counter) + "/5)"); break;
-		 * case 2: (new MessageBox(MyLocale.getMsg(5500, "Error"), MyLocale.getMsg(5501, "Login failed! Wrong account or password?"), FormBase.OKB)).execute(); counter = 0; break; case 3: localInfB.setInfo(MyLocale.getMsg(5523, "Login
-		 * error! next try...")+ "(" + (5 - counter) + "/5)"); break; case 4: localInfB.setInfo(MyLocale.getMsg(5523, "Login error! next try...") + "(" + (5 - counter) + "/5)"); break; } }
-		 * 
-		 * localInfB.close(0); return real_return;
-		 */
+		int counter = 5;
+		boolean real_return = false;
+		// **0 Get password 
+		String passwort = Global.pref.password;
+		InfoBox localInfB = new InfoBox(MyLocale.getMsg(5506, "Password"), MyLocale.getMsg(5505, "Enter Password"), InfoBox.INPUT);
+		localInfB.feedback.setText(passwort);
+		localInfB.feedback.isPassword = true;
+		int code = FormBase.IDOK;
+		if (passwort.equals("")) {
+			code = localInfB.execute();
+			passwort = localInfB.getInput();
+		}
+		localInfB.close(0);
+		if (code != FormBase.IDOK)
+			return false;
+
+		localInfB = new InfoBox(MyLocale.getMsg(5507, "Status"), MyLocale.getMsg(5508, "Logging in..."));
+		localInfB.exec();
+
+		while (counter > 0) {
+			counter--;
+			switch (origin_login(passwort)) {
+			case 1:
+				real_return = true;
+				counter = 0;
+				break;
+			case 0:
+				localInfB.setInfo(MyLocale.getMsg(5523, "Login error! next try...") + "(" + (5 - counter) + "/5)");
+				break;
+			case 2:
+				(new MessageBox(MyLocale.getMsg(5500, "Error"), MyLocale.getMsg(5501, "Login failed! Wrong account or password?"), FormBase.OKB)).execute();
+				counter = 0;
+				break;
+			case 3:
+				localInfB.setInfo(MyLocale.getMsg(5523, "Login error! next try...") + "(" + (5 - counter) + "/5)");
+				break;
+			case 4:
+				localInfB.setInfo(MyLocale.getMsg(5523, "Login error! next try...") + "(" + (5 - counter) + "/5)");
+				break;
+			}
+		}
+
+		localInfB.close(0);
+		return real_return;
+		*/
 
 	}
 
 	/**
-	 * Method to login the user to gc.com It will request a password and use the alias defined in preferences If the login page cannot be fetched, the password is cleared. If the login fails, an appropriate message is displayed. changed
-	 * return type from boolean to int 0 = false / abort 1 = true 2 = wrong username or password 3 = login exception 4 = fetch error / offline remove messagebox and infobox
+	 * Method to login the user to gc.com It will request a password and use the alias defined in preferences If the login page cannot be fetched, the password is cleared. If the login fails, an appropriate message is displayed. changed return type
+	 * from boolean to int 0 = false / abort 1 = true 2 = wrong username or password 3 = login exception 4 = fetch error / offline remove messagebox and infobox
 	 */
+	/*
 	private int origin_login(String passwort) {
 
-		loggedIn = false;
-		String loginPage, loginPageUrl, loginSuccess;
-		try {
-			loginPageUrl = p.getProp("loginPage");
-			loginSuccess = p.getProp("loginSuccess");
-		} catch (final Exception ex) { // Tag not found in spider.def
-			return 0;
-		}
-
-		// **1 we have user and password for login
-		try {
-			loginPage = UrlFetcher.fetch(loginPageUrl); // https://www.geocaching.com/login/default.aspx
-			if (loginPage.equals("")) {
-				pref.log("[login]:empty gc.com login page " + loginPageUrl, null);
-				return 4;
-			}
-		} catch (final Exception ex) {
-			pref.log("[login]:Exception gc.com login page", ex, true);
-			return 4;
-		}
-
-		// **2 now we can check the loginpage if logged in else log in
-		// assume language is already set to EN (loginSuccess has EN - Text)
-		if (loginPage.indexOf(loginSuccess) > 0) {
-			if (loginPage.indexOf(pref.myAlias) > 0) {
-				loggedIn = true;
-				pref.log("[login]:Already logged in as " + pref.myAlias);
-			} else {
-				// it is another user, whom we should logout
-				try {
-					loginPage = UrlFetcher.fetch("https://www.geocaching.com/login/default.aspx?RESET=Y");
-				} catch (final Exception ex) {
-					pref.log("[login]:Exception logout user from gc", ex);
-					return 4;
-				}
-
-			}
-		}
-		if (!loggedIn) {
-			try {
-				final Regex rexViewstate = new Regex("id=\"__VIEWSTATE\" value=\"(.*?)\" />");
-				String viewstate = "";
-				rexViewstate.search(loginPage);
-				if (rexViewstate.didMatch()) {
-					viewstate = rexViewstate.stringMatched(1);
-				} else {
-					;
-					pref.log("[login]:__VIEWSTATE not found (before login): no login possible.", null);
-					return 0;
-				}
-
-				final StringBuffer sb = new StringBuffer(1000);
-				sb.append("__EVENTTARGET=");
-				sb.append("&__EVENTARGUMENT=");
-				sb.append("&__VIEWSTATE=" + URL.encodeURL(viewstate, false));
-				sb.append("&ctl00%24ContentBody%24tbUsername=" + encodeUTF8URL(Utils.encodeJavaUtf8String(pref.myAlias)));
-				sb.append("&ctl00%24ContentBody%24tbPassword=" + encodeUTF8URL(Utils.encodeJavaUtf8String(passwort)));
-				sb.append("&ctl00%24ContentBody%24cbRememberMe=true");
-				sb.append("&ctl00%24ContentBody%24btnSignIn=Login");
-				UrlFetcher.setpostData(sb.toString());
-
-				loginPage = UrlFetcher.fetch(loginPageUrl);
-			} catch (final Exception ex) {
-				pref.log("[login]:Exception login with post Data.", ex);
-				return 3;
-			}
-		}
-
-		// formerly this part was not executed if already logged in
-		// but as https login post sometimes/often gives faulty EOF (https implementation program error),
-		// though the call was successful, the second call (repeating login()) of loginpage get
-		// gives us the following data used as cookie : sessionId and userid
-		// hopefully pfeffer or someone else fixes this EOF some time
-		if (loginPage.indexOf(loginSuccess) > 0) {
-			pref.log("Login successful: " + pref.myAlias);
-			// **3 now we are logged in and get the userId and sessionId
-			if (!getSessionIdAndSetCookie("")) return 2;
-		} else {
-			pref.log("[login]: Wrong Account or Password? " + pref.myAlias, null);
-			return 2;
-		}
-
-		if (!this.switchToEnglish()) return 0;
-
-		loggedIn = true;
-		return 1;
+	loggedIn = false;
+	String loginPage, loginPageUrl, loginSuccess;
+	try {
+		loginPageUrl = p.getProp("loginPage");
+		loginSuccess = p.getProp("loginSuccess");
+	} catch (final Exception ex) { // Tag not found in spider.def
+		return 0;
 	}
 
+	// **1 we have user and password for login
+	try {
+		loginPage = UrlFetcher.fetch(loginPageUrl); // https://www.geocaching.com/login/default.aspx
+		if (loginPage.equals("")) {
+			Global.pref.log("[login]:empty gc.com login page " + loginPageUrl, null);
+			return 4;
+		}
+	} catch (final Exception ex) {
+		Global.pref.log("[login]:Exception gc.com login page", ex, true);
+		return 4;
+	}
+
+	// **2 now we can check the loginpage if logged in else log in
+	// assume language is already set to EN (loginSuccess has EN - Text)
+	if (loginPage.indexOf(loginSuccess) > 0) {
+		if (loginPage.indexOf(Global.pref.myAlias) > 0) {
+			loggedIn = true;
+			Global.pref.log("[login]:Already logged in as " + Global.pref.myAlias);
+		} else {
+			// it is another user, whom we should logout
+			try {
+				loginPage = UrlFetcher.fetch("https://www.geocaching.com/login/default.aspx?RESET=Y");
+			} catch (final Exception ex) {
+				Global.pref.log("[login]:Exception logout user from gc", ex);
+				return 4;
+			}
+
+		}
+	}
+	if (!loggedIn) {
+		try {
+			final Regex rexViewstate = new Regex("id=\"__VIEWSTATE\" value=\"(.*?)\" />");
+			String viewstate = "";
+			rexViewstate.search(loginPage);
+			if (rexViewstate.didMatch()) {
+				viewstate = rexViewstate.stringMatched(1);
+			} else {
+				;
+				Global.pref.log("[login]:__VIEWSTATE not found (before login): no login possible.", null);
+				return 0;
+			}
+
+			final StringBuffer sb = new StringBuffer(1000);
+			sb.append("__EVENTTARGET=");
+			sb.append("&__EVENTARGUMENT=");
+			sb.append("&__VIEWSTATE=" + URL.encodeURL(viewstate, false));
+			sb.append("&ctl00%24ContentBody%24tbUsername=" + encodeUTF8URL(Utils.encodeJavaUtf8String(Global.pref.myAlias)));
+			sb.append("&ctl00%24ContentBody%24tbPassword=" + encodeUTF8URL(Utils.encodeJavaUtf8String(passwort)));
+			sb.append("&ctl00%24ContentBody%24cbRememberMe=true");
+			sb.append("&ctl00%24ContentBody%24btnSignIn=Login");
+			UrlFetcher.setpostData(sb.toString());
+
+			loginPage = UrlFetcher.fetch(loginPageUrl);
+		} catch (final Exception ex) {
+			Global.pref.log("[login]:Exception login with post Data.", ex);
+			return 3;
+		}
+	}
+
+	// formerly this part was not executed if already logged in
+	// but as https login post sometimes/often gives faulty EOF (https implementation program error),
+	// though the call was successful, the second call (repeating login()) of loginpage get
+	// gives us the following data used as cookie : sessionId and userid
+	// hopefully pfeffer or someone else fixes this EOF some time
+	if (loginPage.indexOf(loginSuccess) > 0) {
+		Global.pref.log("Login successful: " + Global.pref.myAlias);
+		// **3 now we are logged in and get the userId and sessionId
+		if (!getSessionIdAndSetCookie(""))
+			return 2;
+	} else {
+		Global.pref.log("[login]: Wrong Account or Password? " + Global.pref.myAlias, null);
+		return 2;
+	}
+
+	if (!this.switchToEnglish())
+		return 0;
+
+	loggedIn = true;
+	return 1;
+	}
+	*/
 	private boolean getSessionIdAndSetCookie(String userId) {
 
 		PropertyList pl = UrlFetcher.getDocumentProperties();
@@ -1219,8 +1316,9 @@ public class SpiderGC {
 		rexCookieSession.search(docprops);
 		if (rexCookieSession.didMatch()) {
 			cookie = "ASP.NET_SessionId=" + rexCookieSession.stringMatched(1);
-		} else {
-			pref.log("[login]:SessionID not found.", null);
+		}
+		else {
+			Global.pref.log("[login]:SessionID not found.", null);
 			return false;
 		}
 
@@ -1230,13 +1328,15 @@ public class SpiderGC {
 			if (rexCookieID.didMatch()) {
 				cookie += "; userid=" + rexCookieID.stringMatched(1);
 				// set the user id in user pref
-				pref.userID = rexCookieID.stringMatched(1);
-				pref.savePreferences();
-			} else {
-				pref.log("[login]:userID not found.", null);
+				Global.pref.userID = rexCookieID.stringMatched(1);
+				Global.pref.savePreferences();
+			}
+			else {
+				Global.pref.log("[login]:userID not found.", null);
 				return false;
 			}
-		} else {
+		}
+		else {
 			cookie += "; userid=" + userId;
 		}
 
@@ -1249,23 +1349,27 @@ public class SpiderGC {
 		String page = "";
 		String url = "http://www.geocaching.com/account/ManagePreferences.aspx";
 		try {
-			UrlFetcher.setPermanentRequestorProperty("Cookie", "userid=" + pref.userID);
+			UrlFetcher.setPermanentRequestorProperty("Cookie", "userid=" + Global.pref.userID);
 			page = UrlFetcher.fetch(url); // getting the sessionid
 			if (page.length() == 0) {
-				pref.log("[switchToEnglish]:empty page getting SessionID.", null);
+				Global.pref.log("[switchToEnglish]:empty page getting SessionID.", null);
 				return false;
 			}
-		} catch (final Exception ex) {
-			pref.log("[switchToEnglish]:Exception getting SessionID.", ex, true);
+		}
+		catch (final Exception ex) {
+			Global.pref.log("[switchToEnglish]:Exception getting SessionID.", ex, true);
 			return false;
 		}
 
-		if (!getSessionIdAndSetCookie(pref.userID)) return false;
+		if (!getSessionIdAndSetCookie(Global.pref.userID))
+			return false;
 
 		try {
 			page = UrlFetcher.fetch(url);
-			if (page.length() == 0) return false;
-		} catch (IOException e) {
+			if (page.length() == 0)
+				return false;
+		}
+		catch (IOException e) {
 			return false;
 		}
 
@@ -1277,8 +1381,8 @@ public class SpiderGC {
 		ext.set(languageBlock, "<option selected=\"selected\" value=\"", "\">", 0, true);
 		String oldLanguage = ext.findNext();
 		if (oldLanguage.equals("en-US")) {
-			pref.switchGCLanguageToEnglish = false;
-			pref.log("already English");
+			Global.pref.switchGCLanguageToEnglish = false;
+			Global.pref.log("already English");
 			return true;
 		}
 		// switch to english now goes into gc account Display Preferences
@@ -1286,7 +1390,7 @@ public class SpiderGC {
 		String languages[] = { "en-US", "de-DE", "fr-FR", "pt-PT", "cs-CZ", "sv-SE", "nl-NL", "ca-ES", "pl-PL", "et-EE", "nb-NO", "ko-KR", "es-ES", "hu-HU" };
 		for (int i = 0; i < languages.length; i++) {
 			if (oldLanguage.equals(languages[i])) {
-				pref.oldLanguageCtl = url + "?__EVENTTARGET=" + UrlFetcher.encodeURL("ctl00$uxLocaleList$uxLocaleList$ctl" + MyLocale.formatLong(i, "00") + "$uxLocaleItem", false);
+				Global.pref.oldLanguageCtl = url + "?__EVENTTARGET=" + UrlFetcher.encodeURL("ctl00$uxLocaleList$uxLocaleList$ctl" + MyLocale.formatLong(i, "00") + "$uxLocaleItem", false);
 				break;
 			}
 		}
@@ -1296,14 +1400,16 @@ public class SpiderGC {
 			page = UrlFetcher.fetch(url);
 			ext.set(page, "<a href=\"#\">", "&#9660;", 0, true);
 			if (ext.findFirst(page).equals("English")) {
-				pref.log("Switched to English");
+				Global.pref.log("Switched to English");
 				return true;
-			} else {
-				pref.log("couldn't switch to english", null);
+			}
+			else {
+				Global.pref.log("couldn't switch to english", null);
 				return false;
 			}
-		} catch (final Exception ex) {
-			pref.log("[SpiderGC.java:switchToEnglish]Error switching to English: check " + url, ex);
+		}
+		catch (final Exception ex) {
+			Global.pref.log("[SpiderGC.java:switchToEnglish]Error switching to English: check " + url, ex);
 			return false;
 		}
 
@@ -1343,8 +1449,9 @@ public class SpiderGC {
 			icon_camera = p.getProp("icon_camera");
 			icon_attended = p.getProp("icon_attended");
 			RexCacheType = new Regex(p.getProp("cacheTypeRex"));
-		} catch (final Exception ex) {
-			pref.log("Error fetching Properties.", ex);
+		}
+		catch (final Exception ex) {
+			Global.pref.log("Error fetching Properties.", ex);
 		}
 	}
 
@@ -1356,9 +1463,10 @@ public class SpiderGC {
 
 		try {
 			htmlListPage = UrlFetcher.fetch(url);
-			pref.log("[getFirstListPage] Got first page " + url);
-		} catch (final Exception ex) {
-			pref.log("[getFirstListPage] Error fetching first list page " + url, ex, true);
+			Global.pref.log("[getFirstListPage] Got first page " + url);
+		}
+		catch (final Exception ex) {
+			Global.pref.log("[getFirstListPage] Error fetching first list page " + url, ex, true);
 			Vm.showWait(false);
 			infB.close(0);
 			(new MessageBox(MyLocale.getMsg(5500, "Error"), MyLocale.getMsg(5503, "Error fetching first list page."), FormBase.OKB)).execute();
@@ -1378,9 +1486,10 @@ public class SpiderGC {
 		rexViewstate.search(htmlListPage);
 		if (rexViewstate.didMatch()) {
 			viewstate = rexViewstate.stringMatched(1);
-		} else {
+		}
+		else {
 			viewstate = "";
-			pref.log("[SpiderGC.java:getAListPage] check rexViewstate!", null);
+			Global.pref.log("[SpiderGC.java:getAListPage] check rexViewstate!", null);
 		}
 
 		final Regex rexViewstate1 = new Regex("id=\"__VIEWSTATE1\" value=\"(.*?)\" />");
@@ -1388,9 +1497,10 @@ public class SpiderGC {
 		rexViewstate1.search(htmlListPage);
 		if (rexViewstate1.didMatch()) {
 			viewstate1 = rexViewstate1.stringMatched(1);
-		} else {
+		}
+		else {
 			viewstate1 = "";
-			pref.log("[SpiderGC.java:getAListPage] check rexViewstate1!", null);
+			Global.pref.log("[SpiderGC.java:getAListPage] check rexViewstate1!", null);
 		}
 
 		final String postData = "__EVENTTARGET=" + URL.encodeURL(whatPage, false) //
@@ -1401,9 +1511,10 @@ public class SpiderGC {
 		try {
 			UrlFetcher.setpostData(postData);
 			htmlListPage = UrlFetcher.fetch(url);
-			pref.log("[getAListPage] " + whatPage);
-		} catch (final Exception ex) {
-			pref.log("[getAListPage] Error at " + whatPage, ex);
+			Global.pref.log("[getAListPage] " + whatPage);
+		}
+		catch (final Exception ex) {
+			Global.pref.log("[getAListPage] Error at " + whatPage, ex);
 			ret = false;
 		}
 		return ret;
@@ -1413,13 +1524,15 @@ public class SpiderGC {
 		String url;
 		if (spiderAllFinds) {
 			url = urlSeek //
-					+ queryUserFinds + encodeUTF8URL(Utils.encodeJavaUtf8String(pref.myAlias));
-		} else {
+					+ queryUserFinds + encodeUTF8URL(Utils.encodeJavaUtf8String(Global.pref.myAlias));
+		}
+		else {
 			url = urlSeek //
 					+ queryLat + origin.getLatDeg(TransformCoordinates.DD) //
 					+ queryLon + origin.getLonDeg(TransformCoordinates.DD) //
 					+ queryDistance + Integer.toString(distance); //
-			if (doNotgetFound) url = url + queryDoNotGetFound;
+			if (doNotgetFound)
+				url = url + queryDoNotGetFound;
 		}
 		url = url + cacheTypeRestriction;
 		return url;
@@ -1453,7 +1566,8 @@ public class SpiderGC {
 				numArchivedUpdates += 1;
 				ret = true;
 			}
-		} else if (!doNotgetFound) { // there could be a found or own ...
+		}
+		else if (!doNotgetFound) { // there could be a found or own ...
 			is_found_GC = CacheDescription.indexOf(propFound) != -1;
 			if (is_found_GC != ch.is_found()) {
 				ch.setFound(is_found_GC);
@@ -1464,7 +1578,8 @@ public class SpiderGC {
 
 		if (ch.is_found()) {
 			// check for missing ownLogID (and logtext)
-			if (ch.getCacheDetails(false).OwnLogId.equals("")) ret = true;
+			if (ch.getCacheDetails(false).OwnLogId.equals(""))
+				ret = true;
 		}
 		final boolean is_available_GC = !is_archived_GC && CacheDescription.indexOf(propAvailable) == -1;
 		if (is_available_GC != ch.is_available()) {
@@ -1477,26 +1592,27 @@ public class SpiderGC {
 			save = true;
 			ret = true;
 		}
-		if (pref.checkDTS) {
+		if (Global.pref.checkDTS) {
 			final String dts[] = mString.split(getDTS(CacheDescription), '/');
 			if (dts.length == 3) {
 				if (difficultyChanged(ch, CacheTerrDiff.v1Converter(dts[0]))) {
 					save = true;
 					ret = true;
-					pref.log("difficultyChanged");
+					Global.pref.log("difficultyChanged");
 				}
 				if (terrainChanged(ch, CacheTerrDiff.v1Converter(dts[1]))) {
 					save = true;
 					ret = true;
-					pref.log("terrainChanged");
+					Global.pref.log("terrainChanged");
 				}
 				if (sizeChanged(ch, CacheSize.gcGpxString2Cw(dts[2]))) {
 					save = true;
 					ret = true;
-					pref.log("sizeChanged");
+					Global.pref.log("sizeChanged");
 				}
-			} else {
-				pref.log("[SpiderGC.java:updateExists]check DTS calculation!", null);
+			}
+			else {
+				Global.pref.log("[SpiderGC.java:updateExists]check DTS calculation!", null);
 			}
 		}
 		if (newFoundExists(ch, CacheDescription)) {
@@ -1506,7 +1622,8 @@ public class SpiderGC {
 		if (!ret) {
 			ret = TBchanged(ch, CacheDescription);
 		}
-		if (save) ch.save();
+		if (save)
+			ch.save();
 		return ret;
 	}
 
@@ -1521,8 +1638,9 @@ public class SpiderGC {
 		RexNumFinds.search(doc);
 		if (RexNumFinds.didMatch()) {
 			return Common.parseInt(RexNumFinds.stringMatched(1));
-		} else {
-			pref.log("[SpiderGC.java:getNumFound]check RexNumFinds!", null);
+		}
+		else {
+			Global.pref.log("[SpiderGC.java:getNumFound]check RexNumFinds!", null);
 			return 0;
 		}
 	}
@@ -1533,7 +1651,8 @@ public class SpiderGC {
 		for (int i = 0; i < cacheDB.size(); i++) {
 			ch = cacheDB.get(i);
 			if (ch.is_found()) {
-				if (ch.getWayPoint().startsWith("GC")) counter++;
+				if (ch.getWayPoint().startsWith("GC"))
+					counter++;
 			}
 		}
 		return counter;
@@ -1543,13 +1662,15 @@ public class SpiderGC {
 		// #<span class="small NoWrap"><img src="/images/icons/compass/SW.gif" alt="SW" title="SW" />SW<br />0.31km</span>
 		// DistDirRex = compass/(.*?)\.gif(.*?)<br />(.*?)(?:km|mi|ft)
 		final double[] distanceAndDirection = { (0.0), (0.0) };
-		if (spiderAllFinds) return distanceAndDirection;
+		if (spiderAllFinds)
+			return distanceAndDirection;
 		// <span class="small NoWrap"><br />Here</span>
-		if (doc.indexOf(">Here<")>0)  return distanceAndDirection;
+		if (doc.indexOf(">Here<") > 0)
+			return distanceAndDirection;
 		String stmp;
 		DistDirRex.search(doc);
 		if (!DistDirRex.didMatch()) {
-			pref.log("[SpiderGC.java:getDistanceAndDirection]check DistDirRex!", null);
+			Global.pref.log("[SpiderGC.java:getDistanceAndDirection]check DistDirRex!", null);
 			distanceAndDirection[0] = -1.0; // Abbruch
 			return distanceAndDirection;
 		}
@@ -1596,10 +1717,10 @@ public class SpiderGC {
 		//waypointRex        = \\|\\s+GC(.*?)\\s+\\|
 		RexPropWaypoint.search(doc);
 		if (!RexPropWaypoint.didMatch()) {
-			pref.log("[SpiderGC.java:getWP]check waypointRex!", null);
+			Global.pref.log("[SpiderGC.java:getWP]check waypointRex!", null);
 			return "???";
 		}
-		String stmp= RexPropWaypoint.stringMatched(1);
+		String stmp = RexPropWaypoint.stringMatched(1);
 		return "GC" + stmp;
 	}
 
@@ -1607,13 +1728,15 @@ public class SpiderGC {
 	 * check for Premium Member Cache
 	 */
 	private boolean doPMCache(String chWaypoint, String toCheck) {
-		if (pref.isPremium) return true;
+		if (Global.pref.isPremium)
+			return true;
 		if (toCheck.indexOf(propPM) <= 0) {
 			return true;
-		} else {
+		}
+		else {
 			numPrivate = numPrivate + 1;
 			// if (spiderAllFinds) {
-			pref.log(chWaypoint + " is private.", null);
+			Global.pref.log(chWaypoint + " is private.", null);
 			// }
 			return false;
 		}
@@ -1627,7 +1750,8 @@ public class SpiderGC {
 		if (RexPropType.didMatch()) {
 			String stmp = RexPropType.stringMatched(1);
 			if (Common.parseInt(stmp) == 0) {
-				if (stmp.equalsIgnoreCase("EarthCache")) stmp = "137";
+				if (stmp.equalsIgnoreCase("EarthCache"))
+					stmp = "137";
 			}
 			if (ch.getType() == CacheType.gcSpider2CwType(stmp))
 				return false;
@@ -1636,7 +1760,7 @@ public class SpiderGC {
 				return true;
 			}
 		}
-		pref.log("[SpiderGC.java:typeChanged]check TypeRex!", null);
+		Global.pref.log("[SpiderGC.java:typeChanged]check TypeRex!", null);
 		return false;
 	}
 
@@ -1693,19 +1817,23 @@ public class SpiderGC {
 	 * if cache lies in the desired direction
 	 */
 	private boolean directionOK(String[] directions, double toCheck) {
-		if (directions == null || directions.length == 0) return true; // nothing means all
+		if (directions == null || directions.length == 0)
+			return true; // nothing means all
 		final int lowerLimit = Common.parseInt(directions[0]);
 		final int upperLimit = Common.parseInt(directions[1]);
 		if (lowerLimit <= upperLimit) {
 			if ((toCheck >= lowerLimit) && (toCheck <= upperLimit)) {
 				return true;
-			} else {
+			}
+			else {
 				return false;
 			}
-		} else {
+		}
+		else {
 			if ((toCheck >= lowerLimit) || (toCheck <= upperLimit)) {
 				return true;
-			} else {
+			}
+			else {
 				return false;
 			}
 		}
@@ -1719,13 +1847,15 @@ public class SpiderGC {
 	 * @return boolean newLogExists
 	 */
 	private boolean newFoundExists(CacheHolder ch, String cacheDescription) {
-		if (!pref.checkLog || pref.maxLogsToSpider == 0) return false;
+		if (!Global.pref.checkLog || Global.pref.maxLogsToSpider == 0)
+			return false;
 		final Time lastUpdateCW = new Time();
 		String stmp = ch.getLastSync();
 		if (stmp.length() > 0) {
 			try {
 				lastUpdateCW.parse(stmp, "yyyyMMddHHmmss");
-			} catch (Exception e) {
+			}
+			catch (Exception e) {
 				// lastUpdateCW = now
 			}
 		}
@@ -1738,8 +1868,9 @@ public class SpiderGC {
 		logDateRex.search(cacheDescription);
 		if (logDateRex.didMatch()) {
 			stmp = logDateRex.stringMatched(1);
-		} else {
-			pref.log("[SpiderGC.java:newFoundExists]check logDateRex!", null);
+		}
+		else {
+			Global.pref.log("[SpiderGC.java:newFoundExists]check logDateRex!", null);
 			return false;
 		}
 		final Time lastLogGC = DateFormat.toDate(stmp);
@@ -1750,7 +1881,7 @@ public class SpiderGC {
 
 	private boolean TBchanged(CacheHolder ch, String cacheDescription) {
 		// simplified Version: only presence is checked
-		if (pref.downloadTBs && pref.checkTBs) {
+		if (Global.pref.downloadTBs && Global.pref.checkTBs) {
 			final boolean hasTB = cacheDescription.indexOf("data-tbcount") > -1;
 			return ch.has_bugs() != (hasTB);
 		}
@@ -1758,30 +1889,24 @@ public class SpiderGC {
 	}
 
 	/**
-	 * Read a complete cachepage from geocaching.com including all logs. This is used both when updating already existing caches (via spiderSingle) and when spidering around a centre. It is also used when reading a GPX file and fetching the
-	 * images.
+	 * Read a complete cachepage from geocaching.com including all logs. This is used both when updating already existing caches (via spiderSingle) and when spidering around a centre. It is also used when reading a GPX file and fetching the images.
 	 * 
 	 * This is the workhorse function of the spider.
 	 * 
 	 * @param CacheHolderDetail
 	 *            chD The element wayPoint must be set to the name of a waypoint
-	 * @param boolean
-	 *            isUpdate True if an existing cache is being updated, false if it is a new cache
-	 * @param boolean
-	 *            fetchImages True if the pictures are to be fetched
-	 * @param boolean
-	 *            fetchTBs True if the TBs are to be fetched
-	 * @param boolean
-	 *            doNotGetFound True if the cache is not to be spidered if it has already been found
-	 * @param boolean
-	 *            fetchAllLogs True if all logs are to be fetched (by adding option '&logs=y' to command line). This is normally false when spidering from GPXImport as the logs are part of the GPX file, and true otherwise
+	 * @param boolean isUpdate True if an existing cache is being updated, false if it is a new cache
+	 * @param boolean fetchImages True if the pictures are to be fetched
+	 * @param boolean fetchTBs True if the TBs are to be fetched
+	 * @param boolean doNotGetFound True if the cache is not to be spidered if it has already been found
+	 * @param boolean fetchAllLogs True if all logs are to be fetched (by adding option '&logs=y' to command line). This is normally false when spidering from GPXImport as the logs are part of the GPX file, and true otherwise
 	 * @return -1 if the infoBox was closed (cancel spidering), 0 if there was an error (continue with next cache), 1 if everything ok
 	 */
 	private int getCacheByWaypointName(CacheHolder ch, boolean isUpdate, boolean fetchImages, boolean fetchTBs, boolean doNotGetFound, boolean fetchAllLogs) {
 		int ret = SPIDER_OK; // initialize value;
 
 		while (true) { // retry even if failure
-			pref.log(""); // new line for more overview
+			Global.pref.log(""); // new line for more overview
 			String completeWebPage;
 			int spiderTrys = 0;
 			final int MAX_SPIDER_TRYS = 3;
@@ -1790,21 +1915,24 @@ public class SpiderGC {
 				try {
 					final String doc = p.getProp("getPageByName") + ch.getWayPoint() + ((fetchAllLogs || ch.is_found()) ? p.getProp("fetchAllLogs") : "");
 					completeWebPage = UrlFetcher.fetch(doc);
-					pref.log("Fetched: " + ch.getWayPoint());
+					Global.pref.log("Fetched: " + ch.getWayPoint());
 					if (completeWebPage.equals("")) {
-						pref.log("Could not fetch " + ch.getWayPoint(), null);
+						Global.pref.log("Could not fetch " + ch.getWayPoint(), null);
 						if (!infB.isClosed) {
 							continue;
-						} else {
+						}
+						else {
 							ch.setIncomplete(true);
 							return SPIDER_CANCEL;
 						}
 					}
-				} catch (final Exception ex) {
-					pref.log("Could not fetch " + ch.getWayPoint(), ex);
+				}
+				catch (final Exception ex) {
+					Global.pref.log("Could not fetch " + ch.getWayPoint(), ex);
 					if (!infB.isClosed) {
 						continue;
-					} else {
+					}
+					else {
 						ch.setIncomplete(true);
 						return SPIDER_CANCEL;
 					}
@@ -1819,12 +1947,14 @@ public class SpiderGC {
 						if (latLon.equals("???")) {
 							if (completeWebPage.indexOf(p.getProp("premiumCachepage")) > 0) {
 								// Premium cache spidered by non premium member
-								pref.log("Ignoring premium member cache: " + ch.getWayPoint(), null);
+								Global.pref.log("Ignoring premium member cache: " + ch.getWayPoint(), null);
 								spiderTrys = MAX_SPIDER_TRYS;
 								ret = SPIDER_IGNORE_PREMIUM;
 								continue;
-							} else {
-								if (spiderTrys == MAX_SPIDER_TRYS) pref.log(">>>> Failed to spider Cache. Retry.", null);
+							}
+							else {
+								if (spiderTrys == MAX_SPIDER_TRYS)
+									Global.pref.log(">>>> Failed to spider Cache. Retry.", null);
 								ret = SPIDER_ERROR;
 								continue; // Restart the spider
 							}
@@ -1844,12 +1974,13 @@ public class SpiderGC {
 						// Logs first (for check early for break)
 						// ==========
 						getLogs(completeWebPage, ch.getCacheDetails(false));
-						pref.log("Got logs");
+						Global.pref.log("Got logs");
 						// If the switch is set to not store found caches and we found the cache => return
 						if (ch.is_found() && doNotGetFound) {
 							if (infB.isClosed) {
 								return SPIDER_CANCEL;
-							} else {
+							}
+							else {
 								return SPIDER_IGNORE;
 							}
 						}
@@ -1857,14 +1988,14 @@ public class SpiderGC {
 						// General Cache Data
 						// ==========
 						ch.setPos(new CWPoint(latLon));
-						pref.log("LatLon: " + ch.getPos().toString());
+						Global.pref.log("LatLon: " + ch.getPos().toString());
 
 						final String longDesc = getLongDesc(completeWebPage);
 						ch.getCacheDetails(false).setLongDescription(longDesc);
-						pref.log("Got description");
+						Global.pref.log("Got description");
 
 						ch.setCacheName(SafeXML.cleanback(getName(completeWebPage)));
-						pref.log("Name: " + ch.getCacheName());
+						Global.pref.log("Name: " + ch.getCacheName());
 
 						final String location = getLocation(completeWebPage);
 						if (location.length() != 0) {
@@ -1872,85 +2003,92 @@ public class SpiderGC {
 							if (countryStart > -1) {
 								ch.getCacheDetails(false).Country = SafeXML.cleanback(location.substring(countryStart + 1).trim());
 								ch.getCacheDetails(false).State = SafeXML.cleanback(location.substring(0, countryStart).trim());
-							} else {
+							}
+							else {
 								ch.getCacheDetails(false).Country = location.trim();
 								ch.getCacheDetails(false).State = "";
 							}
-							pref.log("Got (country/state)" + ch.getCacheDetails(false).Country + "/" + ch.getCacheDetails(false).State);
-						} else {
+							Global.pref.log("Got (country/state)" + ch.getCacheDetails(false).Country + "/" + ch.getCacheDetails(false).State);
+						}
+						else {
 							ch.getCacheDetails(false).Country = "";
 							ch.getCacheDetails(false).State = "";
-							pref.log("No location (country/state) found");
+							Global.pref.log("No location (country/state) found");
 						}
 						String owner = getOwner(completeWebPage);
 						owner = SafeXML.cleanback(owner).trim();
 						ch.setCacheOwner(owner);
-						if (ch.getCacheOwner().equalsIgnoreCase(pref.myAlias) || (ch.getCacheOwner().equalsIgnoreCase(pref.myAlias2))) ch.setOwned(true);
-						pref.log("Owner: " + ch.getCacheOwner() + "; is_owned = " + ch.is_owned() + ";  alias1,2 = [" + pref.myAlias + "|" + pref.myAlias2 + "]");
+						if (ch.getCacheOwner().equalsIgnoreCase(Global.pref.myAlias) || (ch.getCacheOwner().equalsIgnoreCase(Global.pref.myAlias2)))
+							ch.setOwned(true);
+						Global.pref.log("Owner: " + ch.getCacheOwner() + "; is_owned = " + ch.is_owned() + ";  alias1,2 = [" + Global.pref.myAlias + "|" + Global.pref.myAlias2 + "]");
 
 						ch.setDateHidden(DateFormat.toYYMMDD(getDateHidden(completeWebPage)));
-						pref.log("Hidden: " + ch.getDateHidden());
+						Global.pref.log("Hidden: " + ch.getDateHidden());
 
 						ch.getCacheDetails(false).setHints(getHints(completeWebPage));
-						pref.log("Hints: " + ch.getCacheDetails(false).Hints);
+						Global.pref.log("Hints: " + ch.getCacheDetails(false).Hints);
 
 						ch.setCacheSize(CacheSize.gcSpiderString2Cw(getSize(completeWebPage)));
-						pref.log("Size: " + ch.getCacheSize());
+						Global.pref.log("Size: " + ch.getCacheSize());
 
 						ch.setHard(CacheTerrDiff.v1Converter(getDiff(completeWebPage)));
-						pref.log("Hard: " + ch.getHard());
+						Global.pref.log("Hard: " + ch.getHard());
 
 						ch.setTerrain(CacheTerrDiff.v1Converter(getTerr(completeWebPage)));
-						pref.log("Terr: " + ch.getTerrain());
+						Global.pref.log("Terr: " + ch.getTerrain());
 
 						ch.setType(getType(completeWebPage));
-						pref.log("Type: " + ch.getType());
+						Global.pref.log("Type: " + ch.getType());
 						// ==========
 						// Bugs
 						// ==========
-						if (fetchTBs) getBugs(ch.getCacheDetails(false), completeWebPage);
+						if (fetchTBs)
+							getBugs(ch.getCacheDetails(false), completeWebPage);
 						ch.setHas_bugs(ch.getCacheDetails(false).Travelbugs.size() > 0);
-						pref.log("Got TBs");
+						Global.pref.log("Got TBs");
 						// ==========
 						// Images
 						// ==========
 						if (fetchImages) {
 							getImages(completeWebPage, ch.getCacheDetails(false), true);
-							pref.log("Got images");
+							Global.pref.log("Got images");
 						}
 						// ==========
 						// Addi waypoints
 						// ==========
 						getAddWaypoints(completeWebPage, ch.getWayPoint(), ch.is_found());
-						pref.log("Got additional waypoints");
+						Global.pref.log("Got additional waypoints");
 						// ==========
 						// Attributes
 						// ==========
 						getAttributes(completeWebPage, ch.getCacheDetails(false));
-						pref.log("Got attributes");
+						Global.pref.log("Got attributes");
 						// ==========
 						// Last sync date
 						// ==========
 						ch.setLastSync((new Time()).format("yyyyMMddHHmmss"));
 						ch.setIncomplete(false);
-						pref.log("ready " + ch.getWayPoint() + " : " + ch.getLastSync());
+						Global.pref.log("ready " + ch.getWayPoint() + " : " + ch.getLastSync());
 						break;
-					} catch (final Exception ex) {
-						pref.log("[getCacheByWaypointName: ]Error reading cache: " + ch.getWayPoint(), ex);
 					}
-				} else {
+					catch (final Exception ex) {
+						Global.pref.log("[getCacheByWaypointName: ]Error reading cache: " + ch.getWayPoint(), ex);
+					}
+				}
+				else {
 					break;
 				}
 			} // spiderTrys
 			if ((spiderTrys >= MAX_SPIDER_TRYS) && (ret == SPIDER_OK)) {
-				pref.log(">>> Failed to spider cache. Number of retrys exhausted.", null);
-				final int decision = (new MessageBox(MyLocale.getMsg(5500, "Error"), MyLocale.getMsg(5515, "Failed to load cache.%0aPleas check your internet connection.%0aRetry?"), FormBase.DEFOKB | FormBase.NOB | FormBase.CANCELB))
-						.execute();
+				Global.pref.log(">>> Failed to spider cache. Number of retrys exhausted.", null);
+				final int decision = (new MessageBox(MyLocale.getMsg(5500, "Error"), MyLocale.getMsg(5515, "Failed to load cache.%0aPleas check your internet connection.%0aRetry?"), FormBase.DEFOKB | FormBase.NOB | FormBase.CANCELB)).execute();
 				if (decision == FormBase.IDOK) {
 					continue; // retry even if failure
-				} else if (decision == FormBase.IDNO) {
+				}
+				else if (decision == FormBase.IDNO) {
 					ret = SPIDER_ERROR;
-				} else {
+				}
+				else {
 					ret = SPIDER_CANCEL;
 				}
 			}
@@ -1975,7 +2113,7 @@ public class SpiderGC {
 		inRex.search(doc);
 		if (!inRex.didMatch()) {
 			if (doc.indexOf("Unpublished Geocache") < 0 && doc.indexOf("Premium Member Only Cache") < 0) {
-				pref.log("[SpiderGC.java:getLatLon]check latLonRex!" + doc, null);
+				Global.pref.log("[SpiderGC.java:getLatLon]check latLonRex!" + doc, null);
 			}
 			return "???";
 		}
@@ -1997,17 +2135,20 @@ public class SpiderGC {
 		final Regex longDescRex = new Regex(p.getProp("longDescRex"));
 		shortDescRex.search(doc);
 		if (!shortDescRex.didMatch()) {
-			if (shortDescRex_not_yet_found) pref.log("[SpiderGC.java:getLongDesc]no shortDesc or check shortDescRex!", null);
+			if (shortDescRex_not_yet_found)
+				Global.pref.log("[SpiderGC.java:getLongDesc]no shortDesc or check shortDescRex!", null);
 			// + Preferences.NEWLINE + doc);
-		} else {
+		}
+		else {
 			res = shortDescRex.stringMatched(1);
 			shortDescRex_not_yet_found = false;
 		}
 		res += "<br>";
 		longDescRex.search(doc);
 		if (!longDescRex.didMatch()) {
-			pref.log("[SpiderGC.java:getLongDesc]check longDescRex!", null);
-		} else {
+			Global.pref.log("[SpiderGC.java:getLongDesc]check longDescRex!", null);
+		}
+		else {
 			res += longDescRex.stringMatched(1);
 		}
 		final int spanEnd = res.lastIndexOf("</span>");
@@ -2029,7 +2170,7 @@ public class SpiderGC {
 		final Regex inRex = new Regex(p.getProp("cacheLocationRex"));
 		inRex.search(doc);
 		if (!inRex.didMatch()) {
-			pref.log("[SpiderGC.java:getLocation]check cacheLocationRex!", null);
+			Global.pref.log("[SpiderGC.java:getLocation]check cacheLocationRex!", null);
 			return "";
 		}
 		String res2 = inRex.stringMatched(2);
@@ -2047,7 +2188,7 @@ public class SpiderGC {
 		final Regex inRex = new Regex(p.getProp("cacheNameRex"));
 		inRex.search(doc);
 		if (!inRex.didMatch()) {
-			pref.log("[SpiderGC.java:getName]check cacheNameRex!", null);
+			Global.pref.log("[SpiderGC.java:getName]check cacheNameRex!", null);
 			return "???";
 		}
 		return inRex.stringMatched(1);
@@ -2064,7 +2205,7 @@ public class SpiderGC {
 		final Regex inRex = new Regex(p.getProp("cacheOwnerRex"));
 		inRex.search(doc);
 		if (!inRex.didMatch()) {
-			pref.log("[SpiderGC.java:getOwner]check cacheOwnerRex!", null);
+			Global.pref.log("[SpiderGC.java:getOwner]check cacheOwnerRex!", null);
 			return "???";
 		}
 		return inRex.stringMatched(1);
@@ -2081,7 +2222,7 @@ public class SpiderGC {
 		final Regex inRex = new Regex(p.getProp("dateHiddenRex"));
 		inRex.search(doc);
 		if (!inRex.didMatch()) {
-			pref.log("[SpiderGC.java:getDateHidden]check dateHiddenRex!", null);
+			Global.pref.log("[SpiderGC.java:getDateHidden]check dateHiddenRex!", null);
 			return "???";
 		}
 		return inRex.stringMatched(1);
@@ -2098,7 +2239,7 @@ public class SpiderGC {
 		final Regex inRex = new Regex(p.getProp("hintsRex"));
 		inRex.search(doc);
 		if (!inRex.didMatch()) {
-			pref.log("[SpiderGC.java:getHints]check hintsRex!", null);
+			Global.pref.log("[SpiderGC.java:getHints]check hintsRex!", null);
 			return "";
 		}
 		return inRex.stringMatched(1);
@@ -2117,7 +2258,7 @@ public class SpiderGC {
 		if (inRex.didMatch())
 			return inRex.stringMatched(1);
 		else {
-			pref.log("[SpiderGC.java:getSize]check sizeRex!", null);
+			Global.pref.log("[SpiderGC.java:getSize]check sizeRex!", null);
 			return "None";
 		}
 	}
@@ -2135,7 +2276,7 @@ public class SpiderGC {
 		if (inRex.didMatch())
 			return inRex.stringMatched(1);
 		else {
-			pref.log("[SpiderGC.java:getDiff]check difficultyRex!", null);
+			Global.pref.log("[SpiderGC.java:getDiff]check difficultyRex!", null);
 			return "-1";
 		}
 	}
@@ -2153,7 +2294,7 @@ public class SpiderGC {
 		if (inRex.didMatch())
 			return inRex.stringMatched(1);
 		else {
-			pref.log("[SpiderGC.java:getTerr]check terrainRex!", null);
+			Global.pref.log("[SpiderGC.java:getTerr]check terrainRex!", null);
 			return "-1";
 		}
 	}
@@ -2170,7 +2311,7 @@ public class SpiderGC {
 		if (RexCacheType.didMatch())
 			return CacheType.gcSpider2CwType(RexCacheType.stringMatched(1));
 		else {
-			pref.log("[SpiderGC.java:getType]check cacheTypeRex!", null);
+			Global.pref.log("[SpiderGC.java:getType]check cacheTypeRex!", null);
 			return 0;
 		}
 	}
@@ -2191,7 +2332,7 @@ public class SpiderGC {
 
 		RexUserToken.search(completeWebPage);
 		if (!RexUserToken.didMatch()) {
-			pref.log("[SpiderGC.java:getLogs]check RexUserToken!", null);
+			Global.pref.log("[SpiderGC.java:getLogs]check RexUserToken!", null);
 		}
 		final String userToken = RexUserToken.stringMatched(1);
 
@@ -2204,8 +2345,10 @@ public class SpiderGC {
 		boolean foundByMe = false;
 		if (completeWebPage.indexOf("ctl00_ContentBody_hlFoundItLog") > -1) {
 			foundByMe = true;
-		} else {
-			if (pref.maxLogsToSpider < 100) num = pref.maxLogsToSpider + 1;
+		}
+		else {
+			if (Global.pref.maxLogsToSpider < 100)
+				num = Global.pref.maxLogsToSpider + 1;
 		}
 
 		do {
@@ -2224,13 +2367,15 @@ public class SpiderGC {
 				}
 				fetchResult = String.valueOf(fr);
 				resp = new JSONObject(fetchResult);
-			} catch (Exception e) {
-				if (fetchResult == null) fetchResult = "";
-				pref.log("Error getting Logs. \r\n" + fetchResult, e);
+			}
+			catch (Exception e) {
+				if (fetchResult == null)
+					fetchResult = "";
+				Global.pref.log("Error getting Logs. \r\n" + fetchResult, e);
 				return;
 			}
 			if (!resp.getString("status").equals("success")) {
-				pref.log("status is " + resp.getString("status"));
+				Global.pref.log("status is " + resp.getString("status"));
 			}
 			final JSONArray data = resp.getJSONArray("data");
 			fertig = data.length() < num;
@@ -2247,7 +2392,7 @@ public class SpiderGC {
 				final String d = DateFormat.toYYMMDD(entry.getString("Visited"));
 
 				// if this log says this Cache is found by me
-				if ((icon.equals(icon_smile) || icon.equals(icon_camera) || icon.equals(icon_attended)) && (name.equalsIgnoreCase(pref.myAlias) || (name.equalsIgnoreCase(pref.myAlias2)))) {
+				if ((icon.equals(icon_smile) || icon.equals(icon_camera) || icon.equals(icon_attended)) && (name.equalsIgnoreCase(Global.pref.myAlias) || (name.equalsIgnoreCase(Global.pref.myAlias2)))) {
 					chD.getParent().setFound(true);
 					chD.getParent().setCacheStatus(d);
 					// final String logId = entry.getString("LogID");
@@ -2256,18 +2401,20 @@ public class SpiderGC {
 					foundown = true;
 					reslts.add(new Log(icon, d, name, logText));
 				}
-				if (nLogs <= pref.maxLogsToSpider) {
+				if (nLogs <= Global.pref.maxLogsToSpider) {
 					reslts.add(new Log(icon, d, name, logText));
-				} else {
+				}
+				else {
 					if (foundown || !foundByMe) {
 						fertig = true;
 						break;
 					}
 				}
 			}
-		} while (!fertig);
+		}
+		while (!fertig);
 
-		if (nLogs > pref.maxLogsToSpider) {
+		if (nLogs > Global.pref.maxLogsToSpider) {
 			// there are more logs
 			reslts.add(Log.maxLog());
 		}
@@ -2317,10 +2464,11 @@ public class SpiderGC {
 			exBug.set(bugBlock);
 			while ((linkPlusBug = exBug.findNext()).length() > 0) {
 				exBugWrong = false;
-				if (infB.isClosed) break;
+				if (infB.isClosed)
+					break;
 				final int idx = linkPlusBug.indexOf(p.getProp("bugLinkEnd"));
 				if (idx < 0) {
-					pref.log("[SpiderGC.java:getBugs]check TBs bugLinkEnd!", null);
+					Global.pref.log("[SpiderGC.java:getBugs]check TBs bugLinkEnd!", null);
 					break; // No link/bug pair found
 				}
 				link = linkPlusBug.substring(0, idx);
@@ -2333,17 +2481,20 @@ public class SpiderGC {
 						exBugName.set(bugDetails, p.getProp("bugDetailsStart"), p.getProp("bugDetailsEnd"), 0, Extractor.EXCLUDESTARTEND); // reusing
 						// exBugName
 						chD.Travelbugs.add(new Travelbug(link.substring(1 + link.indexOf("=")), bug, exBugName.findNext()));
-					} catch (final Exception ex) {
-						pref.log("[SpiderGC.java:getBugs] Could not fetch buginfo from " + link, ex);
+					}
+					catch (final Exception ex) {
+						Global.pref.log("[SpiderGC.java:getBugs] Could not fetch buginfo from " + link, ex);
 					}
 				}
 			}
 			infB.setInfo(oldInfoBox);
 			if (exBugWrong) {
-				if (blockLength > 200) pref.log("[SpiderGC.java:getBugs]check TBs bugExStart / bugExEnd! blockLength = " + blockLength + " for " + chD.URL, null);
+				if (blockLength > 200)
+					Global.pref.log("[SpiderGC.java:getBugs]check TBs bugExStart / bugExEnd! blockLength = " + blockLength + " for " + chD.URL, null);
 			}
-		} else {
-			pref.log("[SpiderGC.java:getBugs]check TBs blockExStart / blockExEnd! ", null);
+		}
+		else {
+			Global.pref.log("[SpiderGC.java:getBugs]check TBs blockExStart / blockExEnd! ", null);
 		}
 	}
 
@@ -2366,7 +2517,7 @@ public class SpiderGC {
 		CacheImages lastImages = null;
 
 		// First: Get current image object of waypoint before spidering images.
-		final CacheHolder oldCh = Global.getProfile().cacheDB.get(chD.getParent().getWayPoint());
+		final CacheHolder oldCh = Global.profile.cacheDB.get(chD.getParent().getWayPoint());
 		if (oldCh != null) {
 			lastImages = oldCh.getCacheDetails(false).images;
 		}
@@ -2375,12 +2526,14 @@ public class SpiderGC {
 		// ========
 		String longDesc = doc;
 		try {
-			if (chD.getParent().getWayPoint().startsWith("GC") || extractLongDesc) longDesc = getLongDesc(doc);
+			if (chD.getParent().getWayPoint().startsWith("GC") || extractLongDesc)
+				longDesc = getLongDesc(doc);
 			longDesc = STRreplace.replace(longDesc, "<img", "<IMG");
 			longDesc = STRreplace.replace(longDesc, "src=", "SRC=");
 			longDesc = STRreplace.replace(longDesc, "'", "\"");
 			exImgBlock = new Extractor(longDesc, p.getProp("imgBlockExStart"), p.getProp("imgBlockExEnd"), 0, false);
-		} catch (final Exception ex) {// Missing property in spider.def
+		}
+		catch (final Exception ex) {// Missing property in spider.def
 			return;
 		}
 		String tst;
@@ -2404,18 +2557,20 @@ public class SpiderGC {
 						}
 						if (imageInfo == null) {
 							imageInfo = new ImageInfo();
-							pref.log("[getImages] Loading image: " + imgUrl + " as " + fileName + imgType);
+							Global.pref.log("[getImages] Loading image: " + imgUrl + " as " + fileName + imgType);
 							spiderImage(imgUrl, fileName + imgType);
 							imageInfo.setFilename(fileName + imgType);
 							imageInfo.setURL(imgUrl);
-						} else {
-							pref.log("[getImages] Already exising image: " + imgUrl + " as " + imageInfo.getFilename());
+						}
+						else {
+							Global.pref.log("[getImages] Already exising image: " + imgUrl + " as " + imageInfo.getFilename());
 						}
 						spideredUrls.add(imgUrl);
 						spiderCounter++;
-					} else { // Image already spidered as wayPoint_'idxUrl'
+					}
+					else { // Image already spidered as wayPoint_'idxUrl'
 						fileName = chD.getParent().getWayPoint().toLowerCase() + "_" + Convert.toString(idxUrl);
-						pref.log("[getImages] Already loaded image: " + imgUrl + " as " + fileName + imgType);
+						Global.pref.log("[getImages] Already loaded image: " + imgUrl + " as " + fileName + imgType);
 						imageInfo = new ImageInfo();
 						imageInfo.setFilename(fileName + imgType);
 						imageInfo.setURL(imgUrl);
@@ -2425,8 +2580,9 @@ public class SpiderGC {
 					imgCounter++;
 					chD.images.add(imageInfo);
 				}
-			} catch (final IndexOutOfBoundsException e) {
-				pref.log("[getImages] Problem loading image. imgURL:" + imgUrl, e);
+			}
+			catch (final IndexOutOfBoundsException e) {
+				Global.pref.log("[getImages] Problem loading image. imgURL:" + imgUrl, e);
 			}
 		}
 		// ========
@@ -2446,7 +2602,8 @@ public class SpiderGC {
 			spanBlock = new Extractor(doc, p.getProp("imgSpanExStart"), p.getProp("imgSpanExEnd"), 0, false);
 			spanBlock.set(spanBlock.findNext(), p.getProp("imgSpanExStart2"), p.getProp("imgSpanExEnd"), 0, true);
 			spanBlock.set(spanBlock.findNext() + imgSrcExStart, imgSrcExStart, imgSrcExStart, 0, false);
-		} catch (final Exception ex) {
+		}
+		catch (final Exception ex) {
 			return;
 		}
 		while ((tst = spanBlock.findNext()).length() > 0) {
@@ -2474,18 +2631,20 @@ public class SpiderGC {
 						}
 						if (imageInfo == null) {
 							imageInfo = new ImageInfo();
-							pref.log("[getImages] Loading image: " + imgUrl + " as " + fileName + imgType);
+							Global.pref.log("[getImages] Loading image: " + imgUrl + " as " + fileName + imgType);
 							spiderImage(imgUrl, fileName + imgType);
 							imageInfo.setFilename(fileName + imgType);
 							imageInfo.setURL(imgUrl);
-						} else {
-							pref.log("[getImages] Already exising image: " + imgUrl + " as " + imageInfo.getFilename());
+						}
+						else {
+							Global.pref.log("[getImages] Already exising image: " + imgUrl + " as " + imageInfo.getFilename());
 						}
 						spideredUrls.add(imgUrl);
 						spiderCounter++;
-					} else { // Image already spidered as wayPoint_'idxUrl'
+					}
+					else { // Image already spidered as wayPoint_'idxUrl'
 						fileName = chD.getParent().getWayPoint().toLowerCase() + "_" + Convert.toString(idxUrl);
-						pref.log("[getImages] Already loaded image: " + imgUrl + " as " + fileName + imgType);
+						Global.pref.log("[getImages] Already loaded image: " + imgUrl + " as " + fileName + imgType);
 						imageInfo = new ImageInfo();
 						imageInfo.setFilename(fileName + imgType);
 						imageInfo.setURL(imgUrl);
@@ -2499,8 +2658,9 @@ public class SpiderGC {
 					imageInfo.setComment(imgComment);
 					chD.images.add(imageInfo);
 				}
-			} catch (final IndexOutOfBoundsException e) {
-				pref.log("[getImages] IndexOutOfBoundsException in image span. imgURL:" + imgUrl, e);
+			}
+			catch (final IndexOutOfBoundsException e) {
+				Global.pref.log("[getImages] IndexOutOfBoundsException in image span. imgURL:" + imgUrl, e);
 			}
 
 		}
@@ -2527,12 +2687,13 @@ public class SpiderGC {
 						}
 						if (imageInfo == null) {
 							imageInfo = new ImageInfo();
-							pref.log("[getImages] Loading image: " + imgUrl + " as " + fileName + imgType);
+							Global.pref.log("[getImages] Loading image: " + imgUrl + " as " + fileName + imgType);
 							spiderImage(imgUrl, fileName + imgType);
 							imageInfo.setFilename(fileName + imgType);
 							imageInfo.setURL(imgUrl);
-						} else {
-							pref.log("[getImages] Already exising image: " + imgUrl + " as " + imageInfo.getFilename());
+						}
+						else {
+							Global.pref.log("[getImages] Already exising image: " + imgUrl + " as " + imageInfo.getFilename());
 						}
 						spideredUrls.add(imgUrl);
 						spiderCounter++;
@@ -2541,8 +2702,9 @@ public class SpiderGC {
 						chD.images.add(imageInfo);
 					}
 				}
-			} catch (final IndexOutOfBoundsException e) {
-				pref.log("[getImages] Problem loading image. imgURL:" + imgUrl, e);
+			}
+			catch (final IndexOutOfBoundsException e) {
+				Global.pref.log("[getImages] Problem loading image. imgURL:" + imgUrl, e);
 			}
 
 		}
@@ -2558,14 +2720,18 @@ public class SpiderGC {
 	 */
 	private void spiderImage(String address, String fn) {
 		try {
-			UrlFetcher.fetchDataFile(address, profile.dataDir + fn);
-		} catch (final UnknownHostException e) {
-			pref.log("[spiderImage] Host not there...", e);
-		} catch (final IOException ioex) {
-			pref.log("[spiderImage] File not found!", ioex);
-		} catch (final Exception ex) {
-			pref.log("[spiderImage] Some other problem while fetching image", ex);
-		} finally {
+			UrlFetcher.fetchDataFile(address, Global.profile.dataDir + fn);
+		}
+		catch (final UnknownHostException e) {
+			Global.pref.log("[spiderImage] Host not there...", e);
+		}
+		catch (final IOException ioex) {
+			Global.pref.log("[spiderImage] File not found!", ioex);
+		}
+		catch (final Exception ex) {
+			Global.pref.log("[spiderImage] Some other problem while fetching image", ex);
+		}
+		finally {
 			// Continue with the spider
 		}
 	}
@@ -2606,14 +2772,15 @@ public class SpiderGC {
 					else
 						adWayPoint = MyLocale.formatLong(counter, "00") + wayPoint.substring(2);
 					counter++;
-					final int idx = profile.getCacheIndex(adWayPoint);
+					final int idx = Global.profile.getCacheIndex(adWayPoint);
 					if (idx >= 0) {
 						// Creating new CacheHolder, but accessing old cache.xml file
 						hd = new CacheHolder();
 						hd.setWayPoint(adWayPoint);
 						// Accessing Details reads file if not yet done
 						hd.getCacheDetails(true);
-					} else {
+					}
+					else {
 						hd = new CacheHolder();
 						hd.setWayPoint(adWayPoint);
 					}
@@ -2622,34 +2789,38 @@ public class SpiderGC {
 					nameRex.search(rowBlock);
 					if (nameRex.didMatch()) {
 						hd.setCacheName(nameRex.stringMatched(1));
-					} else {
-						pref.log("check nameRex in spider.def" + Preferences.NEWLINE + rowBlock);
+					}
+					else {
+						Global.pref.log("check nameRex in spider.def" + Preferences.NEWLINE + rowBlock);
 					}
 
 					koordRex.search(rowBlock);
 					if (koordRex.didMatch()) {
 						hd.setPos(new CWPoint(koordRex.stringMatched(1)));
 						koords_not_yet_found = false;
-					} else {
+					}
+					else {
 						if (koords_not_yet_found) {
 							koords_not_yet_found = false;
-							pref.log("check koordRex in spider.def" + Preferences.NEWLINE + rowBlock);
+							Global.pref.log("check koordRex in spider.def" + Preferences.NEWLINE + rowBlock);
 						}
 					}
 
 					typeRex.search(rowBlock);
 					if (typeRex.didMatch()) {
 						hd.setType(CacheType.gpxType2CwType("Waypoint|" + typeRex.stringMatched(1)));
-					} else {
-						pref.log("check typeRex in spider.def" + Preferences.NEWLINE + rowBlock);
+					}
+					else {
+						Global.pref.log("check typeRex in spider.def" + Preferences.NEWLINE + rowBlock);
 					}
 
 					rowBlock = exRowBlock.findNext();
 					descRex.search(rowBlock);
 					if (descRex.didMatch()) {
 						hd.getCacheDetails(false).setLongDescription(descRex.stringMatched(1).trim());
-					} else {
-						pref.log("check descRex in spider.def" + Preferences.NEWLINE + rowBlock);
+					}
+					else {
+						Global.pref.log("check descRex in spider.def" + Preferences.NEWLINE + rowBlock);
 					}
 					hd.setFound(is_found);
 					hd.setCacheSize(CacheSize.CW_SIZE_NOTCHOSEN);
@@ -2659,7 +2830,8 @@ public class SpiderGC {
 					if (idx < 0) {
 						cacheDB.add(hd);
 						hd.save();
-					} else {
+					}
+					else {
 						final CacheHolder cx = cacheDB.get(idx);
 						final boolean checked = cx.is_Checked;
 						cx.initStates(false);
@@ -2697,7 +2869,8 @@ public class SpiderGC {
 				dest[d++] = '%';
 				dest[d++] = hex.charAt((c >> 4) & 0xf);
 				dest[d++] = hex.charAt(c & 0xf);
-			} else
+			}
+			else
 				dest[d++] = c;
 		}
 		return new String(dest, 0, d);
@@ -2716,9 +2889,10 @@ public class SpiderGC {
 		try {
 			// infB.setInfo(oldInfoBox+"\nGetting bug: "+bug);
 			bugList = UrlFetcher.fetch(p.getProp("getBugByName") + STRreplace.replace(SafeXML.clean(name), " ", "+"));
-			pref.log("[getBugId] Fetched bugId: " + name);
-		} catch (final Exception ex) {
-			pref.log("[getBugId] Could not fetch bug list" + name, ex);
+			Global.pref.log("[getBugId] Fetched bugId: " + name);
+		}
+		catch (final Exception ex) {
+			Global.pref.log("[getBugId] Could not fetch bug list" + name, ex);
 			bugList = "";
 		}
 		try {
@@ -2733,8 +2907,9 @@ public class SpiderGC {
 			final Extractor exGuid = new Extractor(bugList, p.getProp("bugGuidExStart"), p.getProp("bugGuidExEnd"), 0, Extractor.EXCLUDESTARTEND);
 			// TODO Replace with spider.def
 			return exGuid.findNext();
-		} catch (final Exception ex) {
-			pref.log("[getBugId] Error getting TB", ex);
+		}
+		catch (final Exception ex) {
+			Global.pref.log("[getBugId] Error getting TB", ex);
 			return "";
 		}
 	}
@@ -2754,9 +2929,10 @@ public class SpiderGC {
 				bugDetails = UrlFetcher.fetch(p.getProp("getBugByGuid") + guid);
 			else
 				bugDetails = UrlFetcher.fetch(p.getProp("getBugById") + guid);
-			pref.log("[getBugMissionByGuid] Fetched TB detailsById: " + guid);
-		} catch (final Exception ex) {
-			pref.log("[getBugMissionByGuid] Could not fetch TB details " + guid, ex);
+			Global.pref.log("[getBugMissionByGuid] Fetched TB detailsById: " + guid);
+		}
+		catch (final Exception ex) {
+			Global.pref.log("[getBugMissionByGuid] Could not fetch TB details " + guid, ex);
 			bugDetails = "";
 		}
 		try {
@@ -2766,8 +2942,9 @@ public class SpiderGC {
 			}
 			final Extractor exDetails = new Extractor(bugDetails, p.getProp("bugDetailsStart"), p.getProp("bugDetailsEnd"), 0, Extractor.EXCLUDESTARTEND);
 			return exDetails.findNext();
-		} catch (final Exception ex) {
-			pref.log("[getBugMissionByGuid] Error getting TB " + guid, ex);
+		}
+		catch (final Exception ex) {
+			Global.pref.log("[getBugMissionByGuid] Error getting TB " + guid, ex);
 			return "";
 		}
 	}
@@ -2783,14 +2960,15 @@ public class SpiderGC {
 		String bugDetails;
 		try {
 			bugDetails = UrlFetcher.fetch(p.getProp("getBugByTrackNr") + trackNr);
-			pref.log("[getBugMissionByTrackNr] Fetched bug detailsByTrackNr: " + trackNr);
-		} catch (final Exception ex) {
-			pref.log("[getBugMissionByTrackNr] getBugByTrackNr " + trackNr, ex);
+			Global.pref.log("[getBugMissionByTrackNr] Fetched bug detailsByTrackNr: " + trackNr);
+		}
+		catch (final Exception ex) {
+			Global.pref.log("[getBugMissionByTrackNr] getBugByTrackNr " + trackNr, ex);
 			bugDetails = "";
 		}
 		try {
 			if (bugDetails.indexOf(p.getProp("bugNotFound")) >= 0) {
-				pref.log("[getBugMissionByTrackNr], bugNotFound " + trackNr, null);
+				Global.pref.log("[getBugMissionByTrackNr], bugNotFound " + trackNr, null);
 				// (new MessageBox(MyLocale.getMsg(5500,"Error"),
 				// MyLocale.getMsg(6020,"Travelbug not found."),
 				// MessageBox.OKB)).execute();
@@ -2798,8 +2976,9 @@ public class SpiderGC {
 			}
 			final Extractor exDetails = new Extractor(bugDetails, p.getProp("bugDetailsStart"), p.getProp("bugDetailsEnd"), 0, Extractor.EXCLUDESTARTEND);
 			return exDetails.findNext();
-		} catch (final Exception ex) {
-			pref.log("[getBugMissionByTrackNr] TB Details, bugNotFound " + trackNr, ex);
+		}
+		catch (final Exception ex) {
+			Global.pref.log("[getBugMissionByTrackNr] TB Details, bugNotFound " + trackNr, ex);
 			return "";
 		}
 	}
@@ -2816,14 +2995,15 @@ public class SpiderGC {
 		final String trackNr = TB.getTrackingNo();
 		try {
 			bugDetails = UrlFetcher.fetch(p.getProp("getBugByTrackNr") + trackNr);
-			pref.log("[getBugMissionAndNameByTrackNr] Fetched TB getBugByTrackNr: " + trackNr);
-		} catch (final Exception ex) {
-			pref.log("[getBugMissionAndNameByTrackNr] Could not fetch bug details: " + trackNr, ex);
+			Global.pref.log("[getBugMissionAndNameByTrackNr] Fetched TB getBugByTrackNr: " + trackNr);
+		}
+		catch (final Exception ex) {
+			Global.pref.log("[getBugMissionAndNameByTrackNr] Could not fetch bug details: " + trackNr, ex);
 			bugDetails = "";
 		}
 		try {
 			if (bugDetails.indexOf(p.getProp("bugNotFound")) >= 0) {
-				pref.log("[getBugMissionAndNameByTrackNr], bugNotFound: " + trackNr, null);
+				Global.pref.log("[getBugMissionAndNameByTrackNr], bugNotFound: " + trackNr, null);
 				// (new MessageBox(MyLocale.getMsg(5500,"Error"),
 				// MyLocale.getMsg(6020,"Travelbug not found."),
 				// MessageBox.OKB)).execute();
@@ -2834,8 +3014,9 @@ public class SpiderGC {
 			final Extractor exName = new Extractor(bugDetails, p.getProp("bugNameStart"), p.getProp("bugNameEnd"), 0, Extractor.EXCLUDESTARTEND);
 			TB.setName(exName.findNext());
 			return true;
-		} catch (final Exception ex) {
-			pref.log("[getBugMissionAndNameByTrackNr] TB Details, bugNotFound: " + trackNr, ex);
+		}
+		catch (final Exception ex) {
+			Global.pref.log("[getBugMissionAndNameByTrackNr] TB Details, bugNotFound: " + trackNr, ex);
 			return false;
 		}
 	}
@@ -2845,8 +3026,9 @@ public class SpiderGC {
 			super();
 			try {
 				load(new FileInputStream(FileBase.getProgramDirectory() + "/spider.def"));
-			} catch (final Exception ex) {
-				pref.log("Failed to load spider.def from " + FileBase.getProgramDirectory(), ex);
+			}
+			catch (final Exception ex) {
+				Global.pref.log("Failed to load spider.def from " + FileBase.getProgramDirectory(), ex);
 				(new MessageBox(MyLocale.getMsg(5500, "Error"), MyLocale.getMsg(5504, "Could not load 'spider.def'"), FormBase.OKB)).execute();
 			}
 		}
@@ -2864,7 +3046,7 @@ public class SpiderGC {
 			final String s = super.getProperty(key);
 			if (s == null) {
 				(new MessageBox(MyLocale.getMsg(5500, "Error"), MyLocale.getMsg(5497, "Error missing tag in spider.def") + ": " + key, FormBase.OKB)).execute();
-				pref.log("Missing tag in spider.def: " + key);
+				Global.pref.log("Missing tag in spider.def: " + key);
 				throw new Exception("Missing tag in spider.def: " + key);
 			}
 			return s;
@@ -2892,15 +3074,17 @@ public class SpiderGC {
 				if (s.startsWith("ï»¿")) {
 					r.close();
 					r = new ewe.io.TextReader(_fileName);
-					r.codec = new JavaUtf8Codec();
-				} else {
+					r.codec = new BetterUTF8Codec();
+				}
+				else {
 					r.close();
 					r = new ewe.io.TextReader(_fileName);
 					r.codec = new AsciiCodec();
 				}
 				parse(r);
 				r.close();
-			} catch (final Exception e) {
+			}
+			catch (final Exception e) {
 			}
 			return _routePoints;
 		}
@@ -2910,7 +3094,8 @@ public class SpiderGC {
 				final double lat = Common.parseDouble(atts.getValue("lat"));
 				final double lon = Common.parseDouble(atts.getValue("lon"));
 				final TrackPoint tp = new TrackPoint(lat, lon);
-				if (tp.isValid()) _routePoints.add(tp);
+				if (tp.isValid())
+					_routePoints.add(tp);
 				return;
 			}
 		}

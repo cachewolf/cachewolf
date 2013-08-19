@@ -24,8 +24,8 @@ package CacheWolf;
 /**
  * A list of @see TravelbugJourney s.
  */
+import CacheWolf.utils.FileBugfix;
 import ewe.io.BufferedWriter;
-import ewe.io.File;
 import ewe.io.FileWriter;
 import ewe.io.PrintWriter;
 import ewe.util.Comparer;
@@ -127,16 +127,16 @@ public class TravelbugJourneyList extends MinML {
 	 */
 	public boolean readTravelbugsFile(){
 		try{
-			String datei = Global.getPref().absoluteBaseDir + "/" + "travelbugs.xml";
+			String datei = Global.pref.absoluteBaseDir + "/" + "travelbugs.xml";
 			datei = datei.replace('\\', '/');
 			ewe.io.Reader r = new ewe.io.InputStreamReader(new ewe.io.FileInputStream(datei));
 			parse(r);
 			r.close();
 		}catch(Exception e){
 			if (e instanceof NullPointerException)
-				Global.getPref().log("Error reading travelbugs.xml: NullPointerException in Element "+lastName +". Wrong attribute?",e,true);
+				Global.pref.log("Error reading travelbugs.xml: NullPointerException in Element "+lastName +". Wrong attribute?",e,true);
 			else 
-				Global.getPref().log("Error reading travelbugs.xml: ", e);
+				Global.pref.log("Error reading travelbugs.xml: ", e);
 			return false;
 		}
 		return true;
@@ -184,14 +184,14 @@ public class TravelbugJourneyList extends MinML {
 	 * Method to save current travelbugs in the travelbugs.xml file
 	 */
 	public void saveTravelbugsFile(){
-		String baseDir=Global.getPref().absoluteBaseDir;
+		String baseDir=Global.pref.absoluteBaseDir;
 		try {
-			File backup=new File(baseDir+"travelbugs.bak");
+			FileBugfix backup=new FileBugfix(baseDir+"travelbugs.bak");
 			if (backup.exists()) backup.delete();
-			File travelbugs=new File(baseDir+"travelbugs.xml");
+			FileBugfix travelbugs=new FileBugfix(baseDir+"travelbugs.xml");
 			travelbugs.rename("travelbugs.bak");
 		} catch (Exception ex) {
-			Global.getPref().log("[TravelbugJourneyList:saveTravelbugsFile]Error deleting backup or renaming travelbugs.xml",ex);
+			Global.pref.log("[TravelbugJourneyList:saveTravelbugsFile]Error deleting backup or renaming travelbugs.xml",ex);
 		}
 		String datei = baseDir + "travelbugs.xml";
 		try{
@@ -203,7 +203,7 @@ public class TravelbugJourneyList extends MinML {
 			outp.print("</travelbugJourneys>\n");	
 			outp.close();
 		} catch (Exception e) {
-			Global.getPref().log("Problem saving: " +datei,e,true);
+			Global.pref.log("Problem saving: " +datei,e,true);
 		}
 	}
 

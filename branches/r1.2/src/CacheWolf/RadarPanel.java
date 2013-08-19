@@ -47,7 +47,6 @@ public class RadarPanel extends CellPanel {
 	mButton btToggle = new mButton("Toggle");
 	mButton btPlus = new mButton("   +   ");
 	int toggleMod = 0; // 0 = cacheicons, 1= cacheWP, 2 = cacheNames
-	Preferences pref;
 	CacheDB cacheDB;
 	myInteractivePanel iActP;
 	double scale;
@@ -84,12 +83,11 @@ public class RadarPanel extends CellPanel {
 	 * database. It also calculates the maximum size available for drawing
 	 * the radar.
 	 */
-	public void setParam(Preferences p, CacheDB db, CacheHolder sWp) {
+	public void setParam(CacheDB db, CacheHolder sWp) {
 		selectedWaypoint = sWp;
-		pref = p;
 		cacheDB = db;
-		height = (pref.myAppHeight) * 6 / 5; // add 10% each at top/bottom
-		width = (pref.myAppWidth) * 6 / 5;
+		height = (Global.pref.myAppHeight) * 6 / 5; // add 10% each at top/bottom
+		width = (Global.pref.myAppWidth) * 6 / 5;
 	}
 
 	// Call this after the centre has changed to re-center the radar panel
@@ -125,7 +123,7 @@ public class RadarPanel extends CellPanel {
 	 * Private method to draw the caches.
 	 */
 	private void drawCaches() {
-		final Font radarFont = new Font("Gui", Font.BOLD, Global.getPref().fontSize);
+		final Font radarFont = new Font("Gui", Font.BOLD, Global.pref.fontSize);
 		final FontMetrics fm = getFontMetrics(radarFont);
 		AniImage aImg;
 		RadarPanelImage rpi;
@@ -162,7 +160,7 @@ public class RadarPanel extends CellPanel {
 							iActP.addImage(aImg);
 						}
 					}
-					Image imgCache = CacheType.getMapImage(holder);
+					Image imgCache = CacheType.getBigCacheIcon(holder);
 					rpi = new RadarPanelImage(imgCache);
 					rpi.wayPoint = holder.getWayPoint();
 					rpi.rownum = i;
@@ -205,7 +203,8 @@ public class RadarPanel extends CellPanel {
 
 		if (width < height) {
 			scale = (double) scaleKm / (double) height;
-		} else {
+		}
+		else {
 			scale = (double) scaleKm / (double) width;
 		}
 		centerX = (width / 2);
@@ -217,7 +216,8 @@ public class RadarPanel extends CellPanel {
 		if (width > height) {
 			radstep = (int) (10 / scale);
 			steps = (width / radstep);
-		} else {
+		}
+		else {
 			radstep = (int) (10 / scale);
 			steps = (height / radstep);
 		}
@@ -238,7 +238,7 @@ public class RadarPanel extends CellPanel {
 		final AniImage aImg = new AniImage(img);
 		// iActP.addImage(aImg);
 		iActP.backgroundImage = img;
-		final int xPos = (pref.myAppWidth / 2 - width / 2);
+		final int xPos = (Global.pref.myAppWidth / 2 - width / 2);
 		aImg.setLocation(xPos, 0);
 		aImg.refresh();
 	}

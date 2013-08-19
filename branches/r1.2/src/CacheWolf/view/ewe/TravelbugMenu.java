@@ -95,34 +95,38 @@ public class TravelbugMenu extends MenuBar {
 				Travelbug tb = TravelbugPickup.pickupTravelbug(view.tblSrcCache);
 				if (tb != null) {
 					view.chDmodified = true;
-					model.allTravelbugJourneys.addTbPickup(tb, Global.getProfile().name, view.waypoint);
+					model.allTravelbugJourneys.addTbPickup(tb, Global.profile.name, view.waypoint);
 					view.modTbJourneyList.numRows = model.allTravelbugJourneys.size();
 					view.repaint();
 				}
 
-			} else if (mev.selectedItem == mnuDropTB) {
+			}
+			else if (mev.selectedItem == mnuDropTB) {
 				if (view.selectedRow >= 0 && view.selectedRow < view.modTbJourneyList.numRows) {
 					Travelbug tb = model.allTravelbugJourneys.getTBJourney(view.selectedRow).getTb();
 					view.chD.Travelbugs.add(tb);
-					model.allTravelbugJourneys.addTbDrop(tb, Global.getProfile().name, view.waypoint);
+					model.allTravelbugJourneys.addTbDrop(tb, Global.profile.name, view.waypoint);
 					view.chDmodified = true;
 					view.ch.setHas_bugs(true);
 				}
 				view.repaint();
-			} else if (mev.selectedItem == mnuNewTB) {
+			}
+			else if (mev.selectedItem == mnuNewTB) {
 				TravelbugJourney tbj = new TravelbugJourney("New");
-				tbj.setFromProfile(Global.getProfile().name);
+				tbj.setFromProfile(Global.profile.name);
 				tbj.setFromWaypoint(view.waypoint);
 				model.allTravelbugJourneys.add(tbj);
 				view.modTbJourneyList.numRows = model.allTravelbugJourneys.size();
 				// view.cursorTo(view.tblMyTravelbugJourneys.size()-1,1,true);
 				view.repaint();
-			} else if (mev.selectedItem == mnuDeleteTB && view.selectedRow >= 0) {
+			}
+			else if (mev.selectedItem == mnuDeleteTB && view.selectedRow >= 0) {
 				model.allTravelbugJourneys.remove(view.selectedRow);
 				view.modTbJourneyList.numRows = model.allTravelbugJourneys.size();
 				if (view.selectedRow > 0) {
 					// cursorTo(view.selectedRow-1,0,true);
-				} else {
+				}
+				else {
 					// view.modTbJourneyList.showFields(new
 					// TravelbugJourney(""));
 				}
@@ -139,19 +143,22 @@ public class TravelbugMenu extends MenuBar {
 				view.modTbJourneyList.numRows = model.allTravelbugJourneys.size();
 				if (sel.y < view.modTbJourneyList.numRows) {
 					// cursorTo(sel.y,0,true);
-				} else {
+				}
+				else {
 					view.modTbJourneyList.showFields(new TravelbugJourney(""));
 				}
 				view.repaint();
-			} else if (mev.selectedItem == mnuGetMission && view.selectedRow > -1) {
+			}
+			else if (mev.selectedItem == mnuGetMission && view.selectedRow > -1) {
 				TravelbugJourney tbj = model.allTravelbugJourneys.getTBJourney(view.selectedRow);
-				SpiderGC spider = new SpiderGC(Global.getPref(), Global.getProfile());
+				SpiderGC spider = new SpiderGC();
 				Vm.showWait(true);
 
 				// if we have an ID, get mission by ID
 				if (tbj.getTb().getGuid().length() != 0) {
 					tbj.getTb().setMission(spider.getBugMissionByGuid(tbj.getTb().getGuid()));
-				} else {
+				}
+				else {
 					// try to get mission and name by tracking number
 					boolean suceeded = false;
 					if (tbj.getTb().getTrackingNo().length() != 0) {
@@ -166,10 +173,11 @@ public class TravelbugMenu extends MenuBar {
 						}
 					}
 				}
-				Global.getPref().setOldGCLanguage();
-			} else if (mev.selectedItem == mnuOpenOnline && view.selectedRow >= 0) {
+				Global.pref.setOldGCLanguage();
+			}
+			else if (mev.selectedItem == mnuOpenOnline && view.selectedRow >= 0) {
 				TravelbugJourney tbj = model.allTravelbugJourneys.getTBJourney(view.selectedRow);
-				SpiderGC spider = new SpiderGC(Global.getPref(), Global.getProfile());
+				SpiderGC spider = new SpiderGC();
 				Vm.showWait(true);
 				// First check whether ID is set, if not get it
 				if (tbj.getTb().getGuid().length() == 0)
@@ -183,13 +191,14 @@ public class TravelbugMenu extends MenuBar {
 						else
 							s = "http://www.geocaching.com/track/details.aspx?id=" + tbj.getTb().getGuid();
 
-						CWWrapper.exec(Global.getPref().browser, s);
-						Global.getPref().log("Executed: \"" + Global.getPref().browser + "\" \"" + s + "\"");
-					} catch (Exception ioex) {
-						Global.getPref().log("Ignored Exception", ioex, true);
+						CWWrapper.exec(Global.pref.browser, s);
+						Global.pref.log("Executed: \"" + Global.pref.browser + "\" \"" + s + "\"");
+					}
+					catch (Exception ioex) {
+						Global.pref.log("Ignored Exception", ioex, true);
 					}
 				}
-				Global.getPref().setOldGCLanguage();
+				Global.pref.setOldGCLanguage();
 			}
 
 		}

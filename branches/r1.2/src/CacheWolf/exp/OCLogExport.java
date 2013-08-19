@@ -45,7 +45,7 @@ public final class OCLogExport {
 	public static void doit() {
 
 		if (cacheDB == null)
-			cacheDB = Global.getProfile().cacheDB;
+			cacheDB = Global.profile.cacheDB;
 		int totalWaypoints = cacheDB.countVisible();
 		int updated = 0;
 		ProgressBarForm pbf = new ProgressBarForm();
@@ -110,7 +110,8 @@ public final class OCLogExport {
 								ch.save();
 							}
 						}
-					} catch (IOException e) {
+					}
+					catch (IOException e) {
 						// dann nicht
 					}
 				}
