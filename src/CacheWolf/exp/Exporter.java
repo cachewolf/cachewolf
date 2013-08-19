@@ -27,12 +27,10 @@ import CacheWolf.CacheHolder;
 import CacheWolf.CacheSize;
 import CacheWolf.CacheType;
 import CacheWolf.Global;
-import CacheWolf.Preferences;
-import CacheWolf.Profile;
+import CacheWolf.utils.FileBugfix;
 import ewe.filechooser.FileChooser;
 import ewe.filechooser.FileChooserBase;
 import ewe.io.BufferedWriter;
-import ewe.io.File;
 import ewe.io.FileWriter;
 import ewe.io.IOException;
 import ewe.io.PrintWriter;
@@ -63,8 +61,6 @@ public class Exporter {
 	final static int COUNT = 2;
 
 	CacheDB cacheDB;
-	Preferences pref;
-	Profile profile;
 	// mask in file chooser
 	String mask = "*.*";
 	// file name, if no file chooser is used
@@ -81,9 +77,7 @@ public class Exporter {
 	String expName;
 
 	public Exporter() {
-		profile = Global.getProfile();
-		pref = Global.getPref();
-		cacheDB = profile.cacheDB;
+		cacheDB = Global.profile.cacheDB;
 		howManyParams = LAT_LON;
 		expName = this.getClass().getName();
 		// remove package
@@ -102,7 +96,7 @@ public class Exporter {
 	 *            1, if filechooser
 	 */
 	public void doIt(int variant) {
-		File outFile;
+		FileBugfix outFile;
 		String str;
 		CacheHolder ch;
 		ProgressBarForm pbf = new ProgressBarForm();
@@ -112,8 +106,9 @@ public class Exporter {
 			outFile = getOutputFile();
 			if (outFile == null)
 				return;
-		} else {
-			outFile = new File(tmpFileName);
+		}
+		else {
+			outFile = new FileBugfix(tmpFileName);
 		}
 
 		pbf.showMainTask = false;
@@ -133,7 +128,7 @@ public class Exporter {
 				ch = cacheDB.get(i);
 				if (ch.isVisible()) {
 					if (ch.is_incomplete()) {
-						Global.getPref().log("skipping export of incomplete waypoint " + ch.getWayPoint());
+						Global.pref.log("skipping export of incomplete waypoint " + ch.getWayPoint());
 						incompleteWaypoints++;
 						continue;
 					}
@@ -180,8 +175,9 @@ public class Exporter {
 			if (incompleteWaypoints > 0) {
 				new MessageBox("Export Error", incompleteWaypoints + " incomplete waypoints have not been exported. See log for details.", FormBase.OKB).execute();
 			}
-		} catch (IOException ioE) {
-			pref.log("Error opening " + outFile.getName(), ioE);
+		}
+		catch (IOException ioE) {
+			Global.pref.log("Error opening " + outFile.getName(), ioE);
 		}
 		// try
 	}
@@ -236,16 +232,17 @@ public class Exporter {
 	 * 
 	 * @return
 	 */
-	public File getOutputFile() {
-		File file;
-		FileChooser fc = new FileChooser(FileChooserBase.SAVE, pref.getExportPath(expName));
+	public FileBugfix getOutputFile() {
+		FileBugfix file;
+		FileChooser fc = new FileChooser(FileChooserBase.SAVE, Global.pref.getExportPath(expName));
 		fc.setTitle("Select target file:");
 		fc.addMask(mask);
 		if (fc.execute() != FormBase.IDCANCEL) {
-			file = fc.getChosenFile();
-			pref.setExportPath(expName, file.getPath());
+			file = (FileBugfix) fc.getChosenFile();
+			Global.pref.setExportPath(expName, file.getPath());
 			return file;
-		} else {
+		}
+		else {
 			return null;
 		}
 	}
@@ -325,11 +322,11 @@ public class Exporter {
 	private static Hashtable iso2simpleMappings = new Hashtable(250);
 	static {
 		String[] mappingArray = new String[] { "34", "'", "160", " ", "161", "i", "162", "c", "163", "$", "164", "o", "165", "$", "166", "!", "167", "$", "168", " ", "169", " ", "170", " ", "171", "<", "172", " ", "173", "-", "174", " ", "175", "-",
-				"176", " ", "177", "+/-", "178", "2", "179", "3", "180", "'", "181", " ", "182", " ", "183", " ", "184", ",", "185", "1", "186", " ", "187", ">", "188", "1/4", "189", "1/2", "190", "3/4", "191", "?", "192", "A", "193", "A", "194", "A",
-				"195", "A", "196", "Ae", "197", "A", "198", "AE", "199", "C", "200", "E", "201", "E", "202", "E", "203", "E", "204", "I", "205", "I", "206", "I", "207", "I", "208", "D", "209", "N", "210", "O", "211", "O", "212", "O", "213", "O", "214",
-				"Oe", "215", "x", "216", "O", "217", "U", "218", "U", "219", "U", "220", "Ue", "221", "Y", "222", " ", "223", "ss", "224", "a", "225", "a", "226", "a", "227", "a", "228", "ae", "229", "a", "230", "ae", "231", "c", "232", "e", "233", "e",
-				"234", "e", "235", "e", "236", "i", "237", "i", "238", "i", "239", "i", "240", "o", "241", "n", "242", "o", "243", "o", "244", "o", "245", "o", "246", "oe", "247", "/", "248", "o", "249", "u", "250", "u", "251", "u", "252", "ue", "253",
-				"y", "254", "p", "255", "y" };
+				"176", " ", "177", "+/-", "178", "2", "179", "3", "180", "'", "181", " ", "182", " ", "183", " ", "184", ",", "185", "1", "186", " ", "187", ">", "188", "1/4", "189", "1/2", "190", "3/4", "191", "?", "192", "A", "193", "A", "194",
+				"A", "195", "A", "196", "Ae", "197", "A", "198", "AE", "199", "C", "200", "E", "201", "E", "202", "E", "203", "E", "204", "I", "205", "I", "206", "I", "207", "I", "208", "D", "209", "N", "210", "O", "211", "O", "212", "O", "213",
+				"O", "214", "Oe", "215", "x", "216", "O", "217", "U", "218", "U", "219", "U", "220", "Ue", "221", "Y", "222", " ", "223", "ss", "224", "a", "225", "a", "226", "a", "227", "a", "228", "ae", "229", "a", "230", "ae", "231", "c", "232",
+				"e", "233", "e", "234", "e", "235", "e", "236", "i", "237", "i", "238", "i", "239", "i", "240", "o", "241", "n", "242", "o", "243", "o", "244", "o", "245", "o", "246", "oe", "247", "/", "248", "o", "249", "u", "250", "u", "251", "u",
+				"252", "ue", "253", "y", "254", "p", "255", "y" };
 		for (int i = 0; i < mappingArray.length; i = i + 2) {
 			iso2simpleMappings.put(Integer.valueOf(mappingArray[i]), mappingArray[i + 1]);
 		}
@@ -339,7 +336,8 @@ public class Exporter {
 		if (c < 127) {
 			// leave alone as equivalent string.
 			return null;
-		} else {
+		}
+		else {
 			String s = (String) iso2simpleMappings.get(new Integer(c));
 			if (s == null) // not in table, replace with empty string just to be sure
 				return "";
@@ -361,7 +359,8 @@ public class Exporter {
 				// we could sb.append( c ), but that would be slower
 				// than saving them up for a big append.
 				charsToAppend++;
-			} else {
+			}
+			else {
 				if (charsToAppend != 0) {
 					sb.append(text.substring(i - charsToAppend, i));
 					charsToAppend = 0;
@@ -369,7 +368,7 @@ public class Exporter {
 				sb.append(entity);
 			}
 		} // end for
-			// append chars to the right of the last entity.
+		  // append chars to the right of the last entity.
 		if (charsToAppend != 0) {
 			sb.append(text.substring(originalTextLength - charsToAppend, originalTextLength));
 		}

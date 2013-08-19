@@ -99,7 +99,7 @@ public class MainMenu extends MenuBar {
 
 	public MainMenu(Form f) {
 
-		Global.getPref().setgpsbabel();
+		Global.pref.setgpsbabel();
 
 		father = f;
 
@@ -116,7 +116,7 @@ public class MainMenu extends MenuBar {
 		// /////////////////////////////////////////////////////////////////////
 		// subMenu for import, part of "Application" menu below
 		// /////////////////////////////////////////////////////////////////////
-		if (Global.getPref().spiderRoute)
+		if (Global.pref.spiderRoute)
 			spiderRoute = new MenuItem(MyLocale.getMsg(137, "Download along a Route from geocaching.com"));
 		else
 			spiderRoute = mnuSeparator;
@@ -155,7 +155,7 @@ public class MainMenu extends MenuBar {
 				exportTPL = new MenuItem(MyLocale.getMsg(128, "via Template")), //
 				exportOCLog = new MenuItem(MyLocale.getMsg(1210, "logs to OC")), //
 				exportGarminPic = new MenuItem("Garmin pictures"), };
-		if (Global.getPref().gpsbabel == null) {
+		if (Global.pref.gpsbabel == null) {
 			exportGPS.modifiers = MenuItem.Disabled;
 			exportGPS.setText(MyLocale.getMsg(136, "to GPS : gpsbabel missing."));
 		}
@@ -206,7 +206,7 @@ public class MainMenu extends MenuBar {
 				filtNonSelected = new MenuItem(MyLocale.getMsg(1011, "Filter out non selected")), //
 				mnuSeparator, filtBlack = new MenuItem(MyLocale.getMsg(161, "Show Blacklist")), //
 		};
-		filtBlack.modifiers = Global.getProfile().showBlacklisted() ? filtBlack.modifiers | MenuItem.Checked : filtBlack.modifiers & ~MenuItem.Checked;
+		filtBlack.modifiers = Global.profile.showBlacklisted() ? filtBlack.modifiers | MenuItem.Checked : filtBlack.modifiers & ~MenuItem.Checked;
 
 		// /////////////////////////////////////////////////////////////////////
 		// Create a combined "Filter and Search" pulldown menu for devices with small screens
@@ -229,7 +229,8 @@ public class MainMenu extends MenuBar {
 		if (MyLocale.getScreenWidth() > 300) {
 			this.addMenu(new PullDownMenu(MyLocale.getMsg(112, "Search"), new Menu(searchMenuItems, null)));
 			this.addMenu(new PullDownMenu(MyLocale.getMsg(159, "Filter"), new Menu(filterMenuItems, null)));
-		} else {
+		}
+		else {
 			this.addMenu(new PullDownMenu(MyLocale.getMsg(159, "Filter"), new Menu(filterAndSearchMenuItems, null)));
 		}
 
@@ -260,7 +261,7 @@ public class MainMenu extends MenuBar {
 	public void setTablePanel(TablePanel t) {
 		tbp = t;
 		if (mnuContext.subMenu == null) {
-			if (("," + Global.getPref().listColMap + ",").indexOf(",0,") >= 0)
+			if (("," + Global.pref.listColMap + ",").indexOf(",0,") >= 0)
 				mnuContext.subMenu = tbp.tc.getMenuFull();
 			else
 				mnuContext.subMenu = tbp.tc.getMenuSmall();
@@ -271,7 +272,8 @@ public class MainMenu extends MenuBar {
 		if (profileChangeAllowed) {
 			mnuNewProfile.modifiers &= ~MenuItem.Disabled;
 			mnuOpenProfile.modifiers &= ~MenuItem.Disabled;
-		} else {
+		}
+		else {
 			mnuNewProfile.modifiers |= MenuItem.Disabled;
 			mnuOpenProfile.modifiers |= MenuItem.Disabled;
 		}
@@ -284,58 +286,56 @@ public class MainMenu extends MenuBar {
 		if (srch != null) {
 			searchInDescriptionAndNotes = inp.useNoteDesc();
 			searchInLogs = inp.useLogs();
-			SearchCache ssc = new SearchCache(Global.getProfile().cacheDB);
+			SearchCache ssc = new SearchCache(Global.profile.cacheDB);
 			ssc.search(srch, searchInDescriptionAndNotes, searchInLogs);
 			Global.mainTab.tbP.refreshTable();
 		}
 	}
 
 	public void onEvent(Event ev) {
-		Preferences pref = Global.getPref();
-		Profile profile = Global.getProfile();
-		CacheDB cacheDB = profile.cacheDB;
+		CacheDB cacheDB = Global.profile.cacheDB;
 		Global.mainTab.updatePendingChanges();
 		if (ev instanceof MenuEvent) { // && ev.type == MenuEvent.PRESSED
 			MenuEvent mev = (MenuEvent) ev;
 			// /////////////////////////////////////////////////////////////////////
-			// subMenu for profiles, part of "Application" menu
+			// subMenu for Global.profiles, part of "Application" menu
 			// /////////////////////////////////////////////////////////////////////
 			if (mev.selectedItem == mnuNewProfile) {
 				if (NewProfileWizard.startNewProfileWizard(getFrame())) {
 					tbp.myMod.numRows = 0;
-					pref.setCurCentrePt(profile.centre);
-					filtBlack.modifiers = Global.getProfile().showBlacklisted() ? filtBlack.modifiers | MenuItem.Checked : filtBlack.modifiers & ~MenuItem.Checked;
+					Global.pref.setCurCentrePt(Global.profile.centre);
+					filtBlack.modifiers = Global.profile.showBlacklisted() ? filtBlack.modifiers | MenuItem.Checked : filtBlack.modifiers & ~MenuItem.Checked;
 					tbp.refreshTable();
 				}
 			}
 			if (mev.selectedItem == mnuOpenProfile) {
 				Global.mainTab.saveUnsavedChanges(true);
-				if (pref.selectProfile(profile, Preferences.PROFILE_SELECTOR_FORCED_ON, false)) {
+				if (Global.pref.selectProfile(Preferences.PROFILE_SELECTOR_FORCED_ON, false)) {
 					tbp.myMod.sortedBy = -1;
 					tbp.myMod.numRows = 0;
 					CacheHolder.removeAllDetails();
-					profile.cacheDB.clear();
+					Global.profile.cacheDB.clear();
 					InfoBox infB = new InfoBox("CacheWolf", MyLocale.getMsg(5000, "Loading Cache-List"));
 					infB.exec();
 					infB.waitUntilPainted(1000);
 					Vm.showWait(infB, true);
-					profile.readIndex(infB);
+					Global.profile.readIndex(infB);
 					Vm.showWait(infB, false);
-					pref.setCurCentrePt(profile.centre);
-					filtBlack.modifiers = Global.getProfile().showBlacklisted() ? filtBlack.modifiers | MenuItem.Checked : filtBlack.modifiers & ~MenuItem.Checked;
-					Global.mainForm.setTitle(profile.name + " - CW " + Version.getRelease());
+					Global.pref.setCurCentrePt(Global.profile.centre);
+					filtBlack.modifiers = Global.profile.showBlacklisted() ? filtBlack.modifiers | MenuItem.Checked : filtBlack.modifiers & ~MenuItem.Checked;
+					Global.mainForm.setTitle(Global.profile.name + " - CW " + Version.getRelease());
 					infB.close(0);
 					tbp.resetModel();
 				}
 			}
 			if (mev.selectedItem == mnuDeleteProfile) {
-				pref.editProfile(2, 227, 226);
+				Global.pref.editProfile(2, 227, 226);
 			}
 			if (mev.selectedItem == mnuRenameProfile) {
-				pref.editProfile(3, 228, 229);
+				Global.pref.editProfile(3, 228, 229);
 			}
 			if (mev.selectedItem == mnuEditCenter) {
-				ProfileDataForm f = new ProfileDataForm(pref, profile);
+				ProfileDataForm f = new ProfileDataForm();
 				f.execute(getFrame(), Gui.CENTER_FRAME);
 				tbp.refreshTable();
 				f.close(0);
@@ -344,34 +344,35 @@ public class MainMenu extends MenuBar {
 			// subMenu for import, part of "Application" menu
 			// /////////////////////////////////////////////////////////////////////
 			if (mev.selectedItem == spider) {
-				SpiderGC spGC = new SpiderGC(pref, profile);
+				SpiderGC spGC = new SpiderGC();
 				Global.mainTab.saveUnsavedChanges(false);
 				spGC.doIt();
 				cacheDB.clear();
-				profile.readIndex();
+				Global.profile.readIndex();
 				tbp.resetModel();
-				pref.setOldGCLanguage();
+				Global.pref.setOldGCLanguage();
 			}
 			if (mev.selectedItem == spiderRoute) {
-				SpiderGC spGC = new SpiderGC(pref, profile);
+				SpiderGC spGC = new SpiderGC();
 				Global.mainTab.saveUnsavedChanges(false);
 				spGC.doItAlongARoute();
 				cacheDB.clear();
-				profile.readIndex();
+				Global.profile.readIndex();
 				tbp.resetModel();
-				pref.setOldGCLanguage();
+				Global.pref.setOldGCLanguage();
 			}
 			if (mev.selectedItem == spiderAllFinds) {
-				SpiderGC spGC = new SpiderGC(pref, profile);
+				SpiderGC spGC = new SpiderGC();
 				Global.mainTab.saveUnsavedChanges(false);
 				spGC.doIt(true);
 				cacheDB.clear();
-				profile.readIndex();
+				Global.profile.readIndex();
 				tbp.resetModel();
-				pref.setOldGCLanguage();
+				Global.pref.setOldGCLanguage();
 			}
 			if (mev.selectedItem == loadGCVotes) {
-				if (sGCV == null) sGCV = new GCVoteImporter(pref, profile);
+				if (sGCV == null)
+					sGCV = new GCVoteImporter();
 				sGCV.doIt();
 				tbp.resetModel();
 			}
@@ -380,60 +381,63 @@ public class MainMenu extends MenuBar {
 				tbp.resetModel();
 			}
 			if (mev.selectedItem == loadcaches) {
-				String dir = pref.getImporterPath("LocGpxImporter");
+				String dir = Global.pref.getImporterPath("LocGpxImporter");
 				FileChooser fc = new FileChooser(FileChooserBase.OPEN | FileChooserBase.MULTI_SELECT, dir);
 				fc.addMask("*.gpx,*.zip,*.loc,*.txt,*.log,*.csv");
 				fc.setTitle(MyLocale.getMsg(909, "Select file(s)"));
 				if (fc.execute() != FormBase.IDCANCEL) {
 					dir = fc.getChosenDirectory().toString();
-					pref.setImporterPath("LocGpxImporter", dir);
+					Global.pref.setImporterPath("LocGpxImporter", dir);
 					String files[] = fc.getAllChosen();
 					int how = GPXImporter.DOIT_ASK;
 					for (int i = 0; i < files.length; i++) {
 						String file = dir + "/" + files[i];
 						if (file.endsWith("txt") || file.endsWith("log")) {
-							FieldnotesImporter fn = new FieldnotesImporter(pref, profile, file);
+							FieldnotesImporter fn = new FieldnotesImporter(file);
 							fn.doIt();
-						} else if (file.endsWith("loc")) {
-							LOCXMLImporter loc = new LOCXMLImporter(pref, profile, file);
+						}
+						else if (file.endsWith("loc")) {
+							LOCXMLImporter loc = new LOCXMLImporter(file);
 							loc.doIt();
-						} else if (file.endsWith("csv")) {
-							CSVImporter mn = new CSVImporter(pref, profile, file);
+						}
+						else if (file.endsWith("csv")) {
+							CSVImporter mn = new CSVImporter(file);
 							mn.doIt();
-						} else { // gpx + zip
-							GPXImporter gpx = new GPXImporter(pref, profile, file);
+						}
+						else { // gpx + zip
+							GPXImporter gpx = new GPXImporter(file);
 							gpx.doIt(how);
 							how = gpx.getHow();
 						}
 					}
 				}
-				Global.getProfile().setShowBlacklisted(false);
-				filtBlack.modifiers = Global.getProfile().showBlacklisted() ? filtBlack.modifiers | MenuItem.Checked : filtBlack.modifiers & ~MenuItem.Checked;
+				Global.profile.setShowBlacklisted(false);
+				filtBlack.modifiers = Global.profile.showBlacklisted() ? filtBlack.modifiers | MenuItem.Checked : filtBlack.modifiers & ~MenuItem.Checked;
 				tbp.resetModel();
-				pref.setOldGCLanguage();
+				Global.pref.setOldGCLanguage();
 			}
 			if (mev.selectedItem == loadOC) {
-				OCXMLImporter oc = new OCXMLImporter(pref, profile);
+				OCXMLImporter oc = new OCXMLImporter();
 				oc.doIt();
-				Global.getProfile().setShowBlacklisted(false);
-				filtBlack.modifiers = Global.getProfile().showBlacklisted() ? filtBlack.modifiers | MenuItem.Checked : filtBlack.modifiers & ~MenuItem.Checked;
+				Global.profile.setShowBlacklisted(false);
+				filtBlack.modifiers = Global.profile.showBlacklisted() ? filtBlack.modifiers | MenuItem.Checked : filtBlack.modifiers & ~MenuItem.Checked;
 				tbp.resetModel();
 			}
 			if (mev.selectedItem == loadOCFinds) {
 				OCGPXfetch.doIt();
-				Global.getProfile().setShowBlacklisted(false);
-				filtBlack.modifiers = Global.getProfile().showBlacklisted() ? filtBlack.modifiers | MenuItem.Checked : filtBlack.modifiers & ~MenuItem.Checked;
+				Global.profile.setShowBlacklisted(false);
+				filtBlack.modifiers = Global.profile.showBlacklisted() ? filtBlack.modifiers | MenuItem.Checked : filtBlack.modifiers & ~MenuItem.Checked;
 				tbp.resetModel();
 			}
 			if (mev.selectedItem == update) {
 				updateSelectedCaches(tbp);
-				pref.setOldGCLanguage();
+				Global.pref.setOldGCLanguage();
 			}
 			// /////////////////////////////////////////////////////////////////////
 			// subMenu for export, part of "Application" menu
 			// /////////////////////////////////////////////////////////////////////
 			if (mev.selectedItem == exporthtml) {
-				HTMLExporter htm = new HTMLExporter(pref, profile);
+				HTMLExporter htm = new HTMLExporter();
 				htm.doIt();
 			}
 			if (mev.selectedItem == exportGpxNg) {
@@ -441,11 +445,11 @@ public class MainMenu extends MenuBar {
 				gpx.doit();
 			}
 			if (mev.selectedItem == exporttop50) {
-				OVLExporter ovl = new OVLExporter(pref, profile);
+				OVLExporter ovl = new OVLExporter();
 				ovl.doIt();
 			}
 			if (mev.selectedItem == exportASC) {
-				ASCExporter asc = new ASCExporter(pref, profile);
+				ASCExporter asc = new ASCExporter();
 				asc.doIt();
 			}
 			if (mev.selectedItem == exportTomTom) {
@@ -453,7 +457,7 @@ public class MainMenu extends MenuBar {
 				tt.doIt();
 			}
 			if (mev.selectedItem == exportMSARCSV) {
-				MSARCSVExporter msar = new MSARCSVExporter(pref, profile);
+				MSARCSVExporter msar = new MSARCSVExporter();
 				msar.doIt();
 			}
 			if (mev.selectedItem == exportLOC) {
@@ -471,27 +475,28 @@ public class MainMenu extends MenuBar {
 				loc.setTmpFileName(tmpFileName);
 				loc.doIt(LocExporter.MODE_AUTO);
 				ProgressBarForm.display(MyLocale.getMsg(950, "Transfer"), MyLocale.getMsg(951, "Sending to GPS"), null);
-				gpsBabelCommand = pref.gpsbabel + " " + pref.garminGPSBabelOptions + " -i geo -f " + tmpFileName + " -o garmin -F " + pref.garminConn + ":";
-				pref.log("[MainMenu:onEvent] " + gpsBabelCommand);
+				gpsBabelCommand = Global.pref.gpsbabel + " " + Global.pref.garminGPSBabelOptions + " -i geo -f " + tmpFileName + " -o garmin -F " + Global.pref.garminConn + ":";
+				Global.pref.log("[MainMenu:onEvent] " + gpsBabelCommand);
 				try {
 					// this will *only* work with ewe.jar at the moment
 					ewe.sys.Process p = Vm.exec(gpsBabelCommand);
 					p.waitFor();
-				} catch (IOException ioex) {
+				}
+				catch (IOException ioex) {
 					Vm.showWait(false);
 					(new MessageBox("Error", "Garmin export unsuccessful", FormBase.OKB)).execute();
-					pref.log("Error exporting to Garmin", ioex, true);
+					Global.pref.log("Error exporting to Garmin", ioex, true);
 				}
 				;
 				ProgressBarForm.clear();
 				Vm.showWait(false);
 			}
 			if (mev.selectedItem == exportOZI) {
-				OziExporter ozi = new OziExporter(pref, profile);
+				OziExporter ozi = new OziExporter();
 				ozi.doIt();
 			}
 			if (mev.selectedItem == exportKML) {
-				KMLExporter kml = new KMLExporter(pref, profile);
+				KMLExporter kml = new KMLExporter();
 				kml.doIt();
 			}
 			if (mev.selectedItem == exportTPL) {
@@ -499,7 +504,7 @@ public class MainMenu extends MenuBar {
 				fc.addMask("*.tpl");
 				fc.setTitle(MyLocale.getMsg(910, "Select Template file"));
 				if (fc.execute() != FormBase.IDCANCEL) {
-					TPLExporter tpl = new TPLExporter(pref, profile, fc.getChosenFile().toString());
+					TPLExporter tpl = new TPLExporter(fc.getChosenFile().toString());
 					tpl.doIt();
 				}
 			}
@@ -509,15 +514,15 @@ public class MainMenu extends MenuBar {
 				tbp.resetModel();
 			}
 			if (mev.selectedItem == exportExplorist) {
-				ExploristExporter mag = new ExploristExporter(pref, profile);
+				ExploristExporter mag = new ExploristExporter();
 				mag.doIt();
 			}
 			if (mev.selectedItem == exportSpoilerPOI) {
-				SpoilerPOIExporter spoilerpoi = new SpoilerPOIExporter(pref, profile);
+				SpoilerPOIExporter spoilerpoi = new SpoilerPOIExporter();
 				spoilerpoi.doIt();
 			}
 			if (mev.selectedItem == exportGarminPic) {
-				GarminPicExporter garminpic = new GarminPicExporter(pref, profile);
+				GarminPicExporter garminpic = new GarminPicExporter();
 				garminpic.doIt();
 			}
 
@@ -526,11 +531,13 @@ public class MainMenu extends MenuBar {
 			// /////////////////////////////////////////////////////////////////////
 			if (mev.selectedItem == downloadmap) {
 				MapLoaderGui mLG = new MapLoaderGui(cacheDB);
-				mLG.exec(); // .execute doesn't work because the tcp-socket uses another thread which cannot be startet if here .execute() is used!
+				// .execute doesn't work because the tcp-socket uses another thread
+				// which cannot be startet if here .execute() is used!
+				mLG.exec();
 			}
 			if (mev.selectedItem == importmap) {
 
-				MapImporter map = new MapImporter(pref);
+				MapImporter map = new MapImporter();
 				map.importMap();
 			}
 			if (mev.selectedItem == kalibmap) {
@@ -538,21 +545,22 @@ public class MainMenu extends MenuBar {
 				sM.execute();
 				if ((sM.getSelectedMap()).length() > 0) {
 					try {
-						MapImporter map = new MapImporter(pref, sM.getSelectedMap(), sM.worldfileexists);
+						MapImporter map = new MapImporter(sM.getSelectedMap(), sM.worldfileexists);
 						map.execute(null, Gui.CENTER_FRAME);
-					} catch (java.lang.OutOfMemoryError e) {
+					}
+					catch (java.lang.OutOfMemoryError e) {
 						MessageBox tmpMB = new MessageBox(MyLocale.getMsg(312, "Error"), MyLocale.getMsg(156, "Out of memory error, map to big"), FormBase.OKB);
 						tmpMB.exec();
 					}
 				}
 			}
 			if (mev.selectedItem == selectMapPath) {
-				FileChooser fc = new FileChooser(FileChooserBase.DIRECTORY_SELECT, Global.getPref().getCustomMapsPath());
+				FileChooser fc = new FileChooser(FileChooserBase.DIRECTORY_SELECT, Global.pref.getCustomMapsPath());
 				fc.addMask("*.wfl");
 				fc.setTitle(MyLocale.getMsg(4200, "Select map directory:"));
 				if (fc.execute() != FormBase.IDCANCEL) {
-					Global.getPref().saveCustomMapsPath(fc.getChosen().toString());
-					// mm.loadMaps(Global.getPref().getCustomMapsPath(), mm.posCircle.where.latDec);
+					Global.pref.saveCustomMapsPath(fc.getChosen().toString());
+					// mm.loadMaps(Global.pref.getCustomMapsPath(), mm.posCircle.where.latDec);
 					// mm.forceMapLoad();
 				}
 
@@ -561,17 +569,17 @@ public class MainMenu extends MenuBar {
 			// "Application" pulldown menu
 			// /////////////////////////////////////////////////////////////////////
 			if (mev.selectedItem == preferences) {
-				tbp.saveColWidth(pref);
-				PreferencesScreen pfs = new PreferencesScreen(pref);
+				tbp.saveColWidth();
+				PreferencesScreen pfs = new PreferencesScreen();
 				pfs.execute(father.getFrame(), Gui.CENTER_FRAME);
-				pref.readPrefFile();
+				Global.pref.readPrefFile();
 			}
 			if (mev.selectedItem == savenoxit) {
-				profile.saveIndex(pref, Profile.SHOW_PROGRESS_BAR);
-				tbp.saveColWidth(pref);
+				Global.profile.saveIndex(Profile.SHOW_PROGRESS_BAR);
+				tbp.saveColWidth();
 			}
 			/*
-			 * if(mev.selectedItem == savenexit){ profile.saveIndex(pref,Profile.SHOW_PROGRESS_BAR); tbp.saveColWidth(pref); ewe.sys.Vm.exit(0); }
+			 * if(mev.selectedItem == savenexit){ Global.profile.saveIndex(pref,Profile.SHOW_PROGRESS_BAR); tbp.saveColWidth(pref); ewe.sys.Vm.exit(0); }
 			 */
 			if (mev.selectedItem == exit) {
 				Global.mainTab.saveUnsavedChanges(true);
@@ -605,9 +613,10 @@ public class MainMenu extends MenuBar {
 				tbp.refreshTable();
 			}
 			if (mev.selectedItem == filtCreate) {
-				scnFilter.setData(profile.getCurrentFilter());
+				scnFilter.setData(Global.profile.getCurrentFilter());
 				scnFilter.setPreferredSize(450, 480);
-				if (Vm.isMobile()) scnFilter.setPreferredSize(MyLocale.getScreenWidth(), MyLocale.getScreenHeight()); // Fullscreen
+				if (Vm.isMobile())
+					scnFilter.setPreferredSize(MyLocale.getScreenWidth(), MyLocale.getScreenHeight()); // Fullscreen
 				scnFilter.execute(father.getFrame(), Gui.CENTER_FRAME);
 				tbp.refreshTable();
 			}
@@ -622,7 +631,7 @@ public class MainMenu extends MenuBar {
 				tbp.refreshTable();
 			}
 			if (mev.selectedItem == filtSelected) { // incremental filter
-				Global.getProfile().selectionChanged = true;
+				Global.profile.selectionChanged = true;
 				CacheHolder ch;
 				boolean filterChanged = false;
 				for (int i = cacheDB.size() - 1; i >= 0; i--) {
@@ -634,13 +643,13 @@ public class MainMenu extends MenuBar {
 						filterChanged = true;
 					}
 				}
-				if (filterChanged && Global.getProfile().getFilterActive() == Filter.FILTER_INACTIVE) {
-					Global.getProfile().setFilterActive(Filter.FILTER_MARKED_ONLY);
+				if (filterChanged && Global.profile.getFilterActive() == Filter.FILTER_INACTIVE) {
+					Global.profile.setFilterActive(Filter.FILTER_MARKED_ONLY);
 				}
 				tbp.refreshTable();
 			}
 			if (mev.selectedItem == filtNonSelected) {
-				Global.getProfile().selectionChanged = true;
+				Global.profile.selectionChanged = true;
 				CacheHolder ch;
 				boolean filterChanged = false;
 				for (int i = cacheDB.size() - 1; i >= 0; i--) {
@@ -652,15 +661,15 @@ public class MainMenu extends MenuBar {
 						filterChanged = true;
 					}
 				}
-				if (filterChanged && Global.getProfile().getFilterActive() == Filter.FILTER_INACTIVE) {
-					Global.getProfile().setFilterActive(Filter.FILTER_MARKED_ONLY);
+				if (filterChanged && Global.profile.getFilterActive() == Filter.FILTER_INACTIVE) {
+					Global.profile.setFilterActive(Filter.FILTER_MARKED_ONLY);
 				}
 				tbp.refreshTable();
 			}
 			if (mev.selectedItem == filtBlack) {
 				// filtBlack.modifiers=filtBlack.modifiers|MenuItem.Checked;
-				Global.getProfile().setShowBlacklisted(!Global.getProfile().showBlacklisted());
-				filtBlack.modifiers = Global.getProfile().showBlacklisted() ? filtBlack.modifiers | MenuItem.Checked : filtBlack.modifiers & ~MenuItem.Checked;
+				Global.profile.setShowBlacklisted(!Global.profile.showBlacklisted());
+				filtBlack.modifiers = Global.profile.showBlacklisted() ? filtBlack.modifiers | MenuItem.Checked : filtBlack.modifiers & ~MenuItem.Checked;
 				SearchCache ssc = new SearchCache(cacheDB);
 				ssc.clearSearch();// Clear search & restore filter status
 				tbp.refreshTable();
@@ -677,21 +686,21 @@ public class MainMenu extends MenuBar {
 			}
 
 			if (mev.selectedItem == orgCopy) {
-				profile.saveIndex(pref, Profile.SHOW_PROGRESS_BAR);
+				Global.profile.saveIndex(Profile.SHOW_PROGRESS_BAR);
 				DataMover dm = new DataMover();
 				dm.copyCaches();
 				tbp.refreshTable();
 			}
 
 			if (mev.selectedItem == orgMove) {
-				profile.saveIndex(pref, Profile.SHOW_PROGRESS_BAR);
+				Global.profile.saveIndex(Profile.SHOW_PROGRESS_BAR);
 				DataMover dm = new DataMover();
 				dm.moveCaches();
 				tbp.refreshTable();
 			}
 
 			if (mev.selectedItem == orgDelete) {
-				profile.saveIndex(pref, Profile.SHOW_PROGRESS_BAR);
+				Global.profile.saveIndex(Profile.SHOW_PROGRESS_BAR);
 				DataMover dm = new DataMover();
 				dm.deleteCaches();
 				tbp.refreshTable();
@@ -699,7 +708,7 @@ public class MainMenu extends MenuBar {
 			if (mev.selectedItem == orgRebuild) {
 				Rebuild rb = new Rebuild();
 				rb.rebuild();
-				profile.updateBearingDistance();
+				Global.profile.updateBearingDistance();
 				tbp.refreshTable();
 			}
 			if (mev.selectedItem == orgCheckNotesAndSolver) {
@@ -714,7 +723,8 @@ public class MainMenu extends MenuBar {
 						ch.setHasNote(!ch.getCacheDetails(false).getCacheNotes().equals(""));
 						ch.setHasSolver(!ch.getCacheDetails(false).getSolver().equals(""));
 					}
-					if (cwp.isClosed()) break;
+					if (cwp.isClosed())
+						break;
 				} // for
 				cwp.exit(0);
 				tbp.refreshTable();
@@ -734,15 +744,15 @@ public class MainMenu extends MenuBar {
 			// "About" pulldown menu
 			// /////////////////////////////////////////////////////////////////////
 			if (mev.selectedItem == about) {
-				InfoScreen is = new InfoScreen(MyLocale.getLocalizedFile("info.html"), MyLocale.getMsg(117, "About"), true, pref);
+				InfoScreen is = new InfoScreen(MyLocale.getLocalizedFile("info.html"), MyLocale.getMsg(117, "About"), true);
 				is.execute(father.getFrame(), Gui.CENTER_FRAME);
 			}
 			if (mev.selectedItem == legend) {
-				InfoScreen is = new InfoScreen(MyLocale.getLocalizedFile("legende.html"), MyLocale.getMsg(155, "Legend"), true, pref);
+				InfoScreen is = new InfoScreen(MyLocale.getLocalizedFile("legende.html"), MyLocale.getMsg(155, "Legend"), true);
 				is.execute(father.getFrame(), Gui.CENTER_FRAME);
 			}
 			if (mev.selectedItem == wolflang) {
-				InfoScreen is = new InfoScreen(MyLocale.getLocalizedFile("wolflang.html"), MyLocale.getMsg(118, "WolfLanguage"), true, pref);
+				InfoScreen is = new InfoScreen(MyLocale.getLocalizedFile("wolflang.html"), MyLocale.getMsg(118, "WolfLanguage"), true);
 				is.execute(father.getFrame(), Gui.CENTER_FRAME);
 			}
 			if (mev.selectedItem == sysinfo) {
@@ -750,7 +760,7 @@ public class MainMenu extends MenuBar {
 				Font f = mApp.guiFont;
 				sb.append(MyLocale.getMsg(121, "Profile"));
 				sb.append(": ");
-				sb.append(profile.dataDir);
+				sb.append(Global.profile.dataDir);
 				sb.append("<br>");
 				sb.append(MyLocale.getMsg(260, "Platform:"));
 				sb.append(' ');
@@ -800,14 +810,14 @@ public class MainMenu extends MenuBar {
 				sb.append(' ');
 				sb.append(MyLocale.getMsg(271, "Max.:"));
 				sb.append(' ');
-				sb.append(Global.getPref().maxDetails);
+				sb.append(Global.pref.maxDetails);
 				sb.append("<br>");
 				sb.append(MyLocale.getMsg(272, "CacheWolf version:"));
 				sb.append(' ');
 				sb.append(Version.getReleaseDetailed());
 				sb.append("<br>");
-				InfoScreen is = new InfoScreen(sb.toString(), "System", false, pref);
-				pref.log(STRreplace.replace(sb.toString(), "<br>", Preferences.NEWLINE), null);
+				InfoScreen is = new InfoScreen(sb.toString(), "System", false);
+				Global.pref.log(STRreplace.replace(sb.toString(), "<br>", Preferences.NEWLINE), null);
 				is.execute(father.getFrame(), Gui.CENTER_FRAME);
 			}
 			if (mev.selectedItem == chkVersion) {
@@ -818,7 +828,8 @@ public class MainMenu extends MenuBar {
 			// the event by the context menu handler
 			tbp.tc.popupMenuEvent(mev.selectedItem);
 
-		} else if (ev instanceof ControlEvent) {
+		}
+		else if (ev instanceof ControlEvent) {
 			if (ev.type == ControlEvent.MENU_SHOWN) {
 				Global.mainTab.tbP.tc.adjustAddiHideUnhideMenu();
 			}
@@ -826,9 +837,7 @@ public class MainMenu extends MenuBar {
 	}
 
 	public static void updateSelectedCaches(TablePanel tablePanel) {
-		Preferences pref = Global.getPref();
-		Profile profile = Global.getProfile();
-		CacheDB cacheDB = profile.cacheDB;
+		CacheDB cacheDB = Global.profile.cacheDB;
 		CacheHolder ch;
 
 		OCXMLImporterScreen options = new OCXMLImporterScreen(MyLocale.getMsg(1014, "updateSelectedCaches"), OCXMLImporterScreen.IMAGES | OCXMLImporterScreen.TRAVELBUGS | OCXMLImporterScreen.MAXLOGS | OCXMLImporterScreen.ALL);
@@ -836,15 +845,15 @@ public class MainMenu extends MenuBar {
 			return;
 		}
 
-		SpiderGC spider = new SpiderGC(pref, profile);
-		OCXMLImporter ocSync = new OCXMLImporter(pref, profile);
+		SpiderGC spider = new SpiderGC();
+		OCXMLImporter ocSync = new OCXMLImporter();
 		Vm.showWait(true);
 		boolean alreadySaid = false;
 		boolean alreadySaid2 = false;
 		InfoBox infB = new InfoBox("Info", "Loading", InfoBox.PROGRESS_WITH_WARNINGS);
 		infB.exec();
 
-		boolean loadAllLogs = (pref.maxLogsToSpider > 5);
+		boolean loadAllLogs = (Global.pref.maxLogsToSpider > 5);
 
 		Vector cachesToUpdate = new Vector();
 		for (int i = 0; i < cacheDB.size(); i++) {
@@ -856,15 +865,15 @@ public class MainMenu extends MenuBar {
 				// Alter code prft aber nur ob ein Maincache von GC existiert und versucht dann den addi direkt zu spidern, was nicht funktioniert
 				{
 					cachesToUpdate.add(new Integer(i));
-				} else {
+				}
+				else {
 					if (ch.isAddiWpt() && ch.mainCache != null && !ch.mainCache.is_Checked && !alreadySaid2) { // Is the father ticked?
 						alreadySaid2 = true;
 						(new MessageBox(MyLocale.getMsg(327, "Information"), MyLocale.getMsg(5001, "Can't spider additional waypoint directly. Please check main cache."), FormBase.OKB)).execute();
 					}
 					if (!ch.isAddiWpt() && !alreadySaid) {
 						alreadySaid = true;
-						(new MessageBox(MyLocale.getMsg(327, "Information"), ch.getWayPoint() + MyLocale.getMsg(5002, ": At the moment this function is only applicable for geocaching.com and opencaching.de/.cz/.org.uk ."), FormBase.OKB))
-								.execute();
+						(new MessageBox(MyLocale.getMsg(327, "Information"), ch.getWayPoint() + MyLocale.getMsg(5002, ": At the moment this function is only applicable for geocaching.com and opencaching.de/.cz/.org.uk ."), FormBase.OKB)).execute();
 					}
 				}
 
@@ -883,27 +892,31 @@ public class MainMenu extends MenuBar {
 				if (test == SpiderGC.SPIDER_CANCEL) {
 					infB.close(0);
 					break;
-				} else if (test == SpiderGC.SPIDER_ERROR || test == SpiderGC.SPIDER_IGNORE_PREMIUM) {
-					spiderErrors++;
-				} else {
-					// profile.hasUnsavedChanges=true;
 				}
-			} else {
+				else if (test == SpiderGC.SPIDER_ERROR || test == SpiderGC.SPIDER_IGNORE_PREMIUM) {
+					spiderErrors++;
+				}
+				else {
+					// Global.profile.hasUnsavedChanges=true;
+				}
+			}
+			else {
 				if (!ocSync.syncSingle(i, infB)) {
 					infB.close(0);
 					break;
-				} else {
-					// profile.hasUnsavedChanges=true;
+				}
+				else {
+					// Global.profile.hasUnsavedChanges=true;
 				}
 			}
 
 			// cacheDB.clear();
-			// profile.readIndex();
+			// Global.profile.readIndex();
 		}
 		infB.close(0);
-		profile.saveIndex(pref, Profile.SHOW_PROGRESS_BAR);
-		profile.restoreFilter();
-		profile.updateBearingDistance();
+		Global.profile.saveIndex(Profile.SHOW_PROGRESS_BAR);
+		Global.profile.restoreFilter();
+		Global.profile.updateBearingDistance();
 		tablePanel.refreshTable();
 		Vm.showWait(false);
 		if (spiderErrors > 0) {

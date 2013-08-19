@@ -25,7 +25,7 @@ import CacheWolf.Global;
 import CacheWolf.MyLocale;
 import CacheWolf.navi.touchControls.MovingMapControlItemText.TextOptions;
 import CacheWolf.navi.touchControls.MovingMapControls.Role;
-import ewe.io.File;
+import CacheWolf.utils.FileBugfix;
 import ewe.io.FileBase;
 import ewe.sys.Vm;
 import ewe.util.Hashtable;
@@ -136,7 +136,7 @@ public class MovingMapControlSettings extends MinML  implements ICommandListener
 	private int fontsize;
 	public MovingMapControlSettings(boolean vga, Hashtable roles) {
 		double fontscale = vga ? 1.5 : 1;
-		this.fontsize = (int) (Global.getPref().fontSize * fontscale);
+		this.fontsize = (int) (Global.pref.fontSize * fontscale);
 		this.roles = roles;
 	}
 	public void startElement(String name, AttributeList attributes) throws SAXException {
@@ -146,7 +146,7 @@ public class MovingMapControlSettings extends MinML  implements ICommandListener
 				try {
 					fontsize = Integer.parseInt(fontsizeString);
 				} catch (Exception e) {
-					Global.getPref().log("fontsize not an int " + fontsizeString,e);
+					Global.pref.log("fontsize not an int " + fontsizeString,e);
 				}
 			}
 		}
@@ -193,14 +193,14 @@ public class MovingMapControlSettings extends MinML  implements ICommandListener
 			}
 
 			if (xpos < 0) {
-				Global.getPref().log("the x position of the button has to be set! "
+				Global.pref.log("the x position of the button has to be set! "
 						+ "use attribute '" + BUTTON_ATTR_FROM_LEFT + "' or '"
 						+ BUTTON_ATTR_FROM_RIGHT + "'",null);
 				xpos = 0;
 			}
 
 			if (ypos < 0) {
-				Global.getPref().log("the y position of the button has to be set! "
+				Global.pref.log("the y position of the button has to be set! "
 						+ "use attribute '" + BUTTON_ATTR_FROM_TOP + "' or '"
 						+ BUTTON_ATTR_FROM_BOTTOM + "'",null);
 				ypos = 0;
@@ -219,12 +219,12 @@ public class MovingMapControlSettings extends MinML  implements ICommandListener
 			String alignText = attributes.getValue(BUTTON_ATTR_ALIGNTEXT);
 			String content = attributes.getValue(BUTTON_ATTR_CONTENT);
 			if (visibility == null) {
-				Global.getPref().log("read MovingMap settings: " + BUTTON_ATTR_VISIBILITY
+				Global.pref.log("read MovingMap settings: " + BUTTON_ATTR_VISIBILITY
 						+ " not set!",null);
 				return;
 			}
 			if (action == -2) {
-				Global.getPref().log("read MovingMap settings: " + BUTTON_ATTR_ACTION + " not set!",null);
+				Global.pref.log("read MovingMap settings: " + BUTTON_ATTR_ACTION + " not set!",null);
 				return;
 			}
 			int alphavalue = getIntFromFile(attributes, BUTTON_ATTR_ALPHA, -1);
@@ -233,7 +233,7 @@ public class MovingMapControlSettings extends MinML  implements ICommandListener
 
 			if (imageLocation == null) {
 				// something not set
-				Global.getPref().log("Image for '" + localeDefault + "' not found",null);
+				Global.pref.log("Image for '" + localeDefault + "' not found",null);
 				return;
 			}
 			else {
@@ -319,7 +319,7 @@ public class MovingMapControlSettings extends MinML  implements ICommandListener
 			try {
 				defaultValue = Integer.parseInt(entry);
 			} catch (Exception e) {
-				Global.getPref().log("Can not read int for filed " + field + ": " + entry,e);
+				Global.pref.log("Can not read int for filed " + field + ": " + entry,e);
 			}
 		}
 		return defaultValue;
@@ -347,9 +347,9 @@ public class MovingMapControlSettings extends MinML  implements ICommandListener
 		CONFIG_RELATIVE_PATH=tmp;
 		String path = FileBase.makePath(FileBase.getProgramDirectory(),CONFIG_RELATIVE_PATH);
 		path = path.replace('\\', '/');
-		File file = new File(path, CONFIG_FILE_NAME_OVERWRITE);
-		if (!file.exists()) {file = new File(path, ""+MyLocale.getScreenWidth()+"x"+MyLocale.getScreenHeight()+".xml");}
-		if (!file.exists()) {file = new File(path, CONFIG_FILE_NAME);}
+		FileBugfix file = new FileBugfix(path, CONFIG_FILE_NAME_OVERWRITE);
+		if (!file.exists()) {file = new FileBugfix(path, ""+MyLocale.getScreenWidth()+"x"+MyLocale.getScreenHeight()+".xml");}
+		if (!file.exists()) {file = new FileBugfix(path, CONFIG_FILE_NAME);}
 		
 		
 		try {
@@ -358,13 +358,13 @@ public class MovingMapControlSettings extends MinML  implements ICommandListener
 			r.close();
 		} catch (Exception e) {
 			if (e instanceof NullPointerException)
-				Global.getPref().log(
+				Global.pref.log(
 						"Error reading " + path
 								+ ": NullPointerException in Element " + ""
 								+ ". Wrong attribute, File not existing?", e,
 						true);
 			else
-				Global.getPref().log("Error reading " + path + ": ", e);
+				Global.pref.log("Error reading " + path + ": ", e);
 			return false;
 		}
 		return true;

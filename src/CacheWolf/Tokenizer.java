@@ -272,7 +272,7 @@ public class Tokenizer{
 				else err(MyLocale.getMsg(1732,"Invalid character")); 
 			}
 		} catch (Exception e) {
-			// Global.getPref().log("Ignored Exception", e, true);
+			// Global.pref.log("Ignored Exception", e, true);
 		}
 	}
 }

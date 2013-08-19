@@ -80,8 +80,8 @@ public class HintLogPanel extends CellPanel{
 		CellPanel logpane = split.getNextPanel();
 		CellPanel hintpane = split.getNextPanel();
 		split.setSplitter(PanelSplitter.AFTER|PanelSplitter.HIDDEN,PanelSplitter.BEFORE|PanelSplitter.HIDDEN,0);
-		int initialHintHeight=Global.getPref().initialHintHeight;
-		if (initialHintHeight<0 || initialHintHeight>1000) initialHintHeight=Global.getPref().DEFAULT_INITIAL_HINT_HEIGHT;
+		int initialHintHeight=Global.pref.initialHintHeight;
+		if (initialHintHeight<0 || initialHintHeight>1000) initialHintHeight=Global.pref.DEFAULT_INITIAL_HINT_HEIGHT;
 		hintpane.setPreferredSize(100,initialHintHeight);
 		ScrollBarPanel sbphint = new MyScrollBarPanel(hint);
 		hintpane.addLast(sbphint,CellConstants.STRETCH, (CellConstants.FILL|CellConstants.WEST));
@@ -93,7 +93,7 @@ public class HintLogPanel extends CellPanel{
 
 		sbplog = new MyScrollBarPanel(htmlImagDisp, ScrollablePanel.NeverShowHorizontalScrollers);
 		//logpane.addLast(sbplog,CellConstants.STRETCH, CellConstants.FILL);
-		Rect r = new Rect(new Dimension (Global.getPref().myAppWidth-sbplog.vbar.getRect().width, 20));
+		Rect r = new Rect(new Dimension (Global.pref.myAppWidth-sbplog.vbar.getRect().width, 20));
 		htmlImagDisp.virtualSize = r;
 		htmlImagDisp.checkScrolls();
 		logpane.addLast(sbplog.getScrollablePanel(), CellConstants.STRETCH, CellConstants.FILL);
@@ -129,7 +129,7 @@ public class HintLogPanel extends CellPanel{
 		StringBuffer dummy = new StringBuffer(DEFAULT_STRINGBUFFER_SIZE);
 		int counter = 0;
 		int nLogs=currCache.CacheLogs.size();
-		int logsPerPage=Global.getPref().logsPerPage;
+		int logsPerPage=Global.pref.logsPerPage;
 		for(int i = crntLogPosition; i<nLogs; i++){
 			dummy.append(SafeXML.cleanback(currCache.CacheLogs.getLog(i).toHtml()));
 			dummy.append("<br>");
@@ -147,7 +147,7 @@ public class HintLogPanel extends CellPanel{
 			logs.endHtml();
 		} catch (Exception e) {
 			logs=new HtmlDisplay();
-			Global.getPref().log("Error rendering HTML",e,true);
+			Global.pref.log("Error rendering HTML",e,true);
 			logs.setPlainText("Ewe VM: Internal error displaying logs");
 		}
 		int h = logs.getLineHeight() * logs.getNumLines();
@@ -186,7 +186,7 @@ public class HintLogPanel extends CellPanel{
 	 */
 	public void onEvent(Event ev){
 		if(ev instanceof ControlEvent && ev.type == ControlEvent.PRESSED){
-			int minLogs = java.lang.Math.min(Global.getPref().logsPerPage, currCache.CacheLogs.size());
+			int minLogs = java.lang.Math.min(Global.pref.logsPerPage, currCache.CacheLogs.size());
 			if(ev.target == moreBt){
 				prevBt.modify(0,ControlConstants.Disabled);
 				prevBt.repaintNow();

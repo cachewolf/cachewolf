@@ -61,11 +61,10 @@ public class Navigate {
 	public int luminary = SkyOrientation.SUN;
 
 	public GotoPanel gotoPanel = null;
-	public MovingMap movingMap = null;
+	private MovingMap movingMap = null;
 	public GpsdThread gpsdThread = null;
 	public OldGpsdThread oldGpsdThread = null;
 	public SerialThread serThread = null;
-	public Preferences pref = Global.getPref();
 	public UpdateThread tickerThread;
 	public boolean gpsRunning = false;
 	boolean lograw = false;
@@ -85,7 +84,7 @@ public class Navigate {
 		lograw = loggingOn;
 		logIntervall = loggingIntervall; // TODO switch on and off during serthread running
 
-		switch (Global.getPref().useGPSD) {
+		switch (Global.pref.useGPSD) {
 		// Tblue> TODO: NEW vs. OLD: This is ugly! The only line that's
 		// different is the one where the object is created!
 		case Preferences.GPSD_FORMAT_NEW:
@@ -96,15 +95,17 @@ public class Navigate {
 				gpsRunning = true;
 				curTrack = new Track(trackColor); // TODO addTrack here to MovingMap? see MovingMapPanel.snapToGps
 				if (lograw)
-					gpsPos.startLog(Global.getProfile().dataDir, logIntervall, CWGPSPoint.LOGALL);
+					gpsPos.startLog(Global.profile.dataDir, logIntervall, CWGPSPoint.LOGALL);
 				if (gotoPanel != null)
 					gotoPanel.gpsStarted();
 				if (movingMap != null)
 					movingMap.gpsStarted();
-			} catch (IOException e) {
+			}
+			catch (IOException e) {
 				(new MessageBox(MyLocale.getMsg(4403, "Error"), MyLocale.getMsg(4408, "Could not connect to GPSD: ") + e.getMessage() + MyLocale.getMsg(4409, "\nPossible reasons:\nGPSD is not running or GPSD host is not reachable"), FormBase.OKB))
 						.execute();
-			} catch (Exception e) {
+			}
+			catch (Exception e) {
 				// Other error (JSON/GPS).
 				(new MessageBox(MyLocale.getMsg(4403, "Error"), MyLocale.getMsg(99999, "Could not initialize GPSD connection: ") + e.getMessage(), FormBase.OKB)).execute();
 			}
@@ -118,12 +119,13 @@ public class Navigate {
 				gpsRunning = true;
 				curTrack = new Track(trackColor); // TODO addTrack here to MovingMap? see MovingMapPanel.snapToGps
 				if (lograw)
-					gpsPos.startLog(Global.getProfile().dataDir, logIntervall, CWGPSPoint.LOGALL);
+					gpsPos.startLog(Global.profile.dataDir, logIntervall, CWGPSPoint.LOGALL);
 				if (gotoPanel != null)
 					gotoPanel.gpsStarted();
 				if (movingMap != null)
 					movingMap.gpsStarted();
-			} catch (IOException e) {
+			}
+			catch (IOException e) {
 				(new MessageBox(MyLocale.getMsg(4403, "Error"), MyLocale.getMsg(4408, "Could not connect to GPSD: ") + e.getMessage() + MyLocale.getMsg(4409, "\nPossible reasons:\nGPSD is not running or GPSD host is not reachable"), FormBase.OKB))
 						.execute();
 			}
@@ -135,9 +137,9 @@ public class Navigate {
 				if (serThread.isAlive())
 					return; // TODO use gpsRunning
 			try {
-				serThread = new SerialThread(pref.mySPO, gpsPos, (pref.forwardGPS ? pref.forwardGpsHost : ""));
-				if (pref.forwardGPS && !serThread.tcpForward) {
-					(new MessageBox(MyLocale.getMsg(4400, "Warning"), MyLocale.getMsg(4401, "Ignoring error:\n could not forward GPS data to host:\n") + pref.forwardGpsHost + "\n" + serThread.lastError
+				serThread = new SerialThread(Global.pref.mySPO, gpsPos, (Global.pref.forwardGPS ? Global.pref.forwardGpsHost : ""));
+				if (Global.pref.forwardGPS && !serThread.tcpForward) {
+					(new MessageBox(MyLocale.getMsg(4400, "Warning"), MyLocale.getMsg(4401, "Ignoring error:\n could not forward GPS data to host:\n") + Global.pref.forwardGpsHost + "\n" + serThread.lastError
 							+ MyLocale.getMsg(4402, "\nstop and start GPS to retry"), FormBase.OKB)).exec();
 				}
 				serThread.start();
@@ -145,15 +147,17 @@ public class Navigate {
 				gpsRunning = true;
 				curTrack = new Track(trackColor); // TODO addTrack here to MovingMap? see MovingMapPanel.snapToGps
 				if (lograw)
-					gpsPos.startLog(Global.getProfile().dataDir, logIntervall, CWGPSPoint.LOGALL);
+					gpsPos.startLog(Global.profile.dataDir, logIntervall, CWGPSPoint.LOGALL);
 				if (gotoPanel != null)
 					gotoPanel.gpsStarted();
 				if (movingMap != null)
 					movingMap.gpsStarted();
-			} catch (IOException e) {
+			}
+			catch (IOException e) {
 				(new MessageBox(MyLocale.getMsg(4403, "Error"), MyLocale.getMsg(4404, "Could not connect to GPS-receiver.\n Error while opening serial Port ") + e.getMessage()
 						+ MyLocale.getMsg(4405, "\npossible reasons:\n Another (GPS-)program is blocking the port\nwrong port\nOn Loox: active infra-red port is blocking GPS"), FormBase.OKB)).execute();
-			} catch (UnsatisfiedLinkError e) {
+			}
+			catch (UnsatisfiedLinkError e) {
 				(new MessageBox(MyLocale.getMsg(4403, "Error"), MyLocale.getMsg(4404, "Could not connect to GPS-receiver.\n Error while opening serial Port ")
 						+ MyLocale.getMsg(4406, "Please copy jave_ewe.dll into the directory of the cachewolf program"), FormBase.OKB)).execute();
 			}
@@ -230,7 +234,8 @@ public class Navigate {
 				curTrack = new Track(trackColor);
 			try {
 				curTrack.add(gpsPos);
-			} catch (IndexOutOfBoundsException e) { // track full -> create a new one
+			}
+			catch (IndexOutOfBoundsException e) { // track full -> create a new one
 				curTrack = new Track(trackColor);
 				curTrack.add(gpsPos);
 				if (movingMap != null)
@@ -240,16 +245,18 @@ public class Navigate {
 				SkyOrientation.getSunAzimut(gpsPos.Time, gpsPos.Date, gpsPos.latDec, gpsPos.lonDec);
 				double jd = SkyOrientation.utc2juliandate(gpsPos.Time, gpsPos.Date);
 				skyOrientationDir = SkyOrientation.getLuminaryDir(luminary, jd, gpsPos);
-			} catch (NumberFormatException e) { // irgendeine Info zu Berechnung des Sonnenaziumt fehlt (insbesondere Datum und Uhrzeit sind nicht unbedingt gleichzeitig verfügbar wenn es einen Fix gibt)
+			}
+			catch (NumberFormatException e) { // irgendeine Info zu Berechnung des Sonnenaziumt fehlt (insbesondere Datum und Uhrzeit sind nicht unbedingt gleichzeitig verfügbar wenn es einen Fix gibt)
 				skyOrientationDir.set(-361, -361); // any value out of range (bigger than 360) will prevent drawArrows from drawing it
 			}
 
-		} else {
+		}
+		else {
 			skyOrientationDir.set(-361, -361); // any value out of range (bigger than 360) will prevent drawArrows from drawing it
 		}
 		gotoPanel.updateGps(fix);
 		if (movingMap != null)
-			movingMap.updateGps(fix);
+			movingMap.updatePositionFromGps(fix);
 	}
 }
 
@@ -268,7 +275,7 @@ class GpsdThread extends mThread {
 		int proto_major;
 
 		myGPS = GPSPoint;
-		gpsObj = new GPS(Global.getPref().gpsdHost, Global.getPref().gpsdPort);
+		gpsObj = new GPS(Global.pref.gpsdHost, Global.pref.gpsdPort);
 		gpsObj.stream(GPS.WATCH_ENABLE);
 
 		// Check major protocol version:
@@ -276,7 +283,8 @@ class GpsdThread extends mThread {
 
 		if (!response.getString("class").equals("VERSION")) {
 			throw new GPSException("Expected VERSION object at connect.");
-		} else if ((proto_major = response.getInt("proto_major")) != 3) {
+		}
+		else if ((proto_major = response.getInt("proto_major")) != 3) {
 			throw new GPSException("Invalid protocol API version; got " + proto_major + ", want 3.");
 		}
 	}
@@ -315,14 +323,17 @@ class GpsdThread extends mThread {
 
 					respClass = response.getString("class");
 					if (respClass.equals("DEVICE") && response.has("activated") && response.getDouble("activated") != 0) { // This is a new device, we need to tell gpsd we want to watch it:
-						Global.getPref().log("New GPS device, sending WATCH command.");
+						Global.pref.log("New GPS device, sending WATCH command.");
 						gpsObj.stream(GPS.WATCH_ENABLE);
-					} else if (respClass.equals("POLL")) {
-						gotValidData = myGPS.examineGpsd(response);
-					} else if (respClass.equals("ERROR")) {
-						// Global.getPref().log( "Ignored gpsd error: " + response.getString( "message" ) );
 					}
-				} catch (Exception e) {
+					else if (respClass.equals("POLL")) {
+						gotValidData = myGPS.examineGpsd(response);
+					}
+					else if (respClass.equals("ERROR")) {
+						// Global.pref.log( "Ignored gpsd error: " + response.getString( "message" ) );
+					}
+				}
+				catch (Exception e) {
 					// Something bad happened, will just ignore this JSON
 					// object:
 					// Ignored Exception", e, true);
@@ -331,7 +342,8 @@ class GpsdThread extends mThread {
 
 				if (gotValidData) {
 					notInterpreted = 0;
-				} else {
+				}
+				else {
 					notInterpreted++;
 				}
 				if (notInterpreted > 22) {
@@ -341,8 +353,9 @@ class GpsdThread extends mThread {
 
 			try {
 				sleep(1000);
-			} catch (InterruptedException e) {
-				// Global.getPref().log("Ignored Exception", e, true);
+			}
+			catch (InterruptedException e) {
+				// Global.pref.log("Ignored Exception", e, true);
 			}
 
 			noData++;
@@ -372,9 +385,10 @@ class OldGpsdThread extends mThread {
 
 	public OldGpsdThread(CWGPSPoint GPSPoint) throws IOException {
 		try {
-			gpsdSocket = new Socket(Global.getPref().gpsdHost, Global.getPref().gpsdPort);
-		} catch (IOException e) {
-			throw new IOException(Global.getPref().gpsdHost);
+			gpsdSocket = new Socket(Global.pref.gpsdHost, Global.pref.gpsdPort);
+		}
+		catch (IOException e) {
+			throw new IOException(Global.pref.gpsdHost);
 		} // catch (UnsatisfiedLinkError e) {} // TODO in original java-vm
 		myGPS = GPSPoint;
 	}
@@ -391,8 +405,9 @@ class OldGpsdThread extends mThread {
 				if (noData > 5) {
 					myGPS.noDataError();
 				}
-			} catch (InterruptedException e) {
-				// Global.getPref().log("Ignored Exception", e, true);
+			}
+			catch (InterruptedException e) {
+				// Global.pref.log("Ignored Exception", e, true);
 			}
 			if (gpsdSocket != null) {
 				gpsResult = getGpsdData("ADPQTV\r\n");
@@ -417,18 +432,21 @@ class OldGpsdThread extends mThread {
 		int rcvLength = 0;
 		try {
 			gpsdSocket.write(command.getBytes());
-		} catch (IOException e) {
-			Global.getPref().log("Socket exception", e, true);
+		}
+		catch (IOException e) {
+			Global.pref.log("Socket exception", e, true);
 		}
 		try {
 			sleep(100);
-		} catch (InterruptedException e) {
-			// Global.getPref().log("Ignored exception", e, true);
+		}
+		catch (InterruptedException e) {
+			// Global.pref.log("Ignored exception", e, true);
 		}
 		try {
 			rcvLength = gpsdSocket.read(rcvBuff);
-		} catch (IOException e) {
-			Global.getPref().log("Socket exception", e, true);
+		}
+		catch (IOException e) {
+			Global.pref.log("Socket exception", e, true);
 		}
 		String str = null;
 		if (rcvLength > 0) {
@@ -461,17 +479,20 @@ class SerialThread extends mThread {
 		try {
 			spo.portName = CacheWolf.Common.fixSerialPortName(spo.portName);
 			comSp = new SerialPort(spo);
-		} catch (IOException e) {
+		}
+		catch (IOException e) {
 			throw new IOException(spo.portName);
 		} // catch (UnsatisfiedLinkError e) {} // TODO in original java-vm
 		if (forwardIP.length() > 0) {
 			try {
 				tcpConn = new Socket(forwardIP, 23);
 				tcpForward = true;
-			} catch (ewe.net.UnknownHostException e) {
+			}
+			catch (ewe.net.UnknownHostException e) {
 				tcpForward = false;
 				lastError = e.getMessage();
-			} catch (IOException e) {
+			}
+			catch (IOException e) {
 				tcpForward = false;
 				lastError = e.getMessage();
 			}
@@ -490,8 +511,9 @@ class SerialThread extends mThread {
 				if (noData > 5) {
 					myGPS.noDataError();
 				}
-			} catch (InterruptedException e) {
-				// Global.getPref().log("Ignored Exception", e, true);
+			}
+			catch (InterruptedException e) {
+				// Global.pref.log("Ignored Exception", e, true);
 			}
 			if (comSp != null) {
 				comLength = comSp.nonBlockingRead(comBuff, 0, comBuff.length);
@@ -501,7 +523,8 @@ class SerialThread extends mThread {
 					if (tcpForward) {
 						try {
 							tcpConn.write(comBuff, 0, comLength);
-						} catch (IOException e) {
+						}
+						catch (IOException e) {
 							tcpForward = false;
 						}
 					}
@@ -546,12 +569,14 @@ class UpdateThread extends mThread {
 		while (run) {
 			try {
 				sleep(calldelay);
-			} catch (InterruptedException e) {
+			}
+			catch (InterruptedException e) {
 			}
 			try {
 				ticked.ticked();
-			} catch (Exception e) {
-				// Global.getPref().log("Navigate.UpdateThread.run(): Ignored Exception. There should not be an Exception, so please report it in the cachewolf forum at www.geoclub.de", e, true);
+			}
+			catch (Exception e) {
+				// Global.pref.log("Navigate.UpdateThread.run(): Ignored Exception. There should not be an Exception, so please report it in the cachewolf forum at www.geoclub.de", e, true);
 			}
 		}
 	}

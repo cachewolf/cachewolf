@@ -22,9 +22,9 @@
 package CacheWolf;
 
 import CacheWolf.utils.BetterUTF8Codec;
+import CacheWolf.utils.FileBugfix;
 import ewe.data.PropertyList;
 import ewe.io.AsciiCodec;
-import ewe.io.File;
 import ewe.io.FileBase;
 import ewe.io.FileOutputStream;
 import ewe.io.IOException;
@@ -107,7 +107,8 @@ public class UrlFetcher {
 	public static void fetchDataFile(String address, String target) throws IOException {
 		FileOutputStream outp = null;
 		try {
-			outp = new FileOutputStream(new File(target));
+			FileBugfix f = new FileBugfix(target);
+			outp = new FileOutputStream(f);
 			outp.write(fetchByteArray(address).toBytes());
 		} finally {
 			if (outp != null) outp.close();

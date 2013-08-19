@@ -67,9 +67,6 @@ public class MainTab extends mTabbedPanel {
 	SolverPanel solverP;
 	ewe.ui.CellPanel mapP;
 
-	Preferences pref;
-	Profile profile;
-
 	CacheDB cacheDB;
 	String lastselected = "";
 	public CacheHolder ch = null, chMain = null;
@@ -87,20 +84,21 @@ public class MainTab extends mTabbedPanel {
 		// Init here so that Global.MainT is already set
 		Global.mainTab = this;
 		mnuMain = mainMenu;
-		pref = Global.getPref();
-		profile = Global.getProfile();
-		if (!pref.tabsAtTop) tabLocation = SOUTH;
-		cacheDB = profile.cacheDB;
+		if (!Global.pref.tabsAtTop)
+			tabLocation = SOUTH;
+		cacheDB = Global.profile.cacheDB;
 		this.statBar = statBar;
 		MyLocale.setSIPButton();
 		// Don't expand tabs if the screen is very narrow, i.e. HP IPAQ
 		// 65xx, 69xx
 		int sw = MyLocale.getScreenWidth();
-		if (sw <= 480) this.dontExpandTabs = true;
+		if (sw <= 480)
+			this.dontExpandTabs = true;
 		String imagesize = "";
-		if (pref.useBigIcons) imagesize = "_vga";
+		if (Global.pref.useBigIcons)
+			imagesize = "_vga";
 
-		tbP = new TablePanel(pref, profile, statBar);
+		tbP = new TablePanel(statBar);
 		Card c = this.addCard(listP = new TableForm(tbP), MyLocale.getMsg(1200, "List"), null);
 		LIST_CARD = this.cardPanel.cards.size() - 1;
 		oldCard = LIST_CARD;
@@ -121,7 +119,7 @@ public class MainTab extends mTabbedPanel {
 		HINTSANDLOGS_CARD = this.cardPanel.cards.size() - 1;
 		c.iconize(new Image("more" + imagesize + ".gif"), true);
 
-		c = this.addCard(solverP = new SolverPanel(pref, profile), MyLocale.getMsg(1205, "Solver"), null);
+		c = this.addCard(solverP = new SolverPanel(), MyLocale.getMsg(1205, "Solver"), null);
 		SOLVER_CARD = this.cardPanel.cards.size() - 1;
 		c.iconize(new Image("solver" + imagesize + ".gif"), true);
 
@@ -137,13 +135,13 @@ public class MainTab extends mTabbedPanel {
 		c.iconize(new Image("goto" + imagesize + ".gif"), true);
 		nav.setGotoPanel(gotoP);
 
-		if (pref.isBigScreen || !pref.useRadar) {
+		if (Global.pref.isBigScreen || !Global.pref.useRadar) {
 			c = this.addCard(mapP = new ewe.ui.CellPanel(), MyLocale.getMsg(347, "Show map"), null);
 			MAP_CARD = this.cardPanel.cards.size() - 1;
 			c.iconize(new Image("globe_tab" + imagesize + ".gif"), true);
 		}
 
-		if (pref.isBigScreen || pref.useRadar) {
+		if (Global.pref.isBigScreen || Global.pref.useRadar) {
 			c = this.addCard(radarP, "Radar", null);
 			RADAR_CARD = this.cardPanel.cards.size() - 1;
 			radarP.setMainTab(this);
@@ -195,6 +193,7 @@ public class MainTab extends mTabbedPanel {
 	 * 
 	 */
 	private void onLeavingPanel(int panelNo) {
+		// mainly for doing changes from DETAILS_CARD
 		if (panelNo == MainTab.LIST_CARD) { // Leaving the list view
 			// Get the cache for the current line (ch)
 			// Get the details for the current line (chD)
@@ -205,7 +204,8 @@ public class MainTab extends mTabbedPanel {
 				ch = null;
 				chD = null;
 				lastselected = "";
-			} else {
+			}
+			else {
 				ch = cacheDB.get(tbP.getSelectedCache());
 				lastselected = ch.getWayPoint(); // Used in
 				// Parser.Skeleton
@@ -223,11 +223,12 @@ public class MainTab extends mTabbedPanel {
 					tbP.myMod.updateRows();// This sorts the waypoint (if
 					// it is new) into the right
 					// position
-					tbP.selectRow(profile.getCacheIndex(detP.cache.getWayPoint()));
+					tbP.selectRow(Global.profile.getCacheIndex(detP.cache.getWayPoint()));
 				}
 				// was tbP.refreshTable();
 				tbP.tc.update(true); // Update and repaint
-				if (statBar != null) statBar.updateDisplay("");
+				if (statBar != null)
+					statBar.updateDisplay("");
 			}
 		}
 		if (panelNo == MainTab.SOLVER_CARD) { // Leaving the Solver Panel
@@ -239,15 +240,18 @@ public class MainTab extends mTabbedPanel {
 					cacheDirty = true;
 					boolean oldHasSolver = chD.getParent().hasSolver();
 					chD.setSolver(solverP.getInstructions());
-					if (oldHasSolver != chD.getParent().hasSolver()) tbP.tc.update(true);
+					if (oldHasSolver != chD.getParent().hasSolver())
+						tbP.tc.update(true);
 					// For safety reasons: Immediately save solver
 					// instructions when
 					// switching panels
 					updatePendingChanges();
-				} else {
+				}
+				else {
 					boolean oldHasSolver = chMain.hasSolver();
 					chMain.getCacheDetails(true).setSolver(solverP.getInstructions());
-					if (oldHasSolver != chMain.hasSolver()) tbP.tc.update(true);
+					if (oldHasSolver != chMain.hasSolver())
+						tbP.tc.update(true);
 					chMain.save();
 					chMain = null;
 				}
@@ -268,59 +272,79 @@ public class MainTab extends mTabbedPanel {
 				tbP.refreshTable();
 			}
 			updateCurCentrePtFromGPS();
-		} else if (panelNo == DETAILS_CARD) {
+		}
+		else if (panelNo == DETAILS_CARD) {
 			boolean newCache = false;
 			if (chD == null) { // Empty DB - show a dummy detail
 				newWaypoint(ch = new CacheHolder());
 				newCache = true;
 			}
 			detP.setDetails(ch, newCache);
-		} else if (panelNo == DESCRIPTION_CARD) {
+		}
+		else if (panelNo == DESCRIPTION_CARD) {
 			descP.setText(ch);
-		} else if (panelNo == IMAGES_CARD) {
+		}
+		else if (panelNo == IMAGES_CARD) {
 			if (ch.isAddiWpt()) {
 				imageP.setImages(ch.mainCache.getCacheDetails(true));
-			} else {
+			}
+			else {
 				imageP.setImages(chD);
 			}
-		} else if (panelNo == HINTSANDLOGS_CARD) {
+		}
+		else if (panelNo == HINTSANDLOGS_CARD) {
 			if (ch.isAddiWpt()) {
 				hintLP.setText(ch.mainCache.getCacheDetails(true));
-			} else {
+			}
+			else {
 				hintLP.setText(chD);
 			}
-		} else if (panelNo == SOLVER_CARD) {
+		}
+		else if (panelNo == SOLVER_CARD) {
 			if (ch.isAddiWpt()) {
 				chMain = ch.mainCache;
 				solverP.setInstructions(ch.mainCache);
-			} else {
+			}
+			else {
 				solverP.setInstructions(ch);
 			}
-		} else if (panelNo == CALC_CARD) {
-			if (ch != null) calcP.setFields(ch);
-		} else if (panelNo == MAP_CARD) {
+		}
+		else if (panelNo == CALC_CARD) {
+			if (ch != null)
+				calcP.setFields(ch);
+		}
+		else if (panelNo == MAP_CARD) {
 			gotoP.switchToMovingMap();
 			if (oldCard == LIST_CARD) {
 				select(listP);
-			} else if (oldCard == DETAILS_CARD) {
+			}
+			else if (oldCard == DETAILS_CARD) {
 				select(detP);
-			} else if (oldCard == DESCRIPTION_CARD) {
+			}
+			else if (oldCard == DESCRIPTION_CARD) {
 				select(descP);
-			} else if (oldCard == IMAGES_CARD) {
+			}
+			else if (oldCard == IMAGES_CARD) {
 				select(imageP);
-			} else if (oldCard == HINTSANDLOGS_CARD) {
+			}
+			else if (oldCard == HINTSANDLOGS_CARD) {
 				select(hintLP);
-			} else if (oldCard == SOLVER_CARD) {
+			}
+			else if (oldCard == SOLVER_CARD) {
 				select(solverP);
-			} else if (oldCard == CALC_CARD) {
+			}
+			else if (oldCard == CALC_CARD) {
 				select(calcP);
-			} else if (oldCard == GOTO_CARD) {
+			}
+			else if (oldCard == GOTO_CARD) {
 				select(gotoP);
-			} else if (oldCard == RADAR_CARD) {
+			}
+			else if (oldCard == RADAR_CARD) {
 				select(radarP);
 			}
-		} else if (panelNo == RADAR_CARD) {
-			radarP.setParam(pref, cacheDB, ch);
+		}
+		else if (panelNo == RADAR_CARD) {
+			radarP.setParam(cacheDB, ch);
 			radarP.drawThePanel();
 			updateCurCentrePtFromGPS();
 		}
@@ -330,7 +354,8 @@ public class MainTab extends mTabbedPanel {
 	/**
 	 * this is called from MovingMap Cache context menu
 	 * 
-	 * @param chi ,
+	 * @param chi
+	 *            ,
 	 *            the CacheHolder for the Cache to switch to
 	 * @param panelNo
 	 *            1=DetailsPanel 2=Description Panel
@@ -345,13 +370,14 @@ public class MainTab extends mTabbedPanel {
 		// onEnteringPanel(LIST_CARD);
 
 		// to switch to cache selected on map we do action as if leaving LIST_CARD
-		tbP.selectRow(profile.getCacheIndex(chi.getWayPoint()));
+		tbP.selectRow(Global.profile.getCacheIndex(chi.getWayPoint()));
 		onLeavingPanel(LIST_CARD);
 
 		if (panelNo == DETAILS_CARD) {
 			onEnteringPanel(DETAILS_CARD);
 			select(detP);
-		} else if (panelNo == DESCRIPTION_CARD) {
+		}
+		else if (panelNo == DESCRIPTION_CARD) {
 			onEnteringPanel(DESCRIPTION_CARD);
 			select(descP);
 		}
@@ -372,10 +398,10 @@ public class MainTab extends mTabbedPanel {
 		updatePendingChanges(); // was: onEnteringPanel(0); oldCard=0;
 
 		mainCache = lastselected;
-		int selectedIndex = profile.getCacheIndex(lastselected);
+		int selectedIndex = Global.profile.getCacheIndex(lastselected);
 		if (selectedIndex >= 0) {
 			// why not using the target ???
-			CacheHolder selectedCache = profile.cacheDB.get(selectedIndex);
+			CacheHolder selectedCache = Global.profile.cacheDB.get(selectedIndex);
 			// try to start new waypoint with real coords
 			if (!pCh.getPos().isValid()) {
 				pCh.setPos(selectedCache.getPos());
@@ -387,27 +413,30 @@ public class MainTab extends mTabbedPanel {
 					if (!pCh.getPos().isValid()) {
 						pCh.setPos(selectedCache.mainCache.getPos());
 					}
-				} else {
+				}
+				else {
 					mainCache = null;
 				}
 			}
 		}
 		if (CacheType.isAddiWpt(pCh.getType()) && mainCache != null && mainCache.length() > 2) {
-			pCh.setWayPoint(profile.getNewAddiWayPointName(mainCache));
-			profile.setAddiRef(pCh);
-		} else {
-			pCh.setWayPoint(profile.getNewWayPointName("CW"));
+			pCh.setWayPoint(Global.profile.getNewAddiWayPointName(mainCache));
+			Global.profile.setAddiRef(pCh);
+		}
+		else {
+			pCh.setWayPoint(Global.profile.getNewWayPointName("CW"));
 			lastselected = pCh.getWayPoint();
 		}
 		pCh.setCacheSize(CacheSize.CW_SIZE_NOTCHOSEN);
 		chD = pCh.getCacheDetails(false);
 		this.ch = pCh;
 		cacheDB.add(pCh);
-		Global.getProfile().notifyUnsavedChanges(true); // Just to be sure
+		Global.profile.notifyUnsavedChanges(true); // Just to be sure
 		tbP.myMod.numRows++;
 		detP.setDetails(pCh, true);
 		oldCard = DETAILS_CARD;
-		if (this.cardPanel.selectedItem != 1) select(detP);
+		if (this.cardPanel.selectedItem != 1)
+			select(detP);
 		solverP.setInstructions(pCh);
 		// tbP.refreshTable(); // moved this instruction to onLeavingPanel
 
@@ -422,48 +451,51 @@ public class MainTab extends mTabbedPanel {
 	 */
 	public void SwitchToMovingMap(CWPoint centerTo, boolean forceCenter) {
 		try {
-			onLeavingPanel(oldCard); // mainly for doing changes from DETAILS_CARD
+			onLeavingPanel(oldCard);
 			if (!centerTo.isValid()) {
 				(new MessageBox("Error", "No valid coordinates", FormBase.OKB)).execute();
 				return;
 			}
 			if (mm == null) {
-				mm = new MovingMap(nav, profile.cacheDB);
-				nav.setMovingMap(mm);
+				mm = new MovingMap(nav);
 			}
 
-			mm.myExec(centerTo, forceCenter);
+			mm.display(centerTo, forceCenter);
+			// If white Areas are filled there is a problem with painting the image.
+			// We force painting here.
+			// mm.repaint();
 
 			if (forceCenter) {
 				try {
 					int i = 0;
+					// wait until the window size of the moving map is known
+					// note: ewe.sys.sleep() will pause the whole vm
+					//- no other thread will run
 					while (MapImage.screenDim.width == 0 && i < 10 * 60) {
 						i++;
 						ewe.sys.mThread.sleep(100);
-					} // wait until the window size of the moving map is
-					// known note: ewe.sys.sleep() will pause the whole
-					// vm - no other thread will run
+					}
 					if (i >= 10 * 60) {
 						(new MessageBox("Error", "MovingMap cannot be displayed - this is most likely a bug - plaese report it on www.geoclub.de", FormBase.OKB)).execute();
 						return;
 					}
-					// If white Areas are filled there is a problem with
-					// painting the image. We force painting here.
-					mm.repaint();
-				} catch (InterruptedException e) {
-					Global.getPref().log("Error starting mavoing map (1): ", e, true);
+				}
+				catch (InterruptedException e) {
+					Global.pref.log("Error starting mavoing map (1): ", e, true);
 					(new MessageBox("Error", "This must not happen please report to pfeffer how to produce this error message", FormBase.OKB)).execute();
 				}
 			}
-		} catch (Exception e) { // TODO swith waiting indication clock off
-			Global.getPref().log("Error starting moving map (2): ", e, true);
+		}
+		catch (Exception e) { // TODO swith waiting indication clock off
+			Global.pref.log("Error starting moving map (2): ", e, true);
 			(new MessageBox("Error", "Error starting moving map: " + e.getMessage(), FormBase.OKB)).execute();
 		}
 	}
 
 	void updatePendingChanges() {
 		if (cacheDirty) {
-			if (chD != null) chD.getParent().save();
+			if (chD != null)
+				chD.getParent().save();
 			cacheDirty = false;
 		}
 	}
@@ -481,9 +513,10 @@ public class MainTab extends mTabbedPanel {
 			oldCard = LIST_CARD;
 		}
 		updatePendingChanges();
-		if (profile.hasUnsavedChanges()) profile.saveIndex(Global.getPref(), true);
-		this.tbP.saveColWidth(pref);
-		Global.getPref().savePreferences();
+		if (Global.profile.hasUnsavedChanges())
+			Global.profile.saveIndex(true);
+		this.tbP.saveColWidth();
+		Global.pref.savePreferences();
 	}
 
 	private void checkProfileChange() {
@@ -496,13 +529,13 @@ public class MainTab extends mTabbedPanel {
 	}
 
 	private void updateCurCentrePtFromGPS() {
-		if (pref.setCurrentCentreFromGPSPosition) {
+		if (Global.pref.setCurrentCentreFromGPSPosition) {
 			if (nav.gpsRunning) {
 				CWPoint whereAmI = nav.gpsPos;
 				if (whereAmI.isValid()) {
-					CWPoint curCentr = pref.getCurCentrePt();
+					CWPoint curCentr = Global.pref.getCurCentrePt();
 					if (whereAmI.latDec != curCentr.latDec || whereAmI.lonDec != curCentr.lonDec) {
-						pref.setCurCentrePt(whereAmI);
+						Global.pref.setCurCentrePt(whereAmI);
 					}
 				}
 			}

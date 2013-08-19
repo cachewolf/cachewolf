@@ -67,9 +67,9 @@ public class myTableModel extends TableModel {
 	private int[] colMap;
 	/** The column widths corresponding to the list of columns above */
 	private int[] colWidth;
-	private String[] colName = { " ", "?", MyLocale.getMsg(1000, "D"), MyLocale.getMsg(1001, "T"), MyLocale.getMsg(1002, "Waypoint"), "Name", MyLocale.getMsg(1004, "Location"), MyLocale.getMsg(1005, "Owner"),
-			MyLocale.getMsg(1006, "Hidden"), MyLocale.getMsg(1007, "Status"), MyLocale.getMsg(1008, "Dist"), MyLocale.getMsg(1009, "Bear"), MyLocale.getMsg(1017, "S"), MyLocale.getMsg(1026, "#Rec"), MyLocale.getMsg(1027, "OC-IDX"),
-			MyLocale.getMsg(1038, "S"), MyLocale.getMsg(1040, "N"), MyLocale.getMsg(1047, "A"), MyLocale.getMsg(1049, "DNF"), MyLocale.getMsg(1051, "Last synced") };
+	private String[] colName = { " ", "?", MyLocale.getMsg(1000, "D"), MyLocale.getMsg(1001, "T"), MyLocale.getMsg(1002, "Waypoint"), "Name", MyLocale.getMsg(1004, "Location"), MyLocale.getMsg(1005, "Owner"), MyLocale.getMsg(1006, "Hidden"),
+			MyLocale.getMsg(1007, "Status"), MyLocale.getMsg(1008, "Dist"), MyLocale.getMsg(1009, "Bear"), MyLocale.getMsg(1017, "S"), MyLocale.getMsg(1026, "#Rec"), MyLocale.getMsg(1027, "OC-IDX"), MyLocale.getMsg(1038, "S"),
+			MyLocale.getMsg(1040, "N"), MyLocale.getMsg(1047, "A"), MyLocale.getMsg(1049, "DNF"), MyLocale.getMsg(1051, "Last synced") };
 
 	private static Image noFindLogs[] = new Image[4];
 	public static mImage red, blue, yellow; // skull, green
@@ -94,7 +94,7 @@ public class myTableModel extends TableModel {
 
 	public myTableModel(myTableControl tc, FontMetrics fm) {
 		super();
-		cacheDB = Global.getProfile().cacheDB;
+		cacheDB = Global.profile.cacheDB;
 		this.fm = fm;
 		tcControl = tc;
 		setColumnNamesAndWidths();
@@ -153,12 +153,12 @@ public class myTableModel extends TableModel {
 	 * 
 	 */
 	public void setColumnNamesAndWidths() {
-		colMap = TableColumnChooser.str2Array(Global.getPref().listColMap, 0, N_COLUMNS - 1, 0, -1);
-		colWidth = TableColumnChooser.str2Array(Global.getPref().listColWidth, 10, 1024, 50, colMap.length);
+		colMap = TableColumnChooser.str2Array(Global.pref.listColMap, 0, N_COLUMNS - 1, 0, -1);
+		colWidth = TableColumnChooser.str2Array(Global.pref.listColWidth, 10, 1024, 50, colMap.length);
 		numCols = colMap.length;
 		clearCellAdjustments();
 		// If the displayed columns include the checkbox, we use the full menu
-		if (("," + Global.getPref().listColMap + ",").indexOf(",0,") >= 0)
+		if (("," + Global.pref.listColMap + ",").indexOf(",0,") >= 0)
 			tcControl.setMenuFull();
 		else
 			tcControl.setMenuSmall();
@@ -178,7 +178,8 @@ public class myTableModel extends TableModel {
 		// Convert to string
 		StringBuffer sb = new StringBuffer(100);
 		for (int i = 0; i < N_COLUMNS; i++) {
-			if (sb.length() != 0) sb.append(',');
+			if (sb.length() != 0)
+				sb.append(',');
 			sb.append(colWidth[i]);
 		}
 		return sb.toString();
@@ -196,12 +197,14 @@ public class myTableModel extends TableModel {
 			ch = cacheDB.get(i);
 			if (!ch.isVisible()) {
 				notVisibleDB.add(ch);
-			} else { // point is not filtered
-				if (Global.getPref().SortingGroupedByCache) {
+			}
+			else { // point is not filtered
+				if (Global.pref.SortingGroupedByCache) {
 					if (ch.isAddiWpt()) { // unfiltered Addi Wpt
 						// check if main wpt is filtered
 						if (ch.mainCache != null) { // parent exists
-							if (!ch.mainCache.isVisible()) sortDB.add(ch); // Unfiltered Addi Wpt with
+							if (!ch.mainCache.isVisible())
+								sortDB.add(ch); // Unfiltered Addi Wpt with
 							// filtered Main Wpt, show it on
 							// its own
 							// else
@@ -211,19 +214,23 @@ public class myTableModel extends TableModel {
 							// regularly, when
 							// filtered addis are unfiltered, so there is not
 							// need to log this case.
-						} else { // Addi without main Cache
+						}
+						else { // Addi without main Cache
 							sortDB.add(ch);
 						}
-					} else { // Main Wpt, not filtered. Check for Addis
+					}
+					else { // Main Wpt, not filtered. Check for Addis
 						sortDB.add(ch);
 						if (ch.hasAddiWpt()) {
 							for (int j = 0; j < ch.addiWpts.getCount(); j++) {
 								addiWpt = (CacheHolder) ch.addiWpts.get(j);
-								if (addiWpt.isVisible()) sortDB.add(addiWpt);
+								if (addiWpt.isVisible())
+									sortDB.add(addiWpt);
 							}
 						}// if hasAddiWpt
 					} // if AddiWpt
-				} else {
+				}
+				else {
 					sortDB.add(ch);
 				}
 			} // if filtered
@@ -263,7 +270,7 @@ public class myTableModel extends TableModel {
 						lineColorBG.set(COLOR_FLAGED);
 					else if (ch.getCacheStatus().indexOf(MyLocale.getMsg(319, "not found")) > -1)
 						lineColorBG.set(COLOR_STATUS);
-					else if (Global.getPref().debug && ch.detailsLoaded()) {
+					else if (Global.pref.debug && ch.detailsLoaded()) {
 						lineColorBG.set(COLOR_DETAILS_LOADED);
 					}
 
@@ -271,13 +278,16 @@ public class myTableModel extends TableModel {
 						if (lineColorBG.equals(COLOR_WHITE)) {
 							lineColorBG.set(COLOR_ARCHIVED);
 							ta.foreground = COLOR_WHITE;
-						} else {
+						}
+						else {
 							ta.foreground = COLOR_ARCHIVED;
 						}
-					} else if (!ch.is_available()) {
+					}
+					else if (!ch.is_available()) {
 						if (lineColorBG.equals(COLOR_WHITE)) {
 							lineColorBG.set(COLOR_AVAILABLE);
-						} else {
+						}
+						else {
 							ta.foreground = COLOR_AVAILABLE;
 						}
 					}
@@ -291,17 +301,20 @@ public class myTableModel extends TableModel {
 					lastColorBG.set(ta.fillColor);
 					lastColorFG.set(ta.foreground);
 					lastRow = row;
-				} catch (Exception e) {
-					Global.getPref().log("[myTableModel:getCellAttributes]Ignored row=" + row + " lastRow=" + lastRow, e, true);
+				}
+				catch (Exception e) {
+					Global.pref.log("[myTableModel:getCellAttributes]Ignored row=" + row + " lastRow=" + lastRow, e, true);
 				}
 				;
-			} else {
+			}
+			else {
 				// Here: We already had this row.
 				// Take color computed for last column
 				ta.fillColor = lastColorBG;
 				ta.foreground = lastColorFG;
 			}
-		} else if (row == -1 && colMap[col] == 0 && Global.getProfile().showBlacklisted()) {
+		}
+		else if (row == -1 && colMap[col] == 0 && Global.profile.showBlacklisted()) {
 			ta.fillColor = Color.Black;
 			lastColorBG.set(ta.fillColor);
 		}
@@ -350,11 +363,13 @@ public class myTableModel extends TableModel {
 				if (sortAscending) {
 					return new IconAndText(imgSortUp, colName[colMap[col]], fm);
 					// return "^ "+colName[colMap[col]];
-				} else {
+				}
+				else {
 					return new IconAndText(imgSortDown, colName[colMap[col]], fm);
 					// return "v "+colName[colMap[col]];
 				}
-			} else {
+			}
+			else {
 				return colName[colMap[col]];
 			}
 		}
@@ -373,29 +388,37 @@ public class myTableModel extends TableModel {
 				case 2: // Difficulty;
 					if (!ch.isCacheWpt()) {
 						return "";
-					} else {
+					}
+					else {
 						return CacheTerrDiff.longDT(ch.getHard());
 					}
 				case 3: // Terrain
 					if (!ch.isCacheWpt()) {
 						return "";
-					} else {
+					}
+					else {
 						return CacheTerrDiff.longDT(ch.getTerrain());
 					}
 				case 4: // Waypoint
 					if (showExtraWptInfo) {
-						if (ch.is_incomplete()) return ch.getIconAndTextWP(4, fm);
-						if (ch.is_new()) return ch.getIconAndTextWP(3, fm);
-						if (ch.is_updated()) return ch.getIconAndTextWP(2, fm);
-						if (ch.is_log_updated()) return ch.getIconAndTextWP(1, fm);
+						if (ch.is_incomplete())
+							return ch.getIconAndTextWP(4, fm);
+						if (ch.is_new())
+							return ch.getIconAndTextWP(3, fm);
+						if (ch.is_updated())
+							return ch.getIconAndTextWP(2, fm);
+						if (ch.is_log_updated())
+							return ch.getIconAndTextWP(1, fm);
 					}
 					return ch.getWayPoint();
 				case 5: // Cachename
 					// Fast return for majority of case
-					if (!showExtraWptInfo || (ch.has_bugs() == false && ch.getNoFindLogs() == 0)) return ch.getCacheName();
+					if (!showExtraWptInfo || (ch.has_bugs() == false && ch.getNoFindLogs() == 0))
+						return ch.getCacheName();
 					// Now need more checks
 					IconAndText wpVal = new IconAndText();
-					if (ch.has_bugs() == true) wpVal.addColumn(bug);
+					if (ch.has_bugs() == true)
+						wpVal.addColumn(bug);
 					if (ch.getNoFindLogs() > 0) {
 						if (ch.getNoFindLogs() > noFindLogs.length)
 							wpVal.addColumn(noFindLogs[noFindLogs.length - 1]);
@@ -419,7 +442,8 @@ public class myTableModel extends TableModel {
 				case 12: // Size
 					if (ch.isAddiWpt()) {
 						return "";
-					} else {
+					}
+					else {
 						return sizePics[CacheSize.guiSizeImageId(ch.getCacheSize())];
 					}
 				case 13: // OC / gcvote Bewertung
@@ -443,31 +467,36 @@ public class myTableModel extends TableModel {
 				case 17: // Number of Additional Waypoints;
 					if (ch.mainCache == null && ch.addiWpts.size() > 0) {
 						return String.valueOf(ch.addiWpts.size());
-					} else {
+					}
+					else {
 						return "";
 					}
 				case 18: // Number of DNF logs
 					if (ch.getNoFindLogs() > 0) {
 						return String.valueOf(ch.getNoFindLogs());
-					} else {
+					}
+					else {
 						return "";
 					}
 				case 19: // Last sync date
 					if (!ch.getLastSync().equals("")) {
 						try {
 							lastSyncWorker.parse(ch.getLastSync(), "yyyyMMddHHmmss");
-						} catch (IllegalArgumentException e) {
-							Global.getPref().log("Could not parse 'lastSyncDate': " + ch.getLastSync() + ". Reset to empty.", e);
+						}
+						catch (IllegalArgumentException e) {
+							Global.pref.log("Could not parse 'lastSyncDate': " + ch.getLastSync() + ". Reset to empty.", e);
 							ch.setLastSync("");
 						}
 						return lastSyncWorker.format("yyyy-MM-dd HH:mm");
-					} else {
+					}
+					else {
 						return "";
 					}
 				} // Switch
 			} // if
-		} catch (Exception e) {
-			// Global.getPref().log("[myTableModel:getCellData]Ignored", e,true);
+		}
+		catch (Exception e) {
+			// Global.pref.log("[myTableModel:getCellData]Ignored", e,true);
 			return null;
 		}
 		return null;
@@ -475,12 +504,13 @@ public class myTableModel extends TableModel {
 
 	public boolean penPressed(Point onTable, Point cell) {
 		boolean retval = false;
-		if (cell == null) return false;
+		if (cell == null)
+			return false;
 		try {
 			// Check whether the click is on the checkbox image
 			tcControl.clickedColumn = colMap[cell.x];
 			if (cell.y >= 0 && colMap[cell.x] == 0) {
-				Global.getProfile().selectionChanged = true;
+				Global.profile.selectionChanged = true;
 				if ((penEventModifiers & IKeys.SHIFT) > 0) {
 					if (tcControl.cursor.y >= 0) {
 						// Second row being marked with shift key pressed
@@ -488,10 +518,12 @@ public class myTableModel extends TableModel {
 							toggleSelect(tcControl.cursor.y + 1, cell.y, cell.x);
 						else
 							toggleSelect(cell.y, tcControl.cursor.y - 1, cell.x);
-					} else {
+					}
+					else {
 						// Remember this row as start of range, but don't toggle yet
 					}
-				} else { // Single row marked
+				}
+				else { // Single row marked
 					toggleSelect(cell.y, cell.y, cell.x);
 				}
 			}
@@ -502,12 +534,14 @@ public class myTableModel extends TableModel {
 				boolean sortvalue = true;
 				if (mappedCol == 0)
 					sortvalue = !showExtraWptInfo;
-				else if (mappedCol == sortedBy) sortvalue = !sortAscending;
+				else if (mappedCol == sortedBy)
+					sortvalue = !sortAscending;
 				sortTable(mappedCol, sortvalue);
 				retval = true;
 			}
-		} catch (NullPointerException npex) {
-			Global.getPref().log("[myTableModel:Penpressed]", npex, true);
+		}
+		catch (NullPointerException npex) {
+			Global.pref.log("[myTableModel:Penpressed]", npex, true);
 			Vm.showWait(false);
 		}
 		return retval;
@@ -520,22 +554,26 @@ public class myTableModel extends TableModel {
 			// Hide/unhide the additional information about a waypoint such as
 			// travelbugs/number of notfound logs/yellow circle/red circle etc.
 			// This helps on small PDA screens
-			if (mappedCol == 0) showExtraWptInfo = howToDo;
-		} else {
+			if (mappedCol == 0)
+				showExtraWptInfo = howToDo;
+		}
+		else {
 			sortAscending = howToDo;
 			Vm.showWait(true);
 			// get selected Cache
 			Point a = tcControl.getSelectedCell(null);
 			CacheHolder ch = null;
-			if ((a != null) && (a.y >= 0) && (a.y < cacheDB.size())) ch = cacheDB.get(a.y);
+			if ((a != null) && (a.y >= 0) && (a.y < cacheDB.size()))
+				ch = cacheDB.get(a.y);
 			cacheDB.sort(new MyComparer(cacheDB, sortedBy, numRows), !sortAscending);
 			updateRows();
 			// = cacheDB.rebuild(sortedVector of ch,
 			// invisibleVector of ch)
 			// select previously selected Cache again
 			if (ch != null) {
-				int rownum = Global.getProfile().getCacheIndex(ch.getWayPoint());
-				if (rownum >= 0) tcControl.cursorTo(rownum, 0, true);
+				int rownum = Global.profile.getCacheIndex(ch.getWayPoint());
+				if (rownum >= 0)
+					tcControl.cursorTo(rownum, 0, true);
 			}
 			this.isSorted = true;
 			Vm.showWait(false);
@@ -564,7 +602,8 @@ public class myTableModel extends TableModel {
 				// toggle addis too, if there are.
 				ch.is_Checked = !ch.is_Checked;
 				checkAddiWpts = true;
-			} else {
+			}
+			else {
 				// If not a single row click...
 				if (ch.isAddiWpt()) {
 					// Only toggle addis, if their main cache is not within the
@@ -572,11 +611,13 @@ public class myTableModel extends TableModel {
 					int mainIdx = cacheDB.getIndex(ch.mainCache);
 					if (mainIdx < from - 1 || mainIdx > to) {
 						ch.is_Checked = !ch.is_Checked;
-					} else {
+					}
+					else {
 						// Otherwise the addis will be toggled along with their
 						// main caches, so nothing is to do here.
 					}
-				} else {
+				}
+				else {
 					// If its a main cache, then toggle it and remember to
 					// toggle the addis, too.
 					ch.is_Checked = !ch.is_Checked;

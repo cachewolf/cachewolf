@@ -28,11 +28,9 @@ import CacheWolf.CacheSize;
 import CacheWolf.CacheType;
 import CacheWolf.Common;
 import CacheWolf.Global;
-import CacheWolf.Preferences;
-import CacheWolf.Profile;
+import CacheWolf.utils.FileBugfix;
 import ewe.filechooser.FileChooser;
 import ewe.filechooser.FileChooserBase;
-import ewe.io.File;
 import ewe.io.FileBase;
 import ewe.io.FileOutputStream;
 import ewe.io.IOException;
@@ -54,13 +52,9 @@ public class TomTomExporter {
 	public final static String expName = "TomTom";
 
 	CacheDB cacheDB;
-	Preferences pref;
-	Profile profile;
 
 	public TomTomExporter() {
-		profile = Global.getProfile();
-		pref = Global.getPref();
-		cacheDB = profile.cacheDB;
+		cacheDB = Global.profile.cacheDB;
 	}
 
 	public void doIt() {
@@ -72,7 +66,7 @@ public class TomTomExporter {
 			return;
 		fileFormat = infoScreen.getFormat();
 
-		dirName = pref.getExportPath(expName);
+		dirName = Global.pref.getExportPath(expName);
 
 		if (infoScreen.oneFilePerType()) {
 			FileChooser fc = new FileChooser(FileChooserBase.DIRECTORY_SELECT, dirName);
@@ -80,10 +74,11 @@ public class TomTomExporter {
 			if (fc.execute() == FormBase.IDCANCEL)
 				return;
 			dirName = fc.getChosen();
-			pref.setExportPath(expName, dirName);
+			Global.pref.setExportPath(expName, dirName);
 			prefix = infoScreen.getPrefix();
 			writeOneFilePerType(fileFormat, dirName, prefix);
-		} else {
+		}
+		else {
 			FileChooser fc = new FileChooser(FileChooserBase.SAVE, dirName);
 			fc.setTitle("Select target file:");
 
@@ -95,14 +90,14 @@ public class TomTomExporter {
 			if (fc.execute() == FormBase.IDCANCEL)
 				return;
 			fileName = fc.getChosen();
-			pref.setExportPathFromFileName(expName, fileName);
+			Global.pref.setExportPathFromFileName(expName, fileName);
 			writeSingleFile(fileFormat, fileName);
 		}
 	}
 
 	public void writeOneFilePerType(int format, String dirName, String prefix) {
 		RandomAccessFile out = null;
-		File dfile;
+		FileBugfix dfile;
 		String ext, fileName = null;
 
 		CacheHolder holder;
@@ -132,7 +127,7 @@ public class TomTomExporter {
 				typeName = typeName.substring(0, typeName.length() - 4);
 
 				fileName = dirName + "/" + prefix + typeName + ext;
-				dfile = new File(fileName);
+				dfile = new FileBugfix(fileName);
 				dfile.delete();
 				out = new RandomAccessFile(fileName, "rw");
 				for (int i = 0; i < cacheDB.size(); i++) {
@@ -146,29 +141,32 @@ public class TomTomExporter {
 							continue;
 						if (format == TT_ASC) {
 							writeRecordASCII(out, holder, holder.getPos().getLatDeg(CWPoint.DD), holder.getPos().getLonDeg(CWPoint.DD));
-						} else {
+						}
+						else {
 							writeRecordBinary(out, holder, holder.getPos().getLatDeg(CWPoint.DD), holder.getPos().getLonDeg(CWPoint.DD));
 						}
 					}// if
 				}// for cacheDB
 				out.close();
 				// check for empty files and delete them
-				dfile = new File(fileName);
+				dfile = new FileBugfix(fileName);
 				if (dfile.length() == 0) {
 					dfile.delete();
-				} else {
+				}
+				else {
 					copyIcon(j, dirName + "/" + prefix, typeName);
 				}
 			}// for wayType
 			progressForm.exit(0);
-		} catch (IOException e) {
-			pref.log("Problem creating file! " + fileName, e, true);
+		}
+		catch (IOException e) {
+			Global.pref.log("Problem creating file! " + fileName, e, true);
 		}// try
 	}
 
 	public void writeSingleFile(int format, String fileName) {
 		RandomAccessFile out = null;
-		File dfile;
+		FileBugfix dfile;
 
 		CacheHolder holder;
 		ProgressBarForm pbf = new ProgressBarForm();
@@ -182,7 +180,7 @@ public class TomTomExporter {
 		int expCount = 0;
 
 		try {
-			dfile = new File(fileName);
+			dfile = new FileBugfix(fileName);
 			dfile.delete();
 			out = new RandomAccessFile(fileName, "rw");
 			for (int i = 0; i < cacheDB.size(); i++) {
@@ -195,7 +193,8 @@ public class TomTomExporter {
 						continue;
 					if (format == TT_ASC) {
 						writeRecordASCII(out, holder, holder.getPos().getLatDeg(CWPoint.DD), holder.getPos().getLonDeg(CWPoint.DD));
-					} else {
+					}
+					else {
 						writeRecordBinary(out, holder, holder.getPos().getLatDeg(CWPoint.DD), holder.getPos().getLonDeg(CWPoint.DD));
 					}
 				}// if
@@ -203,8 +202,9 @@ public class TomTomExporter {
 			out.close();
 			copyIcon(0, fileName.substring(0, fileName.indexOf(".")), "");
 			pbf.exit(0);
-		} catch (Exception e) {
-			pref.log("Problem writing to file! " + fileName, e, true);
+		}
+		catch (Exception e) {
+			Global.pref.log("Problem writing to file! " + fileName, e, true);
 		}// try
 	}
 
@@ -228,8 +228,9 @@ public class TomTomExporter {
 			outp.writeBytes(" - ");
 			outp.writeBytes(CacheSize.cw2ExportString(ch.getCacheSize()));
 			outp.writeBytes("\"\r\n");
-		} catch (IOException e) {
-			pref.log("Error writing to file", e, true);
+		}
+		catch (IOException e) {
+			Global.pref.log("Error writing to file", e, true);
 		}
 		return;
 	}
@@ -267,8 +268,9 @@ public class TomTomExporter {
 			outp.writeBytes(CacheSize.cw2ExportString(ch.getCacheSize()));
 			d = 0;
 			outp.writeByte((byte) d);
-		} catch (IOException e) {
-			pref.log("Error writing to file", e, true);
+		}
+		catch (IOException e) {
+			Global.pref.log("Error writing to file", e, true);
 		}
 
 		return;
@@ -283,8 +285,9 @@ public class TomTomExporter {
 			outp.writeByte(buf.data[2]);
 			outp.writeByte(buf.data[1]);
 			outp.writeByte(buf.data[0]);
-		} catch (IOException e) {
-			pref.log("Error writing to file", e, true);
+		}
+		catch (IOException e) {
+			Global.pref.log("Error writing to file", e, true);
 		}
 
 		return;
@@ -294,7 +297,8 @@ public class TomTomExporter {
 		ZipFile zif = null;
 		try {
 			zif = new ZipFile(FileBase.getProgramDirectory() + FileBase.separator + "exporticons" + FileBase.separator + "TomTom.zip");
-		} catch (IOException e) {
+		}
+		catch (IOException e) {
 		}
 		try {
 			if (zif == null) {
@@ -317,10 +321,12 @@ public class TomTomExporter {
 			fos.flush();
 			fos.close();
 			fis.close();
-		} catch (ZipException e) {
-			pref.log("Problem copying Icon " + "GC-" + typeName + ".bmp", e, true);
-		} catch (IOException e) {
-			pref.log("Problem copying Icon " + "GC-" + typeName + ".bmp", e, true);
+		}
+		catch (ZipException e) {
+			Global.pref.log("Problem copying Icon " + "GC-" + typeName + ".bmp", e, true);
+		}
+		catch (IOException e) {
+			Global.pref.log("Problem copying Icon " + "GC-" + typeName + ".bmp", e, true);
 		}
 	}
 

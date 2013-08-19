@@ -79,8 +79,6 @@ public final class CalcPanel extends CellPanel {
 	// Needed for creation of new waypoint
 	CacheDB cacheDB;
 	MainTab mainT;
-	Preferences pref;
-	Profile profile;
 	// different panels to avoid spanning
 	CellPanel TopP = new CellPanel();
 	CellPanel BottomP = new CellPanel();
@@ -92,10 +90,8 @@ public final class CalcPanel extends CellPanel {
 	mButton btnChangeLatLon;
 
 	public CalcPanel() {
-		pref = Global.getPref();
-		profile = Global.getProfile();
 		mainT = Global.mainTab;
-		cacheDB = profile.cacheDB;
+		cacheDB = Global.profile.cacheDB;
 
 		TopP.addNext(chkDD = new mCheckBox("d.d°"), CellConstants.DONTSTRETCH, CellConstants.WEST);
 		TopP.addNext(chkDMM = new mCheckBox("d°m.m\'"), CellConstants.DONTSTRETCH, CellConstants.WEST);
@@ -128,9 +124,10 @@ public final class CalcPanel extends CellPanel {
 		}
 		BottomP.addLast(chcDistUnit = new mChoice(new String[] { "m", "km", MyLocale.getMsg(1407, "steps"), MyLocale.getMsg(1408, "feet"), MyLocale.getMsg(1409, "yards"), MyLocale.getMsg(1410, "miles") }, 0), CellConstants.DONTSTRETCH,
 				(CellConstants.HFILL | CellConstants.WEST)).setTag(CellConstants.INSETS, new ewe.fx.Insets(0, 2, 0, 0));
-		if (Global.getPref().metricSystem == Metrics.METRIC) {
+		if (Global.pref.metricSystem == Metrics.METRIC) {
 			chcDistUnit.setInt(0); // Meter
-		} else {
+		}
+		else {
 			chcDistUnit.setInt(3); // Feet
 		}
 
@@ -258,7 +255,8 @@ public final class CalcPanel extends CellPanel {
 						btnChangeLatLon.setText(InScr.getCoords().toString(getLocalCooSystem()));
 						coordInp.set(InScr.getCoords());
 					}
-				} else {
+				}
+				else {
 					CoordsScreen cs = new CoordsScreen();
 					readFields(coordInp, bd);
 					cs.setFields(coordInp, getLocalCooSystem());

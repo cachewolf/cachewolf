@@ -143,9 +143,9 @@ public class TravelbugList extends MinML{
 			parse(new StringReader(XMLString));
 		} catch (Exception e) {
 			if (e instanceof NullPointerException)
-				Global.getPref().log("Error reading cache-travelbug list: NullPointerException in Element "+lastName +". Wrong attribute?",e,true);
+				Global.pref.log("Error reading cache-travelbug list: NullPointerException in Element "+lastName +". Wrong attribute?",e,true);
 			else 
-				Global.getPref().log("Error reading cache-travelbug list: ", e);
+				Global.pref.log("Error reading cache-travelbug list: ", e);
 		};
 	}
 	

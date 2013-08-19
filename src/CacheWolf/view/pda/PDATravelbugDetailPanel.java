@@ -21,8 +21,8 @@
 */
 package CacheWolf.view.pda;
 
+import CacheWolf.Global;
 import CacheWolf.MyLocale;
-import CacheWolf.Preferences;
 import CacheWolf.TravelbugJourney;
 import ewe.fx.Color;
 import ewe.fx.Dimension;
@@ -173,7 +173,7 @@ public class PDATravelbugDetailPanel extends Form {
 		pnlName.addLast(panel, STRETCH, FILL);
 		// VON-Tab
 		mLabel label = new mLabel(MyLocale.getMsg(6058, "Retrieved:"));
-		Font tmpFont = new Font("Helvetica", Font.BOLD, Preferences.getPrefObject().fontSize * 2);
+		Font tmpFont = new Font("Helvetica", Font.BOLD, Global.pref.fontSize * 2);
 		label.font = tmpFont;
 		panel.addLast(label, DONTSTRETCH, DONTFILL | WEST);
 		panel.addNext(new mLabel(MyLocale.getMsg(6029, "Profile/Cache:")), DONTSTRETCH, DONTFILL | WEST);
@@ -237,7 +237,7 @@ public class PDATravelbugDetailPanel extends Form {
 		// ------------------------------------------------
 		CellPanel pnlDest = new CellPanel();
 		label = new mLabel(MyLocale.getMsg(6035, "Mission:"));
-		tmpFont = new Font("Helvetica", Font.BOLD, Preferences.getPrefObject().fontSize * 2);
+		tmpFont = new Font("Helvetica", Font.BOLD, Global.pref.fontSize * 2);
 		label.setFont(tmpFont);
 		pnlDest.addLast(label, DONTSTRETCH, DONTFILL);
 		txtMission = new HtmlDisplay();
@@ -263,38 +263,42 @@ public class PDATravelbugDetailPanel extends Form {
 		case ControlEvent.PRESSED:
 			String action = paramEvent.action;
 			if (action.equals(FORWARD)) {
-				pnlTab.select(pnlTab.getSelectedItem()+1);
-			} else if (action.equals(BACK)) {
-				pnlTab.select(pnlTab.getSelectedItem()-1);
-//				pnlTab.selectNextTab(false, true);
-			} else if (action.equals(MENUE)) {
+				pnlTab.select(pnlTab.getSelectedItem() + 1);
+			}
+			else if (action.equals(BACK)) {
+				pnlTab.select(pnlTab.getSelectedItem() - 1);
+				//				pnlTab.selectNextTab(false, true);
+			}
+			else if (action.equals(MENUE)) {
 				PDATravelbugDetailMenu detailMenu = new PDATravelbugDetailMenu(this, view);
 				int execute = detailMenu.execute();
-				if (execute == 1){
+				if (execute == 1) {
 					exit(0);
-				}				
-			} else if (action.equals(FROM_DATE) || action.equals(TO_DATE)) {
+				}
+			}
+			else if (action.equals(FROM_DATE) || action.equals(TO_DATE)) {
 				mInput inpDate = action.equals(FROM_DATE) ? inpFromDate : inpToDate;
 				PDADateTimeChooser dc = new PDADateTimeChooser();
 				dc.setTitle(MyLocale.getMsg(328, "Date found"));
 				dc.setLocation(0, 0);
-//				dc.setPreferredSize(240, 240);
+				//				dc.setPreferredSize(240, 240);
 				String foundDate = inpDate.getText();
 				Time t = new Time();
 				try {
 					t.parse(foundDate, "y-M-d H:m");
-				} catch (IllegalArgumentException e) {
+				}
+				catch (IllegalArgumentException e) {
 					try {
 						t.parse(foundDate, "y-M-d");
-					} catch (IllegalArgumentException e1) {
+					}
+					catch (IllegalArgumentException e1) {
 						// Can't parse date - should not happen
 					}
 				}
 				dc.reset(t);
 				if (dc.execute() == ewe.ui.FormBase.IDOK) {
-					inpDate.setText(Convert.toString(dc.getYear ()) + "-" + MyLocale.formatLong(dc.getMonth (), "00") + "-"
-							+ MyLocale.formatLong(dc.getDay(), "00") + " " + dc.getTime() + " " + MyLocale.formatLong(dc.getHour(), "00") +
-							":"+MyLocale.formatLong(dc.getMinute(), "00"));
+					inpDate.setText(Convert.toString(dc.getYear()) + "-" + MyLocale.formatLong(dc.getMonth(), "00") + "-" + MyLocale.formatLong(dc.getDay(), "00") + " " + dc.getTime() + " " + MyLocale.formatLong(dc.getHour(), "00") + ":"
+							+ MyLocale.formatLong(dc.getMinute(), "00"));
 				}
 			}
 		}
@@ -309,7 +313,8 @@ public class PDATravelbugDetailPanel extends Form {
 		if (travelbug.getToDate().length() == 0 && travelbug.getFromDate().length() > 0) {
 			Gui.takeFocus(btnToDate, paramInt);
 
-		} else {
+		}
+		else {
 			Gui.takeFocus(btnFromDate, paramInt);
 		}
 	}

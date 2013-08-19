@@ -87,11 +87,11 @@ public final class CWWrapper {
 	public static boolean execute(String cmd) {
 		try {
 			if (cmd == null) {
-				Global.getPref().log("execute: empty command", null);
+				Global.pref.log("execute: empty command", null);
 				return false;
 			}
 			if (cmd.length() == 0) {
-				Global.getPref().log("execute: empty command", null);
+				Global.pref.log("execute: empty command", null);
 				return false;
 			}
 
@@ -100,13 +100,13 @@ public final class CWWrapper {
 			p.waitFor();
 			String errorMsg = errorStream.readALine();
 			if (errorMsg != null) {
-				Global.getPref().log("execute: " + cmd + errorMsg, null);
+				Global.pref.log("execute: " + cmd + errorMsg, null);
 				return false;
 			}
 			errorStream.close();
 			return true;
 		} catch (Exception ex) {
-			Global.getPref().log("execute: " + cmd, ex, true);
+			Global.pref.log("execute: " + cmd, ex, true);
 			return false;
 		}
 	}

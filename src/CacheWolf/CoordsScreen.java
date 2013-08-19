@@ -130,7 +130,8 @@ public class CoordsScreen extends Form {
 			mainPanel.addNext(new mLabel(MyLocale.getMsg(1402, "Easting")), CellConstants.DONTSTRETCH, (CellConstants.DONTFILL | CellConstants.SOUTHWEST));
 			mainPanel.addNext(new mLabel(MyLocale.getMsg(1401, "Northing")), CellConstants.DONTSTRETCH, (CellConstants.DONTFILL | CellConstants.SOUTHWEST));
 			mainPanel.addLast(btnClear = new mButton(MyLocale.getMsg(1413, "Clear")), CellConstants.HSTRETCH, (CellConstants.HFILL));
-		} else {
+		}
+		else {
 			mainPanel.addNext(new mLabel(MyLocale.getMsg(1400, "Zone")), CellConstants.DONTSTRETCH, (CellConstants.DONTFILL | CellConstants.SOUTHWEST));
 			mainPanel.addNext(new mLabel(MyLocale.getMsg(1402, "Easting")), CellConstants.DONTSTRETCH, (CellConstants.DONTFILL | CellConstants.SOUTHWEST));
 			mainPanel.addNext(new mLabel(MyLocale.getMsg(1401, "Northing")), CellConstants.DONTSTRETCH, (CellConstants.DONTFILL | CellConstants.SOUTHWEST));
@@ -253,7 +254,8 @@ public class CoordsScreen extends Form {
 				coords.set(inpUTMNorthing.getText(), inpUTMEasting.getText(), inpUTMZone.getText(), currFormat);
 			else
 				coords.set(inpUTMNorthing.getText(), inpUTMEasting.getText(), currFormat);
-		} else {
+		}
+		else {
 			NS = chcNS.getInt() == 0 ? "N" : "S";
 			EW = chcEW.getInt() == 0 ? "E" : "W";
 			coords.set(NS, inpNSDeg.getText(), inpNSm.getText(), inpNSs.getText(), EW, inpEWDeg.getText(), inpEWm.getText(), inpEWs.getText(), currFormat);
@@ -276,11 +278,13 @@ public class CoordsScreen extends Form {
 					inpUTMZone.setText(pp.getZoneString());
 				else
 					inpUTMZone.setText("");
-			} else {
+			}
+			else {
 				inpUTMNorthing.setText("0");
 				inpUTMEasting.setText("0");
 			}
-		} else {
+		}
+		else {
 			chcNS.setInt(coords.getNSLetter().equals("N") ? 0 : 1);
 			chcEW.setInt(coords.getEWLetter().equals("E") ? 0 : 1);
 
@@ -344,7 +348,8 @@ public class CoordsScreen extends Form {
 						if ((new MessageBox(MyLocale.getMsg(144, "Warnung"), MyLocale.getMsg(1412, "Coordinates invalid. Apply anyway?"), FormBase.DEFOKB | FormBase.NOB)).execute() == FormBase.IDOK) {
 							this.close(IDOK);
 						}
-					} else {
+					}
+					else {
 						(new MessageBox(MyLocale.getMsg(321, "Error"), MyLocale.getMsg(1411, "Please enter valid coordinates"), FormBase.OKB)).execute();
 					}
 				}
@@ -364,16 +369,18 @@ public class CoordsScreen extends Form {
 				CWPoint coord;
 				String inp = inpText.getText().trim().toUpperCase();
 				if (inp.startsWith("GC")) {
-					SpiderGC spider = new SpiderGC(Global.getPref(), Global.getProfile());
+					SpiderGC spider = new SpiderGC();
 					coord = new CWPoint(spider.getCacheCoordinates(inp));
-					Global.getPref().setOldGCLanguage();
-				} else {
+					Global.pref.setOldGCLanguage();
+				}
+				else {
 					coord = new CWPoint(inp);
 				}
 				if (!coord.isValid()) {
 					MessageBox tmpMB = new MessageBox(MyLocale.getMsg(321, "Error"), MyLocale.getMsg(4111, "Coordinates must be entered in the format N DD MM.MMM E DDD MM.MMM"), FormBase.OKB);
 					tmpMB.exec();
-				} else {
+				}
+				else {
 					currFormat = getLocalSystem(combineToFormatSel(chkFormat.getSelectedIndex(), localCooSystem.getInt()));
 					setFields(coord, currFormat);
 					this.repaintNow();

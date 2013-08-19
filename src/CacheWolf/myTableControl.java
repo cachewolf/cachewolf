@@ -53,8 +53,6 @@ import ewe.ui.mList;
  */
 public class myTableControl extends TableControl {
 
-	public Preferences pref;
-	public Profile profile;
 	public CacheDB cacheDB;
 	public TablePanel tbp;
 
@@ -70,9 +68,7 @@ public class myTableControl extends TableControl {
 	private Menu mSmall;
 
 	myTableControl(TablePanel tablePanel) {
-		profile = Global.getProfile();
-		cacheDB = profile.cacheDB;
-		pref = Global.getPref();
+		cacheDB = Global.profile.cacheDB;
 		tbp = tablePanel;
 		allowDragSelection = false; // allow only one row to be selected at one time
 		MenuItem[] mnuFull = { miOpen = new MenuItem(MyLocale.getMsg(1021, "Open description")), //
@@ -144,7 +140,8 @@ public class myTableControl extends TableControl {
 				// select all on <ctrl-a>
 				setSelectForAll(true);
 				ev.consumed = true;
-			} else {
+			}
+			else {
 				Global.mainTab.clearDetails();
 				if (ev.key == IKeys.HOME)
 					Global.mainTab.tbP.selectRow(0); // cursorTo(0,cursor.x+listMode,true);
@@ -152,7 +149,7 @@ public class myTableControl extends TableControl {
 					Global.mainTab.tbP.selectRow(model.numRows - 1); // cursorTo(model.numRows-1,cursor.x+listMode,true);
 				else if (ev.key == IKeys.PAGE_DOWN)
 					Global.mainTab.tbP.selectRow(java.lang.Math.min(cursor.y + getOnScreen(null).height - 1, model.numRows - 1)); // cursorTo(java.lang.Math.min(cursor.y+ getOnScreen(null).height-1, model.numRows-1),cursor.x+listMode,true); // I don't
-																																	// know why this doesn't work: tbp.doScroll(IScroll.Vertical, IScroll.PageHigher, 1);
+																																  // know why this doesn't work: tbp.doScroll(IScroll.Vertical, IScroll.PageHigher, 1);
 				else if (ev.key == IKeys.PAGE_UP)
 					Global.mainTab.tbP.selectRow(java.lang.Math.max(cursor.y - getOnScreen(null).height + 1, 0)); // cursorTo(java.lang.Math.max(cursor.y-getOnScreen(null).height+1, 0),cursor.x+listMode,true);
 				else if (ev.key == IKeys.ACTION || ev.key == IKeys.ENTER)
@@ -167,18 +164,20 @@ public class myTableControl extends TableControl {
 					CacheHolder ch;
 					ch = cacheDB.get(tbp.getSelectedCache());
 					Global.mainTab.gotoP.setDestinationAndSwitch(ch);
-				} else if (ev.key == 6)
+				}
+				else if (ev.key == 6)
 					MainMenu.search(); // (char)6 == ctrl + f
 				else
 					super.onKeyEvent(ev);
 			}
-		} else
+		}
+		else
 			super.onKeyEvent(ev);
 	}
 
 	/** Set all caches either as selected or as deselected, depending on argument */
 	private void setSelectForAll(boolean selectStatus) {
-		Global.getProfile().setSelectForAll(selectStatus);
+		Global.profile.setSelectForAll(selectStatus);
 		tbp.refreshTable();
 	}
 
@@ -191,7 +190,8 @@ public class myTableControl extends TableControl {
 		// invalid path will be handled by try
 		try {
 			CWWrapper.exec(program, parameter); // maybe this works on some PDAs?
-		} catch (IOException ex) {
+		}
+		catch (IOException ex) {
 			(new MessageBox(MyLocale.getMsg(321, "Error"), MyLocale.getMsg(1034, "Cannot start " + program + "!") + "\n" + ex.toString() + "\n" + MyLocale.getMsg(1035, "Possible reason:") + "\n" + MyLocale.getMsg(1036, "A bug in ewe VM, please be")
 					+ "\n" + MyLocale.getMsg(1037, "patient for an update"), FormBase.OKB)).execute();
 		}
@@ -206,11 +206,13 @@ public class myTableControl extends TableControl {
 		CacheHolder ch;
 		if (selectedItem == miTickAll) {
 			setSelectForAll(true);
-		} else
+		}
+		else
 
 		if (selectedItem == miUntickAll) {
 			setSelectForAll(false);
-		} else
+		}
+		else
 
 		if (selectedItem == miDelete) {
 			Vm.showWait(true);
@@ -227,7 +229,8 @@ public class myTableControl extends TableControl {
 					if (!currCache.isVisible()) {
 						if (currCache.isAddiWpt()) {
 							addiNonVisibleCount++;
-						} else {
+						}
+						else {
 							mainNonVisibleCount++;
 						}
 					}
@@ -236,10 +239,11 @@ public class myTableControl extends TableControl {
 			// Warn if there are ticked but invisible caches - and ask if they should be deleted too.
 			shouldDeleteCount = allCount;
 			if (addiNonVisibleCount + mainNonVisibleCount > 0) {
-				if ((new MessageBox(MyLocale.getMsg(144, "Warning"), MyLocale.getMsg(1029, "There are caches that are ticked but invisible.\n(Main caches: ") + mainNonVisibleCount + MyLocale.getMsg(1030, ", additional Waypoints: ") + addiNonVisibleCount
-						+ ")\n" + MyLocale.getMsg(1031, "Delete them, too?"), FormBase.YESB | FormBase.NOB)).execute() == FormBase.IDYES) {
+				if ((new MessageBox(MyLocale.getMsg(144, "Warning"), MyLocale.getMsg(1029, "There are caches that are ticked but invisible.\n(Main caches: ") + mainNonVisibleCount + MyLocale.getMsg(1030, ", additional Waypoints: ")
+						+ addiNonVisibleCount + ")\n" + MyLocale.getMsg(1031, "Delete them, too?"), FormBase.YESB | FormBase.NOB)).execute() == FormBase.IDYES) {
 					deleteFiltered = true;
-				} else {
+				}
+				else {
 					deleteFiltered = false;
 					shouldDeleteCount = allCount - mainNonVisibleCount - addiNonVisibleCount;
 				}
@@ -255,7 +259,7 @@ public class myTableControl extends TableControl {
 					pbf.exec();
 					h.progress = (float) 0.5;
 					h.changed();
-					String[] CacheFiles = new FileBugfix(profile.dataDir).list(null, FileBase.LIST_FILES_ONLY | FileBase.LIST_DONT_SORT);
+					String[] CacheFiles = new FileBugfix(Global.profile.dataDir).list(null, FileBase.LIST_FILES_ONLY | FileBase.LIST_DONT_SORT);
 					pbf.setTask(h, MyLocale.getMsg(1012, "Delete selected"));
 					for (int i = size - 1; i >= 0; i--) {// Start Counting down, as the size decreases with each deleted cache
 						ch = cacheDB.get(i);
@@ -264,7 +268,7 @@ public class myTableControl extends TableControl {
 							h.progress = ((float) nDeleted) / (float) allCount;
 							h.changed();
 							cacheDB.removeElementAt(i);
-							dm.deleteCacheFiles(ch.getWayPoint(), profile.dataDir, CacheFiles);
+							dm.deleteCacheFiles(ch.getWayPoint(), Global.profile.dataDir, CacheFiles);
 							ch = null;
 							if (pbf.isClosed)
 								break;
@@ -272,17 +276,19 @@ public class myTableControl extends TableControl {
 					}
 					pbf.exit(0);
 					tbp.myMod.numRows -= nDeleted;
-					profile.saveIndex(pref, true);
+					Global.profile.saveIndex(true);
 					tbp.refreshTable();
 				}
 			}
 			Vm.showWait(false);
-		} else
+		}
+		else
 
 		if (selectedItem == miUpdate) {
 			MainMenu.updateSelectedCaches(tbp);
-			pref.setOldGCLanguage();
-		} else
+			Global.pref.setOldGCLanguage();
+		}
+		else
 
 		if (selectedItem == miChangeBlack) {
 			Vm.showWait(true);
@@ -292,24 +298,27 @@ public class myTableControl extends TableControl {
 					if (currCache.isVisible() && currCache.is_Checked) {
 						if (currCache.isAddiWpt()) {
 							// currCache.setBlack(!currCache.is_black());
-						} else {
+						}
+						else {
 							currCache.setBlack(!currCache.is_black());
 							currCache.save(); // to reflect it in xml and what takes time reading+writing
 						}
 					}
 				}
 				// profile.saveIndex(pref,true);
-				profile.buildReferences();
+				Global.profile.buildReferences();
 				tbp.refreshTable();
-			} finally {
+			}
+			finally {
 				Vm.showWait(false);
 			}
 			;
-		} else
+		}
+		else
 
 		if (selectedItem == miCenter) {
 			if (tbp.getSelectedCache() < 0) {
-				Global.getPref().log("[myTableControl:popupMenuEvent] getSelectedCache() < 0");
+				Global.pref.log("[myTableControl:popupMenuEvent] getSelectedCache() < 0");
 				return;
 			}
 			CacheHolder thisCache = cacheDB.get(tbp.getSelectedCache());
@@ -317,10 +326,12 @@ public class myTableControl extends TableControl {
 			if (!cp.isValid()) {
 				MessageBox tmpMB = new MessageBox(MyLocale.getMsg(321, "Error"), MyLocale.getMsg(4111, "Coordinates must be entered in the format N DD MM.MMM E DDD MM.MMM"), FormBase.OKB);
 				tmpMB.execute();
-			} else {
-				pref.setCurCentrePt(cp);
 			}
-		} else
+			else {
+				Global.pref.setCurCentrePt(cp);
+			}
+		}
+		else
 
 		if (selectedItem == miUnhideAddis) {
 			// This toggles the "showAddis" Flag
@@ -328,17 +339,20 @@ public class myTableControl extends TableControl {
 			ch.setShowAddis(!ch.showAddis());
 			if (ch.addiWpts.size() > 0) {
 				tbp.refreshTable();
-			} else {
+			}
+			else {
 				// This should never occur, as we check prior to activating the menu if the
 				// cache has addis. But just in case...
 				new MessageBox(MyLocale.getMsg(4201, "Info"), MyLocale.getMsg(1043, "This cache has no additional waypoints."), FormBase.OKB).execute();
 			}
-		} else
+		}
+		else
 
 		if (selectedItem == miGoto) {
 			ch = cacheDB.get(tbp.getSelectedCache());
 			Global.mainTab.gotoP.setDestinationAndSwitch(ch);
-		} else
+		}
+		else
 
 		if (selectedItem == miOpenOnline) {
 			ch = cacheDB.get(tbp.getSelectedCache());
@@ -354,7 +368,8 @@ public class myTableControl extends TableControl {
 					String s = OC.getGCWayPoint(ch.getCacheOwner());
 					if (s.length() > 0)
 						url = "http://www.geocaching.com/seek/cache_details.aspx?wp=" + s;
-				} else {
+				}
+				else {
 					if (wpName.length() > 0) {
 						if (wpName.charAt(0) < 65)
 							wpName = mainCache.getOcCacheID().substring(1);
@@ -363,9 +378,10 @@ public class myTableControl extends TableControl {
 				}
 			}
 			if (url != null) {
-				callExternalProgram(pref.browser, url);
+				callExternalProgram(Global.pref.browser, url);
 			}
-		} else
+		}
+		else
 
 		if (selectedItem == miOpenGmaps) {
 			ch = cacheDB.get(tbp.getSelectedCache());
@@ -374,20 +390,22 @@ public class myTableControl extends TableControl {
 				String lon = "" + ch.getPos().getLonDeg(CWPoint.DD);
 				String nameOfCache = UrlFetcher.encodeURL(ch.getCacheName(), false).replace('#', 'N').replace('@', '_');
 				String language = Vm.getLocale().getString(Locale.LANGUAGE_SHORT, 0, 0);
-				if (!pref.language.equalsIgnoreCase("auto")) {
-					language = pref.language;
+				if (!Global.pref.language.equalsIgnoreCase("auto")) {
+					language = Global.pref.language;
 				}
 				url = "http://maps.google." + language + "/maps?q=" + nameOfCache + "@" + lat + "," + lon;
-				callExternalProgram(pref.browser, url);
+				callExternalProgram(Global.pref.browser, url);
 				url = "http://www.geocaching.com/map/default.aspx?lat=" + lat + "&lng=" + lon;
-				callExternalProgram(pref.browser, url);
+				callExternalProgram(Global.pref.browser, url);
 			}
-		} else
+		}
+		else
 
 		if (selectedItem == miOpenOffline) {
 			ShowCacheInBrowser sc = new ShowCacheInBrowser();
 			sc.showCache(cacheDB.get(tbp.getSelectedCache()));
-		} else
+		}
+		else
 
 		if (selectedItem == miLogOnline) {
 			ch = cacheDB.get(tbp.getSelectedCache());
@@ -408,7 +426,8 @@ public class myTableControl extends TableControl {
 						if (url.indexOf("viewcache") >= 0) {
 							url = STRreplace.replace(url, "viewcache", "log");
 						}
-					} else {
+					}
+					else {
 						if (chD.OwnLogId.length() > 0) {
 							String wpName = mainCache.getOcCacheID();
 							if (wpName.length() > 0 && wpName.charAt(0) < 65) {
@@ -416,7 +435,8 @@ public class myTableControl extends TableControl {
 								if (clickedColumn == 14) {
 									OCLogExport.doOneLog(mainCache);
 									tbp.refreshTable();
-								} else {
+								}
+								else {
 									// open OC logpage with GC Logtext in Clipboard
 									Vm.setClipboardText(chD.OwnLog.getDate() + '\n' + "<br>" + chD.OwnLog.getMessage());
 									if (wpName.length() > 1) {
@@ -427,17 +447,19 @@ public class myTableControl extends TableControl {
 									}
 								}
 							}
-						} else
+						}
+						else
 							// GC log
 							url = "http://www.geocaching.com/seek/log.aspx?ID=" + mainCache.GetCacheID();
 					}
 
 					if (url.length() > 0) {
-						callExternalProgram(pref.browser, url);
+						callExternalProgram(Global.pref.browser, url);
 					}
 				}
 			}
-		} else
+		}
+		else
 
 		if (selectedItem == miOpen) {
 			penDoubleClicked(null);
@@ -458,7 +480,8 @@ public class myTableControl extends TableControl {
 	}
 
 	/**
-	 * Adjusting the menu item for hiding or unhiding additional waypoints. If the cache has no addis, then the menu is deactivated. If it has addis, then the menu text is adapted according to the current value of the property <code>showAddis()</code>.
+	 * Adjusting the menu item for hiding or unhiding additional waypoints. If the cache has no addis, then the menu is deactivated. If it has addis, then the menu text is adapted according to the current value of the property
+	 * <code>showAddis()</code>.
 	 * 
 	 */
 	public void adjustAddiHideUnhideMenu() {
@@ -473,10 +496,12 @@ public class myTableControl extends TableControl {
 				miUnhideAddis.modifiers &= ~MenuItem.Disabled;
 				if (!selCache.showAddis()) {
 					miUnhideAddis.setText(MyLocale.getMsg(1042, "Unhide Addis"));
-				} else {
+				}
+				else {
 					miUnhideAddis.setText(MyLocale.getMsg(1045, "Hide Addis"));
 				}
-			} else {
+			}
+			else {
 				miUnhideAddis.setText(MyLocale.getMsg(1042, "Unhide Addis"));
 				miUnhideAddis.modifiers |= MenuItem.Disabled;
 			}
@@ -510,7 +535,8 @@ public class myTableControl extends TableControl {
 			imgDrag.addColumn(CacheType.getTypeImage(ch.getType()));
 			imgDrag.addColumn(ch.getWayPoint());
 			dc.dragData = dc.startImageDrag(imgDrag, new Point(8, 8), this);
-		} else
+		}
+		else
 			super.startDragging(dc);
 	}
 
@@ -528,7 +554,8 @@ public class myTableControl extends TableControl {
 				}
 			}
 			Global.mainTab.tbP.selectRow(row);
-		} else
+		}
+		else
 			super.stopDragging(dc);
 	}
 

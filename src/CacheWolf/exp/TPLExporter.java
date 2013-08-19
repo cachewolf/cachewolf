@@ -26,8 +26,7 @@ import CacheWolf.CacheHolder;
 import CacheWolf.CacheType;
 import CacheWolf.Global;
 import CacheWolf.InfoBox;
-import CacheWolf.Preferences;
-import CacheWolf.Profile;
+import CacheWolf.utils.FileBugfix;
 import HTML.Template;
 
 import com.stevesoft.ewe_pat.Regex;
@@ -36,7 +35,6 @@ import ewe.filechooser.FileChooser;
 import ewe.filechooser.FileChooserBase;
 import ewe.io.AsciiCodec;
 import ewe.io.BufferedWriter;
-import ewe.io.File;
 import ewe.io.FileWriter;
 import ewe.io.IOException;
 import ewe.io.JavaUtf8Codec;
@@ -100,49 +98,66 @@ class TplFilter implements HTML.Tmpl.Filter {
 			if (param.equals("charset")) {
 				if (value.equals("ASCII")) {
 					codec = new AsciiCodec();
-				} else if (value.equals("UTF8")) {
+				}
+				else if (value.equals("UTF8")) {
 					codec = new JavaUtf8Codec();
-				} else {
+				}
+				else {
 					codec = new NoCodec();
 				}
-			} else if (param.equals("badchars")) {
+			}
+			else if (param.equals("badchars")) {
 				badChars = value;
-			} else if (param.equals("newline")) {
+			}
+			else if (param.equals("newline")) {
 				newLine = "";
 				if (value.indexOf("CR") >= 0)
 					newLine += "\r";
 				if (value.indexOf("LF") >= 0)
 					newLine += "\n";
-			} else if (param.equals("decsep")) {
+			}
+			else if (param.equals("decsep")) {
 				decSep = value;
-			} else if (param.equals("ShortNameLength")) {
+			}
+			else if (param.equals("ShortNameLength")) {
 				shortNameLength = Integer.valueOf(value).intValue();
-			} else if (param.equals("WaypointLength")) {
+			}
+			else if (param.equals("WaypointLength")) {
 				shortWaypointLength = Integer.valueOf(value).intValue();
-			} else if (param.equals("NrLogs")) {
+			}
+			else if (param.equals("NrLogs")) {
 				noOfLogs = Integer.valueOf(value).intValue();
-			} else if (param.equals("singleFile")) {
+			}
+			else if (param.equals("singleFile")) {
 				single = value.equals("yes") ? true : false;
-			} else if (param.equals("formatModifier")) {
+			}
+			else if (param.equals("formatModifier")) {
 				formatModifier = Integer.valueOf(value).intValue();
-			} else if (param.equals("Out")) {
+			}
+			else if (param.equals("Out")) {
 				out = value;
-			} else if (param.equals("takeOnlyWp")) {
+			}
+			else if (param.equals("takeOnlyWp")) {
 				if (value.equals("main")) {
 					getMainWp = true;
-				} else if (value.equals("addi")) {
+				}
+				else if (value.equals("addi")) {
 					getAddiWp = true;
-				} else if (value.equals("parking")) {
+				}
+				else if (value.equals("parking")) {
 					getParking = true;
 				}
-			} else if (param.equals("sortedBy")) {
+			}
+			else if (param.equals("sortedBy")) {
 				sortedBy = Integer.valueOf(value).intValue();
-			} else if (param.equals("CopyCacheImages")) {
+			}
+			else if (param.equals("CopyCacheImages")) {
 				if (value.equals("yes"))
 					copyCacheImages = 1;
 				if (value.equals("CBX"))
 					copyCacheImages = 2;
-			} else if (param.startsWith("input")) {
+			}
+			else if (param.startsWith("input")) {
 				String par = param.substring(5);
 				InfoBox inf = new InfoBox("Eingabe", par, InfoBox.INPUT);
 				inf.feedback.setText(value);
@@ -151,7 +166,8 @@ class TplFilter implements HTML.Tmpl.Filter {
 					res = inf.getInput();
 					additionalVarParams.put(par, res);
 				}
-			} else if (param.startsWith("const")) {
+			}
+			else if (param.startsWith("const")) {
 				additionalVarParams.put(param.substring(5), value);
 			}
 			return "";
@@ -186,19 +202,15 @@ class TplFilter implements HTML.Tmpl.Filter {
 
 public class TPLExporter {
 	CacheDB cacheDB;
-	Preferences pref;
-	Profile profile;
 	String tplFile;
 	String expName;
 	Regex rex = null;
 	private static GarminMap gm = null;
 
-	public TPLExporter(Preferences p, Profile prof, String tpl) {
-		pref = p;
-		profile = prof;
-		cacheDB = profile.cacheDB;
+	public TPLExporter(String tpl) {
+		cacheDB = Global.profile.cacheDB;
 		tplFile = tpl;
-		File tmpFile = new File(tpl);
+		FileBugfix tmpFile = new FileBugfix(tpl);
 		expName = tmpFile.getName();
 		expName = expName.substring(0, expName.indexOf("."));
 		gm = new GarminMap();
@@ -224,15 +236,15 @@ public class TPLExporter {
 			args.put("filter", myFilter);
 			Template tpl = new Template(args);
 
-			FileChooser fc = new FileChooser(FileChooserBase.SAVE, pref.getExportPath(expName));
+			FileChooser fc = new FileChooser(FileChooserBase.SAVE, Global.pref.getExportPath(expName));
 			fc.setTitle("Select target file:");
 			fc.addMask(myFilter.out);
 			if (fc.execute() == FormBase.IDCANCEL) {
 				pbf.exit(0);
 				return;
 			}
-			File saveTo = fc.getChosenFile();
-			pref.setExportPath(expName, saveTo.getPath());
+			FileBugfix saveTo = (FileBugfix) fc.getChosenFile();
+			Global.pref.setExportPath(expName, saveTo.getPath());
 
 			if (myFilter.sortedBy != -1) {
 				Global.mainTab.tbP.myMod.sortTable(myFilter.sortedBy, true);
@@ -254,9 +266,11 @@ public class TPLExporter {
 					boolean get = true;
 					if (myFilter.getAddiWp) {
 						get = ch.isAddiWpt();
-					} else if (myFilter.getMainWp) {
+					}
+					else if (myFilter.getMainWp) {
 						get = !ch.isAddiWpt();
-					} else if (myFilter.getParking) {
+					}
+					else if (myFilter.getParking) {
 						get = (ch.getType() == CacheType.CW_TYPE_PARKING)// parking
 								|| (!ch.isAddiWpt() && !hasParking(ch));// oder main ohne Parkplatz
 					}
@@ -286,8 +300,9 @@ public class TPLExporter {
 								tpl.printTo(detfile);
 								detfile.close();
 							}
-						} catch (Exception e) {
-							pref.log("[TplExporter:doIt]" + ch.getWayPoint(), e, true);
+						}
+						catch (Exception e) {
+							Global.pref.log("[TplExporter:doIt]" + ch.getWayPoint(), e, true);
 						}
 					}
 				}
@@ -301,9 +316,11 @@ public class TPLExporter {
 				// oder detfile.print(tpl.output());
 				detfile.close();
 			}
-		} catch (Exception e) {
-			pref.log("[TplExporter:doIt]", e, true);
-		} catch (OutOfMemoryError e) {
+		}
+		catch (Exception e) {
+			Global.pref.log("[TplExporter:doIt]", e, true);
+		}
+		catch (OutOfMemoryError e) {
 			(new MessageBox("Error", "Not enough memory available to load all cache data (incl. description and logs)\nexport aborted\nFilter caches to minimise memory needed for TPL-Export\nWe recommend to restart CacheWolf now", FormBase.OKB))
 					.execute();
 		}

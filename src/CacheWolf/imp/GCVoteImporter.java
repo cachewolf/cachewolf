@@ -24,9 +24,8 @@ package CacheWolf.imp;
 import CacheWolf.CacheDB;
 import CacheWolf.CacheHolder;
 import CacheWolf.Common;
+import CacheWolf.Global;
 import CacheWolf.MyLocale;
-import CacheWolf.Preferences;
-import CacheWolf.Profile;
 import CacheWolf.UrlFetcher;
 import ewe.io.Reader;
 import ewe.io.StringReader;
@@ -37,36 +36,29 @@ import ewe.ui.ProgressBarForm;
 import ewesoft.xml.MinML;
 import ewesoft.xml.sax.AttributeList;
 
+public class GCVoteImporter extends MinML {
 
-
-public class GCVoteImporter extends MinML{
-
-	private Profile profile;
 	private CacheDB cacheDB;
 	private String GCVUser;
 	private String GCVPassword;
 	private String GCVURL;
 	private String GCVWaypoints;
 	private String GCVResults;
-	private static Preferences pref;
 
 	/**
-	*	Constructor initalizing profile and cacheDB
-	*/
-	public GCVoteImporter(Preferences prf, Profile _profile){
-		this.profile=_profile;
-		this.cacheDB = profile.cacheDB;
-		pref = prf;
-		// pref.logInit();
+	 * Constructor initalizing profile and cacheDB
+	 */
+	public GCVoteImporter() {
+		this.cacheDB = Global.profile.cacheDB;
 	}
 
 	/**
-	*	Read cacheDB and check for GCVotes
-	*/
+	 * Read cacheDB and check for GCVotes
+	 */
 	public void doIt() {
 		ProgressBarForm pbf = new ProgressBarForm();
 		Handle h = new Handle();
-		this.GCVUser = ""; // pref.myAlias;
+		this.GCVUser = ""; // Global.pref.myAlias;
 		this.GCVPassword = "";
 
 		int totalWaypoints = cacheDB.countVisible();
@@ -77,8 +69,8 @@ public class GCVoteImporter extends MinML{
 		pbf.exec();
 
 		for (int o = 0; o < cacheDB.size(); o += 100) {
-		GCVWaypoints = "";
-			for (int i = o; (i < (o+100)) & (i < cacheDB.size()); i++) {
+			GCVWaypoints = "";
+			for (int i = o; (i < (o + 100)) & (i < cacheDB.size()); i++) {
 				CacheHolder ch = cacheDB.get(i);
 				if (ch.isVisible()) {
 					if (ch.isCacheWpt()) {
@@ -91,41 +83,43 @@ public class GCVoteImporter extends MinML{
 			}
 
 			GCVURL = "http://gcvote.de/getVotes.php?";
-			GCVURL += "userName="+GCVUser+"&password="+GCVPassword+"&waypoints="+GCVWaypoints;
+			GCVURL += "userName=" + GCVUser + "&password=" + GCVPassword + "&waypoints=" + GCVWaypoints;
 
 			try {
-				pref.log("[GCVote]:Requesting ratings");
+				Global.pref.log("[GCVote]:Requesting ratings");
 				GCVResults = UrlFetcher.fetch(GCVURL);
 				if (GCVResults.equals("")) {
-					(new MessageBox(MyLocale.getMsg(0,"Error"), MyLocale.getMsg(0,"Error loading GCVote page.%0aPlease check your internet connection."), FormBase.OKB)).execute();
-					pref.log("[GCVote]:Could not fetch: getVotes.php page",null);
-				} else {
+					(new MessageBox(MyLocale.getMsg(0, "Error"), MyLocale.getMsg(0, "Error loading GCVote page.%0aPlease check your internet connection."), FormBase.OKB)).execute();
+					Global.pref.log("[GCVote]:Could not fetch: getVotes.php page", null);
+				}
+				else {
 					// parse response for votes
-					pref.log("[GCVote]:GCVotes = "+GCVResults);
+					Global.pref.log("[GCVote]:GCVotes = " + GCVResults);
 					Reader r = new StringReader(GCVResults);
 					parse(r);
 				}
-			} catch (Exception ex) {
-				pref.log("[GCVote:DoIt]",ex,true);
+			}
+			catch (Exception ex) {
+				Global.pref.log("[GCVote:DoIt]", ex, true);
 			}
 		}
 		pbf.exit(0);
 	}
 
 	/**
-	*	Eventhandler for XML votes
-	*/
-	public void startElement(String name, AttributeList atts){
+	 * Eventhandler for XML votes
+	 */
+	public void startElement(String name, AttributeList atts) {
 		String waypoint;
 		double voteAvg;
 		int voteCnt;
-		if(name.equals("vote")) {
+		if (name.equals("vote")) {
 			waypoint = atts.getValue("waypoint");
 			voteAvg = Common.parseDouble(atts.getValue("voteAvg")) * 10.0;
 			voteCnt = Common.parseInt(atts.getValue("voteCnt"));
-			pref.log("[GCVote:startElement]:Waypoint = " + waypoint + " - " + voteAvg + "(" + voteCnt + " votes)" );
+			Global.pref.log("[GCVote:startElement]:Waypoint = " + waypoint + " - " + voteAvg + "(" + voteCnt + " votes)");
 			CacheHolder cb = cacheDB.get(waypoint);
-			cb.setNumRecommended( 100*voteCnt + (int)(voteAvg + 0.5));
+			cb.setNumRecommended(100 * voteCnt + (int) (voteAvg + 0.5));
 		}
 	}
 }

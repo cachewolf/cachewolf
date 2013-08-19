@@ -196,8 +196,8 @@ public class LogList {
 	 * @return number of removed logs
 	 */
 	public int purgeLogs() {
-		int maxKeep = Global.getPref().maxLogsToKeep;
-		boolean keepOwn = Global.getPref().alwaysKeepOwnLogs;
+		int maxKeep = Global.pref.maxLogsToKeep;
+		boolean keepOwn = Global.pref.alwaysKeepOwnLogs;
 		int purgedLogs = 0;
 		for (int i = logList.size(); i > maxKeep; i--) {
 			if (!(keepOwn && getLog(i - 1).isOwnLog())) {

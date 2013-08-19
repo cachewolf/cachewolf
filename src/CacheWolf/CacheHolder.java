@@ -183,7 +183,8 @@ public class CacheHolder {
 				end = xmlString.indexOf('"', start + 1);
 				setDateHidden(xmlString.substring(start + 1, end));
 				// Convert the US format to YYYY-MM-DD if necessary
-				if (getDateHidden().indexOf('/') > -1) setDateHidden(DateFormat.toYYMMDD(getDateHidden()));
+				if (getDateHidden().indexOf('/') > -1)
+					setDateHidden(DateFormat.toYYMMDD(getDateHidden()));
 
 				start = xmlString.indexOf('"', end + 1);
 				end = xmlString.indexOf('"', start + 1);
@@ -201,26 +202,30 @@ public class CacheHolder {
 				end = xmlString.indexOf('"', start + 1);
 				if (isAddiWpt() || isCustomWpt()) {
 					setHard(CacheTerrDiff.CW_DT_UNSET);
-				} else {
+				}
+				else {
 					try {
 						setHard(CacheTerrDiff.v1Converter(xmlString.substring(start + 1, end)));
-					} catch (IllegalArgumentException ex) {
+					}
+					catch (IllegalArgumentException ex) {
 						setHard(CacheTerrDiff.CW_DT_ERROR);
 						setIncomplete(true);
-						Global.getPref().log(wayPoint, ex, true);
+						Global.pref.log(wayPoint, ex, true);
 					}
 				}
 				start = xmlString.indexOf('"', end + 1);
 				end = xmlString.indexOf('"', start + 1);
 				if (isAddiWpt() || isCustomWpt()) {
 					setTerrain(CacheTerrDiff.CW_DT_UNSET);
-				} else {
+				}
+				else {
 					try {
 						setTerrain(CacheTerrDiff.v1Converter(xmlString.substring(start + 1, end)));
-					} catch (IllegalArgumentException ex) {
+					}
+					catch (IllegalArgumentException ex) {
 						setTerrain(CacheTerrDiff.CW_DT_ERROR);
 						setIncomplete(true);
-						Global.getPref().log(wayPoint, ex, true);
+						Global.pref.log(wayPoint, ex, true);
 					}
 				}
 				// The next item was 'dirty' but this is no longer used.
@@ -232,13 +237,15 @@ public class CacheHolder {
 				end = xmlString.indexOf('"', start + 1);
 				if (isAddiWpt() || isCustomWpt()) {
 					setCacheSize(CacheSize.CW_SIZE_NOTCHOSEN);
-				} else {
+				}
+				else {
 					try {
 						setCacheSize(CacheSize.v1Converter(xmlString.substring(start + 1, end)));
-					} catch (IllegalArgumentException ex) {
+					}
+					catch (IllegalArgumentException ex) {
 						setCacheSize(CacheSize.CW_SIZE_ERROR);
 						setIncomplete(true);
-						Global.getPref().log(wayPoint, ex, true);
+						Global.pref.log(wayPoint, ex, true);
 					}
 				}
 				start = xmlString.indexOf('"', end + 1);
@@ -315,10 +322,12 @@ public class CacheHolder {
 
 					start = xmlString.indexOf('"', end + 1);
 					end = xmlString.indexOf('"', start + 1);
-					if (start > -1 && end > -1) attribsBits[2] = (Convert.parseLong(xmlString.substring(start + 1, end)));
+					if (start > -1 && end > -1)
+						attribsBits[2] = (Convert.parseLong(xmlString.substring(start + 1, end)));
 				}
 				setAttribsAsBits(attribsBits);
-			} else if (version == 3 || version == 2) {
+			}
+			else if (version == 3 || version == 2) {
 				start = xmlString.indexOf('"');
 				end = xmlString.indexOf('"', start + 1);
 				setCacheName(SafeXML.cleanback(xmlString.substring(start + 1, end)));
@@ -340,7 +349,8 @@ public class CacheHolder {
 				end = xmlString.indexOf('"', start + 1);
 				setDateHidden(xmlString.substring(start + 1, end));
 				// Convert the US format to YYYY-MM-DD if necessary
-				if (getDateHidden().indexOf('/') > -1) setDateHidden(DateFormat.toYYMMDD(getDateHidden()));
+				if (getDateHidden().indexOf('/') > -1)
+					setDateHidden(DateFormat.toYYMMDD(getDateHidden()));
 
 				start = xmlString.indexOf('"', end + 1);
 				end = xmlString.indexOf('"', start + 1);
@@ -375,7 +385,8 @@ public class CacheHolder {
 
 					start = xmlString.indexOf('"', end + 1);
 					end = xmlString.indexOf('"', start + 1);
-					if (start > -1 && end > -1) attribsBits[2] = (Convert.parseLong(xmlString.substring(start + 1, end)));
+					if (start > -1 && end > -1)
+						attribsBits[2] = (Convert.parseLong(xmlString.substring(start + 1, end)));
 				}
 
 				start = xmlString.indexOf('"', end + 1);
@@ -386,7 +397,8 @@ public class CacheHolder {
 				end = xmlString.indexOf('"', start + 1);
 				if (version == 2) {
 					long2byteFieldsv2(Convert.parseLong(xmlString.substring(start + 1, end)));
-				} else {
+				}
+				else {
 					long2byteFields(Convert.parseLong(xmlString.substring(start + 1, end)));
 				}
 				start = xmlString.indexOf('"', end + 1);
@@ -396,7 +408,8 @@ public class CacheHolder {
 
 					start = xmlString.indexOf('"', end + 1);
 					end = xmlString.indexOf('"', start + 1);
-					if (start > -1 && end > -1) attribsBits[3] = (Convert.parseLong(xmlString.substring(start + 1, end)));
+					if (start > -1 && end > -1)
+						attribsBits[3] = (Convert.parseLong(xmlString.substring(start + 1, end)));
 				}
 				setAttribsAsBits(attribsBits);
 			}
@@ -409,8 +422,9 @@ public class CacheHolder {
 				setHasNote(!details.getCacheNotes().equals(""));
 				setHasSolver(!details.getSolver().equals(""));
 			}
-		} catch (Exception ex) {
-			// Global.getPref().log("Ignored Exception in CacheHolder()", ex, true);
+		}
+		catch (Exception ex) {
+			// Global.pref.log("Ignored Exception in CacheHolder()", ex, true);
 		}
 	}
 
@@ -423,12 +437,13 @@ public class CacheHolder {
 		String result = null;
 		String newUnit = null;
 
-		if (this.kilom == this.lastKilom && Global.getPref().metricSystem == this.lastMetric) {
+		if (this.kilom == this.lastKilom && Global.pref.metricSystem == this.lastMetric) {
 			result = this.lastDistance;
-		} else {
+		}
+		else {
 			if (this.kilom >= 0) {
 				double newValue = 0;
-				switch (Global.getPref().metricSystem) {
+				switch (Global.pref.metricSystem) {
 				case Metrics.IMPERIAL:
 					newValue = Metrics.convertUnit(this.kilom, Metrics.KILOMETER, Metrics.MILES);
 					newUnit = Metrics.getUnit(Metrics.MILES);
@@ -440,12 +455,13 @@ public class CacheHolder {
 					break;
 				}
 				result = MyLocale.formatDouble(newValue, "0.00") + " " + newUnit;
-			} else {
-				result = "? " + (Global.getPref().metricSystem == Metrics.IMPERIAL ? Metrics.getUnit(Metrics.MILES) : Metrics.getUnit(Metrics.KILOMETER));
+			}
+			else {
+				result = "? " + (Global.pref.metricSystem == Metrics.IMPERIAL ? Metrics.getUnit(Metrics.MILES) : Metrics.getUnit(Metrics.KILOMETER));
 			}
 			// Caching values, so reevaluation is only done when really needed
 			this.lastKilom = this.kilom;
-			this.lastMetric = Global.getPref().metricSystem;
+			this.lastMetric = Global.pref.metricSystem;
 			this.lastDistance = result;
 		}
 		return result;
@@ -501,7 +517,8 @@ public class CacheHolder {
 		this.setIncomplete(ch.is_incomplete());
 		this.addiWpts = ch.addiWpts;
 		this.mainCache = ch.mainCache;
-		if (ch.getOcCacheID().length() > 0) this.setOcCacheID(ch.getOcCacheID());
+		if (ch.getOcCacheID().length() > 0)
+			this.setOcCacheID(ch.getOcCacheID());
 		this.setNoFindLogs(ch.getNoFindLogs());
 		this.setHas_bugs(ch.has_bugs());
 		this.setHTML(ch.is_HTML());
@@ -530,13 +547,15 @@ public class CacheHolder {
 					recommendationScore = chD.CacheLogs.recommendationRating;
 					setNumFoundsSinceRecommendation(chD.CacheLogs.foundsSinceRecommendation);
 					setNumRecommended(chD.CacheLogs.numRecommended);
-				} else { // cache doesn't have details
+				}
+				else { // cache doesn't have details
 					recommendationScore = -1;
 					setNumFoundsSinceRecommendation(-1);
 					setNumRecommended(-1);
 				}
 			}
-		} else {
+		}
+		else {
 			recommendationScore = -1;
 			setNumFoundsSinceRecommendation(-1);
 			// setNumRecommended(-1);
@@ -592,8 +611,8 @@ public class CacheHolder {
 		Hashtable varParams = new Hashtable();
 		CacheHolderDetail det = this.getCacheDetails(false);
 		varParams.put("PROGDIR", FileBase.getProgramDirectory());
-		varParams.put("PROFILDIR", Global.getProfile().dataDir);
-		varParams.put("ALIAS", Global.getPref().myAlias);
+		varParams.put("PROFILDIR", Global.profile.dataDir);
+		varParams.put("ALIAS", Global.pref.myAlias);
 		varParams.put("TYPE", CacheType.type2TypeTag(type)); // <type>
 		varParams.put("TYPENO", "" + type);
 		varParams.put("SYM", CacheType.type2SymTag(type)); // <sym>
@@ -622,7 +641,8 @@ public class CacheHolder {
 			varParams.put("SHORTSIZE", CacheSize.getExportShortId(ch.cacheSize));
 			varParams.put("OWNER", (ModTyp == 0) ? SafeXML.cleanGPX(ch.cacheOwner) : ch.cacheOwner);
 			varParams.put("DATE", ch.dateHidden);
-		} else {
+		}
+		else {
 			varParams.put("MAINWP", "");
 			varParams.put("MAINWPNAME", "");
 			varParams.put("DIFFICULTY", (isCustomWpt() || hard < 0) ? "" : decSep.replaceAll(CacheTerrDiff.longDT(hard)));
@@ -657,14 +677,16 @@ public class CacheHolder {
 			varParams.put("LATLON", decSep.replaceAll(pos.toString()));
 			varParams.put("LAT", decSep.replaceAll(pos.getLatDeg(CWPoint.DD)));
 			varParams.put("LON", decSep.replaceAll(pos.getLonDeg(CWPoint.DD)));
-		} else {
+		}
+		else {
 			varParams.put("LATLON", "unknown");
 			varParams.put("LAT", "");
 			varParams.put("LON", "");
 		}
 		if (withFoundText) {
 			varParams.put("STATUS", getStatusText());
-		} else
+		}
+		else
 			varParams.put("STATUS", cacheStatus);
 		varParams.put("GC_LOGTYPE", getGCLogType());
 		varParams.put("STATUS_DATE", getStatusDate());
@@ -683,7 +705,8 @@ public class CacheHolder {
 		String shortName = shortenName(cn, shortNameLength);
 		varParams.put("SHORTNAME", shortName);
 		varParams.put("TRAVELBUG", (bugs ? "Y" : "N"));
-		if (gm != null) varParams.put("GMTYPE", gm.getIcon(this));
+		if (gm != null)
+			varParams.put("GMTYPE", gm.getIcon(this));
 		varParams.put("NOW_DATE", nowdate().setToCurrentTime().toString());
 		varParams.put("NOW_TIME", nowtime().setToCurrentTime().toString());
 		varParams.put("CACHEID", GetCacheID());
@@ -700,16 +723,19 @@ public class CacheHolder {
 			varParams.put("DECRYPTEDHINTS", "");
 			varParams.put("COUNTRY", "");
 			varParams.put("STATE", "");
-		} else {
+		}
+		else {
 			// todo &lt;br&gt;
 			varParams.put("URL", det.URL);
 			if (html) {
 				if (ModTyp == 0) {
 					varParams.put("DESCRIPTION", SafeXML.cleanGPX(det.LongDescription));
-				} else {
+				}
+				else {
 					varParams.put("DESCRIPTION", modifyLongDesc(det, ModTyp));
 				}
-			} else {
+			}
+			else {
 				// what was the reason? replace or no replace? I dont remember
 				varParams.put("DESCRIPTION", STRreplace.replace(det.LongDescription, "\n", "<br>"));
 			}
@@ -717,22 +743,27 @@ public class CacheHolder {
 			if (badChars != null) {
 				if (ModTyp == 0) {
 					varParams.put("NOTES", badChars.replaceAll(det.getCacheNotes()));
-				} else {
+				}
+				else {
 					varParams.put("NOTES", STRreplace.replace(badChars.replaceAll(det.getCacheNotes()), "\n", "<br>"));
 				}
 				varParams.put("HINTS", (ModTyp == 0) ? SafeXML.cleanGPX(badChars.replaceAll(det.Hints)) : badChars.replaceAll(det.Hints));
 				varParams.put("DECRYPTEDHINTS", (ModTyp == 0) ? SafeXML.cleanGPX(badChars.replaceAll(Common.rot13(det.Hints))) : badChars.replaceAll(Common.rot13(det.Hints)));
-			} else {
+			}
+			else {
 				if (ModTyp == 0) {
 					varParams.put("NOTES", SafeXML.cleanGPX(det.getCacheNotes()));
-				} else {
+				}
+				else {
 					varParams.put("NOTES", STRreplace.replace(det.getCacheNotes(), "\n", "<br>"));
 				}
 				varParams.put("HINTS", (ModTyp == 0) ? SafeXML.cleanGPX(det.Hints) : det.Hints);
 				varParams.put("DECRYPTEDHINTS", (ModTyp == 0) ? SafeXML.cleanGPX(Common.rot13(det.Hints)) : Common.rot13(det.Hints));
 			}
-			if (det.Travelbugs.size() > 0) varParams.put("BUGS", (ModTyp == 0) ? SafeXML.cleanGPX(det.Travelbugs.toHtml()) : det.Travelbugs.toHtml());
-			if (det.getSolver() != null && det.getSolver().trim().length() > 0) varParams.put("SOLVER", STRreplace.replace(det.getSolver(), "\n", "<br/>\n"));
+			if (det.Travelbugs.size() > 0)
+				varParams.put("BUGS", (ModTyp == 0) ? SafeXML.cleanGPX(det.Travelbugs.toHtml()) : det.Travelbugs.toHtml());
+			if (det.getSolver() != null && det.getSolver().trim().length() > 0)
+				varParams.put("SOLVER", STRreplace.replace(det.getSolver(), "\n", "<br/>\n"));
 			varParams.put("COUNTRY", det.Country);
 			varParams.put("STATE", det.State);
 
@@ -758,7 +789,8 @@ public class CacheHolder {
 			// logs
 			Vector logVect = new Vector(det.CacheLogs.size());
 			int maxlogs = det.CacheLogs.size();
-			if (nrOfLogs > -1 && nrOfLogs < maxlogs) maxlogs = nrOfLogs;
+			if (nrOfLogs > -1 && nrOfLogs < maxlogs)
+				maxlogs = nrOfLogs;
 			for (int i = 0; i < maxlogs; i++) {
 				Hashtable logs = new Hashtable();
 				String stmp;
@@ -769,7 +801,8 @@ public class CacheHolder {
 					logs.put("DATE", "");
 					logs.put("LOGGER", "");
 					stmp = "<hr>" + MyLocale.getMsg(736, "Too many logs") + "<hr>";
-				} else {
+				}
+				else {
 					logs.put("WAYPOINT", wayPoint);
 					logs.put("ICON", det.CacheLogs.getLog(i).getIcon());
 					logs.put("LOGTYPE", image2TypeText(det.CacheLogs.getLog(i).getIcon()));
@@ -792,7 +825,8 @@ public class CacheHolder {
 					addis.put("LATLON", decSep.replaceAll(ch.pos.toString()));
 					addis.put("LAT", decSep.replaceAll(ch.pos.getLatDeg(CWPoint.DD)));
 					addis.put("LON", decSep.replaceAll(ch.pos.getLonDeg(CWPoint.DD)));
-				} else {
+				}
+				else {
 					addis.put("LATLON", "unknown");
 					addis.put("LAT", "");
 					addis.put("LON", "");
@@ -828,23 +862,25 @@ public class CacheHolder {
 					imgs.put("COMMENT", comment);
 					imgs.put("URL", det.images.get(i).getURL());
 					if (!expName.equals("")) {
-						String src = Global.getProfile().dataDir + imgFile;
+						String src = Global.profile.dataDir + imgFile;
 						String dest;
 						if (expName.endsWith("*")) {
-							String d1 = Global.getPref().getExportPath(expName.substring(0, expName.length() - 1));
+							String d1 = Global.pref.getExportPath(expName.substring(0, expName.length() - 1));
 							d1 = d1 + imgFile.substring(0, 4).toUpperCase() + "/";
 							dest = d1 + imgFile.toUpperCase();
 							if (imgFile.toUpperCase().startsWith(title.toUpperCase())) {
 								d1 = Common.getFilename(dest);
-							} else {
+							}
+							else {
 								d1 = Common.getFilename(dest) + " - " + Common.ClearForFileName(title);
 							}
 							dest = d1 + Common.getFilenameExtension(dest).toLowerCase();
-						} else {
-							dest = Global.getPref().getExportPath(expName) + imgFile;
+						}
+						else {
+							dest = Global.pref.getExportPath(expName) + imgFile;
 						}
 						if (!DataMover.copy(src, dest)) {
-							Global.getPref().log("[CacheHolder:toHashtable]error copying " + imgFile + " to " + Global.getPref().getExportPath(expName));
+							Global.pref.log("[CacheHolder:toHashtable]error copying " + imgFile + " to " + Global.pref.getExportPath(expName));
 						}
 					}
 					if (!title.toLowerCase().startsWith(wayPoint.toLowerCase())) {
@@ -865,41 +901,75 @@ public class CacheHolder {
 	 * @return log type. will default to "Write note" for unknown logtypes
 	 */
 	public static final String image2TypeText(String image) {
-		if (image.equals("icon_smile.gif")) return "Found it";
-		if (image.equals("icon_sad.gif")) return "Didn't find it";
-		if (image.equals("icon_note.gif")) return "Write note";
-		if (image.equals("icon_enabled.gif")) return "Enable Listing";
-		if (image.equals("icon_disabled.gif")) return "Temporarily Disable Listing";
-		if (image.equals("icon_camera.gif")) return "Webcam Photo Taken";
-		if (image.equals("icon_attended.gif")) return "Attended";
-		if (image.equals("icon_greenlight.gif")) return "Publish Listing";
-		if (image.equals("icon_rsvp.gif")) return "Will Attend";
-		if (image.equals("big_smile.gif")) return "Post Reviewer Note";
-		if (image.equals("traffic_cone.gif")) return "Archive";
-		if (image.equals("icon_maint.gif")) return "Owner Maintenance";
-		if (image.equals("icon_needsmaint.gif")) return "Needs Maintenance";
-		if (image.equals("coord_update.gif")) return "Update Coordinates";
-		if (image.equals("icon_remove.gif")) return "Needs Archived";
-		if (image.equals("icon_redlight.gif")) return "Retract Listing";
+		if (image.equals("icon_smile.gif"))
+			return "Found it";
+		if (image.equals("icon_sad.gif"))
+			return "Didn't find it";
+		if (image.equals("icon_note.gif"))
+			return "Write note";
+		if (image.equals("icon_enabled.gif"))
+			return "Enable Listing";
+		if (image.equals("icon_disabled.gif"))
+			return "Temporarily Disable Listing";
+		if (image.equals("icon_camera.gif"))
+			return "Webcam Photo Taken";
+		if (image.equals("icon_attended.gif"))
+			return "Attended";
+		if (image.equals("icon_greenlight.gif"))
+			return "Publish Listing";
+		if (image.equals("icon_rsvp.gif"))
+			return "Will Attend";
+		if (image.equals("big_smile.gif"))
+			return "Post Reviewer Note";
+		if (image.equals("traffic_cone.gif"))
+			return "Archive";
+		if (image.equals("icon_maint.gif"))
+			return "Owner Maintenance";
+		if (image.equals("icon_needsmaint.gif"))
+			return "Needs Maintenance";
+		if (image.equals("coord_update.gif"))
+			return "Update Coordinates";
+		if (image.equals("icon_remove.gif"))
+			return "Needs Archived";
+		if (image.equals("icon_redlight.gif"))
+			return "Retract Listing";
 
-		if (image.equals("2.png")) return "Found it";
-		if (image.equals("3.png")) return "Didn't find it";
-		if (image.equals("4.png")) return "Write note";
-		if (image.equals("5.png")) return "Archive";
-		if (image.equals("7.png")) return "Needs Archived";
-		if (image.equals("9.png")) return "Will Attend";
-		if (image.equals("10.png")) return "Attended";
-		if (image.equals("11.png")) return "Webcam Photo Taken";
-		if (image.equals("12.png")) return "Unarchived"; // new todo check gpx-export/import
-		if (image.equals("18.png")) return "Post Reviewer Note";
-		if (image.equals("22.png")) return "Temporarily Disable Listing";
-		if (image.equals("23.png")) return "Enable Listing";
-		if (image.equals("24.png")) return "Publish Listing";
-		if (image.equals("25.png")) return "Retract Listing";
-		if (image.equals("45.png")) return "Needs Maintenance";
-		if (image.equals("46.png")) return "Owner Maintenance";
-		if (image.equals("47.png")) return "Update Coordinates";
-		if (image.equals("74.png")) return "Announcement"; // new todo check gpx-export/import
+		if (image.equals("2.png"))
+			return "Found it";
+		if (image.equals("3.png"))
+			return "Didn't find it";
+		if (image.equals("4.png"))
+			return "Write note";
+		if (image.equals("5.png"))
+			return "Archive";
+		if (image.equals("7.png"))
+			return "Needs Archived";
+		if (image.equals("9.png"))
+			return "Will Attend";
+		if (image.equals("10.png"))
+			return "Attended";
+		if (image.equals("11.png"))
+			return "Webcam Photo Taken";
+		if (image.equals("12.png"))
+			return "Unarchived"; // new todo check gpx-export/import
+		if (image.equals("18.png"))
+			return "Post Reviewer Note";
+		if (image.equals("22.png"))
+			return "Temporarily Disable Listing";
+		if (image.equals("23.png"))
+			return "Enable Listing";
+		if (image.equals("24.png"))
+			return "Publish Listing";
+		if (image.equals("25.png"))
+			return "Retract Listing";
+		if (image.equals("45.png"))
+			return "Needs Maintenance";
+		if (image.equals("46.png"))
+			return "Owner Maintenance";
+		if (image.equals("47.png"))
+			return "Update Coordinates";
+		if (image.equals("74.png"))
+			return "Announcement"; // new todo check gpx-export/import
 
 		return "unknown logtype " + image;
 	}
@@ -910,7 +980,7 @@ public class CacheHolder {
 	 * @param chD
 	 *            CacheHolderDetail
 	 * @param int
-	 *            ModTypLongDesc == 1 get image from profile path, == 2 get image from html-path
+	 *        ModTypLongDesc == 1 get image from profile path, == 2 get image from html-path
 	 * @return The modified long description
 	 */
 	private String modifyLongDesc(CacheHolderDetail chD, int ModTypLongDesc) {
@@ -919,9 +989,11 @@ public class CacheHolder {
 		int pos;
 		int imageNo = 0;
 		String imgsrc = "";
-		if (ModTypLongDesc == 1) imgsrc = "file://" + Global.getProfile().dataDir;
+		if (ModTypLongDesc == 1)
+			imgsrc = "file://" + Global.profile.dataDir;
 		while (start >= 0 && (pos = chD.LongDescription.indexOf("<img", start)) > 0) {
-			if (imageNo >= chD.images.size()) break;
+			if (imageNo >= chD.images.size())
+				break;
 			s.append(chD.LongDescription.substring(start, pos));
 			start = chD.LongDescription.indexOf(">", pos) + 1;
 			String oldurl = chD.images.get(imageNo).getURL();
@@ -939,7 +1011,8 @@ public class CacheHolder {
 			s.append(STRreplace.replace(imgString, oldurl, newurl));
 			imageNo++;
 		}
-		if (start >= 0) s.append(chD.LongDescription.substring(start));
+		if (start >= 0)
+			s.append(chD.LongDescription.substring(start));
 		return s.toString();
 	}
 
@@ -969,17 +1042,20 @@ public class CacheHolder {
 	}
 
 	private static String removeCharsfromString(String text, int MaxLength, String chars) {
-		if (text == null) return null;
+		if (text == null)
+			return null;
 		int originalTextLength = text.length();
 		int anzToRemove = originalTextLength - MaxLength;
-		if (anzToRemove <= 0) return text;
+		if (anzToRemove <= 0)
+			return text;
 		int anzRemoved = 0;
 		StringBuffer sb = new StringBuffer(50);
 		for (int i = originalTextLength - 1; i >= 0; i--) {
 			char c = text.charAt(i);
 			if (chars.indexOf(c) == -1) {
 				sb.insert(0, c);
-			} else {
+			}
+			else {
 				anzRemoved++;
 				if (anzRemoved == anzToRemove) {
 					sb.insert(0, text.substring(0, i));
@@ -1019,7 +1095,8 @@ public class CacheHolder {
 			kilom = pos.getDistance(toPoint);
 			degrees = toPoint.getBearing(pos);
 			bearing = CWPoint.getDirection(degrees);
-		} else {
+		}
+		else {
 			kilom = -1;
 			bearing = NOBEARING;
 		}
@@ -1034,7 +1111,8 @@ public class CacheHolder {
 				this.setFound(true);
 			}
 			// else addi is already found (perhaps at other time)
-		} else {
+		}
+		else {
 			// there may be a found addi , so don't overwrite
 			if ((this.getType() == CacheType.CW_TYPE_FINAL)) {
 				this.setCacheStatus(mainCh.getCacheStatus());
@@ -1065,9 +1143,12 @@ public class CacheHolder {
 	 * @return
 	 */
 	public boolean hasSameMainCache(CacheHolder ch) {
-		if (this == ch) return true;
-		if (ch == null) return false;
-		if ((!this.isAddiWpt()) && (!ch.isAddiWpt())) return false;
+		if (this == ch)
+			return true;
+		if (ch == null)
+			return false;
+		if ((!this.isAddiWpt()) && (!ch.isAddiWpt()))
+			return false;
 		CacheHolder main1, main2;
 		if (this.isAddiWpt())
 			main1 = this.mainCache;
@@ -1102,8 +1183,9 @@ public class CacheHolder {
 		if (details == null) {
 			details = new CacheHolderDetail(this);
 			try {
-				details.readCache(Global.getProfile().dataDir);
-			} catch (IOException e) {
+				details.readCache(Global.profile.dataDir);
+			}
+			catch (IOException e) {
 				if (alarmuser) {
 					// FIXME: put a message to languages file
 					(new MessageBox(MyLocale.getMsg(31415, "Error"), MyLocale.getMsg(31415, "Could not read cache details for cache: ") + this.getWayPoint(), FormBase.OKB)).execute();
@@ -1114,7 +1196,8 @@ public class CacheHolder {
 			// for importing/spidering reasons helper objects with same waypoint are created
 			if (details != null && !cachesWithLoadedDetails.contains(this)) {
 				cachesWithLoadedDetails.add(this);
-				if (cachesWithLoadedDetails.size() >= Global.getPref().maxDetails) removeOldestDetails();
+				if (cachesWithLoadedDetails.size() >= Global.pref.maxDetails)
+					removeOldestDetails();
 			}
 		}
 		return details;
@@ -1125,27 +1208,28 @@ public class CacheHolder {
 	 */
 	public void save() {
 		checkIncomplete();
-		this.getCacheDetails(false).saveCacheDetails(Global.getProfile().dataDir);
+		this.getCacheDetails(false).saveCacheDetails(Global.profile.dataDir);
 	}
 
 	void releaseCacheDetails() {
 		if (details != null && details.hasUnsavedChanges) {
-			details.saveCacheDetails(Global.getProfile().dataDir);
+			details.saveCacheDetails(Global.profile.dataDir);
 		}
 		details = null;
 		cachesWithLoadedDetails.remove(this);
 	}
 
 	// final static int maxDetails = 50;
-	static Vector cachesWithLoadedDetails = new Vector(Global.getPref().maxDetails);
+	static Vector cachesWithLoadedDetails = new Vector(Global.pref.maxDetails);
 
 	public static void removeOldestDetails() {
 		CacheHolder ch;
-		for (int i = 0; i < Global.getPref().deleteDetails; i++) {
+		for (int i = 0; i < Global.pref.deleteDetails; i++) {
 			// String wp = (String) cachesWithLoadedDetails.get(i);
-			// CacheHolder ch = Global.getProfile().cacheDB.get(wp);
+			// CacheHolder ch = Global.profile.cacheDB.get(wp);
 			ch = (CacheHolder) cachesWithLoadedDetails.get(i);
-			if (ch != null) ch.releaseCacheDetails();
+			if (ch != null)
+				ch.releaseCacheDetails();
 		}
 	}
 
@@ -1153,9 +1237,10 @@ public class CacheHolder {
 		CacheHolder ch;
 		for (int i = cachesWithLoadedDetails.size() - 1; i >= 0; i--) {
 			// String wp = (String) cachesWithLoadedDetails.get(i);
-			// CacheHolder ch = Global.getProfile().cacheDB.get(wp);
+			// CacheHolder ch = Global.profile.cacheDB.get(wp);
 			ch = (CacheHolder) cachesWithLoadedDetails.get(i);
-			if (ch != null && ch.detailsLoaded()) ch.releaseCacheDetails();
+			if (ch != null && ch.detailsLoaded())
+				ch.releaseCacheDetails();
 		}
 	}
 
@@ -1167,13 +1252,13 @@ public class CacheHolder {
 		CacheHolderDetail chD;
 		for (int i = cachesWithLoadedDetails.size() - 1; i >= 0; i--) {
 			// String wp = (String) cachesWithLoadedDetails.get(i);
-			// ch = Global.getProfile().cacheDB.get(wp);
+			// ch = Global.profile.cacheDB.get(wp);
 			ch = (CacheHolder) cachesWithLoadedDetails.get(i);
 			if (ch != null) {
 				chD = ch.getCacheDetails(true);
 				if (chD != null && chD.hasUnsavedChanges) {
 					// ch.calcRecommendationScore();
-					chD.saveCacheDetails(Global.getProfile().dataDir);
+					chD.saveCacheDetails(Global.profile.dataDir);
 				}
 			}
 		}
@@ -1183,7 +1268,8 @@ public class CacheHolder {
 		int msgNr = 318; // normal found
 		if (type == CacheType.CW_TYPE_WEBCAM) {
 			msgNr = 361;
-		} else if (type == CacheType.CW_TYPE_EVENT || type == CacheType.CW_TYPE_MEGA_EVENT) {
+		}
+		else if (type == CacheType.CW_TYPE_EVENT || type == CacheType.CW_TYPE_MEGA_EVENT) {
 			msgNr = 355;
 		}
 		return MyLocale.getMsg(msgNr, "Found");
@@ -1193,7 +1279,8 @@ public class CacheHolder {
 		int msgNr = 318; // normal found
 		if (type == CacheType.CW_TYPE_WEBCAM) {
 			msgNr = 361;
-		} else if (type == CacheType.CW_TYPE_EVENT || type == CacheType.CW_TYPE_MEGA_EVENT) {
+		}
+		else if (type == CacheType.CW_TYPE_EVENT || type == CacheType.CW_TYPE_MEGA_EVENT) {
 			msgNr = 355;
 		}
 		for (int i = 0; i < _logType.length; i++) {
@@ -1216,10 +1303,12 @@ public class CacheHolder {
 	public String getStatusText() {
 		if ((cacheStatus.length() == 10 || cacheStatus.length() == 16) && cacheStatus.charAt(4) == '-') {
 			return getFoundText() + " " + cacheStatus;
-		} else {
+		}
+		else {
 			if (found) {
 				return getFoundText();
-			} else {
+			}
+			else {
 				return cacheStatus;
 			}
 		}
@@ -1247,7 +1336,8 @@ public class CacheHolder {
 			rexTime.search(getCacheStatus());
 			if (rexTime.stringMatched(1) != null) {
 				statusTime = rexTime.stringMatched(1);
-			} else {
+			}
+			else {
 				Regex rexDate = new Regex("([0-9]{4}-[0-9]{2}-[0-9]{2})");
 				rexDate.search(getCacheStatus());
 				if (rexDate.stringMatched(1) != null) {
@@ -1258,19 +1348,19 @@ public class CacheHolder {
 
 		return statusTime;
 	}
-	
+
 	public String getStatusUtcDate() {
 		String statusDate = getStatusDate();
 
-		long timeZoneOffset = Global.getProfile().getTimeZoneOffsetLong();
+		long timeZoneOffset = Global.profile.getTimeZoneOffsetLong();
 
-		if ( timeZoneOffset != 0 || Global.getProfile().getTimeZoneAutoDST() ) {
+		if (timeZoneOffset != 0 || Global.profile.getTimeZoneAutoDST()) {
 			//convert to UTC only if time is set
 			Regex rexTime = new Regex("([0-9]{1,2}:[0-9]{2})");
 			rexTime.search(getCacheStatus());
 			if (rexTime.stringMatched(1) != null) {
-				String statusDateTime = (statusDate + " " + getStatusTime()).trim();	
-				if ( statusDateTime.length() > 0) {
+				String statusDateTime = (statusDate + " " + getStatusTime()).trim();
+				if (statusDateTime.length() > 0) {
 					try {
 						Time logTime = new Time();
 						logTime.parse(statusDateTime, "yyyy-MM-dd HH:mm");
@@ -1279,30 +1369,32 @@ public class CacheHolder {
 
 						if (timeZoneOffset == 100) { //autodetect
 							timeZoneOffsetMillis = Time.convertSystemTime(logTime.getTime(), false) - logTime.getTime();
-						} else {
-							timeZoneOffsetMillis = timeZoneOffset*3600000;							
+						}
+						else {
+							timeZoneOffsetMillis = timeZoneOffset * 3600000;
 						}
 
-						if ( Global.getProfile().getTimeZoneAutoDST() ) {
-							int lsM = (byte) (31 - ((int)(5 * logTime.year / 4) + 4) % 7);//last Sunday in March
-							int lsO = (byte) (31 - ((int)(5 * logTime.year / 4) + 1) % 7);//last Sunday in October
+						if (Global.profile.getTimeZoneAutoDST()) {
+							int lsM = (byte) (31 - ((int) (5 * logTime.year / 4) + 4) % 7);//last Sunday in March
+							int lsO = (byte) (31 - ((int) (5 * logTime.year / 4) + 1) % 7);//last Sunday in October
 
 							Time dstStart = new Time(lsM, 3, logTime.year);
 							dstStart.hour = 2;
-							dstStart.setTime( dstStart.getTime() - timeZoneOffsetMillis );
+							dstStart.setTime(dstStart.getTime() - timeZoneOffsetMillis);
 							Time dstEnd = new Time(lsO, 10, logTime.year);
 							dstEnd.hour = 1;
 							dstEnd.minute = 59;
-							dstEnd.setTime( dstEnd.getTime() - timeZoneOffsetMillis );
+							dstEnd.setTime(dstEnd.getTime() - timeZoneOffsetMillis);
 
-							if ( logTime.after(dstStart) && logTime.before(dstEnd) ) {
+							if (logTime.after(dstStart) && logTime.before(dstEnd)) {
 								timeZoneOffsetMillis += 3600000;
-							}							
+							}
 						}
 
-						logTime.setTime(logTime.getTime() - timeZoneOffsetMillis );							
+						logTime.setTime(logTime.getTime() - timeZoneOffsetMillis);
 						statusDate = logTime.format("yyyy-MM-dd");
-					} catch (IllegalArgumentException e) {
+					}
+					catch (IllegalArgumentException e) {
 					}
 				}
 			}
@@ -1314,15 +1406,15 @@ public class CacheHolder {
 	public String getStatusUtcTime() {
 		String statusTime = getStatusTime();
 
-		long timeZoneOffset = Global.getProfile().getTimeZoneOffsetLong();
+		long timeZoneOffset = Global.profile.getTimeZoneOffsetLong();
 
-		if ( timeZoneOffset != 0 || Global.getProfile().getTimeZoneAutoDST() ) {
+		if (timeZoneOffset != 0 || Global.profile.getTimeZoneAutoDST()) {
 			//convert to UTC only if time is set
 			Regex rexTime = new Regex("([0-9]{1,2}:[0-9]{2})");
 			rexTime.search(getCacheStatus());
 			if (rexTime.stringMatched(1) != null) {
-				String statusDateTime = (getStatusDate() + " " + statusTime).trim();	
-				if ( statusDateTime.length() > 0) {
+				String statusDateTime = (getStatusDate() + " " + statusTime).trim();
+				if (statusDateTime.length() > 0) {
 					try {
 						Time logTime = new Time();
 						logTime.parse(statusDateTime, "yyyy-MM-dd HH:mm");
@@ -1331,30 +1423,32 @@ public class CacheHolder {
 
 						if (timeZoneOffset == 100) { //autodetect
 							timeZoneOffsetMillis = Time.convertSystemTime(logTime.getTime(), false) - logTime.getTime();
-						} else {
-							timeZoneOffsetMillis = timeZoneOffset*3600000;							
+						}
+						else {
+							timeZoneOffsetMillis = timeZoneOffset * 3600000;
 						}
 
-						if ( Global.getProfile().getTimeZoneAutoDST() ) {
-							int lsM = (byte) (31 - ((int)(5 * logTime.year / 4) + 4) % 7);//last Sunday in March
-							int lsO = (byte) (31 - ((int)(5 * logTime.year / 4) + 1) % 7);//last Sunday in October
+						if (Global.profile.getTimeZoneAutoDST()) {
+							int lsM = (byte) (31 - ((int) (5 * logTime.year / 4) + 4) % 7);//last Sunday in March
+							int lsO = (byte) (31 - ((int) (5 * logTime.year / 4) + 1) % 7);//last Sunday in October
 
 							Time dstStart = new Time(lsM, 3, logTime.year);
 							dstStart.hour = 2;
-							dstStart.setTime( dstStart.getTime() - timeZoneOffsetMillis );
+							dstStart.setTime(dstStart.getTime() - timeZoneOffsetMillis);
 							Time dstEnd = new Time(lsO, 10, logTime.year);
 							dstEnd.hour = 1;
 							dstEnd.minute = 59;
-							dstEnd.setTime( dstEnd.getTime() - timeZoneOffsetMillis );
+							dstEnd.setTime(dstEnd.getTime() - timeZoneOffsetMillis);
 
-							if ( logTime.after(dstStart) && logTime.before(dstEnd) ) {
+							if (logTime.after(dstStart) && logTime.before(dstEnd)) {
 								timeZoneOffsetMillis += 3600000;
-							}							
+							}
 						}
 
-						logTime.setTime(logTime.getTime() - timeZoneOffsetMillis );							
+						logTime.setTime(logTime.getTime() - timeZoneOffsetMillis);
 						statusTime = logTime.format("HH:mm");
-					} catch (IllegalArgumentException e) {
+					}
+					catch (IllegalArgumentException e) {
 					}
 				}
 			}
@@ -1362,7 +1456,6 @@ public class CacheHolder {
 
 		return statusTime;
 	}
-
 
 	public String GetCacheID() {
 		String result = "";
@@ -1390,7 +1483,8 @@ public class CacheHolder {
 			}
 
 			result = Integer.toString(gcId);
-		} else if (isOC()) {
+		}
+		else if (isOC()) {
 			result = getOcCacheID();
 		}
 
@@ -1402,8 +1496,8 @@ public class CacheHolder {
 	private final static int IDX_WRITENOTE = 5;
 	private final static String[][] _logType = { { "353", "" }, { "318", "Found it" }, { "355", "Attended" }, { "361", "Webcam Photo Taken" }, { "319", "Didn't find it" },
 			{ "314", "Write note" }, // at change do change IDX_WRITENOTE = 5;
-			{ "315", "Needs Archived" }, { "316", "Needs Maintenance" }, { "317", "Search" }, { "354", "Will Attend" }, { "320", "Owner" }, { "359", "Owner Maintenance" }, { "356", "Temporarily Disable Listing" },
-			{ "357", "Enable Listing" }, { "358", "Post Reviewer Note" }, { "362", "Solved" }, { "313", "Flag 1" }, { "360", "Flag 2" }, };
+			{ "315", "Needs Archived" }, { "316", "Needs Maintenance" }, { "317", "Search" }, { "354", "Will Attend" }, { "320", "Owner" }, { "359", "Owner Maintenance" }, { "356", "Temporarily Disable Listing" }, { "357", "Enable Listing" },
+			{ "358", "Post Reviewer Note" }, { "362", "Solved" }, { "313", "Flag 1" }, { "360", "Flag 2" }, };
 
 	public final static String[] GetGuiLogTypes() {
 		String[] ret = new String[_logType.length];
@@ -1419,7 +1513,8 @@ public class CacheHolder {
 			String msgNr = "318"; // normal found
 			if (type == CacheType.CW_TYPE_WEBCAM) {
 				msgNr = "361";
-			} else if (type == CacheType.CW_TYPE_EVENT || type == CacheType.CW_TYPE_MEGA_EVENT) {
+			}
+			else if (type == CacheType.CW_TYPE_EVENT || type == CacheType.CW_TYPE_MEGA_EVENT) {
 				msgNr = "355";
 			}
 			for (int i = 1; i < _logType.length; i++) {
@@ -1428,7 +1523,8 @@ public class CacheHolder {
 					break;
 				}
 			}
-		} else {
+		}
+		else {
 			String CacheStatus = getCacheStatus();
 			for (int i = 1; i < _logType.length; i++) {
 				if (CacheStatus.endsWith(MyLocale.getMsg(Common.parseInt(_logType[i][MSG_NR]), ""))) {
@@ -1518,10 +1614,14 @@ public class CacheHolder {
 				// Addis don't have their own values for difficulty, terrain and size
 				// Custom waypoints can't be updated to remove incomplete flag, so we
 				// have to set reasonable values.
-				if (getHard() == CacheTerrDiff.CW_DT_ERROR) setHard(CacheTerrDiff.CW_DT_UNSET);
-				if (getTerrain() == CacheTerrDiff.CW_DT_ERROR) setTerrain(CacheTerrDiff.CW_DT_UNSET);
-				if (getCacheSize() == CacheSize.CW_SIZE_ERROR) setCacheSize(CacheSize.CW_SIZE_NONE);
-			} else {
+				if (getHard() == CacheTerrDiff.CW_DT_ERROR)
+					setHard(CacheTerrDiff.CW_DT_UNSET);
+				if (getTerrain() == CacheTerrDiff.CW_DT_ERROR)
+					setTerrain(CacheTerrDiff.CW_DT_UNSET);
+				if (getCacheSize() == CacheSize.CW_SIZE_ERROR)
+					setCacheSize(CacheSize.CW_SIZE_NONE);
+			}
+			else {
 				setIncomplete(true);
 			}
 		}
@@ -1576,7 +1676,8 @@ public class CacheHolder {
 	private long bool2BitMask(boolean value, int position) {
 		if (value) {
 			return (1L << (position - 1));
-		} else {
+		}
+		else {
 			return 0L;
 		}
 	}
@@ -1602,10 +1703,9 @@ public class CacheHolder {
 	 * @return
 	 */
 	public boolean isVisible() {
-		Profile profile = Global.getProfile();
-		int filter = profile.getFilterActive();
-		boolean noShow = ((profile.showBlacklisted() != this.is_black()) || (profile.showSearchResult() && !this.is_flaged)
-				|| ((filter == Filter.FILTER_ACTIVE || filter == Filter.FILTER_MARKED_ONLY) && (this.is_filtered()) ^ profile.isFilterInverted()) || (filter == Filter.FILTER_CACHELIST)
+		int filter = Global.profile.getFilterActive();
+		boolean noShow = ((Global.profile.showBlacklisted() != this.is_black()) || (Global.profile.showSearchResult() && !this.is_flaged)
+				|| ((filter == Filter.FILTER_ACTIVE || filter == Filter.FILTER_MARKED_ONLY) && (this.is_filtered()) ^ Global.profile.isFilterInverted()) || (filter == Filter.FILTER_CACHELIST)
 				&& !Global.mainForm.cacheList.contains(this.getWayPoint()));
 		boolean showAddi = this.showAddis() && this.mainCache != null && this.mainCache.isVisible();
 		noShow = noShow && !showAddi;
@@ -1619,7 +1719,8 @@ public class CacheHolder {
 	}
 
 	public void setPos(TrackPoint _pos) {
-		if (_pos.latDec != pos.latDec || _pos.lonDec != pos.lonDec) setUpdated(true);
+		if (_pos.latDec != pos.latDec || _pos.lonDec != pos.lonDec)
+			setUpdated(true);
 		pos.set(_pos);
 	}
 
@@ -1664,7 +1765,7 @@ public class CacheHolder {
 	public void setCacheStatus(String cacheStatus) {
 		if (!cacheStatus.equals(this.cacheStatus)) {
 			this.cacheStatus = cacheStatus;
-			Global.getProfile().notifyUnsavedChanges(true);
+			Global.profile.notifyUnsavedChanges(true);
 			if ((this.getType() == CacheType.CW_TYPE_FINAL) && (this.mainCache != null)) {
 				this.mainCache.setCacheStatus(this.getCacheStatus());
 				// change the addi's in setFound
@@ -1677,7 +1778,7 @@ public class CacheHolder {
 	}
 
 	public void setWayPoint(String wayPoint) {
-		Global.getProfile().notifyUnsavedChanges(!wayPoint.equals(this.wayPoint));
+		Global.profile.notifyUnsavedChanges(!wayPoint.equals(this.wayPoint));
 		this.wayPoint = wayPoint;
 	}
 
@@ -1686,7 +1787,7 @@ public class CacheHolder {
 	}
 
 	public void setCacheName(String cacheName) {
-		Global.getProfile().notifyUnsavedChanges(!cacheName.equals(this.cacheName));
+		Global.profile.notifyUnsavedChanges(!cacheName.equals(this.cacheName));
 		this.cacheName = cacheName;
 	}
 
@@ -1695,7 +1796,7 @@ public class CacheHolder {
 	}
 
 	public void setCacheOwner(String cacheOwner) {
-		Global.getProfile().notifyUnsavedChanges(!cacheOwner.equals(this.cacheOwner));
+		Global.profile.notifyUnsavedChanges(!cacheOwner.equals(this.cacheOwner));
 		this.cacheOwner = cacheOwner;
 	}
 
@@ -1704,7 +1805,7 @@ public class CacheHolder {
 	}
 
 	public void setDateHidden(String dateHidden) {
-		Global.getProfile().notifyUnsavedChanges(!dateHidden.equals(this.dateHidden));
+		Global.profile.notifyUnsavedChanges(!dateHidden.equals(this.dateHidden));
 		this.dateHidden = dateHidden;
 	}
 
@@ -1713,7 +1814,7 @@ public class CacheHolder {
 	}
 
 	public void setCacheSize(byte cacheSize) {
-		Global.getProfile().notifyUnsavedChanges(cacheSize != this.cacheSize);
+		Global.profile.notifyUnsavedChanges(cacheSize != this.cacheSize);
 		this.cacheSize = cacheSize;
 	}
 
@@ -1722,7 +1823,7 @@ public class CacheHolder {
 	}
 
 	public void setHard(byte hard) {
-		Global.getProfile().notifyUnsavedChanges(hard != this.hard);
+		Global.profile.notifyUnsavedChanges(hard != this.hard);
 		this.hard = hard;
 	}
 
@@ -1731,7 +1832,7 @@ public class CacheHolder {
 	}
 
 	public void setTerrain(byte terrain) {
-		Global.getProfile().notifyUnsavedChanges(terrain != this.terrain);
+		Global.profile.notifyUnsavedChanges(terrain != this.terrain);
 		this.terrain = terrain;
 	}
 
@@ -1751,7 +1852,7 @@ public class CacheHolder {
 	 *            Cache Type
 	 */
 	public void setType(byte typeId) {
-		Global.getProfile().notifyUnsavedChanges(typeId != type);
+		Global.profile.notifyUnsavedChanges(typeId != type);
 		type = typeId;
 	}
 
@@ -1760,7 +1861,7 @@ public class CacheHolder {
 	}
 
 	public void setArchived(boolean is_archived) {
-		Global.getProfile().notifyUnsavedChanges(is_archived != this.archived);
+		Global.profile.notifyUnsavedChanges(is_archived != this.archived);
 		this.archived = is_archived;
 		if (this.archived) {
 			this.available = false;
@@ -1772,7 +1873,7 @@ public class CacheHolder {
 	}
 
 	public void setAvailable(boolean is_available) {
-		Global.getProfile().notifyUnsavedChanges(is_available != this.available);
+		Global.profile.notifyUnsavedChanges(is_available != this.available);
 		this.available = is_available;
 		if (this.available) {
 			this.archived = false;
@@ -1784,7 +1885,7 @@ public class CacheHolder {
 	}
 
 	public void setOwned(boolean is_owned) {
-		Global.getProfile().notifyUnsavedChanges(is_owned != this.owned);
+		Global.profile.notifyUnsavedChanges(is_owned != this.owned);
 		this.owned = is_owned;
 	}
 
@@ -1794,13 +1895,14 @@ public class CacheHolder {
 
 	public void setFound(boolean is_found) {
 		if (is_found != this.found) {
-			Global.getProfile().notifyUnsavedChanges(true);
+			Global.profile.notifyUnsavedChanges(true);
 			this.found = is_found;
 			if ((this.getType() == CacheType.CW_TYPE_FINAL) && (this.mainCache != null)) {
 				this.mainCache.setFound(is_found);
 				// done in setCacheStatus this.mainCache.setCacheStatus(this.getCacheStatus());
 				// so setFound should be called after setCacheStatus
-				if (is_found) this.mainCache.setAttributesToAddiWpts();
+				if (is_found)
+					this.mainCache.setAttributesToAddiWpts();
 			}
 		}
 	}
@@ -1828,7 +1930,8 @@ public class CacheHolder {
 		CacheHolder mc = null;
 		if (this.mainCache == null) {
 			mc = this;
-		} else {
+		}
+		else {
 			mc = this.mainCache;
 		}
 		if (mc.showAddis != value) {
@@ -1867,7 +1970,7 @@ public class CacheHolder {
 	}
 
 	public void setFiltered(boolean is_filtered) {
-		Global.getProfile().notifyUnsavedChanges(is_filtered != this.filtered);
+		Global.profile.notifyUnsavedChanges(is_filtered != this.filtered);
 		this.filtered = is_filtered;
 	}
 
@@ -1876,8 +1979,9 @@ public class CacheHolder {
 	}
 
 	public void setLog_updated(boolean is_log_updated) {
-		Global.getProfile().notifyUnsavedChanges(is_log_updated != this.log_updated);
-		if (is_log_updated && iconAndTextWPLevel == 1) iconAndTextWP = null;
+		Global.profile.notifyUnsavedChanges(is_log_updated != this.log_updated);
+		if (is_log_updated && iconAndTextWPLevel == 1)
+			iconAndTextWP = null;
 		this.log_updated = is_log_updated;
 	}
 
@@ -1886,8 +1990,9 @@ public class CacheHolder {
 	}
 
 	public void setUpdated(boolean is_updated) {
-		Global.getProfile().notifyUnsavedChanges(is_updated != this.cache_updated);
-		if (is_updated && iconAndTextWPLevel == 2) iconAndTextWP = null;
+		Global.profile.notifyUnsavedChanges(is_updated != this.cache_updated);
+		if (is_updated && iconAndTextWPLevel == 2)
+			iconAndTextWP = null;
 		this.cache_updated = is_updated;
 	}
 
@@ -1896,8 +2001,9 @@ public class CacheHolder {
 	}
 
 	public void setIncomplete(boolean is_incomplete) {
-		Global.getProfile().notifyUnsavedChanges(is_incomplete != this.incomplete);
-		if (is_incomplete && iconAndTextWPLevel == 4) iconAndTextWP = null;
+		Global.profile.notifyUnsavedChanges(is_incomplete != this.incomplete);
+		if (is_incomplete && iconAndTextWPLevel == 4)
+			iconAndTextWP = null;
 		this.incomplete = is_incomplete;
 	}
 
@@ -1911,19 +2017,21 @@ public class CacheHolder {
 				ret = true;
 			else
 				ret = false;
-		} else if (isAddiWpt()) {
+		}
+		else if (isAddiWpt()) {
 			// FIXME: do not check for mainCache == null, since it will be null during initial import
 			// FIXME: find out why we only check waypoints with IDs of a certain length ???
 			// if (mainCache == null
 			// || getHard() != CacheTerrDiff.CW_DT_UNSET
 			if (getHard() != CacheTerrDiff.CW_DT_UNSET || getCacheSize() != CacheSize.CW_SIZE_NOTCHOSEN || getTerrain() != CacheTerrDiff.CW_DT_UNSET || getWayPoint().length() < 3
 			// || getCacheOwner().length() > 0
-					// || getDateHidden().length() > 0
+			// || getDateHidden().length() > 0
 					|| getCacheName().length() == 0)
 				ret = true;
 			else
 				ret = false;
-		} else if (isCustomWpt()) {
+		}
+		else if (isCustomWpt()) {
 			if (getHard() != CacheTerrDiff.CW_DT_UNSET || getTerrain() != CacheTerrDiff.CW_DT_UNSET || getCacheSize() != CacheSize.CW_SIZE_NOTCHOSEN || getWayPoint().length() < 3
 			// || getCacheOwner().length() > 0
 			// || getDateHidden().length() > 0
@@ -1932,7 +2040,8 @@ public class CacheHolder {
 				ret = true;
 			else
 				ret = false;
-		} else {
+		}
+		else {
 			// we should not get here, so let's set a warning just in case
 			ret = true;
 		}
@@ -1951,7 +2060,7 @@ public class CacheHolder {
 	}
 
 	public void setBlack(boolean is_black) {
-		Global.getProfile().notifyUnsavedChanges(is_black != this.black);
+		Global.profile.notifyUnsavedChanges(is_black != this.black);
 		this.black = is_black;
 	}
 
@@ -1960,8 +2069,9 @@ public class CacheHolder {
 	}
 
 	public void setNew(boolean is_new) {
-		Global.getProfile().notifyUnsavedChanges(is_new != this.newCache);
-		if (is_new && iconAndTextWPLevel == 3) iconAndTextWP = null;
+		Global.profile.notifyUnsavedChanges(is_new != this.newCache);
+		if (is_new && iconAndTextWPLevel == 3)
+			iconAndTextWP = null;
 		this.newCache = is_new;
 	}
 
@@ -1970,7 +2080,7 @@ public class CacheHolder {
 	}
 
 	public void setOcCacheID(String ocCacheID) {
-		Global.getProfile().notifyUnsavedChanges(!ocCacheID.equals(this.ocCacheID));
+		Global.profile.notifyUnsavedChanges(!ocCacheID.equals(this.ocCacheID));
 		this.ocCacheID = ocCacheID;
 	}
 
@@ -1979,7 +2089,7 @@ public class CacheHolder {
 	}
 
 	public void setNoFindLogs(byte noFindLogs) {
-		Global.getProfile().notifyUnsavedChanges(noFindLogs != this.noFindLogs);
+		Global.profile.notifyUnsavedChanges(noFindLogs != this.noFindLogs);
 		this.noFindLogs = noFindLogs;
 	}
 
@@ -1988,14 +2098,17 @@ public class CacheHolder {
 	}
 
 	public String getRecommended() {
-		if (!isCacheWpt()) return "";
+		if (!isCacheWpt())
+			return "";
 		if (isOC()) {
 			return Convert.formatInt(recommendationScore) + " (" + Convert.formatInt(numRecommended) + ")";
-		} else {
+		}
+		else {
 			int gcVote = numRecommended;
 			if (gcVote < 100) {
 				return MyLocale.formatDouble((double) gcVote / 10.0, "0.0");
-			} else {
+			}
+			else {
 				int votes = gcVote / 100;
 				gcVote = gcVote - 100 * votes;
 				return MyLocale.formatDouble((double) gcVote / 10.0, "0.0") + " (" + Convert.formatInt(votes) + ")";
@@ -2004,7 +2117,7 @@ public class CacheHolder {
 	}
 
 	public void setNumRecommended(int numRecommended) {
-		Global.getProfile().notifyUnsavedChanges(numRecommended != this.numRecommended);
+		Global.profile.notifyUnsavedChanges(numRecommended != this.numRecommended);
 		this.numRecommended = numRecommended;
 	}
 
@@ -2013,7 +2126,7 @@ public class CacheHolder {
 	}
 
 	public void setNumFoundsSinceRecommendation(int numFoundsSinceRecommendation) {
-		Global.getProfile().notifyUnsavedChanges(numFoundsSinceRecommendation != this.numFoundsSinceRecommendation);
+		Global.profile.notifyUnsavedChanges(numFoundsSinceRecommendation != this.numFoundsSinceRecommendation);
 		this.numFoundsSinceRecommendation = numFoundsSinceRecommendation;
 	}
 
@@ -2022,7 +2135,7 @@ public class CacheHolder {
 	}
 
 	public void setHas_bugs(boolean has_bug) {
-		Global.getProfile().notifyUnsavedChanges(has_bug != this.bugs);
+		Global.profile.notifyUnsavedChanges(has_bug != this.bugs);
 		this.bugs = has_bug;
 	}
 
@@ -2031,7 +2144,7 @@ public class CacheHolder {
 	}
 
 	public void setHTML(boolean is_HTML) {
-		Global.getProfile().notifyUnsavedChanges(is_HTML != this.html);
+		Global.profile.notifyUnsavedChanges(is_HTML != this.html);
 		this.html = is_HTML;
 	}
 
@@ -2040,7 +2153,7 @@ public class CacheHolder {
 	}
 
 	public void setLastSync(String lastSync) {
-		Global.getProfile().notifyUnsavedChanges(!lastSync.equals(this.lastSync));
+		Global.profile.notifyUnsavedChanges(!lastSync.equals(this.lastSync));
 		this.lastSync = lastSync;
 	}
 
@@ -2049,7 +2162,7 @@ public class CacheHolder {
 	}
 
 	public void setAttribsAsBits(long[] attributesBits) {
-		Global.getProfile().notifyUnsavedChanges(attributesBits != this.attributesBits);
+		Global.profile.notifyUnsavedChanges(attributesBits != this.attributesBits);
 		this.attributesBits = attributesBits;
 	}
 
@@ -2058,7 +2171,7 @@ public class CacheHolder {
 	}
 
 	public void setHasSolver(boolean hasSolver) {
-		Global.getProfile().notifyUnsavedChanges(hasSolver != this.hasSolver);
+		Global.profile.notifyUnsavedChanges(hasSolver != this.hasSolver);
 		this.hasSolver = hasSolver;
 	}
 
@@ -2067,7 +2180,7 @@ public class CacheHolder {
 	}
 
 	public void setHasNote(boolean hasNote) {
-		Global.getProfile().notifyUnsavedChanges(hasNote != this.hasNote);
+		Global.profile.notifyUnsavedChanges(hasNote != this.hasNote);
 		this.hasNote = hasNote;
 	}
 
@@ -2084,9 +2197,10 @@ public class CacheHolder {
 		if (details.rename(newWptId)) {
 			setWayPoint(newWptId);
 			save();
-			Global.getProfile().notifyUnsavedChanges(true);
+			Global.profile.notifyUnsavedChanges(true);
 			return true;
-		} else {
+		}
+		else {
 			return false;
 		}
 	}

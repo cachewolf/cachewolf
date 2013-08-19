@@ -25,12 +25,11 @@ import CacheWolf.CWPoint;
 import CacheWolf.CacheHolder;
 import CacheWolf.CacheHolderDetail;
 import CacheWolf.CacheType;
-import CacheWolf.Preferences;
-import CacheWolf.Profile;
+import CacheWolf.Global;
 import CacheWolf.STRreplace;
 import CacheWolf.SafeXML;
+import CacheWolf.utils.FileBugfix;
 import ewe.io.BufferedWriter;
-import ewe.io.File;
 import ewe.io.FileBase;
 import ewe.io.FileOutputStream;
 import ewe.io.FileWriter;
@@ -66,16 +65,14 @@ public class KMLExporter extends Exporter {
 
 	String[] categoryNames = { "Available", "Found", "Owned", "Not Available", "UNKNOWN" };
 	Hashtable[] outCacheDB = new Hashtable[categoryNames.length];
-	private Profile prof;
 
-	public KMLExporter(Preferences p, Profile _prof) {
+	public KMLExporter() {
 		super();
 		this.setMask("*.kml");
-		prof = _prof;
 	}
 
 	public void doIt(int variant) {
-		File outFile;
+		FileBugfix outFile;
 		String str;
 		CacheHolder ch;
 		CacheHolder addiWpt;
@@ -86,8 +83,9 @@ public class KMLExporter extends Exporter {
 			outFile = getOutputFile();
 			if (outFile == null)
 				return;
-		} else {
-			outFile = new File(tmpFileName);
+		}
+		else {
+			outFile = new FileBugfix(tmpFileName);
 		}
 
 		pbf.showMainTask = false;
@@ -101,7 +99,7 @@ public class KMLExporter extends Exporter {
 
 		try {
 			PrintWriter outp = new PrintWriter(new BufferedWriter(new FileWriter(outFile)));
-			str = STRreplace.replace(this.header(), "CacheWolf", prof.name);
+			str = STRreplace.replace(this.header(), "CacheWolf", Global.profile.name);
 			if (str != null)
 				outp.print(str);
 			for (int cat = 0; cat < categoryNames.length; cat++) {
@@ -166,8 +164,9 @@ public class KMLExporter extends Exporter {
 				outp.print(str);
 			outp.close();
 			pbf.exit(0);
-		} catch (IOException ioE) {
-			pref.log("Error opening " + outFile.getName(), ioE);
+		}
+		catch (IOException ioE) {
+			Global.pref.log("Error opening " + outFile.getName(), ioE);
 		}
 		// try
 
@@ -196,13 +195,17 @@ public class KMLExporter extends Exporter {
 			if (ch.isVisible() && !ch.isAddiWpt()) {
 				if (ch.is_found()) {
 					tmp = (Vector) outCacheDB[FOUND].get(String.valueOf(ch.getType()));
-				} else if (ch.is_owned()) {
+				}
+				else if (ch.is_owned()) {
 					tmp = (Vector) outCacheDB[OWNED].get(String.valueOf(ch.getType()));
-				} else if (ch.is_archived() || !ch.is_available()) {
+				}
+				else if (ch.is_archived() || !ch.is_available()) {
 					tmp = (Vector) outCacheDB[NOT_AVAILABLE].get(String.valueOf(ch.getType()));
-				} else if (ch.is_available()) {
+				}
+				else if (ch.is_available()) {
 					tmp = (Vector) outCacheDB[AVAILABLE].get(String.valueOf(ch.getType()));
-				} else {
+				}
+				else {
 					tmp = (Vector) outCacheDB[UNKNOWN].get(String.valueOf(ch.getType()));
 				}
 				tmp.add(ch);
@@ -251,7 +254,8 @@ public class KMLExporter extends Exporter {
 		ZipFile zif = null;
 		try {
 			zif = new ZipFile(FileBase.getProgramDirectory() + FileBase.separator + "exporticons" + FileBase.separator + "GoogleEarth.zip");
-		} catch (IOException e) {
+		}
+		catch (IOException e) {
 		}
 		try {
 			if (zif == null) {
@@ -276,10 +280,12 @@ public class KMLExporter extends Exporter {
 				fis.close();
 			}
 
-		} catch (ZipException e) {
-			pref.log("Problem copying Icon", e, true);
-		} catch (IOException e) {
-			pref.log("Problem copying Icon", e, true);
+		}
+		catch (ZipException e) {
+			Global.pref.log("Problem copying Icon", e, true);
+		}
+		catch (IOException e) {
+			Global.pref.log("Problem copying Icon", e, true);
 		}
 	}
 

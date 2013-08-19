@@ -138,9 +138,9 @@ private Object originalPostData;
  * afterwards you don't need to set proxy parameters anymore
  */
 
-private static String proxy = Global.getPref().myproxy;
-private static int proxyPort = Common.parseInt(Global.getPref().myproxyport);
-private static boolean useProxy = Global.getPref().proxyActive;
+private static String proxy = Global.pref.myproxy;
+private static int proxyPort = Common.parseInt(Global.pref.myproxyport);
+private static boolean useProxy = Global.pref.proxyActive;
 
 //FIXME: why is this called immediately from preferences screen? shouldn't we read it from preferences instead?
 public static void setProxy(String proxyi, int proxyporti, boolean useproxyi) {
@@ -223,7 +223,7 @@ public void setPostData(Object data)
 			ByteArray got = td.encodeText(Vm.getStringChars(s),0,s.length(),true,null);
 			setPostData(got.toBytes());
 		}catch(IOException e){
-			// Global.getPref().log("Ignored exception", e, true);
+			// Global.pref.log("Ignored exception", e, true);
 		}
 	}
 	else if (data instanceof InputStream) bytesToPost = new StreamAdapter((InputStream)data);

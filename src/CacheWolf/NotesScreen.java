@@ -48,11 +48,11 @@ public class NotesScreen extends Form{
 	
 	public NotesScreen(CacheHolderDetail ch){
 		String imagesize = "";
-		if (Global.getPref().useBigIcons) imagesize="_vga";
+		if (Global.pref.useBigIcons) imagesize="_vga";
 		addDateTime = new mButton(new mImage("date_time"+imagesize+".gif"));
 		
 		this.title = "Notes";
-		setPreferredSize(Global.getPref().myAppWidth, Global.getPref().myAppHeight);
+		setPreferredSize(Global.pref.myAppWidth, Global.pref.myAppHeight);
 		this.resizeOnSIP = true;
 		chD = ch;
 		wayNotes.setText(chD.getCacheNotes());

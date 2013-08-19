@@ -39,6 +39,10 @@ public class FileBugfix extends File{
 		ewefile.set(null, name);
 	}
 	
+	public FileBugfix(String path, String fName) {
+		this(path + "/" + fName);
+	}
+
 
 	public void set(File dir, String name) {
 		ewefile.set(dir, STRreplace.replace(name, "//", "/")); // this or null?

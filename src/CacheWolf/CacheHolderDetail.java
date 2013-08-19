@@ -25,7 +25,6 @@ import CacheWolf.utils.FileBugfix;
 import ewe.filechooser.FileChooser;
 import ewe.filechooser.FileChooserBase;
 import ewe.io.BufferedWriter;
-import ewe.io.File;
 import ewe.io.FileNotFoundException;
 import ewe.io.FileReader;
 import ewe.io.FileWriter;
@@ -122,8 +121,8 @@ public class CacheHolderDetail {
 	}
 
 	public void setCacheLogs(LogList newLogs) {
-		if (Global.getPref().overwriteLogs) {
-			CacheLogs=newLogs;
+		if (Global.pref.overwriteLogs) {
+			CacheLogs = newLogs;
 			getParent().setLog_updated(true);
 			hasUnsavedChanges = true;
 		}
@@ -142,7 +141,7 @@ public class CacheHolderDetail {
 	/**
 	 * Method to update an existing cache with new data. This is
 	 * necessary to avoid missing old logs. Called from GPX Importer
-	 *
+	 * 
 	 * @param newCh
 	 *            new cache data
 	 * @return CacheHolder with updated data
@@ -193,18 +192,18 @@ public class CacheHolderDetail {
 
 	/**
 	 * Adds a user image to the cache data
-	 *
+	 * 
 	 * @param profile
 	 */
-	public void addUserImage(Profile profile) {
-		File imgFile;
+	public void addUserImage() {
+		FileBugfix imgFile;
 		String imgDesc, imgDestName;
 
 		// Get Image and description
-		FileChooser fc = new FileChooser(FileChooserBase.OPEN, profile.dataDir);
+		FileChooser fc = new FileChooser(FileChooserBase.OPEN, Global.profile.dataDir);
 		fc.setTitle("Select image file:");
 		if (fc.execute() != FormBase.IDCANCEL) {
-			imgFile = fc.getChosenFile();
+			imgFile = (FileBugfix) fc.getChosenFile();
 			imgDesc = new InputBox("Description").input("", 10);
 			// Create Destination Filename
 			String ext = imgFile.getFileExt().substring(imgFile.getFileExt().lastIndexOf('.'));
@@ -215,9 +214,9 @@ public class CacheHolderDetail {
 			userImageInfo.setTitle(imgDesc);
 			this.userImages.add(userImageInfo);
 			// Copy File
-			DataMover.copy(imgFile.getFullPath(), profile.dataDir + imgDestName);
+			DataMover.copy(imgFile.getFullPath(), Global.profile.dataDir + imgDestName);
 			// Save Data
-			saveCacheDetails(profile.dataDir);
+			saveCacheDetails(Global.profile.dataDir);
 		}
 	}
 
@@ -238,7 +237,8 @@ public class CacheHolderDetail {
 		if (cacheFile.exists()) {
 			try {
 				in = new FileReader(cacheFile.getAbsolutePath());
-			} catch (FileNotFoundException e) {
+			}
+			catch (FileNotFoundException e) {
 				in = null; // exception is thrown again below, if file could not be found in upper case, too
 			}
 		}
@@ -251,7 +251,7 @@ public class CacheHolderDetail {
 
 		if (in == null)
 			throw new FileNotFoundException(dir + getParent().getWayPoint().toLowerCase() + ".xml");
-		Global.getPref().log("Reading file " + getParent().getWayPoint() + ".xml");
+		Global.pref.log("Reading file " + getParent().getWayPoint() + ".xml");
 		String text = in.readAll();
 		in.close();
 
@@ -282,10 +282,12 @@ public class CacheHolderDetail {
 		if (ownLogText.length() > 0) {
 			if (ownLogText.indexOf("<img src='") >= 0) {
 				OwnLog = new Log(ownLogText + "]]>");
-			} else {
-				OwnLog = new Log("icon_smile.gif", "1900-01-01", Global.getPref().myAlias, ownLogText);
 			}
-		} else {
+			else {
+				OwnLog = new Log("icon_smile.gif", "1900-01-01", Global.pref.myAlias, ownLogText);
+			}
+		}
+		else {
 			OwnLog = null;
 		}
 
@@ -306,7 +308,8 @@ public class CacheHolderDetail {
 			if (pos > 0) {
 				imageInfo.setFilename(SafeXML.cleanback(dummy.substring(0, pos)));
 				imageInfo.setURL(SafeXML.cleanback((dummy.substring(pos + 5, dummy.indexOf("</URL>")))));
-			} else {
+			}
+			else {
 				imageInfo.setFilename(SafeXML.cleanback(dummy));
 			}
 			this.images.add(imageInfo);
@@ -317,14 +320,15 @@ public class CacheHolderDetail {
 		while ((dummy = ex.findNext()).length() > 0) {
 			if (imgNr >= this.images.size()) {
 				images.add(new ImageInfo()); // this (more IMGTEXT than IMG in the <cache>.xml, but it happens. So avoid an ArrayIndexOutOfBoundException and add an ImageInfo gracefully
-				Global.getPref().log("Error reading " + this.getParent().getWayPoint() + "More IMGTEXT tags than IMG tags");
+				Global.pref.log("Error reading " + this.getParent().getWayPoint() + "More IMGTEXT tags than IMG tags");
 			}
 			imageInfo = this.images.get(imgNr);
 			int pos = dummy.indexOf("<DESC>");
 			if (pos > 0) {
 				imageInfo.setTitle(dummy.substring(0, pos));
 				imageInfo.setComment(dummy.substring(pos + 6, dummy.indexOf("</DESC>")));
-			} else {
+			}
+			else {
 				imageInfo.setTitle(dummy);
 			}
 			imgNr = imgNr + 1;
@@ -366,7 +370,8 @@ public class CacheHolderDetail {
 			ex = new Extractor(text, "<BUGS><![CDATA[", "]]></BUGS>", 0, true);
 			String Bugs = ex.findNext();
 			Travelbugs.addFromHTML(Bugs);
-		} else
+		}
+		else
 			Travelbugs.addFromXML(dummy);
 
 		ex.set(text, "<URL><![CDATA[", "]]></URL>", 0, true);
@@ -377,7 +382,8 @@ public class CacheHolderDetail {
 			int logpos = URL.indexOf("&"); // &Submit &log=y
 			if (logpos > 0)
 				URL = URL.substring(0, logpos);
-		} else {
+		}
+		else {
 			if (getParent().getWayPoint().startsWith("GC")) {
 				URL = "http://www.geocaching.com/seek/cache_details.aspx?wp=" + getParent().getWayPoint();
 			}
@@ -389,17 +395,17 @@ public class CacheHolderDetail {
 
 	public void deleteFile(String FileName) {
 		// File exists?
-		boolean exists = (new File(FileName)).exists();
+		boolean exists = (new FileBugfix(FileName)).exists();
 		// yes: then delete
 		if (exists) {
-			boolean ok = (new File(FileName)).delete();
+			boolean ok = (new FileBugfix(FileName)).delete();
 			if (ok)
 				ok = true;
 		}
-		boolean exists2 = (new File(FileName.toLowerCase())).exists();
+		boolean exists2 = (new FileBugfix(FileName.toLowerCase())).exists();
 		// yes: delete
 		if (exists2) {
-			boolean ok2 = (new File(FileName.toLowerCase())).delete();
+			boolean ok2 = (new FileBugfix(FileName.toLowerCase())).delete();
 			if (ok2)
 				ok2 = true;
 		}
@@ -413,8 +419,9 @@ public class CacheHolderDetail {
 		deleteFile(dir + getParent().getWayPoint() + ".xml");
 		try {
 			detfile = new PrintWriter(new BufferedWriter(new FileWriter(new FileBugfix(dir + getParent().getWayPoint().toLowerCase() + ".xml").getAbsolutePath())));
-		} catch (Exception e) {
-			Global.getPref().log("Problem creating details file", e, true);
+		}
+		catch (Exception e) {
+			Global.pref.log("Problem creating details file", e, true);
 			return;
 		}
 		try {
@@ -431,7 +438,8 @@ public class CacheHolderDetail {
 				detfile.print("<OWNLOGID>" + OwnLogId + "</OWNLOGID>\r\n");
 				if (OwnLog != null) {
 					detfile.print("<OWNLOG><![CDATA[" + OwnLog.toHtml() + "]]></OWNLOG>\r\n");
-				} else {
+				}
+				else {
 					detfile.print("<OWNLOG><![CDATA[]]></OWNLOG>\r\n");
 				}
 				for (int i = 0; i < CacheLogs.size(); i++) {
@@ -447,7 +455,8 @@ public class CacheHolderDetail {
 					String urlBuf = images.get(i).getURL();
 					if (urlBuf != null && !urlBuf.equals("")) {
 						detfile.print("    <IMG>" + SafeXML.clean(stbuf) + "<URL>" + SafeXML.clean(urlBuf) + "</URL></IMG>\n");
-					} else {
+					}
+					else {
 						detfile.print("    <IMG>" + SafeXML.clean(stbuf) + "</IMG>\n");
 					}
 				}
@@ -486,22 +495,24 @@ public class CacheHolderDetail {
 				detfile.print("<SOLVER><![CDATA[" + getSolver() + "]]></SOLVER>\r\n");
 				detfile.print(getParent().toXML()); // This will allow restoration of index.xml
 				detfile.print("</CACHEDETAILS>\n");
-				Global.getPref().log("Writing file: " + getParent().getWayPoint().toLowerCase() + ".xml");
+				Global.pref.log("Writing file: " + getParent().getWayPoint().toLowerCase() + ".xml");
 			} // if length
-		} catch (Exception e) {
-			Global.getPref().log("Problem waypoint " + getParent().getWayPoint() + " writing to a details file: ", e);
+		}
+		catch (Exception e) {
+			Global.pref.log("Problem waypoint " + getParent().getWayPoint() + " writing to a details file: ", e);
 		}
 		try {
 			detfile.close();
-		} catch (Exception e) {
-			Global.getPref().log("Problem waypoint " + getParent().getWayPoint() + " writing to a details file: ", e);
+		}
+		catch (Exception e) {
+			Global.pref.log("Problem waypoint " + getParent().getWayPoint() + " writing to a details file: ", e);
 		}
 		hasUnsavedChanges = false;
 	}
 
 	/**
 	 * Return true if this cache has additional info for some pictures
-	 *
+	 * 
 	 * @return true if cache has additional info, false otherwise
 	 */
 	public boolean hasImageInfo() {
@@ -513,14 +524,14 @@ public class CacheHolderDetail {
 
 	/**
 	 * change id in waypoint details and rename associated files. Function should only be called by CacheHolder
-	 *
+	 * 
 	 * @param newWptId
 	 *            new id of the waypoint
 	 * @return true on success, false for failure
 	 */
 	protected boolean rename(String newWptId) {
 		boolean success = false;
-		String profiledir = Global.getProfile().dataDir;
+		String profiledir = Global.profile.dataDir;
 		int oldWptLength = getParent().getWayPoint().length();
 
 		// just in case ... (got the pun? ;) )
@@ -582,16 +593,17 @@ public class CacheHolderDetail {
 		// rename the files
 		try {
 			// since we use *.* we do not need FileBugFix
-			String srcFiles[] = new File(profiledir).list(getParent().getWayPoint().concat("*.*"), ewe.io.FileBase.LIST_FILES_ONLY);
+			String srcFiles[] = new FileBugfix(profiledir).list(getParent().getWayPoint().concat("*.*"), ewe.io.FileBase.LIST_FILES_ONLY);
 			for (int i = 0; i < srcFiles.length; i++) {
 				String newfile = newWptId.concat(srcFiles[i].substring(oldWptLength));
-				File srcFile = new File(profiledir.concat(srcFiles[i]));
-				File dstFile = new File(profiledir.concat(newfile));
+				FileBugfix srcFile = new FileBugfix(profiledir.concat(srcFiles[i]));
+				FileBugfix dstFile = new FileBugfix(profiledir.concat(newfile));
 				srcFile.move(dstFile);
 			}
 			success = true;
-		} catch (Exception e) {
-			Global.getPref().log("Error renaming waypoint details", e, true);
+		}
+		catch (Exception e) {
+			Global.pref.log("Error renaming waypoint details", e, true);
 			// TODO: any chance of a roll back?
 			// TODO: should we ignore a file not found?
 		}

@@ -25,7 +25,7 @@ import CacheWolf.CacheHolder;
 import CacheWolf.CacheSize;
 import CacheWolf.CacheTerrDiff;
 import CacheWolf.Global;
-import ewe.io.File;
+import CacheWolf.utils.FileBugfix;
 import ewe.io.FileBase;
 import ewe.util.Vector;
 import ewesoft.xml.MinML;
@@ -44,9 +44,9 @@ public class GarminMap extends MinML {
 	public GarminMap(){
 		try{
 			String datei = FileBase.getProgramDirectory() + "/exporticons/garminmap.xml"; //own version
-			if (!new File(datei).exists()) {
+			if (!new FileBugfix(datei).exists()) {
 				datei=FileBase.getProgramDirectory() + "/exporticons/exporticons/garminmap.xml"; //cw default version
-				if (!new File(datei).exists()) {
+				if (!new FileBugfix(datei).exists()) {
 					return;
 				}
 			}
@@ -57,9 +57,9 @@ public class GarminMap extends MinML {
 		}catch(Exception e){
 			exists=false;
 			if (e instanceof NullPointerException)
-				Global.getPref().log("Error reading garminmap.xml: NullPointerException in Element "+lastName +". Wrong attribute?",e,true);
+				Global.pref.log("Error reading garminmap.xml: NullPointerException in Element "+lastName +". Wrong attribute?",e,true);
 			else
-				Global.getPref().log("Error reading garminmap.xml: ", e);
+				Global.pref.log("Error reading garminmap.xml: ", e);
 		}
 	}
 	public void startElement(String name, AttributeList atts){

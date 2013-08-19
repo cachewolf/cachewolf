@@ -22,7 +22,7 @@ See http://www.cachewolf.de/ for more information.
 package CacheWolf;
 
 import CacheWolf.navi.TransformCoordinates;
-import ewe.io.File;
+import CacheWolf.utils.FileBugfix;
 import ewe.io.IOException;
 import ewe.io.RandomAccessFile;
 import ewe.sys.Convert;
@@ -103,10 +103,10 @@ public class Test extends mThread{
 			}
 			end = new Time();
 			out.close();
-			File dfile = new File(fileName);
+			FileBugfix dfile = new FileBugfix(fileName);
 			dfile.delete();
 		} catch (IOException e) {
-			Global.getPref().log("",e,true);
+			Global.pref.log("",e,true);
 		}
 		printResult("Filewrite 10 Bytes", start, end, i);
 		
@@ -117,7 +117,7 @@ public class Test extends mThread{
 		long time;
 		time = end.getTime() - start.getTime();
 		
-		Global.getPref().log(VM + " " +  Convert.toString(time) + " msec " + Convert.toString(count) + " * " + what);
+		Global.pref.log(VM + " " +  Convert.toString(time) + " msec " + Convert.toString(count) + " * " + what);
 	}
 	
 	void testPassedRegex(String pattern, String expectedResult, int format) {
@@ -126,7 +126,7 @@ public class Test extends mThread{
 
 		if (expectedResult.equals(res)) return; 
 
-		Global.getPref().log("Failed test Regex: "+pattern+" Expected="+expectedResult+" Actual="+res); 
+		Global.pref.log("Failed test Regex: "+pattern+" Expected="+expectedResult+" Actual="+res); 
 		allPassed=false; 
 	}
 	
