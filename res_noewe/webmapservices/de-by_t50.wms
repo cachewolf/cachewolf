@@ -13,11 +13,12 @@ RequestUrlPart:     REQUEST=GetMap
 #LayersUrlPart:     LAYERS=adv_dtk50|DTK50 (BY-Standard)|0.498903|24.9451
 LayersUrlPart:     LAYERS=adv_dtk50
 StylesUrlPart:     STYLES=
-ImageFormatUrlPart:FORMAT=image/jpeg
+ImageFormatUrlPart:FORMAT=image/png
 BoundingBoxTopLeftWGS84: N 50.6269 E 8.8929
 BoundingBoxBottomRightWGS84: N 47.0828 E 13.9782
 #BBox_Mitte: N 48.85485 E 11.43556
 MinScale:   1
 MaxScale:   17
 RecommendedScale:    5 1 2.5 10
-ImageFileExtension: .jpg
+ImageFileExtension: .png
+# der Server liefert JPEG, progressive, was CW bzw Ewe nicht kann!
