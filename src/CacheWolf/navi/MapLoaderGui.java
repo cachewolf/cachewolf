@@ -113,8 +113,11 @@ public class MapLoaderGui extends Form {
 	private int tileWidth;
 	private int tileHeight;
 
+	public boolean isCreated;
+
 	public MapLoaderGui(CacheDB cacheDBi) {
 		super();
+		isCreated = false;
 		this.title = MyLocale.getMsg(1800, "Download georeferenced maps");
 		center = new CWPoint(Global.pref.getCurCentrePt());
 		tileWidth = Global.pref.tilewidth;
@@ -131,6 +134,10 @@ public class MapLoaderGui extends Form {
 
 		// sort the items in the list of services in a way that services which cover the current center point.
 		unsortedMapServices = mapLoader.getAvailableOnlineMapServices();
+		if (unsortedMapServices.length <= 0) {
+			Global.pref.log("no OnlineMapServices defined");
+			return;
+		}
 		sortMapServices();
 		mapServiceChoice = new mChoice(sortedmapServices, 0);
 		MessageArea desc = new MessageArea(descString);
@@ -213,6 +220,7 @@ public class MapLoaderGui extends Form {
 		mTab.addCard(pnlPerCache, MyLocale.getMsg(1814, "Per cache"), MyLocale.getMsg(1813, "Per Cache"));
 		setRecommScaleInput();
 		this.addLast(mTab);
+		isCreated = true;
 	}
 
 	private void initTileInputfields() {
@@ -337,7 +345,7 @@ public class MapLoaderGui extends Form {
 		mapLoader.setProgressInfoBox(progressBox);
 		Vm.showWait(true);
 
-		Point size = new Point(Global.pref.tilewidth, Global.pref.tileheight);
+		Point TileSizeInPixels = new Point(Global.pref.tilewidth, Global.pref.tileheight);
 		if (forCachesChkBox.getState() || perCache) {
 			// calculate map boundaries from cacheDB
 			Area surArea = Global.profile.getSourroundingArea(onlySelected);
@@ -349,11 +357,11 @@ public class MapLoaderGui extends Form {
 			}
 			mapLoader.setTopleft(surArea.topleft);
 			mapLoader.setBottomright(surArea.bottomright);
-			mapLoader.setTiles(scale, size, overlapping);
+			mapLoader.setTiles(scale, TileSizeInPixels, overlapping);
 		}
 		else {
 			// calculate from centre point an radius
-			mapLoader.setTiles(center, radius * 1000, scale, size, overlapping);
+			mapLoader.setTiles(center, radius * 1000, scale, TileSizeInPixels, overlapping);
 		}
 
 		// download map(s)
@@ -362,7 +370,7 @@ public class MapLoaderGui extends Form {
 			mapLoader.setFetchOnlyMapWithCache(fetchOnlyMapWithCacheChkBox.getState());
 			if (mapLoader.getNumMapsY() == 0) {
 				try {
-					mapLoader.downloadMap(mapLoader.getTopleft(), scale, size, mapsDir);
+					mapLoader.downloadMap(mapLoader.getTopleft(), scale, TileSizeInPixels, mapsDir);
 				}
 				catch (Exception e) {
 				}
@@ -384,7 +392,7 @@ public class MapLoaderGui extends Form {
 						numdownloaded++;
 						progressBox.setInfo(MyLocale.getMsg(1820, "Downloading map '") + mapLoader.getCurrentOnlineMapService().getName() + "'\n" + numdownloaded + " / " + numCaches + MyLocale.getMsg(1821, "\n for cache:\n") + ch.getCacheName());
 						try {
-							mapLoader.downloadMap(ch.getPos(), scale, size, mapsDir);
+							mapLoader.downloadMap(ch.getPos(), scale, TileSizeInPixels, mapsDir);
 						}
 						catch (Exception e) {
 							progressBox.addWarning(MyLocale.getMsg(1822, "Cache:") + " " + ch.getCacheName() + "(" + ch.getWayPoint() + ") " + MyLocale.getMsg(1823, "Ignoring error:") + " " + e.getMessage() + "\n");

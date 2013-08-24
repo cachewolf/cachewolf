@@ -1,24 +1,23 @@
-TakenFromUrl:       http://www.geodaten.bayern.de/ogc/getogc.cgi?
-GetCapabilitiesUrl: http://www.geodaten.bayern.de/ogc/getogc.cgi?SERVICE=WMS&VERSION=1.1.1&REQUEST=GetCapabilities
-Name:               DE Bayern t50
-MapType:                        topo
-MainUrl:            http://www.geodaten.bayern.de/ogc/getogc.cgi?
+#Digitale Topographische Karte 1:50000 (BVV)
+<Abstract>Die Inhalte der Digitalen Topographischen Karte 1:50000 (DTK50) werden derzeit aus dem DLM50.2 abgeleitet und mit kartographischen Daten ergänzt. Sie wird im 3-Jahresturnus aktualisiert und ist für den Darstellungsmaßstab 1:50000 ausgelegt. Der abrufbare Kartenausschnitt pro WMS-Request ist auf eine Ausdehnung von maximal 2.000x2.000 Pixel begrenzt. Weitere Informationen unter: http://vermessung.bayern.de/geo basis_lvg/dtk/dtk50.html</Abstract>
+TakenFromUrl:       http://geoportal.bayern.de/geoportalbayern/inhalte/uebersichten/geodatendienste.html
+GetCapabilitiesUrl: http://geodaten.bayern.de/ogc/ogc_dtk50_oa.cgi?SERVICE=WMS&VERSION=1.1.1&REQUEST=GetCapabilities
+Name:               de.bayern DTK
+MapType:                        de.bayern DTK
+MainUrl:            http://geodaten.bayern.de/ogc/ogc_dtk50_oa.cgi?
 ServiceTypeUrlPart: SERVICE=WMS
 VersionUrlPart:     VERSION=1.1.1
-CoordinateReferenceSystemCacheWolf:  31468
-CoordinateReferenceSystemUrlPart: SRS=EPSG:31468
+CoordinateReferenceSystemCacheWolf:  4326
+CoordinateReferenceSystemUrlPart: SRS=EPSG:4326 
 RequestUrlPart:     REQUEST=GetMap
-#LayersUrlPart:     LAYERS=OGC:WMS|Web Map Service der Bayerischen Vermessungsverwaltung||
-#LayersUrlPart:     LAYERS=copyright|Copyrightvermerk||
-#LayersUrlPart:     LAYERS=TK50|Digitale Topographische Karte 1:50000|0.997805696859274|24.9451424214819
-#LayersUrlPart:     LAYERS=UK500|Digitale Topographische Karte 1:500000|14.9670854528891|498.902848429637
-#LayersUrlPart:     LAYERS=DOP|Digitale Orthophotos 2,0m|2.82329121926332|1147.47655138817
-LayersUrlPart:     LAYERS=TK50
+#LayersUrlPart:     LAYERS=adv_dtk50|DTK50 (BY-Standard)|0.498903|24.9451
+LayersUrlPart:     LAYERS=adv_dtk50
 StylesUrlPart:     STYLES=
-ImageFormatUrlPart:FORMAT=image/png
+ImageFormatUrlPart:FORMAT=image/jpeg
 BoundingBoxTopLeftWGS84: N 50.6269 E 8.8929
 BoundingBoxBottomRightWGS84: N 47.0828 E 13.9782
+#BBox_Mitte: N 48.85485 E 11.43556
 MinScale:   1
-MaxScale:   15
-RecommendedScale:    3 5 7
-ImageFileExtension: .png
+MaxScale:   17
+RecommendedScale:    5 1 2.5 10
+ImageFileExtension: .jpg
