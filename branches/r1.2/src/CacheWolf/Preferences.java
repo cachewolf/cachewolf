@@ -1128,7 +1128,7 @@ public class Preferences extends MinML {
 	 */
 	public String getMapDownloadSavePath(String mapkind) {
 		String subdir = Global.profile.dataDir.substring(Global.pref.absoluteBaseDir.length()).replace('\\', '/');
-		String mapsDir = Global.pref.absoluteBaseDir + "maps/" + Common.ClearForFileName(mapkind) + "/" + subdir;
+		String mapsDir = Global.pref.absoluteBaseDir + "maps/" + subdir + Common.ClearForFileName(mapkind) + "/";
 		if (!(new FileBugfix(mapsDir).isDirectory())) { // dir exists?
 			if (new FileBugfix(mapsDir).mkdirs() == false) {
 				// dir creation failed?

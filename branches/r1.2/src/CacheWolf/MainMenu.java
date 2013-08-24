@@ -533,7 +533,8 @@ public class MainMenu extends MenuBar {
 				MapLoaderGui mLG = new MapLoaderGui(cacheDB);
 				// .execute doesn't work because the tcp-socket uses another thread
 				// which cannot be startet if here .execute() is used!
-				mLG.exec();
+				if (mLG.isCreated)
+					mLG.exec();
 			}
 			if (mev.selectedItem == importmap) {
 
