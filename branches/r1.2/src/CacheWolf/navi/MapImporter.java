@@ -172,7 +172,7 @@ public class MapImporter extends Form {
 		int tmp = fc.execute();
 		if (tmp != FormBase.IDYES)
 			return FormBase.IDCANCEL;
-		FileBugfix inDir = (FileBugfix) fc.getChosenFile();
+		FileBugfix inDir = new FileBugfix(fc.getChosenFile());
 		FileBugfix mapFile;
 		InfoBox inf = new InfoBox("Info", MyLocale.getMsg(4109, "Loading maps...            \n"), InfoBox.PROGRESS_WITH_WARNINGS, false);
 		inf.setPreferredSize(220, 300);

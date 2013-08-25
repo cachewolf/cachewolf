@@ -203,7 +203,7 @@ public class ExploristExporter {
 		fc.setTitle(MyLocale.getMsg(2102, "Select target file:"));
 		fc.addMask(mask);
 		if (fc.execute() != FormBase.IDCANCEL) {
-			file = (FileBugfix) fc.getChosenFile();
+			file = new FileBugfix(fc.getChosenFile());
 			Global.pref.setExportPath(expName, file.getPath());
 			return file;
 		}

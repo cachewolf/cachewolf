@@ -243,7 +243,7 @@ public class TPLExporter {
 				pbf.exit(0);
 				return;
 			}
-			FileBugfix saveTo = (FileBugfix) fc.getChosenFile();
+			FileBugfix saveTo = new FileBugfix(fc.getChosenFile());
 			Global.pref.setExportPath(expName, saveTo.getPath());
 
 			if (myFilter.sortedBy != -1) {

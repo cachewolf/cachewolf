@@ -203,7 +203,7 @@ public class CacheHolderDetail {
 		FileChooser fc = new FileChooser(FileChooserBase.OPEN, Global.profile.dataDir);
 		fc.setTitle("Select image file:");
 		if (fc.execute() != FormBase.IDCANCEL) {
-			imgFile = (FileBugfix) fc.getChosenFile();
+			imgFile = new FileBugfix(fc.getChosenFile());
 			imgDesc = new InputBox("Description").input("", 10);
 			// Create Destination Filename
 			String ext = imgFile.getFileExt().substring(imgFile.getFileExt().lastIndexOf('.'));
