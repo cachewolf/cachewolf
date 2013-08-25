@@ -482,17 +482,21 @@ public class MapLoaderGui extends Form {
 					scale = (float) CacheWolf.Common.parseDouble(scaleInputPerCache.getText());
 
 				}
-				if (scale < mapLoader.getCurrentOnlineMapService().minscale || scale > mapLoader.getCurrentOnlineMapService().maxscale) {
-					if (scale < mapLoader.getCurrentOnlineMapService().minscale) {
-						scaleInput.setText(Convert.toString(mapLoader.getCurrentOnlineMapService().minscale));
-						scaleInputPerCache.setText(Convert.toString(java.lang.Math.ceil(mapLoader.getCurrentOnlineMapService().minscale * 100) / 100));
+
+				double minScale = java.lang.Math.ceil(mapLoader.getCurrentOnlineMapService().minscale * 141) / 100;
+				double maxScale = java.lang.Math.floor(mapLoader.getCurrentOnlineMapService().maxscale * 142) / 100;
+
+				if (scale < minScale || scale > maxScale) {
+					if (scale < minScale) {
+						scaleInput.setText(Convert.toString(minScale));
+						scaleInputPerCache.setText(Convert.toString(minScale));
 					}
 					else {
-						scaleInput.setText(Convert.toString(java.lang.Math.floor(mapLoader.getCurrentOnlineMapService().maxscale * 100) / 100));
-						scaleInputPerCache.setText(Convert.toString(mapLoader.getCurrentOnlineMapService().maxscale));
+						scaleInput.setText(Convert.toString(maxScale));
+						scaleInputPerCache.setText(Convert.toString(maxScale));
 					}
-					(new MessageBox(MyLocale.getMsg(321, "Error"), "! " + scale + "\n" + MyLocale.getMsg(1830, "The selected online map service provides map in the scale from") + " " + mapLoader.getCurrentOnlineMapService().minscale
-							+ MyLocale.getMsg(1831, " to") + " " + mapLoader.getCurrentOnlineMapService().maxscale + MyLocale.getMsg(1832, "\n please adjust 'Approx. meter pro pixel' accordingly"), FormBase.OKB)).execute();
+					(new MessageBox(MyLocale.getMsg(321, "Error"), "! " + scale + "\n" + MyLocale.getMsg(1830, "The selected online map service provides map in the scale from") + " " + minScale + MyLocale.getMsg(1831, " to") + " " + maxScale
+							+ MyLocale.getMsg(1832, "\n please adjust 'Approx. meter pro pixel' accordingly"), FormBase.OKB)).execute();
 					return;
 				}
 				this.close(FormBase.IDOK);

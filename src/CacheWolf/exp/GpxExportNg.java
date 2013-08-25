@@ -428,7 +428,7 @@ public class GpxExportNg {
 				if (fc.execute() == FormBase.IDCANCEL)
 					return;
 
-				file = (FileBugfix) fc.getChosenFile();
+				file = new FileBugfix(fc.getChosenFile());
 				Global.pref.setExportPath(expName + "-GPX", file.getPath());
 			}
 			else {

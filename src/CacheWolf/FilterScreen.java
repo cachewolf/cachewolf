@@ -661,7 +661,7 @@ public class FilterScreen extends Form {
 				FileChooser fc = new FileChooser(FileChooserBase.OPEN, Global.profile.dataDir);
 				fc.setTitle(MyLocale.getMsg(712, "Select route file"));
 				if (fc.execute() != FormBase.IDCANCEL) {
-					datei = (FileBugfix) fc.getChosenFile();
+					datei = new FileBugfix(fc.getChosenFile());
 					InfoBox inf = new InfoBox("Distance?", "Dist:", InfoBox.INPUT);
 					inf.execute();
 					Vm.showWait(true);
