@@ -1,8 +1,9 @@
 TakenFromUrl: 
 GetCapabilitiesUrl:
-Name:               Google
-MapType:                        topo
-MainUrl:            http://mt0.google.com/vt/lyrs=m@142&x={x}&y={y}&z={z}
+Name:               Google Hybrid 
+MapType:            Google
+# m = Map, s = Satellite, y = Hybrid, t = Terrain, p = Terrain, Streets + Water
+MainUrl:            http://mt.google.com/vt/lyrs=y&x={x}&y={y}&z={z}
 #ServiceTypeUrlPart:
 ServiceTypeUrlPart:
 #VersionUrlPart:
@@ -20,7 +21,7 @@ BoundingBoxTopLeftWGS84: N 90.0000 W 180.0000
 BoundingBoxBottomRightWGS84: S 90.0000 E 180.0000
 MinScale:  0
 MaxScale:   24
-RecommendedScale:   16
+RecommendedScale:   14 9 10 11 12 13 15 16
 #
 ImageFileExtension: .png
 MinPixelSize: 256
