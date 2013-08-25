@@ -823,16 +823,16 @@ public final class MovingMap extends Form implements ICommandListener {
 	}
 
 	/**
-	 * get upper left corner of map on window
-	 * this is called when the map needs to be moved
-	 * the position of the map is wanted
-	 * the map-position is calculated relativ to posCircle (x,y and lat/lon)
-	 * returns the same as mmp.mapImage.getLocation(mapPos);
-	 * but also works if mmp == null
-	 * 
-	 * is used to move the map to the correct point
+	 * the map-position is calculated relativ to posCircle<br>
+	 * this is called when the map needs to be moved<br>
+	 * <br>
+	 * is used to move the map to the correct point<br>
+	 * <br>
 	 * 
 	 * @return Point
+	 *         position of map on window (upper left corner)<br>
+	 *         returns the same as mmp.mapImage.getLocation(mapPos);<br>
+	 *         but also works if mmp == null<br>
 	 */
 	public Point getMapPositionOnScreen() {
 		// in case no calculation is possible return something outside of the screen
@@ -1003,20 +1003,16 @@ public final class MovingMap extends Form implements ICommandListener {
 		return -1;
 	}
 
-	/**
-	 * Move the map so that the posCircle is at lat/lon
-	 * 
-	 * @param where
-	 *            new position where.latDec/where.lonDec
-	 * 
-	 */
-	public Point updatePositionOfMapElements(CWPoint where) {
-		posCircle.where.set(where);
-		final Point mapPos = getMapPositionOnScreen();
-		mmp.moveMainMapImage(mapPos.x, mapPos.y);
+	public void updatePositionOfMapElements() {
 		updateSymbolPositions();
 		updateDistance();
 		updateOverlayPos();
+	}
+
+	public Point updatePositionOfMainMapImage(CWPoint where) {
+		posCircle.where.set(where);
+		final Point mapPos = getMapPositionOnScreen();
+		mmp.moveMainMapImage(mapPos.x, mapPos.y);
 		return mapPos;
 	}
 
@@ -1042,30 +1038,33 @@ public final class MovingMap extends Form implements ICommandListener {
 			return; // avoid multi-threading problems
 		updatingPos = true;
 
-		final Point mapPos = updatePositionOfMapElements(where);
+		Point mapPos = updatePositionOfMainMapImage(where);
 
 		forceMapLoad = forceMapLoad || lastWidth != this.width || lastHeight != this.height;
-
-		if (forceMapLoad || wantMapTest) {
-			if (forceMapLoad || (java.lang.Math.abs(lastCompareX - mapPos.x) > this.width / 10 || java.lang.Math.abs(lastCompareY - mapPos.y) > this.height / 10)) {
-				// if more then 1/10 of screen moved since last time or forceMapLoad: we try to find a better map
-				if (autoSelectMap) {
-					setBestMap(where, !mmp.ScreenCompletlyCoveredByMainMap(this.width, this.height));
-					forceMapLoad = false;
-				}
-				if (isFillWhiteArea() && !mmp.ScreenCompletlyCoveredByMainMap(this.width, this.height))
-					fillWhiteArea();
-				lastCompareX = mapPos.x;
-				lastCompareY = mapPos.y;
-			}
-			else {
-				mmp.updateLocationOfMapTiles(mapPos.x - lastXPos, mapPos.y - lastYPos);
-			}
-		}
-		lastXPos = mapPos.x;
-		lastYPos = mapPos.y;
 		lastWidth = width;
 		lastHeight = height;
+
+		// if more then 1/10 of screen moved since last time or forceMapLoad: 
+		if (forceMapLoad || (java.lang.Math.abs(lastCompareX - mapPos.x) > this.width / 10 || java.lang.Math.abs(lastCompareY - mapPos.y) > this.height / 10)) {
+			// we try to find a better map
+			if (autoSelectMap) {
+				setBestMap(where, !mmp.ScreenCompletlyCoveredByMainMap(this.width, this.height));
+				mapPos = getMapPositionOnScreen();
+				forceMapLoad = false;
+			}
+			if (isFillWhiteArea() && !mmp.ScreenCompletlyCoveredByMainMap(this.width, this.height))
+				fillWhiteArea();
+			lastCompareX = mapPos.x;
+			lastCompareY = mapPos.y;
+		}
+		else {
+			mmp.updatePositionOfMapTiles(mapPos.x - lastXPos, mapPos.y - lastYPos);
+		}
+
+		updatePositionOfMapElements();
+		lastXPos = mapPos.x;
+		lastYPos = mapPos.y;
+
 		updatingPos = false;
 		repaint();
 	}
@@ -1197,15 +1196,15 @@ public final class MovingMap extends Form implements ICommandListener {
 			Global.pref.log("!For wA " + whiteArea + middleX + "," + middleY + " got no map");
 			return;
 		}
-		// A map was found, but it does not contain the centerPoint
-		// but there is a map nearby, perhaps it fits on the screen, so we don't return (perhaps already added)
+		// perhaps a nearby map is found, not containing the (center)Point, perhaps it fits on the screen
+		// but we can't use this map: the splitting into white areas goes wrong in that case
 		if (!(bestMap.bottomright.latDec <= centerPoint.latDec && centerPoint.latDec <= bestMap.topleft.latDec)) {
 			Global.pref.log("!For wA " + whiteArea + middleX + "," + middleY + " Lat outside " + bestMap.getMapNameForList());
-			// return;
+			return;
 		}
 		if (!(bestMap.topleft.lonDec <= centerPoint.lonDec && centerPoint.lonDec <= bestMap.bottomright.lonDec)) {
 			Global.pref.log("!For wA " + whiteArea + middleX + "," + middleY + " Lon outside " + bestMap.getMapNameForList());
-			// return;
+			return;
 		}
 		final String imagefilename = bestMap.getImagePathAndName();
 		if (!imagefilename.equals(currentMap.getImagePathAndName())) {
@@ -1704,7 +1703,8 @@ public final class MovingMap extends Form implements ICommandListener {
 	 */
 	public void setMap(MapInfoObject newmap, CWPoint where) {
 		if (currentMap != null && newmap.getImagePathAndName().equals(currentMap.getImagePathAndName())) {
-			updatePositionOfMapElements(where);
+			posCircle.where.set(where);
+			updatePositionOfMapElements();
 			repaint();
 			return;
 		}
@@ -1769,7 +1769,7 @@ public final class MovingMap extends Form implements ICommandListener {
 					mapImage1to1 = mainMap;
 				}
 				rebuildOverlaySet();
-				updatePositionOfMapElements(where);
+				updatePositionOfMapElements();
 				(new MessageBox(MyLocale.getMsg(4207, "Error"), MyLocale.getMsg(4218, "Could not load map: \n") + newmap.getImagePathAndName(), FormBase.OKB)).execute();
 			}
 			catch (final OutOfMemoryError e) {
@@ -1781,7 +1781,7 @@ public final class MovingMap extends Form implements ICommandListener {
 					mapImage1to1 = mainMap;
 				}
 				rebuildOverlaySet();
-				updatePositionOfMapElements(where);
+				updatePositionOfMapElements();
 				(new MessageBox(MyLocale.getMsg(4207, "Error"), MyLocale.getMsg(4219, "Not enough memory to load map: \n") + newmap.getImagePathAndName() + MyLocale.getMsg(4220, "\nYou can try to close\n all prgrams and \nrestart CacheWolf"),
 						FormBase.OKB)).execute();
 			}
@@ -1794,7 +1794,7 @@ public final class MovingMap extends Form implements ICommandListener {
 					mapImage1to1 = mainMap;
 				}
 				rebuildOverlaySet();
-				updatePositionOfMapElements(where);
+				updatePositionOfMapElements();
 				// TODO this doesn't work correctly if the resolution changed, 
 				// I guess because the pixels of PosCircle will be interpreted from the new resolution,
 				// but should be interpreted using the old resolution to test:
@@ -1832,7 +1832,7 @@ public final class MovingMap extends Form implements ICommandListener {
 		final int npy = posCircleY - posCircle.getHeight() / 2;
 		posCircle.move(npx, npy);
 		// move other MapElements
-		updatePositionOfMapElements(posCircle.where);
+		updatePositionOfMapElements();
 		repaint();
 	}
 
@@ -2489,7 +2489,7 @@ class MovingMapPanel extends InteractivePanel implements EventListener {
 		mapTiles.clear();
 	}
 
-	public void updateLocationOfMapTiles(int deltaX, int deltaY) {
+	public void updatePositionOfMapTiles(int deltaX, int deltaY) {
 		if (deltaX == 0 && deltaY == 0)
 			return;
 		for (int i = mapTiles.size() - 1; i >= 0; i--) {
