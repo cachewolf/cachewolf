@@ -1,0 +1,27 @@
+TakenFromUrl: 
+GetCapabilitiesUrl:
+Name:               Google Map
+MapType:            Google
+MainUrl:            http://mt0.google.com/vt/lyrs=m@142&x={x}&y={y}&z={z}
+#ServiceTypeUrlPart:
+ServiceTypeUrlPart:
+#VersionUrlPart:
+VersionUrlPart:
+CoordinateReferenceSystemCacheWolf:  4326
+CoordinateReferenceSystemUrlPart: SRS=EPSG:4326
+RequestUrlPart:     Tile
+#LayersUrlPart:
+LayersUrlPart:
+#StylesUrlPart:
+StylesUrlPart:
+ImageFormatUrlPart:FORMAT=image/png
+# BBox the Tileserver covers
+BoundingBoxTopLeftWGS84: N 90.0000 W 180.0000
+BoundingBoxBottomRightWGS84: S 90.0000 E 180.0000
+MinScale:  0
+MaxScale:   24
+RecommendedScale:   14 9 10 11 12 13 15 16
+#
+ImageFileExtension: .png
+MinPixelSize: 256
+MaxPixelSize: 256
