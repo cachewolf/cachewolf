@@ -101,8 +101,8 @@ public final class MovingMap extends Form implements ICommandListener {
 	private final static Image imgSelectedCache = new Image("mark_cache.png");
 	private final static Image imgGoto = new Image("goto_map.png");
 
-	private final static int smallTileWidth = 100; //100;
-	private final static int smallTileHeight = 100; //100;
+	private final static int smallTileWidth = 256; //100;
+	private final static int smallTileHeight = 256; //100;
 
 	private Navigate myNavigation;
 	private CacheDB cacheDB;
@@ -126,9 +126,11 @@ public final class MovingMap extends Form implements ICommandListener {
 	private AniImage statusImageHaveSignal;
 	private AniImage statusImageNoSignal;
 	private AniImage statusImageNoGps;
+
 	private MapSymbol posCircle;
-	private int posCircleX = 0, posCircleY = 0, lastCompareX = Integer.MAX_VALUE, lastCompareY = Integer.MAX_VALUE;
-	// double posCircleLat, posCircleLon;
+	private int posCircleX = 0, posCircleY = 0;
+	private int lastCompareX = Integer.MAX_VALUE, lastCompareY = Integer.MAX_VALUE;
+
 	FontMetrics fm;
 
 	// local access
@@ -229,11 +231,8 @@ public final class MovingMap extends Form implements ICommandListener {
 	public void setShowCachesOnMap(boolean value) {
 		if (value != Global.pref.showCachesOnMap) {
 			Global.pref.showCachesOnMap = value;
+			updatePositionOfMapElements();
 		}
-		if (!value) {
-			removeAllMapSymbols();
-		}
-
 	}
 
 	public MovingMapControls getControlsLayer() {
@@ -269,12 +268,10 @@ public final class MovingMap extends Form implements ICommandListener {
 	/**
 	 * loads the list of maps
 	 * 
-	 * @param mapsPath
-	 *            without trailing "/"
 	 * @param lat
 	 *            used to create empty maps with correct conversion from lon to meters the latitude must be known
 	 */
-	private void loadMaps(String mapsPath, double lat) {
+	private void loadMaps(double lat) {
 		if (loadingMapList)
 			return;
 		if (mapsloaded)
@@ -291,7 +288,7 @@ public final class MovingMap extends Form implements ICommandListener {
 
 		boolean remember = dontUpdatePos;
 		dontUpdatePos = true;
-		maps = new MapsList(mapsPath, lat);
+		maps = new MapsList(lat);
 		dontUpdatePos = remember;
 
 		inf.close(0);
@@ -955,10 +952,6 @@ public final class MovingMap extends Form implements ICommandListener {
 			return gotoPos.where;
 	}
 
-	public CWPoint getPosCircleWhere() {
-		return posCircle.where;
-	}
-
 	public void removeAllMapSymbols() {
 		for (int i = symbols.size() - 1; i >= 0; i--) {
 			mmp.removeImage((MapSymbol) symbols.get(i));
@@ -1018,11 +1011,11 @@ public final class MovingMap extends Form implements ICommandListener {
 
 	private void initMaps(CWPoint where) {
 		if (this.maps != null) {
-			if (!(Global.pref.getCustomMapsPath().startsWith(this.maps.getMapsPath()))) {
+			if (!(Global.pref.getCustomMapsPath().equals(this.maps.getMapsPath()))) {
 				mapsloaded = false;
 			}
 		}
-		loadMaps(Global.pref.getCustomMapsPath(), where.latDec);
+		loadMaps(where.latDec);
 		lastCompareX = Integer.MAX_VALUE;
 		lastCompareY = Integer.MAX_VALUE;
 		autoSelectMap = true;
@@ -1326,7 +1319,9 @@ public final class MovingMap extends Form implements ICommandListener {
 
 	private void addRemainingWhiteAreas(Rect blackArea, Rect whiteArea) {
 		// divide into non overlapping
-		// int bottomYPos = whiteArea.y;
+		// remaining WhiteAreas must have width > mw and height > mh else they stay white
+		final int mw = 10;
+		final int mh = 10;
 		int leftWidth = Math.max(0, blackArea.x - whiteArea.x);
 		int rightWidth = Math.max(0, whiteArea.width - leftWidth - blackArea.width);
 		int bottomHeight = Math.max(0, blackArea.y - whiteArea.y);
@@ -1334,48 +1329,50 @@ public final class MovingMap extends Form implements ICommandListener {
 		int topHeight = Math.max(0, whiteArea.y + whiteArea.height - topYPos);
 		// left Rect
 		final Rect l = new Rect();
-		if (leftWidth > 0) {
+		if (leftWidth > mw) {
 			l.x = whiteArea.x;
 			l.y = whiteArea.y;
 			l.width = leftWidth;
 			l.height = bottomHeight + blackArea.height;
-			if (l.height > 0) {
+			if (l.height > mh) {
 				whiteAreas.add(l);
 				Global.pref.log("Left  : " + l);
 			}
 		}
 		// top Rect
-		final Rect t = new Rect();
-		if (topHeight > 0) {
-			t.x = whiteArea.x;
-			t.y = topYPos;
-			t.width = leftWidth + blackArea.width;
-			t.height = topHeight;
-			if (t.width > 0) {
-				whiteAreas.add(t);
-				Global.pref.log("Top   : " + t);
+		if (topYPos != whiteArea.y) {
+			final Rect t = new Rect();
+			if (topHeight > mh) {
+				t.x = whiteArea.x;
+				t.y = topYPos;
+				t.width = leftWidth + blackArea.width;
+				t.height = topHeight;
+				if (t.width > mw) {
+					whiteAreas.add(t);
+					Global.pref.log("Top   : " + t);
+				}
 			}
 		}
 		// right Rect
 		final Rect r = new Rect();
-		if (rightWidth > 0) {
+		if (rightWidth > mw) {
 			r.x = blackArea.x + blackArea.width;
 			r.y = blackArea.y;
 			r.width = rightWidth;
 			r.height = blackArea.height + topHeight;
-			if (r.height > 0) {
+			if (r.height > mh) {
 				whiteAreas.add(r);
 				Global.pref.log("Right : " + r);
 			}
 		}
 		// bottom Rect
 		final Rect b = new Rect();
-		if (bottomHeight > 0) {
+		if (bottomHeight > mh) {
 			b.x = blackArea.x;
 			b.y = whiteArea.y;
 			b.width = blackArea.width + rightWidth;
 			b.height = bottomHeight;
-			if (b.width > 0) {
+			if (b.width > mw) {
 				whiteAreas.add(b);
 				Global.pref.log("Bottom: " + b);
 			}
@@ -1734,14 +1731,20 @@ public final class MovingMap extends Form implements ICommandListener {
 
 				final String ImageFilename = currentMap.getImagePathAndName();
 
-				if (ImageFilename.length() > 0) {
-					// attention: when running in native java-vm,
-					// no exception will be thrown, not even OutOfMemory Error
-					mainMap = new MapImage(ImageFilename);
-				}
-				else {
+				if (ImageFilename == null) {
 					// no image associated with the calibration info ("empty map")
 					mainMap = new MapImage();
+				}
+				else {
+					if (ImageFilename.length() > 0) {
+						// attention: when running in native java-vm,
+						// no exception will be thrown, not even OutOfMemory Error
+						mainMap = new MapImage(ImageFilename);
+					}
+					else {
+						// no image file exists
+						mainMap = new MapImage();
+					}
 				}
 
 				mmp.setMainMap(mainMap);
@@ -2024,35 +2027,25 @@ public final class MovingMap extends Form implements ICommandListener {
 			if (fc.execute() != FormBase.IDCANCEL) {
 				Global.pref.saveCustomMapsPath(fc.getChosen().toString());
 				mapsloaded = false;
-				loadMaps(Global.pref.getCustomMapsPath(), posCircle.where.latDec);
+				loadMaps(posCircle.where.latDec);
 				updatePosition(posCircle.where);
 			}
 			return true;
 		}
 		if (FILL_MAP == actionCommand) {
 			setFillWhiteArea(true);
-			updatePosition(posCircle.where);
-			// mmp.repaint();
 			return true;
 		}
 		if (NO_FILL_MAP == actionCommand) {
 			setFillWhiteArea(false);
-			// updatePosition(posCircle.where);
-			mmp.repaint();
 			return true;
 		}
 		if (SHOW_CACHES == actionCommand) {
 			setShowCachesOnMap(true);
-			forceMapLoad = true;
-			updatePosition(posCircle.where);
-			// mmp.repaint();
 			return true;
 		}
 		if (HIDE_CACHES == actionCommand) {
 			setShowCachesOnMap(false);
-			forceMapLoad = true;
-			updatePosition(posCircle.where);
-			// mmp.repaint();
 			return true;
 		}
 		if (HIDE_MAP == actionCommand) {
@@ -2134,15 +2127,15 @@ public final class MovingMap extends Form implements ICommandListener {
 		final ListBox manualSelectMap = new ListBox(maps, gpspos, getGotoPosWhere(), currentMap);
 		if (manualSelectMap.execute() == FormBase.IDOK) {
 			autoSelectMap = false;
-			if (manualSelectMap.selectedMap.isInBound(getPosCircleWhere()) || manualSelectMap.selectedMap.getImagePathAndName().length() == 0) {
-				setMap(manualSelectMap.selectedMap, getPosCircleWhere());
+			if (manualSelectMap.selectedMap.isInBound(posCircle.where) || manualSelectMap.selectedMap.getImagePathAndName().length() == 0) {
+				setMap(manualSelectMap.selectedMap, posCircle.where);
 				setResModus(MovingMap.NORMAL_KEEP_RESOLUTION);
 				ignoreGps = false;
 			}
 			else {
 				setGpsStatus(MovingMap.noGPS);
 				ignoreGps = true;
-				setMap(manualSelectMap.selectedMap, getPosCircleWhere());
+				setMap(manualSelectMap.selectedMap, posCircle.where);
 				// if map has an image
 				if (currentMap.hasImage)
 					setCenterOfScreen(manualSelectMap.selectedMap.center, true);
@@ -2216,9 +2209,15 @@ public final class MovingMap extends Form implements ICommandListener {
 	}
 
 	public void setFillWhiteArea(boolean fillWhiteArea) {
-		Global.pref.fillWhiteArea = fillWhiteArea;
-		if (!fillWhiteArea)
-			mmp.clearMapTiles();
+		if (Global.pref.fillWhiteArea != fillWhiteArea) {
+			Global.pref.fillWhiteArea = fillWhiteArea;
+			if (!fillWhiteArea)
+				mmp.clearMapTiles();
+			else {
+				forceMapLoad = true;
+				updatePosition(posCircle.where);
+			}
+		}
 	}
 
 	public void addImage(AniImage ani) {
@@ -2739,7 +2738,7 @@ class ListBox extends Form {
 		// is big engough for 240px width
 		this.setPreferredSize(java.lang.Math.max(MyLocale.getScreenWidth() * 3 / 4, java.lang.Math.min(240, MyLocale.getScreenWidth())), MyLocale.getScreenHeight() * 3 / 4);
 		this.maps = maps;
-		MapInfoObject map;
+		MapInfoObject mio;
 		MapListEntry ml;
 		String cmp;
 		int oldmap = -1;
@@ -2757,13 +2756,13 @@ class ListBox extends Form {
 				if (!Area.containsRoughly(ml.sortEntryBBox, cmp))
 					continue; // TODO if no map available
 				else {
-					map = ml.getMap();
+					mio = ml.getMap();
 				}
-				if (map.isInBound(Gps.latDec, Gps.lonDec) && map.isInBound(gotopos)) {
-					list.addItem(i + ": " + map.getMapNameForList());
+				if (mio.isInBound(Gps.latDec, Gps.lonDec) && mio.isInBound(gotopos)) {
+					list.addItem(i + ": " + mio.getMapNameForList());
 					row++;
 					inList[i] = true;
-					if (!curMapFound && curMap != null && map.getMapNameForList().equals(curMap.getMapNameForList())) {
+					if (!curMapFound && curMap != null && mio.getMapNameForList().equals(curMap.getMapNameForList())) {
 						oldmap = row;
 						curMapFound = true;
 					}
@@ -2781,13 +2780,13 @@ class ListBox extends Form {
 				if (!Area.containsRoughly(ml.sortEntryBBox, cmp))
 					continue; // TODO if no map available
 				else {
-					map = ml.getMap();
+					mio = ml.getMap();
 				}
-				if (map.isInBound(Gps.latDec, Gps.lonDec)) {
-					list.addItem(i + ": " + map.getMapNameForList());
+				if (mio.isInBound(Gps.latDec, Gps.lonDec)) {
+					list.addItem(i + ": " + mio.getMapNameForList());
 					row++;
 					inList[i] = true;
-					if (!curMapFound && curMap != null && map.getMapNameForList().equals(curMap.getMapNameForList())) {
+					if (!curMapFound && curMap != null && mio.getMapNameForList().equals(curMap.getMapNameForList())) {
 						oldmap = row;
 						curMapFound = true;
 					}
@@ -2803,13 +2802,13 @@ class ListBox extends Form {
 				if (!Area.containsRoughly(ml.sortEntryBBox, cmp))
 					continue; // TODO if no map available
 				else {
-					map = ml.getMap();
+					mio = ml.getMap();
 				}
-				if (map.isInBound(gotopos)) {
-					list.addItem(i + ": " + map.getMapNameForList());
+				if (mio.isInBound(gotopos)) {
+					list.addItem(i + ": " + mio.getMapNameForList());
 					row++;
 					inList[i] = true;
-					if (!curMapFound && curMap != null && map.getMapNameForList().equals(curMap.getMapNameForList())) {
+					if (!curMapFound && curMap != null && mio.getMapNameForList().equals(curMap.getMapNameForList())) {
 						oldmap = row;
 						curMapFound = true;
 					}

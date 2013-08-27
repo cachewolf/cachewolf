@@ -411,7 +411,7 @@ public class MapLoaderGui extends Form {
 		// rebuild MapsList.txt
 		FileBugfix MapsListFile = new FileBugfix(Global.pref.getCustomMapsPath() + "/MapsList.txt");
 		MapsListFile.delete();
-		MapsList maps = new MapsList(Global.pref.getCustomMapsPath(), center.latDec);
+		MapsList maps = new MapsList(center.latDec);
 		maps.clear();
 		maps = null;
 	}

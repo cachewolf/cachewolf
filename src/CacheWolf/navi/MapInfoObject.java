@@ -23,6 +23,7 @@ package CacheWolf.navi;
 
 import CacheWolf.CWPoint;
 import CacheWolf.Common;
+import CacheWolf.Global;
 import CacheWolf.Matrix;
 import CacheWolf.MyLocale;
 import CacheWolf.utils.FileBugfix;
@@ -163,7 +164,7 @@ public class MapInfoObject extends Area {
 			path = mapListEntry.path; // with ending /
 			mapName = mapListEntry.filename; // without Extension
 			// TODO correct imageExtension 
-			imageExtension = ".png"; // with dot
+			imageExtension = Common.getFilenameExtension(Common.getImageName(Global.pref.getCustomMapsPath() + path + mapName)); //".png"; // with dot
 			hasImage = true;
 			break;
 		case 3:
@@ -218,15 +219,17 @@ public class MapInfoObject extends Area {
 	}
 
 	/**
-	 * @return the filename of the associated map image, "" if no file is associated, null if associated file could not be found
+	 * @return the filename of the associated map image<br>
+	 *         null : the referenced file doesn't exist<br>
+	 *         "" = empty map -> no file is associated<br>
 	 */
 	public String getImagePathAndName() {
 		if (hasImage) {
 			if (this.imageExtension.length() > 0) {
-				return this.path + this.mapName + this.imageExtension;
+				return Global.pref.getCustomMapsPath() + this.path + this.mapName + this.imageExtension;
 			}
 			else {
-				String in = Common.getImageName(this.path + this.mapName);
+				String in = Common.getImageName(Global.pref.getCustomMapsPath() + this.path + this.mapName);
 				this.imageExtension = Common.getFilenameExtension(in);
 				return in;
 			}
@@ -250,7 +253,7 @@ public class MapInfoObject extends Area {
 	 *             when affine data is not correct, e.g. it is not possible to inverse affine-transformation
 	 */
 	public void loadwfl(String mapsPath, String thisMap) throws IOException, ArithmeticException {
-		final FileInputStream instream = new FileInputStream(mapsPath + thisMap + ".wfl");
+		final FileInputStream instream = new FileInputStream(Global.pref.getCustomMapsPath() + mapsPath + thisMap + ".wfl");
 		final InputStreamReader in = new InputStreamReader(instream);
 
 		String line = "";
