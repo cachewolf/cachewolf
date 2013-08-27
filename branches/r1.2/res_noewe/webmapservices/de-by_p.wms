@@ -7,8 +7,8 @@ MapType:                        de.bayern DOP
 MainUrl:            http://geodaten.bayern.de/ogc/ogc_dop200_oa.cgi?
 ServiceTypeUrlPart: SERVICE=WMS
 VersionUrlPart:     VERSION=1.1.1
-CoordinateReferenceSystemCacheWolf:  31467 31468 4326
-CoordinateReferenceSystemUrlPart: SRS=EPSG:31467 SRS=EPSG:31468 SRS=EPSG:4326 
+CoordinateReferenceSystemCacheWolf:  4326
+CoordinateReferenceSystemUrlPart: SRS=EPSG:4326 
 RequestUrlPart:     REQUEST=GetMap
 #LayersUrlPart:     LAYERS=adv_md_dop200|Aufnahmedatum|0.3|1248.00148412395
 #LayersUrlPart:     LAYERS=adv_dop200c|DOP 200 (Farbe)|0.3|1248.00148412395
@@ -23,3 +23,5 @@ MinScale:   0.5
 MaxScale:   25
 RecommendedScale:    1 2.5 5 10
 ImageFileExtension: .jpg
+MinPixelSize: 10
+MaxPixelSize: 2000
