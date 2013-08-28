@@ -1356,6 +1356,7 @@ public class SpiderGC {
 
 		try {
 			htmlListPage = UrlFetcher.fetch(url);
+			//pref.log("[getFirstListPage] Got first page " + url + "\r\nStart htmlListPage\r\n" + htmlListPage + "\r\nEnde nhtmlListPage\r\n" );
 			pref.log("[getFirstListPage] Got first page " + url);
 		} catch (final Exception ex) {
 			pref.log("[getFirstListPage] Error fetching first list page " + url, ex, true);
@@ -1545,7 +1546,6 @@ public class SpiderGC {
 		final double[] distanceAndDirection = { (0.0), (0.0) };
 		if (spiderAllFinds) return distanceAndDirection;
 		// <span class="small NoWrap"><br />Here</span>
-		if (doc.indexOf(">Here<")>0)  return distanceAndDirection;
 		String stmp;
 		DistDirRex.search(doc);
 		if (!DistDirRex.didMatch()) {
@@ -1554,7 +1554,32 @@ public class SpiderGC {
 			return distanceAndDirection;
 		}
 		stmp = DistDirRex.stringMatched(3);
-		distanceAndDirection[0] = Common.parseDouble(stmp);
+		if (stmp.equals("here")) {
+			 return distanceAndDirection;
+		}
+		else {
+			int p = stmp.indexOf("km");
+			if (p>0) {
+				stmp=stmp.substring(0,p); 
+				distanceAndDirection[0] = Common.parseDouble(stmp);
+			}
+			else {
+				p = stmp.indexOf("ft");
+				if (p>0) {
+					 stmp=stmp.substring(0,p);
+					 distanceAndDirection[0] = 0.0003048 * Common.parseDouble(stmp);
+				}
+				else {
+					p = stmp.indexOf("mi");
+					if (p>0) {
+						 stmp=stmp.substring(0,p);
+						 distanceAndDirection[0] = 1.609 * Common.parseDouble(stmp);
+					}
+					else return distanceAndDirection;
+				}
+			}		
+		}
+
 		stmp = DistDirRex.stringMatched(1);
 		if (stmp.equals("N"))
 			distanceAndDirection[1] = 0.0;
