@@ -129,12 +129,12 @@ imgBlockExStart    = <IMG
 imgBlockExEnd      = >
 # imgSpanEx searches for images in the image section
 imgSpanExStart     = ctl00_ContentBody_MapLinks_MapLinks
-imgSpanExStart2    = <p class="NoPrint">
+imgSpanExStart2    = <ul class="CachePageImages NoPrint">
 imgSpanExEnd       = InformationWidget Clear
 imgSrcExStart      = <a href="http://
 imgSrcExEnd        = " rel="lightbox"
-imgNameExStart     = <span>
-imgNameExEnd       = </span>
+imgNameExStart     = rel="lightbox">
+imgNameExEnd       = </a>
 imgCommentExStart  = </a><br />
 imgCommentExEnd    = <br /><br />
 
