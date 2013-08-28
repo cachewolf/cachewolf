@@ -70,6 +70,8 @@ fetchAllLogs       = &log=y
 cacheUnavailable   = class="OldWarning"><li>This\ cache\ is\ temporarily\ unavailable
 cacheArchived      = class="OldWarning"><li>This\ cache\ has\ been\ archived
 premiumCachepage   = > Premium Member Only Cache
+# "oldLatLngDisplay":"N 48° 29.684' E 009° 12.397'"
+orgLatLonRex       = "oldLatLngDisplay":"((?s).*?)"
 latLonRex          = <span id="uxLatLon">((?s).*?)</span>
 shortDescRex       = tBody_ShortDescription">((?s).*?)</span>
 longDescRex        = tBody_LongDescription">((?s).*?)<strong>\\s+Additional\ Hints</strong>
@@ -153,7 +155,7 @@ prefixExEnd        = ">
 #--------------------------------------
 #Section2e: Attributes
 #--------------------------------------
-attBlockExStart = <div\ class="CacheDetailNavigationWidget
-attBlockExEnd  = What\ are\ Attributes?</a></small></p>
+attBlockExStart = Attributes
+attBlockExEnd  = What are Attributes?</a></small></p>
 attExStart = /images/attributes/
-attExEnd = "\ alt="
+attExEnd = " alt=
