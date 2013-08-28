@@ -135,8 +135,8 @@ imgSrcExStart      = <a href="http://
 imgSrcExEnd        = " rel="lightbox"
 imgNameExStart     = rel="lightbox">
 imgNameExEnd       = </a>
-imgCommentExStart  = </a><br />
-imgCommentExEnd    = <br /><br />
+imgCommentExStart  = <span class="description">
+imgCommentExEnd    = </span>
 
 #--------------------------------------
 #Section2d: Additional waypoints
