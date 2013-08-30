@@ -305,7 +305,7 @@ public final class MapsList extends Vector {
 						test = new FileBugfix(CustomMapsPath + S[0] + ".pack");
 					}
 					else { // if (S[3].equals("0")) {
-						test = new FileBugfix(CustomMapsPath + S[0] + S[1] + ".wfl");
+						test = new FileBugfix(CustomMapsPath + S[0] + "/" + S[1] + ".wfl");
 					}
 					if (!test.exists()) {
 						ret = false;
