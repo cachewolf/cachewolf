@@ -1,0 +1,38 @@
+﻿#Dieser Geoimage WMS Dienst stellt ab Juli 2011 hochauflösende Orthophotos von Österreich ausschließlich für die nicht kommerzielle Nutzung zur Verfügung.
+#Bitte beachten Sie unbedingt die Nutzungsbedingungen
+#Der Dienst ist insbesondere für die Nutzung durch Open Data Communities gedacht(OSM).
+#Siehe http://www.geoimage.at/geodatendienste.html
+TakenFromUrl:       http://www.geoimage.at/geodatendienste.html
+GetCapabilitiesUrl: http://gis.lebensministerium.at/wmsgw/?key=4d80de696cd562a63ce463a58a61488d&SERVICE=WMS&VERSION=1.1.1&REQUEST=GetCapabilities
+Name:               at DOP
+MapType:            at DOP
+MainUrl:            http://gis.lebensministerium.at/wmsgw/?key=4d80de696cd562a63ce463a58a61488d&
+ServiceTypeUrlPart: SERVICE=WMS
+VersionUrlPart:     VERSION=1.1.1
+CoordinateReferenceSystemCacheWolf:  4326
+CoordinateReferenceSystemUrlPart: SRS=EPSG:4326 
+RequestUrlPart:     REQUEST=GetMap
+#LayersUrlPart:     LAYERS=DOP|Öffentlicher Geoimage DOP WMS MaxRes (2011-07-01)||
+#LayersUrlPart:     LAYERS=Orthophoto|Orthophoto||
+#LayersUrlPart:     LAYERS=Luftbild_MR|Luftbild_MR|0.0498902848429637|1.24725712107409
+#LayersUrlPart:     LAYERS=Luftbild_1m|Luftbild_1m_LB|1.24725712107409|7.73299415065938
+#LayersUrlPart:     LAYERS=Luftbild_8m|Luftbild_8m_LB|7.48404162929299|75.0848786886604
+#LayersUrlPart:     LAYERS=Satellitenbild_30m|Satellitenbild_30m|74.835926167294|4989.02848429637
+#LayersUrlPart:     LAYERS=Metadata|Metadata||
+#LayersUrlPart:     LAYERS=Metadata_Tiles|Metadata_Tiles|0.0498902848429637|75.0848786886604
+#LayersUrlPart:     LAYERS=Metadata-dissolve|Metadata-dissolve|1.24725712107409|4989.02848429637
+#LayersUrlPart:     LAYERS=Metadata-dissolve-res|Metadata-dissolve-res|0.0498902848429637|1.24725712107409
+LayersUrlPart:     LAYERS=Orthophoto
+StylesUrlPart:     STYLES=
+ImageFormatUrlPart:FORMAT=image/jpeg
+BoundingBoxTopLeftWGS84: N 49.2085 E 9.3565
+BoundingBoxBottomRightWGS84: N 46.0867 E 17.3085
+#BBox_Mitte: N 47.6476 E 13.332485
+MinScale:   0.5
+MaxScale:   6
+RecommendedScale:    1 0.5 2
+ImageFileExtension: .jpg
+MinPixelSize: 200
+MaxPixelSize: 2000
+RecommendedWidthPixelSize: 1024
+RecommendedHeightPixelSize: 1024
