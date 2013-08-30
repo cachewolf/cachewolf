@@ -1192,11 +1192,11 @@ public final class MovingMap extends Form implements ICommandListener {
 		// perhaps a nearby map is found, not containing the (center)Point, perhaps it fits on the screen
 		// but we can't use this map: the splitting into white areas goes wrong in that case
 		if (!(bestMap.bottomright.latDec <= centerPoint.latDec && centerPoint.latDec <= bestMap.topleft.latDec)) {
-			Global.pref.log("!For wA " + whiteArea + middleX + "," + middleY + " Lat outside " + bestMap.getMapNameForList());
+			Global.pref.log("!For wA " + whiteArea + middleX + "," + middleY + " Lat outside " + bestMap.getMapImageFileName().getMapNameForList(bestMap.getMapType()));
 			return;
 		}
 		if (!(bestMap.topleft.lonDec <= centerPoint.lonDec && centerPoint.lonDec <= bestMap.bottomright.lonDec)) {
-			Global.pref.log("!For wA " + whiteArea + middleX + "," + middleY + " Lon outside " + bestMap.getMapNameForList());
+			Global.pref.log("!For wA " + whiteArea + middleX + "," + middleY + " Lon outside " + bestMap.getMapImageFileName().getMapNameForList(bestMap.getMapType()));
 			return;
 		}
 		final String imagefilename = bestMap.getImagePathAndName();
@@ -1209,7 +1209,7 @@ public final class MovingMap extends Form implements ICommandListener {
 				mapPos.y = posCircleY - mapposint.y;
 				final Point mapDimension = bestMap.calcMapXY(bestMap.bottomright);
 				blackArea = new Rect(mapPos.x, mapPos.y, mapDimension.x, mapDimension.y);
-				Global.pref.log("For wA " + whiteArea + middleX + "," + middleY + " got " + blackArea + " ='" + bestMap.getMapNameForList() + "'");
+				Global.pref.log("For wA " + whiteArea + middleX + "," + middleY + " got " + blackArea + " ='" + bestMap.getMapImageFileName().getMapNameForList(bestMap.getMapType()) + "'");
 				// Are there any white areas left?
 				addRemainingWhiteAreas(blackArea, whiteArea);
 				// Not all maps have the dimension 1000x1000 Pixels, we cache this information:
@@ -1509,7 +1509,7 @@ public final class MovingMap extends Form implements ICommandListener {
 			while (currentMap == null) {
 				// this actually cannot happen, but maybe in case of an inconstistent code change (esp. regarding empty maps)
 				// force the user to select a map
-				chooseMap();
+				manualSelectMap();
 				if (currentMap == null)
 					(new MessageBox(MyLocale.getMsg(4207, "Error"), MyLocale.getMsg(4210, "Moving map cannot run without a map - please select one. \n You can select an empty map"), FormBase.OKB)).execute();
 			}
@@ -1709,11 +1709,11 @@ public final class MovingMap extends Form implements ICommandListener {
 		try {
 			Vm.showWait(true);
 			dontUpdatePos = true; // make updatePosition ignore calls during loading new map
-			Global.pref.log(MyLocale.getMsg(4216, "Loading map...") + newmap.getMapName());
+			Global.pref.log(MyLocale.getMsg(4216, "Loading map...") + newmap.getMapImageFileName().getMapNameForList(newmap.getMapType()));
 			MapImage mainMap = mmp.getMainMap();
 			try {
 				currentMap = newmap;
-				title = currentMap.getMapName();
+				title = currentMap.getMapImageFileName().getMapNameForList(currentMap.getMapType());
 
 				// neccessary to make updateposition to test if the current map is the best one for the GPS-Position
 				lastCompareX = Integer.MAX_VALUE;
@@ -2017,7 +2017,7 @@ public final class MovingMap extends Form implements ICommandListener {
 			return true;
 		}
 		if (SELECT_MAP == actionCommand) {
-			chooseMap();
+			manualSelectMap();
 			return true;
 		}
 		if (CHANGE_MAP_DIR == actionCommand) {
@@ -2118,7 +2118,7 @@ public final class MovingMap extends Form implements ICommandListener {
 		return gotoPos;
 	}
 
-	public void chooseMap() {
+	public void manualSelectMap() {
 		CWPoint gpspos;
 		if (myNavigation.gpsPos.Fix > 0)
 			gpspos = new CWPoint(myNavigation.gpsPos.latDec, myNavigation.gpsPos.lonDec);
@@ -2137,7 +2137,7 @@ public final class MovingMap extends Form implements ICommandListener {
 				ignoreGps = true;
 				setMap(manualSelectMap.selectedMap, posCircle.where);
 				// if map has an image
-				if (currentMap.hasImage)
+				if (currentMap.getMapType() != 1)
 					setCenterOfScreen(manualSelectMap.selectedMap.center, true);
 				setResModus(MovingMap.NORMAL_KEEP_RESOLUTION);
 			}
@@ -2728,7 +2728,7 @@ class ListBox extends Form {
 	mButton cancelButton, okButton;
 	mList list = new mList(4, 1, false);
 	public boolean selected = false;
-	Vector maps;
+	private Vector maps;
 
 	public ListBox(Vector maps, CWPoint Gps, CWPoint gotopos, MapInfoObject curMap) {
 		this.title = MyLocale.getMsg(4271, "Maps");
@@ -2759,10 +2759,10 @@ class ListBox extends Form {
 					mio = ml.getMap();
 				}
 				if (mio.isInBound(Gps.latDec, Gps.lonDec) && mio.isInBound(gotopos)) {
-					list.addItem(i + ": " + mio.getMapNameForList());
+					list.addItem(i + ": " + mio.getMapImageFileName().getMapNameForList(mio.getMapType()));
 					row++;
 					inList[i] = true;
-					if (!curMapFound && curMap != null && mio.getMapNameForList().equals(curMap.getMapNameForList())) {
+					if (!curMapFound && curMap != null && mio.getMapImageFileName().getMapNameForList(mio.getMapType()).equals(curMap.getMapImageFileName().getMapNameForList(curMap.getMapType()))) {
 						oldmap = row;
 						curMapFound = true;
 					}
@@ -2783,10 +2783,10 @@ class ListBox extends Form {
 					mio = ml.getMap();
 				}
 				if (mio.isInBound(Gps.latDec, Gps.lonDec)) {
-					list.addItem(i + ": " + mio.getMapNameForList());
+					list.addItem(i + ": " + mio.getMapImageFileName().getMapNameForList(mio.getMapType()));
 					row++;
 					inList[i] = true;
-					if (!curMapFound && curMap != null && mio.getMapNameForList().equals(curMap.getMapNameForList())) {
+					if (!curMapFound && curMap != null && mio.getMapImageFileName().getMapNameForList(mio.getMapType()).equals(curMap.getMapImageFileName().getMapNameForList(curMap.getMapType()))) {
 						oldmap = row;
 						curMapFound = true;
 					}
@@ -2805,10 +2805,10 @@ class ListBox extends Form {
 					mio = ml.getMap();
 				}
 				if (mio.isInBound(gotopos)) {
-					list.addItem(i + ": " + mio.getMapNameForList());
+					list.addItem(i + ": " + mio.getMapImageFileName().getMapNameForList(mio.getMapType()));
 					row++;
 					inList[i] = true;
-					if (!curMapFound && curMap != null && mio.getMapNameForList().equals(curMap.getMapNameForList())) {
+					if (!curMapFound && curMap != null && mio.getMapImageFileName().getMapNameForList(mio.getMapType()).equals(curMap.getMapImageFileName().getMapNameForList(curMap.getMapType()))) {
 						oldmap = row;
 						curMapFound = true;
 					}
@@ -2820,9 +2820,9 @@ class ListBox extends Form {
 		for (int i = 0; i < maps.size(); i++) {
 			ml = (MapListEntry) maps.get(i);
 			if (!inList[i]) {
-				list.addItem(i + ": " + ml.getMapNameForList());
+				list.addItem(i + ": " + ml.getMapImageFileName().getMapNameForList(ml.getMapType()));
 				row++;
-				if (!curMapFound && curMap != null && ml.getMapNameForList().equals(curMap.getMapNameForList())) {
+				if (!curMapFound && curMap != null && ml.getMapImageFileName().getMapNameForList(ml.getMapType()).equals(curMap.getMapImageFileName().getMapNameForList(curMap.getMapType()))) {
 					oldmap = row;
 					curMapFound = true;
 				}

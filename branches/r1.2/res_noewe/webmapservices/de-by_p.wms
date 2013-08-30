@@ -23,5 +23,7 @@ MinScale:   0.5
 MaxScale:   25
 RecommendedScale:    1 2.5 5 10
 ImageFileExtension: .jpg
-MinPixelSize: 10
+MinPixelSize: 200
 MaxPixelSize: 2000
+RecommendedWidthPixelSize: 1024
+RecommendedHeightPixelSize: 1024

@@ -31,7 +31,6 @@ import CacheWolf.InfoBox;
 import CacheWolf.MyLocale;
 import CacheWolf.utils.FileBugfix;
 import ewe.fx.Point;
-import ewe.io.FileBase;
 import ewe.sys.Convert;
 import ewe.sys.Vm;
 import ewe.ui.CellConstants;
@@ -120,17 +119,8 @@ public class MapLoaderGui extends Form {
 		isCreated = false;
 		this.title = MyLocale.getMsg(1800, "Download georeferenced maps");
 		center = new CWPoint(Global.pref.getCurCentrePt());
-		tileWidth = Global.pref.tilewidth;
-		tileHeight = Global.pref.tileheight;
-		// minimale Grösse 200 x 175 
-		if (tileWidth == 0 || tileHeight == 0) {
-			tileWidth = Global.pref.myAppWidth > 200 ? Global.pref.myAppWidth : 200;
-			tileHeight = Global.pref.myAppHeight > 175 ? Global.pref.myAppHeight : 175;
-		}
-		Global.pref.tilewidth = tileWidth;
-		Global.pref.tileheight = tileHeight;
 		cacheDB = cacheDBi;
-		mapLoader = new MapLoader(FileBase.getProgramDirectory() + "/" + "webmapservices");
+		mapLoader = new MapLoader();
 
 		// sort the items in the list of services in a way that services which cover the current center point.
 		unsortedMapServices = mapLoader.getAvailableOnlineMapServices();
@@ -160,8 +150,6 @@ public class MapLoaderGui extends Form {
 		pnlTiles.addLast(coosBtn = new mButton(center.toString()));
 		pnlTiles.addNext(scaleLbl);
 		mapLoader.setCurrentMapService(sortingMapServices[mapServiceChoice.selectedIndex]);
-
-		initTileInputfields();
 
 		this.focusFirst();
 		pnlTiles.addLast(scaleInput);
@@ -219,24 +207,9 @@ public class MapLoaderGui extends Form {
 
 		mTab.addCard(pnlPerCache, MyLocale.getMsg(1814, "Per cache"), MyLocale.getMsg(1813, "Per Cache"));
 		setRecommScaleInput();
+		setRecommPixelSize();
 		this.addLast(mTab);
 		isCreated = true;
-	}
-
-	private void initTileInputfields() {
-		tileWidthInput.setText(Integer.toString(Global.pref.tilewidth));
-		tileHeightInput.setText(Integer.toString(Global.pref.tileheight));
-		pnlTilestileWidthInput.setText(Integer.toString(Global.pref.tilewidth));
-		pnlTilestileHeightInput.setText(Integer.toString(Global.pref.tileheight));
-	}
-
-	private void initTileInputfields(int wh) {
-		if (wh == Integer.MAX_VALUE)
-			wh = 1024;
-		tileWidthInput.setText("" + wh);
-		tileHeightInput.setText("" + wh);
-		pnlTilestileWidthInput.setText("" + wh);
-		pnlTilestileHeightInput.setText("" + wh);
 	}
 
 	private void checkTileSizeInputfields(String w, String h) {
@@ -250,9 +223,12 @@ public class MapLoaderGui extends Form {
 			iw = mapLoader.getCurrentOnlineMapService().maxPixelSize;
 		if (ih > mapLoader.getCurrentOnlineMapService().maxPixelSize)
 			ih = mapLoader.getCurrentOnlineMapService().maxPixelSize;
+		tileWidthInput.setText(Integer.toString(iw));
+		tileHeightInput.setText(Integer.toString(ih));
+		pnlTilestileWidthInput.setText(Integer.toString(iw));
+		pnlTilestileHeightInput.setText(Integer.toString(ih));
 		Global.pref.tileheight = ih;
 		Global.pref.tilewidth = iw;
-		initTileInputfields();
 	}
 
 	private void setRecommScaleInput() {
@@ -329,10 +305,13 @@ public class MapLoaderGui extends Form {
 			}
 		}
 		while (StartPos < LastPos);
+		if (LeadingPath.endsWith("/")) {
+			LeadingPath = LeadingPath.substring(0, LeadingPath.length() - 1);
+		}
 		return LeadingPath;
 	}
 
-	public void downloadTiles() {
+	public void download() {
 		String mapsDir = getMapsDir();
 		if (mapsDir == null)
 			return;
@@ -369,14 +348,10 @@ public class MapLoaderGui extends Form {
 			mapLoader.setProgressInfoBox(progressBox);
 			mapLoader.setFetchOnlyMapWithCache(fetchOnlyMapWithCacheChkBox.getState());
 			if (mapLoader.getNumMapsY() == 0) {
-				try {
-					mapLoader.downloadMap(mapLoader.getTopleft(), scale, TileSizeInPixels, mapsDir);
-				}
-				catch (Exception e) {
-				}
+				mapLoader.downloadMap(mapLoader.getTopleft(), scale, TileSizeInPixels, mapsDir);
 			}
 			else {
-				mapLoader.downlaodMaps(mapsDir);
+				mapLoader.downloadMaps(mapsDir);
 			}
 		}
 		else {
@@ -449,6 +424,7 @@ public class MapLoaderGui extends Form {
 				}
 				mapLoader.setCurrentMapService(sortingMapServices[mapServiceChoice.selectedIndex]);
 				if (ev.target == okBtiles) { // get tiles
+					this.checkTileSizeInputfields(tileWidthInput.getText(), tileHeightInput.getText());
 					perCache = false;
 					if (forSelectedChkBox.getSelectedItem().toString().equalsIgnoreCase(MyLocale.getMsg(1804, "all")))
 						onlySelected = false;
@@ -474,6 +450,7 @@ public class MapLoaderGui extends Form {
 				}
 				else {
 					// per cache
+					this.checkTileSizeInputfields(tileWidthInput.getText(), tileHeightInput.getText());
 					perCache = true;
 					if (forSelectedChkBoxPerCache.getSelectedItem().toString().equalsIgnoreCase(MyLocale.getMsg(1804, "all")))
 						onlySelected = false;
@@ -500,7 +477,7 @@ public class MapLoaderGui extends Form {
 					return;
 				}
 				this.close(FormBase.IDOK);
-				this.downloadTiles();
+				this.download();
 			}
 			else if (ev.target == coosBtn) {
 				CoordsScreen cs = new CoordsScreen();
@@ -522,7 +499,7 @@ public class MapLoaderGui extends Form {
 			if (ev.target == mapServiceChoice) {
 				mapLoader.setCurrentMapService(sortingMapServices[mapServiceChoice.selectedIndex]);
 				setRecommScaleInput();
-				initTileInputfields(mapLoader.getCurrentOnlineMapService().maxPixelSize);
+				setRecommPixelSize();
 				if (mapLoader.getCurrentOnlineMapService() instanceof WebMapService) {
 					// es gibt keinen anderen mehr (bis ihn jemand wieder einbaut)
 					WebMapService wms = (WebMapService) mapLoader.getCurrentOnlineMapService();
@@ -555,5 +532,13 @@ public class MapLoaderGui extends Form {
 			}
 		}
 		super.onEvent(ev);
+	}
+
+	private void setRecommPixelSize() {
+		tileWidthInput.setText(mapLoader.getCurrentOnlineMapService().prefWidthPixelSize);
+		tileHeightInput.setText(mapLoader.getCurrentOnlineMapService().prefHeightPixelSize);
+		pnlTilestileWidthInput.setText(mapLoader.getCurrentOnlineMapService().prefWidthPixelSize);
+		pnlTilestileHeightInput.setText(mapLoader.getCurrentOnlineMapService().prefHeightPixelSize);
+
 	}
 }

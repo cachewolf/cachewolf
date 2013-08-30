@@ -984,10 +984,10 @@ public class Preferences extends MinML {
 	public String getCustomMapsPath() {
 		String rCMP = Global.profile.getRelativeCustomMapsPath();
 		if (rCMP.equals("")) {
-			return customMapsPath;
+			return customMapsPath; // from pref.xml
 		}
 		else {
-			return absoluteBaseDir + "maps" + rCMP;
+			return absoluteBaseDir + "maps" + rCMP; // from profile
 		}
 	}
 
