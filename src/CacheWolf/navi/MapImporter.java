@@ -112,7 +112,9 @@ public class MapImporter extends Form {
 		thisMap = mapToLoad;
 		mapsPath = Global.pref.getMapManuallySavePath(true) + "/";
 		try {
-			wfl.loadwfl(mapsPath, thisMap);
+			wfl.getMapImageFileName().setPath(mapsPath.substring(Global.pref.getCustomMapsPath().length()));
+			wfl.getMapImageFileName().setMapName(thisMap);
+			wfl.loadWFL();
 		}
 		catch (FileNotFoundException ex) {
 		}
@@ -347,7 +349,9 @@ public class MapImporter extends Form {
 							}
 							 */
 							wfl.evalGCP(GCPs, imageWidth, imageHeight);
-							wfl.saveWFL(mapsPath, rawFileName);
+							wfl.getMapImageFileName().setPath(mapsPath.substring(Global.pref.getCustomMapsPath().length()));
+							wfl.getMapImageFileName().setMapName(rawFileName);
+							wfl.saveWFL();
 							GCPs.clear();
 						} // if
 
@@ -389,7 +393,9 @@ public class MapImporter extends Form {
 				while (retry == true) {
 					try {
 						retry = false;
-						wfl.saveWFL(mapsPath, thisMap);
+						wfl.getMapImageFileName().setPath(mapsPath.substring(Global.pref.getCustomMapsPath().length()));
+						wfl.getMapImageFileName().setMapName(thisMap);
+						wfl.saveWFL();
 						if (Global.mainTab.mm != null)
 							Global.mainTab.mm.setMapsloaded(false);
 					}

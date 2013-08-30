@@ -2563,7 +2563,7 @@ public class SpiderGC {
 							imageInfo.setURL(imgUrl);
 						}
 						else {
-							Global.pref.log("[getImages] Already exising image: " + imgUrl + " as " + imageInfo.getFilename());
+							Global.pref.log("[getImages] Already existing image: " + imgUrl + " as " + imageInfo.getFilename());
 						}
 						spideredUrls.add(imgUrl);
 						spiderCounter++;

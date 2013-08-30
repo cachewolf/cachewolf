@@ -20,7 +20,9 @@ BoundingBoxBottomRightWGS84: N 47.0828 E 13.9782
 MinScale:   1
 MaxScale:   17
 RecommendedScale:    5 2.5 10
-ImageFileExtension: .png
-MinPixelSize: 10
-MaxPixelSize: 2000
 # der Server liefert JPEG, progressive, was CW bzw Ewe nicht kann!
+ImageFileExtension: .png
+MinPixelSize: 200
+MaxPixelSize: 2000
+RecommendedWidthPixelSize: 1024
+RecommendedHeightPixelSize: 1024

@@ -58,6 +58,7 @@ public class MapImage extends AniImage {
 	}
 
 	public MapImage(String f) throws ImageDecodingException, UnsupportedImageFormatException, ImageNotFoundException, ewe.sys.SystemResourceException {
+		// f kommt aus MapInfoObject.getImagePathAndName
 		if (screenDim == null)
 			screenDim = new Dimension(0, 0);
 		Global.pref.log("create MapImage from: " + f);

@@ -25,3 +25,5 @@ RecommendedScale:   14 9 10 11 12 13 15 16
 ImageFileExtension: .png
 MinPixelSize: 256
 MaxPixelSize: 256
+RecommendedWidthPixelSize: 256
+RecommendedHeightPixelSize: 256
