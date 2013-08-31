@@ -4,7 +4,7 @@
 #Siehe http://www.geoimage.at/geodatendienste.html
 TakenFromUrl:       http://www.geoimage.at/geodatendienste.html
 GetCapabilitiesUrl: http://gis.lebensministerium.at/wmsgw/?key=4d80de696cd562a63ce463a58a61488d&SERVICE=WMS&VERSION=1.1.1&REQUEST=GetCapabilities
-Name:               at DOP
+Name:               at.lebensministerium Orthophoto 
 MapType:            at DOP
 MainUrl:            http://gis.lebensministerium.at/wmsgw/?key=4d80de696cd562a63ce463a58a61488d&
 ServiceTypeUrlPart: SERVICE=WMS
