@@ -26,7 +26,6 @@ import CacheWolf.CacheHolder;
 import CacheWolf.CacheType;
 import CacheWolf.Global;
 import CacheWolf.InfoBox;
-import CacheWolf.utils.FileBugfix;
 import HTML.Template;
 
 import com.stevesoft.ewe_pat.Regex;
@@ -35,6 +34,7 @@ import ewe.filechooser.FileChooser;
 import ewe.filechooser.FileChooserBase;
 import ewe.io.AsciiCodec;
 import ewe.io.BufferedWriter;
+import ewe.io.File;
 import ewe.io.FileWriter;
 import ewe.io.IOException;
 import ewe.io.JavaUtf8Codec;
@@ -210,7 +210,7 @@ public class TPLExporter {
 	public TPLExporter(String tpl) {
 		cacheDB = Global.profile.cacheDB;
 		tplFile = tpl;
-		FileBugfix tmpFile = new FileBugfix(tpl);
+		File tmpFile = new File(tpl);
 		expName = tmpFile.getName();
 		expName = expName.substring(0, expName.indexOf("."));
 		gm = new GarminMap();
@@ -243,7 +243,7 @@ public class TPLExporter {
 				pbf.exit(0);
 				return;
 			}
-			FileBugfix saveTo = new FileBugfix(fc.getChosenFile());
+			File saveTo = fc.getChosenFile();
 			Global.pref.setExportPath(expName, saveTo.getPath());
 
 			if (myFilter.sortedBy != -1) {

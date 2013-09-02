@@ -24,7 +24,7 @@ package CacheWolf.navi;
 import CacheWolf.Global;
 import CacheWolf.InfoBox;
 import CacheWolf.MyLocale;
-import CacheWolf.utils.FileBugfix;
+import ewe.io.File;
 import ewe.io.FileBase;
 import ewe.ui.CellConstants;
 import ewe.ui.ControlEvent;
@@ -66,13 +66,13 @@ public class SelectMap extends Form {
 		InfoBox inf = new InfoBox("Info", MyLocale.getMsg(4109, "Loading maps..."));
 		inf.show();
 		try {
-			FileBugfix files = new FileBugfix(mapsPath);
-			FileBugfix checkWFL;
+			File files = new File(mapsPath);
+			File checkWFL;
 			String rawFileName = new String();
-			dateien = files.listMultiple("*.png,*.jpg,*.gif,*.bmp", FileBase.LIST_FILES_ONLY);
+			dateien = files.listMultiple("*.png,*.jpg,*.gif,*.bmp", FileBase.LIST_FILES_ONLY); // use FileBugfix if FileBase.LIST_DIRECTORIES_ONLY
 			for (int i = 0; i < dateien.length; i++) {
 				rawFileName = dateien[i].substring(0, dateien[i].lastIndexOf('.'));
-				checkWFL = new FileBugfix(mapsPath + rawFileName + ".wfl");
+				checkWFL = new File(mapsPath + rawFileName + ".wfl");
 
 				if (checkWFL.exists()) {
 					CMaps.addItem(rawFileName);

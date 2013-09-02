@@ -45,11 +45,11 @@ import CacheWolf.UrlFetcher;
 import CacheWolf.imp.SpiderGC.SpiderProperties;
 import CacheWolf.navi.TrackPoint;
 import CacheWolf.utils.BetterUTF8Codec;
-import CacheWolf.utils.FileBugfix;
 
 import com.stevesoft.ewe_pat.Regex;
 
 import ewe.io.AsciiCodec;
+import ewe.io.File;
 import ewe.io.IOException;
 import ewe.io.TextReader;
 import ewe.net.MalformedURLException;
@@ -780,7 +780,7 @@ public class GPXImporter extends MinML {
 		String target = Global.profile.dataDir + fileName;
 		imageInfo.setFilename(fileName);
 		try {
-			FileBugfix ftest = new FileBugfix(target);
+			File ftest = new File(target);
 			if (ftest.exists()) {
 				if (ftest.length() == 0) {
 					ftest.delete();
@@ -792,7 +792,7 @@ public class GPXImporter extends MinML {
 			else {
 				if (Global.pref.downloadPics) {
 					UrlFetcher.fetchDataFile(imageInfo.getURL(), target);
-					ftest = new FileBugfix(target);
+					ftest = new File(target);
 					if (ftest.exists()) {
 						if (ftest.length() > 0) {
 							holder.getCacheDetails(false).images.add(imageInfo);

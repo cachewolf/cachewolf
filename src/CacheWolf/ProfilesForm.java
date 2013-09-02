@@ -21,10 +21,10 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 package CacheWolf;
 
-import CacheWolf.utils.FileBugfix;
 import ewe.fx.Graphics;
 import ewe.fx.Insets;
 import ewe.fx.Rect;
+import ewe.io.File;
 import ewe.io.FileBase;
 import ewe.ui.CellConstants;
 import ewe.ui.ControlConstants;
@@ -135,8 +135,8 @@ public class ProfilesForm extends Form {
 
 		choice = new MyList();
 		// Get all subdirectories in the base directory
-		FileBugfix fileBaseDir = new FileBugfix(baseDir);
-		String[] existingProfiles = fileBaseDir.list("*.*", FileBase.LIST_DIRECTORIES_ONLY);
+		File fileBaseDir = new File(baseDir);
+		String[] existingProfiles = fileBaseDir.list("*.*", FileBase.LIST_DIRECTORIES_ONLY); // null == *.* so no FileBugfix needed
 		// Now add these subdirectories to the list of profiles but
 		// exclude the "maps" directory which will contain the moving maps
 		for (int i = 0; i < existingProfiles.length; i++)

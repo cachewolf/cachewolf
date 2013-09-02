@@ -22,10 +22,10 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 package CacheWolf;
 
 import CacheWolf.imp.KMLImporter;
-import CacheWolf.utils.FileBugfix;
 
 import com.stevesoft.ewe_pat.Regex;
 
+import ewe.io.File;
 import ewe.io.FileNotFoundException;
 import ewe.io.FileReader;
 import ewe.io.IOException;
@@ -116,7 +116,7 @@ public class Filter {
 	 * We use a regex method to allow for different formats of waypoints:
 	 * possible is currently: DD MM.mmm
 	 */
-	public void doFilterRoute(FileBugfix routeFile, double distance) {
+	public void doFilterRoute(File routeFile, double distance) {
 		Global.profile.selectionChanged = true;
 		CacheDB cacheDB = Global.profile.cacheDB;
 		// load file into a vector:

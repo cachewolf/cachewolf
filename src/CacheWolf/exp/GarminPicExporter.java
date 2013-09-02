@@ -28,12 +28,12 @@ import CacheWolf.DataMover;
 import CacheWolf.Global;
 import CacheWolf.ImageInfo;
 import CacheWolf.MyLocale;
-import CacheWolf.utils.FileBugfix;
 
 import com.stevesoft.ewe_pat.Regex;
 
 import ewe.filechooser.FileChooser;
 import ewe.filechooser.FileChooserBase;
+import ewe.io.File;
 import ewe.sys.Handle;
 import ewe.ui.CellConstants;
 import ewe.ui.CheckBoxGroup;
@@ -252,7 +252,7 @@ public class GarminPicExporter {
 	 * @return The full path pointing to the newly created sub-directory
 	 */
 	private String appendDir(String baseDir, String appendDir) {
-		FileBugfix file = new FileBugfix(baseDir + appendDir);
+		File file = new File(baseDir + appendDir);
 		if (!file.exists())
 			file.createDir();
 		return file.getAbsolutePath() + "/";

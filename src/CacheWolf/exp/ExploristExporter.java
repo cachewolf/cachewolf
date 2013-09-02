@@ -31,11 +31,11 @@ import CacheWolf.Common;
 import CacheWolf.Global;
 import CacheWolf.InfoBox;
 import CacheWolf.MyLocale;
-import CacheWolf.utils.FileBugfix;
 import ewe.filechooser.FileChooser;
 import ewe.filechooser.FileChooserBase;
 import ewe.io.BufferedReader;
 import ewe.io.BufferedWriter;
+import ewe.io.File;
 import ewe.io.FileNotFoundException;
 import ewe.io.FileReader;
 import ewe.io.FileWriter;
@@ -84,7 +84,7 @@ public class ExploristExporter {
 	}
 
 	public void doIt() {
-		FileBugfix configFile = new FileBugfix("magellan.cfg");
+		File configFile = new File("magellan.cfg");
 		if (configFile.exists()) {
 			FileChooser fc = new FileChooser(FileChooserBase.DIRECTORY_SELECT, Global.pref.getExportPath(expName + "Dir"));
 			fc.setTitle(MyLocale.getMsg(2104, "Choose directory for exporting .gs files"));
@@ -130,7 +130,7 @@ public class ExploristExporter {
 	 * Does the most work for exporting data
 	 */
 	public void doIt(String baseFileName) {
-		FileBugfix outFile;
+		File outFile;
 		String fileBaseName;
 		String str = null;
 		CacheHolder ch;
@@ -143,7 +143,7 @@ public class ExploristExporter {
 				return;
 		}
 		else {
-			outFile = new FileBugfix(baseFileName);
+			outFile = new File(baseFileName);
 		}
 
 		fileBaseName = outFile.getFullPath();
@@ -159,14 +159,14 @@ public class ExploristExporter {
 
 		try {
 			// Set initial value for outp to calm down compiler
-			PrintWriter outp = new PrintWriter(new BufferedWriter(new FileWriter(new FileBugfix(fileBaseName + expCount / 200 + ".gs"))));
+			PrintWriter outp = new PrintWriter(new BufferedWriter(new FileWriter(new File(fileBaseName + expCount / 200 + ".gs"))));
 			for (int i = 0; i < cacheDB.size(); i++) {
 				ch = cacheDB.get(i);
 				if (ch.isVisible()) {
 					// all 200 caches we need a new file
 					if (expCount % 200 == 0 && expCount > 0) {
 						outp.close();
-						outp = new PrintWriter(new BufferedWriter(new FileWriter(new FileBugfix(fileBaseName + expCount / 200 + ".gs"))));
+						outp = new PrintWriter(new BufferedWriter(new FileWriter(new File(fileBaseName + expCount / 200 + ".gs"))));
 					}
 
 					expCount++;
@@ -197,13 +197,13 @@ public class ExploristExporter {
 	 * 
 	 * @return
 	 */
-	public FileBugfix getOutputFile() {
-		FileBugfix file;
+	public File getOutputFile() {
+		File file;
 		FileChooser fc = new FileChooser(FileChooserBase.SAVE, Global.pref.getExportPath(expName));
 		fc.setTitle(MyLocale.getMsg(2102, "Select target file:"));
 		fc.addMask(mask);
 		if (fc.execute() != FormBase.IDCANCEL) {
-			file = new FileBugfix(fc.getChosenFile());
+			file = fc.getChosenFile();
 			Global.pref.setExportPath(expName, file.getPath());
 			return file;
 		}

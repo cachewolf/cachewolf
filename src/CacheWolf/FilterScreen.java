@@ -22,7 +22,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 package CacheWolf;
 
 import CacheWolf.navi.Metrics;
-import CacheWolf.utils.FileBugfix;
 import ewe.filechooser.FileChooser;
 import ewe.filechooser.FileChooserBase;
 import ewe.fx.Color;
@@ -33,6 +32,7 @@ import ewe.fx.Insets;
 import ewe.fx.Pen;
 import ewe.fx.Rect;
 import ewe.fx.mImage;
+import ewe.io.File;
 import ewe.sys.Convert;
 import ewe.sys.Vm;
 import ewe.ui.ButtonObject;
@@ -657,11 +657,11 @@ public class FilterScreen extends Form {
 			}
 			else if (ev.target == btnRoute) {
 
-				FileBugfix datei;
+				File datei;
 				FileChooser fc = new FileChooser(FileChooserBase.OPEN, Global.profile.dataDir);
 				fc.setTitle(MyLocale.getMsg(712, "Select route file"));
 				if (fc.execute() != FormBase.IDCANCEL) {
-					datei = new FileBugfix(fc.getChosenFile());
+					datei = fc.getChosenFile();
 					InfoBox inf = new InfoBox("Distance?", "Dist:", InfoBox.INPUT);
 					inf.execute();
 					Vm.showWait(true);

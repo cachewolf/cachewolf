@@ -31,6 +31,7 @@ import CacheWolf.utils.FileBugfix;
 import ewe.fx.Point;
 import ewe.fx.Rect;
 import ewe.io.DataInputStream;
+import ewe.io.File;
 import ewe.io.FileBase;
 import ewe.io.FileInputStream;
 import ewe.io.IOException;
@@ -63,7 +64,7 @@ public final class MapsList extends Vector {
 	public MapsList(double lat) {
 		CustomMapsPath = Global.pref.getCustomMapsPath();
 		String MapsListPaN = CustomMapsPath + "/MapsList.txt";
-		FileBugfix MapsListFile = new FileBugfix(MapsListPaN);
+		File MapsListFile = new File(MapsListPaN);
 		boolean dontBuildMapsListFile = MapsListFile.exists();
 		if (dontBuildMapsListFile) {
 			dontBuildMapsListFile = readMapsListFile(MapsListPaN);
@@ -85,20 +86,20 @@ public final class MapsList extends Vector {
 
 	private void initMapsList() {
 		String dateien[];
-		FileBugfix files;
 		String[] dirstmp;
 		Vector dirs = new Vector();
 		dirs.add(""); // start with the mapsPath (only this one , without its subdirs) =  + dirs.get(0)
 		Global.pref.log("building mapslist started " + CustomMapsPath);
-		files = new FileBugfix(CustomMapsPath);
+		FileBugfix files = new FileBugfix(CustomMapsPath);
+		File dirList = new File(CustomMapsPath);
 		for (int j = 0; j < dirs.size(); j++) {
 			String aktPath;
 			//add subdirectories
 			aktPath = CustomMapsPath + dirs.get(j);
-			files.set(null, aktPath);
+			dirList.set(null, aktPath);
 			// the options "File.LIST_DONT_SORT | File.LIST_IGNORE_DIRECTORY_STATUS" make it run about twice as fast in sun-vm.
 			// The option File.LIST_IGNORE_DIRECTORY_STATUS influences only the sorting (dirs first)
-			dirstmp = files.list(null, FileBase.LIST_DIRECTORIES_ONLY | FileBase.LIST_DONT_SORT | FileBase.LIST_IGNORE_DIRECTORY_STATUS);
+			dirstmp = dirList.list(null, FileBase.LIST_DIRECTORIES_ONLY | FileBase.LIST_DONT_SORT | FileBase.LIST_IGNORE_DIRECTORY_STATUS);
 			if (dirstmp != null) {
 				for (int subDir = 0; subDir < dirstmp.length; subDir++) {
 					if (!dirstmp[subDir].startsWith(".")) {
@@ -116,7 +117,7 @@ public final class MapsList extends Vector {
 					String p[] = ewe.util.mString.split(aktPath, '/');
 					if (p.length > 3) {
 						String wmsPaN = FileBase.getProgramDirectory() + "/webmapservices/" + p[p.length - 3] + ".wms";
-						FileBugfix wmsFile = new FileBugfix(wmsPaN);
+						File wmsFile = new File(wmsPaN);
 						// (.../Google/<zoom>/<x>/<y>.png ) und Google.wms existiert
 						// Definition: there is a tiles - structure,
 						// if there exist no wfl - files in the actual directory (aktPath)
@@ -181,7 +182,7 @@ public final class MapsList extends Vector {
 		DataInputStream reader;
 		try {
 
-			FileBugfix queryFile = new FileBugfix(thePackFile);
+			File queryFile = new File(thePackFile);
 			stream = new FileInputStream(queryFile);
 			reader = new DataInputStream(stream);
 
@@ -298,12 +299,12 @@ public final class MapsList extends Vector {
 					}
 				}
 				else {
-					FileBugfix test;
+					File test;
 					if (S[3].equals("3")) {
-						test = new FileBugfix(CustomMapsPath + S[0] + ".pack");
+						test = new File(CustomMapsPath + S[0] + ".pack");
 					}
 					else { // if (S[3].equals("0")) {
-						test = new FileBugfix(CustomMapsPath + S[0] + "/" + S[1] + ".wfl");
+						test = new File(CustomMapsPath + S[0] + "/" + S[1] + ".wfl");
 					}
 					if (!test.exists()) {
 						ret = false;
@@ -889,13 +890,13 @@ final class MapListEntry {
 					String f = mapsPath + subPath + filenamei + ".wfl";
 					renameProgressInfoB.setInfo(MyLocale.getMsg(4704, "\nRenaming file: ") + f + "\n");
 					String to = sortEntryBBox + "E-" + filenamei + ".wfl";
-					if (!new FileBugfix(f).rename(to))
+					if (!new File(f).rename(to))
 						(new MessageBox(MyLocale.getMsg(321, "Error"), MyLocale.getMsg(4705, "Failed to rename:\n") + f + MyLocale.getMsg(4706, "\nto:\n") + to, FormBase.OKB)).exec();
 					f = Common.getImageName(mapsPath + subPath + filenamei);
 					if (f != null) {
 						imageExtension = Common.getFilenameExtension(f);
 						to = sortEntryBBox + "E-" + filenamei + imageExtension;
-						if (!new FileBugfix(f).rename(to)) {
+						if (!new File(f).rename(to)) {
 							Global.pref.log("MapListEntry Failed to rename: " + mapsPath + subPath + filenamei + ": " + f + " to: " + to, null);
 							(new MessageBox(MyLocale.getMsg(321, "Error"), MyLocale.getMsg(4705, "Failed to rename:\n") + f + MyLocale.getMsg(4706, "\nto:\n") + to, FormBase.OKB)).exec();
 						}

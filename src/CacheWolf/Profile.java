@@ -23,8 +23,8 @@ package CacheWolf;
 
 import CacheWolf.navi.Area;
 import CacheWolf.navi.TransformCoordinates;
-import CacheWolf.utils.FileBugfix;
 import ewe.io.BufferedWriter;
+import ewe.io.File;
 import ewe.io.FileNotFoundException;
 import ewe.io.FileReader;
 import ewe.io.FileWriter;
@@ -179,18 +179,18 @@ public class Profile {
 		PrintWriter detfile;
 		CacheHolder ch;
 		try {
-			FileBugfix backup = new FileBugfix(dataDir + "index.bak");
+			File backup = new File(dataDir + "index.bak");
 			if (backup.exists()) {
 				backup.delete();
 			}
-			FileBugfix index = new FileBugfix(dataDir + "index.xml");
+			File index = new File(dataDir + "index.xml");
 			index.rename("index.bak");
 		}
 		catch (Exception ex) {
 			Global.pref.log("[Profile:saveIndex]Error deleting backup or renaming index.xml");
 		}
 		try {
-			detfile = new PrintWriter(new BufferedWriter(new FileWriter(new FileBugfix(dataDir + "index.xml").getAbsolutePath())));
+			detfile = new PrintWriter(new BufferedWriter(new FileWriter(new File(dataDir + "index.xml").getAbsolutePath())));
 		}
 		catch (Exception e) {
 			Global.pref.log("Problem creating index.xml " + dataDir, e);
@@ -283,7 +283,7 @@ public class Profile {
 			int lastShownWpt = 0;
 			char decSep = MyLocale.getDigSeparator().charAt(0);
 			char notDecSep = decSep == '.' ? ',' : '.';
-			FileBugfix indexFile = new FileBugfix(dataDir + "index.xml");
+			File indexFile = new File(dataDir + "index.xml");
 			FileReader in = new FileReader(indexFile.getAbsolutePath());
 			indexXmlVersion = 1; // Initial guess
 			in.readLine(); // <?xml version= ...

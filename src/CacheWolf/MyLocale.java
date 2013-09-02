@@ -26,8 +26,8 @@ package CacheWolf;
  * 
  */
 
-import CacheWolf.utils.FileBugfix;
 import ewe.fx.Rect;
+import ewe.io.File;
 import ewe.io.FileBase;
 import ewe.io.FileReader;
 import ewe.io.IOException;
@@ -122,7 +122,7 @@ public class MyLocale {
 		l = null;
 		if ((language.length() != 0) && (!language.equalsIgnoreCase("auto"))) { // Was a language explicitly specified?
 			setLocale(language);
-			if (!(new FileBugfix(getLocaleFileName(resourcelanguage)).exists())) {
+			if (!(new File(getLocaleFileName(resourcelanguage)).exists())) {
 				l = null; // language file not found
 				initErrors += "Language " + language + " not found - using system language\n";// don't copy this messagebox into a language file, because it is only used if no languages file can be accessed
 			}
@@ -130,13 +130,13 @@ public class MyLocale {
 		if (l == null) { // no language specified OR specified language not available -> use system default
 			setLocale(Vm.getLocale().getString(Locale.LANGUAGE_SHORT, 0, 0));
 			// test if a localisation file for the system language exists
-			if (!(new FileBugfix(getLocaleFileName(resourcelanguage)).exists())) {
+			if (!(new File(getLocaleFileName(resourcelanguage)).exists())) {
 				setLocale(standardLanguage);
 				initErrors += "Your system language is not supported by cachewolf - using English\n You can choose a different language in the preferences\n";
 			}
 		}
 		lr = null;
-		if (new FileBugfix(getLocaleFileName(resourcelanguage)).exists()) {
+		if (new File(getLocaleFileName(resourcelanguage)).exists()) {
 
 			// ewe.io.TreeConfigFile.getConfigFile(getLocaleFileName(resourcelanguage));
 			// above replaced for to change resourcefile to have UTF-8 Codec
@@ -407,12 +407,12 @@ public class MyLocale {
 		int index = basename.lastIndexOf('.');
 		String prefix = basename.substring(0, index);
 		String suffix = basename.substring(index);
-		FileBugfix f = new FileBugfix(programmDirectory, prefix + '_' + lang + suffix);
+		File f = new File(programmDirectory, prefix + '_' + lang + suffix);
 		if (f.exists()) {
 			return f.toString();
 		}
 		else {
-			return new FileBugfix(programmDirectory, basename).toString();
+			return new File(programmDirectory, basename).toString();
 		}
 	}
 

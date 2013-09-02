@@ -28,9 +28,9 @@ import CacheWolf.CacheSize;
 import CacheWolf.CacheType;
 import CacheWolf.Common;
 import CacheWolf.Global;
-import CacheWolf.utils.FileBugfix;
 import ewe.filechooser.FileChooser;
 import ewe.filechooser.FileChooserBase;
+import ewe.io.File;
 import ewe.io.FileBase;
 import ewe.io.FileOutputStream;
 import ewe.io.IOException;
@@ -97,7 +97,7 @@ public class TomTomExporter {
 
 	public void writeOneFilePerType(int format, String dirName, String prefix) {
 		RandomAccessFile out = null;
-		FileBugfix dfile;
+		File dfile;
 		String ext, fileName = null;
 
 		CacheHolder holder;
@@ -127,7 +127,7 @@ public class TomTomExporter {
 				typeName = typeName.substring(0, typeName.length() - 4);
 
 				fileName = dirName + "/" + prefix + typeName + ext;
-				dfile = new FileBugfix(fileName);
+				dfile = new File(fileName);
 				dfile.delete();
 				out = new RandomAccessFile(fileName, "rw");
 				for (int i = 0; i < cacheDB.size(); i++) {
@@ -149,7 +149,7 @@ public class TomTomExporter {
 				}// for cacheDB
 				out.close();
 				// check for empty files and delete them
-				dfile = new FileBugfix(fileName);
+				dfile = new File(fileName);
 				if (dfile.length() == 0) {
 					dfile.delete();
 				}
@@ -166,7 +166,7 @@ public class TomTomExporter {
 
 	public void writeSingleFile(int format, String fileName) {
 		RandomAccessFile out = null;
-		FileBugfix dfile;
+		File dfile;
 
 		CacheHolder holder;
 		ProgressBarForm pbf = new ProgressBarForm();
@@ -180,7 +180,7 @@ public class TomTomExporter {
 		int expCount = 0;
 
 		try {
-			dfile = new FileBugfix(fileName);
+			dfile = new File(fileName);
 			dfile.delete();
 			out = new RandomAccessFile(fileName, "rw");
 			for (int i = 0; i < cacheDB.size(); i++) {
