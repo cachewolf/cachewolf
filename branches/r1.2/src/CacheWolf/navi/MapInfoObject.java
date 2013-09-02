@@ -177,8 +177,12 @@ public class MapInfoObject extends Area {
 	}
 
 	private CWPoint Tile2LatLon(int x, int y, int zoom) {
-		double lon = x / Math.pow(2.0, zoom) * 360.0 - 180;
-		double n = Math.PI - (2.0 * Math.PI * y) / Math.pow(2.0, zoom);
+		double xx = x;
+		double yy = y;
+		double zz = zoom;
+		double zz2 = Math.pow(2, zoom);
+		double lon = xx / zz2 * 360.0 - 180.0;
+		double n = Math.PI - (2.0 * Math.PI * yy) / zz2;
 		double lat = (Math.atan(0.5 * (Math.exp(n) - Math.exp(-n)))) * 180.0 / Math.PI;
 		return new CWPoint(lat, lon);
 	}
@@ -370,8 +374,11 @@ public class MapInfoObject extends Area {
 
 	private void doCalculations() throws ArithmeticException {
 		try {
+			// macht im Prinzip topleft = affineTopLeft
 			topleft.set(calcLatLon(0, 0));
+			// die Mitte durch Halbierung
 			center.set((bottomright.latDec + topleft.latDec) / 2, (bottomright.lonDec + topleft.lonDec) / 2);
+			// Diagonale Länge = 2 * (Mitte bis UntenRechts)  
 			sizeKm = java.lang.Math.abs((float) center.getDistance(bottomright)) * 2;
 
 			// calculate reverse affine
@@ -385,6 +392,7 @@ public class MapInfoObject extends Area {
 			// calculate north direction
 			final Point c = calcMapXY(center);
 			final int heightpixel = c.y * 2;
+
 			c.y -= 1000;
 			rotationRad = (float) (center.getBearing(calcLatLon(c)) / 180 * Math.PI);
 			// note: the direction of nord can vary across the image.
@@ -464,10 +472,10 @@ public class MapInfoObject extends Area {
 	}
 
 	/**
-	 * Method to calculate bitmap x,y of the current map using lat and lon target coordinates.
-	 * There ist no garanty that the returned coordinates are inside of the map. They can be negative.
+	 * Method to calculate bitmap x,y of the current map using lat and lon target coordinates.<br>
+	 * There is no guaranty that the returned coordinates are inside of the map. They can be negative.<br>
 	 * 
-	 * @param TrackPoint
+	 * @param ll
 	 * @return Point
 	 */
 	public Point calcMapXY(TrackPoint ll) {

@@ -1,0 +1,26 @@
+#Dieses Kartenwerk wird eingestellt und 2014 durch die Digitale Topographische Karte 1:250.000 abgelöst.
+#Die Digitale Topographische Karte 1:200.000, Vorläufige Ausgabe (DTK200-V), beinhaltet die Rasterdaten der „Topographischen Übersichtskarte 1:200.000 (TÜK200)“ ohne schattenplastische Geländedarstellung (Schummerung). Die Auflösung der Daten beträgt 320 Pixel je cm. 
+TakenFromUrl:       http://sg.geodatenzentrum.de/wms_dtk200?
+GetCapabilitiesUrl: http://sg.geodatenzentrum.de/wms_dtk200?SERVICE=WMS&VERSION=1.1.1&REQUEST=GetCapabilities
+Name:               de.geodatenzentrum Topographische Karte 1:200.000
+MapType:            de.geodatenzentrum TK200
+MainUrl:            http://sg.geodatenzentrum.de/wms_dtk200?
+ServiceTypeUrlPart: SERVICE=WMS
+VersionUrlPart:     VERSION=1.1.1
+CoordinateReferenceSystemCacheWolf:  4326
+CoordinateReferenceSystemUrlPart: SRS=EPSG:4326 
+RequestUrlPart:     REQUEST=GetMap
+#LayersUrlPart:     LAYERS=DTK200 Layers|DTK200 Layers||
+#LayersUrlPart:     LAYERS=DTK200|DTK200||
+LayersUrlPart:     LAYERS=DTK200
+StylesUrlPart:     STYLES=
+ImageFormatUrlPart:FORMAT=image/jpeg
+BoundingBoxTopLeftWGS84: N 55.3817 E 4.9972
+BoundingBoxBottomRightWGS84: N 16.6036 E 46.4396
+#BBox_Mitte: N 35.9926635 E 25.7184185
+MinScale:   0
+MaxScale:   1000
+RecommendedScale:   5 10 20
+ImageFileExtension: .jpg
+RecommendedWidthPixelSize: 1024
+RecommendedHeightPixelSize: 1024

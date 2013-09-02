@@ -336,13 +336,11 @@ public class Preferences extends MinML {
 	/** Determines whether to fill the white areas on the map */
 	public boolean fillWhiteArea = false;
 
-	/** Selected Size of map tiles */
-	public int mapTileSize = 1;
-	/** How many should maptiles overlap */
-	public int mapOverlapping = 2;
 	/** Width and height of free defined tile size */
 	public int tilewidth;
 	public int tileheight;
+	/** How many should maptiles overlap */
+	public int mapOverlapping = 2;
 	/** ShowCachesOnMap */
 	public boolean showCachesOnMap = true;
 	public float lastScale = 1f;
@@ -744,13 +742,9 @@ public class Preferences extends MinML {
 			fillWhiteArea = tmp != null && tmp.equalsIgnoreCase("true");
 		}
 		else if (name.equals("mapLoader")) {
-			tmp = atts.getValue("tileSize");
-			if (tmp == null || tmp.length() == 0)
-				tmp = "1";
-			mapTileSize = Convert.parseInt(tmp);
 			tmp = atts.getValue("overlapping");
 			if (tmp == null || tmp.length() == 0)
-				tmp = "2";
+				tmp = "0";
 			mapOverlapping = Convert.parseInt(tmp);
 			tmp = atts.getValue("tilewidth");
 			tilewidth = (tmp != null && tmp.length() > 0) ? Convert.parseInt(tmp) : 0;
@@ -951,8 +945,11 @@ public class Preferences extends MinML {
 			}
 			outp.print("    <logkeeping maximum=\"" + SafeXML.strxmlencode(maxLogsToKeep) + "\" keepown=\"" + SafeXML.strxmlencode(alwaysKeepOwnLogs) + "\" />\n");
 			outp.print("    <fillWhiteArea on=\"" + SafeXML.strxmlencode(fillWhiteArea) + "\" />\n");
-			outp.print("    <mapLoader tileSize=\"" + SafeXML.strxmlencode(mapTileSize) + "\" overlapping=\"" + SafeXML.strxmlencode(mapOverlapping) + "\" tilewidth=\"" + SafeXML.strxmlencode(tilewidth) + "\" tileheight=\""
-					+ SafeXML.strxmlencode(tileheight) + "\" />\n");
+			outp.print("    <mapLoader" //
+					+ " overlapping=\"" + SafeXML.strxmlencode(mapOverlapping) + "\"" //
+					+ " tilewidth=\"" + SafeXML.strxmlencode(tilewidth) + "\"" //
+					+ " tileheight=\"" + SafeXML.strxmlencode(tileheight) + "\"" //
+					+ " />\n");
 			outp.print("    <Map" //
 					+ " showCachesOnMap=\"" + SafeXML.strxmlencode(showCachesOnMap) + "\"" //
 					+ " lastScale=\"" + Common.DoubleToString(lastScale, 0, 2) + "\"" //
@@ -995,12 +992,15 @@ public class Preferences extends MinML {
 		if (customMapsPath == null || !customMapsPath.equals(mapspath_)) {
 			customMapsPath = mapspath_.replace('\\', '/');
 			savePreferences();
+
 			String s = absoluteBaseDir + "maps";
-			if (customMapsPath.indexOf(s) == 0) {
+			if (customMapsPath.indexOf(s) == 0) { // starts with s
+				// the selected path is under the default absoluteBaseDir + "maps"
 				String t = customMapsPath.substring(s.length(), customMapsPath.length());
 				Global.profile.setRelativeCustomMapsPath(t);
 			}
 			else {
+				// maps for the profile are not under absoluteBaseDir + "maps"
 				Global.profile.setRelativeCustomMapsPath("");
 			}
 		}

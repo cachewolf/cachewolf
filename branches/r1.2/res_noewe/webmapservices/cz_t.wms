@@ -1,22 +1,24 @@
-﻿TakenFromUrl:       http://geoportal.cuzk.cz
+﻿TakenFromUrl:       
 GetCapabilitiesUrl: http://geoportal.cuzk.cz/WMS_ZM50_PUB/service.svc/get?SERVICE=WMS&VERSION=1.1.1&REQUEST=GetCapabilities
-Name:               cz.Tschechien t50k
-MapType:                        topo
+Name:               cz.cuzk Základní mapa / Basiskarte 1:50 000
+MapType:            cz TK50
 MainUrl:            http://geoportal.cuzk.cz/WMS_ZM50_PUB/service.svc/get?
 ServiceTypeUrlPart: SERVICE=WMS
 VersionUrlPart:     VERSION=1.1.1
 CoordinateReferenceSystemCacheWolf:  4326
 CoordinateReferenceSystemUrlPart: SRS=EPSG:4326 
 RequestUrlPart:     REQUEST=GetMap
-#LayersUrlPart:     LAYERS=GR_ZM50|Základní mapa 1:50 000|1|100000
-#LayersUrlPart:     LAYERS=GT_TEXT_ZM10|Copyright|1|100000
+#LayersUrlPart:     LAYERS=GR_ZM50|Základní mapa 1:50 000||
+#LayersUrlPart:     LAYERS=GR_ZM50|Základní mapa 1:50 000|3.000000|3000.000000
 LayersUrlPart:     LAYERS=GR_ZM50
 StylesUrlPart:     STYLES=
 ImageFormatUrlPart:FORMAT=image/jpeg
-BoundingBoxTopLeftWGS84: N 51.4961 E 11.6156
-BoundingBoxBottomRightWGS84: N 48.0913 E 19.0612
-#BBox_Mitte: N 49.7936991896322 E 15.3384076389007
-MinScale:   0
-MaxScale:   12
-RecommendedScale:    5 2 4
+BoundingBoxTopLeftWGS84: N 51.6917 E 11.2140
+BoundingBoxBottomRightWGS84: N 47.9649 E 19.4077
+#BBox_Mitte: N 49.8282897678992 E 15.3108371017388
+MinScale:   2
+MaxScale:   25
+RecommendedScale:    5 2.5 10
 ImageFileExtension: .jpg
+RecommendedWidthPixelSize: 1024
+RecommendedHeightPixelSize: 1024

@@ -2,7 +2,7 @@
 #<Abstract>Digitale Orthophotos (DOP) sind entzerrte, maßstabsgetreue Luftbilder. Die Bodenpixelgröße beträgt 2m. Daher ist das DOP mit der 2m-Bodenauflösung ist bis zu Darstellungsmaßstäben von ca. 1 : 17.000 geeignet. Bei größeren Darstellungsmaßstäben tritt die grobe Pixelstruktur des Bildes in Erscheinung. Die DOP werden im Turnus von 3 Jahren aktualisiert. Weitere Informationen zur Bayernbefliegung unter: http://www.vermessung.bayern.de/luftbild/bayernbefliegung.html. Der abrufbare Kartenausschnitt pro WMS-Request ist auf eine Ausdehnung von maximal 2.000 x 2.000 Pixel begrenzt. Der WMS ist Bestandteil der OpenData-Initiative in Bayern.</Abstract>
 TakenFromUrl:       http://geoportal.bayern.de/geoportalbayern/inhalte/uebersichten/geodatendienste.html
 GetCapabilitiesUrl: http://geodaten.bayern.de/ogc/ogc_dop200_oa.cgi?SERVICE=WMS&VERSION=1.1.1&REQUEST=GetCapabilities
-Name:               de.bayern DOP
+Name:               de.bayern Orthophoto 1 : 17.000 2m-Bodenauflösung
 MapType:            de.bayern DOP
 MainUrl:            http://geodaten.bayern.de/ogc/ogc_dop200_oa.cgi?
 ServiceTypeUrlPart: SERVICE=WMS

@@ -106,11 +106,6 @@ public class MapLoaderGui extends Form {
 	private float radius;
 	private float scale;
 	private int overlapping;
-	/**
-	 * Determines width and height of tiles for `per cache maps'
-	 */
-	private int tileWidth;
-	private int tileHeight;
 
 	public boolean isCreated;
 
@@ -123,7 +118,7 @@ public class MapLoaderGui extends Form {
 		mapLoader = new MapLoader();
 
 		// sort the items in the list of services in a way that services which cover the current center point.
-		unsortedMapServices = mapLoader.getAvailableOnlineMapServices();
+		unsortedMapServices = mapLoader.getAvailableOnlineMapServices(center);
 		if (unsortedMapServices.length <= 0) {
 			Global.pref.log("no OnlineMapServices defined");
 			return;
@@ -240,6 +235,26 @@ public class MapLoaderGui extends Form {
 		scaleInputPerCache.choice.set(recScales, mapLoader.getCurrentOnlineMapService().preselectedRecScaleIndex);
 		scaleInput.setText(recScales[mapLoader.getCurrentOnlineMapService().preselectedRecScaleIndex]);
 		scaleInputPerCache.setText(recScales[mapLoader.getCurrentOnlineMapService().preselectedRecScaleIndex]);
+	}
+
+	private float checkScale(double scale) {
+
+		double minScale = ((WebMapService) mapLoader.getCurrentOnlineMapService()).minscaleWMS;
+		double maxScale = ((WebMapService) mapLoader.getCurrentOnlineMapService()).maxscaleWMS;
+
+		if (scale < minScale || scale > maxScale) {
+			if (scale < minScale) {
+				scale = minScale;
+			}
+			else {
+				scale = maxScale;
+			}
+			(new MessageBox(MyLocale.getMsg(321, "Error"), "! " + scale + "\n" + MyLocale.getMsg(1830, "The selected online map service provides map in the scale from") + " " + minScale + " " + MyLocale.getMsg(1831, " to") + " " + maxScale + "\n "
+					+ MyLocale.getMsg(1832, "\n please adjust 'Approx. meter pro pixel' accordingly"), FormBase.OKB)).execute();
+		}
+		scaleInput.setText(Convert.toString(scale));
+		scaleInputPerCache.setText(Convert.toString(scale));
+		return (float) scale;
 	}
 
 	/**
@@ -376,11 +391,6 @@ public class MapLoaderGui extends Form {
 				}
 			}
 		}
-		Vm.showWait(false);
-		progressBox.addWarning(MyLocale.getMsg(1826, "Finished downloading and calibration of maps"));
-		progressBox.addOkButton();
-		progressBox.waitUntilClosed();
-		mapLoader.setProgressInfoBox(null);
 		if (Global.mainTab.mm != null)
 			Global.mainTab.mm.setMapsloaded(false);
 		// rebuild MapsList.txt
@@ -389,6 +399,11 @@ public class MapLoaderGui extends Form {
 		MapsList maps = new MapsList(center.latDec);
 		maps.clear();
 		maps = null;
+		Vm.showWait(false);
+		progressBox.addWarning(MyLocale.getMsg(1826, "Finished downloading and calibration of maps"));
+		progressBox.addOkButton();
+		progressBox.waitUntilClosed();
+		mapLoader.setProgressInfoBox(null);
 	}
 
 	private void updateForCachesState() {
@@ -431,7 +446,8 @@ public class MapLoaderGui extends Form {
 					else
 						onlySelected = true;
 					radius = (float) CacheWolf.Common.parseDouble(distanceInput.getText());
-					scale = (float) CacheWolf.Common.parseDouble(scaleInput.getText());
+
+					scale = checkScale(CacheWolf.Common.parseDouble(scaleInput.getText()));
 					overlapping = Convert.toInt(overlappingInput.getText());
 					if (!forCachesChkBox.getState()) {
 						if (radius <= 0) {
@@ -456,26 +472,11 @@ public class MapLoaderGui extends Form {
 						onlySelected = false;
 					else
 						onlySelected = true;
-					scale = (float) CacheWolf.Common.parseDouble(scaleInputPerCache.getText());
+
+					scale = checkScale(CacheWolf.Common.parseDouble(scaleInputPerCache.getText()));
 
 				}
 
-				double minScale = java.lang.Math.ceil(mapLoader.getCurrentOnlineMapService().minscale * 141) / 100;
-				double maxScale = java.lang.Math.floor(mapLoader.getCurrentOnlineMapService().maxscale * 142) / 100;
-
-				if (scale < minScale || scale > maxScale) {
-					if (scale < minScale) {
-						scaleInput.setText(Convert.toString(minScale));
-						scaleInputPerCache.setText(Convert.toString(minScale));
-					}
-					else {
-						scaleInput.setText(Convert.toString(maxScale));
-						scaleInputPerCache.setText(Convert.toString(maxScale));
-					}
-					(new MessageBox(MyLocale.getMsg(321, "Error"), "! " + scale + "\n" + MyLocale.getMsg(1830, "The selected online map service provides map in the scale from") + " " + minScale + MyLocale.getMsg(1831, " to") + " " + maxScale
-							+ MyLocale.getMsg(1832, "\n please adjust 'Approx. meter pro pixel' accordingly"), FormBase.OKB)).execute();
-					return;
-				}
 				this.close(FormBase.IDOK);
 				this.download();
 			}
@@ -526,6 +527,12 @@ public class MapLoaderGui extends Form {
 			}
 			else if (ev.target == pnlTilestileHeightInput) {
 				this.checkTileSizeInputfields(pnlTilestileWidthInput.getText(), pnlTilestileHeightInput.getText());
+			}
+			else if (ev.target == scaleInput) {
+				scale = checkScale(CacheWolf.Common.parseDouble(scaleInput.getText()));
+			}
+			else if (ev.target == scaleInputPerCache) {
+				scale = checkScale(CacheWolf.Common.parseDouble(scaleInputPerCache.getText()));
 			}
 			else if (ev.target == overlappingInput) {
 				Global.pref.mapOverlapping = Convert.toInt(overlappingInput.getText());

@@ -61,7 +61,6 @@ public class CWPoint extends TrackPoint {
 	/**
 	 * Creates an empty CWPoint, use set methods for filling
 	 */
-
 	public CWPoint() {
 		super(-361, -361); // construct with unvalid == unset lat/lon 
 
@@ -73,7 +72,6 @@ public class CWPoint extends TrackPoint {
 	 * @param CWPoint
 	 *            LatLonPoint
 	 */
-
 	public CWPoint(TrackPoint cwPoint) {
 		super(cwPoint.latDec, cwPoint.lonDec);
 	}
@@ -175,7 +173,8 @@ public class CWPoint extends TrackPoint {
 					pll.parse();
 					this.latDec = pll.lat2;
 					this.lonDec = pll.lon2;
-				} catch (Exception e) {
+				}
+				catch (Exception e) {
 					this.latDec = 91;
 					this.lonDec = 361;
 					break;
@@ -188,7 +187,8 @@ public class CWPoint extends TrackPoint {
 				this.latDec = 91;
 				this.lonDec = 361;
 			}
-		} else {
+		}
+		else {
 			this.latDec = 91;
 			this.lonDec = 361;
 		}
@@ -238,18 +238,23 @@ public class CWPoint extends TrackPoint {
 			if (rex.stringMatched(4) != null) { //Seconds available
 				set(rex.stringMatched(1).toUpperCase(), rex.stringMatched(2), rex.stringMatched(3), rex.stringMatched(4) + "." + rex.stringMatched(5), strEW, rex.stringMatched(7), rex.stringMatched(8),
 						rex.stringMatched(9) + "." + rex.stringMatched(10), TransformCoordinates.DMS);
-			} else {
+			}
+			else {
 				set(rex.stringMatched(1).toUpperCase(), rex.stringMatched(2), rex.stringMatched(3) + "." + rex.stringMatched(5), null, strEW, rex.stringMatched(7), rex.stringMatched(8) + "." + rex.stringMatched(10), null, TransformCoordinates.DMM);
 			}
 
-		} else if (rex.stringMatched(12) != null) { // Decimal
+		}
+		else if (rex.stringMatched(12) != null) { // Decimal
 			set(rex.stringMatched(11) == null ? "N" : rex.stringMatched(11).toUpperCase(), rex.stringMatched(12) + "." + rex.stringMatched(13), null, null, rex.stringMatched(14) == null ? "E" : rex.stringMatched(14).toUpperCase(),
 					rex.stringMatched(15) + "." + rex.stringMatched(16), null, null, TransformCoordinates.DD);
-		} else if (rex.stringMatched(17) != null) { // UTM
+		}
+		else if (rex.stringMatched(17) != null) { // UTM
 			set(rex.stringMatched(19), rex.stringMatched(18), rex.stringMatched(17)); //parse sequence is E N, but set needs N E
-		} else if (rex.stringMatched(20) != null) { // GK
+		}
+		else if (rex.stringMatched(20) != null) { // GK
 			set(rex.stringMatched(21), rex.stringMatched(20), TransformCoordinates.LOCALSYSTEM_DEFAULT);
-		} else if (rex.stringMatched(22) != null) { // general projected coordinate reference system
+		}
+		else if (rex.stringMatched(22) != null) { // general projected coordinate reference system
 			if (crsid != null) {
 				int ls = TransformCoordinates.getLocalSystemCode(crsid);
 				if (ls == -1)
@@ -320,7 +325,8 @@ public class CWPoint extends TrackPoint {
 		try {
 			ProjectedPoint utm = new ProjectedPoint(new CWPoint(Common.parseDouble(UTMNorthing), Common.parseDouble(UTMEasting)), utmzone, TransformCoordinates.LOCALSYSTEM_UTM_WGS84, true);
 			set(TransformCoordinates.ProjectedToWgs84(utm, TransformCoordinates.LOCALSYSTEM_UTM_WGS84, true));
-		} catch (Exception e) {
+		}
+		catch (Exception e) {
 			makeInvalid();
 		}
 	}
@@ -375,7 +381,8 @@ public class CWPoint extends TrackPoint {
 			CWPoint pp = new CWPoint(Common.parseDouble(strNorthing), Common.parseDouble(strEasting));
 			ProjectedPoint gk = new ProjectedPoint(pp, localCooSystem, true, true);
 			set(TransformCoordinates.ProjectedToWgs84(gk, localCooSystem, true));
-		} catch (Exception e) {
+		}
+		catch (Exception e) {
 			makeInvalid();
 		}
 	}
@@ -395,7 +402,8 @@ public class CWPoint extends TrackPoint {
 			CWPoint pp = new CWPoint(Common.parseDouble(strNorthing), Common.parseDouble(strEasting));
 			ProjectedPoint gk = new ProjectedPoint(pp, zone, localCooSystem, true);
 			set(TransformCoordinates.ProjectedToWgs84(gk, localCooSystem, true));
-		} catch (Exception e) {
+		}
+		catch (Exception e) {
 			makeInvalid();
 		}
 	}

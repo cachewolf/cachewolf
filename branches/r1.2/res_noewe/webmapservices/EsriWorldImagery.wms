@@ -1,8 +1,8 @@
-TakenFromUrl: 
+TakenFromUrl:       http://www.arcgis.com/home/webmap/viewer.html
 GetCapabilitiesUrl:
-Name:               Kompasskarten (hubermedia GmbH) 
-MapType:            Kompass Karten
-MainUrl:            http://ec2.cdn.ecmaps.de/WmsGateway.ashx.jpg?Experience=kompass&MapStyle=KOMPASS%20Touristik&TileX={x}&TileY={y}&ZoomLevel={z}
+Name:               Esri WorldImagery
+MapType:            Esri
+MainUrl:            http://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}
 #ServiceTypeUrlPart:
 ServiceTypeUrlPart:
 #VersionUrlPart:
@@ -19,12 +19,11 @@ ImageFormatUrlPart:FORMAT=image/jpeg
 BoundingBoxTopLeftWGS84: N 90.0000 W 180.0000
 BoundingBoxBottomRightWGS84: S 90.0000 E 180.0000
 MinScale:  1
-MaxScale:   15
-RecommendedScale:   14 9 10 11 12 13 15
+MaxScale:   20
+RecommendedScale:   14 9 10 11 12 13 15 16
 #
 ImageFileExtension: .jpg
 MinPixelSize: 256
 MaxPixelSize: 256
 RecommendedWidthPixelSize: 256
 RecommendedHeightPixelSize: 256
-

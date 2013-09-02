@@ -1,7 +1,7 @@
 TakenFromUrl:       http://deutschlandviewer.bayern.de/deutschlandviewer/D_Viewer_Hilfe/Hilfe_D_Viewer.htm#Geodaten
 GetCapabilitiesUrl: http://www.lv-bw.de/dv/service/getrds.asp?login=dv&pw=anonymous&SERVICE=WMS&REQUEST=GetCapabilities
-Name:               de.Baden-Wuerttemberg RK10
-MapType:            de.lv-bw.RK10
+Name:               de.Baden-Wuerttemberg TK10
+MapType:            de.lv-bw TK10
 #MainUrl:           http://www.lv-bw.de/dv/service/getrds.asp?login=dv&pw=anonymous&
 MainUrl:            http://www.lv-bw.de/dv/service/getrds.asp?login=geoportal&pw=gdi_bw&
 ServiceTypeUrlPart: SERVICE=WMS
@@ -20,3 +20,5 @@ MinScale:   0
 MaxScale:   20
 RecommendedScale:    1 5 10
 ImageFileExtension: .jpg
+RecommendedWidthPixelSize: 1024
+RecommendedHeightPixelSize: 1024
