@@ -39,11 +39,11 @@ import CacheWolf.SafeXML;
 import CacheWolf.UrlFetcher;
 import CacheWolf.navi.TrackPoint;
 import CacheWolf.navi.TransformCoordinates;
-import CacheWolf.utils.FileBugfix;
 
 import com.stevesoft.ewe_pat.Regex;
 
 import ewe.io.BufferedReader;
+import ewe.io.File;
 import ewe.io.IO;
 import ewe.io.IOException;
 import ewe.io.InputStreamReader;
@@ -257,7 +257,7 @@ public class OCXMLImporter extends MinML {
 
 	private boolean syncOC(String address) {
 		boolean success = true;
-		FileBugfix tmpFile = null;
+		File tmpFile = null;
 		BufferedReader r;
 
 		// inf = new InfoBox("Opencaching download", MyLocale.getMsg(1608,"downloading data\n from opencaching"), InfoBox.PROGRESS_WITH_WARNINGS, false);
@@ -270,7 +270,7 @@ public class OCXMLImporter extends MinML {
 			UrlFetcher.fetchDataFile(address, target);
 
 			// parse
-			tmpFile = new FileBugfix(target);
+			tmpFile = new File(target);
 			if (tmpFile.getLength() == 0) {
 				throw new IOException("no updates available");
 			}
@@ -723,7 +723,7 @@ public class OCXMLImporter extends MinML {
 					cacheDB.removeElementAt(cacheDB.getIndex(holder));
 					DBindexID.remove(holder.GetCacheID());
 					// und Dateien löschen?
-					final FileBugfix tmpFile = new FileBugfix(Global.profile.dataDir + holder.getWayPoint() + ".xml");
+					final File tmpFile = new File(Global.profile.dataDir + holder.getWayPoint() + ".xml");
 					tmpFile.delete();
 					// todo: was ist mit den schon heruntergeladenen Bildern?
 				}
@@ -850,7 +850,7 @@ public class OCXMLImporter extends MinML {
 		final String target = Global.profile.dataDir + fileName;
 		imageInfo.setFilename(fileName);
 		try {
-			FileBugfix ftest = new FileBugfix(target);
+			File ftest = new File(target);
 			if (ftest.exists()) {
 				if (ftest.length() == 0) {
 					ftest.delete();
@@ -862,7 +862,7 @@ public class OCXMLImporter extends MinML {
 			else {
 				if (Global.pref.downloadPics) {
 					UrlFetcher.fetchDataFile(imageInfo.getURL(), target);
-					ftest = new FileBugfix(target);
+					ftest = new File(target);
 					if (ftest.exists()) {
 						if (ftest.length() > 0) {
 							holder.getCacheDetails(false).images.add(imageInfo);

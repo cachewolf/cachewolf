@@ -24,7 +24,7 @@ package CacheWolf.imp;
 import CacheWolf.Global;
 import CacheWolf.MyLocale;
 import CacheWolf.UrlFetcher;
-import CacheWolf.utils.FileBugfix;
+import ewe.io.File;
 import ewe.io.IOException;
 import ewe.ui.FormBase;
 
@@ -65,7 +65,7 @@ public class OCGPXfetch {
 			String tmpFile = Global.profile.dataDir + "dummy.zip";
 			login();
 			UrlFetcher.fetchDataFile(address, tmpFile);
-			FileBugfix ftmp = new FileBugfix(tmpFile);
+			File ftmp = new File(tmpFile);
 			if (ftmp.exists() && ftmp.length() > 0) {
 				GPXImporter gpx = new GPXImporter(tmpFile);
 				if (Global.pref.downloadPics)

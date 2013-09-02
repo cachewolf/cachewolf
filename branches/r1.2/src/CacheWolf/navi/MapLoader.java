@@ -34,6 +34,7 @@ import CacheWolf.utils.CWWrapper;
 import CacheWolf.utils.FileBugfix;
 import ewe.fx.Point;
 import ewe.io.BufferedWriter;
+import ewe.io.File;
 import ewe.io.FileBase;
 import ewe.io.FileInputStream;
 import ewe.io.FileReader;
@@ -306,8 +307,8 @@ public class MapLoader {
 		String imagetype = currentOnlineMapService.getImageFileExt();
 		String url = currentOnlineMapService.getUrlForCenterScale(center, scale, SizeInPixels);
 		String fName = path + imagename + imagetype;
-		FileBugfix fn = new FileBugfix(path + imagename + ".wfl");
-		FileBugfix fn1 = new FileBugfix(fName);
+		File fn = new File(path + imagename + ".wfl");
+		File fn1 = new File(fName);
 		if (!fn.exists() || fn.length() == 0 || !fn1.exists() || fn1.length() == 0) {
 			downloadImage(url, fName);
 			mio.saveWFL();
@@ -327,10 +328,10 @@ public class MapLoader {
 		url = STRreplace.replace(url, "{y}", "" + y);
 		url = STRreplace.replace(url, "{z}", "" + zoom);
 		String targetPath = path + wms.filename + "/" + zoom + "/" + x;
-		FileBugfix f = new FileBugfix(targetPath);
+		File f = new File(targetPath);
 		if (f.mkdirs()) {
 			String fName = targetPath + "/" + y + wms.imageFileExt;
-			FileBugfix fn = new FileBugfix(fName);
+			File fn = new File(fName);
 			if (!fn.exists() || fn.length() == 0) {
 				downloadImage(url, fName);
 				// get scale
@@ -357,7 +358,7 @@ public class MapLoader {
 		String mapProgramPath = wms.versionUrlPart + "/";
 		mapProgramPath = mapProgramPath.replace('/', FileBase.separatorChar);
 		String mapProgram = mapProgramPath + wms.MainUrl;
-		FileBugfix f = new FileBugfix(mapProgram);
+		File f = new File(mapProgram);
 		if (!f.exists() || !f.canRead()) {
 			MessageBox mb = new MessageBox(MyLocale.getMsg(321, "Error"), MyLocale.getMsg(1834, "Please enter the correct path to Kosmos.Console.exe into the wms-file."), ewe.ui.MessageBox.OKB);
 			mb.execute();
@@ -368,8 +369,8 @@ public class MapLoader {
 
 		if (wms.requestUrlPart.equalsIgnoreCase("Kosmos")) {
 			// minx miny maxx maxy + SizeInPixels.x
-			mapProgramParams = "bitmapgen" + " \"" + FileBase.getProgramDirectory().replace('/', FileBugfix.separatorChar) + "\\" + wms.serviceTypeUrlPart + "\"" + " \"" + path.replace('/', FileBugfix.separatorChar) + imagename + imagetype + "\""
-					+ " -mb " + bottomleft.toString(TransformCoordinates.LAT_LON).replace(',', ' ') + " " + topright.toString(TransformCoordinates.LAT_LON).replace(',', ' ') + " -w " + SizeInPixels.x;
+			mapProgramParams = "bitmapgen" + " \"" + FileBase.getProgramDirectory().replace('/', File.separatorChar) + "\\" + wms.serviceTypeUrlPart + "\"" + " \"" + path.replace('/', File.separatorChar) + imagename + imagetype + "\"" + " -mb "
+					+ bottomleft.toString(TransformCoordinates.LAT_LON).replace(',', ' ') + " " + topright.toString(TransformCoordinates.LAT_LON).replace(',', ' ') + " -w " + SizeInPixels.x;
 			CWWrapper.execute(mapProgram + " " + mapProgramParams);
 		}
 		else {
@@ -438,7 +439,7 @@ public class MapLoader {
 					Vector GCPs = map2wfl(path + imagename);
 					mio.evalGCP(GCPs, SizeInPixels.x, SizeInPixels.y);
 					// can not supress generation of pgw,jgw-file
-					FileBugfix georefFile = new FileBugfix(fName + ".georef");
+					File georefFile = new File(fName + ".georef");
 					georefFile.delete();
 				}
 				else {
@@ -451,7 +452,7 @@ public class MapLoader {
 
 	private Vector map2wfl(String pathAndImageName) {
 		Vector GCPs = new Vector();
-		FileBugfix mapFile = new FileBugfix(pathAndImageName + ".map");
+		File mapFile = new File(pathAndImageName + ".map");
 		if (mapFile.exists()) {
 			GCPoint gcp1 = new GCPoint();
 			GCPoint gcp2 = new GCPoint();
@@ -587,7 +588,7 @@ public class MapLoader {
 			forceredirect = false;
 			realurl = url;
 		}
-		FileBugfix dateiF = new FileBugfix(datei);
+		File dateiF = new File(datei);
 		if (!dateiF.exists()) {
 			if (forceredirect)
 				UrlFetcher.setForceRedirect();
@@ -601,7 +602,7 @@ public class MapLoader {
 				ct = "document property content-type does not exist!";
 			}
 			if (!ct.substring(0, 5).equalsIgnoreCase("image")) {
-				dateiF = new FileBugfix(datei);
+				dateiF = new File(datei);
 				dateiF.delete();
 				throw new IOException(MyLocale.getMsg(4808, "downloadImage: content-type:") + " " + ct + MyLocale.getMsg(4809, " is not an image, begin of content:") + " (deleted)");
 			}

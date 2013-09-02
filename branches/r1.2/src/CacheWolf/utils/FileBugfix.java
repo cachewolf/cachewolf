@@ -45,10 +45,6 @@ public class FileBugfix extends File {
 		this(path + "/" + fName);
 	}
 
-	public FileBugfix(File file) {
-		ewefile = file;
-	}
-
 	public void set(File dir, String name) {
 		ewefile.set(dir, STRreplace.replace(name, "//", "/")); // this or null?
 	}
@@ -66,13 +62,12 @@ public class FileBugfix extends File {
 
 	public String[] listMultiple(final String compositeMask, final int listAndSortOptions) {
 		/* super.listMultiple in ewe 1.49
-		 * usually works correct, but when called with Option Dirs_Only, it gives the dirs 
-		 * twice (once filtered by mask, once all)
+		 * usually works correct, but when called with Option Dirs_Only, it gives the dirs twice (once filtered by mask, once all)
 		 */
 		return listBugFixed(compositeMask, listAndSortOptions);
 	}
 
-	public String[] listBugFixed(final String compositeMask, final int listAndSortOptions) {
+	private String[] listBugFixed(final String compositeMask, final int listAndSortOptions) {
 		String mask = (compositeMask == null) ? "*.*" : compositeMask;
 		String[] found; //the following code is mainly copied from FileBase.listmultiple to avoid recursion it is not called
 		char c = mask.indexOf(',') == -1 ? ';' : ',';
@@ -118,9 +113,9 @@ public class FileBugfix extends File {
 	}
 
 	/**
-	 * this is needed in order to be able to use the simulated
-	 * file system _filesystem.zip when running as applet
+	 * this is needed in order to be able to use the simulated file system _filesystem.zip when running as applet
 	 */
+
 	public boolean exists() {
 		return (ewefile.exists());
 	}

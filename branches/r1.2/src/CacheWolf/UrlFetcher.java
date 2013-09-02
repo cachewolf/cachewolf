@@ -22,9 +22,9 @@
 package CacheWolf;
 
 import CacheWolf.utils.BetterUTF8Codec;
-import CacheWolf.utils.FileBugfix;
 import ewe.data.PropertyList;
 import ewe.io.AsciiCodec;
+import ewe.io.File;
 import ewe.io.FileBase;
 import ewe.io.FileOutputStream;
 import ewe.io.IOException;
@@ -66,7 +66,8 @@ public class UrlFetcher {
 	};
 
 	public static void setRequestorProperty(String name, String property) {
-		if (requestorProperties == null) requestorProperties = new PropertyList();
+		if (requestorProperties == null)
+			requestorProperties = new PropertyList();
 		requestorProperties.set(name, property);
 	}
 
@@ -78,12 +79,14 @@ public class UrlFetcher {
 	}
 
 	public static void setPermanentRequestorProperty(String name, String property) {
-		if (permanentRequestorProperties == null) initPermanentRequestorProperty();
+		if (permanentRequestorProperties == null)
+			initPermanentRequestorProperty();
 		if (property != null)
 			permanentRequestorProperties.set(name, property);
 		else {
 			int index = permanentRequestorProperties.find(name);
-			if (index >= 0) permanentRequestorProperties.del(index);
+			if (index >= 0)
+				permanentRequestorProperties.del(index);
 		}
 	}
 
@@ -107,11 +110,13 @@ public class UrlFetcher {
 	public static void fetchDataFile(String address, String target) throws IOException {
 		FileOutputStream outp = null;
 		try {
-			FileBugfix f = new FileBugfix(target);
+			File f = new File(target);
 			outp = new FileOutputStream(f);
 			outp.write(fetchByteArray(address).toBytes());
-		} finally {
-			if (outp != null) outp.close();
+		}
+		finally {
+			if (outp != null)
+				outp.close();
 		}
 	}
 
@@ -144,18 +149,21 @@ public class UrlFetcher {
 				if (first != -1) {
 					host = host.substring(0, first);
 				}
-				if (!urltmp.startsWith("/")) host = host + "/";
+				if (!urltmp.startsWith("/"))
+					host = host + "/";
 				urltmp = "http://" + host + urltmp; // TODO https?
 			}
 			conn.setUrl(urltmp);
 			conn.documentIsEncoded = isUrlEncoded(urltmp);
-			if (permanentRequestorProperties == null) initPermanentRequestorProperty();
+			if (permanentRequestorProperties == null)
+				initPermanentRequestorProperty();
 			if (postData != null) {
 				conn.setPostData(postData);
 				conn.setRequestorProperty("Content-Type", "application/x-www-form-urlencoded");
 			}
 			conn.setRequestorProperty(permanentRequestorProperties);
-			if (requestorProperties != null) conn.setRequestorProperty(requestorProperties);
+			if (requestorProperties != null)
+				conn.setRequestorProperty(requestorProperties);
 			conn.connect();
 			if (conn.responseCode >= 400) {
 				maxRedirections = 5;
@@ -185,13 +193,16 @@ public class UrlFetcher {
 				conn = conn.getRedirectedConnection(urltmp);
 				forceRedirect = false; // one time or more redirected
 			}
-		} while (((urltmp != null) || (urltmp == null) && forceRedirect) && i <= maxRedirections);
-		if (i > maxRedirections) throw new IOException("too many http redirections while trying to fetch: " + url + " only " + maxRedirections + " are allowed");
+		}
+		while (((urltmp != null) || (urltmp == null) && forceRedirect) && i <= maxRedirections);
+		if (i > maxRedirections)
+			throw new IOException("too many http redirections while trying to fetch: " + url + " only " + maxRedirections + " are allowed");
 		ByteArray daten;
 		if (conn.isOpen()) {
 			daten = conn.readData();
 			conn.disconnect();
-		} else
+		}
+		else
 			daten = null;
 		maxRedirections = 5;
 		requestorProperties = null;

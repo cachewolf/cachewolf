@@ -46,6 +46,7 @@ import ewe.filechooser.FileChooser;
 import ewe.filechooser.FileChooserBase;
 import ewe.fx.Sound;
 import ewe.io.BufferedWriter;
+import ewe.io.File;
 import ewe.io.FileBase;
 import ewe.io.FileOutputStream;
 import ewe.io.FileWriter;
@@ -179,10 +180,10 @@ public class GpxExportNg {
 
 	public GpxExportNg() {
 		bitmapFileName = FileBase.getProgramDirectory() + "/exporticons/GarminPOI.zip"; // own version
-		if (!(hasBitmaps = new FileBugfix(bitmapFileName).exists())) {
+		if (!(hasBitmaps = new File(bitmapFileName).exists())) {
 			// cw default version
 			bitmapFileName = FileBase.getProgramDirectory() + "/exporticons/exporticons/GarminPOI.zip";
-			hasBitmaps = new FileBugfix(bitmapFileName).exists();
+			hasBitmaps = new File(bitmapFileName).exists();
 		}
 
 		hasGpsbabel = Global.pref.gpsbabel != null;
@@ -248,18 +249,18 @@ public class GpxExportNg {
 			if (exportTarget == OUTPUT_POI) {
 				// FIXME: create proper tempdir
 				tempDir = baseDir + FileBase.separator + "GPXExporterNG.tmp";
-				new FileBugfix(tempDir).mkdir();
+				new File(tempDir).mkdir();
 			}
 			else {
 				tempDir = outDir;
 				String tmp[] = new FileBugfix(tempDir).list(prefix + "*.gpx", ewe.io.FileBase.LIST_FILES_ONLY);
 				for (int i = 0; i < tmp.length; i++) {
-					FileBugfix tmpFile = new FileBugfix(tempDir + FileBase.separator + tmp[i]);
+					File tmpFile = new File(tempDir + FileBase.separator + tmp[i]);
 					tmpFile.delete();
 				}
 				tmp = new FileBugfix(tempDir).list(prefix + "*.bmp", ewe.io.FileBase.LIST_FILES_ONLY);
 				for (int i = 0; i < tmp.length; i++) {
-					FileBugfix tmpFile = new FileBugfix(tempDir + FileBase.separator + tmp[i]);
+					File tmpFile = new File(tempDir + FileBase.separator + tmp[i]);
 					tmpFile.delete();
 				}
 			}
@@ -297,7 +298,7 @@ public class GpxExportNg {
 								writer = (PrintWriter) fileHandles.get(poiId);
 							}
 							else {
-								writer = new PrintWriter(new BufferedWriter(new FileWriter(new FileBugfix(tempDir + FileBase.separator + prefix + poiId + ".gpx"))));
+								writer = new PrintWriter(new BufferedWriter(new FileWriter(new File(tempDir + FileBase.separator + prefix + poiId + ".gpx"))));
 								fileHandles.put(poiId, writer);
 								writer.print(formatHeader());
 							}
@@ -327,7 +328,7 @@ public class GpxExportNg {
 					if (!prefix.equals("")) {
 						String tmp[] = new FileBugfix(outDir).list(prefix + "*.gpi", ewe.io.FileBase.LIST_FILES_ONLY);
 						for (int i = 0; i < tmp.length; i++) {
-							FileBugfix tmpFile = new FileBugfix(outDir + FileBase.separator + tmp[i]);
+							File tmpFile = new File(outDir + FileBase.separator + tmp[i]);
 							tmpFile.delete();
 						}
 					}
@@ -383,10 +384,10 @@ public class GpxExportNg {
 				}
 
 				if (exportTarget == OUTPUT_POI) {
-					FileBugfix tmpdir = new FileBugfix(tempDir);
+					File tmpdir = new File(tempDir);
 					String tmp[] = new FileBugfix(tempDir).list(prefix + "*.*", ewe.io.FileBase.LIST_FILES_ONLY);
 					for (int i = 0; i < tmp.length; i++) {
-						FileBugfix tmpFile = new FileBugfix(tempDir + FileBase.separator + tmp[i]);
+						File tmpFile = new File(tempDir + FileBase.separator + tmp[i]);
 						tmpFile.delete();
 					}
 					tmpdir.delete();
@@ -417,7 +418,7 @@ public class GpxExportNg {
 				}
 			}
 
-			final FileBugfix file;
+			final File file;
 
 			if (!sendToGarmin) {
 				final FileChooser fc = new FileChooser(FileChooserBase.SAVE, Global.pref.getExportPath(expName + "-GPX"));
@@ -428,11 +429,11 @@ public class GpxExportNg {
 				if (fc.execute() == FormBase.IDCANCEL)
 					return;
 
-				file = new FileBugfix(fc.getChosenFile());
+				file = fc.getChosenFile();
 				Global.pref.setExportPath(expName + "-GPX", file.getPath());
 			}
 			else {
-				file = new FileBugfix("");
+				file = new File("");
 				file.createTempFile("gpxexport", null, null);
 			}
 

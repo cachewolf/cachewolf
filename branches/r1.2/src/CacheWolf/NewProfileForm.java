@@ -21,7 +21,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 package CacheWolf;
 
-import CacheWolf.utils.FileBugfix;
+import ewe.io.File;
 import ewe.ui.ControlEvent;
 import ewe.ui.Event;
 import ewe.ui.Form;
@@ -71,7 +71,7 @@ public class NewProfileForm extends Form {
 					profileDir = "";
 				}
 				else {
-					FileBugfix f = new FileBugfix(baseDir + profileDir);
+					File f = new File(baseDir + profileDir);
 					if (f.exists()) {
 						MessageBox mb = new MessageBox(MyLocale.getMsg(321, "Error"), MyLocale.getMsg(1114, "Directory exists already."), MBOK);
 						mb.execute();

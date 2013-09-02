@@ -27,6 +27,7 @@ import CacheWolf.utils.FileBugfix;
 import ewe.filechooser.FileChooser;
 import ewe.filechooser.FileChooserBase;
 import ewe.io.BufferedWriter;
+import ewe.io.File;
 import ewe.io.FileBase;
 import ewe.io.FileWriter;
 import ewe.io.IOException;
@@ -127,7 +128,7 @@ public class Preferences extends MinML {
 			p_ = FileBase.makePath(FileBase.getProgramDirectory(), "pref.xml");
 		}
 		else {
-			if (new FileBugfix(p).isDirectory())
+			if (new File(p).isDirectory())
 				p_ = FileBase.makePath(p, "pref.xml");
 			else
 				p_ = p;
@@ -443,7 +444,7 @@ public class Preferences extends MinML {
 		}
 		if (testlist != null) {
 			for (int i = 0; i < testlist.length; i++)
-				if ((new FileBugfix(testlist[i])).exists()) {
+				if ((new File(testlist[i])).exists()) {
 					return testlist[i];
 				}
 		}
@@ -1077,7 +1078,7 @@ public class Preferences extends MinML {
 					| FormBase.NOB);
 			if (inf.execute() == FormBase.IDYES) {
 				String sp = getMapManuallySavePath(false);
-				FileBugfix spF = new FileBugfix(sp);
+				File spF = new File(sp);
 				if (!spF.exists())
 					spF.mkdirs();
 				String image;
@@ -1112,9 +1113,9 @@ public class Preferences extends MinML {
 	 */
 	public String getMapManuallySavePath(boolean create) {
 		String mapsDir = absoluteBaseDir + mapsPath;
-		if (create && !(new FileBugfix(mapsDir).isDirectory())) { // dir
+		if (create && !(new File(mapsDir).isDirectory())) { // dir
 			// exists?
-			if (new FileBugfix(mapsDir).mkdirs() == false) {// dir creation
+			if (new File(mapsDir).mkdirs() == false) {// dir creation
 				// failed?
 				(new MessageBox(MyLocale.getMsg(321, "Error"), MyLocale.getMsg(172, "Error: cannot create maps directory: \n") + mapsDir, FormBase.OKB)).exec();
 				return null;
@@ -1129,10 +1130,10 @@ public class Preferences extends MinML {
 	public String getMapDownloadSavePath(String mapkind) {
 		String subdir = Global.profile.dataDir.substring(Global.pref.absoluteBaseDir.length()).replace('\\', '/');
 		String mapsDir = Global.pref.absoluteBaseDir + "maps/" + subdir + Common.ClearForFileName(mapkind) + "/";
-		if (!(new FileBugfix(mapsDir).isDirectory())) { // dir exists?
-			if (new FileBugfix(mapsDir).mkdirs() == false) {
+		if (!(new File(mapsDir).isDirectory())) { // dir exists?
+			if (new File(mapsDir).mkdirs() == false) {
 				// dir creation failed?
-				(new MessageBox(MyLocale.getMsg(321, "Error"), MyLocale.getMsg(172, "Error: cannot create maps directory: \n") + new FileBugfix(mapsDir).getParentFile(), FormBase.OKB)).exec();
+				(new MessageBox(MyLocale.getMsg(321, "Error"), MyLocale.getMsg(172, "Error: cannot create maps directory: \n") + new File(mapsDir).getParentFile(), FormBase.OKB)).exec();
 				return null;
 			}
 		}
@@ -1179,7 +1180,7 @@ public class Preferences extends MinML {
 
 	private void checkAbsoluteBaseDir() {
 		// If datadir is empty, ask for one
-		if (absoluteBaseDir.length() == 0 || !(new FileBugfix(absoluteBaseDir)).exists()) {
+		if (absoluteBaseDir.length() == 0 || !(new File(absoluteBaseDir)).exists()) {
 			do {
 				FileChooser fc = new FileChooser(FileChooserBase.DIRECTORY_SELECT, getHomeDir());
 				fc.title = MyLocale.getMsg(170, "Select base directory for cache data");
@@ -1188,7 +1189,7 @@ public class Preferences extends MinML {
 					ewe.sys.Vm.exit(0);
 				setBaseDir(fc.getChosenFile().toString());
 			}
-			while (!(new FileBugfix(absoluteBaseDir)).exists());
+			while (!(new File(absoluteBaseDir)).exists());
 		}
 	}
 
@@ -1220,7 +1221,7 @@ public class Preferences extends MinML {
 				// No centre yet
 				lastProfile = f.newSelectedProfile;
 			}
-			profileExists = (new FileBugfix(absoluteBaseDir + lastProfile)).exists();
+			profileExists = (new File(absoluteBaseDir + lastProfile)).exists();
 			if (!profileExists)
 				(new MessageBox(MyLocale.getMsg(144, "Warning"), MyLocale.getMsg(171, "Profile does not exist: ") + lastProfile, FormBase.MBOK)).execute();
 		}
@@ -1236,11 +1237,11 @@ public class Preferences extends MinML {
 		return true;
 	}
 
-	static public boolean deleteDirectory(FileBugfix path) {
+	static public boolean deleteDirectory(File path) {
 		if (path.exists()) {
 			String[] files = path.list();
 			for (int i = 0; i < files.length; i++) {
-				FileBugfix f = new FileBugfix(path.getFullPath() + "/" + files[i]);
+				File f = new File(path.getFullPath() + "/" + files[i]);
 				if (f.isDirectory()) {
 					deleteDirectory(f);
 				}
@@ -1252,7 +1253,7 @@ public class Preferences extends MinML {
 		return (path.delete());
 	}
 
-	static public boolean renameDirectory(FileBugfix OldPath, FileBugfix NewPath) {
+	static public boolean renameDirectory(File OldPath, File NewPath) {
 		return OldPath.renameTo(NewPath);
 	}
 
@@ -1272,11 +1273,11 @@ public class Preferences extends MinML {
 		}
 		else {
 			boolean err = true;
-			FileBugfix profilePath = new FileBugfix(absoluteBaseDir + f.newSelectedProfile);
+			File profilePath = new File(absoluteBaseDir + f.newSelectedProfile);
 			if (operation == 3) {
 				String newName = new InputBox("Bitte neuen Verzeichnisnamen eingeben : ").input("", 50);
 				if (!newName.equals(null)) {
-					err = !renameDirectory(profilePath, new FileBugfix(absoluteBaseDir + newName));
+					err = !renameDirectory(profilePath, new File(absoluteBaseDir + newName));
 				}
 			}
 			else if (operation == 2) {
@@ -1292,9 +1293,9 @@ public class Preferences extends MinML {
 					return;
 				}
 
-				answer = new MessageBox("", mapsPath + " " + MyLocale.getMsg(143, "l?schen ?"), FormBase.MBYESNO).execute();
+				answer = new MessageBox("", mapsPath + " " + MyLocale.getMsg(143, "löschen ?"), FormBase.MBYESNO).execute();
 				if (answer == 1) {
-					deleteDirectory(new FileBugfix(mapsPath));
+					deleteDirectory(new File(mapsPath));
 				}
 				err = !deleteDirectory(profilePath);
 				// ? wait until deleted ?
@@ -1317,7 +1318,7 @@ public class Preferences extends MinML {
 	 * Method to delete an existing log file. Called on every SpiderGC. The log file is also cleared when Preferences is created and the filesize > 60KB
 	 */
 	public void logInit() {
-		FileBugfix logFile = new FileBugfix(LOGFILENAME);
+		File logFile = new File(LOGFILENAME);
 		logFile.delete();
 		log("CW Version " + Version.getReleaseDetailed(), null, true);
 
@@ -1427,7 +1428,7 @@ public class Preferences extends MinML {
 	}
 
 	public void setExportPathFromFileName(String exporter, String filename) {
-		FileBugfix tmpfile = new FileBugfix(filename);
+		File tmpfile = new File(filename);
 		exporterPaths.put(exporter, tmpfile.getPath());
 		savePreferences();
 	}
@@ -1557,7 +1558,7 @@ public class Preferences extends MinML {
 		baseDir = baseDir.replace('\\', '/');
 		if (!baseDir.endsWith("/"))
 			baseDir += "/";
-		absoluteBaseDir = new FileBugfix(baseDir).getAbsolutePath();
+		absoluteBaseDir = new File(baseDir).getAbsolutePath();
 		absoluteBaseDir = absoluteBaseDir.replace('\\', '/');
 		if (!absoluteBaseDir.endsWith("/"))
 			absoluteBaseDir += "/";

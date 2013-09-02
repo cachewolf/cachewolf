@@ -21,7 +21,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 package CacheWolf;
 
-import CacheWolf.utils.FileBugfix;
 import ewe.fx.Color;
 import ewe.fx.Font;
 import ewe.fx.FontMetrics;
@@ -32,6 +31,7 @@ import ewe.fx.Rect;
 import ewe.fx.mImage;
 import ewe.graphics.AniImage;
 import ewe.graphics.InteractivePanel;
+import ewe.io.File;
 import ewe.sys.SystemResourceException;
 import ewe.sys.Vm;
 import ewe.ui.ControlBase;
@@ -190,7 +190,7 @@ public class ImagePanel extends InteractivePanel {
 			}
 			if (doit) {
 				location = Global.profile.dataDir + location;
-				if (!(new FileBugfix(location)).exists()) {
+				if (!(new File(location)).exists()) {
 					location = NO_IMAGE;
 					if (!Global.pref.showDeletedImages)
 						continue; // Don't show the deleted Image if user does not want it
@@ -299,7 +299,7 @@ public class ImagePanel extends InteractivePanel {
 				MessageBox mBox = new MessageBox(MyLocale.getMsg(144, "Warning"), MyLocale.getMsg(344, "Delete image") + " \"" + ((ImagePanelImage) which).imageText + "\"?", FormBase.IDYES | FormBase.IDNO);
 				if (mBox.execute() == FormBase.IDOK) {
 					try {
-						FileBugfix f = new FileBugfix(((ImagePanelImage) which).fileName);
+						File f = new File(((ImagePanelImage) which).fileName);
 						f.delete();
 						removeImage(which);
 					}

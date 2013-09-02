@@ -27,7 +27,6 @@ import CacheWolf.CacheHolderDetail;
 import CacheWolf.Common;
 import CacheWolf.DataMover;
 import CacheWolf.Global;
-import CacheWolf.utils.FileBugfix;
 import HTML.Template;
 
 import com.stevesoft.ewe_pat.Regex;
@@ -36,6 +35,7 @@ import ewe.filechooser.FileChooser;
 import ewe.filechooser.FileChooserBase;
 import ewe.io.AsciiCodec;
 import ewe.io.BufferedWriter;
+import ewe.io.File;
 import ewe.io.FileBase;
 import ewe.io.FileWriter;
 import ewe.io.IOException;
@@ -171,7 +171,7 @@ public class HTMLExporter {
 
 							String mapImgFile = new String(ch.getWayPoint() + "_map.gif");
 							// check if map file exists
-							FileBugfix test = new FileBugfix(Global.profile.dataDir + mapImgFile);
+							File test = new File(Global.profile.dataDir + mapImgFile);
 
 							if (test.exists()) {
 								mapImgParams.put("FILE", mapImgFile);

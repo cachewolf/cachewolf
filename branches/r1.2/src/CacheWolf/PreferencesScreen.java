@@ -250,7 +250,6 @@ public class PreferencesScreen extends Form {
 		chkProxyActive.setState(Global.pref.proxyActive);
 		pnlMore.addLast(pnlProxy, HSTRETCH, HFILL);
 		pnlMore.addNext(new mLabel(MyLocale.getMsg(592, "Language (needs restart)")), DONTSTRETCH, DONTFILL | LEFT);
-		// "*.xyz" doesn't work on some systems -> use FileBugFix
 		String[] tmp = (new FileBugfix(FileBase.getProgramDirectory() + "/languages").list("*.cfg", FileBase.LIST_FILES_ONLY));
 		if (tmp == null)
 			tmp = new String[0];

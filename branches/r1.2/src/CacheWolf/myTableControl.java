@@ -23,10 +23,10 @@ package CacheWolf;
 
 import CacheWolf.exp.OCLogExport;
 import CacheWolf.utils.CWWrapper;
-import CacheWolf.utils.FileBugfix;
 import ewe.fx.IconAndText;
 import ewe.fx.Point;
 import ewe.fx.Rect;
+import ewe.io.File;
 import ewe.io.FileBase;
 import ewe.io.IOException;
 import ewe.sys.Handle;
@@ -259,7 +259,7 @@ public class myTableControl extends TableControl {
 					pbf.exec();
 					h.progress = (float) 0.5;
 					h.changed();
-					String[] CacheFiles = new FileBugfix(Global.profile.dataDir).list(null, FileBase.LIST_FILES_ONLY | FileBase.LIST_DONT_SORT);
+					String[] CacheFiles = new File(Global.profile.dataDir).list(null, FileBase.LIST_FILES_ONLY | FileBase.LIST_DONT_SORT);// null == *.* so no File needed
 					pbf.setTask(h, MyLocale.getMsg(1012, "Delete selected"));
 					for (int i = size - 1; i >= 0; i--) {// Start Counting down, as the size decreases with each deleted cache
 						ch = cacheDB.get(i);

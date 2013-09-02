@@ -21,7 +21,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 package CacheWolf;
 
-import CacheWolf.utils.FileBugfix;
+import ewe.io.File;
 
 public final class Common {
 
@@ -159,12 +159,12 @@ public final class Common {
 	 */
 	static public String getImageName(String name) {
 		String fileName;
-		FileBugfix tmp = null;
+		File tmp = null;
 		String[] t = { ".png", ".gif", ".jpg", ".bmp" };
 		int i;
 		for (i = 0; i < t.length; i++) {
 			if (tmp == null)
-				tmp = new FileBugfix(name + t[i]);
+				tmp = new File(name + t[i]);
 			else
 				tmp.setText(name + t[i]);
 			if (tmp.exists())

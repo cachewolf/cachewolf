@@ -21,9 +21,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 package CacheWolf;
 
-import CacheWolf.utils.FileBugfix;
 import ewe.filechooser.FileChooser;
 import ewe.filechooser.FileChooserBase;
+import ewe.io.File;
 import ewe.io.FileBase;
 import ewe.io.FileInputStream;
 import ewe.io.FileOutputStream;
@@ -72,7 +72,7 @@ public class DataMover {
 		//Ende
 
 		// Read indexfile of destination, if one exists
-		FileBugfix ftest = new FileBugfix(dstProfile.dataDir + "index.xml");
+		File ftest = new File(dstProfile.dataDir + "index.xml");
 		if (ftest.exists()) {
 			dstProfile.readIndex();
 		}
@@ -170,7 +170,7 @@ public class DataMover {
 		}
 
 		// Read indexfile of destination, if one exists
-		FileBugfix ftest = new FileBugfix(dstProfile.dataDir + "index.xml");
+		File ftest = new File(dstProfile.dataDir + "index.xml");
 		if (ftest.exists()) {
 			dstProfile.readIndex();
 		}
@@ -276,7 +276,7 @@ public class DataMover {
 		wpt = wpt.toLowerCase();
 		for (int i = 0; i < tmp.length; i++) {
 			if (tmp[i].toLowerCase().startsWith(wpt + '.') || tmp[i].toLowerCase().startsWith(wpt + '_')) {
-				FileBugfix tmpFile = new FileBugfix(dir + tmp[i]);
+				File tmpFile = new File(dir + tmp[i]);
 				tmpFile.delete();
 			}
 		}
@@ -289,8 +289,8 @@ public class DataMover {
 		wpt = wpt.toLowerCase();
 		for (int i = 0; i < srcFiles.length; i++) {
 			if (srcFiles[i].toLowerCase().startsWith(wpt + '.') || srcFiles[i].toLowerCase().startsWith(wpt + '_')) {
-				FileBugfix srcFile = new FileBugfix(srcDir + srcFiles[i]);
-				FileBugfix dstFile = new FileBugfix(dstDir + srcFiles[i]);
+				File srcFile = new File(srcDir + srcFiles[i]);
+				File dstFile = new File(dstDir + srcFiles[i]);
 				srcFile.move(dstFile);
 			}
 		}
@@ -319,11 +319,11 @@ public class DataMover {
 	 */
 	public static boolean copy(String sFileSrc, String sFileDst) {
 		try {
-			FileBugfix fSrc = new FileBugfix(sFileSrc);
+			File fSrc = new File(sFileSrc);
 			int len = 32768;
 			byte[] buff = new byte[(int) java.lang.Math.min(len, fSrc.length())];
 			FileInputStream fis = new FileInputStream(fSrc);
-			FileBugfix dDst = new FileBugfix(FileBugfix.getDrivePath(sFileDst));
+			File dDst = new File(File.getDrivePath(sFileDst));
 			if (!dDst.exists()) {
 				dDst.createDir();
 			}
@@ -363,8 +363,8 @@ public class DataMover {
 			pbf.exec();
 			h.progress = (float) 0.5;
 			h.changed();
-			FileBugfix destPath = new FileBugfix(Global.profile.dataDir);
-			destFileList = destPath.list(null, FileBase.LIST_FILES_ONLY | FileBase.LIST_DONT_SORT);
+			File destPath = new File(Global.profile.dataDir);
+			destFileList = destPath.list(null, FileBase.LIST_FILES_ONLY | FileBase.LIST_DONT_SORT); // null == *.* so no FileBugfix needed
 			pbf.exit(0);
 		}
 
@@ -384,13 +384,13 @@ public class DataMover {
 			pbf.exec();
 			h.progress = (float) 0.33;
 			h.changed();
-			FileBugfix srcPath = new FileBugfix(Global.profile.dataDir);
-			srcFileList = srcPath.list(null, FileBase.LIST_FILES_ONLY | FileBase.LIST_DONT_SORT);
+			File srcPath = new File(Global.profile.dataDir);
+			srcFileList = srcPath.list(null, FileBase.LIST_FILES_ONLY | FileBase.LIST_DONT_SORT); // null == *.* so no FileBugfix needed
 			pbf.setTask(h, "Be patient. Reading Destination Directory");
 			h.progress = (float) 0.66;
 			h.changed();
-			FileBugfix destPath = new FileBugfix(dstProfile.dataDir);
-			destFileList = destPath.list(null, FileBase.LIST_FILES_ONLY | FileBase.LIST_DONT_SORT);
+			File destPath = new File(dstProfile.dataDir);
+			destFileList = destPath.list(null, FileBase.LIST_FILES_ONLY | FileBase.LIST_DONT_SORT); // null == *.* so no FileBugfix needed
 			pbf.exit(0);
 		}
 
@@ -431,13 +431,13 @@ public class DataMover {
 			pbf.exec();
 			h.progress = (float) 0.33;
 			h.changed();
-			FileBugfix srcPath = new FileBugfix(Global.profile.dataDir);
-			srcFileList = srcPath.list(null, FileBase.LIST_FILES_ONLY | FileBase.LIST_DONT_SORT);
+			File srcPath = new File(Global.profile.dataDir);
+			srcFileList = srcPath.list(null, FileBase.LIST_FILES_ONLY | FileBase.LIST_DONT_SORT); // null == *.* so no FileBugfix needed
 			pbf.setTask(h, "Be patient. Reading Destination Directory");
 			h.progress = (float) 0.66;
 			h.changed();
-			FileBugfix destPath = new FileBugfix(dstProfile.dataDir);
-			destFileList = destPath.list(null, FileBase.LIST_FILES_ONLY | FileBase.LIST_DONT_SORT);
+			File destPath = new File(dstProfile.dataDir);
+			destFileList = destPath.list(null, FileBase.LIST_FILES_ONLY | FileBase.LIST_DONT_SORT); // null == *.* so no FileBugfix needed
 			pbf.exit(0);
 		}
 

@@ -21,7 +21,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 package CacheWolf;
 
-import CacheWolf.utils.FileBugfix;
+import ewe.io.File;
 import ewe.util.Vector;
 
 /**
@@ -203,7 +203,7 @@ public class CacheImages {
 				ImageInfo img = this.get(i);
 				if (CacheImages.optimizeLink(img.getURL()).equals(newUrl) && img.getFilename().equals(pFilename)) {
 					String location = Global.profile.dataDir + pFilename;
-					if ((new FileBugfix(location)).exists()) {
+					if ((new File(location)).exists()) {
 						result = img;
 						break;
 					}
@@ -251,7 +251,7 @@ public class CacheImages {
 			String obsoleteFilename = oldImages.get(i).getFilename();
 			if (!newImages.hasFile(obsoleteFilename)) {
 				String location = Global.profile.dataDir + obsoleteFilename;
-				FileBugfix tmpFile = new FileBugfix(location);
+				File tmpFile = new File(location);
 				if (tmpFile.exists() && tmpFile.canWrite()) {
 					Global.pref.log("Image not longer needed. Deleting: " + obsoleteFilename);
 					tmpFile.delete();

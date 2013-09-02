@@ -21,10 +21,10 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 package CacheWolf;
 
-import CacheWolf.utils.FileBugfix;
 import ewe.filechooser.FileChooser;
 import ewe.filechooser.FileChooserBase;
 import ewe.io.BufferedWriter;
+import ewe.io.File;
 import ewe.io.FileNotFoundException;
 import ewe.io.FileReader;
 import ewe.io.FileWriter;
@@ -196,14 +196,14 @@ public class CacheHolderDetail {
 	 * @param profile
 	 */
 	public void addUserImage() {
-		FileBugfix imgFile;
+		File imgFile;
 		String imgDesc, imgDestName;
 
 		// Get Image and description
 		FileChooser fc = new FileChooser(FileChooserBase.OPEN, Global.profile.dataDir);
 		fc.setTitle("Select image file:");
 		if (fc.execute() != FormBase.IDCANCEL) {
-			imgFile = new FileBugfix(fc.getChosenFile());
+			imgFile = fc.getChosenFile();
 			imgDesc = new InputBox("Description").input("", 10);
 			// Create Destination Filename
 			String ext = imgFile.getFileExt().substring(imgFile.getFileExt().lastIndexOf('.'));
@@ -233,7 +233,7 @@ public class CacheHolderDetail {
 		// when a cache object is freshly created to serve as container for imported data
 		if (this.getParent().getWayPoint().equals(CacheHolder.EMPTY))
 			return;
-		FileBugfix cacheFile = new FileBugfix(dir + getParent().getWayPoint().toLowerCase() + ".xml");
+		File cacheFile = new File(dir + getParent().getWayPoint().toLowerCase() + ".xml");
 		if (cacheFile.exists()) {
 			try {
 				in = new FileReader(cacheFile.getAbsolutePath());
@@ -243,7 +243,7 @@ public class CacheHolderDetail {
 			}
 		}
 		if (in == null) {
-			cacheFile = new FileBugfix(dir + getParent().getWayPoint() + ".xml");
+			cacheFile = new File(dir + getParent().getWayPoint() + ".xml");
 			if (cacheFile.exists()) {
 				in = new FileReader(cacheFile.getAbsolutePath());
 			}
@@ -395,17 +395,17 @@ public class CacheHolderDetail {
 
 	public void deleteFile(String FileName) {
 		// File exists?
-		boolean exists = (new FileBugfix(FileName)).exists();
+		boolean exists = (new File(FileName)).exists();
 		// yes: then delete
 		if (exists) {
-			boolean ok = (new FileBugfix(FileName)).delete();
+			boolean ok = (new File(FileName)).delete();
 			if (ok)
 				ok = true;
 		}
-		boolean exists2 = (new FileBugfix(FileName.toLowerCase())).exists();
+		boolean exists2 = (new File(FileName.toLowerCase())).exists();
 		// yes: delete
 		if (exists2) {
-			boolean ok2 = (new FileBugfix(FileName.toLowerCase())).delete();
+			boolean ok2 = (new File(FileName.toLowerCase())).delete();
 			if (ok2)
 				ok2 = true;
 		}
@@ -418,7 +418,7 @@ public class CacheHolderDetail {
 		PrintWriter detfile;
 		deleteFile(dir + getParent().getWayPoint() + ".xml");
 		try {
-			detfile = new PrintWriter(new BufferedWriter(new FileWriter(new FileBugfix(dir + getParent().getWayPoint().toLowerCase() + ".xml").getAbsolutePath())));
+			detfile = new PrintWriter(new BufferedWriter(new FileWriter(new File(dir + getParent().getWayPoint().toLowerCase() + ".xml").getAbsolutePath())));
 		}
 		catch (Exception e) {
 			Global.pref.log("Problem creating details file", e, true);
@@ -593,11 +593,11 @@ public class CacheHolderDetail {
 		// rename the files
 		try {
 			// since we use *.* we do not need FileBugFix
-			String srcFiles[] = new FileBugfix(profiledir).list(getParent().getWayPoint().concat("*.*"), ewe.io.FileBase.LIST_FILES_ONLY);
+			String srcFiles[] = new File(profiledir).list(getParent().getWayPoint().concat("*.*"), ewe.io.FileBase.LIST_FILES_ONLY);
 			for (int i = 0; i < srcFiles.length; i++) {
 				String newfile = newWptId.concat(srcFiles[i].substring(oldWptLength));
-				FileBugfix srcFile = new FileBugfix(profiledir.concat(srcFiles[i]));
-				FileBugfix dstFile = new FileBugfix(profiledir.concat(newfile));
+				File srcFile = new File(profiledir.concat(srcFiles[i]));
+				File dstFile = new File(profiledir.concat(newfile));
 				srcFile.move(dstFile);
 			}
 			success = true;

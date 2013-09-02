@@ -29,8 +29,8 @@ import CacheWolf.CoordsScreen;
 import CacheWolf.Global;
 import CacheWolf.InfoBox;
 import CacheWolf.MyLocale;
-import CacheWolf.utils.FileBugfix;
 import ewe.fx.Point;
+import ewe.io.File;
 import ewe.sys.Convert;
 import ewe.sys.Vm;
 import ewe.ui.CellConstants;
@@ -394,7 +394,7 @@ public class MapLoaderGui extends Form {
 		if (Global.mainTab.mm != null)
 			Global.mainTab.mm.setMapsloaded(false);
 		// rebuild MapsList.txt
-		FileBugfix MapsListFile = new FileBugfix(Global.pref.getCustomMapsPath() + "/MapsList.txt");
+		File MapsListFile = new File(Global.pref.getCustomMapsPath() + "/MapsList.txt");
 		MapsListFile.delete();
 		MapsList maps = new MapsList(center.latDec);
 		maps.clear();

@@ -26,8 +26,8 @@ import CacheWolf.CacheImages;
 import CacheWolf.Common;
 import CacheWolf.Global;
 import CacheWolf.SafeXML;
-import CacheWolf.utils.FileBugfix;
 import CacheWolf.utils.URLUTF8Encoder;
+import ewe.io.File;
 import ewe.sys.Time;
 import ewe.ui.FormBase;
 
@@ -106,7 +106,7 @@ public class SpoilerPOIExporter extends Exporter {
 			if (onlySpoiler && (comment.indexOf("oiler") < 1))
 				continue;
 			// check if the file is not deleted
-			if (!(new FileBugfix(url)).exists())
+			if (!(new File(url)).exists())
 				continue;
 
 			picCounter++;

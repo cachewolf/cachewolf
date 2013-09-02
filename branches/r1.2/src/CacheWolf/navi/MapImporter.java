@@ -27,7 +27,6 @@ import CacheWolf.CoordsScreen;
 import CacheWolf.Global;
 import CacheWolf.InfoBox;
 import CacheWolf.MyLocale;
-import CacheWolf.utils.FileBugfix;
 import ewe.filechooser.FileChooser;
 import ewe.filechooser.FileChooserBase;
 import ewe.fx.Color;
@@ -39,6 +38,7 @@ import ewe.fx.Point;
 import ewe.fx.mImage;
 import ewe.graphics.AniImage;
 import ewe.graphics.InteractivePanel;
+import ewe.io.File;
 import ewe.io.FileBase;
 import ewe.io.FileInputStream;
 import ewe.io.FileNotFoundException;
@@ -174,8 +174,8 @@ public class MapImporter extends Form {
 		int tmp = fc.execute();
 		if (tmp != FormBase.IDYES)
 			return FormBase.IDCANCEL;
-		FileBugfix inDir = new FileBugfix(fc.getChosenFile());
-		FileBugfix mapFile;
+		File inDir = fc.getChosenFile();
+		File mapFile;
 		InfoBox inf = new InfoBox("Info", MyLocale.getMsg(4109, "Loading maps...            \n"), InfoBox.PROGRESS_WITH_WARNINGS, false);
 		inf.setPreferredSize(220, 300);
 		inf.setInfoHeight(100);
@@ -195,7 +195,7 @@ public class MapImporter extends Form {
 		byte[] buf;
 		int len;
 		String[] parts;
-		String[] files = inDir.listMultiple("*.png,*.jpg,*.gif,*.bmp", FileBase.LIST_FILES_ONLY);
+		String[] files = inDir.listMultiple("*.png,*.jpg,*.gif,*.bmp", FileBase.LIST_FILES_ONLY); // use FileBugfix if FileBase.LIST_DIRECTORIES_ONLY
 
 		String currfile = null;
 		String curInFullPath;
@@ -245,7 +245,7 @@ public class MapImporter extends Form {
 			}
 			//Check for a .map file
 			rawFileName = currfile.substring(0, currfile.lastIndexOf('.'));
-			mapFile = new FileBugfix(inDir.getFullPath() + "/" + rawFileName + ".map");
+			mapFile = new File(inDir.getFullPath() + "/" + rawFileName + ".map");
 			if (!imageerror && mapFile.exists()) {
 				GCPoint gcp1 = new GCPoint();
 				GCPoint gcp2 = new GCPoint();

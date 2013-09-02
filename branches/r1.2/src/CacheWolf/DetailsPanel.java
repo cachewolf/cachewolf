@@ -22,11 +22,11 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 package CacheWolf;
 
 import CacheWolf.navi.TransformCoordinates;
-import CacheWolf.utils.FileBugfix;
 import ewe.fx.Color;
 import ewe.fx.Dimension;
 import ewe.fx.Point;
 import ewe.fx.mImage;
+import ewe.io.File;
 import ewe.sys.Convert;
 import ewe.sys.Time;
 import ewe.sys.Vm;
@@ -454,7 +454,7 @@ public class DetailsPanel extends CellPanel {
 					}
 					// already warned(multi same DataChangeEvents) or same waypointname as before edit !!!
 					if (!warnedForWaypoint.equals(uTmp) && !uTmp.equals(this.cache.getWayPoint())) {
-						if ((new FileBugfix(Global.profile.dataDir + iTmp.toLowerCase() + ".xml")).exists()) {
+						if ((new File(Global.profile.dataDir + iTmp.toLowerCase() + ".xml")).exists()) {
 							warnedForWaypoint = uTmp; // before MessageBox cause Multithread DataChangeEvents
 							// filename is LowerCase
 							new MessageBox("Warning :", uTmp + "\n" + MyLocale.getMsg(275, "Waypoint already exists!"), MessageBox.OKB).execute();
