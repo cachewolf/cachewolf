@@ -83,18 +83,13 @@ public final class MapsList extends Vector {
 		this.onCompletedRead();
 	}
 
-	/**
-	 * 
-	 * @param mapsPath
-	 *            without trailing /
-	 */
 	private void initMapsList() {
 		String dateien[];
 		FileBugfix files;
 		String[] dirstmp;
 		Vector dirs = new Vector();
 		dirs.add(""); // start with the mapsPath (only this one , without its subdirs) =  + dirs.get(0)
-
+		Global.pref.log("building mapslist started " + CustomMapsPath);
 		files = new FileBugfix(CustomMapsPath);
 		for (int j = 0; j < dirs.size(); j++) {
 			String aktPath;
@@ -178,6 +173,7 @@ public final class MapsList extends Vector {
 		// if (MapListEntry.rename == 1)
 		// reset static changes to initial values
 		MapListEntry.loadingFinished();
+		Global.pref.log("building mapslist finished " + CustomMapsPath);
 	}
 
 	private void createMapListEntries(String thePackFile) {
@@ -189,11 +185,11 @@ public final class MapsList extends Vector {
 			stream = new FileInputStream(queryFile);
 			reader = new DataInputStream(stream);
 
-			String layerName = readString(reader, 32);
-			String friendlyName = readString(reader, 128);
-			String url = readString(reader, 256);
-			long ticks = readReverseLong(reader);
-			long MaxAge = ticks;
+			readString(reader, 32); // String layerName = 
+			readString(reader, 128); // String friendlyName = 
+			readString(reader, 256); // String url = 
+			readReverseLong(reader); // long ticks = 
+			// long MaxAge = ticks;
 			int numBoundingBoxes = readReverseInt(reader);
 			for (int i = 0; i < numBoundingBoxes; i++) {
 				try {
@@ -262,6 +258,7 @@ public final class MapsList extends Vector {
 	}
 
 	private void writeMapsListFile(String PathAndName) {
+		Global.pref.log("write started " + PathAndName);
 		try {
 			ewe.io.TextWriter w;
 			w = new ewe.io.TextWriter(PathAndName, false);
@@ -277,6 +274,7 @@ public final class MapsList extends Vector {
 		catch (IOException e) {
 
 		}
+		Global.pref.log("write finished " + PathAndName);
 	}
 
 	private boolean readMapsListFile(String PathAndName) {

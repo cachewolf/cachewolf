@@ -1,6 +1,6 @@
 TakenFromUrl:       map.adfc-tourenportal.de = 195.66.99.21
 GetCapabilitiesUrl: doesn't work
-Name:               de ADFC Tourenportal
+Name:               de ADFC Tourenportal (MM_TOPO)
 MapType:            de ADFC
 MainUrl:            http://195.66.99.21/mm-mapserver_v2/wms/wms.php?
 ServiceTypeUrlPart: SERVICE=WMS

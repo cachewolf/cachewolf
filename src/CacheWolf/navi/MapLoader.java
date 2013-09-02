@@ -45,6 +45,7 @@ import ewe.sys.Double;
 import ewe.sys.Time;
 import ewe.ui.FormBase;
 import ewe.ui.MessageBox;
+import ewe.util.Comparer;
 import ewe.util.Properties;
 import ewe.util.StandardComparer;
 import ewe.util.Utils;
@@ -116,7 +117,13 @@ public class MapLoader {
 		fetchOnlyMapWithCache = value;
 	}
 
-	public String[] getAvailableOnlineMapServices() {
+	public String[] getAvailableOnlineMapServices(CWPoint center) {
+
+		if (center.isValid()) {
+			MapServiceComparer comparer = new MapServiceComparer(center);
+			onlineMapServices.sort(comparer, false);
+		}
+
 		int s = onlineMapServices.size();
 		String[] services = new String[s];
 		for (int i = 0; i < s; i++) {
@@ -313,7 +320,7 @@ public class MapLoader {
 		int x, y, zoom;
 		double latRad = center.latDec * Math.PI / 180.0;
 		zoom = (int) scale; // 8->406.67, 9->203.335, ..., 16->1.58, 17->0.79, 18->0.39				
-		int n = (int) Math.pow(2, (int) zoom);
+		int n = (int) Math.pow(2, zoom);
 		x = (int) (n * ((center.lonDec + 180.0) / 360.0));
 		y = (int) (n * (1 - (Math.log(Math.tan(latRad) + 1.0 / Math.cos(latRad)) / Math.PI)) / 2);
 		String url = STRreplace.replace(wms.MainUrl, "{x}", "" + x);
@@ -865,6 +872,7 @@ class WebMapService extends OnlineMapService {
 		if (!bottomright.isValid())
 			bottomright.set(-90, 180);
 		boundingBox = new Area(topleft, bottomright);
+
 		minscaleWMS = Common.parseDouble(wms.getProperty("MinScale", "0").trim());
 		maxscaleWMS = Common.parseDouble(wms.getProperty("MaxScale", Convert.toString(java.lang.Double.MAX_VALUE)).trim());
 		minscale = minscaleWMS / Math.sqrt(2); // in WMS scale is measured diagonal while in CacheWolf it is measured vertical
@@ -975,13 +983,13 @@ class WebMapService extends OnlineMapService {
 		// http://www.geoserver.nrw.de/GeoOgcWms1.3/servlet/TK25?SERVICE=WMS&VERSION=1.1.0&REQUEST=GetMap&SRS=EPSG:31466&BBOX=2577567.0149,5607721.7566,2578567.0077,5608721.7602&WIDTH=500&HEIGHT=500&LAYERS=Raster:TK25_KMF:Farbkombination&STYLES=&FORMAT=image/png
 		CWPoint bottomleft = new CWPoint(maparea.bottomright.latDec, maparea.topleft.lonDec);
 		CWPoint topright = new CWPoint(maparea.topleft.latDec, maparea.bottomright.lonDec);
-		double scaleh = maparea.bottomright.getDistance(bottomleft) * 1000 / SizeInPixels.x;
-		double scalev = maparea.topleft.getDistance(topright) * 1000 / SizeInPixels.y;
-		double scaleCalculated = Math.sqrt(scaleh * scaleh + scalev * scalev); // meters per pixel measured diagonal
-		// todo scaleInput <--> scaleCalculated
-		if (scaleCalculated < minscaleWMS || scaleCalculated > maxscaleWMS)
-			throw new IllegalArgumentException(MyLocale.getMsg(4825, "scale") + " " + scaleInput + MyLocale.getMsg(4826, " not supported by online map service, supported scale range:") + " " + minscaleWMS + " - " + maxscaleWMS
-					+ MyLocale.getMsg(4827, " (measured in meters per pixel vertically)"));
+		// double scaleh = maparea.bottomright.getDistance(bottomleft) * 1000 / SizeInPixels.x;
+		// double scalev = maparea.topleft.getDistance(topright) * 1000 / SizeInPixels.y;
+		// double scaleCalculated = Math.sqrt(scaleh * scaleh + scalev * scalev); // meters per pixel measured diagonal
+
+		// if (scaleCalculated < minscaleWMS || scaleCalculated > maxscaleWMS)
+		//	throw new IllegalArgumentException(MyLocale.getMsg(4825, "scale") + " " + scaleInput + MyLocale.getMsg(4826, " not supported by online map service, supported scale range:") + " " + minscaleWMS + " - " + maxscaleWMS
+		//			+ MyLocale.getMsg(4827, " (measured in meters per pixel vertically)"));
 		int crs = 0;
 		String bbox = "BBOX=";
 		int localsystem = TransformCoordinates.getLocalProjectionSystem(coordinateReferenceSystem[0]);
@@ -997,9 +1005,18 @@ class WebMapService extends OnlineMapService {
 			bbox += bottomleft.toString(TransformCoordinates.LON_LAT) + "," + topright.toString(TransformCoordinates.LON_LAT);
 		else
 			throw new IllegalArgumentException(MyLocale.getMsg(4828, "Coordinate system not supported by cachewolf:") + " " + coordinateReferenceSystem.toString());
-		String ret = MainUrl + serviceTypeUrlPart + "&" + versionUrlPart + "&" + requestUrlPart + "&" + coordinateReferenceSystemUrlPart[crs] + "&" + bbox + "&WIDTH=" + SizeInPixels.x + "&HEIGHT=" + SizeInPixels.y + "&" + layersUrlPart + "&"
-				+ stylesUrlPart + "&" + imageFormatUrlPart;
-		Global.pref.log(ret + " WGS84: Bottom left: " + bottomleft.toString(TransformCoordinates.DD) + "top right: " + topright.toString(TransformCoordinates.DD));
+		String ret = MainUrl //
+				+ serviceTypeUrlPart//
+				+ "&" + versionUrlPart //
+				+ "&" + requestUrlPart //
+				+ "&" + coordinateReferenceSystemUrlPart[crs] //
+				+ "&" + bbox //
+				+ "&" + "WIDTH=" + SizeInPixels.x //
+				+ "&" + "HEIGHT=" + SizeInPixels.y //
+				+ "&" + layersUrlPart //
+				+ "&" + stylesUrlPart //
+				+ "&" + imageFormatUrlPart;
+		Global.pref.log(" WGS84: Bottom left: " + bottomleft.toString(TransformCoordinates.DD) + "top right: " + topright.toString(TransformCoordinates.DD));
 		return ret;
 	}
 
@@ -1087,5 +1104,33 @@ class WebMapService extends OnlineMapService {
 		MapInfoObject ret = new MapInfoObject();
 		ret.evalGCP(georef, pixelsize.x, pixelsize.y, coordinateReferenceSystem[getCrs(maparea.getCenter())]);
 		return ret;
+	}
+}
+
+class MapServiceComparer implements Comparer {
+	CWPoint centre;
+
+	public MapServiceComparer(CWPoint centre) {
+		this.centre = centre;
+	}
+
+	public int compare(Object one, Object two) {
+		if ((!(one instanceof OnlineMapService)) && (!(two instanceof OnlineMapService))) {
+			return 0;
+		}
+		else {
+			OnlineMapService a = (OnlineMapService) one;
+			OnlineMapService b = (OnlineMapService) two;
+			CWPoint abottomleft = new CWPoint(a.boundingBox.topleft.latDec, a.boundingBox.bottomright.lonDec);
+			CWPoint bbottomleft = new CWPoint(b.boundingBox.topleft.latDec, b.boundingBox.bottomright.lonDec);
+			CWPoint atopright = new CWPoint(a.boundingBox.bottomright.latDec, a.boundingBox.topleft.lonDec);
+			CWPoint btopright = new CWPoint(b.boundingBox.bottomright.latDec, b.boundingBox.topleft.lonDec);
+			double ad1 = Math.min(a.boundingBox.topleft.getDistance(centre), a.boundingBox.bottomright.getDistance(centre));
+			double ad2 = Math.min(abottomleft.getDistance(centre), atopright.getDistance(centre));
+			double bd1 = Math.min(b.boundingBox.topleft.getDistance(centre), b.boundingBox.bottomright.getDistance(centre));
+			double bd2 = Math.min(bbottomleft.getDistance(centre), btopright.getDistance(centre));
+			int ret = (int) ((Math.min(ad1, ad2) - Math.min(bd1, bd2)) * 1000);
+			return ret;
+		}
 	}
 }

@@ -2,8 +2,8 @@
 <Abstract>Die Inhalte der Digitalen Topographischen Karte 1:50000 (DTK50) werden derzeit aus dem DLM50.2 abgeleitet und mit kartographischen Daten ergänzt. Sie wird im 3-Jahresturnus aktualisiert und ist für den Darstellungsmaßstab 1:50000 ausgelegt. Der abrufbare Kartenausschnitt pro WMS-Request ist auf eine Ausdehnung von maximal 2.000x2.000 Pixel begrenzt. Weitere Informationen unter: http://vermessung.bayern.de/geo basis_lvg/dtk/dtk50.html</Abstract>
 TakenFromUrl:       http://geoportal.bayern.de/geoportalbayern/inhalte/uebersichten/geodatendienste.html
 GetCapabilitiesUrl: http://geodaten.bayern.de/ogc/ogc_dtk50_oa.cgi?SERVICE=WMS&VERSION=1.1.1&REQUEST=GetCapabilities
-Name:               de.bayern DTK
-MapType:                        de.bayern DTK
+Name:               de.bayern Topographischen Karte 1:50000
+MapType:            de.bayern TK50
 MainUrl:            http://geodaten.bayern.de/ogc/ogc_dtk50_oa.cgi?
 ServiceTypeUrlPart: SERVICE=WMS
 VersionUrlPart:     VERSION=1.1.1

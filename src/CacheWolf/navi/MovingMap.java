@@ -421,6 +421,7 @@ public final class MovingMap extends Form implements ICommandListener {
 		scaleWanted = Global.pref.lastScale;
 		mapChangeModus = NORMAL_KEEP_RESOLUTION;
 
+		this.removeAllMapSymbols(); // a cache could have been deleted (formerly shown)
 		initMaps(centerTo);
 
 		if (getControlsLayer() != null) {
@@ -772,10 +773,12 @@ public final class MovingMap extends Form implements ICommandListener {
 		}
 		else {
 			// maybe this could / should be replaced to windows size
+			Global.pref.log("Window not yet on screen? This should never happen (again)");
 			posCircleX = Global.pref.myAppWidth / 2;
 			posCircleY = Global.pref.myAppHeight / 2;
 		}
 		posCircle.hidden = false;
+		// always position the middle of a symbol
 		posCircle.move(posCircleX - posCircle.getWidth() / 2, posCircleY - posCircle.getHeight() / 2);
 		// posCircle.setLocation a problem -> hiding the posCircle in some situation
 	}
