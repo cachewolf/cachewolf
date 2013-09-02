@@ -28,8 +28,8 @@ import CacheWolf.CacheType;
 import CacheWolf.Global;
 import CacheWolf.STRreplace;
 import CacheWolf.SafeXML;
-import CacheWolf.utils.FileBugfix;
 import ewe.io.BufferedWriter;
+import ewe.io.File;
 import ewe.io.FileBase;
 import ewe.io.FileOutputStream;
 import ewe.io.FileWriter;
@@ -72,7 +72,7 @@ public class KMLExporter extends Exporter {
 	}
 
 	public void doIt(int variant) {
-		FileBugfix outFile;
+		File outFile;
 		String str;
 		CacheHolder ch;
 		CacheHolder addiWpt;
@@ -85,7 +85,7 @@ public class KMLExporter extends Exporter {
 				return;
 		}
 		else {
-			outFile = new FileBugfix(tmpFileName);
+			outFile = new File(tmpFileName);
 		}
 
 		pbf.showMainTask = false;

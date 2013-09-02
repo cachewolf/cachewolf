@@ -27,10 +27,10 @@ import CacheWolf.CacheHolder;
 import CacheWolf.CacheSize;
 import CacheWolf.CacheType;
 import CacheWolf.Global;
-import CacheWolf.utils.FileBugfix;
 import ewe.filechooser.FileChooser;
 import ewe.filechooser.FileChooserBase;
 import ewe.io.BufferedWriter;
+import ewe.io.File;
 import ewe.io.FileWriter;
 import ewe.io.IOException;
 import ewe.io.PrintWriter;
@@ -96,7 +96,7 @@ public class Exporter {
 	 *            1, if filechooser
 	 */
 	public void doIt(int variant) {
-		FileBugfix outFile;
+		File outFile;
 		String str;
 		CacheHolder ch;
 		ProgressBarForm pbf = new ProgressBarForm();
@@ -108,7 +108,7 @@ public class Exporter {
 				return;
 		}
 		else {
-			outFile = new FileBugfix(tmpFileName);
+			outFile = new File(tmpFileName);
 		}
 
 		pbf.showMainTask = false;
@@ -232,13 +232,13 @@ public class Exporter {
 	 * 
 	 * @return
 	 */
-	public FileBugfix getOutputFile() {
-		FileBugfix file;
+	public File getOutputFile() {
+		File file;
 		FileChooser fc = new FileChooser(FileChooserBase.SAVE, Global.pref.getExportPath(expName));
 		fc.setTitle("Select target file:");
 		fc.addMask(mask);
 		if (fc.execute() != FormBase.IDCANCEL) {
-			file = new FileBugfix(fc.getChosenFile());
+			file = fc.getChosenFile();
 			Global.pref.setExportPath(expName, file.getPath());
 			return file;
 		}
