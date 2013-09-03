@@ -247,7 +247,7 @@ public class GPXImporter extends MinML {
 			}
 
 			// if (fromOC && doSpider) (new MessageBox("Warnung", MyLocale.getMsg(4001,
-			// "GPX files from opencaching don't contain information of images, they cannot be laoded. Best you get caches from opencaching by menu /Application/Import/Download from Opencaching"), FormBase.OKB)).execute();
+			// "GPX files from opencaching don't contain information of images, they cannot be loaded. Best you get caches from opencaching by menu /Application/Import/Download from Opencaching"), FormBase.OKB)).execute();
 			zaehlerGel = 0;
 		}
 		if (name.equals("wpt")) {

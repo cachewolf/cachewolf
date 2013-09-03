@@ -274,6 +274,12 @@ public final class MovingMap extends Form implements ICommandListener {
 	private void loadMaps(double lat) {
 		if (loadingMapList)
 			return;
+
+		if (this.maps != null) {
+			if (!(Global.pref.getCustomMapsPath().equals(this.maps.getMapsPath()))) {
+				mapsloaded = false;
+			}
+		}
 		if (mapsloaded)
 			return;
 
@@ -283,8 +289,6 @@ public final class MovingMap extends Form implements ICommandListener {
 		Vm.showWait(this, true);
 		inf.exec();
 		inf.waitUntilPainted(100);
-
-		resetCenterOfMap();
 
 		boolean remember = dontUpdatePos;
 		dontUpdatePos = true;
@@ -421,8 +425,12 @@ public final class MovingMap extends Form implements ICommandListener {
 		scaleWanted = Global.pref.lastScale;
 		mapChangeModus = NORMAL_KEEP_RESOLUTION;
 
-		this.removeAllMapSymbols(); // a cache could have been deleted (formerly shown)
+		// a cache could have been deleted (formerly shown)
+		this.removeAllMapSymbols();
 		initMaps(centerTo);
+		if (symbols.isEmpty()) {
+			this.showCachesOnMap();
+		}
 
 		if (getControlsLayer() != null) {
 			getControlsLayer().changeRoleState(MovingMapControls.ROLE_MENU, false);
@@ -1013,12 +1021,9 @@ public final class MovingMap extends Form implements ICommandListener {
 	}
 
 	private void initMaps(CWPoint where) {
-		if (this.maps != null) {
-			if (!(Global.pref.getCustomMapsPath().equals(this.maps.getMapsPath()))) {
-				mapsloaded = false;
-			}
-		}
 		loadMaps(where.latDec);
+
+		resetCenterOfMap();
 		lastCompareX = Integer.MAX_VALUE;
 		lastCompareY = Integer.MAX_VALUE;
 		autoSelectMap = true;
@@ -1027,7 +1032,7 @@ public final class MovingMap extends Form implements ICommandListener {
 	}
 
 	/**
-	 * Method to laod the best map for lat/lon and move the map so that the posCircle is at lat/lon
+	 * Method to load the best map for lat/lon and move the map so that the posCircle is at lat/lon
 	 */
 	public void updatePosition(CWPoint where) {
 		if (updatingPos || dontUpdatePos || loadingMapList || (where.latDec == 0 && where.lonDec == 0) || !where.isValid())
