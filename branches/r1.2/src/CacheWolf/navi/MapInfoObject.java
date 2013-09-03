@@ -528,6 +528,10 @@ public class MapInfoObject extends Area {
 		return mapImageFileName;
 	}
 
+	public String getMapNameForList() {
+		return mapImageFileName.getMapNameForList(mapType);
+	}
+
 	public byte getMapType() {
 		return mapType;
 	}
