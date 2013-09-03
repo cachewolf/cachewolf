@@ -705,7 +705,7 @@ class OnlineMapService {
 	}
 
 	/**
-	 * Overlaod this to integrate name of layers
+	 * Overload this to integrate name of layers
 	 * 
 	 * @return friendly service name
 	 */
