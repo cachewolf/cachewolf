@@ -753,12 +753,12 @@ public final class MapsList extends Vector {
 			return b.scale / a.scale < scaleTolerance;
 	}
 
-	public static boolean scaleEquals(float s, MapInfoObject b) {
-		//return java.lang.Math.abs(s - b.scale) < scaleTolerance;
-		if (s > b.scale)
-			return s / b.scale < scaleTolerance;
+	public static boolean scaleEquals(float scale, MapInfoObject b) {
+		//return java.lang.Math.abs(scale - b.scale) < scaleTolerance;
+		if (scale > b.scale)
+			return scale / b.scale < scaleTolerance;
 		else
-			return b.scale / s < scaleTolerance;
+			return b.scale / scale < scaleTolerance;
 	}
 
 	/**
@@ -951,6 +951,10 @@ final class MapListEntry {
 
 	public void setMapImageFileName(MapImageFileName mapImageFileName) {
 		this.mapImageFileName = mapImageFileName;
+	}
+
+	public String getMapNameForList() {
+		return mapImageFileName.getMapNameForList(mapType);
 	}
 
 	public byte getMapType() {

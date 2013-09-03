@@ -86,7 +86,7 @@ import ewe.util.Vector;
  * Class to display the map bitmap and to select another bitmap to display.
  * 
  * class ListBox extends Form
- * Class to display maps to choose from
+ * Class to display maps to manually choose from
  * 
  * class ArrowsOnMap extends AniImage
  * 
@@ -142,10 +142,11 @@ public final class MovingMap extends Form implements ICommandListener {
 	private boolean forceMapLoad = true;
 	private boolean mapHidden = false;
 
-	// access with getter or setter
 	// to avoid multi-threading problems
+	private boolean inUpdatePosition;
+	private boolean inLoadMaps = false;
+
 	private boolean dontUpdatePos = false;
-	private boolean updatingPos;
 	private boolean zoomingMode = false;
 	private boolean mapsloaded = false;
 	private boolean doPaintPosDestLine = true;
@@ -167,6 +168,9 @@ public final class MovingMap extends Form implements ICommandListener {
 	private final Vector whiteAreas = new Vector();
 	private boolean eventOccurred; // not yet implemented, don't know how (check for abort filling white areas)
 
+	/**
+	 * Creating the moving map.
+	 */
 	public MovingMap(Navigate nav) {
 		symbols = new Vector();
 		this.cacheDB = Global.profile.cacheDB;
@@ -228,11 +232,105 @@ public final class MovingMap extends Form implements ICommandListener {
 
 	}
 
-	public void setShowCachesOnMap(boolean value) {
-		if (value != Global.pref.showCachesOnMap) {
-			Global.pref.showCachesOnMap = value;
-			updatePositionOfMapElements();
+	/**
+	 * Showing the moving map.
+	 */
+	public void display(CWPoint centerTo, boolean forceCenter) {
+		exec(); // displays the Form modal
+		running = true;
+		// disconnect movingMap from GPS TODO only if GPS-pos is not on the screen
+		if (forceCenter)
+			setGpsStatus(noGPS);
+		// to load maplist + place a map on screen otherwise no symbol can be placed
+		ignoreGps = true; // else overlay symbols are removed on started gps
+
+		rebuildOverlaySet(); // show tracks , even if reentering map
+
+		scaleWanted = Global.pref.lastScale;
+		mapChangeModus = NORMAL_KEEP_RESOLUTION;
+
+		// a cache could have been deleted (previously shown)
+		this.removeAllMapSymbols();
+		initMaps(centerTo);
+		if (symbols.isEmpty()) {
+			this.showCachesOnMap();
 		}
+
+		if (getControlsLayer() != null) {
+			getControlsLayer().changeRoleState(MovingMapControls.ROLE_MENU, false);
+		}
+
+		if (myNavigation.destinationIsCache) {
+			destChanged(myNavigation.destinationCache);
+		}
+		else {
+			destChanged(myNavigation.destination);
+		}
+
+		ignoreGps = false;
+
+	}
+
+	/**
+	 * moving the map by myNavigation.gpsPos.
+	 */
+	public void updatePositionFromGps(int fix) {
+		if (!running || ignoreGps)
+			return;
+		// runMovingMap neccessary in case of multi-threaded Java-VM:
+		// ticked could be called during load of mmp
+		if ((fix > 0) && (myNavigation.gpsPos.getSats() >= 0)) {
+			// TODO is getSats really necessary?
+			directionArrows.setDirections((float) myNavigation.gpsPos.getBearing(myNavigation.destination), (float) myNavigation.skyOrientationDir.lonDec, (float) myNavigation.gpsPos.getBear());
+			setGpsStatus(MovingMap.gotFix);
+			updatePosition(myNavigation.gpsPos);
+			ShowLastAddedPoint(myNavigation.curTrack);
+		}
+		if (fix == 0 && myNavigation.gpsPos.getSats() == 0)
+			setGpsStatus(MovingMap.lostFix);
+		if (fix < 0)
+			setGpsStatus(MovingMap.noGPSData);
+		controlsLayer.updateContent("hdop", Convert.toString(myNavigation.gpsPos.getHDOP()));
+		controlsLayer.updateContent("sats", Convert.toString(myNavigation.gpsPos.getSats()) + "/" + Convert.toString(myNavigation.gpsPos.getSatsInView()));
+	}
+
+	/**
+	 * Method to load the best map for lat/lon and move the map so that the posCircle is at lat/lon
+	 */
+	private void updatePosition(CWPoint where) {
+		if (inUpdatePosition || dontUpdatePos || (where.latDec == 0 && where.lonDec == 0) || !where.isValid())
+			return; // avoid multi-threading problems
+		inUpdatePosition = true;
+
+		Point mapPos = updatePositionOfMainMapImage(where);
+
+		forceMapLoad = forceMapLoad || lastWidth != this.width || lastHeight != this.height;
+		lastWidth = width;
+		lastHeight = height;
+
+		// if more then 1/10 of screen moved since last time or forceMapLoad: 
+		if (forceMapLoad || (java.lang.Math.abs(lastCompareX - mapPos.x) > this.width / 10 || java.lang.Math.abs(lastCompareY - mapPos.y) > this.height / 10)) {
+			// we try to find a better map
+			if (autoSelectMap) {
+				setBestMap(where, !mmp.ScreenCompletlyCoveredByMainMap(this.width, this.height));
+				mapPos = getMapPositionOnScreen();
+				forceMapLoad = false;
+			}
+			if (isFillWhiteArea() && !mmp.ScreenCompletlyCoveredByMainMap(this.width, this.height))
+				fillWhiteArea();
+			lastCompareX = mapPos.x;
+			lastCompareY = mapPos.y;
+		}
+		else {
+			mmp.updatePositionOfMapTiles(mapPos.x - lastXPos, mapPos.y - lastYPos);
+		}
+
+		updatePositionOfMapElements();
+		lastXPos = mapPos.x;
+		lastYPos = mapPos.y;
+
+		inUpdatePosition = false;
+		repaint();
 	}
 
 	public MovingMapControls getControlsLayer() {
@@ -263,8 +361,6 @@ public final class MovingMap extends Form implements ICommandListener {
 		}
 	}
 
-	boolean loadingMapList = false;
-
 	/**
 	 * loads the list of maps
 	 * 
@@ -272,7 +368,7 @@ public final class MovingMap extends Form implements ICommandListener {
 	 *            used to create empty maps with correct conversion from lon to meters the latitude must be known
 	 */
 	private void loadMaps(double lat) {
-		if (loadingMapList)
+		if (inLoadMaps)
 			return;
 
 		if (this.maps != null) {
@@ -283,7 +379,7 @@ public final class MovingMap extends Form implements ICommandListener {
 		if (mapsloaded)
 			return;
 
-		loadingMapList = true;
+		inLoadMaps = true;
 
 		final InfoBox inf = new InfoBox(MyLocale.getMsg(4201, "Info"), MyLocale.getMsg(4203, "Loading list of maps..."));
 		Vm.showWait(this, true);
@@ -293,13 +389,14 @@ public final class MovingMap extends Form implements ICommandListener {
 		boolean remember = dontUpdatePos;
 		dontUpdatePos = true;
 		maps = new MapsList(lat);
+		resetCenterOfMap();
 		dontUpdatePos = remember;
 
 		inf.close(0);
 		Vm.showWait(this, false);
 
 		mapsloaded = true;
-		loadingMapList = false;
+		inLoadMaps = false;
 	}
 
 	public void updateScale() {
@@ -409,42 +506,6 @@ public final class MovingMap extends Form implements ICommandListener {
 		else {
 			controlsLayer.updateContent("distance", "");
 		}
-	}
-
-	public void display(CWPoint centerTo, boolean forceCenter) {
-		exec(); // displays the Form modal
-		running = true;
-		// disconnect movingMap from GPS TODO only if GPS-pos is not on the screen
-		if (forceCenter)
-			setGpsStatus(noGPS);
-		// to load maplist + place a map on screen otherwise no symbol can be placed
-		ignoreGps = true; // else overlay symbols are removed on started gps
-
-		rebuildOverlaySet(); // show tracks , even if reentering map
-
-		scaleWanted = Global.pref.lastScale;
-		mapChangeModus = NORMAL_KEEP_RESOLUTION;
-
-		// a cache could have been deleted (formerly shown)
-		this.removeAllMapSymbols();
-		initMaps(centerTo);
-		if (symbols.isEmpty()) {
-			this.showCachesOnMap();
-		}
-
-		if (getControlsLayer() != null) {
-			getControlsLayer().changeRoleState(MovingMapControls.ROLE_MENU, false);
-		}
-
-		if (myNavigation.destinationIsCache) {
-			destChanged(myNavigation.destinationCache);
-		}
-		else {
-			destChanged(myNavigation.destination);
-		}
-
-		ignoreGps = false;
-
 	}
 
 	public void addTrack(Track tr) {
@@ -774,7 +835,7 @@ public final class MovingMap extends Form implements ICommandListener {
 	 * move posCircle to the Centre of the Screen
 	 * 
 	 */
-	public void resetCenterOfMap() {
+	private void resetCenterOfMap() {
 		if (width != 0) {
 			posCircleX = width / 2;
 			posCircleY = height / 2;
@@ -1023,51 +1084,11 @@ public final class MovingMap extends Form implements ICommandListener {
 	private void initMaps(CWPoint where) {
 		loadMaps(where.latDec);
 
-		resetCenterOfMap();
 		lastCompareX = Integer.MAX_VALUE;
 		lastCompareY = Integer.MAX_VALUE;
 		autoSelectMap = true;
 		setBestMap(where, true);
 		forceMapLoad = false;
-	}
-
-	/**
-	 * Method to load the best map for lat/lon and move the map so that the posCircle is at lat/lon
-	 */
-	public void updatePosition(CWPoint where) {
-		if (updatingPos || dontUpdatePos || loadingMapList || (where.latDec == 0 && where.lonDec == 0) || !where.isValid())
-			return; // avoid multi-threading problems
-		updatingPos = true;
-
-		Point mapPos = updatePositionOfMainMapImage(where);
-
-		forceMapLoad = forceMapLoad || lastWidth != this.width || lastHeight != this.height;
-		lastWidth = width;
-		lastHeight = height;
-
-		// if more then 1/10 of screen moved since last time or forceMapLoad: 
-		if (forceMapLoad || (java.lang.Math.abs(lastCompareX - mapPos.x) > this.width / 10 || java.lang.Math.abs(lastCompareY - mapPos.y) > this.height / 10)) {
-			// we try to find a better map
-			if (autoSelectMap) {
-				setBestMap(where, !mmp.ScreenCompletlyCoveredByMainMap(this.width, this.height));
-				mapPos = getMapPositionOnScreen();
-				forceMapLoad = false;
-			}
-			if (isFillWhiteArea() && !mmp.ScreenCompletlyCoveredByMainMap(this.width, this.height))
-				fillWhiteArea();
-			lastCompareX = mapPos.x;
-			lastCompareY = mapPos.y;
-		}
-		else {
-			mmp.updatePositionOfMapTiles(mapPos.x - lastXPos, mapPos.y - lastYPos);
-		}
-
-		updatePositionOfMapElements();
-		lastXPos = mapPos.x;
-		lastYPos = mapPos.y;
-
-		updatingPos = false;
-		repaint();
 	}
 
 	private void showCachesOnMap() {
@@ -1200,11 +1221,11 @@ public final class MovingMap extends Form implements ICommandListener {
 		// perhaps a nearby map is found, not containing the (center)Point, perhaps it fits on the screen
 		// but we can't use this map: the splitting into white areas goes wrong in that case
 		if (!(bestMap.bottomright.latDec <= centerPoint.latDec && centerPoint.latDec <= bestMap.topleft.latDec)) {
-			Global.pref.log("!For wA " + whiteArea + middleX + "," + middleY + " Lat outside " + bestMap.getMapImageFileName().getMapNameForList(bestMap.getMapType()));
+			Global.pref.log("!For wA " + whiteArea + middleX + "," + middleY + " Lat outside " + bestMap.getMapNameForList());
 			return;
 		}
 		if (!(bestMap.topleft.lonDec <= centerPoint.lonDec && centerPoint.lonDec <= bestMap.bottomright.lonDec)) {
-			Global.pref.log("!For wA " + whiteArea + middleX + "," + middleY + " Lon outside " + bestMap.getMapImageFileName().getMapNameForList(bestMap.getMapType()));
+			Global.pref.log("!For wA " + whiteArea + middleX + "," + middleY + " Lon outside " + bestMap.getMapNameForList());
 			return;
 		}
 		final String imagefilename = bestMap.getImagePathAndName();
@@ -1217,7 +1238,7 @@ public final class MovingMap extends Form implements ICommandListener {
 				mapPos.y = posCircleY - mapposint.y;
 				final Point mapDimension = bestMap.calcMapXY(bestMap.bottomright);
 				blackArea = new Rect(mapPos.x, mapPos.y, mapDimension.x, mapDimension.y);
-				Global.pref.log("For wA " + whiteArea + middleX + "," + middleY + " got " + blackArea + " ='" + bestMap.getMapImageFileName().getMapNameForList(bestMap.getMapType()) + "'");
+				Global.pref.log("For wA " + whiteArea + middleX + "," + middleY + " got " + blackArea + " ='" + bestMap.getMapNameForList() + "'");
 				// Are there any white areas left?
 				addRemainingWhiteAreas(blackArea, whiteArea);
 				// Not all maps have the dimension 1000x1000 Pixels, we cache this information:
@@ -1387,26 +1408,6 @@ public final class MovingMap extends Form implements ICommandListener {
 		}
 	}
 
-	public void updatePositionFromGps(int fix) {
-		if (!running || ignoreGps)
-			return;
-		// runMovingMap neccessary in case of multi-threaded Java-VM:
-		// ticked could be called during load of mmp
-		if ((fix > 0) && (myNavigation.gpsPos.getSats() >= 0)) {
-			// TODO is getSats really necessary?
-			directionArrows.setDirections((float) myNavigation.gpsPos.getBearing(myNavigation.destination), (float) myNavigation.skyOrientationDir.lonDec, (float) myNavigation.gpsPos.getBear());
-			setGpsStatus(MovingMap.gotFix);
-			updatePosition(myNavigation.gpsPos);
-			ShowLastAddedPoint(myNavigation.curTrack);
-		}
-		if (fix == 0 && myNavigation.gpsPos.getSats() == 0)
-			setGpsStatus(MovingMap.lostFix);
-		if (fix < 0)
-			setGpsStatus(MovingMap.noGPSData);
-		controlsLayer.updateContent("hdop", Convert.toString(myNavigation.gpsPos.getHDOP()));
-		controlsLayer.updateContent("sats", Convert.toString(myNavigation.gpsPos.getSats()) + "/" + Convert.toString(myNavigation.gpsPos.getSatsInView()));
-	}
-
 	public void gpsStarted() {
 		addTrack(myNavigation.curTrack);
 		ignoreGps = false;
@@ -1416,19 +1417,16 @@ public final class MovingMap extends Form implements ICommandListener {
 		setGpsStatus(MovingMap.noGPS);
 	}
 
-	int mapChangeModus = HIGHEST_RESOLUTION_GPS_DEST;
-	float scaleWanted;
-	boolean wantMapTest = true; // if true updateposition calls setBestMap
-	// regulary even if the currentMap covers
-	// the whole screen
-	public final static int NORMAL_KEEP_RESOLUTION = 1;
+	private int mapChangeModus = HIGHEST_RESOLUTION_GPS_DEST;
+	private float scaleWanted;
 	// keeps the choosen resolution as long as a map is available
 	// that overlaps with the screen and with the PosCircle -
 	// it changes the resolution if no such map is available.
 	// It will change back to the wanted scale as soon as a map becomes available (through movement of the GPS-receiver)
-	public final static int HIGHEST_RESOLUTION = 2;
-	public final static int HIGHEST_RESOLUTION_GPS_DEST = 3;
-	boolean inBestMap = false; // to avoid multi-threading problems
+	private final static int NORMAL_KEEP_RESOLUTION = 1;
+	private final static int HIGHEST_RESOLUTION = 2;
+	private final static int HIGHEST_RESOLUTION_GPS_DEST = 3;
+	private boolean inSetBestMap = false; // to avoid multi-threading problems
 
 	/**
 	 * loads the best map for lat/lon according to mapChangeModus
@@ -1440,31 +1438,25 @@ public final class MovingMap extends Form implements ICommandListener {
 	 * @param lat
 	 * @param lon
 	 * @param loadIfSameScale
-	 *            false: will not change the map if the better map has the same scale as the current - this is used not to change the map if it covers already the screen completely true: willchange the map, regardless of change in scale
+	 *            false: will not change the map if the better map has the same scale as the current
+	 *            . - this is used not to change the map, if it covers already the screen completely
+	 *            true: willchange the map, regardless of change in scale
 	 */
 	public void setBestMap(CWPoint where, boolean loadIfSameScale) {
-		if (inBestMap)
+		if (inSetBestMap)
 			return;
-		inBestMap = true;
+		inSetBestMap = true;
 		final Object[] s = getRectForMapChange(where);
 		final CWPoint cll = (CWPoint) s[0];
 		final Rect screen = (Rect) s[1];
 		final boolean posCircleOnScreen = ((Boolean) s[2]).booleanValue();
 		MapInfoObject newmap = null;
-		wantMapTest = true;
 		switch (mapChangeModus) {
 		case NORMAL_KEEP_RESOLUTION:
 			lastHighestResolutionGPSDestScale = -1;
 			newmap = maps.getBest(cll, screen, scaleWanted, false, true);
 			if (newmap == null)
 				newmap = currentMap;
-			if (newmap != null) {
-				if (MapsList.scaleEquals(scaleWanted, newmap))
-					wantMapTest = false;
-			}
-			else {
-				wantMapTest = false;
-			}
 			break;
 		case HIGHEST_RESOLUTION:
 			lastHighestResolutionGPSDestScale = -1;
@@ -1499,15 +1491,17 @@ public final class MovingMap extends Form implements ICommandListener {
 			(new MessageBox(MyLocale.getMsg(4207, "Error"), MyLocale.getMsg(4208, "Bug: \nillegal mapChangeModus: ") + mapChangeModus, FormBase.OKB)).execute();
 			break;
 		}
+
 		if (newmap != null && (currentMap == null || !currentMap.getImagePathAndName().equals(newmap.getImagePathAndName()))) {
 			if (loadIfSameScale || !MapsList.scaleEquals(currentMap.scale / currentMap.zoomFactor, newmap)) {
 				// better map found
 				setMap(newmap, where);
 				moveScreenXYtoLatLon(new Point(screen.x, screen.y), cll, true);
 			}
-			inBestMap = false;
+			inSetBestMap = false;
 			return;
 		}
+
 		if (currentMap == null && newmap == null) {
 			// Für die aktuelle Position steht keine Karte zur Verfügung
 			// choosemap calls setmap with posCircle-coords
@@ -1522,7 +1516,7 @@ public final class MovingMap extends Form implements ICommandListener {
 					(new MessageBox(MyLocale.getMsg(4207, "Error"), MyLocale.getMsg(4210, "Moving map cannot run without a map - please select one. \n You can select an empty map"), FormBase.OKB)).execute();
 			}
 		}
-		inBestMap = false;
+		inSetBestMap = false;
 	}
 
 	public void setResModus(int modus) {
@@ -1717,11 +1711,11 @@ public final class MovingMap extends Form implements ICommandListener {
 		try {
 			Vm.showWait(true);
 			dontUpdatePos = true; // make updatePosition ignore calls during loading new map
-			Global.pref.log(MyLocale.getMsg(4216, "Loading map...") + newmap.getMapImageFileName().getMapNameForList(newmap.getMapType()));
+			Global.pref.log(MyLocale.getMsg(4216, "Loading map...") + newmap.getMapNameForList());
 			MapImage mainMap = mmp.getMainMap();
 			try {
 				currentMap = newmap;
-				title = currentMap.getMapImageFileName().getMapNameForList(currentMap.getMapType());
+				title = currentMap.getMapNameForList();
 
 				// neccessary to make updateposition to test if the current map is the best one for the GPS-Position
 				lastCompareX = Integer.MAX_VALUE;
@@ -1847,9 +1841,13 @@ public final class MovingMap extends Form implements ICommandListener {
 		repaint();
 	}
 
-	/*
-	 * public void setZoomingMode() { repaintNow(); zoomingMode = true; }
-	 */
+	private void setShowCachesOnMap(boolean value) {
+		if (value != Global.pref.showCachesOnMap) {
+			Global.pref.showCachesOnMap = value;
+			updatePositionOfMapElements();
+		}
+	}
+
 	/**
 	 * zommes in if w>0 and out if w<0
 	 * 
@@ -2035,8 +2033,9 @@ public final class MovingMap extends Form implements ICommandListener {
 			if (fc.execute() != FormBase.IDCANCEL) {
 				Global.pref.saveCustomMapsPath(fc.getChosen().toString());
 				mapsloaded = false;
-				loadMaps(posCircle.where.latDec);
-				updatePosition(posCircle.where);
+				forceMapLoad = true;
+				initMaps(posCircle.where);
+				//updatePosition(posCircle.where);
 			}
 			return true;
 		}
@@ -2767,10 +2766,10 @@ class ListBox extends Form {
 					mio = ml.getMap();
 				}
 				if (mio.isInBound(Gps.latDec, Gps.lonDec) && mio.isInBound(gotopos)) {
-					list.addItem(i + ": " + mio.getMapImageFileName().getMapNameForList(mio.getMapType()));
+					list.addItem(i + ": " + mio.getMapNameForList());
 					row++;
 					inList[i] = true;
-					if (!curMapFound && curMap != null && mio.getMapImageFileName().getMapNameForList(mio.getMapType()).equals(curMap.getMapImageFileName().getMapNameForList(curMap.getMapType()))) {
+					if (!curMapFound && curMap != null && mio.getMapNameForList().equals(curMap.getMapNameForList())) {
 						oldmap = row;
 						curMapFound = true;
 					}
@@ -2791,10 +2790,10 @@ class ListBox extends Form {
 					mio = ml.getMap();
 				}
 				if (mio.isInBound(Gps.latDec, Gps.lonDec)) {
-					list.addItem(i + ": " + mio.getMapImageFileName().getMapNameForList(mio.getMapType()));
+					list.addItem(i + ": " + mio.getMapNameForList());
 					row++;
 					inList[i] = true;
-					if (!curMapFound && curMap != null && mio.getMapImageFileName().getMapNameForList(mio.getMapType()).equals(curMap.getMapImageFileName().getMapNameForList(curMap.getMapType()))) {
+					if (!curMapFound && curMap != null && mio.getMapNameForList().equals(curMap.getMapNameForList())) {
 						oldmap = row;
 						curMapFound = true;
 					}
@@ -2813,10 +2812,10 @@ class ListBox extends Form {
 					mio = ml.getMap();
 				}
 				if (mio.isInBound(gotopos)) {
-					list.addItem(i + ": " + mio.getMapImageFileName().getMapNameForList(mio.getMapType()));
+					list.addItem(i + ": " + mio.getMapNameForList());
 					row++;
 					inList[i] = true;
-					if (!curMapFound && curMap != null && mio.getMapImageFileName().getMapNameForList(mio.getMapType()).equals(curMap.getMapImageFileName().getMapNameForList(curMap.getMapType()))) {
+					if (!curMapFound && curMap != null && mio.getMapNameForList().equals(curMap.getMapNameForList())) {
 						oldmap = row;
 						curMapFound = true;
 					}
@@ -2828,9 +2827,9 @@ class ListBox extends Form {
 		for (int i = 0; i < maps.size(); i++) {
 			ml = (MapListEntry) maps.get(i);
 			if (!inList[i]) {
-				list.addItem(i + ": " + ml.getMapImageFileName().getMapNameForList(ml.getMapType()));
+				list.addItem(i + ": " + ml.getMapNameForList());
 				row++;
-				if (!curMapFound && curMap != null && ml.getMapImageFileName().getMapNameForList(ml.getMapType()).equals(curMap.getMapImageFileName().getMapNameForList(curMap.getMapType()))) {
+				if (!curMapFound && curMap != null && ml.getMapNameForList().equals(curMap.getMapNameForList())) {
 					oldmap = row;
 					curMapFound = true;
 				}
