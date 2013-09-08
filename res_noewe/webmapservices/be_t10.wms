@@ -1,7 +1,7 @@
 TakenFromUrl:       http://www.ngi.be/testbed/
 GetCapabilitiesUrl: http://www.ngi.be/testbed/wms/top10r_l08_fr?SERVICE=WMS&VERSION=1.1.1&REQUEST=GetCapabilities
-Name:               be t10
-MapType:                        topo
+Name:               be NGI Top10
+MapType:            be Top10R
 MainUrl:            http://www.ngi.be/testbed/wms/top10r_l08_fr?
 ServiceTypeUrlPart: SERVICE=WMS
 VersionUrlPart:     VERSION=1.1.1
@@ -11,11 +11,15 @@ RequestUrlPart:     REQUEST=GetMap
 #LayersUrlPart:     LAYERS=0|TOP10R||
 LayersUrlPart:     LAYERS=0
 StylesUrlPart:     STYLES=
-ImageFormatUrlPart:FORMAT=image/png
+ImageFormatUrlPart:FORMAT=image/jpeg
 BoundingBoxTopLeftWGS84: N 51.6081 E 2.3039
 BoundingBoxButtomRightWGS84: N 49.3489 E 6.7800
 #BBox_Mitte: N 50.4784805 E 4.5419475
-MinScale:   0
-MaxScale:   1000
+MinScale:   0.5
+MaxScale:   3.5
 RecommendedScale:   1
-ImageFileExtension: .png
+ImageFileExtension: .jpg
+MinPixelSize: 200
+MaxPixelSize: 1000
+RecommendedWidthPixelSize: 1000
+RecommendedHeightPixelSize: 1000
