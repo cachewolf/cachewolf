@@ -1,7 +1,11 @@
+#Die Digitale Topographische Karte 1:25 000 (DTK25) ist das Nachfolgekartenwerk der Topographischen Karte 1:25.000 (TK25). Die DTK25 ist somit der erste Repräsentant einer neuen Generation von amtlichen topographischen Karten, die weitgehend automatisch aus den objektstrukturierten Daten des Digitalen Landschaftsmodells ATKIS-DLM abgleitet ist. 
+#Das Kartenwerk der DTK25 der Bundesrepublik Deutschland besteht in seinem nordrhein-westfälischen Anteil aus 270 Kartenblättern. Jedes Kartenblatt hat ein Kartenbildformat von ca. 45 cm x 47 cm und gibt eine Fläche von ca. 125 km² auf der Erdoberfläche wieder. Die Einteilung der Blätter erfolgt nach geographischen Koordinaten. Jedes Blatt ist 10 Längenminuten breit und 6 Breitenminuten hoch. Jedes Blatt der DTK25 wird durch eine vierstellige Nummer und durch den Namen der größten auf ihr dargestellten Stadt oder Gemeinde bezeichnet.
+#Der Maßstab 1:25 000 ist das traditionsreichste Kartenwerk der deutschen Landesvermessung. Es entstand vor etwa 200 Jahren als erste systematische topographische Landesaufnahme, die mit dem damals neu entwickelten Messtisch durchgeführt wurde. Deshalb werden die Kartenblätter dieses Maßstabes bis heute auch Messtischblätter genannt.Die TK25 in Nordrhein-Westfalen entstand in der Zeit von 1892 bis 1912. Im Laufe von mehr als 100 Jahren ihrer Existenz wurden die einzelnen Kartenblätter in ihren Inhalten ständig aktualisiert und die kartographischen Bearbeitungsverfahren dem Stand der jeweiligen technischen Entwicklung angepasst. Auch die Kartengraphik wurde modernisiert. Am deutlichsten wird dies in der Umstellung des zunächst einfarbigen Kartenwerks auf ein mehrfarbiges Kartenwerk in den 50er und 60er Jahren des 20. Jahrhunderts. 
+#Die TK25 wurde Anfang des Jahres 2008 durch die DTK25 abgelöst.
 TakenFromUrl:       http://www.geoserver.nrw.de/gbdatenIT.NRW.html#5
 GetCapabilitiesUrl: http://www.wms.nrw.de/geobasis/adv_dtk25?SERVICE=WMS&VERSION=1.1.1&REQUEST=GetCapabilities
-Name:               de.nw t25
-MapType:                        topo
+Name:               de.nw Topographische Karte 1:25 000
+MapType:            de.nw DTK25
 MainUrl:            http://www.wms.nrw.de/geobasis/adv_dtk25?
 ServiceTypeUrlPart: SERVICE=WMS
 VersionUrlPart:     VERSION=1.1.1
@@ -16,7 +20,11 @@ ImageFormatUrlPart:FORMAT=image/png
 BoundingBoxTopLeftWGS84: N 52.5850 E 5.7043
 BoundingBoxBottomRightWGS84: N 50.2178 E 9.5219
 #BBox_Mitte: N 51.4014 E 7.61312
-MinScale:   0.5
-MaxScale:   18
-RecommendedScale:    2.5 1 2 6.5
+MinScale:   0.3
+MaxScale:   12
+RecommendedScale:    2.5 1 5
 ImageFileExtension: .png
+MinPixelSize: 200
+MaxPixelSize: 1000
+RecommendedWidthPixelSize: 1000
+RecommendedHeightPixelSize: 1000
