@@ -1,7 +1,7 @@
 ﻿TakenFromUrl:       http://www.lgln.niedersachsen.de?
 GetCapabilitiesUrl: http://www.geobasisdaten.niedersachsen.de/bestand?SERVICE=WMS&VERSION=1.1.1&REQUEST=GetCapabilities
-Name:               de.Niedersachsen t25
-MapType:                        topo
+Name:               de.Niedersachsen LGLN Bestand
+MapType:            de.ni lgln
 MainUrl:            http://www.geobasisdaten.niedersachsen.de/bestand?
 ServiceTypeUrlPart: SERVICE=WMS
 VersionUrlPart:     VERSION=1.1.1
@@ -34,3 +34,7 @@ MinScale:   2
 MaxScale:   60
 RecommendedScale:    2.5 1 5 7.5
 ImageFileExtension: .jpg
+MinPixelSize: 200
+MaxPixelSize: 2000
+RecommendedWidthPixelSize: 1000
+RecommendedHeightPixelSize: 1000

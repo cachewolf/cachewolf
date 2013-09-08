@@ -310,6 +310,7 @@ public class MapLoader {
 		File fn = new File(path + imagename + ".wfl");
 		File fn1 = new File(fName);
 		if (!fn.exists() || fn.length() == 0 || !fn1.exists() || fn1.length() == 0) {
+			Global.pref.log(url);
 			downloadImage(url, fName);
 			mio.saveWFL();
 		}
@@ -843,7 +844,7 @@ class WebMapService extends OnlineMapService {
 			if (!TransformCoordinates.isSupported(coordinateReferenceSystem[i]))
 				throw new IllegalArgumentException(MyLocale.getMsg(4815, "Coordinate reference system not supported by CacheWolf:\n") + coordinateReferenceSystem[i]);
 		}
-		tmp = wms.getProperty("CoordinateReferenceSystemUrlPart", "").trim();
+		tmp = STRreplace.replace(wms.getProperty("CoordinateReferenceSystemUrlPart", "").trim(), ":", "%3A");
 		if (tmp == "")
 			throw new IllegalArgumentException(MyLocale.getMsg(4816, "WebMapService: property >CoordinateReferenceSystemUrlPart:< missing in file:\n") + filename);
 		tmp2 = mString.split(tmp, ' ');
@@ -857,7 +858,7 @@ class WebMapService extends OnlineMapService {
 				throw new IllegalArgumentException(MyLocale.getMsg(4820, "WebMapService: property >CoordinateReferenceSystemUrlPart:< incorrect in file:\n") + filename);
 		}
 		requestUrlPart = wms.getProperty("RequestUrlPart", "REQUEST=GetMap").trim();
-		imageFormatUrlPart = wms.getProperty("ImageFormatUrlPart", "").trim();
+		imageFormatUrlPart = STRreplace.replace(wms.getProperty("ImageFormatUrlPart", "").trim(), "/", "%2F");
 		stylesUrlPart = wms.getProperty("StylesUrlPart", "").trim();
 		String topleftS = wms.getProperty("BoundingBoxTopLeftWGS84", "").trim();
 		String bottomrightS = wms.getProperty("BoundingBoxBottomRightWGS84");
@@ -1007,17 +1008,18 @@ class WebMapService extends OnlineMapService {
 		else
 			throw new IllegalArgumentException(MyLocale.getMsg(4828, "Coordinate system not supported by cachewolf:") + " " + coordinateReferenceSystem.toString());
 		String ret = MainUrl //
-				+ serviceTypeUrlPart//
+				+ layersUrlPart //
+				+ "&" + imageFormatUrlPart//
+				+ "&" + serviceTypeUrlPart//
 				+ "&" + versionUrlPart //
 				+ "&" + requestUrlPart //
+				+ "&" + stylesUrlPart //
 				+ "&" + coordinateReferenceSystemUrlPart[crs] //
 				+ "&" + bbox //
 				+ "&" + "WIDTH=" + SizeInPixels.x //
 				+ "&" + "HEIGHT=" + SizeInPixels.y //
-				+ "&" + layersUrlPart //
-				+ "&" + stylesUrlPart //
-				+ "&" + imageFormatUrlPart;
-		Global.pref.log(" WGS84: Bottom left: " + bottomleft.toString(TransformCoordinates.DD) + "top right: " + topright.toString(TransformCoordinates.DD));
+		;
+		// Global.pref.log(" WGS84: Bottom left: " + bottomleft.toString(TransformCoordinates.DD) + "top right: " + topright.toString(TransformCoordinates.DD));
 		return ret;
 	}
 
