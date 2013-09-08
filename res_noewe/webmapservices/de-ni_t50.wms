@@ -1,7 +1,7 @@
 ﻿TakenFromUrl:       http://www.geodaten.niedersachsen.de/
 GetCapabilitiesUrl: http://geoportal.geodaten.niedersachsen.de/geodatenportal/servlet/gtEntryPoint?SERVICE=WMS&VERSION=1.1.1&REQUEST=GetCapabilities
 Name:               de.Niedersachsen t50
-MapType:                        topo
+MapType:            de.ni t50
 MainUrl:            http://geoportal.geodaten.niedersachsen.de/geodatenportal/servlet/gtEntryPoint?
 ServiceTypeUrlPart: SERVICE=WMS
 VersionUrlPart:     VERSION=1.1.1
@@ -218,3 +218,7 @@ MinScale:   0
 MaxScale:   16
 RecommendedScale:    5 1 10
 ImageFileExtension: .jpg
+MinPixelSize: 200
+MaxPixelSize: 2000
+RecommendedWidthPixelSize: 1000
+RecommendedHeightPixelSize: 1000
