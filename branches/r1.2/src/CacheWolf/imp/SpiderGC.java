@@ -2343,7 +2343,7 @@ public class SpiderGC {
 		int num = 100;
 
 		boolean foundByMe = false;
-		if (completeWebPage.indexOf("ctl00_ContentBody_hlFoundItLog") > -1) {
+		if (completeWebPage.indexOf("ctl00_ContentBody_GeoNav_logText") > -1) {
 			foundByMe = true;
 		}
 		else {
