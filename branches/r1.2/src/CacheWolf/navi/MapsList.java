@@ -635,9 +635,9 @@ public final class MapsList extends Vector {
 
 	/**
 	 * 
-	 * @param lat
+	 * @param ll
+	 *            lat/lon
 	 *            a point to be inside the map
-	 * @param lon
 	 * @param screen
 	 *            : width, height of the screen. The map must overlap the screen. xy: where is lat/lon on screen
 	 * @param curScale
@@ -726,22 +726,22 @@ public final class MapsList extends Vector {
 	/**
 	 * returns an area in lat/lon of the screen
 	 * 
-	 * @param a
-	 *            screen width / height and position of lat/lon on the screen
-	 * @param lat
+	 * @param screen
+	 *            screen width/height and x/y position on the screen of lat/lon
+	 * @param ll
+	 *            lat/lon
 	 *            a (reference) point on the screen
-	 * @param lon
 	 * @param scale
 	 *            scale (meters per pixel) of the map for which the screen edges are wanted
 	 * @param map
 	 *            map for which the screen edges are wanted
 	 * @return Area
 	 */
-	private Area getAreaForScreen(Rect a, CWPoint ll, float scale, MapInfoObject map) {
+	private Area getAreaForScreen(Rect screen, CWPoint ll, float scale, MapInfoObject map) {
 		Area ret = null;
 		Point xy = map.calcMapXY(ll);
-		Point topleft = new Point(xy.x - a.x, xy.y - a.y);
-		ret = new Area(map.calcLatLon(topleft), map.calcLatLon(topleft.x + a.width, topleft.y + a.height));
+		Point topleft = new Point(xy.x - screen.x, xy.y - screen.y);
+		ret = new Area(map.calcLatLon(topleft), map.calcLatLon(topleft.x + screen.width, topleft.y + screen.height));
 		return ret;
 	}
 

@@ -128,6 +128,8 @@ public final class CacheType {
 	public static final byte CW_TYPE_REFERENCE = 55;
 	/** unrecognized cache type or missing information */
 	public static final byte CW_TYPE_ERROR = -1;
+	public static final byte CW_TYPE_APE = 102;
+	public static final byte CW_TYPE_MAZE = 103;
 	String[] ggpx = { "Geocache|Custom", "Custom", "Custom", "" };
 	private static final byte found = 0;
 	private static final byte archived = 1;
@@ -154,13 +156,16 @@ public final class CacheType {
 			new CTyp(CW_TYPE_CITO, CW_TYPE_CITO, 'C', "13", "13", "", (byte) -115, 'X', "typeCito.png", new String[] { "Geocache|Cache In Trash Out Event", "Geocache", "Cache In Trash Out Event", "CITO" }, 13, 10, 17, 0x020000),
 			new CTyp(CW_TYPE_EARTH, CW_TYPE_EARTH, 'C', "137", "137", "", (byte) 9, 'E', "typeEarth.png", new String[] { "Geocache|Earthcache", "Geocache", "Earthcache", "Earth" }, 18, 11, 7, 0x000400),
 			new CTyp(CW_TYPE_WHEREIGO, CW_TYPE_WHEREIGO, 'C', "1858", "1858", "", (byte) 100, 'G', "typeWhereigo.png", new String[] { "Geocache|Wherigo Cache", "Geocache", "Wherigo Cache", "Wherigo" }, 15, 12, 18, 0x040000),
+			// todo definitions for Filter and Filterselection for APE and MAZE
+			new CTyp(CW_TYPE_APE, (byte) 102, 'C', "", "9", "", (byte) -1, 'A', "typeApe.png", new String[] { "Geocache|Project APE Cache", "Geocache", "Project APE Cache", "APE" }, 16, 13, -1, 0),
+			new CTyp(CW_TYPE_MAZE, (byte) 103, 'C', "", "1304", "", (byte) -1, 'Z', "typeMaze.png", new String[] { "Geocache|GPS Adventures Exhibit", "Geocache", "GPS Adventures Exhibit", "MAZE" }, 17, 14, -1, 0),
 			// additional waypoints
-			new CTyp(CW_TYPE_PARKING, CW_TYPE_PARKING, 'A', "50", "", "", (byte) -78, 'P', "typeParking.png", new String[] { "Waypoint|Parking Area", "Parking Area", "Parking Area", "" }, 50, 13, 11, 0x000800),
-			new CTyp(CW_TYPE_STAGE, CW_TYPE_STAGE, 'A', "51", "", "", (byte) -77, 'S', "typeStage.png", new String[] { "Waypoint|Stages of a Multicache", "Stages of a Multicache", "Stages of a Multicache", "" }, 51, 14, 12, 0x001000),
-			new CTyp(CW_TYPE_QUESTION, CW_TYPE_QUESTION, 'A', "52", "", "", (byte) -76, 'Q', "typeQuestion.png", new String[] { "Waypoint|Question to Answer", "Question to Answer", "Question to Answer", "" }, 52, 15, 13, 0x002000),
-			new CTyp(CW_TYPE_FINAL, CW_TYPE_FINAL, 'A', "53", "", "", (byte) -75, 'F', "typeFinal.png", new String[] { "Waypoint|Final Location", "Final Location", "Final Location", "" }, 53, 16, 14, 0x004000),
-			new CTyp(CW_TYPE_TRAILHEAD, CW_TYPE_TRAILHEAD, 'A', "54", "", "", (byte) -74, 'H', "typeTrailhead.png", new String[] { "Waypoint|Trailhead", "Trailhead", "Trailhead", "" }, 54, 17, 15, 0x008000),
-			new CTyp(CW_TYPE_REFERENCE, CW_TYPE_REFERENCE, 'A', "55", "", "", (byte) -73, 'R', "typeReference.png", new String[] { "Waypoint|Reference Point", "Reference Point", "Reference Point", "" }, 55, 18, 16, 0x010000),
+			new CTyp(CW_TYPE_PARKING, CW_TYPE_PARKING, 'A', "50", "", "", (byte) -78, 'P', "typeParking.png", new String[] { "Waypoint|Parking Area", "Parking Area", "Parking Area", "" }, 50, 15, 11, 0x000800),
+			new CTyp(CW_TYPE_STAGE, CW_TYPE_STAGE, 'A', "51", "", "", (byte) -77, 'S', "typeStage.png", new String[] { "Waypoint|Stages of a Multicache", "Stages of a Multicache", "Stages of a Multicache", "" }, 51, 16, 12, 0x001000),
+			new CTyp(CW_TYPE_QUESTION, CW_TYPE_QUESTION, 'A', "52", "", "", (byte) -76, 'Q', "typeQuestion.png", new String[] { "Waypoint|Question to Answer", "Question to Answer", "Question to Answer", "" }, 52, 17, 13, 0x002000),
+			new CTyp(CW_TYPE_FINAL, CW_TYPE_FINAL, 'A', "53", "", "", (byte) -75, 'F', "typeFinal.png", new String[] { "Waypoint|Final Location", "Final Location", "Final Location", "" }, 53, 18, 14, 0x004000),
+			new CTyp(CW_TYPE_TRAILHEAD, CW_TYPE_TRAILHEAD, 'A', "54", "", "", (byte) -74, 'H', "typeTrailhead.png", new String[] { "Waypoint|Trailhead", "Trailhead", "Trailhead", "" }, 54, 19, 15, 0x008000),
+			new CTyp(CW_TYPE_REFERENCE, CW_TYPE_REFERENCE, 'A', "55", "", "", (byte) -73, 'R', "typeReference.png", new String[] { "Waypoint|Reference Point", "Reference Point", "Reference Point", "" }, 55, 20, 16, 0x010000),
 			// error on waypoint
 			new CTyp(CW_TYPE_ERROR, CW_TYPE_ERROR, 'E', "", "", "", (byte) -1, '-', "guiError.png", new String[] { "", "", "", "" }, 49, -1, -1, 0),
 			// mapped types (recognized on input from gpx or download-spider / or cw - version)
@@ -169,8 +174,6 @@ public final class CacheType {
 			new CTyp(CW_TYPE_UNKNOWN, (byte) 9, 'C', "9", "", "9", (byte) -119, 'U', "", new String[] { "Geocache|Moving", "Geocache", "Moving", "Moving" }, 9, -1, -1, 0),
 			new CTyp(CW_TYPE_TRADITIONAL, (byte) 10, 'C', "10", "", "10", (byte) -118, 'U', "", new String[] { "Geocache|DriveIn", "Geocache", "DriveIn", "DriveIn" }, 10, -1, -1, 0),
 			new CTyp(CW_TYPE_EVENT, (byte) 14, 'C', "", "3653", "", (byte) -1, 'X', "", new String[] { "Geocache|Lost and Found Event Cache", "Geocache", "Lost and Found Event Cache", "" }, 6, -1, -1, 0),
-			new CTyp(CW_TYPE_TRADITIONAL, (byte) 102, 'C', "", "9", "", (byte) -1, 'T', "", new String[] { "Geocache|Project APE Cache", "Geocache", "Project APE Cache", "APE" }, 16, -1, -1, 0),
-			new CTyp(CW_TYPE_EVENT, (byte) 103, 'C', "", "1304", "", (byte) -1, 'X', "", new String[] { "Geocache|GPS Adventures Exhibit", "Geocache", "GPS Adventures Exhibit", "MAZE" }, 17, -1, -1, 0),
 			new CTyp(CW_TYPE_UNKNOWN, (byte) 108, 'C', "", "", "8", (byte) -1, 'U', "", new String[] { "only on OC download", "", "", "" }, 19, -1, -1, 0),
 			new CTyp(CW_TYPE_WHEREIGO, (byte) 15, 'C', "", "", "", (byte) -62, 'G', "", new String[] { "Hack for V2 Typ", "", "", "" }, -1, -1, -1, 0), };
 	// public static final int anzCacheTyps=cTypRef.length;
