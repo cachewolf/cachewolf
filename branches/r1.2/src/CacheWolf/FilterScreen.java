@@ -70,7 +70,7 @@ public class FilterScreen extends Form {
 	private mChoice chcDist, chcDiff, chcTerr, chcAttrib;
 	private mCheckBox chkFound, chkNotFound, chkTrad, chkVirtual, chkEvent, chkEarth, chkMega, chkOwned, chkNotOwned, chkMulti, chkLetter, chkWebcam, chkMystery, chkLocless, chkCustom, chkParking, chkStage, chkQuestion, chkFinal, chkTrailhead,
 			chkReference, chkMicro, chkSmall, chkRegular, chkLarge, chkVeryLarge, chkOther, chkCito, chkArchived, chkNotArchived, chkAvailable, chkNotAvailable, chkNW, chkNNW, chkN, chkNNE, chkNE, chkENE, chkE, chkESE, chkSE, chkSSE, chkS, chkSSW,
-			chkSW, chkWSW, chkW, chkWNW, chkWherigo, chkNoCoord;
+			chkSW, chkWSW, chkW, chkWNW, chkWherigo, chkNoCoord, chkApe, chkMaze;
 	private mComboBox chcStatus;
 	private mChoice fltList;
 	private mCheckBox chkUseRegexp;
@@ -241,9 +241,6 @@ public class FilterScreen extends Form {
 
 		pnlCacheTypes.addNext(addImg(CacheType.getTypeImage(CacheType.CW_TYPE_EVENT)));
 		pnlCacheTypes.addNext(chkEvent = new mCheckBox("Event"), CellConstants.DONTSTRETCH, CellConstants.FILL);
-		// todo and definition of Filter in CacheType
-		// pnlCacheTypes.addNext(addImg(CacheType.getTypeImage(CacheType.CW_TYPE_MAZE)));
-		// pnlCacheTypes.addNext(chkEvent = new mCheckBox("Maze"), CellConstants.DONTSTRETCH, CellConstants.FILL);
 		pnlCacheTypes.addNext(addImg(CacheType.getTypeImage(CacheType.CW_TYPE_WEBCAM)));
 		pnlCacheTypes.addLast(chkWebcam = new mCheckBox("Webcam"), CellConstants.DONTSTRETCH, CellConstants.FILL);
 
@@ -259,11 +256,16 @@ public class FilterScreen extends Form {
 
 		pnlCacheTypes.addNext(addImg(CacheType.getTypeImage(CacheType.CW_TYPE_CITO)));
 		pnlCacheTypes.addNext(chkCito = new mCheckBox("Cito-Ev."), CellConstants.DONTSTRETCH, CellConstants.FILL);
-		pnlCacheTypes.addNext(addImg(CacheType.getTypeImage(CacheType.CW_TYPE_CUSTOM)));
-		pnlCacheTypes.addLast(chkCustom = new mCheckBox("Custom"), CellConstants.DONTSTRETCH, CellConstants.FILL);
-
 		pnlCacheTypes.addNext(addImg(CacheType.getTypeImage(CacheType.CW_TYPE_WHEREIGO)));
-		pnlCacheTypes.addNext(chkWherigo = new myChkBox("WherIGo"), CellConstants.DONTSTRETCH, CellConstants.FILL);
+		pnlCacheTypes.addLast(chkWherigo = new myChkBox("WherIGo"), CellConstants.DONTSTRETCH, CellConstants.FILL);
+
+		pnlCacheTypes.addNext(addImg(CacheType.getTypeImage(CacheType.CW_TYPE_APE)));
+		pnlCacheTypes.addNext(chkApe = new myChkBox("Ape"), CellConstants.DONTSTRETCH, CellConstants.FILL);
+		pnlCacheTypes.addNext(addImg(CacheType.getTypeImage(CacheType.CW_TYPE_MAZE)));
+		pnlCacheTypes.addLast(chkMaze = new mCheckBox("Maze"), CellConstants.DONTSTRETCH, CellConstants.FILL);
+
+		pnlCacheTypes.addNext(addImg(CacheType.getTypeImage(CacheType.CW_TYPE_CUSTOM)));
+		pnlCacheTypes.addNext(chkCustom = new mCheckBox("Custom"), CellConstants.DONTSTRETCH, CellConstants.FILL);
 		pnlCacheTypes.addNext(addImg(CacheType.getTypeImage(CacheType.CW_TYPE_DRIVE_IN)));
 		pnlCacheTypes.addLast(addiWptChk = new myChkBox("Add. Wpt"), CellConstants.DONTSTRETCH, CellConstants.FILL);
 
@@ -512,6 +514,8 @@ public class FilterScreen extends Form {
 		chkCustom.state = fltType.charAt(10) == '1';
 		chkCito.state = fltType.charAt(17) == '1';
 		chkWherigo.state = fltType.charAt(18) == '1';
+		chkApe.state = fltType.charAt(19) == '1';
+		chkMaze.state = fltType.charAt(20) == '1';
 
 		// Note addiWptState is set by setColors
 
@@ -603,13 +607,13 @@ public class FilterScreen extends Form {
 
 		// Panel 4 - Cache types
 		boolean allAddis = (chkParking.state && chkStage.state && chkQuestion.state && chkFinal.state && chkTrailhead.state && chkReference.state);
-		if (!(chkTrad.state && chkMulti.state && chkVirtual.state && chkLetter.state && chkEvent.state && chkWebcam.state && chkMystery.state && chkEarth.state && chkLocless.state && chkMega.state && chkCito.state && chkWherigo.state
-				&& chkCustom.state && allAddis))
+		if (!(chkTrad.state && chkMulti.state && chkVirtual.state && chkLetter.state && chkEvent.state && chkWebcam.state && chkMystery.state && chkEarth.state && chkLocless.state && chkMega.state && chkCito.state && chkWherigo.state && chkApe.state
+				&& chkMaze.state && chkCustom.state && allAddis))
 			btnTypes.backGround = COLOR_FILTERACTIVE;
 		else
 			btnTypes.backGround = COLOR_FILTERINACTIVE;
 		if (!(chkTrad.state || chkMulti.state || chkVirtual.state || chkLetter.state || chkEvent.state || chkWebcam.state || chkMystery.state || chkEarth.state || chkLocless.state || chkMega.state || chkCustom.state || chkParking.state
-				|| chkStage.state || chkQuestion.state || chkFinal.state || chkTrailhead.state || chkCito.state || chkWherigo.state || chkReference.state))
+				|| chkStage.state || chkQuestion.state || chkFinal.state || chkTrailhead.state || chkCito.state || chkWherigo.state || chkApe.state || chkMaze.state || chkReference.state))
 			btnTypes.backGround = COLOR_FILTERALL;
 		btnTypes.repaint();
 
@@ -804,7 +808,7 @@ public class FilterScreen extends Form {
 				+ (chkNotFound.state ? "1" : "0") + (chkNotOwned.state ? "1" : "0"));
 		data.setFilterType((chkTrad.state ? "1" : "0") + (chkMulti.state ? "1" : "0") + (chkVirtual.state ? "1" : "0") + (chkLetter.state ? "1" : "0") + (chkEvent.state ? "1" : "0") + (chkWebcam.state ? "1" : "0") + (chkMystery.state ? "1" : "0")
 				+ (chkEarth.state ? "1" : "0") + (chkLocless.state ? "1" : "0") + (chkMega.state ? "1" : "0") + (chkCustom.state ? "1" : "0") + (chkParking.state ? "1" : "0") + (chkStage.state ? "1" : "0") + (chkQuestion.state ? "1" : "0")
-				+ (chkFinal.state ? "1" : "0") + (chkTrailhead.state ? "1" : "0") + (chkReference.state ? "1" : "0") + (chkCito.state ? "1" : "0") + (chkWherigo.state ? "1" : "0"));
+				+ (chkFinal.state ? "1" : "0") + (chkTrailhead.state ? "1" : "0") + (chkReference.state ? "1" : "0") + (chkCito.state ? "1" : "0") + (chkWherigo.state ? "1" : "0") + (chkApe.state ? "1" : "0") + (chkMaze.state ? "1" : "0"));
 		data.setFilterRose((chkNW.state ? "1" : "0") + (chkNNW.state ? "1" : "0") + (chkN.state ? "1" : "0") + (chkNNE.state ? "1" : "0") + (chkNE.state ? "1" : "0") + (chkENE.state ? "1" : "0") + (chkE.state ? "1" : "0")
 				+ (chkESE.state ? "1" : "0") + (chkSE.state ? "1" : "0") + (chkSSE.state ? "1" : "0") + (chkS.state ? "1" : "0") + (chkSSW.state ? "1" : "0") + (chkSW.state ? "1" : "0") + (chkWSW.state ? "1" : "0") + (chkW.state ? "1" : "0")
 				+ (chkWNW.state ? "1" : "0"));
