@@ -1531,14 +1531,14 @@ public final class MovingMap extends Form implements ICommandListener {
 	}
 
 	/**
-	 * method to get a point on the screen which must be included in the map the map methods are looking for.
-	 * If the poscircle is on the screen this will be that point.
-	 * If it is outside then the centre of the screen will be used.
+	 * method to get a point on the screen which must be included in the map the map methods are looking for.<br>
+	 * If the poscircle is on the screen this will be that point.<br>
+	 * If it is outside then the centre of the screen will be used.<br>
+	 * <br>
+	 * returns [0] = CWPoint of that point, [1] Rect describing the screen around it<br>
 	 * 
-	 * returns [0] = CWPoint of that point, [1] Rect describing the screen around it
-	 * 
-	 * @param lat
-	 * @param lon
+	 * @param ll
+	 *            lat / lon
 	 * @return
 	 */
 	public Object[] getRectForMapChange(CWPoint ll) {
@@ -2570,13 +2570,7 @@ class MovingMapPanel extends InteractivePanel implements EventListener {
 						gotoCacheMenuItem = new MenuItem(MyLocale.getMsg(4279, "Goto") + "$g");
 						kontextMenu.addItem(gotoCacheMenuItem);
 						if (!clickedCache.is_found()) {
-							int msgNr = 318; // normal found
-							if (clickedCache.getType() == CacheType.CW_TYPE_WEBCAM) {
-								msgNr = 361;
-							}
-							else if (clickedCache.getType() == CacheType.CW_TYPE_EVENT || clickedCache.getType() == CacheType.CW_TYPE_MEGA_EVENT) {
-								msgNr = 355;
-							}
+							int msgNr = clickedCache.getLogMsgNr();
 							markFoundMenuItem = new MenuItem(MyLocale.getMsg(msgNr, "Found") + "$m");
 							kontextMenu.addItem(markFoundMenuItem);
 						}

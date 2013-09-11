@@ -610,13 +610,7 @@ public class DetailsPanel extends CellPanel {
 				}
 			}
 			else if (ev.target == btnFoundDate) {
-				int msgNr = 318; // normal found
-				if (cache.getType() == CacheType.CW_TYPE_WEBCAM) {
-					msgNr = 361;
-				}
-				else if (cache.getType() == CacheType.CW_TYPE_EVENT || cache.getType() == CacheType.CW_TYPE_MEGA_EVENT) {
-					msgNr = 355;
-				}
+				int msgNr = cache.getLogMsgNr();
 				// DateChooser.dayFirst=true;
 				final DateTimeChooser dc = new DateTimeChooser(Vm.getLocale());
 				dc.title = MyLocale.getMsg(328, "Date found");
@@ -728,13 +722,7 @@ public class DetailsPanel extends CellPanel {
 		// the CacheHolder object which sits in cacheDB
 		// FIXME: so how do we do this??
 
-		int msgNr = 318; // normal found
-		if (cache.getType() == CacheType.CW_TYPE_WEBCAM) {
-			msgNr = 361;
-		}
-		else if (cache.getType() == CacheType.CW_TYPE_EVENT || cache.getType() == CacheType.CW_TYPE_MEGA_EVENT) {
-			msgNr = 355;
-		}
+		int msgNr = cache.getLogMsgNr();
 
 		// Strip the found message if the status contains a date
 		if (chcStatus.getText().startsWith(MyLocale.getMsg(msgNr, "Found")) && chcStatus.getText().length() >= MyLocale.getMsg(msgNr, "Found").length() + 11) {

@@ -1269,7 +1269,7 @@ public class CacheHolder {
 		if (type == CacheType.CW_TYPE_WEBCAM) {
 			msgNr = 361;
 		}
-		else if (type == CacheType.CW_TYPE_EVENT || type == CacheType.CW_TYPE_MEGA_EVENT) {
+		else if (type == CacheType.CW_TYPE_EVENT || type == CacheType.CW_TYPE_MEGA_EVENT || type == CacheType.CW_TYPE_MAZE) {
 			msgNr = 355;
 		}
 		return MyLocale.getMsg(msgNr, "Found");
@@ -1280,7 +1280,7 @@ public class CacheHolder {
 		if (type == CacheType.CW_TYPE_WEBCAM) {
 			msgNr = 361;
 		}
-		else if (type == CacheType.CW_TYPE_EVENT || type == CacheType.CW_TYPE_MEGA_EVENT) {
+		else if (type == CacheType.CW_TYPE_EVENT || type == CacheType.CW_TYPE_MEGA_EVENT || type == CacheType.CW_TYPE_MAZE) {
 			msgNr = 355;
 		}
 		for (int i = 0; i < _logType.length; i++) {
@@ -1514,7 +1514,7 @@ public class CacheHolder {
 			if (type == CacheType.CW_TYPE_WEBCAM) {
 				msgNr = "361";
 			}
-			else if (type == CacheType.CW_TYPE_EVENT || type == CacheType.CW_TYPE_MEGA_EVENT) {
+			else if (type == CacheType.CW_TYPE_EVENT || type == CacheType.CW_TYPE_MEGA_EVENT || type == CacheType.CW_TYPE_MAZE) {
 				msgNr = "355";
 			}
 			for (int i = 1; i < _logType.length; i++) {
@@ -1534,6 +1534,17 @@ public class CacheHolder {
 			}
 		}
 		return gcLogType;
+	}
+
+	public int getLogMsgNr() {
+		int msgNr = 318; // normal found
+		if (type == CacheType.CW_TYPE_WEBCAM) {
+			msgNr = 361;
+		}
+		else if (type == CacheType.CW_TYPE_EVENT || type == CacheType.CW_TYPE_MEGA_EVENT || type == CacheType.CW_TYPE_MAZE) {
+			msgNr = 355;
+		}
+		return msgNr;
 	}
 
 	/**

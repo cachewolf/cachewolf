@@ -231,47 +231,41 @@ public class FilterScreen extends Form {
 
 		pnlCacheTypes.addNext(addImg(CacheType.getTypeImage(CacheType.CW_TYPE_TRADITIONAL)));
 		pnlCacheTypes.addNext(chkTrad = new mCheckBox("Traditonal"), CellConstants.DONTSTRETCH, CellConstants.FILL);
-
 		pnlCacheTypes.addNext(addImg(CacheType.getTypeImage(CacheType.CW_TYPE_MULTI)));
 		pnlCacheTypes.addLast(chkMulti = new mCheckBox("Multi"), CellConstants.DONTSTRETCH, CellConstants.FILL);
 
 		pnlCacheTypes.addNext(addImg(CacheType.getTypeImage(CacheType.CW_TYPE_VIRTUAL)));
 		pnlCacheTypes.addNext(chkVirtual = new mCheckBox("Virtual"), CellConstants.DONTSTRETCH, CellConstants.FILL);
-
 		pnlCacheTypes.addNext(addImg(CacheType.getTypeImage(CacheType.CW_TYPE_LETTERBOX)));
 		pnlCacheTypes.addLast(chkLetter = new mCheckBox("Letterbox"), CellConstants.DONTSTRETCH, CellConstants.FILL);
 
 		pnlCacheTypes.addNext(addImg(CacheType.getTypeImage(CacheType.CW_TYPE_EVENT)));
 		pnlCacheTypes.addNext(chkEvent = new mCheckBox("Event"), CellConstants.DONTSTRETCH, CellConstants.FILL);
-
+		// todo and definition of Filter in CacheType
+		// pnlCacheTypes.addNext(addImg(CacheType.getTypeImage(CacheType.CW_TYPE_MAZE)));
+		// pnlCacheTypes.addNext(chkEvent = new mCheckBox("Maze"), CellConstants.DONTSTRETCH, CellConstants.FILL);
 		pnlCacheTypes.addNext(addImg(CacheType.getTypeImage(CacheType.CW_TYPE_WEBCAM)));
 		pnlCacheTypes.addLast(chkWebcam = new mCheckBox("Webcam"), CellConstants.DONTSTRETCH, CellConstants.FILL);
 
 		pnlCacheTypes.addNext(addImg(CacheType.getTypeImage(CacheType.CW_TYPE_UNKNOWN)));
 		pnlCacheTypes.addNext(chkMystery = new mCheckBox("Mystery"), CellConstants.DONTSTRETCH, CellConstants.FILL);
-
 		pnlCacheTypes.addNext(addImg(CacheType.getTypeImage(CacheType.CW_TYPE_EARTH)));
 		pnlCacheTypes.addLast(chkEarth = new mCheckBox("Earth"), CellConstants.DONTSTRETCH, CellConstants.FILL);
 
 		pnlCacheTypes.addNext(addImg(CacheType.getTypeImage(CacheType.CW_TYPE_LOCATIONLESS)));
 		pnlCacheTypes.addNext(chkLocless = new mCheckBox("Locationless"), CellConstants.DONTSTRETCH, CellConstants.FILL);
-
 		pnlCacheTypes.addNext(addImg(CacheType.getTypeImage(CacheType.CW_TYPE_MEGA_EVENT)));
 		pnlCacheTypes.addLast(chkMega = new mCheckBox("Mega-Ev."), CellConstants.DONTSTRETCH, CellConstants.FILL);
 
 		pnlCacheTypes.addNext(addImg(CacheType.getTypeImage(CacheType.CW_TYPE_CITO)));
 		pnlCacheTypes.addNext(chkCito = new mCheckBox("Cito-Ev."), CellConstants.DONTSTRETCH, CellConstants.FILL);
-
-		//pnlCacheTypes.addLast(addiWptChk = new mCheckBox("Add. Wpt"), CellConstants.DONTSTRETCH, CellConstants.FILL);
-		//pnlCacheTypes.addLast(new mLabel(""));
 		pnlCacheTypes.addNext(addImg(CacheType.getTypeImage(CacheType.CW_TYPE_CUSTOM)));
 		pnlCacheTypes.addLast(chkCustom = new mCheckBox("Custom"), CellConstants.DONTSTRETCH, CellConstants.FILL);
 
 		pnlCacheTypes.addNext(addImg(CacheType.getTypeImage(CacheType.CW_TYPE_WHEREIGO)));
 		pnlCacheTypes.addNext(chkWherigo = new myChkBox("WherIGo"), CellConstants.DONTSTRETCH, CellConstants.FILL);
-
 		pnlCacheTypes.addNext(addImg(CacheType.getTypeImage(CacheType.CW_TYPE_DRIVE_IN)));
-		pnlCacheTypes.addNext(addiWptChk = new myChkBox("Add. Wpt"), CellConstants.DONTSTRETCH, CellConstants.FILL);
+		pnlCacheTypes.addLast(addiWptChk = new myChkBox("Add. Wpt"), CellConstants.DONTSTRETCH, CellConstants.FILL);
 
 		//addiWptChk.modify(0,NotAnEditor);
 		//////////////////////////
