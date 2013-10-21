@@ -35,6 +35,8 @@ import ewe.ui.CellPanel;
 import ewe.ui.ControlEvent;
 import ewe.ui.Event;
 import ewe.ui.mButton;
+import ewe.sys.Convert;
+import ewe.sys.Double;
 
 /**
  * The radar panel. Displays the caches around a centre point.<br>
@@ -51,7 +53,7 @@ public class RadarPanel extends CellPanel {
 	CacheDB cacheDB;
 	myInteractivePanel iActP;
 	double scale;
-	int scaleKm = 30;
+	int scaleKm = 2;
 	int centerX, centerY;
 	int height, width;
 	CacheHolder selectedWaypoint = null;
@@ -59,6 +61,10 @@ public class RadarPanel extends CellPanel {
 	boolean penMoving = false;
 	int x1, y1, x2, y2 = 0;
 	boolean reCenterImage = true;
+
+	final static Color RED = new Color(255, 0, 0);
+	final static Color GREEN = new Color(0, 255, 0);
+	final static Color YELLOW = new Color(255, 255, 0);
 
 	/**
 	 * Constructor for the radar panel.
@@ -176,11 +182,11 @@ public class RadarPanel extends CellPanel {
 						final Graphics gCircle = new Graphics(imgCircle);
 						gCircle.setColor(Color.Black);
 						gCircle.fillRect(0, 0, diag, diag);
-						gCircle.setColor(new Color(255, 0, 0));
+						gCircle.setColor(RED);
 						gCircle.drawEllipse(0, 0, diag, diag);
 						aImg = new AniImage(imgCircle);
 						aImg.setLocation(centerX + drX - diag / 2, centerY + drY - diag / 2);
-						aImg.transparentColor = new Color(0, 0, 0);
+						aImg.transparentColor = Color.Black;
 						aImg.properties = mImage.IsNotHot;
 						iActP.addImage(aImg);
 					}
@@ -210,37 +216,55 @@ public class RadarPanel extends CellPanel {
 		}
 		centerX = (width / 2);
 		centerY = (height / 2);
-		// centerY = (int)(centerY-centerY*0.15);
-		g.setColor(new Color(0, 255, 0));
-		int radstep = 0, steps = 0, radius = 0;
 
-		if (width > height) {
-			radstep = (int) (10 / scale);
-			steps = (width / radstep);
-		} else {
-			radstep = (int) (10 / scale);
-			steps = (height / radstep);
+		g.setColor(GREEN);
+		// Draw rings each 10 km
+		for (int i = 1; i <= scaleKm/10; i++) {
+			drawRangeRing(g, (float)(i * 10));
 		}
-		for (int i = 1; i <= steps; i++) {
-			radius = (radstep * i) * 2;
-			g.drawEllipse(centerX - radius / 2, centerY - radius / 2, radius, radius);
+
+		// Draw 1 to 5 km rings only if we have zoomed in (useful for cities with high density of caches)
+		if (scaleKm <= 25) {
+			g.setColor(YELLOW);
+			drawRangeRing(g, 5.0f);
+			if (scaleKm <= 10) {
+				drawRangeRing(g, 2.0f);
+				drawRangeRing(g, 1.0f);
+			}
+			if (scaleKm <= 5) {
+				drawRangeRing(g, 0.5f);
+			}
 		}
 		g.drawLine(centerX, 0, centerX, height);
 		g.drawLine(0, centerY, width, centerY);
 
-		// Show 1 KM radius only if we have zoomed in (useful for cities with high density of caches)
-		if (scaleKm <= 20) {
-			g.setColor(new Color(255, 255, 0)); // Yellow for 1km circle
-			radius = radstep / 5;
-			g.drawEllipse(centerX - radius / 2, centerY - radius / 2, radius, radius);
-			g.free();
-		}
+		g.free();
 		final AniImage aImg = new AniImage(img);
 		// iActP.addImage(aImg);
 		iActP.backgroundImage = img;
 		final int xPos = (pref.myAppWidth / 2 - width / 2);
 		aImg.setLocation(xPos, 0);
 		aImg.refresh();
+	}
+
+	public void drawRangeRing(Graphics g, float radius) {
+		int pixelRadius = (int)(radius / scale);
+		g.drawEllipse(centerX - pixelRadius, centerY - pixelRadius, pixelRadius * 2, pixelRadius * 2);
+		Double f = new Double();
+		if (radius < 1.0) {
+			f.set(radius * 1000);
+			String s = f.toString(0, 0, 0);
+			g.drawText(s + " m", 
+					centerX - pixelRadius * 7 / 10, // ~ radius / sqrt(2)
+					centerY - pixelRadius * 7 / 10);
+		}
+		else {
+			f.set(radius);
+			String s = f.toString(0, 0, 0);
+			g.drawText(s + " km", 
+					centerX - pixelRadius * 7 / 10, // ~ radius / sqrt(2)
+					centerY - pixelRadius * 7 / 10);
+		}
 	}
 
 	public void onEvent(Event ev) {
