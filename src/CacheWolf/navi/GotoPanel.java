@@ -110,7 +110,7 @@ public final class GotoPanel extends CellPanel {
 
 	/**
 	 * Create GotoPanel
-	 * 
+	 *
 	 * @param Preferences
 	 *            global preferences
 	 * @param MainTab
@@ -169,7 +169,7 @@ public final class GotoPanel extends CellPanel {
 		CoordsP.addLast(lblPosition, CellConstants.HSTRETCH, (CellConstants.HFILL | CellConstants.WEST));
 
 		CoordsP.addNext(lblDST = new mLabel(MyLocale.getMsg(1500, "DST:")), CellConstants.DONTSTRETCH, (CellConstants.DONTFILL | CellConstants.WEST));
-		lblDST.backGround = new Color(0, 0, 255);
+		lblDST.backGround = BLUE;
 		lblDST.setMenu(mnuContextFormt);
 		lblDST.modifyAll(ControlConstants.WantHoldDown, 0);
 
@@ -217,7 +217,7 @@ public final class GotoPanel extends CellPanel {
 
 	/**
 	 * set the coords of the destination
-	 * 
+	 *
 	 * @param dest
 	 *            destination
 	 */
@@ -236,7 +236,7 @@ public final class GotoPanel extends CellPanel {
 
 	/**
 	 * set the coords of the destination and switch to gotoPanel
-	 * 
+	 *
 	 * @param LatLon
 	 *            destination
 	 */
@@ -252,7 +252,7 @@ public final class GotoPanel extends CellPanel {
 
 	/**
 	 * updates distance and bearing
-	 * 
+	 *
 	 */
 
 	public void updateDistance() {
@@ -460,9 +460,9 @@ class GotoRose extends AniImage {
 
 	String m_Luminary = MyLocale.getMsg(6100, "Sun");
 
-	Font mainFont;
-	FontMetrics fm;
-	int lineHeight;
+	Font mainFont, bigFont;
+	FontMetrics fm, fb;
+	int lineHeight, lineHeightBig;
 
 	int roseRadius;
 
@@ -476,6 +476,10 @@ class GotoRose extends AniImage {
 	final static Color DARKGREEN = new Color(0, 192, 0);
 	final static Color CYAN = new Color(0, 255, 255);
 	final static Color MAGENTA = new Color(255, 0, 255);
+	final static Color GREY = new Color(150, 150, 150);
+	final static Color LIGHT_GREY = new Color(200, 200, 200);
+	final static Color ROSE_BORDER_COLOR = new Color(150, 150, 150);
+	final static Color ROSE_TEXT_COLOR = new Color(75, 75, 75);
 
 	/**
 	 * @param gd
@@ -520,7 +524,7 @@ class GotoRose extends AniImage {
 
 	/**
 	 * draw arrows for the directions of movement and destination waypoint
-	 * 
+	 *
 	 * @param ctrl
 	 *            the control to paint on
 	 * @param moveDir
@@ -533,21 +537,25 @@ class GotoRose extends AniImage {
 		g.setColor(Color.White);
 		g.fillRect(0, 0, location.width, location.height);
 
-		int fontSize = location.width / 17;
+		int fontSize    = location.width / 17;
+		int fontSizeBig = location.width / 10;
 		mainFont = GetCorrectedFont(g, "Verdana", Font.BOLD, fontSize);
+		bigFont =  GetCorrectedFont(g, "Verdana", Font.BOLD, fontSizeBig);
 		g.setFont(mainFont);
 		fm = g.getFontMetrics(mainFont);
-		lineHeight = fm.getHeight() + 1;
+		fb = g.getFontMetrics(bigFont);
+		lineHeight = fm.getHeight();
+		lineHeightBig = fb.getHeight();
 		roseRadius = java.lang.Math.min((location.width * 3) / 4, location.height) / 2;
 
 		if (northCentered) {
 			// scale(location.width, location.height, null, 0);
 			// super.doDraw(g, options);
-			drawFullRose(g, 0, new Color(255, 255, 255), new Color(200, 200, 200), new Color(255, 255, 255), new Color(200, 200, 200), new Color(150, 150, 150), new Color(75, 75, 75), 1.0f, true, true);
+			drawFullRose(g, 0, Color.White, LIGHT_GREY, Color.White, LIGHT_GREY, ROSE_BORDER_COLOR, ROSE_TEXT_COLOR, 1.0f, true, true);
 		} else {
 			int radius = (int) (roseRadius * 0.75f);
 
-			g.setPen(new Pen(new Color(150, 150, 150), Pen.SOLID, 3));
+			g.setPen(new Pen(ROSE_BORDER_COLOR, Pen.SOLID, 3));
 			g.drawEllipse(location.width / 2 - radius, location.height / 2 - radius, 2 * radius, 2 * radius);
 		}
 
@@ -560,6 +568,7 @@ class GotoRose extends AniImage {
 
 	private void drawWayPointData(Graphics g) {
 		String strTemp = MyLocale.getMsg(1512, "Waypoint");
+		String strTempVal = "?";
 		g.setColor(Color.DarkBlue);
 		g.fillRect(0, 0, fm.getTextWidth(strTemp) + 4, lineHeight);
 		g.setColor(Color.White);
@@ -590,13 +599,28 @@ class GotoRose extends AniImage {
 		if (newDistance >= 0.0f) {
 			tmp.set(newDistance);
 			if (tmp.value >= threshold) {
-				strTemp = MyLocale.formatDouble(tmp, "0.000") + " " + Metrics.getUnit(bigUnit);
+				strTempVal = MyLocale.formatDouble(tmp, "0.000");
+				strTemp = strTempVal + " " + Metrics.getUnit(bigUnit);
 			} else {
 				tmp.set(Metrics.convertUnit(tmp.value, bigUnit, smallUnit));
-				strTemp = tmp.toString(3, 0, 0) + " " + Metrics.getUnit(smallUnit);
+				strTempVal = tmp.toString(3, 0, 0);
+				strTemp = strTempVal + " " + Metrics.getUnit(smallUnit);
 			}
-		} else
-			strTemp = "--- " + Metrics.getUnit(bigUnit);
+		} else {
+			strTempVal = "---";
+			strTemp = strTempVal + " " + Metrics.getUnit(bigUnit);
+		}
+		// Draw distance inside the compass rose
+		g.setFont(bigFont);
+		g.setPen(new Pen(ROSE_BORDER_COLOR, Pen.SOLID, 1));
+		g.setBrush(new Brush(Color.White, Brush.SOLID));
+		int ellipseWidth = fb.getTextWidth(strTempVal) * 5 / 4;
+		int ellipseHeight = lineHeightBig * 5 / 4;
+		g.fillEllipse((location.width - ellipseWidth) / 2, (location.height - ellipseHeight) / 2, ellipseWidth, ellipseHeight);
+		g.setColor(Color.Black);
+		g.drawText(strTempVal, (location.width - fb.getTextWidth(strTempVal)) / 2, (location.height - lineHeightBig) / 2);
+
+		g.setFont(mainFont);
 		g.drawText(strTemp, 2, lineHeight);
 
 		tmp.set(gotoDir);
@@ -739,7 +763,7 @@ class GotoRose extends AniImage {
 				if (moveDir < 360 && moveDir > -360) {
 					// drawDoubleArrow(g, 360 - moveDir, BLUE, new Color(175,0,0), 1.0f);
 					// drawRose(g, 360 - moveDir, new Color(100,100,100), new Color(200,200,200), 1.0f);
-					drawFullRose(g, 360 - moveDir, new Color(255, 255, 255), new Color(200, 200, 200), new Color(150, 150, 150), new Color(200, 200, 200), new Color(200, 200, 200), new Color(75, 75, 75), 1.0f, false, false);
+					drawFullRose(g, 360 - moveDir, Color.White, LIGHT_GREY, GREY, LIGHT_GREY, ROSE_BORDER_COLOR, ROSE_TEXT_COLOR, 1.0f, false, false);
 
 					int radius = (int) (roseRadius * 0.75f);
 					g.setPen(new Pen(RED, Pen.SOLID, 3));
