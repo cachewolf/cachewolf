@@ -329,6 +329,7 @@ public class KMLExporter extends Exporter {
 		strBuf.append("      </IconStyle>\r\n");
 		strBuf.append("      <LabelStyle>\r\n");
 		strBuf.append("         <color>" + getColor(ch) + "</color>\r\n");
+		strBuf.append("         <scale>" + "0.7" + "</scale>\r\n");
 		strBuf.append("      </LabelStyle>\r\n");
 		strBuf.append("      </Style>\r\n");
 		strBuf.append("   </Placemark>\r\n");
