@@ -81,7 +81,7 @@ class mySerialThread extends mThread{
 			try {
 				sleep(200);
 			} catch (InterruptedException e) {
-				// Global.getPref().log("Ignored exception", e, true);
+				// Global.pref.log("Ignored exception", e, true);
 			}
 			if (comSp != null)	{  
 				comLength = comSp.nonBlockingRead(comBuff, 0 ,comBuff.length);
@@ -108,7 +108,7 @@ class mySerialThread extends mThread{
 			ret = comSp.close(); //compSp == null can happen if a exception occured 
 			try { ewe.sys.mThread.sleep(500); // wait in order to give the system time to close the serial port
 			} catch (InterruptedException e) {
-				// Global.getPref().log("Ignored exception", e, true);
+				// Global.pref.log("Ignored exception", e, true);
 			}
 		}
 		else ret = true;
@@ -133,7 +133,7 @@ class GpsdThread extends mThread {
 		JSONObject response;
 		int proto_major;
 
-		gpsObj = new GPS(Global.getPref().gpsdHost, Global.getPref().gpsdPort);
+		gpsObj = new GPS(Global.pref.gpsdHost, Global.pref.gpsdPort);
 		gpsObj.stream( GPS.WATCH_ENABLE );
 
 		// Check major protocol version:
@@ -160,7 +160,7 @@ class GpsdThread extends mThread {
 			try {
 				sleep(1000);
 			} catch (InterruptedException e) {
-				// Global.getPref().log("Ignored Exception", e, true);
+				// Global.pref.log("Ignored Exception", e, true);
 			}
 
 			if( gpsObj == null ) {
@@ -186,12 +186,12 @@ class GpsdThread extends mThread {
 				if( response.getString( "class" ).equals( "DEVICE" ) &&
 				    response.has( "activated" ) && response.getDouble( "activated" ) != 0 )
 				{	// This is a new device, we need to tell gpsd we want to watch it:
-					Global.getPref().log( "New GPS device, sending WATCH command." );
+					Global.pref.log( "New GPS device, sending WATCH command." );
 					gpsObj.stream( GPS.WATCH_ENABLE );
 				}
 			} catch( Exception e ) {
 				// We will just ignore this JSON object:
-				// Global.getPref().log("Ignored Exception", e, true);
+				// Global.pref.log("Ignored Exception", e, true);
 			}
 		} // while
 	}
@@ -219,9 +219,9 @@ class OldGpsdThread extends mThread{
 	
 	public OldGpsdThread(TextDisplay td) throws IOException {
 		try{
-			gpsdSocket = new Socket(Global.getPref().gpsdHost, Global.getPref().gpsdPort);
+			gpsdSocket = new Socket(Global.pref.gpsdHost, Global.pref.gpsdPort);
 		} catch (IOException e) {
-			throw new IOException(Global.getPref().gpsdHost);
+			throw new IOException(Global.pref.gpsdHost);
 		} // catch (UnsatisfiedLinkError e) {} // TODO in original java-vm 
 		out = td;
 		lastgot = null;
@@ -234,7 +234,7 @@ class OldGpsdThread extends mThread{
 			try {
 				sleep(900);
 			} catch (InterruptedException e) {
-				// Global.getPref().log("Ignored Exception", e, true);
+				// Global.pref.log("Ignored Exception", e, true);
 			}
 			if (gpsdSocket != null)	{
 				gpsResult = getGpsdData("ADPQTV\r\n");
@@ -252,17 +252,17 @@ class OldGpsdThread extends mThread{
 		try {
 			gpsdSocket.write(command.getBytes());
 		} catch (IOException e) {
-			Global.getPref().log("Socket exception", e, true);
+			Global.pref.log("Socket exception", e, true);
 		}
 		try {
 			sleep(100);
 		} catch (InterruptedException e) {
-			// Global.getPref().log("Ignored exception", e, true);
+			// Global.pref.log("Ignored exception", e, true);
 		}
 		try {
 			rcvLength = gpsdSocket.read(rcvBuff);
 		} catch (IOException e) {
-			Global.getPref().log("Socket exception", e, true);
+			Global.pref.log("Socket exception", e, true);
 		}
 		String str = null;
 		if (rcvLength > 0)	{
@@ -434,7 +434,7 @@ public class GPSPortOptions extends SerialPortOptions {
 			if (!gpsRunning){
 				ed_.fromControls();
 
-				switch(Global.getPref().useGPSD) {
+				switch(Global.pref.useGPSD) {
 					case Preferences.GPSD_FORMAT_NEW:
 						txtOutput.setText(MyLocale.getMsg(99999, "Displaying data from gpsd directly (JSON):\n"));
 						try {
@@ -559,7 +559,7 @@ public class GPSPortOptions extends SerialPortOptions {
 				if (gpsPort.nonBlockingRead().indexOf("$GP", 0) >= 0) gpsfound = true;
 			}
 			try {ewe.sys.mThread.sleep(200); } catch (InterruptedException e) {
-				// Global.getPref().log("Ignored exception", e, true);
+				// Global.pref.log("Ignored exception", e, true);
 			}
 		}
 		gpsPort.stop();

@@ -67,13 +67,13 @@ public class PDATravelbugDetailMenu extends PDAMenu {
 	public void actionPerformed(String action) {
 		if (action.equals(DROP)) {
 			Travelbug tb = view.getTravelbug().getTb();
-			int curCacheNo = Global.mainTab.tbP.getSelectedCache();
-			CacheDB cacheDB = Global.getProfile().cacheDB;
+			int curCacheNo = Global.mainTab.tablePanel.getSelectedCache();
+			CacheDB cacheDB = Global.profile.cacheDB;
 			if (curCacheNo >= 0 && curCacheNo < cacheDB.size()) {
 				CacheHolder ch = cacheDB.get(curCacheNo);
 				CacheHolderDetail cacheDetails = ch.getCacheDetails(true);
 				cacheDetails.Travelbugs.add(tb);
-				journeyScreen.model.allTravelbugJourneys.addTbDrop(tb, Global.getProfile().name, ch.getWayPoint());
+				journeyScreen.model.allTravelbugJourneys.addTbDrop(tb, Global.profile.name, ch.getWayPoint());
 				ch.setHas_bugs(true);
 				ch.save();
 				// Set Input fields to the new Values:
@@ -85,8 +85,9 @@ public class PDATravelbugDetailMenu extends PDAMenu {
 			}
 			journeyScreen.setupTBButtons();
 			exit(0);
-		} else if (action.equals(BROWSER)) {
-			SpiderGC spider = new SpiderGC(Global.getPref(), Global.getProfile());
+		}
+		else if (action.equals(BROWSER)) {
+			SpiderGC spider = new SpiderGC();
 			Vm.showWait(true);
 			// First check whether ID is set, if not get it
 			Travelbug tb = view.getTravelbug().getTb();
@@ -102,23 +103,26 @@ public class PDATravelbugDetailMenu extends PDAMenu {
 					else
 						s = "http://www.geocaching.com/track/details.aspx?id=" + tb.getGuid();
 
-					CWWrapper.exec(Global.getPref().browser, s);
-					Global.getPref().log("Executed: \"" + Global.getPref().browser + "\" \"" + s + "\"");
-				} catch (Exception ioex) {
-					Global.getPref().log("Ignored Exception", ioex, true);
+					CWWrapper.exec(Global.pref.browser, s);
+					Global.pref.log("Executed: \"" + Global.pref.browser + "\" \"" + s + "\"");
+				}
+				catch (Exception ioex) {
+					Global.pref.log("Ignored Exception", ioex, true);
 				}
 			}
-			Global.getPref().setOldGCLanguage();
+			Global.pref.setOldGCLanguage();
 			exit(0);
-		} else if (action.equals(SPIDER)) {
+		}
+		else if (action.equals(SPIDER)) {
 			Travelbug tb = view.getTravelbug().getTb();
-			SpiderGC spider = new SpiderGC(Global.getPref(), Global.getProfile());
+			SpiderGC spider = new SpiderGC();
 			Vm.showWait(true);
 
 			// if we have an ID, get mission by ID
 			if (tb.getGuid().length() != 0) {
 				tb.setMission(spider.getBugMissionByGuid(tb.getGuid()));
-			} else {
+			}
+			else {
 				// try to get mission and name by tracking number
 				boolean suceeded = false;
 				if (tb.getTrackingNo().length() != 0) {
@@ -135,9 +139,10 @@ public class PDATravelbugDetailMenu extends PDAMenu {
 			}
 			journeyScreen.model.allTravelbugJourneys.saveTravelbugsFile();
 			Vm.showWait(false);
-			Global.getPref().setOldGCLanguage();
+			Global.pref.setOldGCLanguage();
 			exit(0);
-		} else if (action.equals(DELETE)) {
+		}
+		else if (action.equals(DELETE)) {
 			// LOESCHEN DES TB's aus der Datenbank ist Boese!!!
 			// Erst mal eine Sicherheitesabfrage bauen:
 			int r = PDAOptionPane.showConfirmDialog(this.getFrame(), "Sind Sie Sicher???", "Wollen Sie wirklich den TB löschen??");
@@ -152,7 +157,8 @@ public class PDATravelbugDetailMenu extends PDAMenu {
 					}
 				}
 			}
-		} else if (action.equals(EXIT)) {
+		}
+		else if (action.equals(EXIT)) {
 			boolean changed = false;
 			if (!view.getInpName().text.equals(view.getTravelbug().getTb().getName())) {
 				view.getTravelbug().getTb().setName(view.getInpName().text);

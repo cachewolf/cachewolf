@@ -146,13 +146,13 @@ public class TravelbugJourneyScreen extends Form {
 
 	public TravelbugJourneyScreen(TravelBugJourneyScreenModel newModel) {
 		model = newModel;
-		CacheDB cacheDB = Global.getProfile().cacheDB;
+		CacheDB cacheDB = Global.profile.cacheDB;
 		SplittablePanel split = new SplittablePanel(PanelSplitter.VERTICAL);
 		// On modern PDAs the splitter is to small to move it with the stylus.
 		// We will make it a littler thicker
 		MyLocale.setSplitterSize(split);
 		CellPanel tablepane = split.getNextPanel();
-		int curCacheNo = Global.mainTab.tbP.getSelectedCache();
+		int curCacheNo = Global.mainTab.tablePanel.getSelectedCache();
 		String cache = "";
 		if (curCacheNo >= 0 && curCacheNo < cacheDB.size()) {
 			ch = cacheDB.get(curCacheNo);
@@ -248,13 +248,13 @@ public class TravelbugJourneyScreen extends Form {
 
 		modTbJourneyList.numRows = model.allTravelbugJourneys.size();
 		// Get the columns to display and their widths from preferences
-		modTbJourneyList.columnMap = TableColumnChooser.str2Array(Global.getPref().travelbugColMap, 0, 11, 0, -1);
-		modTbJourneyList.colWidth = TableColumnChooser.str2Array(Global.getPref().travelbugColWidth, 10, 1024, 50, -1);
+		modTbJourneyList.columnMap = TableColumnChooser.str2Array(Global.pref.travelbugColMap, 0, 11, 0, -1);
+		modTbJourneyList.colWidth = TableColumnChooser.str2Array(Global.pref.travelbugColWidth, 10, 1024, 50, -1);
 		modTbJourneyList.numCols = modTbJourneyList.columnMap.length;
 
 		modTbJourneyList.select(0, 12, true);
 		/* Restore the saved setting about showing only non-logged bugs */
-		if (Global.getPref().travelbugShowOnlyNonLogged) {
+		if (Global.pref.travelbugShowOnlyNonLogged) {
 			tcTbJourneyList.toggleNonLogged();
 		}
 		updateNumBugs();
@@ -317,10 +317,12 @@ public class TravelbugJourneyScreen extends Form {
 				Time t = new Time();
 				try {
 					t.parse(foundDate, "y-M-d H:m");
-				} catch (IllegalArgumentException e) {
+				}
+				catch (IllegalArgumentException e) {
 					try {
 						t.parse(foundDate, "y-M-d");
-					} catch (IllegalArgumentException e1) {
+					}
+					catch (IllegalArgumentException e1) {
 						// Can't parse date - should not happen
 					}
 				}
@@ -331,7 +333,8 @@ public class TravelbugJourneyScreen extends Form {
 					if (ev.target == btnFromDate) {
 						model.allTravelbugJourneys.getTBJourney(selectedRow).setFromDate(inpDate.getText());
 						Gui.takeFocus(chkFromLogged, ControlConstants.ByKeyboard);
-					} else {
+					}
+					else {
 						model.allTravelbugJourneys.getTBJourney(selectedRow).setToDate(inpDate.getText());
 						Gui.takeFocus(chkToLogged, ControlConstants.ByKeyboard);
 					}
@@ -351,14 +354,14 @@ public class TravelbugJourneyScreen extends Form {
 			model.allTravelbugJourneys.saveTravelbugsFile();
 			model.allTravelbugJourneys.clear();
 			// Save the flag about showing non-logged journeys only
-			boolean old = Global.getPref().travelbugShowOnlyNonLogged;
-			Global.getPref().travelbugShowOnlyNonLogged = (tcTbJourneyList.mnuToggleList.modifiers & MenuItem.Checked) == MenuItem.Checked;
+			boolean old = Global.pref.travelbugShowOnlyNonLogged;
+			Global.pref.travelbugShowOnlyNonLogged = (tcTbJourneyList.mnuToggleList.modifiers & MenuItem.Checked) == MenuItem.Checked;
 			String travelbugColWidth = modTbJourneyList.getColWidths();
 			// If the preferences changed, save the pref.xml file
 			Vm.showWait(true);
-			if (!Global.getPref().travelbugColWidth.equals(travelbugColWidth) || old != Global.getPref().travelbugShowOnlyNonLogged) {
-				Global.getPref().travelbugColWidth = travelbugColWidth;
-				Global.getPref().savePreferences();
+			if (!Global.pref.travelbugColWidth.equals(travelbugColWidth) || old != Global.pref.travelbugShowOnlyNonLogged) {
+				Global.pref.travelbugColWidth = travelbugColWidth;
+				Global.pref.savePreferences();
 			}
 			// If the list of travelbugs in the cache was modified, we need to
 			// save the cache too
@@ -404,7 +407,8 @@ public class TravelbugJourneyScreen extends Form {
 		public Object getCellData(int row, int col) {
 			if (row == -1) {
 				return TravelbugJourney.getElementNameByNumber(columnMap[col]);
-			} else {
+			}
+			else {
 				int map = columnMap[col];
 				// If we have not yet logged the from or the to, a red dot is
 				// placed in front of the first item
@@ -417,7 +421,8 @@ public class TravelbugJourneyScreen extends Form {
 						iat.addColumn(model.allTravelbugJourneys.getTBJourney(row).getElementByNumber(map));
 						return iat;
 					}
-				} else
+				}
+				else
 					return model.allTravelbugJourneys.getTBJourney(row).getElementByNumber(map);
 			}
 		}
@@ -489,13 +494,15 @@ public class TravelbugJourneyScreen extends Form {
 				// of the table must be sorted
 				if ((tcTbJourneyList.mnuToggleList.modifiers & MenuItem.Checked) == MenuItem.Checked) {
 					model.allTravelbugJourneys.sortFirstHalf(columnMap[cell.x], sortAsc, modTbJourneyList.numRows);
-				} else { // Showing all journeys - sort the full table
+				}
+				else { // Showing all journeys - sort the full table
 					model.allTravelbugJourneys.sort(columnMap[cell.x], sortAsc);
 				}
 				tcTbJourneyList.repaint();
 				Vm.showWait(false);
 				retval = true;
-			} else if (cell != null && cell.y >= 0 && (penEventModifiers & IKeys.SHIFT) > 0) {
+			}
+			else if (cell != null && cell.y >= 0 && (penEventModifiers & IKeys.SHIFT) > 0) {
 				// A range of rows can be marked by shift-click on the first and
 				// last row
 				if (lastRow != -1) { // Second row being marked with shift key
@@ -506,11 +513,13 @@ public class TravelbugJourneyScreen extends Form {
 						toggleSelect(cell.y, lastRow);
 					lastRow = -1;
 					retval = true;
-				} else { // Remember this row as start of range, but don't
-					// toggle yet
+				}
+				else { // Remember this row as start of range, but don't
+					   // toggle yet
 					lastRow = cell.y;
 				}
-			} else { // Single row marked
+			}
+			else { // Single row marked
 				lastRow = -1;
 			}
 			return retval;
@@ -592,7 +601,8 @@ public class TravelbugJourneyScreen extends Form {
 					mnuDropTB.modifiers &= ~MenuItem.Disabled;
 				else
 					mnuDropTB.modifiers |= MenuItem.Disabled;
-			} else {
+			}
+			else {
 				mnuDeleteTB.modifiers |= MenuItem.Disabled;
 				mnuGetMission.modifiers |= MenuItem.Disabled;
 				mnuOpenOnline.modifiers |= MenuItem.Disabled;
@@ -628,7 +638,7 @@ public class TravelbugJourneyScreen extends Form {
 				Travelbug tb = TravelbugPickup.pickupTravelbug(tblSrcCache);
 				if (tb != null) {
 					chDmodified = true;
-					tbModel.allTravelbugJourneys.addTbPickup(tb, Global.getProfile().name, waypoint);
+					tbModel.allTravelbugJourneys.addTbPickup(tb, Global.profile.name, waypoint);
 					modTbJourneyList.numRows = tbModel.allTravelbugJourneys.size();
 					tcTbJourneyList.repaint();
 				}
@@ -637,7 +647,7 @@ public class TravelbugJourneyScreen extends Form {
 				if (selectedRow >= 0 && selectedRow < modTbJourneyList.numRows) {
 					Travelbug tb = tbModel.allTravelbugJourneys.getTBJourney(selectedRow).getTb();
 					chD.Travelbugs.add(tb);
-					tbModel.allTravelbugJourneys.addTbDrop(tb, Global.getProfile().name, waypoint);
+					tbModel.allTravelbugJourneys.addTbDrop(tb, Global.profile.name, waypoint);
 					chDmodified = true;
 					ch.setHas_bugs(true);
 				}
@@ -645,7 +655,7 @@ public class TravelbugJourneyScreen extends Form {
 			}
 			if (selectedItem == mnuNewTB) {
 				TravelbugJourney tbj = new TravelbugJourney("New");
-				tbj.setFromProfile(Global.getProfile().name);
+				tbj.setFromProfile(Global.profile.name);
 				tbj.setFromWaypoint(waypoint);
 				tbModel.allTravelbugJourneys.add(tbj);
 				modTbJourneyList.numRows = tbModel.allTravelbugJourneys.size();
@@ -678,13 +688,14 @@ public class TravelbugJourneyScreen extends Form {
 			}
 			if (selectedItem == mnuGetMission && selectedRow > -1) {
 				TravelbugJourney tbj = tbModel.allTravelbugJourneys.getTBJourney(selectedRow);
-				SpiderGC spider = new SpiderGC(Global.getPref(), Global.getProfile());
+				SpiderGC spider = new SpiderGC();
 				Vm.showWait(true);
 
 				// if we have an ID, get mission by ID
 				if (tbj.getTb().getGuid().length() != 0) {
 					tbj.getTb().setMission(spider.getBugMissionByGuid(tbj.getTb().getGuid()));
-				} else {
+				}
+				else {
 					// try to get mission and name by tracking number
 					boolean suceeded = false;
 					if (tbj.getTb().getTrackingNo().length() != 0) {
@@ -706,11 +717,11 @@ public class TravelbugJourneyScreen extends Form {
 				inpName.setText(tbj.getTb().getName());
 				lblId.setText(tbj.getTb().getGuid());
 				lowerpane.repaint();
-				Global.getPref().setOldGCLanguage();
+				Global.pref.setOldGCLanguage();
 			}
 			if (selectedItem == mnuOpenOnline && selectedRow >= 0) {
 				TravelbugJourney tbj = tbModel.allTravelbugJourneys.getTBJourney(selectedRow);
-				SpiderGC spider = new SpiderGC(Global.getPref(), Global.getProfile());
+				SpiderGC spider = new SpiderGC();
 				Vm.showWait(true);
 				// First check whether ID is set, if not get it
 				if (tbj.getTb().getGuid().length() == 0)
@@ -724,10 +735,11 @@ public class TravelbugJourneyScreen extends Form {
 						else
 							s = "http://www.geocaching.com/track/details.aspx?id=" + tbj.getTb().getGuid();
 
-						CWWrapper.exec(Global.getPref().browser, s);
-						Global.getPref().log("Executed: \"" + Global.getPref().browser + "\" \"" + s + "\"");
-					} catch (Exception ioex) {
-						Global.getPref().log("Ignored Exception", ioex, true);
+						CWWrapper.exec(Global.pref.browser, s);
+						Global.pref.log("Executed: \"" + Global.pref.browser + "\" \"" + s + "\"");
+					}
+					catch (Exception ioex) {
+						Global.pref.log("Ignored Exception", ioex, true);
 					}
 				}
 			}
@@ -735,7 +747,7 @@ public class TravelbugJourneyScreen extends Form {
 				toggleNonLogged();
 			}
 			updateNumBugs();
-			Global.getPref().setOldGCLanguage();
+			Global.pref.setOldGCLanguage();
 		}
 
 		/**
@@ -749,7 +761,8 @@ public class TravelbugJourneyScreen extends Form {
 				tbModel.allTravelbugJourneys.sort(TravelbugJourney.BOTHLOGGED, false);
 				// modListTable.numRows=tblMyTravelbugJourneys.size();
 				modTbJourneyList.numRows = tbModel.allTravelbugJourneys.countNonLogged();
-			} else {
+			}
+			else {
 				modTbJourneyList.numRows = tbModel.allTravelbugJourneys.size();
 			}
 			tcTbJourneyList.repaint();
@@ -760,7 +773,8 @@ public class TravelbugJourneyScreen extends Form {
 			selectedRow = row;
 			if (row >= 0) {
 				modTbJourneyList.showFields(tbModel.allTravelbugJourneys.getTBJourney(row));
-			} else {
+			}
+			else {
 				modTbJourneyList.showFields(new TravelbugJourney(""));
 			}
 		}

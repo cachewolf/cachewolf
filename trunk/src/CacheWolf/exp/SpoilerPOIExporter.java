@@ -24,11 +24,10 @@ package CacheWolf.exp;
 import CacheWolf.CacheHolder;
 import CacheWolf.CacheImages;
 import CacheWolf.Common;
-import CacheWolf.Preferences;
-import CacheWolf.Profile;
+import CacheWolf.Global;
 import CacheWolf.SafeXML;
-import CacheWolf.utils.FileBugfix;
 import CacheWolf.utils.URLUTF8Encoder;
+import ewe.io.File;
 import ewe.sys.Time;
 import ewe.ui.FormBase;
 
@@ -43,7 +42,7 @@ public class SpoilerPOIExporter extends Exporter {
 	private SpoilerPOIExporterScreen infoScreen;
 	private boolean onlySpoiler;
 
-	public SpoilerPOIExporter(Preferences p, Profile prof) {
+	public SpoilerPOIExporter() {
 		super();
 		this.setMask("*.gpx");
 		this.setHowManyParams(LAT_LON);
@@ -98,7 +97,7 @@ public class SpoilerPOIExporter extends Exporter {
 		for (int i = 0; i < images.size(); i++) {
 			filename = images.get(i).getFilename();
 			comment = images.get(i).getTitle();
-			url = profile.dataDir + filename;
+			url = Global.profile.dataDir + filename;
 
 			// POILoader can only work with JPG-Files
 			if (!filename.endsWith(".jpg"))
@@ -107,7 +106,7 @@ public class SpoilerPOIExporter extends Exporter {
 			if (onlySpoiler && (comment.indexOf("oiler") < 1))
 				continue;
 			// check if the file is not deleted
-			if (!(new FileBugfix(url)).exists())
+			if (!(new File(url)).exists())
 				continue;
 
 			picCounter++;

@@ -21,7 +21,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 package CacheWolf;
 
-import CacheWolf.utils.FileBugfix;
 import ewe.io.File;
 import ewe.util.Vector;
 
@@ -100,7 +99,8 @@ public class CacheImages {
 	public int size() {
 		if (this.vector == null) {
 			return 0;
-		} else {
+		}
+		else {
 			return this.vector.size();
 		}
 	}
@@ -159,7 +159,8 @@ public class CacheImages {
 			this.checkForDisplayImages(prefix);
 		if (display == null) {
 			return this;
-		} else {
+		}
+		else {
 			return display;
 		}
 	}
@@ -201,8 +202,8 @@ public class CacheImages {
 			for (int i = 0; i < this.size(); i++) {
 				ImageInfo img = this.get(i);
 				if (CacheImages.optimizeLink(img.getURL()).equals(newUrl) && img.getFilename().equals(pFilename)) {
-					String location = Global.getProfile().dataDir + pFilename;
-					if ((new FileBugfix(location)).exists()) {
+					String location = Global.profile.dataDir + pFilename;
+					if ((new File(location)).exists()) {
 						result = img;
 						break;
 					}
@@ -249,10 +250,10 @@ public class CacheImages {
 			// Check if image file is present in new collection
 			String obsoleteFilename = oldImages.get(i).getFilename();
 			if (!newImages.hasFile(obsoleteFilename)) {
-				String location = Global.getProfile().dataDir + obsoleteFilename;
-				File tmpFile = new FileBugfix(location);
+				String location = Global.profile.dataDir + obsoleteFilename;
+				File tmpFile = new File(location);
 				if (tmpFile.exists() && tmpFile.canWrite()) {
-					Global.getPref().log("Image not longer needed. Deleting: " + obsoleteFilename);
+					Global.pref.log("Image not longer needed. Deleting: " + obsoleteFilename);
 					tmpFile.delete();
 				}
 			}

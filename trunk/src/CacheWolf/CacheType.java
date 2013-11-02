@@ -45,8 +45,8 @@ final class CTyp {
 	public Image _mapImage;
 	public Image[] _modImage = { null, null, null, null, null, null, null };
 
-	public CTyp(byte cwMappedCType, byte cwCType, char cwCGroup, String cwCTypeV1, String gcCTypeSpider, String ocCTypeXmlImport, byte cwCTypeV2, char gpxShortCType, String imageName, String[] gpx, int msgNrCTypeName, int gUIOrder, int filterStringPos,
-			int filterPattern) {
+	public CTyp(byte cwMappedCType, byte cwCType, char cwCGroup, String cwCTypeV1, String gcCTypeSpider, String ocCTypeXmlImport, byte cwCTypeV2, char gpxShortCType, String imageName, String[] gpx, int msgNrCTypeName, int gUIOrder,
+			int filterStringPos, int filterPattern) {
 
 		_cwMappedCType = cwMappedCType;
 		_cwCType = cwCType;
@@ -76,7 +76,7 @@ final class CTyp {
  * Handles all aspects of converting cache type information
  * from and to the various im- and exporters ...
  * converting legacy profiles to current standard
- *
+ * 
  * Do not instantiate this class, only use it in a static way
  */
 public final class CacheType {
@@ -128,6 +128,8 @@ public final class CacheType {
 	public static final byte CW_TYPE_REFERENCE = 55;
 	/** unrecognized cache type or missing information */
 	public static final byte CW_TYPE_ERROR = -1;
+	public static final byte CW_TYPE_APE = 102;
+	public static final byte CW_TYPE_MAZE = 103;
 	String[] ggpx = { "Geocache|Custom", "Custom", "Custom", "" };
 	private static final byte found = 0;
 	private static final byte archived = 1;
@@ -149,18 +151,21 @@ public final class CacheType {
 			new CTyp(CW_TYPE_MEGA_EVENT, CW_TYPE_MEGA_EVENT, 'C', "453", "453", "", (byte) 101, 'X', "typeMegaevent.png", new String[] { "Geocache|Mega-Event Cache", "Geocache", "Mega-Event Cache", "Mega" }, 14, 6, 9, 0x000200),
 			new CTyp(CW_TYPE_WEBCAM, CW_TYPE_WEBCAM, 'C', "11", "11", "5", (byte) -117, 'W', "typeWebcam.png", new String[] { "Geocache|Webcam Cache", "Geocache", "Webcam Cache", "Webcam" }, 11, 7, 5, 0x000020),
 			new CTyp(CW_TYPE_UNKNOWN, CW_TYPE_UNKNOWN, 'C', "8", "8", "", (byte) -120, 'U', "typeUnknown.png", new String[] { "Geocache|Unknown Cache", "Geocache", "Unknown Cache", "Mystery" }, 8, 8, 6, 0x000040),
-			new CTyp(CW_TYPE_LOCATIONLESS, CW_TYPE_LOCATIONLESS, 'C', "12", "12", "", (byte) -116, 'O', "typeLocless.png", new String[] { "Geocache|Locationless (Reverse) Cache", "Geocache", "Locationless (Reverse) Cache", "Locationless" }, 12, 9, 8,
-					0x000080),
+			new CTyp(CW_TYPE_LOCATIONLESS, CW_TYPE_LOCATIONLESS, 'C', "12", "12", "", (byte) -116, 'O', "typeLocless.png", new String[] { "Geocache|Locationless (Reverse) Cache", "Geocache", "Locationless (Reverse) Cache", "Locationless" }, 12, 9,
+					8, 0x000080),
 			new CTyp(CW_TYPE_CITO, CW_TYPE_CITO, 'C', "13", "13", "", (byte) -115, 'X', "typeCito.png", new String[] { "Geocache|Cache In Trash Out Event", "Geocache", "Cache In Trash Out Event", "CITO" }, 13, 10, 17, 0x020000),
 			new CTyp(CW_TYPE_EARTH, CW_TYPE_EARTH, 'C', "137", "137", "", (byte) 9, 'E', "typeEarth.png", new String[] { "Geocache|Earthcache", "Geocache", "Earthcache", "Earth" }, 18, 11, 7, 0x000400),
 			new CTyp(CW_TYPE_WHEREIGO, CW_TYPE_WHEREIGO, 'C', "1858", "1858", "", (byte) 100, 'G', "typeWhereigo.png", new String[] { "Geocache|Wherigo Cache", "Geocache", "Wherigo Cache", "Wherigo" }, 15, 12, 18, 0x040000),
+			// todo definitions for Filter and Filterselection for APE and MAZE
+			new CTyp(CW_TYPE_APE, (byte) 102, 'C', "", "9", "", (byte) -1, 'A', "typeApe.png", new String[] { "Geocache|Project APE Cache", "Geocache", "Project APE Cache", "APE" }, 16, 13, 19, 0x080000),
+			new CTyp(CW_TYPE_MAZE, (byte) 103, 'C', "", "1304", "", (byte) -1, 'Z', "typeMaze.png", new String[] { "Geocache|GPS Adventures Exhibit", "Geocache", "GPS Adventures Exhibit", "MAZE" }, 17, 14, 20, 0x100000),
 			// additional waypoints
-			new CTyp(CW_TYPE_PARKING, CW_TYPE_PARKING, 'A', "50", "", "", (byte) -78, 'P', "typeParking.png", new String[] { "Waypoint|Parking Area", "Parking Area", "Parking Area", "" }, 50, 13, 11, 0x000800),
-			new CTyp(CW_TYPE_STAGE, CW_TYPE_STAGE, 'A', "51", "", "", (byte) -77, 'S', "typeStage.png", new String[] { "Waypoint|Stages of a Multicache", "Stages of a Multicache", "Stages of a Multicache", "" }, 51, 14, 12, 0x001000),
-			new CTyp(CW_TYPE_QUESTION, CW_TYPE_QUESTION, 'A', "52", "", "", (byte) -76, 'Q', "typeQuestion.png", new String[] { "Waypoint|Question to Answer", "Question to Answer", "Question to Answer", "" }, 52, 15, 13, 0x002000),
-			new CTyp(CW_TYPE_FINAL, CW_TYPE_FINAL, 'A', "53", "", "", (byte) -75, 'F', "typeFinal.png", new String[] { "Waypoint|Final Location", "Final Location", "Final Location", "" }, 53, 16, 14, 0x004000),
-			new CTyp(CW_TYPE_TRAILHEAD, CW_TYPE_TRAILHEAD, 'A', "54", "", "", (byte) -74, 'H', "typeTrailhead.png", new String[] { "Waypoint|Trailhead", "Trailhead", "Trailhead", "" }, 54, 17, 15, 0x008000),
-			new CTyp(CW_TYPE_REFERENCE, CW_TYPE_REFERENCE, 'A', "55", "", "", (byte) -73, 'R', "typeReference.png", new String[] { "Waypoint|Reference Point", "Reference Point", "Reference Point", "" }, 55, 18, 16, 0x010000),
+			new CTyp(CW_TYPE_PARKING, CW_TYPE_PARKING, 'A', "50", "", "", (byte) -78, 'P', "typeParking.png", new String[] { "Waypoint|Parking Area", "Parking Area", "Parking Area", "" }, 50, 15, 11, 0x000800),
+			new CTyp(CW_TYPE_STAGE, CW_TYPE_STAGE, 'A', "51", "", "", (byte) -77, 'S', "typeStage.png", new String[] { "Waypoint|Stages of a Multicache", "Stages of a Multicache", "Stages of a Multicache", "" }, 51, 16, 12, 0x001000),
+			new CTyp(CW_TYPE_QUESTION, CW_TYPE_QUESTION, 'A', "52", "", "", (byte) -76, 'Q', "typeQuestion.png", new String[] { "Waypoint|Question to Answer", "Question to Answer", "Question to Answer", "" }, 52, 17, 13, 0x002000),
+			new CTyp(CW_TYPE_FINAL, CW_TYPE_FINAL, 'A', "53", "", "", (byte) -75, 'F', "typeFinal.png", new String[] { "Waypoint|Final Location", "Final Location", "Final Location", "" }, 53, 18, 14, 0x004000),
+			new CTyp(CW_TYPE_TRAILHEAD, CW_TYPE_TRAILHEAD, 'A', "54", "", "", (byte) -74, 'H', "typeTrailhead.png", new String[] { "Waypoint|Trailhead", "Trailhead", "Trailhead", "" }, 54, 19, 15, 0x008000),
+			new CTyp(CW_TYPE_REFERENCE, CW_TYPE_REFERENCE, 'A', "55", "", "", (byte) -73, 'R', "typeReference.png", new String[] { "Waypoint|Reference Point", "Reference Point", "Reference Point", "" }, 55, 20, 16, 0x010000),
 			// error on waypoint
 			new CTyp(CW_TYPE_ERROR, CW_TYPE_ERROR, 'E', "", "", "", (byte) -1, '-', "guiError.png", new String[] { "", "", "", "" }, 49, -1, -1, 0),
 			// mapped types (recognized on input from gpx or download-spider / or cw - version)
@@ -169,8 +174,6 @@ public final class CacheType {
 			new CTyp(CW_TYPE_UNKNOWN, (byte) 9, 'C', "9", "", "9", (byte) -119, 'U', "", new String[] { "Geocache|Moving", "Geocache", "Moving", "Moving" }, 9, -1, -1, 0),
 			new CTyp(CW_TYPE_TRADITIONAL, (byte) 10, 'C', "10", "", "10", (byte) -118, 'U', "", new String[] { "Geocache|DriveIn", "Geocache", "DriveIn", "DriveIn" }, 10, -1, -1, 0),
 			new CTyp(CW_TYPE_EVENT, (byte) 14, 'C', "", "3653", "", (byte) -1, 'X', "", new String[] { "Geocache|Lost and Found Event Cache", "Geocache", "Lost and Found Event Cache", "" }, 6, -1, -1, 0),
-			new CTyp(CW_TYPE_TRADITIONAL, (byte) 102, 'C', "", "9", "", (byte) -1, 'T', "", new String[] { "Geocache|Project APE Cache", "Geocache", "Project APE Cache", "APE" }, 16, -1, -1, 0),
-			new CTyp(CW_TYPE_EVENT, (byte) 103, 'C', "", "1304", "", (byte) -1, 'X', "", new String[] { "Geocache|GPS Adventures Exhibit", "Geocache", "GPS Adventures Exhibit", "MAZE" }, 17, -1, -1, 0),
 			new CTyp(CW_TYPE_UNKNOWN, (byte) 108, 'C', "", "", "8", (byte) -1, 'U', "", new String[] { "only on OC download", "", "", "" }, 19, -1, -1, 0),
 			new CTyp(CW_TYPE_WHEREIGO, (byte) 15, 'C', "", "", "", (byte) -62, 'G', "", new String[] { "Hack for V2 Typ", "", "", "" }, -1, -1, -1, 0), };
 	// public static final int anzCacheTyps=cTypRef.length;
@@ -190,7 +193,7 @@ public final class CacheType {
 
 	/**
 	 * check if a given waypoint type is an additional waypoint
-	 *
+	 * 
 	 * @param type
 	 *            waypoint type to check
 	 * @return true if it is an additional waypoint, false otherwise
@@ -201,7 +204,7 @@ public final class CacheType {
 
 	/**
 	 * check if a given waypoint type is an cache waypoint
-	 *
+	 * 
 	 * @param type
 	 *            waypoint type to check
 	 * @return true if it is an Cache waypoint, false otherwise
@@ -212,7 +215,7 @@ public final class CacheType {
 
 	/**
 	 * check if a given waypoint type is an Custom waypoint
-	 *
+	 * 
 	 * @param type
 	 *            waypoint type to check
 	 * @return true if it is an Custom waypint, false otherwise
@@ -224,7 +227,7 @@ public final class CacheType {
 	// done for DetailsPanel.java and KML- and TomTom-Exporter
 	/**
 	 * create list of cache types to be shown in GUI drop down lists
-	 *
+	 * 
 	 * @return list of cache types to be shown in GUI drop down list
 	 * @see guiSelect2Cw
 	 * @see cw2GuiSelect
@@ -247,7 +250,7 @@ public final class CacheType {
 
 	/**
 	 * translate GUI drop down index selection back to internally stored type
-	 *
+	 * 
 	 * @param selection
 	 *            index value from drop down list
 	 * @return internal type
@@ -268,7 +271,7 @@ public final class CacheType {
 
 	/**
 	 * translate cache type to position of index to highlight in GUI cache type drop down list
-	 *
+	 * 
 	 * @param typeId
 	 *            internal id of cache type
 	 * @return index of the cache type in GUI list
@@ -283,7 +286,7 @@ public final class CacheType {
 
 	/**
 	 * convert the strings found in import of GPX from GC, OC or TC to internal cache type
-	 *
+	 * 
 	 * @param gpxType
 	 *            type information found in GPX
 	 * @return internal cache type
@@ -315,7 +318,7 @@ public final class CacheType {
 
 	/**
 	 * convert the cache type information from an OC XML import to internal cache type
-	 *
+	 * 
 	 * @param ocType
 	 *            cache type found in OC XML
 	 * @return internal cache type
@@ -333,7 +336,7 @@ public final class CacheType {
 
 	/**
 	 * convert type information discovered by GC spider to internal type information
-	 *
+	 * 
 	 * @param gcType
 	 *            type information from GC spider
 	 * @return internal representation of cache type
@@ -351,7 +354,7 @@ public final class CacheType {
 
 	/**
 	 * convert version1 type information to current values
-	 *
+	 * 
 	 * @param type
 	 *            version1 cache type information
 	 * @return current version cache type information or -1
@@ -368,7 +371,7 @@ public final class CacheType {
 
 	/**
 	 * convert version2 type information to current values
-	 *
+	 * 
 	 * @param type
 	 *            version2 cache type information
 	 * @return current version cache type information or -1
@@ -385,7 +388,7 @@ public final class CacheType {
 
 	/**
 	 * translate cache type to a short version for compact exporters or "smart" cache names.
-	 *
+	 * 
 	 * @param typeId
 	 *            CacheWolf internal type information
 	 * @return abbreviation of cache type
@@ -396,7 +399,7 @@ public final class CacheType {
 
 	/**
 	 * map cache types to images
-	 *
+	 * 
 	 * @param typeId
 	 *            internal cache type id
 	 * @return non qualified name of image
@@ -407,7 +410,7 @@ public final class CacheType {
 
 	/**
 	 * generate type description matching those of GC for GPX export
-	 *
+	 * 
 	 * @param typeId
 	 *            internal type id
 	 * @return type information in GC.com <type> GPX format
@@ -418,7 +421,7 @@ public final class CacheType {
 
 	/**
 	 * generate type description matching those of GC for GPX export
-	 *
+	 * 
 	 * @param typeId
 	 *            internal type id
 	 * @return symb information in GC.com <sym> GPX format
@@ -429,7 +432,7 @@ public final class CacheType {
 
 	/**
 	 * generate type description matching those of GC for GPX export
-	 *
+	 * 
 	 * @param typeId
 	 *            internal type id
 	 * @return type information in GC.com <groundspeak:type> GPX format
@@ -440,7 +443,7 @@ public final class CacheType {
 
 	/**
 	 * generate type description matching those of GC for GPX export
-	 *
+	 * 
 	 * @param typeId
 	 *            internal type id
 	 * @return Gui - string for type
@@ -451,7 +454,7 @@ public final class CacheType {
 
 	/**
 	 * select image to be displayed for a given cache type
-	 *
+	 * 
 	 * @param typeId
 	 *            internal cache type id
 	 * @return <code>Image</code> object to be displayed
@@ -462,12 +465,12 @@ public final class CacheType {
 
 	/**
 	 * select image to be displayed for a given cache type
-	 *
+	 * 
 	 * @param typeId
 	 *            internal cache type id
 	 * @return <code>Image</code> object to be displayed
 	 */
-	public static Image getMapImage(CacheHolder ch) {
+	public static Image getBigCacheIcon(CacheHolder ch) {
 		byte typeId = ch.getType();
 		Image im = cTypRef[Ref_Index(typeId)]._mapImage;
 		if (ch.is_found()) {
@@ -475,32 +478,38 @@ public final class CacheType {
 				cTypRef[Ref_Index(typeId)]._modImage[found] = newOverlayedImage(im, GuiImageBroker.found);
 			}
 			im = cTypRef[Ref_Index(typeId)]._modImage[found];
-		} else if (ch.is_archived()) {
+		}
+		else if (ch.is_archived()) {
 			if (cTypRef[Ref_Index(typeId)]._modImage[archived] == null) {
 				cTypRef[Ref_Index(typeId)]._modImage[archived] = newOverlayedImage(im, GuiImageBroker.archived);
 			}
 			im = cTypRef[Ref_Index(typeId)]._modImage[archived];
-		} else if (!ch.is_available()) {
+		}
+		else if (!ch.is_available()) {
 			if (cTypRef[Ref_Index(typeId)]._modImage[disabled] == null) {
 				cTypRef[Ref_Index(typeId)]._modImage[disabled] = newOverlayedImage(im, GuiImageBroker.disabled);
 			}
 			im = cTypRef[Ref_Index(typeId)]._modImage[disabled];
-		} else if (ch.is_owned()) {
+		}
+		else if (ch.is_owned()) {
 			if (cTypRef[Ref_Index(typeId)]._modImage[owned] == null) {
 				cTypRef[Ref_Index(typeId)]._modImage[owned] = newOverlayedImage(im, GuiImageBroker.owned);
 			}
 			im = cTypRef[Ref_Index(typeId)]._modImage[owned];
-		} else if (ch.getCacheStatus().startsWith(MyLocale.getMsg(362, "solved"))) {
+		}
+		else if (ch.getCacheStatus().startsWith(MyLocale.getMsg(362, "solved"))) {
 			if (cTypRef[Ref_Index(typeId)]._modImage[solved] == null) {
 				cTypRef[Ref_Index(typeId)]._modImage[solved] = newOverlayedImage(im, GuiImageBroker.solved);
 			}
 			im = cTypRef[Ref_Index(typeId)]._modImage[solved];
-		} else if (ch.getCacheStatus().indexOf(MyLocale.getMsg(319, "Not Found")) > -1) {
+		}
+		else if (ch.getCacheStatus().indexOf(MyLocale.getMsg(319, "Not Found")) > -1) {
 			if (cTypRef[Ref_Index(typeId)]._modImage[dnf] == null) {
 				cTypRef[Ref_Index(typeId)]._modImage[dnf] = newOverlayedImage(im, GuiImageBroker.dnf);
 			}
 			im = cTypRef[Ref_Index(typeId)]._modImage[dnf];
-		} else if (ch.getCacheName().toLowerCase().indexOf("bonus") > -1) {
+		}
+		else if (ch.getCacheName().toLowerCase().indexOf("bonus") > -1) {
 			if (cTypRef[Ref_Index(typeId)]._modImage[bonus] == null) {
 				cTypRef[Ref_Index(typeId)]._modImage[bonus] = newOverlayedImage(im, GuiImageBroker.bonus);
 			}
@@ -511,7 +520,7 @@ public final class CacheType {
 
 	/**
 	 * select image to be displayed for a given cache type
-	 *
+	 * 
 	 * @param typeId
 	 *            internal cache type id
 	 * @param Image
@@ -525,7 +534,7 @@ public final class CacheType {
 
 	/**
 	 * select image to be displayed for a given cache type
-	 *
+	 * 
 	 * @param typeId
 	 *            internal cache type id
 	 * @param Image

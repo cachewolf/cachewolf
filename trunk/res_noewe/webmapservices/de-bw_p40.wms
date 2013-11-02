@@ -1,0 +1,32 @@
+﻿
+Name: 									de.Baden-Württemberg DOP 40cm-Bodenaufloesung
+MapType:            					de.bw DOP_40
+MainUrl:            					http://www.lv-bw.de/dv/service/getrds.asp?login=geoportal&pw=gdi_bw&
+LayersUrlPart:     						LAYERS=DOP_RGB
+ImageFormatUrlPart:						FORMAT=image/png
+ImageFileExtension: 					.png
+CoordinateReferenceSystemCacheWolf:		31467
+CoordinateReferenceSystemUrlPart:		SRS=EPSG:31467
+RecommendedScale:						1 0.5 2 4
+BoundingBoxTopLeftWGS84:				N 50.0000 E 7.2000
+BoundingBoxBottomRightWGS84:			N 47.4000 E 10.7000
+ServiceTypeUrlPart:						SERVICE=WMS
+VersionUrlPart:							VERSION=1.1.1
+RequestUrlPart:							REQUEST=GetMap
+StylesUrlPart:							STYLES=
+#
+#MinScale:   							?
+#MaxScale:   							?
+#
+#MinPixelSize:							?
+#MaxPixelSize:							?
+#RecommendedWidthPixelSize: 			?
+#RecommendedHeightPixelSize: 			?
+#
+#WMS LGL-BW - DOP-C 40
+#Digitale Orthophotos in Farbe (DOP-C) in einer Bodenaufloesung bis zu ca. 40 cm
+#Dieser Dienst kann unter Beachtung der Nutzungsbedingungen des Landesamtes fuer Geoinformation und Landentwicklung (LGL) fuer private Zwecke und Testzwecke unentgeltlich genutzt werden.
+# 
+TakenFromUrl:							https://www.geoportal-bw.de/mapbender/frames/index.php?gui_id=search_simple
+GetCapabilitiesUrl:						http://www.lv-bw.de/dv/service/getrds.asp?login=geoportal&pw=gdi_bw&SERVICE=WMS&REQUEST=GetCapabilities
+https://www.geoportal-bw.de/mapbender/x_metadata/xmlprint.php?uuid=e2d7ce07-8626-71cb-affc-324d0218dc0b&src=gn

@@ -1,0 +1,27 @@
+﻿
+Name: 									de ADFC Tourenportal (MM_TOPO)
+MapType:            					de ADFC
+MainUrl:            					http://195.66.99.21/mm-mapserver_v2/wms/wms.php?
+LayersUrlPart:     						LAYERS=MM_TOPO
+ImageFormatUrlPart:						FORMAT=image/gif
+ImageFileExtension: 					.gif
+CoordinateReferenceSystemCacheWolf:		4326
+CoordinateReferenceSystemUrlPart:		SRS=EPSG:4326
+RecommendedScale:						2
+BoundingBoxTopLeftWGS84: 				N 55.7319 E 4.6186
+BoundingBoxBottomRightWGS84: 			N 45.9690 E 16.7118
+ServiceTypeUrlPart:						SERVICE=WMS
+VersionUrlPart:							VERSION=1.1.1
+RequestUrlPart:							REQUEST=GetMap
+StylesUrlPart:							STYLES=
+# anderes ist nicht sinnvoll
+MinScale:   							2
+MaxScale:   							2
+#
+#MinPixelSize:							200
+#MaxPixelSize:							4096
+#RecommendedWidthPixelSize: 			1024
+#RecommendedHeightPixelSize: 			1024
+#
+TakenFromUrl:							-
+GetCapabilitiesUrl:						geht nicht
