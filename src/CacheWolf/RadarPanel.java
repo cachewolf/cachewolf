@@ -35,8 +35,6 @@ import ewe.ui.CellPanel;
 import ewe.ui.ControlEvent;
 import ewe.ui.Event;
 import ewe.ui.mButton;
-import ewe.sys.Convert;
-import ewe.sys.Double;
 
 /**
  * The radar panel. Displays the caches around a centre point.<br>
@@ -45,11 +43,10 @@ import ewe.sys.Double;
  * Class ID=500
  */
 public class RadarPanel extends CellPanel {
-	mButton btMinus = new mButton("   -   ");
-	mButton btToggle = new mButton("Toggle");
-	mButton btPlus = new mButton("   +   ");
+	mButton btnMinus;
+	mButton btnToggle;
+	mButton btnPlus;
 	int toggleMod = 0; // 0 = cacheicons, 1= cacheWP, 2 = cacheNames
-	Preferences pref;
 	CacheDB cacheDB;
 	myInteractivePanel iActP;
 	double scale;
@@ -57,14 +54,12 @@ public class RadarPanel extends CellPanel {
 	int centerX, centerY;
 	int height, width;
 	CacheHolder selectedWaypoint = null;
-	MainTab mt;
 	boolean penMoving = false;
 	int x1, y1, x2, y2 = 0;
 	boolean reCenterImage = true;
-
-	final static Color RED = new Color(255, 0, 0);
-	final static Color GREEN = new Color(0, 255, 0);
-	final static Color YELLOW = new Color(255, 255, 0);
+	private final static Color RED = new Color(255, 0, 0);
+	private final static Color GREEN = new Color(0, 255, 0);
+	private final static Color YELLOW = new Color(255, 255, 0);
 
 	/**
 	 * Constructor for the radar panel.
@@ -72,17 +67,20 @@ public class RadarPanel extends CellPanel {
 	 * "navigation" buttons.
 	 */
 	public RadarPanel() {
-		this.addLast(iActP = new myInteractivePanel(), CellConstants.STRETCH, CellConstants.FILL);
-		final CellPanel cp = new CellPanel();
-		cp.addNext(btMinus, CellConstants.HSTRETCH, (CellConstants.FILL | CellConstants.WEST));
-		cp.addNext(btToggle, CellConstants.HSTRETCH, CellConstants.FILL);
-		cp.addLast(btPlus, CellConstants.HSTRETCH, (CellConstants.FILL | CellConstants.EAST));
-		this.addLast(cp, CellConstants.HSTRETCH, CellConstants.FILL);
-	}
+		btnMinus = GuiImageBroker.getButton("-", "minus");
+		btnToggle = GuiImageBroker.getButton("Toggle", "toggle");
+		btnPlus = GuiImageBroker.getButton("+", "plus");
 
-	public void setMainTab(MainTab tb) {
-		mt = tb;
-		iActP.setMainTab(tb);
+		final CellPanel buttonPanel = new CellPanel();
+		buttonPanel.addNext(btnMinus, CellConstants.HSTRETCH, (CellConstants.FILL | CellConstants.WEST));
+		buttonPanel.addNext(btnToggle, CellConstants.HSTRETCH, CellConstants.FILL);
+		buttonPanel.addLast(btnPlus, CellConstants.HSTRETCH, (CellConstants.FILL | CellConstants.EAST));
+
+		if (!Global.pref.tabsAtTop)
+			this.addLast(buttonPanel, CellConstants.HSTRETCH, CellConstants.HFILL);
+		this.addLast(iActP = new myInteractivePanel(), CellConstants.STRETCH, CellConstants.FILL);
+		if (Global.pref.tabsAtTop)
+			this.addLast(buttonPanel, CellConstants.HSTRETCH, CellConstants.HFILL);
 	}
 
 	/**
@@ -90,12 +88,11 @@ public class RadarPanel extends CellPanel {
 	 * database. It also calculates the maximum size available for drawing
 	 * the radar.
 	 */
-	public void setParam(Preferences p, CacheDB db, CacheHolder sWp) {
+	public void setParam(CacheDB db, CacheHolder sWp) {
 		selectedWaypoint = sWp;
-		pref = p;
 		cacheDB = db;
-		height = (pref.myAppHeight) * 6 / 5; // add 10% each at top/bottom
-		width = (pref.myAppWidth) * 6 / 5;
+		height = (Global.pref.myAppHeight) * 6 / 5; // add 10% each at top/bottom
+		width = (Global.pref.myAppWidth) * 6 / 5;
 	}
 
 	// Call this after the centre has changed to re-center the radar panel
@@ -122,7 +119,7 @@ public class RadarPanel extends CellPanel {
 			// scroll which centers the image
 			iActP.scroll(-1000, -1000);
 			final Dimension dispSize = getDisplayedSize(null);
-			iActP.scroll((width - dispSize.width) / 2, (height - dispSize.height + btMinus.getSize(null).height) / 2);
+			iActP.scroll((width - dispSize.width) / 2, (height - dispSize.height + btnMinus.getSize(null).height) / 2);
 			reCenterImage = false;
 		}
 	}
@@ -131,7 +128,7 @@ public class RadarPanel extends CellPanel {
 	 * Private method to draw the caches.
 	 */
 	private void drawCaches() {
-		final Font radarFont = new Font("Gui", Font.BOLD, Global.getPref().fontSize);
+		final Font radarFont = new Font("Gui", Font.BOLD, Global.pref.fontSize);
 		final FontMetrics fm = getFontMetrics(radarFont);
 		AniImage aImg;
 		RadarPanelImage rpi;
@@ -168,7 +165,7 @@ public class RadarPanel extends CellPanel {
 							iActP.addImage(aImg);
 						}
 					}
-					Image imgCache = CacheType.getMapImage(holder);
+					Image imgCache = CacheType.getBigCacheIcon(holder);
 					rpi = new RadarPanelImage(imgCache);
 					rpi.wayPoint = holder.getWayPoint();
 					rpi.rownum = i;
@@ -211,7 +208,8 @@ public class RadarPanel extends CellPanel {
 
 		if (width < height) {
 			scale = (double) scaleKm / (double) height;
-		} else {
+		}
+		else {
 			scale = (double) scaleKm / (double) width;
 		}
 		centerX = (width / 2);
@@ -219,8 +217,8 @@ public class RadarPanel extends CellPanel {
 
 		g.setColor(GREEN);
 		// Draw rings each 10 km
-		for (int i = 1; i <= scaleKm/10; i++) {
-			drawRangeRing(g, (float)(i * 10));
+		for (int i = 1; i <= scaleKm / 10; i++) {
+			drawRangeRing(g, (float) (i * 10));
 		}
 
 		// Draw 1 to 5 km rings only if we have zoomed in (useful for cities with high density of caches)
@@ -235,41 +233,36 @@ public class RadarPanel extends CellPanel {
 				drawRangeRing(g, 0.5f);
 			}
 		}
+
 		g.drawLine(centerX, 0, centerX, height);
 		g.drawLine(0, centerY, width, centerY);
-
 		g.free();
 		final AniImage aImg = new AniImage(img);
 		// iActP.addImage(aImg);
 		iActP.backgroundImage = img;
-		final int xPos = (pref.myAppWidth / 2 - width / 2);
+		final int xPos = (Global.pref.myAppWidth / 2 - width / 2);
 		aImg.setLocation(xPos, 0);
 		aImg.refresh();
 	}
 
 	public void drawRangeRing(Graphics g, float radius) {
-		int pixelRadius = (int)(radius / scale);
+		int pixelRadius = (int) (radius / scale);
 		g.drawEllipse(centerX - pixelRadius, centerY - pixelRadius, pixelRadius * 2, pixelRadius * 2);
-		Double f = new Double();
 		if (radius < 1.0) {
-			f.set(radius * 1000);
-			String s = f.toString(0, 0, 0);
-			g.drawText(s + " m", 
-					centerX - pixelRadius * 7 / 10, // ~ radius / sqrt(2)
+			String s = Common.DoubleToString(radius * 1000, 0, 0);
+			g.drawText(s + " m", centerX - pixelRadius * 7 / 10, // ~ radius / sqrt(2)
 					centerY - pixelRadius * 7 / 10);
 		}
 		else {
-			f.set(radius);
-			String s = f.toString(0, 0, 0);
-			g.drawText(s + " km", 
-					centerX - pixelRadius * 7 / 10, // ~ radius / sqrt(2)
+			String s = Common.DoubleToString(radius, 0, 0);
+			g.drawText(s + " km", centerX - pixelRadius * 7 / 10, // ~ radius / sqrt(2)
 					centerY - pixelRadius * 7 / 10);
 		}
 	}
 
 	public void onEvent(Event ev) {
 		if (ev instanceof ControlEvent && ev.type == ControlEvent.PRESSED) {
-			if (ev.target == btPlus) {
+			if (ev.target == btnPlus) {
 				if (scaleKm > 10)
 					scaleKm = scaleKm - 10;
 				else if (scaleKm == 10)
@@ -280,7 +273,7 @@ public class RadarPanel extends CellPanel {
 					scaleKm = 1;
 				drawThePanel();
 			}
-			if (ev.target == btMinus) {
+			if (ev.target == btnMinus) {
 				if (scaleKm == 1)
 					scaleKm = 2;
 				else if (scaleKm == 2)
@@ -291,7 +284,7 @@ public class RadarPanel extends CellPanel {
 					scaleKm = scaleKm + 10;
 				drawThePanel();
 			}
-			if (ev.target == btToggle) {
+			if (ev.target == btnToggle) {
 				toggleMod++;
 				if (toggleMod > 2)
 					toggleMod = 0;

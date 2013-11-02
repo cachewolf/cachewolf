@@ -46,7 +46,7 @@ ServiceTypeUrlPart:	SERVICE=WMS
 VersionUrlPart:	VERSION=1.1.0 
 # The EPSG-Code, supported by cachewolf: German Gauß-Krüger (31466, 31467, 31468, 
 # 31469), Italian Gauß-Boaga (3003 and 3004), Austrian Lambert old (31287) and
-# new (31287), Swedish UTM (3006) and WGS84 (4326)
+# new (31287) and WGS84 (4326)
 # You get a list of supported coordinate systems from the WMS in the getCapabilieties 
 # answer under <Layer><SRS> or <CRS>
 # Please feel free to ask for another coordinate system to be supported by cachewolf 
@@ -110,9 +110,4 @@ MaxScale:	5.61182372
 RecommendedScale:	1 2.5 5 25
 # set this according to ImageFormatUrlPart (must start with ".")
 ImageFileExtension: .png
-# some WMS limit the size of the image they deliver. In This case Cachewolf needs to
-# get adjust to this maximum. Usually this is not a problem, because most servives' limit
-# is above 1000 which is the default for big tiles in Cachewolf. Thus it can be usually omitted.
-# If the service you are configuring has a lower limit, enter it here an uncomment "maxPixelSize".
-# As the tiles are usually quadratic, the given number is applied as vertical and horizontal maximum.
-# MaxPixelSize:	2000 
+

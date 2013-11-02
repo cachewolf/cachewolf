@@ -22,103 +22,96 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 package CacheWolf;
 
 import CacheWolf.navi.Metrics;
+import CacheWolf.navi.Navigate;
 import CacheWolf.navi.TransformCoordinates;
-import ewe.fx.Dimension;
 import ewe.fx.FontMetrics;
+import ewe.fx.Point;
+import ewe.fx.Rect;
 import ewe.sys.Vm;
 import ewe.ui.CellConstants;
 import ewe.ui.CellPanel;
-import ewe.ui.CheckBoxGroup;
+import ewe.ui.ControlConstants;
 import ewe.ui.ControlEvent;
 import ewe.ui.Event;
 import ewe.ui.FormBase;
+import ewe.ui.Menu;
+import ewe.ui.MenuEvent;
+import ewe.ui.MenuItem;
 import ewe.ui.ScrollBarPanel;
 import ewe.ui.mButton;
-import ewe.ui.mCheckBox;
 import ewe.ui.mChoice;
 import ewe.ui.mInput;
 import ewe.ui.mLabel;
 import ewe.ui.formatted.TextDisplay;
 
 /**
- *	Class to create the panel to do calculation with waypoints<br>
- *	Also allows for creation of a custom waypoint.<br>
- *	Class ID 1400
+ * Class to create the panel to do calculation with waypoints<br>
+ * Also allows for creation of a custom waypoint.<br>
+ * Class ID 1400
  */
-
-/**
- * Wrapper class to pass bearing and distance
- */
-class BearingDistance {
-	public double degrees;
-	public double distance;
-
-	public BearingDistance() {
-		this.degrees = 0;
-		this.distance = 0;
-	}
-
-	public BearingDistance(double degrees, double distance) {
-		this.degrees = degrees;
-		this.distance = distance;
-	}
-}
 
 public final class CalcPanel extends CellPanel {
 
-	mCheckBox chkDMM, chkDMS, chkDD, chkCustom;
-	CheckBoxGroup chkFormat = new CheckBoxGroup();
-	mChoice localCooSystem;
-	mChoice chcDistUnit;
-	mInput inpBearing, inpDistance, inpText;
-	TextDisplay txtOutput;
-	mButton btnCalc, btnClear, btnSave, btnGoto, btnParse;
-	BearingDistance bd = new BearingDistance();
-	CWPoint coordInp = new CWPoint();
-	CWPoint coordOut = new CWPoint();
-	// Needed for creation of new waypoint
-	CacheDB cacheDB;
-	MainTab mainT;
-	Preferences pref;
-	Profile profile;
-	// different panels to avoid spanning
-	CellPanel TopP = new CellPanel();
-	CellPanel BottomP = new CellPanel();
+	private mChoice chcDistUnit;
+	private mInput inpBearing, inpDistance;
+	private TextDisplay txtOutput;
+	private mButton btnCalc, btnClear, btnSave, btnGoto;
+	private BearingDistance bearingDistance = new BearingDistance();
+	private CWPoint coordInp = new CWPoint();
+	private CWPoint coordOut = new CWPoint();
+	private MainTab mainTab;
 
-	String lastWaypoint = "";
-	boolean bBearing, bDistance;
+	private String lastWaypoint = "";
 
-	int currFormat;
-	mButton btnChangeLatLon;
+	private int currFormat;
+	private mButton btnChangeLatLon;
+	private mButton btnChangeProjection;
+	private Menu mnuContextFormt;
 
 	public CalcPanel() {
-		pref = Global.getPref();
-		profile = Global.getProfile();
-		mainT = Global.mainTab;
-		cacheDB = profile.cacheDB;
+		mainTab = Global.mainTab;
 
-		TopP.addNext(chkDD = new mCheckBox("d.d°"), CellConstants.DONTSTRETCH, CellConstants.WEST);
-		TopP.addNext(chkDMM = new mCheckBox("d°m.m\'"), CellConstants.DONTSTRETCH, CellConstants.WEST);
-		TopP.addNext(chkDMS = new mCheckBox("d°m\'s\""), CellConstants.DONTSTRETCH, CellConstants.WEST);
-		TopP.addNext(chkCustom = new mCheckBox(""), CellConstants.DONTSTRETCH, CellConstants.WEST);
+		CellPanel buttonPanel = new CellPanel();
+		buttonPanel.equalWidths = true;
+		buttonPanel.addNext(btnGoto = GuiImageBroker.getButton(MyLocale.getMsg(1500, "Destination"), "goto"));
+		btnGoto.setToolTip(MyLocale.getMsg(326, "Set as destination and show Compass View"));
+		buttonPanel.addLast(btnSave = GuiImageBroker.getButton(MyLocale.getMsg(311, "Create Waypoint"), "newwpt"));
+		btnSave.setToolTip(MyLocale.getMsg(311, "Create Waypoint"));
+		if (!Global.pref.tabsAtTop)
+			this.addLast(buttonPanel, CellConstants.HSTRETCH, CellConstants.HFILL);
 
-		chkDD.setGroup(chkFormat);
-		chkDMM.setGroup(chkFormat);
-		chkDMS.setGroup(chkFormat);
-		chkCustom.setGroup(chkFormat);
-		chkFormat.setInt(1);
-		currFormat = 1;
-		String[] ls = TransformCoordinates.getProjectedSystemNames();
-		TopP.addLast(localCooSystem = new mChoice(ls, 0), CellConstants.DONTSTRETCH, CellConstants.WEST);
+		CellPanel TopP = new CellPanel();
+		// Format selection for coords context menu
+		MenuItem miCooformat[] = new MenuItem[TransformCoordinates.localSystems.length + 3];
+		mnuContextFormt = new Menu();
+		currFormat = 1; // default to d° m.m
+		mnuContextFormt.addItem(miCooformat[0] = new MenuItem("d.d°"));
+		miCooformat[0].modifiers &= ~MenuItem.Checked;
+		mnuContextFormt.addItem(miCooformat[1] = new MenuItem("d°m.m\'"));
+		miCooformat[1].modifiers |= MenuItem.Checked; // default
+		mnuContextFormt.addItem(miCooformat[2] = new MenuItem("d°m\'s\""));
+		miCooformat[2].modifiers &= ~MenuItem.Checked;
+		mnuContextFormt.addItems(TransformCoordinates.getProjectedSystemNames());
 
-		btnChangeLatLon = new mButton();
-		TopP.addLast(btnChangeLatLon, CellConstants.HSTRETCH, (CellConstants.HFILL | CellConstants.WEST));
+		btnChangeLatLon = GuiImageBroker.getButton("from", "from");
+		btnChangeLatLon.setMenu(mnuContextFormt);
+		btnChangeLatLon.modifyAll(ControlConstants.WantHoldDown, 0);
+
+		btnChangeProjection = GuiImageBroker.getButton("...", "projection");
+		btnChangeProjection.setMenu(mnuContextFormt);
+		btnChangeProjection.modifyAll(ControlConstants.WantHoldDown, 0);
+
+		TopP.addNext(btnChangeLatLon, HSTRETCH, FILL);
+		TopP.addLast(btnChangeProjection, DONTSTRETCH, DONTFILL);
+
 		// inpBearing and direction, unit for inpDistance
-		BottomP.addNext(new mLabel(MyLocale.getMsg(1403, "Bearing")), CellConstants.DONTSTRETCH, (CellConstants.DONTFILL | CellConstants.WEST));
-		BottomP.addLast(new mLabel(MyLocale.getMsg(1404, "Distance")), CellConstants.DONTSTRETCH, (CellConstants.DONTFILL | CellConstants.WEST));
-		BottomP.addNext(inpBearing = new mInput(), CellConstants.DONTSTRETCH, (CellConstants.DONTFILL | CellConstants.WEST));
+		CellPanel BottomP = new CellPanel();
+		BottomP.addNext(new mLabel(MyLocale.getMsg(1403, "Bearing")), DONTSTRETCH, (DONTFILL | LEFT));
+		BottomP.addLast(new mLabel(MyLocale.getMsg(1404, "Distance")), DONTSTRETCH, (DONTFILL | LEFT));
+
+		BottomP.addNext(inpBearing = new mInput(), DONTSTRETCH, (DONTFILL | LEFT));
 		inpBearing.setText("0");
-		BottomP.addNext(inpDistance = new mInput(), CellConstants.DONTSTRETCH, (CellConstants.DONTFILL | CellConstants.WEST));
+		BottomP.addNext(inpDistance = new mInput(), DONTSTRETCH, (DONTFILL | LEFT));
 		inpDistance.setText("0");
 		// Check for narrow screen and reduce width of fields to avoid horizontal scroll panel
 		if (MyLocale.getScreenWidth() <= 240) {
@@ -126,29 +119,28 @@ public final class CalcPanel extends CellPanel {
 			inpBearing.setPreferredSize(fm.getTextWidth("99999999"), fm.getHeight() * 4 / 3);
 			inpDistance.setPreferredSize(fm.getTextWidth("99999999"), fm.getHeight() * 4 / 3);
 		}
-		BottomP.addLast(chcDistUnit = new mChoice(new String[] { "m", "km", MyLocale.getMsg(1407, "steps"), MyLocale.getMsg(1408, "feet"), MyLocale.getMsg(1409, "yards"), MyLocale.getMsg(1410, "miles") }, 0), CellConstants.DONTSTRETCH,
-				(CellConstants.HFILL | CellConstants.WEST)).setTag(CellConstants.INSETS, new ewe.fx.Insets(0, 2, 0, 0));
-		if (Global.getPref().metricSystem == Metrics.METRIC) {
+		BottomP.addNext(chcDistUnit = new mChoice(new String[] { "m", "km", MyLocale.getMsg(1407, "steps"), MyLocale.getMsg(1408, "feet"), MyLocale.getMsg(1409, "yards"), MyLocale.getMsg(1410, "miles") }, 0), DONTSTRETCH, (HFILL | LEFT)).setTag(
+				INSETS, new ewe.fx.Insets(0, 2, 0, 0));
+		BottomP.addLast(btnCalc = GuiImageBroker.getButton(MyLocale.getMsg(1735, "Solve!"), "calc"), DONTSTRETCH, HFILL);
+
+		if (Global.pref.metricSystem == Metrics.METRIC) {
 			chcDistUnit.setInt(0); // Meter
-		} else {
+		}
+		else {
 			chcDistUnit.setInt(3); // Feet
 		}
-
-		// Buttons for calc and save
-		BottomP.addNext(btnCalc = new mButton("Calc"), CellConstants.DONTSTRETCH, (CellConstants.DONTFILL | CellConstants.WEST));
-		BottomP.addNext(btnClear = new mButton("Clear"), CellConstants.DONTSTRETCH, (CellConstants.DONTFILL | CellConstants.WEST));
-		BottomP.addNext(btnGoto = new mButton("Goto"), CellConstants.DONTSTRETCH, (CellConstants.DONTFILL | CellConstants.WEST));
-		BottomP.addLast(btnSave = new mButton(MyLocale.getMsg(311, "Create Waypoint")), CellConstants.DONTSTRETCH, (CellConstants.DONTFILL | CellConstants.WEST));
 
 		// Output
 		txtOutput = new TextDisplay(3, 1); // Need to limit size for small screens
 		ScrollBarPanel sbp = new MyScrollBarPanel(txtOutput);
-		BottomP.addLast(sbp.setTag(CellConstants.SPAN, new Dimension(4, 1)), CellConstants.STRETCH, (CellConstants.FILL | CellConstants.WEST));
+		BottomP.addLast(sbp, STRETCH, (FILL | LEFT));
+		BottomP.addLast(btnClear = GuiImageBroker.getButton("Clear", "clear"), DONTSTRETCH, (DONTFILL | LEFT));
 
 		// add Panels
-		this.addLast(TopP, CellConstants.HSTRETCH, CellConstants.WEST);// .setTag(SPAN,new Dimension(4,1));
-		this.addLast(BottomP, CellConstants.VSTRETCH, CellConstants.VFILL | CellConstants.WEST); // .setTag(SPAN,new Dimension(4,1));
-
+		this.addLast(TopP, HSTRETCH, HFILL);// .setTag(SPAN,new Dimension(4,1));
+		this.addLast(BottomP); //, VSTRETCH, VFILL | LEFT // .setTag(SPAN,new Dimension(4,1));
+		if (Global.pref.tabsAtTop)
+			this.addLast(buttonPanel, CellConstants.HSTRETCH, CellConstants.HFILL);
 	}
 
 	private final int getLocalCooSystem() {
@@ -156,8 +148,6 @@ public final class CalcPanel extends CellPanel {
 	}
 
 	public final void readFields(CWPoint coords, BearingDistance degKm) {
-		// coords.set(btnChangeLatLon.getText());
-		currFormat = CoordsScreen.combineToFormatSel(chkFormat.getSelectedIndex(), localCooSystem.getInt());
 		degKm.degrees = Common.parseDouble(inpBearing.getText());
 
 		double rawDistance = Common.parseDouble(inpDistance.getText());
@@ -207,25 +197,31 @@ public final class CalcPanel extends CellPanel {
 		}
 	}
 
-	public void setFields() {
-		btnChangeLatLon.setText(coordInp.toString(getLocalCooSystem()));
-		// chkFormat.selectIndex(currFormat);
+	private void setFields() {
+		GuiImageBroker.setButtonText(btnChangeLatLon, coordInp.toString(getLocalCooSystem()));
+		// repaint();
 	}
 
 	public void onEvent(Event ev) {
-
-		if (ev instanceof ControlEvent && ev.type == ControlEvent.PRESSED) {
-			if (ev.target == chkFormat || ((ev.type == ControlEvent.PRESSED) && (ev.target == localCooSystem))) {
-				if (ev.target == localCooSystem)
-					chkFormat.selectIndex(3);
-				readFields(coordInp, bd);
-				setFields();
-				this.repaintNow();
+		if (ev instanceof MenuEvent) {
+			if (ev.type == MenuEvent.SELECTED) {
+				if (((MenuEvent) ev).menu == mnuContextFormt) {
+					mnuContextFormt.close();
+					mnuContextFormt.getItemAt(currFormat).modifiers &= ~MenuItem.Checked;
+					currFormat = mnuContextFormt.getInt();
+					mnuContextFormt.getItemAt(currFormat).modifiers |= MenuItem.Checked;
+					setFields();
+				}
 			}
-
+		}
+		if (ev instanceof ControlEvent && ev.type == ControlEvent.PRESSED) {
+			if (ev.target == this.btnChangeProjection) {
+				Rect rm = mnuContextFormt.getRect();
+				btnChangeProjection.startDropMenu(new Point(rm.x, rm.y));
+			}
 			if (ev.target == btnCalc) {
-				readFields(coordInp, bd);
-				coordOut = coordInp.project(bd.degrees, bd.distance);
+				readFields(coordInp, bearingDistance);
+				coordOut = coordInp.project(bearingDistance.degrees, bearingDistance.distance);
 				txtOutput.appendText(coordOut.toString(getLocalCooSystem()) + "\n", true);
 			}
 			if (ev.target == btnClear) {
@@ -233,43 +229,65 @@ public final class CalcPanel extends CellPanel {
 			}
 			if (ev.target == btnSave) {
 				CacheHolder ch = new CacheHolder();
-				readFields(coordInp, bd);
-				coordOut = coordInp.project(bd.degrees, bd.distance);
+				readFields(coordInp, bearingDistance);
+				coordOut = coordInp.project(bearingDistance.degrees, bearingDistance.distance);
 				ch.setPos(coordOut);
-				ch.setType(CacheType.CW_TYPE_STAGE); // TODO unfertig
-				mainT.newWaypoint(ch);
+				ch.setType(CacheType.CW_TYPE_STAGE);
+				mainTab.newWaypoint(ch);
 			}
 
 			if (ev.target == btnGoto) {
-				readFields(coordInp, bd);
-				coordOut = coordInp.project(bd.degrees, bd.distance);
-				mainT.gotoP.setDestinationAndSwitch(coordOut);
+				readFields(coordInp, bearingDistance);
+				coordOut = coordInp.project(bearingDistance.degrees, bearingDistance.distance);
+				Navigate.itself.setDestination(coordOut);
+				mainTab.select(MainTab.GOTO_CARD);
 			}
 
 			if (ev.target == btnChangeLatLon) {
 				if (Vm.isMobile()) {
-					readFields(coordInp, bd);
+					readFields(coordInp, bearingDistance);
 					InputScreen InScr = new InputScreen(getLocalCooSystem());
 					if (coordInp.isValid())
 						InScr.setCoords(coordInp);
 					else
 						InScr.setCoords(new CWPoint(0, 0));
-					if (InScr.execute(null, CellConstants.TOP) == FormBase.IDOK) {
-						btnChangeLatLon.setText(InScr.getCoords().toString(getLocalCooSystem()));
+					if (InScr.execute(null, TOP) == FormBase.IDOK) {
+						GuiImageBroker.setButtonText(btnChangeLatLon, InScr.getCoords().toString(getLocalCooSystem()));
 						coordInp.set(InScr.getCoords());
+						// repaint();
 					}
-				} else {
+				}
+				else {
 					CoordsScreen cs = new CoordsScreen();
-					readFields(coordInp, bd);
+					readFields(coordInp, bearingDistance);
 					cs.setFields(coordInp, getLocalCooSystem());
 					if (cs.execute() == FormBase.IDOK) {
-						btnChangeLatLon.setText(cs.getCoords().toString(getLocalCooSystem()));
+						GuiImageBroker.setButtonText(btnChangeLatLon, cs.getCoords().toString(getLocalCooSystem()));
 						coordInp.set(cs.getCoords());
+						// repaint();
 					}
 				}
 
 			}
 			super.onEvent(ev);
 		}
+	}
+}
+
+/**
+ * Wrapper class to pass bearing and distance
+ */
+class BearingDistance {
+	public double degrees;
+	public double distance;
+
+	public BearingDistance() {
+		this.degrees = 0;
+		this.distance = 0;
+	}
+
+	public BearingDistance(double degrees, double distance) {
+		this.degrees = degrees;
+		this.distance = distance;
 	}
 }

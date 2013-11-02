@@ -32,7 +32,6 @@ import CacheWolf.Common;
 import CacheWolf.DateFormat;
 import CacheWolf.Global;
 import CacheWolf.MyLocale;
-import CacheWolf.Preferences;
 import CacheWolf.Profile;
 import CacheWolf.STRreplace;
 import CacheWolf.SafeXML;
@@ -45,25 +44,21 @@ import ewe.util.mString;
 
 public class CSVImporter {
 	CacheDB cacheDB;
-	Preferences pref;
-	Profile profile;
 	String file;
 	double maxDistance = 0.0;
 	CWPoint startPos;
 
 	String[] header;
 
-	public CSVImporter(Preferences pf, Profile prof, String f) {
-		pref = pf;
-		profile = prof;
-		cacheDB = profile.cacheDB;
+	public CSVImporter(String f) {
+		cacheDB = Global.profile.cacheDB;
 		file = f;
 	}
 
 	public void doIt() {
-		startPos = pref.getCurCentrePt();
+		startPos = Global.pref.getCurCentrePt();
 		if (startPos == null || !startPos.isValid()) {
-			pref.log("Zentrum nicht gesetzt", null);
+			Global.pref.log("Zentrum nicht gesetzt", null);
 			return;
 		}
 		OCXMLImporterScreen options;
@@ -79,7 +74,7 @@ public class CSVImporter {
 				options.close(0);
 				return;
 			}
-			profile.setDistGC(maxDist);
+			Global.profile.setDistGC(maxDist);
 		}
 		options.close(0);
 		try {
@@ -106,9 +101,11 @@ public class CSVImporter {
 					t = STRreplace.replace(s, "\",\"", "\t");
 					if (t.length() != s.length()) {
 						csvTyp = 1; // +Textkennzeichnung "
-					} else {
+					}
+					else {
 						t = STRreplace.replace(s, "\";\"", "\t");
-						if (t.length() != s.length()) csvTyp = 2; // +Textkennzeichnung "
+						if (t.length() != s.length())
+							csvTyp = 2; // +Textkennzeichnung "
 					}
 					if (csvTyp == 0) {
 						if (s.indexOf(",") > 0) {
@@ -121,7 +118,8 @@ public class CSVImporter {
 						}
 					}
 					header = mString.split(t, '\t');
-				} else {
+				}
+				else {
 					header = mString.split(s, '\t');
 				}
 				int nr_of_elements = header.length;
@@ -134,8 +132,10 @@ public class CSVImporter {
 						t = r.readLine();
 						if (t != null) {
 							if (t.length() == 0) {
-								if (s.length() > 0) s = s + "<br>";
-							} else {
+								if (s.length() > 0)
+									s = s + "<br>";
+							}
+							else {
 								switch (csvTyp) {
 								case 1:
 									t = STRreplace.replace(t, "\t", " ");
@@ -163,37 +163,43 @@ public class CSVImporter {
 							}
 							l = mString.split(s, '\t');
 							if (l.length > nr_of_elements) {
-								pref.log(s);
+								Global.pref.log(s);
 								s = "";
 							}
 						}
-					} while (l.length < nr_of_elements && t != null);
+					}
+					while (l.length < nr_of_elements && t != null);
 
 					if (l != null) {
 						if (l.length == nr_of_elements) {
 							if (!parse(l)) {
-								pref.log(s);
+								Global.pref.log(s);
 							}
-						} else {
-							pref.log("bug" + s);
+						}
+						else {
+							Global.pref.log("bug" + s);
 						}
 					}
 
-				} while (t != null);
+				}
+				while (t != null);
 
-			} catch (Exception e) {
-				pref.log("Abort CSVImporter: ", e, true);
+			}
+			catch (Exception e) {
+				Global.pref.log("Abort CSVImporter: ", e, true);
 				r.close();
-				profile.saveIndex(pref, Profile.NO_SHOW_PROGRESS_BAR);
+				Global.profile.saveIndex(Profile.NO_SHOW_PROGRESS_BAR);
 				Vm.showWait(false);
 				return;
 			}
 			r.close();
 			// save Index
-			profile.saveIndex(pref, Profile.NO_SHOW_PROGRESS_BAR);
+			Global.profile.saveIndex(Profile.NO_SHOW_PROGRESS_BAR);
 			Vm.showWait(false);
-		} catch (Exception e) {
-		} finally {
+		}
+		catch (Exception e) {
+		}
+		finally {
 			Vm.showWait(false);
 		}
 	}
@@ -225,42 +231,57 @@ public class CSVImporter {
 		for (int i = 0; i < header.length; i++) {
 			if (header[i].equalsIgnoreCase("LAT")) {
 				l[LAT] = STRreplace.replace(ds[i], "\"", ""); // 0.
-			} else if (header[i].equalsIgnoreCase("LON")) {
+			}
+			else if (header[i].equalsIgnoreCase("LON")) {
 				l[LON] = STRreplace.replace(ds[i], "\"", ""); // 1.
-			} else if (header[i].equalsIgnoreCase("LATLON")) {
+			}
+			else if (header[i].equalsIgnoreCase("LATLON")) {
 				CWPoint coord = new CWPoint(ds[i]); // 0. 1.
 				l[LAT] = "" + coord.latDec;
 				l[LON] = "" + coord.lonDec;
-			} else if (header[i].equalsIgnoreCase("GO TO") || header[i].equalsIgnoreCase("GOTO")) {
+			}
+			else if (header[i].equalsIgnoreCase("GO TO") || header[i].equalsIgnoreCase("GOTO")) {
 				// 0. 1.
-				if (ds[i].length() < 15) return false;
+				if (ds[i].length() < 15)
+					return false;
 				hyper = true;
 				String s = "N48 " + ds[i].substring(1, 7) + "E9 " + ds[i].substring(9);
 				CWPoint coord = new CWPoint(s);
 				l[LAT] = "" + coord.latDec;
 				l[LON] = "" + coord.lonDec;
-			} else if (header[i].equalsIgnoreCase("WAYPOINT") || header[i].equalsIgnoreCase("WP")) {
+			}
+			else if (header[i].equalsIgnoreCase("WAYPOINT") || header[i].equalsIgnoreCase("WP")) {
 				l[WAYPOINT] = ds[i]; // 2.
-			} else if (header[i].equalsIgnoreCase("USERNAME") || header[i].equalsIgnoreCase("OWNER")) {
+			}
+			else if (header[i].equalsIgnoreCase("USERNAME") || header[i].equalsIgnoreCase("OWNER")) {
 				l[OWNER] = ds[i]; // 3.
-			} else if (header[i].equalsIgnoreCase("CACHENAME")) {
+			}
+			else if (header[i].equalsIgnoreCase("CACHENAME")) {
 				l[CACHENAME] = ds[i]; // 4.
-			} else if (header[i].equalsIgnoreCase("FRIENDLYNAME")) {
+			}
+			else if (header[i].equalsIgnoreCase("FRIENDLYNAME")) {
 				l[CACHENAME] = ds[i]; // 4.
 				munzee = true;
-			} else if (header[i].equalsIgnoreCase("CODE gefunden") || header[i].equalsIgnoreCase("STATUS")) {
+			}
+			else if (header[i].equalsIgnoreCase("CODE gefunden") || header[i].equalsIgnoreCase("STATUS")) {
 				l[STATUS] = ds[i]; // 5.
-			} else if (header[i].equalsIgnoreCase("DEPLOYED") || header[i].equalsIgnoreCase("DATEHIDDEN")) {
+			}
+			else if (header[i].equalsIgnoreCase("DEPLOYED") || header[i].equalsIgnoreCase("DATEHIDDEN")) {
 				l[DATEHIDDEN] = ds[i]; // 6.
-			} else if (header[i].equalsIgnoreCase("HINT")) {
+			}
+			else if (header[i].equalsIgnoreCase("HINT")) {
 				l[HINT] = ds[i]; // 7.
-			} else if (header[i].equalsIgnoreCase("KOMMENTAR") || header[i].equalsIgnoreCase("NOTES")) {
+			}
+			else if (header[i].equalsIgnoreCase("KOMMENTAR") || header[i].equalsIgnoreCase("NOTES")) {
 				l[NOTES] = ds[i]; // 8.
-			} else if (header[i].equalsIgnoreCase("CREATED")) {
+			}
+			else if (header[i].equalsIgnoreCase("CREATED")) {
 				l[CREATED] = ds[i]; // 9.
-			} else if (header[i].equalsIgnoreCase("LOCATION")) {
+			}
+			else if (header[i].equalsIgnoreCase("LOCATION")) {
 				l[LOCATION] = ds[i]; // 10.
-			} else if (header[i].equalsIgnoreCase("CODE")) {
+			}
+			else if (header[i].equalsIgnoreCase("CODE")) {
 				l[CODE] = ds[i]; // 11.
 			}
 		}
@@ -272,14 +293,15 @@ public class CSVImporter {
 			tmpPos.set(lat, lon);
 			double tmpDistance = tmpPos.getDistance(startPos);
 			if (tmpDistance > maxDistance) {
-				// pref.log("CSVImporter: not imported " + l[CACHENAME] + ", Distance = "+ tmpDistance);
+				// Global.pref.log("CSVImporter: not imported " + l[CACHENAME] + ", Distance = "+ tmpDistance);
 				return false;
 			}
 			if (!tmpPos.isValid()) {
 				return false;
 			}
-		} catch (Exception e) {
-			pref.log("Error CSVImporter at: " + l[CACHENAME] + "(" + l[LAT] + " " + l[LON] + ")", e);
+		}
+		catch (Exception e) {
+			Global.pref.log("Error CSVImporter at: " + l[CACHENAME] + "(" + l[LAT] + " " + l[LON] + ")", e);
 			return false;
 		}
 		// 2. Wegpunkt
@@ -293,17 +315,20 @@ public class CSVImporter {
 				wayPoint = wayPoint.substring(0, 8);
 			}
 			wayPoint = "MZ" + wayPoint + l[CODE];
-		} else {
+		}
+		else {
 			if (l[WAYPOINT].length() > 0) {
 				// aus Datei
 				wayPoint = l[WAYPOINT];
-			} else {
+			}
+			else {
 				// ? schon einer an der gleichen Koordinate
 				wayPoint = getWPofCoordinates(tmpPos);
 				if (wayPoint.length() == 0) {
 					// nein --> neuer
-					wayPoint = Global.getProfile().getNewWayPointName(extractFileName(file).substring(0, 2).toUpperCase());
-				} else {
+					wayPoint = Global.profile.getNewWayPointName(extractFileName(file).substring(0, 2).toUpperCase());
+				}
+				else {
 				}
 			}
 		}
@@ -316,17 +341,20 @@ public class CSVImporter {
 		// 3. OWNER
 		if (l[OWNER].length() > 0) {
 			ch.setCacheOwner(l[OWNER]);
-		} else {
+		}
+		else {
 			ch.setCacheOwner("Unknown");
 		}
 		// 4. CacheName - Titel
 		if (munzee) {
 			ch.setCacheName("MZ - " + l[CACHENAME]);
-		} else if (hyper) {
+		}
+		else if (hyper) {
 			String s = extractFileName(file).substring(0, 2).toUpperCase();
 			if (wayPoint.startsWith(s)) {
 				ch.setCacheName(wayPoint + " " + l[STATUS] + " " + l[HINT]);
-			} else {
+			}
+			else {
 				String st = STRreplace.replace(l[NOTES], "# ", "#");
 				int i1 = st.indexOf("#");
 				if (i1 > -1) {
@@ -334,18 +362,21 @@ public class CSVImporter {
 					String std;
 					if (i2 < 0) {
 						std = st.substring(i1);
-					} else {
+					}
+					else {
 						std = st.substring(i1, i2);
 					}
 					std = (std + "    ").substring(0, 4);
 					ch.setCacheName(s + std + " " + l[STATUS] + " " + l[HINT]);
-				} else {
+				}
+				else {
 					if (ch.getCacheName().length() == 0) {
 
 					}
 				}
 			}
-		} else {
+		}
+		else {
 			ch.setCacheName(l[CACHENAME]);
 		}
 		// 5. Status gefunden
@@ -365,7 +396,8 @@ public class CSVImporter {
 				if (dnf) {
 					statusText = MyLocale.getMsg(362, "Solved");
 					gefunden = false;
-				} else {
+				}
+				else {
 					if (l[STATUS].length() == 0) {
 						gefunden = false;
 						statusText = MyLocale.getMsg(362, "Solved");
@@ -381,13 +413,15 @@ public class CSVImporter {
 				// return false;
 				l[DATEHIDDEN] = l[CREATED];
 			}
-		} else {
+		}
+		else {
 			l[DATEHIDDEN] = l[CREATED];
 		}
 		String dateHidden;
 		try {
 			dateHidden = DateFormat.toYYMMDD(l[DATEHIDDEN].substring(0, 10));
-		} catch (Exception e) {
+		}
+		catch (Exception e) {
 			dateHidden = DateFormat.toYYMMDD(new Time());
 		}
 		ch.setDateHidden(dateHidden);
@@ -403,10 +437,12 @@ public class CSVImporter {
 		// Description
 		if (munzee) {
 			chd.setLongDescription(l[NOTES]);
-		} else {
+		}
+		else {
 			if (hyper) {
 				chd.setLongDescription("gef:" + l[STATUS] + "<br>von: " + l[CODE] + "<br>" + l[NOTES] + "<br>" + l[HINT]);
-			} else {
+			}
+			else {
 				chd.setCacheNotes(l[NOTES]);
 			}
 		}
@@ -418,11 +454,13 @@ public class CSVImporter {
 			if (countryStart > -1) {
 				chd.Country = SafeXML.cleanback(location.substring(countryStart + 1).trim());
 				chd.State = SafeXML.cleanback(location.substring(0, countryStart).trim());
-			} else {
+			}
+			else {
 				chd.Country = location.trim();
 				chd.State = "";
 			}
-		} else {
+		}
+		else {
 			ch.getCacheDetails(false).Country = "";
 			ch.getCacheDetails(false).State = "";
 		}
@@ -444,11 +482,13 @@ public class CSVImporter {
 	}
 
 	private String extractFileName(String filePathName) {
-		if (filePathName == null) return null;
+		if (filePathName == null)
+			return null;
 
 		int dotPos = filePathName.lastIndexOf('.');
 		int slashPos = filePathName.lastIndexOf('\\');
-		if (slashPos == -1) slashPos = filePathName.lastIndexOf('/');
+		if (slashPos == -1)
+			slashPos = filePathName.lastIndexOf('/');
 
 		if (dotPos > slashPos) {
 			return filePathName.substring(slashPos > 0 ? slashPos + 1 : 0, dotPos);

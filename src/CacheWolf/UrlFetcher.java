@@ -1,23 +1,23 @@
 /*
-GNU General Public License
-CacheWolf is a software for PocketPC, Win and Linux that
-enables paperless caching.
-It supports the sites geocaching.com and opencaching.de
+    GNU General Public License
+    CacheWolf is a software for PocketPC, Win and Linux that
+    enables paperless caching.
+    It supports the sites geocaching.com and opencaching.de
 
-Copyright (C) 2006  CacheWolf development team
-See http://www.cachewolf.de/ for more information.
-This program is free software; you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation; version 2 of the License.
+    Copyright (C) 2006  CacheWolf development team
+	See http://www.cachewolf.de/ for more information.
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; version 2 of the License.
 
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
 
-You should have received a copy of the GNU General Public License
-along with this program; if not, write to the Free Software
-Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+    You should have received a copy of the GNU General Public License
+    along with this program; if not, write to the Free Software
+    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 package CacheWolf;
 
@@ -96,7 +96,10 @@ public class UrlFetcher {
 
 	public static String fetch(String address) throws IOException {
 		ByteArray daten = fetchByteArray(address);
-		StringBuffer sb = new BetterUTF8Codec ().decodeUTF8(daten.data, 0, daten.length);
+		// JavaUtf8Codec codec = new JavaUtf8Codec();
+		// CharArray c_data = codec.decodeText(daten.data, 0, daten.length, true, null);
+		// return c_data.toString();
+		StringBuffer sb = new BetterUTF8Codec().decodeUTF8(daten.data, 0, daten.length);
 		return sb.toString();
 	}
 
@@ -107,10 +110,13 @@ public class UrlFetcher {
 	public static void fetchDataFile(String address, String target) throws IOException {
 		FileOutputStream outp = null;
 		try {
-		outp = new FileOutputStream(new File(target));
-		outp.write(fetchByteArray(address).toBytes());
-		} finally {
-		if (outp != null) outp.close();
+			File f = new File(target);
+			outp = new FileOutputStream(f);
+			outp.write(fetchByteArray(address).toBytes());
+		}
+		finally {
+			if (outp != null)
+				outp.close();
 		}
 	}
 
@@ -123,8 +129,6 @@ public class UrlFetcher {
 		int i = 0;
 		conn = new HttpConnection(url); // todo reuse: don#t reuse, some params are not correctly reset with SetUrl
 		urltmp = url;
-		String lastScheme="http";
-		if (urltmp.startsWith("https")) lastScheme="https";
 		do { // allow max 5 redirections (http 302 location)
 			i++;
 			if (urltmp == null) {
@@ -135,36 +139,25 @@ public class UrlFetcher {
 				i = i - 1;
 			}
 			realUrl = urltmp;
-			if (!( urltmp.startsWith("http") || urltmp.startsWith("https") )) {
+			if (!(urltmp.startsWith("http") || urltmp.startsWith("https"))) {
 				url = FileBase.fixupPath(url);
 				String uu = url.toLowerCase();
 				String host;
 				uu = url.replace('\\', '/');
 				host = uu.substring(7);
-				if (uu.startsWith("https")) {
-					host = uu.substring(8);
-				}
 				int first = host.indexOf('/');
 				if (first != -1) {
 					host = host.substring(0, first);
 				}
 				if (!urltmp.startsWith("/"))
 					host = host + "/";
-				urltmp = lastScheme + "://" + host + urltmp;
-				Global.getPref().log("[UrlFetcher:Redirect] changed to: " + urltmp);
-			}
-			if (urltmp.startsWith("https")) {
-				lastScheme="https";
-			}
-			else {
-				lastScheme="http";
+				urltmp = "http://" + host + urltmp; // TODO https?
 			}
 			conn.setUrl(urltmp);
 			conn.documentIsEncoded = isUrlEncoded(urltmp);
 			if (permanentRequestorProperties == null)
 				initPermanentRequestorProperty();
 			if (postData != null) {
-				Global.getPref().log("[UrlFetcher:] changed to POST ");
 				conn.setPostData(postData);
 				conn.setRequestorProperty("Content-Type", "application/x-www-form-urlencoded");
 			}
@@ -181,8 +174,6 @@ public class UrlFetcher {
 			}
 			urltmp = conn.getRedirectTo();
 			if (urltmp != null) {
-				// this is a redirect
-				Global.getPref().log("[UrlFetcher:Redirect] to " + urltmp);
 				conn.disconnect();
 				// mainly implemented for opencaching.de ... login
 				final PropertyList pl = UrlFetcher.getDocumentProperties();
@@ -197,20 +188,21 @@ public class UrlFetcher {
 						else
 							// needed for opencaching.de ... login
 							setPermanentRequestorProperty("Cookie", cookie);
-							;
 					}
 				}
 				conn = conn.getRedirectedConnection(urltmp);
 				forceRedirect = false; // one time or more redirected
 			}
-		} while (((urltmp != null) || (urltmp == null) && forceRedirect) && i <= maxRedirections);
+		}
+		while (((urltmp != null) || (urltmp == null) && forceRedirect) && i <= maxRedirections);
 		if (i > maxRedirections)
 			throw new IOException("too many http redirections while trying to fetch: " + url + " only " + maxRedirections + " are allowed");
 		ByteArray daten;
 		if (conn.isOpen()) {
 			daten = conn.readData();
 			conn.disconnect();
-		} else
+		}
+		else
 			daten = null;
 		maxRedirections = 5;
 		requestorProperties = null;
@@ -221,8 +213,7 @@ public class UrlFetcher {
 
 	/**
 	 * @param url
-	 * @return true, if the string seems to be already URL encoded (that is, it contains only url-allowd chars), false
-	 *         otherwise
+	 * @return true, if the string seems to be already URL encoded (that is, it contains only url-allowd chars), false otherwise
 	 */
 	private static boolean isUrlEncoded(String url) {
 		final String allowed = new String("-_.~!*'();:@&=+$,/?%#[]");
@@ -240,9 +231,8 @@ public class UrlFetcher {
 
 	/**
 	 * This method encodes an URL containing special characters using the UTF-8 codec in %nn%nn notation<br>
-	 * Note that the encoding for URLs is not generally defined. Usually cp1252 or UTF-8 is used. It depends on what the
-	 * server expects, what encoding you must use.
-	 *
+	 * Note that the encoding for URLs is not generally defined. Usually cp1252 or UTF-8 is used. It depends on what the server expects, what encoding you must use.
+	 * 
 	 * @param cc
 	 * @return
 	 * @throws IOException
@@ -260,9 +250,8 @@ public class UrlFetcher {
 	final static String hex = ewe.util.TextEncoder.hex;
 
 	/**
-	 * Encode the URL using %## notation. Note: this fixes a bug in ewe.net.URL.encodeURL(): that routine assumes all
-	 * chars to be < 127. This method is mainly copied from there
-	 *
+	 * Encode the URL using %## notation. Note: this fixes a bug in ewe.net.URL.encodeURL(): that routine assumes all chars to be < 127. This method is mainly copied from there
+	 * 
 	 * @param url
 	 *            The unencoded URL.
 	 * @param spaceToPlus

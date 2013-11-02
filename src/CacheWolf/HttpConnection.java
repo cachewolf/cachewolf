@@ -144,9 +144,9 @@ public class HttpConnection {
 	 * afterwards you don't need to set proxy parameters anymore
 	 */
 
-	private static String proxy = Global.getPref().myproxy;
-	private static int proxyPort = Common.parseInt(Global.getPref().myproxyport);
-	private static boolean useProxy = Global.getPref().proxyActive;
+	private static String proxy = Global.pref.myproxy;
+	private static int proxyPort = Common.parseInt(Global.pref.myproxyport);
+	private static boolean useProxy = Global.pref.proxyActive;
 
 //	FIXME: why is this called immediately from preferences screen? shouldn't we read it from preferences instead?
 	public static void setProxy(String proxyi, int proxyporti, boolean useproxyi) {

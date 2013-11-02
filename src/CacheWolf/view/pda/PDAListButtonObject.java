@@ -82,7 +82,7 @@ public class PDAListButtonObject extends ButtonObject {
 		}
 		}
 		catch(Exception e){
-			Global.getPref().log("Mysterious Exception caught!", e, true);
+			Global.pref.log("Mysterious Exception caught!", e, true);
 		}
 	}
 }

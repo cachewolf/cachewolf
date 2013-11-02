@@ -116,7 +116,7 @@ public final class Matrix{
 	public void DumpMatrix(){
 		for (int i = 0; i < matrix.length; i++)
 			for (int j = 0; j < matrix[i].length; j++)
-				Global.getPref().log("[ "+i+ " " + j + " ] " + matrix[i][j]);
+				Global.pref.log("[ "+i+ " " + j + " ] " + matrix[i][j]);
 	}
 	
 	/**
@@ -157,7 +157,7 @@ public final class Matrix{
 							m[row][i] = f1 * m[col][i] + m[row][i];
 						}
 					} catch (Exception e) {
-						Global.getPref().log("Still Here!!!");
+						Global.pref.log("Still Here!!!");
 					}
 				}
 			}
@@ -198,7 +198,7 @@ public final class Matrix{
 		double dd = 0;
 
 		if (det == 0) {
-			Global.getPref().log("Determinant Equals 0, Not Invertible.");
+			Global.pref.log("Determinant Equals 0, Not Invertible.");
 		} else {
 			dd = 1 / det;
 		}

@@ -44,7 +44,7 @@ public class LocExporter extends Exporter {
 		super();
 		this.setMask("*.loc");
 		this.setHowManyParams(NO_PARAMS);
-		if (Global.getPref().addDetailsToName) {
+		if (Global.pref.addDetailsToName) {
 			this.setNeedCacheDetails(true);
 		}
 		gm = new GarminMap();
@@ -62,22 +62,23 @@ public class LocExporter extends Exporter {
 		StringBuffer strBuf = new StringBuffer(200);
 		strBuf.append("<waypoint>\r\n   <name id=\"");
 		String wptName = simplifyString(ch.getWayPoint());
-		if (Global.getPref().addDetailsToWaypoint) {
+		if (Global.pref.addDetailsToWaypoint) {
 			wptName += getShortDetails(ch);
 		}
-		if (Global.getPref().garminMaxLen == 0)
+		if (Global.pref.garminMaxLen == 0)
 			strBuf.append(wptName);
 		else {
 			try {
-				strBuf.append(wptName.substring(wptName.length() - Global.getPref().garminMaxLen));
-			} catch (Exception ex) {
-				pref.log("[LocExporter:record]Invalid value for garmin.MaxWaypointLength", ex);
+				strBuf.append(wptName.substring(wptName.length() - Global.pref.garminMaxLen));
+			}
+			catch (Exception ex) {
+				Global.pref.log("[LocExporter:record]Invalid value for garmin.MaxWaypointLength", ex);
 			}
 		}
 		strBuf.append("\"><![CDATA[");
 		strBuf.append(simplifyString(ch.getCacheName()));
-		if (Global.getPref().addDetailsToName) {
-			if (!Global.getPref().addDetailsToWaypoint) {
+		if (Global.pref.addDetailsToName) {
+			if (!Global.pref.addDetailsToWaypoint) {
 				strBuf.append(getShortDetails(ch));
 			}
 			CacheHolderDetail det = ch.getCacheDetails(true);

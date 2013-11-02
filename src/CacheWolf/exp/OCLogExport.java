@@ -45,7 +45,7 @@ public final class OCLogExport {
 	public static void doit() {
 
 		if (cacheDB == null)
-			cacheDB = Global.getProfile().cacheDB;
+			cacheDB = Global.profile.cacheDB;
 		int totalWaypoints = cacheDB.countVisible();
 		int updated = 0;
 		ProgressBarForm pbf = new ProgressBarForm();
@@ -92,7 +92,7 @@ public final class OCLogExport {
 							loggedIn = page.indexOf("Eingeloggt als") > -1; // next time perhaps
 							String ocCacheId = new Extractor(page, "viewcache.php?cacheid=", "\">", 0, true).findNext();
 							String postData = "cacheid=" + ocCacheId + "&version3=1&descMode=3";
-							if (ch.getType() == CacheType.CW_TYPE_EVENT || ch.getType() == CacheType.CW_TYPE_EVENT)
+							if (ch.getType() == CacheType.CW_TYPE_EVENT || ch.getType() == CacheType.CW_TYPE_MEGA_EVENT || ch.getType() == CacheType.CW_TYPE_MAZE)
 								postData = postData + "&logtype=7";
 							else
 								postData = postData + "&logtype=1";
@@ -110,7 +110,8 @@ public final class OCLogExport {
 								ch.save();
 							}
 						}
-					} catch (IOException e) {
+					}
+					catch (IOException e) {
 						// dann nicht
 					}
 				}

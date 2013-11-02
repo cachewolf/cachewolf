@@ -40,7 +40,7 @@ public final class OCLinkImporter {
 	public static void doIt() {
 
 		if (cacheDB == null)
-			cacheDB = Global.getProfile().cacheDB;
+			cacheDB = Global.profile.cacheDB;
 		int totalWaypoints = cacheDB.countVisible();
 		int updated = 0;
 		ProgressBarForm pbf = new ProgressBarForm();
@@ -103,7 +103,8 @@ public final class OCLinkImporter {
 					String ocCacheName = new Extractor(result, "name=\"", "\"", 0, true).findNext();
 					if (ch.getCacheName().equals(ocCacheName)) {
 						hasOC = true;
-					} else {
+					}
+					else {
 						int start = result.indexOf("coords=\"") + 8;
 						int lonend = result.indexOf(",", start);
 						int latend = result.indexOf("\"", lonend);
@@ -137,7 +138,8 @@ public final class OCLinkImporter {
 				if (save)
 					ch.save();
 
-			} catch (Exception e) {
+			}
+			catch (Exception e) {
 				// dann halt nicht
 			}
 		}

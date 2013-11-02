@@ -21,7 +21,7 @@
 */
 package CacheWolf.view.pda;
 
-import CacheWolf.Preferences;
+import CacheWolf.Global;
 import ewe.fx.Color;
 import ewe.fx.Font;
 import ewe.ui.ControlEvent;
@@ -41,10 +41,10 @@ public class PDAOptionPane extends Form {
 	public static int showConfirmDialog(Frame parent, String title, String message) {
 		PDAOptionPane pane = new PDAOptionPane();
 		pane.title = title;
-		pane.backGround=new Color(255,128,128);
-		Font tmpFont = new Font("Helvetica", Font.BOLD, Preferences.getPrefObject().fontSize * 2);
+		pane.backGround = new Color(255, 128, 128);
+		Font tmpFont = new Font("Helvetica", Font.BOLD, Global.pref.fontSize * 2);
 		mLabel messageLabel = new mLabel(message);
-		messageLabel.font=tmpFont;
+		messageLabel.font = tmpFont;
 		pane.addLast(messageLabel, HFILL, HSTRETCH);
 		PDAMenuButton button = new PDAMenuButton("OK", OK_STR);
 		pane.addNext(button, FILL, STRETCH);
@@ -62,7 +62,8 @@ public class PDAOptionPane extends Form {
 			if (action.equals(OK_STR)) {
 				result = OK;
 				exit(0);
-			} else if (action.equals(CANCEL_STR)) {
+			}
+			else if (action.equals(CANCEL_STR)) {
 				exit(0);
 			}
 		}

@@ -52,7 +52,8 @@ PM                 = premium_only.png
 DistDirRex         = compass/(.*?)\.gif(.*?)<br />(.*?)(?:km|mi|ft)
 #<span class="small">3.5/1.5</span><br /><img src="/images/icons/container/other.gif" alt="Size: Other" title="Size: Other" />
 #<span class="small">3/2.5</span><br /><img src="/images/icons/container/not_chosen.gif" alt="Size: Not chosen" title="Size: Not chosen" />
-DTSRex             =>(.*?)/(.*?)<(.*?)container/(.*?)\.gif
+#<span class="small">3/4</span><br /><img src="/images/icons/container/small.gif" alt="Size: Small" title="Size: Small" />
+DTSRex             = small">(.*?)/(.*?)<(.*)\\s*(.*)container/(.*)\\.gif
 #                            |
 #                            GC34CQJ
 #                            |

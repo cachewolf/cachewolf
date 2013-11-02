@@ -22,31 +22,26 @@
 package CacheWolf.navi;
 
 import CacheWolf.CWPoint;
-import CacheWolf.CacheDB;
 import CacheWolf.CacheHolder;
 import CacheWolf.CacheType;
 import CacheWolf.CoordsScreen;
-import CacheWolf.DetailsPanel;
 import CacheWolf.Global;
+import CacheWolf.GuiImageBroker;
 import CacheWolf.InputScreen;
-import CacheWolf.MainTab;
 import CacheWolf.MyLocale;
-import CacheWolf.Preferences;
-import CacheWolf.Profile;
 import ewe.fx.Brush;
 import ewe.fx.Color;
-import ewe.fx.Dimension;
 import ewe.fx.Font;
 import ewe.fx.FontMetrics;
 import ewe.fx.Graphics;
 import ewe.fx.Pen;
+import ewe.fx.Point;
 import ewe.fx.Rect;
 import ewe.graphics.AniImage;
 import ewe.sys.Convert;
 import ewe.sys.Double;
 import ewe.sys.Vm;
 import ewe.sys.VmConstants;
-import ewe.ui.CellConstants;
 import ewe.ui.CellPanel;
 import ewe.ui.ControlConstants;
 import ewe.ui.ControlEvent;
@@ -71,27 +66,17 @@ import ewe.ui.mLabel;
 
 public final class GotoPanel extends CellPanel {
 
-	// public CWGPSPoint gpsPosition = new CWGPSPoint();
-	// public CWPoint toPoint = new CWPoint();
-	public Navigate myNavigation;
-	mButton btnGPS, btnCenter, btnSave;
-	mButton btnGoto, btnMap;
-	int currFormatSel;
+	final CellPanel buttonPanel;
+	final CellPanel coordsPanel;
+	final CellPanel rosePanel;
 
-	mLabel lblGPS, lblPosition, lblDST;
+	private mButton btnGPS, btnCenter, btnNewWpt;
+	private mButton destination;
+	private mButton btnChangeProjection;
+	private int currFormatSel;
+
+	mLabel lblDestination, lblGPS, lblPosition;
 	Color gpsStatus;
-
-	MainTab mainT;
-	CacheDB cacheDB;
-	DetailsPanel detP;
-
-	Preferences pref;
-	Profile profile;
-	// different panels to avoid spanning
-	CellPanel HeadP = new CellPanel();
-	CellPanel ButtonP = new CellPanel();
-	CellPanel CoordsP = new CellPanel();
-	CellPanel roseP = new CellPanel();
 
 	ImageControl icRose;
 	GotoRose compassRose;
@@ -99,7 +84,7 @@ public final class GotoPanel extends CellPanel {
 	final static Color RED = new Color(255, 0, 0);
 	final static Color YELLOW = new Color(255, 255, 0);
 	final static Color GREEN = new Color(0, 255, 0);
-	final static Color BLUE = new Color(0, 0, 255);
+	final static Color BLUE = new Color(0, 128, 255);
 
 	Menu mnuContextFormt;
 	MenuItem miCooformat[] = new MenuItem[TransformCoordinates.localSystems.length + 3]; // miDMM, miDMS, miDD, miUTM, miGK;
@@ -110,7 +95,7 @@ public final class GotoPanel extends CellPanel {
 
 	/**
 	 * Create GotoPanel
-	 *
+	 * 
 	 * @param Preferences
 	 *            global preferences
 	 * @param MainTab
@@ -120,22 +105,27 @@ public final class GotoPanel extends CellPanel {
 	 * @param Vector
 	 *            cacheDB
 	 */
-	public GotoPanel(Navigate nav) {
-		myNavigation = nav;
-		pref = Global.getPref();
-		profile = Global.getProfile();
-		mainT = Global.mainTab;
-		detP = mainT.detP;
-		cacheDB = profile.cacheDB;
+	public GotoPanel() {
 
 		// Button
-		ButtonP.addNext(btnGPS = new mButton(MyLocale.getMsg(1504, "Start")), CellConstants.DONTSTRETCH, (CellConstants.DONTFILL | CellConstants.WEST));
-		ButtonP.addNext(btnCenter = new mButton(MyLocale.getMsg(309, "Centre")), CellConstants.DONTSTRETCH, (CellConstants.DONTFILL | CellConstants.WEST));
-		ButtonP.addLast(btnSave = new mButton(MyLocale.getMsg(311, "Create Waypoint")), CellConstants.DONTSTRETCH, (CellConstants.DONTFILL | CellConstants.WEST));
-		// ButtonP.addLast(btnMap = new mButton(MyLocale.getMsg(1506,"Map")),CellConstants.DONTSTRETCH, (CellConstants.DONTFILL|CellConstants.WEST));
+		buttonPanel = new CellPanel();
+		btnGPS = GuiImageBroker.getButton(MyLocale.getMsg(1504, "Start"), "gps");
+		btnGPS.setToolTip(MyLocale.getMsg(1504, "Start"));
 
-		// Format selection for coords
-		// context menu
+		btnCenter = GuiImageBroker.getButton(MyLocale.getMsg(309, "Centre"), "snap2gps");
+		btnCenter.setToolTip(MyLocale.getMsg(646, "Current centre from GPS"));
+
+		btnNewWpt = GuiImageBroker.getButton(MyLocale.getMsg(733, "Addi Wpt"), "newwpt");
+		btnNewWpt.setToolTip(MyLocale.getMsg(311, "Create Waypoint"));
+
+		buttonPanel.addNext(btnGPS);
+		buttonPanel.addNext(btnCenter);
+		buttonPanel.addLast(btnNewWpt);
+
+		// coordsPanel
+		coordsPanel = new CellPanel();
+
+		// Format selection for coords (context) menu
 		mnuContextFormt = new Menu();
 		currFormatSel = 1; // default to d° m.m
 		mnuContextFormt.addItem(miCooformat[0] = new MenuItem("d.d°"));
@@ -146,122 +136,133 @@ public final class GotoPanel extends CellPanel {
 		miCooformat[2].modifiers &= ~MenuItem.Checked;
 		mnuContextFormt.addItems(TransformCoordinates.getProjectedSystemNames());
 
-		// Create context menu for compass rose: select luminary for orientation
-		mnuContextRose = new Menu();
-		for (int i = 0; i < SkyOrientation.LUMINARY_NAMES.length; i++) {
-			mnuContextRose.addItem(miLuminary[i] = new MenuItem(SkyOrientation.getLuminaryName(i)));
-			if (i == myNavigation.luminary)
-				miLuminary[i].modifiers |= MenuItem.Checked;
-			else
-				miLuminary[i].modifiers &= MenuItem.Checked;
-		}
+		CellPanel destinationPanel = new CellPanel();
+		lblDestination = new mLabel("DST: ");
+		lblDestination.setMenu(mnuContextFormt);
+		lblDestination.modifyAll(ControlConstants.WantHoldDown, 0);
+		CellPanel labelPanel = new CellPanel();
+		labelPanel.backGround = BLUE;
+		labelPanel.addLast(lblDestination, VSTRETCH, CENTER);
+		destinationPanel.addNext(labelPanel, VSTRETCH, VFILL);
+		destination = GuiImageBroker.getButton(MyLocale.getMsg(1500, "DST:"), "goto");
+		destination.setToolTip(MyLocale.getMsg(1500, "DST:"));
+		destination.setMenu(mnuContextFormt);
+		destination.modifyAll(ControlConstants.WantHoldDown, 0);
+		destinationPanel.addNext(destination, HSTRETCH, HFILL);
 
-		// Coords
-		CoordsP.addNext(lblGPS = new mLabel("GPS: "), CellConstants.DONTSTRETCH, (CellConstants.DONTFILL | CellConstants.WEST));
+		btnChangeProjection = GuiImageBroker.getButton("...", "projection");
+		btnChangeProjection.setMenu(mnuContextFormt);
+		btnChangeProjection.modifyAll(ControlConstants.WantHoldDown, 0);
+		destinationPanel.addLast(btnChangeProjection, DONTSTRETCH, DONTFILL);
+		coordsPanel.addLast(destinationPanel, HSTRETCH, HFILL);
+
+		CellPanel gpsPanel = new CellPanel();
+		gpsPanel.addNext(lblGPS = new mLabel("GPS: "), DONTSTRETCH, FILL);
 		lblGPS.backGround = RED;
 		lblGPS.setMenu(mnuContextFormt);
 		lblGPS.modifyAll(ControlConstants.WantHoldDown, 0);
 
-		lblPosition = new mLabel(myNavigation.gpsPos.toString(CoordsScreen.getLocalSystem(currFormatSel)));
-		lblPosition.anchor = CellConstants.CENTER;
+		lblPosition = new mLabel("");
+		lblPosition.anchor = CENTER;
 		lblPosition.setMenu(mnuContextFormt);
 		lblPosition.modifyAll(ControlConstants.WantHoldDown, 0);
-		CoordsP.addLast(lblPosition, CellConstants.HSTRETCH, (CellConstants.HFILL | CellConstants.WEST));
+		gpsPanel.addLast(lblPosition, HSTRETCH, HFILL);
+		coordsPanel.addLast(gpsPanel, HSTRETCH, HFILL);
 
-		CoordsP.addNext(lblDST = new mLabel(MyLocale.getMsg(1500, "DST:")), CellConstants.DONTSTRETCH, (CellConstants.DONTFILL | CellConstants.WEST));
-		lblDST.backGround = BLUE;
-		lblDST.setMenu(mnuContextFormt);
-		lblDST.modifyAll(ControlConstants.WantHoldDown, 0);
-
-		CoordsP.addLast(btnGoto = new mButton(getGotoBtnText()), CellConstants.HSTRETCH, (CellConstants.HFILL | CellConstants.WEST));
-
-		// Rose for bearing
-		// compassRose = new GotoRose("rose.png");
+		// rosePanel for bearing
+		rosePanel = new CellPanel();
 		compassRose = new GotoRose();
 		icRose = new ImageControl(compassRose);
-		icRose.setMenu(mnuContextRose);
 		icRose.modifyAll(ControlConstants.WantHoldDown, 0); // this is necessary in order to make PenHold on a PDA work as right click
-		roseP.addLast(icRose, CellConstants.DONTSTRETCH, (CellConstants.DONTFILL | CellConstants.NORTH));
-
+		// Create context menu for compass rose
+		mnuContextRose = new Menu();
+		for (int i = 0; i < SkyOrientation.LUMINARY_NAMES.length; i++) {
+			mnuContextRose.addItem(miLuminary[i] = new MenuItem(SkyOrientation.getLuminaryName(i)));
+		}
+		icRose.setMenu(mnuContextRose);
 		mnuContextRose.addItem(new MenuItem("", MenuItem.Separator, null));
 		mnuContextRose.addItem(miNorthCentered = new MenuItem(MyLocale.getMsg(1503, "North Centered")));
 		if (compassRose.isNorthCentered())
 			miNorthCentered.modifiers |= MenuItem.Checked;
 		else
 			miNorthCentered.modifiers &= MenuItem.Checked;
+		rosePanel.addLast(icRose, STRETCH, FILL);
 
 		// add Panels
-		HeadP.addLast(ButtonP, CellConstants.HSTRETCH, CellConstants.DONTFILL | CellConstants.WEST).setTag(SPAN, new Dimension(2, 1));
-		HeadP.addLast(CoordsP, CellConstants.HSTRETCH, CellConstants.HFILL | CellConstants.NORTH).setTag(SPAN, new Dimension(2, 1));
-		this.addNext(HeadP, CellConstants.HSTRETCH, CellConstants.WEST).setTag(SPAN, new Dimension(2, 1));
-		this.addLast(btnMap = new mButton(MyLocale.getMsg(1506, "Map") + " "), CellConstants.HSTRETCH, CellConstants.VFILL | CellConstants.RIGHT).setTag(SPAN, new Dimension(2, 1));
-		this.addLast(roseP, CellConstants.DONTSTRETCH, CellConstants.DONTFILL | CellConstants.WEST).setTag(SPAN, new Dimension(2, 1));
-		btnMap.backGround = GREEN;
+		if (!Global.pref.tabsAtTop)
+			this.addLast(buttonPanel, HSTRETCH, HFILL);
+		this.addLast(coordsPanel, HSTRETCH, HFILL);
+		this.addLast(rosePanel);
+		if (Global.pref.tabsAtTop)
+			this.addLast(buttonPanel, HSTRETCH, HFILL);
+
 	}
 
+	public void init() {
+
+		// select luminary for orientation
+		for (int i = 0; i < SkyOrientation.LUMINARY_NAMES.length; i++) {
+			if (i == Global.mainTab.navigate.luminary)
+				miLuminary[i].modifiers |= MenuItem.Checked;
+			else
+				miLuminary[i].modifiers &= MenuItem.Checked;
+		}
+
+		lblPosition.text = Global.mainTab.navigate.gpsPos.toString(CoordsScreen.getLocalSystem(currFormatSel));
+
+		setText(destination, getGotoBtnText());
+
+	}
+
+	// Overrides
 	public void resizeTo(int pWidth, int pHeight) {
 		super.resizeTo(pWidth, pHeight);
-		Rect coordsRect = CoordsP.getRect();
+		Rect coordsRect = coordsPanel.getRect();
+		Rect buttonRect = buttonPanel.getRect();
 		int roseHeight = pHeight - coordsRect.y - coordsRect.height;
+
+		if (Global.pref.tabsAtTop) {
+			roseHeight = roseHeight - buttonRect.height;
+		}
+		else {
+
+		}
+
 		if (Gui.screenIs(Gui.PDA_SCREEN) && Vm.isMobile()) {
 			// some space for the SIP button
 			if ((Vm.getParameter(VmConstants.VM_FLAGS) & (VmConstants.VM_FLAG_SIP_BUTTON_ON_SCREEN)) == (VmConstants.VM_FLAG_SIP_BUTTON_ON_SCREEN)) {
 				Rect screen = (Rect) Window.getGuiInfo(WindowConstants.INFO_SCREEN_RECT, null, new Rect(), 0);
-				roseHeight -= screen.height / 14;
+				roseHeight = roseHeight - screen.height / 14;
 			}
 		}
-		roseP.resizeTo(pWidth, roseHeight);
+
+		rosePanel.resizeTo(pWidth, roseHeight);
 		icRose.resizeTo(pWidth, roseHeight);
 		compassRose.resize(pWidth, roseHeight);
+
+		if (Global.pref.tabsAtTop) {
+			Rect roseRect = rosePanel.getRect();
+			buttonPanel.setLocation(0, roseRect.y + roseRect.height);
+		}
 	}
 
-	/**
-	 * set the coords of the destination
-	 *
-	 * @param dest
-	 *            destination
-	 */
-	public void setDestination(CWPoint dest) {
-		myNavigation.setDestination(dest);
-		if (!myNavigation.destination.isValid())
-			(new MessageBox(MyLocale.getMsg(321, "Error"), MyLocale.getMsg(1507, "Coordinates are out of range:") + "\n" + MyLocale.getMsg(1508, "latitude") + ": " + myNavigation.destination.latDec + "\n " + MyLocale.getMsg(1509, "longditue") + ": "
-					+ myNavigation.destination.lonDec, FormBase.OKB)).execute();
-
-	}
-
-	public void destChanged(CWPoint d) { // called from myNavigate
-		btnGoto.setText(getGotoBtnText());
+	// called from myNavigate
+	public void destChanged(CWPoint d) {
+		setText(destination, getGotoBtnText());
 		updateDistance();
 	}
 
 	/**
-	 * set the coords of the destination and switch to gotoPanel
-	 *
-	 * @param LatLon
-	 *            destination
-	 */
-	public void setDestinationAndSwitch(CWPoint where) {
-		myNavigation.setDestination(where);
-		mainT.select(this);
-	}
-
-	public void setDestinationAndSwitch(CacheHolder ch) {
-		myNavigation.setDestination(ch);
-		mainT.select(this);
-	}
-
-	/**
 	 * updates distance and bearing
-	 *
+	 * 
 	 */
-
 	public void updateDistance() {
 		// update distance
 		float distance = -1.0f;
-		if (myNavigation.gpsPos.isValid() && myNavigation.destination.isValid()) {
-			distance = (float) myNavigation.gpsPos.getDistance(myNavigation.destination);
+		if (Global.mainTab.navigate.gpsPos.isValid() && Global.mainTab.navigate.destination.isValid()) {
+			distance = (float) Global.mainTab.navigate.gpsPos.getDistance(Global.mainTab.navigate.destination);
 		}
-		compassRose.setWaypointDirectionDist((float) myNavigation.gpsPos.getBearing(myNavigation.destination), distance);
+		compassRose.setWaypointDirectionDist((float) Global.mainTab.navigate.gpsPos.getBearing(Global.mainTab.navigate.destination), distance);
 	}
 
 	/**
@@ -271,20 +272,20 @@ public final class GotoPanel extends CellPanel {
 		Double bearMov = new Double();
 		Double speed = new Double();
 		Double sunAzimut = new Double();
-		compassRose.setGpsStatus(fix, myNavigation.gpsPos.getSats(), myNavigation.gpsPos.getSatsInView(), myNavigation.gpsPos.getHDOP());
-		if ((fix > 0) && (myNavigation.gpsPos.getSats() >= 0)) {
+		compassRose.setGpsStatus(fix, Global.mainTab.navigate.gpsPos.getSats(), Global.mainTab.navigate.gpsPos.getSatsInView(), Global.mainTab.navigate.gpsPos.getHDOP());
+		if ((fix > 0) && (Global.mainTab.navigate.gpsPos.getSats() >= 0)) {
 			// display values only, if signal good
-			lblPosition.setText(myNavigation.gpsPos.toString(CoordsScreen.getLocalSystem(currFormatSel)));
-			speed.set(myNavigation.gpsPos.getSpeed());
-			sunAzimut.set(myNavigation.skyOrientationDir.lonDec);
-			bearMov.set(myNavigation.gpsPos.getBear());
+			lblPosition.setText(Global.mainTab.navigate.gpsPos.toString(CoordsScreen.getLocalSystem(currFormatSel)));
+			speed.set(Global.mainTab.navigate.gpsPos.getSpeed());
+			sunAzimut.set(Global.mainTab.navigate.skyOrientationDir.lonDec);
+			bearMov.set(Global.mainTab.navigate.gpsPos.getBear());
 			updateDistance();
 			compassRose.setSunMoveDirections((float) sunAzimut.value, (float) bearMov.value, (float) speed.value);
 			// Set background to signal quality
 		}
 
 		// receiving data, but signal ist not good
-		if ((fix == 0) && (myNavigation.gpsPos.getSats() >= 0)) {
+		if ((fix == 0) && (Global.mainTab.navigate.gpsPos.getSats() >= 0)) {
 			gpsStatus = YELLOW;
 		}
 		// receiving no data
@@ -292,16 +293,16 @@ public final class GotoPanel extends CellPanel {
 			if (gpsStatus != RED)
 				(new MessageBox(MyLocale.getMsg(321, "Error"), MyLocale.getMsg(1510, "No data from GPS.\nConnection to serial port/gpsd closed."), FormBase.OKB)).exec();
 			gpsStatus = RED;
-			myNavigation.stopGps();
+			Global.mainTab.navigate.stopGps();
 		}
 		// cannot interpret data
 		if (fix == -2) {
 			if (gpsStatus != RED)
 				(new MessageBox(MyLocale.getMsg(321, "Error"), MyLocale.getMsg(1511,
 						"Cannot interpret data from GPS/gpsd!\nPossible reasons:\nWrong port,\nwrong baud rate,\ninvalid protocol (need NMEA/gpsd).\nConnection to serial port closed.\nLast String tried to interpret:\n")
-						+ myNavigation.gpsPos.lastStrExamined, FormBase.OKB)).exec();
+						+ Global.mainTab.navigate.gpsPos.lastStrExamined, FormBase.OKB)).exec();
 			gpsStatus = RED;
-			myNavigation.stopGps(); // TODO automatic in myNavigate?
+			Global.mainTab.navigate.stopGps(); // TODO automatic in myNavigate?
 		}
 	}
 
@@ -310,7 +311,7 @@ public final class GotoPanel extends CellPanel {
 	}
 
 	public void startGps() {
-		myNavigation.startGps(pref.logGPS, Convert.toInt(pref.logGPSTimer));
+		Global.mainTab.navigate.startGps(Global.pref.logGPS, Convert.toInt(Global.pref.logGPSTimer));
 	}
 
 	public void gpsStoped() {
@@ -320,34 +321,14 @@ public final class GotoPanel extends CellPanel {
 	}
 
 	private String getGotoBtnText() {
-		if (myNavigation.destination == null)
+		if (Global.mainTab.navigate.destination == null)
 			return MyLocale.getMsg(999, "Not set");
 		else
-			return myNavigation.destination.toString(CoordsScreen.getLocalSystem(currFormatSel));
+			return Global.mainTab.navigate.destination.toString(CoordsScreen.getLocalSystem(currFormatSel));
 	}
 
-	public void switchToMovingMap() {
-		CWPoint centerTo = null;
-		if (myNavigation.isGpsPosValid())
-			centerTo = new CWPoint(myNavigation.gpsPos); // set gps-pos if gps is on
-		else {
-			// setze Zielpunkt als Ausgangspunkt, wenn GPS aus ist und lade entsprechende Karte
-			// centerTo = new CWPoint(myNavigation.destination);
-			if (myNavigation.destination.isValid())
-				centerTo = new CWPoint(myNavigation.destination);
-			else {
-				if (mainT.ch != null && mainT.ch.getPos().isValid())
-					centerTo = new CWPoint(mainT.ch.getPos());
-				else {
-					if (pref.getCurCentrePt().isValid())
-						centerTo = new CWPoint(pref.getCurCentrePt());
-				}
-			}
-		}
-		if (centerTo != null && centerTo.isValid())
-			mainT.SwitchToMovingMap(centerTo, false);
-		else
-			(new MessageBox(MyLocale.getMsg(321, "Error"), MyLocale.getMsg(1513, "Cannot start moving map without valid coordinates. Please enter coordinates as destination, as center, in selected cache or start GPS"), FormBase.OKB)).execute();
+	private void setText(mButton btn, String text) {
+		GuiImageBroker.setButtonText(btn, text);
 	}
 
 	/**
@@ -361,25 +342,27 @@ public final class GotoPanel extends CellPanel {
 					mnuContextFormt.getItemAt(currFormatSel).modifiers &= ~MenuItem.Checked;
 					currFormatSel = mnuContextFormt.getInt();
 					mnuContextFormt.getItemAt(currFormatSel).modifiers |= MenuItem.Checked;
-					lblPosition.setText(myNavigation.gpsPos.toString(CoordsScreen.getLocalSystem(currFormatSel)));
-					btnGoto.setText(getGotoBtnText());
+					lblPosition.setText(Global.mainTab.navigate.gpsPos.toString(CoordsScreen.getLocalSystem(currFormatSel)));
+					setText(destination, getGotoBtnText());
 				} // end lat-lon-format context menu
 				if (((MenuEvent) ev).menu == mnuContextRose) {
 					MenuItem action = (MenuItem) mnuContextRose.getSelectedItem();
 					if (action != null) {
 						for (int i = 0; i < miLuminary.length; i++) {
 							if (action == miLuminary[i]) {
-								myNavigation.setLuminary(i);
+								Global.mainTab.navigate.setLuminary(i);
 								miLuminary[i].modifiers |= MenuItem.Checked;
-								compassRose.setLuminaryName(SkyOrientation.getLuminaryName(myNavigation.luminary));
-							} else
+								compassRose.setLuminaryName(SkyOrientation.getLuminaryName(Global.mainTab.navigate.luminary));
+							}
+							else
 								miLuminary[i].modifiers &= ~MenuItem.Checked;
 						}
 						if (action == miNorthCentered) {
 							if (compassRose.isNorthCentered()) {
 								compassRose.setNorthCentered(false);
 								miNorthCentered.modifiers &= ~MenuItem.Checked;
-							} else {
+							}
+							else {
 								compassRose.setNorthCentered(true);
 								miNorthCentered.modifiers |= MenuItem.Checked;
 							}
@@ -395,48 +378,58 @@ public final class GotoPanel extends CellPanel {
 				if (btnGPS.getText().equals(MyLocale.getMsg(1504, "Start")))
 					startGps();
 				else
-					myNavigation.stopGps();
+					Global.mainTab.navigate.stopGps();
 			}
 
 			// set current position as centre and recalculate distance of caches in MainTab
 			if (ev.target == btnCenter) {
-				if (myNavigation.gpsPos.isValid()) {
-					pref.setCurCentrePt(myNavigation.gpsPos);
-				} else
+				if (Global.mainTab.navigate.gpsPos.isValid()) {
+					Global.pref.setCurCentrePt(Global.mainTab.navigate.gpsPos);
+				}
+				else
 					(new MessageBox(MyLocale.getMsg(312, "Error"), MyLocale.getMsg(1514, "Cannot recalculate distances, because the GPS position is not set"), FormBase.OKB)).execute();
 			}
 			// Start moving map
+			/*
 			if (ev.target == btnMap) {
 				switchToMovingMap();
 			}
+			 */
 			// create new waypoint with current GPS-position
-			if (ev.target == btnSave) {
+			if (ev.target == btnNewWpt) {
 				CacheHolder ch = new CacheHolder();
-				ch.setPos(myNavigation.gpsPos);
+				ch.setPos(Global.mainTab.navigate.gpsPos);
 				ch.setType(CacheType.CW_TYPE_STAGE); // see CacheType.GC_AW_STAGE_OF_MULTI // TODO unfertig
-				mainT.newWaypoint(ch);
+				Global.mainTab.newWaypoint(ch);
 			}
 			// change destination waypoint
-			if (ev.target == btnGoto) {
+			if (ev.target == destination) {
 				if (Vm.isMobile()) {
 					InputScreen InScr = new InputScreen(CoordsScreen.getLocalSystem(currFormatSel));
-					if (myNavigation.destination.isValid())
-						InScr.setCoords(myNavigation.destination);
+					if (Global.mainTab.navigate.destination.isValid())
+						InScr.setCoords(Global.mainTab.navigate.destination);
 					else
 						InScr.setCoords(new CWPoint(0, 0));
-					if (InScr.execute(null, CellConstants.TOP) == FormBase.IDOK)
-						setDestination(InScr.getCoords());
-				} else {
+					if (InScr.execute(null, TOP) == FormBase.IDOK)
+						Navigate.itself.setDestination(InScr.getCoords());
+				}
+				else {
 					CoordsScreen cs = new CoordsScreen();
-					if (myNavigation.destination.isValid())
-						cs.setFields(myNavigation.destination, CoordsScreen.getLocalSystem(currFormatSel));
+					if (Global.mainTab.navigate.destination.isValid())
+						cs.setFields(Global.mainTab.navigate.destination, CoordsScreen.getLocalSystem(currFormatSel));
 					else
 						cs.setFields(new CWPoint(0, 0), CoordsScreen.getLocalSystem(currFormatSel));
-					if (cs.execute(null, CellConstants.TOP) == FormBase.IDOK)
-						setDestination(cs.getCoords());
+					if (cs.execute(null, TOP) == FormBase.IDOK)
+						Navigate.itself.setDestination(cs.getCoords());
 				}
 
 			}
+
+			if (ev.target == this.btnChangeProjection) {
+				Rect rm = mnuContextFormt.getRect();
+				btnChangeProjection.startDropMenu(new Point(rm.x, rm.y));
+			}
+
 		}
 		super.onEvent(ev);
 	}
@@ -466,7 +459,7 @@ class GotoRose extends AniImage {
 
 	int roseRadius;
 
-	boolean northCentered = Global.getPref().northCenteredGoto;
+	boolean northCentered = Global.pref.northCenteredGoto;
 
 	final static Color RED = new Color(255, 0, 0);
 	final static Color YELLOW = new Color(255, 255, 0);
@@ -524,7 +517,7 @@ class GotoRose extends AniImage {
 
 	/**
 	 * draw arrows for the directions of movement and destination waypoint
-	 *
+	 * 
 	 * @param ctrl
 	 *            the control to paint on
 	 * @param moveDir
@@ -532,15 +525,14 @@ class GotoRose extends AniImage {
 	 * @param destDir
 	 *            degrees of destination waypoint
 	 */
-
 	public void doDraw(Graphics g, int options) {
 		g.setColor(Color.White);
 		g.fillRect(0, 0, location.width, location.height);
 
-		int fontSize    = location.width / 17;
+		int fontSize = location.width / 17;
 		int fontSizeBig = location.width / 10;
 		mainFont = GetCorrectedFont(g, "Verdana", Font.BOLD, fontSize);
-		bigFont =  GetCorrectedFont(g, "Verdana", Font.BOLD, fontSizeBig);
+		bigFont = GetCorrectedFont(g, "Verdana", Font.BOLD, fontSizeBig);
 		g.setFont(mainFont);
 		fm = g.getFontMetrics(mainFont);
 		fb = g.getFontMetrics(bigFont);
@@ -552,7 +544,8 @@ class GotoRose extends AniImage {
 			// scale(location.width, location.height, null, 0);
 			// super.doDraw(g, options);
 			drawFullRose(g, 0, Color.White, LIGHT_GREY, Color.White, LIGHT_GREY, ROSE_BORDER_COLOR, ROSE_TEXT_COLOR, 1.0f, true, true);
-		} else {
+		}
+		else {
 			int radius = (int) (roseRadius * 0.75f);
 
 			g.setPen(new Pen(ROSE_BORDER_COLOR, Pen.SOLID, 3));
@@ -576,7 +569,7 @@ class GotoRose extends AniImage {
 
 		g.setColor(Color.Black);
 
-		int metricSystem = Global.getPref().metricSystem;
+		int metricSystem = Global.pref.metricSystem;
 		Double tmp = new Double();
 		strTemp = "";
 		double newDistance = 0;
@@ -590,7 +583,8 @@ class GotoRose extends AniImage {
 			smallUnit = Metrics.FEET;
 			threshold = 0.1;
 			newDistance = Metrics.convertUnit(distance, Metrics.KILOMETER, Metrics.MILES);
-		} else {
+		}
+		else {
 			bigUnit = Metrics.KILOMETER;
 			smallUnit = Metrics.METER;
 			threshold = 1.0;
@@ -601,12 +595,14 @@ class GotoRose extends AniImage {
 			if (tmp.value >= threshold) {
 				strTempVal = MyLocale.formatDouble(tmp, "0.000");
 				strTemp = strTempVal + " " + Metrics.getUnit(bigUnit);
-			} else {
+			}
+			else {
 				tmp.set(Metrics.convertUnit(tmp.value, bigUnit, smallUnit));
 				strTempVal = tmp.toString(3, 0, 0);
 				strTemp = strTempVal + " " + Metrics.getUnit(smallUnit);
 			}
-		} else {
+		}
+		else {
 			strTempVal = "---";
 			strTemp = strTempVal + " " + Metrics.getUnit(bigUnit);
 		}
@@ -642,11 +638,12 @@ class GotoRose extends AniImage {
 		String unit = null;
 
 		// Allow for different metric systems
-		if (Global.getPref().metricSystem == Metrics.IMPERIAL) {
+		if (Global.pref.metricSystem == Metrics.IMPERIAL) {
 			tmp.set(Metrics.convertUnit(m_speed, Metrics.KILOMETER, Metrics.MILES));
 			unit = " mph";
 			strSpeed = "- mph";
-		} else {
+		}
+		else {
 			tmp.set(m_speed);
 			unit = " km/h";
 			strSpeed = "- km/h";
@@ -654,7 +651,8 @@ class GotoRose extends AniImage {
 		if (tmp.value >= 0) {
 			if (tmp.value >= 100) {
 				strSpeed = MyLocale.formatDouble(tmp, "0") + unit;
-			} else {
+			}
+			else {
 				strSpeed = MyLocale.formatDouble(tmp, "0.0") + unit;
 			}
 		}
@@ -699,11 +697,13 @@ class GotoRose extends AniImage {
 		if ((m_fix > 0) && (m_sats >= 0)) {
 			// Set background to signal quality
 			g.setColor(GREEN);
-		} else
+		}
+		else
 		// receiving data, but signal ist not good
 		if ((m_fix == 0) && (m_sats >= 0)) {
 			g.setColor(YELLOW);
-		} else {
+		}
+		else {
 			g.setColor(RED);
 		}
 
@@ -741,11 +741,14 @@ class GotoRose extends AniImage {
 
 				if (diff <= 12.25f) {
 					moveDirColor = GREEN;
-				} else if (diff <= 22.5f) {
+				}
+				else if (diff <= 22.5f) {
 					moveDirColor = CYAN;
-				} else if (diff <= 45.0f) {
+				}
+				else if (diff <= 45.0f) {
 					moveDirColor = ORANGE;
-				} else if (diff <= 90.0f) {
+				}
+				else if (diff <= 90.0f) {
 					moveDirColor = MAGENTA;
 				}
 			}
@@ -758,7 +761,8 @@ class GotoRose extends AniImage {
 					drawThinArrow(g, moveDir, RED, moveDirColor, 1.0f);
 				if (sunDir < 360 && sunDir > -360)
 					drawSunArrow(g, sunDir, YELLOW, 0.75f);
-			} else {
+			}
+			else {
 				// moveDir centered
 				if (moveDir < 360 && moveDir > -360) {
 					// drawDoubleArrow(g, 360 - moveDir, BLUE, new Color(175,0,0), 1.0f);
@@ -926,9 +930,9 @@ class GotoRose extends AniImage {
 
 	public void setNorthCentered(boolean nc) {
 		northCentered = nc;
-		if (northCentered != Global.getPref().northCenteredGoto) {
-			Global.getPref().northCenteredGoto = northCentered;
-			Global.getPref().savePreferences();
+		if (northCentered != Global.pref.northCenteredGoto) {
+			Global.pref.northCenteredGoto = northCentered;
+			Global.pref.savePreferences();
 		}
 		refresh();
 	}

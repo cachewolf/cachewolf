@@ -22,7 +22,6 @@
 package CacheWolf.navi.touchControls;
 
 import CacheWolf.Global;
-import CacheWolf.Preferences;
 import CacheWolf.navi.touchControls.MovingMapControls.Role;
 import ewe.fx.Image;
 import ewe.graphics.AniImage;
@@ -56,7 +55,6 @@ public abstract class MovingMapControlItem {
 	static public final int ICON_TEXT_BOTTOM = 0x400000;
 
 	public int xProperties = 0x0;
-	protected Preferences pref = Global.getPref();
 
 	private String helpText = null;
 	private int xPos;
@@ -108,8 +106,9 @@ public abstract class MovingMapControlItem {
 
 				image.setPixels(imagePixels, 0, 0, 0, imageW, imageH, 0);
 
-			} else
-				Global.getPref().log("icon " + iconSrc + " is bigger than " + source + "! Icon not loaded", null);
+			}
+			else
+				Global.pref.log("icon " + iconSrc + " is bigger than " + source + "! Icon not loaded", null);
 
 		}
 
@@ -181,7 +180,8 @@ public abstract class MovingMapControlItem {
 			String part = parts[i];
 			if (part.startsWith("!")) {
 				roles.put(part.substring(1), Boolean.FALSE);
-			} else {
+			}
+			else {
 				roles.put(part, Boolean.TRUE);
 			}
 		}
@@ -200,7 +200,7 @@ public abstract class MovingMapControlItem {
 
 			Boolean thisElement = (Boolean) roles.get(nextKey);
 			if (!overallRoles.containsKey(nextKey)) {
-				Global.getPref().log("Lookup role " + nextKey + " not possible", null);
+				Global.pref.log("Lookup role " + nextKey + " not possible", null);
 				return false;
 			}
 

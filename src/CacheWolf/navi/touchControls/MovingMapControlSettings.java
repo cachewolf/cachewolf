@@ -35,7 +35,7 @@ import ewesoft.xml.MinML;
 import ewesoft.xml.sax.AttributeList;
 import ewesoft.xml.sax.SAXException;
 
-public class MovingMapControlSettings extends MinML  implements ICommandListener {
+public class MovingMapControlSettings extends MinML implements ICommandListener {
 
 	public static final String CONFIG_FILE_NAME = "movingMapControls.xml";
 	public static final String CONFIG_FILE_NAME_OVERWRITE = "my_movingMapControls.xml";
@@ -134,19 +134,22 @@ public class MovingMapControlSettings extends MinML  implements ICommandListener
 	Vector menuItems = new Vector(10);
 	private Hashtable roles;
 	private int fontsize;
+
 	public MovingMapControlSettings(boolean vga, Hashtable roles) {
 		double fontscale = vga ? 1.5 : 1;
-		this.fontsize = (int) (Global.getPref().fontSize * fontscale);
+		this.fontsize = (int) (Global.pref.fontSize * fontscale);
 		this.roles = roles;
 	}
+
 	public void startElement(String name, AttributeList attributes) throws SAXException {
 		if (name.equals(SETTINGS)) {
 			String fontsizeString = attributes.getValue(SETTINGS_ATTR_FONTSIZE);
 			if (fontsizeString != null) {
 				try {
 					fontsize = Integer.parseInt(fontsizeString);
-				} catch (Exception e) {
-					Global.getPref().log("fontsize not an int " + fontsizeString,e);
+				}
+				catch (Exception e) {
+					Global.pref.log("fontsize not an int " + fontsizeString, e);
 				}
 			}
 		}
@@ -180,7 +183,8 @@ public class MovingMapControlSettings extends MinML  implements ICommandListener
 			if (xpos < 0) {
 				xpos = toIntValue(fromRight);
 				xProperties |= MovingMapControlItem.DISPLAY_FROM_RIGHT;
-			} else {
+			}
+			else {
 				xProperties |= MovingMapControlItem.DISPLAY_FROM_LEFT;
 			}
 
@@ -188,21 +192,18 @@ public class MovingMapControlSettings extends MinML  implements ICommandListener
 			if (ypos < 0) {
 				ypos = toIntValue(fromBottom);
 				xProperties |= MovingMapControlItem.DISPLAY_FROM_BOTTOM;
-			} else {
+			}
+			else {
 				xProperties |= MovingMapControlItem.DISPLAY_FROM_TOP;
 			}
 
 			if (xpos < 0) {
-				Global.getPref().log("the x position of the button has to be set! "
-						+ "use attribute '" + BUTTON_ATTR_FROM_LEFT + "' or '"
-						+ BUTTON_ATTR_FROM_RIGHT + "'",null);
+				Global.pref.log("the x position of the button has to be set! " + "use attribute '" + BUTTON_ATTR_FROM_LEFT + "' or '" + BUTTON_ATTR_FROM_RIGHT + "'", null);
 				xpos = 0;
 			}
 
 			if (ypos < 0) {
-				Global.getPref().log("the y position of the button has to be set! "
-						+ "use attribute '" + BUTTON_ATTR_FROM_TOP + "' or '"
-						+ BUTTON_ATTR_FROM_BOTTOM + "'",null);
+				Global.pref.log("the y position of the button has to be set! " + "use attribute '" + BUTTON_ATTR_FROM_TOP + "' or '" + BUTTON_ATTR_FROM_BOTTOM + "'", null);
 				ypos = 0;
 			}
 
@@ -214,17 +215,16 @@ public class MovingMapControlSettings extends MinML  implements ICommandListener
 			String imageLocation = attributes.getValue(BUTTON_ATTR_LOCATION);
 			String iconLocation = attributes.getValue(BUTTON_ATTR_ICON);
 			if (iconLocation != null) {
-				iconLocation = CONFIG_RELATIVE_PATH + iconLocation; 
+				iconLocation = CONFIG_RELATIVE_PATH + iconLocation;
 			}
 			String alignText = attributes.getValue(BUTTON_ATTR_ALIGNTEXT);
 			String content = attributes.getValue(BUTTON_ATTR_CONTENT);
 			if (visibility == null) {
-				Global.getPref().log("read MovingMap settings: " + BUTTON_ATTR_VISIBILITY
-						+ " not set!",null);
+				Global.pref.log("read MovingMap settings: " + BUTTON_ATTR_VISIBILITY + " not set!", null);
 				return;
 			}
 			if (action == -2) {
-				Global.getPref().log("read MovingMap settings: " + BUTTON_ATTR_ACTION + " not set!",null);
+				Global.pref.log("read MovingMap settings: " + BUTTON_ATTR_ACTION + " not set!", null);
 				return;
 			}
 			int alphavalue = getIntFromFile(attributes, BUTTON_ATTR_ALPHA, -1);
@@ -233,30 +233,28 @@ public class MovingMapControlSettings extends MinML  implements ICommandListener
 
 			if (imageLocation == null) {
 				// something not set
-				Global.getPref().log("Image for '" + localeDefault + "' not found",null);
+				Global.pref.log("Image for '" + localeDefault + "' not found", null);
 				return;
 			}
 			else {
-				imageLocation = CONFIG_RELATIVE_PATH + imageLocation; 
+				imageLocation = CONFIG_RELATIVE_PATH + imageLocation;
 			}
-			int localfontsize=getIntFromFile(attributes, SETTINGS_ATTR_FONTSIZE, fontsize);
+			int localfontsize = getIntFromFile(attributes, SETTINGS_ATTR_FONTSIZE, fontsize);
 			// textoptions
-			TextOptions tOptions = new TextOptions(localfontsize, getIntFromFile(
-					attributes, BUTTON_ATTR_TEXT_OFFSET_L, 0), getIntFromFile(
-					attributes, BUTTON_ATTR_TEXT_OFFSET_R, 0), getIntFromFile(
-					attributes, BUTTON_ATTR_TEXT_OFFSET_T, 0), getIntFromFile(
-					attributes, BUTTON_ATTR_TEXT_OFFSET_B, 0));
+			TextOptions tOptions = new TextOptions(localfontsize, getIntFromFile(attributes, BUTTON_ATTR_TEXT_OFFSET_L, 0), getIntFromFile(attributes, BUTTON_ATTR_TEXT_OFFSET_R, 0), getIntFromFile(attributes, BUTTON_ATTR_TEXT_OFFSET_T, 0),
+					getIntFromFile(attributes, BUTTON_ATTR_TEXT_OFFSET_B, 0));
 
 			MovingMapControlItem button;
 			String itemText;
-			if (localeDefault == null) 
-				itemText=MyLocale.getMsg(localIDValue, "");
-			else itemText=MyLocale.getMsg(localIDValue, localeDefault);
+			if (localeDefault == null)
+				itemText = MyLocale.getMsg(localIDValue, "");
+			else
+				itemText = MyLocale.getMsg(localIDValue, localeDefault);
 			if (itemText.equals("") && content == null) {
 				button = new MovingMapControlItemButton(imageLocation, iconLocation, action, alphavalue);
-			} else {
-				button = new MovingMapControlItemText(itemText,
-						imageLocation, iconLocation, alphavalue, action, content, alignText, tOptions);
+			}
+			else {
+				button = new MovingMapControlItemText(itemText, imageLocation, iconLocation, alphavalue, action, content, alignText, tOptions);
 			}
 
 			// add extra role to all icons
@@ -275,51 +273,86 @@ public class MovingMapControlSettings extends MinML  implements ICommandListener
 	}
 
 	private int getCommand(String value) {
-		if (value == null ) return -2;
-		else if (value.equals("selectMap")) return SELECT_MAP;
-		else if (value.equals("changeMapDir")) return CHANGE_MAP_DIR;
-		else if (value.equals("moveToGps")) return MOVE_TO_GPS;
-		else if (value.equals("moveToDest")) return MOVE_TO_DEST;
-		else if (value.equals("moveToCenter")) return MOVE_TO_CENTER;
-		else if (value.equals("allCachesRes")) return ALL_CACHES_RES;
-		else if (value.equals("moreOverview")) return MORE_OVERVIEW;
-		else if (value.equals("moreDetails")) return MORE_DETAILS;
-		else if (value.equals("keepManResolution")) return KEEP_MAN_RESOLUTION;
-		else if (value.equals("changeStateOfRole")) return changeStateOfRole;
-		else if (value.equals("highestResolution")) return HIGHEST_RES;
-		else if (value.equals("highestResGpsDest")) return HIGHEST_RES_GPS_DEST;
-		else if (value.equals("showMap")) return SHOW_MAP;
-		else if (value.equals("hideMap")) return HIDE_MAP;
-		else if (value.equals("menu")) return SHOW_MENU;
-		else if (value.equals("hide_menu")) return HIDE_MENU;
-		else if (value.equals("show_caches")) return SHOW_CACHES;
-		else if (value.equals("hide_caches")) return HIDE_CACHES;
-		else if (value.equals("zoomin")) return ZOOMIN;
-		else if (value.equals("zoomout")) return ZOOMOUT;
-		else if (value.equals("1to1")) return ZOOM_1_TO_1;
-		else if (value.equals("map_moved")) return MAP_MOVED;
-		else if (value.equals("pos_updated")) return POS_UPDATED;
-		else if (value.equals("goto_updated")) return GOTO_UPDATED;
-		else if (value.equals("close")) return CLOSE;
-		else if (value.equals("fillMap")) return FILL_MAP;
-		else if (value.equals("nofillMap")) return NO_FILL_MAP;
-		else if (value.equals("context_goto")) return CONTEXT_GOTO;
-		else if (value.equals("context_nwp")) return CONTEXT_NEW_WAY_POINT;
-		else if (value.equals("context_ocDesc")) return CONTEXT_OPEN_CACHE_DESC;
-		else if (value.equals("context_ocDetail")) return CONTEXT_OPEN_CACHE_DETAIL;
-		else if (value.equals("context_goto_cache")) return CONTEXT_GOTO_CACHE;
-		else if (value.equals("context_tour")) return CONTEXT_TOUR;
-		else return -1;
+		if (value == null)
+			return -2;
+		else if (value.equals("selectMap"))
+			return SELECT_MAP;
+		else if (value.equals("changeMapDir"))
+			return CHANGE_MAP_DIR;
+		else if (value.equals("moveToGps"))
+			return MOVE_TO_GPS;
+		else if (value.equals("moveToDest"))
+			return MOVE_TO_DEST;
+		else if (value.equals("moveToCenter"))
+			return MOVE_TO_CENTER;
+		else if (value.equals("allCachesRes"))
+			return ALL_CACHES_RES;
+		else if (value.equals("moreOverview"))
+			return MORE_OVERVIEW;
+		else if (value.equals("moreDetails"))
+			return MORE_DETAILS;
+		else if (value.equals("keepManResolution"))
+			return KEEP_MAN_RESOLUTION;
+		else if (value.equals("changeStateOfRole"))
+			return changeStateOfRole;
+		else if (value.equals("highestResolution"))
+			return HIGHEST_RES;
+		else if (value.equals("highestResGpsDest"))
+			return HIGHEST_RES_GPS_DEST;
+		else if (value.equals("showMap"))
+			return SHOW_MAP;
+		else if (value.equals("hideMap"))
+			return HIDE_MAP;
+		else if (value.equals("menu"))
+			return SHOW_MENU;
+		else if (value.equals("hide_menu"))
+			return HIDE_MENU;
+		else if (value.equals("show_caches"))
+			return SHOW_CACHES;
+		else if (value.equals("hide_caches"))
+			return HIDE_CACHES;
+		else if (value.equals("zoomin"))
+			return ZOOMIN;
+		else if (value.equals("zoomout"))
+			return ZOOMOUT;
+		else if (value.equals("1to1"))
+			return ZOOM_1_TO_1;
+		else if (value.equals("map_moved"))
+			return MAP_MOVED;
+		else if (value.equals("pos_updated"))
+			return POS_UPDATED;
+		else if (value.equals("goto_updated"))
+			return GOTO_UPDATED;
+		else if (value.equals("close"))
+			return CLOSE;
+		else if (value.equals("fillMap"))
+			return FILL_MAP;
+		else if (value.equals("nofillMap"))
+			return NO_FILL_MAP;
+		else if (value.equals("context_goto"))
+			return CONTEXT_GOTO;
+		else if (value.equals("context_nwp"))
+			return CONTEXT_NEW_WAY_POINT;
+		else if (value.equals("context_ocDesc"))
+			return CONTEXT_OPEN_CACHE_DESC;
+		else if (value.equals("context_ocDetail"))
+			return CONTEXT_OPEN_CACHE_DETAIL;
+		else if (value.equals("context_goto_cache"))
+			return CONTEXT_GOTO_CACHE;
+		else if (value.equals("context_tour"))
+			return CONTEXT_TOUR;
+		else
+			return -1;
 	}
 
-	private int getIntFromFile(AttributeList attributes, String field,
-			int defaultValue) {
+	private int getIntFromFile(AttributeList attributes, String field, int defaultValue) {
 		String entry = attributes.getValue(field);
 		if (entry != null) {
 			try {
 				defaultValue = Integer.parseInt(entry);
-			} catch (Exception e) {
-				Global.getPref().log("Can not read int for filed " + field + ": " + entry,e);
+			}
+			catch (Exception e) {
+				Global.pref.log("Can not read int for filed " + field + ": " + entry, e);
 			}
 		}
 		return defaultValue;
@@ -328,43 +361,44 @@ public class MovingMapControlSettings extends MinML  implements ICommandListener
 	private int toIntValue(String pos) {
 		try {
 			return Integer.parseInt(pos);
-		} catch (Exception e) {
+		}
+		catch (Exception e) {
 			return -1;
 		}
 	}
 
 	public boolean readFile() {
 		setDocumentHandler(this);
-		String tmp = CONFIG_RELATIVE_PATH+"Desktop/";
+		String tmp = CONFIG_RELATIVE_PATH + "Desktop/";
 
 		if (Vm.isMobile()) {
-			tmp=CONFIG_RELATIVE_PATH+"pda/";
-			
+			tmp = CONFIG_RELATIVE_PATH + "pda/";
+
 			if (MyLocale.getScreenHeight() >= 480 && MyLocale.getScreenWidth() >= 480) {
-				tmp=CONFIG_RELATIVE_PATH+"pda_vga/";
+				tmp = CONFIG_RELATIVE_PATH + "pda_vga/";
 			}
 		}
-		CONFIG_RELATIVE_PATH=tmp;
-		String path = FileBase.makePath(FileBase.getProgramDirectory(),CONFIG_RELATIVE_PATH);
+		CONFIG_RELATIVE_PATH = tmp;
+		String path = FileBase.makePath(FileBase.getProgramDirectory(), CONFIG_RELATIVE_PATH);
 		path = path.replace('\\', '/');
 		File file = new File(path, CONFIG_FILE_NAME_OVERWRITE);
-		if (!file.exists()) {file = new File(path, ""+MyLocale.getScreenWidth()+"x"+MyLocale.getScreenHeight()+".xml");}
-		if (!file.exists()) {file = new File(path, CONFIG_FILE_NAME);}
-		
-		
+		if (!file.exists()) {
+			file = new File(path, "" + MyLocale.getScreenWidth() + "x" + MyLocale.getScreenHeight() + ".xml");
+		}
+		if (!file.exists()) {
+			file = new File(path, CONFIG_FILE_NAME);
+		}
+
 		try {
 			ewe.io.Reader r = new ewe.io.InputStreamReader(new ewe.io.FileInputStream(file));
 			parse(r);
 			r.close();
-		} catch (Exception e) {
+		}
+		catch (Exception e) {
 			if (e instanceof NullPointerException)
-				Global.getPref().log(
-						"Error reading " + path
-								+ ": NullPointerException in Element " + ""
-								+ ". Wrong attribute, File not existing?", e,
-						true);
+				Global.pref.log("Error reading " + path + ": NullPointerException in Element " + "" + ". Wrong attribute, File not existing?", e, true);
 			else
-				Global.getPref().log("Error reading " + path + ": ", e);
+				Global.pref.log("Error reading " + path + ": ", e);
 			return false;
 		}
 		return true;
@@ -373,6 +407,7 @@ public class MovingMapControlSettings extends MinML  implements ICommandListener
 	public Vector getMenuItems() {
 		return menuItems;
 	}
+
 	public boolean handleCommand(int command) {
 		// dummy
 		return false;
