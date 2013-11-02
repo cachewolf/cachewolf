@@ -71,7 +71,7 @@ public class Log {
 			if (logLine.indexOf("<img") < 0) { // Have we reached the line that states max logs reached
 				icon = MAXLOGICON;
 			} else {
-				Global.getPref().log("Error parsing log: " + logLine, ex);
+				Global.pref.log("Error parsing log: " + logLine, ex);
 				icon = INVALIDLOGICON;
 			}
 			date = "1900-00-00";
@@ -165,13 +165,13 @@ public class Log {
 		if (typeText.equals("Retract Listing")) return "img_redlight.gif";
 		if (typeText.equals("Announcement")) return "74.png";
 		if (typeText.equals("Unarchived")) return "12.png";
-		Global.getPref().log("GPX Import: warning, unknown logtype " + typeText + " assuming Write note", null);
+		Global.pref.log("GPX Import: warning, unknown logtype " + typeText + " assuming Write note", null);
 		return "icon_note.gif";
 	}
 
 	/** log was written by one of the aliases defined in preferences */
 	public boolean isOwnLog() {
-		return this.logger.equalsIgnoreCase(Global.getPref().myAlias) || this.logger.equalsIgnoreCase(Global.getPref().myAlias2);
+		return this.logger.equalsIgnoreCase(Global.pref.myAlias) || this.logger.equalsIgnoreCase(Global.pref.myAlias2);
 	}
 
 	/** Return XML representation of log for storing in cache.xml */

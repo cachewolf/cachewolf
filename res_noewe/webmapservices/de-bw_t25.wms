@@ -1,0 +1,21 @@
+﻿
+Name: 									de.Baden-Württemberg DTK25
+MapType:            					de.bw DTK25
+MainUrl:            					http://www.lv-bw.de/dv/service/getrds.asp?login=geoportal&pw=gdi_bw&
+LayersUrlPart:     						LAYERS=DTK25
+ImageFormatUrlPart:						FORMAT=image/png
+ImageFileExtension: 					.png
+CoordinateReferenceSystemCacheWolf:		31467
+CoordinateReferenceSystemUrlPart:		SRS=EPSG:31467
+RecommendedScale:						2.5 1.25 5 10
+BoundingBoxTopLeftWGS84:				N 50.0000 E 7.2000
+BoundingBoxBottomRightWGS84:			N 47.4000 E 10.7000
+ServiceTypeUrlPart:						SERVICE=WMS
+VersionUrlPart:							VERSION=1.1.1
+RequestUrlPart:							REQUEST=GetMap
+StylesUrlPart:							STYLES=
+#WMS LGL-BW - DTK25
+#Rasterkarte der Topographischen Karte als Vorstufe der kuenftigen Digitalen Topographischen Karte im Massstab 1 : 25.000 (AKTIS-DTK 25-V)
+#Dieser Dienst kann unter Beachtung der Nutzungsbedingungen des Landesamtes fuer Geoinformation und Landentwicklung (LGL) fuer private Zwecke und Testzwecke unentgeltlich genutzt werden. 
+TakenFromUrl:							https://www.geoportal-bw.de/mapbender/frames/index.php?gui_id=search_simple
+#https://www.geoportal-bw.de/mapbender/x_metadata/xmlprint.php?uuid=53486d42-7057-cb2c-f9af-5c613f2cf58f&src=gn

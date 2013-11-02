@@ -22,14 +22,11 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 package CacheWolf;
 
 import ewe.ui.CellConstants;
-import ewe.ui.ControlConstants;
 import ewe.ui.ControlEvent;
 import ewe.ui.Event;
 import ewe.ui.Form;
 import ewe.ui.FormBase;
-import ewe.ui.IKeys;
 import ewe.ui.TextMessage;
-import ewe.ui.mButton;
 import ewe.ui.mCheckBox;
 import ewe.ui.mInput;
 import ewe.ui.mLabel;
@@ -39,13 +36,14 @@ public class InfoBox extends Form {
 	mCheckBox mCB;
 	TextMessage warnings;
 	public boolean mCB_state = false;
-	mButton mB = new mButton("OK");
-	mButton mC = new mButton("Cancel");
+	private ExecutePanel executePanel;
 	public mInput feedback = new mInput();
+
 	public final static int CHECKBOX = 1;
 	public final static int INPUT = 2;
 	public final static int DISPLAY_ONLY = 3;
 	public final static int PROGRESS_WITH_WARNINGS = 4;
+
 	private int type = 0;
 	/**
 	 * This variable is set to true if the user closed the Info window by clicking the "close" button. It can be used to check if a lengthy task needs to be aborted (i.e. spidering)
@@ -80,8 +78,7 @@ public class InfoBox extends Form {
 		type = ty;
 		// this.setPreferredSize(150,50);
 		// Resize InfoBox with Fontsize
-		Preferences pref = Global.getPref();
-		int fs = pref.fontSize;
+		int fs = Global.pref.fontSize;
 		int sw = MyLocale.getScreenWidth();
 		int psx;
 		int psy;
@@ -132,17 +129,13 @@ public class InfoBox extends Form {
 			warnings = new TextMessage("");
 			warnings.autoWrap = autoWrap;
 			this.addLast(warnings.getScrollablePanel(), CellConstants.HEXPAND | CellConstants.VEXPAND | CellConstants.VGROW, CellConstants.HEXPAND | CellConstants.VEXPAND | CellConstants.VGROW);
-			mB.set(ControlConstants.Disabled, true);
-			mB.setPreferredSize(40, 20);
-			addLast(mB, CellConstants.DONTSTRETCH, CellConstants.DONTFILL);
+			executePanel = new ExecutePanel(this);
+			executePanel.hide(ExecutePanel.APPLY);
+			executePanel.hide(ExecutePanel.CANCEL);
 			break;
 		}
-		mC.setHotKey(0, IKeys.ESCAPE);
-		mB.setHotKey(0, IKeys.ACTION);
-		mB.setHotKey(0, IKeys.ENTER);
 		if (ty == CHECKBOX || ty == INPUT) {
-			this.addNext(mC, CellConstants.STRETCH, CellConstants.FILL);
-			this.addLast(mB, CellConstants.STRETCH, CellConstants.FILL);
+			executePanel = new ExecutePanel(this);
 		}
 	}
 
@@ -167,22 +160,18 @@ public class InfoBox extends Form {
 		warnings.setText(warnings.text + w);
 	}
 
-	public void addOkButton() { // unfortunately this doesn't work
-		mB.set(ControlConstants.Disabled, false);
-		// addNext(mB);
-		// relayout(true);
-		// mB.set(Control.Invisible, false);
-		this.repaintNow();
+	public void addOkButton() {
+		executePanel.show(ExecutePanel.APPLY);
 	}
 
 	public void onEvent(Event ev) {
 		if (ev instanceof ControlEvent && ev.type == ControlEvent.PRESSED) {
-			if (ev.target == mB) {
+			if (ev.target == executePanel.applyButton) {
 				if (type == CHECKBOX)
 					mCB_state = mCB.getState();
 				this.close(FormBase.IDOK);
 			}
-			if (ev.target == mC) {
+			if (ev.target == executePanel.cancelButton) {
 				this.close(FormBase.IDCANCEL);
 			}
 		}

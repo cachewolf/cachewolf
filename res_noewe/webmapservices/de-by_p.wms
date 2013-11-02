@@ -1,24 +1,39 @@
-TakenFromUrl:       http://www.geodaten.bayern.de/ogc/getogc.cgi?
-GetCapabilitiesUrl: http://www.geodaten.bayern.de/ogc/getogc.cgi?SERVICE=WMS&VERSION=1.1.1&REQUEST=GetCapabilities
-Name:               DE Bayern p
-MapType:                        photo
-MainUrl:            http://www.geodaten.bayern.de/ogc/getogc.cgi?
-ServiceTypeUrlPart: SERVICE=WMS
-VersionUrlPart:     VERSION=1.1.1
-CoordinateReferenceSystemCacheWolf:  31468
-CoordinateReferenceSystemUrlPart: SRS=EPSG:31468
-RequestUrlPart:     REQUEST=GetMap
-#LayersUrlPart:     LAYERS=OGC:WMS|Web Map Service der Bayerischen Vermessungsverwaltung||
-#LayersUrlPart:     LAYERS=copyright|Copyrightvermerk||
-#LayersUrlPart:     LAYERS=TK50|Digitale Topographische Karte 1:50000|0.997805696859274|24.9451424214819
-#LayersUrlPart:     LAYERS=UK500|Digitale Topographische Karte 1:500000|14.9670854528891|498.902848429637
-#LayersUrlPart:     LAYERS=DOP|Digitale Orthophotos 2,0m|2.82329121926332|1147.47655138817
-LayersUrlPart:     LAYERS=DOP
-StylesUrlPart:     STYLES=
-ImageFormatUrlPart:FORMAT=image/png
-BoundingBoxTopLeftWGS84: N 50.6269 E 8.8929
-BoundingBoxBottomRightWGS84: N 47.0828 E 13.9782
-MinScale:   2.82
-MaxScale:   11
-RecommendedScale:    3 4 5
-ImageFileExtension: .png
+﻿
+Name: 									de.Bayern DOP 1 : 17.000 2m-Bodenauflösung
+MapType:            					de.by DOP200
+MainUrl:            					http://geodaten.bayern.de/ogc/ogc_dop200_oa.cgi?
+LayersUrlPart:     						LAYERS=adv_dop200c
+ImageFormatUrlPart:						FORMAT=image/jpeg
+ImageFileExtension: 					.jpg
+CoordinateReferenceSystemCacheWolf:		4326
+CoordinateReferenceSystemUrlPart:		SRS=EPSG:4326
+#CoordinateReferenceSystemCacheWolf:	31468
+#CoordinateReferenceSystemUrlPart:		SRS=EPSG:31468
+RecommendedScale:						1 2.5 5 10
+BoundingBoxTopLeftWGS84: 				N 50.6269 E 8.8929
+BoundingBoxBottomRightWGS84: 			N 47.0828 E 13.9782
+ServiceTypeUrlPart:						SERVICE=WMS
+VersionUrlPart:							VERSION=1.1.1
+RequestUrlPart:							REQUEST=GetMap
+StylesUrlPart:							STYLES=
+#
+#MinScale:   							?0.5
+#MaxScale:   							?25
+#
+#MinPixelSize:							?
+MaxPixelSize:							2000
+#RecommendedWidthPixelSize: 			?
+#RecommendedHeightPixelSize: 			?
+#
+#Digitale Orthophotos 2m (BVV = Bayerische Vermessungsverwaltung): 
+#Digitale Orthophotos (DOP) sind entzerrte, maßstabsgetreue Luftbilder. 
+#Die Bodenpixelgröße beträgt 2m. 
+#Daher ist das DOP mit der 2m-Bodenauflösung ist bis zu Darstellungsmaßstäben von ca. 1 : 17.000 geeignet. 
+#Bei größeren Darstellungsmaßstäben tritt die grobe Pixelstruktur des Bildes in Erscheinung. 
+#Die DOP werden im Turnus von 3 Jahren aktualisiert. 
+#Weitere Informationen zur Bayernbefliegung unter: http://www.vermessung.bayern.de/luftbild/bayernbefliegung.html. 
+#Der abrufbare Kartenausschnitt pro WMS-Request ist auf eine Ausdehnung von maximal 2.000 x 2.000 Pixel begrenzt. 
+#Der WMS ist Bestandteil der OpenData-Initiative in Bayern.
+# 
+TakenFromUrl:							http://geoportal.bayern.de/geoportalbayern/inhalte/uebersichten/geodatendienste.html
+GetCapabilitiesUrl:						http://geodaten.bayern.de/ogc/ogc_dop200_oa.cgi?SERVICE=WMS&VERSION=1.1.1&REQUEST=GetCapabilities

@@ -1,24 +1,24 @@
-    /*
-    GNU General Public License
-    CacheWolf is a software for PocketPC, Win and Linux that
-    enables paperless caching.
-    It supports the sites geocaching.com and opencaching.de
+/*
+GNU General Public License
+CacheWolf is a software for PocketPC, Win and Linux that
+enables paperless caching.
+It supports the sites geocaching.com and opencaching.de
 
-    Copyright (C) 2006  CacheWolf development team
+Copyright (C) 2006  CacheWolf development team
 See http://www.cachewolf.de/ for more information.
-    This program is free software; you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation; version 2 of the License.
+This program is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation; version 2 of the License.
 
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
 
-    You should have received a copy of the GNU General Public License
-    along with this program; if not, write to the Free Software
-    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
-    */
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software
+Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+*/
 package CacheWolf;
 
 import CacheWolf.utils.FileBugfix;
@@ -36,8 +36,7 @@ public class Rebuild {
 
 	public void rebuild() {
 		int i;
-		Profile prof = Global.getProfile();
-		CacheDB cacheDB=prof.cacheDB;
+		CacheDB cacheDB = Global.profile.cacheDB;
 
 		myProgressBarForm pbf = new myProgressBarForm();
 		Handle h = new Handle();
@@ -48,14 +47,15 @@ public class Rebuild {
 		pbf.exec();
 		h.progress = (float) 0.5;
 		h.changed();
-		String[] CacheFiles = new FileBugfix(prof.dataDir).list("*.xml",FileBase.LIST_FILES_ONLY | FileBase.LIST_DONT_SORT);
+		String[] CacheFiles = new FileBugfix(Global.profile.dataDir).list("*.xml", FileBase.LIST_FILES_ONLY | FileBase.LIST_DONT_SORT);
 		pbf.setTask(h, "preparing XML-files");
 		for (i = 0; i < CacheFiles.length; i++) {
 			int pos = CacheFiles[i].lastIndexOf('.');
 			if (pos < 0)
 				continue;
 			String wayPoint = CacheFiles[i].substring(0, pos).toUpperCase();
-			if (wayPoint.equalsIgnoreCase("index")) CacheFiles[i] = null;
+			if (wayPoint.equalsIgnoreCase("index"))
+				CacheFiles[i] = null;
 			else {
 				count++;
 			}
@@ -65,53 +65,57 @@ public class Rebuild {
 		if (count > 0) {
 			int nProcessed = 0;
 			// Now do the actual work
-			String details="";
+			String details = "";
 			for (i = 0; i < CacheFiles.length; i++) {
 				if (CacheFiles[i] != null) {
-					
+
 					nProcessed++;
-					if (nProcessed%100==0) {
+					if (nProcessed % 100 == 0) {
 						h.progress = ((float) nProcessed) / (float) (count);
 						h.changed();
 					}
-					int start=0;
-					boolean doit=true;
+					int start = 0;
+					boolean doit = true;
 					try {
-						FileReader in = new FileReader(prof.dataDir + CacheFiles[i]);
-						details=in.readAll();
+						FileReader in = new FileReader(Global.profile.dataDir + CacheFiles[i]);
+						details = in.readAll();
 						in.close();
 						start = details.indexOf("<CACHE ");
-						if (start < 0) doit=false;
-						else if (details.indexOf("<CACHEDETAILS>") < 0) doit=false;					
+						if (start < 0)
+							doit = false;
+						else if (details.indexOf("<CACHEDETAILS>") < 0)
+							doit = false;
 					}
 					catch (IOException e) {
-						doit=false;
-					};
-					
+						doit = false;
+					}
+					;
+
 					if (doit) {
 						int end;
-						int vstart=details.indexOf("<VERSION value = \"");						
+						int vstart = details.indexOf("<VERSION value = \"");
 						if (vstart >= 0) {
-							cacheXmlVersion = Integer.valueOf(details.substring(vstart + 18, details.indexOf("\"",vstart + 18))).intValue();
+							cacheXmlVersion = Integer.valueOf(details.substring(vstart + 18, details.indexOf("\"", vstart + 18))).intValue();
 						}
 						else {
 							cacheXmlVersion = 1;
 						}
 						end = details.indexOf("/>", start);
-						CacheHolder ch = new CacheHolder(details.substring(start, end + 2),cacheXmlVersion);
+						CacheHolder ch = new CacheHolder(details.substring(start, end + 2), cacheXmlVersion);
 						cacheDB.add(ch);
 						nAdded++;
-						Global.getPref().log(ch.getWayPoint() + " added. (" + nAdded + ")");
+						Global.pref.log(ch.getWayPoint() + " added. (" + nAdded + ")");
 						// CacheFiles[i] = null;
-					} else
-						Global.getPref().log("File " + CacheFiles[i] + " not entered to index.xml");
-						;
+					}
+					else
+						Global.pref.log("File " + CacheFiles[i] + " not entered to index.xml");
+					;
 				}
 				if (pbf.isClosed)
 					break;
 			}
-			prof.buildReferences();
-			prof.saveIndex(Global.getPref(), true);
+			Global.profile.buildReferences();
+			Global.profile.saveIndex(true);
 		}
 		pbf.exit(0);
 	}

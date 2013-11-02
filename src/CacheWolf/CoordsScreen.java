@@ -37,7 +37,6 @@ import ewe.ui.Event;
 import ewe.ui.Form;
 import ewe.ui.FormBase;
 import ewe.ui.Gui;
-import ewe.ui.IKeys;
 import ewe.ui.MessageBox;
 import ewe.ui.mButton;
 import ewe.ui.mCheckBox;
@@ -59,7 +58,8 @@ public class CoordsScreen extends Form {
 	mInput inpNSDeg, inpNSm, inpNSs, inpEWDeg, inpEWm, inpEWs;
 	mInput inpUTMZone, inpUTMNorthing, inpUTMEasting;
 	mInput inpText;
-	mButton btnCancel, btnApply, btnCopy, btnPaste, btnParse, btnGps, btnClear, btnSearch;
+	mButton btnCopy, btnPaste, btnParse, btnGps, btnClear, btnSearch;
+	private ExecutePanel executePanel = null;
 	InputScreen inpScreen;
 
 	CWPoint coordInp = new CWPoint();
@@ -81,7 +81,6 @@ public class CoordsScreen extends Form {
 
 	public CoordsScreen(boolean allowInvalidCoords) {
 		allowInvalid = allowInvalidCoords;
-
 		InitCoordsScreen();
 	}
 
@@ -130,7 +129,8 @@ public class CoordsScreen extends Form {
 			mainPanel.addNext(new mLabel(MyLocale.getMsg(1402, "Easting")), CellConstants.DONTSTRETCH, (CellConstants.DONTFILL | CellConstants.SOUTHWEST));
 			mainPanel.addNext(new mLabel(MyLocale.getMsg(1401, "Northing")), CellConstants.DONTSTRETCH, (CellConstants.DONTFILL | CellConstants.SOUTHWEST));
 			mainPanel.addLast(btnClear = new mButton(MyLocale.getMsg(1413, "Clear")), CellConstants.HSTRETCH, (CellConstants.HFILL));
-		} else {
+		}
+		else {
 			mainPanel.addNext(new mLabel(MyLocale.getMsg(1400, "Zone")), CellConstants.DONTSTRETCH, (CellConstants.DONTFILL | CellConstants.SOUTHWEST));
 			mainPanel.addNext(new mLabel(MyLocale.getMsg(1402, "Easting")), CellConstants.DONTSTRETCH, (CellConstants.DONTFILL | CellConstants.SOUTHWEST));
 			mainPanel.addNext(new mLabel(MyLocale.getMsg(1401, "Northing")), CellConstants.DONTSTRETCH, (CellConstants.DONTFILL | CellConstants.SOUTHWEST));
@@ -150,15 +150,10 @@ public class CoordsScreen extends Form {
 		mainPanel.addLast(btnParse = new mButton(MyLocale.getMsg(619, "Parse")), CellConstants.HSTRETCH, (CellConstants.HFILL));
 
 		// Buttons for cancel and apply, copy and paste
-		btnCancel = new mButton(MyLocale.getMsg(614, "Cancel"));
-		btnCancel.setHotKey(0, IKeys.ESCAPE);
-		mainPanel.addNext(btnCancel, CellConstants.HSTRETCH, (CellConstants.HFILL));
-		// btnCancel.setTag(SPAN,new Dimension(4,1));
-		mainPanel.addNext(btnApply = new mButton(MyLocale.getMsg(615, "Apply")), CellConstants.HSTRETCH, (CellConstants.HFILL));
-		// btnApply.setTag(SPAN,new Dimension(4,1));
 		mainPanel.addNext(btnPaste = new mButton(MyLocale.getMsg(617, "Paste")), CellConstants.HSTRETCH, (CellConstants.HFILL));
 		// btnParse.setTag(SPAN,new Dimension(4,1));
-		mainPanel.addLast(btnCopy = new mButton(MyLocale.getMsg(618, "Copy")), CellConstants.HSTRETCH, (CellConstants.HFILL));
+		mainPanel.addNext(btnCopy = new mButton(MyLocale.getMsg(618, "Copy")), CellConstants.HSTRETCH, (CellConstants.HFILL));
+		executePanel = new ExecutePanel(mainPanel);
 		// btnCopy.setTag(SPAN,new Dimension(4,1));
 		chcNS.exitKeys = exitKeys;
 		chcEW.exitKeys = exitKeys;
@@ -253,7 +248,8 @@ public class CoordsScreen extends Form {
 				coords.set(inpUTMNorthing.getText(), inpUTMEasting.getText(), inpUTMZone.getText(), currFormat);
 			else
 				coords.set(inpUTMNorthing.getText(), inpUTMEasting.getText(), currFormat);
-		} else {
+		}
+		else {
 			NS = chcNS.getInt() == 0 ? "N" : "S";
 			EW = chcEW.getInt() == 0 ? "E" : "W";
 			coords.set(NS, inpNSDeg.getText(), inpNSm.getText(), inpNSs.getText(), EW, inpEWDeg.getText(), inpEWm.getText(), inpEWs.getText(), currFormat);
@@ -276,11 +272,13 @@ public class CoordsScreen extends Form {
 					inpUTMZone.setText(pp.getZoneString());
 				else
 					inpUTMZone.setText("");
-			} else {
+			}
+			else {
 				inpUTMNorthing.setText("0");
 				inpUTMEasting.setText("0");
 			}
-		} else {
+		}
+		else {
 			chcNS.setInt(coords.getNSLetter().equals("N") ? 0 : 1);
 			chcEW.setInt(coords.getEWLetter().equals("E") ? 0 : 1);
 
@@ -320,7 +318,7 @@ public class CoordsScreen extends Form {
 		}
 		if (ev instanceof ControlEvent && ev.type == ControlEvent.PRESSED) {
 			if (((ControlEvent) ev).target == inpEWDeg || ((ControlEvent) ev).target == inpEWm || ((ControlEvent) ev).target == inpEWs || ((ControlEvent) ev).target == inpUTMNorthing)
-				Gui.takeFocus(btnApply, ControlConstants.ByKeyboard);
+				Gui.takeFocus(executePanel.applyButton, ControlConstants.ByKeyboard);
 
 			if (ev.target == chkFormat || ev.target == localCooSystem) {
 				if (ev.target == localCooSystem)
@@ -330,11 +328,11 @@ public class CoordsScreen extends Form {
 				this.repaintNow();
 			}
 
-			if (ev.target == btnCancel) {
+			if (ev.target == executePanel.cancelButton) {
 				this.close(IDCANCEL);
 			}
 
-			if (ev.target == btnApply) {
+			if (ev.target == executePanel.applyButton) {
 				currFormat = getLocalSystem(combineToFormatSel(chkFormat.getSelectedIndex(), localCooSystem.getInt()));
 				readFields(coordInp);
 				if (coordInp.isValid())
@@ -344,7 +342,8 @@ public class CoordsScreen extends Form {
 						if ((new MessageBox(MyLocale.getMsg(144, "Warnung"), MyLocale.getMsg(1412, "Coordinates invalid. Apply anyway?"), FormBase.DEFOKB | FormBase.NOB)).execute() == FormBase.IDOK) {
 							this.close(IDOK);
 						}
-					} else {
+					}
+					else {
 						(new MessageBox(MyLocale.getMsg(321, "Error"), MyLocale.getMsg(1411, "Please enter valid coordinates"), FormBase.OKB)).execute();
 					}
 				}
@@ -355,7 +354,7 @@ public class CoordsScreen extends Form {
 			}
 
 			if (ev.target == btnCopy) {
-				readFields(coordInp); // TODO was anderes als Gauß-Krüger unterstützen
+				readFields(coordInp);
 				Vm.setClipboardText(coordInp.toString(currFormat));
 			}
 
@@ -364,16 +363,18 @@ public class CoordsScreen extends Form {
 				CWPoint coord;
 				String inp = inpText.getText().trim().toUpperCase();
 				if (inp.startsWith("GC")) {
-					SpiderGC spider = new SpiderGC(Global.getPref(), Global.getProfile());
+					SpiderGC spider = new SpiderGC();
 					coord = new CWPoint(spider.getCacheCoordinates(inp));
-					Global.getPref().setOldGCLanguage();
-				} else {
+					Global.pref.setOldGCLanguage();
+				}
+				else {
 					coord = new CWPoint(inp);
 				}
 				if (!coord.isValid()) {
 					MessageBox tmpMB = new MessageBox(MyLocale.getMsg(321, "Error"), MyLocale.getMsg(4111, "Coordinates must be entered in the format N DD MM.MMM E DDD MM.MMM"), FormBase.OKB);
 					tmpMB.exec();
-				} else {
+				}
+				else {
 					currFormat = getLocalSystem(combineToFormatSel(chkFormat.getSelectedIndex(), localCooSystem.getInt()));
 					setFields(coord, currFormat);
 					this.repaintNow();
@@ -381,7 +382,7 @@ public class CoordsScreen extends Form {
 			}
 
 			if (ev.target == btnGps) {
-				Navigate nav = Global.mainTab.nav;
+				Navigate nav = Global.mainTab.navigate;
 				if (nav.gpsPos.isValid()) {
 					CWPoint coord = nav.gpsPos;
 					currFormat = getLocalSystem(combineToFormatSel(chkFormat.getSelectedIndex(), localCooSystem.getInt()));

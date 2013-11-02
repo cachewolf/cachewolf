@@ -23,7 +23,6 @@ package CacheWolf;
 
 import CacheWolf.navi.Area;
 import CacheWolf.navi.TransformCoordinates;
-import CacheWolf.utils.FileBugfix;
 import ewe.io.BufferedWriter;
 import ewe.io.File;
 import ewe.io.FileNotFoundException;
@@ -75,8 +74,8 @@ public class Profile {
 	private String gpxTarget = new String();
 	private String gpxId = new String();
 
-	/** path to the maps of the profile relative to the maps root */
-	private String relativeCustomMapsPath = "";
+	/** path (there may be subdirs) to the maps of the profile, relative to the preferences maps dir with ending / */
+	private String relativeMapsDir = "";
 
 	public final static boolean SHOW_PROGRESS_BAR = true;
 	public final static boolean NO_SHOW_PROGRESS_BAR = false;
@@ -86,6 +85,8 @@ public class Profile {
 	private boolean filterInverted = false;
 	private boolean showBlacklisted = false;
 	private boolean showSearchResult = false;
+	private String timeZoneOffset = "0";
+	private boolean timeZoneAutoDST = false;
 
 	public boolean selectionChanged = true; // ("Häckchen") used by movingMap to get to knao if it should update the caches in the map
 	/**
@@ -145,7 +146,7 @@ public class Profile {
 		setGpxId("0");
 		setGpxStyle("0");
 		setGpxTarget("0");
-		setRelativeCustomMapsPath("");
+		relativeMapsDir = "";
 		resetUnsavedChanges();
 	}
 
@@ -165,7 +166,7 @@ public class Profile {
 	// saveIndex(pref,showprogress, Filter.filterActive,Filter.filterInverted);
 	// }
 	/** Save index with filter settings given */
-	public void saveIndex(Preferences pref, boolean showprogress) {
+	public void saveIndex(boolean showprogress) {
 		ProgressBarForm pbf = new ProgressBarForm();
 		Handle h = new Handle();
 		int updFrequ = Vm.isMobile() ? 10 : 40; // Number of caches between screen updates
@@ -184,23 +185,27 @@ public class Profile {
 			}
 			File index = new File(dataDir + "index.xml");
 			index.rename("index.bak");
-		} catch (Exception ex) {
-			pref.log("[Profile:saveIndex]Error deleting backup or renaming index.xml");
+		}
+		catch (Exception ex) {
+			Global.pref.log("[Profile:saveIndex]Error deleting backup or renaming index.xml");
 		}
 		try {
-			detfile = new PrintWriter(new BufferedWriter(new FileWriter(new FileBugfix(dataDir + "index.xml").getAbsolutePath())));
-		} catch (Exception e) {
-			pref.log("Problem creating index.xml " + dataDir, e);
+			detfile = new PrintWriter(new BufferedWriter(new FileWriter(new File(dataDir + "index.xml").getAbsolutePath())));
+		}
+		catch (Exception e) {
+			Global.pref.log("Problem creating index.xml " + dataDir, e);
 			return;
 		}
 		CWPoint savedCentre = centre;
-		if (centre == null || !centre.isValid() || (savedCentre.latDec == 0.0 && savedCentre.lonDec == 0.0)) savedCentre = pref.getCurCentrePt();
+		if (centre == null || !centre.isValid() || (savedCentre.latDec == 0.0 && savedCentre.lonDec == 0.0))
+			savedCentre = Global.pref.getCurCentrePt();
 
 		try {
 			detfile.print("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
 			detfile.print("<CACHELIST format=\"decimal\">\n");
 			detfile.print("    <VERSION value = \"3\"/>\n");
-			if (savedCentre.isValid()) detfile.print("    <CENTRE lat=\"" + savedCentre.latDec + "\" lon=\"" + savedCentre.lonDec + "\"/>\n");
+			if (savedCentre.isValid())
+				detfile.print("    <CENTRE lat=\"" + savedCentre.latDec + "\" lon=\"" + savedCentre.lonDec + "\"/>\n");
 			if (getLast_sync_opencaching() == null || getLast_sync_opencaching().endsWith("null") || getLast_sync_opencaching().equals("")) {
 				setLast_sync_opencaching("20050801000000");
 			}
@@ -223,7 +228,8 @@ public class Profile {
 			int activeFilterForSave;
 			if (getFilterActive() == Filter.FILTER_CACHELIST) {
 				activeFilterForSave = Filter.FILTER_ACTIVE;
-			} else {
+			}
+			else {
 				activeFilterForSave = getFilterActive();
 			}
 			detfile.print("    <FILTERCONFIG status = \"" + activeFilterForSave + (isFilterInverted() ? "T" : "F") + "\" showBlacklist = \"" + showBlacklisted() + "\" />\n");
@@ -231,12 +237,14 @@ public class Profile {
 			detfile.print("    <SYNCOC date = \"" + getLast_sync_opencaching() + "\" dist = \"" + getDistOC() + "\"/>\n");
 			detfile.print("    <SPIDERGC dist = \"" + getDistGC() + "\" mindist = \"" + getMinDistGC() + "\" direction = \"" + getDirectionGC() + "\"/>\n");
 			detfile.print("    <EXPORT style = \"" + getGpxStyle() + "\" target = \"" + getGpxTarget() + "\" id = \"" + getGpxId() + "\"/>\n");
-			detfile.print("    <mapspath relativeDir = \"" + SafeXML.clean(relativeCustomMapsPath) + "\"/>\n");
+			detfile.print("    <mapspath relativeDir = \"" + SafeXML.clean(relativeMapsDir) + "\"/>\n");
+			detfile.print("    <TIMEZONE timeZoneOffset = \"" + getTimeZoneOffset() + "\" timeZoneAutoDST = \"" + getTimeZoneAutoDST() + "\"/>\n");
 			int size = cacheDB.size();
 			for (int i = 0; i < size; i++) {
 				if (showprogress) {
 					h.progress = (float) i / (float) size;
-					if ((i % updFrequ) == 0) h.changed();
+					if ((i % updFrequ) == 0)
+						h.changed();
 				}
 				ch = cacheDB.get(i);
 				if (ch.getWayPoint().length() > 0) {
@@ -246,11 +254,14 @@ public class Profile {
 			detfile.print("</CACHELIST>\n");
 			detfile.close();
 			buildReferences(); // TODO Why is this needed here?
-			if (showprogress) pbf.exit(0);
-		} catch (Exception e) {
-			pref.log("Problem writing to index file ", e);
+			if (showprogress)
+				pbf.exit(0);
+		}
+		catch (Exception e) {
+			Global.pref.log("Problem writing to index file ", e);
 			detfile.close();
-			if (showprogress) pbf.exit(0);
+			if (showprogress)
+				pbf.exit(0);
 		}
 		resetUnsavedChanges();
 	}
@@ -272,12 +283,13 @@ public class Profile {
 			int lastShownWpt = 0;
 			char decSep = MyLocale.getDigSeparator().charAt(0);
 			char notDecSep = decSep == '.' ? ',' : '.';
-			FileBugfix indexFile = new FileBugfix(dataDir + "index.xml");
+			File indexFile = new File(dataDir + "index.xml");
 			FileReader in = new FileReader(indexFile.getAbsolutePath());
 			indexXmlVersion = 1; // Initial guess
 			in.readLine(); // <?xml version= ...
 			String text = in.readLine(); // <CACHELIST>
-			if (text != null && text.indexOf("decimal") > 0) fmtDec = true;
+			if (text != null && text.indexOf("decimal") > 0)
+				fmtDec = true;
 			Extractor ex = new Extractor(null, " = \"", "\" ", 0, true);
 
 			// ewe.sys.Time startT=new ewe.sys.Time();
@@ -290,10 +302,8 @@ public class Profile {
 							convertWarningDisplayed = true;
 							int res = new MessageBox(
 									MyLocale.getMsg(144, "Warning"),
-									MyLocale
-											.getMsg(
-													4407,
-													"The profile files are not in the current format.%0aTherefore they are now converted to the current format. Depending of the size of the profile and the computer involved this may take some minutes. Please bear with us until the conversion is done."),
+									MyLocale.getMsg(4407,
+											"The profile files are not in the current format.%0aTherefore they are now converted to the current format. Depending of the size of the profile and the computer involved this may take some minutes. Please bear with us until the conversion is done."),
 									FormBase.YESB | FormBase.NOB).execute();
 							if (res == MessageBox.NOB) {
 								ewe.sys.Vm.exit(0);
@@ -309,66 +319,95 @@ public class Profile {
 					}
 					CacheHolder ch = new CacheHolder(text, indexXmlVersion);
 					cacheDB.add(ch);
-				} else if (text.indexOf("<CENTRE") >= 0) { // lat= lon=
+				}
+				else if (text.indexOf("<CENTRE") >= 0) { // lat= lon=
 					if (fmtDec) {
 						int start = text.indexOf("lat=\"") + 5;
 						String lat = text.substring(start, text.indexOf("\"", start)).replace(notDecSep, decSep);
 						start = text.indexOf("lon=\"") + 5;
 						String lon = text.substring(start, text.indexOf("\"", start)).replace(notDecSep, decSep);
 						centre.set(Convert.parseDouble(lat), Convert.parseDouble(lon));
-					} else {
+					}
+					else {
 						int start = text.indexOf("lat=\"") + 5;
 						String lat = SafeXML.cleanback(text.substring(start, text.indexOf("\"", start)));
 						start = text.indexOf("long=\"") + 6;
 						String lon = SafeXML.cleanback(text.substring(start, text.indexOf("\"", start)));
 						centre.set(lat + " " + lon, TransformCoordinates.CW); // Fast parse
 					}
-				} else if (text.indexOf("<VERSION") >= 0) {
+				}
+				else if (text.indexOf("<VERSION") >= 0) {
 					int start = text.indexOf("value = \"") + 9;
 					indexXmlVersion = Integer.valueOf(text.substring(start, text.indexOf("\"", start))).intValue();
 					if (indexXmlVersion > CURRENTFILEFORMAT) {
-						Global.getPref().log("[Profile:readIndex]unsupported file format");
+						Global.pref.log("[Profile:readIndex]unsupported file format");
 						clearProfile();
 						return;
 					}
-				} else if (text.indexOf("<SYNCOC") >= 0) {
+				}
+				else if (text.indexOf("<SYNCOC") >= 0) {
 					int start = text.indexOf("date = \"") + 8;
 					setLast_sync_opencaching(text.substring(start, text.indexOf("\"", start)));
 					start = text.indexOf("dist = \"") + 8;
 					setDistOC(text.substring(start, text.indexOf("\"", start)));
-				} else if (text.indexOf("mapspath") >= 0) {
+				}
+				else if (text.indexOf("mapspath") >= 0) {
 					int start = text.indexOf("relativeDir = \"") + 15;
-					setRelativeCustomMapsPath(SafeXML.cleanback(text.substring(start, text.indexOf("\"", start))).replace('\\', '/'));
-				} else if (text.indexOf("<SPIDERGC") >= 0) {
+					this.relativeMapsDir = (SafeXML.cleanback(text.substring(start, text.indexOf("\"", start))).replace('\\', '/'));
+				}
+				else if (text.indexOf("<SPIDERGC") >= 0) {
 					int start = text.indexOf("dist = \"") + 8;
 					setDistGC(text.substring(start, text.indexOf("\"", start)));
 					start = text.indexOf("mindist = \"") + 11;
 					if (start == 10) {
 						setMinDistGC("0");
-					} else
+					}
+					else
 						setMinDistGC(text.substring(start, text.indexOf("\"", start)));
 					start = text.indexOf("direction = \"") + 13;
 					if (start == 12) {
 						setDirectionGC("");
-					} else
+					}
+					else
 						setDirectionGC(text.substring(start, text.indexOf("\"", start)));
-				} else if (text.indexOf("<EXPORT") >= 0) {
+				}
+				else if (text.indexOf("<EXPORT") >= 0) {
 					int start = text.indexOf("style = \"") + 9;
 					if (start == 8) {
 						setGpxStyle("0");
-					} else
+					}
+					else
 						setGpxStyle(text.substring(start, text.indexOf("\"", start)));
 					start = text.indexOf("target = \"") + 10;
 					if (start == 9) {
 						setGpxTarget("0");
-					} else
+					}
+					else
 						setGpxTarget(text.substring(start, text.indexOf("\"", start)));
 					start = text.indexOf("id = \"") + 6;
 					if (start == 5) {
 						setGpxId("0");
-					} else
+					}
+					else
 						setGpxId(text.substring(start, text.indexOf("\"", start)));
-				} else if (indexXmlVersion <= 2 && text.indexOf("<FILTER") >= 0) {
+				}
+				else if (text.indexOf("<TIMEZONE") >= 0) {
+					int start = text.indexOf("timeZoneOffset = \"") + 18;
+					if (start == 17) {
+						setTimeZoneOffset("0");
+					}
+					else {
+						setTimeZoneOffset(text.substring(start, text.indexOf("\"", start)));
+					}
+					start = text.indexOf("timeZoneAutoDST = \"") + 19;
+					if (start == 18) {
+						setTimeZoneAutoDST(false);
+					}
+					else {
+						setTimeZoneAutoDST(text.substring(start, text.indexOf("\"", start)));
+					}
+				}
+				else if (indexXmlVersion <= 2 && text.indexOf("<FILTER") >= 0) {
 					// Read filter data of file versions 1 and 2. (Legacy code)
 					String temp = ex.findFirst(text.substring(text.indexOf("<FILTER"))); // Filter status is now first, need to deal with old versions which don't have filter status
 					if (temp.length() == 2) {
@@ -379,7 +418,8 @@ public class Profile {
 							setFilterActive(Common.parseInt(temp.substring(0, 1)));
 						setFilterInverted(temp.charAt(1) == 'T');
 						setFilterRose(ex.findNext());
-					} else
+					}
+					else
 						setFilterRose(temp);
 					setFilterType(ex.findNext());
 					setFilterVar(ex.findNext());
@@ -389,14 +429,18 @@ public class Profile {
 					setFilterSize(ex.findNext());
 					String attr = ex.findNext();
 					long[] filterAttr = { 0l, 0l, 0l, 0l };
-					if (attr != null && !attr.equals("")) filterAttr[0] = Convert.parseLong(attr);
+					if (attr != null && !attr.equals(""))
+						filterAttr[0] = Convert.parseLong(attr);
 					attr = ex.findNext();
-					if (attr != null && !attr.equals("")) filterAttr[2] = Convert.parseLong(attr);
+					if (attr != null && !attr.equals(""))
+						filterAttr[2] = Convert.parseLong(attr);
 					attr = ex.findNext();
 					setFilterAttr(filterAttr);
-					if (attr != null && !attr.equals("")) setFilterAttrChoice(Convert.parseInt(attr));
+					if (attr != null && !attr.equals(""))
+						setFilterAttrChoice(Convert.parseInt(attr));
 					setShowBlacklisted(Boolean.valueOf(ex.findNext()).booleanValue());
-				} else if (text.indexOf("<FILTERDATA") >= 0) {
+				}
+				else if (text.indexOf("<FILTERDATA") >= 0) {
 					setFilterRose(ex.findFirst(text.substring(text.indexOf("<FILTERDATA"))));
 					setFilterType(ex.findNext());
 					setFilterVar(ex.findNext());
@@ -406,9 +450,11 @@ public class Profile {
 					setFilterSize(ex.findNext());
 					String attr = ex.findNext();
 					long[] filterAttr = { 0l, 0l, 0l, 0l };
-					if (attr != null && !attr.equals("")) filterAttr[0] = Convert.parseLong(attr);
+					if (attr != null && !attr.equals(""))
+						filterAttr[0] = Convert.parseLong(attr);
 					attr = ex.findNext();
-					if (attr != null && !attr.equals("")) filterAttr[2] = Convert.parseLong(attr);
+					if (attr != null && !attr.equals(""))
+						filterAttr[2] = Convert.parseLong(attr);
 					setFilterAttr(filterAttr);
 					attr = ex.findNext();
 					setFilterAttrChoice(Convert.parseInt(attr));
@@ -418,15 +464,19 @@ public class Profile {
 					if (attr != null && !attr.equals("")) {
 						setFilterNoCoord(Boolean.valueOf(attr).booleanValue());
 
-					} else {
+					}
+					else {
 						setFilterNoCoord(true);
 					}
 					attr = ex.findNext();
-					if (attr != null && !attr.equals("")) filterAttr[1] = Convert.parseLong(attr);
+					if (attr != null && !attr.equals(""))
+						filterAttr[1] = Convert.parseLong(attr);
 					attr = ex.findNext();
-					if (attr != null && !attr.equals("")) filterAttr[3] = Convert.parseLong(attr);
+					if (attr != null && !attr.equals(""))
+						filterAttr[3] = Convert.parseLong(attr);
 					setFilterAttr(filterAttr);
-				} else if (text.indexOf("<FILTERCONFIG") >= 0) {
+				}
+				else if (text.indexOf("<FILTERCONFIG") >= 0) {
 					String temp = ex.findFirst(text.substring(text.indexOf("<FILTERCONFIG")));
 					setFilterActive(Common.parseInt(temp.substring(0, 1)));
 					setFilterInverted(temp.charAt(1) == 'T');
@@ -440,12 +490,14 @@ public class Profile {
 			}
 			buildReferences();
 			if (indexXmlVersion < CURRENTFILEFORMAT) {
-				saveIndex(Global.getPref(), true);
+				saveIndex(true);
 			}
-		} catch (FileNotFoundException e) {
-			Global.getPref().log("index.xml not found in directory " + dataDir, e);
-		} catch (IOException e) {
-			Global.getPref().log("Problem reading index.xml in dir: " + dataDir, e, true);
+		}
+		catch (FileNotFoundException e) {
+			Global.pref.log("index.xml not found in directory " + dataDir, e);
+		}
+		catch (IOException e) {
+			Global.pref.log("Problem reading index.xml in dir: " + dataDir, e, true);
 		}
 		this.getCurrentFilter().normaliseFilters();
 		resetUnsavedChanges();
@@ -468,10 +520,12 @@ public class Profile {
 				flt.invertFilter();
 				setFilterInverted(true); // Needed because previous line inverts filterInverted
 			}
-		} else if (getFilterActive() == Filter.FILTER_CACHELIST) {
-			Global.mainForm.cacheList.applyCacheList();
+		}
+		else if (getFilterActive() == Filter.FILTER_CACHELIST) {
+			MainForm.itself.cacheList.applyCacheList();
 			// flt.filterActive=filterActive;
-		} else if (getFilterActive() == Filter.FILTER_INACTIVE) {
+		}
+		else if (getFilterActive() == Filter.FILTER_INACTIVE) {
 			if (clearIfInactive) {
 				flt.clearFilter();
 			}
@@ -487,12 +541,14 @@ public class Profile {
 		String strWp = null;
 		long lgWp = 0;
 		int s = cacheDB.size();
-		if (s == 0) return prefix + "0000";
+		if (s == 0)
+			return prefix + "0000";
 		// Create new waypoint,look if not in db
 		do {
 			lgWp++;
 			strWp = prefix + MyLocale.formatLong(lgWp, "0000");
-		} while (cacheDB.getIndex(strWp) >= 0);
+		}
+		while (cacheDB.getIndex(strWp) >= 0);
 		return strWp;
 	}
 
@@ -507,7 +563,8 @@ public class Profile {
 		String waypoint;
 		do {
 			waypoint = MyLocale.formatLong(++wptNo, "00") + forcache.substring(2);
-		} while (Global.getProfile().getCacheIndex(waypoint) >= 0);
+		}
+		while (getCacheIndex(waypoint) >= 0);
 		return waypoint;
 	}
 
@@ -527,14 +584,17 @@ public class Profile {
 				}
 			}
 		}
-		if (mainindex < 0 || !cacheDB.get(mainindex).isCacheWpt()) mainindex = getCacheIndex("CW" + mainwpt);
+		if (mainindex < 0 || !cacheDB.get(mainindex).isCacheWpt())
+			mainindex = getCacheIndex("CW" + mainwpt);
 		if (mainindex < 0 /* || !cacheDB.get(mainindex)..isCacheWpt() */) {
 			ch.setIncomplete(true);
-		} else {
+		}
+		else {
 			CacheHolder mainch = cacheDB.get(mainindex);
 			if (mainch.getWayPoint().equals(ch.getWayPoint())) {
 				ch.setIncomplete(true);
-			} else {
+			}
+			else {
 				mainch.addiWpts.add(ch);
 				ch.mainCache = mainch;
 				ch.setAttributesFromMainCache();
@@ -571,7 +631,8 @@ public class Profile {
 						}
 					}
 				}
-			} else /* selectStatus==false */{
+			}
+			else /* selectStatus==false */{
 				ch.is_Checked = selectStatus;
 			}
 		}
@@ -580,7 +641,8 @@ public class Profile {
 	public int numCachesInArea; // only valid after calling getSourroundingArea
 
 	public Area getSourroundingArea(boolean onlyOfSelected) {
-		if (cacheDB == null || cacheDB.size() == 0) return null;
+		if (cacheDB == null || cacheDB.size() == 0)
+			return null;
 		CacheHolder ch;
 		CWPoint topleft = null;
 		CWPoint bottomright = null;
@@ -595,12 +657,18 @@ public class Profile {
 					// ignore it //
 					// && ch.mainCache != null is only necessary because the data base may be corrupted
 					if (!isAddi || (isAddi && ch.mainCache != null && ch.getPos().getDistance(ch.mainCache.getPos()) < 1000)) {
-						if (topleft == null) topleft = new CWPoint(ch.getPos());
-						if (bottomright == null) bottomright = new CWPoint(ch.getPos());
-						if (topleft.latDec < ch.getPos().latDec) topleft.latDec = ch.getPos().latDec;
-						if (topleft.lonDec > ch.getPos().lonDec) topleft.lonDec = ch.getPos().lonDec;
-						if (bottomright.latDec > ch.getPos().latDec) bottomright.latDec = ch.getPos().latDec;
-						if (bottomright.lonDec < ch.getPos().lonDec) bottomright.lonDec = ch.getPos().lonDec;
+						if (topleft == null)
+							topleft = new CWPoint(ch.getPos());
+						if (bottomright == null)
+							bottomright = new CWPoint(ch.getPos());
+						if (topleft.latDec < ch.getPos().latDec)
+							topleft.latDec = ch.getPos().latDec;
+						if (topleft.lonDec > ch.getPos().lonDec)
+							topleft.lonDec = ch.getPos().lonDec;
+						if (bottomright.latDec > ch.getPos().latDec)
+							bottomright.latDec = ch.getPos().latDec;
+						if (bottomright.lonDec < ch.getPos().lonDec)
+							bottomright.lonDec = ch.getPos().lonDec;
 						numCachesInArea++;
 					}
 				}
@@ -619,7 +687,7 @@ public class Profile {
 	 * @see Extractor
 	 */
 	public void updateBearingDistance() {
-		CWPoint centerPoint = new CWPoint(Global.getPref().getCurCentrePt()); // Clone current centre to be sure
+		CWPoint centerPoint = new CWPoint(Global.pref.getCurCentrePt()); // Clone current centre to be sure
 		int anz = cacheDB.size();
 		CacheHolder ch;
 		// Jetzt durch die CacheDaten schleifen
@@ -630,7 +698,8 @@ public class Profile {
 		// The following call is not very clean as it mixes UI with base classes
 		// However, calling it from here allows us to recenter the
 		// radar panel with only one call
-		if (Global.mainTab != null) Global.mainTab.radarP.recenterRadar();
+		if (Global.mainTab != null)
+			Global.mainTab.radarPanel.recenterRadar();
 	} // updateBearingDistance
 
 	/**
@@ -651,7 +720,8 @@ public class Profile {
 		int max = cacheDB.size();
 		for (int i = 0; i < max; i++) {
 			ch = cacheDB.get(i);
-			if (ch.isAddiWpt()) setAddiRef(ch);
+			if (ch.isAddiWpt())
+				setAddiRef(ch);
 		}
 		// sort addi wpts
 		for (int i = 0; i < max; i++) {
@@ -893,13 +963,74 @@ public class Profile {
 		this.gpxId = id;
 	}
 
-	public String getRelativeCustomMapsPath() {
-		return relativeCustomMapsPath;
+	public void setRelativeMapsDir(String relativeMapsDir) {
+		this.notifyUnsavedChanges(!relativeMapsDir.equals(this.relativeMapsDir));
+		this.relativeMapsDir = relativeMapsDir;
 	}
 
-	public void setRelativeCustomMapsPath(String rCMPath) {
-		this.notifyUnsavedChanges(!rCMPath.equals(this.relativeCustomMapsPath));
-		this.relativeCustomMapsPath = rCMPath;
+	public String getMapsDir() {
+		return Global.pref.absoluteMapsBaseDir + relativeMapsDir;
+	}
+
+	public String getMapsSubDir(String mapsDir) {
+		mapsDir = STRreplace.replace(mapsDir, "\\", "/"); // da mapsDir aus Eingabe (fc) kommt
+		if (!mapsDir.endsWith("/")) {
+			mapsDir = mapsDir + "/";
+		}
+		String ret = Global.pref.absoluteMapsBaseDir;
+		if (mapsDir.startsWith(ret)) {
+			ret = mapsDir.substring(ret.length());
+		}
+		else
+			ret = "";
+		return ret;
+	}
+
+	public long getTimeZoneOffsetLong() {
+		long offset = 0;
+		if (timeZoneOffset.equalsIgnoreCase("auto")) {
+			offset = 100;
+		}
+		else {
+			try {
+				offset = Convert.toInt(timeZoneOffset);
+			}
+			catch (Exception e) {
+				offset = 0;
+			}
+		}
+		return offset;
+	}
+
+	public String getTimeZoneOffset() {
+		return timeZoneOffset;
+	}
+
+	public void setTimeZoneOffset(String offset) {
+		this.notifyUnsavedChanges(!offset.equals(this.timeZoneOffset));
+		this.timeZoneOffset = offset;
+	}
+
+	public boolean getTimeZoneAutoDST() {
+		return timeZoneAutoDST;
+	}
+
+	public void setTimeZoneAutoDST(boolean autoDST) {
+		this.notifyUnsavedChanges(autoDST != this.timeZoneAutoDST);
+		this.timeZoneAutoDST = autoDST;
+	}
+
+	public void setTimeZoneAutoDST(String autoDST) {
+		boolean newAutoDST = false;
+
+		try {
+			newAutoDST = Convert.toBoolean(autoDST);
+		}
+		catch (Exception e) {
+			newAutoDST = false;
+		}
+
+		setTimeZoneAutoDST(newAutoDST);
 	}
 
 	/**

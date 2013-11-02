@@ -27,7 +27,7 @@ import CacheWolf.CacheSize;
 import CacheWolf.CacheTerrDiff;
 import CacheWolf.CacheType;
 import CacheWolf.Common;
-import CacheWolf.Preferences;
+import CacheWolf.Global;
 import CacheWolf.Profile;
 import CacheWolf.navi.TrackPoint;
 import ewe.io.FileReader;
@@ -43,17 +43,13 @@ import ewesoft.xml.sax.AttributeList;
 public class LOCXMLImporter extends MinML {
 	boolean debugXML = false;
 	CacheDB cacheDB;
-	Preferences pref;
-	Profile profile;
 	String file;
 	CacheHolder holder;
 
 	String strData = "";
 
-	public LOCXMLImporter(Preferences pf, Profile prof, String f) {
-		pref = pf;
-		profile = prof;
-		cacheDB = profile.cacheDB;
+	public LOCXMLImporter(String f) {
+		cacheDB = Global.profile.cacheDB;
 		file = f;
 	}
 
@@ -66,9 +62,10 @@ public class LOCXMLImporter extends MinML {
 			parse(r);
 			r.close();
 			// save Index
-			profile.saveIndex(pref, Profile.NO_SHOW_PROGRESS_BAR);
+			Global.profile.saveIndex(Profile.NO_SHOW_PROGRESS_BAR);
 			Vm.showWait(false);
-		} catch (Exception e) {
+		}
+		catch (Exception e) {
 			Vm.showWait(false);
 		}
 	}
@@ -76,7 +73,7 @@ public class LOCXMLImporter extends MinML {
 	public void startElement(String name, AttributeList atts) {
 		if (debugXML) {
 			for (int i = 0; i < atts.getLength(); i++) {
-				pref.log(" Name: " + atts.getName(i) + " Value: " + atts.getValue(i), null);
+				Global.pref.log(" Name: " + atts.getName(i) + " Value: " + atts.getValue(i), null);
 			}
 		}
 		strData = "";
@@ -108,7 +105,7 @@ public class LOCXMLImporter extends MinML {
 			}
 			// save all (after each cache???)
 			holder.save();
-			profile.saveIndex(pref, Profile.NO_SHOW_PROGRESS_BAR);
+			Global.profile.saveIndex(Profile.NO_SHOW_PROGRESS_BAR);
 			return;
 		}
 
@@ -122,7 +119,7 @@ public class LOCXMLImporter extends MinML {
 		String chars = new String(ch, start, length);
 		strData += chars;
 		if (debugXML)
-			pref.log(strData, null);
+			Global.pref.log(strData, null);
 	}
 
 	private CacheHolder getHolder(String wpt) {

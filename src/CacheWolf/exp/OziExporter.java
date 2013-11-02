@@ -20,29 +20,28 @@
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 package CacheWolf.exp;
+
 import CacheWolf.CacheHolder;
 import CacheWolf.CacheSize;
 import CacheWolf.CacheType;
-import CacheWolf.Preferences;
-import CacheWolf.Profile;
 
 /**
-*	Class to export the cache database (index) to an OziExplorer File
-*/
-public class OziExporter extends Exporter{
-	
+ * Class to export the cache database (index) to an OziExplorer File
+ */
+public class OziExporter extends Exporter {
+
 	GarminMap oziColorMapper;
-	
-	public OziExporter(Preferences p, Profile prof){
+
+	public OziExporter() {
 		super();
 		this.setHowManyParams(LAT_LON);
 		this.setMask("*.wpt");
-		oziColorMapper=new GarminMap();
+		oziColorMapper = new GarminMap();
 	}
-	
-	public String header () {
+
+	public String header() {
 		StringBuffer strBuf = new StringBuffer(200);
-		
+
 		strBuf.append("OziExplorer CE Waypoint File Version 1.2\r\n");
 		strBuf.append("WGS 84\r\n");
 		strBuf.append("Reserved 2\r\n");
@@ -51,7 +50,7 @@ public class OziExporter extends Exporter{
 		return strBuf.toString();
 	}
 
-	public String record(CacheHolder ch, String lat, String lon){
+	public String record(CacheHolder ch, String lat, String lon) {
 		StringBuffer strBuf = new StringBuffer(200);
 		String tmpName;
 
@@ -61,20 +60,14 @@ public class OziExporter extends Exporter{
 		// Field 2 : Name - the waypoint name, use the correct length name to suit the GPS type.
 		if (ch.isCustomWpt() || ch.isAddiWpt()) {
 			strBuf.append(ch.getWayPoint() + ",");
-		} else {
-			strBuf.append(ch.getWayPoint()
-			.concat(" ")
-			.concat(CacheType.getExportShortId(ch.getType()))
-			.concat(String.valueOf(ch.getHard()))
-			.concat(String.valueOf(ch.getTerrain()))
-			.concat(CacheSize.getExportShortId(ch.getCacheSize()))
-			.concat(",")
-			);
+		}
+		else {
+			strBuf.append(ch.getWayPoint().concat(" ").concat(CacheType.getExportShortId(ch.getType())).concat(String.valueOf(ch.getHard())).concat(String.valueOf(ch.getTerrain())).concat(CacheSize.getExportShortId(ch.getCacheSize())).concat(","));
 		}
 		// Field 3 : Latitude - decimal degrees.
-		strBuf.append(lat+",");
+		strBuf.append(lat + ",");
 		// Field 4 : Longitude - decimal degrees.
-		strBuf.append(lon+",");
+		strBuf.append(lon + ",");
 		// Field 5 : Date - see Date Format below, if blank a preset date will be used
 		strBuf.append(",");
 		// Field 6 : Symbol - 0 to number of symbols in GPS
@@ -86,14 +79,14 @@ public class OziExporter extends Exporter{
 		// Field 9 : Foreground Color (RGB value)
 		strBuf.append("0,");
 		// Field 10 : Background Color (RGB value)
-		strBuf.append(oziColorMapper.ozicolor(ch)+",");
+		strBuf.append(oziColorMapper.ozicolor(ch) + ",");
 		// Field 11 : Description (max 40), no commas
 		tmpName = simplifyString(ch.getCacheName()).replace(',', ' ');
-		if (tmpName.length() <= 40){
+		if (tmpName.length() <= 40) {
 			strBuf.append(tmpName + ",");
 		}
 		else {
-			strBuf.append(tmpName.substring(0,40) + ",");
+			strBuf.append(tmpName.substring(0, 40) + ",");
 		}
 		// Field 12 : Pointer Direction
 		strBuf.append("0,");
@@ -113,7 +106,7 @@ public class OziExporter extends Exporter{
 		strBuf.append("0,");
 		// Field 20 : Proximity Time
 		strBuf.append("10.0,");
-	    // Field 21 : Proximity or Route or Both
+		// Field 21 : Proximity or Route or Both
 		strBuf.append("2,");
 		// Field 22 : File Attachment Name
 		strBuf.append(",");

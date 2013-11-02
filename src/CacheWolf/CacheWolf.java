@@ -1,24 +1,24 @@
-    /*
-    GNU General Public License
-    CacheWolf is a software for PocketPC, Win and Linux that
-    enables paperless caching.
-    It supports the sites geocaching.com and opencaching.de
+/*
+GNU General Public License
+CacheWolf is a software for PocketPC, Win and Linux that
+enables paperless caching.
+It supports the sites geocaching.com and opencaching.de
 
-    Copyright (C) 2006  CacheWolf development team
+Copyright (C) 2006  CacheWolf development team
 See http://www.cachewolf.de/ for more information.
-    This program is free software; you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation; version 2 of the License.
+This program is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation; version 2 of the License.
 
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
 
-    You should have received a copy of the GNU General Public License
-    along with this program; if not, write to the Free Software
-    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
-    */
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software
+Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+*/
 package CacheWolf;
 
 import ewe.sys.Device;
@@ -26,25 +26,24 @@ import ewe.ui.Editor;
 import ewe.ui.FormBase;
 import ewe.ui.MessageBox;
 
-public class CacheWolf{
-	public static void main(String vmargs[])
-	{
+public class CacheWolf {
+	public static void main(String vmargs[]) {
 		ewe.sys.Vm.startEwe(vmargs);
-		
+
 		// get program command line parameters and switches
 		String[] args = vmargs; // Vm.getProgramArguments(); <-- only works in eclipse, but mixes the letters in the ewe-vm (tested in ewe-1.49 on win xp)
 		String configfile = null;
 		boolean debug = false;
-		if(args.length > 0){
-			for (int i=0; i < args.length ; i++) {
-				if (args[i] != null && args[i].length() > 1 &&
-						(args[i].startsWith("-") || args[i].startsWith("/")) ) {
+		if (args.length > 0) {
+			for (int i = 0; i < args.length; i++) {
+				if (args[i] != null && args[i].length() > 1 && (args[i].startsWith("-") || args[i].startsWith("/"))) {
 					String c = args[i].substring(1, args[i].length());
 					if (c.equalsIgnoreCase("c")) {
-						if (i < args.length -1 ) {
-							configfile = args[i+1];
+						if (i < args.length - 1) {
+							configfile = args[i + 1];
 							i++;
-						} else {
+						}
+						else {
 							(new MessageBox("Error", MyLocale.getMsg(7200, "Usage: CacheWolf [-c <path to pref.xml>] [-debug]"), FormBase.OKB)).execute();
 							// return usage info
 							ewe.sys.Vm.exit(1);
@@ -59,13 +58,13 @@ public class CacheWolf{
 		}
 		// debug = true will permanently set this in pref.xml
 		// !!! debug = false will be overwritten by reading pref.xml
-		Editor mainF = new MainForm(debug, configfile);
+		Editor mainForm = new MainForm(debug, configfile);
 		Device.preventIdleState(true);
-		mainF.execute();
+		mainForm.execute();
 		Device.preventIdleState(false);
 		ewe.sys.Vm.exit(0);
 	}
-	
+
 }
 
 // for javadoc see: http://java.sun.com/j2se/javadoc/writingdoccomments/index.html#exampleresult

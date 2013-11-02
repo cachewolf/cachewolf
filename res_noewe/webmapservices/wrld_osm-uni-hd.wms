@@ -1,0 +1,31 @@
+﻿
+Name: 									World OSM Uni Heidelberg
+MapType:            					wrld osm UNI HD
+MainUrl:            					http://129.206.228.72/cached/osm/service?
+LayersUrlPart:     						LAYERS=osm_auto:all
+ImageFormatUrlPart:						FORMAT=image/png
+ImageFileExtension: 					.png
+CoordinateReferenceSystemCacheWolf:		4326
+CoordinateReferenceSystemUrlPart:		SRS=EPSG:4326
+RecommendedScale:						1 2 4 8 16 32
+BoundingBoxTopLeftWGS84:				N 85.0511 W 180.0000
+BoundingBoxBottomRightWGS84:			S 85.0511 E 180.0000
+ServiceTypeUrlPart:						SERVICE=WMS
+VersionUrlPart:							VERSION=1.1.1
+RequestUrlPart:							REQUEST=GetMap
+StylesUrlPart:							STYLES=
+#
+#MinScale:   							?
+#MaxScale:   							?
+#
+#MinPixelSize:							?
+#MaxPixelSize:							?
+#RecommendedWidthPixelSize: 			?
+#RecommendedHeightPixelSize: 			?
+#
+#Cached WMS with OpenStreetMap Data
+#Michael Auer (auer@uni-heidelberg.de) University of Heidelberg, Department of Geography, Chair of GIScience Prof. Zipf
+#This service is intended for private and evaluation use only.
+#Map data © OpenStreetMap contributors, CC BY-SA The data is licensed as Creative Commons Attribution-Share Alike 2.0 (http://creativecommons.org/licenses/by-sa/2.0/)
+TakenFromUrl:							http://www.osm-wms.de/#info
+GetCapabilitiesUrl:						http://129.206.228.72/cached/osm?Request=GetCapabilities

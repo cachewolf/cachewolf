@@ -28,10 +28,9 @@ import CacheWolf.CacheHolderDetail;
 import CacheWolf.CacheTerrDiff;
 import CacheWolf.CacheType;
 import CacheWolf.Common;
+import CacheWolf.Global;
 import CacheWolf.InfoBox;
 import CacheWolf.MyLocale;
-import CacheWolf.Preferences;
-import CacheWolf.Profile;
 import ewe.filechooser.FileChooser;
 import ewe.filechooser.FileChooserBase;
 import ewe.io.BufferedReader;
@@ -66,8 +65,6 @@ public class ExploristExporter {
 	final static int COUNT = 2;
 
 	CacheDB cacheDB;
-	Preferences pref;
-	Profile profile;
 	// mask in file chooser
 	String mask = "*.gs";
 	// decimal separator for lat- and lon-String
@@ -79,10 +76,8 @@ public class ExploristExporter {
 	// name of exporter for saving pathname
 	String expName;
 
-	public ExploristExporter(Preferences p, Profile prof) {
-		profile = prof;
-		pref = p;
-		cacheDB = profile.cacheDB;
+	public ExploristExporter() {
+		cacheDB = Global.profile.cacheDB;
 		expName = this.getClass().getName();
 		// remove package
 		expName = expName.substring(expName.indexOf(".") + 1);
@@ -91,14 +86,14 @@ public class ExploristExporter {
 	public void doIt() {
 		File configFile = new File("magellan.cfg");
 		if (configFile.exists()) {
-			FileChooser fc = new FileChooser(FileChooserBase.DIRECTORY_SELECT, pref.getExportPath(expName + "Dir"));
+			FileChooser fc = new FileChooser(FileChooserBase.DIRECTORY_SELECT, Global.pref.getExportPath(expName + "Dir"));
 			fc.setTitle(MyLocale.getMsg(2104, "Choose directory for exporting .gs files"));
 			String targetDir;
 			if (fc.execute() != FormBase.IDCANCEL) {
 				targetDir = fc.getChosen() + "/";
-				pref.setExportPath(expName + "Dir", targetDir);
+				Global.pref.setExportPath(expName + "Dir", targetDir);
 
-				CWPoint centre = profile.centre;
+				CWPoint centre = Global.profile.centre;
 				try {
 					LineNumberReader reader = new LineNumberReader(new BufferedReader(new FileReader(configFile)));
 					String line, fileName, coordinate;
@@ -112,17 +107,21 @@ public class ExploristExporter {
 						doIt(fileName);
 					}
 					reader.close();
-				} catch (FileNotFoundException e) {
+				}
+				catch (FileNotFoundException e) {
 					InfoBox info = new InfoBox(MyLocale.getMsg(2100, "Explorist Exporter"), MyLocale.getMsg(2101, "Failure at loading magellan.cfg\n" + e.getMessage()));
 					info.show();
-				} catch (IOException e) {
+				}
+				catch (IOException e) {
 					InfoBox info = new InfoBox(MyLocale.getMsg(2100, "Explorist Exporter"), MyLocale.getMsg(2103, "Failure at reading magellan.cfg\n" + e.getMessage()));
 					info.show();
-				} finally {
+				}
+				finally {
 					cacheDB.sort(new DistanceComparer(centre), false);
 				}
 			}
-		} else {
+		}
+		else {
 			doIt(null);
 		}
 	}
@@ -142,7 +141,8 @@ public class ExploristExporter {
 			outFile = getOutputFile();
 			if (outFile == null)
 				return;
-		} else {
+		}
+		else {
 			outFile = new File(baseFileName);
 		}
 
@@ -185,8 +185,9 @@ public class ExploristExporter {
 
 			outp.close();
 			pbf.exit(0);
-		} catch (IOException ioE) {
-			pref.log("Error opening " + outFile.getName(), ioE);
+		}
+		catch (IOException ioE) {
+			Global.pref.log("Error opening " + outFile.getName(), ioE);
 		}
 		// try
 	}
@@ -198,14 +199,15 @@ public class ExploristExporter {
 	 */
 	public File getOutputFile() {
 		File file;
-		FileChooser fc = new FileChooser(FileChooserBase.SAVE, pref.getExportPath(expName));
+		FileChooser fc = new FileChooser(FileChooserBase.SAVE, Global.pref.getExportPath(expName));
 		fc.setTitle(MyLocale.getMsg(2102, "Select target file:"));
 		fc.addMask(mask);
 		if (fc.execute() != FormBase.IDCANCEL) {
 			file = fc.getChosenFile();
-			pref.setExportPath(expName, file.getPath());
+			Global.pref.setExportPath(expName, file.getPath());
 			return file;
-		} else {
+		}
+		else {
 			return null;
 		}
 	}
@@ -245,15 +247,20 @@ public class ExploristExporter {
 		if (ch.isAddiWpt()) {
 			if (ch.getType() == 50) {
 				add = "Pa:";
-			} else if (ch.getType() == 51) {
+			}
+			else if (ch.getType() == 51) {
 				add = "St:";
-			} else if (ch.getType() == 52) {
+			}
+			else if (ch.getType() == 52) {
 				add = "Qu:";
-			} else if (ch.getType() == 53) {
+			}
+			else if (ch.getType() == 53) {
 				add = "Fi:";
-			} else if (ch.getType() == 54) {
+			}
+			else if (ch.getType() == 54) {
 				add = "Tr:";
-			} else if (ch.getType() == 55) {
+			}
+			else if (ch.getType() == 55) {
 				add = "Re:";
 			}
 			sb.append(add);
@@ -267,7 +274,8 @@ public class ExploristExporter {
 
 		if (!add.equals("")) { // Set Picture in Explorist to Virtual for Addis
 			sb.append("Virtual Cache");
-		} else {
+		}
+		else {
 			sb.append(CacheType.type2GSTypeTag(ch.getType()));
 		}
 		sb.append(",");
@@ -318,7 +326,8 @@ public class ExploristExporter {
 	private String toGsDateFormat(String input) {
 		if (input.length() >= 10) {
 			return input.substring(8, 10) + input.substring(5, 7) + "1" + input.substring(2, 4);
-		} else {
+		}
+		else {
 			return "";
 		}
 	}
