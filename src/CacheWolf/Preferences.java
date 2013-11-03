@@ -420,7 +420,7 @@ public class Preferences extends MinML {
 	    if (e instanceof NullPointerException)
 		log("Error reading pref.xml: NullPointerException in Element " + lastName + ". Wrong attribute?", e, true);
 	    else
-		log("Error reading pref.xml: ", e);
+		log("Error reading pref.xml: " + lastName, e);
 	}
 	isBigScreen = (MyLocale.getScreenWidth() >= 400) && (MyLocale.getScreenHeight() >= 600);
     }
@@ -735,7 +735,7 @@ public class Preferences extends MinML {
 		showCachesOnMap = Boolean.valueOf(atts.getValue("showCachesOnMap")).booleanValue();
 	    tmp = atts.getValue("lastScale");
 	    if (tmp != null)
-		lastScale = Float.valueOf(atts.getValue("lastScale")).floatValue();
+		lastScale = (float) Common.parseDouble(tmp);
 	} else if (name.equals("SortingGroupedByCache")) {
 	    tmp = atts.getValue("on");
 	    SortingGroupedByCache = tmp != null && tmp.equalsIgnoreCase("true");
@@ -772,6 +772,10 @@ public class Preferences extends MinML {
 	if (pathToConfigFile == null)
 	    setPathToConfigFile(null); // this sets the default value
 	try {
+	    File f = new File(pathToConfigFile);
+	    if (f.exists())
+		f.delete();
+
 	    PrintWriter outp = new PrintWriter(new BufferedWriter(new FileWriter(pathToConfigFile)));
 	    outp.print("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" //
 		    + "<preferences>\n" //
@@ -858,7 +862,6 @@ public class Preferences extends MinML {
 		    + " colwidths=\"" + SafeXML.clean(travelbugColWidth) + "\"" //
 		    + " shownonlogged=\"" + SafeXML.strxmlencode(travelbugShowOnlyNonLogged) + "\"" //
 		    + " />\n");
-
 	    outp.print("    <descpanel showimages=\"" + SafeXML.strxmlencode(descShowImg) + "\" />\n");
 	    outp.print("    <imagepanel showdeletedimages=\"" + SafeXML.strxmlencode(showDeletedImages) + "\" />\n");
 	    outp.print("    <hintlogpanel"//
@@ -901,9 +904,7 @@ public class Preferences extends MinML {
 	    for (int i = 0; i < filterIDs.length; i++) {
 		outp.print(this.getFilter(filterIDs[i]).toXML(filterIDs[i]));
 	    }
-	    if (debug)
-		// Keep the debug switch if it is set
-		outp.print("    <debug value=\"true\" />\n");
+	    outp.print("    <debug value=\"" + SafeXML.strxmlencode(debug) + "\" />\n");
 	    // save last path of different exporters
 	    Iterator itPath = exporterPaths.entries();
 	    MapEntry entry;
@@ -925,7 +926,7 @@ public class Preferences extends MinML {
 		    + " />\n");
 	    outp.print("    <Map" //
 		    + " showCachesOnMap=\"" + SafeXML.strxmlencode(showCachesOnMap) + "\"" //
-		    + " lastScale=\"" + Common.DoubleToString(lastScale, 0, 2) + "\"" //
+		    + " lastScale=\"" + Common.DoubleToString(Double.parseDouble(Float.toString(lastScale)), 0, 2) + "\"" //
 		    + " />\n");
 	    outp.print("    <SortingGroupedByCache on=\"" + SafeXML.strxmlencode(SortingGroupedByCache) + "\" />\n");
 	    if (mobileGUI)
