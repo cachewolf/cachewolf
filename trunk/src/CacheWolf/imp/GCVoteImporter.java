@@ -25,101 +25,99 @@ import CacheWolf.CacheDB;
 import CacheWolf.CacheHolder;
 import CacheWolf.Common;
 import CacheWolf.Global;
+import CacheWolf.InfoBox;
 import CacheWolf.MyLocale;
 import CacheWolf.UrlFetcher;
 import ewe.io.Reader;
 import ewe.io.StringReader;
 import ewe.sys.Handle;
 import ewe.ui.FormBase;
-import ewe.ui.MessageBox;
 import ewe.ui.ProgressBarForm;
 import ewesoft.xml.MinML;
 import ewesoft.xml.sax.AttributeList;
 
 public class GCVoteImporter extends MinML {
 
-	private CacheDB cacheDB;
-	private String GCVUser;
-	private String GCVPassword;
-	private String GCVURL;
-	private String GCVWaypoints;
-	private String GCVResults;
+    private CacheDB cacheDB;
+    private String GCVUser;
+    private String GCVPassword;
+    private String GCVURL;
+    private String GCVWaypoints;
+    private String GCVResults;
 
-	/**
-	 * Constructor initalizing profile and cacheDB
-	 */
-	public GCVoteImporter() {
-		this.cacheDB = Global.profile.cacheDB;
-	}
+    /**
+     * Constructor initalizing profile and cacheDB
+     */
+    public GCVoteImporter() {
+	this.cacheDB = Global.profile.cacheDB;
+    }
 
-	/**
-	 * Read cacheDB and check for GCVotes
-	 */
-	public void doIt() {
-		ProgressBarForm pbf = new ProgressBarForm();
-		Handle h = new Handle();
-		this.GCVUser = ""; // Global.pref.myAlias;
-		this.GCVPassword = "";
+    /**
+     * Read cacheDB and check for GCVotes
+     */
+    public void doIt() {
+	ProgressBarForm pbf = new ProgressBarForm();
+	Handle h = new Handle();
+	this.GCVUser = ""; // Global.pref.myAlias;
+	this.GCVPassword = "";
 
-		int totalWaypoints = cacheDB.countVisible();
-		int countWaypoints = 0;
+	int totalWaypoints = cacheDB.countVisible();
+	int countWaypoints = 0;
 
-		pbf.showMainTask = false;
-		pbf.setTask(h, "Import GCVote ratings ...");
-		pbf.exec();
+	pbf.showMainTask = false;
+	pbf.setTask(h, "Import GCVote ratings ...");
+	pbf.exec();
 
-		for (int o = 0; o < cacheDB.size(); o += 100) {
-			GCVWaypoints = "";
-			for (int i = o; (i < (o + 100)) & (i < cacheDB.size()); i++) {
-				CacheHolder ch = cacheDB.get(i);
-				if (ch.isVisible()) {
-					if (ch.isCacheWpt()) {
-						GCVWaypoints += ch.getWayPoint() + ",";
-					}
-					countWaypoints++;
-					h.progress = (float) countWaypoints / (float) totalWaypoints;
-					h.changed();
-				}
-			}
-
-			GCVURL = "http://gcvote.de/getVotes.php?";
-			GCVURL += "userName=" + GCVUser + "&password=" + GCVPassword + "&waypoints=" + GCVWaypoints;
-
-			try {
-				Global.pref.log("[GCVote]:Requesting ratings");
-				GCVResults = UrlFetcher.fetch(GCVURL);
-				if (GCVResults.equals("")) {
-					(new MessageBox(MyLocale.getMsg(0, "Error"), MyLocale.getMsg(0, "Error loading GCVote page.%0aPlease check your internet connection."), FormBase.OKB)).execute();
-					Global.pref.log("[GCVote]:Could not fetch: getVotes.php page", null);
-				}
-				else {
-					// parse response for votes
-					Global.pref.log("[GCVote]:GCVotes = " + GCVResults);
-					Reader r = new StringReader(GCVResults);
-					parse(r);
-				}
-			}
-			catch (Exception ex) {
-				Global.pref.log("[GCVote:DoIt]", ex, true);
-			}
+	for (int o = 0; o < cacheDB.size(); o += 100) {
+	    GCVWaypoints = "";
+	    for (int i = o; (i < (o + 100)) & (i < cacheDB.size()); i++) {
+		CacheHolder ch = cacheDB.get(i);
+		if (ch.isVisible()) {
+		    if (ch.isCacheWpt()) {
+			GCVWaypoints += ch.getWayPoint() + ",";
+		    }
+		    countWaypoints++;
+		    h.progress = (float) countWaypoints / (float) totalWaypoints;
+		    h.changed();
 		}
-		pbf.exit(0);
-	}
+	    }
 
-	/**
-	 * Eventhandler for XML votes
-	 */
-	public void startElement(String name, AttributeList atts) {
-		String waypoint;
-		double voteAvg;
-		int voteCnt;
-		if (name.equals("vote")) {
-			waypoint = atts.getValue("waypoint");
-			voteAvg = Common.parseDouble(atts.getValue("voteAvg")) * 10.0;
-			voteCnt = Common.parseInt(atts.getValue("voteCnt"));
-			Global.pref.log("[GCVote:startElement]:Waypoint = " + waypoint + " - " + voteAvg + "(" + voteCnt + " votes)");
-			CacheHolder cb = cacheDB.get(waypoint);
-			cb.setNumRecommended(100 * voteCnt + (int) (voteAvg + 0.5));
+	    GCVURL = "http://gcvote.de/getVotes.php?";
+	    GCVURL += "userName=" + GCVUser + "&password=" + GCVPassword + "&waypoints=" + GCVWaypoints;
+
+	    try {
+		Global.pref.log("[GCVote]:Requesting ratings");
+		GCVResults = UrlFetcher.fetch(GCVURL);
+		if (GCVResults.equals("")) {
+		    new InfoBox(MyLocale.getMsg(0, "Error"), MyLocale.getMsg(0, "Error loading GCVote page.%0aPlease check your internet connection.")).wait(FormBase.OKB);
+		    Global.pref.log("[GCVote]:Could not fetch: getVotes.php page", null);
+		} else {
+		    // parse response for votes
+		    Global.pref.log("[GCVote]:GCVotes = " + GCVResults);
+		    Reader r = new StringReader(GCVResults);
+		    parse(r);
 		}
+	    } catch (Exception ex) {
+		Global.pref.log("[GCVote:DoIt]", ex, true);
+	    }
 	}
+	pbf.exit(0);
+    }
+
+    /**
+     * Eventhandler for XML votes
+     */
+    public void startElement(String name, AttributeList atts) {
+	String waypoint;
+	double voteAvg;
+	int voteCnt;
+	if (name.equals("vote")) {
+	    waypoint = atts.getValue("waypoint");
+	    voteAvg = Common.parseDouble(atts.getValue("voteAvg")) * 10.0;
+	    voteCnt = Common.parseInt(atts.getValue("voteCnt"));
+	    Global.pref.log("[GCVote:startElement]:Waypoint = " + waypoint + " - " + voteAvg + "(" + voteCnt + " votes)");
+	    CacheHolder cb = cacheDB.get(waypoint);
+	    cb.setNumRecommended(100 * voteCnt + (int) (voteAvg + 0.5));
+	}
+    }
 }
