@@ -45,7 +45,6 @@ import ewe.sys.Convert;
 import ewe.sys.Double;
 import ewe.sys.Time;
 import ewe.ui.FormBase;
-import ewe.ui.MessageBox;
 import ewe.util.Comparer;
 import ewe.util.Properties;
 import ewe.util.StandardComparer;
@@ -84,7 +83,6 @@ public class MapLoader {
 	FileBugfix files = new FileBugfix(wmspath);
 	String FileName;
 	OnlineMapService tempOMS;
-	MessageBox f = null;
 	dateien = files.list("*.wms", FileBase.LIST_FILES_ONLY);
 	for (int i = 0; i < dateien.length; i++) {
 	    FileName = dateien[i];
@@ -99,8 +97,7 @@ public class MapLoader {
 		tempOMS = new WebMapService(STRreplace.replace(wmspath + "/" + FileName, "//", "/"));
 		onlineMapServices.add(tempOMS);
 	    } catch (Exception ex) {
-		if (f == null)
-		    (f = new MessageBox(MyLocale.getMsg(144, "Warning"), MyLocale.getMsg(4801, "Ignoring error while \n reading web map service definition file \n") + ex.toString(), FormBase.OKB)).exec();
+		new InfoBox(MyLocale.getMsg(144, "Warning"), MyLocale.getMsg(4801, "Ignoring error while \n reading web map service definition file \n") + ex.toString()).exec();
 	    }
 	}
 
@@ -352,8 +349,7 @@ public class MapLoader {
 	String mapProgram = mapProgramPath + wms.MainUrl;
 	File f = new File(mapProgram);
 	if (!f.exists() || !f.canRead()) {
-	    MessageBox mb = new MessageBox(MyLocale.getMsg(321, "Error"), MyLocale.getMsg(1834, "Please enter the correct path to Kosmos.Console.exe into the wms-file."), ewe.ui.MessageBox.OKB);
-	    mb.execute();
+	    new InfoBox(MyLocale.getMsg(321, "Error"), MyLocale.getMsg(1834, "Please enter the correct path to Kosmos.Console.exe into the wms-file.")).wait(FormBase.OKB);
 	    return;
 	}
 
