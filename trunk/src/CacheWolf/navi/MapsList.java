@@ -845,7 +845,7 @@ final class MapListEntry {
 		rename = 2;
 		/* no longer needed
 		if (rename == 0) { // never asked before
-			if ((new MessageBox(MyLocale.getMsg(4702, "Optimisation"), MyLocale.getMsg(4703,
+			if ((new InfoBox(MyLocale.getMsg(4702, "Optimisation"), MyLocale.getMsg(4703,
 					"Cachewolf can make loading maps much faster by adding a identification mark to the filename. Do you want me to do this now?\n It can take several minutes"), FormBase.YESB | FormBase.NOB)).execute() == FormBase.IDYES) {
 				renameProgressInfoB = new InfoBox(MyLocale.getMsg(327, "Info"), MyLocale.getMsg(4704, "\nRenaming file:") + "    \n");
 				renameProgressInfoB.exec();
@@ -863,28 +863,28 @@ final class MapListEntry {
 		    renameProgressInfoB.setInfo(MyLocale.getMsg(4704, "\nRenaming file: ") + f + "\n");
 		    String to = sortEntryBBox + "E-" + filenamei + ".wfl";
 		    if (!new File(f).rename(to))
-			new InfoBox(MyLocale.getMsg(321, "Error"), MyLocale.getMsg(4705, "Failed to rename:\n") + f + MyLocale.getMsg(4706, "\nto:\n") + to).wait(FormBase.OKB);
+			new InfoBox(MyLocale.getMsg(5500, "Error"), MyLocale.getMsg(4705, "Failed to rename:\n") + f + MyLocale.getMsg(4706, "\nto:\n") + to).wait(FormBase.OKB);
 		    f = Common.getImageName(mapsPath + subPath + filenamei);
 		    if (f != null) {
 			imageExtension = Common.getFilenameExtension(f);
 			to = sortEntryBBox + "E-" + filenamei + imageExtension;
 			if (!new File(f).rename(to)) {
 			    Global.pref.log("MapListEntry Failed to rename: " + mapsPath + subPath + filenamei + ": " + f + " to: " + to, null);
-			    new InfoBox(MyLocale.getMsg(321, "Error"), MyLocale.getMsg(4705, "Failed to rename:\n") + f + MyLocale.getMsg(4706, "\nto:\n") + to).wait(FormBase.OKB);
+			    new InfoBox(MyLocale.getMsg(5500, "Error"), MyLocale.getMsg(4705, "Failed to rename:\n") + f + MyLocale.getMsg(4706, "\nto:\n") + to).wait(FormBase.OKB);
 			}
 		    } else {
 			Global.pref.log("MapListEntry: Could not find image assiciated to: " + mapsPath + subPath + filenamei + ".wfl", null);
-			new InfoBox(MyLocale.getMsg(321, "Error"), MyLocale.getMsg(4709, "Could not find image assiciated to:\n") + mapsPath + subPath + filenamei + ".wfl").wait(FormBase.OKB);
+			new InfoBox(MyLocale.getMsg(5500, "Error"), MyLocale.getMsg(4709, "Could not find image assiciated to:\n") + mapsPath + subPath + filenamei + ".wfl").wait(FormBase.OKB);
 		    }
 		    // this.MapImageFileNameObject.setMapName(sortEntryBBox + "E-" + filenamei);
 		    this.MapImageFileNameObject.setMapName(filenamei);
 		    this.MapImageFileNameObject.setImageExtension(imageExtension);
 		}
 	    } catch (IOException ioex) { // this should not happen
-		new InfoBox(MyLocale.getMsg(321, "Error"), MyLocale.getMsg(4707, "I/O-Error while reading:") + " " + mapsPath + subPath + filenamei + ": " + ioex.getMessage()).wait(FormBase.OKB);
+		new InfoBox(MyLocale.getMsg(5500, "Error"), MyLocale.getMsg(4707, "I/O-Error while reading:") + " " + mapsPath + subPath + filenamei + ": " + ioex.getMessage()).wait(FormBase.OKB);
 		Global.pref.log("MapListEntry: I/O-Error while reading: " + mapsPath + subPath + filenamei + ": ", ioex);
 	    } catch (Exception ex) {
-		new InfoBox(MyLocale.getMsg(321, "Error"), MyLocale.getMsg(4706, "Error while reading:") + " " + mapsPath + subPath + filenamei + ": " + ex.getMessage()).wait(FormBase.OKB);
+		new InfoBox(MyLocale.getMsg(5500, "Error"), MyLocale.getMsg(4706, "Error while reading:") + " " + mapsPath + subPath + filenamei + ": " + ex.getMessage()).wait(FormBase.OKB);
 		Global.pref.log("MapListEntry: Error while reading: " + mapsPath + subPath + filenamei + ": ", ex);
 	    }
 	}

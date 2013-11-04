@@ -178,9 +178,9 @@ public class Filter {
 		    ch.setFiltered(true);
 	    }
 	} catch (FileNotFoundException fnex) {
-	    new InfoBox("Error", "File not found").wait(FormBase.OKB);
+	    new InfoBox(MyLocale.getMsg(5500, "Error"), "File not found").wait(FormBase.OKB);
 	} catch (IOException ioex) {
-	    new InfoBox("Error", "Problem reading file!").wait(FormBase.OKB);
+	    new InfoBox(MyLocale.getMsg(5500, "Error"), "Problem reading file!").wait(FormBase.OKB);
 	}
     }
 

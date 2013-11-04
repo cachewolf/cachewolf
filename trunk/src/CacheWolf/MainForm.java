@@ -89,7 +89,7 @@ public class MainForm extends Editor {
 	    Global.pref.readPrefFile();
 	    Global.pref.logInit();
 	    if (MyLocale.initErrors.length() != 0) {
-		new InfoBox("Error", MyLocale.initErrors).wait(FormBase.OKB);
+		new InfoBox(MyLocale.getMsg(5500, "Error"), MyLocale.initErrors).wait(FormBase.OKB);
 	    }
 	    if (Vm.isMobile()) {
 		//this.windowFlagsToSet |=Window.FLAG_FULL_SCREEN;

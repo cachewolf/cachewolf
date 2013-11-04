@@ -349,7 +349,7 @@ public class MapLoader {
 	String mapProgram = mapProgramPath + wms.MainUrl;
 	File f = new File(mapProgram);
 	if (!f.exists() || !f.canRead()) {
-	    new InfoBox(MyLocale.getMsg(321, "Error"), MyLocale.getMsg(1834, "Please enter the correct path to Kosmos.Console.exe into the wms-file.")).wait(FormBase.OKB);
+	    new InfoBox(MyLocale.getMsg(5500, "Error"), MyLocale.getMsg(1834, "Please enter the correct path to Kosmos.Console.exe into the wms-file.")).wait(FormBase.OKB);
 	    return;
 	}
 

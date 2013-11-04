@@ -71,7 +71,6 @@ import ewe.ui.KeyEvent;
 import ewe.ui.Menu;
 import ewe.ui.MenuEvent;
 import ewe.ui.MenuItem;
-import ewe.ui.MessageBox;
 import ewe.ui.PenEvent;
 import ewe.ui.WindowConstants;
 import ewe.ui.WindowEvent;
@@ -1142,7 +1141,7 @@ public final class MovingMap extends Form implements ICommandListener {
 		} catch (final ewe.sys.SystemResourceException sre) {
 		    // next time there may be problem don't ask again
 		    if (reflectResourceException) {
-			if (new MessageBox("Error", "Not enough ressources to fill white ares, disabling this", MessageBox.YESB | MessageBox.NOB).execute() == MessageBox.IDYES) {
+			if (new InfoBox(MyLocale.getMsg(5500, "Error"), "Not enough ressources to fill white ares, disabling this").wait(FormBase.YESB | FormBase.NOB) == FormBase.IDYES) {
 			    setFillWhiteArea(false);
 			    reflectResourceException = true;
 			} else {
@@ -1421,7 +1420,7 @@ public final class MovingMap extends Form implements ICommandListener {
 	    }
 	    break;
 	default:
-	    new InfoBox(MyLocale.getMsg(4207, "Error"), MyLocale.getMsg(4208, "Bug: \nillegal mapChangeModus: ") + mapChangeModus).wait(FormBase.OKB);
+	    new InfoBox(MyLocale.getMsg(5500, "Error"), MyLocale.getMsg(4208, "Bug: \nillegal mapChangeModus: ") + mapChangeModus).wait(FormBase.OKB);
 	    break;
 	}
 
@@ -1446,7 +1445,7 @@ public final class MovingMap extends Form implements ICommandListener {
 		// force the user to select a map
 		manualSelectMap();
 		if (currentMap == null)
-		    new InfoBox(MyLocale.getMsg(4207, "Error"), MyLocale.getMsg(4210, "Moving map cannot run without a map - please select one. \n You can select an empty map")).wait(FormBase.OKB);
+		    new InfoBox(MyLocale.getMsg(5500, "Error"), MyLocale.getMsg(4210, "Moving map cannot run without a map - please select one. \n You can select an empty map")).wait(FormBase.OKB);
 	    }
 	}
 	inSetBestMap = false;
@@ -1612,7 +1611,7 @@ public final class MovingMap extends Form implements ICommandListener {
 		}
 		rebuildOverlaySet();
 		updatePositionOfMapElements();
-		new InfoBox(MyLocale.getMsg(4207, "Error"), MyLocale.getMsg(4218, "Could not load map: \n") + newmap.getImagePathAndName()).wait(FormBase.OKB);
+		new InfoBox(MyLocale.getMsg(5500, "Error"), MyLocale.getMsg(4218, "Could not load map: \n") + newmap.getImagePathAndName()).wait(FormBase.OKB);
 	    } catch (final OutOfMemoryError e) {
 		Global.pref.log("[MovingMap:setMap]OutOfMemoryError", e, true);
 		if (mainMap != null) {
@@ -1623,7 +1622,7 @@ public final class MovingMap extends Form implements ICommandListener {
 		}
 		rebuildOverlaySet();
 		updatePositionOfMapElements();
-		new InfoBox(MyLocale.getMsg(4207, "Error"), MyLocale.getMsg(4219, "Not enough memory to load map: \n") + newmap.getImagePathAndName() + MyLocale.getMsg(4220, "\nYou can try to close\n all prgrams and \nrestart CacheWolf"))
+		new InfoBox(MyLocale.getMsg(5500, "Error"), MyLocale.getMsg(4219, "Not enough memory to load map: \n") + newmap.getImagePathAndName() + MyLocale.getMsg(4220, "\nYou can try to close\n all prgrams and \nrestart CacheWolf"))
 			.wait(FormBase.OKB);
 	    } catch (final SystemResourceException e) {
 		Global.pref.log("[MovingMap:setMap]SystemResourceException", e, true);
@@ -1639,7 +1638,7 @@ public final class MovingMap extends Form implements ICommandListener {
 		// I guess because the pixels of PosCircle will be interpreted from the new resolution,
 		// but should be interpreted using the old resolution to test:
 		// select a map with a much greater value of m per pixel manually
-		new InfoBox(MyLocale.getMsg(4207, "Error"), MyLocale.getMsg(4221, "Not enough ressources to load map: ") + newmap.getImagePathAndName() + MyLocale.getMsg(4220, "\nYou can try to close\n all prgrams and \nrestart CacheWolf"))
+		new InfoBox(MyLocale.getMsg(5500, "Error"), MyLocale.getMsg(4221, "Not enough ressources to load map: ") + newmap.getImagePathAndName() + MyLocale.getMsg(4220, "\nYou can try to close\n all prgrams and \nrestart CacheWolf"))
 			.wait(FormBase.OKB);
 	    }
 	} finally {
@@ -1770,7 +1769,7 @@ public final class MovingMap extends Form implements ICommandListener {
 		    mainMap = new MapImage(mapImage1to1.scale((int) (newImageRect.width * zoomFactor), (int) (newImageRect.height * zoomFactor), newImageRect, 0));
 		currentMap.zoom(zoomFactor, newImageRect.x, newImageRect.y);
 	    } catch (final OutOfMemoryError e) {
-		new InfoBox(MyLocale.getMsg(4207, "Error"), MyLocale.getMsg(4222, "Out of memory error")).wait(FormBase.OKB);
+		new InfoBox(MyLocale.getMsg(5500, "Error"), MyLocale.getMsg(4222, "Out of memory error")).wait(FormBase.OKB);
 	    }
 
 	    // do garbage collection
@@ -2016,13 +2015,13 @@ public final class MovingMap extends Form implements ICommandListener {
 	    }
 	    dontUpdatePos = remember;
 	} else
-	    new InfoBox(MyLocale.getMsg(4207, "Error"), MyLocale.getMsg(4211, "No ") + (betterOverview ? MyLocale.getMsg(4212, "less") : MyLocale.getMsg(4213, "more")) + MyLocale.getMsg(4214, " detailed map available")).wait(FormBase.OKB);
+	    new InfoBox(MyLocale.getMsg(5500, "Error"), MyLocale.getMsg(4211, "No ") + (betterOverview ? MyLocale.getMsg(4212, "less") : MyLocale.getMsg(4213, "more")) + MyLocale.getMsg(4214, " detailed map available")).wait(FormBase.OKB);
     }
 
     private void loadMapForAllCaches() {
 	final Area sur = Global.profile.getSourroundingArea(true);
 	if (sur == null) {
-	    new InfoBox(MyLocale.getMsg(4207, "Error"), MyLocale.getMsg(4215, "Keine  Caches mit H?ckchen ausgew?hlt")).wait(FormBase.OKB);
+	    new InfoBox(MyLocale.getMsg(5500, "Error"), MyLocale.getMsg(4215, "Keine  Caches mit H?ckchen ausgew?hlt")).wait(FormBase.OKB);
 	    return;
 	}
 	MapInfoObject newmap = maps.getMapForArea(sur.topleft, sur.bottomright);

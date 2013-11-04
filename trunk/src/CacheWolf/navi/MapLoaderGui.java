@@ -247,7 +247,7 @@ public class MapLoaderGui extends Form {
 	    } else {
 		scale = maxScale;
 	    }
-	    new InfoBox(MyLocale.getMsg(321, "Error"), "! " + scale + "\n" + MyLocale.getMsg(1830, "The selected online map service provides map in the scale from") + " " + minScale + " " + MyLocale.getMsg(1831, " to") + " " + maxScale + "\n "
+	    new InfoBox(MyLocale.getMsg(5500, "Error"), "! " + scale + "\n" + MyLocale.getMsg(1830, "The selected online map service provides map in the scale from") + " " + minScale + " " + MyLocale.getMsg(1831, " to") + " " + maxScale + "\n "
 		    + MyLocale.getMsg(1832, "\n please adjust 'Approx. meter pro pixel' accordingly")).wait(FormBase.OKB);
 	}
 	scaleInput.setText(Convert.toString(scale));
@@ -299,7 +299,7 @@ public class MapLoaderGui extends Form {
 	// check and create mapsDir
 	if (!(new File(mapsDir).isDirectory())) {
 	    if (new File(mapsDir).mkdirs() == false) {
-		new InfoBox(MyLocale.getMsg(321, "Error"), MyLocale.getMsg(172, "Error: cannot create maps directory: \n") + new File(mapsDir).getParentFile()).wait(FormBase.OKB);
+		new InfoBox(MyLocale.getMsg(5500, "Error"), MyLocale.getMsg(172, "Error: cannot create maps directory: \n") + new File(mapsDir).getParentFile()).wait(FormBase.OKB);
 		return null;
 	    }
 	}
@@ -324,7 +324,7 @@ public class MapLoaderGui extends Form {
 	    // calculate map boundaries from cacheDB
 	    Area surArea = Global.profile.getSourroundingArea(onlySelected);
 	    if (surArea == null) {
-		new InfoBox(MyLocale.getMsg(321, "Error"), MyLocale.getMsg(1817, "No Caches are selected")).wait(FormBase.OKB);
+		new InfoBox(MyLocale.getMsg(5500, "Error"), MyLocale.getMsg(1817, "No Caches are selected")).wait(FormBase.OKB);
 		Vm.showWait(false);
 		progressBox.close(0);
 		return;
@@ -410,7 +410,7 @@ public class MapLoaderGui extends Form {
 		this.close(FormBase.IDCANCEL);
 	    } else if (ev.target == executePanel.applyButton || ev.target == executePanelPerCache.applyButton) {
 		if (sortingMapServices[mapServiceChoice.selectedIndex] == -1) {
-		    new InfoBox(MyLocale.getMsg(321, "Error"), MyLocale.getMsg(1833, "Please don't select the separator line in the wms service option")).wait(FormBase.OKB);
+		    new InfoBox(MyLocale.getMsg(5500, "Error"), MyLocale.getMsg(1833, "Please don't select the separator line in the wms service option")).wait(FormBase.OKB);
 		}
 		mapLoader.setCurrentMapService(sortingMapServices[mapServiceChoice.selectedIndex]);
 		if (ev.target == executePanel.applyButton) { // get tiles
@@ -426,15 +426,15 @@ public class MapLoaderGui extends Form {
 		    overlapping = Convert.toInt(overlappingInput.getText());
 		    if (!forCachesChkBox.getState()) {
 			if (radius <= 0) {
-			    new InfoBox(MyLocale.getMsg(321, "Error"), MyLocale.getMsg(1827, "'radius' must be greater than 0")).wait(FormBase.OKB);
+			    new InfoBox(MyLocale.getMsg(5500, "Error"), MyLocale.getMsg(1827, "'radius' must be greater than 0")).wait(FormBase.OKB);
 			    return;
 			}
 			if (overlapping < 0) {
-			    new InfoBox(MyLocale.getMsg(321, "Error"), MyLocale.getMsg(1828, "'overlapping' must be greater or equal 0")).wait(FormBase.OKB);
+			    new InfoBox(MyLocale.getMsg(5500, "Error"), MyLocale.getMsg(1828, "'overlapping' must be greater or equal 0")).wait(FormBase.OKB);
 			    return;
 			}
 			if (!center.isValid() && !forCachesChkBox.getState()) {
-			    new InfoBox(MyLocale.getMsg(321, "Error"), MyLocale.getMsg(1829, "Please enter the 'centre' around which the maps shall be downloaded")).wait(FormBase.OKB);
+			    new InfoBox(MyLocale.getMsg(5500, "Error"), MyLocale.getMsg(1829, "Please enter the 'centre' around which the maps shall be downloaded")).wait(FormBase.OKB);
 			    return;
 			}
 		    }

@@ -89,7 +89,7 @@ public class GCVoteImporter extends MinML {
 		Global.pref.log("[GCVote]:Requesting ratings");
 		GCVResults = UrlFetcher.fetch(GCVURL);
 		if (GCVResults.equals("")) {
-		    new InfoBox(MyLocale.getMsg(0, "Error"), MyLocale.getMsg(0, "Error loading GCVote page.%0aPlease check your internet connection.")).wait(FormBase.OKB);
+		    new InfoBox(MyLocale.getMsg(5500, "Error"), MyLocale.getMsg(0, "Error loading GCVote page.%0aPlease check your internet connection.")).wait(FormBase.OKB);
 		    Global.pref.log("[GCVote]:Could not fetch: getVotes.php page", null);
 		} else {
 		    // parse response for votes

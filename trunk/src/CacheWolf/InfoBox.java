@@ -21,7 +21,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 package CacheWolf;
 
-import ewe.ui.CellConstants;
 import ewe.ui.ControlEvent;
 import ewe.ui.Event;
 import ewe.ui.Form;
@@ -54,8 +53,8 @@ public class InfoBox extends Form {
 	this(title, info, DISPLAY_ONLY);
 
 	/*
-	 * this.setPreferredSize(170,50); this.title = title; msgArea = new MessageArea(""), CellConstants.STRETCH, CellConstants.FILL) this.addLast(scP = new ScrollBarPanel(msgArea)); msgArea.setText(info); mB.setHotKey(0, IKeys.ACTION); mB.setHotKey(0,
-	 * IKeys.ENTER); //mB.set(Control.Invisible, true); //this.addLast(mB, CellConstants.STRETCH, CellConstants.FILL);
+	 * this.setPreferredSize(170,50); this.title = title; msgArea = new MessageArea(""), STRETCH, FILL) this.addLast(scP = new ScrollBarPanel(msgArea)); msgArea.setText(info); mB.setHotKey(0, IKeys.ACTION); mB.setHotKey(0,
+	 * IKeys.ENTER); //mB.set(Control.Invisible, true); //this.addLast(mB, STRETCH, FILL);
 	 */
     }
 
@@ -82,55 +81,49 @@ public class InfoBox extends Form {
 	int sw = MyLocale.getScreenWidth();
 	int psx;
 	int psy;
-	psx = 170;
-	psy = 50;
-	if ((fs > 11) && (sw >= 200)) {
-	    psx = 200;
-	    psy = 70;
+	psx = fs * 14; // 20
+	psy = fs * 6; // 7
+
+	if (Global.pref.useBigIcons) {
+	    psx = Math.min(psx + 48, sw);
+	    psy = Math.min(psy + 16, MyLocale.getScreenHeight());
+	} else {
+	    psx = Math.min(psx, sw);
+	    psy = Math.min(psy, MyLocale.getScreenHeight());
 	}
-	if ((fs > 16) && (sw >= 250)) {
-	    psx = 250;
-	    psy = 90;
-	}
-	if ((fs > 21) && (sw >= 300)) {
-	    psx = 300;
-	    psy = 110;
-	}
-	if ((fs > 24) && (sw >= 350)) {
-	    psx = 350;
-	    psy = 130;
-	}
+
 	this.setPreferredSize(psx, psy);
 	this.title = title;
 	switch (type) {
 	case CHECKBOX:
 	    checkBox = new mCheckBox(info);
-	    this.addLast(checkBox, CellConstants.STRETCH, CellConstants.FILL);
+	    this.addLast(checkBox, STRETCH, FILL);
 	    executePanel = new ExecutePanel(this);
 	    break;
 	case INPUT:
 	    mLabel mL = new mLabel(info);
-	    this.addNext(mL, CellConstants.STRETCH, CellConstants.FILL);
-	    this.addLast(feedback, CellConstants.STRETCH, CellConstants.FILL);
+	    this.addNext(mL, STRETCH, FILL);
+	    this.addLast(feedback, STRETCH, FILL);
 	    executePanel = new ExecutePanel(this);
 	    break;
 	case DISPLAY_ONLY:
 	    msgArea = new TextMessage(info);
 	    msgArea.autoWrap = autoWrap;
-	    msgArea.alignment = CellConstants.CENTER;
-	    msgArea.anchor = CellConstants.CENTER;
-	    this.addLast(msgArea.getScrollablePanel(), CellConstants.STRETCH, CellConstants.FILL);
+	    msgArea.alignment = CENTER;
+	    msgArea.anchor = CENTER;
+	    this.addLast(msgArea.getScrollablePanel(), STRETCH, FILL);
+	    this.setPreferredSize(psx + 100, psy);
 	    break;
 	case PROGRESS_WITH_WARNINGS:
 	    msgArea = new TextMessage(info);
 	    msgArea.autoWrap = autoWrap;
-	    msgArea.alignment = CellConstants.CENTER;
-	    msgArea.anchor = CellConstants.CENTER;
+	    msgArea.alignment = CENTER;
+	    msgArea.anchor = CENTER;
 	    msgArea.setPreferredSize(psx - 20, psy);
-	    this.addLast(msgArea.getScrollablePanel(), CellConstants.HEXPAND | CellConstants.HGROW, CellConstants.HEXPAND | CellConstants.HGROW);
+	    this.addLast(msgArea.getScrollablePanel(), HEXPAND | HGROW, HEXPAND | HGROW);
 	    warnings = new TextMessage("");
 	    warnings.autoWrap = autoWrap;
-	    this.addLast(warnings.getScrollablePanel(), CellConstants.HEXPAND | CellConstants.VEXPAND | CellConstants.VGROW, CellConstants.HEXPAND | CellConstants.VEXPAND | CellConstants.VGROW);
+	    this.addLast(warnings.getScrollablePanel(), HEXPAND | VEXPAND | VGROW, HEXPAND | VEXPAND | VGROW);
 	    executePanel = new ExecutePanel(this);
 	    executePanel.hide(ExecutePanel.APPLY);
 	    executePanel.hide(ExecutePanel.CANCEL);
@@ -141,7 +134,6 @@ public class InfoBox extends Form {
     public final int wait(int doButtons)
     //===================================================================
     {
-	// FormBase.OKB
 	if (type == DISPLAY_ONLY) {
 	    if (executePanel == null)
 		executePanel = new ExecutePanel(this, doButtons);
@@ -183,6 +175,8 @@ public class InfoBox extends Form {
 		this.close(FormBase.IDOK);
 	    } else if (ev.target == executePanel.cancelButton) {
 		this.close(FormBase.IDCANCEL);
+	    } else if (ev.target == executePanel.refuseButton) {
+		this.close(FormBase.IDNO);
 	    }
 	}
 	super.onEvent(ev);

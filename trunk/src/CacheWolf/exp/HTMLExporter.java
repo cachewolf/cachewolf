@@ -28,6 +28,7 @@ import CacheWolf.Common;
 import CacheWolf.DataMover;
 import CacheWolf.Global;
 import CacheWolf.InfoBox;
+import CacheWolf.MyLocale;
 import HTML.Template;
 
 import com.stevesoft.ewe_pat.Regex;
@@ -257,7 +258,7 @@ public class HTMLExporter {
 	pbf.exit(0);
 
 	if (exportErrors > 0) {
-	    new InfoBox("Export Error", exportErrors + " errors during export. See log for details.").wait(FormBase.OKB);
+	    new InfoBox(MyLocale.getMsg(5500, "Error"), exportErrors + " errors during export. See log for details.").wait(FormBase.OKB);
 	}
 
     }

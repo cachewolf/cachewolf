@@ -68,7 +68,6 @@ import ewe.sys.Convert;
 import ewe.sys.Time;
 import ewe.sys.Vm;
 import ewe.ui.FormBase;
-import ewe.ui.MessageBox;
 import ewe.util.Enumeration;
 import ewe.util.Hashtable;
 import ewe.util.Properties;
@@ -276,8 +275,7 @@ public class SpiderGC {
 			    break;
 			case Preferences.ASK:
 			    if (!alreadyAnswered) {
-				final MessageBox mBox = new MessageBox(MyLocale.getMsg(5517, "Spider Updates?"), cachesToUpdate.size() + MyLocale.getMsg(5518, " caches in database need an update. Update now?"), FormBase.IDYES | FormBase.IDNO);
-				lastAnswer = (mBox.execute() != FormBase.IDOK);
+				lastAnswer = (new InfoBox(MyLocale.getMsg(5517, "Spider Updates?"), cachesToUpdate.size() + MyLocale.getMsg(5518, " caches in database need an update. Update now?")).wait(FormBase.IDYES | FormBase.IDNO) != FormBase.IDOK);
 				alreadyAnswered = true;
 			    }
 			    if (lastAnswer) {
@@ -1161,8 +1159,16 @@ public class SpiderGC {
     }
 
     /**
-     * Method to login the user to gc.com It will request a password and use the alias defined in preferences If the login page cannot be fetched, the password is cleared. If the login fails, an appropriate message is displayed. changed return type
-     * from boolean to int 0 = false / abort 1 = true 2 = wrong username or password 3 = login exception 4 = fetch error / offline remove messagebox and infobox
+     * Method to login the user to gc.com 
+     * It will request a password and use the alias defined in preferences 
+     * If the login page cannot be fetched, the password is cleared. 
+     * If the login fails, an appropriate message is displayed. 
+     * changed return type from boolean to int
+     * 0 = false / abort 
+     * 1 = true 
+     * 2 = wrong username or password 
+     * 3 = login exception 
+     * 4 = fetch error / offline
      */
     /*
     private int origin_login(String passwort) {
@@ -2006,7 +2012,7 @@ public class SpiderGC {
 	    } // spiderTrys
 	    if ((spiderTrys >= MAX_SPIDER_TRYS) && (ret == SPIDER_OK)) {
 		Global.pref.log(">>> Failed to spider cache. Number of retrys exhausted.", null);
-		final int decision = (new MessageBox(MyLocale.getMsg(5500, "Error"), MyLocale.getMsg(5515, "Failed to load cache.%0aPleas check your internet connection.%0aRetry?"), FormBase.DEFOKB | FormBase.NOB | FormBase.CANCELB)).execute();
+		int decision = new InfoBox(MyLocale.getMsg(5500, "Error"), MyLocale.getMsg(5515, "Failed to load cache.%0aPleas check your internet connection.%0aRetry?")).wait(FormBase.DEFOKB | FormBase.NOB | FormBase.CANCELB);
 		if (decision == FormBase.IDOK) {
 		    continue; // retry even if failure
 		} else if (decision == FormBase.IDNO) {

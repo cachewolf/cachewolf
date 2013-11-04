@@ -55,7 +55,6 @@ import ewe.ui.ControlEvent;
 import ewe.ui.Event;
 import ewe.ui.Form;
 import ewe.ui.FormBase;
-import ewe.ui.MessageBox;
 import ewe.ui.ScrollBarPanel;
 import ewe.ui.mButton;
 import ewe.ui.mLabel;
@@ -103,7 +102,7 @@ public class MapImporter extends Form {
 	    wfl.loadWFL();
 	} catch (FileNotFoundException ex) {
 	} catch (IOException ex) { // is thrown if lat/lon out of range
-	    new InfoBox(MyLocale.getMsg(312, "Error"), ex.getMessage()).wait(FormBase.OKB);
+	    new InfoBox(MyLocale.getMsg(5500, "Error"), ex.getMessage()).wait(FormBase.OKB);
 	    Global.pref.log("Cannot load world file!", ex);
 	}
 	mapInteractivePanel pane = new mapInteractivePanel(this);
@@ -378,12 +377,10 @@ public class MapImporter extends Form {
 			if (Global.mainTab.movingMap != null)
 			    Global.mainTab.movingMap.setMapsloaded(false);
 		    } catch (IOException e) {
-			MessageBox tmpMB = new MessageBox(MyLocale.getMsg(321, "Error"), MyLocale.getMsg(321, "Error writing file ") + e.getMessage() + MyLocale.getMsg(324, " - retry?"), FormBase.YESB | FormBase.NOB);
-			if (tmpMB.execute() == FormBase.IDYES)
+			if (new InfoBox(MyLocale.getMsg(5500, "Error"), MyLocale.getMsg(5500, "Error writing file ") + e.getMessage() + MyLocale.getMsg(324, " - retry?")).wait(FormBase.YESB | FormBase.NOB) == FormBase.IDOK)
 			    retry = true;
 		    } catch (IllegalArgumentException e) {
-			MessageBox tmpMB = new MessageBox(MyLocale.getMsg(144, "Warning"), MyLocale.getMsg(325, "Map not calibrated") + MyLocale.getMsg(324, " - retry?"), FormBase.YESB | FormBase.NOB);
-			if (tmpMB.execute() == FormBase.IDYES) {
+			if (new InfoBox(MyLocale.getMsg(144, "Warning"), MyLocale.getMsg(325, "Map not calibrated") + MyLocale.getMsg(324, " - retry?")).wait(FormBase.YESB | FormBase.NOB) == FormBase.IDOK) {
 			    retry = true;
 			    break;
 			}
