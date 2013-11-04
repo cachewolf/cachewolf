@@ -44,7 +44,6 @@ import ewe.ui.IKeys;
 import ewe.ui.KeyEvent;
 import ewe.ui.MenuEvent;
 import ewe.ui.MenuItem;
-import ewe.ui.MessageBox;
 import ewe.ui.MultiPanelEvent;
 import ewe.ui.ScrollBarPanel;
 import ewe.ui.ScrollablePanel;
@@ -410,7 +409,7 @@ public class CacheList extends CellPanel {
     /** Check if there are any unsaved changes and ask user if he wants to save */
     public void saveIfDirty() {
 	if (dirty) {
-	    if ((new MessageBox(MyLocale.getMsg(144, "Warning"), MyLocale.getMsg(192, "Save changes"), FormBase.MBYESNO)).execute() == FormBase.IDYES) {
+	    if (new InfoBox(MyLocale.getMsg(144, "Warning"), MyLocale.getMsg(192, "Save changes")).wait(FormBase.MBYESNO) == FormBase.IDYES) {
 		if (currFile != null)
 		    saveToFile(currFile);
 		else {

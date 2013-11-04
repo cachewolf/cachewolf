@@ -290,14 +290,14 @@ public final class GotoPanel extends CellPanel {
 	// receiving no data
 	if (fix == -1) {
 	    if (gpsStatus != RED)
-		new InfoBox(MyLocale.getMsg(321, "Error"), MyLocale.getMsg(1510, "No data from GPS.\nConnection to serial port/gpsd closed.")).exec();
+		new InfoBox(MyLocale.getMsg(5500, "Error"), MyLocale.getMsg(1510, "No data from GPS.\nConnection to serial port/gpsd closed.")).exec();
 	    gpsStatus = RED;
 	    Global.mainTab.navigate.stopGps();
 	}
 	// cannot interpret data
 	if (fix == -2) {
 	    if (gpsStatus != RED)
-		new InfoBox(MyLocale.getMsg(321, "Error"), MyLocale.getMsg(1511,
+		new InfoBox(MyLocale.getMsg(5500, "Error"), MyLocale.getMsg(1511,
 			"Cannot interpret data from GPS/gpsd!\nPossible reasons:\nWrong port,\nwrong baud rate,\ninvalid protocol (need NMEA/gpsd).\nConnection to serial port closed.\nLast String tried to interpret:\n")
 			+ Global.mainTab.navigate.gpsPos.lastStrExamined, FormBase.OKB).exec();
 	    gpsStatus = RED;
@@ -383,7 +383,7 @@ public final class GotoPanel extends CellPanel {
 		if (Global.mainTab.navigate.gpsPos.isValid()) {
 		    Global.pref.setCurCentrePt(Global.mainTab.navigate.gpsPos);
 		} else
-		    new InfoBox(MyLocale.getMsg(312, "Error"), MyLocale.getMsg(1514, "Cannot recalculate distances, because the GPS position is not set")).wait(FormBase.OKB);
+		    new InfoBox(MyLocale.getMsg(5500, "Error"), MyLocale.getMsg(1514, "Cannot recalculate distances, because the GPS position is not set")).wait(FormBase.OKB);
 	    }
 	    // Start moving map
 	    /*

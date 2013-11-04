@@ -37,7 +37,6 @@ import ewe.ui.Event;
 import ewe.ui.Form;
 import ewe.ui.FormBase;
 import ewe.ui.Gui;
-import ewe.ui.MessageBox;
 import ewe.ui.mButton;
 import ewe.ui.mCheckBox;
 import ewe.ui.mChoice;
@@ -335,11 +334,11 @@ public class CoordsScreen extends Form {
 		    this.close(IDOK);
 		else {
 		    if (allowInvalid) {
-			if ((new MessageBox(MyLocale.getMsg(144, "Warnung"), MyLocale.getMsg(1412, "Coordinates invalid. Apply anyway?"), FormBase.DEFOKB | FormBase.NOB)).execute() == FormBase.IDOK) {
+			if ((new InfoBox(MyLocale.getMsg(144, "Warnung"), MyLocale.getMsg(1412, "Coordinates invalid. Apply anyway?"))).wait(FormBase.DEFOKB | FormBase.NOB) == FormBase.IDOK) {
 			    this.close(IDOK);
 			}
 		    } else {
-			new InfoBox(MyLocale.getMsg(321, "Error"), MyLocale.getMsg(1411, "Please enter valid coordinates")).wait(FormBase.OKB);
+			new InfoBox(MyLocale.getMsg(5500, "Error"), MyLocale.getMsg(1411, "Please enter valid coordinates")).wait(FormBase.OKB);
 		    }
 		}
 	    }
@@ -365,8 +364,7 @@ public class CoordsScreen extends Form {
 		    coord = new CWPoint(inp);
 		}
 		if (!coord.isValid()) {
-		    MessageBox tmpMB = new MessageBox(MyLocale.getMsg(321, "Error"), MyLocale.getMsg(4111, "Coordinates must be entered in the format N DD MM.MMM E DDD MM.MMM"), FormBase.OKB);
-		    tmpMB.exec();
+		    new InfoBox(MyLocale.getMsg(5500, "Error"), MyLocale.getMsg(4111, "Coordinates must be entered in the format N DD MM.MMM E DDD MM.MMM")).wait(FormBase.OKB);
 		} else {
 		    currFormat = getLocalSystem(combineToFormatSel(chkFormat.getSelectedIndex(), localCooSystem.getInt()));
 		    setFields(coord, currFormat);

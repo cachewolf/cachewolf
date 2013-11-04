@@ -240,7 +240,7 @@ public class GpxExportNg {
 
 	    if (!poiMapper.exists) {
 		Global.pref.log("GPX Export: unable to load garminmap.xml", null);
-		new InfoBox("Export Error", "unable to load garminmap.xml").wait(FormBase.OKB);
+		new InfoBox(MyLocale.getMsg(5500, "Error"), "unable to load garminmap.xml").wait(FormBase.OKB);
 		return;
 	    }
 
@@ -473,7 +473,7 @@ public class GpxExportNg {
 	    } catch (Exception ex) {
 		exportErrors++;
 		Global.pref.log("GPX Export: unable to write output to " + file.toString(), ex, true);
-		new InfoBox("Export Error", "unable to write output to " + file.toString()).wait(FormBase.OKB);
+		new InfoBox(MyLocale.getMsg(5500, "Error"), "unable to write output to " + file.toString()).wait(FormBase.OKB);
 		return;
 	    } finally {
 		Vm.showWait(false);
@@ -508,7 +508,7 @@ public class GpxExportNg {
 	    }
 	}
 	if (exportErrors > 0) {
-	    new InfoBox("Export Error", exportErrors + " errors during export. Check log for details.").wait(FormBase.OKB);
+	    new InfoBox(MyLocale.getMsg(5500, "Error"), exportErrors + " errors during export. Check log for details.").wait(FormBase.OKB);
 	}
     }
 
@@ -709,8 +709,8 @@ public class GpxExportNg {
     }
 
     /**
-	 *
-	 */
+     *
+     */
     private String formatTbs(CacheHolder ch) {
 	StringBuffer ret = new StringBuffer();
 	Travelbug Tb;
@@ -732,8 +732,8 @@ public class GpxExportNg {
     }
 
     /**
-	 *
-	 */
+     *
+     */
     private String formatAttributes(CacheHolder ch) {
 	StringBuffer ret = new StringBuffer();
 	Attribute attrib;

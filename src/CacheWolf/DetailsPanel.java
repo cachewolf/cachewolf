@@ -430,7 +430,7 @@ public class DetailsPanel extends CellPanel {
 		    // already warned(multi same DataChangeEvents) or same waypointname as before edit !!!
 		    if (!warnedForWaypoint.equals(uTmp) && !uTmp.equals(this.cache.getWayPoint())) {
 			if ((new File(Global.profile.dataDir + iTmp.toLowerCase() + ".xml")).exists()) {
-			    warnedForWaypoint = uTmp; // before MessageBox cause Multithread DataChangeEvents
+			    warnedForWaypoint = uTmp;
 			    // filename is LowerCase
 			    new InfoBox("Warning :", uTmp + "\n" + MyLocale.getMsg(275, "Waypoint already exists!")).wait(FormBase.OKB);
 			    // revert waypointname

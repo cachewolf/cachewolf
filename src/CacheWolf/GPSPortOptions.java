@@ -442,11 +442,11 @@ public class GPSPortOptions extends SerialPortOptions {
 			btnTest.setText(Gui.getTextFrom(MyLocale.getMsg(7118, "Stop")));
 			gpsRunning = true;
 		    } catch (IOException e) {
-			new InfoBox(MyLocale.getMsg(4403, "Error"), MyLocale.getMsg(99999, "Could not connect to GPSD: ") + e.getMessage() + MyLocale.getMsg(99999, "\nPossible reasons:\nGPSD is not running or GPSD host is not reachable"))
+			new InfoBox(MyLocale.getMsg(5500, "Error"), MyLocale.getMsg(99999, "Could not connect to GPSD: ") + e.getMessage() + MyLocale.getMsg(99999, "\nPossible reasons:\nGPSD is not running or GPSD host is not reachable"))
 				.wait(FormBase.OKB);
 		    } catch (Exception e) {
 			// Other error (JSON/GPS).
-			new InfoBox(MyLocale.getMsg(4403, "Error"), MyLocale.getMsg(99999, "Could not initialize GPSD connection: ") + e.getMessage()).wait(FormBase.OKB);
+			new InfoBox(MyLocale.getMsg(5500, "Error"), MyLocale.getMsg(99999, "Could not initialize GPSD connection: ") + e.getMessage()).wait(FormBase.OKB);
 		    }
 		    break;
 
@@ -460,7 +460,7 @@ public class GPSPortOptions extends SerialPortOptions {
 			btnTest.setText(Gui.getTextFrom(MyLocale.getMsg(7118, "Stop")));
 			gpsRunning = true;
 		    } catch (IOException e) {
-			new InfoBox(MyLocale.getMsg(4403, "Error"), MyLocale.getMsg(99999, "Could not connect to GPSD: ") + e.getMessage() + MyLocale.getMsg(99999, "\nPossible reasons:\nGPSD is not running or GPSD host is not reachable"))
+			new InfoBox(MyLocale.getMsg(5500, "Error"), MyLocale.getMsg(99999, "Could not connect to GPSD: ") + e.getMessage() + MyLocale.getMsg(99999, "\nPossible reasons:\nGPSD is not running or GPSD host is not reachable"))
 				.wait(FormBase.OKB);
 		    }
 		    break;

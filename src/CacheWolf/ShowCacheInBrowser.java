@@ -142,7 +142,7 @@ public class ShowCacheInBrowser {
 		// on pda surrounding quotes " will be converted to %22 (and a %22file:// does not work)
 		CWWrapper.exec(Global.pref.browser, "file://" + STRreplace.replace(saveTo, " ", "%20"), false, false);
 	    } catch (IOException ex) {
-		new InfoBox(MyLocale.getMsg(321, "Error"), MyLocale.getMsg(1034, "Cannot start browser!") + "\n" + ex.toString() + "\n" + MyLocale.getMsg(1035, "Possible reason:") + "\n" + MyLocale.getMsg(1036, "A bug in ewe VM, please be") + "\n"
+		new InfoBox(MyLocale.getMsg(5500, "Error"), MyLocale.getMsg(1034, "Cannot start browser!") + "\n" + ex.toString() + "\n" + MyLocale.getMsg(1035, "Possible reason:") + "\n" + MyLocale.getMsg(1036, "A bug in ewe VM, please be") + "\n"
 			+ MyLocale.getMsg(1037, "patient for an update")).wait(FormBase.OKB);
 	    }
 

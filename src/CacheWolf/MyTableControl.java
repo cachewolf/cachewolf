@@ -42,7 +42,6 @@ import ewe.ui.IKeys;
 import ewe.ui.KeyEvent;
 import ewe.ui.Menu;
 import ewe.ui.MenuItem;
-import ewe.ui.MessageBox;
 import ewe.ui.PenEvent;
 import ewe.ui.ProgressBarForm;
 import ewe.ui.TableControl;
@@ -184,7 +183,7 @@ public class MyTableControl extends TableControl {
 	try {
 	    CWWrapper.exec(program, parameter); // maybe this works on some PDAs?
 	} catch (IOException ex) {
-	    new InfoBox(MyLocale.getMsg(321, "Error"), MyLocale.getMsg(1034, "Cannot start " + program + "!") + "\n" + ex.toString() + "\n" + MyLocale.getMsg(1035, "Possible reason:") + "\n" + MyLocale.getMsg(1036, "A bug in ewe VM, please be")
+	    new InfoBox(MyLocale.getMsg(5500, "Error"), MyLocale.getMsg(1034, "Cannot start " + program + "!") + "\n" + ex.toString() + "\n" + MyLocale.getMsg(1035, "Possible reason:") + "\n" + MyLocale.getMsg(1036, "A bug in ewe VM, please be")
 		    + "\n" + MyLocale.getMsg(1037, "patient for an update")).wait(FormBase.OKB);
 	}
     }
@@ -228,8 +227,8 @@ public class MyTableControl extends TableControl {
 	    // Warn if there are ticked but invisible caches - and ask if they should be deleted too.
 	    shouldDeleteCount = allCount;
 	    if (addiNonVisibleCount + mainNonVisibleCount > 0) {
-		if ((new MessageBox(MyLocale.getMsg(144, "Warning"), MyLocale.getMsg(1029, "There are caches that are ticked but invisible.\n(Main caches: ") + mainNonVisibleCount + MyLocale.getMsg(1030, ", additional Waypoints: ")
-			+ addiNonVisibleCount + ")\n" + MyLocale.getMsg(1031, "Delete them, too?"), FormBase.YESB | FormBase.NOB)).execute() == FormBase.IDYES) {
+		if (new InfoBox(MyLocale.getMsg(144, "Warning"), MyLocale.getMsg(1029, "There are caches that are ticked but invisible.\n(Main caches: ") + mainNonVisibleCount + MyLocale.getMsg(1030, ", additional Waypoints: ") + addiNonVisibleCount
+			+ ")\n" + MyLocale.getMsg(1031, "Delete them, too?")).wait(FormBase.YESB | FormBase.NOB) == FormBase.IDYES) {
 		    deleteFiltered = true;
 		} else {
 		    deleteFiltered = false;
@@ -237,7 +236,7 @@ public class MyTableControl extends TableControl {
 		}
 	    }
 	    if (shouldDeleteCount > 0) {
-		if ((new MessageBox(MyLocale.getMsg(144, "Warning"), MyLocale.getMsg(1022, "Delete selected caches (") + shouldDeleteCount + MyLocale.getMsg(1028, ") ?"), FormBase.YESB | FormBase.NOB)).execute() == FormBase.IDYES) {
+		if (new InfoBox(MyLocale.getMsg(144, "Warning"), MyLocale.getMsg(1022, "Delete selected caches (") + shouldDeleteCount + MyLocale.getMsg(1028, ") ?")).wait(FormBase.YESB | FormBase.NOB) == FormBase.IDYES) {
 		    DataMover dm = new DataMover();
 		    myProgressBarForm pbf = new myProgressBarForm();
 		    Handle h = new Handle();
@@ -311,7 +310,7 @@ public class MyTableControl extends TableControl {
 	    CacheHolder thisCache = cacheDB.get(Global.mainTab.tablePanel.getSelectedCache());
 	    CWPoint cp = new CWPoint(thisCache.getPos());
 	    if (!cp.isValid()) {
-		new InfoBox(MyLocale.getMsg(321, "Error"), MyLocale.getMsg(4111, "Coordinates must be entered in the format N DD MM.MMM E DDD MM.MMM")).wait(FormBase.OKB);
+		new InfoBox(MyLocale.getMsg(5500, "Error"), MyLocale.getMsg(4111, "Coordinates must be entered in the format N DD MM.MMM E DDD MM.MMM")).wait(FormBase.OKB);
 	    } else {
 		Global.pref.setCurCentrePt(cp);
 	    }

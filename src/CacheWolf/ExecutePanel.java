@@ -2,6 +2,7 @@ package CacheWolf;
 
 import ewe.ui.CellPanel;
 import ewe.ui.ControlConstants;
+import ewe.ui.FormBase;
 import ewe.ui.Gui;
 import ewe.ui.IKeys;
 import ewe.ui.Window;
@@ -28,46 +29,45 @@ public class ExecutePanel extends CellPanel {
 	flags = LEFT & RIGHT;
     }
 
-    /** Cancel buttons should come before OK buttons. */
-    private static boolean reverse = (Gui.getGuiFlags() & Window.GUI_FLAG_REVERSE_OK_CANCEL) != 0;
+    /** Cancel buttons should come before OK buttons. I changed the meaning: first cancel, then ok */
+    private static boolean reverse = (Gui.getGuiFlags() & Window.GUI_FLAG_REVERSE_OK_CANCEL) == 0;
 
     public ExecutePanel(CellPanel panel, int which) {
-	/*
-		boolean first = !reverse;
-		
-		if ((which & (FormBase.YESB|FormBase.NOB)) == (FormBase.YESB|FormBase.NOB))
-			if ((which & (FormBase.CANCELB|FormBase.DEFCANCELB)) != 0)
-				if (!first){
-				    cancelButton = addButton(which,FormBase.DEFCANCELB|FormBase.CANCELB,"Cancel",cross,IKeys.ESCAPE);
-					no = addButton(which,NOB,"No",stop,'n');
-					applyButton = addButton(which,YESB,"Yes",tick,IKeys.ENTER);
-				}
-		for (int i = 0; i<2; i++){
-			if (first){
-				if (ok == null) ok = addButton(which,OKB,"OK",tick,'o');
-				if (ok == null) ok = addButton(which,DEFOKB,"OK",tick,IKeys.ENTER);
-				if (yes == null) yes = addButton(which,YESB,"Yes",tick,reverse ? IKeys.ENTER : 'y');
-			}else{
-				if (no == null) no = addButton(which,NOB,"No",stop,reverse ? IKeys.ESCAPE : 'n');
-				if (cancel == null) cancel = addButton(which,CANCELB,"Cancel",cross,'c');
-				if (cancel == null) cancel = addButton(which,DEFCANCELB,"Cancel",cross,IKeys.ESCAPE);
-			}
-			first = !first;
-		}
-		if ((which & CANCELB) == 0)
-		if (back == null) back = addButton(which,BACKB,"<< Back",null,'b');
-	*/
 	this.equalWidths = true;
+	/** */
+	boolean first = !reverse;
 
-	middleButton = GuiImageBroker.getButton(MyLocale.getMsg(1605, "OK"), "OK");
-	middleButton.setHotKey(0, IKeys.ACTION);
-	middleButton.setHotKey(0, IKeys.ENTER);
-	middleButton.setHotKey(0, IKeys.ESCAPE);
-	this.addNext(middleButton);
+	if ((which & (FormBase.YESB | FormBase.NOB)) == (FormBase.YESB | FormBase.NOB))
+	    if ((which & (FormBase.CANCELB | FormBase.DEFCANCELB)) != 0)
+		if (!first) {
+		    cancelButton = addButton(FormBase.DEFCANCELB | FormBase.CANCELB, IKeys.ESCAPE);
+		    refuseButton = addButton(FormBase.NOB, 'n');
+		    applyButton = addButton(FormBase.YESB, IKeys.ENTER);
+		}
+	for (int i = 0; i < 2; i++) {
+	    if (first) {
+		if (applyButton == null && (which & FormBase.OKB) != 0)
+		    applyButton = addButton(FormBase.OKB, 'o');
+		if (applyButton == null && (which & FormBase.DEFOKB) != 0)
+		    applyButton = addButton(FormBase.DEFOKB, IKeys.ENTER);
+		if (applyButton == null && (which & FormBase.YESB) != 0)
+		    applyButton = addButton(FormBase.YESB, reverse ? IKeys.ENTER : 'y');
+	    } else {
+		if (refuseButton == null && (which & FormBase.NOB) != 0)
+		    refuseButton = addButton(FormBase.NOB, reverse ? IKeys.ESCAPE : 'n');
+		if (cancelButton == null && (which & FormBase.CANCELB) != 0)
+		    cancelButton = addButton(FormBase.CANCELB, 'c');
+		if (cancelButton == null && (which & FormBase.DEFCANCELB) != 0)
+		    cancelButton = addButton(FormBase.DEFCANCELB, IKeys.ESCAPE);
+	    }
+	    first = !first;
+	}
+	// if ((which & FormBase.CANCELB) == 0)
+	// if (backButton == null) backButton = addButton(which,FormBase.BACKB,"<< Back",null,'b');
+	/* */
+
 	panel.addLast(this, DONTSTRETCH, FILL);
-	applyButton = middleButton;
-	cancelButton = middleButton;
-	flags = MIDDLE;
+	flags = 0;
     }
 
     public ExecutePanel(CellPanel panel, String leftText, String middleText, String rightText, String leftIcon, String middleIcon, String rightIcon) {
@@ -85,6 +85,22 @@ public class ExecutePanel extends CellPanel {
 	    this.addLast(rightButton);
 	}
 	panel.addLast(this, DONTSTRETCH, FILL);
+
+    }
+
+    private mButton addButton(int which, int iKey) {
+	mButton btn = null;
+	if ((which & FormBase.YESB) != 0)
+	    btn = GuiImageBroker.getButton(MyLocale.getMsg(640, "Yes"), "ok");
+	if ((which & FormBase.NOB) != 0)
+	    btn = GuiImageBroker.getButton(MyLocale.getMsg(641, "No"), "no");
+	if ((which & FormBase.CANCELB) != 0)
+	    btn = GuiImageBroker.getButton(MyLocale.getMsg(614, "Cancel"), "cancel");
+	if ((which & FormBase.OKB) != 0 || (which & FormBase.DEFOKB) != 0)
+	    btn = GuiImageBroker.getButton(MyLocale.getMsg(1605, "OK"), "ok");
+	btn.setHotKey(0, iKey);
+	this.addNext(btn);
+	return btn;
     }
 
     public void enable(int button) {

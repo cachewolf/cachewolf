@@ -29,6 +29,7 @@ import CacheWolf.ExecutePanel;
 import CacheWolf.Global;
 import CacheWolf.ImageInfo;
 import CacheWolf.InfoBox;
+import CacheWolf.MyLocale;
 
 import com.stevesoft.ewe_pat.Regex;
 
@@ -122,7 +123,7 @@ public class GarminPicExporter {
 	pbf.exit(0);
 
 	if (exportErrors > 0) {
-	    new InfoBox("Export Error", exportErrors + " errors during export. See log for details.").wait(FormBase.OKB);
+	    new InfoBox(MyLocale.getMsg(5500, "Error"), exportErrors + " errors during export. See log for details.").wait(FormBase.OKB);
 	}
 	if (nonJPGimages > 0) {
 	    new InfoBox("Some pictures not copied", nonJPGimages + " pictures were not copied because Garmin GPS can only handle the JPG format. See log for details.").wait(FormBase.OKB);

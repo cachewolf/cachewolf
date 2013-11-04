@@ -60,16 +60,16 @@ public class NewProfileForm extends Form {
 	    if (ev.target == executePanel.applyButton) {
 		profileDir = inpDir.getDisplayText();
 		if (profileDir.equalsIgnoreCase("maps")) {
-		    new InfoBox(MyLocale.getMsg(321, "Error"), MyLocale.getMsg(1122, "'maps' is reserved for the maps directory.")).wait(FormBase.OKB);
+		    new InfoBox(MyLocale.getMsg(5500, "Error"), MyLocale.getMsg(1122, "'maps' is reserved for the maps directory.")).wait(FormBase.OKB);
 		    profileDir = "";
 		} else {
 		    File f = new File(baseDir + profileDir);
 		    if (f.exists()) {
-			new InfoBox(MyLocale.getMsg(321, "Error"), MyLocale.getMsg(1114, "Directory exists already.")).wait(FormBase.OKB);
+			new InfoBox(MyLocale.getMsg(5500, "Error"), MyLocale.getMsg(1114, "Directory exists already.")).wait(FormBase.OKB);
 			profileDir = "";
 		    } else {
 			if (profileDir.indexOf("/") >= 0 || profileDir.indexOf("\\") >= 0 || !f.createDir()) {
-			    new InfoBox(MyLocale.getMsg(321, "Error"), MyLocale.getMsg(1113, "Cannot create directory")).wait(FormBase.OKB);
+			    new InfoBox(MyLocale.getMsg(5500, "Error"), MyLocale.getMsg(1113, "Cannot create directory")).wait(FormBase.OKB);
 			    profileDir = "";
 			    this.close(-1);
 			}
