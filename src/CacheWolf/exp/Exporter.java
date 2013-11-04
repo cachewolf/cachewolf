@@ -28,6 +28,7 @@ import CacheWolf.CacheSize;
 import CacheWolf.CacheType;
 import CacheWolf.Global;
 import CacheWolf.InfoBox;
+import CacheWolf.MyLocale;
 import ewe.filechooser.FileChooser;
 import ewe.filechooser.FileChooserBase;
 import ewe.io.BufferedWriter;
@@ -167,7 +168,7 @@ public class Exporter {
 	    outp.close();
 	    pbf.exit(0);
 	    if (incompleteWaypoints > 0) {
-		new InfoBox("Export Error", incompleteWaypoints + " incomplete waypoints have not been exported. See log for details.").wait(FormBase.OKB);
+		new InfoBox(MyLocale.getMsg(5500, "Error"), incompleteWaypoints + " incomplete waypoints have not been exported. See log for details.").wait(FormBase.OKB);
 	    }
 	} catch (IOException ioE) {
 	    Global.pref.log("Error opening " + outFile.getName(), ioE);

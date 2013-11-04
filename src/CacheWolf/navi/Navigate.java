@@ -98,10 +98,10 @@ public class Navigate {
 		if (movingMap != null)
 		    movingMap.gpsStarted();
 	    } catch (IOException e) {
-		new InfoBox(MyLocale.getMsg(4403, "Error"), MyLocale.getMsg(4408, "Could not connect to GPSD: ") + e.getMessage() + MyLocale.getMsg(4409, "\nPossible reasons:\nGPSD is not running or GPSD host is not reachable")).wait(FormBase.OKB);
+		new InfoBox(MyLocale.getMsg(5500, "Error"), MyLocale.getMsg(4408, "Could not connect to GPSD: ") + e.getMessage() + MyLocale.getMsg(4409, "\nPossible reasons:\nGPSD is not running or GPSD host is not reachable")).wait(FormBase.OKB);
 	    } catch (Exception e) {
 		// Other error (JSON/GPS).
-		new InfoBox(MyLocale.getMsg(4403, "Error"), MyLocale.getMsg(99999, "Could not initialize GPSD connection: ") + e.getMessage()).wait(FormBase.OKB);
+		new InfoBox(MyLocale.getMsg(5500, "Error"), MyLocale.getMsg(99999, "Could not initialize GPSD connection: ") + e.getMessage()).wait(FormBase.OKB);
 	    }
 	    break;
 
@@ -119,7 +119,7 @@ public class Navigate {
 		if (movingMap != null)
 		    movingMap.gpsStarted();
 	    } catch (IOException e) {
-		new InfoBox(MyLocale.getMsg(4403, "Error"), MyLocale.getMsg(4408, "Could not connect to GPSD: ") + e.getMessage() + MyLocale.getMsg(4409, "\nPossible reasons:\nGPSD is not running or GPSD host is not reachable")).wait(FormBase.OKB);
+		new InfoBox(MyLocale.getMsg(5500, "Error"), MyLocale.getMsg(4408, "Could not connect to GPSD: ") + e.getMessage() + MyLocale.getMsg(4409, "\nPossible reasons:\nGPSD is not running or GPSD host is not reachable")).wait(FormBase.OKB);
 	    }
 	    break;
 
@@ -131,7 +131,7 @@ public class Navigate {
 	    try {
 		serThread = new SerialThread(Global.pref.mySPO, gpsPos, (Global.pref.forwardGPS ? Global.pref.forwardGpsHost : ""));
 		if (Global.pref.forwardGPS && !serThread.tcpForward) {
-		    new InfoBox(MyLocale.getMsg(4400, "Warning"), MyLocale.getMsg(4401, "Ignoring error:\n could not forward GPS data to host:\n") + Global.pref.forwardGpsHost + "\n" + serThread.lastError
+		    new InfoBox(MyLocale.getMsg(144, "Warning"), MyLocale.getMsg(4401, "Ignoring error:\n could not forward GPS data to host:\n") + Global.pref.forwardGpsHost + "\n" + serThread.lastError
 			    + MyLocale.getMsg(4402, "\nstop and start GPS to retry")).exec();
 		}
 		serThread.start();
@@ -145,10 +145,10 @@ public class Navigate {
 		if (movingMap != null)
 		    movingMap.gpsStarted();
 	    } catch (IOException e) {
-		new InfoBox(MyLocale.getMsg(4403, "Error"), MyLocale.getMsg(4404, "Could not connect to GPS-receiver.\n Error while opening serial Port ") + e.getMessage()
+		new InfoBox(MyLocale.getMsg(5500, "Error"), MyLocale.getMsg(4404, "Could not connect to GPS-receiver.\n Error while opening serial Port ") + e.getMessage()
 			+ MyLocale.getMsg(4405, "\npossible reasons:\n Another (GPS-)program is blocking the port\nwrong port\nOn Loox: active infra-red port is blocking GPS")).wait(FormBase.OKB);
 	    } catch (UnsatisfiedLinkError e) {
-		new InfoBox(MyLocale.getMsg(4403, "Error"), MyLocale.getMsg(4404, "Could not connect to GPS-receiver.\n Error while opening serial Port ")
+		new InfoBox(MyLocale.getMsg(5500, "Error"), MyLocale.getMsg(4404, "Could not connect to GPS-receiver.\n Error while opening serial Port ")
 			+ MyLocale.getMsg(4406, "Please copy jave_ewe.dll into the directory of the cachewolf program")).wait(FormBase.OKB);
 	    }
 	    break;
@@ -196,7 +196,7 @@ public class Navigate {
 	    gotoPanel.destChanged(destination);
 	    movingMap.destChanged(destination);
 	} else {
-	    new InfoBox(MyLocale.getMsg(321, "Error"), MyLocale.getMsg(1507, "Coordinates are out of range:") + "\n" + MyLocale.getMsg(1508, "latitude") + ": " + destination.latDec + "\n " + MyLocale.getMsg(1509, "longditue") + ": "
+	    new InfoBox(MyLocale.getMsg(5500, "Error"), MyLocale.getMsg(1507, "Coordinates are out of range:") + "\n" + MyLocale.getMsg(1508, "latitude") + ": " + destination.latDec + "\n " + MyLocale.getMsg(1509, "longditue") + ": "
 		    + destination.lonDec).wait(FormBase.OKB);
 	}
     }

@@ -1156,7 +1156,7 @@ public class CacheHolder {
 	    } catch (IOException e) {
 		if (alarmuser) {
 		    // FIXME: put a message to languages file
-		    new InfoBox(MyLocale.getMsg(31415, "Error"), MyLocale.getMsg(31415, "Could not read cache details for cache: ") + this.getWayPoint()).wait(FormBase.OKB);
+		    new InfoBox(MyLocale.getMsg(5500, "Error"), MyLocale.getMsg(31415, "Could not read cache details for cache: ") + this.getWayPoint()).wait(FormBase.OKB);
 		    // details = null;
 		}
 		this.setIncomplete(true);

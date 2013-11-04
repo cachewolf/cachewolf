@@ -42,7 +42,7 @@ public class CacheWolf {
 			    configfile = args[i + 1];
 			    i++;
 			} else {
-			    new InfoBox("Error", MyLocale.getMsg(7200, "Usage: CacheWolf [-c <path to pref.xml>] [-debug]")).wait(FormBase.OKB);
+			    new InfoBox(MyLocale.getMsg(5500, "Error"), MyLocale.getMsg(7200, "Usage: CacheWolf [-c <path to pref.xml>] [-debug]")).wait(FormBase.OKB);
 			    // return usage info
 			    ewe.sys.Vm.exit(1);
 			}

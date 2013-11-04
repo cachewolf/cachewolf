@@ -22,6 +22,7 @@
 package CacheWolf.navi;
 
 import CacheWolf.InfoBox;
+import CacheWolf.MyLocale;
 import ewe.fx.Color;
 import ewe.io.BufferedWriter;
 import ewe.io.FileWriter;
@@ -57,7 +58,7 @@ public class Track {
     }
 
     /**
-	 */
+     */
     public void add(TrackPoint t) {
 	if (t == null)
 	    return;
@@ -114,7 +115,7 @@ public class Track {
 	    PrintWriter outp = new PrintWriter(new BufferedWriter(new FileWriter(filename)));
 	    outp.print(ba.toString());
 	} catch (IOException e) {
-	    new InfoBox("Error", "Error reading trackfile:\n" + e.toString()).wait(FormBase.OKB);
+	    new InfoBox(MyLocale.getMsg(5500, "Error"), "Error reading trackfile:\n" + e.toString()).wait(FormBase.OKB);
 	}
     }
 }

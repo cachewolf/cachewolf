@@ -189,7 +189,7 @@ public class OCXMLImporter extends MinML {
 	String lastS = Global.profile.getLast_sync_opencaching();
 	final CWPoint centre = Global.pref.getCurCentrePt(); // No need to clone curCentrePt as centre is only read
 	if (!centre.isValid()) {
-	    new InfoBox("Error", "Coordinates for centre must be set").wait(FormBase.OKB);
+	    new InfoBox(MyLocale.getMsg(5500, "Error"), "Coordinates for centre must be set").wait(FormBase.OKB);
 	    return;
 	}
 	final OCXMLImporterScreen importOpt = new OCXMLImporterScreen(MyLocale.getMsg(130, "Download from opencaching"), OCXMLImporterScreen.ALL | OCXMLImporterScreen.DIST | OCXMLImporterScreen.IMAGES | OCXMLImporterScreen.INCLUDEFOUND

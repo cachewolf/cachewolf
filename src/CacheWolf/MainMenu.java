@@ -65,7 +65,6 @@ import ewe.ui.Menu;
 import ewe.ui.MenuBar;
 import ewe.ui.MenuEvent;
 import ewe.ui.MenuItem;
-import ewe.ui.MessageBox;
 import ewe.ui.ProgressBarForm;
 import ewe.ui.PullDownMenu;
 import ewe.ui.mApp;
@@ -581,7 +580,7 @@ public class MainMenu extends MenuBar {
 		    p.waitFor();
 		} catch (IOException ioex) {
 		    Vm.showWait(false);
-		    new InfoBox("Error", "Garmin export unsuccessful").wait(FormBase.OKB);
+		    new InfoBox(MyLocale.getMsg(5500, "Error"), "Garmin export unsuccessful").wait(FormBase.OKB);
 		    Global.pref.log("Error exporting to Garmin", ioex, true);
 		}
 		;
@@ -646,8 +645,7 @@ public class MainMenu extends MenuBar {
 			MapImporter map = new MapImporter(sM.getSelectedMap(), sM.worldfileexists);
 			map.execute(null, Gui.CENTER_FRAME);
 		    } catch (java.lang.OutOfMemoryError e) {
-			MessageBox tmpMB = new MessageBox(MyLocale.getMsg(312, "Error"), MyLocale.getMsg(156, "Out of memory error, map to big"), FormBase.OKB);
-			tmpMB.exec();
+			new InfoBox(MyLocale.getMsg(312, "Error"), MyLocale.getMsg(156, "Out of memory error, map to big")).wait(FormBase.OKB);
 		    }
 		}
 	    }

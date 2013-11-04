@@ -38,7 +38,6 @@ import ewe.sys.Time;
 import ewe.sys.Vm;
 import ewe.ui.FormBase;
 import ewe.ui.InputBox;
-import ewe.ui.MessageBox;
 import ewe.ui.Window;
 import ewe.ui.WindowConstants;
 import ewe.ui.mApp;
@@ -415,7 +414,7 @@ public class Preferences extends MinML {
 	    Global.profile.dataDir = absoluteBaseDir + lastProfile + "/";
 	    savePreferences();
 
-	    new MessageBox(MyLocale.getMsg(327, "Information"), MyLocale.getMsg(176, "First start - using default preferences \n For experts only: \n Could not read preferences file:\n") + pathToConfigFile, FormBase.OKB).execute();
+	    new InfoBox(MyLocale.getMsg(327, "Information"), MyLocale.getMsg(176, "First start - using default preferences \n For experts only: \n Could not read preferences file:\n") + pathToConfigFile).wait(FormBase.OKB);
 	} catch (Exception e) {
 	    if (e instanceof NullPointerException)
 		log("Error reading pref.xml: NullPointerException in Element " + lastName + ". Wrong attribute?", e, true);
@@ -1072,7 +1071,7 @@ public class Preferences extends MinML {
 	// check selection
 	if (lastProfile.equals(f.newSelectedProfile)) {
 	    // aktives Profil kann nicht gelöscht / umbenannt werden;
-	    new InfoBox(MyLocale.getMsg(321, "Error"), MyLocale.getMsg(ErrorMsgActive, "[Profile active...]")).wait(FormBase.OKB);
+	    new InfoBox(MyLocale.getMsg(5500, "Error"), MyLocale.getMsg(ErrorMsgActive, "[Profile active...]")).wait(FormBase.OKB);
 	} else {
 	    boolean err = true;
 	    File profilePath = new File(absoluteBaseDir + f.newSelectedProfile);
@@ -1088,21 +1087,16 @@ public class Preferences extends MinML {
 		String mapsPath = p.getMapsDir();
 		//Really check if the user wants to delete the profile
 		String questionText = MyLocale.getMsg(276, "Do You really want to delete profile '") + f.newSelectedProfile + MyLocale.getMsg(277, "' ?");
-		int answer = new MessageBox("", questionText, FormBase.MBYESNO).execute();
-		if (answer != 1) {
-		    //No? Exit!
+		if (new InfoBox("", questionText).wait(FormBase.MBYESNO) != FormBase.IDOK)
 		    return;
-		}
-
-		answer = new MessageBox("", MyLocale.getMsg(1125, "Delete") + " " + MyLocale.getMsg(654, "Maps directory") + "?\n\n" + mapsPath + "\n", FormBase.MBYESNO).execute();
-		if (answer == 1) {
+		if (new InfoBox("", MyLocale.getMsg(1125, "Delete") + " " + MyLocale.getMsg(654, "Maps directory") + "?\n\n" + mapsPath + "\n").wait(FormBase.MBYESNO) == FormBase.IDOK) {
 		    deleteDirectory(new File(mapsPath));
 		}
 		err = !deleteDirectory(profilePath);
 		// ? wait until deleted ?
 	    }
 	    if (err) {
-		new InfoBox(MyLocale.getMsg(321, "Error"), MyLocale.getMsg(ErrorMsg, "[Profile Error...]")).wait(FormBase.OKB);
+		new InfoBox(MyLocale.getMsg(5500, "Error"), MyLocale.getMsg(ErrorMsg, "[Profile Error...]")).wait(FormBase.OKB);
 	    }
 	}
     }

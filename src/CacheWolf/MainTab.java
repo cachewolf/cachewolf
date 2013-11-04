@@ -492,7 +492,7 @@ public class MainTab extends mTabbedPanel {
 	if (centerTo != null && centerTo.isValid())
 	    movingMap.display(centerTo);
 	else
-	    new InfoBox(MyLocale.getMsg(321, "Error"), MyLocale.getMsg(1513, "Cannot start moving map without valid coordinates. Please enter coordinates as destination, as center, in selected cache or start GPS")).wait(FormBase.OKB);
+	    new InfoBox(MyLocale.getMsg(5500, "Error"), MyLocale.getMsg(1513, "Cannot start moving map without valid coordinates. Please enter coordinates as destination, as center, in selected cache or start GPS")).wait(FormBase.OKB);
     }
 
     private CWPoint getPositionAndSetDestination() {

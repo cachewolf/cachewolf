@@ -26,6 +26,7 @@ import CacheWolf.CacheHolder;
 import CacheWolf.CacheType;
 import CacheWolf.Global;
 import CacheWolf.InfoBox;
+import CacheWolf.MyLocale;
 import HTML.Template;
 
 import com.stevesoft.ewe_pat.Regex;
@@ -297,7 +298,8 @@ public class TPLExporter {
 	} catch (Exception e) {
 	    Global.pref.log("[TplExporter:doIt]", e, true);
 	} catch (OutOfMemoryError e) {
-	    new InfoBox("Error", "Not enough memory available to load all cache data (incl. description and logs)\nexport aborted\nFilter caches to minimise memory needed for TPL-Export\nWe recommend to restart CacheWolf now").wait(FormBase.OKB);
+	    new InfoBox(MyLocale.getMsg(5500, "Error"), "Not enough memory available to load all cache data (incl. description and logs)\nexport aborted\nFilter caches to minimise memory needed for TPL-Export\nWe recommend to restart CacheWolf now")
+		    .wait(FormBase.OKB);
 	}
 	pbf.exit(0);
     }
