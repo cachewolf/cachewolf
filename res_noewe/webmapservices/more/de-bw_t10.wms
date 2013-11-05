@@ -1,4 +1,5 @@
-Name: 									de.Baden-Württemberg RasterKarte 1:10.000
+ï»¿#intentionally left blank
+Name: 									de.Baden-WÃ¼rttemberg RasterKarte 1:10.000
 MapType:            					de.bw RK10
 MainUrl:            					http://www.lv-bw.de/dv/service/getrds.asp?login=geoportal&pw=gdi_bw&
 LayersUrlPart:     						LAYERS=RK10
@@ -22,53 +23,53 @@ StylesUrlPart:							STYLES=
 #RecommendedWidthPixelSize: 			?
 #RecommendedHeightPixelSize: 			?
 #
-#Rasterkarte 1 : 10.000 (RK 10) mit Daten aus dem Digitalen Landschaftsmodell (ATKIS-Basis-DLM), Gebäudedaten aus der Automatisierten Liegenschaftskarte (ALK) und Höhenliniendaten aus der Rasterkarte der vorläufigen Digitalen Topographischen Karte 1 : 25.000 (DTK 25-V)
+#Rasterkarte 1 : 10.000 (RK 10) mit Daten aus dem Digitalen Landschaftsmodell (ATKIS-Basis-DLM), GebÃ¤udedaten aus der Automatisierten Liegenschaftskarte (ALK) und HÃ¶henliniendaten aus der Rasterkarte der vorlÃ¤ufigen Digitalen Topographischen Karte 1 : 25.000 (DTK 25-V)
 #Dieser WMS setzt sich aus folgenden Einzelebenen zusammen: 
 #RK 10-TXS: Ortsnamen 
-#RK 10-TXF: Straßennamen 
-#RK 10-TXB: Gewässernamen 
+#RK 10-TXF: StraÃŸennamen 
+#RK 10-TXB: GewÃ¤ssernamen 
 #RK 10-TXN: Gewann-, Berg- und Talnamen 
 #RK 10-TXG: Wald- und Heidenamen 
 #RK 10-ZBH: Hochspannungsleitungen 
-#RK 10-SBW: Brückensignaturen (Flächen) 
-#RK 10-SYR: Grenzübergänge 
-#RK 10-SYB: Gewässersignatur 
-#RK 10-SVN: Europastraßensymbol, Vegetationssignaturen und andere Signaturen (Jugendherberge, Sanatorium, Gewächshaus) 
-#RK 10-SYG: Bundesstraßensymbol 
-#RK 10-SBS: Brückensignaturen 
-#RK 10-BRB: Brücken und Stege 
-#RK 10-BRO: Brückendecker von Autobahnen und Bundesstraßen 
-#RK 10-BRG: Brückendecker von Landes- und Kreisstraßen 
-#RK 10-ZWG: Brückendecker Straßenzwischenraum 
-#RK 10-SSW: Bahnlinien und Bahnbrücken 
-#RK 10-ZFG: Fußgängerzonen 
-#RK 10-SGB: Wege und Straßenkontur aller Straßen 
-#RK 10-SSO: Autobahnen und Bundesstraßen 
-#RK 10-SSG: Landes- und Kreisstraßen 
-#RK 10-SWE: Straßendecker 
-#RK 10-SGR: öffentliche Gebäude 
-#RK 10-SGG: Wohn- und Wirtschaftsgebäude 
+#RK 10-SBW: BrÃ¼ckensignaturen (FlÃ¤chen) 
+#RK 10-SYR: GrenzÃ¼bergÃ¤nge 
+#RK 10-SYB: GewÃ¤ssersignatur 
+#RK 10-SVN: EuropastraÃŸensymbol, Vegetationssignaturen und andere Signaturen (Jugendherberge, Sanatorium, GewÃ¤chshaus) 
+#RK 10-SYG: BundesstraÃŸensymbol 
+#RK 10-SBS: BrÃ¼ckensignaturen 
+#RK 10-BRB: BrÃ¼cken und Stege 
+#RK 10-BRO: BrÃ¼ckendecker von Autobahnen und BundesstraÃŸen 
+#RK 10-BRG: BrÃ¼ckendecker von Landes- und KreisstraÃŸen 
+#RK 10-ZWG: BrÃ¼ckendecker StraÃŸenzwischenraum 
+#RK 10-SSW: Bahnlinien und BahnbrÃ¼cken 
+#RK 10-ZFG: FuÃŸgÃ¤ngerzonen 
+#RK 10-SGB: Wege und StraÃŸenkontur aller StraÃŸen 
+#RK 10-SSO: Autobahnen und BundesstraÃŸen 
+#RK 10-SSG: Landes- und KreisstraÃŸen 
+#RK 10-SWE: StraÃŸendecker 
+#RK 10-SGR: Ã¶ffentliche GebÃ¤ude 
+#RK 10-SGG: Wohn- und WirtschaftsgebÃ¤ude 
 #RK 10-SGV: Verwaltungsgrenzen 
-#RK 10-SBB: Gewässerkonturen (Flüsse, Bäche, Kanäle, Gräben) 
-#RK 10-SBG: Vegetation (Flächensymbole) und Naturschutzgebietsgrenzen 
-#RK 10-SRB: Höhenlinien mit Höhenangabe, Dämme, Deiche 
-#RK 10-FSB: Gewässerflächen (Seen, Flüsse, Freibäder) 
-#RK 10-FPG: Freizeitanlagen (Campingplätze, Sportanlagen, Grünanlagen) 
-#RK 10-FWE: Plätze (Verkehrsflächen, Parkplätze, Rastplätze, Festplätze) 
-#RK 10-FSR: Siedlungsflächen (Ortslagen, Wohnplätze, Wohnbauflächen, ...) 
-#RK 10-FIG: Industrieflächen (Industrie- und Gewerbeflächen, Umspannstationen, Klärwerke, Fabrikanlagen, ...) 
-#RK 10-FWI: Grünland und Straßenzwischenraum 
+#RK 10-SBB: GewÃ¤sserkonturen (FlÃ¼sse, BÃ¤che, KanÃ¤le, GrÃ¤ben) 
+#RK 10-SBG: Vegetation (FlÃ¤chensymbole) und Naturschutzgebietsgrenzen 
+#RK 10-SRB: HÃ¶henlinien mit HÃ¶henangabe, DÃ¤mme, Deiche 
+#RK 10-FSB: GewÃ¤sserflÃ¤chen (Seen, FlÃ¼sse, FreibÃ¤der) 
+#RK 10-FPG: Freizeitanlagen (CampingplÃ¤tze, Sportanlagen, GrÃ¼nanlagen) 
+#RK 10-FWE: PlÃ¤tze (VerkehrsflÃ¤chen, ParkplÃ¤tze, RastplÃ¤tze, FestplÃ¤tze) 
+#RK 10-FSR: SiedlungsflÃ¤chen (Ortslagen, WohnplÃ¤tze, WohnbauflÃ¤chen, ...) 
+#RK 10-FIG: IndustrieflÃ¤chen (Industrie- und GewerbeflÃ¤chen, Umspannstationen, KlÃ¤rwerke, Fabrikanlagen, ...) 
+#RK 10-FWI: GrÃ¼nland und StraÃŸenzwischenraum 
 #RK 10-FWA: Wald 
 #RK 10-FAO: Ackerland 
-#RK 10-FBB: Brachland (Heiden, Moore, Moose, Sümpfe, Riede) 
+#RK 10-FBB: Brachland (Heiden, Moore, Moose, SÃ¼mpfe, Riede) 
 #Der Dienst liefert eine Kombination aller Einzelebenen, es kann auch die Bereitstellung von Einzelebenen oder beliebiger Kombinationen der Einzelebenen vereinbart werden.
 #
-#Die Nutzung des Dienstes bedarf des Abschlusses einer Nutzungsvereinbarung mit dem Landesamt für Geoinformation und Landentwicklung (Kontakt). 
-#Sämtliche Rechte liegen beim LGL. 
-#Die Präsentation im Geodatenviewer kann für private und kommerzielle Zwecke unter den Bedingungen der Lizenz CC BY 3.0 (http://creativecommons.org/licenses/by/3.0/) unentgeltlich genutzt werden. 
-#Beispielweise ist unter der genannten Lizenzbedingung die Nutzung von Kartenausschnitten aus dem Geodatenviewer im Umfang des Bildschirminhalts für Immobilienexposés, Ausstellungstafeln oder für Vereinsfestschriften, Wandertafeln erlaubt. 
+#Die Nutzung des Dienstes bedarf des Abschlusses einer Nutzungsvereinbarung mit dem Landesamt fÃ¼r Geoinformation und Landentwicklung (Kontakt). 
+#SÃ¤mtliche Rechte liegen beim LGL. 
+#Die PrÃ¤sentation im Geodatenviewer kann fÃ¼r private und kommerzielle Zwecke unter den Bedingungen der Lizenz CC BY 3.0 (http://creativecommons.org/licenses/by/3.0/) unentgeltlich genutzt werden. 
+#Beispielweise ist unter der genannten Lizenzbedingung die Nutzung von Kartenausschnitten aus dem Geodatenviewer im Umfang des Bildschirminhalts fÃ¼r ImmobilienexposÃ©s, Ausstellungstafeln oder fÃ¼r Vereinsfestschriften, Wandertafeln erlaubt. 
 #Davon ausgenommen sind die im Geodatenviewer angebotenen Geofachdaten. 
-#Der Nutzer hat bei der unentgeltlichen Nutzung der Geobasisdaten und Geodatendienste bei dem entnommenen Kartenausschnitt an gut sichtbarer Stelle folgende Quellenangabe anzugeben: „Datenquelle: LGL, www.lgl-bw.de“.
+#Der Nutzer hat bei der unentgeltlichen Nutzung der Geobasisdaten und Geodatendienste bei dem entnommenen Kartenausschnitt an gut sichtbarer Stelle folgende Quellenangabe anzugeben: â€Datenquelle: LGL, www.lgl-bw.deâ€œ.
 TakenFromUrl:							https://www.geoportal-bw.de/mapbender/frames/index.php?gui_id=search_simple
 #										https://www.geoportal-bw.de/mapbender/x_metadata/xmlprint.php?uuid=a6c9c50f-04db-f439-ddc6-26ef7a7a81e4&src=gn 
 GetCapabilitiesUrl:						https://www.geoportal-bw.de/mapbender/x_metadata/xmlexport.php?uuid=a6c9c50f-04db-f439-ddc6-26ef7a7a81e4&src=gn

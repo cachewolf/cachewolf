@@ -1,0 +1,55 @@
+﻿#intentionally left blank
+Name: 									de.Schleswig-Holstein DTK5
+MapType:            					de.sh TK5
+MainUrl:            					http://service.schleswig-holstein.de/OGCFassade/SH_WMS_BDD_KF.aspx?
+LayersUrlPart:     						LAYERS=1
+ImageFormatUrlPart:						FORMAT=image/jpeg
+ImageFileExtension: 					.jpg
+CoordinateReferenceSystemCacheWolf:		31467
+CoordinateReferenceSystemUrlPart:		SRS=EPSG:31467
+RecommendedScale:						1
+BoundingBoxTopLeftWGS84: 				N 55.07062 E 7.82657
+BoundingBoxBottomRightWGS84: 			N 53.3408 E 11.36994
+ServiceTypeUrlPart:						SERVICE=WMS
+VersionUrlPart:							VERSION=1.1.1
+RequestUrlPart:							REQUEST=GetMap
+StylesUrlPart:							STYLES=
+#
+MinScale:   							0.75
+MaxScale:   							1.5
+#
+#MinPixelSize:							?
+#MaxPixelSize:							?
+#RecommendedWidthPixelSize: 			256
+#RecommendedHeightPixelSize: 			256
+#
+#Topographischer Geobasisdatendienst (WMS kostenfrei)
+#LayersUrlPart:     LAYERS=7|UEK1500||
+#LayersUrlPart:     LAYERS=6|UEK600||
+#LayersUrlPart:     LAYERS=5|UEK250||
+#LayersUrlPart:     LAYERS=4|DTK100-V||
+#LayersUrlPart:     LAYERS=3|DTK50-V||
+#LayersUrlPart:     LAYERS=2|DTK25-V||
+#LayersUrlPart:     LAYERS=1|DTK5||
+#Der topographische Geobasisdatendienst umfasst Karten folgender Maßstaebe: 
+#Uebersichtskarte fuer einen Maßstab von 1:2.000.000 (bildschirmfuellend) bis 1:125.000,
+#Digitale Topographische Karten 1:100.000 - Vorlaeufige Ausgabe fuer einen Maßstab von 1:125.000 bis 1:75.000, 
+#Digitale Topographische Karten 1:50.000 - Vorlaeufige Ausgabe fuer einen Maßstab von 1:75.000 bis 1:35.000, 
+#Digitale Topographische Karten 1:25.000 - Vorlaeufige Ausgabe fuer einen Maßstab von 1:35.000 bis 1:10.000, 
+#Digitale Topographische Karten 1:5.000 fuer einen Maßstab von 1:10.000 bis 1:4.000. 
+#Bei diesem Dienst handelt es sich um einen Darstellungsdienst aus Summenlayern fuer nichtkommerzielle Anwendungen. 
+#Dabei ist zu beachten, dass bei der DTK25, DTK50 und DTK100 ausschließlich Schleswig-Holstein abgebildet ist.
+#Herr Stephan Bork, Landesamt für Vermessung und Geoinformation Schleswig-Holstein (LVermGeo SH), Mercatorstrasse 1, Kiel, SH, 24106, Germany, +49 431 383-2037, geoserver@lvermgeo.landsh.de
+#
+#Dies ist ein Darstellungsdienst, der nur für die private nichtkommerzielle Nutzung entgeltfrei ist.
+#Auch das Herunterladen der Daten ist nicht gestattet.
+#Darstellungsdienst: Für eine interne Nutzung durch private Anwender ist der Dienst entgeltfrei. 
+#Eine interne und externe Nutzung im Sinne der AdV-Entgeltrichtlinie, die über die private Nutzung hinaus geht, ist kostenpflichtig. 
+#Das gezielte, flächendeckende Herunterladen (Download) der zugrundeliegenden Geodaten ist nicht gestattet. 
+#Die Geobasisinformationen sind gesetzlich geschützt. 
+#Unbefugte Vervielfältigung oder Verbreitung verstößt gegen das Urheberrechtsgesetz (UrhG) und das schleswig-holsteinische Vermessungs- und Katastergesetz (VermKatG). 
+#Eine kommerzielle Nutzung kann beim Landesamt für Vermessung und Geoinformation Schleswig-Holstein (LVermGeo SH) auf Grundlage einer separaten Vereinbarung beantragt werden. 
+#Sie ist genehmigungs- und kostenpflichtig.
+#
+TakenFromUrl:							
+GetCapabilitiesUrl:						http://service.schleswig-holstein.de/OGCFassade/SH_WMS_BDD_KF.aspx?SERVICE=WMS&VERSION=1.1.1&REQUEST=GetCapabilities

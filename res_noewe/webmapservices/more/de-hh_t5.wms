@@ -1,0 +1,24 @@
+﻿#intentionally left blank
+Name: 									de.Hamburg TK5
+MapType:            					de.hh TK5
+MainUrl:            					http://gateway.hamburg.de/OGCFassade/HH_WMS_DK5.aspx?
+LayersUrlPart:     						LAYERS=1,5
+ImageFormatUrlPart:						FORMAT=image/jpeg
+ImageFileExtension: 					.jpg
+CoordinateReferenceSystemCacheWolf:		31467
+CoordinateReferenceSystemUrlPart:		SRS=EPSG:31467
+RecommendedScale:						0.5 0.25 1
+BoundingBoxTopLeftWGS84: 				N 53.9652 E 8.4123
+BoundingBoxBottomRightWGS84: 			N 53.3854 E 10.3716
+ServiceTypeUrlPart:						SERVICE=WMS
+VersionUrlPart:							VERSION=1.1.1
+RequestUrlPart:							REQUEST=GetMap
+StylesUrlPart:							STYLES=
+#
+#MinScale:   							?
+#MaxScale:   							?
+#
+#MinPixelSize:							?
+#MaxPixelSize:							?
+#RecommendedWidthPixelSize: 			256
+#RecommendedHeightPixelSize: 			256

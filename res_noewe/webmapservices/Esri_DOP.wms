@@ -1,0 +1,27 @@
+﻿#intentionally left blank
+Name: 									World Esri DOP
+MapType:            					Esri
+MainUrl:            					http://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}
+LayersUrlPart:     						
+ImageFormatUrlPart:						FORMAT=image/jpeg
+ImageFileExtension: 					.jpg
+CoordinateReferenceSystemCacheWolf:		4326
+CoordinateReferenceSystemUrlPart:		SRS=EPSG:4326
+RecommendedScale:						16 9 10 11 12 13 14 15
+BoundingBoxTopLeftWGS84:				N 85.0511 W 180.0000
+BoundingBoxBottomRightWGS84:			S 85.0511 E 180.0000
+ServiceTypeUrlPart:						
+VersionUrlPart:							
+RequestUrlPart:							Tile
+StylesUrlPart:							
+#
+MinScale:   							1
+MaxScale:   							20
+#
+MinPixelSize:							256
+MaxPixelSize:							256
+RecommendedWidthPixelSize:	 			256
+RecommendedHeightPixelSize: 			256
+#
+TakenFromUrl:							
+GetCapabilitiesUrl:						

@@ -1,3 +1,4 @@
+﻿#intentionally left blank
 TakenFromUrl:       http://deutschlandviewer.bayern.de/deutschlandviewer/D_Viewer_Hilfe/Hilfe_D_Viewer.htm#Geodaten
 GetCapabilitiesUrl: http://www.lv-bw.de/dv/service/getrds.asp?login=dv&pw=anonymous&SERVICE=WMS&REQUEST=GetCapabilities
 Name: de.Baden-Wuerttemberg t50 SF=0.3..700

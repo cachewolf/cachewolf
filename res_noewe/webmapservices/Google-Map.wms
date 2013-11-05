@@ -1,0 +1,27 @@
+﻿#intentionally left blank
+Name: 									Google Map
+MapType:            					Google
+MainUrl:            					http://mt0.google.com/vt/lyrs=m@142&x={x}&y={y}&z={z}
+LayersUrlPart:     						
+ImageFormatUrlPart:						FORMAT=image/png
+ImageFileExtension: 					.png
+CoordinateReferenceSystemCacheWolf:		4326
+CoordinateReferenceSystemUrlPart:		SRS=EPSG:4326
+RecommendedScale:						14 9 10 11 12 13 15 16
+BoundingBoxTopLeftWGS84:				N 85.0511 W 180.0000
+BoundingBoxBottomRightWGS84:			S 85.0511 E 180.0000
+ServiceTypeUrlPart:						
+VersionUrlPart:							
+RequestUrlPart:							Tile
+StylesUrlPart:							
+#
+MinScale:   							1
+MaxScale:   							20
+#
+MinPixelSize:							256
+MaxPixelSize:							256
+RecommendedWidthPixelSize:	 			256
+RecommendedHeightPixelSize: 			256
+#
+TakenFromUrl:							
+GetCapabilitiesUrl:						
