@@ -1418,7 +1418,6 @@ public class SpiderGC {
 	try {
 	    htmlListPage = UrlFetcher.fetch(url);
 	    Global.pref.log("[getFirstListPage] Got first page " + url);
-	    Global.pref.log(htmlListPage);
 	} catch (final Exception ex) {
 	    Global.pref.log("[getFirstListPage] Error fetching first list page " + url, ex, true);
 	    Vm.showWait(false);
@@ -1464,7 +1463,6 @@ public class SpiderGC {
 	    UrlFetcher.setpostData(postData);
 	    htmlListPage = UrlFetcher.fetch(url);
 	    Global.pref.log("[getAListPage] " + whatPage);
-	    Global.pref.log(htmlListPage);
 	} catch (final Exception ex) {
 	    Global.pref.log("[getAListPage] Error at " + whatPage, ex);
 	    ret = false;
