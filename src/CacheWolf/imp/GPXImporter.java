@@ -229,6 +229,7 @@ public class GPXImporter extends MinML {
 		    fromOC = true;
 		else
 		    fromOC = false;
+
 		if (strCreator.startsWith("TerraCaching"))
 		    fromTC = true;
 		else
@@ -262,12 +263,14 @@ public class GPXImporter extends MinML {
 	    holder.setAvailable(strAvailable != null && strAvailable.equalsIgnoreCase("True"));
 	    holder.setArchived(strArchived != null && strArchived.equalsIgnoreCase("True"));
 	    // OC now has GC - Format, get CacheID -- missing p.ex. on GcTour gpx
+	    /* */
 	    for (int i = 0; i < atts.getLength(); i++) {
 		if (atts.getName(i).equals("id")) {
 		    holder.setOcCacheID(atts.getValue("id"));
 		    break;
 		}
 	    }
+	    /* */
 	    return;
 	}
 	// OC
