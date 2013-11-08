@@ -133,32 +133,30 @@ public class MapLoader {
     }
 
     /**
-     * download maps from expedia at zoomlevel alti and save the maps and the .wfl in path
+     * 
      * 
      * @param center
      *            centre of all tiles
      * @param radius
      *            in meters
      * @param scale
-     *            in "alti" value 1 alti = 3950 /2817.947378 = 1,046861280317350198581316446428 meters per pixel
-     * @param size
+     *            3950 /2817.947378 = 1,046861280317350198581316446428 meters per pixel
+     * @param sizeInPixels
      *            in pixels
      * @param overlapping
      *            in pixels
-     * @param path
-     *            without "/" at the end
      * 
      */
-    public void setTiles(CWPoint center, float radius, float scale, Point size, int overlapping) {
+    public void setTiles(CWPoint center, float radius, float scale, Point sizeInPixels, int overlapping) {
 	double metersPerLat = (1000 * (new CWPoint(0, 0)).getDistance(new CWPoint(1, 0)));
 	double metersPerLon = metersPerLat * java.lang.Math.cos(center.latDec / 180 * java.lang.Math.PI);
 	topleft = new CWPoint(center.latDec + (radius / metersPerLat), center.lonDec - (radius / metersPerLon));
 	bottomright = new CWPoint(center.latDec - (radius / metersPerLat), center.lonDec + (radius / metersPerLon));
 
-	this.setTiles(scale, size, overlapping);
+	this.setTiles(scale, sizeInPixels, overlapping);
     }
 
-    public void setTiles(float scale, Point SizeInPixels, int overlapping) {
+    public void setTiles(float scale, Point sizeInPixels, int overlapping) {
 	double metersPerLat;
 	double metersPerLon;
 	if (topleft.equals(bottomright)) {
@@ -187,6 +185,7 @@ public class MapLoader {
 
 	double pixelsPerLat = metersPerLat / metersperpixel;
 	double pixelsPerLon = metersPerLon / metersperpixel;
+
 	// over all pixelsize without borders
 	double pixelsY = (topleft.latDec - bottomright.latDec) * pixelsPerLat;
 	double pixelsX = -(topleft.lonDec - bottomright.lonDec) * pixelsPerLon;
@@ -194,25 +193,25 @@ public class MapLoader {
 	int borderX = overlapping;
 	int borderY = overlapping;
 
-	numMapsY = (int) java.lang.Math.ceil((pixelsY + borderY) / (SizeInPixels.y - borderY));
-	numMapsX = (int) java.lang.Math.ceil((pixelsX + borderX) / (SizeInPixels.x - borderX));
+	numMapsY = (int) java.lang.Math.ceil((pixelsY + borderY) / (sizeInPixels.y - borderY));
+	numMapsX = (int) java.lang.Math.ceil((pixelsX + borderX) / (sizeInPixels.x - borderX));
 
 	// increments calulated from pixel offset of tiles
-	latinc = -(SizeInPixels.y - borderY) / pixelsPerLat;
-	loninc = (SizeInPixels.x - borderX) / pixelsPerLon;
+	latinc = -(sizeInPixels.y - borderY) / pixelsPerLat;
+	loninc = (sizeInPixels.x - borderX) / pixelsPerLon;
 
 	// calculation of centre of first tile
-	// additional SizeInPixels for borders and rounding
-	double oversizeX = (numMapsX * (SizeInPixels.x - borderX) + borderX) - pixelsX;
-	double oversizeY = (numMapsY * (SizeInPixels.y - borderY) + borderY) - pixelsY;
+	// additional sizeInPixels for borders and rounding
+	double oversizeX = (numMapsX * (sizeInPixels.x - borderX) + borderX) - pixelsX;
+	double oversizeY = (numMapsY * (sizeInPixels.y - borderY) + borderY) - pixelsY;
 	// offset for upper left corner
-	double offsetLat = -((SizeInPixels.y - oversizeY) / 2.0) / pixelsPerLat;
-	double offsetLon = ((SizeInPixels.x - oversizeX) / 2.0) / pixelsPerLon;
+	double offsetLat = -((sizeInPixels.y - oversizeY) / 2.0) / pixelsPerLat;
+	double offsetLon = ((sizeInPixels.x - oversizeX) / 2.0) / pixelsPerLon;
 	topleft.latDec = topleft.latDec + offsetLat;
 	topleft.lonDec = topleft.lonDec + offsetLon;
 
 	this.sizeInPixels = new Point();
-	this.sizeInPixels.set(SizeInPixels);
+	this.sizeInPixels.set(sizeInPixels);
 	this.scale = scale;
     }
 
@@ -228,7 +227,7 @@ public class MapLoader {
 			progressInfobox.setInfo(MyLocale.getMsg(4802, "Downloading calibrated (georeferenced) \n map image \n '") + currentOnlineMapService.getName() + MyLocale.getMsg(4803, "' \n Downloading tile \n row") + " " + row + " / "
 				+ numMapsY + MyLocale.getMsg(4804, " column") + " " + col + " / " + numMapsX);
 		    downloadMap(center, this.scale, this.sizeInPixels, mapsPath);
-		    if (progressInfobox.isClosed)
+		    if (progressInfobox.isClosed())
 			return;
 		}
 		lon = lon + loninc;
@@ -263,20 +262,20 @@ public class MapLoader {
      * 
      * @param center
      * @param scale
-     * @param SizeInPixels
+     * @param sizeInPixels
      * @param path
      *            including trailing "/"
      * @throws Exception
      */
-    public void downloadMap(CWPoint center, float scale, Point SizeInPixels, String path) {
+    public void downloadMap(CWPoint center, float scale, Point sizeInPixels, String path) {
 	WebMapService wms = (WebMapService) currentOnlineMapService;
 	try {
 	    if (wms.requestUrlPart.startsWith("REQUEST")) {
-		downloadMapFromWmsServer(center, scale, SizeInPixels, path);
+		downloadMapFromWmsServer(center, scale, sizeInPixels, path);
 	    } else if (wms.requestUrlPart.equalsIgnoreCase("Tile")) {
 		downloadMapFromTileServer(center, scale, path);
 	    } else if (wms.requestUrlPart.equalsIgnoreCase("Maperitive") || wms.requestUrlPart.equalsIgnoreCase("Kosmos")) {
-		downloadMapExternal(center, scale, SizeInPixels, path);
+		downloadMapExternal(center, scale, sizeInPixels, path);
 	    }
 	} catch (Exception e) {
 	    this.progressInfobox.addWarning(MyLocale.getMsg(4805, "Tile") + " " + MyLocale.getMsg(4806, ": Ignoring error:") + " " + e.getMessage() + "\n");
@@ -284,8 +283,8 @@ public class MapLoader {
 
     }
 
-    private void downloadMapFromWmsServer(CWPoint center, float scale, Point SizeInPixels, String path) throws Exception {
-	MapInfoObject mio = currentOnlineMapService.getMapInfoObject(center, scale, SizeInPixels);
+    private void downloadMapFromWmsServer(CWPoint center, float scale, Point sizeInPixels, String path) throws Exception {
+	MapInfoObject mio = currentOnlineMapService.getMapInfoObject(center, scale, sizeInPixels);
 	String filename = createFilename(mio.getCenter(), mio.scale);
 	String imagename = filename; //mio.createMapName(filename);
 
@@ -293,7 +292,7 @@ public class MapLoader {
 	mio.getMapImageFileNameObject().setPath(Global.profile.getMapsSubDir(path));
 
 	String imagetype = currentOnlineMapService.getImageFileExt();
-	String url = currentOnlineMapService.getUrlForCenterScale(center, scale, SizeInPixels);
+	String url = currentOnlineMapService.getUrlForCenterScale(center, scale, sizeInPixels);
 	String fName = path + imagename + imagetype;
 	File fn = new File(path + imagename + ".wfl");
 	File fn1 = new File(fName);
@@ -330,9 +329,9 @@ public class MapLoader {
 	}
     }
 
-    private void downloadMapExternal(CWPoint center, float scale, Point SizeInPixels, String path) throws Exception {
+    private void downloadMapExternal(CWPoint center, float scale, Point sizeInPixels, String path) throws Exception {
 	WebMapService wms = (WebMapService) currentOnlineMapService;
-	MapInfoObject mio = wms.getMapInfoObject(center, scale, SizeInPixels);
+	MapInfoObject mio = wms.getMapInfoObject(center, scale, sizeInPixels);
 	String filename = createFilename(mio.getCenter(), mio.scale);
 	String imagename = filename; // mio.createMapName(filename);
 
@@ -340,7 +339,7 @@ public class MapLoader {
 	mio.getMapImageFileNameObject().setPath(Global.profile.getMapsSubDir(path));
 	String imagetype = wms.getImageFileExt();
 	String fName = path + imagename + imagetype;
-	Area maparea = wms.CenterScaleToArea(center, scale, SizeInPixels);
+	Area maparea = wms.CenterScaleToArea(center, scale, sizeInPixels);
 	CWPoint bottomleft = new CWPoint(maparea.bottomright.latDec, maparea.topleft.lonDec);
 	CWPoint topright = new CWPoint(maparea.topleft.latDec, maparea.bottomright.lonDec);
 
@@ -356,9 +355,9 @@ public class MapLoader {
 	String mapProgramParams = "";
 
 	if (wms.requestUrlPart.equalsIgnoreCase("Kosmos")) {
-	    // minx miny maxx maxy + SizeInPixels.x
+	    // minx miny maxx maxy + sizeInPixels.x
 	    mapProgramParams = "bitmapgen" + " \"" + FileBase.getProgramDirectory().replace('/', File.separatorChar) + "\\" + wms.serviceTypeUrlPart + "\"" + " \"" + path.replace('/', File.separatorChar) + imagename + imagetype + "\"" + " -mb "
-		    + bottomleft.toString(TransformCoordinates.LAT_LON).replace(',', ' ') + " " + topright.toString(TransformCoordinates.LAT_LON).replace(',', ' ') + " -w " + SizeInPixels.x;
+		    + bottomleft.toString(TransformCoordinates.LAT_LON).replace(',', ' ') + " " + topright.toString(TransformCoordinates.LAT_LON).replace(',', ' ') + " -w " + sizeInPixels.x;
 	    CWWrapper.execute(mapProgram + " " + mapProgramParams);
 	} else {
 	    if (wms.requestUrlPart.equalsIgnoreCase("Maperitive")) {
@@ -402,7 +401,7 @@ public class MapLoader {
 		} else {
 		    outp.print("export-bitmap file=" + fName);
 		}
-		String pxSize = " width=" + SizeInPixels.x + " height=" + SizeInPixels.y;
+		String pxSize = " width=" + sizeInPixels.x + " height=" + sizeInPixels.y;
 		outp.print(pxSize);
 		outp.println(" ozi=true");
 		outp.println("exit");
@@ -421,7 +420,7 @@ public class MapLoader {
 		if (CWWrapper.execute(mapProgram + " " + mapProgramParams)) {
 		    // preparation for generating wfl from the ozi map-file
 		    Vector GCPs = map2wfl(path + imagename);
-		    mio.evalGCP(GCPs, SizeInPixels.x, SizeInPixels.y);
+		    mio.evalGCP(GCPs, sizeInPixels.x, sizeInPixels.y);
 		    // can not supress generation of pgw,jgw-file
 		    File georefFile = new File(fName + ".georef");
 		    georefFile.delete();
@@ -708,12 +707,12 @@ class OnlineMapService {
      * 
      * @param center
      * @param scale
-     * @param SizeInPixels
+     * @param sizeInPixels
      * @return
      */
-    public String getUrlForCenterScale(CWPoint center, float scale, Point SizeInPixels) {
-	Area bbox = CenterScaleToArea(center, scale, SizeInPixels);
-	String url = getUrlForBoundingBoxInternal(bbox, SizeInPixels, scale);
+    public String getUrlForCenterScale(CWPoint center, float scale, Point sizeInPixels) {
+	Area bbox = CenterScaleToArea(center, scale, sizeInPixels);
+	String url = getUrlForBoundingBoxInternal(bbox, sizeInPixels, scale);
 	return url;
     }
 
@@ -721,10 +720,10 @@ class OnlineMapService {
      * This is made protected and named "...Internal" because a lot of services don't work correctly when a map is requested, that is not exactly quadratic --> alway use getUrlForCenter...
      * 
      * @param surArea
-     * @param SizeInPixels
+     * @param sizeInPixels
      * @return
      */
-    protected String getUrlForBoundingBoxInternal(Area surArea, Point SizeInPixels, double scaleInput) {
+    protected String getUrlForBoundingBoxInternal(Area surArea, Point sizeInPixels, double scaleInput) {
 	return null;
     }
 
@@ -736,9 +735,9 @@ class OnlineMapService {
      * @param pixelsize
      * @return
      */
-    public Area CenterScaleToArea(CWPoint center, float scale, Point SizeInPixels) {
+    public Area CenterScaleToArea(CWPoint center, float scale, Point sizeInPixels) {
 	Area bbox = new Area();
-	double halfdiagonal = Math.sqrt(SizeInPixels.x * SizeInPixels.x + SizeInPixels.y * SizeInPixels.y) / 2 * scale / 1000;
+	double halfdiagonal = Math.sqrt(sizeInPixels.x * sizeInPixels.x + sizeInPixels.y * sizeInPixels.y) / 2 * scale / 1000;
 	bbox.topleft = center.project(-45, halfdiagonal);
 	bbox.bottomright = center.project(135, halfdiagonal);
 	return bbox;
@@ -951,14 +950,14 @@ class WebMapService extends OnlineMapService {
 	return bbox;
     }
 
-    protected String getUrlForBoundingBoxInternal(Area maparea, Point SizeInPixels, double scaleInput) {
+    protected String getUrlForBoundingBoxInternal(Area maparea, Point sizeInPixels, double scaleInput) {
 	if (!boundingBox.isOverlapping(maparea))
 	    throw new IllegalArgumentException(MyLocale.getMsg(4822, "area:") + " " + maparea.toString() + MyLocale.getMsg(4823, " not covered by service:") + " " + name + MyLocale.getMsg(4824, ", service area:") + " " + boundingBox.toString());
 	// http://www.geoserver.nrw.de/GeoOgcWms1.3/servlet/TK25?SERVICE=WMS&VERSION=1.1.0&REQUEST=GetMap&SRS=EPSG:31466&BBOX=2577567.0149,5607721.7566,2578567.0077,5608721.7602&WIDTH=500&HEIGHT=500&LAYERS=Raster:TK25_KMF:Farbkombination&STYLES=&FORMAT=image/png
 	CWPoint bottomleft = new CWPoint(maparea.bottomright.latDec, maparea.topleft.lonDec);
 	CWPoint topright = new CWPoint(maparea.topleft.latDec, maparea.bottomright.lonDec);
-	// double scaleh = maparea.bottomright.getDistance(bottomleft) * 1000 / SizeInPixels.x;
-	// double scalev = maparea.topleft.getDistance(topright) * 1000 / SizeInPixels.y;
+	// double scaleh = maparea.bottomright.getDistance(bottomleft) * 1000 / sizeInPixels.x;
+	// double scalev = maparea.topleft.getDistance(topright) * 1000 / sizeInPixels.y;
 	// double scaleCalculated = Math.sqrt(scaleh * scaleh + scalev * scalev); // meters per pixel measured diagonal
 
 	// if (scaleCalculated < minscaleWMS || scaleCalculated > maxscaleWMS)
@@ -987,8 +986,8 @@ class WebMapService extends OnlineMapService {
 		+ "&" + stylesUrlPart //
 		+ "&" + coordinateReferenceSystemUrlPart[crs] //
 		+ "&" + bbox //
-		+ "&" + "WIDTH=" + SizeInPixels.x //
-		+ "&" + "HEIGHT=" + SizeInPixels.y //
+		+ "&" + "WIDTH=" + sizeInPixels.x //
+		+ "&" + "HEIGHT=" + sizeInPixels.y //
 	;
 	// Global.pref.log(" WGS84: Bottom left: " + bottomleft.toString(TransformCoordinates.DD) + "top right: " + topright.toString(TransformCoordinates.DD));
 	return ret;

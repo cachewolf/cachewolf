@@ -312,9 +312,9 @@ public class MapLoaderGui extends Form {
 	    return;
 
 	InfoBox progressBox = new InfoBox(MyLocale.getMsg(1815, "Downloading georeferenced maps"), MyLocale.getMsg(1816, "Downloading georeferenced maps\n \n \n \n \n"), InfoBox.PROGRESS_WITH_WARNINGS);
-	progressBox.setPreferredSize(220, 300);
-	progressBox.setInfoHeight(160);
-	progressBox.relayout(false);
+	//progressBox.setPreferredSize(220, 300);
+	//progressBox.setInfoHeight(160);
+	//progressBox.relayout(false);
 	progressBox.exec();
 	mapLoader.setProgressInfoBox(progressBox);
 	Vm.showWait(true);

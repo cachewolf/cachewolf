@@ -138,7 +138,7 @@ public class OCXMLImporter extends MinML {
 	hostname = OC.getOCHostName(ch.getWayPoint());
 	holder = null;
 
-	if (infB.isClosed) {
+	if (infB.isClosed()) {
 	    // there could have been an update before
 	    return true;
 	}

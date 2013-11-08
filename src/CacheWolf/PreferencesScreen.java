@@ -64,36 +64,13 @@ public class PreferencesScreen extends Form {
     public PreferencesScreen() {
 	int sw = MyLocale.getScreenWidth();
 	int sh = MyLocale.getScreenHeight();
+	setPreferredSize(Math.min(sw, Global.pref.fontSize * 26), Math.min(sh, Global.pref.fontSize * 20));
 
 	mTabbedPanel mTab = new mTabbedPanel();
 
 	this.title = MyLocale.getMsg(600, "Preferences");
 	if ((sw > 240) && (sh > 240))
 	    this.resizable = true;
-	// this.moveable = true;
-	// this.windowFlagsToSet = Window.FLAG_MAXIMIZE;
-
-	// set dialog-width according to fontsize
-	if ((Global.pref.fontSize <= 13) || (sw <= 240) || (sh <= 240)) {
-	    setPreferredSize(240, 240);
-	} else if (Global.pref.fontSize <= 28) {
-	    // was for <=16 setPreferredSize(288,252);
-	    setPreferredSize(Global.pref.fontSize * 21, Global.pref.fontSize * 19);
-	}
-	/*
-	else if (Global.pref.fontSize <= 20) {
-		setPreferredSize(352, 302);
-	}
-	else if (Global.pref.fontSize <= 24) {
-		setPreferredSize(420, 350);
-	}
-	else if (Global.pref.fontSize <= 28) {
-		setPreferredSize(480, 390);
-	}
-	else {
-		setPreferredSize(576, 512);
-	}
-	*/
 
 	// ///////////////////////////////////////////////////////
 	// Card General
