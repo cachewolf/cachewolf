@@ -247,7 +247,7 @@ public class SpiderGC {
 		if (cachesToUpdate == null) {
 		    cachesToUpdate = new Hashtable();
 		}
-		if (!infB.isClosed) {
+		if (!infB.isClosed()) {
 		    infB.setInfo(MyLocale.getMsg(5511, "Found ") + cachesToLoad.size() + MyLocale.getMsg(5512, " caches"));
 		}
 		// continue to update index to changed cache.xml things
@@ -265,7 +265,7 @@ public class SpiderGC {
 
 		Global.mainTab.tablePanel.updateStatusBar();
 
-		if (!infB.isClosed) {
+		if (!infB.isClosed()) {
 		    spiderErrors = downloadCaches(cachesToLoad, spiderErrors, totalCachesToLoad, loadAllLogs);
 
 		    if (cachesToUpdate.size() > 0) {
@@ -296,7 +296,7 @@ public class SpiderGC {
 	    Global.profile.restoreFilter();
 	    Global.profile.saveIndex(true);
 
-	    if (!infB.isClosed) {
+	    if (!infB.isClosed()) {
 		infB.close(0);
 	    }
 	    Vm.showWait(false);
@@ -447,15 +447,15 @@ public class SpiderGC {
 		    if (points != null)
 			Global.pref.log("s: do " + pointsIndex + " of (" + points.size() + ") at " + origin);
 		    getCaches(lateralDistance);
-		    if (infB.isClosed)
+		    if (infB.isClosed())
 			break;
 		}
 		startPos = nextPos;
 	    }
-	    if (infB.isClosed)
+	    if (infB.isClosed())
 		break;
 	}
-	if (infB.isClosed) {
+	if (infB.isClosed()) {
 	    Vm.showWait(false);
 	    return;
 	} // or ask for download of intermediate result
@@ -574,7 +574,7 @@ public class SpiderGC {
 			// finish this htmlListPage
 			toDistance = 0;
 		    RexPropLine.searchFrom(tableOfHtmlListPage, RexPropLine.matchedTo());
-		    if (infB.isClosed) {
+		    if (infB.isClosed()) {
 			toDistance = 0;
 			break;
 		    }
@@ -864,7 +864,7 @@ public class SpiderGC {
 			// finish listing get next row of table (next Cache Description) of this htmlListPage
 			toDistance = 0;
 		    RexPropLine.searchFrom(tableOfHtmlListPage, RexPropLine.matchedTo());
-		    if (infB.isClosed) {
+		    if (infB.isClosed()) {
 			toDistance = 0;
 			cExpectedForUpdate.clear();
 			break;
@@ -954,7 +954,7 @@ public class SpiderGC {
 
     private int downloadCaches(Vector cachesToLoad, int spiderErrors, int totalCachesToLoad, boolean loadAllLogs) {
 	for (int i = 0; i < cachesToLoad.size(); i++) {
-	    if (infB.isClosed)
+	    if (infB.isClosed())
 		break;
 	    String wpt = (String) cachesToLoad.get(i);
 	    final boolean is_found = wpt.indexOf("found") != -1;
@@ -983,7 +983,7 @@ public class SpiderGC {
     private int updateCaches(Hashtable cachesToUpdate, int spiderErrors, int totalCachesToLoad, boolean loadAllLogs) {
 	int jj = 0;
 	for (final Enumeration e = cachesToUpdate.elements(); e.hasMoreElements();) {
-	    if (infB.isClosed)
+	    if (infB.isClosed())
 		break;
 	    final CacheHolder ch = (CacheHolder) e.nextElement();
 	    jj++;
@@ -1858,7 +1858,7 @@ public class SpiderGC {
 		    Global.pref.log("Fetched: " + ch.getWayPoint());
 		    if (completeWebPage.equals("")) {
 			Global.pref.log("Could not fetch " + ch.getWayPoint(), null);
-			if (!infB.isClosed) {
+			if (!infB.isClosed()) {
 			    continue;
 			} else {
 			    ch.setIncomplete(true);
@@ -1867,7 +1867,7 @@ public class SpiderGC {
 		    }
 		} catch (final Exception ex) {
 		    Global.pref.log("Could not fetch " + ch.getWayPoint(), ex);
-		    if (!infB.isClosed) {
+		    if (!infB.isClosed()) {
 			continue;
 		    } else {
 			ch.setIncomplete(true);
@@ -1875,7 +1875,7 @@ public class SpiderGC {
 		    }
 		}
 		// Only analyse the cache data and fetch pictures if user has not closed the progress window
-		if (!infB.isClosed) {
+		if (!infB.isClosed()) {
 		    try {
 			ch.initStates(!isUpdate);
 
@@ -1913,7 +1913,7 @@ public class SpiderGC {
 			Global.pref.log("Got logs");
 			// If the switch is set to not store found caches and we found the cache => return
 			if (ch.is_found() && doNotGetFound) {
-			    if (infB.isClosed) {
+			    if (infB.isClosed()) {
 				return SPIDER_CANCEL;
 			    } else {
 				return SPIDER_IGNORE;
@@ -2023,7 +2023,7 @@ public class SpiderGC {
 	    }
 	    break;
 	}// while(true) // retry even if failure
-	if (infB.isClosed) {
+	if (infB.isClosed()) {
 	    // If the infoBox was closed before getting here, we return -1
 	    return SPIDER_CANCEL;
 	}
@@ -2387,7 +2387,7 @@ public class SpiderGC {
 	    exBug.set(bugBlock);
 	    while ((linkPlusBug = exBug.findNext()).length() > 0) {
 		exBugWrong = false;
-		if (infB.isClosed)
+		if (infB.isClosed())
 		    break;
 		final int idx = linkPlusBug.indexOf(p.getProp("bugLinkEnd"));
 		if (idx < 0) {

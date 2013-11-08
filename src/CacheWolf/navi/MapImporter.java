@@ -341,7 +341,7 @@ public class MapImporter extends Form {
 	    }
 	} // for file
 	Vm.showWait(this, false);
-	inf.addText("\n" + MyLocale.getMsg(4120, "done."));
+	inf.addInfo("\n" + MyLocale.getMsg(4120, "done."));
 	inf.addOkButton();
 	if (Global.mainTab.movingMap != null)
 	    Global.mainTab.movingMap.setMapsloaded(false);
