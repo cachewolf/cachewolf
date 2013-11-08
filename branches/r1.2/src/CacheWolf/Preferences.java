@@ -758,7 +758,7 @@ public class Preferences extends MinML {
 				showCachesOnMap = Boolean.valueOf(atts.getValue("showCachesOnMap")).booleanValue();
 			tmp = atts.getValue("lastScale");
 			if (tmp != null)
-				lastScale = Float.valueOf(atts.getValue("lastScale")).floatValue();
+				lastScale = (float) Common.parseDouble(tmp);
 		}
 		else if (name.equals("SortingGroupedByCache")) {
 			tmp = atts.getValue("on");
@@ -953,7 +953,7 @@ public class Preferences extends MinML {
 					+ " />\n");
 			outp.print("    <Map" //
 					+ " showCachesOnMap=\"" + SafeXML.strxmlencode(showCachesOnMap) + "\"" //
-					+ " lastScale=\"" + Common.DoubleToString(lastScale, 0, 2) + "\"" //
+					+ " lastScale=\"" + Common.DoubleToString(Double.parseDouble(Float.toString(lastScale)), 0, 2) + "\"" //
 					+ " />\n");
 			outp.print("    <SortingGroupedByCache on=\"" + SafeXML.strxmlencode(SortingGroupedByCache) + "\" />\n");
 			outp.print("    <Symbols useOwnSymbols=\"" + SafeXML.strxmlencode(useOwnSymbols) + "\" />\n");
