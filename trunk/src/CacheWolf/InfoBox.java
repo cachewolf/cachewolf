@@ -31,69 +31,48 @@ import ewe.ui.mInput;
 import ewe.ui.mLabel;
 
 public class InfoBox extends Form {
-    TextMessage msgArea;
-    mCheckBox checkBox;
-    TextMessage warnings;
-    public boolean checkBoxState = false;
-    private ExecutePanel executePanel;
-    public mInput feedback = new mInput();
 
     public final static int CHECKBOX = 1;
     public final static int INPUT = 2;
     public final static int DISPLAY_ONLY = 3;
     public final static int PROGRESS_WITH_WARNINGS = 4;
 
+    private TextMessage msgArea;
+    private TextMessage warnings;
+    private mCheckBox checkBox;
+    private boolean checkBoxState = false;
+    private mInput feedback = new mInput();
+    private ExecutePanel executePanel;
+
     private int type = 0;
+
     /**
-     * This variable is set to true if the user closed the Info window by clicking the "close" button. It can be used to check if a lengthy task needs to be aborted (i.e. spidering)
+     * This variable is set to true (by canExit()), if the user closed the Info window by clicking the "close" button.
+     * It can be used to check if a lengthy task needs to be aborted (i.e. spidering)
      */
-    public boolean isClosed = false;
+    private boolean isClosed = false;
 
     public InfoBox(String title, String info) {
 	this(title, info, DISPLAY_ONLY);
-
-	/*
-	 * this.setPreferredSize(170,50); this.title = title; msgArea = new MessageArea(""), STRETCH, FILL) this.addLast(scP = new ScrollBarPanel(msgArea)); msgArea.setText(info); mB.setHotKey(0, IKeys.ACTION); mB.setHotKey(0,
-	 * IKeys.ENTER); //mB.set(Control.Invisible, true); //this.addLast(mB, STRETCH, FILL);
-	 */
-    }
-
-    public String getInput() {
-	return feedback.getText();
-    }
-
-    public void addText(String t) {
-	msgArea.setText(msgArea.text + t);
-	this.repaintNow();
     }
 
     public InfoBox(String title, String info, int type) {
 	this(title, info, type, true);
-	// this.setPreferredSize(170, 50);
-	relayout(false);
     }
 
-    public InfoBox(String title, String info, int ty, boolean autoWrap) {
-	type = ty;
-	// this.setPreferredSize(150,50);
-	// Resize InfoBox with Fontsize
-	int fs = Global.pref.fontSize;
-	int sw = MyLocale.getScreenWidth();
-	int psx;
-	int psy;
-	psx = fs * 14; // 20
-	psy = fs * 6; // 7
-
+    public InfoBox(String title, String info, int type, boolean autoWrap) {
+	// Resize InfoBox
+	int psx = Global.pref.fontSize * 14;
+	int psy = Global.pref.fontSize * 6;
 	if (Global.pref.useBigIcons) {
-	    psx = Math.min(psx + 48, sw);
+	    psx = Math.min(psx + 48, MyLocale.getScreenWidth());
 	    psy = Math.min(psy + 16, MyLocale.getScreenHeight());
 	} else {
-	    psx = Math.min(psx, sw);
+	    psx = Math.min(psx, MyLocale.getScreenWidth());
 	    psy = Math.min(psy, MyLocale.getScreenHeight());
 	}
-
 	this.setPreferredSize(psx, psy);
-	this.title = title;
+
 	switch (type) {
 	case CHECKBOX:
 	    checkBox = new mCheckBox(info);
@@ -129,6 +108,9 @@ public class InfoBox extends Form {
 	    executePanel.hide(ExecutePanel.CANCEL);
 	    break;
 	}
+	this.title = title;
+	this.type = type;
+	relayout(false);
     }
 
     public final int wait(int doButtons)
@@ -140,11 +122,6 @@ public class InfoBox extends Form {
 	}
 	exec();
 	return waitUntilClosed();
-    }
-
-    public void setInfo(String info) {
-	msgArea.setText(info);
-	this.repaintNow();
     }
 
     public void setInfoHeight(int heighti) {
@@ -159,12 +136,52 @@ public class InfoBox extends Form {
 	return msgArea.getText();
     }
 
+    public void setInfo(String info) {
+	msgArea.setText(info);
+	this.repaintNow();
+    }
+
+    public void addInfo(String t) {
+	msgArea.setText(msgArea.text + t);
+	this.repaintNow();
+    }
+
+    public String getInput() {
+	return feedback.getText();
+    }
+
     public void addWarning(String w) {
 	warnings.setText(warnings.text + w);
     }
 
+    public boolean isCheckBoxState() {
+	return checkBoxState;
+    }
+
+    public void setCheckBoxState(boolean checkBoxState) {
+	this.checkBoxState = checkBoxState;
+    }
+
+    public mInput getFeedback() {
+	return feedback;
+    }
+
+    public void setFeedback(mInput feedback) {
+	this.feedback = feedback;
+    }
+
     public void addOkButton() {
 	executePanel.show(ExecutePanel.APPLY);
+    }
+
+    public boolean isClosed() {
+	return isClosed;
+    }
+
+    // Overrides
+    protected boolean canExit(int exitCode) {
+	isClosed = true;
+	return true;
     }
 
     public void onEvent(Event ev) {
@@ -180,11 +197,6 @@ public class InfoBox extends Form {
 	    }
 	}
 	super.onEvent(ev);
-    }
-
-    protected boolean canExit(int exitCode) {
-	isClosed = true;
-	return true;
     }
 
 }

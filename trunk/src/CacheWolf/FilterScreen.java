@@ -654,7 +654,7 @@ public class FilterScreen extends Form {
 		    inf.execute();
 		    Vm.showWait(true);
 		    Filter flt = new Filter();
-		    flt.doFilterRoute(datei, Convert.toDouble(inf.feedback.getText()));
+		    flt.doFilterRoute(datei, Convert.toDouble(inf.getFeedback().getText()));
 		}
 		Vm.showWait(false);
 		fltList.select(-1);

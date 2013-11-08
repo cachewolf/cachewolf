@@ -1,0 +1,28 @@
+﻿#intentionally left blank
+Name: 									de.Hamburg TK
+MapType:            					de.hh
+MainUrl:            					http://geodienste-hamburg.de/HH_WMS_Geobasisdaten?
+LayersUrlPart:     						LAYERS=1,5,9,13,17,21
+ImageFormatUrlPart:						FORMAT=image/jpeg
+ImageFileExtension: 					.jpg
+CoordinateReferenceSystemCacheWolf:		31467
+CoordinateReferenceSystemUrlPart:		SRS=EPSG:31467
+RecommendedScale:						5 0.5 1 15 30
+BoundingBoxTopLeftWGS84: 				N 54.4898 E 8.3817
+BoundingBoxBottomRightWGS84: 			N 52.4834 E 11.7749
+ServiceTypeUrlPart:						SERVICE=WMS
+VersionUrlPart:							VERSION=1.1.1
+RequestUrlPart:							REQUEST=GetMap
+StylesUrlPart:							STYLES=
+#
+#MinScale:   							?
+#MaxScale:   							?
+#
+#MinPixelSize:							?
+#MaxPixelSize:							?
+#RecommendedWidthPixelSize: 			256
+#RecommendedHeightPixelSize: 			256
+#Thomas Eichhorn, Landesbetrieb Geoinformation und Vermessung, Neuenfelder Straße 19, 21109 Hamburg, +49 40 42826 5975, gvgeoportal@gv.hamburg.de
+#kostenfrei fuer die kommerzielle und nicht-kommerzielle Nutzung
+#Datenlizenz Deutschland - Namensnennung - Version 1.0; siehe http://www.daten-deutschland.de/bibliothek/Datenlizenz_Deutschland/dl-de-by-1.0
+#Namensnennung: "Freie und Hansestadt Hamburg, Landesbetrieb Geoinformation und Vermessung"

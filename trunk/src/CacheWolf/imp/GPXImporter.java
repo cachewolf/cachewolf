@@ -213,7 +213,7 @@ public class GPXImporter extends MinML {
     public void startElement(String name, AttributeList atts) {
 
 	strBuf = new StringBuffer(300);
-	if (infB.isClosed)
+	if (infB.isClosed())
 	    return;
 	if (name.equals("gpx")) {
 	    // check for opencaching
@@ -340,7 +340,7 @@ public class GPXImporter extends MinML {
 
     public void endElement(String name) {
 	strData = strBuf.toString();
-	if (infB.isClosed)
+	if (infB.isClosed())
 	    return;
 	// logs
 	if (inLogs) {
