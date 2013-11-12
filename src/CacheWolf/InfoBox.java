@@ -40,7 +40,6 @@ public class InfoBox extends Form {
     private TextMessage msgArea;
     private TextMessage warnings;
     private mCheckBox checkBox;
-    private boolean checkBoxState = false;
     private mInput feedback = new mInput();
     private ExecutePanel executePanel;
 
@@ -63,7 +62,7 @@ public class InfoBox extends Form {
     public InfoBox(String title, String info, int type, boolean autoWrap) {
 	// Resize InfoBox
 	int psx = Global.pref.fontSize * 14;
-	int psy = Global.pref.fontSize * 6;
+	int psy = Global.pref.fontSize * 12;
 	if (Global.pref.useBigIcons) {
 	    psx = Math.min(psx + 48, MyLocale.getScreenWidth());
 	    psy = Math.min(psy + 16, MyLocale.getScreenHeight());
@@ -91,26 +90,25 @@ public class InfoBox extends Form {
 	    msgArea.alignment = CENTER;
 	    msgArea.anchor = CENTER;
 	    this.addLast(msgArea.getScrollablePanel(), STRETCH, FILL);
-	    this.setPreferredSize(psx + 100, psy);
 	    break;
 	case PROGRESS_WITH_WARNINGS:
-	    msgArea = new TextMessage(info);
+	    msgArea = new TextMessage(info + "\n\n\n\n");
 	    msgArea.autoWrap = autoWrap;
 	    msgArea.alignment = CENTER;
 	    msgArea.anchor = CENTER;
-	    msgArea.setPreferredSize(psx - 20, psy);
-	    this.addLast(msgArea.getScrollablePanel(), HEXPAND | HGROW, HEXPAND | HGROW);
-	    warnings = new TextMessage("");
+	    this.addLast(msgArea.getScrollablePanel());
+	    warnings = new TextMessage("\n\n\n\n");
 	    warnings.autoWrap = autoWrap;
-	    this.addLast(warnings.getScrollablePanel(), HEXPAND | VEXPAND | VGROW, HEXPAND | VEXPAND | VGROW);
+	    this.addLast(warnings.getScrollablePanel());
 	    executePanel = new ExecutePanel(this);
-	    executePanel.hide(ExecutePanel.APPLY);
-	    executePanel.hide(ExecutePanel.CANCEL);
+	    executePanel.hide(FormBase.YESB);
 	    break;
 	}
 	this.title = title;
 	this.type = type;
 	relayout(false);
+	if (warnings != null)
+	    warnings.setText("");
     }
 
     public final int wait(int doButtons)
@@ -150,28 +148,40 @@ public class InfoBox extends Form {
 	return feedback.getText();
     }
 
+    public void setInput(String value) {
+	feedback.setText(value);
+    }
+
     public void addWarning(String w) {
 	warnings.setText(warnings.text + w);
     }
 
-    public boolean isCheckBoxState() {
-	return checkBoxState;
+    public boolean getCheckBoxState() {
+	return checkBox.getState();
     }
 
-    public void setCheckBoxState(boolean checkBoxState) {
-	this.checkBoxState = checkBoxState;
+    public void setCheckBoxState(boolean to) {
+	checkBox.setState(to);
     }
 
-    public mInput getFeedback() {
-	return feedback;
+    public void showButton(int button) {
+	executePanel.show(button);
     }
 
-    public void setFeedback(mInput feedback) {
-	this.feedback = feedback;
+    public void hideButton(int button) {
+	executePanel.hide(button);
     }
 
-    public void addOkButton() {
-	executePanel.show(ExecutePanel.APPLY);
+    public void enableButton(int button) {
+	executePanel.enable(button);
+    }
+
+    public void disableButton(int button) {
+	executePanel.disable(button);
+    }
+
+    public void setButtonText(String text, int button) {
+	executePanel.setText(text, button);
     }
 
     public boolean isClosed() {
@@ -187,12 +197,13 @@ public class InfoBox extends Form {
     public void onEvent(Event ev) {
 	if (ev instanceof ControlEvent && ev.type == ControlEvent.PRESSED) {
 	    if (ev.target == executePanel.applyButton) {
-		if (type == CHECKBOX)
-		    checkBoxState = checkBox.getState();
+		isClosed = true;
 		this.close(FormBase.IDOK);
 	    } else if (ev.target == executePanel.cancelButton) {
+		isClosed = true;
 		this.close(FormBase.IDCANCEL);
 	    } else if (ev.target == executePanel.refuseButton) {
+		isClosed = true;
 		this.close(FormBase.IDNO);
 	    }
 	}

@@ -143,11 +143,9 @@ class TplFilter implements HTML.Tmpl.Filter {
 	    } else if (param.startsWith("input")) {
 		String par = param.substring(5);
 		InfoBox inf = new InfoBox("Eingabe", par, InfoBox.INPUT);
-		inf.getFeedback().setText(value);
-		String res;
+		inf.setInput(value);
 		if (inf.execute() == FormBase.IDOK) {
-		    res = inf.getInput();
-		    additionalVarParams.put(par, res);
+		    additionalVarParams.put(par, inf.getInput());
 		}
 	    } else if (param.startsWith("const")) {
 		additionalVarParams.put(param.substring(5), value);

@@ -653,8 +653,7 @@ public class FilterScreen extends Form {
 		    InfoBox inf = new InfoBox("Distance?", "Dist:", InfoBox.INPUT);
 		    inf.execute();
 		    Vm.showWait(true);
-		    Filter flt = new Filter();
-		    flt.doFilterRoute(datei, Convert.toDouble(inf.getFeedback().getText()));
+		    new Filter().doFilterRoute(datei, Convert.toDouble(inf.getInput()));
 		}
 		Vm.showWait(false);
 		fltList.select(-1);

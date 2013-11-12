@@ -1013,7 +1013,7 @@ public class SpiderGC {
     public int spiderSingle(int number, InfoBox pInfB, boolean loadAllLogs) {
 	int ret = -1;
 	this.infB = pInfB;
-	final CacheHolder ch = new CacheHolder(); // cacheDB.get(number);
+	final CacheHolder ch = new CacheHolder();
 	ch.setWayPoint(cacheDB.get(number).getWayPoint());
 	if (ch.isAddiWpt())
 	    return -1; // addi waypoint, comes with parent cache
@@ -1676,7 +1676,7 @@ public class SpiderGC {
     /**
      * check for Premium Member Cache
      */
-    private boolean doPMCache(String chWaypoint, String toCheck) {
+    private boolean doPMCache(String waypoint, String toCheck) {
 	if (Global.pref.isPremium)
 	    return true;
 	if (toCheck.indexOf(propPM) <= 0) {
@@ -1684,8 +1684,16 @@ public class SpiderGC {
 	} else {
 	    numPrivate = numPrivate + 1;
 	    // if (spiderAllFinds) {
-	    Global.pref.log(chWaypoint + " is private.", null);
+	    Global.pref.log(waypoint + " is private.", null);
 	    // }
+	    /*
+	    CacheHolder ch = cacheDB.get(waypoint);
+	    if (ch == null) {
+	    ch = new CacheHolder(waypoint);
+	    cacheDB.add(ch);
+	    ch.save();
+	    }
+	    */
 	    return false;
 	}
     }

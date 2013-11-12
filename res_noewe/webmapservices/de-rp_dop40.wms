@@ -1,0 +1,29 @@
+﻿#intentionally left blank
+Name: 									de.Rheinland-Pfalz DOP40
+MapType:            					de.rp dop
+MainUrl:            					http://geo4.service24.rlp.de/wms/dop_basis.fcgi?
+LayersUrlPart:     						LAYERS=rp_dop
+ImageFormatUrlPart:						FORMAT=image/jpeg
+ImageFileExtension: 					.jpg
+CoordinateReferenceSystemCacheWolf:		31466 31467 31468 31469
+CoordinateReferenceSystemUrlPart:		SRS=EPSG:31466 SRS=EPSG:31467 SRS=EPSG:31468 SRS=EPSG:31469
+RecommendedScale:						1 5 10
+BoundingBoxTopLeftWGS84: 				N 51.0009 E 6.0378
+BoundingBoxBottomRightWGS84: 			N 48.8980 E 8.6177
+ServiceTypeUrlPart:						SERVICE=WMS
+VersionUrlPart:							VERSION=1.1.1
+RequestUrlPart:							REQUEST=GetMap
+StylesUrlPart:							STYLES=
+#
+#MinScale:   							 ?
+#MaxScale:   							 ?
+#
+#MinPixelSize:							 ?
+#MaxPixelSize:							 ?
+#RecommendedWidthPixelSize: 			 256
+#RecommendedHeightPixelSize: 			 256
+#Digitale Orthophotos (DOP) - Dienst für entzerrte Luftbilder der Vermessungs- und Katasterverwaltung Rheinland-Pfalz mit einer Bodenauflösung von 40 cm.
+#Sämtliche Rechte an diesem Produkt liegen beim Landesamt für Vermessung und Geobasisinformation Rheinland-Pfalz (LVermGeo). 
+#Das Anschauen in den Online-Anwendungen der Vermessungs- und Katasterverwaltung Rheinland-Pfalz sowie im GeoPortal.rlp ist kostenfrei. 
+#Jede darüber hinaus gehende Nutzung, so auch das Einbinden in weitere Anwendungen oder kommerzielle Nutzung ist kostenpflichtig und bedarf einer vertraglichen Grundlage. 
+#Bitte nehmen Sie dazu Kontakt mit dem LVermGeo  (http://www.lvermgeo.rlp.de/index.php?id=2891, Tel.-Nr.: 0261-492-515) auf.

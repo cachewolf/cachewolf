@@ -161,7 +161,7 @@ public final class GuiImageBroker {
 	return new IconAndText(getImage(icon), getText(text), null); //Gui.makeHot(text)
     }
 
-    public static IImage getImageForButton(mButton btn, String text, String icon) {
+    public static IImage getImageOfButton(mButton btn, String text, String icon) {
 	if (btn.image != null) {
 	    if (btn.image instanceof IconAndText) {
 		return getIconAndText(text, icon);
@@ -229,7 +229,6 @@ public final class GuiImageBroker {
     }
 
     public static MenuItem getMenuItem(String text, String icon) {
-	//return new MenuItem().iconize(text, getImage(icon), true);
 	return new MenuItem().iconize(getText(text), getImage(icon), true);
     }
 
