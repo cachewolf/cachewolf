@@ -213,58 +213,72 @@ Public Class capxml2wms
 
         Dim wmsFileName As String = IO.Path.ChangeExtension(xmlFileName, ".wms")
         IO.File.Delete(wmsFileName) 'vorsichtshalber
-        Dim encoding As System.Text.Encoding = New System.Text.UTF8Encoding(False)
+        Dim encoding As System.Text.Encoding = New System.Text.UTF8Encoding(True)
         Dim F As New System.IO.StreamWriter(wmsFileName, False, encoding)
 
         Me.ComboBoxBBoxI.SelectedIndex = Me.ComboBoxBBox.SelectedIndex
         GetBBoxValues(Me.ComboBoxBBoxI.SelectedItem)
 
-
-        F.WriteLine("TakenFromUrl:       " & OnlineResource)
-        F.WriteLine("GetCapabilitiesUrl: " & capsUrl)
-        F.WriteLine("Name:               " & land & "." & area & " topo")
-        F.WriteLine("MapType:                        topo")
-        F.WriteLine("MainUrl:            " & wmsUrl)
-        F.WriteLine("ServiceTypeUrlPart: SERVICE=WMS")
-        F.WriteLine("VersionUrlPart:     VERSION=" & Version)
-        F.WriteLine("CoordinateReferenceSystemCacheWolf: " & SRSCW)
-        F.WriteLine("CoordinateReferenceSystemUrlPart: " & SRS)
-        F.WriteLine("RequestUrlPart:     REQUEST=GetMap")
-        ' und noch die möglichen Layer , Title, ScaleHint
-        For Each s As String In CheckedListBoxLayers.Items
-            F.WriteLine("#LayersUrlPart:     LAYERS=" & s)
-        Next
         ' und die gewählten Layer durch Komma getrennt
         Dim SelectedLayers As String = ""
         For Each s As String In CheckedListBoxLayers.CheckedItems
             SelectedLayers += "," & s.Split("|")(0)
         Next
-        If SelectedLayers <> "" Then
-            F.WriteLine("LayersUrlPart:     LAYERS=" & SelectedLayers.Substring(1).Replace(" ", "%20"))
-        Else
-            F.WriteLine("LayersUrlPart:     LAYERS=")
-        End If
-        F.WriteLine("StylesUrlPart:     STYLES=")
-        F.WriteLine("ImageFormatUrlPart:FORMAT=" & Me.ComboBoxFormat.SelectedItem.ToString)
-        F.WriteLine("BoundingBoxTopLeftWGS84: " & maxy & " " & minx)
-        F.WriteLine("BoundingBoxBottomRightWGS84: " & miny & " " & maxx)
-        F.WriteLine("#BBox_Mitte: " & mittey & " " & mittex)
-        F.WriteLine("MinScale:   " & (Math.Ceiling(minScale * 10000) / 10000).ToString(DPunkt))
-        F.WriteLine("MaxScale:   " & (Math.Floor(maxScale * 10000) / 10000).ToString(DPunkt))
+
+        ' und noch die möglichen Layer , Title, ScaleHint
+        'For Each s As String In CheckedListBoxLayers.Items
+        '    F.WriteLine("#LayersUrlPart:     LAYERS=" & s)
+        'Next
+
         Dim recsscales As String = ""
         If Not recScale Is Nothing Then
             For Each d As Double In recScale
                 recsscales = recsscales & " " & (Math.Floor(d * 10000) / 10000).ToString(DPunkt)
             Next
-            recsscales.Trim()
+            recsscales = recsscales.Trim()
         Else
             recsscales = "5"
         End If
-        F.WriteLine("RecommendedScale:   " & recsscales)
-        'Me.ComboBoxFormat.SelectedItem.ToString.Split("/")(1)
-        Dim rk As Microsoft.Win32.RegistryKey = My.Computer.Registry.ClassesRoot.OpenSubKey("Mime\Database\Content Type\" & Me.ComboBoxFormat.SelectedItem.ToString)
-        Dim stmp As String = rk.GetValue("Extension")
-        F.WriteLine("ImageFileExtension: " & stmp)
+
+        F.WriteLine("#intentionally left blank")
+        F.WriteLine("Name:                                   " & land & "." & area & " topo")
+        F.WriteLine("MapType:                                " & land & "." & area & " " & SelectedLayers)
+        F.WriteLine("MainUrl:                                " & wmsUrl)
+        If SelectedLayers <> "" Then
+            SelectedLayers = SelectedLayers.Substring(1).Replace(" ", "%20")
+        End If
+        F.WriteLine("LayersUrlPart:                          LAYERS=" & SelectedLayers)
+        F.WriteLine("ImageFormatUrlPart:                     FORMAT=" & Me.ComboBoxFormat.SelectedItem.ToString)
+        Try
+            Dim rk As Microsoft.Win32.RegistryKey = My.Computer.Registry.ClassesRoot.OpenSubKey("Mime\Database\Content Type\" & Me.ComboBoxFormat.SelectedItem.ToString.ToLower)
+            Dim stmp As String = rk.GetValue("Extension")
+            F.WriteLine("ImageFileExtension:                     " & stmp)
+        Catch ex As Exception
+            F.WriteLine("ImageFileExtension:                     .jpg")
+        End Try
+        F.WriteLine("CoordinateReferenceSystemCacheWolf:     " & SRSCW.Trim)
+        F.WriteLine("CoordinateReferenceSystemUrlPart:       " & SRS.Trim)
+        F.WriteLine("RecommendedScale:                       " & recsscales)
+        F.WriteLine("BoundingBoxTopLeftWGS84:                " & maxy & " " & minx)
+        F.WriteLine("BoundingBoxBottomRightWGS84:            " & miny & " " & maxx)
+        'F.WriteLine("#BBox_Mitte: " & mittey & " " & mittex)
+        F.WriteLine("ServiceTypeUrlPart:                     SERVICE=WMS")
+        F.WriteLine("VersionUrlPart:                         VERSION=" & Version)
+        F.WriteLine("RequestUrlPart:                         REQUEST=GetMap")
+        F.WriteLine("StylesUrlPart:                          STYLES=")
+        F.WriteLine("#")
+        F.WriteLine("MinScale:                               " & (Math.Ceiling(minScale * 10000) / 10000).ToString(DPunkt))
+        F.WriteLine("MaxScale:                               " & (Math.Floor(maxScale * 10000) / 10000).ToString(DPunkt))
+        F.WriteLine("#")
+        F.WriteLine("#MinPixelSize:                           ?")
+        F.WriteLine("#MaxPixelSize:                           ?")
+        F.WriteLine("#RecommendedWidthPixelSize:              256")
+        F.WriteLine("#RecommendedHeightPixelSize:             256")
+        F.WriteLine("#")
+        F.WriteLine("#")
+        F.WriteLine("#")
+        F.WriteLine("TakenFromUrl:                           " & OnlineResource)
+        F.WriteLine("GetCapabilitiesUrl:                     " & capsUrl)
 
         F.Close()
         ' noch ne gpx mit waypoints der BBox
@@ -569,9 +583,9 @@ Public Class capxml2wms
                 End If
             End If
         Next
-        Me.ComboBoxBBox.SelectedIndex = 0
-        'Me.ComboBoxBBoxI.SelectedIndex = 0
-
+        If Me.ComboBoxBBox.Items.Count > 0 Then
+            Me.ComboBoxBBox.SelectedIndex = 0
+        End If
         '.z.B.
         '<BoundingBox SRS="EPSG:31467" minx="3340000" miny="5230000" maxx="3615000" maxy="5550000" />
         OBBoxes = New Dictionary(Of String, XmlElement)

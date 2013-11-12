@@ -107,7 +107,7 @@ Public Class Map
         End If
         capxml2wms.recScale.Add(sf)
         scaleLowerLimit = capxml2wms.minScale / Math.Sqrt(2)
-        scaleUpperLimit = capxml2wms.maxScale / Math.Sqrt(2)
+        scaleUpperLimit = sf 'capxml2wms.maxScale / Math.Sqrt(2)
         _MapLoad()
     End Sub
 

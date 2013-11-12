@@ -156,6 +156,8 @@ public class MapLoaderGui extends Form {
 	pnlTiles.addLast(pnlTilestileHeightInput, CellConstants.DONTSTRETCH, CellConstants.DONTFILL | CellConstants.WEST);
 
 	executePanel = new ExecutePanel(pnlTiles);
+	executePanel.setText(MyLocale.getMsg(162, "Download"), FormBase.YESB);
+	executePanel.setText(MyLocale.getMsg(4107, "Done"), FormBase.CANCELB);
 
 	updateForCachesState();
 	mTab.addCard(pnlTiles, MyLocale.getMsg(1812, "Tiles"), MyLocale.getMsg(1812, "Tiles"));
@@ -176,6 +178,8 @@ public class MapLoaderGui extends Form {
 	pnlPerCache.addLast(pnl, CellConstants.DONTSTRETCH, CellConstants.DONTFILL | CellConstants.WEST);
 
 	executePanelPerCache = new ExecutePanel(pnlPerCache);
+	executePanelPerCache.setText(MyLocale.getMsg(162, "Download"), FormBase.YESB);
+	executePanelPerCache.setText(MyLocale.getMsg(4107, "Done"), FormBase.CANCELB);
 
 	mTab.addCard(pnlPerCache, MyLocale.getMsg(1814, "Per cache"), MyLocale.getMsg(1813, "Per Cache"));
 	setRecommScaleInput();
@@ -312,9 +316,8 @@ public class MapLoaderGui extends Form {
 	    return;
 
 	InfoBox progressBox = new InfoBox(MyLocale.getMsg(1815, "Downloading georeferenced maps"), MyLocale.getMsg(1816, "Downloading georeferenced maps\n \n \n \n \n"), InfoBox.PROGRESS_WITH_WARNINGS);
-	//progressBox.setPreferredSize(220, 300);
-	//progressBox.setInfoHeight(160);
-	//progressBox.relayout(false);
+	progressBox.setButtonText(MyLocale.getMsg(111, "Exit"), FormBase.YESB);
+	progressBox.disableButton(FormBase.YESB);
 	progressBox.exec();
 	mapLoader.setProgressInfoBox(progressBox);
 	Vm.showWait(true);
@@ -352,34 +355,40 @@ public class MapLoaderGui extends Form {
 	    Global.profile.getSourroundingArea(onlySelected);
 	    int numCaches = Global.profile.numCachesInArea;
 	    for (int i = cacheDB.size() - 1; i >= 0; i--) {
-		ch = cacheDB.get(i);
-		if (!this.onlySelected || ch.is_Checked) {
-		    // TODO != 0 sollte verschwinden, sobald das handling von nicht gesetzten Koos überall korrekt ist
-		    if (ch.getPos().isValid() && ch.getPos().latDec != 0 && ch.getPos().lonDec != 0) {
-			numdownloaded++;
-			progressBox.setInfo(MyLocale.getMsg(1820, "Downloading map '") + mapLoader.getCurrentOnlineMapService().getName() + "'\n" + numdownloaded + " / " + numCaches + MyLocale.getMsg(1821, "\n for cache:\n") + ch.getCacheName());
-			try {
-			    mapLoader.downloadMap(ch.getPos(), scale, TileSizeInPixels, mapsDir);
-			} catch (Exception e) {
-			    progressBox.addWarning(MyLocale.getMsg(1822, "Cache:") + " " + ch.getCacheName() + "(" + ch.getWayPoint() + ") " + MyLocale.getMsg(1823, "Ignoring error:") + " " + e.getMessage() + "\n");
+		if (!progressBox.isClosed()) {
+		    ch = cacheDB.get(i);
+		    if (!this.onlySelected || ch.is_Checked) {
+			// TODO != 0 sollte verschwinden, sobald das handling von nicht gesetzten Koos überall korrekt ist
+			if (ch.getPos().isValid() && ch.getPos().latDec != 0 && ch.getPos().lonDec != 0) {
+			    numdownloaded++;
+			    progressBox.setInfo(MyLocale.getMsg(1820, "Downloading map '") + mapLoader.getCurrentOnlineMapService().getName() + "'\n" + numdownloaded + " / " + numCaches + MyLocale.getMsg(1821, "\n for cache:\n") + ch.getCacheName());
+			    try {
+				mapLoader.downloadMap(ch.getPos(), scale, TileSizeInPixels, mapsDir);
+			    } catch (Exception e) {
+				progressBox.addWarning(MyLocale.getMsg(1822, "Cache:") + " " + ch.getCacheName() + "(" + ch.getWayPoint() + ") " + MyLocale.getMsg(1823, "Ignoring error:") + " " + e.getMessage() + "\n");
+			    }
 			}
 		    }
 		}
 	    }
 	}
-	if (Global.mainTab.movingMap != null)
-	    Global.mainTab.movingMap.setMapsloaded(false);
-	// rebuild MapsList.txt
-	progressBox.setInfo("rebuild MapsList.txt");
-	File MapsListFile = new File(Global.profile.getMapsDir() + "/MapsList.txt");
-	MapsListFile.delete();
-	MapsList maps = new MapsList(center.latDec);
-	maps.clear();
-	maps = null;
+	if (!progressBox.isClosed()) {
+	    if (Global.mainTab.movingMap != null)
+		Global.mainTab.movingMap.setMapsloaded(false);
+	    // rebuild MapsList.txt
+	    progressBox.setInfo("rebuild MapsList.txt");
+	    File MapsListFile = new File(Global.profile.getMapsDir() + "/MapsList.txt");
+	    MapsListFile.delete();
+	    MapsList maps = new MapsList(center.latDec);
+	    maps.clear();
+	    maps = null;
+	    progressBox.addWarning(MyLocale.getMsg(1826, "Finished downloading and calibration of maps"));
+	    progressBox.disableButton(FormBase.CANCELB);
+	    progressBox.enableButton(FormBase.YESB);
+	    Vm.showWait(false);
+	    progressBox.waitUntilClosed();
+	}
 	Vm.showWait(false);
-	progressBox.addWarning(MyLocale.getMsg(1826, "Finished downloading and calibration of maps"));
-	progressBox.addOkButton();
-	progressBox.waitUntilClosed();
 	mapLoader.setProgressInfoBox(null);
     }
 

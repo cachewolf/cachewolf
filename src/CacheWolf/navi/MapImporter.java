@@ -118,7 +118,7 @@ public class MapImporter extends Form {
 	this.addLast(scp.getScrollablePanel(), CellConstants.STRETCH, CellConstants.FILL);
 	infPanel = new CellPanel();
 	infPanel.addNext(infLabel, CellConstants.STRETCH, CellConstants.FILL);
-	infButton = new mButton(MyLocale.getMsg(4107, "Done!"));
+	infButton = new mButton(MyLocale.getMsg(803, "Done!"));
 	infPanel.addLast(infButton, CellConstants.DONTSTRETCH, CellConstants.FILL);
 	this.addLast(infPanel, CellConstants.DONTSTRETCH, CellConstants.FILL);
 	//scp.repaintNow();
@@ -342,7 +342,7 @@ public class MapImporter extends Form {
 	} // for file
 	Vm.showWait(this, false);
 	inf.addInfo("\n" + MyLocale.getMsg(4120, "done."));
-	inf.addOkButton();
+	inf.showButton(FormBase.YESB);
 	if (Global.mainTab.movingMap != null)
 	    Global.mainTab.movingMap.setMapsloaded(false);
 	return FormBase.IDOK;

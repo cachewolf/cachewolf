@@ -251,7 +251,7 @@ public class OCXMLImporter extends MinML {
 	    inf.addWarning("\nNumber of" + "\n...caches new/updated: " + numCacheImported + " / " + numCacheUpdated + "\n...cache descriptions new/updated: " + numDescImported + "\n...logs new/updated: " + numLogImported);
 	    inf.setInfo(finalMessage);
 	}
-	inf.addOkButton();
+	inf.showButton(FormBase.YESB);
     }
 
     private boolean syncOC(String address) {
