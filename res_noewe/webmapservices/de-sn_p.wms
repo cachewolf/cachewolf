@@ -1,0 +1,32 @@
+﻿#intentionally left blank
+Name:                                  de.Sachsen Digitale Orthophotos (Bodenauflösung 20 cm)
+MapType:                               de.sn dop
+MainUrl:                               http://www.landesvermessung.sachsen.de/ias/basiskarte4/service/SRV4ADV_P_DOPRGB/WMSFREE_TK/wmsservice?
+LayersUrlPart:                         LAYERS=adv_dop
+ImageFormatUrlPart:                    FORMAT=image/jpeg
+ImageFileExtension:                    .jpg
+CoordinateReferenceSystemCacheWolf:    31468 31467 31469
+CoordinateReferenceSystemUrlPart:      SRS=EPSG:31468 SRS=EPSG:31467 SRS=EPSG:31469
+RecommendedScale:                      1 0.5 2.5 5 10
+BoundingBoxTopLeftWGS84:               N 51.8592 E 11.7651
+BoundingBoxBottomRightWGS84:           N 50.0294 E 15.1358
+ServiceTypeUrlPart:                    SERVICE=WMS
+VersionUrlPart:                        VERSION=1.1.1
+RequestUrlPart:                        REQUEST=GetMap
+StylesUrlPart:                         STYLES=
+#
+#MinScale:                              0
+#MaxScale:                              500
+#
+#MinPixelSize:                          ?
+#MaxPixelSize:                          ?
+#RecommendedWidthPixelSize:             256
+#RecommendedHeightPixelSize:            256
+#
+#Herr Berg, Staatsbetrieb Geobasisinformation und Vermessung Sachsen (GeoSN), Olbrichtplatz 3, 01099 Dresden DE-SN, +49 (0)351 8283-0, info@geosn.sachsen.de
+#kostenfrei
+#Staatsbetrieb Geobasisinformation und Vermessung Sachsen
+#aktuelle digitale Digitale Orthofotos DOP (Luftbilder), entzerrt,landesweit, blattschnittfrei, in Farbe, Bodenauflösungen ca. 0,2 m und ca. 3 m (LowRes), komprimierte Rasterdaten
+#
+TakenFromUrl:                          http://www.landesvermessung.sachsen.de/inhalt/produkte/geo/basis/basis_dienste.html
+GetCapabilitiesUrl:                    http://www.landesvermessung.sachsen.de/ias/basiskarte4/service/SRV4ADV_P_DOPRGB/WMSFREE_TK/wmsservice?SERVICE=WMS&VERSION=1.1.1&REQUEST=GetCapabilities

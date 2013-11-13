@@ -1,0 +1,33 @@
+﻿#intentionally left blank
+Name:                                  de.Berlin Digitale farbige Orthophotos 2011 (DOP20RGB)
+MapType:                               de.bb DOP
+MainUrl:                               http://fbinter.stadt-berlin.de/fb/wms/senstadt/k_luftbild2011_20?
+LayersUrlPart:                         LAYERS=0
+ImageFormatUrlPart:                    FORMAT=image/jpeg
+ImageFileExtension:                    .jpg
+CoordinateReferenceSystemCacheWolf:    4326
+CoordinateReferenceSystemUrlPart:      SRS=EPSG:4326
+RecommendedScale:                      1 0.5 2 4
+BoundingBoxTopLeftWGS84:               N 52.6877 E 13.0790
+BoundingBoxBottomRightWGS84:           N 52.3284 E 13.7701
+ServiceTypeUrlPart:                    SERVICE=WMS
+VersionUrlPart:                        VERSION=1.1.1
+RequestUrlPart:                        REQUEST=GetMap
+StylesUrlPart:                         STYLES=
+#
+#MinScale:                              0
+#MaxScale:                              45
+#
+#MinPixelSize:                          ?
+#MaxPixelSize:                          ?
+#RecommendedWidthPixelSize:             256
+#RecommendedHeightPixelSize:            256
+#
+#Digitale Orthophotos für das gesamte Berliner Stadtgebiet mit einer Bodenauflösung von 0,20 m im Blattschnitt 2 km x 2 km.
+#Senatsverwaltung für Stadtentwicklung und Umwelt Berlin, Fehrbelliner Platz 1, 10707 Berlin , +49-30-90139-5257, fisbroker@senstadtum.berlin.de
+#Nutzungsbestimmungen: http://www.stadtentwicklung.berlin.de/geoinformation/download/nutzIII.pdf.
+#Nutzungsbedingungen: Der Quellenvermerk, der gemäß §2 der o.g. Nutzungsbestimmungen zu verwenden ist, lautet "Geoportal Berlin / [Titel des Datensatzes]".
+#Zugriffsbeschränkungen: keine
+#
+TakenFromUrl:                          http://www.stadtentwicklung.berlin.de/geoinformation/geodateninfrastruktur/de/geodienste/wms_titel.shtml
+GetCapabilitiesUrl:                    http://fbinter.stadt-berlin.de/fb/wms/senstadt/k_luftbild2011_20?SERVICE=WMS&VERSION=1.1.1&REQUEST=GetCapabilities

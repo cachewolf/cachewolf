@@ -1,0 +1,31 @@
+﻿#intentionally left blank
+Name:                                  de.Brandenburg Digitale Topographische Karte 1 : 25 000 Farbe (WMS-DTK25_Farbe)
+MapType:                               de.bb t25
+MainUrl:                               http://isk.geobasis-bb.de/ows/dtk25.php?
+LayersUrlPart:                         LAYERS=1
+ImageFormatUrlPart:                    FORMAT=image/jpeg
+ImageFileExtension:                    .jpg
+CoordinateReferenceSystemCacheWolf:    4326
+CoordinateReferenceSystemUrlPart:      SRS=EPSG:4326
+RecommendedScale:                      2.5 1 5
+BoundingBoxTopLeftWGS84:               N 53.9234 E 10.1898
+BoundingBoxBottomRightWGS84:           N 50.8699 E 15.7081
+ServiceTypeUrlPart:                    SERVICE=WMS
+VersionUrlPart:                        VERSION=1.1.1
+RequestUrlPart:                        REQUEST=GetMap
+StylesUrlPart:                         STYLES=
+#
+#MinScale:                              0
+#MaxScale:                              100
+#
+#MinPixelSize:                          ?
+#MaxPixelSize:                          ?
+#RecommendedWidthPixelSize:             256
+#RecommendedHeightPixelSize:            256
+#
+#Der Web Map Service WMS-DTK25_Farbe stellt das Kartenbild der Topographischen Karte 1: 25 000 vom Gebiet Brandenburg zur Verfuegung.
+#Landesvermessung und Geobasisinformation Brandenburg (LGB), Heinrich-Mann-Allee 103, 14473 Potsdam, +49-331-8844-316, gsc@geobasis-bb.de
+#Nutzungsbedingungen: http://www.geobasis-bb.de/GeoPortal1/pdf/AGNB.pdf
+#Die LGB besitzt alle Rechte an den von ihr bereitgestellten Geoservices.
+TakenFromUrl:                          http://geoportal.brandenburg.de/servicebereich/geowebdienste.html?letter1=1&letter2=Z
+GetCapabilitiesUrl:                    http://isk.geobasis-bb.de/ows/dtk25.php?SERVICE=WMS&VERSION=1.1.1&REQUEST=GetCapabilities
