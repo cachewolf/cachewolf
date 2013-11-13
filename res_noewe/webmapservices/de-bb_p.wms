@@ -1,0 +1,32 @@
+﻿#intentionally left blank
+Name:                                  de.Brandenburg Digitale Orthophotos 20cm Bodenauflösung Farbe (WMS-DOP20c)
+MapType:                               de.bb dop
+MainUrl:                               http://isk.geobasis-bb.de/ows/dop20c.php?
+LayersUrlPart:                         LAYERS=0
+ImageFormatUrlPart:                    FORMAT=image/jpeg
+ImageFileExtension:                    .jpg
+CoordinateReferenceSystemCacheWolf:    4326
+CoordinateReferenceSystemUrlPart:      SRS=EPSG:4326
+RecommendedScale:                      1 0.5 2 4 8 16
+BoundingBoxTopLeftWGS84:               N 53.9234 E 10.1898
+BoundingBoxBottomRightWGS84:           N 50.8699 E 15.7081
+ServiceTypeUrlPart:                    SERVICE=WMS
+VersionUrlPart:                        VERSION=1.1.1
+RequestUrlPart:                        REQUEST=GetMap
+StylesUrlPart:                         STYLES=
+#
+#MinScale:                              0
+#MaxScale:                              100
+#
+#MinPixelSize:                          ?
+#MaxPixelSize:                          ?
+#RecommendedWidthPixelSize:             256
+#RecommendedHeightPixelSize:            256
+#
+#Der Web Map Service WMS-DOP20c stellt digitale farbige Orthophotos (Luftbilder) mit der Bodenauflösung von 20cm vom Gebiet Brandenburg zur Verfügung.
+#Landesvermessung und Geobasisinformation Brandenburg (LGB), Heinrich-Mann-Allee 103, 14473 Potsdam, +49-331-8844-316, gsc@geobasis-bb.de
+#Nutzungsbedingungen: http://www.geobasis-bb.de/GeoPortal1/pdf/AGNB.pdf
+#Die LGB besitzt alle Rechte an den von ihr bereitgestellten Geoservices.
+#
+TakenFromUrl:                          http://geoportal.brandenburg.de/servicebereich/geowebdienste.html?letter1=1&letter2=Z
+GetCapabilitiesUrl:                    http://isk.geobasis-bb.de/ows/dop20c.php?SERVICE=WMS&VERSION=1.1.1&REQUEST=GetCapabilities
