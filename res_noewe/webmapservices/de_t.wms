@@ -1,31 +1,29 @@
 ﻿#intentionally left blank
-Name:                                   Deutschland 1:200.000 Digitale Topographische Karte
-MapType:                                de DTK200
-MainUrl:                                http://sg.geodatenzentrum.de/wms_dtk200?
-LayersUrlPart:                          LAYERS=DTK200
-ImageFormatUrlPart:                     FORMAT=image/png
-ImageFileExtension:                     .png
+Name:                                   de Webatlas, Bundesamt für Kartographie und Geodäsie 
+MapType:                                de t
+MainUrl:                                https://sg.geodatenzentrum.de/wms_webatlasde__8f827e84-bdc9-cda4-aad0-f9711caab5c3?
+LayersUrlPart:                          LAYERS=webatlasde
+ImageFormatUrlPart:                     FORMAT=image/jpeg
+ImageFileExtension:                     .jpg
 CoordinateReferenceSystemCacheWolf:     31466 31467 31468 31469
 CoordinateReferenceSystemUrlPart:       SRS=EPSG:31466 SRS=EPSG:31467 SRS=EPSG:31468 SRS=EPSG:31469
-RecommendedScale:                       10 20
-BoundingBoxTopLeftWGS84:                N 55.3817 E 4.9972
-BoundingBoxBottomRightWGS84:            N 16.6036 E 46.4396
+RecommendedScale:                       1 0.5 2 4 8 16 32 64 128 256
+BoundingBoxTopLeftWGS84:                N 56.8548 E 0.1059
+BoundingBoxBottomRightWGS84:            N 20.4489 E 45.2375
 ServiceTypeUrlPart:                     SERVICE=WMS
 VersionUrlPart:                         VERSION=1.1.1
 RequestUrlPart:                         REQUEST=GetMap
 StylesUrlPart:                          STYLES=
 #
-#MinScale:                               2.5
-#MaxScale:                               100
+#MinScale:                               0
+#MaxScale:                               500
 #
 #MinPixelSize:                           ?
 #MaxPixelSize:                           ?
 #RecommendedWidthPixelSize:              256
 #RecommendedHeightPixelSize:             256
 #
-#Die hier angebotenen Geodaten stehen über Geodatendienste gemäß Geodatenzugangsgesetz geldleistungsfrei zum Download und zur Online-Nutzung zur Verfügung.
-#Dieses Kartenwerk wird eingestellt und 2014 durch die Digitale Topographische Karte 1:250.000 abgelöst.
-#Die Digitale Topographische Karte 1:200.000, Vorläufige Ausgabe (DTK200-V), beinhaltet die Rasterdaten der „Topographischen Übersichtskarte 1:200.000 (TÜK200)“ ohne schattenplastische Geländedarstellung (Schummerung). Die Auflösung der Daten beträgt 320 Pixel je cm. 
 #
-TakenFromUrl:                           http://www.geodatenzentrum.de/geodaten/gdz?l=down_opendata
-GetCapabilitiesUrl:                     http://sg.geodatenzentrum.de/wms_dtk200?SERVICE=WMS&VERSION=1.1.1&REQUEST=GetCapabilities
+#
+TakenFromUrl:                           http://sg.geodatenzentrum.de/web_bkg_webmap/applications/webatlasde/webatlasde.html
+GetCapabilitiesUrl:                     https://sg.geodatenzentrum.de/wms_webatlasde__8f827e84-bdc9-cda4-aad0-f9711caab5c3?SERVICE=WMS&VERSION=1.1.1&REQUEST=GetCapabilities
