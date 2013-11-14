@@ -1,0 +1,37 @@
+﻿#intentionally left blank
+Name:                                  de.Mecklenburg-Vorpommern Digitale Topographische Webkarte
+MapType:                               de.mv t
+MainUrl:                               http://www.geodaten-mv.de/dienste/gdimv_topomv?
+LayersUrlPart:                         LAYERS=gdimv_topomv
+ImageFormatUrlPart:                    FORMAT=image/jpeg
+ImageFileExtension:                    .jpg
+CoordinateReferenceSystemCacheWolf:    31467 31468 31469
+CoordinateReferenceSystemUrlPart:      SRS=EPSG:31467 SRS=EPSG:31468 SRS=EPSG:31469
+RecommendedScale:                      1 2 4 8 16 32 64 128
+BoundingBoxTopLeftWGS84:               N 54.7744 E 10.3494
+BoundingBoxBottomRightWGS84:           N 53.0058 E 14.6948
+ServiceTypeUrlPart:                    SERVICE=WMS
+VersionUrlPart:                        VERSION=1.1.1
+RequestUrlPart:                        REQUEST=GetMap
+StylesUrlPart:                         STYLES=
+#
+#MinScale:                              0
+#MaxScale:                              500
+#
+#MinPixelSize:                          ?
+#MaxPixelSize:                          ?
+#RecommendedWidthPixelSize:             256
+#RecommendedHeightPixelSize:            256
+#
+#Die Digitale Topographische Webkarte (TopoMV) ist eine aus dem Digitalen Landschaftsmodell (DLM) abgeleitete maßstabsunabhängige Darstellung von ausgewählten Landschaftselementen mit vereinfachter grafischer Ausprägung.
+#
+#Die über Geowebdienste visualisierten Geobasisdaten sind durch das Gesetz über das amtliche Geoinformations- und Vermessungswesen (Geoinformations- und Vermessungsgesetz - GeoVermG M-V) und das Urheberrechtsgesetz (UrhG) in den jeweils geltenden Fassungen gesetzlich geschützt.
+#Zuwiderhandlungen gegen die gesetzlichen Schutzregelungen sind mit Bußgeld oder Strafe bedroht. 
+#Es gelten die: Allgemeinen Bedingungen für die Bereitstellung und Nutzung von Geodaten, Geodiensten und Produkten des Amtes für Geoinformation, Vermessungs- und Katasterwesen Mecklenburg-Vorpommern (AGNB),
+#und die Entgeltvorschrift 'Entgelte Geobasisdaten LAiV - Amt für Geoinformation, Vermessungs- und Katasterwesen'. 
+#Für weitere Auskünfte nehmen Sie bitte Kontakt mit uns auf: Amt für Geoinformation, Vermessungs- und Katasterwesen Tel.: 0385/588-56341 E-Mail: geodatenservice@laiv-mv.de
+#
+#Mirko Klisch, Landesamt für Innere Verwaltung M-V, Koordinierungsstelle für Geoinformationswesen (KGeo), +49 (0)385 588 56 342, Lübecker Straße 287, 19059  Schwerin, kgeo@laiv-mv.de
+#
+TakenFromUrl:                          http://www.geoportal-mv.de/land-mv/GeoPortalMV_prod/de/Geowebdienste/TopographischeKarten.jsp
+GetCapabilitiesUrl:                    http://www.geodaten-mv.de/dienste/gdimv_topomv?SERVICE=WMS&VERSION=1.1.1&REQUEST=GetCapabilities
