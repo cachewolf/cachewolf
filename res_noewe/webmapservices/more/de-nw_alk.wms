@@ -1,0 +1,33 @@
+﻿TakenFromUrl:       http://www.wms.nrw.de/geobasis/wms_nw_alk_vektor?
+GetCapabilitiesUrl: http://www.wms.nrw.de/geobasis/wms_nw_alk_vektor?SERVICE=WMS&VERSION=1.1.1&REQUEST=GetCapabilities
+Name:               de.nw Automatisierten Liegeschaftskarte
+MapType:            de.nw alk
+MainUrl:            http://www.wms.nrw.de/geobasis/wms_nw_alk_vektor?
+ServiceTypeUrlPart: SERVICE=WMS
+VersionUrlPart:     VERSION=1.1.1
+CoordinateReferenceSystemCacheWolf:  4326
+CoordinateReferenceSystemUrlPart: SRS=EPSG:4326
+RequestUrlPart:     REQUEST=GetMap
+#LayersUrlPart:     LAYERS=WMS_NW_ALK_VEKTOR|WMS NW ALK VEKTOR||
+#LayersUrlPart:     LAYERS=nw_alk_vektor_info|Metadaten|0.000395979583635492|3959.79583635492
+#LayersUrlPart:     LAYERS=nw_alk_vektor_bodenschaetzung|Bodenschätzung|0|9.89948959088729
+#LayersUrlPart:     LAYERS=nw_alk_vektor_symbole|Symbole|0|1.38592854272422
+#LayersUrlPart:     LAYERS=nw_alk_vektor_beschriftung|Beschriftung|0|1.97989791817746
+#LayersUrlPart:     LAYERS=nw_alk_vektor_nutzungsartengrenzen|Nutzungsartengrenzen|0.000395979583635492|1.97989791817746
+#LayersUrlPart:     LAYERS=nw_alk_vektor_topographie_gebaeudeausgestaltung|Topographie/ Gebäudeausgestaltung|0.000395979583635492|0.791959167270983
+#LayersUrlPart:     LAYERS=nw_alk_vektor_gebaeude|Gebäude|0|9.89948959088729
+#LayersUrlPart:     LAYERS=nw_alk_vektor_flurstuecke|Flurstücke|0.000395979583635492|9.89948959088729
+LayersUrlPart:     LAYERS=WMS_NW_ALK_VEKTOR
+StylesUrlPart:     STYLES=
+ImageFormatUrlPart:FORMAT=image/jpeg
+BoundingBoxTopLeftWGS84: N 52.6030 E 5.7928
+BoundingBoxBottomRightWGS84: N 50.2516 E 9.5969
+#BBox_Mitte: N 51.4273 E 7.694845
+MinScale:   0.2
+MaxScale:   6
+RecommendedScale:    1 0.5 2
+ImageFileExtension: .jpg
+MinPixelSize: 200
+MaxPixelSize: 1000
+RecommendedWidthPixelSize: 1000
+RecommendedHeightPixelSize: 1000

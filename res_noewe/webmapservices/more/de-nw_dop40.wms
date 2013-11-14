@@ -1,0 +1,30 @@
+#Digitale Orthophotos werden entsprechend den Vorgaben der AdV (Arbeitsgemeinschaft der Vermessungsverwaltungen der Länder) hergestellt und nach ihrer Bodenauflösung (cm pro Pixel; Ground Sample Distance, GSD) bezeichnet.
+#Die digitalen Orthophotos in diesem Dienst wurden auf der Basis der DOP20 hergestellt und weisen eine Bodenauflösung von 40cm/Pixel auf.
+#Stand: 11.03.2013
+TakenFromUrl:       http://www.wms.nrw.de/geobasis/wms_nw_dop40?
+GetCapabilitiesUrl: http://www.wms.nrw.de/geobasis/wms_nw_dop40?SERVICE=WMS&VERSION=1.1.1&REQUEST=GetCapabilities
+Name:               de.nw Orthophotos 40cm/Pixel
+MapType:            de.nw DOP40
+MainUrl:            http://www.wms.nrw.de/geobasis/wms_nw_dop40?
+ServiceTypeUrlPart: SERVICE=WMS
+VersionUrlPart:     VERSION=1.1.1
+CoordinateReferenceSystemCacheWolf:  4326
+CoordinateReferenceSystemUrlPart: SRS=EPSG:4326 
+RequestUrlPart:     REQUEST=GetMap
+#LayersUrlPart:     LAYERS=WMS_NW_DOP40|WMS NW DOP40||
+#LayersUrlPart:     LAYERS=nw_dop40|DOP40||
+#LayersUrlPart:     LAYERS=nw_dop40_info|Metadaten DOP40||
+LayersUrlPart:     LAYERS=nw_dop40
+StylesUrlPart:     STYLES=
+ImageFormatUrlPart:FORMAT=image/png
+BoundingBoxTopLeftWGS84: N 52.7998 E 5.5933
+BoundingBoxBottomRightWGS84: N 50.0578 E 9.7416
+#BBox_Mitte: N 51.4288 E 7.66746
+MinScale:   0.2
+MaxScale:   12
+RecommendedScale:    1 4 2
+ImageFileExtension: .png
+MinPixelSize: 200
+MaxPixelSize: 1000
+RecommendedWidthPixelSize: 1000
+RecommendedHeightPixelSize: 1000

@@ -870,6 +870,7 @@ public class SpiderGC {
 			break;
 		    }
 		} // next Cache
+
 		infB.setInfo(MyLocale.getMsg(5511, "Found ") + cachesToLoad.size() + " / " + cFoundForUpdate.size() + MyLocale.getMsg(5512, " caches"));
 		if (found_on_page < 20) {
 		    if (spiderAllFinds) {
@@ -885,6 +886,7 @@ public class SpiderGC {
 			}
 		    }
 		}
+
 		if (toDistance > 0) {
 		    if (getAListPage(toDistanceInMiles, gotoNextPage)) {
 			lastPageVisited++;
@@ -907,6 +909,7 @@ public class SpiderGC {
 	    Vm.showWait(false);
 	    cExpectedForUpdate.clear();
 	}
+
 	String s = "Checked " + page_number + " pages" + Preferences.NEWLINE;
 	s = s + "with " + ((page_number - 1) * 20 + found_on_page) + " caches" + Preferences.NEWLINE;
 	s = s + "Found " + cachesToLoad.size() + " new caches" + Preferences.NEWLINE;
