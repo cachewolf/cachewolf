@@ -1,0 +1,32 @@
+﻿#intentionally left blank
+Name:                                  de.Saarland Digitales Landschaftsmodell
+MapType:                               de.sl
+MainUrl:                               http://geoportal.lkvk.saarland.de/freewms/karte_sl?
+LayersUrlPart:                         LAYERS=atkissl,Landesflaeche,sl_00,sl_01,sl_02,sl_03,Wald,wald_00,wald_01,wald_02,wald_03,wald_04,Sonderkultur,sonderkultur_00,sonderkultur_01,sonderkultur_02,sonderkultur_03,sonderkultur_04,Ortslage,ortslage_000,ortslage_00,ortslage_01,ortslage_02,ortslage_03,ortslage_04,ax_friedhof_0,ax_friedhof_1,Industrie,industrie_00,industrie_01,industrie_02,industrie_03,industrie_04,tagebau_0,tagebau_1,Fluesse,baeche_0,baeche_1,fluss_00,fluss_01,fluss_02,fluss_03,fluss_04,fluss_05,fluss_06,Seen,see_00,see_0,see_1,see_2,see_3,see_4,see_5,see_6,Wege,weg_0,weg_0_fuss,weg_1,Fahrbahn,Bauwerke,ax_gebaeude,ax_turm,ax_sonstigesbw,ax_bw_sfe,Gemeindestrassen,Gemeindestrasse_0,Gemeindestrasse_1,Kreisstrassen,Kreisstrasse_0,Kreisstrasse_1,Kreisstrasse_2,Landesstrassen,Landesstrasse_0,Landesstrasse_1,Landesstrasse_2,Landesstrasse_3,Bundesstrassen,Bundesstrasse_0,Bundesstrasse_1,Bundesstrasse_2,Bundesstrasse_3,Autobahnen,Autobahn_0,Autobahn_1,Autobahn_2,Autobahn_3,Bahn,bahn_00,bahn_01,bahn_02,Ortschaften,orte_1,orte_2,orte_3,orte_4,schutzhuette_0,schutzhuette_1,Leitungen,ax_leitung,leitungsmasten
+ImageFormatUrlPart:                    FORMAT=image/jpeg
+ImageFileExtension:                    .jpg
+CoordinateReferenceSystemCacheWolf:    31466 31467
+CoordinateReferenceSystemUrlPart:      SRS=EPSG:31466 SRS=EPSG:31467
+RecommendedScale:                      4 1 2 8 16
+BoundingBoxTopLeftWGS84:               N 49.6434 E 6.3546
+BoundingBoxBottomRightWGS84:           N 49.1083 E 7.4130
+ServiceTypeUrlPart:                    SERVICE=WMS
+VersionUrlPart:                        VERSION=1.1.1
+RequestUrlPart:                        REQUEST=GetMap
+StylesUrlPart:                         STYLES=
+#
+#MinScale:                              0
+#MaxScale:                              150
+#
+#MinPixelSize:                          ?
+#MaxPixelSize:                          ?
+#RecommendedWidthPixelSize:             256
+#RecommendedHeightPixelSize:            256
+#
+#LVGL: Landesamt fuer Vermessung, Geoinformation und Landentwicklung, Eric Gross, Von der Heydt 22, 66115 Saarbruecken, Telefon	 +49 (681) 9712 226, e.gross@lvgl.saarland.de
+#Saemtliche Rechte an diesem Dienst liegen beim saarlaendischen Landesamt fuer Vermessung, Geoinformation und Landentwicklung (LVGL).
+#Jegliche Nutzung, so auch das Einbinden in weitere Anwendungen (Download) ist kostenpflichtig und bedarf einer vertraglichen Gundlage. 
+#Bitte nehmen Sie dazu Kontakt mit dem LVGL (www.lvgl.saarland.de, Tel.-Nr.: +49681/ 9712 - 226) auf.
+#
+TakenFromUrl:                          http://geoportal.saarland.de/mapbender/geoportal/mod_index.php?mb_user_myGui=Geoportal-SL
+GetCapabilitiesUrl:                    http://geoportal.lkvk.saarland.de/freewms/karte_sl?SERVICE=WMS&VERSION=1.1.1&REQUEST=GetCapabilities
