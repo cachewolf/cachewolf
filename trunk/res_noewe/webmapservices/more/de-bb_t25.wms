@@ -24,7 +24,7 @@ StylesUrlPart:                         STYLES=
 #RecommendedHeightPixelSize:            256
 #
 #Der Web Map Service WMS-DTK25_Farbe stellt das Kartenbild der Topographischen Karte 1: 25 000 vom Gebiet Brandenburg zur Verfuegung.
-#Landesvermessung und Geobasisinformation Brandenburg (LGB), Heinrich-Mann-Allee 103, 14473 Potsdam, +49-331-8844-316, gsc@geobasis-bb.de
+#Landesvermessung und Geobasisinformation Brandenburg (LGB), Heinrich-Mann-Allee 103, 14473 Potsdam, +49-331-8844-0, gsc@geobasis-bb.de
 #Nutzungsbedingungen: http://www.geobasis-bb.de/GeoPortal1/pdf/AGNB.pdf
 #Die LGB besitzt alle Rechte an den von ihr bereitgestellten Geoservices.
 TakenFromUrl:                          http://geoportal.brandenburg.de/servicebereich/geowebdienste.html?letter1=1&letter2=Z
