@@ -1,0 +1,33 @@
+﻿#intentionally left blank
+Name:                                  de.Hessen Orthophotos im Rasterdatenformat 0,4m-Bodenauflösung aufgerufen werden können.
+MapType:                               de.he dop
+#MainUrl:                               http://www.gds-srv.hessen.de/cgi-bin/lika-services/de-viewer/access/ogc-free-images.ows?
+MainUrl:                               http://www.gds-srv.hessen.de/cgi-bin/lika-services/ogc-free-images.ows?
+LayersUrlPart:                         LAYERS=adv_dop
+ImageFormatUrlPart:                    FORMAT=image/jpeg
+ImageFileExtension:                    .jpg
+CoordinateReferenceSystemCacheWolf:    31467 31466 31468 31469
+CoordinateReferenceSystemUrlPart:      SRS=EPSG:31467 SRS=EPSG:31466 SRS=EPSG:31468 SRS=EPSG:31469
+RecommendedScale:                      0.5 1 2.5 5
+BoundingBoxTopLeftWGS84:               N 51.6683 E 7.6982
+BoundingBoxBottomRightWGS84:           N 49.3444 E 11.3972
+ServiceTypeUrlPart:                    SERVICE=WMS
+VersionUrlPart:                        VERSION=1.1.1
+RequestUrlPart:                        REQUEST=GetMap
+StylesUrlPart:                         STYLES=
+#
+#MinScale:                              0
+#MaxScale:                              20
+#
+#MinPixelSize:                          ?
+#MaxPixelSize:                          ?
+#RecommendedWidthPixelSize:             256
+#RecommendedHeightPixelSize:            256
+#
+#Hessisches Landesamt für Bodenmanagement und Geoinformation (HLBG), Schaperstraße 16, 65195  Wiesbaden
+#Angela Pfisterer, +49 611 535-5480, Angela.Pfisterer@hvbg.hessen.de
+#Die kostenfreie Nutzung der Daten ist nur für interne Zwecke erlaubt. 
+#Die Weitergabe an Dritte oder jede gewerbliche Nutzung der Daten ist kostenpflichtig und bedarf der schriftlichen Genehmigung durch das Hessische Landesamt für Bodenmanagement und Geoinformation.
+#
+TakenFromUrl:                          http://geodatenkatalog.hessen.de/MIS-Hessen/Query/ShowCSWInfo.do?fileIdentifier=cca84ddc-dda9-4987-a6d4-4f9ecf783577
+GetCapabilitiesUrl:                    http://www.gds-srv.hessen.de/cgi-bin/lika-services/de-viewer/access/ogc-free-images.ows?SERVICE=WMS&VERSION=1.1.1&REQUEST=GetCapabilities
