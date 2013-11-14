@@ -1,0 +1,23 @@
+TakenFromUrl:       http://geo4.service24.rlp.de/wms/dtk25.fcgi?
+GetCapabilitiesUrl:  http://geo4.service24.rlp.de/wms/dtk25.fcgi?SERVICE=WMS&VERSION=1.1.1&REQUEST=GetCapabilities
+Name:               de.rlp topo
+MapType:                        topo
+MainUrl:             http://geo4.service24.rlp.de/wms/dtk25.fcgi?
+ServiceTypeUrlPart: SERVICE=WMS
+VersionUrlPart:     VERSION=1.1.1
+CoordinateReferenceSystemCacheWolf:  4326
+CoordinateReferenceSystemUrlPart: SRS=EPSG:4326
+RequestUrlPart:     REQUEST=GetMap
+#LayersUrlPart:     LAYERS=OGC:WMS|DTK25|0|1496.70854528891
+#LayersUrlPart:     LAYERS=rp_dtk25|DTK25 RP||
+#LayersUrlPart:     LAYERS=rp_dtk25_metadaten|DTK25 RP Metadaten||
+LayersUrlPart:     LAYERS=rp_dtk25
+StylesUrlPart:     STYLES=
+ImageFormatUrlPart:FORMAT=image/jpeg
+#BoundingBoxTopLeftWGS84: N 51.0191 E 5.9086
+#BoundingBoxBottomRightWGS84: N 48.7512 E 8.6869
+#BBox_Mitte: N 49.88515 E 7.297735
+MinScale:   1
+MaxScale:   12
+RecommendedScale:    5
+ImageFileExtension: .jpg
