@@ -1,0 +1,32 @@
+﻿#intentionally left blank
+Name:                                  de.Saarland Orthophoto 2010
+MapType:                               de.sl dop
+MainUrl:                               http://geoportal.lkvk.saarland.de/freewms/dop2010?
+LayersUrlPart:                         LAYERS=DOP2010
+ImageFormatUrlPart:                    FORMAT=image/jpeg
+ImageFileExtension:                    .jpg
+CoordinateReferenceSystemCacheWolf:    31466 31467 31468
+CoordinateReferenceSystemUrlPart:      SRS=EPSG:31466 SRS=EPSG:31467 SRS=EPSG:31468
+RecommendedScale:                      1 0.5 2 4 8
+BoundingBoxTopLeftWGS84:               N 49.6434 E 6.3546
+BoundingBoxBottomRightWGS84:           N 49.1083 E 7.4130
+ServiceTypeUrlPart:                    SERVICE=WMS
+VersionUrlPart:                        VERSION=1.1.1
+RequestUrlPart:                        REQUEST=GetMap
+StylesUrlPart:                         STYLES=
+#
+#MinScale:                              0
+#MaxScale:                              256
+#
+#MinPixelSize:                          ?
+#MaxPixelSize:                          ?
+#RecommendedWidthPixelSize:             256
+#RecommendedHeightPixelSize:            256
+#
+#LVGL: Landesamt fuer Vermessung, Geoinformation und Landentwicklung, Eric Gross, Von der Heydt 22, 66115 Saarbruecken, Telefon	 +49 (681) 9712 226, e.gross@lvgl.saarland.de
+#Saemtliche Rechte an diesem Dienst liegen beim saarlaendischen Landesamt fuer Vermessung, Geoinformation und Landentwicklung (LVGL).
+#Jegliche Nutzung, so auch das Einbinden in weitere Anwendungen (Download) ist kostenpflichtig und bedarf einer vertraglichen Gundlage. 
+#Bitte nehmen Sie dazu Kontakt mit dem LVGL (www.lvgl.saarland.de, Tel.-Nr.: +49681/ 9712 - 226) auf.
+#
+TakenFromUrl:                          http://geoportal.saarland.de/mapbender/geoportal/mod_index.php?mb_user_myGui=Geoportal-SL
+GetCapabilitiesUrl:                    http://geoportal.lkvk.saarland.de/freewms/dop2010?SERVICE=WMS&VERSION=1.1.1&REQUEST=GetCapabilities
