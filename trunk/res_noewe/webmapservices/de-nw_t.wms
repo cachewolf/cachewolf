@@ -1,0 +1,46 @@
+﻿#intentionally left blank
+Name:                                  de.Nordrhein-Westfalen Topographische Kartenwerke
+MapType:                               de.nw dtk
+MainUrl:                               http://www.wms.nrw.de/geobasis/wms_nw_dtk?
+LayersUrlPart:                         LAYERS=nw_dtk_col
+ImageFormatUrlPart:                    FORMAT=image/jpeg
+ImageFileExtension:                    .jpg
+CoordinateReferenceSystemCacheWolf:    31466 31467
+CoordinateReferenceSystemUrlPart:      SRS=EPSG:31466 SRS=EPSG:31467
+RecommendedScale:                      1 2 4 8 16 32 64 128 256
+BoundingBoxTopLeftWGS84:               N 52.6020 E 5.7250
+BoundingBoxBottomRightWGS84:           N 50.1506 E 9.5315
+ServiceTypeUrlPart:                    SERVICE=WMS
+VersionUrlPart:                        VERSION=1.1.1
+RequestUrlPart:                        REQUEST=GetMap
+StylesUrlPart:                         STYLES=
+#
+#MinScale:                              0
+#MaxScale:                              500
+#
+#MinPixelSize:                          ?
+#MaxPixelSize:                          ?
+#RecommendedWidthPixelSize:             256
+#RecommendedHeightPixelSize:            256
+#
+#I. Gegenstand - Dieser Darstellungsdienst beinhaltet Rasterdaten ausgewählter Geobasisdaten. 
+#Er wird vom Land NRW als Bestandteil des NRW-Atlas nach GeoBasisBNErl. NRW vom 03.01.2013 bereitgestellt. 
+#
+#II. Nutzungsrechte - Der Darstellungsdienst kann unter Einhaltung der Nutzungsbedingungen unter III. für private, kommerzielle, behördliche, interne und externe Zwecke uneingeschränkt genutzt werden;
+#die Nutzung bedarf keiner weiteren Genehmigung. 
+#Die Nutzungsrechte werden für alle bekannten sowie für alle zukünftigen Zwecke der Dienstenutzung eingeräumt. 
+#Der bereitgestellte Dienst darf insbesondere 1. mit eigenen Diensten und Diensten Anderer zusammengeführt werden; 
+#2. in interne und externe Geschäftsprozesse und Anwendungen in öffentlichen und nicht öffentlichen elektronischen Netzwerken eingebunden werden. 
+#Das Nutzungsrecht umfasst nicht die dauerhafte Speicherung der über den Dienst bereitgestellten Daten zum Aufbau von Sekundärdatenbeständen und deren Weiterverwendung. 
+#
+#III. Nutzungsbedingungen - Die Nutzer haben sicherzustellen, dass 
+#1. dem Dienst sowie aus diesem abgeleitete Präsentationen der Quellenvermerk © Geobasis NRW <Jahr> beigegeben und erkennbar in optischem Zusammenhang eingebunden wird; 
+#2. neue Gestaltungen oder sonstige Abwandlungen durch Kombination mit anderen Diensten mit einem Veränderungshinweis im beigegebenen Quellenvermerk versehen werden oder, sofern der Lizenzgeber dies verlangt, der beigegebene Quellenvermerk gelöscht wird; 
+#3. die Bereitstellung durch den Dienst nicht die Merkmale einer amtlichen Standardausgabe enthält. Mit der Nutzung des Dienstes gelten diese Bedingungen als anerkannt. 
+#
+#IV. Haftungsbeschränkung - Für die Kompatibilität des zur Verfügung gestellten Dienstes mit den Systemen des Nutzers, die inhaltliche Richtigkeit, eine bestimmte Datenqualität oder die dauerhafte Bereitstellung wird keine Haftung übernommen. Davon ausgenommen sind Schadensersatzansprüche auf Grund einer Verletzung des Lebens, des Körpers und der Gesundheit. Ebenfalls ausgenommen ist die Haftung für Schäden, die auf einer vorsätzlichen oder grob fahrlässigen Pflichtverletzung beruhen. Eine über gesetzliche Schadensersatzansprüche hinausgehende Haftung ist ausgeschlossen. 
+#
+#V. Gebühren - Die Bereitstellung und Nutzung des Darstellungsdienstes sind kostenfrei. - Stand: 07.03.2013
+#
+TakenFromUrl:                          https://www.geoportal.nrw.de/application-geokatalog/start/index.php
+GetCapabilitiesUrl:                    http://www.wms.nrw.de/geobasis/wms_nw_dtk?SERVICE=WMS&VERSION=1.1.1&REQUEST=GetCapabilities
