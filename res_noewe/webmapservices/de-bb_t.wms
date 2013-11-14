@@ -1,0 +1,31 @@
+﻿#intentionally left blank
+Name:                                  de.Brandenburg+Berlin Topographischen Karten 1:1.000 bis 1:5.000.000
+MapType:                               de.bb t
+MainUrl:                               http://isk.geobasis-bb.de/ows/dnm.php?
+LayersUrlPart:                         LAYERS=bg,siedlung,vegetation,gewaesser,transport,verkehrsobjekte,strassennamen,ortsnamen,gewaessernamen
+ImageFormatUrlPart:                    FORMAT=image/png
+ImageFileExtension:                    .png
+CoordinateReferenceSystemCacheWolf:    31468 31469
+CoordinateReferenceSystemUrlPart:      SRS=EPSG:31468 SRS=EPSG:31469
+RecommendedScale:                      1 2 4 8 16 32
+BoundingBoxTopLeftWGS84:               N 53.5690 E 11.2000
+BoundingBoxBottomRightWGS84:           N 51.3000 E 14.8000
+ServiceTypeUrlPart:                    SERVICE=WMS
+VersionUrlPart:                        VERSION=1.1.1
+RequestUrlPart:                        REQUEST=GetMap
+StylesUrlPart:                         STYLES=
+#
+#MinScale:                              0
+#MaxScale:                              500
+#
+#MinPixelSize:                          ?
+#MaxPixelSize:                          ?
+#RecommendedWidthPixelSize:             256
+#RecommendedHeightPixelSize:            256
+#
+#Das Digitale Navigationsmodell (DNM) stellt nicht-amtliche topographische Basisnavigationsdaten vom Gebiet der Länder Brandenburg und Berlin zur Verfügung.
+#Landesvermessung und Geobasisinformation Brandenburg (LGB), Heinrich-Mann-Allee 103, 14473 Potsdam, +49-331-8844-316, gudrun.ritter@geobasis-bb.de
+#
+#
+TakenFromUrl:                          http://geoportal.brandenburg.de/servicebereich/geowebdienste.html?letter1=1&letter2=Z
+GetCapabilitiesUrl:                    http://isk.geobasis-bb.de/ows/dnm.php?SERVICE=WMS&VERSION=1.1.1&REQUEST=GetCapabilities
