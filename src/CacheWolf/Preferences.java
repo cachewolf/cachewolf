@@ -699,6 +699,14 @@ public class Preferences extends MinML {
 	    } else {
 		data.setFilterNoCoord(true);
 	    }
+	    // Order within the search items must not be changed
+	    String searchFilter = SafeXML.cleanback(atts.getValue("search"));
+	    String[] searchFilterList = ewe.util.mString.split(searchFilter, '|'); //'\u0399');
+	    for(int i = 0; i < searchFilterList.length; i++)
+	    {
+	    	if (i == 0) data.setSyncDate(searchFilterList[i]);
+	    	if (i == 1) data.setNamePattern(searchFilterList[i]);
+	    }
 	    // Filter object is remembered under the given ID
 	    this.addFilter(id, data);
 	} else if (name.equals("datamover")) {
