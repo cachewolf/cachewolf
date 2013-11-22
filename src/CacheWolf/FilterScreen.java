@@ -22,6 +22,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 package CacheWolf;
 
 import CacheWolf.navi.Metrics;
+import CacheWolf.STRreplace;
 import ewe.filechooser.FileChooser;
 import ewe.filechooser.FileChooserBase;
 import ewe.fx.Color;
@@ -34,12 +35,14 @@ import ewe.fx.Rect;
 import ewe.fx.mImage;
 import ewe.io.File;
 import ewe.sys.Convert;
+import ewe.sys.Time;
 import ewe.sys.Vm;
 import ewe.ui.ButtonObject;
 import ewe.ui.CardPanel;
 import ewe.ui.CellPanel;
 import ewe.ui.ControlEvent;
 import ewe.ui.DataChangeEvent;
+import ewe.ui.DateChooser;
 import ewe.ui.Event;
 import ewe.ui.Form;
 import ewe.ui.FormBase;
@@ -73,6 +76,16 @@ public class FilterScreen extends Form {
     private mComboBox chcStatus;
     private mChoice fltList;
     private mCheckBox chkUseRegexp;
+
+	// elements for the search panel
+	private mChoice   chcSrchSyncDateCmp;
+	private mInput    inpSrchSyncDate;
+	private mButton   btnSrchSyncDate;
+	private mButton   btnSrchSyncDateClear;
+	private mInput    inpSrchName;
+	private mButton   btnSrchNameClear;
+
+	private mButton   btnClearSearch;
 
     private mInput inpDist, inpTerr, inpDiff;
 
@@ -154,7 +167,9 @@ public class FilterScreen extends Form {
 	//////////////////////////
 	// Panel 1 - Bearing & Distance
 	//////////////////////////
+
 	addTitle(pnlBearDist, MyLocale.getMsg(714, "Bearings & Distance"));
+
 	pnlBearDist.addNext(new mLabel(MyLocale.getMsg(701, "Distance: ")), DONTSTRETCH, FILL);
 	pnlBearDist.addNext(chcDist = new mChoice(new String[] { "<=", ">=" }, 0), DONTSTRETCH, (DONTFILL | WEST));
 	pnlBearDist.addLast(inpDist = new mInput(), DONTSTRETCH, FILL);
@@ -188,7 +203,9 @@ public class FilterScreen extends Form {
 	//////////////////////////
 	// Panel 2 - Cache attributes
 	//////////////////////////
+
 	addTitle(pnlAttributes, MyLocale.getMsg(720, "Status"));
+
 	mLabel lblTitleAtt;
 	pnlAttributes.addLast(lblTitleAtt = new mLabel(MyLocale.getMsg(715, "Show all caches with status:")), HSTRETCH, FILL);
 	lblTitleAtt.setTag(SPAN, new Dimension(2, 1));
@@ -211,7 +228,9 @@ public class FilterScreen extends Form {
 	//////////////////////////
 	// Panel 3 - Cache ratings
 	//////////////////////////
+
 	addTitle(pnlRatings, MyLocale.getMsg(718, "Cache ratings"));
+
 	pnlRatings.addNext(new mLabel(MyLocale.getMsg(702, "Difficulty: ")), DONTSTRETCH, FILL);
 	pnlRatings.addNext(chcDiff = new mChoice(new String[] { "<=", "=", ">=" }, 0), DONTSTRETCH, (DONTFILL | WEST));
 	//pnlRatings.addLast(difIn = new mChoice(new String[]{"1.0", "1.5", "2.0", "2.5", "3.0", "3.5", "4.0", "4.5", "5.0"},0),DONTSTRETCH, (DONTFILL|WEST));
@@ -228,81 +247,125 @@ public class FilterScreen extends Form {
 
 	addTitle(pnlCacheTypes, MyLocale.getMsg(719, "Cache types"));
 
-	pnlCacheTypes.addNext(addImg(CacheType.getTypeImage(CacheType.CW_TYPE_TRADITIONAL)));
+	pnlCacheTypes.addNext(addImg(CacheType.getTypeImage(CacheType.CW_TYPE_TRADITIONAL)), HSHRINK, HCONTRACT);
 	pnlCacheTypes.addNext(chkTrad = new mCheckBox("Traditonal"), DONTSTRETCH, FILL);
-	pnlCacheTypes.addNext(addImg(CacheType.getTypeImage(CacheType.CW_TYPE_MULTI)));
+	pnlCacheTypes.addNext(addImg(CacheType.getTypeImage(CacheType.CW_TYPE_MULTI)), HSHRINK, HCONTRACT);
 	pnlCacheTypes.addLast(chkMulti = new mCheckBox("Multi"), DONTSTRETCH, FILL);
 
-	pnlCacheTypes.addNext(addImg(CacheType.getTypeImage(CacheType.CW_TYPE_VIRTUAL)));
+	pnlCacheTypes.addNext(addImg(CacheType.getTypeImage(CacheType.CW_TYPE_VIRTUAL)), HSHRINK, HCONTRACT);
 	pnlCacheTypes.addNext(chkVirtual = new mCheckBox("Virtual"), DONTSTRETCH, FILL);
-	pnlCacheTypes.addNext(addImg(CacheType.getTypeImage(CacheType.CW_TYPE_LETTERBOX)));
+	pnlCacheTypes.addNext(addImg(CacheType.getTypeImage(CacheType.CW_TYPE_LETTERBOX)), HSHRINK, HCONTRACT);
 	pnlCacheTypes.addLast(chkLetter = new mCheckBox("Letterbox"), DONTSTRETCH, FILL);
 
-	pnlCacheTypes.addNext(addImg(CacheType.getTypeImage(CacheType.CW_TYPE_EVENT)));
+	pnlCacheTypes.addNext(addImg(CacheType.getTypeImage(CacheType.CW_TYPE_EVENT)), HSHRINK, HCONTRACT);
 	pnlCacheTypes.addNext(chkEvent = new mCheckBox("Event"), DONTSTRETCH, FILL);
-	pnlCacheTypes.addNext(addImg(CacheType.getTypeImage(CacheType.CW_TYPE_WEBCAM)));
+	pnlCacheTypes.addNext(addImg(CacheType.getTypeImage(CacheType.CW_TYPE_WEBCAM)), HSHRINK, HCONTRACT);
 	pnlCacheTypes.addLast(chkWebcam = new mCheckBox("Webcam"), DONTSTRETCH, FILL);
 
-	pnlCacheTypes.addNext(addImg(CacheType.getTypeImage(CacheType.CW_TYPE_UNKNOWN)));
+	pnlCacheTypes.addNext(addImg(CacheType.getTypeImage(CacheType.CW_TYPE_UNKNOWN)), HSHRINK, HCONTRACT);
 	pnlCacheTypes.addNext(chkMystery = new mCheckBox("Mystery"), DONTSTRETCH, FILL);
-	pnlCacheTypes.addNext(addImg(CacheType.getTypeImage(CacheType.CW_TYPE_EARTH)));
+	pnlCacheTypes.addNext(addImg(CacheType.getTypeImage(CacheType.CW_TYPE_EARTH)), HSHRINK, HCONTRACT);
 	pnlCacheTypes.addLast(chkEarth = new mCheckBox("Earth"), DONTSTRETCH, FILL);
 
-	pnlCacheTypes.addNext(addImg(CacheType.getTypeImage(CacheType.CW_TYPE_LOCATIONLESS)));
+	pnlCacheTypes.addNext(addImg(CacheType.getTypeImage(CacheType.CW_TYPE_LOCATIONLESS)), HSHRINK, HCONTRACT);
 	pnlCacheTypes.addNext(chkLocless = new mCheckBox("Locationless"), DONTSTRETCH, FILL);
-	pnlCacheTypes.addNext(addImg(CacheType.getTypeImage(CacheType.CW_TYPE_MEGA_EVENT)));
+	pnlCacheTypes.addNext(addImg(CacheType.getTypeImage(CacheType.CW_TYPE_MEGA_EVENT)), HSHRINK, HCONTRACT);
 	pnlCacheTypes.addLast(chkMega = new mCheckBox("Mega-Ev."), DONTSTRETCH, FILL);
 
-	pnlCacheTypes.addNext(addImg(CacheType.getTypeImage(CacheType.CW_TYPE_CITO)));
+	pnlCacheTypes.addNext(addImg(CacheType.getTypeImage(CacheType.CW_TYPE_CITO)), HSHRINK, HCONTRACT);
 	pnlCacheTypes.addNext(chkCito = new mCheckBox("Cito-Ev."), DONTSTRETCH, FILL);
-	pnlCacheTypes.addNext(addImg(CacheType.getTypeImage(CacheType.CW_TYPE_WHEREIGO)));
+	pnlCacheTypes.addNext(addImg(CacheType.getTypeImage(CacheType.CW_TYPE_WHEREIGO)), HSHRINK, HCONTRACT);
 	pnlCacheTypes.addLast(chkWherigo = new myChkBox("WherIGo"), DONTSTRETCH, FILL);
 
-	pnlCacheTypes.addNext(addImg(CacheType.getTypeImage(CacheType.CW_TYPE_APE)));
+	pnlCacheTypes.addNext(addImg(CacheType.getTypeImage(CacheType.CW_TYPE_APE)), HSHRINK, HCONTRACT);
 	pnlCacheTypes.addNext(chkApe = new myChkBox("Ape"), DONTSTRETCH, FILL);
-	pnlCacheTypes.addNext(addImg(CacheType.getTypeImage(CacheType.CW_TYPE_MAZE)));
+	pnlCacheTypes.addNext(addImg(CacheType.getTypeImage(CacheType.CW_TYPE_MAZE)), HSHRINK, HCONTRACT);
 	pnlCacheTypes.addLast(chkMaze = new mCheckBox("Maze"), DONTSTRETCH, FILL);
 
-	pnlCacheTypes.addNext(addImg(CacheType.getTypeImage(CacheType.CW_TYPE_CUSTOM)));
+	pnlCacheTypes.addNext(addImg(CacheType.getTypeImage(CacheType.CW_TYPE_CUSTOM)), HSHRINK, HCONTRACT);
 	pnlCacheTypes.addNext(chkCustom = new mCheckBox("Custom"), DONTSTRETCH, FILL);
-	pnlCacheTypes.addNext(addImg(CacheType.getTypeImage(CacheType.CW_TYPE_DRIVE_IN)));
+	pnlCacheTypes.addNext(addImg(CacheType.getTypeImage(CacheType.CW_TYPE_DRIVE_IN)), HSHRINK, HCONTRACT);
 	pnlCacheTypes.addLast(addiWptChk = new myChkBox("Add. Wpt"), DONTSTRETCH, FILL);
+
+	pnlCacheTypes.addLast(new mLabel(""), STRETCH, FILL);
 
 	//addiWptChk.modify(0,NotAnEditor);
 	//////////////////////////
 	// Panel 5 - Addi waypoints
 	//////////////////////////
-	addTitle(pnlAddi, MyLocale.getMsg(726, "Additional waypoints"));
-	pnlAddi.addNext(addImg(CacheType.getTypeImage(CacheType.CW_TYPE_PARKING)));
-	pnlAddi.addNext(chkParking = new mCheckBox("Parking"), DONTSTRETCH, FILL);
-	pnlAddi.addNext(addImg(CacheType.getTypeImage(CacheType.CW_TYPE_STAGE)));
-	pnlAddi.addLast(chkStage = new mCheckBox("Stage"), DONTSTRETCH, FILL);
-	pnlAddi.addNext(addImg(CacheType.getTypeImage(CacheType.CW_TYPE_QUESTION)));
-	pnlAddi.addNext(chkQuestion = new mCheckBox("Question"), DONTSTRETCH, FILL);
-	pnlAddi.addNext(addImg(CacheType.getTypeImage(CacheType.CW_TYPE_FINAL)));
-	pnlAddi.addLast(chkFinal = new mCheckBox("Final"), DONTSTRETCH, FILL);
-	pnlAddi.addNext(addImg(CacheType.getTypeImage(CacheType.CW_TYPE_TRAILHEAD)));
-	pnlAddi.addNext(chkTrailhead = new mCheckBox("Trailhead"), DONTSTRETCH, FILL);
-	pnlAddi.addNext(addImg(CacheType.getTypeImage(CacheType.CW_TYPE_REFERENCE)));
-	pnlAddi.addLast(chkReference = new mCheckBox("Reference"), DONTSTRETCH, FILL);
-	pnlAddi.addLast(new mLabel(""), VSTRETCH, FILL);
+
+	addTitle(pnlAddi,MyLocale.getMsg(726, "Additional waypoints"));
+
+	final CellPanel pnlAddiWP;
+	pnlAddi.addLast(pnlAddiWP = new CellPanel());
+	pnlAddiWP.addNext(addImg(CacheType.getTypeImage(CacheType.CW_TYPE_PARKING)), HSHRINK, HCONTRACT);
+	pnlAddiWP.addLast(chkParking = new mCheckBox("Parking"), HGROW, FILL);
+	pnlAddiWP.addNext(addImg(CacheType.getTypeImage(CacheType.CW_TYPE_STAGE)), HSHRINK, HCONTRACT);
+	pnlAddiWP.addLast(chkStage = new mCheckBox("Stage"), HGROW, FILL);
+	pnlAddiWP.addNext(addImg(CacheType.getTypeImage(CacheType.CW_TYPE_QUESTION)), HSHRINK, HCONTRACT);
+	pnlAddiWP.addLast(chkQuestion = new mCheckBox("Question"), HGROW, FILL);
+	pnlAddiWP.addNext(addImg(CacheType.getTypeImage(CacheType.CW_TYPE_FINAL)), HSHRINK, HCONTRACT);
+	pnlAddiWP.addLast(chkFinal = new mCheckBox("Final"), HGROW, FILL);
+	pnlAddiWP.addNext(addImg(CacheType.getTypeImage(CacheType.CW_TYPE_TRAILHEAD)), HSHRINK, HCONTRACT);
+	pnlAddiWP.addLast(chkTrailhead = new mCheckBox("Trailhead"), HGROW, FILL);
+	pnlAddiWP.addNext(addImg(CacheType.getTypeImage(CacheType.CW_TYPE_REFERENCE)), HSHRINK, HCONTRACT);
+	pnlAddiWP.addLast(chkReference = new mCheckBox("Reference"), HGROW, FILL);
+	pnlAddiWP.addLast(new mLabel(""), VSTRETCH, FILL);
 
 	//////////////////////////
 	// Panel 6 - Cache container
 	//////////////////////////
+
 	addTitle(pnlContainer, MyLocale.getMsg(727, "Cache container"));
-	pnlContainer.addLast(chkMicro = new mCheckBox("Micro"));
-	pnlContainer.addLast(chkSmall = new mCheckBox("Small"));
-	pnlContainer.addLast(chkRegular = new mCheckBox("Regular"));
-	pnlContainer.addLast(chkLarge = new mCheckBox("Large"));
-	pnlContainer.addLast(chkVeryLarge = new mCheckBox("Very Large"));
-	pnlContainer.addLast(chkOther = new mCheckBox("Other"));
+
+	final CellPanel pnlContainerList;
+	pnlContainer.addLast(pnlContainerList = new CellPanel());
+	pnlContainerList.addNext(addImg(new Image(CacheSize.CW_GUIIMG_MICRO)), HSHRINK, HCONTRACT);
+	pnlContainerList.addLast(chkMicro=new mCheckBox("Micro"), HGROW, FILL);
+	pnlContainerList.addNext(addImg(new Image(CacheSize.CW_GUIIMG_SMALL)), HSHRINK, HCONTRACT);
+	pnlContainerList.addLast(chkSmall=new mCheckBox("Small"), HGROW, FILL);
+	pnlContainerList.addNext(addImg(new Image(CacheSize.CW_GUIIMG_NORMAL)), HSHRINK, HCONTRACT);
+	pnlContainerList.addLast(chkRegular=new mCheckBox("Regular"), HGROW, FILL);
+	pnlContainerList.addNext(addImg(new Image(CacheSize.CW_GUIIMG_LARGE)), HSHRINK, HCONTRACT);
+	pnlContainerList.addLast(chkLarge=new mCheckBox("Large"), HGROW, FILL);
+	pnlContainerList.addNext(addImg(new Image(CacheSize.CW_GUIIMG_VERYLARGE)), HSHRINK, HCONTRACT);
+	pnlContainerList.addLast(chkVeryLarge=new mCheckBox("Very Large"), HGROW, FILL);
+	pnlContainerList.addNext(addImg(new Image(CacheSize.CW_GUIIMG_NONPHYSICAL)), HSHRINK, HCONTRACT);
+	pnlContainerList.addLast(chkOther=new mCheckBox("Other"), HGROW, FILL);
+	pnlContainerList.addLast(new mLabel(""), VSTRETCH, HCONTRACT);
 
 	//////////////////////////
 	// Panel 7 - Search
 	//////////////////////////
-	addTitle(pnlSearch, "Search");
-	pnlSearch.addLast(new mLabel("To be implemented"));
+
+	addTitle(pnlSearch, MyLocale.getMsg(133, "Search"));
+
+	// Search for sync date
+	pnlSearch.addLast(new mLabel(MyLocale.getMsg(1051, "Last sync date:")), DONTSTRETCH, (DONTFILL | WEST));
+
+	pnlSearch.addNext(chcSrchSyncDateCmp = new mChoice(new String[]{"Before", "At", "After"}, 0), HSHRINK, (FILL | WEST));
+	pnlSearch.addNext(inpSrchSyncDate = new mInput(""), HSTRETCH, FILL);
+	pnlSearch.addNext(btnSrchSyncDate = GuiImageBroker.getButton("", "calendar"), DONTSTRETCH, FILL);
+	pnlSearch.addLast(btnSrchSyncDateClear = GuiImageBroker.getButton("", "clear"), DONTSTRETCH, FILL);
+	inpSrchSyncDate.modifyAll(DisplayOnly, 0);
+	btnSrchSyncDate.setToolTip(MyLocale.getMsg(31415, "Set found date / time"));
+
+	pnlSearch.addLast(new mLabel(""), DONTSTRETCH, FILL);
+
+	// Search for cache name
+	pnlSearch.addLast(new mLabel("Cache " + MyLocale.getMsg(303, "Name contains:")), DONTSTRETCH, (DONTFILL | WEST));
+	pnlSearch.addNext(inpSrchName = new mInput(), HSTRETCH, FILL | EAST);
+	inpSrchName.setTag(SPAN, new Dimension(3,1));
+	pnlSearch.addLast(btnSrchNameClear = GuiImageBroker.getButton("", "clear"), DONTSTRETCH, FILL);
+
+	// Search for owner
+	// coming soon
+
+	// Clear button for whole search panel
+	pnlSearch.addLast(new mLabel(""), DONTSTRETCH, FILL);
+	pnlSearch.addLast(btnClearSearch = GuiImageBroker.getButton("Clear Search", "clear"), HSHRINK, HCONTRACT);
+
+	pnlSearch.addLast(new mLabel(""), STRETCH, FILL);
 
 	//////////////////////////
 	// Panel 8 - Cache attributes
@@ -317,11 +380,15 @@ public class FilterScreen extends Form {
 	attV.setSelectionMasks(ini);
 
 	Frame frmScreen = new Frame();
+
 	mLabel lblInfo;
 	frmScreen.addLast(lblInfo = new mLabel(MyLocale.getMsg(725, "Note: Filters are additive, active filter=green"))).setTag(SPAN, new Dimension(2, 1));
 	lblInfo.setTag(INSETS, new Insets(0, 0, 2, 0));
 	frmScreen.borderStyle = UIConstants.BDR_RAISEDOUTER | UIConstants.BDR_SUNKENINNER | UIConstants.BF_BOTTOM;
 	this.addLast(frmScreen, HSTRETCH, HFILL);
+
+	// On small screens the buttons gets too wide, additional panel as workaround
+	CellPanel middlePanel = new CellPanel();
 
 	CellPanel pnlButtons = new CellPanel();
 	pnlButtons.addLast(new mLabel("Filter"));
@@ -332,9 +399,8 @@ public class FilterScreen extends Form {
 	pnlButtons.addLast(btnAddi = new mButton(MyLocale.getMsg(733, "Add. Wpt")));
 	pnlButtons.addLast(btnContainer = new mButton(MyLocale.getMsg(724, "Container")));
 	pnlButtons.addLast(btnCacheAttributes = new mButton(MyLocale.getMsg(738, "Attributes")));
-	// Search ist für 0.9n noch deaktiviert
-	//pnlButtons.addLast(btnSearch=new mButton("Search")); btnSearch.modify(Disabled,0);
-	addNext(pnlButtons, HSTRETCH, FILL);
+	pnlButtons.addLast(btnSearch = new mButton(MyLocale.getMsg(133, "Search")));
+	middlePanel.addNext(pnlButtons, HSTRETCH, FILL);
 
 	cp.addItem(pnlBearDist, "Bear", null);
 	cp.addItem(pnlAttributes, "Att", null);
@@ -344,7 +410,8 @@ public class FilterScreen extends Form {
 	cp.addItem(pnlContainer, "Size", null);
 	cp.addItem(pnlSearch, "Search", null);
 	cp.addItem(pnlCacheAttributes, "Attr", null);
-	addLast(cp, VSTRETCH, FILL);
+	middlePanel.addLast(cp, STRETCH, FILL);
+	this.addLast(middlePanel);
 
 	CellPanel savDelPanel = new CellPanel(); // Panel for "save" and "delete" button
 	savDelPanel.equalWidths = true;
@@ -367,28 +434,28 @@ public class FilterScreen extends Form {
 	int psx;
 	int psy;
 	if ((sw > 300) && (sh > 300)) {
-	    // larger screens: size according to fontsize
-	    psx = 240;
-	    psy = 260;
-	    if (fs > 12) {
-		psx = 300;
-		psy = 330;
-	    }
-	    if (fs > 17) {
-		psx = 400;
-		psy = 340;
-	    }
-	    if (fs > 23) {
-		psx = 500;
-		psy = 350;
-	    }
-	    setPreferredSize(psx, psy);
+		// larger screens: size according to fontsize
+		psx = 240;
+		psy = 260;
+		if (fs > 12) {
+			psx = 300;
+			psy = 330;
+		}
+		if (fs > 17) {
+			psx = 400;
+			psy = 340;
+		}
+		if (fs > 23) {
+			psx = 500;
+			psy = 350;
+		}
+		setPreferredSize(psx, psy);
 	} else {
-	    // small screens: fixed size
-	    if (sh > 240)
-		setPreferredSize(240, 260);
-	    else
-		setPreferredSize(240, 240);
+		// small screens: fixed size
+		if (sh > 240)
+			setPreferredSize(240, 260);
+		else
+			setPreferredSize(240, 240);
 	}
 	cp.select(3);
 
@@ -397,9 +464,9 @@ public class FilterScreen extends Form {
     }
 
     public void resizeTo(int width, int height) {
-	attV.changeIapSize(width, height);
-	this.relayout(true);
-	super.resizeTo(width, height);
+    	attV.changeIapSize(width, height);
+    	this.relayout(true);
+    	super.resizeTo(width, height);
     }
 
     public void setData(FilterData data) {
@@ -407,22 +474,23 @@ public class FilterScreen extends Form {
 	//////////////////////////
 	// Panel 1 - Bearing & Distance
 	//////////////////////////
-	if (data.getFilterDist().length() > 1) {
-	    if (data.getFilterDist().charAt(0) == 'L')
-		chcDist.select(0);
-	    else
-		chcDist.select(1);
-	    String dist = data.getFilterDist().substring(1);
-	    if (Global.pref.metricSystem == Metrics.IMPERIAL) {
-		double distValue = java.lang.Double.valueOf(dist).doubleValue();
-		double newDistValue = Metrics.convertUnit(distValue, Metrics.KILOMETER, Metrics.MILES);
-		dist = String.valueOf(newDistValue);
-	    }
-	    inpDist.setText(dist);
-	} else {
-	    chcDist.select(0);
-	    inpDist.setText("");
-	}
+
+    if (data.getFilterDist().length() > 1) {
+    	if (data.getFilterDist().charAt(0) == 'L')
+    		chcDist.select(0);
+    	else
+    		chcDist.select(1);
+    	String dist = data.getFilterDist().substring(1);
+    	if (Global.pref.metricSystem == Metrics.IMPERIAL) {
+    		double distValue = java.lang.Double.valueOf(dist).doubleValue();
+    		double newDistValue = Metrics.convertUnit(distValue, Metrics.KILOMETER, Metrics.MILES);
+    		dist = String.valueOf(newDistValue);
+    	}
+    	inpDist.setText(dist);
+    } else {
+    	chcDist.select(0);
+    	inpDist.setText("");
+    }
 	chkNoCoord.state = data.getFilterNoCoord();
 	String fltRose = data.getFilterRose();
 	chkNW.state = fltRose.charAt(0) == '1';
@@ -463,30 +531,31 @@ public class FilterScreen extends Form {
 	//////////////////////////
 	// Panel 3 - Cache ratings
 	//////////////////////////
+
 	if (data.getFilterDiff().length() > 1) {
-	    if (data.getFilterDiff().charAt(0) == 'L')
-		chcDiff.select(0);
-	    else if (data.getFilterDiff().charAt(0) == '=')
-		chcDiff.select(1);
-	    else
-		chcDiff.select(2);
-	    inpDiff.setText(data.getFilterDiff().substring(1));
+		if (data.getFilterDiff().charAt(0) == 'L')
+			chcDiff.select(0);
+		else if (data.getFilterDiff().charAt(0) == '=')
+			chcDiff.select(1);
+		else
+			chcDiff.select(2);
+		inpDiff.setText(data.getFilterDiff().substring(1));
 	} else {
-	    chcDiff.select(0);
-	    inpDiff.setText("");
+		chcDiff.select(0);
+		inpDiff.setText("");
 	}
 
 	if (data.getFilterTerr().length() > 1) {
-	    if (data.getFilterTerr().charAt(0) == 'L')
-		chcTerr.select(0);
-	    else if (data.getFilterTerr().charAt(0) == '=')
-		chcTerr.select(1);
-	    else
-		chcTerr.select(2);
-	    inpTerr.setText(data.getFilterTerr().substring(1));
+		if (data.getFilterTerr().charAt(0) == 'L')
+			chcTerr.select(0);
+		else if (data.getFilterTerr().charAt(0) == '=')
+			chcTerr.select(1);
+		else
+			chcTerr.select(2);
+		inpTerr.setText(data.getFilterTerr().substring(1));
 	} else {
-	    chcTerr.select(0);
-	    inpTerr.setText("");
+		chcTerr.select(0);
+		inpTerr.setText("");
 	}
 
 	//////////////////////////
@@ -515,6 +584,7 @@ public class FilterScreen extends Form {
 	//////////////////////////
 	// Panel 5 - Additional waypoints
 	//////////////////////////
+
 	chkParking.state = fltType.charAt(11) == '1';
 	chkStage.state = fltType.charAt(12) == '1';
 	chkQuestion.state = fltType.charAt(13) == '1';
@@ -526,6 +596,7 @@ public class FilterScreen extends Form {
 	//////////////////////////
 	// Panel 6 - Cache container
 	//////////////////////////
+
 	String fltSize = data.getFilterSize();
 	chkMicro.state = fltSize.charAt(0) == '1';
 	chkSmall.state = fltSize.charAt(1) == '1';
@@ -538,9 +609,26 @@ public class FilterScreen extends Form {
 	// Panel 7 - Search
 	//////////////////////////
 
+	String syncDate = data.getSyncDate();
+	if (syncDate.length() >= 10) {
+		// First sign is <, =, >, followed by '-' and then yyyymmdd
+		String theOperator = syncDate.substring(0,1);
+		String theDate = syncDate.substring(2,10);
+		inpSrchSyncDate.setText(theDate.substring(0,4)+"-"+theDate.substring(4,6)+"-"+theDate.substring(6,8));
+		chcSrchSyncDateCmp.select(2);
+		if (theOperator.equals("<")) chcSrchSyncDateCmp.select(0);
+		if (theOperator.equals("=")) chcSrchSyncDateCmp.select(1);
+		if (theOperator.equals(">")) chcSrchSyncDateCmp.select(2);
+	} else {
+		inpSrchSyncDate.setText("");
+	}
+
+	inpSrchName.setText(data.getNamePattern());
+
 	//////////////////////////
 	// Panel 8 - Cache attributes
 	//////////////////////////
+
 	attV.setSelectionMasks(data.getFilterAttr());
 	chcAttrib.select(data.getFilterAttrChoice());
 
@@ -618,14 +706,20 @@ public class FilterScreen extends Form {
 	btnContainer.repaint();
 
 	// Panel 7 - Search
+	if (inpSrchSyncDate.getText().length() > 0 ||
+		inpSrchName.getText().length() > 0) {
+		btnSearch.backGround=COLOR_FILTERACTIVE;
+	} else {
+		btnSearch.backGround=COLOR_FILTERINACTIVE;
+	}
+	btnSearch.repaint();
 
 	// Panel 8 - Cache attributes
 	if (attV.isSetSelectionMask())
-	    btnCacheAttributes.backGround = COLOR_FILTERACTIVE;
+		btnCacheAttributes.backGround = COLOR_FILTERACTIVE;
 	else
-	    btnCacheAttributes.backGround = COLOR_FILTERINACTIVE;
+		btnCacheAttributes.backGround = COLOR_FILTERINACTIVE;
 	btnCacheAttributes.repaint();
-
     }
 
     /**
@@ -634,134 +728,163 @@ public class FilterScreen extends Form {
      * @see Filter
      */
     public void onEvent(Event ev) {
-	if (ev instanceof ControlEvent && ev.type == ControlEvent.PRESSED) {
-	    if (ev.target == executePanel.cancelButton) {
-		if (savedFiltersChanged) {
-		    Global.pref.savePreferences();
-		    savedFiltersChanged = false;
-		}
-		fltList.select(-1);
-		currentFilterID = "";
-		this.close(0);
-	    } else if (ev.target == btnRoute) {
+    	if (ev instanceof ControlEvent && ev.type == ControlEvent.PRESSED) {
+    		if (ev.target == executePanel.cancelButton) {
+    			if (savedFiltersChanged) {
+    				Global.pref.savePreferences();
+    				savedFiltersChanged = false;
+    			}
+    			fltList.select(-1);
+    			currentFilterID = "";
+    			this.close(0);
+    		} else if (ev.target == btnRoute) {
 
-		File datei;
-		FileChooser fc = new FileChooser(FileChooserBase.OPEN, Global.profile.dataDir);
-		fc.setTitle(MyLocale.getMsg(712, "Select route file"));
-		if (fc.execute() != FormBase.IDCANCEL) {
-		    datei = fc.getChosenFile();
-		    InfoBox inf = new InfoBox("Distance?", "Dist:", InfoBox.INPUT);
-		    inf.execute();
-		    Vm.showWait(true);
-		    new Filter().doFilterRoute(datei, Convert.toDouble(inf.getInput()));
-		}
-		Vm.showWait(false);
-		fltList.select(-1);
-		currentFilterID = "";
-		this.close(0);
+    			File datei;
+    			FileChooser fc = new FileChooser(FileChooserBase.OPEN, Global.profile.dataDir);
+    			fc.setTitle(MyLocale.getMsg(712, "Select route file"));
+    			if (fc.execute() != FormBase.IDCANCEL) {
+    				datei = fc.getChosenFile();
+    				InfoBox inf = new InfoBox("Distance?", "Dist:", InfoBox.INPUT);
+    				inf.execute();
+    				Vm.showWait(true);
+    				Filter flt = new Filter();
+    			    new Filter().doFilterRoute(datei, Convert.toDouble(inf.getInput()));
+    			}
+    			Vm.showWait(false);
+    			fltList.select(-1);
+    			currentFilterID = "";
+    			this.close(0);
 
-	    } else if (ev.target == executePanel.applyButton) {
-		Vm.showWait(true);
+    		} else if (ev.target == executePanel.applyButton) {
+    			Vm.showWait(true);
 
-		FilterData data = getDataFromScreen();
-		Global.profile.setCurrentFilter(data);
+    			FilterData data = getDataFromScreen();
+    			Global.profile.setCurrentFilter(data);
 
-		Filter flt = new Filter();
-		flt.setFilter();
-		flt.doFilter();
-		if (savedFiltersChanged) {
-		    Global.pref.savePreferences();
-		    savedFiltersChanged = false;
-		}
-		Global.mainTab.tablePanel.myTableControl.scrollToVisible(0, 0);
-		Vm.showWait(false);
-		fltList.select(-1);
-		currentFilterID = "";
-		this.close(0);
-	    } else if (ev.target == btnSaveFlt) {
-		String ID = fltList.getText();
-		FilterData data = getDataFromScreen();
-		InputBox inp = new InputBox("ID");
-		String newID = inp.input(ID, 20);
-		if (newID != null && !newID.equals("")) {
-		    if (Global.pref.hasFilter(newID)) {
-			if (new InfoBox(MyLocale.getMsg(221, "Overwrite Filter?"), MyLocale.getMsg(222, "The filter already exists. Overwrite it?")).wait(FormBase.IDYES | FormBase.IDNO) == FormBase.IDYES) {
-			    Global.pref.addFilter(newID, data);
-			    savedFiltersChanged = true;
-			    buildFilterList();
-			}
-		    } else {
-			Global.pref.addFilter(newID, data);
-			savedFiltersChanged = true;
-			buildFilterList();
-		    }
-		}
-	    } else if (ev.target == btnDelFlt) {
-		String ID = fltList.getText();
-		if (!ID.equals("")) {
-		    FilterData data = Global.pref.getFilter(ID);
-		    // We only need to delete anything, if there is already a filter of the id
-		    // in the list box. If not, just delete the text in the box.
-		    if (data != null) {
-			if (new InfoBox(MyLocale.getMsg(223, "Delete filter?"), ID + MyLocale.getMsg(224, " - Delete this filter?")).wait(FormBase.IDYES | FormBase.IDNO) == FormBase.IDYES) {
-			    Global.pref.removeFilter(ID);
-			    fltList.setText("");
-			    savedFiltersChanged = true;
-			    this.buildFilterList();
-			}
-		    } else {
-			fltList.setText("");
-		    }
-		}
-	    } else if (ev.target == addiWptChk) { // Set all addi filters to value of main addi filter
-		chkParking.setState(addiWptChk.state);
-		chkStage.setState(addiWptChk.state);
-		chkQuestion.setState(addiWptChk.state);
-		chkFinal.setState(addiWptChk.state);
-		chkTrailhead.setState(addiWptChk.state);
-		chkReference.setState(addiWptChk.state);
-		addiWptChk.bgColor = Color.White;
-		addiWptChk.repaint();
-	    } else if (ev.target == btnBearing)
-		cp.select(0);
-	    else if (ev.target == btnAttributes)
-		cp.select(1);
-	    else if (ev.target == btnRatings)
-		cp.select(2);
-	    else if (ev.target == btnTypes)
-		cp.select(3);
-	    else if (ev.target == btnAddi)
-		cp.select(4);
-	    else if (ev.target == btnContainer)
-		cp.select(5);
-	    else if (ev.target == btnSearch)
-		cp.select(6);
-	    else if (ev.target == btnCacheAttributes)
-		cp.select(7);
-	    else if (ev.target == btnDeselect) {
-		chkNW.state = chkNNW.state = chkN.state = chkNNE.state = chkNE.state = chkENE.state = chkE.state = chkESE.state = chkSE.state = chkSSE.state = chkS.state = chkSSW.state = chkSW.state = chkWSW.state = chkW.state = chkWNW.state = false;
-		setColors();
-		repaint();
-
-	    } else if (ev.target == btnSelect) {
-		chkNW.state = chkNNW.state = chkN.state = chkNNE.state = chkNE.state = chkENE.state = chkE.state = chkESE.state = chkSE.state = chkSSE.state = chkS.state = chkSSW.state = chkSW.state = chkWSW.state = chkW.state = chkWNW.state = true;
-		setColors();
-		repaint();
-	    }
-	}
-	if (ev instanceof DataChangeEvent) {
-	    if (ev.target == fltList) {
-		if (!currentFilterID.equals(fltList.getText())) {
-		    FilterData data = Global.pref.getFilter(fltList.getText());
-		    if (data != null) {
-			currentFilterID = fltList.getText();
-			this.setData(data);
-			this.repaintNow();
-		    }
-		}
-	    }
-	    setColors();
-	}
+    			Filter flt = new Filter();
+    			flt.setFilter();
+    			flt.doFilter();
+    			if (savedFiltersChanged) {
+    				Global.pref.savePreferences();
+    				savedFiltersChanged = false;
+    			}
+    			Global.mainTab.tablePanel.myTableControl.scrollToVisible(0, 0);
+    			Vm.showWait(false);
+    			fltList.select(-1);
+    			currentFilterID = "";
+    			this.close(0);
+    		} else if (ev.target == btnSaveFlt) {
+    			String ID = fltList.getText();
+    			FilterData data = getDataFromScreen();
+    			InputBox inp = new InputBox("ID");
+    			String newID = inp.input(ID, 20);
+    			if (newID != null && !newID.equals("")) {
+    				if (Global.pref.hasFilter(newID)) {
+    					if (new InfoBox(MyLocale.getMsg(221, "Overwrite Filter?"), MyLocale.getMsg(222, "The filter already exists. Overwrite it?")).wait(FormBase.IDYES | FormBase.IDNO) == FormBase.IDYES) {
+    						Global.pref.addFilter(newID, data);
+    						savedFiltersChanged = true;
+    						buildFilterList();
+    					}
+    				} else {
+    					Global.pref.addFilter(newID, data);
+    					savedFiltersChanged = true;
+    					buildFilterList();
+    				}
+    			}
+    		} else if (ev.target == btnDelFlt) {
+    			String ID = fltList.getText();
+    			if (!ID.equals("")) {
+    				FilterData data = Global.pref.getFilter(ID);
+    				// We only need to delete anything, if there is already a filter of the id
+    				// in the list box. If not, just delete the text in the box.
+    				if (data != null) {
+    					if (new InfoBox(MyLocale.getMsg(223, "Delete filter?"), ID + MyLocale.getMsg(224, " - Delete this filter?")).wait(FormBase.IDYES | FormBase.IDNO) == FormBase.IDYES) {
+    						Global.pref.removeFilter(ID);
+    						fltList.setText("");
+    						savedFiltersChanged = true;
+    						this.buildFilterList();
+    					}
+    				} else {
+    					fltList.setText("");
+    				}
+    			}
+    		} else if (ev.target == addiWptChk) { // Set all addi filters to value of main addi filter
+    			chkParking.setState(addiWptChk.state);
+    			chkStage.setState(addiWptChk.state);
+    			chkQuestion.setState(addiWptChk.state);
+    			chkFinal.setState(addiWptChk.state);
+    			chkTrailhead.setState(addiWptChk.state);
+    			chkReference.setState(addiWptChk.state);
+    			addiWptChk.bgColor = Color.White;
+    			addiWptChk.repaint();
+    		} else if (ev.target == btnBearing)
+    			cp.select(0);
+    		else if (ev.target == btnAttributes)
+    			cp.select(1);
+    		else if (ev.target == btnRatings)
+    			cp.select(2);
+    		else if (ev.target == btnTypes)
+    			cp.select(3);
+    		else if (ev.target == btnAddi)
+    			cp.select(4);
+    		else if (ev.target == btnContainer)
+    			cp.select(5);
+    		else if (ev.target == btnSearch)
+    			cp.select(6);
+    		else if (ev.target == btnCacheAttributes)
+    			cp.select(7);
+    		else if (ev.target == btnDeselect) {
+    			chkNW.state = chkNNW.state = chkN.state = chkNNE.state = chkNE.state = chkENE.state = chkE.state = chkESE.state = chkSE.state = chkSSE.state = chkS.state = chkSSW.state = chkSW.state = chkWSW.state = chkW.state = chkWNW.state = false;
+    			setColors();
+    			repaint();
+    		} else if (ev.target == btnSelect) {
+    			chkNW.state = chkNNW.state = chkN.state = chkNNE.state = chkNE.state = chkENE.state = chkE.state = chkESE.state = chkSE.state = chkSSE.state = chkS.state = chkSSW.state = chkSW.state = chkWSW.state = chkW.state = chkWNW.state = true;
+    			setColors();
+    			repaint();
+    		}
+    		else if (ev.target == btnSrchSyncDate) {
+    			DateChooser.dayFirst = true;
+    			final DateChooser dc = new DateChooser(Vm.getLocale());
+    			dc.title = "Last Update Time";
+    			dc.setPreferredSize(240, 240);
+    			if (inpSrchSyncDate.getText().length() == 10) try {
+    				dc.setDate(new Time(Convert.parseInt(inpSrchSyncDate.getText().substring(8)), Convert.parseInt(inpSrchSyncDate.getText().substring(5, 7)), Convert.parseInt(inpSrchSyncDate.getText().substring(0, 4))));
+    			} catch (NumberFormatException e) {
+    				dc.reset(new Time());
+    			}
+    			if (dc.execute() == ewe.ui.FormBase.IDOK) {
+    				inpSrchSyncDate.setText(Convert.toString(dc.year) + "-" + MyLocale.formatLong(dc.month, "00") + "-" + MyLocale.formatLong(dc.day, "00"));
+    			}
+    			setColors();
+    			repaint();
+    		} else if (ev.target == btnSrchSyncDateClear) {
+    			inpSrchSyncDate.setText("");
+    			setColors();
+    			repaint();
+    		} else if (ev.target == btnSrchNameClear) {
+    			inpSrchName.setText("");
+    			setColors();
+    			repaint();
+    		} else if (ev.target == btnClearSearch) {
+    			inpSrchSyncDate.setText("");
+    			inpSrchName.setText("");
+    			setColors();
+    			repaint();
+    		}
+    	}
+    	if (ev instanceof DataChangeEvent) {
+    		if (ev.target == fltList) {
+    			if (!currentFilterID.equals(fltList.getText())) {
+    				FilterData data = Global.pref.getFilter(fltList.getText());
+    				if (data != null) {
+    					currentFilterID = fltList.getText();
+    					this.setData(data);
+    					this.repaintNow();
+    				}
+    			}
+    		}
+    		setColors();
+    	}
     }
 
     /**
@@ -769,11 +892,11 @@ public class FilterScreen extends Form {
      * reflects the filters that are currenty in memory.
      */
     private void buildFilterList() {
-	while (fltList.itemsSize() > 0) {
-	    fltList.deleteItem(0);
-	}
-	fltList.addItems(Global.pref.getFilterIDs());
-	fltList.updateItems();
+    	while (fltList.itemsSize() > 0) {
+    		fltList.deleteItem(0);
+    	}
+    	fltList.addItems(Global.pref.getFilterIDs());
+    	fltList.updateItems();
     }
 
     /**
@@ -781,56 +904,73 @@ public class FilterScreen extends Form {
      * entered in the screen.
      */
     private FilterData getDataFromScreen() {
-	FilterData data = new FilterData();
-	data.setFilterVar((chkArchived.state ? "1" : "0") + (chkAvailable.state ? "1" : "0") + (chkFound.state ? "1" : "0") + (chkOwned.state ? "1" : "0") + (chkNotArchived.state ? "1" : "0") + (chkNotAvailable.state ? "1" : "0")
-		+ (chkNotFound.state ? "1" : "0") + (chkNotOwned.state ? "1" : "0"));
-	data.setFilterType((chkTrad.state ? "1" : "0") + (chkMulti.state ? "1" : "0") + (chkVirtual.state ? "1" : "0") + (chkLetter.state ? "1" : "0") + (chkEvent.state ? "1" : "0") + (chkWebcam.state ? "1" : "0") + (chkMystery.state ? "1" : "0")
-		+ (chkEarth.state ? "1" : "0") + (chkLocless.state ? "1" : "0") + (chkMega.state ? "1" : "0") + (chkCustom.state ? "1" : "0") + (chkParking.state ? "1" : "0") + (chkStage.state ? "1" : "0") + (chkQuestion.state ? "1" : "0")
-		+ (chkFinal.state ? "1" : "0") + (chkTrailhead.state ? "1" : "0") + (chkReference.state ? "1" : "0") + (chkCito.state ? "1" : "0") + (chkWherigo.state ? "1" : "0") + (chkApe.state ? "1" : "0") + (chkMaze.state ? "1" : "0"));
-	data.setFilterRose((chkNW.state ? "1" : "0") + (chkNNW.state ? "1" : "0") + (chkN.state ? "1" : "0") + (chkNNE.state ? "1" : "0") + (chkNE.state ? "1" : "0") + (chkENE.state ? "1" : "0") + (chkE.state ? "1" : "0")
-		+ (chkESE.state ? "1" : "0") + (chkSE.state ? "1" : "0") + (chkSSE.state ? "1" : "0") + (chkS.state ? "1" : "0") + (chkSSW.state ? "1" : "0") + (chkSW.state ? "1" : "0") + (chkWSW.state ? "1" : "0") + (chkW.state ? "1" : "0")
-		+ (chkWNW.state ? "1" : "0"));
-	data.setFilterSize((chkMicro.state ? "1" : "0") + (chkSmall.state ? "1" : "0") + (chkRegular.state ? "1" : "0") + (chkLarge.state ? "1" : "0") + (chkVeryLarge.state ? "1" : "0") + (chkOther.state ? "1" : "0"));
+    	FilterData data = new FilterData();
+    	data.setFilterVar((chkArchived.state ? "1" : "0") + (chkAvailable.state ? "1" : "0") + (chkFound.state ? "1" : "0") + (chkOwned.state ? "1" : "0") + (chkNotArchived.state ? "1" : "0") + (chkNotAvailable.state ? "1" : "0")
+    			+ (chkNotFound.state ? "1" : "0") + (chkNotOwned.state ? "1" : "0"));
+    	data.setFilterType((chkTrad.state ? "1" : "0") + (chkMulti.state ? "1" : "0") + (chkVirtual.state ? "1" : "0") + (chkLetter.state ? "1" : "0") + (chkEvent.state ? "1" : "0") + (chkWebcam.state ? "1" : "0") + (chkMystery.state ? "1" : "0")
+    			+ (chkEarth.state ? "1" : "0") + (chkLocless.state ? "1" : "0") + (chkMega.state ? "1" : "0") + (chkCustom.state ? "1" : "0") + (chkParking.state ? "1" : "0") + (chkStage.state ? "1" : "0") + (chkQuestion.state ? "1" : "0")
+    			+ (chkFinal.state ? "1" : "0") + (chkTrailhead.state ? "1" : "0") + (chkReference.state ? "1" : "0") + (chkCito.state ? "1" : "0") + (chkWherigo.state ? "1" : "0") + (chkApe.state ? "1" : "0") + (chkMaze.state ? "1" : "0"));
+    	data.setFilterRose((chkNW.state ? "1" : "0") + (chkNNW.state ? "1" : "0") + (chkN.state ? "1" : "0") + (chkNNE.state ? "1" : "0") + (chkNE.state ? "1" : "0") + (chkENE.state ? "1" : "0") + (chkE.state ? "1" : "0")
+    			+ (chkESE.state ? "1" : "0") + (chkSE.state ? "1" : "0") + (chkSSE.state ? "1" : "0") + (chkS.state ? "1" : "0") + (chkSSW.state ? "1" : "0") + (chkSW.state ? "1" : "0") + (chkWSW.state ? "1" : "0") + (chkW.state ? "1" : "0")
+    			+ (chkWNW.state ? "1" : "0"));
+    	data.setFilterSize((chkMicro.state ? "1" : "0") + (chkSmall.state ? "1" : "0") + (chkRegular.state ? "1" : "0") + (chkLarge.state ? "1" : "0") + (chkVeryLarge.state ? "1" : "0") + (chkOther.state ? "1" : "0"));
 
-	// Distance: If Metric system is set to imperial units,
-	//           then the entered value is meant to be miles,
-	//           otherwise it's kilometer.
-	double distValue = java.lang.Double.NaN;
-	String rawDistance = inpDist.getText().replace(',', '.');
-	String newDistance = rawDistance; // initial Value;
-	if (!rawDistance.trim().equals("")) {
-	    distValue = java.lang.Double.valueOf(rawDistance).doubleValue();
-	    if (Global.pref.metricSystem == Metrics.IMPERIAL) {
-		newDistance = String.valueOf(Metrics.convertUnit(distValue, Metrics.MILES, Metrics.KILOMETER));
-	    }
-	}
-	if (chcDist.selectedIndex == 0) {
-	    data.setFilterDist("L" + newDistance);
-	} else {
-	    data.setFilterDist("G" + newDistance);
-	}
+    	// Distance: If Metric system is set to imperial units,
+    	//           then the entered value is meant to be miles,
+    	//           otherwise it's kilometer.
+    	double distValue = java.lang.Double.NaN;
+    	String rawDistance = inpDist.getText().replace(',', '.');
+    	String newDistance = rawDistance; // initial Value;
+    	if (!rawDistance.trim().equals("")) {
+    		distValue = java.lang.Double.valueOf(rawDistance).doubleValue();
+    		if (Global.pref.metricSystem == Metrics.IMPERIAL) {
+    			newDistance = String.valueOf(Metrics.convertUnit(distValue, Metrics.MILES, Metrics.KILOMETER));
+    		}
+    	}
+    	if (chcDist.selectedIndex == 0) {
+    		data.setFilterDist("L" + newDistance);
+    	} else {
+    		data.setFilterDist("G" + newDistance);
+    	}
 
-	if (chcDiff.selectedIndex == 0) {
-	    data.setFilterDiff("L" + inpDiff.getText());
-	} else if (chcDiff.selectedIndex == 1) {
-	    data.setFilterDiff("=" + inpDiff.getText());
-	} else {
-	    data.setFilterDiff("G" + inpDiff.getText());
-	}
+    	if (chcDiff.selectedIndex == 0) {
+    		data.setFilterDiff("L" + inpDiff.getText());
+    	} else if (chcDiff.selectedIndex == 1) {
+    		data.setFilterDiff("=" + inpDiff.getText());
+    	} else {
+    		data.setFilterDiff("G" + inpDiff.getText());
+    	}
 
-	if (chcTerr.selectedIndex == 0) {
-	    data.setFilterTerr("L" + inpTerr.getText());
-	} else if (chcTerr.selectedIndex == 1) {
-	    data.setFilterTerr("=" + inpTerr.getText());
-	} else {
-	    data.setFilterTerr("G" + inpTerr.getText());
-	}
-	data.setFilterAttr(attV.getSelectionMasks());
-	data.setFilterAttrChoice(chcAttrib.selectedIndex);
-	data.setFilterStatus(chcStatus.getText());
-	data.setUseRegexp(chkUseRegexp.getState());
-	data.setFilterNoCoord(chkNoCoord.getState());
-	return data;
+    	if (chcTerr.selectedIndex == 0) {
+    		data.setFilterTerr("L" + inpTerr.getText());
+    	} else if (chcTerr.selectedIndex == 1) {
+    		data.setFilterTerr("=" + inpTerr.getText());
+    	} else {
+    		data.setFilterTerr("G" + inpTerr.getText());
+    	}
+    	data.setFilterAttr(attV.getSelectionMasks());
+    	data.setFilterAttrChoice(chcAttrib.selectedIndex);
+    	data.setFilterStatus(chcStatus.getText());
+    	data.setUseRegexp(chkUseRegexp.getState());
+    	data.setFilterNoCoord(chkNoCoord.getState());
+
+    	if (inpSrchSyncDate.getText() == "") {
+    		data.setSyncDate("");
+    	} else {
+    		// last sync has a special format, remove '-'
+    		String aDate = STRreplace.replace(inpSrchSyncDate.getText(), "-", "");
+    		String aDirection = ">-";
+    		if(chcSrchSyncDateCmp.selectedIndex == 0) {
+    			aDirection = "<-";
+    		} else if(chcSrchSyncDateCmp.selectedIndex == 1) {
+    			aDirection = "=-";
+    		} else {
+    			aDirection = ">-";
+    		}
+    		data.setSyncDate(aDirection + aDate);
+    	}
+    	data.setNamePattern(inpSrchName.getText());
+
+    	return data;
     }
-
 }
