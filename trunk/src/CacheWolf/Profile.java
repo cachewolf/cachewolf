@@ -428,10 +428,10 @@ public class Profile {
 		    String attr = ex.findNext();
 		    long[] filterAttr = { 0l, 0l, 0l, 0l };
 		    if (attr != null && !attr.equals(""))
-			filterAttr[0] = Convert.parseLong(attr);
+		    	filterAttr[0] = Convert.parseLong(attr);
 		    attr = ex.findNext();
 		    if (attr != null && !attr.equals(""))
-			filterAttr[2] = Convert.parseLong(attr);
+		    	filterAttr[2] = Convert.parseLong(attr);
 		    setFilterAttr(filterAttr);
 		    attr = ex.findNext();
 		    setFilterAttrChoice(Convert.parseInt(attr));
@@ -439,18 +439,27 @@ public class Profile {
 		    setFilterUseRegexp(Boolean.valueOf(ex.findNext()).booleanValue());
 		    attr = ex.findNext();
 		    if (attr != null && !attr.equals("")) {
-			setFilterNoCoord(Boolean.valueOf(attr).booleanValue());
-
+		    	setFilterNoCoord(Boolean.valueOf(attr).booleanValue());
 		    } else {
-			setFilterNoCoord(true);
+		    	setFilterNoCoord(true);
 		    }
 		    attr = ex.findNext();
 		    if (attr != null && !attr.equals(""))
-			filterAttr[1] = Convert.parseLong(attr);
+		    	filterAttr[1] = Convert.parseLong(attr);
 		    attr = ex.findNext();
 		    if (attr != null && !attr.equals(""))
-			filterAttr[3] = Convert.parseLong(attr);
+		    	filterAttr[3] = Convert.parseLong(attr);
 		    setFilterAttr(filterAttr);
+
+		    // Order within the search items must not be changed
+		    attr = SafeXML.cleanback(ex.findNext());
+		    String[] searchFilterList = ewe.util.mString.split(attr, '|'); //'\u0399');
+		    for(int i = 0; i < searchFilterList.length; i++)
+		    {
+		    	if (i == 0) setFilterSyncDate(searchFilterList[i]);
+		    	if (i == 1) setFilterNamePattern(searchFilterList[i]);
+		    }
+
 		} else if (text.indexOf("<FILTERCONFIG") >= 0) {
 		    String temp = ex.findFirst(text.substring(text.indexOf("<FILTERCONFIG")));
 		    setFilterActive(Common.parseInt(temp.substring(0, 1)));
@@ -859,6 +868,24 @@ public class Profile {
     public String getLast_sync_opencaching() {
 	return last_sync_opencaching;
     }
+
+	public String getFilterSyncDate() {
+		return currentFilter.getSyncDate();
+	}
+
+	public void setFilterSyncDate(String lastDate) {
+		this.notifyUnsavedChanges(lastDate != this.getCurrentFilter().getSyncDate());
+		this.currentFilter.setSyncDate(lastDate);
+	}
+
+	public String getFilterNamePattern() {
+		return currentFilter.getNamePattern();
+	}
+
+	public void setFilterNamePattern(String pattern) {
+		this.notifyUnsavedChanges(pattern != this.getCurrentFilter().getNamePattern());
+		this.currentFilter.setNamePattern(pattern);
+	}
 
     public void setLast_sync_opencaching(String last_sync_opencaching) {
 	this.notifyUnsavedChanges(!last_sync_opencaching.equals(this.last_sync_opencaching));

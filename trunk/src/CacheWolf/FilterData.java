@@ -53,6 +53,10 @@ public class FilterData {
 	private String filterStatus = "";
 	private boolean useRegexp = false;
 
+	// filter items of the search panel
+	private String syncDate = "";
+	private String namePattern = "";
+
 	/**
 	 * Constructor for a profile
 	 * 
@@ -76,10 +80,28 @@ public class FilterData {
 		if (ID != null && !ID.equals("")) {
 			saveID = "id = \"" + SafeXML.clean(ID) + "\" ";
 		}
-		return "    <FILTERDATA " + saveID + "rose = \"" + getFilterRose() + "\"" + " type = \"" + getFilterType() + "\"" + " var = \"" + getFilterVar() + "\"" + " dist = \"" + getFilterDist().replace('"', ' ') + "\"" + " diff = \""
-				+ getFilterDiff() + "\"" + " terr = \"" + getFilterTerr() + "\"" + " size = \"" + getFilterSize() + "\"" + " attributesYes = \"" + filterAttr[0] + "\"" + " attributesNo = \"" + filterAttr[2] + "\"" + " attributesChoice = \""
-				+ getFilterAttrChoice() + "\"" + " status = \"" + SafeXML.clean(getFilterStatus()) + "\"" + " useRegexp = \"" + useRegexp() + "\"" + " noCoord = \"" + getFilterNoCoord() + "\"" + " attributesYes1 = \"" + filterAttr[1] + "\""
-				+ " attributesNo1 = \"" + filterAttr[3] + "\"" + " />\n";
+		// '|' is splitter, it'll not work correctly if contained in any search item
+		// alternative: '\u0399'
+		String searchSeparator = "|"; // '\u0399'
+		return "    <FILTERDATA " + saveID +
+			"rose = \"" + getFilterRose() + "\"" +
+			" type = \"" + getFilterType() + "\"" +
+			" var = \"" + getFilterVar() + "\"" +
+			" dist = \"" + getFilterDist().replace('"',' ') + "\"" +
+			" diff = \"" + getFilterDiff() + "\"" +
+			" terr = \"" + getFilterTerr() + "\"" +
+			" size = \"" + getFilterSize() + "\"" +
+			" attributesYes = \"" + filterAttr[0] + "\"" +
+			" attributesNo = \"" + filterAttr[2] + "\"" +
+			" attributesChoice = \"" + getFilterAttrChoice() + "\"" +
+			" status = \"" + SafeXML.clean(getFilterStatus()) + "\"" +
+			" useRegexp = \"" + useRegexp()+ "\"" +
+			" noCoord = \"" + getFilterNoCoord() + "\"" +
+			" attributesYes1 = \"" + filterAttr[1] + "\"" +
+			" attributesNo1 = \"" + filterAttr[3] + "\"" +
+			// just one entry for search to make it easier extendable later
+			" search = \"" + getSyncDate() + searchSeparator + getNamePattern() + "\"" +
+			" />\n";
 	}
 
 	/**
@@ -206,4 +228,19 @@ public class FilterData {
 		this.filterNoCoord = filterNoCoord;
 	}
 
+	public String getSyncDate() {
+		return this.syncDate;
+	}
+
+	public void setSyncDate(String date) {
+		this.syncDate = date;
+	}
+
+	public String getNamePattern() {
+		return this.namePattern;
+	}
+
+	public void setNamePattern(String pattern) {
+		this.namePattern = pattern;
+	}
 }
