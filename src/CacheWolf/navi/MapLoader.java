@@ -416,7 +416,6 @@ public class MapLoader {
 		    // mapProgramParams = "-exitafter " + scriptFileName;
 		    mapProgramParams = scriptFileName;
 		}
-		// Vm.exec(mapProgram, mapProgramParams, 0, true);
 		if (CWWrapper.execute(mapProgram + " " + mapProgramParams)) {
 		    // preparation for generating wfl from the ozi map-file
 		    Vector GCPs = map2wfl(path + imagename);
@@ -837,10 +836,6 @@ class WebMapService extends OnlineMapService {
 	stylesUrlPart = wms.getProperty("StylesUrlPart", "").trim();
 	String topleftS = wms.getProperty("BoundingBoxTopLeftWGS84", "").trim();
 	String bottomrightS = wms.getProperty("BoundingBoxBottomRightWGS84");
-	// To be backward-compatible with misspelled property-name: Don't remove these lines until all wms-Files has been changed
-	if (bottomrightS == null) {
-	    bottomrightS = wms.getProperty("BoundingBoxButtomRightWGS84", "");
-	}
 	bottomrightS.trim();
 	CWPoint topleft = new CWPoint(topleftS);
 	CWPoint bottomright = new CWPoint(bottomrightS);
