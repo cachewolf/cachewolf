@@ -67,7 +67,7 @@ public final class TransformCoordinates {
     public static final int EPSG_FRENCH_LAMBERT_NTF_IV = 27574;
     public static final int EPSG_TEST = -5;
     public static final int EPSG_SwedenUTM = 3006;
-    public static final int EPSG_DenmarkUTM = 25832;
+    public static final int EPSG_25828to25838 = 25832; // a dummy here DENMARK ..
     public static final int EPSG_Mercator_1SP_Google = 3857;
 
     /**
@@ -75,19 +75,20 @@ public final class TransformCoordinates {
      * Localsystem refers to all these stripes. <br>
      * Usually each stripe has its own EPSG-code <br>
      * which must be choosen automatically in some cirmstances. <br>
-     * That's why I implementet "localsystem". <br>
+     * That's why I implemented "localsystem". <br>
      * The constants start with the telephone country code <br>
      * and have two digits after that <br>
      * which can be used in order to distinguish between several local systems which are in use in one country. <br>
      * In Austria, for example, there is a new and an old one.
      */
-    public static final int LOCALSYSTEM_GERMAN_GK = 4900;
+    public static final int LOCALSYSTEM_FRANCE_LAMBERT_IIE = 3300;
     public static final int LOCALSYSTEM_ITALIAN_GB = 3900;
     public static final int LOCALSYSTEM_AUSTRIAN_LAMBERT_OLD = 4300;
     public static final int LOCALSYSTEM_AUSTRIAN_LAMBERT_NEW = 4301;
-    public static final int LOCALSYSTEM_FRANCE_LAMBERT_IIE = 3300;
+    public static final int LOCALSYSTEM_UTM28Nto38N = 4500; // a dummy here DENMARK
     public static final int LOCALSYSTEM_SWEDEN = 4600;
-    public static final int LOCALSYSTEM_DENMARK = 4500;
+    public static final int LOCALSYSTEM_GERMAN_GK = 4900;
+
     public static final int LOCALSYSTEM_UTM_WGS84 = 10000;
     /** returned from some methods if not supported */
     public static final int LOCALSYSTEM_NOT_SUPPORTED = -1;
@@ -256,6 +257,8 @@ public final class TransformCoordinates {
      *         depending on lat / lon.
      */
     public static final int getLocalProjectionSystem(int epsgcode) {
+	if (epsgcode >= 25828 && epsgcode <= 25838)
+	    return TransformCoordinates.LOCALSYSTEM_UTM28Nto38N;
 	int ret;
 	switch (epsgcode) {
 	case EPSG_GERMAN_GK2:
@@ -279,9 +282,6 @@ public final class TransformCoordinates {
 	    break;
 	case EPSG_SwedenUTM:
 	    ret = TransformCoordinates.LOCALSYSTEM_SWEDEN;
-	    break;
-	case EPSG_DenmarkUTM:
-	    ret = TransformCoordinates.LOCALSYSTEM_DENMARK;
 	    break;
 	default:
 	    ret = -1;
@@ -416,7 +416,7 @@ public final class TransformCoordinates {
 	case TransformCoordinates.LOCALSYSTEM_UTM_WGS84:
 	case TransformCoordinates.LOCALSYSTEM_AUSTRIAN_LAMBERT_NEW:
 	case TransformCoordinates.LOCALSYSTEM_SWEDEN:
-	case TransformCoordinates.LOCALSYSTEM_DENMARK:
+	case TransformCoordinates.LOCALSYSTEM_UTM28Nto38N:
 	    return NO_DATUM_SHIFT;
 	default:
 	    throw new IllegalArgumentException("TransformCoordinates.getTransParams(wgs84): localsystem: " + localsystem + "not supported");
@@ -447,7 +447,7 @@ public final class TransformCoordinates {
 	case TransformCoordinates.LOCALSYSTEM_SWEDEN:
 	    transparams = NO_DATUM_SHIFT;
 	    break;
-	case TransformCoordinates.LOCALSYSTEM_DENMARK:
+	case TransformCoordinates.LOCALSYSTEM_UTM28Nto38N:
 	    transparams = NO_DATUM_SHIFT;
 	    break;
 	default:

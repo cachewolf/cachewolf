@@ -179,9 +179,8 @@ public class MyTableControl extends TableControl {
     }
 
     private void callExternalProgram(String program, String parameter) {
-	// invalid path will be handled by try
 	try {
-	    CWWrapper.exec(program, parameter); // maybe this works on some PDAs?
+	    CWWrapper.exec(program, parameter);
 	} catch (IOException ex) {
 	    new InfoBox(MyLocale.getMsg(5500, "Error"), MyLocale.getMsg(1034, "Cannot start " + program + "!") + "\n" + ex.toString() + "\n" + MyLocale.getMsg(1035, "Possible reason:") + "\n" + MyLocale.getMsg(1036, "A bug in ewe VM, please be")
 		    + "\n" + MyLocale.getMsg(1037, "patient for an update")).wait(FormBase.OKB);

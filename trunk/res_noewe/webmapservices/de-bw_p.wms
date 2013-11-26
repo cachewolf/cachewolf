@@ -1,6 +1,6 @@
 ﻿#intentionally left blank
 Name: 									de.Baden-Württemberg DOP 40cm-Bodenaufloesung
-MapType:            					de.bw DOP_40
+MapType:            					de.bw dop40
 MainUrl:            					http://www.lv-bw.de/dv/service/getrds.asp?login=geoportal&pw=gdi_bw&
 LayersUrlPart:     						LAYERS=DOP_RGB
 ImageFormatUrlPart:						FORMAT=image/png
