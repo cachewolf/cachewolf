@@ -28,219 +28,218 @@ package CacheWolf;
  */
 public class FilterData {
 
-	// When extending the filter check "normaliseFilters"
-	// which ensures backward compatibility. Normally no change should be needed
-	public final static String FILTERTYPE = "111111111111111111111";
-	public final static String FILTERROSE = "1111111111111111";
-	public final static String FILTERVAR = "11111111";
-	public final static String FILTERSIZE = "111111";
+    // When extending the filter check "normaliseFilters"
+    // which ensures backward compatibility. Normally no change should be needed
+    public final static String FILTERTYPE = "111111111111111111111";
+    public final static String FILTERROSE = "1111111111111111";
+    public final static String FILTERVAR = "11111111";
+    public final static String FILTERSIZE = "111111";
 
-	private String filterType = new String(FILTERTYPE);
-	private String filterRose = new String(FILTERROSE);
-	private String filterSize = new String(FILTERSIZE);
-	private boolean filterNoCoord = true;
+    private String filterType = new String(FILTERTYPE);
+    private String filterRose = new String(FILTERROSE);
+    private String filterSize = new String(FILTERSIZE);
+    private boolean filterNoCoord = true;
 
-	// filter settings for archived ... owner (section) in filterscreen
-	private String filterVar = new String(FILTERVAR);
-	private String filterDist = new String("L");
-	private String filterDiff = new String("L");
-	private String filterTerr = new String("L");
+    // filter settings for archived ... owner (section) in filterscreen
+    private String filterVar = new String(FILTERVAR);
+    private String filterDist = new String("L");
+    private String filterDiff = new String("L");
+    private String filterTerr = new String("L");
 
-	private long[] filterAttr = { 0l, 0l, 0l, 0l };
-	private int filterAttrChoice = 0;
+    private long[] filterAttr = { 0l, 0l, 0l, 0l };
+    private int filterAttrChoice = 0;
 
-	// filter setting for state of cache
-	private String filterStatus = "";
-	private boolean useRegexp = false;
+    // filter setting for state of cache
+    private String filterStatus = "";
+    private boolean useRegexp = false;
 
-	// filter items of the search panel
-	private String syncDate = "";
-	private String namePattern = "";
+    // filter items of the search panel
+    private String syncDate = "";
+    private String namePattern = "";
 
-	/**
-	 * Constructor for a profile
-	 * 
-	 */
-	public FilterData() { // public constructor
+    /**
+     * Constructor for a profile
+     * 
+     */
+    public FilterData() { // public constructor
+    }
+
+    /**
+     * Returns an XML representation of the filter data.
+     * If a non empty String is passed as parameter, then this String is used as ID-tag for the filter.
+     * If it is empty, then the ID tag will not appear in the cache data.
+     * The ID tag is the string which is used in the filter screen to appear in the filter list.
+     * 
+     * @param ID
+     *            ID tag of filter
+     * @return XML represenation of filter
+     */
+    public String toXML(String ID) {
+	// do not change order, cause reading this is done in simple way
+	String saveID = "";
+	if (ID != null && !ID.equals("")) {
+	    saveID = "id = \"" + SafeXML.clean(ID) + "\" ";
 	}
+	// '|' is splitter, it'll not work correctly if contained in any search item
+	// alternative: '\u0399'
+	String searchSeparator = "|"; // '\u0399'
+	// just one entry for search to make it easier extendable later
+	return "    <FILTERDATA " + saveID + "rose = \"" + getFilterRose() + "\"" + //
+		" type = \"" + getFilterType() + "\"" + //
+		" var = \"" + getFilterVar() + "\"" + //
+		" dist = \"" + getFilterDist().replace('"', ' ') + "\"" + //
+		" diff = \"" + getFilterDiff() + "\"" + //
+		" terr = \"" + getFilterTerr() + "\"" + //
+		" size = \"" + getFilterSize() + "\"" + //
+		" attributesYes = \"" + filterAttr[0] + "\"" + //
+		" attributesNo = \"" + filterAttr[2] + "\"" + //
+		" attributesChoice = \"" + getFilterAttrChoice() + "\"" + //
+		" status = \"" + SafeXML.clean(getFilterStatus()) + "\"" + //
+		" useRegexp = \"" + useRegexp() + "\"" + //
+		" noCoord = \"" + getFilterNoCoord() + "\"" + //
+		" attributesYes1 = \"" + filterAttr[1] + "\"" + //
+		" attributesNo1 = \"" + filterAttr[3] + "\"" + //
+		" search = \"" + getSyncDate() + searchSeparator + getNamePattern() + "\"" + //
+		" />\n";
+    }
 
-	/**
-	 * Returns an XML representation of the filter data.
-	 * If a non empty String is passed as parameter, then this String is used as ID-tag for the filter.
-	 * If it is empty, then the ID tag will not appear in the cache data.
-	 * The ID tag is the string which is used in the filter screen to appear in the filter list.
-	 * 
-	 * @param ID
-	 *            ID tag of filter
-	 * @return XML represenation of filter
-	 */
-	public String toXML(String ID) {
-		// do not change order, cause reading this is done in simple way
-		String saveID = "";
-		if (ID != null && !ID.equals("")) {
-			saveID = "id = \"" + SafeXML.clean(ID) + "\" ";
-		}
-		// '|' is splitter, it'll not work correctly if contained in any search item
-		// alternative: '\u0399'
-		String searchSeparator = "|"; // '\u0399'
-		return "    <FILTERDATA " + saveID +
-			"rose = \"" + getFilterRose() + "\"" +
-			" type = \"" + getFilterType() + "\"" +
-			" var = \"" + getFilterVar() + "\"" +
-			" dist = \"" + getFilterDist().replace('"',' ') + "\"" +
-			" diff = \"" + getFilterDiff() + "\"" +
-			" terr = \"" + getFilterTerr() + "\"" +
-			" size = \"" + getFilterSize() + "\"" +
-			" attributesYes = \"" + filterAttr[0] + "\"" +
-			" attributesNo = \"" + filterAttr[2] + "\"" +
-			" attributesChoice = \"" + getFilterAttrChoice() + "\"" +
-			" status = \"" + SafeXML.clean(getFilterStatus()) + "\"" +
-			" useRegexp = \"" + useRegexp()+ "\"" +
-			" noCoord = \"" + getFilterNoCoord() + "\"" +
-			" attributesYes1 = \"" + filterAttr[1] + "\"" +
-			" attributesNo1 = \"" + filterAttr[3] + "\"" +
-			// just one entry for search to make it easier extendable later
-			" search = \"" + getSyncDate() + searchSeparator + getNamePattern() + "\"" +
-			" />\n";
+    /**
+     * Ensure that all filters have the proper length so that the 'charAt' access in the filter do
+     * not cause nullPointer Exceptions
+     */
+    public void normaliseFilters() {
+	String manyOnes = "11111111111111111111111111111";
+	if (getFilterRose().length() < FILTERROSE.length()) {
+	    setFilterRose((getFilterRose() + manyOnes).substring(0, FILTERROSE.length()));
 	}
-
-	/**
-	 * Ensure that all filters have the proper length so that the 'charAt' access in the filter do
-	 * not cause nullPointer Exceptions
-	 */
-	public void normaliseFilters() {
-		String manyOnes = "11111111111111111111111111111";
-		if (getFilterRose().length() < FILTERROSE.length()) {
-			setFilterRose((getFilterRose() + manyOnes).substring(0, FILTERROSE.length()));
-		}
-		if (getFilterVar().length() < FILTERVAR.length()) {
-			setFilterVar((getFilterVar() + manyOnes).substring(0, FILTERVAR.length()));
-		}
-		if (getFilterType().length() < FILTERTYPE.length()) {
-			setFilterType((getFilterType() + manyOnes).substring(0, FILTERTYPE.length()));
-		}
-		if (getFilterSize().length() < FILTERSIZE.length()) {
-			setFilterSize((getFilterSize() + manyOnes).substring(0, FILTERSIZE.length()));
-		}
-		if (getFilterDist().length() == 0)
-			setFilterDist("L");
-		if (getFilterDiff().length() == 0)
-			setFilterDiff("L");
-		if (getFilterTerr().length() == 0)
-			setFilterTerr("L");
+	if (getFilterVar().length() < FILTERVAR.length()) {
+	    setFilterVar((getFilterVar() + manyOnes).substring(0, FILTERVAR.length()));
 	}
-
-	// Getter and Setter for private properties
-
-	public String getFilterType() {
-		return filterType;
+	if (getFilterType().length() < FILTERTYPE.length()) {
+	    setFilterType((getFilterType() + manyOnes).substring(0, FILTERTYPE.length()));
 	}
-
-	public void setFilterType(String filterType) {
-		this.filterType = filterType;
+	if (getFilterSize().length() < FILTERSIZE.length()) {
+	    setFilterSize((getFilterSize() + manyOnes).substring(0, FILTERSIZE.length()));
 	}
+	if (getFilterDist().length() == 0)
+	    setFilterDist("L");
+	if (getFilterDiff().length() == 0)
+	    setFilterDiff("L");
+	if (getFilterTerr().length() == 0)
+	    setFilterTerr("L");
+    }
 
-	public String getFilterRose() {
-		return filterRose;
-	}
+    // Getter and Setter for private properties
 
-	public void setFilterRose(String filterRose) {
-		this.filterRose = filterRose;
-	}
+    public String getFilterType() {
+	return filterType;
+    }
 
-	public String getFilterSize() {
-		return filterSize;
-	}
+    public void setFilterType(String filterType) {
+	this.filterType = filterType;
+    }
 
-	public void setFilterSize(String filterSize) {
-		this.filterSize = filterSize;
-	}
+    public String getFilterRose() {
+	return filterRose;
+    }
 
-	public String getFilterVar() {
-		return filterVar;
-	}
+    public void setFilterRose(String filterRose) {
+	this.filterRose = filterRose;
+    }
 
-	public void setFilterVar(String filterVar) {
-		this.filterVar = filterVar;
-	}
+    public String getFilterSize() {
+	return filterSize;
+    }
 
-	public String getFilterDist() {
-		return filterDist;
-	}
+    public void setFilterSize(String filterSize) {
+	this.filterSize = filterSize;
+    }
 
-	public void setFilterDist(String filterDist) {
-		this.filterDist = filterDist;
-	}
+    public String getFilterVar() {
+	return filterVar;
+    }
 
-	public String getFilterDiff() {
-		return filterDiff;
-	}
+    public void setFilterVar(String filterVar) {
+	this.filterVar = filterVar;
+    }
 
-	public void setFilterDiff(String filterDiff) {
-		this.filterDiff = filterDiff;
-	}
+    public String getFilterDist() {
+	return filterDist;
+    }
 
-	public String getFilterTerr() {
-		return filterTerr;
-	}
+    public void setFilterDist(String filterDist) {
+	this.filterDist = filterDist;
+    }
 
-	public void setFilterTerr(String filterTerr) {
-		this.filterTerr = filterTerr;
-	}
+    public String getFilterDiff() {
+	return filterDiff;
+    }
 
-	public long[] getFilterAttr() {
-		return filterAttr;
-	}
+    public void setFilterDiff(String filterDiff) {
+	this.filterDiff = filterDiff;
+    }
 
-	public void setFilterAttr(long[] filterAttr) {
-		this.filterAttr = filterAttr;
-	}
+    public String getFilterTerr() {
+	return filterTerr;
+    }
 
-	public int getFilterAttrChoice() {
-		return filterAttrChoice;
-	}
+    public void setFilterTerr(String filterTerr) {
+	this.filterTerr = filterTerr;
+    }
 
-	public void setFilterAttrChoice(int filterAttrChoice) {
-		this.filterAttrChoice = filterAttrChoice;
-	}
+    public long[] getFilterAttr() {
+	return filterAttr;
+    }
 
-	public String getFilterStatus() {
-		return filterStatus;
-	}
+    public void setFilterAttr(long[] filterAttr) {
+	this.filterAttr = filterAttr;
+    }
 
-	public void setFilterStatus(String filterStatus) {
-		this.filterStatus = filterStatus;
-	}
+    public int getFilterAttrChoice() {
+	return filterAttrChoice;
+    }
 
-	public boolean useRegexp() {
-		return useRegexp;
-	}
+    public void setFilterAttrChoice(int filterAttrChoice) {
+	this.filterAttrChoice = filterAttrChoice;
+    }
 
-	public void setUseRegexp(boolean useRegexp) {
-		this.useRegexp = useRegexp;
-	}
+    public String getFilterStatus() {
+	return filterStatus;
+    }
 
-	public boolean getFilterNoCoord() {
-		return filterNoCoord;
-	}
+    public void setFilterStatus(String filterStatus) {
+	this.filterStatus = filterStatus;
+    }
 
-	public void setFilterNoCoord(boolean filterNoCoord) {
-		this.filterNoCoord = filterNoCoord;
-	}
+    public boolean useRegexp() {
+	return useRegexp;
+    }
 
-	public String getSyncDate() {
-		return this.syncDate;
-	}
+    public void setUseRegexp(boolean useRegexp) {
+	this.useRegexp = useRegexp;
+    }
 
-	public void setSyncDate(String date) {
-		this.syncDate = date;
-	}
+    public boolean getFilterNoCoord() {
+	return filterNoCoord;
+    }
 
-	public String getNamePattern() {
-		return this.namePattern;
-	}
+    public void setFilterNoCoord(boolean filterNoCoord) {
+	this.filterNoCoord = filterNoCoord;
+    }
 
-	public void setNamePattern(String pattern) {
-		this.namePattern = pattern;
-	}
+    public String getSyncDate() {
+	return this.syncDate;
+    }
+
+    public void setSyncDate(String date) {
+	this.syncDate = date;
+    }
+
+    public String getNamePattern() {
+	return this.namePattern;
+    }
+
+    public void setNamePattern(String pattern) {
+	this.namePattern = pattern;
+    }
 }

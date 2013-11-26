@@ -110,8 +110,8 @@ public class Filter {
     private long[] attributesPattern = { 0l, 0l, 0l, 0l };
     private int attributesChoice = 0;
 
-	private String syncDate = "";
-	private String namePattern = "";
+    private String syncDate = "";
+    private String namePattern = "";
 
     /**
      * Apply a route filter. Each waypoint is on a seperate line. We use a regex method to allow for different formats of waypoints: possible is currently: DD MM.mmm
@@ -191,151 +191,150 @@ public class Filter {
      * Method to calculate the distance of a point to a segment
      */
     private double DistToSegment(CWPoint fromPoint, CWPoint toPoint, CWPoint cwp) {
-    	double dist = 0;
-    	double px = cwp.lonDec * pi180;
-    	double py = cwp.latDec * pi180;
-    	double X1 = fromPoint.lonDec * pi180;
-    	double Y1 = fromPoint.latDec * pi180;
-    	double X2 = toPoint.lonDec * pi180;
-    	double Y2 = toPoint.latDec * pi180;
-    	double dx = X2 - X1;
-    	double dy = Y2 - Y1;
-    	if (dx == 0 && dy == 0) {
-    		// have a point and not a segment!
-    		dx = px - X1;
-    		dy = py - Y1;
-    		return java.lang.Math.sqrt(dx * dx + dy * dy);
-    	}
-    	dist = Matrix.cross(X1, Y1, X2, Y2, px, py) / Matrix.dist(X1, Y1, X2, Y2);
-    	double dot1 = Matrix.dot(X1, Y1, X2, Y2, px, py);
-    	if (dot1 > 0)
-    		return Matrix.dist(X2, Y2, px, py);
-    	double dot2 = Matrix.dot(X2, Y2, X1, Y1, px, py);
-    	if (dot2 > 0)
-    		return Matrix.dist(X1, Y1, px, py);
-    	dist = java.lang.Math.abs(dist);
-    	return dist;
+	double dist = 0;
+	double px = cwp.lonDec * pi180;
+	double py = cwp.latDec * pi180;
+	double X1 = fromPoint.lonDec * pi180;
+	double Y1 = fromPoint.latDec * pi180;
+	double X2 = toPoint.lonDec * pi180;
+	double Y2 = toPoint.latDec * pi180;
+	double dx = X2 - X1;
+	double dy = Y2 - Y1;
+	if (dx == 0 && dy == 0) {
+	    // have a point and not a segment!
+	    dx = px - X1;
+	    dy = py - Y1;
+	    return java.lang.Math.sqrt(dx * dx + dy * dy);
+	}
+	dist = Matrix.cross(X1, Y1, X2, Y2, px, py) / Matrix.dist(X1, Y1, X2, Y2);
+	double dot1 = Matrix.dot(X1, Y1, X2, Y2, px, py);
+	if (dot1 > 0)
+	    return Matrix.dist(X2, Y2, px, py);
+	double dot2 = Matrix.dot(X2, Y2, X1, Y1, px, py);
+	if (dot2 > 0)
+	    return Matrix.dist(X1, Y1, px, py);
+	dist = java.lang.Math.abs(dist);
+	return dist;
     }
 
     /**
      * Set the filter from the filter data stored in the Global.profile (the filterscreen also updates the Global.profile)
      */
     public void setFilter() {
-    	archived = Global.profile.getFilterVar().charAt(0) == '1';
-    	available = Global.profile.getFilterVar().charAt(1) == '1';
-    	foundByMe = Global.profile.getFilterVar().charAt(2) == '1';
-    	ownedByMe = Global.profile.getFilterVar().charAt(3) == '1';
-    	notArchived = Global.profile.getFilterVar().charAt(4) == '1';
-    	notAvailable = Global.profile.getFilterVar().charAt(5) == '1';
-    	notFoundByMe = Global.profile.getFilterVar().charAt(6) == '1';
-    	notOwnedByMe = Global.profile.getFilterVar().charAt(7) == '1';
-    	cacheStatus = Global.profile.getFilterStatus();
-    	useRegexp = Global.profile.getFilterUseRegexp();
-    	filterNoCoord = Global.profile.getFilterNoCoord();
+	archived = Global.profile.getFilterVar().charAt(0) == '1';
+	available = Global.profile.getFilterVar().charAt(1) == '1';
+	foundByMe = Global.profile.getFilterVar().charAt(2) == '1';
+	ownedByMe = Global.profile.getFilterVar().charAt(3) == '1';
+	notArchived = Global.profile.getFilterVar().charAt(4) == '1';
+	notAvailable = Global.profile.getFilterVar().charAt(5) == '1';
+	notFoundByMe = Global.profile.getFilterVar().charAt(6) == '1';
+	notOwnedByMe = Global.profile.getFilterVar().charAt(7) == '1';
+	cacheStatus = Global.profile.getFilterStatus();
+	useRegexp = Global.profile.getFilterUseRegexp();
+	filterNoCoord = Global.profile.getFilterNoCoord();
 
-    	typeMatchPattern = CacheType.Type_FilterString2Type_FilterPattern(Global.profile.getFilterType());
-    	hasTypeMatchPattern = CacheType.hasTypeMatchPattern(typeMatchPattern);
-    	roseMatchPattern = 0;
-    	String filterRose = Global.profile.getFilterRose();
-    	if (filterRose.charAt(0) == '1')
-    		roseMatchPattern |= NW;
-    	if (filterRose.charAt(1) == '1')
-    		roseMatchPattern |= NNW;
-    	if (filterRose.charAt(2) == '1')
-    		roseMatchPattern |= N;
-    	if (filterRose.charAt(3) == '1')
-    		roseMatchPattern |= NNE;
-    	if (filterRose.charAt(4) == '1')
-    		roseMatchPattern |= NE;
-    	if (filterRose.charAt(5) == '1')
-    		roseMatchPattern |= ENE;
-    	if (filterRose.charAt(6) == '1')
-    		roseMatchPattern |= E;
-    	if (filterRose.charAt(7) == '1')
-    		roseMatchPattern |= ESE;
-    	if (filterRose.charAt(8) == '1')
-    		roseMatchPattern |= SE;
-    	if (filterRose.charAt(9) == '1')
-    		roseMatchPattern |= SSE;
-    	if (filterRose.charAt(10) == '1')
-    		roseMatchPattern |= S;
-    	if (filterRose.charAt(11) == '1')
-    		roseMatchPattern |= SSW;
-    	if (filterRose.charAt(12) == '1')
-    		roseMatchPattern |= SW;
-    	if (filterRose.charAt(13) == '1')
-    		roseMatchPattern |= WSW;
-    	if (filterRose.charAt(14) == '1')
-    		roseMatchPattern |= W;
-    	if (filterRose.charAt(15) == '1')
-    		roseMatchPattern |= WNW;
-    	hasRoseMatchPattern = roseMatchPattern != ROSE_ALL;
-    	sizeMatchPattern = 0;
-    	String filterSize = Global.profile.getFilterSize();
-    	if (filterSize.charAt(0) == '1')
-    		sizeMatchPattern |= CacheSize.CW_FILTER_MICRO;
-    	if (filterSize.charAt(1) == '1')
-    		sizeMatchPattern |= CacheSize.CW_FILTER_SMALL;
-    	if (filterSize.charAt(2) == '1')
-    		sizeMatchPattern |= CacheSize.CW_FILTER_NORMAL;
-    	if (filterSize.charAt(3) == '1')
-    		sizeMatchPattern |= CacheSize.CW_FILTER_LARGE;
-    	if (filterSize.charAt(4) == '1')
-    		sizeMatchPattern |= CacheSize.CW_FILTER_VERYLARGE;
-    	if (filterSize.charAt(5) == '1')
-    		sizeMatchPattern |= CacheSize.CW_FILTER_NONPHYSICAL;
-    	hasSizeMatchPattern = sizeMatchPattern != CacheSize.CW_FILTER_ALL;
-    	distdirec = Global.profile.getFilterDist().charAt(0) == 'L' ? SMALLER : GREATER;
-    	fscDist = Common.parseDouble(Global.profile.getFilterDist().substring(1)); // Distance
-    	diffdirec = Global.profile.getFilterDiff().charAt(0) == 'L' ? SMALLER : (Global.profile.getFilterDiff().charAt(0) == '=' ? EQUAL : GREATER);
-    	fscDiff = Common.parseDouble(Global.profile.getFilterDiff().substring(1)); // Difficulty
-    	terrdirec = Global.profile.getFilterTerr().charAt(0) == 'L' ? SMALLER : (Global.profile.getFilterTerr().charAt(0) == '=' ? EQUAL : GREATER);
-    	fscTerr = Common.parseDouble(Global.profile.getFilterTerr().substring(1)); // Terrain
-    	attributesPattern = Global.profile.getFilterAttr();
-    	attributesChoice = Global.profile.getFilterAttrChoice();
-    	// items from search panel
-    	syncDate = Global.profile.getFilterSyncDate();
-    	namePattern = Global.profile.getFilterNamePattern();
+	typeMatchPattern = CacheType.Type_FilterString2Type_FilterPattern(Global.profile.getFilterType());
+	hasTypeMatchPattern = CacheType.hasTypeMatchPattern(typeMatchPattern);
+	roseMatchPattern = 0;
+	String filterRose = Global.profile.getFilterRose();
+	if (filterRose.charAt(0) == '1')
+	    roseMatchPattern |= NW;
+	if (filterRose.charAt(1) == '1')
+	    roseMatchPattern |= NNW;
+	if (filterRose.charAt(2) == '1')
+	    roseMatchPattern |= N;
+	if (filterRose.charAt(3) == '1')
+	    roseMatchPattern |= NNE;
+	if (filterRose.charAt(4) == '1')
+	    roseMatchPattern |= NE;
+	if (filterRose.charAt(5) == '1')
+	    roseMatchPattern |= ENE;
+	if (filterRose.charAt(6) == '1')
+	    roseMatchPattern |= E;
+	if (filterRose.charAt(7) == '1')
+	    roseMatchPattern |= ESE;
+	if (filterRose.charAt(8) == '1')
+	    roseMatchPattern |= SE;
+	if (filterRose.charAt(9) == '1')
+	    roseMatchPattern |= SSE;
+	if (filterRose.charAt(10) == '1')
+	    roseMatchPattern |= S;
+	if (filterRose.charAt(11) == '1')
+	    roseMatchPattern |= SSW;
+	if (filterRose.charAt(12) == '1')
+	    roseMatchPattern |= SW;
+	if (filterRose.charAt(13) == '1')
+	    roseMatchPattern |= WSW;
+	if (filterRose.charAt(14) == '1')
+	    roseMatchPattern |= W;
+	if (filterRose.charAt(15) == '1')
+	    roseMatchPattern |= WNW;
+	hasRoseMatchPattern = roseMatchPattern != ROSE_ALL;
+	sizeMatchPattern = 0;
+	String filterSize = Global.profile.getFilterSize();
+	if (filterSize.charAt(0) == '1')
+	    sizeMatchPattern |= CacheSize.CW_FILTER_MICRO;
+	if (filterSize.charAt(1) == '1')
+	    sizeMatchPattern |= CacheSize.CW_FILTER_SMALL;
+	if (filterSize.charAt(2) == '1')
+	    sizeMatchPattern |= CacheSize.CW_FILTER_NORMAL;
+	if (filterSize.charAt(3) == '1')
+	    sizeMatchPattern |= CacheSize.CW_FILTER_LARGE;
+	if (filterSize.charAt(4) == '1')
+	    sizeMatchPattern |= CacheSize.CW_FILTER_VERYLARGE;
+	if (filterSize.charAt(5) == '1')
+	    sizeMatchPattern |= CacheSize.CW_FILTER_NONPHYSICAL;
+	hasSizeMatchPattern = sizeMatchPattern != CacheSize.CW_FILTER_ALL;
+	distdirec = Global.profile.getFilterDist().charAt(0) == 'L' ? SMALLER : GREATER;
+	fscDist = Common.parseDouble(Global.profile.getFilterDist().substring(1)); // Distance
+	diffdirec = Global.profile.getFilterDiff().charAt(0) == 'L' ? SMALLER : (Global.profile.getFilterDiff().charAt(0) == '=' ? EQUAL : GREATER);
+	fscDiff = Common.parseDouble(Global.profile.getFilterDiff().substring(1)); // Difficulty
+	terrdirec = Global.profile.getFilterTerr().charAt(0) == 'L' ? SMALLER : (Global.profile.getFilterTerr().charAt(0) == '=' ? EQUAL : GREATER);
+	fscTerr = Common.parseDouble(Global.profile.getFilterTerr().substring(1)); // Terrain
+	attributesPattern = Global.profile.getFilterAttr();
+	attributesChoice = Global.profile.getFilterAttrChoice();
+	// items from search panel
+	syncDate = Global.profile.getFilterSyncDate();
+	namePattern = Global.profile.getFilterNamePattern();
     }
 
     /**
      * Apply the filter. Caches that match a criteria are flagged is_filtered = true. The table model is responsible for displaying or not displaying a cache that is filtered.
      */
     public void doFilter() {
-    	CacheDB cacheDB = Global.profile.cacheDB;
-    	Hashtable examinedCaches;
-    	if (cacheDB.size() == 0)
-    		return;
-    	if (!hasFilter()) { // If the filter was completely reset, we can just
-    						// clear it
-    		clearFilter();
-    		return;
-    	}
-    	Global.profile.selectionChanged = true;
-    	CacheHolder ch;
-    	examinedCaches = new Hashtable(cacheDB.size());
+	CacheDB cacheDB = Global.profile.cacheDB;
+	Hashtable examinedCaches;
+	if (cacheDB.size() == 0)
+	    return;
+	if (!hasFilter()) { // If the filter was completely reset, we can just
+			    // clear it
+	    clearFilter();
+	    return;
+	}
+	Global.profile.selectionChanged = true;
+	CacheHolder ch;
+	examinedCaches = new Hashtable(cacheDB.size());
 
-    	for (int i = cacheDB.size() - 1; i >= 0; i--) {
-    		ch = cacheDB.get(i);
-    		if (examinedCaches.containsKey(ch))
-    			continue;
+	for (int i = cacheDB.size() - 1; i >= 0; i--) {
+	    ch = cacheDB.get(i);
+	    if (examinedCaches.containsKey(ch))
+		continue;
 
-    		boolean filterCache = excludedByFilter(ch);
-    		if (!filterCache && ch.mainCache != null
-    				&& CacheType.hasMainTypeMatchPattern(typeMatchPattern)) {
-    			if (examinedCaches.containsKey(ch.mainCache)) {
-    				filterCache = ch.mainCache.is_filtered();
-    			} else {
-    				ch.mainCache.setFiltered(excludedByFilter(ch.mainCache));
-    				filterCache = ch.mainCache.is_filtered();
-    				examinedCaches.put(ch.mainCache, null);
-    			}
-    		}
-    		ch.setFiltered(filterCache);
-    	}
-    	Global.profile.setFilterActive(FILTER_ACTIVE);
-    	examinedCaches = null;
-    	// Global.profile.hasUnsavedChanges=true;
+	    boolean filterCache = excludedByFilter(ch);
+	    if (!filterCache && ch.mainCache != null && CacheType.hasMainTypeMatchPattern(typeMatchPattern)) {
+		if (examinedCaches.containsKey(ch.mainCache)) {
+		    filterCache = ch.mainCache.is_filtered();
+		} else {
+		    ch.mainCache.setFiltered(excludedByFilter(ch.mainCache));
+		    filterCache = ch.mainCache.is_filtered();
+		    examinedCaches.put(ch.mainCache, null);
+		}
+	    }
+	    ch.setFiltered(filterCache);
+	}
+	Global.profile.setFilterActive(FILTER_ACTIVE);
+	examinedCaches = null;
+	// Global.profile.hasUnsavedChanges=true;
     }
 
     public boolean excludedByFilter(CacheHolder ch) {
@@ -352,17 +351,17 @@ public class Filter {
 	double dummyd1;
 	boolean cacheFiltered = false;
 	do {
-		// /////////////////////////////
-		// Filter criterium 1: Cache type
-		// /////////////////////////////
-		if (hasTypeMatchPattern) { // Only do the checks if we have a
-			// filter
-			cacheTypePattern = CacheType.getCacheTypePattern(ch.getType());
-			if ((cacheTypePattern & typeMatchPattern) == 0) {
-				cacheFiltered = true;
-				break;
-			}
+	    // /////////////////////////////
+	    // Filter criterium 1: Cache type
+	    // /////////////////////////////
+	    if (hasTypeMatchPattern) { // Only do the checks if we have a
+		// filter
+		cacheTypePattern = CacheType.getCacheTypePattern(ch.getType());
+		if ((cacheTypePattern & typeMatchPattern) == 0) {
+		    cacheFiltered = true;
+		    break;
 		}
+	    }
 	    // /////////////////////////////
 	    // Filter criterium 2: Bearing from centre
 	    // /////////////////////////////
@@ -370,238 +369,240 @@ public class Filter {
 	    // By using else if we can reduce the number of comparisons from 16 to just over 8
 	    // By first checking the first letter, we can reduce the average number further to
 	    // just under 5
-		if (hasRoseMatchPattern) {
-			if (ch.getBearing().startsWith("N")) {
-				if (ch.getBearing().equals("NW"))
-					cacheRosePattern = NW;
-				else if (ch.getBearing().equals("NNW"))
-					cacheRosePattern = NNW;
-				else if (ch.getBearing().equals("N"))
-					cacheRosePattern = N;
-				else if (ch.getBearing().equals("NNE"))
-					cacheRosePattern = NNE;
-				else
-					cacheRosePattern = NE;
-			} else if (ch.getBearing().startsWith("E")) {
-				if (ch.getBearing().equals("ENE"))
-					cacheRosePattern = ENE;
-				else if (ch.getBearing().equals("E"))
-					cacheRosePattern = E;
-				else
-					cacheRosePattern = ESE;
-			} else if (ch.getBearing().startsWith("S")) {
-				if (ch.getBearing().equals("SW"))
-					cacheRosePattern = SW;
-				else if (ch.getBearing().equals("SSW"))
-					cacheRosePattern = SSW;
-				else if (ch.getBearing().equals("S"))
-					cacheRosePattern = S;
-				else if (ch.getBearing().equals("SSE"))
-					cacheRosePattern = SSE;
-				else
-					cacheRosePattern = SE;
-			} else {
-				if (ch.getBearing().equals("WNW"))
-					cacheRosePattern = WNW;
-				else if (ch.getBearing().equals("W"))
-					cacheRosePattern = W;
-				else if (ch.getBearing().equals("WSW"))
-					cacheRosePattern = WSW;
-				else
-					cacheRosePattern = 0;
-			}
-			if ((cacheRosePattern != 0) && ((cacheRosePattern & roseMatchPattern) == 0)) {
-				cacheFiltered = true;
-				break;
-			}
+	    if (hasRoseMatchPattern) {
+		if (ch.getBearing().startsWith("N")) {
+		    if (ch.getBearing().equals("NW"))
+			cacheRosePattern = NW;
+		    else if (ch.getBearing().equals("NNW"))
+			cacheRosePattern = NNW;
+		    else if (ch.getBearing().equals("N"))
+			cacheRosePattern = N;
+		    else if (ch.getBearing().equals("NNE"))
+			cacheRosePattern = NNE;
+		    else
+			cacheRosePattern = NE;
+		} else if (ch.getBearing().startsWith("E")) {
+		    if (ch.getBearing().equals("ENE"))
+			cacheRosePattern = ENE;
+		    else if (ch.getBearing().equals("E"))
+			cacheRosePattern = E;
+		    else
+			cacheRosePattern = ESE;
+		} else if (ch.getBearing().startsWith("S")) {
+		    if (ch.getBearing().equals("SW"))
+			cacheRosePattern = SW;
+		    else if (ch.getBearing().equals("SSW"))
+			cacheRosePattern = SSW;
+		    else if (ch.getBearing().equals("S"))
+			cacheRosePattern = S;
+		    else if (ch.getBearing().equals("SSE"))
+			cacheRosePattern = SSE;
+		    else
+			cacheRosePattern = SE;
+		} else {
+		    if (ch.getBearing().equals("WNW"))
+			cacheRosePattern = WNW;
+		    else if (ch.getBearing().equals("W"))
+			cacheRosePattern = W;
+		    else if (ch.getBearing().equals("WSW"))
+			cacheRosePattern = WSW;
+		    else
+			cacheRosePattern = 0;
 		}
+		if ((cacheRosePattern != 0) && ((cacheRosePattern & roseMatchPattern) == 0)) {
+		    cacheFiltered = true;
+		    break;
+		}
+	    }
 	    // /////////////////////////////
 	    // Filter criterium 3: Distance
 	    // /////////////////////////////
-		if (fscDist > 0.0) {
-			dummyd1 = ch.kilom;
-			if (distdirec == SMALLER && dummyd1 > fscDist) {
-				cacheFiltered = true;
-				break;
-			}
-			if (distdirec == GREATER && dummyd1 < fscDist) {
-				cacheFiltered = true;
-				break;
-			}
+	    if (fscDist > 0.0) {
+		dummyd1 = ch.kilom;
+		if (distdirec == SMALLER && dummyd1 > fscDist) {
+		    cacheFiltered = true;
+		    break;
 		}
+		if (distdirec == GREATER && dummyd1 < fscDist) {
+		    cacheFiltered = true;
+		    break;
+		}
+	    }
 	    // /////////////////////////////
 	    // Filter criterium 4: Difficulty
 	    // /////////////////////////////
-		if (fscDiff > 0.0) {
-			dummyd1 = ch.getHard() / 10D;
-			if (diffdirec == SMALLER && dummyd1 > fscDiff) {
-				cacheFiltered = true;
-				break;
-			}
-			if (diffdirec == EQUAL && dummyd1 != fscDiff) {
-				cacheFiltered = true;
-				break;
-			}
-			if (diffdirec == GREATER && dummyd1 < fscDiff) {
-				cacheFiltered = true;
-				break;
-			}
+	    if (fscDiff > 0.0) {
+		dummyd1 = ch.getHard() / 10D;
+		if (diffdirec == SMALLER && dummyd1 > fscDiff) {
+		    cacheFiltered = true;
+		    break;
 		}
+		if (diffdirec == EQUAL && dummyd1 != fscDiff) {
+		    cacheFiltered = true;
+		    break;
+		}
+		if (diffdirec == GREATER && dummyd1 < fscDiff) {
+		    cacheFiltered = true;
+		    break;
+		}
+	    }
 	    // /////////////////////////////
 	    // Filter criterium 5: Terrain
 	    // /////////////////////////////
-		if (fscTerr > 0.0) {
-			dummyd1 = ch.getTerrain() / 10D;
-			if (terrdirec == SMALLER && dummyd1 > fscTerr) {
-				cacheFiltered = true;
-				break;
-			}
-			if (terrdirec == EQUAL && dummyd1 != fscTerr) {
-				cacheFiltered = true;
-				break;
-			}
-			if (terrdirec == GREATER && dummyd1 < fscTerr) {
-				cacheFiltered = true;
-				break;
-			}
+	    if (fscTerr > 0.0) {
+		dummyd1 = ch.getTerrain() / 10D;
+		if (terrdirec == SMALLER && dummyd1 > fscTerr) {
+		    cacheFiltered = true;
+		    break;
 		}
+		if (terrdirec == EQUAL && dummyd1 != fscTerr) {
+		    cacheFiltered = true;
+		    break;
+		}
+		if (terrdirec == GREATER && dummyd1 < fscTerr) {
+		    cacheFiltered = true;
+		    break;
+		}
+	    }
 
 	    // /////////////////////////////
 	    // Filter criterium 6: Found by me
 	    // /////////////////////////////
-		if ((ch.is_found() && !foundByMe) || (!ch.is_found() && !notFoundByMe)) {
-			cacheFiltered = true;
-			break;
-		}
-		// /////////////////////////////
-		// Filter criterium 7: Owned by me
-		// /////////////////////////////
-		if ((ch.is_owned() && !ownedByMe) || (!ch.is_owned() && !notOwnedByMe)) {
-			cacheFiltered = true;
-			break;
-		}
-		// /////////////////////////////
-		// Filter criterium 8: Archived
-		// /////////////////////////////
-		if ((ch.is_archived() && !archived) || (!ch.is_archived() && !notArchived)) {
-			cacheFiltered = true;
-			break;
-		}
+	    if ((ch.is_found() && !foundByMe) || (!ch.is_found() && !notFoundByMe)) {
+		cacheFiltered = true;
+		break;
+	    }
+	    // /////////////////////////////
+	    // Filter criterium 7: Owned by me
+	    // /////////////////////////////
+	    if ((ch.is_owned() && !ownedByMe) || (!ch.is_owned() && !notOwnedByMe)) {
+		cacheFiltered = true;
+		break;
+	    }
+	    // /////////////////////////////
+	    // Filter criterium 8: Archived
+	    // /////////////////////////////
+	    if ((ch.is_archived() && !archived) || (!ch.is_archived() && !notArchived)) {
+		cacheFiltered = true;
+		break;
+	    }
 	    // /////////////////////////////
 	    // Filter criterium 9: Unavailable
 	    // /////////////////////////////
-		if ((ch.is_available() && !available) || (!ch.is_available() && !notAvailable)) {
-			cacheFiltered = true;
-			break;
+	    if ((ch.is_available() && !available) || (!ch.is_available() && !notAvailable)) {
+		cacheFiltered = true;
+		break;
+	    }
+	    // /////////////////////////////
+	    // Filter criterium 10: Size
+	    // /////////////////////////////
+	    if (hasSizeMatchPattern) {
+		cacheSizePattern = CacheSize.getFilterPattern(ch.getCacheSize());
+		if ((cacheSizePattern & sizeMatchPattern) == 0) {
+		    cacheFiltered = true;
+		    break;
 		}
-		// /////////////////////////////
-		// Filter criterium 10: Size
-		// /////////////////////////////
-		if (hasSizeMatchPattern) {
-			cacheSizePattern = CacheSize.getFilterPattern(ch.getCacheSize());
-			if ((cacheSizePattern & sizeMatchPattern) == 0) {
-				cacheFiltered = true;
-				break;
-			}
-		}
+	    }
 	    // /////////////////////////////
 	    // Filter criterium 11: Attributes
 	    // /////////////////////////////
-		if ((attributesPattern[0] != 0 || attributesPattern[1] != 0 ||
-			 attributesPattern[2] != 0 || attributesPattern[3] != 0) && ch.mainCache == null) {
-			long[] chAtts = ch.getAttributesBits();
-			if (attributesChoice == 0) {
-				// AND-condition:
-				if ((chAtts[0] & attributesPattern[0]) != attributesPattern[0] ||
-					(chAtts[1] & attributesPattern[1]) != attributesPattern[1] ||
-					(chAtts[2] & attributesPattern[2]) != attributesPattern[2]
-				                                                                                                                                                                                        || (chAtts[3] & attributesPattern[3]) != attributesPattern[3]) {
-					cacheFiltered = true;
-					break;
-				}
-			} else if (attributesChoice == 1) {
-				// OR-condition:
-				if ((chAtts[0] & attributesPattern[0]) == 0 &&
-					(chAtts[1] & attributesPattern[1]) == 0 &&
-					(chAtts[2] & attributesPattern[2]) == 0 &&
-					(chAtts[3] & attributesPattern[3]) == 0) {
-					cacheFiltered = true;
-					break;
-				}
-			} else {
-				// NOT-condition:
-				if ((chAtts[0] & attributesPattern[0]) != 0 ||
-					(chAtts[1] & attributesPattern[1]) != 0 ||
-					(chAtts[2] & attributesPattern[2]) != 0 ||
-					(chAtts[3] & attributesPattern[3]) != 0) {
-					cacheFiltered = true;
-					break;
-				}
-			}
+	    if ((attributesPattern[0] != 0 || attributesPattern[1] != 0 || attributesPattern[2] != 0 || attributesPattern[3] != 0) && ch.mainCache == null) {
+		long[] chAtts = ch.getAttributesBits();
+		if (attributesChoice == 0) {
+		    // AND-condition:
+		    if ((chAtts[0] & attributesPattern[0]) != attributesPattern[0] || //
+			    (chAtts[1] & attributesPattern[1]) != attributesPattern[1] || //
+			    (chAtts[2] & attributesPattern[2]) != attributesPattern[2] || //                                                        
+			    (chAtts[3] & attributesPattern[3]) != attributesPattern[3] //
+		    ) {
+			cacheFiltered = true;
+			break;
+		    }
+		} else if (attributesChoice == 1) {
+		    // OR-condition:
+		    if ((chAtts[0] & attributesPattern[0]) == 0 && //
+			    (chAtts[1] & attributesPattern[1]) == 0 && //
+			    (chAtts[2] & attributesPattern[2]) == 0 && //
+			    (chAtts[3] & attributesPattern[3]) == 0 //
+		    ) {
+			cacheFiltered = true;
+			break;
+		    }
+		} else {
+		    // NOT-condition:
+		    if ((chAtts[0] & attributesPattern[0]) != 0 || //
+			    (chAtts[1] & attributesPattern[1]) != 0 || //
+			    (chAtts[2] & attributesPattern[2]) != 0 || //
+			    (chAtts[3] & attributesPattern[3]) != 0 //
+		    ) {
+			cacheFiltered = true;
+			break;
+		    }
 		}
-		// /////////////////////////////
-		// Filter criterium 12: Status
-		// /////////////////////////////
-		if (!cacheStatus.equals("")) {
-			if (!useRegexp) {
-				if (ch.getStatusText().toLowerCase().indexOf(cacheStatus.toLowerCase()) < 0) {
-					cacheFiltered = true;
-					break;
-				}
-			} else {
-				Regex rex = new Regex(cacheStatus.toLowerCase());
-				rex.search(ch.getStatusText().toLowerCase());
-				if (rex.stringMatched() == null) {
-					cacheFiltered = true;
-					break;
-				}
-			}
+	    }
+	    // /////////////////////////////
+	    // Filter criterium 12: Status
+	    // /////////////////////////////
+	    if (!cacheStatus.equals("")) {
+		if (!useRegexp) {
+		    if (ch.getStatusText().toLowerCase().indexOf(cacheStatus.toLowerCase()) < 0) {
+			cacheFiltered = true;
+			break;
+		    }
+		} else {
+		    Regex rex = new Regex(cacheStatus.toLowerCase());
+		    rex.search(ch.getStatusText().toLowerCase());
+		    if (rex.stringMatched() == null) {
+			cacheFiltered = true;
+			break;
+		    }
 		}
+	    }
 	    // /////////////////////////////
 	    // Filter criterium 13: NoCoord
 	    // /////////////////////////////
-		if (!filterNoCoord && !ch.getPos().isValid()) {
-			cacheFiltered = true;
-			break;
-		}
-		// /////////////////////////////
-		// Filter criterium 14: Search
-		// /////////////////////////////
-		if (!syncDate.equals("")) {
-			if (syncDate.length() >= 10) {
-				// First sign is <, =, >, followed by '-' and then yyyymmdd
-				String theOperator = syncDate.substring(0,1);
-				String theDate = syncDate.substring(2,10);
-				String cacheSyncDate = ch.getLastSync();
-				if (cacheSyncDate.length() >= 8) {
-					// time will not be taken into account
-					cacheSyncDate = cacheSyncDate.substring(0,8);
-					int diff = theDate.compareTo(cacheSyncDate);
-					if (theOperator.equals("<")) {
-						if (diff <= 0) {
-							cacheFiltered = true;
-							break;
-						}
-					} else if (theOperator.equals("=")) {
-						if (diff != 0) {
-							cacheFiltered = true;
-							break;
-						}
-					} else {
-						if (diff >= 0) {
-							cacheFiltered = true;
-							break;
-						}
-					}
-				}
-			}
-		}
-		if (!namePattern.equals("")) {
-			if (ch.getCacheName().indexOf(namePattern) < 0) {
+	    if (!filterNoCoord && !ch.getPos().isValid()) {
+		cacheFiltered = true;
+		break;
+	    }
+	    // /////////////////////////////
+	    // Filter criterium 14: Search
+	    // /////////////////////////////
+	    if (!syncDate.equals("")) {
+		if (syncDate.length() >= 10) {
+		    // First sign is <, =, >, followed by '-' and then yyyymmdd
+		    String theOperator = syncDate.substring(0, 1);
+		    String theDate = syncDate.substring(2, 10);
+		    String cacheSyncDate = ch.getLastSync();
+		    if (cacheSyncDate.length() >= 8) {
+			// time will not be taken into account
+			cacheSyncDate = cacheSyncDate.substring(0, 8);
+			int diff = theDate.compareTo(cacheSyncDate);
+			if (theOperator.equals("<")) {
+			    if (diff <= 0) {
 				cacheFiltered = true;
 				break;
+			    }
+			} else if (theOperator.equals("=")) {
+			    if (diff != 0) {
+				cacheFiltered = true;
+				break;
+			    }
+			} else {
+			    if (diff >= 0) {
+				cacheFiltered = true;
+				break;
+			    }
 			}
+		    }
 		}
+	    }
+	    if (!namePattern.equals("")) {
+		if (ch.getCacheName().indexOf(namePattern) < 0) {
+		    cacheFiltered = true;
+		    break;
+		}
+	    }
 
 	    break;
 	} while (true);
@@ -612,38 +613,27 @@ public class Filter {
      * Switches flag to invert filter property.
      */
     public void invertFilter() {
-    	Global.profile.setFilterInverted(!Global.profile.isFilterInverted());
+	Global.profile.setFilterInverted(!Global.profile.isFilterInverted());
     }
 
     /**
      * Clear the is_filtered flag from the cache database.
      */
     public void clearFilter() {
-    	Global.profile.selectionChanged = true;
-    	CacheDB cacheDB = Global.profile.cacheDB;
-    	for (int i = cacheDB.size() - 1; i >= 0; i--) {
-    		CacheHolder ch = cacheDB.get(i);
-    		ch.setFiltered(false);
-    	}
-    	Global.profile.setFilterActive(FILTER_INACTIVE);
+	Global.profile.selectionChanged = true;
+	CacheDB cacheDB = Global.profile.cacheDB;
+	for (int i = cacheDB.size() - 1; i >= 0; i--) {
+	    CacheHolder ch = cacheDB.get(i);
+	    ch.setFiltered(false);
+	}
+	Global.profile.setFilterActive(FILTER_INACTIVE);
     }
 
     public boolean hasFilter() {
-    	long[] attribs = Global.profile.getFilterAttr();
-    	return !(Global.profile.getFilterType().equals(FilterData.FILTERTYPE) &&
-    			Global.profile.getFilterRose().equals(FilterData.FILTERROSE) &&
-    			Global.profile.getFilterVar().equals(FilterData.FILTERVAR) &&
-    			Global.profile.getFilterSize().equals(FilterData.FILTERSIZE) &&
-    			Global.profile.getFilterDist().equals("L") &&
-    			Global.profile.getFilterDiff().equals("L") &&
-    			Global.profile.getFilterTerr().equals("L") &&
-    			attribs[0] == 0l &&
-    			attribs[1] == 0l &&
-    			attribs[2] == 0l &&
-    			attribs[3] == 0l &&
-    			Global.profile.getFilterStatus().equals("") &&
-    			Global.profile.getFilterSyncDate().equals("") &&
-    			Global.profile.getFilterNamePattern().equals("") &&
-    			Global.profile.getFilterNoCoord());
+	long[] attribs = Global.profile.getFilterAttr();
+	return !(Global.profile.getFilterType().equals(FilterData.FILTERTYPE) && Global.profile.getFilterRose().equals(FilterData.FILTERROSE) && Global.profile.getFilterVar().equals(FilterData.FILTERVAR)
+		&& Global.profile.getFilterSize().equals(FilterData.FILTERSIZE) && Global.profile.getFilterDist().equals("L") && Global.profile.getFilterDiff().equals("L") && Global.profile.getFilterTerr().equals("L") && attribs[0] == 0l
+		&& attribs[1] == 0l && attribs[2] == 0l && attribs[3] == 0l && Global.profile.getFilterStatus().equals("") && Global.profile.getFilterSyncDate().equals("") && Global.profile.getFilterNamePattern().equals("") && Global.profile
+		    .getFilterNoCoord());
     }
 }

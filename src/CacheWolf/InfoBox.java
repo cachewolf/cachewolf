@@ -61,7 +61,7 @@ public class InfoBox extends Form {
 
     public InfoBox(String title, String info, int type, boolean autoWrap) {
 	// Resize InfoBox
-	int psx = Global.pref.fontSize * 14;
+	int psx = Global.pref.fontSize * 16;
 	int psy = Global.pref.fontSize * 12;
 	if (Global.pref.useBigIcons) {
 	    psx = Math.min(psx + 48, MyLocale.getScreenWidth());
@@ -92,7 +92,7 @@ public class InfoBox extends Form {
 	    this.addLast(msgArea.getScrollablePanel(), STRETCH, FILL);
 	    break;
 	case PROGRESS_WITH_WARNINGS:
-	    msgArea = new TextMessage(info + "\n\n\n\n");
+	    msgArea = new TextMessage("\n\n\n\n");
 	    msgArea.autoWrap = autoWrap;
 	    msgArea.alignment = CENTER;
 	    msgArea.anchor = CENTER;
@@ -109,6 +109,7 @@ public class InfoBox extends Form {
 	relayout(false);
 	if (warnings != null)
 	    warnings.setText("");
+	msgArea.setText(info);
     }
 
     public final int wait(int doButtons)
