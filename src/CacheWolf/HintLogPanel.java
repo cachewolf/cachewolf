@@ -73,46 +73,52 @@ public class HintLogPanel extends CellPanel {
     private MyScrollBarPanel sbplog;
     private int lastScrollbarWidth = 0;
     private boolean hintIsDecoded = false;
-    final CellPanel pnlTools;
 
     public HintLogPanel() {
-	pnlTools = new CellPanel();
-	prevBt = GuiImageBroker.getButton("<<", "previous");
-	pnlTools.addNext(prevBt); // DONTSTRETCH, (HFILL | WEST)
+	CellPanel codeButtonPanel = new CellPanel();
+	codeButtonPanel.equalWidths = true;
 	codeButton = GuiImageBroker.getButton(MyLocale.getMsg(400, "Decode"), "decode");
-	encodeButtonImage = GuiImageBroker.getImageOfButton(codeButton, MyLocale.getMsg(401, "Encode"), "encode");
-	decodeButtonImage = GuiImageBroker.getImageOfButton(codeButton, MyLocale.getMsg(400, "Decode"), "decode");
-	pnlTools.addNext(codeButton);// HSTRETCH, HFILL | WEST
-	codeButton.setMinimumSize(MyLocale.getScreenWidth() * 2 / 3, 10);
-	moreBt = GuiImageBroker.getButton(">>", "next");
-	pnlTools.addLast(moreBt); // DONTSTRETCH, (HFILL | EAST)
-	pnlTools.equalWidths = true;
+	encodeButtonImage = GuiImageBroker.makeImageForButton(codeButton, MyLocale.getMsg(401, "Encode"), "encode");
+	decodeButtonImage = GuiImageBroker.makeImageForButton(codeButton, MyLocale.getMsg(400, "Decode"), "decode");
+	codeButtonPanel.addNext(codeButton);
 
-	if (!Global.pref.tabsAtTop)
-	    addLast(pnlTools, DONTSTRETCH, FILL).setTag(SPAN, new Dimension(3, 1));
+	CellPanel logButtonPanel = new CellPanel();
+	logButtonPanel.equalWidths = true;
+	prevBt = GuiImageBroker.getButton("<<", "previous");
+	logButtonPanel.addNext(prevBt); // DONTSTRETCH, (HFILL | WEST)
+	moreBt = GuiImageBroker.getButton(">>", "next");
+	logButtonPanel.addLast(moreBt); // DONTSTRETCH, (HFILL | EAST)
 
 	SplittablePanel split = new SplittablePanel(PanelSplitter.VERTICAL);
-	MyLocale.setSplitterSize(split);
 	CellPanel logpane = split.getNextPanel();
 	CellPanel hintpane = split.getNextPanel();
+	MyLocale.setSplitterSize(split);
 	split.setSplitter(PanelSplitter.AFTER | PanelSplitter.HIDDEN, PanelSplitter.BEFORE | PanelSplitter.HIDDEN, 0);
+
 	int initialHintHeight = Global.pref.initialHintHeight;
 	if (initialHintHeight < 0 || initialHintHeight > 1000)
 	    initialHintHeight = Global.pref.DEFAULT_INITIAL_HINT_HEIGHT;
 	hintpane.setPreferredSize(100, initialHintHeight);
+
+	if (!Global.pref.tabsAtTop)
+	    hintpane.addLast(codeButtonPanel, DONTSTRETCH, FILL);
 	ScrollBarPanel sbphint = new MyScrollBarPanel(hint);
 	hint.modify(ControlConstants.NotEditable, 0);
 	hintpane.addLast(sbphint, CellConstants.STRETCH, (CellConstants.FILL | CellConstants.WEST));
+	if (Global.pref.tabsAtTop)
+	    hintpane.addLast(codeButtonPanel, DONTSTRETCH, FILL);
 
+	if (!Global.pref.tabsAtTop)
+	    logpane.addLast(logButtonPanel, DONTSTRETCH, FILL);
 	sbplog = new MyScrollBarPanel(htmlImagDisp, ScrollablePanel.NeverShowHorizontalScrollers);
 	Rect r = new Rect(new Dimension(Global.pref.myAppWidth - sbplog.vbar.getRect().width, 20));
 	htmlImagDisp.virtualSize = r;
 	htmlImagDisp.checkScrolls();
 	logpane.addLast(sbplog.getScrollablePanel(), CellConstants.STRETCH, CellConstants.FILL);
-	this.addLast(split);
-
 	if (Global.pref.tabsAtTop)
-	    addLast(pnlTools, DONTSTRETCH, FILL).setTag(SPAN, new Dimension(3, 1));
+	    logpane.addLast(logButtonPanel, DONTSTRETCH, FILL);
+
+	this.addLast(split);
 
 	clear();
     }

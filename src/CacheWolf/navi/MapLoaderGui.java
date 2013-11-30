@@ -34,7 +34,6 @@ import ewe.fx.Point;
 import ewe.io.File;
 import ewe.sys.Convert;
 import ewe.sys.Vm;
-import ewe.ui.CellConstants;
 import ewe.ui.CellPanel;
 import ewe.ui.ControlConstants;
 import ewe.ui.ControlEvent;
@@ -59,8 +58,6 @@ import ewe.ui.mTabbedPanel;
 public class MapLoaderGui extends Form {
     private ExecutePanel executePanel, executePanelPerCache;
     mTabbedPanel mTab = new mTabbedPanel();
-    CellPanel pnlTiles = new CellPanel();
-    CellPanel pnlPerCache = new CellPanel();
 
     final String descString = MyLocale.getMsg(1802, "Download georeferenced maps\n Select online service:");
     mChoice mapServiceChoice;
@@ -73,8 +70,8 @@ public class MapLoaderGui extends Form {
     mLabel km = new mLabel("km");
     mLabel coosLbl;
     mButton coosBtn;
-    mLabel scaleLbl = new mLabel(MyLocale.getMsg(1807, "Approx. m per pixel:"));
     mLabel scaleLblPerCache = new mLabel(MyLocale.getMsg(1807, "Approx. m per pixel:"));
+    mLabel scaleLbl = new mLabel(MyLocale.getMsg(1807, "Approx. m per pixel:"));
     mComboBox scaleInput = new mComboBox();
     mComboBox scaleInputPerCache = new mComboBox();
     mLabel overlappingLbl = new mLabel(MyLocale.getMsg(1808, "overlapping in pixel:"));
@@ -125,22 +122,26 @@ public class MapLoaderGui extends Form {
 	MessageArea desc = new MessageArea(descString);
 	desc.modifyAll(ControlConstants.NotEditable | ControlConstants.DisplayOnly | ControlConstants.NoFocus, ControlConstants.TakesKeyFocus);
 	desc.borderStyle = UIConstants.BDR_NOBORDER;
+
 	this.addLast(desc);
 	this.addLast(mapServiceChoice);
+
 	// tiles panel
+	CellPanel pnlTiles = new CellPanel();
 	pnlTiles.addNext(forCachesChkBox);
 	pnlTiles.addNext(forSelectedChkBox);
 	pnlTiles.addLast(cachesLbl);
-	pnlTiles.addNext(distLbl = new mLabel(MyLocale.getMsg(1810, "Within a rectangle of:")), CellConstants.DONTSTRETCH, (CellConstants.DONTFILL | CellConstants.WEST));
+	pnlTiles.addNext(distLbl = new mLabel(MyLocale.getMsg(1810, "Within a rectangle of:")), DONTSTRETCH, (DONTFILL | WEST));
 	distanceInput = new mInput();
 	int tmp = Convert.toInt((Global.profile.getDistOC()));
 	tmp = java.lang.Math.max(tmp, Convert.toInt((Global.profile.getDistGC())));
 	distanceInput.setText(Convert.toString((tmp > 0 ? tmp : 15)));
-	pnlTiles.addNext(distanceInput, CellConstants.DONTSTRETCH, (CellConstants.DONTFILL | CellConstants.WEST));
+	pnlTiles.addNext(distanceInput, DONTSTRETCH, (DONTFILL | WEST));
 	pnlTiles.addLast(km);
 	pnlTiles.addNext(coosLbl = new mLabel(MyLocale.getMsg(1811, "around the centre:") + " "));
 	pnlTiles.addLast(coosBtn = new mButton(center.toString()));
 	pnlTiles.addNext(scaleLbl);
+
 	mapLoader.setCurrentMapService(sortingMapServices[mapServiceChoice.selectedIndex]);
 
 	this.focusFirst();
@@ -149,11 +150,13 @@ public class MapLoaderGui extends Form {
 	pnlTiles.addLast(overlappingInput);
 	fetchOnlyMapWithCacheChkBox.setState(false);
 	pnlTiles.addLast(fetchOnlyMapWithCacheChkBox);
-	pnlTiles.addNext(new mLabel(MyLocale.getMsg(1835, "Tilesize")), CellConstants.DONTSTRETCH, CellConstants.DONTFILL | CellConstants.WEST);
-	pnlTilestileHeightInput.columns = pnlTilestileWidthInput.columns = 5;
-	pnlTiles.addNext(pnlTilestileWidthInput, CellConstants.DONTSTRETCH, CellConstants.DONTFILL | CellConstants.WEST);
-	pnlTiles.addNext(new mLabel("x"), CellConstants.DONTSTRETCH, CellConstants.DONTFILL | CellConstants.WEST);
-	pnlTiles.addLast(pnlTilestileHeightInput, CellConstants.DONTSTRETCH, CellConstants.DONTFILL | CellConstants.WEST);
+	pnlTiles.addNext(new mLabel(MyLocale.getMsg(1835, "Tilesize")), DONTSTRETCH, DONTFILL | WEST);
+	pnlTilestileHeightInput.columns = pnlTilestileWidthInput.columns = 5; // 5 Zeichen vorsehen
+	CellPanel p03 = new CellPanel();
+	p03.addNext(pnlTilestileWidthInput, DONTSTRETCH, CENTER);
+	p03.addNext(new mLabel("x"), DONTSTRETCH, CENTER);
+	p03.addLast(pnlTilestileHeightInput, DONTSTRETCH, CENTER);
+	pnlTiles.addLast(p03, HSTRETCH, HFILL);
 
 	executePanel = new ExecutePanel(pnlTiles);
 	executePanel.setText(MyLocale.getMsg(162, "Download"), FormBase.YESB);
@@ -163,25 +166,33 @@ public class MapLoaderGui extends Form {
 	mTab.addCard(pnlTiles, MyLocale.getMsg(1812, "Tiles"), MyLocale.getMsg(1812, "Tiles"));
 
 	// per cache panel
-	pnlPerCache.addNext(new mLabel(MyLocale.getMsg(1813, "Download one map for")), CellConstants.DONTSTRETCH, CellConstants.DONTFILL);
-	pnlPerCache.addNext(forSelectedChkBoxPerCache, CellConstants.DONTSTRETCH, CellConstants.DONTFILL);
-	pnlPerCache.addLast(new mLabel(MyLocale.getMsg(1806, "caches")), CellConstants.DONTSTRETCH, CellConstants.DONTFILL);
-	pnlPerCache.addNext(scaleLblPerCache, CellConstants.DONTSTRETCH, CellConstants.DONTFILL);
-	pnlPerCache.addLast(scaleInputPerCache, CellConstants.DONTSTRETCH, CellConstants.DONTFILL | CellConstants.WEST);
+	CellPanel perCacheCard = new CellPanel();
+	CellPanel pccSelectionPanel = new CellPanel();
+	CellPanel p1 = new CellPanel();
+	pccSelectionPanel.addNext(new mLabel(MyLocale.getMsg(1813, "Download one map for")), VSTRETCH, LEFT);
+	p1.addNext(forSelectedChkBoxPerCache);
+	p1.addLast(new mLabel(MyLocale.getMsg(1806, "caches")));
+	pccSelectionPanel.addLast(p1, HSTRETCH, HFILL);
 
-	pnlPerCache.addNext(new mLabel(MyLocale.getMsg(1835, "Tilesize")), CellConstants.DONTSTRETCH, CellConstants.DONTFILL);
-	CellPanel pnl = new CellPanel();
-	tileHeightInput.columns = tileWidthInput.columns = 5;
-	pnl.addNext(tileWidthInput, CellConstants.DONTSTRETCH, CellConstants.DONTFILL);
-	pnl.addNext(new mLabel("x"), CellConstants.DONTSTRETCH, CellConstants.DONTFILL);
-	pnl.addLast(tileHeightInput, CellConstants.DONTSTRETCH, CellConstants.DONTFILL);
-	pnlPerCache.addLast(pnl, CellConstants.DONTSTRETCH, CellConstants.DONTFILL | CellConstants.WEST);
+	CellPanel p2 = new CellPanel();
+	pccSelectionPanel.addNext(scaleLblPerCache, VSTRETCH, LEFT);
+	p2.addLast(scaleInputPerCache);
+	pccSelectionPanel.addLast(p2, HSTRETCH, HFILL);
 
-	executePanelPerCache = new ExecutePanel(pnlPerCache);
+	CellPanel p3 = new CellPanel();
+	tileHeightInput.columns = tileWidthInput.columns = 5; // 5 Zeichen vorsehen
+	pccSelectionPanel.addNext(new mLabel(MyLocale.getMsg(1835, "Tilesize")), VSTRETCH, LEFT);
+	p3.addNext(tileWidthInput, DONTSTRETCH, CENTER);
+	p3.addNext(new mLabel("x"), DONTSTRETCH, CENTER);
+	p3.addLast(tileHeightInput, DONTSTRETCH, CENTER);
+	pccSelectionPanel.addLast(p3, HSTRETCH, HFILL);
+
+	perCacheCard.addLast(pccSelectionPanel, STRETCH, FILL);
+	executePanelPerCache = new ExecutePanel(perCacheCard);
 	executePanelPerCache.setText(MyLocale.getMsg(162, "Download"), FormBase.YESB);
 	executePanelPerCache.setText(MyLocale.getMsg(4107, "Done"), FormBase.CANCELB);
 
-	mTab.addCard(pnlPerCache, MyLocale.getMsg(1814, "Per cache"), MyLocale.getMsg(1813, "Per Cache"));
+	mTab.addCard(perCacheCard, MyLocale.getMsg(1814, "Per cache"), MyLocale.getMsg(1813, "Per Cache"));
 	setRecommScaleInput();
 	setRecommPixelSize();
 	this.addLast(mTab);
@@ -398,7 +409,8 @@ public class MapLoaderGui extends Form {
 	    // create map rectangle from caches
 	    a = 0;
 	    b = ControlConstants.Disabled;
-	} else { // use centre and distance input
+	} else {
+	    // use centre and distance input
 	    a = ControlConstants.Disabled;
 	    b = 0;
 	}

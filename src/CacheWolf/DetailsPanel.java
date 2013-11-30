@@ -265,13 +265,13 @@ public class DetailsPanel extends CellPanel {
 	final CellPanel pnlTools = new CellPanel();
 
 	btnTBs = GuiImageBroker.getButton(MyLocale.getMsg(353, "TBs"), "bug");
-	showBugImage = GuiImageBroker.getImageOfButton(btnTBs, MyLocale.getMsg(353, "TBs"), "bug");
-	showBugNoImage = GuiImageBroker.getImageOfButton(btnTBs, MyLocale.getMsg(353, "TBs"), "bug_no");
+	showBugImage = GuiImageBroker.makeImageForButton(btnTBs, MyLocale.getMsg(353, "TBs"), "bug");
+	showBugNoImage = GuiImageBroker.makeImageForButton(btnTBs, MyLocale.getMsg(353, "TBs"), "bug_no");
 	btnTBs.setToolTip(MyLocale.getMsg(346, "Show travelbugs"));
 
 	btnBlackListed = GuiImageBroker.getButton(MyLocale.getMsg(363, "Blacklist"), "is_black");
-	btnImageNotBlackListed = GuiImageBroker.getImageOfButton(btnBlackListed, MyLocale.getMsg(363, "Blacklist"), "no_black");
-	btnImageBlackListed = GuiImageBroker.getImageOfButton(btnBlackListed, MyLocale.getMsg(363, "Blacklist"), "is_black");
+	btnImageNotBlackListed = GuiImageBroker.makeImageForButton(btnBlackListed, MyLocale.getMsg(363, "Blacklist"), "no_black");
+	btnImageBlackListed = GuiImageBroker.makeImageForButton(btnBlackListed, MyLocale.getMsg(363, "Blacklist"), "is_black");
 	btnBlackListed.setToolTip(MyLocale.getMsg(349, "Toggle Blacklist status"));
 
 	btnNotes = GuiImageBroker.getButton(MyLocale.getMsg(308, "Notes"), "notes");

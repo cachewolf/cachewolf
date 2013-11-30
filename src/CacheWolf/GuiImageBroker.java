@@ -161,7 +161,7 @@ public final class GuiImageBroker {
 	return new IconAndText(getImage(icon), getText(text), null); //Gui.makeHot(text)
     }
 
-    public static IImage getImageOfButton(mButton btn, String text, String icon) {
+    public static IImage makeImageForButton(mButton btn, String text, String icon) {
 	if (btn.image != null) {
 	    if (btn.image instanceof IconAndText) {
 		return getIconAndText(text, icon);
@@ -236,7 +236,7 @@ public final class GuiImageBroker {
 	PullDownMenu pdm;
 	if (Global.pref.leftIcons) {
 	    pdm = new PullDownMenu(getText(text), new Menu(menuItems, null));
-	    pdm.image = getImage(icon); // oder ein IconAndText zuweisen 
+	    pdm.image = getImage(icon);
 	    pdm.textPosition = Graphics.Right; // rechts vom Icon
 	} else {
 	    pdm = new PullDownMenu("", new Menu(menuItems, null));
