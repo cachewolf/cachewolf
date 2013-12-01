@@ -1,0 +1,29 @@
+﻿#intentionally left blank
+Name:                                   de.Thüringen DTK25-V Kombination farbig
+MapType:                                de.th t25
+MainUrl:                                http://www.geoproxy.geoportal-th.de/geoproxy/services?
+LayersUrlPart:                          LAYERS=dtkv25col
+ImageFormatUrlPart:                     FORMAT=image/jpeg
+ImageFileExtension:                     .jpg
+CoordinateReferenceSystemCacheWolf:     31468 31467
+CoordinateReferenceSystemUrlPart:       SRS=EPSG:31468 SRS=EPSG:31467
+RecommendedScale:                       2
+BoundingBoxTopLeftWGS84:                N 52.0000 E 9.0000
+BoundingBoxBottomRightWGS84:            N 49.9009 E 13.0000
+ServiceTypeUrlPart:                     SERVICE=WMS
+VersionUrlPart:                         VERSION=1.1.1
+RequestUrlPart:                         REQUEST=GetMap
+StylesUrlPart:                          STYLES=
+#
+#MinScale:                               1
+#MaxScale:                               6
+#MinPixelSize:                           ?
+#MaxPixelSize:                           ?
+#RecommendedWidthPixelSize:              256
+#RecommendedHeightPixelSize:             256
+#
+#Ringo Staudt, Thueringer Ministerium fuer Bau, Landesentwicklung und Verkehr, Hohenwindenstr. 13 a, 99086 Erfurt, +49 361 - 37 83 317, ringo.staudt@tlvermgeo.thueringen.de
+#no fees = freie Nutzung
+#
+TakenFromUrl:                           http://www.geoproxy.geoportal-th.de/geoproxy/services
+GetCapabilitiesUrl:                     http://www.geoproxy.geoportal-th.de/geoproxy/services?SERVICE=WMS&VERSION=1.1.1&REQUEST=GetCapabilities
