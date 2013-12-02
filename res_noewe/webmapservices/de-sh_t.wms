@@ -1,0 +1,30 @@
+﻿#intentionally left blank
+Name:                                   de.Schleswig-holstein Digitale Topographische Karte 1:25.000 - Vorlaeufige Ausgabe Geobasisdatendienst (WMS kostenfrei)
+MapType:                                de.sh t
+MainUrl:                                http://service.schleswig-holstein.de/OGCFassade/SH_WMS_BDD_KF.aspx?
+LayersUrlPart:                          LAYERS=2
+ImageFormatUrlPart:                     FORMAT=image/jpeg
+ImageFileExtension:                     .jpg
+CoordinateReferenceSystemCacheWolf:     31467
+CoordinateReferenceSystemUrlPart:       SRS=EPSG:31467
+RecommendedScale:                       5
+BoundingBoxTopLeftWGS84:                N 55.1317 E 7.6589
+BoundingBoxBottomRightWGS84:            N 53.2240 E 11.5061
+ServiceTypeUrlPart:                     SERVICE=WMS
+VersionUrlPart:                         VERSION=1.1.0
+RequestUrlPart:                         REQUEST=GetMap
+StylesUrlPart:                          STYLES=
+#
+#MinScale:                               3.7548
+#MaxScale:                               11.0485
+#
+#MinPixelSize:                           ?
+#MaxPixelSize:                           ?
+#RecommendedWidthPixelSize:              256
+#RecommendedHeightPixelSize:             256
+#
+#Der topographische Geobasisdatendienst umfasst Karten folgender Maßstaebe: Uebersichtskarte fuer einen Maßstab von 1:2.000.000 (bildschirmfuellend) bis 1:125.000, Digitale Topographische Karten 1:100.000 - Vorlaeufige Ausgabe fuer einen Maßstab von 1:125.000 bis 1:75.000, Digitale Topographische Karten 1:50.000 - Vorlaeufige Ausgabe für einen Maßstab von 1:75.000 bis 1:35.000, Digitale Topographische Karten 1:25.000 - Vorlaeufige Ausgabe fuer einen Maßstab von 1:35.000 bis 1:10.000, Digitale Topographische Karten 1:5.000 fuer einen Maßstab von 1:10.000 bis 1:4.000. Bei diesem Dienst handelt es sich um einen kostenfreien WebMapService mit der Darstellung von Summenlayern fuer nichtkommerzielle Anwendungen. Dabei ist zu beachten, dass bei der DTK25, DTK50 und DTK100 ausschließlich Schleswig-Holstein abgebildet ist.
+#Stephan Bork, Landesamt für Vermessung und Geoinformation Schleswig-Holstein (LVermGeo SH), Mercatorstrasse 1, 24106 Kiel, +49 431 383-2037, geoserver@lvermgeo.landsh.de
+#
+TakenFromUrl:                           http://service.schleswig-holstein.de/OGCFassade/SH_WMS_BDD_KF.aspx?
+GetCapabilitiesUrl:                     http://service.schleswig-holstein.de/OGCFassade/SH_WMS_BDD_KF.aspx?SERVICE=WMS&VERSION=1.1.0&REQUEST=GetCapabilities
