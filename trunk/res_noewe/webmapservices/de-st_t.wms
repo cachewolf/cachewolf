@@ -1,0 +1,29 @@
+﻿#intentionally left blank
+Name:                                   de.Sachsen-Anhalt WebAtlasDE
+MapType:                                de.st t
+MainUrl:                                http://geoportal.geodaten.sachsen-anhalt.de/geodatenportal/servlet/gtEntryPoint;jsessionid=51711E7127EC019A09827A328FE11E69?wms_service_name=Geodatenportal&
+LayersUrlPart:                          LAYERS=layer_27244
+ImageFormatUrlPart:                     FORMAT=image/jpeg
+ImageFileExtension:                     .jpg
+CoordinateReferenceSystemCacheWolf:     31468 31467 31469
+CoordinateReferenceSystemUrlPart:       SRS=EPSG:31468 SRS=EPSG:31467 SRS=EPSG:31469
+RecommendedScale:                       1 0.5 2.5 5 10 20
+BoundingBoxTopLeftWGS84:                N 53.0769 E 10.5093
+BoundingBoxBottomRightWGS84:            N 50.8927 E 13.3233
+ServiceTypeUrlPart:                     SERVICE=WMS
+VersionUrlPart:                         VERSION=1.1.1
+RequestUrlPart:                         REQUEST=GetMap
+StylesUrlPart:                          STYLES=
+#
+#MinScale:                               0
+#MaxScale:                               1000
+#
+#MinPixelSize:                           ?
+#MaxPixelSize:                           ?
+#RecommendedWidthPixelSize:              256
+#RecommendedHeightPixelSize:             256
+#
+#Zentrales CallCenter, Landesamt fuer Vermessung und Geoinformation Sachsen-Anhalt, Otto-Von-Guericke-Strasse 15, 39104 Magdeburg, +49 391 567-8585, service@lvermgeo.sachsen-anhalt.de
+#
+TakenFromUrl:                           www.lvermgeo.sachsen-anhalt.de
+GetCapabilitiesUrl:                     http://geoportal.geodaten.sachsen-anhalt.de/geodatenportal/servlet/gtEntryPoint;jsessionid=51711E7127EC019A09827A328FE11E69?wms_service_name=Geodatenportal&SERVICE=WMS&VERSION=1.1.0&REQUEST=GetCapabilities
