@@ -1107,11 +1107,11 @@ public class SpiderGC {
 		    Global.pref.userID = UrlFetcher.getCookie("userid");
 		    if (Global.pref.userID == null) {
 			Global.pref.userID = "";
-			new InfoBox(MyLocale.getMsg(5523, "Login error!"), "Please correct your account in preferences\n\n see http://cachewolf.aldos.de/userid.html !").wait(FormBase.OKB);
+			new InfoBox(MyLocale.getMsg(5523, "Login error!"), MyLocale.getMsg(5524, "Please correct your account in preferences\n\n see http://cachewolf.aldos.de/userid.html !")).wait(FormBase.OKB);
 			return false;
 		    }
 		} else {
-		    new InfoBox(MyLocale.getMsg(5523, "Login error!"), "Perhaps GC is not available. This should not happen!").wait(FormBase.OKB);
+		    new InfoBox(MyLocale.getMsg(5523, "Login error!"), MyLocale.getMsg(5525, "Perhaps GC is not available. This should not happen!")).wait(FormBase.OKB);
 		    return false;
 		}
 	    }
@@ -1126,20 +1126,20 @@ public class SpiderGC {
 		    break;
 		case 1:
 		    // language not set to "en-US" , we couldn't change
-		    new InfoBox(MyLocale.getMsg(5523, "Login error!"), "Couldn't change language to EN.").wait(FormBase.OKB);
+		    new InfoBox(MyLocale.getMsg(5523, "Login error!"), MyLocale.getMsg(5526, "Couldn't change language to EN.")).wait(FormBase.OKB);
 		    break;
 		case 2:
 		    // exception on http://www.geocaching.com/account/ManagePreferences.aspx
-		    new InfoBox(MyLocale.getMsg(5523, "Login error!"), "Exception on ManagePreferences.aspx").wait(FormBase.OKB);
+		    new InfoBox(MyLocale.getMsg(5523, "Login error!"), MyLocale.getMsg(5527, "Exception on ManagePreferences.aspx")).wait(FormBase.OKB);
 		    break;
 		case 3:
 		    // "Metric" : "Imperial" don't correspond
-		    new InfoBox(MyLocale.getMsg(5523, "Login error!"), "Change Metric/Imperial (km / mi) manually. (GC or CW)").wait(FormBase.OKB);
+		    new InfoBox(MyLocale.getMsg(5523, "Login error!"), MyLocale.getMsg(5528, "Change Metric/Imperial (km / mi) manually. (GC or CW)")).wait(FormBase.OKB);
 		    break;
 		case 4:
 		    break;
 		case 5:
-		    new InfoBox(MyLocale.getMsg(5523, "Login error!"), "got no SessionID").wait(FormBase.OKB);
+		    new InfoBox(MyLocale.getMsg(5523, "Login error!"), MyLocale.getMsg(5529, "got no SessionID")).wait(FormBase.OKB);
 		    break;
 		case 6:
 		    // no correct login
@@ -1148,7 +1148,7 @@ public class SpiderGC {
 			retry = true;
 		    else {
 			retry = false;
-			new InfoBox(MyLocale.getMsg(5523, "Login error!"), "Please correct your account in preferences\n\n see http://cachewolf.aldos.de/userid.html !").wait(FormBase.OKB);
+			new InfoBox(MyLocale.getMsg(5523, "Login error!"), MyLocale.getMsg(5524, "Please correct your account in preferences\n\n see http://cachewolf.aldos.de/userid.html !")).wait(FormBase.OKB);
 		    }
 		    break;
 		default:
