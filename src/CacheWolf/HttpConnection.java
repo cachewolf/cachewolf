@@ -189,10 +189,16 @@ public class HttpConnection {
 	c.keepAliveMode = keepAliveMode;
 	c.contentLength = contentLength;
 	c.getRequestorProperties().set(getRequestorProperties());
-	if (originalPostData != null)
-	    c.setPostData(originalPostData);
-	c.documentIsEncoded = documentIsEncoded;
 	c.command = command;
+	//if (command.equalsIgnoreCase("POST")) {
+	if (originalPostData != null) {
+	    c.setPostData(originalPostData);
+	    if (responseCode == 302) {
+		// reflect the Post/Redirect/Get Method
+		c.command = "GET";
+	    }
+	}
+	c.documentIsEncoded = documentIsEncoded;
 	c.textCodec = textCodec == null ? null : (TextCodec) textCodec.getCopy();
 	c.requestVersion = requestVersion;
 	return c;
