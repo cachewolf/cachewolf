@@ -550,26 +550,13 @@ public class MapLoader {
 
     /**
      * @param url
-     *            usual URL. If a redirect is requiered (as in the case of Expedia, add an "R" before "http://" --> Don't download the url, retry until getting a http-redirect this is necessary for expedia as it delivers the image only after a
-     *            http-redirect and sometimes doesn't send a redirect on the first try
      * @param datei
      *            path and name of file to save to
      */
     public void downloadImage(String url, String datei) throws IOException {
-	String realurl;
-	boolean forceredirect;
-	if (url.startsWith("R")) {
-	    forceredirect = true;
-	    realurl = url.substring(1, url.length());
-	} else {
-	    forceredirect = false;
-	    realurl = url;
-	}
 	File dateiF = new File(datei);
 	if (!dateiF.exists()) {
-	    if (forceredirect)
-		UrlFetcher.setForceRedirect();
-	    UrlFetcher.fetchDataFile(realurl, datei);
+	    UrlFetcher.fetchDataFile(url, datei);
 	    String ct = null;
 	    // todo perhaps compare ct with wms Definition , set File Extension accordingly
 	    try {

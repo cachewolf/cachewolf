@@ -56,8 +56,6 @@ import CacheWolf.utils.BetterUTF8Codec;
 
 import com.stevesoft.ewe_pat.Regex;
 
-import ewe.data.Property;
-import ewe.data.PropertyList;
 import ewe.io.AsciiCodec;
 import ewe.io.FileBase;
 import ewe.io.FileInputStream;
@@ -82,9 +80,6 @@ import ewesoft.xml.sax.AttributeList;
  */
 public class SpiderGC {
 
-    /**
-     * The maximum number of logs that will be stored
-     */
     private static boolean loggedIn = false;
 
     // Return values for spider action
@@ -106,7 +101,6 @@ public class SpiderGC {
      */
     private static final String iconsRelativePath = "<img src=\"/images/icons/";
 
-    private static String cookie = "";
     private static double minDistance = 0;
     private static double maxDistance = 0;
     private static String direction = "";
@@ -213,8 +207,9 @@ public class SpiderGC {
 	    boolean lastAnswer = true;
 	    int pageLimit = 20; // das sorgt für die Gruppierung
 	    int maxPages = 0;
+
 	    if (!login())
-		upperDistance = maxDistance;
+		upperDistance = maxDistance; // Abbruch
 	    else {
 		getFirstListPage(this.getDistanceInMiles(maxDistance));
 		maxPages = (int) java.lang.Math.ceil(getNumFound(htmlListPage) / 20);
@@ -300,6 +295,7 @@ public class SpiderGC {
 		infB.close(0);
 	    }
 	    Vm.showWait(false);
+	    loggedIn = false; // check again login on next spider
 	}
     } // End of DoIt
 
@@ -486,6 +482,8 @@ public class SpiderGC {
 
 	Global.profile.restoreFilter();
 	Global.profile.saveIndex(true);
+	loggedIn = false; // check again login on next spider
+
     }
 
     private CWPoint nextRoutePoint(CWPoint startPos, double lateralDistance) {
@@ -711,9 +709,6 @@ public class SpiderGC {
     }
 
     private Hashtable fillDownloadLists(int maxNew, int maxUpdate, double toDistance, double fromDistance, String[] directions, Hashtable cExpectedForUpdate) {
-	if (!login())
-	    return null;
-
 	int numFinds;
 	int startPage = 1;
 	// max distance in miles for URL, so we can get more than 80km
@@ -1020,7 +1015,6 @@ public class SpiderGC {
 	ch.setWayPoint(cacheDB.get(number).getWayPoint());
 	if (ch.isAddiWpt())
 	    return -1; // addi waypoint, comes with parent cache
-
 	if (!login())
 	    return -1;
 	try {
@@ -1051,6 +1045,7 @@ public class SpiderGC {
 	} catch (final Exception ex) {
 	    Global.pref.log("[spiderSingle] Error spidering " + ch.getWayPoint() + " in spiderSingle", ex);
 	}
+	loggedIn = false; // check again login on next spider
 	return ret;
     } // spiderSingle
 
@@ -1075,302 +1070,312 @@ public class SpiderGC {
 	    completeWebPage = UrlFetcher.fetch(doc);
 	    Global.pref.log("Fetched " + wayPoint);
 	} catch (final Exception ex) {
-	    localInfB.close(0);
+	    completeWebPage = "";
 	    Global.pref.log("[getCacheCoordinates] Could not fetch " + wayPoint, ex);
-	    return "";
 	}
 	localInfB.close(0);
+	loggedIn = false; // check again login on next spider
 	try {
 	    return getLatLon(completeWebPage);
 	} catch (final Exception ex) {
 	    return "????";
 	}
+
     } // getCacheCoordinates
 
     /**
-     * create alias Method from login for auto retry TODO: Translation for status text!
+     * login to geocaching.com
      */
     private boolean login() {
 
-	if (loggedIn && !Global.pref.switchGCLanguageToEnglish) {
+	if (loggedIn) {
 	    return true;
 	}
 
-	// the next could be removed, cause switch language now too requires https
-	if (Global.pref.userID.length() > 0) {
-	    UrlFetcher.setPermanentRequestorProperty("Cookie", null);
-	    loggedIn = switchToEnglish();
-	    if (loggedIn)
-		return true;
+	loggedIn = false;
+	int retrycount = -1;
+	int maxretries = 1;
+	boolean retry = false;
 
-	    else {
-		new InfoBox(MyLocale.getMsg(5523, "Login error!"), "Die userID ist vermutlich nicht mehr gültig. Siehe http://cachewolf.aldos.de/userid.html !").wait(FormBase.OKB);
-		return false;
+	do {
+	    retry = false;
+	    retrycount = retrycount + 1;
+	    // we try to get a userId by logging in with username and password
+	    if (Global.pref.userID.length() == 0) {
+		if (gcLogin()) {
+		    UrlFetcher.rememberCookies();
+		    Global.pref.userID = UrlFetcher.getCookie("userid");
+		    if (Global.pref.userID == null) {
+			Global.pref.userID = "";
+			new InfoBox(MyLocale.getMsg(5523, "Login error!"), "Please correct your account in preferences\n\n see http://cachewolf.aldos.de/userid.html !").wait(FormBase.OKB);
+			return false;
+		    }
+		} else {
+		    new InfoBox(MyLocale.getMsg(5523, "Login error!"), "Perhaps GC is not available. This should not happen!").wait(FormBase.OKB);
+		    return false;
+		}
 	    }
+
+	    if (Global.pref.userID.length() > 0) {
+		// we have a saved userID (perhaps invalid)
+		switch (checkGCSettings()) {
+		case 0:
+		    loggedIn = true;
+		    Global.pref.userID = UrlFetcher.getCookie("userid");
+		    Global.pref.savePreferences();
+		    break;
+		case 1:
+		    // language not set to "en-US" , we couldn't change
+		    new InfoBox(MyLocale.getMsg(5523, "Login error!"), "Couldn't change language to EN.").wait(FormBase.OKB);
+		    break;
+		case 2:
+		    // exception on http://www.geocaching.com/account/ManagePreferences.aspx
+		    new InfoBox(MyLocale.getMsg(5523, "Login error!"), "Exception on ManagePreferences.aspx").wait(FormBase.OKB);
+		    break;
+		case 3:
+		    // "Metric" : "Imperial" don't correspond
+		    new InfoBox(MyLocale.getMsg(5523, "Login error!"), "Change Metric/Imperial (km / mi) manually. (GC or CW)").wait(FormBase.OKB);
+		    break;
+		case 4:
+		    break;
+		case 5:
+		    new InfoBox(MyLocale.getMsg(5523, "Login error!"), "got no SessionID").wait(FormBase.OKB);
+		    break;
+		case 6:
+		    // no correct login
+		    Global.pref.userID = "";
+		    if (retrycount < maxretries)
+			retry = true;
+		    else {
+			retry = false;
+			new InfoBox(MyLocale.getMsg(5523, "Login error!"), "Please correct your account in preferences\n\n see http://cachewolf.aldos.de/userid.html !").wait(FormBase.OKB);
+		    }
+		    break;
+		default:
+		}
+	    }
+
+	} while (retry);
+	return loggedIn;
+    }
+
+    private int checkGCSettings() {
+	String page = "";
+	String url = "http://www.geocaching.com/account/ManagePreferences.aspx";
+	UrlFetcher.clearCookies();
+	UrlFetcher.setCookie("userid", Global.pref.userID);
+	try {
+	    page = UrlFetcher.fetch(url); // getting the sessionid
+	} catch (final Exception ex) {
+	    Global.pref.log("[checkGCSettings]:Exception calling " + url + " with userID " + Global.pref.userID, ex);
+	    return 2;
+	}
+
+	UrlFetcher.rememberCookies();
+	String SessionId = UrlFetcher.getCookie("ASP.NET_SessionId");
+	if (SessionId == null) {
+	    Global.pref.log("[checkGCSettings]:got no SessionID.");
+	    return 5;
+	}
+
+	Extractor ext = new Extractor();
+	Extractor extValue = new Extractor();
+
+	//1.) http://www.geocaching.com/my/
+	//<a href="http://www.geocaching.com/my/" class="CommonUsername" title="arbor95" target="_self">arbor95</a>	
+	String userBlock = ext.set(page, "http://www.geocaching.com/my/", "</a>", 0, true).findNext();
+	String loggedInAs = extValue.set(userBlock, "title=\"", "\"", 0, true).findNext();
+	Global.pref.log("[checkGCSettings]:loggedInAs= " + loggedInAs, null);
+	if (loggedInAs.length() == 0)
+	    return 6;
+
+	//2.) ctl00$ContentBody$uxLanguagePreference
+	//<select name="ctl00$ContentBody$uxLanguagePreference" id="ctl00_ContentBody_uxLanguagePreference" class="Select">
+	//<option selected="selected" value="en-US">English</option>
+	//oder
+	//<option selected=\"selected\" value=\"de-DE">Deutsch</option>	
+	String languageBlock = ext.findNext("ctl00$ContentBody$uxLanguagePreference", "</select>");
+	String oldLanguage = extValue.set(languageBlock, "<option selected=\"selected\" value=\"", "\">", 0, true).findNext();
+	Global.pref.log("[checkGCSettings]:Language= " + oldLanguage, null);
+
+	//3.) ctl00$ContentBody$uxTimeZone
+
+	//4.) ctl00_ContentBody_uxDisplayUnits
+	//<table id="ctl00_ContentBody_uxDisplayUnits" .. </table>
+	//<input id="ctl00_ContentBody_uxDisplayUnits_1" type="radio" name="ctl00$ContentBody$uxDisplayUnits" value="1" checked="checked" /><label for="ctl00_ContentBody_uxDisplayUnits_1">Metric</label>
+	String distanceUnitBlock = ext.findNext("ctl00_ContentBody_uxDisplayUnits", "</table>");
+	String distanceUnit = extValue.set(extValue.set(distanceUnitBlock, "\"checked\"", "</td>", 0, true).findNext(), "\">", "</label>", 0, true).findNext();
+	Global.pref.log("[checkGCSettings]:Units= " + distanceUnit, null);
+	if (!distanceUnit.equalsIgnoreCase(Global.pref.metricSystem == Metrics.METRIC ? "Metric" : "Imperial")) {
+	    return 3;
+	}
+
+	//5.) ctl00$ContentBody$uxDateTimeFormat
+	//<select name="ctl00$ContentBody$uxDateTimeFormat" id="ctl00_ContentBody_uxDateTimeFormat" class="Select">
+	//<option selected="selected" value="yyyy-MM-dd"> 2013-12-04</option>
+	String GCDateFormatBlock = ext.findNext("ctl00$ContentBody$uxDateTimeFormat", "</select>");
+	String GCDateFormat = extValue.set(GCDateFormatBlock, "selected\" value=\"", "\">", 0, true).findNext();
+	Global.pref.log("[checkGCSettings]:GCDateFormat= " + GCDateFormat, null);
+	DateFormat.GCDateFormat = GCDateFormat;
+
+	//6.)ctl00$ContentBody$uxInstantMessengerProvider
+
+	//7.) ctl00$ContentBody$ddlGPXVersion
+
+	if (oldLanguage.equals("en-US")) {
+	    Global.pref.changedGCLanguageToEnglish = false;
+	    return 0;
 	} else {
-	    new InfoBox(MyLocale.getMsg(5523, "Login error!"), "Siehe http://cachewolf.aldos.de/userid.html !").wait(FormBase.OKB);
-	    return false;
+	    Global.pref.oldGCLanguage = oldLanguage;
+	    if (setGCLanguage("en-US")) {
+		Global.pref.changedGCLanguageToEnglish = true;
+		return 0;
+	    } else {
+		Global.pref.changedGCLanguageToEnglish = false;
+		return 1;
+	    }
 	}
 
 	/*
-	int counter = 5;
-	boolean real_return = false;
-	// **0 Get password 
-	String passwort = Global.pref.password;
-	InfoBox localInfB = new InfoBox(MyLocale.getMsg(5506, "Password"), MyLocale.getMsg(5505, "Enter Password"), InfoBox.INPUT);
-	localInfB.feedback.setText(passwort);
-	localInfB.feedback.isPassword = true;
-	int code = FormBase.IDOK;
-	if (passwort.equals("")) {
-		code = localInfB.execute();
-		passwort = localInfB.getInput();
+	// other place to check/set selected language
+	String languageBlock = ext.set(page, "\"selected-language\"", "</div>", 0, true).findNext();
+	String oldLanguage = ext.set(languageBlock, "<a href=\"#\">", "&#9660;</a>", 0, true).findNext();
+	if (oldLanguage.equals("English")) {
+	    Global.pref.switchGCLanguageToEnglish = false;
+	    return 0;
 	}
-	localInfB.close(0);
-	if (code != FormBase.IDOK)
-		return false;
-
-	localInfB = new InfoBox(MyLocale.getMsg(5507, "Status"), MyLocale.getMsg(5508, "Logging in..."));
-	localInfB.exec();
-
-	while (counter > 0) {
-		counter--;
-		switch (origin_login(passwort)) {
-		case 1:
-			real_return = true;
-			counter = 0;
-			break;
-		case 0:
-			localInfB.setInfo(MyLocale.getMsg(5523, "Login error! next try...") + "(" + (5 - counter) + "/5)");
-			break;
-		case 2:
-			(new InfoBox(MyLocale.getMsg(5500, "Error"), MyLocale.getMsg(5501, "Login failed! Wrong account or password?")).wait(FormBase.OKB);
-			counter = 0;
-			break;
-		case 3:
-			localInfB.setInfo(MyLocale.getMsg(5523, "Login error! next try...") + "(" + (5 - counter) + "/5)");
-			break;
-		case 4:
-			localInfB.setInfo(MyLocale.getMsg(5523, "Login error! next try...") + "(" + (5 - counter) + "/5)");
-			break;
-		}
-	}
-
-	localInfB.close(0);
-	return real_return;
 	*/
 
     }
 
-    /**
-     * Method to login the user to gc.com 
-     * It will request a password and use the alias defined in preferences 
-     * If the login page cannot be fetched, the password is cleared. 
-     * If the login fails, an appropriate message is displayed. 
-     * changed return type from boolean to int
-     * 0 = false / abort 
-     * 1 = true 
-     * 2 = wrong username or password 
-     * 3 = login exception 
-     * 4 = fetch error / offline
-     */
-    /*
-    private int origin_login(String passwort) {
-
-    loggedIn = false;
-    String loginPage, loginPageUrl, loginSuccess;
-    try {
-    	loginPageUrl = p.getProp("loginPage");
-    	loginSuccess = p.getProp("loginSuccess");
-    } catch (final Exception ex) { // Tag not found in spider.def
-    	return 0;
-    }
-
-    // **1 we have user and password for login
-    try {
-    	loginPage = UrlFetcher.fetch(loginPageUrl); // https://www.geocaching.com/login/default.aspx
-    	if (loginPage.equals("")) {
-    		Global.pref.log("[login]:empty gc.com login page " + loginPageUrl, null);
-    		return 4;
-    	}
-    } catch (final Exception ex) {
-    	Global.pref.log("[login]:Exception gc.com login page", ex, true);
-    	return 4;
-    }
-
-    // **2 now we can check the loginpage if logged in else log in
-    // assume language is already set to EN (loginSuccess has EN - Text)
-    if (loginPage.indexOf(loginSuccess) > 0) {
-    	if (loginPage.indexOf(Global.pref.myAlias) > 0) {
-    		loggedIn = true;
-    		Global.pref.log("[login]:Already logged in as " + Global.pref.myAlias);
-    	} else {
-    		// it is another user, whom we should logout
-    		try {
-    			loginPage = UrlFetcher.fetch("https://www.geocaching.com/login/default.aspx?RESET=Y");
-    		} catch (final Exception ex) {
-    			Global.pref.log("[login]:Exception logout user from gc", ex);
-    			return 4;
-    		}
-
-    	}
-    }
-    if (!loggedIn) {
-    	try {
-    		final Regex rexViewstate = new Regex("id=\"__VIEWSTATE\" value=\"(.*?)\" />");
-    		String viewstate = "";
-    		rexViewstate.search(loginPage);
-    		if (rexViewstate.didMatch()) {
-    			viewstate = rexViewstate.stringMatched(1);
-    		} else {
-    			;
-    			Global.pref.log("[login]:__VIEWSTATE not found (before login): no login possible.", null);
-    			return 0;
-    		}
-
-    		final StringBuffer sb = new StringBuffer(1000);
-    		sb.append("__EVENTTARGET=");
-    		sb.append("&__EVENTARGUMENT=");
-    		sb.append("&__VIEWSTATE=" + URL.encodeURL(viewstate, false));
-    		sb.append("&ctl00%24ContentBody%24tbUsername=" + encodeUTF8URL(Utils.encodeJavaUtf8String(Global.pref.myAlias)));
-    		sb.append("&ctl00%24ContentBody%24tbPassword=" + encodeUTF8URL(Utils.encodeJavaUtf8String(passwort)));
-    		sb.append("&ctl00%24ContentBody%24cbRememberMe=true");
-    		sb.append("&ctl00%24ContentBody%24btnSignIn=Login");
-    		UrlFetcher.setpostData(sb.toString());
-
-    		loginPage = UrlFetcher.fetch(loginPageUrl);
-    	} catch (final Exception ex) {
-    		Global.pref.log("[login]:Exception login with post Data.", ex);
-    		return 3;
-    	}
-    }
-
-    // formerly this part was not executed if already logged in
-    // but as https login post sometimes/often gives faulty EOF (https implementation program error),
-    // though the call was successful, the second call (repeating login()) of loginpage get
-    // gives us the following data used as cookie : sessionId and userid
-    // hopefully pfeffer or someone else fixes this EOF some time
-    if (loginPage.indexOf(loginSuccess) > 0) {
-    	Global.pref.log("Login successful: " + Global.pref.myAlias);
-    	// **3 now we are logged in and get the userId and sessionId
-    	if (!getSessionIdAndSetCookie(""))
-    		return 2;
-    } else {
-    	Global.pref.log("[login]: Wrong Account or Password? " + Global.pref.myAlias, null);
-    	return 2;
-    }
-
-    if (!this.switchToEnglish())
-    	return 0;
-
-    loggedIn = true;
-    return 1;
-    }
-    */
-    private boolean getSessionIdAndSetCookie(String userId) {
-
-	PropertyList pl = UrlFetcher.getDocumentProperties();
-	String docprops = "";
-	for (int i = 0; i < pl.size(); i++) {
-	    final Property p = (Property) pl.get(i);
-	    if (p.name.equalsIgnoreCase("Set-Cookie")) {
-		docprops += p.value;
-	    }
-	}
-
-	final Regex rexCookieSession = new Regex("(?i)ASP.NET_SessionId=(.*?);.*");
-	rexCookieSession.search(docprops);
-	if (rexCookieSession.didMatch()) {
-	    cookie = "ASP.NET_SessionId=" + rexCookieSession.stringMatched(1);
-	} else {
-	    Global.pref.log("[login]:SessionID not found.", null);
-	    return false;
-	}
-
-	if (userId.length() == 0) {
-	    final Regex rexCookieID = new Regex("(?i)userid=(.*?);.*");
-	    rexCookieID.search(docprops);
-	    if (rexCookieID.didMatch()) {
-		cookie += "; userid=" + rexCookieID.stringMatched(1);
-		// set the user id in user pref
-		Global.pref.userID = rexCookieID.stringMatched(1);
-		Global.pref.savePreferences();
-	    } else {
-		Global.pref.log("[login]:userID not found.", null);
-		return false;
-	    }
-	} else {
-	    cookie += "; userid=" + userId;
-	}
-
-	UrlFetcher.setPermanentRequestorProperty("Cookie", cookie);
-	return true;
-
-    }
-
-    private boolean switchToEnglish() {
-	String page = "";
-	String url = "http://www.geocaching.com/account/ManagePreferences.aspx";
-	try {
-	    UrlFetcher.setPermanentRequestorProperty("Cookie", "userid=" + Global.pref.userID);
-	    page = UrlFetcher.fetch(url); // getting the sessionid
-	    if (page.length() == 0) {
-		Global.pref.log("[switchToEnglish]:empty page getting SessionID.", null);
-		return false;
-	    }
-	} catch (final Exception ex) {
-	    Global.pref.log("[switchToEnglish]:Exception getting SessionID.", ex, true);
-	    return false;
-	}
-
-	if (!getSessionIdAndSetCookie(Global.pref.userID))
-	    return false;
-
-	try {
-	    page = UrlFetcher.fetch(url);
-	    if (page.length() == 0)
-		return false;
-	} catch (IOException e) {
-	    return false;
-	}
-
-	Extractor ext = new Extractor(page, "ctl00$ContentBody$uxLanguagePreference", "</select>", 0, true);
-	String languageBlock = ext.findNext();
-	ext.set(ext.findNext("ctl00$ContentBody$uxDateTimeFormat"), "selected\" value=\"", "\">", 0, true);
-	DateFormat.GCDateFormat = ext.findNext();
-	// <option selected=\"selected\" value=\"de-DE">Deutsch</option>
-	ext.set(languageBlock, "<option selected=\"selected\" value=\"", "\">", 0, true);
-	String oldLanguage = ext.findNext();
-	if (oldLanguage.equals("en-US")) {
-	    Global.pref.switchGCLanguageToEnglish = false;
-	    Global.pref.log("already English");
-	    return true;
-	}
-	// switch to english now goes into gc account Display Preferences
+    public static boolean setGCLanguage(String toLanguage) {
+	// language now goes into gc account Display Preferences
 	// (is permanent, must be reset)
-	String languages[] = { "en-US", "de-DE", "fr-FR", "pt-PT", "cs-CZ", "sv-SE", "nl-NL", "ca-ES", "pl-PL", "et-EE", "nb-NO", "ko-KR", "es-ES", "hu-HU" };
+	// must do post (get no longer works)
+
+	String languages[] = { "en-US", "de-DE", "fr-FR", "pt-PT", "cs-CZ", "da-DK", "sv-SE", "es-ES", "et-EE", "it-IT", "el-GR", "lv-LV", "nl-NL", "ca-ES", "pl-PL", "et-EE", "nb-NO", "ko-KR", "hu-HU", "ro-RO", "ja-JP" };
+	String languageCode = "00"; // defaults to "en-US"
 	for (int i = 0; i < languages.length; i++) {
-	    if (oldLanguage.equals(languages[i])) {
-		Global.pref.oldLanguageCtl = url + "?__EVENTTARGET=" + UrlFetcher.encodeURL("ctl00$uxLocaleList$uxLocaleList$ctl" + MyLocale.formatLong(i, "00") + "$uxLocaleItem", false);
+	    if (toLanguage.equals(languages[i])) {
+		languageCode = MyLocale.formatLong(i, "00");
 		break;
 	    }
 	}
-	final String strEnglishPage = "ctl00$uxLocaleList$uxLocaleList$ctl00$uxLocaleItem";
-	url += "?__EVENTTARGET=" + UrlFetcher.encodeURL(strEnglishPage, false);
+	String page;
+	String url = "http://www.geocaching.com/my/recentlyviewedcaches.aspx";
 	try {
 	    page = UrlFetcher.fetch(url);
-	    ext.set(page, "<a href=\"#\">", "&#9660;", 0, true);
-	    if (ext.findFirst(page).equals("English")) {
-		Global.pref.log("Switched to English");
-		return true;
-	    } else {
-		Global.pref.log("couldn't switch to english", null);
-		return false;
-	    }
 	} catch (final Exception ex) {
-	    Global.pref.log("[SpiderGC.java:switchToEnglish]Error switching to English: check " + url, ex);
+	    Global.pref.log("[recentlyviewedcaches]:Exception", ex, true);
 	    return false;
 	}
+	Extractor ext = new Extractor();
+	String viewstate = ext.set(page, "id=\"__VIEWSTATE\" value=\"", "\" />", 0, true).findNext();
+	String viewstate1 = ext.findNext("id=\"__VIEWSTATE1\" value=\"");
+	final String postData = "__EVENTTARGET=ctl00%24uxLocaleListTop%24uxLocaleList%24ctl" + languageCode + "%24uxLocaleItem" //
+		+ "&" + "__EVENTARGUMENT="//
+		+ "&" + "__VIEWSTATEFIELDCOUNT=2" //
+		+ "&" + "__VIEWSTATE=" + UrlFetcher.encodeURL(viewstate, false) //
+		+ "&" + "__VIEWSTATE1=" + UrlFetcher.encodeURL(viewstate1, false) //
+		+ "&" + "ctl00%24ContentBody%24wp=" //
+	;
+	try {
+	    UrlFetcher.setpostData(postData);
+	    page = UrlFetcher.fetch(url);
+	} catch (final Exception ex) {
+	    Global.pref.log("[setGCLanguage] Exception", ex);
+	    return false;
+	}
+	if (stillLoggedIn(page)) {
+	    // check success
+	    return true;
+	} else {
+	    return false;
+	}
+    }
 
+    /* 
+    private boolean setGCLanguage(String toLanguage) {
+    // switch to English with
+    // url = "http://www.geocaching.com/account/ManagePreferences.aspx";
+    // todo to work successfull with this perhaps set all values (did not test).
+    String viewstate = ext.set(page, "id=\"__VIEWSTATE\" value=\"", "\" />", 0, true).findNext();
+    String viewstate1 = ext.findNext("id=\"__VIEWSTATE1\" value=\"");
+    String setLanguageEN = "ctl00$ContentBody$uxLanguagePreference=en-US";
+    String commit = "ctl00$ContentBody$uxSave=Save Changes";
+
+    final String postData = "__EVENTTARGET=" //
+    	+ "&" + "__EVENTARGUMENT="//
+    	+ "&" + "__VIEWSTATEFIELDCOUNT=2" //
+    	+ "&" + "__VIEWSTATE=" + UrlFetcher.encodeURL(viewstate, false) //
+    	+ "&" + "__VIEWSTATE1=" + UrlFetcher.encodeURL(viewstate1, false) //
+    	+ "&" + UrlFetcher.encodeURL(setLanguageEN, false) //
+    	+ "&" + UrlFetcher.encodeURL(commit, true) //
+    ;
+    try {
+        UrlFetcher.setpostData(postData);
+        page = UrlFetcher.fetch(url);
+        Global.pref.log(page, null);
+    } catch (final Exception ex) {
+        Global.pref.log("[checkGCSettings] Error at post checkGCSettings", ex);
+        return 1;
+    }	
+    }
+    */
+
+    private boolean gcLogin() {
+
+	// Get password 
+	String passwort = Global.pref.password;
+	InfoBox localInfB = new InfoBox(MyLocale.getMsg(5506, "Password"), MyLocale.getMsg(5505, "Enter Password"), InfoBox.INPUT);
+	localInfB.setInputPassword(passwort);
+	int code = FormBase.IDOK;
+	if (passwort.equals("")) {
+	    code = localInfB.execute();
+	    passwort = localInfB.getInput();
+	}
+	localInfB.close(0);
+	if (code != FormBase.IDOK)
+	    return false;
+
+	String page;
+	String url = "https://www.geocaching.com/login/default.aspx";
+	UrlFetcher.clearCookies();
+	try {
+	    page = UrlFetcher.fetch(url); // 
+	} catch (final Exception ex) {
+	    Global.pref.log("[gcLogin]:Exception gc.com login page", ex, true);
+	    return false;
+	}
+	Extractor ext = new Extractor();
+	String viewstate = ext.set(page, "id=\"__VIEWSTATE\" value=\"", "\" />", 0, true).findNext();
+	final String postData = "__EVENTTARGET=" //
+		+ "&" + "__EVENTARGUMENT="//
+		+ "&" + "__VIEWSTATEFIELDCOUNT=1" //
+		+ "&" + "__VIEWSTATE=" + UrlFetcher.encodeURL(viewstate, false) //
+		+ "&" + "ctl00%24ContentBody%24tbUsername=" + encodeUTF8URL(Utils.encodeJavaUtf8String(Global.pref.myAlias)) //
+		+ "&" + "ctl00%24ContentBody%24tbPassword=" + encodeUTF8URL(Utils.encodeJavaUtf8String(passwort)) //
+		+ "&" + "ctl00%24ContentBody%24cbRememberMe=" + "true" //
+		+ "&" + "ctl00%24ContentBody%24btnSignIn=" + "Login" //
+	;
+	try {
+	    UrlFetcher.setpostData(postData);
+	    page = UrlFetcher.fetch(url);
+	} catch (final Exception ex) {
+	    Global.pref.log("[gcLogin] Exception", ex);
+	    return false;
+	}
+	return true;
+    }
+
+    private static boolean stillLoggedIn(String page) {
+	if (!(page.indexOf("ctl00_hlSignOut") > -1)) {
+	    if (!(page.indexOf("ctl00_ContentLogin_uxLoginStatus_uxLoginURL") > -1)) {
+		Global.pref.log(page);
+		return false;
+	    }
+	}
+	return true;
     }
 
     /*
