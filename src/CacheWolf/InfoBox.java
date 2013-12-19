@@ -109,7 +109,8 @@ public class InfoBox extends Form {
 	relayout(false);
 	if (warnings != null)
 	    warnings.setText("");
-	msgArea.setText(info);
+	if (msgArea != null)
+	    msgArea.setText(info);
     }
 
     public final int wait(int doButtons)
@@ -151,6 +152,11 @@ public class InfoBox extends Form {
 
     public void setInput(String value) {
 	feedback.setText(value);
+    }
+
+    public void setInputPassword(String value) {
+	feedback.setText(value);
+	feedback.isPassword = true;
     }
 
     public void addWarning(String w) {

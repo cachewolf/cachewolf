@@ -21,6 +21,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 package CacheWolf;
 
+import CacheWolf.imp.SpiderGC;
 import CacheWolf.navi.Metrics;
 import CacheWolf.navi.TransformCoordinates;
 import ewe.filechooser.FileChooser;
@@ -284,7 +285,7 @@ public class Preferences extends MinML {
      * The currently used centre point, can be different from the profile's centrepoint. This is used for spidering
      */
     private CWPoint curCentrePt = new CWPoint();
-    public boolean switchGCLanguageToEnglish = false;
+    public boolean changedGCLanguageToEnglish = false;
     /** True if the goto panel is North centered */
     public boolean northCenteredGoto = true;
     /** Number of CacheHolder details that are kept in memory */
@@ -351,7 +352,7 @@ public class Preferences extends MinML {
     /** TRUE if we want automatic sorting * */
     public boolean sortAutomatic = true;
     //
-    public String oldLanguageCtl = "";
+    public String oldGCLanguage = "";
     public boolean doNotGetFound = true;
 
     // ////////////////////////////////////////////
@@ -702,10 +703,11 @@ public class Preferences extends MinML {
 	    // Order within the search items must not be changed
 	    String searchFilter = SafeXML.cleanback(atts.getValue("search"));
 	    String[] searchFilterList = ewe.util.mString.split(searchFilter, '|'); //'\u0399');
-	    for(int i = 0; i < searchFilterList.length; i++)
-	    {
-	    	if (i == 0) data.setSyncDate(searchFilterList[i]);
-	    	if (i == 1) data.setNamePattern(searchFilterList[i]);
+	    for (int i = 0; i < searchFilterList.length; i++) {
+		if (i == 0)
+		    data.setSyncDate(searchFilterList[i]);
+		if (i == 1)
+		    data.setNamePattern(searchFilterList[i]);
 	    }
 	    // Filter object is remembered under the given ID
 	    this.addFilter(id, data);
@@ -1370,12 +1372,9 @@ public class Preferences extends MinML {
     }
 
     public void setOldGCLanguage() {
-	if (oldLanguageCtl.length() != 0)
-	    try {
-		UrlFetcher.fetch(oldLanguageCtl);
-		switchGCLanguageToEnglish = true;
-	    } catch (IOException e) {
-		// dann halt nicht
-	    }
+	if (changedGCLanguageToEnglish) {
+	    SpiderGC.setGCLanguage(oldGCLanguage);
+	    changedGCLanguageToEnglish = false;
+	}
     }
 }

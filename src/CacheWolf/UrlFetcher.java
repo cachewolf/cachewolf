@@ -22,20 +22,29 @@
 package CacheWolf;
 
 import CacheWolf.utils.BetterUTF8Codec;
+
+import com.jcraft.jzlib.GZIPInputStream;
+
+import ewe.data.Property;
 import ewe.data.PropertyList;
 import ewe.io.AsciiCodec;
+import ewe.io.ByteArrayInputStream;
 import ewe.io.File;
 import ewe.io.FileOutputStream;
 import ewe.io.IOException;
 import ewe.io.JavaUtf8Codec;
+import ewe.io.TextReader;
 import ewe.util.ByteArray;
 import ewe.util.CharArray;
+import ewe.util.mString;
 
+// todo handle cookies the correct way mainly Domain + Path perhaps Max-Age 
 public class UrlFetcher {
     static HttpConnection conn;
     static int maxRedirections = 5;
     static PropertyList requestorProperties = null;
     static PropertyList permanentRequestorProperties = null;
+    static PropertyList cookies = null;
     static String postData = null;
     static boolean forceRedirect = false;
 
@@ -50,32 +59,32 @@ public class UrlFetcher {
 	maxRedirections = value;
     };
 
-    public static void setForceRedirect() {
-	forceRedirect = true;
+    public static void setForceRedirect(boolean value) {
+	forceRedirect = value;
     };
 
     public static void setRequestorProperties(PropertyList value) {
 	requestorProperties = value;
     };
 
-    public static void setRequestorProperty(String name, String property) {
+    public static void setRequestorProperty(String name, String value) {
 	if (requestorProperties == null)
 	    requestorProperties = new PropertyList();
-	requestorProperties.set(name, property);
+	requestorProperties.set(name, value);
     }
 
     private static void initPermanentRequestorProperty() {
 	permanentRequestorProperties = new PropertyList();
-	permanentRequestorProperties.add("User-Agent", "Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.7.5) Gecko/20041107 Firefox/1.0");
-	permanentRequestorProperties.add("Connection", "close");
-	// permanentRequestorProperties.add("Connection", "keep-alive");
+	permanentRequestorProperties.set("User-Agent", "Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.7.5) Gecko/20041107 Firefox/1.0");
+	//permanentRequestorProperties.set("Connection", "close");
+	permanentRequestorProperties.set("Connection", "keep-alive");
     }
 
-    public static void setPermanentRequestorProperty(String name, String property) {
+    public static void setPermanentRequestorProperty(String name, String value) {
 	if (permanentRequestorProperties == null)
 	    initPermanentRequestorProperty();
-	if (property != null)
-	    permanentRequestorProperties.set(name, property);
+	if (value != null)
+	    permanentRequestorProperties.set(name, value);
 	else {
 	    int index = permanentRequestorProperties.find(name);
 	    if (index >= 0)
@@ -83,21 +92,95 @@ public class UrlFetcher {
 	}
     }
 
+    public static void clearCookies() {
+	if (cookies == null) {
+	    cookies = new PropertyList();
+	} else
+	    cookies.clear();
+    }
+
+    public static void setCookie(String name, String value) {
+	if (cookies == null) {
+	    cookies = new PropertyList();
+	}
+	if (name != null)
+	    if (value != null) {
+		cookies.set(name, value);
+	    }
+    }
+
+    public static String getCookie(String name) {
+	Property p = cookies.get(name);
+	if (p != null) {
+	    return (String) p.value;
+	} else
+	    return null;
+    }
+
+    private static void addCookies2RequestorProperties() {
+	String value = "";
+	for (int i = 0; i < cookies.size(); i++) {
+	    final Property cookie = (Property) cookies.get(i);
+	    value = value + cookie.name + "=" + cookie.value + "; ";
+	}
+	if (value.length() > 0)
+	    conn.setRequestorProperty("Cookie", value);
+    }
+
+    private static void addPermanent2RequestorProperties() {
+	if (permanentRequestorProperties == null)
+	    initPermanentRequestorProperty();
+	conn.setRequestorProperty(permanentRequestorProperties);
+    }
+
+    private static void add2RequestorProperties() {
+	if (requestorProperties != null)
+	    conn.setRequestorProperty(requestorProperties);
+    }
+
     public static void setpostData(String value) {
 	postData = value;
     };
 
     public static String fetch(String address) throws IOException {
+	setRequestorProperty("Accept-Encoding", "gzip");
 	ByteArray daten = fetchByteArray(address);
-	// JavaUtf8Codec codec = new JavaUtf8Codec();
-	// CharArray c_data = codec.decodeText(daten.data, 0, daten.length, true, null);
-	// return c_data.toString();
-	StringBuffer sb = new BetterUTF8Codec().decodeUTF8(daten.data, 0, daten.length);
-	return sb.toString();
-    }
-
-    public static ByteArray fetchData(String address) throws IOException {
-	return fetchByteArray(address);
+	boolean gzip = false;
+	if (conn != null) {
+	    if (conn.documentProperties != null) {
+		Property p = conn.documentProperties.get("Content-Encoding");
+		if (p != null) {
+		    if (p.value.toString().toLowerCase().equals("gzip")) {
+			gzip = true;
+		    }
+		}
+	    }
+	    if (gzip) {
+		ByteArrayInputStream bis = new ByteArrayInputStream(daten.data);
+		GZIPInputStream zis = new GZIPInputStream(bis);
+		TextReader br = new TextReader(zis);
+		br.codec = new BetterUTF8Codec();
+		String line;
+		StringBuffer sb = new StringBuffer();
+		try {
+		    while ((line = br.readLine()) != null) {
+			sb.append(line.trim() + "\n");
+		    }
+		} catch (Exception e) {
+		} finally {
+		    if (br != null) {
+			try {
+			    br.close();
+			} catch (Exception e) {
+			}
+		    }
+		}
+		return sb.toString();
+	    } else {
+		return new BetterUTF8Codec().decodeUTF8(daten.data, 0, daten.length).toString();
+	    }
+	}
+	throw new IOException("got no data from web");
     }
 
     public static void fetchDataFile(String address, String target) throws IOException {
@@ -119,73 +202,60 @@ public class UrlFetcher {
      * @throws IOException
      */
     public static ByteArray fetchByteArray(String url) throws IOException {
-	int i = 0;
+	listCookies("Start " + url);
 	conn = new HttpConnection(url);
 	String urltmp = url;
 
 	conn.documentIsEncoded = isUrlEncoded(urltmp);
 
-	if (permanentRequestorProperties == null)
-	    initPermanentRequestorProperty();
+	addPermanent2RequestorProperties();
+	addCookies2RequestorProperties();
+	add2RequestorProperties();
 
 	if (postData != null) {
 	    conn.setPostData(postData);
 	    conn.setRequestorProperty("Content-Type", "application/x-www-form-urlencoded");
 	}
 
-	conn.setRequestorProperty(permanentRequestorProperties);
-
-	if (requestorProperties != null)
-	    conn.setRequestorProperty(requestorProperties);
-
-	do { // allow max 5 redirections (http 302 location)
-	    i++;
-	    if (urltmp == null) {
-		// hack for expedia, doing the original url again.
-		// expedia always must redirect >=1 time, but sometimes that is missed
-		// see also: http://www.geoclub.de/viewtopic.php?p=305071#305071
-		urltmp = url;
-		i = i - 1;
-	    }
+	int redirectionCounter = 0;
+	do {
+	    redirectionCounter++;
 
 	    conn.connect();
 
-	    if (conn.responseCode >= 400) {
-		maxRedirections = 5;
-		requestorProperties = null;
-		postData = null;
-		forceRedirect = false;
-		throw new IOException("URL: " + urltmp + "\nhttp response code: " + conn.responseCode);
-	    }
-	    urltmp = conn.getRedirectTo();
-
-	    if (urltmp != null) {
-		conn.disconnect();
-		conn = conn.getRedirectedConnection(urltmp);
-
-		/*
-		// mainly implemented for opencaching.de ... login
-		final PropertyList pl = UrlFetcher.getDocumentProperties();
-		if (pl != null) {
-		    String cookie = (String) pl.getValue("Set-Cookie", "");
-		    if (cookie.length() > 0) {
-			if (postData == null)
-			    // do not overwrite existing cookie (mostly for geocaching.com)
-			    // normally a cookie exists for a website
-			    // we do not handle that correct
-			    setRequestorProperty("Cookie", cookie);
-			else
-			    // needed for opencaching.de ... login
-			    setPermanentRequestorProperty("Cookie", cookie);
+	    if (conn.responseCode < 300 || conn.responseCode > 399) {
+		if (conn.responseCode > 399) {
+		    // abort with error
+		    maxRedirections = 5;
+		    requestorProperties = null;
+		    postData = null;
+		    forceRedirect = false;
+		    throw new IOException("URL: " + urltmp + "\nhttp response code: " + conn.responseCode);
+		} else {
+		    if (forceRedirect) {
+			// hack for expedia, doing the original url again. (forceRedirect == true)
+			// expedia always must redirect >=1 time, but sometimes that is missed
+			// see also: http://www.geoclub.de/viewtopic.php?p=305071#305071
+			urltmp = url;
+			redirectionCounter = redirectionCounter - 1;
+			forceRedirect = false;
+		    } else {
+			// now can get data
+			urltmp = null;
 		    }
 		}
-		*/
-
-		forceRedirect = false; // one time or more redirected
+	    } else {
+		//  redirection
+		urltmp = conn.documentProperties.getString("location", null);
+		rememberCookies();
+		listCookies("redirection " + conn.responseCode + " to: " + urltmp);
+		conn.disconnect();
+		conn = conn.getRedirectedConnection(urltmp);
+		if (redirectionCounter > maxRedirections)
+		    throw new IOException("too many http redirections while trying to fetch: " + url + " only " + maxRedirections + " are allowed");
 	    }
-	} while (((urltmp != null) || ((urltmp == null) && forceRedirect)) && i <= maxRedirections);
-	if (i > maxRedirections)
-	    throw new IOException("too many http redirections while trying to fetch: " + url + " only " + maxRedirections + " are allowed");
+	} while (urltmp != null);
+
 	ByteArray daten;
 	if (conn.isOpen()) {
 	    daten = conn.readData();
@@ -197,6 +267,39 @@ public class UrlFetcher {
 	postData = null;
 	forceRedirect = false;
 	return daten;
+    }
+
+    public static void rememberCookies() {
+	final PropertyList pl = UrlFetcher.getDocumentProperties();
+	// collect Set-Cookie
+	String CookieList = "";
+	for (int j = 0; j < pl.size(); j++) {
+	    final Property p = (Property) pl.get(j);
+	    if (p.name.equalsIgnoreCase("Set-Cookie")) {
+		String v = (String) p.value;
+		String[] ea = mString.split(v, ';');
+		CookieList = CookieList + ea[0] + "; ";
+		// adding the received cookies for later use
+		if (ea.length > 1) {
+		    String[] rp = mString.split(ea[0], '=');
+		    if (rp.length == 2) {
+			cookies.set(rp[0], rp[1]);
+		    }
+		}
+	    }
+	}
+	if (CookieList.length() > 0)
+	    conn.setRequestorProperty("Cookie", CookieList);
+    }
+
+    private static void listCookies(String from) {
+	Global.pref.log("Cookies " + from);
+	if (cookies != null) {
+	    for (int i = 0; i < cookies.size(); i++) {
+		final Property cookie = (Property) cookies.get(i);
+		Global.pref.log(cookie.name + "=" + cookie.value);
+	    }
+	}
     }
 
     /**
@@ -239,6 +342,7 @@ public class UrlFetcher {
 
     /**
      * Encode the URL using %## notation. Note: this fixes a bug in ewe.net.URL.encodeURL(): that routine assumes all chars to be < 127. This method is mainly copied from there
+     * It also encodes the /. This is necessary for the __VIEWSTATEs of GC
      * 
      * @param url
      *            The unencoded URL.
