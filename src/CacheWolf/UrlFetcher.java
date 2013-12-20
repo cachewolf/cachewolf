@@ -119,6 +119,9 @@ public class UrlFetcher {
 
     private static void addCookies2RequestorProperties() {
 	String value = "";
+	if (cookies == null) {
+	    cookies = new PropertyList();
+	}
 	for (int i = 0; i < cookies.size(); i++) {
 	    final Property cookie = (Property) cookies.get(i);
 	    value = value + cookie.name + "=" + cookie.value + "; ";
