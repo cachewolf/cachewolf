@@ -86,7 +86,7 @@ public final class MapsList extends Vector {
 	dirs.add(""); // start with the mapsPath (only this one , without its subdirs) =  + dirs.get(0)
 	Global.pref.log("building mapslist started " + mapsListDir);
 	FileBugfix files = new FileBugfix(mapsListDir);
-	File dirList = new File(mapsListDir);
+	FileBugfix dirList = new FileBugfix(mapsListDir);
 	for (int j = 0; j < dirs.size(); j++) {
 	    String aktPath;
 	    //add subdirectories
