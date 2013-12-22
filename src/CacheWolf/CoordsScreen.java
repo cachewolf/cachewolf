@@ -25,9 +25,8 @@ import CacheWolf.imp.SpiderGC;
 import CacheWolf.navi.Navigate;
 import CacheWolf.navi.ProjectedPoint;
 import CacheWolf.navi.TransformCoordinates;
-import ewe.fx.Dimension;
 import ewe.sys.Vm;
-import ewe.ui.CellConstants;
+import ewe.ui.CardPanel;
 import ewe.ui.CellPanel;
 import ewe.ui.CheckBoxGroup;
 import ewe.ui.Control;
@@ -50,6 +49,8 @@ import ewe.ui.mLabel;
 
 public class CoordsScreen extends Form {
 
+    CellPanel dp, zp;
+    CardPanel tp;
     mCheckBox chkDMM, chkDMS, chkDD, chkCustom;
     CheckBoxGroup chkFormat = new CheckBoxGroup();
     mChoice localCooSystem;
@@ -90,14 +91,14 @@ public class CoordsScreen extends Form {
     private void InitCoordsScreen() {
 	this.setTitle("");
 	// Radiobuttons for format
-	topLinePanel.addNext(chkDD = new mCheckBox("d.d°"), CellConstants.DONTSTRETCH, CellConstants.WEST);
-	topLinePanel.addNext(chkDMM = new mCheckBox("d°m.m\'"), CellConstants.DONTSTRETCH, CellConstants.WEST);
-	topLinePanel.addNext(chkDMS = new mCheckBox("d°m\'s\""), CellConstants.DONTSTRETCH, CellConstants.WEST);
-	// topLinePanel.addNext(chkUTM =new mCheckBox("UTM"),CellConstants.DONTSTRETCH, CellConstants.WEST);
-	topLinePanel.addNext(chkCustom = new mCheckBox(""), CellConstants.DONTSTRETCH, CellConstants.WEST);
+	topLinePanel.addNext(chkDD = new mCheckBox("d.d°"), DONTSTRETCH, LEFT);
+	topLinePanel.addNext(chkDMM = new mCheckBox("d°m.m\'"), DONTSTRETCH, LEFT);
+	topLinePanel.addNext(chkDMS = new mCheckBox("d°m\'s\""), DONTSTRETCH, LEFT);
+	// topLinePanel.addNext(chkUTM =new mCheckBox("UTM"),DONTSTRETCH, LEFT);
+	topLinePanel.addNext(chkCustom = new mCheckBox(""), DONTSTRETCH, LEFT);
 
 	String[] ls = TransformCoordinates.getProjectedSystemNames();
-	topLinePanel.addLast(localCooSystem = new mChoice(ls, 0), CellConstants.DONTSTRETCH, CellConstants.WEST);
+	topLinePanel.addLast(localCooSystem = new mChoice(ls, 0), DONTSTRETCH, LEFT);
 
 	chkDD.setGroup(chkFormat);
 	chkDD.exitKeys = exitKeys;
@@ -107,122 +108,95 @@ public class CoordsScreen extends Form {
 	chkDMS.exitKeys = exitKeys;
 	chkCustom.setGroup(chkFormat);
 	chkCustom.exitKeys = exitKeys;
-	this.addLast(topLinePanel, CellConstants.DONTSTRETCH, CellConstants.WEST);
+	this.addLast(topLinePanel, DONTSTRETCH, LEFT);
 
 	// Input for degrees
-	mainPanel.addNext(chcNS = new mChoice(new String[] { "N", "S" }, 0), CellConstants.DONTSTRETCH, (CellConstants.DONTFILL | CellConstants.WEST));
+	dp = new CellPanel();
+	dp.equalWidths = true;
+	dp.addNext(chcNS = new mChoice(new String[] { "N", "S" }, 0));
 	chcNS.setInt(0);
-	mainPanel.addNext(inpNSDeg = new mInput(), CellConstants.DONTSTRETCH, (CellConstants.DONTFILL | CellConstants.WEST));
-	mainPanel.addNext(inpNSm = new mInput(), CellConstants.DONTSTRETCH, (CellConstants.DONTFILL | CellConstants.WEST));
-	mainPanel.addLast(inpNSs = new mInput(), CellConstants.DONTSTRETCH, (CellConstants.DONTFILL | CellConstants.WEST));
+	dp.addNext(inpNSDeg = new mInput());
+	dp.addNext(inpNSm = new mInput());
+	dp.addLast(inpNSs = new mInput());
 
-	mainPanel.addNext(chcEW = new mChoice(new String[] { "E", "W" }, 0), CellConstants.DONTSTRETCH, (CellConstants.DONTFILL | CellConstants.WEST));
+	dp.addNext(chcEW = new mChoice(new String[] { "E", "W" }, 0));
 	chcEW.setInt(0);
-	mainPanel.addNext(inpEWDeg = new mInput(), CellConstants.DONTSTRETCH, (CellConstants.DONTFILL | CellConstants.WEST));
-	mainPanel.addNext(inpEWm = new mInput(), CellConstants.DONTSTRETCH, (CellConstants.DONTFILL | CellConstants.WEST));
-	mainPanel.addLast(inpEWs = new mInput(), CellConstants.DONTSTRETCH, (CellConstants.DONTFILL | CellConstants.WEST));
+	dp.addNext(inpEWDeg = new mInput());
+	dp.addNext(inpEWm = new mInput());
+	dp.addLast(inpEWs = new mInput());
+	tp = new CardPanel();
+	tp.addItem(dp, "dp", null);
 
-	// Input for UTM
-	if (allowInvalid) {
-	    mainPanel.addNext(new mLabel(MyLocale.getMsg(1400, "Zone")), CellConstants.DONTSTRETCH, (CellConstants.DONTFILL | CellConstants.SOUTHWEST));
-	    mainPanel.addNext(new mLabel(MyLocale.getMsg(1402, "Easting")), CellConstants.DONTSTRETCH, (CellConstants.DONTFILL | CellConstants.SOUTHWEST));
-	    mainPanel.addNext(new mLabel(MyLocale.getMsg(1401, "Northing")), CellConstants.DONTSTRETCH, (CellConstants.DONTFILL | CellConstants.SOUTHWEST));
-	    mainPanel.addLast(btnClear = new mButton(MyLocale.getMsg(1413, "Clear")), CellConstants.HSTRETCH, (CellConstants.HFILL));
-	} else {
-	    mainPanel.addNext(new mLabel(MyLocale.getMsg(1400, "Zone")), CellConstants.DONTSTRETCH, (CellConstants.DONTFILL | CellConstants.SOUTHWEST));
-	    mainPanel.addNext(new mLabel(MyLocale.getMsg(1402, "Easting")), CellConstants.DONTSTRETCH, (CellConstants.DONTFILL | CellConstants.SOUTHWEST));
-	    mainPanel.addNext(new mLabel(MyLocale.getMsg(1401, "Northing")), CellConstants.DONTSTRETCH, (CellConstants.DONTFILL | CellConstants.SOUTHWEST));
-	    mainPanel.addLast(btnSearch = new mButton(MyLocale.getMsg(1414, "Search")), CellConstants.HSTRETCH, (CellConstants.HFILL));
-	}
+	zp = new CellPanel();
+	zp.equalWidths = true;
+	zp.addNext(new mLabel(MyLocale.getMsg(1400, "Zone")));
+	zp.addNext(new mLabel(MyLocale.getMsg(1402, "Easting")));
+	zp.addLast(new mLabel(MyLocale.getMsg(1401, "Northing")));
 
-	mainPanel.addNext(inpUTMZone = new mInput(), CellConstants.DONTSTRETCH, (CellConstants.DONTFILL | CellConstants.WEST));
-	mainPanel.addNext(inpUTMEasting = new mInput(), CellConstants.DONTSTRETCH, (CellConstants.DONTFILL | CellConstants.WEST));
-	mainPanel.addNext(inpUTMNorthing = new mInput(), CellConstants.DONTSTRETCH, (CellConstants.DONTFILL | CellConstants.WEST));
-	mainPanel.addLast(btnGps = new mButton("GPS"), CellConstants.HSTRETCH, (CellConstants.HFILL));
+	zp.addNext(inpUTMZone = new mInput());
+	zp.addNext(inpUTMEasting = new mInput());
+	zp.addLast(inpUTMNorthing = new mInput());
+	tp.addItem(zp, "zp", null);
+	mainPanel.addLast(tp);
 
-	// mainPanel.addLast(new mLabel(MyLocale.getMsg(1405,"To load coordinates from GC, enter GCxxxxx below")),CellConstants.HSTRETCH, (CellConstants.HFILL)).setTag(SPAN,new Dimension(4,1));
-	// Input for free Text
-	mainPanel.addNext(inpText = new mInput(), CellConstants.HSTRETCH, (CellConstants.HFILL | CellConstants.WEST));
+	mainPanel.addLast(inpText = new mInput());
 	inpText.toolTip = MyLocale.getMsg(1406, "Enter coordinates in any format or GCxxxxx");
-	inpText.setTag(SPAN, new Dimension(3, 1));
-	mainPanel.addLast(btnParse = new mButton(MyLocale.getMsg(619, "Parse")), CellConstants.HSTRETCH, (CellConstants.HFILL));
 
-	// Buttons for cancel and apply, copy and paste
-	mainPanel.addNext(btnPaste = new mButton(MyLocale.getMsg(617, "Paste")), CellConstants.HSTRETCH, (CellConstants.HFILL));
-	// btnParse.setTag(SPAN,new Dimension(4,1));
-	mainPanel.addNext(btnCopy = new mButton(MyLocale.getMsg(618, "Copy")), CellConstants.HSTRETCH, (CellConstants.HFILL));
+	CellPanel ep = new CellPanel();
+	ep.equalWidths = true;
+	ep.addNext(btnCopy = GuiImageBroker.getButton(MyLocale.getMsg(618, "Copy"), "toclipboard"));
+	ep.addNext(btnClear = GuiImageBroker.getButton(MyLocale.getMsg(1413, "Clear"), "illegal"));
+	if (!allowInvalid) {
+	    btnClear.set(ControlConstants.Invisible, true);
+	    btnClear.set(ControlConstants.Disabled, true);
+	}
+	ep.addLast(btnParse = GuiImageBroker.getButton(MyLocale.getMsg(619, "Parse"), "examine"));
+	mainPanel.addLast(ep);
+
+	CellPanel ip = new CellPanel();
+	ip.equalWidths = true;
+	ip.addNext(btnPaste = GuiImageBroker.getButton(MyLocale.getMsg(617, "Paste"), "fromclipboard"));
+	ip.addNext(btnGps = GuiImageBroker.getButton("GPS", "gps"));
+	ip.addLast(btnSearch = GuiImageBroker.getButton(MyLocale.getMsg(1414, "Search"), "search"));
+	mainPanel.addLast(ip);
+
 	executePanel = new ExecutePanel(mainPanel);
-	// btnCopy.setTag(SPAN,new Dimension(4,1));
 	chcNS.exitKeys = exitKeys;
 	chcEW.exitKeys = exitKeys;
 	// add Panels
-	this.addLast(mainPanel, CellConstants.DONTSTRETCH, CellConstants.WEST);
+	this.addLast(mainPanel, DONTSTRETCH, LEFT);
 	chcNS.takeFocus(ControlConstants.ByKeyboard);
 
     }
 
     public void activateFields(int format) {
 	// inpEWDeg.wantReturn=false; inpEWm.wantReturn=false; inpEWs.wantReturn=false; inpUTMNorthing.wantReturn=false;
-
+	tp.select(dp);
 	switch (format) {
 	case TransformCoordinates.DD:
-	    enable(chcNS);
-	    enable(inpNSDeg);
 	    disable(inpNSm);
 	    disable(inpNSs);
-	    enable(chcEW);
-	    enable(inpEWDeg);
 	    disable(inpEWm);
 	    disable(inpEWs);
-	    // inpEWDeg.wantReturn=true;
-	    disable(inpUTMZone);
-	    disable(inpUTMNorthing);
-	    disable(inpUTMEasting);
 	    break;
 	case TransformCoordinates.DMM:
-	    enable(chcNS);
-	    enable(inpNSDeg);
 	    enable(inpNSm);
 	    disable(inpNSs);
-	    enable(chcEW);
-	    enable(inpEWDeg);
 	    enable(inpEWm);
 	    disable(inpEWs);
-	    // inpEWm.wantReturn=true;
-	    disable(inpUTMZone);
-	    disable(inpUTMNorthing);
-	    disable(inpUTMEasting);
 	    break;
 	case TransformCoordinates.DMS:
-	    enable(chcNS);
-	    enable(inpNSDeg);
 	    enable(inpNSm);
 	    enable(inpNSs);
-	    enable(chcEW);
-	    enable(inpEWDeg);
 	    enable(inpEWm);
 	    enable(inpEWs);
-	    // inpEWs.wantReturn=true;
-	    disable(inpUTMZone);
-	    disable(inpUTMNorthing);
-	    disable(inpUTMEasting);
 	    break;
 	default:
-	    disable(chcNS);
-	    disable(inpNSDeg);
-	    disable(inpNSm);
-	    disable(inpNSs);
-	    disable(chcEW);
-	    disable(inpEWDeg);
-	    disable(inpEWm);
-	    disable(inpEWs);
+	    tp.select(zp);
 	    if (TransformCoordinates.localSystems[localCooSystem.getInt()].zoneSeperatly)
 		enable(inpUTMZone);
 	    else
 		disable(inpUTMZone);
-	    enable(inpUTMNorthing);
-	    enable(inpUTMEasting);
-	    // inpUTMNorthing.wantReturn=true;
 	    break;
 	}
 
@@ -231,12 +205,14 @@ public class CoordsScreen extends Form {
 	this.repaintNow();
     }
 
-    private void enable(Control c) {
-	c.modify(ControlConstants.TakesKeyFocus, ControlConstants.Disabled);
+    private void disable(Control c) {
+	c.set(ControlConstants.Invisible, true);
+	c.set(ControlConstants.Disabled, true);
     }
 
-    private void disable(Control c) {
-	c.modify(ControlConstants.Disabled, ControlConstants.TakesKeyFocus);
+    private void enable(Control c) {
+	c.set(ControlConstants.Invisible, false);
+	c.set(ControlConstants.Disabled, false);
     }
 
     public void readFields(CWPoint coords) {

@@ -178,7 +178,7 @@ public class MainMenu extends MenuBar {
 		mnuEditCenter = new MenuItem(MyLocale.getMsg(1110, "Centre")), //
 		mnuSeparator, //
 		orgRebuild = new MenuItem(MyLocale.getMsg(208, "Rebuild Index")), //
-		orgCheckNotesAndSolver = GuiImageBroker.getMenuItem(MyLocale.getMsg(220, "Check Notes/Solver"), "notesandsolver"), //
+		orgCheckNotesAndSolver = new MenuItem(MyLocale.getMsg(220, "Check Notes/Solver")), //
 		savenoxit = new MenuItem(MyLocale.getMsg(127, "Save")), //
 	};
 	Menu profileMenu = new Menu(mnuProfile, null);
