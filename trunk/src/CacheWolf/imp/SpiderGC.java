@@ -1253,7 +1253,12 @@ public class SpiderGC {
 	// (is permanent, must be reset)
 	// must do post (get no longer works)
 
-	String languages[] = { "en-US", "de-DE", "fr-FR", "pt-PT", "cs-CZ", "da-DK", "sv-SE", "es-ES", "et-EE", "it-IT", "el-GR", "lv-LV", "nl-NL", "ca-ES", "pl-PL", "et-EE", "nb-NO", "ko-KR", "hu-HU", "ro-RO", "ja-JP" };
+	String languages[] = { "en-US", "de-DE", "fr-FR", "pt-PT", "cs-CZ", //		
+		"da-DK", "sv-SE", "es-ES", "et-EE", "it-IT", //
+		"el-GR", "lv-LV", "nl-NL", "ca-ES", "pl-PL", //
+		"et-EE", "nb-NO", "ko-KR", "hu-HU", "ro-RO", //
+		"ja-JP", //
+	};
 	String languageCode = "00"; // defaults to "en-US"
 	for (int i = 0; i < languages.length; i++) {
 	    if (toLanguage.equals(languages[i])) {
