@@ -386,6 +386,10 @@ public class HttpConnection {
 	command = "GET";
     }
 
+    public String getHost() {
+	return host;
+    }
+
     //	FIXME: never referenced
     ////	===================================================================
     //	public HttpConnection(URL url)

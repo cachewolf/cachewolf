@@ -80,7 +80,7 @@ import ewesoft.xml.sax.AttributeList;
  */
 public class SpiderGC {
 
-    private static boolean loggedIn = false;
+    public static boolean loggedIn = false;
 
     // Return values for spider action
     /**
@@ -1045,7 +1045,6 @@ public class SpiderGC {
 	} catch (final Exception ex) {
 	    Global.pref.log("[spiderSingle] Error spidering " + ch.getWayPoint() + " in spiderSingle", ex);
 	}
-	loggedIn = false; // check again login on next spider
 	return ret;
     } // spiderSingle
 
@@ -1104,7 +1103,7 @@ public class SpiderGC {
 	    if (Global.pref.userID.length() == 0) {
 		if (gcLogin()) {
 		    UrlFetcher.rememberCookies();
-		    Global.pref.userID = UrlFetcher.getCookie("userid");
+		    Global.pref.userID = UrlFetcher.getCookie("userid;www.geocaching.com");
 		    if (Global.pref.userID == null) {
 			Global.pref.userID = "";
 			new InfoBox(MyLocale.getMsg(5523, "Login error!"), MyLocale.getMsg(5524, "Please correct your account in preferences\n\n see http://cachewolf.aldos.de/userid.html !")).wait(FormBase.OKB);
@@ -1121,7 +1120,7 @@ public class SpiderGC {
 		switch (checkGCSettings()) {
 		case 0:
 		    loggedIn = true;
-		    Global.pref.userID = UrlFetcher.getCookie("userid");
+		    Global.pref.userID = UrlFetcher.getCookie("userid;www.geocaching.com");
 		    Global.pref.savePreferences();
 		    break;
 		case 1:
@@ -1163,7 +1162,7 @@ public class SpiderGC {
 	String page = "";
 	String url = "http://www.geocaching.com/account/ManagePreferences.aspx";
 	UrlFetcher.clearCookies();
-	UrlFetcher.setCookie("userid", Global.pref.userID);
+	UrlFetcher.setCookie("userid;www.geocaching.com", Global.pref.userID);
 	try {
 	    page = UrlFetcher.fetch(url); // getting the sessionid
 	} catch (final Exception ex) {
@@ -1172,7 +1171,7 @@ public class SpiderGC {
 	}
 
 	UrlFetcher.rememberCookies();
-	String SessionId = UrlFetcher.getCookie("ASP.NET_SessionId");
+	String SessionId = UrlFetcher.getCookie("ASP.NET_SessionId;www.geocaching.com");
 	if (SessionId == null) {
 	    Global.pref.log("[checkGCSettings]:got no SessionID.");
 	    return 5;
@@ -1874,18 +1873,9 @@ public class SpiderGC {
 	    while (spiderTrys++ < MAX_SPIDER_TRYS) {
 		ret = SPIDER_OK; // initialize value;
 		try {
-		    final String doc = p.getProp("getPageByName") + ch.getWayPoint() + ((fetchAllLogs || ch.is_found()) ? p.getProp("fetchAllLogs") : "");
-		    completeWebPage = UrlFetcher.fetch(doc);
+		    final String url = p.getProp("getPageByName") + ch.getWayPoint() + ((fetchAllLogs || ch.is_found()) ? p.getProp("fetchAllLogs") : "");
+		    completeWebPage = UrlFetcher.fetch(url);
 		    Global.pref.log("Fetched: " + ch.getWayPoint());
-		    if (completeWebPage.equals("")) {
-			Global.pref.log("Could not fetch " + ch.getWayPoint(), null);
-			if (!infB.isClosed()) {
-			    continue;
-			} else {
-			    ch.setIncomplete(true);
-			    return SPIDER_CANCEL;
-			}
-		    }
 		} catch (final Exception ex) {
 		    Global.pref.log("Could not fetch " + ch.getWayPoint(), ex);
 		    if (!infB.isClosed()) {
