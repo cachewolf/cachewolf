@@ -311,6 +311,7 @@ public class MainMenu extends MenuBar {
 	}
 
 	SpiderGC spider = new SpiderGC();
+	SpiderGC.loggedIn = false;
 	OCXMLImporter ocSync = new OCXMLImporter();
 	Vm.showWait(true);
 	boolean alreadySaid = false;

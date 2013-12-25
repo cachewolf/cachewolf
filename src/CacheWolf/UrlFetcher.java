@@ -38,7 +38,6 @@ import ewe.util.ByteArray;
 import ewe.util.CharArray;
 import ewe.util.mString;
 
-// todo handle cookies the correct way mainly Domain + Path perhaps Max-Age 
 public class UrlFetcher {
     static HttpConnection conn;
     static int maxRedirections = 5;
@@ -124,10 +123,15 @@ public class UrlFetcher {
 	}
 	for (int i = 0; i < cookies.size(); i++) {
 	    final Property cookie = (Property) cookies.get(i);
-	    value = value + cookie.name + "=" + cookie.value + "; ";
+	    String cd[] = mString.split(cookie.name, ';');
+	    if (cd[1].equalsIgnoreCase(conn.getHost())) {
+		value = value + cd[0] + "=" + cookie.value + "; ";
+	    }
 	}
-	if (value.length() > 0)
+	if (value.length() > 0) {
 	    conn.setRequestorProperty("Cookie", value);
+	    Global.pref.log("Cookies sent for " + conn.getHost() + " : " + value);
+	}
     }
 
     private static void addPermanent2RequestorProperties() {
@@ -153,7 +157,7 @@ public class UrlFetcher {
 	    if (conn.documentProperties != null) {
 		Property p = conn.documentProperties.get("Content-Encoding");
 		if (p != null) {
-		    if (p.value.toString().toLowerCase().equals("gzip")) {
+		    if (p.value.toString().equalsIgnoreCase("gzip")) {
 			gzip = true;
 		    }
 		}
@@ -205,7 +209,6 @@ public class UrlFetcher {
      * @throws IOException
      */
     public static ByteArray fetchByteArray(String url) throws IOException {
-	listCookies("Start " + url);
 	conn = new HttpConnection(url);
 	String urltmp = url;
 
@@ -251,7 +254,7 @@ public class UrlFetcher {
 		//  redirection
 		urltmp = conn.documentProperties.getString("location", null);
 		rememberCookies();
-		listCookies("redirection " + conn.responseCode + " to: " + urltmp);
+		addCookies2RequestorProperties();
 		conn.disconnect();
 		conn = conn.getRedirectedConnection(urltmp);
 		if (redirectionCounter > maxRedirections)
@@ -273,34 +276,28 @@ public class UrlFetcher {
     }
 
     public static void rememberCookies() {
-	final PropertyList pl = UrlFetcher.getDocumentProperties();
+	final PropertyList pl = getDocumentProperties();
 	// collect Set-Cookie
-	String CookieList = "";
 	for (int j = 0; j < pl.size(); j++) {
 	    final Property p = (Property) pl.get(j);
 	    if (p.name.equalsIgnoreCase("Set-Cookie")) {
-		String v = (String) p.value;
-		String[] ea = mString.split(v, ';');
-		CookieList = CookieList + ea[0] + "; ";
+		String[] theCookie = mString.split((String) p.value, ';');
 		// adding the received cookies for later use
-		if (ea.length > 1) {
-		    String[] rp = mString.split(ea[0], '=');
+		if (theCookie.length > 1) {
+		    String[] rp = mString.split(theCookie[0], '=');
+		    /*
+		    // expires, path, httponly
+		    for (int i = 1; i < theCookie.length; i++) {
+		    String[] dp = mString.split(theCookie[i], '=');
+		    if (dp.length == 2) {
+
+		    }
+		    }
+		    */
 		    if (rp.length == 2) {
-			cookies.set(rp[0], rp[1]);
+			setCookie(rp[0] + ";" + conn.getHost(), rp[1]);
 		    }
 		}
-	    }
-	}
-	if (CookieList.length() > 0)
-	    conn.setRequestorProperty("Cookie", CookieList);
-    }
-
-    private static void listCookies(String from) {
-	Global.pref.log("Cookies " + from);
-	if (cookies != null) {
-	    for (int i = 0; i < cookies.size(); i++) {
-		final Property cookie = (Property) cookies.get(i);
-		Global.pref.log(cookie.name + "=" + cookie.value);
 	    }
 	}
     }

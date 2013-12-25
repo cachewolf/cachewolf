@@ -25,13 +25,10 @@ import CacheWolf.CacheDB;
 import CacheWolf.CacheHolder;
 import CacheWolf.Common;
 import CacheWolf.Global;
-import CacheWolf.InfoBox;
-import CacheWolf.MyLocale;
 import CacheWolf.UrlFetcher;
 import ewe.io.Reader;
 import ewe.io.StringReader;
 import ewe.sys.Handle;
-import ewe.ui.FormBase;
 import ewe.ui.ProgressBarForm;
 import ewesoft.xml.MinML;
 import ewesoft.xml.sax.AttributeList;
@@ -88,15 +85,10 @@ public class GCVoteImporter extends MinML {
 	    try {
 		Global.pref.log("[GCVote]:Requesting ratings");
 		GCVResults = UrlFetcher.fetch(GCVURL);
-		if (GCVResults.equals("")) {
-		    new InfoBox(MyLocale.getMsg(5500, "Error"), MyLocale.getMsg(0, "Error loading GCVote page.%0aPlease check your internet connection.")).wait(FormBase.OKB);
-		    Global.pref.log("[GCVote]:Could not fetch: getVotes.php page", null);
-		} else {
-		    // parse response for votes
-		    Global.pref.log("[GCVote]:GCVotes = " + GCVResults);
-		    Reader r = new StringReader(GCVResults);
-		    parse(r);
-		}
+		// parse response for votes
+		Global.pref.log("[GCVote]:GCVotes = " + GCVResults);
+		Reader r = new StringReader(GCVResults);
+		parse(r);
 	    } catch (Exception ex) {
 		Global.pref.log("[GCVote:DoIt]", ex, true);
 	    }
