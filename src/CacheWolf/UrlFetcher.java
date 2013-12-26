@@ -130,7 +130,7 @@ public class UrlFetcher {
 	}
 	if (value.length() > 0) {
 	    conn.setRequestorProperty("Cookie", value);
-	    Global.pref.log("Cookies sent for " + conn.getHost() + " : " + value);
+	    //Global.pref.log("Cookies sent for " + conn.getHost() + " : " + value);
 	}
     }
 
