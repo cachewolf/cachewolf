@@ -26,11 +26,11 @@ import ewe.ui.Editor;
 import ewe.ui.FormBase;
 
 public class CacheWolf {
-    public static void main(String vmargs[]) {
-	ewe.sys.Vm.startEwe(vmargs);
+    public static void main(String args[]) {
+	ewe.sys.Vm.startEwe(args);
 
 	// get program command line parameters and switches
-	String[] args = vmargs; // Vm.getProgramArguments(); <-- only works in eclipse, but mixes the letters in the ewe-vm (tested in ewe-1.49 on win xp)
+	// Vm.getProgramArguments(); <-- only works in eclipse, but mixes the letters in the ewe-vm (tested in ewe-1.49 on win xp)
 	String configfile = null;
 	boolean debug = false;
 	if (args.length > 0) {

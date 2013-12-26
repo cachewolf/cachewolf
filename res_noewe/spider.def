@@ -10,11 +10,6 @@
 # * escaping space should not be necessary
 # * Be sure that you have no hidden spaces at the end of a line or the patterns will not match!
 #------------------------------------------------------------
-#loginPage          = http://www.geocaching.com/login/default.aspx
-loginPage          = https://www.geocaching.com/login/default.aspx
-loginSuccess       = You\ are\ logged\ in\ as
-nextPage           = /login/default.aspx
-waypoint           = http://www.geocaching.com/seek/cache_details.aspx?wp=
 #--------------------------------------
 #Section1: First page with list of caches
 #--------------------------------------
@@ -66,10 +61,8 @@ TBRex              = /wpttypes/([0-9]+).gif" alt="(.*?)"
 #--------------------------------------
 #Section2: Get cachepage by name
 #--------------------------------------
-getPageByName      = http://www.geocaching.com/seek/cache_details.aspx?wp=
-fetchAllLogs       = &log=y
-cacheUnavailable   = class="OldWarning"><li>This\ cache\ is\ temporarily\ unavailable
-cacheArchived      = class="OldWarning"><li>This\ cache\ has\ been\ archived
+cacheUnavailable   = class="OldWarning"><li>This cache is temporarily unavailable
+cacheArchived      = class="OldWarning"><li>This cache has been archived
 premiumCachepage   = > Premium Member Only Cache
 # "oldLatLngDisplay":"N 48° 29.684' E 009° 12.397'"
 orgLatLonRex       = "oldLatLngDisplay":"((?s).*?)"
