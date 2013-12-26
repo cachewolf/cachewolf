@@ -116,6 +116,8 @@ public class SpiderGC {
     private String cacheTypeRestriction;
     private boolean spiderAllFinds;
     private String htmlListPage;
+    private final static String wayPointUrl = "http://www.geocaching.com/seek/cache_details.aspx?wp=";
+    private final static String loginPageUrl = "https://www.geocaching.com/login/default.aspx";
     private int maxUpdate;
     // private boolean maxNumberAbort;
     private byte restrictedCacheType = 0;
@@ -126,7 +128,7 @@ public class SpiderGC {
     private static String queryLon;
     private static String queryUserFinds;
     private static String queryDistance;
-    private static String gotoNextPage = "ctl00$ContentBody$pgrTop$ctl08";
+    private final static String gotoNextPage = "ctl00$ContentBody$pgrTop$ctl08";
     // change to the block (10pages) of the wanted page
     private static String gotoPreviousBlock = "ctl00$ContentBody$pgrTop$ctl05";
     private static String gotoNextBlock = "ctl00$ContentBody$pgrTop$ctl06";
@@ -162,9 +164,6 @@ public class SpiderGC {
 
     public SpiderGC() {
 	this.cacheDB = Global.profile.cacheDB;
-	if (p == null) {
-	    p = new SpiderProperties();
-	}
 	initialiseProperties();
     }
 
@@ -230,7 +229,7 @@ public class SpiderGC {
 	    Global.pref.log(s, null);
 	    lastPageVisited = -1; // for not to double check pages on next group run
 
-	    while (upperDistance < maxDistance) {
+	    while (upperDistance < maxDistance && !infB.isClosed()) {
 		lowerDistance = upperDistance;
 		if ((int) lowerDistance < ((int) maxDistance - 1)) {
 		    upperDistance = this.getUpperDistance(lowerDistance, maxDistance, maxPages, pageLimit);
@@ -254,14 +253,13 @@ public class SpiderGC {
 
 		int spiderErrors = 0;
 		final int totalCachesToLoad = cachesToLoad.size() + cachesToUpdate.size();
-		final boolean loadAllLogs = spiderAllFinds;
-		Global.pref.log("Download properties : " + Preferences.NEWLINE + "maxLogs: " + (loadAllLogs ? "completepage " : "shortpage") + "nr.:" + Global.pref.maxLogsToSpider + Preferences.NEWLINE + "with pictures     : "
-			+ (!Global.pref.downloadPics ? "no" : "yes") + Preferences.NEWLINE + "with tb           : " + (!Global.pref.downloadTBs ? "no" : "yes") + Preferences.NEWLINE, null);
+		Global.pref.log("Download properties : " + Preferences.NEWLINE + "maxLogs: " + Global.pref.maxLogsToSpider + Preferences.NEWLINE + "with pictures     : " + (!Global.pref.downloadPics ? "no" : "yes") + Preferences.NEWLINE
+			+ "with tb           : " + (!Global.pref.downloadTBs ? "no" : "yes") + Preferences.NEWLINE, null);
 
 		Global.mainTab.tablePanel.updateStatusBar();
 
 		if (!infB.isClosed()) {
-		    spiderErrors = downloadCaches(cachesToLoad, spiderErrors, totalCachesToLoad, loadAllLogs);
+		    spiderErrors = downloadCaches(cachesToLoad, spiderErrors, totalCachesToLoad);
 
 		    if (cachesToUpdate.size() > 0) {
 			switch (Global.pref.spiderUpdates) {
@@ -280,10 +278,11 @@ public class SpiderGC {
 			}
 		    }
 
-		    spiderErrors = updateCaches(cachesToUpdate, spiderErrors, totalCachesToLoad, loadAllLogs);
+		    spiderErrors = updateCaches(cachesToUpdate, spiderErrors, totalCachesToLoad);
 		}
 		completeSpiderErrors = completeSpiderErrors + spiderErrors;
-	    }
+	    } // while
+
 	    if (completeSpiderErrors > 0) {
 		new InfoBox(MyLocale.getMsg(5500, "Error"), completeSpiderErrors + MyLocale.getMsg(5516, " cache descriptions%0acould not be loaded.")).wait(FormBase.OKB);
 	    }
@@ -469,7 +468,7 @@ public class SpiderGC {
 		    cacheDB.removeElementAt(j);
 	    }
 	    // und frisch geladen
-	    spiderErrors = downloadCaches(cachesToLoad, spiderErrors, cachesToLoad.size(), true);
+	    spiderErrors = downloadCaches(cachesToLoad, spiderErrors, cachesToLoad.size());
 	} else {
 	    // man könnte auch aus der Liste einen Quick - Import erstellen
 	}
@@ -950,7 +949,7 @@ public class SpiderGC {
 	return cExpectedForUpdate;
     }
 
-    private int downloadCaches(Vector cachesToLoad, int spiderErrors, int totalCachesToLoad, boolean loadAllLogs) {
+    private int downloadCaches(Vector cachesToLoad, int spiderErrors, int totalCachesToLoad) {
 	for (int i = 0; i < cachesToLoad.size(); i++) {
 	    if (infB.isClosed())
 		break;
@@ -963,7 +962,7 @@ public class SpiderGC {
 		infB.setInfo(MyLocale.getMsg(5513, "Loading: ") + wpt + " (" + (i + 1) + " / " + totalCachesToLoad + ")");
 		final CacheHolder holder = new CacheHolder();
 		holder.setWayPoint(wpt);
-		final int test = getCacheByWaypointName(holder, false, Global.pref.downloadPics, Global.pref.downloadTBs, doNotgetFound, loadAllLogs || is_found | !doNotgetFound);
+		final int test = getCacheByWaypointName(holder, false, Global.pref.downloadPics, Global.pref.downloadTBs, doNotgetFound);
 		if (test == SPIDER_CANCEL) {
 		    infB.close(0);
 		    break;
@@ -978,7 +977,7 @@ public class SpiderGC {
 	return spiderErrors;
     }
 
-    private int updateCaches(Hashtable cachesToUpdate, int spiderErrors, int totalCachesToLoad, boolean loadAllLogs) {
+    private int updateCaches(Hashtable cachesToUpdate, int spiderErrors, int totalCachesToLoad) {
 	int jj = 0;
 	for (final Enumeration e = cachesToUpdate.elements(); e.hasMoreElements();) {
 	    if (infB.isClosed())
@@ -986,7 +985,7 @@ public class SpiderGC {
 	    final CacheHolder ch = (CacheHolder) e.nextElement();
 	    jj++;
 	    infB.setInfo(MyLocale.getMsg(5513, "Loading: ") + ch.getWayPoint() + " (" + (cachesToLoad.size() + jj) + " / " + totalCachesToLoad + ")");
-	    final int test = spiderSingle(cacheDB.getIndex(ch), infB, loadAllLogs);
+	    final int test = spiderSingle(cacheDB.getIndex(ch), infB);
 	    if (test == SPIDER_CANCEL) {
 		break;
 	    } else {
@@ -1008,7 +1007,7 @@ public class SpiderGC {
      * 
      * @return 1 if spider was successful, -1 if spider was cancelled by closing the infobox, 0 error, but continue with next cache
      */
-    public int spiderSingle(int number, InfoBox pInfB, boolean loadAllLogs) {
+    public int spiderSingle(int number, InfoBox pInfB) {
 	int ret = -1;
 	this.infB = pInfB;
 	final CacheHolder ch = new CacheHolder();
@@ -1019,17 +1018,11 @@ public class SpiderGC {
 	    return -1;
 	try {
 	    // Read the cache data from GC.COM and compare to old data
-	    ret = getCacheByWaypointName(ch, true, Global.pref.downloadPics, Global.pref.downloadTBs, false, loadAllLogs);
+	    ret = getCacheByWaypointName(ch, true, Global.pref.downloadPics, Global.pref.downloadTBs, false);
 	    // Save the spidered data
 	    if (ret == SPIDER_OK) {
 		final CacheHolder cacheInDB = cacheDB.get(number);
 		cacheInDB.initStates(false);
-		if (cacheInDB.is_found() && !ch.is_found() && !loadAllLogs) {
-		    // If the number of logs to spider is 5 or less,
-		    // then the "not found" information of the spidered cache is not credible.
-		    // In this case it should not overwrite the "found" state of an existing cache.
-		    ch.setFound(true);
-		}
 		// preserve rating information
 		ch.setNumRecommended(cacheInDB.getNumRecommended());
 		if (Global.pref.downloadPics) {
@@ -1065,8 +1058,8 @@ public class SpiderGC {
 	final InfoBox localInfB = new InfoBox("Info", "Loading", InfoBox.PROGRESS_WITH_WARNINGS);
 	localInfB.exec();
 	try {
-	    final String doc = p.getProp("waypoint") + wayPoint;
-	    completeWebPage = UrlFetcher.fetch(doc);
+	    final String url = wayPointUrl + wayPoint;
+	    completeWebPage = UrlFetcher.fetch(url);
 	    Global.pref.log("Fetched " + wayPoint);
 	} catch (final Exception ex) {
 	    completeWebPage = "";
@@ -1343,10 +1336,9 @@ public class SpiderGC {
 	    return false;
 
 	String page;
-	String url = "https://www.geocaching.com/login/default.aspx";
 	UrlFetcher.clearCookies();
 	try {
-	    page = UrlFetcher.fetch(url); // 
+	    page = UrlFetcher.fetch(loginPageUrl); // 
 	} catch (final Exception ex) {
 	    Global.pref.log("[gcLogin]:Exception gc.com login page", ex, true);
 	    return false;
@@ -1364,7 +1356,7 @@ public class SpiderGC {
 	;
 	try {
 	    UrlFetcher.setpostData(postData);
-	    page = UrlFetcher.fetch(url);
+	    page = UrlFetcher.fetch(loginPageUrl);
 	} catch (final Exception ex) {
 	    Global.pref.log("[gcLogin] Exception", ex);
 	    return false;
@@ -1386,7 +1378,7 @@ public class SpiderGC {
      * 
      */
     private void initialiseProperties() {
-	String stmp;
+	p = new SpiderProperties();
 	try {
 	    urlSeek = p.getProp("urlSeek"); // http://www.geocaching.com/seek/nearest.aspx
 	    queryLat = p.getProp("queryLat"); // ?lat=
@@ -1405,8 +1397,7 @@ public class SpiderGC {
 	    propPM = p.getProp("PM");
 	    propFound = p.getProp("found");
 
-	    stmp = p.getProp("DistDirRex");
-	    DistDirRex = new Regex(stmp);
+	    DistDirRex = new Regex(p.getProp("DistDirRex"));
 	    DTSRex = new Regex(p.getProp("DTSRex"));
 
 	    RexPropWaypoint = new Regex(p.getProp("waypointRex"));
@@ -1572,7 +1563,7 @@ public class SpiderGC {
 		}
 	    } else {
 		try {
-		    Global.pref.log("[SpiderGC.java:updateExists]check DTS calculation!\n" + p.getProp("DTSRex") + "\n" + CacheDescription, null);
+		    Global.pref.log("[SpiderGC.java:updateExists]check DTS calculation (DTSRex)! \n" + CacheDescription, null);
 		} catch (Exception e) {
 		}
 	    }
@@ -1859,10 +1850,9 @@ public class SpiderGC {
      * @param boolean fetchImages True if the pictures are to be fetched
      * @param boolean fetchTBs True if the TBs are to be fetched
      * @param boolean doNotGetFound True if the cache is not to be spidered if it has already been found
-     * @param boolean fetchAllLogs True if all logs are to be fetched (by adding option '&logs=y' to command line). This is normally false when spidering from GPXImport as the logs are part of the GPX file, and true otherwise
      * @return -1 if the infoBox was closed (cancel spidering), 0 if there was an error (continue with next cache), 1 if everything ok
      */
-    private int getCacheByWaypointName(CacheHolder ch, boolean isUpdate, boolean fetchImages, boolean fetchTBs, boolean doNotGetFound, boolean fetchAllLogs) {
+    private int getCacheByWaypointName(CacheHolder ch, boolean isUpdate, boolean fetchImages, boolean fetchTBs, boolean doNotGetFound) {
 	int ret = SPIDER_OK; // initialize value;
 
 	while (true) { // retry even if failure
@@ -1873,7 +1863,7 @@ public class SpiderGC {
 	    while (spiderTrys++ < MAX_SPIDER_TRYS) {
 		ret = SPIDER_OK; // initialize value;
 		try {
-		    final String url = p.getProp("getPageByName") + ch.getWayPoint() + ((fetchAllLogs || ch.is_found()) ? p.getProp("fetchAllLogs") : "");
+		    final String url = wayPointUrl + ch.getWayPoint();
 		    completeWebPage = UrlFetcher.fetch(url);
 		    Global.pref.log("Fetched: " + ch.getWayPoint());
 		} catch (final Exception ex) {
@@ -1915,24 +1905,26 @@ public class SpiderGC {
 			ch.addiWpts.clear();
 			ch.getCacheDetails(false).images.clear();
 
-			ch.setAvailable(!(completeWebPage.indexOf(p.getProp("cacheUnavailable")) >= 0));
-			ch.setArchived(completeWebPage.indexOf(p.getProp("cacheArchived")) >= 0);
-			// ==========
-			// Logs first (for check early for break)
-			// ==========
-			getLogs(completeWebPage, ch.getCacheDetails(false));
-			Global.pref.log("Got logs");
-			// If the switch is set to not store found caches and we found the cache => return
-			if (ch.is_found() && doNotGetFound) {
-			    if (infB.isClosed()) {
-				return SPIDER_CANCEL;
-			    } else {
+			ch.setAvailable(!(completeWebPage.indexOf(p.getProp("cacheUnavailable")) > -1));
+			ch.setArchived(completeWebPage.indexOf(p.getProp("cacheArchived")) > -1);
+
+			// Logs
+			boolean foundByMe = false;
+			if (completeWebPage.indexOf("ctl00_ContentBody_GeoNav_logText") > -1) {
+			    foundByMe = true;
+			    // If the switch is set to not store found caches and we found the cache => return
+			    if (doNotGetFound)
 				return SPIDER_IGNORE;
-			    }
 			}
-			// ==========
+			RexUserToken.search(completeWebPage);
+			if (!RexUserToken.didMatch()) {
+			    Global.pref.log("[SpiderGC.java:getLogs]check RexUserToken!", null);
+			}
+			final String userToken = RexUserToken.stringMatched(1);
+			getLogs(userToken, ch, foundByMe);
+			Global.pref.log("Got logs");
+
 			// General Cache Data
-			// ==========
 			ch.setPos(new CWPoint(latLon));
 			Global.pref.log("LatLon: " + ch.getPos().toString());
 
@@ -2256,23 +2248,11 @@ public class SpiderGC {
 
     /**
      * Get the logs
-     * 
-     * @param doc
-     *            A previously fetched cachepage
-     * @param chD
-     *            Cache Details
-     * @return A HTML string containing the logs
      */
-    private void getLogs(String completeWebPage, CacheHolderDetail chD) throws Exception {
-
+    private void getLogs(String userToken, CacheHolder ch, boolean foundByMe) throws Exception {
+	final CacheHolderDetail chD = ch.getCacheDetails(false);
 	final LogList reslts = chD.CacheLogs;
 	reslts.clear();
-
-	RexUserToken.search(completeWebPage);
-	if (!RexUserToken.didMatch()) {
-	    Global.pref.log("[SpiderGC.java:getLogs]check RexUserToken!", null);
-	}
-	final String userToken = RexUserToken.stringMatched(1);
 
 	int idx = 0;
 	int nLogs = 0;
@@ -2280,10 +2260,7 @@ public class SpiderGC {
 	boolean fertig = false;
 	int num = 100;
 
-	boolean foundByMe = false;
-	if (completeWebPage.indexOf("ctl00_ContentBody_GeoNav_logText") > -1) {
-	    foundByMe = true;
-	} else {
+	if (!foundByMe) {
 	    if (Global.pref.maxLogsToSpider < 100)
 		num = Global.pref.maxLogsToSpider + 1;
 	}
@@ -2329,8 +2306,8 @@ public class SpiderGC {
 
 		// if this log says this Cache is found by me
 		if ((icon.equals(icon_smile) || icon.equals(icon_camera) || icon.equals(icon_attended)) && (name.equalsIgnoreCase(Global.pref.myAlias) || (name.equalsIgnoreCase(Global.pref.myAlias2)))) {
-		    chD.getParent().setFound(true);
-		    chD.getParent().setCacheStatus(d);
+		    ch.setFound(true);
+		    ch.setCacheStatus(d);
 		    // final String logId = entry.getString("LogID");
 		    chD.OwnLogId = entry.getString("LogID");
 		    chD.OwnLog = new Log(icon, d, name, logText);
@@ -2353,7 +2330,7 @@ public class SpiderGC {
 	    reslts.add(Log.maxLog());
 	}
 	// Bei Update ev. doppelt berechnet
-	chD.getParent().setNoFindLogs(reslts.countNotFoundLogs());
+	ch.setNoFindLogs(reslts.countNotFoundLogs());
     }
 
     /**
