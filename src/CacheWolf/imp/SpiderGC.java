@@ -658,7 +658,9 @@ public class SpiderGC {
 	    }
 	    doNotgetFound = options.foundCheckBox.getState();
 	}
-	Global.pref.doNotGetFound = doNotgetFound;
+	if (!spiderAllFinds) {
+		Global.pref.doNotGetFound = doNotgetFound;
+	}
 	if (menu == 0) {
 
 	    int maxNew = -1;
