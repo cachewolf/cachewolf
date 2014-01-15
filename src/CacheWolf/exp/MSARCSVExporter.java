@@ -22,8 +22,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 package CacheWolf.exp;
 
 import CacheWolf.CacheHolder;
-import CacheWolf.CacheSize;
-import CacheWolf.CacheType;
+import CacheWolf.database.CacheSize;
+import CacheWolf.database.CacheType;
 
 /**
  * Class to export the cache database (index) to an CSV File which can bei easy
@@ -33,28 +33,28 @@ import CacheWolf.CacheType;
  */
 public class MSARCSVExporter extends Exporter {
 
-	public MSARCSVExporter() {
-		super();
-		this.setMask("*.csv");
-		this.setDecimalSeparator(',');
-		this.setNeedCacheDetails(true);
-		this.setHowManyParams(LAT_LON);
-	}
+    public MSARCSVExporter() {
+	super();
+	this.setMask("*.csv");
+	this.setDecimalSeparator(',');
+	this.setNeedCacheDetails(true);
+	this.setHowManyParams(LAT_LON);
+    }
 
-	public String header() {
-		return "Name;Breitengrad;L\u00E4ngengrad;Typ1;Typ2;Waypoint;Datum;Hyperlink\r";
-	}
+    public String header() {
+	return "Name;Breitengrad;L\u00E4ngengrad;Typ1;Typ2;Waypoint;Datum;Hyperlink\r";
+    }
 
-	public String record(CacheHolder ch, String lat, String lon) {
-		StringBuffer str = new StringBuffer(200);
-		str.append("\"" + ch.getWayPoint() + " - " + ch.getCacheName() + "\";");
-		str.append(lat + ";" + lon + ";");
-		str.append("\"" + CacheType.type2SymTag(ch.getType()) + "\";");
-		str.append("\"" + CacheSize.cw2ExportString(ch.getCacheSize()) + "\";");
-		str.append("\"" + ch.getWayPoint() + "\";");
-		str.append("\"" + ch.getDateHidden() + "\";");
-		str.append("\"" + ch.getCacheDetails(true).URL + "\"\r\n");
+    public String record(CacheHolder ch, String lat, String lon) {
+	StringBuffer str = new StringBuffer(200);
+	str.append("\"" + ch.getWayPoint() + " - " + ch.getCacheName() + "\";");
+	str.append(lat + ";" + lon + ";");
+	str.append("\"" + CacheType.type2SymTag(ch.getType()) + "\";");
+	str.append("\"" + CacheSize.cw2ExportString(ch.getCacheSize()) + "\";");
+	str.append("\"" + ch.getWayPoint() + "\";");
+	str.append("\"" + ch.getDateHidden() + "\";");
+	str.append("\"" + ch.getCacheDetails(true).URL + "\"\r\n");
 
-		return str.toString();
-	}
+	return str.toString();
+    }
 }

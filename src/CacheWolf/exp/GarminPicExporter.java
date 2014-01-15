@@ -27,9 +27,10 @@ import CacheWolf.CacheHolderDetail;
 import CacheWolf.DataMover;
 import CacheWolf.ExecutePanel;
 import CacheWolf.Global;
-import CacheWolf.ImageInfo;
 import CacheWolf.InfoBox;
 import CacheWolf.MyLocale;
+import CacheWolf.database.CacheType;
+import CacheWolf.database.ImageInfo;
 
 import com.stevesoft.ewe_pat.Regex;
 
@@ -158,7 +159,7 @@ public class GarminPicExporter {
 		    if (whichPics != 2)
 			copyPic = true;
 		} else { // Normal Pic
-		    if (whichPics == 0 || whichPics == 2 || (whichPics == 3 && ch.getType() != CacheWolf.CacheType.CW_TYPE_TRADITIONAL))
+		    if (whichPics == 0 || whichPics == 2 || (whichPics == 3 && ch.getType() != CacheType.CW_TYPE_TRADITIONAL))
 			copyPic = true;
 		}
 		if (copyPic) { // We have to copy this picture

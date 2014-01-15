@@ -24,14 +24,14 @@ package CacheWolf.navi;
 import CacheWolf.CWPoint;
 import CacheWolf.CacheDB;
 import CacheWolf.CacheHolder;
-import CacheWolf.Common;
 import CacheWolf.Global;
 import CacheWolf.InfoBox;
 import CacheWolf.MyLocale;
-import CacheWolf.STRreplace;
 import CacheWolf.UrlFetcher;
 import CacheWolf.utils.CWWrapper;
+import CacheWolf.utils.Common;
 import CacheWolf.utils.FileBugfix;
+import CacheWolf.utils.STRreplace;
 import ewe.fx.Point;
 import ewe.io.BufferedWriter;
 import ewe.io.File;
@@ -312,7 +312,7 @@ public class MapLoader {
 	int n = (int) Math.pow(2, zoom);
 	x = (int) (n * ((center.lonDec + 180.0) / 360.0));
 	y = (int) (n * (1 - (Math.log(Math.tan(latRad) + 1.0 / Math.cos(latRad)) / Math.PI)) / 2);
-	String url = STRreplace.replace(wms.MainUrl, "{x}", "" + x);
+	String url = STRreplace.replace(wms.mainUrl, "{x}", "" + x);
 	url = STRreplace.replace(url, "{y}", "" + y);
 	url = STRreplace.replace(url, "{z}", "" + zoom);
 	String targetPath = path + wms.filename + "/" + zoom + "/" + x;
@@ -345,7 +345,7 @@ public class MapLoader {
 
 	String mapProgramPath = wms.versionUrlPart + "/";
 	mapProgramPath = mapProgramPath.replace('/', FileBase.separatorChar);
-	String mapProgram = mapProgramPath + wms.MainUrl;
+	String mapProgram = mapProgramPath + wms.mainUrl;
 	File f = new File(mapProgram);
 	if (!f.exists() || !f.canRead()) {
 	    new InfoBox(MyLocale.getMsg(5500, "Error"), MyLocale.getMsg(1834, "Please enter the correct path to Kosmos.Console.exe into the wms-file.")).wait(FormBase.OKB);
@@ -639,7 +639,7 @@ class OnlineMapService {
     String mapType;
     /** Esentially the same as name, but used for the file system. It will be part of the names of the downloaded images */
     protected String filename;
-    String MainUrl; // http://www.geoserver.nrw.de/GeoOgcWms1.3/servlet/TK25?SERVICE=WMS
+    String mainUrl, takenFromUrl, getCapabilitiesUrl, specialUrl;
     /** including "." */
     String imageFileExt; // ".gif", ".jpg"...
     double recommendedScales[];
@@ -785,10 +785,13 @@ class WebMapService extends OnlineMapService {
 	name = wms.getProperty("Name", "").trim();
 	if (name == "")
 	    throw new IllegalArgumentException(MyLocale.getMsg(4812, "WebMapService: property >Name:< missing in file:\n") + filename);
-	MainUrl = wms.getProperty("MainUrl", "").trim();
+	mainUrl = wms.getProperty("MainUrl", "").trim();
 	//
-	if (MainUrl == "")
+	if (mainUrl == "")
 	    throw new IllegalArgumentException(MyLocale.getMsg(4813, "WebMapService: property >MainUrl:< missing in file:\n") + filename);
+	//takenFromUrl = wms.getProperty("TakenFromUrl", "").trim();
+	//getCapabilitiesUrl = wms.getProperty("GetCapabilitiesUrl", "").trim();
+	specialUrl = wms.getProperty("SpecialUrl", "").trim();
 	mapType = wms.getProperty("MapType", "maptype_unknown").trim();
 	serviceTypeUrlPart = wms.getProperty("ServiceTypeUrlPart", "SERVICE=WMS").trim();
 	layersUrlPart = wms.getProperty("LayersUrlPart", "").trim();
@@ -959,7 +962,7 @@ class WebMapService extends OnlineMapService {
 	    bbox += bottomleft.toString(TransformCoordinates.LON_LAT) + "," + topright.toString(TransformCoordinates.LON_LAT);
 	else
 	    throw new IllegalArgumentException(MyLocale.getMsg(4828, "Coordinate system not supported by cachewolf:") + " " + coordinateReferenceSystem.toString());
-	String ret = MainUrl //
+	String ret = mainUrl //
 		+ layersUrlPart //
 		+ "&" + imageFormatUrlPart//
 		+ "&" + serviceTypeUrlPart//

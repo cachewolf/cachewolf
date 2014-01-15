@@ -21,10 +21,16 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 package CacheWolf;
 
+import CacheWolf.database.CacheSize;
+import CacheWolf.database.CacheTerrDiff;
+import CacheWolf.database.CacheType;
+import CacheWolf.database.LogList;
 import CacheWolf.exp.Exporter;
 import CacheWolf.exp.GarminMap;
 import CacheWolf.navi.Metrics;
 import CacheWolf.navi.TrackPoint;
+import CacheWolf.utils.Common;
+import CacheWolf.utils.STRreplace;
 
 import com.stevesoft.ewe_pat.Regex;
 
@@ -465,6 +471,7 @@ public class CacheHolder {
      *            If <code>true</code>, then <i>status</i>, <i>is_found</i> and <i>position</i> is updated, otherwise not.
      */
     public void update(CacheHolder ch) {
+
 	this.recommendationScore = ch.recommendationScore;
 	this.setNumFoundsSinceRecommendation(ch.getNumFoundsSinceRecommendation());
 	this.setNumRecommended(ch.getNumRecommended());
@@ -489,7 +496,6 @@ public class CacheHolder {
 	this.setWayPoint(ch.getWayPoint());
 	this.setCacheName(ch.getCacheName());
 	this.setCacheOwner(ch.getCacheOwner());
-
 	this.setDateHidden(ch.getDateHidden());
 	this.setCacheSize(ch.getCacheSize());
 	this.kilom = ch.kilom;
@@ -532,9 +538,9 @@ public class CacheHolder {
 		CacheHolderDetail chD = getCacheDetails(true);
 		if (chD != null) {
 		    chD.CacheLogs.calcRecommendations();
-		    recommendationScore = chD.CacheLogs.recommendationRating;
-		    setNumFoundsSinceRecommendation(chD.CacheLogs.foundsSinceRecommendation);
-		    setNumRecommended(chD.CacheLogs.numRecommended);
+		    recommendationScore = chD.CacheLogs.getRecommendationRating();
+		    setNumFoundsSinceRecommendation(chD.CacheLogs.getFoundsSinceRecommendation());
+		    setNumRecommended(chD.CacheLogs.getNumRecommended());
 		} else { // cache doesn't have details
 		    recommendationScore = -1;
 		    setNumFoundsSinceRecommendation(-1);
@@ -1508,14 +1514,14 @@ public class CacheHolder {
      * @param pNewCache
      *            <code>true</code> if it is a new cache (i.e. a cache not existing in CacheDB), <code>false</code> otherwise.
      */
-    public void initStates(boolean pNewCache) {
-	this.setNew(pNewCache);
+    public void initStates(boolean isNewCache) {
+	this.setNew(isNewCache);
 	this.setUpdated(false);
 	this.setLog_updated(false);
 	this.setIncomplete(false);
-	if (!pNewCache && this.hasAddiWpt()) {
+	if (!isNewCache && this.hasAddiWpt()) {
 	    for (int i = 0; i < this.addiWpts.size(); i++) {
-		((CacheHolder) this.addiWpts.get(i)).initStates(pNewCache);
+		((CacheHolder) this.addiWpts.get(i)).initStates(isNewCache);
 	    }
 	}
     }

@@ -22,11 +22,11 @@
 package CacheWolf.navi;
 
 import CacheWolf.CWPoint;
-import CacheWolf.Common;
 import CacheWolf.Global;
 import CacheWolf.InfoBox;
 import CacheWolf.MyLocale;
 import CacheWolf.utils.BetterUTF8Codec;
+import CacheWolf.utils.Common;
 import CacheWolf.utils.FileBugfix;
 import ewe.fx.Point;
 import ewe.fx.Rect;

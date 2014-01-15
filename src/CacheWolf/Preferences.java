@@ -21,9 +21,11 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 package CacheWolf;
 
-import CacheWolf.imp.SpiderGC;
+import CacheWolf.imp.GCImporter;
 import CacheWolf.navi.Metrics;
 import CacheWolf.navi.TransformCoordinates;
+import CacheWolf.utils.Common;
+import CacheWolf.utils.STRreplace;
 import ewe.filechooser.FileChooser;
 import ewe.filechooser.FileChooserBase;
 import ewe.io.BufferedWriter;
@@ -298,8 +300,8 @@ public class Preferences extends MinML {
     public String language = "";
     /** The metric system to use */
     public int metricSystem = Metrics.METRIC;
-    /** Load updated caches while spidering */
-    public int spiderUpdates = YES;
+    // /** Load updated caches while spidering */
+    // public int spiderUpdates = YES;
     /** Maximum number of new caches to spider */
     public int maxSpiderNumber = 200;
     /** Add short details to waypoint on export */
@@ -629,9 +631,11 @@ public class Preferences extends MinML {
 	    tmp = atts.getValue("checkDTS");
 	    if (tmp != null)
 		checkDTS = Boolean.valueOf(atts.getValue("checkDTS")).booleanValue();
+	    /*
 	    tmp = atts.getValue("spiderUpdates");
 	    if (tmp != null)
-		spiderUpdates = Convert.parseInt(tmp);
+	    spiderUpdates = Convert.parseInt(tmp);
+	    */
 	    tmp = atts.getValue("maxSpiderNumber");
 	    if (tmp != null)
 		maxSpiderNumber = Convert.parseInt(tmp);
@@ -889,7 +893,7 @@ public class Preferences extends MinML {
 	    outp.print("    <opencaching lastSite=\"" + lastOCSite + "\" downloadMissing=\"" + SafeXML.strxmlencode(downloadAllOC) + "\" />\n");
 	    outp.print("    <location lat=\"" + SafeXML.clean(curCentrePt.getLatDeg(TransformCoordinates.DD)) + "\" long=\"" + SafeXML.clean(curCentrePt.getLonDeg(TransformCoordinates.DD)) + "\" />\n");
 	    outp.print("    <spider" //
-		    + " spiderUpdates=\"" + SafeXML.strxmlencode(spiderUpdates) + "\"" //
+		    //+ " spiderUpdates=\"" + SafeXML.strxmlencode(spiderUpdates) + "\"" //
 		    + " checkLog=\"" + SafeXML.strxmlencode(checkLog) + "\"" //
 		    + " overwriteLogs=\"" + SafeXML.strxmlencode(overwriteLogs) + "\"" //
 		    + " checkTBs=\"" + SafeXML.strxmlencode(checkTBs) + "\"" //
@@ -1373,7 +1377,7 @@ public class Preferences extends MinML {
 
     public void setOldGCLanguage() {
 	if (changedGCLanguageToEnglish) {
-	    SpiderGC.setGCLanguage(oldGCLanguage);
+	    GCImporter.setGCLanguage(oldGCLanguage);
 	    changedGCLanguageToEnglish = false;
 	}
     }

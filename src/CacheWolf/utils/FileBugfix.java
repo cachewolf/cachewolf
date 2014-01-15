@@ -21,7 +21,6 @@
 */
 package CacheWolf.utils;
 
-import CacheWolf.STRreplace;
 import ewe.io.File;
 import ewe.io.FileBase;
 import ewe.util.FileComparer;

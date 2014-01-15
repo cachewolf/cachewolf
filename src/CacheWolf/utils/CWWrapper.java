@@ -27,7 +27,8 @@ import ewe.sys.Process;
 import ewe.sys.Vm;
 
 /**
- * Class built as a wrapper for the buggy^Winconsistent Vm.exec in EWE Version 1.49 It identifies the plattform and uses a different call to Vm.exec() depending on the plattform. Bugs identified: ewe.jar: cmd needs quoting, arg are
+ * Class built as a wrapper for the buggy^Winconsistent Vm.exec in EWE Version 1.49
+ *  It identifies the plattform and uses a different call to Vm.exec() depending on the plattform. Bugs identified: ewe.jar: cmd needs quoting, arg are
  * whitespace-split Unix VM: cmd must not be quoted, arg can be only one Win* VM: cmd may be quoted, arg are whitespace-split
  */
 public final class CWWrapper {

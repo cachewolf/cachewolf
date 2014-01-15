@@ -24,14 +24,16 @@ package CacheWolf.navi;
 import CacheWolf.CWPoint;
 import CacheWolf.CacheDB;
 import CacheWolf.CacheHolder;
-import CacheWolf.Common;
 import CacheWolf.CoordsScreen;
 import CacheWolf.ExecutePanel;
 import CacheWolf.Global;
 import CacheWolf.InfoBox;
 import CacheWolf.MyLocale;
+import CacheWolf.UrlFetcher;
+import CacheWolf.utils.Common;
 import ewe.fx.Point;
 import ewe.io.File;
+import ewe.io.IOException;
 import ewe.sys.Convert;
 import ewe.sys.Vm;
 import ewe.ui.CellPanel;
@@ -80,9 +82,6 @@ public class MapLoaderGui extends Form {
     mCheckBox smallTiles = new mCheckBox(MyLocale.getMsg(4280, "Small Tiles"));
     mCheckBox bigTiles = new mCheckBox(MyLocale.getMsg(4282, "BigTiles"));
 
-    /**
-     * Inputfields for width an height of tile size
-     */
     private mInput tileWidthInput = new mInput();
     private mInput tileHeightInput = new mInput();
     // pnlTiles
@@ -321,7 +320,7 @@ public class MapLoaderGui extends Form {
 	return mapsDir;
     }
 
-    public void download() {
+    private void download() {
 	String mapsDir = getMapsDir();
 	if (mapsDir == null)
 	    return;
@@ -351,6 +350,15 @@ public class MapLoaderGui extends Form {
 	    mapLoader.setTiles(center, radius * 1000, scale, TileSizeInPixels, overlapping);
 	}
 
+	// to get Cookies not delivered from gettings maps (DE Dop-Viewer)
+	try {
+	    String specialUrl = mapLoader.getCurrentOnlineMapService().specialUrl;
+	    if (specialUrl.length() > 0) {
+		UrlFetcher.fetch(specialUrl);
+		UrlFetcher.rememberCookies();
+	    }
+	} catch (IOException e1) {
+	}
 	// download map(s)
 	if (!perCache) {
 	    mapLoader.setProgressInfoBox(progressBox);
@@ -441,9 +449,9 @@ public class MapLoaderGui extends Form {
 			onlySelected = false;
 		    else
 			onlySelected = true;
-		    radius = (float) CacheWolf.Common.parseDouble(distanceInput.getText());
+		    radius = (float) Common.parseDouble(distanceInput.getText());
 
-		    scale = checkScale(CacheWolf.Common.parseDouble(scaleInput.getText()));
+		    scale = checkScale(Common.parseDouble(scaleInput.getText()));
 		    overlapping = Convert.toInt(overlappingInput.getText());
 		    if (!forCachesChkBox.getState()) {
 			if (radius <= 0) {
@@ -468,7 +476,7 @@ public class MapLoaderGui extends Form {
 		    else
 			onlySelected = true;
 
-		    scale = checkScale(CacheWolf.Common.parseDouble(scaleInputPerCache.getText()));
+		    scale = checkScale(CacheWolf.utils.Common.parseDouble(scaleInputPerCache.getText()));
 
 		}
 
@@ -516,9 +524,9 @@ public class MapLoaderGui extends Form {
 	    } else if (ev.target == pnlTilestileHeightInput) {
 		this.checkTileHeightInput(pnlTilestileHeightInput.getText());
 	    } else if (ev.target == scaleInput) {
-		scale = checkScale(CacheWolf.Common.parseDouble(scaleInput.getText()));
+		scale = checkScale(Common.parseDouble(scaleInput.getText()));
 	    } else if (ev.target == scaleInputPerCache) {
-		scale = checkScale(CacheWolf.Common.parseDouble(scaleInputPerCache.getText()));
+		scale = checkScale(Common.parseDouble(scaleInputPerCache.getText()));
 	    } else if (ev.target == overlappingInput) {
 		Global.pref.mapOverlapping = Convert.toInt(overlappingInput.getText());
 	    }

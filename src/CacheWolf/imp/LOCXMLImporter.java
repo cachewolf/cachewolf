@@ -23,13 +23,13 @@ package CacheWolf.imp;
 
 import CacheWolf.CacheDB;
 import CacheWolf.CacheHolder;
-import CacheWolf.CacheSize;
-import CacheWolf.CacheTerrDiff;
-import CacheWolf.CacheType;
-import CacheWolf.Common;
 import CacheWolf.Global;
 import CacheWolf.Profile;
+import CacheWolf.database.CacheSize;
+import CacheWolf.database.CacheTerrDiff;
+import CacheWolf.database.CacheType;
 import CacheWolf.navi.TrackPoint;
+import CacheWolf.utils.Common;
 import ewe.io.FileReader;
 import ewe.io.Reader;
 import ewe.sys.Vm;
@@ -41,99 +41,98 @@ import ewesoft.xml.sax.AttributeList;
  * 
  */
 public class LOCXMLImporter extends MinML {
-	boolean debugXML = false;
-	CacheDB cacheDB;
-	String file;
-	CacheHolder holder;
+    boolean debugXML = false;
+    CacheDB cacheDB;
+    String file;
+    CacheHolder holder;
 
-	String strData = "";
+    String strData = "";
 
-	public LOCXMLImporter(String f) {
-		cacheDB = Global.profile.cacheDB;
-		file = f;
+    public LOCXMLImporter(String f) {
+	cacheDB = Global.profile.cacheDB;
+	file = f;
+    }
+
+    public void doIt() {
+	try {
+	    Reader r;
+	    Vm.showWait(true);
+	    // Test for zip.file
+	    r = new FileReader(file);
+	    parse(r);
+	    r.close();
+	    // save Index
+	    Global.profile.saveIndex(Profile.NO_SHOW_PROGRESS_BAR);
+	    Vm.showWait(false);
+	} catch (Exception e) {
+	    Vm.showWait(false);
+	}
+    }
+
+    public void startElement(String name, AttributeList atts) {
+	if (debugXML) {
+	    for (int i = 0; i < atts.getLength(); i++) {
+		Global.pref.log(" Name: " + atts.getName(i) + " Value: " + atts.getValue(i), null);
+	    }
+	}
+	strData = "";
+	if (name.equals("name")) {
+	    holder = getHolder(atts.getValue("id"));
+	    return;
+	}
+	if (name.equals("coord")) {
+	    holder.setPos(new TrackPoint(Common.parseDouble(atts.getValue("lat")), Common.parseDouble(atts.getValue("lon"))));
+	    return;
+	}
+    }
+
+    public void endElement(String name) {
+	if (name.equals("name")) {
+	    holder.setCacheName(strData.replace('\n', ' ').replace('\r', ' ').trim());
 	}
 
-	public void doIt() {
-		try {
-			Reader r;
-			Vm.showWait(true);
-			// Test for zip.file
-			r = new FileReader(file);
-			parse(r);
-			r.close();
-			// save Index
-			Global.profile.saveIndex(Profile.NO_SHOW_PROGRESS_BAR);
-			Vm.showWait(false);
-		}
-		catch (Exception e) {
-			Vm.showWait(false);
-		}
+	if (name.equals("waypoint")) {
+	    int index;
+	    index = cacheDB.getIndex(holder.getWayPoint());
+	    if (index == -1) {
+		holder.setNew(true);
+		cacheDB.add(holder);
+	    }
+	    // update (overwrite) data
+	    else {
+		holder.setNew(false);
+	    }
+	    // save all (after each cache???)
+	    holder.save();
+	    Global.profile.saveIndex(Profile.NO_SHOW_PROGRESS_BAR);
+	    return;
 	}
 
-	public void startElement(String name, AttributeList atts) {
-		if (debugXML) {
-			for (int i = 0; i < atts.getLength(); i++) {
-				Global.pref.log(" Name: " + atts.getName(i) + " Value: " + atts.getValue(i), null);
-			}
-		}
-		strData = "";
-		if (name.equals("name")) {
-			holder = getHolder(atts.getValue("id"));
-			return;
-		}
-		if (name.equals("coord")) {
-			holder.setPos(new TrackPoint(Common.parseDouble(atts.getValue("lat")), Common.parseDouble(atts.getValue("lon"))));
-			return;
-		}
+	if (name.equals("link")) {
+	    holder.getCacheDetails(false).URL = strData;
+	    return;
 	}
+    }
 
-	public void endElement(String name) {
-		if (name.equals("name")) {
-			holder.setCacheName(strData.replace('\n', ' ').replace('\r', ' ').trim());
-		}
+    public void characters(char[] ch, int start, int length) {
+	String chars = new String(ch, start, length);
+	strData += chars;
+	if (debugXML)
+	    Global.pref.log(strData, null);
+    }
 
-		if (name.equals("waypoint")) {
-			int index;
-			index = cacheDB.getIndex(holder.getWayPoint());
-			if (index == -1) {
-				holder.setNew(true);
-				cacheDB.add(holder);
-			}
-			// update (overwrite) data
-			else {
-				holder.setNew(false);
-			}
-			// save all (after each cache???)
-			holder.save();
-			Global.profile.saveIndex(Profile.NO_SHOW_PROGRESS_BAR);
-			return;
-		}
+    private CacheHolder getHolder(String wpt) {
+	CacheHolder ch;
 
-		if (name.equals("link")) {
-			holder.getCacheDetails(false).URL = strData;
-			return;
-		}
+	ch = cacheDB.get(wpt);
+	if (ch == null) {
+	    ch = new CacheHolder(wpt);
+	    ch.setType(CacheType.CW_TYPE_CUSTOM); // loc is always type "Geocache" but is incomplete D/T
+	    ch.setTerrain(CacheTerrDiff.CW_DT_UNSET);
+	    ch.setHard(CacheTerrDiff.CW_DT_UNSET);
+	    ch.setCacheSize(CacheSize.CW_SIZE_NOTCHOSEN);
 	}
-
-	public void characters(char[] ch, int start, int length) {
-		String chars = new String(ch, start, length);
-		strData += chars;
-		if (debugXML)
-			Global.pref.log(strData, null);
-	}
-
-	private CacheHolder getHolder(String wpt) {
-		CacheHolder ch;
-
-		ch = cacheDB.get(wpt);
-		if (ch == null) {
-			ch = new CacheHolder(wpt);
-			ch.setType(CacheType.CW_TYPE_CUSTOM); // loc is always type "Geocache" but is incomplete D/T
-			ch.setTerrain(CacheTerrDiff.CW_DT_UNSET);
-			ch.setHard(CacheTerrDiff.CW_DT_UNSET);
-			ch.setCacheSize(CacheSize.CW_SIZE_NOTCHOSEN);
-		}
-		return ch;
-	}
+	return ch;
+    }
 
 }
