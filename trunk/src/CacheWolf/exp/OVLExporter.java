@@ -21,7 +21,7 @@
 */
 package CacheWolf.exp;
 
-import CacheWolf.CacheHolder;
+import CacheWolf.database.CacheHolder;
 import CacheWolf.Global;
 import CacheWolf.navi.TransformCoordinates;
 import CacheWolf.utils.Common;

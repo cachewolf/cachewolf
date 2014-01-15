@@ -21,8 +21,8 @@
 */
 package CacheWolf.imp;
 
-import CacheWolf.CacheDB;
-import CacheWolf.CacheHolder;
+import CacheWolf.database.CacheDB;
+import CacheWolf.database.CacheHolder;
 import CacheWolf.Global;
 import CacheWolf.Profile;
 import ewe.io.FileReader;

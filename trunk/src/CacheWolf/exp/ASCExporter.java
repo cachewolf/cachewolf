@@ -21,7 +21,7 @@
 */
 package CacheWolf.exp;
 
-import CacheWolf.CacheHolder;
+import CacheWolf.database.CacheHolder;
 
 /**
  * Class to export cache database to an ASCII (CSV!) file.

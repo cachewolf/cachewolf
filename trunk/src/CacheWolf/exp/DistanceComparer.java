@@ -22,7 +22,7 @@
 package CacheWolf.exp;
 
 import CacheWolf.CWPoint;
-import CacheWolf.CacheHolder;
+import CacheWolf.database.CacheHolder;
 import ewe.util.Comparer;
 
 public class DistanceComparer implements Comparer {
