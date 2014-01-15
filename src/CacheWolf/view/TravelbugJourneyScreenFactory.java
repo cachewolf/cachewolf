@@ -23,8 +23,8 @@ package CacheWolf.view;
 
 import java.lang.reflect.Constructor;
 
-import CacheWolf.CacheDB;
-import CacheWolf.CacheHolder;
+import CacheWolf.database.CacheDB;
+import CacheWolf.database.CacheHolder;
 import CacheWolf.Global;
 import CacheWolf.TravelbugJourneyList;
 import CacheWolf.model.TravelBugJourneyScreenModel;

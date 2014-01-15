@@ -22,7 +22,7 @@
 package CacheWolf.navi;
 
 import CacheWolf.CWPoint;
-import CacheWolf.CacheHolder;
+import CacheWolf.database.CacheHolder;
 import CacheWolf.CoordsScreen;
 import CacheWolf.Global;
 import CacheWolf.GuiImageBroker;

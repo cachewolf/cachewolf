@@ -22,8 +22,8 @@
 package CacheWolf.exp;
 
 import CacheWolf.CWPoint;
-import CacheWolf.CacheDB;
-import CacheWolf.CacheHolder;
+import CacheWolf.database.CacheDB;
+import CacheWolf.database.CacheHolder;
 import CacheWolf.Global;
 import CacheWolf.database.CacheSize;
 import CacheWolf.database.CacheType;

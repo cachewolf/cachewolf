@@ -21,6 +21,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 package CacheWolf;
 
+import CacheWolf.database.CacheDB;
+import CacheWolf.database.CacheHolder;
 import CacheWolf.navi.Area;
 import CacheWolf.navi.TransformCoordinates;
 import CacheWolf.utils.Common;
@@ -96,7 +98,7 @@ public class Profile {
     public boolean byPassIndexActive = false;
     private int indexXmlVersion;
     /** version number of current format for index.xml and waypoint.xml */
-    protected static int CURRENTFILEFORMAT = 3;
+    public static int CURRENTFILEFORMAT = 3;
 
     // TODO Add other settings, such as max. number of logs to spider
     // TODO Add settings for the preferred mapper to allow for maps other than expedia and other resolutions

@@ -22,9 +22,9 @@
 package CacheWolf.imp;
 
 import CacheWolf.CWPoint;
-import CacheWolf.CacheDB;
-import CacheWolf.CacheHolder;
-import CacheWolf.CacheHolderDetail;
+import CacheWolf.database.CacheDB;
+import CacheWolf.database.CacheHolder;
+import CacheWolf.database.CacheHolderDetail;
 import CacheWolf.DateFormat;
 import CacheWolf.Global;
 import CacheWolf.MyLocale;

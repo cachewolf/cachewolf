@@ -19,12 +19,20 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
-package CacheWolf;
+package CacheWolf.database;
 
-import CacheWolf.database.CacheSize;
-import CacheWolf.database.CacheTerrDiff;
-import CacheWolf.database.CacheType;
-import CacheWolf.database.LogList;
+import CacheWolf.CWPoint;
+import CacheWolf.DataMover;
+import CacheWolf.DateFormat;
+import CacheWolf.Filter;
+import CacheWolf.Global;
+import CacheWolf.InfoBox;
+import CacheWolf.MainForm;
+import CacheWolf.MyLocale;
+import CacheWolf.MyTableModel;
+import CacheWolf.OC;
+import CacheWolf.Profile;
+import CacheWolf.SafeXML;
 import CacheWolf.exp.Exporter;
 import CacheWolf.exp.GarminMap;
 import CacheWolf.navi.Metrics;
@@ -1194,7 +1202,7 @@ public class CacheHolder {
     }
 
     // final static int maxDetails = 50;
-    static Vector cachesWithLoadedDetails = new Vector(Global.pref.maxDetails);
+    public static Vector cachesWithLoadedDetails = new Vector(Global.pref.maxDetails);
 
     public static void removeOldestDetails() {
 	CacheHolder ch;

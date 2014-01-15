@@ -21,6 +21,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 package CacheWolf;
 
+import CacheWolf.database.CacheDB;
+import CacheWolf.database.CacheHolder;
+
 /**
  * A class to perform a search on the cache database.
  * The searchstr is searched for in the waypoint
@@ -29,64 +32,63 @@ package CacheWolf;
  */
 public class SearchCache {
 
-	CacheDB cacheDB;
+    CacheDB cacheDB;
 
-	public SearchCache(CacheDB DB) {
-		cacheDB = DB;
-	}
+    public SearchCache(CacheDB DB) {
+	cacheDB = DB;
+    }
 
-	/**
-	 * Method to iterate through the cache database.
-	 * Each cache where the search string is found (in waypoint
-	 * and / or cache name) is flagged as matching. The search only
-	 * acts on the filtered (=visible) set of caches
-	 */
-	public void search(String searchStr, boolean searchInDescriptionAndNotes, boolean searchInLogs) {
-		if (searchStr.length() > 0) {
-			Global.profile.selectionChanged = true;
-			searchStr = searchStr.toUpperCase();
-			CacheHolder ch;
-			int counter = 0;
-			if (searchInDescriptionAndNotes || searchInLogs) {
-				counter = cacheDB.countVisible();
-			}
-			CWProgressBar cwp = new CWProgressBar(MyLocale.getMsg(219, "Searching..."), 0, counter, searchInDescriptionAndNotes);
-			cwp.exec();
-			cwp.allowExit(true);
-			//Search through complete database
-			//Mark finds by setting is_flaged
-			//TableModel will be responsible for displaying
-			//marked caches.
-			for (int i = 0; i < cacheDB.size(); i++) {
-				cwp.setPosition(i);
-				ch = cacheDB.get(i);
-				if (!ch.isVisible())
-					break; // Reached end of visible records
-				if (ch.getWayPoint().toUpperCase().indexOf(searchStr) < 0 && ch.getCacheName().toUpperCase().indexOf(searchStr) < 0 && ch.getCacheStatus().toUpperCase().indexOf(searchStr) < 0
-						&& (!searchInDescriptionAndNotes || ch.getCacheDetails(true).LongDescription.toUpperCase().indexOf(searchStr) < 0 && ch.getCacheDetails(true).getCacheNotes().toUpperCase().indexOf(searchStr) < 0)
-						&& (!searchInLogs || ch.getCacheDetails(true).CacheLogs.allMessages().toUpperCase().indexOf(searchStr) < 0)) {
-					ch.is_flaged = false;
-				}
-				else
-					ch.is_flaged = true;
-				if (cwp.isClosed())
-					break;
-			} // for
-			cwp.exit(0);
-			Global.profile.setShowSearchResult(true);
-			Global.mainTab.tablePanel.selectRow(0);
-		} // if
-	}
+    /**
+     * Method to iterate through the cache database.
+     * Each cache where the search string is found (in waypoint
+     * and / or cache name) is flagged as matching. The search only
+     * acts on the filtered (=visible) set of caches
+     */
+    public void search(String searchStr, boolean searchInDescriptionAndNotes, boolean searchInLogs) {
+	if (searchStr.length() > 0) {
+	    Global.profile.selectionChanged = true;
+	    searchStr = searchStr.toUpperCase();
+	    CacheHolder ch;
+	    int counter = 0;
+	    if (searchInDescriptionAndNotes || searchInLogs) {
+		counter = cacheDB.countVisible();
+	    }
+	    CWProgressBar cwp = new CWProgressBar(MyLocale.getMsg(219, "Searching..."), 0, counter, searchInDescriptionAndNotes);
+	    cwp.exec();
+	    cwp.allowExit(true);
+	    //Search through complete database
+	    //Mark finds by setting is_flaged
+	    //TableModel will be responsible for displaying
+	    //marked caches.
+	    for (int i = 0; i < cacheDB.size(); i++) {
+		cwp.setPosition(i);
+		ch = cacheDB.get(i);
+		if (!ch.isVisible())
+		    break; // Reached end of visible records
+		if (ch.getWayPoint().toUpperCase().indexOf(searchStr) < 0 && ch.getCacheName().toUpperCase().indexOf(searchStr) < 0 && ch.getCacheStatus().toUpperCase().indexOf(searchStr) < 0
+			&& (!searchInDescriptionAndNotes || ch.getCacheDetails(true).LongDescription.toUpperCase().indexOf(searchStr) < 0 && ch.getCacheDetails(true).getCacheNotes().toUpperCase().indexOf(searchStr) < 0)
+			&& (!searchInLogs || ch.getCacheDetails(true).CacheLogs.allMessages().toUpperCase().indexOf(searchStr) < 0)) {
+		    ch.is_flaged = false;
+		} else
+		    ch.is_flaged = true;
+		if (cwp.isClosed())
+		    break;
+	    } // for
+	    cwp.exit(0);
+	    Global.profile.setShowSearchResult(true);
+	    Global.mainTab.tablePanel.selectRow(0);
+	} // if
+    }
 
-	/**
-	 * Method to remove the flag from all caches in the
-	 * cache database.
-	 */
-	public void clearSearch() {
-		Global.profile.selectionChanged = true;
-		Global.profile.setShowSearchResult(false);
-		for (int i = cacheDB.size() - 1; i >= 0; i--) {
-			cacheDB.get(i).is_flaged = false;
-		}
+    /**
+     * Method to remove the flag from all caches in the
+     * cache database.
+     */
+    public void clearSearch() {
+	Global.profile.selectionChanged = true;
+	Global.profile.setShowSearchResult(false);
+	for (int i = cacheDB.size() - 1; i >= 0; i--) {
+	    cacheDB.get(i).is_flaged = false;
 	}
+    }
 }
