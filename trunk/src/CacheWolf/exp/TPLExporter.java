@@ -23,10 +23,10 @@ package CacheWolf.exp;
 
 import CacheWolf.CacheDB;
 import CacheWolf.CacheHolder;
-import CacheWolf.CacheType;
 import CacheWolf.Global;
 import CacheWolf.InfoBox;
 import CacheWolf.MyLocale;
+import CacheWolf.database.CacheType;
 import HTML.Template;
 
 import com.stevesoft.ewe_pat.Regex;

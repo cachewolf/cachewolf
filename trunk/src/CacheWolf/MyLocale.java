@@ -26,6 +26,7 @@ package CacheWolf;
  * 
  */
 
+import CacheWolf.utils.STRreplace;
 import ewe.fx.Rect;
 import ewe.io.File;
 import ewe.io.FileBase;

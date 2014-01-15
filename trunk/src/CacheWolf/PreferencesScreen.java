@@ -22,6 +22,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 package CacheWolf;
 
 import CacheWolf.navi.Metrics;
+import CacheWolf.utils.Common;
 import CacheWolf.utils.FileBugfix;
 import ewe.filechooser.FileChooser;
 import ewe.filechooser.FileChooserBase;
@@ -57,6 +58,8 @@ public class PreferencesScreen extends Form {
     mCheckBox chkAutoLoad, chkShowDeletedImg;
     mCheckBox chkNoTabs, chkTabsAtTop, chkShowStatus, chkHasCloseButton, chkUseRadar, chkUseText, chkUseIcons, chkUseBigIcons;
     mCheckBox chkSynthShort, chkProxyActive, chkDescShowImg, chkAddDetailsToWaypoint, chkAddDetailsToName, chkSortingGroupedByCache, chkDebug, chkPM;
+    mCheckBox chkCheckLog, chkCheckDTS, chkCheckTBs;
+    mCheckBox chkOverwriteLogs;
     TableColumnChooser tccList, tccBugs;
 
     mInput inpPassword;
@@ -135,19 +138,37 @@ public class PreferencesScreen extends Form {
 
 	mTab.addCard(pnlGPSMaps, MyLocale.getMsg(655, "Maps/GPS"), null).iconize(GuiImageBroker.getImage("globe"), Global.pref.useIcons);
 	// ///////////////////////////////////////////////////////
-	// Card Export (Garmin and GPSBabel)
+	// Card Import (Spider, GPX, ...)
 	// ///////////////////////////////////////////////////////
-	CellPanel pnlImportExport = new CellPanel();
+	CellPanel importPanel = new CellPanel();
 
 	CellPanel SpiderPanel = new CellPanel();
 	SpiderPanel.setText(MyLocale.getMsg(175, "Import"));
+	/*
 	SpiderPanel.addNext(new mLabel(MyLocale.getMsg(639, "Update changed caches?")), DONTSTRETCH, DONTFILL | LEFT);
 	String[] spiderUpdateOptions = { MyLocale.getMsg(640, "Yes"), MyLocale.getMsg(641, "No"), MyLocale.getMsg(642, "Ask") };
 	SpiderPanel.addLast(inpSpiderUpdates = new mChoice(spiderUpdateOptions, Global.pref.spiderUpdates), DONTSTRETCH, DONTFILL | LEFT);
-	pnlImportExport.addLast(SpiderPanel, HSTRETCH, HFILL);
+	*/
+	SpiderPanel.addLast(chkCheckLog = new mCheckBox(MyLocale.getMsg(666, "Update if new finds exist?")));
+	chkCheckLog.setState(Global.pref.checkLog);
+	//
+	SpiderPanel.addLast(chkCheckDTS = new mCheckBox(MyLocale.getMsg(667, "Update if Difficulty, Terrain, Size changed?")));
+	chkCheckDTS.setState(Global.pref.checkDTS);
+	//	
+	SpiderPanel.addLast(chkCheckTBs = new mCheckBox(MyLocale.getMsg(669, "Update if dropped Tbs changed?")));
+	chkCheckTBs.setState(Global.pref.checkTBs);
+	//
+	SpiderPanel.addLast(chkOverwriteLogs = new mCheckBox(MyLocale.getMsg(668, "Overwrite saved Logs?")));
+	chkOverwriteLogs.setState(Global.pref.overwriteLogs);
+	importPanel.addLast(SpiderPanel, HSTRETCH, HFILL);
 
-	CellPanel ExportPanel = new CellPanel();
-	ExportPanel.setText(MyLocale.getMsg(107, "Export"));
+	mTab.addCard(importPanel, MyLocale.getMsg(175, "Import"), null).iconize(GuiImageBroker.getImage("import"), Global.pref.useIcons);
+
+	// ///////////////////////////////////////////////////////
+	// Card Export (Garmin and GPSBabel)
+	// ///////////////////////////////////////////////////////
+	CellPanel exportPanel = new CellPanel();
+	// ExportPanel.setText(MyLocale.getMsg(107, "Export"));
 
 	CellPanel locExportPanel = new CellPanel();
 	locExportPanel.setText(MyLocale.getMsg(215, "to LOC") + " + " + MyLocale.getMsg(122, "zum GPS mit GPSBabel"));
@@ -158,7 +179,7 @@ public class PreferencesScreen extends Form {
 	// loc Exporter
 	locExportPanel.addLast(chkAddDetailsToName = new mCheckBox(MyLocale.getMsg(645, "names")), DONTSTRETCH, LEFT);
 	chkAddDetailsToName.setState(Global.pref.addDetailsToName);
-	ExportPanel.addLast(locExportPanel, HSTRETCH, HFILL);
+	exportPanel.addLast(locExportPanel, HSTRETCH, HFILL);
 
 	CellPanel cpBabel = new CellPanel();
 	// first loc-file will be generated
@@ -170,11 +191,9 @@ public class PreferencesScreen extends Form {
 	// GPSBabeloption -s
 	cpBabel.addLast(chkSynthShort = new mCheckBox(MyLocale.getMsg(174, "Shorten Cachenames?")), DONTSTRETCH, LEFT);
 	chkSynthShort.setState(!Global.pref.garminGPSBabelOptions.equals(""));
-	ExportPanel.addLast(cpBabel, HSTRETCH, HFILL);
+	exportPanel.addLast(cpBabel, HSTRETCH, HFILL);
 
-	pnlImportExport.addLast(ExportPanel);
-
-	mTab.addCard(pnlImportExport, MyLocale.getMsg(656, "Import/Export"), null).iconize(GuiImageBroker.getImage("database"), Global.pref.useIcons);
+	mTab.addCard(exportPanel, MyLocale.getMsg(107, "Export"), null).iconize(GuiImageBroker.getImage("export"), Global.pref.useIcons);
 	// ///////////////////////////////////////////////////////
 	// Card Screen
 	// ///////////////////////////////////////////////////////
@@ -416,11 +435,15 @@ public class PreferencesScreen extends Form {
 		Global.pref.descShowImg = chkDescShowImg.getState();
 		Global.mainTab.tablePanel.myTableModel.setColumnNamesAndWidths();
 		Global.pref.metricSystem = inpMetric.getInt() == 0 ? Metrics.METRIC : Metrics.IMPERIAL;
-		Global.pref.spiderUpdates = inpSpiderUpdates.getInt();
+		// Global.pref.spiderUpdates = inpSpiderUpdates.getInt();
 		Global.pref.addDetailsToWaypoint = chkAddDetailsToWaypoint.getState();
 		Global.pref.addDetailsToName = chkAddDetailsToName.getState();
 		Global.pref.SortingGroupedByCache = chkSortingGroupedByCache.getState();
 		Global.pref.debug = chkDebug.getState();
+		Global.pref.checkLog = chkCheckLog.getState();
+		Global.pref.checkDTS = chkCheckDTS.getState();
+		Global.pref.checkTBs = chkCheckTBs.getState();
+		Global.pref.overwriteLogs = chkOverwriteLogs.getState();
 
 		Global.pref.savePreferences();
 		Global.pref.dirty = true; // Need to update table in case columns were enabled/disabled

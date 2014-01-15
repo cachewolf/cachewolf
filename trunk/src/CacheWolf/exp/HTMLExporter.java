@@ -24,11 +24,11 @@ package CacheWolf.exp;
 import CacheWolf.CacheDB;
 import CacheWolf.CacheHolder;
 import CacheWolf.CacheHolderDetail;
-import CacheWolf.Common;
 import CacheWolf.DataMover;
 import CacheWolf.Global;
 import CacheWolf.InfoBox;
 import CacheWolf.MyLocale;
+import CacheWolf.utils.Common;
 import HTML.Template;
 
 import com.stevesoft.ewe_pat.Regex;

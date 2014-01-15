@@ -113,6 +113,7 @@ public final class TransformCoordinates {
     public static final Ellipsoid HAYFORD1909 = new Ellipsoid(6378388, 297, false);
     public static final Ellipsoid CLARKE1880IGN = new Ellipsoid(6378249.2, 293.4660213, false);
     public static final Ellipsoid CLARKE1866 = new Ellipsoid(6378206.4, 294.97870, false);
+    public static final Ellipsoid KRASSOWSKY1940 = new Ellipsoid(6378245, 298.3, false);
 
     public static final class LocalSystem {
 	public int code;
@@ -173,6 +174,10 @@ public final class TransformCoordinates {
     private static final TransformParameters GB_ITALIAN_PENINSULAR_TO_WGS84 = new TransformParameters(-104.1, -49.1, -9.9, -0.971, 2.917, -0.714, -11.68, HAYFORD1909);
     //static final Area ITALY_PENINSULAR = new Area(new CWPoint());
     private static final TransformParameters GB_ITALIAN_SARDINIA_TO_WGS84 = new TransformParameters(-168.6, -34.0, 38.6, 0.374, 0.679, 1.379, 9.48, HAYFORD1909);
+    // Pulkovo 1942(83) / 3-degree Gauss-Krueger zone 4
+    // WGS84 Bounds: 10.5000, 48.9000, 13.5000, 54.7200
+    private static final TransformParameters Pulkovo_1942_TO_WGS84 = new TransformParameters(24, -123, -94, 0.02, -0.25, -0.13, 1.1, KRASSOWSKY1940);
+
     private static final Area ITALY_SARDINIA = new Area(new CWPoint(42, 6), new CWPoint(38, 11));
     private static final Area ITALY_SARDINIA_GK = new Area(wgs84ToEpsg(ITALY_SARDINIA.topleft, EPSG_ITALIAN_GB_EW1).toTrackPoint(TransformCoordinates.LOCALSYSTEM_ITALIAN_GB), wgs84ToEpsg(ITALY_SARDINIA.bottomright, EPSG_ITALIAN_GB_EW1).toTrackPoint(
 	    TransformCoordinates.LOCALSYSTEM_ITALIAN_GB));
@@ -186,7 +191,7 @@ public final class TransformCoordinates {
     // taken from taken from http://www.crs-geo.eu/crseu/EN/Home/homepage__node.html?__nnn=true click on "national CRS" -> Austria -> AT (translation *-1 as of 11-8-2009)
     /** Austria Datum Hermannskogel, AT_MGI accuracy about 1.5m */
     private static final TransformParameters LAMBERT_AUSTRIAN_OLD_TO_WGS84 = new TransformParameters(577.326, 90.129, 463.919, -5.136599, -1.4742, -5.297044, 2.4232, BESSEL);
-    // Übersicht über alle Transformparameter und EPSG-COdes und Projektionenm (PORJ4):
+    // Übersicht über alle Transformparameter und EPSG-Codes und Projektionenm (PORJ4):
     // http://svn.osgeo.org/metacrs/proj/trunk/proj/nad/epsg
     //public static final TransformParameters WGS72_TO_WGS84 =  new TransformParameters(0, 0, 4.5, 0, 0, -0.554, 0.219);
     private static final TransformParameters LAMBERT_FRENCH_NTF_TO_WGS84 = new TransformParameters(-168, -60, 320, 0, 0, 0, 0, CLARKE1880IGN);

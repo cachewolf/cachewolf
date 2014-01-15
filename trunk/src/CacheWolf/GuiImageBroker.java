@@ -21,6 +21,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 package CacheWolf;
 
+import CacheWolf.database.CacheType;
 import CacheWolf.utils.FileBugfix;
 import ewe.fx.Graphics;
 import ewe.fx.IImage;
@@ -213,23 +214,24 @@ public final class GuiImageBroker {
 		// Graphics.Up, Graphics.Down, Graphics.Right, Graphics.Left // über, unter, rechts, links vom Icon
 		btn.textPosition = Graphics.Right;
 		btn.image = getImage(icon);
-		return btn;
 	    } else {
 		// Icons in the middle of the Button (as IconAndText)
 		btn = new mButton(getText(text), getImageName(icon), null);
-		return btn;
 	    }
 	} else {
 	    if (text.length() == 0) {
-		return new mButton("", getImageName(icon), null);
+		btn = new mButton("", getImageName(icon), null);
 	    } else {
-		return new mButton(getText(text)); //, "leer", null
+		btn = new mButton(getText(text)); //, "leer", null
 	    }
 	}
+	// btn.backGround = Color.LightGreen;
+	return btn;
     }
 
     public static MenuItem getMenuItem(String text, String icon) {
-	return new MenuItem().iconize(getText(text), getImage(icon), true);
+	MenuItem mi = new MenuItem().iconize(getText(text), getImage(icon), true);
+	return mi;
     }
 
     public static PullDownMenu getPullDownMenu(String text, String icon, MenuItem[] menuItems) {
@@ -244,6 +246,7 @@ public final class GuiImageBroker {
 	}
 	pdm.modify(0, ControlConstants.DrawFlat | ControlConstants.MakeMenuAtLeastAsWide | ControlConstants.NoFocus);
 	pdm.setBorder(ewe.ui.UIConstants.BDR_OUTLINE, 1);
+	//pdm.backGround = Color.LightGreen;
 	return pdm;
     }
 }

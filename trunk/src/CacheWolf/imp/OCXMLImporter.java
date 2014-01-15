@@ -24,21 +24,21 @@ package CacheWolf.imp;
 import CacheWolf.CWPoint;
 import CacheWolf.CacheDB;
 import CacheWolf.CacheHolder;
-import CacheWolf.CacheSize;
-import CacheWolf.CacheTerrDiff;
-import CacheWolf.CacheType;
-import CacheWolf.Common;
 import CacheWolf.Global;
-import CacheWolf.ImageInfo;
 import CacheWolf.InfoBox;
-import CacheWolf.Log;
 import CacheWolf.MyLocale;
 import CacheWolf.OC;
 import CacheWolf.Profile;
 import CacheWolf.SafeXML;
 import CacheWolf.UrlFetcher;
+import CacheWolf.database.CacheSize;
+import CacheWolf.database.CacheTerrDiff;
+import CacheWolf.database.CacheType;
+import CacheWolf.database.ImageInfo;
+import CacheWolf.database.Log;
 import CacheWolf.navi.TrackPoint;
 import CacheWolf.navi.TransformCoordinates;
+import CacheWolf.utils.Common;
 
 import com.stevesoft.ewe_pat.Regex;
 
@@ -192,16 +192,15 @@ public class OCXMLImporter extends MinML {
 	    new InfoBox(MyLocale.getMsg(5500, "Error"), "Coordinates for centre must be set").wait(FormBase.OKB);
 	    return;
 	}
-	final OCXMLImporterScreen importOpt = new OCXMLImporterScreen(MyLocale.getMsg(130, "Download from opencaching"), OCXMLImporterScreen.ALL | OCXMLImporterScreen.DIST | OCXMLImporterScreen.IMAGES | OCXMLImporterScreen.INCLUDEFOUND
-		| OCXMLImporterScreen.HOST);
-	if (importOpt.execute() == FormBase.IDCANCEL) {
+	final ImportGui importGui = new ImportGui(MyLocale.getMsg(130, "Download from opencaching"), ImportGui.ALL | ImportGui.DIST | ImportGui.IMAGES | ImportGui.INCLUDEFOUND | ImportGui.HOST);
+	if (importGui.execute() == FormBase.IDCANCEL) {
 	    return;
 	}
 	Vm.showWait(true);
-	String dist = importOpt.maxDistanceInput.getText();
-	incFinds = !importOpt.foundCheckBox.getState();
-	if (importOpt.domains.getSelectedItem() != null) {
-	    hostname = (String) importOpt.domains.getSelectedItem();
+	String dist = importGui.maxDistanceInput.getText();
+	incFinds = !importGui.foundCheckBox.getState();
+	if (importGui.domains.getSelectedItem() != null) {
+	    hostname = (String) importGui.domains.getSelectedItem();
 	    Global.pref.lastOCSite = hostname;
 	}
 

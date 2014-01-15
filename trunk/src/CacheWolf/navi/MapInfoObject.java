@@ -22,10 +22,10 @@
 package CacheWolf.navi;
 
 import CacheWolf.CWPoint;
-import CacheWolf.Common;
 import CacheWolf.Global;
 import CacheWolf.Matrix;
 import CacheWolf.MyLocale;
+import CacheWolf.utils.Common;
 import ewe.fx.Point;
 import ewe.io.BufferedWriter;
 import ewe.io.FileInputStream;

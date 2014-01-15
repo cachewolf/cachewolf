@@ -23,9 +23,9 @@ package CacheWolf.imp;
 
 import CacheWolf.CacheDB;
 import CacheWolf.CacheHolder;
-import CacheWolf.Common;
 import CacheWolf.Global;
 import CacheWolf.UrlFetcher;
+import CacheWolf.utils.Common;
 import ewe.io.Reader;
 import ewe.io.StringReader;
 import ewe.sys.Handle;

@@ -25,6 +25,7 @@ import org.bouncycastle.crypto.tls.AlwaysValidVerifyer;
 import org.bouncycastle.crypto.tls.TlsSocket;
 
 import CacheWolf.utils.CWPartialInputStream;
+import CacheWolf.utils.Common;
 import ewe.data.Property;
 import ewe.data.PropertyList;
 import ewe.io.AsciiCodec;

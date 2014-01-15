@@ -21,6 +21,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 package CacheWolf;
 
+import CacheWolf.database.CacheSize;
+import CacheWolf.database.CacheType;
 import CacheWolf.navi.GotoPanel;
 import CacheWolf.navi.MovingMap;
 import CacheWolf.navi.Navigate;

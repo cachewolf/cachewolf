@@ -22,11 +22,11 @@
 package CacheWolf.navi;
 
 import CacheWolf.CWPoint;
-import CacheWolf.Common;
 import CacheWolf.CoordsScreen;
 import CacheWolf.Global;
 import CacheWolf.InfoBox;
 import CacheWolf.MyLocale;
+import CacheWolf.utils.Common;
 import ewe.filechooser.FileChooser;
 import ewe.filechooser.FileChooserBase;
 import ewe.fx.Color;

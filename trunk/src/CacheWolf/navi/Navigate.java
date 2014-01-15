@@ -457,7 +457,7 @@ class SerialThread extends mThread {
 
     public SerialThread(SerialPortOptions spo, CWGPSPoint GPSPoint, String forwardIP) throws IOException {
 	try {
-	    spo.portName = CacheWolf.Common.fixSerialPortName(spo.portName);
+	    spo.portName = CacheWolf.utils.Common.fixSerialPortName(spo.portName);
 	    comSp = new SerialPort(spo);
 	} catch (IOException e) {
 	    throw new IOException(spo.portName);
