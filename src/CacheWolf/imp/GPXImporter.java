@@ -22,29 +22,29 @@
 
 package CacheWolf.imp;
 
-import CacheWolf.Attribute;
 import CacheWolf.CacheDB;
 import CacheWolf.CacheHolder;
-import CacheWolf.CacheSize;
-import CacheWolf.CacheTerrDiff;
-import CacheWolf.CacheType;
-import CacheWolf.Common;
-import CacheWolf.Extractor;
+import CacheWolf.CacheHolderDetail;
 import CacheWolf.Filter;
 import CacheWolf.Global;
-import CacheWolf.ImageInfo;
 import CacheWolf.InfoBox;
-import CacheWolf.Log;
 import CacheWolf.MyLocale;
 import CacheWolf.OC;
 import CacheWolf.Profile;
-import CacheWolf.STRreplace;
 import CacheWolf.SafeXML;
 import CacheWolf.Travelbug;
 import CacheWolf.UrlFetcher;
-import CacheWolf.imp.SpiderGC.SpiderProperties;
+import CacheWolf.database.Attribute;
+import CacheWolf.database.CacheSize;
+import CacheWolf.database.CacheTerrDiff;
+import CacheWolf.database.CacheType;
+import CacheWolf.database.ImageInfo;
+import CacheWolf.database.Log;
 import CacheWolf.navi.TrackPoint;
 import CacheWolf.utils.BetterUTF8Codec;
+import CacheWolf.utils.Common;
+import CacheWolf.utils.Extractor;
+import CacheWolf.utils.STRreplace;
 
 import com.stevesoft.ewe_pat.Regex;
 
@@ -88,8 +88,7 @@ public class GPXImporter extends MinML {
     public static final int DOIT_ASK = 0;
     public static final int DOIT_NOSPOILER = 1;
     public static final int DOIT_WITHSPOILER = 2;
-    SpiderGC imgSpider;
-    SpiderProperties propsSpider;
+    GCImporter imgSpider;
     StringBuffer strBuf;
     private int doitHow;
     private String attID;
@@ -114,19 +113,19 @@ public class GPXImporter extends MinML {
 	try {
 	    String file;
 	    if (how == DOIT_ASK) {
-		OCXMLImporterScreen options = new OCXMLImporterScreen(MyLocale.getMsg(5510, "Spider Options"), OCXMLImporterScreen.IMAGES | OCXMLImporterScreen.ISGC);
-		if (options.execute() == FormBase.IDCANCEL) {
+		ImportGui importGui = new ImportGui(MyLocale.getMsg(5510, "Spider Options"), ImportGui.IMAGES | ImportGui.ISGC);
+		if (importGui.execute() == FormBase.IDCANCEL) {
 		    return;
 		}
-		doSpider = options.imagesCheckBox.getState();
-		options.close(0);
+		doSpider = importGui.imagesCheckBox.getState();
+		importGui.close(0);
 	    } else if (how == DOIT_NOSPOILER) {
 		doSpider = false;
 	    } else {
 		doSpider = true;
 	    }
 	    if (doSpider) {
-		imgSpider = new SpiderGC();
+		imgSpider = new GCImporter();
 		doitHow = DOIT_WITHSPOILER;
 	    } else {
 		doitHow = DOIT_NOSPOILER;
@@ -629,21 +628,20 @@ public class GPXImporter extends MinML {
     private void spiderImagesUsingSpider() {
 	String addresse;
 	String cacheText;
+	CacheHolderDetail chD = holder.getCacheDetails(false);
 
 	// just to be sure to have a spider object
 	if (imgSpider == null)
-	    imgSpider = new SpiderGC();
-	if (propsSpider == null) {
-	    propsSpider = imgSpider.new SpiderProperties();
-	}
+	    imgSpider = new GCImporter();
 
 	try {
 	    if (fromTC) {
-		imgSpider.getImages(holder.getCacheDetails(false).LongDescription, holder.getCacheDetails(false), false);
+		// special ;
+		Global.pref.log("[gpx Import]Spider images from TerraCaching not implemented!", null);
 	    } else {
 		if (fromOC) {
-		    holder.getCacheDetails(false).images.clear();
-		    addresse = holder.getCacheDetails(false).URL;
+		    chD.images.clear();
+		    addresse = chD.URL;
 		    cacheText = UrlFetcher.fetch(addresse);
 		    Extractor exBeschreibung = new Extractor(cacheText, "<!-- Beschreibung -->", "<!-- End Beschreibung -->", 0, false);
 		    String beschreibung = exBeschreibung.findNext();
@@ -652,19 +650,11 @@ public class GPXImporter extends MinML {
 		    String bilder = exBilder.findNext();
 		    getOCPictures(bilder);
 		} else {
-		    addresse = "http://www.geocaching.com/seek/cache_details.aspx?wp=" + holder.getWayPoint();
-		    cacheText = UrlFetcher.fetch(addresse);
-		    if (cacheText.indexOf(propsSpider.getProp("premiumCachepage")) > 0) {
-			// Premium cache spidered by non premium member
-			imgSpider.getImages(holder.getCacheDetails(false).LongDescription, holder.getCacheDetails(false), false);
-		    } else {
-			imgSpider.getImages(cacheText, holder.getCacheDetails(false), true);
-		    }
-		    try {
-			imgSpider.getAttributes(cacheText, holder.getCacheDetails(false));
-		    } catch (Exception e) {
-			Global.pref.log("unable to fetch attributes for" + holder.getWayPoint(), e);
-		    }
+		    imgSpider.getWayPointPage(holder.getWayPoint());
+		    chD.setLongDescription(imgSpider.getDescription());
+		    imgSpider.getImages(chD);
+		    // todo if Attributes are in the gpx (Version 1.1.0) : don't spider them
+		    imgSpider.getAttributes(chD);
 		}
 	    }
 	} catch (Exception e1) {
@@ -701,8 +691,9 @@ public class GPXImporter extends MinML {
 		    fetchUrl = new URL(new URL("http://" + hostname + "/"), fetchUrl).toString();
 		}
 	    } catch (MalformedURLException e) {
+		// auch egal
 		continue;
-	    } // auch egal
+	    }
 	    ImageInfo imageInfo = new ImageInfo();
 	    imageInfo.setURL(fetchUrl);
 	    imageInfo.setTitle(makeTitle(imgRegexUrl.stringMatched(1), fetchUrl));

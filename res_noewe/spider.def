@@ -6,8 +6,6 @@
 # A suffix of ExEnd indicates the end of an Extractor search pattern
 #
 # Important:
-# * When entering spaces into a string ensure to escape them or write them as \\u0020
-# * escaping space should not be necessary
 # * Be sure that you have no hidden spaces at the end of a line or the patterns will not match!
 #------------------------------------------------------------
 #--------------------------------------
@@ -61,23 +59,39 @@ TBRex              = /wpttypes/([0-9]+).gif" alt="(.*?)"
 #--------------------------------------
 #Section2: Get cachepage by name
 #--------------------------------------
-cacheUnavailable   = class="OldWarning"><li>This cache is temporarily unavailable
-cacheArchived      = class="OldWarning"><li>This cache has been archived
-premiumCachepage   = > Premium Member Only Cache
-# "oldLatLngDisplay":"N 48° 29.684' E 009° 12.397'"
-orgLatLonRex       = "oldLatLngDisplay":"((?s).*?)"
-latLonRex          = <span id="uxLatLon">((?s).*?)</span>
-shortDescRex       = tBody_ShortDescription">((?s).*?)</span>
-longDescRex        = tBody_LongDescription">((?s).*?)<strong>\\s+Additional\ Hints</strong>
+# <meta name="description" content="...
+#...size geocache, with difficulty of 3.5, terrain of 3. It...
+#...size geocache, with difficulty of 1, terrain of 1.5. It...
+difficultyRex      = difficulty of (.*?),
+terrainRex         = terrain of (.*?)\\.
+#                                                  title="About Cache Types"><img src="/images/WptTypes/2.gif" alt="Traditional Cache"
+#<a href="/about/cache_types.aspx" target="_blank" title="About Cache Types"><img src="/images/WptTypes/8.gif" alt="Mystery-Cache" title="Mystery-Cache" /></a>
+cacheTypeRex       = /images/WptTypes/(.*?)\\.gif" alt="
+#<span id="ctl00_ContentBody_CacheName">EDUARD-MÖRIKE-WEG 5B</span>
 cacheNameRex       = tBody_CacheName">((?s).*?)</span>
+#Ein Geocache von <a href="http://www.geocaching.com/profile/?guid=7715b8c5-bbbb-4b57-bf14-251b134758d2&wid=66b27589-480e-4251-86f3-42884af5f6fd&ds=2">Trebbi</a>
+#A cache by <a href="http://www.geocaching.com/profile/?guid=99dee790-35fc-4764-994d-639ab2e7f059&wid=34611971-fe8a-4d0c-82d7-b60e11714eb3&ds=2">tripleclaus</a>
 cacheOwnerRex      = &wid=(?:(?s).*?)>((?s).*?)<
-dateHiddenRex      = (?:Hidden|Event\ Date)\\s*:\\s*((?s).*?)\\s*<
-hintsRex           = <div\ id="div_hint"\ class="span-8\ WrapFix">\\s*((?s).*?)\\s*</div>
-sizeRex            = alt="Size:\ ((?s).*?)"
-difficultyRex      = difficulty\ of\ (.*?),
-terrainRex         = terrain\ of\ (.*?)\\.\\ 
-cacheTypeRex       = /images/WptTypes/(.*?)\\.gif"\ alt="
-cacheLocationRex   = tBody_Location">In\ (<.*?>)?(.*?)<
+#<div id="ctl00_ContentBody_mcd2">\nVersteckt\n:\n01 Nov 13\n\n</div>
+#<div id="ctl00_ContentBody_mcd2">\nHidden\n:\n19/Jan/2012\n\n</div>
+#!!! von Sprache abhängig : language dependant | vom Datumsformat abhängig : dateformat dependant
+dateHiddenRex      = (?:Hidden|Event Date)\\s*:\\s*((?s).*?)\\s*<
+#Difficulty:</dt>\n<dd>\n<span id="ctl00_ContentBody_uxLegendScale"
+#not used
+#Terrain:</dt>\n<dd>\n<span id="ctl00_ContentBody_Localize12"
+#not used
+#Size:&nbsp;<span class="minorCacheDetails"><img src="/images/icons/container/micro.gif" alt="Size: micro" title="Size: micro" />&nbsp<small>(micro)</small></span>
+sizeRex            = alt="Size: ((?s).*?)"
+#<span id="uxLatLon">N 48° 33.524 E 009° 18.747</span></strong>
+latLonRex          = <span id="uxLatLon">((?s).*?)</span>
+#<span id="ctl00_ContentBody_Location">In Baden-Württemberg, Germany</span><br />
+cacheLocationRex   = tBody_Location">In (<.*?>)?(.*?)<
+#<span id="ctl00_ContentBody_ShortDescription">
+shortDescRex       = tBody_ShortDescription">((?s).*?)</span>
+#<span id="ctl00_ContentBody_LongDescription"><span styl.....
+longDescRex        = tBody_LongDescription">((?s).*?)<strong>\\s+Additional Hints</strong>
+#Decrypt</a>) </p><div id="div_hint" class="span-8 WrapFix">*******\n</div><div id='dk' style="display: block;" class="span-9 last">
+hintsRex           = <div id="div_hint" class="span-8 WrapFix">\\s*((?s).*?)\\s*</div>
 
 #--------------------------------------
 #Section2a: Logs
@@ -96,21 +110,21 @@ blockExStart       = ctl00_ContentBody_uxTravelBugList_uxInventoryLabel
 #blockExEnd         = ctl00_ContentBody_uxTravelBugList_uxTrackableItemsLinks
 blockExEnd         = ctl00_ContentBody_uxTravelBugList_uxTrackableItemsHistory
 # bugEx extrahiert die Namen der einzelnen Bugs aus dem Bugbereich
-bugExStart         = <a\ href="
+bugExStart         = <a href="
 bugExEnd           = </a>
-bugLinkEnd         = "\ class="lnk">
+bugLinkEnd         = " class="lnk">
 bugNameExStart     = <span>
 bugNameExEnd       = </span>
-bugDetailsStart    = <meta\ name="og:description"\ content="
-bugDetailsEnd      = "\ property="og:description"
+bugDetailsStart    = <meta name="og:description" content="
+bugDetailsEnd      = " property="og:description"
 getBugByName       = http://www.geocaching.com/track/search.aspx?k=
 getBugByGuid       = http://www.geocaching.com/track/details.aspx?guid=
 getBugById         = http://www.geocaching.com/track/details.aspx?id=
 getBugByTrackNr    = http://www.geocaching.com/track/details.aspx?tracker=
 bugGuidExStart     = www.geocaching.com/track/details.aspx?id=
 bugGuidExEnd       = "
-bugNotFound        = No\ results\ were\ found\ for\ your\ search
-bugTotalRecords    = Total\ Records:\ <b>1</b>
+bugNotFound        = No results were found for your search
+bugTotalRecords    = Total Records: <b>1</b>
 bugNameStart       = <span id="ctl00_ContentBody_lbHeading">
 bugNameEnd         = </span>
 
@@ -118,32 +132,25 @@ bugNameEnd         = </span>
 #--------------------------------------
 #Section2c: Images
 #--------------------------------------
-# imgBlockEx searches for images in the long description
-imgBlockExStart    = <IMG
-imgBlockExEnd      = >
-# imgSpanEx searches for images in the image section
-imgSpanExStart     = ctl00_ContentBody_MapLinks_MapLinks
-imgSpanExStart2    = <ul class="CachePageImages NoPrint">
-imgSpanExEnd       = InformationWidget Clear
-imgSrcExStart      = <a href="http://
-imgSrcExEnd        = " rel="lightbox"
-imgNameExStart     = rel="lightbox">
-imgNameExEnd       = </a>
-imgCommentExStart  = <span class="description">
-imgCommentExEnd    = </span>
+# searches for images in the spoilerSection
+spoilerSectionStart     = ctl00_ContentBody_MapLinks_MapLinks
+spoilerSectionStart2    = <ul class="CachePageImages NoPrint">
+spoilerSectionEnd       = InformationWidget Clear
+imgCommentExStart       = <span class="description">
+imgCommentExEnd         = </span>
 
 #--------------------------------------
 #Section2d: Additional waypoints
 #--------------------------------------
-wayBlockExStart    = <span\ id="ctl00_ContentBody_WaypointsInfo"
+wayBlockExStart    = <span id="ctl00_ContentBody_WaypointsInfo"
 wayBlockExEnd      = </table>
 nameRex            = &RefDS=1">(.*)</a>
-koordRex           = <td>\\s*([NSns]\ [0-9]{1,2}..[0-9]{1,2}.[0-9]{1,3}\ [EWew]\ [0-9]{1,3}..[0-9]{1,2}.[0-9]{1,3})&nbsp;\\s*</td>
+koordRex           = <td>\\s*([NSns] [0-9]{1,2}..[0-9]{1,2}.[0-9]{1,3} [EWew] [0-9]{1,3}..[0-9]{1,2}.[0-9]{1,3})&nbsp;\\s*</td>
 descRex            = colspan="6">((?:.|\n|\r)*?)</td>
-typeRex            = </a>\ \\((.*)\\)\\s*</td>
+typeRex            = </a> \\((.*)\\)\\s*</td>
 rowBlockExStart    = <tr
 rowBlockExEnd      = </tr>
-prefixExStart      = <span\ id="awpt_
+prefixExStart      = <span id="awpt_
 prefixExEnd        = ">
 
 #--------------------------------------

@@ -21,6 +21,8 @@
 */
 package CacheWolf;
 
+import CacheWolf.utils.Common;
+import CacheWolf.utils.STRreplace;
 import ewe.fx.Dimension;
 import ewe.fx.Graphics;
 import ewe.fx.IImage;

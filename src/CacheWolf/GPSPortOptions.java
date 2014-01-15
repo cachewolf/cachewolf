@@ -27,6 +27,7 @@ import net.ax86.GPSException;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import CacheWolf.utils.Common;
 import ewe.io.IOException;
 import ewe.io.SerialPort;
 import ewe.io.SerialPortOptions;

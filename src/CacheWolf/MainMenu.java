@@ -37,17 +37,18 @@ import CacheWolf.exp.TPLExporter;
 import CacheWolf.exp.TomTomExporter;
 import CacheWolf.imp.CSVImporter;
 import CacheWolf.imp.FieldnotesImporter;
+import CacheWolf.imp.GCImporter;
 import CacheWolf.imp.GCVoteImporter;
 import CacheWolf.imp.GPXImporter;
+import CacheWolf.imp.ImportGui;
 import CacheWolf.imp.LOCXMLImporter;
 import CacheWolf.imp.OCGPXfetch;
 import CacheWolf.imp.OCLinkImporter;
 import CacheWolf.imp.OCXMLImporter;
-import CacheWolf.imp.OCXMLImporterScreen;
-import CacheWolf.imp.SpiderGC;
 import CacheWolf.navi.MapImporter;
 import CacheWolf.navi.MapLoaderGui;
 import CacheWolf.navi.SelectMap;
+import CacheWolf.utils.STRreplace;
 import CacheWolf.view.TravelbugJourneyScreenFactory;
 import ewe.filechooser.FileChooser;
 import ewe.filechooser.FileChooserBase;
@@ -305,13 +306,12 @@ public class MainMenu extends MenuBar {
 	CacheDB cacheDB = Global.profile.cacheDB;
 	CacheHolder ch;
 
-	OCXMLImporterScreen options = new OCXMLImporterScreen(MyLocale.getMsg(1014, "updateSelectedCaches"), OCXMLImporterScreen.IMAGES | OCXMLImporterScreen.TRAVELBUGS | OCXMLImporterScreen.MAXLOGS | OCXMLImporterScreen.ALL);
-	if (options.execute() == FormBase.IDCANCEL) {
+	if (new ImportGui(MyLocale.getMsg(1014, "updateSelectedCaches"), ImportGui.IMAGES | ImportGui.TRAVELBUGS | ImportGui.MAXLOGS | ImportGui.ALL).execute() == FormBase.IDCANCEL) {
 	    return;
 	}
 
-	SpiderGC spider = new SpiderGC();
-	SpiderGC.loggedIn = false;
+	GCImporter spider = new GCImporter();
+	GCImporter.loggedIn = false;
 	OCXMLImporter ocSync = new OCXMLImporter();
 	Vm.showWait(true);
 	boolean alreadySaid = false;
@@ -352,10 +352,10 @@ public class MainMenu extends MenuBar {
 	    infB.redisplay();
 	    if (ch.getWayPoint().substring(0, 2).equalsIgnoreCase("GC")) {
 		int test = spider.spiderSingle(i, infB);
-		if (test == SpiderGC.SPIDER_CANCEL) {
+		if (test == GCImporter.SPIDER_CANCEL) {
 		    infB.close(0);
 		    break;
-		} else if (test == SpiderGC.SPIDER_ERROR || test == SpiderGC.SPIDER_IGNORE_PREMIUM) {
+		} else if (test == GCImporter.SPIDER_ERROR || test == GCImporter.SPIDER_IGNORE_PREMIUM) {
 		    spiderErrors++;
 		} else {
 		    // Global.profile.hasUnsavedChanges=true;
@@ -445,7 +445,7 @@ public class MainMenu extends MenuBar {
 	    // subMenu for import, part of "Application" menu
 	    // /////////////////////////////////////////////////////////////////////
 	    if (mev.selectedItem == spider) {
-		SpiderGC spGC = new SpiderGC();
+		GCImporter spGC = new GCImporter();
 		Global.mainTab.saveUnsavedChanges(false);
 		spGC.doIt();
 		cacheDB.clear();
@@ -454,7 +454,7 @@ public class MainMenu extends MenuBar {
 		Global.pref.setOldGCLanguage();
 	    }
 	    if (mev.selectedItem == spiderRoute) {
-		SpiderGC spGC = new SpiderGC();
+		GCImporter spGC = new GCImporter();
 		Global.mainTab.saveUnsavedChanges(false);
 		spGC.doItAlongARoute();
 		cacheDB.clear();
@@ -463,7 +463,7 @@ public class MainMenu extends MenuBar {
 		Global.pref.setOldGCLanguage();
 	    }
 	    if (mev.selectedItem == spiderAllFinds) {
-		SpiderGC spGC = new SpiderGC();
+		GCImporter spGC = new GCImporter();
 		Global.mainTab.saveUnsavedChanges(false);
 		spGC.doIt(true);
 		cacheDB.clear();
@@ -631,7 +631,7 @@ public class MainMenu extends MenuBar {
 		// .execute doesn't work because the tcp-socket uses another thread
 		// which cannot be startet if here .execute() is used!
 		if (mLG.isCreated)
-		    mLG.exec();
+		    mLG.exec(); // no wait for close window
 	    }
 	    if (mev.selectedItem == importmap) {
 

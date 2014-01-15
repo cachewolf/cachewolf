@@ -23,6 +23,9 @@ package CacheWolf;
 
 import CacheWolf.navi.Area;
 import CacheWolf.navi.TransformCoordinates;
+import CacheWolf.utils.Common;
+import CacheWolf.utils.Extractor;
+import CacheWolf.utils.STRreplace;
 import ewe.io.BufferedWriter;
 import ewe.io.File;
 import ewe.io.FileNotFoundException;
@@ -66,8 +69,6 @@ public class Profile {
     /** Distance for geocaching caches */
     private String distGC = "";
     private String minDistGC = "";
-    /** Direction for geocaching caches */
-    private String directionGC = "";
 
     private String gpxStyle = new String();
     private String gpxTarget = new String();
@@ -141,7 +142,6 @@ public class Profile {
 	setDistOC("");
 	setDistGC("");
 	setMinDistGC("");
-	setDirectionGC("");
 	setGpxId("0");
 	setGpxStyle("0");
 	setGpxTarget("0");
@@ -215,9 +215,6 @@ public class Profile {
 	    if (getMinDistGC() == null || getMinDistGC().endsWith("null") || getMinDistGC().equals("")) {
 		setMinDistGC("0.0");
 	    }
-	    if (getDirectionGC() == null || getDirectionGC().endsWith("null") || getDirectionGC().equals("")) {
-		setDirectionGC("");
-	    }
 
 	    // If the current filter is a CacheTour filter, then save it as
 	    // normal filter, because after loading there is no cache tour defined
@@ -231,7 +228,7 @@ public class Profile {
 	    detfile.print("    <FILTERCONFIG status = \"" + activeFilterForSave + (isFilterInverted() ? "T" : "F") + "\" showBlacklist = \"" + showBlacklisted() + "\" />\n");
 	    detfile.print(this.getCurrentFilter().toXML(""));
 	    detfile.print("    <SYNCOC date = \"" + getLast_sync_opencaching() + "\" dist = \"" + getDistOC() + "\"/>\n");
-	    detfile.print("    <SPIDERGC dist = \"" + getDistGC() + "\" mindist = \"" + getMinDistGC() + "\" direction = \"" + getDirectionGC() + "\"/>\n");
+	    detfile.print("    <SPIDERGC dist = \"" + getDistGC() + "\" mindist = \"" + getMinDistGC() + "\"/>\n");
 	    detfile.print("    <EXPORT style = \"" + getGpxStyle() + "\" target = \"" + getGpxTarget() + "\" id = \"" + getGpxId() + "\"/>\n");
 	    detfile.print("    <mapspath relativeDir = \"" + SafeXML.clean(relativeMapsDir) + "\"/>\n");
 	    detfile.print("    <TIMEZONE timeZoneOffset = \"" + getTimeZoneOffset() + "\" timeZoneAutoDST = \"" + getTimeZoneAutoDST() + "\"/>\n");
@@ -352,11 +349,6 @@ public class Profile {
 			setMinDistGC("0");
 		    } else
 			setMinDistGC(text.substring(start, text.indexOf("\"", start)));
-		    start = text.indexOf("direction = \"") + 13;
-		    if (start == 12) {
-			setDirectionGC("");
-		    } else
-			setDirectionGC(text.substring(start, text.indexOf("\"", start)));
 		} else if (text.indexOf("<EXPORT") >= 0) {
 		    int start = text.indexOf("style = \"") + 9;
 		    if (start == 8) {
@@ -428,10 +420,10 @@ public class Profile {
 		    String attr = ex.findNext();
 		    long[] filterAttr = { 0l, 0l, 0l, 0l };
 		    if (attr != null && !attr.equals(""))
-		    	filterAttr[0] = Convert.parseLong(attr);
+			filterAttr[0] = Convert.parseLong(attr);
 		    attr = ex.findNext();
 		    if (attr != null && !attr.equals(""))
-		    	filterAttr[2] = Convert.parseLong(attr);
+			filterAttr[2] = Convert.parseLong(attr);
 		    setFilterAttr(filterAttr);
 		    attr = ex.findNext();
 		    setFilterAttrChoice(Convert.parseInt(attr));
@@ -439,25 +431,26 @@ public class Profile {
 		    setFilterUseRegexp(Boolean.valueOf(ex.findNext()).booleanValue());
 		    attr = ex.findNext();
 		    if (attr != null && !attr.equals("")) {
-		    	setFilterNoCoord(Boolean.valueOf(attr).booleanValue());
+			setFilterNoCoord(Boolean.valueOf(attr).booleanValue());
 		    } else {
-		    	setFilterNoCoord(true);
+			setFilterNoCoord(true);
 		    }
 		    attr = ex.findNext();
 		    if (attr != null && !attr.equals(""))
-		    	filterAttr[1] = Convert.parseLong(attr);
+			filterAttr[1] = Convert.parseLong(attr);
 		    attr = ex.findNext();
 		    if (attr != null && !attr.equals(""))
-		    	filterAttr[3] = Convert.parseLong(attr);
+			filterAttr[3] = Convert.parseLong(attr);
 		    setFilterAttr(filterAttr);
 
 		    // Order within the search items must not be changed
 		    attr = SafeXML.cleanback(ex.findNext());
 		    String[] searchFilterList = ewe.util.mString.split(attr, '|'); //'\u0399');
-		    for(int i = 0; i < searchFilterList.length; i++)
-		    {
-		    	if (i == 0) setFilterSyncDate(searchFilterList[i]);
-		    	if (i == 1) setFilterNamePattern(searchFilterList[i]);
+		    for (int i = 0; i < searchFilterList.length; i++) {
+			if (i == 0)
+			    setFilterSyncDate(searchFilterList[i]);
+			if (i == 1)
+			    setFilterNamePattern(searchFilterList[i]);
 		    }
 
 		} else if (text.indexOf("<FILTERCONFIG") >= 0) {
@@ -869,23 +862,23 @@ public class Profile {
 	return last_sync_opencaching;
     }
 
-	public String getFilterSyncDate() {
-		return currentFilter.getSyncDate();
-	}
+    public String getFilterSyncDate() {
+	return currentFilter.getSyncDate();
+    }
 
-	public void setFilterSyncDate(String lastDate) {
-		this.notifyUnsavedChanges(lastDate != this.getCurrentFilter().getSyncDate());
-		this.currentFilter.setSyncDate(lastDate);
-	}
+    public void setFilterSyncDate(String lastDate) {
+	this.notifyUnsavedChanges(lastDate != this.getCurrentFilter().getSyncDate());
+	this.currentFilter.setSyncDate(lastDate);
+    }
 
-	public String getFilterNamePattern() {
-		return currentFilter.getNamePattern();
-	}
+    public String getFilterNamePattern() {
+	return currentFilter.getNamePattern();
+    }
 
-	public void setFilterNamePattern(String pattern) {
-		this.notifyUnsavedChanges(pattern != this.getCurrentFilter().getNamePattern());
-		this.currentFilter.setNamePattern(pattern);
-	}
+    public void setFilterNamePattern(String pattern) {
+	this.notifyUnsavedChanges(pattern != this.getCurrentFilter().getNamePattern());
+	this.currentFilter.setNamePattern(pattern);
+    }
 
     public void setLast_sync_opencaching(String last_sync_opencaching) {
 	this.notifyUnsavedChanges(!last_sync_opencaching.equals(this.last_sync_opencaching));
@@ -909,10 +902,6 @@ public class Profile {
 	return minDistGC;
     }
 
-    public String getDirectionGC() {
-	return directionGC;
-    }
-
     public int getGpxStyle() {
 	return Convert.toInt(gpxStyle);
     }
@@ -934,11 +923,6 @@ public class Profile {
     public void setDistGC(String distGC) {
 	this.notifyUnsavedChanges(!distGC.equals(this.distGC));
 	this.distGC = distGC;
-    }
-
-    public void setDirectionGC(String directionGC) {
-	this.notifyUnsavedChanges(!directionGC.equals(this.directionGC));
-	this.directionGC = directionGC;
     }
 
     public void setGpxStyle(String style) {
