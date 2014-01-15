@@ -22,8 +22,8 @@
 package CacheWolf.navi;
 
 import CacheWolf.CWPoint;
-import CacheWolf.CacheDB;
-import CacheWolf.CacheHolder;
+import CacheWolf.database.CacheDB;
+import CacheWolf.database.CacheHolder;
 import CacheWolf.CoordsScreen;
 import CacheWolf.ExecutePanel;
 import CacheWolf.Global;

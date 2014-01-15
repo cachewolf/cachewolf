@@ -19,13 +19,13 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
-package CacheWolf;
+package CacheWolf.database;
 
-import CacheWolf.database.Attributes;
-import CacheWolf.database.CacheImages;
-import CacheWolf.database.ImageInfo;
-import CacheWolf.database.Log;
-import CacheWolf.database.LogList;
+import CacheWolf.DataMover;
+import CacheWolf.Global;
+import CacheWolf.SafeXML;
+import CacheWolf.Travelbug;
+import CacheWolf.TravelbugList;
 import CacheWolf.utils.Extractor;
 import ewe.filechooser.FileChooser;
 import ewe.filechooser.FileChooserBase;

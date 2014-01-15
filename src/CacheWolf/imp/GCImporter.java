@@ -25,8 +25,8 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import CacheWolf.CWPoint;
-import CacheWolf.CacheHolder;
-import CacheWolf.CacheHolderDetail;
+import CacheWolf.database.CacheHolder;
+import CacheWolf.database.CacheHolderDetail;
 import CacheWolf.DateFormat;
 import CacheWolf.Global;
 import CacheWolf.InfoBox;
@@ -81,9 +81,7 @@ public class GCImporter {
     public static boolean loggedIn = false;
 
     // Return values for spider action
-    /**
-     * Ignoring a premium member cache when spidering from a non premium account
-     */
+    /** Ignoring a premium member cache when spidering from a non premium account  */
     public static int SPIDER_IGNORE_PREMIUM = -2;
     /** Canceling spider process */
     public static int SPIDER_CANCEL = -1;
@@ -161,7 +159,7 @@ public class GCImporter {
     private static Regex longDescRex;
     private static Regex hintsRex;
 
-    private static String premiumCache = "> Premium Member Only Cache";
+    private static String premiumGeocache = "> Premium Member Only Cache";
     private static String unpublishedGeocache = "Unpublished Geocache";
     private static String unavailableGeocache = "This cache is temporarily unavailable";
     private static String archivedGeocache = "This cache has been archived";
@@ -1799,8 +1797,22 @@ public class GCImporter {
 	    final int MAX_SPIDER_TRYS = 3;
 	    while (spiderTrys++ < MAX_SPIDER_TRYS) {
 		ret = getWayPointPage(ch.getWayPoint());
-		if (infB.isClosed())
-		    ret = SPIDER_CANCEL;
+		if (ret == SPIDER_OK) {
+		    if (infB.isClosed())
+			ret = SPIDER_CANCEL;
+		    else if (wayPointPage.indexOf(premiumGeocache) > -1) {
+			// old ch.setCacheStatus("PM");
+			// Premium cache spidered by non premium member
+			Global.pref.log("Ignoring premium member cache: " + ch.getWayPoint(), null);
+			spiderTrys = MAX_SPIDER_TRYS;
+			ret = SPIDER_IGNORE_PREMIUM;
+		    } else if (wayPointPage.indexOf(unpublishedGeocache) > -1) {
+			// old ch.setCacheStatus("unpublished Geocache");
+			Global.pref.log("unpublished Geocache: " + ch.getWayPoint(), null);
+			spiderTrys = MAX_SPIDER_TRYS;
+			ret = SPIDER_IGNORE;
+		    }
+		}
 		if (ret == SPIDER_OK) {
 		    try {
 			ch.setHTML(true);
@@ -1809,10 +1821,9 @@ public class GCImporter {
 
 			ch.setAvailable(!(wayPointPage.indexOf(unavailableGeocache) > -1));
 			ch.setArchived(wayPointPage.indexOf(archivedGeocache) > -1);
-			//if (wayPointPage.indexOf(premiumGeocache) > -1) ch.setCacheStatus("PM");
 
 			// Logs
-			getLogs(ch, wayPointPage.indexOf(foundByMe) > -1);
+			getLogs(ch, wayPointPage.indexOf(foundByMe) > -1); // or get finds
 
 			// order of occurrence in wayPointPage (perhaps replace RegEx with Extractor)
 			ch.setHard(getDiff());
@@ -1827,23 +1838,11 @@ public class GCImporter {
 			ch.setCacheSize(getSize());
 			final String latLon = getLatLon();
 			if (latLon.equals("???")) {
-			    if (wayPointPage.indexOf(premiumCache) > 0) {
-				// Premium cache spidered by non premium member
-				Global.pref.log("Ignoring premium member cache: " + ch.getWayPoint(), null);
-				spiderTrys = MAX_SPIDER_TRYS;
-				ret = SPIDER_IGNORE_PREMIUM;
-				continue;
-			    } else {
-				if (wayPointPage.indexOf(unpublishedGeocache) < 0) {
-				    Global.pref.log("[SpiderGC.java:getLatLon]check latLonRex!", null);
-				    if (spiderTrys == MAX_SPIDER_TRYS)
-					Global.pref.log(">>>> Failed to spider Cache. Retry.", null);
-				    ret = SPIDER_ERROR;
-				    continue;
-				}
-				Global.pref.log("unpublished Geocache: " + ch.getWayPoint(), null);
-				ch.setCacheStatus("unpublished Geocache");
-			    }
+			    Global.pref.log("[SpiderGC.java:getLatLon]check latLonRex!", null);
+			    if (spiderTrys == MAX_SPIDER_TRYS)
+				Global.pref.log(">>>> Failed to spider Cache. Retry.", null);
+			    ret = SPIDER_ERROR;
+			    continue;
 			}
 			ch.setPos(new CWPoint(latLon));
 			final String location = getLocation();
@@ -1896,10 +1895,6 @@ public class GCImporter {
 
 	}// while(true)
 
-	if (infB.isClosed()) {
-	    // If the infoBox was closed before getting here, we return -1
-	    ret = SPIDER_CANCEL;
-	}
 	return ret;
     } // getCacheByWaypointName
 
@@ -2035,15 +2030,16 @@ public class GCImporter {
      * Get the logs
      */
     private void getLogs(CacheHolder ch, boolean fetchAllLogs) throws Exception {
-	RexUserToken.search(wayPointPage);
-	if (!RexUserToken.didMatch()) {
-	    Global.pref.log("[SpiderGC.java:getLogs]check RexUserToken!", null);
-	}
-	final String userToken = RexUserToken.stringMatched(1);
-
 	final CacheHolderDetail chD = ch.getCacheDetails(false);
 	final LogList reslts = chD.CacheLogs;
 	reslts.clear();
+
+	RexUserToken.search(wayPointPage);
+	if (!RexUserToken.didMatch()) {
+	    Global.pref.log("[SpiderGC.java:getLogs]check RexUserToken!", null);
+	    return;
+	}
+	final String userToken = RexUserToken.stringMatched(1);
 
 	int idx = 0;
 	int nLogs = 0;
@@ -2240,8 +2236,13 @@ public class GCImporter {
 		// Delete possible characters in URL after the image extension
 		imgUrl = imgUrl.substring(0, imgUrl.lastIndexOf('.') + imgType.length());
 		if (imgType.startsWith(".jpg") || imgType.startsWith(".bmp") || imgType.startsWith(".png") || imgType.startsWith(".gif")) {
-		    // title from title or alt
-		    chD.images.add(spiderImage(chD, imgUrl, imgType));
+		    try {
+			ImageInfo imageInfo = spiderImage(chD, imgUrl, imgType);
+			// title from title or alt
+			chD.images.add(imageInfo);
+		    } catch (Exception e) {
+			Global.pref.log("Error loading image: " + imgUrl, e);
+		    }
 		}
 	    }
 	}
@@ -2262,9 +2263,13 @@ public class GCImporter {
 		// Delete possible characters in URL after the image extension
 		imgUrl = imgUrl.substring(0, imgUrl.lastIndexOf('.') + imgType.length());
 		if (imgType.startsWith(".jpg") || imgType.startsWith(".bmp") || imgType.startsWith(".png") || imgType.startsWith(".gif")) {
-		    ImageInfo imageInfo = spiderImage(chD, imgUrl, imgType);
-		    imageInfo.setTitle(extractValue.findNext(">", "<"));
-		    chD.images.add(imageInfo);
+		    try {
+			ImageInfo imageInfo = spiderImage(chD, imgUrl, imgType);
+			imageInfo.setTitle(extractValue.findNext(">", "<"));
+			chD.images.add(imageInfo);
+		    } catch (Exception e) {
+			Global.pref.log("Error loading image: " + imgUrl, e);
+		    }
 		}
 	    }
 	}
@@ -2293,17 +2298,19 @@ public class GCImporter {
 		if (imgType.startsWith(".jpg") || imgType.startsWith(".bmp") || imgType.startsWith(".png") || imgType.startsWith(".gif")) {
 		    // Delete possible characters in URL after the image extension
 		    imgUrl = imgUrl.substring(0, imgUrl.lastIndexOf('.') + imgType.length());
-		    ImageInfo imageInfo = spiderImage(chD, imgUrl, imgType);
-		    imageInfo.setTitle(extractValue.findNext(">", "<"));
-
-		    String imgComment = extractValue.findNext(imgCommentExStart, imgCommentExEnd);
-		    while (imgComment.startsWith("<br />"))
-			imgComment = imgComment.substring(6);
-		    while (imgComment.endsWith("<br />"))
-			imgComment = imgComment.substring(0, imgComment.length() - 6);
-		    imageInfo.setComment(imgComment);
-
-		    chD.images.add(imageInfo);
+		    try {
+			ImageInfo imageInfo = spiderImage(chD, imgUrl, imgType);
+			imageInfo.setTitle(extractValue.findNext(">", "<"));
+			String imgComment = extractValue.findNext(imgCommentExStart, imgCommentExEnd);
+			while (imgComment.startsWith("<br />"))
+			    imgComment = imgComment.substring(6);
+			while (imgComment.endsWith("<br />"))
+			    imgComment = imgComment.substring(0, imgComment.length() - 6);
+			imageInfo.setComment(imgComment);
+			chD.images.add(imageInfo);
+		    } catch (Exception e) {
+			Global.pref.log("Error loading image: " + imgUrl, e);
+		    }
 		}
 	    }
 	}
@@ -2327,20 +2334,22 @@ public class GCImporter {
 	wayPoint = wayPoint.toLowerCase();
 
 	String downloadUrl = originalUrl;
-	// only clear if starts with / not ..
-	if (!downloadUrl.startsWith("http"))
-	    downloadUrl = "http://www.geocaching.com" + downloadUrl;
-	downloadUrl = STRreplace.replace(downloadUrl, "groundspeak", "geocaching");
-	// links to images in the description directs to one which has reduced in their size.
-	// We like to load the images in their original size:
-	// if (imgUrl.startsWith("http://img.geocaching.com/cache/display")) imgUrl = "http://img.geocaching.com/cache" + imgUrl.substring("http://img.geocaching.com/cache/display".length());
-	//
-	// http://imgcdn.geocaching.com/cache/large/3f8dfccc-958a-4cb8-bfd3-be3ab7db276b.jpg
-	// is same as http://img.geocaching.com/cache/3f8dfccc-958a-4cb8-bfd3-be3ab7db276b.jpg
 	String spideredName = downloadUrl;
-	if (downloadUrl.indexOf("geocaching.com") > -1) {
-	    spideredName = downloadUrl.substring(downloadUrl.lastIndexOf("/"), downloadUrl.lastIndexOf("."));
-	    downloadUrl = "http://img.geocaching.com/cache" + spideredName + imgType;
+	if (!downloadUrl.startsWith("http"))
+	    // only clear if starts with / not ..
+	    downloadUrl = "http://www.geocaching.com" + downloadUrl;
+	else {
+	    downloadUrl = STRreplace.replace(downloadUrl, "groundspeak", "geocaching");
+	    // links to images in the description directs to one which has reduced in their size.
+	    // We like to load the images in their original size:
+	    // if (imgUrl.startsWith("http://img.geocaching.com/cache/display")) imgUrl = "http://img.geocaching.com/cache" + imgUrl.substring("http://img.geocaching.com/cache/display".length());
+	    //
+	    // http://imgcdn.geocaching.com/cache/large/3f8dfccc-958a-4cb8-bfd3-be3ab7db276b.jpg
+	    // is same as http://img.geocaching.com/cache/3f8dfccc-958a-4cb8-bfd3-be3ab7db276b.jpg
+	    if (downloadUrl.indexOf("geocaching.com") > -1) {
+		spideredName = downloadUrl.substring(downloadUrl.lastIndexOf("/"), downloadUrl.lastIndexOf("."));
+		downloadUrl = "http://img.geocaching.com/cache" + spideredName + imgType;
+	    }
 	}
 
 	ImageInfo imageInfo = null;
@@ -2427,7 +2436,7 @@ public class GCImporter {
 		if (Convert.toInt(counter[0]) >= spiderCounter) {
 		    File tmpFile = new File(Global.profile.dataDir + obsoleteFilename);
 		    if (tmpFile.exists() && tmpFile.canWrite()) {
-			Global.pref.log("Image not longer needed. Deleting: " + obsoleteFilename);
+			Global.pref.log("Image no longer needed. Deleting: " + obsoleteFilename);
 			tmpFile.delete();
 		    }
 		}

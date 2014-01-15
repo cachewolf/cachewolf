@@ -21,9 +21,9 @@
 */
 package CacheWolf.view.pda;
 
-import CacheWolf.CacheDB;
-import CacheWolf.CacheHolder;
-import CacheWolf.CacheHolderDetail;
+import CacheWolf.database.CacheDB;
+import CacheWolf.database.CacheHolder;
+import CacheWolf.database.CacheHolderDetail;
 import CacheWolf.Global;
 import CacheWolf.MyLocale;
 import CacheWolf.Travelbug;

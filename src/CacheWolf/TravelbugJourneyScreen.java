@@ -32,6 +32,9 @@ package CacheWolf;
  * @author salzkammergut
  */
 
+import CacheWolf.database.CacheDB;
+import CacheWolf.database.CacheHolder;
+import CacheWolf.database.CacheHolderDetail;
 import CacheWolf.imp.GCImporter;
 import CacheWolf.utils.CWWrapper;
 import ewe.fx.Color;

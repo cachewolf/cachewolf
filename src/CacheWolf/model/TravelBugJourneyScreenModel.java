@@ -21,7 +21,7 @@
 */
 package CacheWolf.model;
 
-import CacheWolf.CacheHolder;
+import CacheWolf.database.CacheHolder;
 import CacheWolf.Global;
 import CacheWolf.TravelbugJourney;
 import CacheWolf.TravelbugJourneyList;
