@@ -21,7 +21,6 @@
 */
 package CacheWolf.navi;
 
-import CacheWolf.CWPoint;
 import CacheWolf.CoordsScreen;
 import CacheWolf.Global;
 import CacheWolf.InfoBox;

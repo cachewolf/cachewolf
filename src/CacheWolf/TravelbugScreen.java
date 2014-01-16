@@ -21,6 +21,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 package CacheWolf;
 
+import CacheWolf.database.TravelbugList;
 import CacheWolf.view.ITravelbugScreen;
 import ewe.ui.ControlEvent;
 import ewe.ui.Event;

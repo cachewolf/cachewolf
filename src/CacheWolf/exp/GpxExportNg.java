@@ -21,23 +21,24 @@
 */
 package CacheWolf.exp;
 
-import CacheWolf.CWPoint;
-import CacheWolf.database.CacheDB;
-import CacheWolf.database.CacheHolder;
-import CacheWolf.database.CacheHolderDetail;
 import CacheWolf.DateFormat;
 import CacheWolf.ExecutePanel;
 import CacheWolf.Global;
 import CacheWolf.InfoBox;
 import CacheWolf.MyLocale;
 import CacheWolf.SafeXML;
-import CacheWolf.Travelbug;
 import CacheWolf.database.Attribute;
+import CacheWolf.database.CacheDB;
+import CacheWolf.database.CacheHolder;
+import CacheWolf.database.CacheHolderDetail;
 import CacheWolf.database.CacheSize;
 import CacheWolf.database.CacheTerrDiff;
 import CacheWolf.database.CacheType;
 import CacheWolf.database.Log;
 import CacheWolf.database.LogList;
+import CacheWolf.database.Travelbug;
+import CacheWolf.navi.CWPoint;
+import CacheWolf.navi.TransformCoordinates;
 import CacheWolf.utils.Common;
 import CacheWolf.utils.FileBugfix;
 
@@ -565,7 +566,7 @@ public class GpxExportNg {
 
 	// .append("\t\t<desc>@@WPDESC@@</desc>").append(newLine)
 
-	ret.append("  <wpt lat=\"" + ch.getPos().getLatDeg(CWPoint.DD) + "\" lon=\"" + ch.getPos().getLonDeg(CWPoint.DD) + "\">").append(newLine);
+	ret.append("  <wpt lat=\"" + ch.getPos().getLatDeg(TransformCoordinates.DD) + "\" lon=\"" + ch.getPos().getLonDeg(TransformCoordinates.DD) + "\">").append(newLine);
 
 	if (exportStyle != STYLE_GPX_COMPACT) {
 	    if (ch.isAddiWpt()) {

@@ -21,10 +21,10 @@
 */
 package CacheWolf.exp;
 
-import CacheWolf.CWPoint;
+import CacheWolf.Global;
 import CacheWolf.database.CacheHolder;
 import CacheWolf.database.CacheHolderDetail;
-import CacheWolf.Global;
+import CacheWolf.navi.TransformCoordinates;
 import CacheWolf.utils.Common;
 
 /**
@@ -87,9 +87,9 @@ public class LocExporter extends Exporter {
 	    }
 	}
 	strBuf.append("]]></name>\r\n   <coord lat=\"");
-	strBuf.append(ch.getPos().getLatDeg(CWPoint.DD));
+	strBuf.append(ch.getPos().getLatDeg(TransformCoordinates.DD));
 	strBuf.append("\" lon=\"");
-	strBuf.append(ch.getPos().getLonDeg(CWPoint.DD));
+	strBuf.append(ch.getPos().getLonDeg(TransformCoordinates.DD));
 	strBuf.append("\"/>\r\n   <type>");
 	strBuf.append(gm.getIcon(ch));
 	strBuf.append("</type>\r\n</waypoint>\r\n");

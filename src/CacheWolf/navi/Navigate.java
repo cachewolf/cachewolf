@@ -27,12 +27,11 @@ import net.ax86.GPSException;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import CacheWolf.CWPoint;
-import CacheWolf.database.CacheHolder;
 import CacheWolf.Global;
 import CacheWolf.InfoBox;
 import CacheWolf.MyLocale;
 import CacheWolf.Preferences;
+import CacheWolf.database.CacheHolder;
 import ewe.fx.Color;
 import ewe.io.IOException;
 import ewe.io.SerialPort;

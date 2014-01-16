@@ -26,6 +26,7 @@ import CacheWolf.database.CacheHolder;
 import CacheWolf.database.CacheHolderDetail;
 import CacheWolf.database.CacheSize;
 import CacheWolf.database.CacheType;
+import CacheWolf.navi.CWPoint;
 import CacheWolf.navi.GotoPanel;
 import CacheWolf.navi.MovingMap;
 import CacheWolf.navi.Navigate;

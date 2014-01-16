@@ -21,13 +21,12 @@
  */
 package CacheWolf.navi;
 
-import CacheWolf.CWPoint;
-import CacheWolf.database.CacheDB;
-import CacheWolf.database.CacheHolder;
 import CacheWolf.Global;
 import CacheWolf.InfoBox;
 import CacheWolf.MyLocale;
 import CacheWolf.UrlFetcher;
+import CacheWolf.database.CacheDB;
+import CacheWolf.database.CacheHolder;
 import CacheWolf.utils.CWWrapper;
 import CacheWolf.utils.Common;
 import CacheWolf.utils.FileBugfix;

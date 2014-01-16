@@ -24,17 +24,15 @@ package CacheWolf.imp;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import CacheWolf.CWPoint;
-import CacheWolf.database.CacheHolder;
-import CacheWolf.database.CacheHolderDetail;
 import CacheWolf.DateFormat;
 import CacheWolf.Global;
 import CacheWolf.InfoBox;
 import CacheWolf.MyLocale;
 import CacheWolf.Preferences;
 import CacheWolf.SafeXML;
-import CacheWolf.Travelbug;
 import CacheWolf.UrlFetcher;
+import CacheWolf.database.CacheHolder;
+import CacheWolf.database.CacheHolderDetail;
 import CacheWolf.database.CacheImages;
 import CacheWolf.database.CacheSize;
 import CacheWolf.database.CacheTerrDiff;
@@ -42,6 +40,8 @@ import CacheWolf.database.CacheType;
 import CacheWolf.database.ImageInfo;
 import CacheWolf.database.Log;
 import CacheWolf.database.LogList;
+import CacheWolf.database.Travelbug;
+import CacheWolf.navi.CWPoint;
 import CacheWolf.navi.Metrics;
 import CacheWolf.navi.MovingMap;
 import CacheWolf.navi.Navigate;
@@ -2348,7 +2348,10 @@ public class GCImporter {
 	    // is same as http://img.geocaching.com/cache/3f8dfccc-958a-4cb8-bfd3-be3ab7db276b.jpg
 	    if (downloadUrl.indexOf("geocaching.com") > -1) {
 		spideredName = downloadUrl.substring(downloadUrl.lastIndexOf("/"), downloadUrl.lastIndexOf("."));
-		downloadUrl = "http://img.geocaching.com/cache" + spideredName + imgType;
+		if (downloadUrl.indexOf("www.geocaching.com") == -1) {
+		    downloadUrl = "http://img.geocaching.com/cache" + spideredName + imgType;
+		}
+		// else gc smileys from www.geocaching.com
 	    }
 	}
 

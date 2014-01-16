@@ -21,7 +21,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 package CacheWolf.database;
 
-import CacheWolf.CWPoint;
 import CacheWolf.DataMover;
 import CacheWolf.DateFormat;
 import CacheWolf.Filter;
@@ -35,8 +34,10 @@ import CacheWolf.Profile;
 import CacheWolf.SafeXML;
 import CacheWolf.exp.Exporter;
 import CacheWolf.exp.GarminMap;
+import CacheWolf.navi.CWPoint;
 import CacheWolf.navi.Metrics;
 import CacheWolf.navi.TrackPoint;
+import CacheWolf.navi.TransformCoordinates;
 import CacheWolf.utils.Common;
 import CacheWolf.utils.STRreplace;
 
@@ -674,8 +675,8 @@ public class CacheHolder {
 	varParams.put("BEARING", bearing);
 	if ((pos != null && pos.isValid())) {
 	    varParams.put("LATLON", decSep.replaceAll(pos.toString()));
-	    varParams.put("LAT", decSep.replaceAll(pos.getLatDeg(CWPoint.DD)));
-	    varParams.put("LON", decSep.replaceAll(pos.getLonDeg(CWPoint.DD)));
+	    varParams.put("LAT", decSep.replaceAll(pos.getLatDeg(TransformCoordinates.DD)));
+	    varParams.put("LON", decSep.replaceAll(pos.getLonDeg(TransformCoordinates.DD)));
 	} else {
 	    varParams.put("LATLON", "unknown");
 	    varParams.put("LAT", "");
@@ -813,8 +814,8 @@ public class CacheHolder {
 		addis.put("NAME", (ModTyp == 0) ? SafeXML.cleanGPX(ch.getCacheName()) : ch.getCacheName());
 		if ((ch.pos != null && ch.pos.isValid())) {
 		    addis.put("LATLON", decSep.replaceAll(ch.pos.toString()));
-		    addis.put("LAT", decSep.replaceAll(ch.pos.getLatDeg(CWPoint.DD)));
-		    addis.put("LON", decSep.replaceAll(ch.pos.getLonDeg(CWPoint.DD)));
+		    addis.put("LAT", decSep.replaceAll(ch.pos.getLatDeg(TransformCoordinates.DD)));
+		    addis.put("LON", decSep.replaceAll(ch.pos.getLonDeg(TransformCoordinates.DD)));
 		} else {
 		    addis.put("LATLON", "unknown");
 		    addis.put("LAT", "");

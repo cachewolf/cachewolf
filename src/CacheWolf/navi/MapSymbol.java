@@ -21,40 +21,38 @@
  */
 package CacheWolf.navi;
 
-import CacheWolf.CWPoint;
-
 public class MapSymbol extends MapImage {
-	String name;
-	String filename;
-	CWPoint where;
-	Object mapObject;
+    String name;
+    String filename;
+    CWPoint where;
+    Object mapObject;
 
-	public MapSymbol(String name, String filename, CWPoint where) {
-		this.name = name;
-		this.filename = filename;
-		this.where = where;
-		loadImage();
-	}
+    public MapSymbol(String name, String filename, CWPoint where) {
+	this.name = name;
+	this.filename = filename;
+	this.where = where;
+	loadImage();
+    }
 
-	public MapSymbol(String name, Object mapObject, String filename, CWPoint where) {
-		this.name = name;
-		this.filename = filename;
-		this.where = where;
-		this.mapObject = mapObject;
-		loadImage();
-	}
+    public MapSymbol(String name, Object mapObject, String filename, CWPoint where) {
+	this.name = name;
+	this.filename = filename;
+	this.where = where;
+	this.mapObject = mapObject;
+	loadImage();
+    }
 
-	public MapSymbol(String name, Object mapObject, ewe.fx.Image fromIm, CWPoint where) {
-		this.name = name;
-		this.where = where;
-		this.mapObject = mapObject;
-		setImage(fromIm);
-	}
+    public MapSymbol(String name, Object mapObject, ewe.fx.Image fromIm, CWPoint where) {
+	this.name = name;
+	this.where = where;
+	this.mapObject = mapObject;
+	setImage(fromIm);
+    }
 
-	private void loadImage() {
-		if (filename != null) {
-			setImage(new ewe.fx.Image(filename), 0);
-			freeSource();
-		}
+    private void loadImage() {
+	if (filename != null) {
+	    setImage(new ewe.fx.Image(filename), 0);
+	    freeSource();
 	}
+    }
 }

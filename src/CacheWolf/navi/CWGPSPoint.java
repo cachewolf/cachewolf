@@ -25,7 +25,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import CacheWolf.CWPoint;
 import CacheWolf.Global;
 import CacheWolf.utils.Common;
 import CacheWolf.utils.Extractor;

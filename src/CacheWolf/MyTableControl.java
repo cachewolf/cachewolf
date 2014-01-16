@@ -26,7 +26,9 @@ import CacheWolf.database.CacheHolder;
 import CacheWolf.database.CacheHolderDetail;
 import CacheWolf.database.CacheType;
 import CacheWolf.exp.OCLogExport;
+import CacheWolf.navi.CWPoint;
 import CacheWolf.navi.Navigate;
+import CacheWolf.navi.TransformCoordinates;
 import CacheWolf.utils.CWWrapper;
 import CacheWolf.utils.STRreplace;
 import ewe.fx.IconAndText;
@@ -357,8 +359,8 @@ public class MyTableControl extends TableControl {
 	} else if (selectedItem == miOpenGmaps) {
 	    ch = cacheDB.get(Global.mainTab.tablePanel.getSelectedCache());
 	    if (ch.getPos().isValid()) {
-		String lat = "" + ch.getPos().getLatDeg(CWPoint.DD);
-		String lon = "" + ch.getPos().getLonDeg(CWPoint.DD);
+		String lat = "" + ch.getPos().getLatDeg(TransformCoordinates.DD);
+		String lon = "" + ch.getPos().getLonDeg(TransformCoordinates.DD);
 		String nameOfCache = UrlFetcher.encodeURL(ch.getCacheName(), false).replace('#', 'N').replace('@', '_');
 		String language = Vm.getLocale().getString(Locale.LANGUAGE_SHORT, 0, 0);
 		if (!Global.pref.language.equalsIgnoreCase("auto")) {
