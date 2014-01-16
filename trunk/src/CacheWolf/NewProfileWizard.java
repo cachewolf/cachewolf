@@ -21,32 +21,33 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 package CacheWolf;
 
+import CacheWolf.navi.CWPoint;
 import CacheWolf.navi.TransformCoordinates;
 import ewe.ui.FormBase;
 import ewe.ui.Gui;
 
 public class NewProfileWizard {
 
-	static public boolean startNewProfileWizard(ewe.ui.Frame parent) {
-		if (Global.mainTab != null)
-			Global.mainTab.saveUnsavedChanges(true);
-		NewProfileForm f = new NewProfileForm(Global.pref.absoluteBaseDir);
-		int code = f.execute(parent, Gui.CENTER_FRAME);
-		if (code == 0) {
-			Global.profile.clearProfile();
-			Global.pref.lastProfile = Global.profile.name = f.profileDir;
-			Global.pref.savePreferences(); // Remember that this was the last profile used
-			Global.profile.dataDir = Global.pref.absoluteBaseDir + f.profileDir + "/";
+    static public boolean startNewProfileWizard(ewe.ui.Frame parent) {
+	if (Global.mainTab != null)
+	    Global.mainTab.saveUnsavedChanges(true);
+	NewProfileForm f = new NewProfileForm(Global.pref.absoluteBaseDir);
+	int code = f.execute(parent, Gui.CENTER_FRAME);
+	if (code == 0) {
+	    Global.profile.clearProfile();
+	    Global.pref.lastProfile = Global.profile.name = f.profileDir;
+	    Global.pref.savePreferences(); // Remember that this was the last profile used
+	    Global.profile.dataDir = Global.pref.absoluteBaseDir + f.profileDir + "/";
 
-			CoordsScreen cs = new CoordsScreen();
-			cs.setFields(new CWPoint(), TransformCoordinates.CW);
-			if (cs.execute() == FormBase.IDOK) {
-				Global.profile.setCenterCoords(cs.getCoords());
-			}
-			MainForm.itself.setTitle(Global.profile.name + " - CW " + Version.getRelease());
-			Global.profile.notifyUnsavedChanges(true);
-		}
-		f.close(0);
-		return (code == 0);
+	    CoordsScreen cs = new CoordsScreen();
+	    cs.setFields(new CWPoint(), TransformCoordinates.CW);
+	    if (cs.execute() == FormBase.IDOK) {
+		Global.profile.setCenterCoords(cs.getCoords());
+	    }
+	    MainForm.itself.setTitle(Global.profile.name + " - CW " + Version.getRelease());
+	    Global.profile.notifyUnsavedChanges(true);
 	}
+	f.close(0);
+	return (code == 0);
+    }
 }

@@ -21,15 +21,14 @@
  */
 package CacheWolf.navi;
 
-import CacheWolf.CWPoint;
-import CacheWolf.database.CacheDB;
-import CacheWolf.database.CacheHolder;
 import CacheWolf.ExecutePanel;
 import CacheWolf.Global;
 import CacheWolf.InfoBox;
 import CacheWolf.MainForm;
 import CacheWolf.MainTab;
 import CacheWolf.MyLocale;
+import CacheWolf.database.CacheDB;
+import CacheWolf.database.CacheHolder;
 import CacheWolf.database.CacheSize;
 import CacheWolf.database.CacheTerrDiff;
 import CacheWolf.database.CacheType;

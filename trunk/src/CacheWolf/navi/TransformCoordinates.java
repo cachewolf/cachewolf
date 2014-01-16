@@ -21,8 +21,7 @@
 */
 package CacheWolf.navi;
 
-import CacheWolf.CWPoint;
-import CacheWolf.Matrix;
+import CacheWolf.utils.Matrix;
 
 /**
  * Class to transform coordinates and shift datums

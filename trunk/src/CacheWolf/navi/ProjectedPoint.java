@@ -21,8 +21,6 @@
 */
 package CacheWolf.navi;
 
-import CacheWolf.CWPoint;
-
 public final class ProjectedPoint {
 
     public static final LambertProjection PJ_AUSTRIAN_LAMBERT_OLD = new LambertProjection(TransformCoordinates.EPSG_AUSTRIAN_LAMBERT_OLD, TransformCoordinates.BESSEL);

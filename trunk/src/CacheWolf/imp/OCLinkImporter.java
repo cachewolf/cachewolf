@@ -21,13 +21,13 @@
 */
 package CacheWolf.imp;
 
-import CacheWolf.CWPoint;
-import CacheWolf.database.CacheDB;
-import CacheWolf.database.CacheHolder;
 import CacheWolf.Global;
 import CacheWolf.OC;
 import CacheWolf.SafeXML;
 import CacheWolf.UrlFetcher;
+import CacheWolf.database.CacheDB;
+import CacheWolf.database.CacheHolder;
+import CacheWolf.navi.TransformCoordinates;
 import CacheWolf.utils.Common;
 import CacheWolf.utils.Extractor;
 import ewe.sys.Handle;
@@ -96,8 +96,8 @@ public final class OCLinkImporter {
 		else {
 		    // check over coordinates
 		    // getting a cache next to the coordinates
-		    String nLat = ch.getPos().getLatDeg(CWPoint.DD);
-		    String nLon = ch.getPos().getLonDeg(CWPoint.DD);
+		    String nLat = ch.getPos().getLatDeg(TransformCoordinates.DD);
+		    String nLon = ch.getPos().getLonDeg(TransformCoordinates.DD);
 		    url = baseurl + "mode=locate&lat=" + nLat + "&lon=" + nLon;
 		    result = SafeXML.cleanback(UrlFetcher.fetch(url));
 		    String ocCacheName = new Extractor(result, "name=\"", "\"", 0, true).findNext();

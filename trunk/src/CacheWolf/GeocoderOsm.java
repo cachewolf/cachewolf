@@ -21,6 +21,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 package CacheWolf;
 
+import CacheWolf.navi.CWPoint;
 import CacheWolf.utils.Common;
 import CacheWolf.utils.STRreplace;
 import ewe.io.InputStreamReader;

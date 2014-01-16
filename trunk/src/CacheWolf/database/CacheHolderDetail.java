@@ -24,8 +24,6 @@ package CacheWolf.database;
 import CacheWolf.DataMover;
 import CacheWolf.Global;
 import CacheWolf.SafeXML;
-import CacheWolf.Travelbug;
-import CacheWolf.TravelbugList;
 import CacheWolf.utils.Extractor;
 import ewe.filechooser.FileChooser;
 import ewe.filechooser.FileChooserBase;
@@ -41,7 +39,6 @@ import ewe.ui.InputBox;
 import ewe.util.Vector;
 
 public class CacheHolderDetail {
-
     /** CacheHolder which holds the detail. <b>Only</b> set by CacheHolder when creating detail! **/
     private CacheHolder parent = null;
     public String LongDescription = CacheHolder.EMPTY;

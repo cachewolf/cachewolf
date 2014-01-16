@@ -1,0 +1,34 @@
+﻿#intentionally left blank
+Name:                                   DE DOP Viewer, Bundesamt für Kartographie und Geodäsie 
+MapType:                                de.dop40
+MainUrl:                                http://sg.geodatenzentrum.de/wms_dop40?
+LayersUrlPart:                          LAYERS=0
+ImageFormatUrlPart:                     FORMAT=image/jpeg
+ImageFileExtension:                     .jpg
+#CoordinateReferenceSystemCacheWolf:     31466 31467 31468 31469
+#CoordinateReferenceSystemUrlPart:       SRS=EPSG:31466 SRS=EPSG:31467 SRS=EPSG:31468 SRS=EPSG:31469
+#CoordinateReferenceSystemCacheWolf:     4326
+#CoordinateReferenceSystemUrlPart:       SRS=EPSG:4326
+CoordinateReferenceSystemCacheWolf:     25832
+CoordinateReferenceSystemUrlPart:       SRS=EPSG:25832
+RecommendedScale:                       5
+BoundingBoxTopLeftWGS84:                N 55.0648 E 5.5508
+BoundingBoxBottomRightWGS84:            N 47.1165 E 15.6229
+ServiceTypeUrlPart:                     SERVICE=WMS
+VersionUrlPart:                         VERSION=1.1.1
+RequestUrlPart:                         REQUEST=GetMap
+StylesUrlPart:                          STYLES=
+#
+#MinScale:                               0
+#MaxScale:                               1000
+#
+#MinPixelSize:                           ?
+#MaxPixelSize:                           ?
+#RecommendedWidthPixelSize:              256
+#RecommendedHeightPixelSize:             256
+#
+#
+#
+TakenFromUrl:                           http://sg.geodatenzentrum.de/web_dop_viewer/dop_viewer.htm
+GetCapabilitiesUrl:                     http://sg.geodatenzentrum.de/wms_dop40?SERVICE=WMS&VERSION=1.1.1&REQUEST=GetCapabilities
+SpecialUrl:								http://sg.geodatenzentrum.de/web_bkg_webmap/lib/bkgwebmap-0.5.all.min.js?bkg_appid=4cc455dc-a595-bbcf-0d00-c1d81caab5c3

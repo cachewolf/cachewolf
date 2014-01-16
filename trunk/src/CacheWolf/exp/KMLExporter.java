@@ -21,12 +21,12 @@
 */
 package CacheWolf.exp;
 
-import CacheWolf.CWPoint;
-import CacheWolf.database.CacheHolder;
-import CacheWolf.database.CacheHolderDetail;
 import CacheWolf.Global;
 import CacheWolf.SafeXML;
+import CacheWolf.database.CacheHolder;
+import CacheWolf.database.CacheHolderDetail;
 import CacheWolf.database.CacheType;
+import CacheWolf.navi.TransformCoordinates;
 import CacheWolf.utils.STRreplace;
 import ewe.io.BufferedWriter;
 import ewe.io.File;
@@ -128,7 +128,7 @@ public class KMLExporter extends Exporter {
 			h.changed();
 
 			if (ch.getPos().isValid()) {
-			    str = record(ch, ch.getPos().getLatDeg(CWPoint.DD).replace('.', this.decimalSeparator), ch.getPos().getLonDeg(CWPoint.DD).replace('.', this.decimalSeparator));
+			    str = record(ch, ch.getPos().getLatDeg(TransformCoordinates.DD).replace('.', this.decimalSeparator), ch.getPos().getLonDeg(TransformCoordinates.DD).replace('.', this.decimalSeparator));
 			    if (str != null)
 				outp.print(str);
 			}
@@ -142,7 +142,7 @@ public class KMLExporter extends Exporter {
 					outp.print(startFolder("Additional Waypoints", false));
 					createdAdditionalWaypointsFolder = true;
 				    }
-				    str = record(addiWpt, addiWpt.getPos().getLatDeg(CWPoint.DD).replace('.', this.decimalSeparator), addiWpt.getPos().getLonDeg(CWPoint.DD).replace('.', this.decimalSeparator));
+				    str = record(addiWpt, addiWpt.getPos().getLatDeg(TransformCoordinates.DD).replace('.', this.decimalSeparator), addiWpt.getPos().getLonDeg(TransformCoordinates.DD).replace('.', this.decimalSeparator));
 				    if (str != null)
 					outp.print(str);
 				}

@@ -21,14 +21,13 @@
 */
 package CacheWolf.navi;
 
-import CacheWolf.CWPoint;
-import CacheWolf.database.CacheHolder;
 import CacheWolf.CoordsScreen;
 import CacheWolf.Global;
 import CacheWolf.GuiImageBroker;
 import CacheWolf.InfoBox;
 import CacheWolf.InputScreen;
 import CacheWolf.MyLocale;
+import CacheWolf.database.CacheHolder;
 import CacheWolf.database.CacheType;
 import ewe.fx.Brush;
 import ewe.fx.Color;

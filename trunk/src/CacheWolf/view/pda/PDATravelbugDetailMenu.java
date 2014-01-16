@@ -21,13 +21,13 @@
 */
 package CacheWolf.view.pda;
 
+import CacheWolf.Global;
+import CacheWolf.MyLocale;
 import CacheWolf.database.CacheDB;
 import CacheWolf.database.CacheHolder;
 import CacheWolf.database.CacheHolderDetail;
-import CacheWolf.Global;
-import CacheWolf.MyLocale;
-import CacheWolf.Travelbug;
-import CacheWolf.TravelbugJourney;
+import CacheWolf.database.Travelbug;
+import CacheWolf.database.TravelbugJourney;
 import CacheWolf.imp.GCImporter;
 import CacheWolf.utils.CWWrapper;
 import ewe.sys.Vm;

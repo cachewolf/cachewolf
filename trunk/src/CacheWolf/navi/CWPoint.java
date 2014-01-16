@@ -19,12 +19,9 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
-package CacheWolf;
+package CacheWolf.navi;
 
-import CacheWolf.navi.GeodeticCalculator;
-import CacheWolf.navi.ProjectedPoint;
-import CacheWolf.navi.TrackPoint;
-import CacheWolf.navi.TransformCoordinates;
+import CacheWolf.MyLocale;
 import CacheWolf.utils.Common;
 import CacheWolf.utils.STRreplace;
 
@@ -37,13 +34,6 @@ import com.stevesoft.ewe_pat.Regex;
  * 
  */
 public class CWPoint extends TrackPoint {
-
-    public static final int CW = TransformCoordinates.CW;
-    public static final int DD = TransformCoordinates.DD;
-    public static final int DMM = TransformCoordinates.DMM;
-    public static final int LAT_LON = TransformCoordinates.LAT_LON;
-    public static final int LON_LAT = TransformCoordinates.LON_LAT;
-    public static final int UTM = TransformCoordinates.UTM;
 
     /** Degrees/Radians conversion constant. */
     static private final double PiOver180 = Math.PI / 180.0;
@@ -69,13 +59,12 @@ public class CWPoint extends TrackPoint {
     }
 
     /**
-     * Create CWPoint by using a CWPoint
+     * Create CWPoint by using a TrackPoint
      * 
-     * @param CWPoint
-     *            LatLonPoint
+     * @param trackPoint
      */
-    public CWPoint(TrackPoint cwPoint) {
-	super(cwPoint.latDec, cwPoint.lonDec);
+    public CWPoint(TrackPoint trackPoint) {
+	super(trackPoint.latDec, trackPoint.lonDec);
     }
 
     /**
@@ -89,33 +78,6 @@ public class CWPoint extends TrackPoint {
     public CWPoint(String coord, int format) {
 	super(-361, -361);
 	set(coord, format);
-    }
-
-    /**
-     * Create CWPoint
-     * 
-     * @param strLatNS
-     *            "N" or "S"
-     * @param strLatDeg
-     *            Degrees of Latitude
-     * @param strLatMin
-     *            Minutes of Latitude
-     * @param strLatSec
-     *            Seconds of Latitude
-     * @param strLonEW
-     *            "E" or "W"
-     * @param strLonDeg
-     *            Degrees of Longitude
-     * @param strLonMin
-     *            Minutes of Longitude
-     * @param strLonSec
-     *            Seconds of Longitude
-     * @param format
-     *            Format: DD, DMM, DMS, CW, UTM
-     */
-    //TODO Remove ? Only used in OCXMLImporter and TablePanel when reading preferences
-    public CWPoint(String strLatNS, String strLatDeg, String strLatMin, String strLatSec, String strLonEW, String strLonDeg, String strLonMin, String strLonSec, int format) {
-	set(strLatNS, strLatDeg, strLatMin, strLatSec, strLonEW, strLonDeg, strLonMin, strLonSec, format);
     }
 
     /**
@@ -335,7 +297,8 @@ public class CWPoint extends TrackPoint {
      */
     public void shift(double meters, int direction) {
 	double meters2deglon = 1 / (1000 * (new CWPoint(0, 0)).getDistance(new CWPoint(1, 0)));
-	switch (direction) { // TODO use ellipsoid distance calculations for better accuracy
+	switch (direction) {
+	// TODO use ellipsoid distance calculations for better accuracy
 	case 0:
 	    latDec += meters * meters2deglon;
 	    return;
@@ -683,9 +646,9 @@ public class CWPoint extends TrackPoint {
 	case TransformCoordinates.DMS:
 	    return getNSLetter() + " " + getLatDeg(format) + "° " + getLatMin(format) + "\' " + getLatSec(format) + "\" " + getEWLetter() + " " + getLonDeg(format) + "° " + getLonMin(format) + "\' " + getLonSec(format) + "\"";
 	case TransformCoordinates.LAT_LON:
-	    return getLatDeg(DD) + "," + getLonDeg(DD);
+	    return getLatDeg(TransformCoordinates.DD) + "," + getLonDeg(TransformCoordinates.DD);
 	case TransformCoordinates.LON_LAT:
-	    return getLonDeg(DD) + "," + getLatDeg(DD);
+	    return getLonDeg(TransformCoordinates.DD) + "," + getLatDeg(TransformCoordinates.DD);
 	    //case TransformCoordinates.CUSTOM:	return getGermanGkCoordinates();
 	default:
 	    return TransformCoordinates.getLocalSystem(format).id + " " + TransformCoordinates.wgs84ToLocalsystem(this, format).toHumanReadableString();

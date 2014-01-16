@@ -24,6 +24,7 @@ package CacheWolf;
 import CacheWolf.database.CacheDB;
 import CacheWolf.database.CacheHolder;
 import CacheWolf.navi.Area;
+import CacheWolf.navi.CWPoint;
 import CacheWolf.navi.TransformCoordinates;
 import CacheWolf.utils.Common;
 import CacheWolf.utils.Extractor;

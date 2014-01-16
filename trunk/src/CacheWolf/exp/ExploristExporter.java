@@ -21,15 +21,16 @@
 */
 package CacheWolf.exp;
 
-import CacheWolf.CWPoint;
-import CacheWolf.database.CacheDB;
-import CacheWolf.database.CacheHolder;
-import CacheWolf.database.CacheHolderDetail;
 import CacheWolf.Global;
 import CacheWolf.InfoBox;
 import CacheWolf.MyLocale;
+import CacheWolf.database.CacheDB;
+import CacheWolf.database.CacheHolder;
+import CacheWolf.database.CacheHolderDetail;
 import CacheWolf.database.CacheTerrDiff;
 import CacheWolf.database.CacheType;
+import CacheWolf.navi.CWPoint;
+import CacheWolf.navi.TransformCoordinates;
 import CacheWolf.utils.Common;
 import ewe.filechooser.FileChooser;
 import ewe.filechooser.FileChooserBase;
@@ -221,12 +222,12 @@ public class ExploristExporter {
 	 */
 	StringBuffer sb = new StringBuffer();
 	sb.append("$PMGNGEO,");
-	sb.append(ch.getPos().getLatDeg(CWPoint.DMM));
-	sb.append(ch.getPos().getLatMin(CWPoint.DMM));
+	sb.append(ch.getPos().getLatDeg(TransformCoordinates.DMM));
+	sb.append(ch.getPos().getLatMin(TransformCoordinates.DMM));
 	sb.append(",");
 	sb.append("N,");
-	sb.append(ch.getPos().getLonDeg(CWPoint.DMM));
-	sb.append(ch.getPos().getLonMin(CWPoint.DMM));
+	sb.append(ch.getPos().getLonDeg(TransformCoordinates.DMM));
+	sb.append(ch.getPos().getLonMin(TransformCoordinates.DMM));
 	sb.append(",");
 	sb.append("E,");
 	sb.append("0000,"); // Height
