@@ -21,7 +21,7 @@
 */
 package CacheWolf.exp;
 
-import CacheWolf.ExecutePanel;
+import CacheWolf.controls.ExecutePanel;
 import ewe.ui.CheckBoxGroup;
 import ewe.ui.ControlEvent;
 import ewe.ui.Event;
@@ -30,45 +30,45 @@ import ewe.ui.FormBase;
 import ewe.ui.mCheckBox;
 
 public class SpoilerPOIExporterScreen extends Form {
-	private final ExecutePanel executePanel;
-	mCheckBox chkAllPic, chkOnlySpoiler;
-	CheckBoxGroup chkGroupFormat;
+    private final ExecutePanel executePanel;
+    mCheckBox chkAllPic, chkOnlySpoiler;
+    CheckBoxGroup chkGroupFormat;
 
-	public SpoilerPOIExporterScreen(String title) {
-		super();
-		this.title = title;
+    public SpoilerPOIExporterScreen(String title) {
+	super();
+	this.title = title;
 
-		// checkboxgroup for all pictures or Spoiler only
-		chkGroupFormat = new CheckBoxGroup();
-		chkAllPic = new mCheckBox("all Pics");
-		chkAllPic.setGroup(chkGroupFormat);
-		chkOnlySpoiler = new mCheckBox("only Spoiler");
-		chkOnlySpoiler.setGroup(chkGroupFormat);
-		chkGroupFormat.selectIndex(1);
+	// checkboxgroup for all pictures or Spoiler only
+	chkGroupFormat = new CheckBoxGroup();
+	chkAllPic = new mCheckBox("all Pics");
+	chkAllPic.setGroup(chkGroupFormat);
+	chkOnlySpoiler = new mCheckBox("only Spoiler");
+	chkOnlySpoiler.setGroup(chkGroupFormat);
+	chkGroupFormat.selectIndex(1);
 
-		this.addNext(chkAllPic);
-		this.addLast(chkOnlySpoiler);
+	this.addNext(chkAllPic);
+	this.addLast(chkOnlySpoiler);
 
-		executePanel = new ExecutePanel(this);
+	executePanel = new ExecutePanel(this);
+    }
+
+    public boolean getOnlySpoiler() {
+	if (chkGroupFormat.getSelectedIndex() == 1)
+	    return true;
+	else
+	    return false;
+    }
+
+    public void onEvent(Event ev) {
+	if (ev instanceof ControlEvent && ev.type == ControlEvent.PRESSED) {
+	    if (ev.target == executePanel.cancelButton) {
+		this.close(FormBase.IDCANCEL);
+	    }
+	    if (ev.target == executePanel.applyButton) {
+		this.close(FormBase.IDOK);
+	    }
 	}
-
-	public boolean getOnlySpoiler() {
-		if (chkGroupFormat.getSelectedIndex() == 1)
-			return true;
-		else
-			return false;
-	}
-
-	public void onEvent(Event ev) {
-		if (ev instanceof ControlEvent && ev.type == ControlEvent.PRESSED) {
-			if (ev.target == executePanel.cancelButton) {
-				this.close(FormBase.IDCANCEL);
-			}
-			if (ev.target == executePanel.applyButton) {
-				this.close(FormBase.IDOK);
-			}
-		}
-		super.onEvent(ev);
-	}
+	super.onEvent(ev);
+    }
 
 }

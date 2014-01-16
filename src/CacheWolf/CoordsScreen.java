@@ -21,6 +21,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 package CacheWolf;
 
+import CacheWolf.controls.ExecutePanel;
+import CacheWolf.controls.InfoBox;
 import CacheWolf.imp.GCImporter;
 import CacheWolf.navi.CWPoint;
 import CacheWolf.navi.Navigate;

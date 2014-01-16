@@ -32,12 +32,12 @@ package CacheWolf.view.ewe;
  * @author salzkammergut
  */
 
-import CacheWolf.DateTimeChooser;
 import CacheWolf.Global;
 import CacheWolf.MyLocale;
 import CacheWolf.MyScrollBarPanel;
 import CacheWolf.TableColumnChooser;
 import CacheWolf.TravelbugPickup;
+import CacheWolf.controls.DateTimeChooser;
 import CacheWolf.database.CacheDB;
 import CacheWolf.database.CacheHolder;
 import CacheWolf.database.CacheHolderDetail;

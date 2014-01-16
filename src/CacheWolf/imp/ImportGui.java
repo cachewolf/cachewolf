@@ -21,10 +21,10 @@
 */
 package CacheWolf.imp;
 
-import CacheWolf.ExecutePanel;
 import CacheWolf.Global;
 import CacheWolf.MyLocale;
 import CacheWolf.OC;
+import CacheWolf.controls.ExecutePanel;
 import CacheWolf.database.CacheType;
 import CacheWolf.imp.GCImporter.SpiderProperties;
 import CacheWolf.utils.Common;

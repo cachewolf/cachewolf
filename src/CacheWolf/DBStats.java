@@ -21,7 +21,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 package CacheWolf;
 
-import CacheWolf.database.CacheDB;
 import CacheWolf.database.CacheHolder;
 import CacheWolf.database.CacheType;
 
@@ -30,10 +29,8 @@ import CacheWolf.database.CacheType;
  *         Use this class to obtain statistics or information on a cache database.
  */
 public class DBStats {
-    CacheDB cacheDB = null;
 
-    public DBStats(CacheDB db) {
-	cacheDB = db;
+    public DBStats() {
     }
 
     /**
@@ -49,8 +46,8 @@ public class DBStats {
 	int counter = 0;
 	int whiteCaches = 0;
 	int whiteWaypoints = 0;
-	for (int i = 0; i < cacheDB.size(); i++) {
-	    holder = cacheDB.get(i);
+	for (int i = 0; i < Global.profile.cacheDB.size(); i++) {
+	    holder = Global.profile.cacheDB.get(i);
 	    if (holder.isVisible()) {
 		counter++;
 		if (CacheType.isAddiWpt(holder.getType())) {
@@ -74,13 +71,13 @@ public class DBStats {
      */
     public String total(boolean big) {
 	CacheHolder holder;
-	int all = cacheDB.size();
+	int all = Global.profile.cacheDB.size();
 	int whiteCaches = 0;
 	int whiteWaypoints = 0;
 	int blackCaches = 0;
 	int blackWaypoints = 0;
 	for (int i = 0; i < all; i++) {
-	    holder = cacheDB.get(i);
+	    holder = Global.profile.cacheDB.get(i);
 	    if (holder.is_black()) {
 		if (CacheType.isAddiWpt(holder.getType())) {
 		    blackWaypoints++;
@@ -108,8 +105,8 @@ public class DBStats {
     public int totalFound() {
 	CacheHolder holder;
 	int counter = 0;
-	for (int i = 0; i < cacheDB.size(); i++) {
-	    holder = cacheDB.get(i);
+	for (int i = 0; i < Global.profile.cacheDB.size(); i++) {
+	    holder = Global.profile.cacheDB.get(i);
 	    if (holder.is_found() == true) {
 		if (holder.isCacheWpt())
 		    counter++;

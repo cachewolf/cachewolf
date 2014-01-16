@@ -19,7 +19,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
-package CacheWolf;
+package CacheWolf.utils;
 
 /* Several date formats are used by GC.COM
  *    2/27/2004   - Hidden dates are in format mm/dd/yyyy (=US style)
@@ -29,8 +29,6 @@ package CacheWolf;
  *    2004-02-27    - YYYY-MM-DD   
  */
 
-import CacheWolf.utils.Common;
-import CacheWolf.utils.STRreplace;
 import ewe.sys.Time;
 import ewe.util.mString;
 
