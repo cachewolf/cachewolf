@@ -21,14 +21,14 @@
 */
 package CacheWolf.exp;
 
-import CacheWolf.CWPoint;
-import CacheWolf.database.CacheDB;
-import CacheWolf.database.CacheHolder;
 import CacheWolf.Global;
 import CacheWolf.InfoBox;
 import CacheWolf.MyLocale;
+import CacheWolf.database.CacheDB;
+import CacheWolf.database.CacheHolder;
 import CacheWolf.database.CacheSize;
 import CacheWolf.database.CacheType;
+import CacheWolf.navi.TransformCoordinates;
 import ewe.filechooser.FileChooser;
 import ewe.filechooser.FileChooserBase;
 import ewe.io.BufferedWriter;
@@ -137,12 +137,12 @@ public class Exporter {
 		    case LAT_LON:
 			if (ch.getPos().isValid() == false)
 			    continue;
-			str = record(ch, ch.getPos().getLatDeg(CWPoint.DD).replace('.', this.decimalSeparator), ch.getPos().getLonDeg(CWPoint.DD).replace('.', this.decimalSeparator));
+			str = record(ch, ch.getPos().getLatDeg(TransformCoordinates.DD).replace('.', this.decimalSeparator), ch.getPos().getLonDeg(TransformCoordinates.DD).replace('.', this.decimalSeparator));
 			break;
 		    case LAT_LON | COUNT:
 			if (ch.getPos().isValid() == false)
 			    continue;
-			str = record(ch, ch.getPos().getLatDeg(CWPoint.DD).replace('.', this.decimalSeparator), ch.getPos().getLonDeg(CWPoint.DD).replace('.', this.decimalSeparator), i);
+			str = record(ch, ch.getPos().getLatDeg(TransformCoordinates.DD).replace('.', this.decimalSeparator), ch.getPos().getLonDeg(TransformCoordinates.DD).replace('.', this.decimalSeparator), i);
 			break;
 		    default:
 			str = null;

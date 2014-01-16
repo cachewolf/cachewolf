@@ -21,12 +21,12 @@
 */
 package CacheWolf.exp;
 
-import CacheWolf.CWPoint;
+import CacheWolf.Global;
 import CacheWolf.database.CacheDB;
 import CacheWolf.database.CacheHolder;
-import CacheWolf.Global;
 import CacheWolf.database.CacheSize;
 import CacheWolf.database.CacheType;
+import CacheWolf.navi.TransformCoordinates;
 import CacheWolf.utils.Common;
 import ewe.filechooser.FileChooser;
 import ewe.filechooser.FileChooserBase;
@@ -139,9 +139,9 @@ public class TomTomExporter {
 			if (holder.getPos().isValid() == false)
 			    continue;
 			if (format == TT_ASC) {
-			    writeRecordASCII(out, holder, holder.getPos().getLatDeg(CWPoint.DD), holder.getPos().getLonDeg(CWPoint.DD));
+			    writeRecordASCII(out, holder, holder.getPos().getLatDeg(TransformCoordinates.DD), holder.getPos().getLonDeg(TransformCoordinates.DD));
 			} else {
-			    writeRecordBinary(out, holder, holder.getPos().getLatDeg(CWPoint.DD), holder.getPos().getLonDeg(CWPoint.DD));
+			    writeRecordBinary(out, holder, holder.getPos().getLatDeg(TransformCoordinates.DD), holder.getPos().getLonDeg(TransformCoordinates.DD));
 			}
 		    }// if
 		}// for cacheDB
@@ -188,9 +188,9 @@ public class TomTomExporter {
 		    if (holder.getPos().isValid() == false)
 			continue;
 		    if (format == TT_ASC) {
-			writeRecordASCII(out, holder, holder.getPos().getLatDeg(CWPoint.DD), holder.getPos().getLonDeg(CWPoint.DD));
+			writeRecordASCII(out, holder, holder.getPos().getLatDeg(TransformCoordinates.DD), holder.getPos().getLonDeg(TransformCoordinates.DD));
 		    } else {
-			writeRecordBinary(out, holder, holder.getPos().getLatDeg(CWPoint.DD), holder.getPos().getLonDeg(CWPoint.DD));
+			writeRecordBinary(out, holder, holder.getPos().getLatDeg(TransformCoordinates.DD), holder.getPos().getLonDeg(TransformCoordinates.DD));
 		    }
 		}// if
 	    }// for

@@ -21,6 +21,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 package CacheWolf;
 
+import CacheWolf.navi.CWPoint;
 import ewe.sys.Vm;
 import ewe.ui.CellConstants;
 import ewe.ui.CellPanel;
@@ -41,87 +42,85 @@ import ewe.util.Vector;
 
 public class GeoCodeGui extends Form {
 
-	mInput streetInp, cityInp;
-	mButton searchBtn, searchCancelBtn;
-	private final ExecutePanel executePanel;
-	CWPoint coordInp = new CWPoint();
-	CellPanel topLinePanel = new CellPanel();
-	CellPanel mainPanel = new CellPanel();
-	// HtmlDisplay foundTxt;
-	mList choice;
-	int exitKeys[] = { 75009 };
+    mInput streetInp, cityInp;
+    mButton searchBtn, searchCancelBtn;
+    private final ExecutePanel executePanel;
+    CWPoint coordInp = new CWPoint();
+    CellPanel topLinePanel = new CellPanel();
+    CellPanel mainPanel = new CellPanel();
+    // HtmlDisplay foundTxt;
+    mList choice;
+    int exitKeys[] = { 75009 };
 
-	Vector geoCodeAnsw;
-	String searchText;
+    Vector geoCodeAnsw;
+    String searchText;
 
-	public GeoCodeGui() {
-		topLinePanel.addNext(new mLabel(MyLocale.getMsg(7300, "Street/POI")), CellConstants.DONTSTRETCH, CellConstants.WEST);
-		topLinePanel.addLast(streetInp = new mInput(MyLocale.getMsg(7305, "Hauptbahnhof")), CellConstants.STRETCH, CellConstants.FILL | CellConstants.WEST);
-		//streetInp.setPreferredSize(500, 20);
-		topLinePanel.addNext(new mLabel(MyLocale.getMsg(7301, "City")), CellConstants.DONTSTRETCH, CellConstants.WEST);
-		topLinePanel.addNext(cityInp = new mInput(MyLocale.getMsg(7304, "München, Deutschland")), CellConstants.HSTRETCH, CellConstants.HFILL | CellConstants.WEST);
-		topLinePanel.addNext(searchBtn = new mButton(MyLocale.getMsg(7302, "Search")), CellConstants.DONTSTRETCH, CellConstants.WEST);
-		topLinePanel.addLast(searchCancelBtn = new mButton(MyLocale.getMsg(7303, "Cancel")), CellConstants.DONTSTRETCH, CellConstants.WEST);
-		// inpText.toolTip=MyLocale.getMsg(1406,"Enter coordinates in any format or GCxxxxx");
+    public GeoCodeGui() {
+	topLinePanel.addNext(new mLabel(MyLocale.getMsg(7300, "Street/POI")), CellConstants.DONTSTRETCH, CellConstants.WEST);
+	topLinePanel.addLast(streetInp = new mInput(MyLocale.getMsg(7305, "Hauptbahnhof")), CellConstants.STRETCH, CellConstants.FILL | CellConstants.WEST);
+	//streetInp.setPreferredSize(500, 20);
+	topLinePanel.addNext(new mLabel(MyLocale.getMsg(7301, "City")), CellConstants.DONTSTRETCH, CellConstants.WEST);
+	topLinePanel.addNext(cityInp = new mInput(MyLocale.getMsg(7304, "München, Deutschland")), CellConstants.HSTRETCH, CellConstants.HFILL | CellConstants.WEST);
+	topLinePanel.addNext(searchBtn = new mButton(MyLocale.getMsg(7302, "Search")), CellConstants.DONTSTRETCH, CellConstants.WEST);
+	topLinePanel.addLast(searchCancelBtn = new mButton(MyLocale.getMsg(7303, "Cancel")), CellConstants.DONTSTRETCH, CellConstants.WEST);
+	// inpText.toolTip=MyLocale.getMsg(1406,"Enter coordinates in any format or GCxxxxx");
 
-		this.addLast(topLinePanel, CellConstants.STRETCH, CellConstants.FILL | CellConstants.WEST);
+	this.addLast(topLinePanel, CellConstants.STRETCH, CellConstants.FILL | CellConstants.WEST);
 
-		// Description of found sites
-		choice = new mList(8, 50, false);
-		ScrollBarPanel sbp = new MyScrollBarPanel(choice, 0);
-		sbp.setOptions(MyScrollBarPanel.NeverShowVerticalScrollers);
-		mainPanel.addLast(sbp, CellConstants.STRETCH, CellConstants.FILL | CellConstants.WEST);
+	// Description of found sites
+	choice = new mList(8, 50, false);
+	ScrollBarPanel sbp = new MyScrollBarPanel(choice, 0);
+	sbp.setOptions(MyScrollBarPanel.NeverShowVerticalScrollers);
+	mainPanel.addLast(sbp, CellConstants.STRETCH, CellConstants.FILL | CellConstants.WEST);
 
-		executePanel = new ExecutePanel(mainPanel);
+	executePanel = new ExecutePanel(mainPanel);
 
-		//add Panels
-		this.addLast(mainPanel, CellConstants.STRETCH, CellConstants.FILL | CellConstants.WEST);
-	}
+	//add Panels
+	this.addLast(mainPanel, CellConstants.STRETCH, CellConstants.FILL | CellConstants.WEST);
+    }
 
-	public void onEvent(Event ev) {
+    public void onEvent(Event ev) {
 
-		if (ev instanceof ControlEvent && ev.type == ControlEvent.PRESSED) {
-			if (ev.target == searchBtn) {
-				Vm.showWait(true);
-				try {
-					geoCodeAnsw = GeocoderOsm.geocode(cityInp.text.trim(), streetInp.text.trim());
-				}
-				catch (Exception e) {
-					geoCodeAnsw = new Vector();
-					geoCodeAnsw.add(new GeocodeAnswer(new CWPoint(), e.getMessage()));
-				}
-				Vm.showWait(false);
-				if (geoCodeAnsw.size() == 0) {
-					geoCodeAnsw = new Vector();
-					geoCodeAnsw.add(new GeocodeAnswer(new CWPoint(), "nothing found"));
-				}
-				choice.items.clear();
-				for (int i = 0; i < geoCodeAnsw.size(); i++) {
-					GeocodeAnswer ga = (GeocodeAnswer) geoCodeAnsw.get(i);
-					choice.addItem(ga.where.toString() + " | " + ga.foundname);
-				}
-				choice.updateItems();
-			}
-
-			if (ev.target == searchCancelBtn) {
-			}
-
-			if (ev.target == executePanel.cancelButton) {
-				this.close(IDCANCEL);
-			}
-
-			if (ev.target == executePanel.applyButton) {
-				if (geoCodeAnsw != null && geoCodeAnsw.size() > 0) {
-					int i = choice.selectedIndex;
-					coordInp = ((GeocodeAnswer) geoCodeAnsw.get(i)).where;
-				}
-				else
-					coordInp.makeInvalid();
-				this.close(IDOK);
-			}
-
+	if (ev instanceof ControlEvent && ev.type == ControlEvent.PRESSED) {
+	    if (ev.target == searchBtn) {
+		Vm.showWait(true);
+		try {
+		    geoCodeAnsw = GeocoderOsm.geocode(cityInp.text.trim(), streetInp.text.trim());
+		} catch (Exception e) {
+		    geoCodeAnsw = new Vector();
+		    geoCodeAnsw.add(new GeocodeAnswer(new CWPoint(), e.getMessage()));
 		}
-		super.onEvent(ev);
+		Vm.showWait(false);
+		if (geoCodeAnsw.size() == 0) {
+		    geoCodeAnsw = new Vector();
+		    geoCodeAnsw.add(new GeocodeAnswer(new CWPoint(), "nothing found"));
+		}
+		choice.items.clear();
+		for (int i = 0; i < geoCodeAnsw.size(); i++) {
+		    GeocodeAnswer ga = (GeocodeAnswer) geoCodeAnsw.get(i);
+		    choice.addItem(ga.where.toString() + " | " + ga.foundname);
+		}
+		choice.updateItems();
+	    }
+
+	    if (ev.target == searchCancelBtn) {
+	    }
+
+	    if (ev.target == executePanel.cancelButton) {
+		this.close(IDCANCEL);
+	    }
+
+	    if (ev.target == executePanel.applyButton) {
+		if (geoCodeAnsw != null && geoCodeAnsw.size() > 0) {
+		    int i = choice.selectedIndex;
+		    coordInp = ((GeocodeAnswer) geoCodeAnsw.get(i)).where;
+		} else
+		    coordInp.makeInvalid();
+		this.close(IDOK);
+	    }
+
 	}
+	super.onEvent(ev);
+    }
 
 }

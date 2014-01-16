@@ -26,7 +26,9 @@ import CacheWolf.database.CacheHolder;
 import CacheWolf.database.CacheSize;
 import CacheWolf.database.CacheType;
 import CacheWolf.imp.KMLImporter;
+import CacheWolf.navi.CWPoint;
 import CacheWolf.utils.Common;
+import CacheWolf.utils.Matrix;
 
 import com.stevesoft.ewe_pat.Regex;
 

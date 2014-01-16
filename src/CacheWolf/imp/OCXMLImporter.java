@@ -21,9 +21,6 @@
  */
 package CacheWolf.imp;
 
-import CacheWolf.CWPoint;
-import CacheWolf.database.CacheDB;
-import CacheWolf.database.CacheHolder;
 import CacheWolf.Global;
 import CacheWolf.InfoBox;
 import CacheWolf.MyLocale;
@@ -31,11 +28,14 @@ import CacheWolf.OC;
 import CacheWolf.Profile;
 import CacheWolf.SafeXML;
 import CacheWolf.UrlFetcher;
+import CacheWolf.database.CacheDB;
+import CacheWolf.database.CacheHolder;
 import CacheWolf.database.CacheSize;
 import CacheWolf.database.CacheTerrDiff;
 import CacheWolf.database.CacheType;
 import CacheWolf.database.ImageInfo;
 import CacheWolf.database.Log;
+import CacheWolf.navi.CWPoint;
 import CacheWolf.navi.TrackPoint;
 import CacheWolf.navi.TransformCoordinates;
 import CacheWolf.utils.Common;
