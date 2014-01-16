@@ -21,9 +21,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 package CacheWolf.database;
 
-import CacheWolf.DataMover;
 import CacheWolf.Global;
 import CacheWolf.SafeXML;
+import CacheWolf.controls.DataMover;
 import CacheWolf.utils.Extractor;
 import ewe.filechooser.FileChooser;
 import ewe.filechooser.FileChooserBase;

@@ -21,11 +21,11 @@
 */
 package CacheWolf.exp;
 
+import CacheWolf.Global;
+import CacheWolf.MyLocale;
+import CacheWolf.controls.InfoBox;
 import CacheWolf.database.CacheDB;
 import CacheWolf.database.CacheHolder;
-import CacheWolf.Global;
-import CacheWolf.InfoBox;
-import CacheWolf.MyLocale;
 import CacheWolf.database.CacheType;
 import HTML.Template;
 

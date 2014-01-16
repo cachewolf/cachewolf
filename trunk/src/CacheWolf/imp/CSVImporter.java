@@ -21,7 +21,6 @@
  */
 package CacheWolf.imp;
 
-import CacheWolf.DateFormat;
 import CacheWolf.Global;
 import CacheWolf.MyLocale;
 import CacheWolf.Profile;
@@ -34,6 +33,7 @@ import CacheWolf.database.CacheTerrDiff;
 import CacheWolf.database.CacheType;
 import CacheWolf.navi.CWPoint;
 import CacheWolf.utils.Common;
+import CacheWolf.utils.DateFormat;
 import CacheWolf.utils.STRreplace;
 import ewe.io.AsciiCodec;
 import ewe.io.JavaUtf8Codec;

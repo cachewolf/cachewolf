@@ -23,8 +23,8 @@ package CacheWolf.navi;
 
 import CacheWolf.CoordsScreen;
 import CacheWolf.Global;
-import CacheWolf.InfoBox;
 import CacheWolf.MyLocale;
+import CacheWolf.controls.InfoBox;
 import CacheWolf.utils.Common;
 import ewe.filechooser.FileChooser;
 import ewe.filechooser.FileChooserBase;

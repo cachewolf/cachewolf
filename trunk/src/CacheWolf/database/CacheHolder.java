@@ -21,17 +21,16 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 package CacheWolf.database;
 
-import CacheWolf.DataMover;
-import CacheWolf.DateFormat;
 import CacheWolf.Filter;
 import CacheWolf.Global;
-import CacheWolf.InfoBox;
 import CacheWolf.MainForm;
 import CacheWolf.MyLocale;
 import CacheWolf.MyTableModel;
 import CacheWolf.OC;
 import CacheWolf.Profile;
 import CacheWolf.SafeXML;
+import CacheWolf.controls.DataMover;
+import CacheWolf.controls.InfoBox;
 import CacheWolf.exp.Exporter;
 import CacheWolf.exp.GarminMap;
 import CacheWolf.navi.CWPoint;
@@ -39,6 +38,7 @@ import CacheWolf.navi.Metrics;
 import CacheWolf.navi.TrackPoint;
 import CacheWolf.navi.TransformCoordinates;
 import CacheWolf.utils.Common;
+import CacheWolf.utils.DateFormat;
 import CacheWolf.utils.STRreplace;
 
 import com.stevesoft.ewe_pat.Regex;

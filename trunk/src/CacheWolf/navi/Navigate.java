@@ -28,9 +28,9 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import CacheWolf.Global;
-import CacheWolf.InfoBox;
 import CacheWolf.MyLocale;
 import CacheWolf.Preferences;
+import CacheWolf.controls.InfoBox;
 import CacheWolf.database.CacheHolder;
 import ewe.fx.Color;
 import ewe.io.IOException;
