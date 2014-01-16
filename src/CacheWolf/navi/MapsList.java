@@ -22,8 +22,8 @@
 package CacheWolf.navi;
 
 import CacheWolf.Global;
-import CacheWolf.InfoBox;
 import CacheWolf.MyLocale;
+import CacheWolf.controls.InfoBox;
 import CacheWolf.utils.BetterUTF8Codec;
 import CacheWolf.utils.Common;
 import CacheWolf.utils.FileBugfix;

@@ -21,8 +21,8 @@
 */
 package CacheWolf.navi;
 
-import CacheWolf.InfoBox;
 import CacheWolf.MyLocale;
+import CacheWolf.controls.InfoBox;
 import ewe.fx.Color;
 import ewe.io.BufferedWriter;
 import ewe.io.FileWriter;

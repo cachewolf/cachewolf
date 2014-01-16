@@ -22,11 +22,11 @@
 package CacheWolf.navi;
 
 import CacheWolf.CoordsScreen;
-import CacheWolf.ExecutePanel;
 import CacheWolf.Global;
-import CacheWolf.InfoBox;
 import CacheWolf.MyLocale;
 import CacheWolf.UrlFetcher;
+import CacheWolf.controls.ExecutePanel;
+import CacheWolf.controls.InfoBox;
 import CacheWolf.database.CacheDB;
 import CacheWolf.database.CacheHolder;
 import CacheWolf.utils.Common;

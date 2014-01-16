@@ -24,13 +24,12 @@ package CacheWolf.imp;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import CacheWolf.DateFormat;
 import CacheWolf.Global;
-import CacheWolf.InfoBox;
 import CacheWolf.MyLocale;
 import CacheWolf.Preferences;
 import CacheWolf.SafeXML;
 import CacheWolf.UrlFetcher;
+import CacheWolf.controls.InfoBox;
 import CacheWolf.database.CacheHolder;
 import CacheWolf.database.CacheHolderDetail;
 import CacheWolf.database.CacheImages;
@@ -50,6 +49,7 @@ import CacheWolf.navi.TrackPoint;
 import CacheWolf.navi.TransformCoordinates;
 import CacheWolf.utils.BetterUTF8Codec;
 import CacheWolf.utils.Common;
+import CacheWolf.utils.DateFormat;
 import CacheWolf.utils.Extractor;
 import CacheWolf.utils.STRreplace;
 

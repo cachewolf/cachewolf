@@ -22,9 +22,9 @@
 package CacheWolf.navi;
 
 import CacheWolf.Global;
-import CacheWolf.InfoBox;
 import CacheWolf.MyLocale;
 import CacheWolf.UrlFetcher;
+import CacheWolf.controls.InfoBox;
 import CacheWolf.database.CacheDB;
 import CacheWolf.database.CacheHolder;
 import CacheWolf.utils.CWWrapper;

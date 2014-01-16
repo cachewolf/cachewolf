@@ -24,12 +24,12 @@ package CacheWolf.imp;
 
 import CacheWolf.Filter;
 import CacheWolf.Global;
-import CacheWolf.InfoBox;
 import CacheWolf.MyLocale;
 import CacheWolf.OC;
 import CacheWolf.Profile;
 import CacheWolf.SafeXML;
 import CacheWolf.UrlFetcher;
+import CacheWolf.controls.InfoBox;
 import CacheWolf.database.Attribute;
 import CacheWolf.database.CacheDB;
 import CacheWolf.database.CacheHolder;
