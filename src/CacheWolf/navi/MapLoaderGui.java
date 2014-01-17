@@ -21,13 +21,14 @@
  */
 package CacheWolf.navi;
 
-import CacheWolf.CoordsScreen;
+import CacheWolf.CoordsInput;
 import CacheWolf.MainForm;
 import CacheWolf.MainTab;
 import CacheWolf.MyLocale;
 import CacheWolf.Preferences;
 import CacheWolf.controls.ExecutePanel;
 import CacheWolf.controls.InfoBox;
+import CacheWolf.database.BoundingBox;
 import CacheWolf.database.CWPoint;
 import CacheWolf.database.CacheDB;
 import CacheWolf.database.CacheHolder;
@@ -337,7 +338,7 @@ public class MapLoaderGui extends Form {
 	Point TileSizeInPixels = new Point(Preferences.itself().tilewidth, Preferences.itself().tileheight);
 	if (forCachesChkBox.getState() || perCache) {
 	    // calculate map boundaries from cacheDB
-	    Area surArea = MainForm.profile.getSourroundingArea(onlySelected);
+	    BoundingBox surArea = MainForm.profile.getSourroundingArea(onlySelected);
 	    if (surArea == null) {
 		new InfoBox(MyLocale.getMsg(5500, "Error"), MyLocale.getMsg(1817, "No Caches are selected")).wait(FormBase.OKB);
 		Vm.showWait(false);
@@ -485,7 +486,7 @@ public class MapLoaderGui extends Form {
 		// this.close(FormBase.IDOK);
 		this.download();
 	    } else if (ev.target == coosBtn) {
-		CoordsScreen cs = new CoordsScreen();
+		CoordsInput cs = new CoordsInput();
 		cs.setFields(center, TransformCoordinates.CW);
 		if (cs.execute() != FormBase.IDCANCEL) {
 		    center = cs.getCoords();

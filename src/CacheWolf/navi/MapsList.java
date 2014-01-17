@@ -25,6 +25,7 @@ import CacheWolf.MainForm;
 import CacheWolf.MyLocale;
 import CacheWolf.Preferences;
 import CacheWolf.controls.InfoBox;
+import CacheWolf.database.BoundingBox;
 import CacheWolf.database.CWPoint;
 import CacheWolf.utils.BetterUTF8Codec;
 import CacheWolf.utils.Common;
@@ -364,7 +365,7 @@ public final class MapsList extends Vector {
 	long start = new Time().getTime();
 	InfoBox progressBox = null;
 	boolean showprogress = false;
-	String cmp = "FF1" + Area.getEasyFindString(ll, MAXDIGITS_IN_FF);
+	String cmp = "FF1" + BoundingBox.getEasyFindString(ll, MAXDIGITS_IN_FF);
 	int guess = -1;
 	MapListEntry mle;
 	MapInfoObject mio;
@@ -373,7 +374,7 @@ public final class MapsList extends Vector {
 	double minDistLon = 1000000000000000000000000000000000000000000000.0;
 	boolean latNearer, lonNearer;
 	boolean better = false;
-	Area screenArea = null; // getAreaForScreen(screen, lat, lon, bestMIO.scale, bestMIO);
+	BoundingBox screenArea = null; // getAreaForScreen(screen, lat, lon, bestMIO.scale, bestMIO);
 	float lastscale = -1;
 	for (int digitlenght = 0; digitlenght < maxDigits; digitlenght++) {
 	    guess = quickfind(cmp, this.numDigitsStartIndex[digitlenght], this.numDigitsStartIndex[digitlenght + 1] - 1);
@@ -389,7 +390,7 @@ public final class MapsList extends Vector {
 		    }
 		}
 		mle = (MapListEntry) get(i);
-		if (!Area.containsRoughly(mle.sortEntryBBox, cmp))
+		if (!BoundingBox.containsRoughly(mle.sortEntryBBox, cmp))
 		    break; // TODO if no map available
 		else {
 		    mio = mle.getMap();
@@ -546,7 +547,7 @@ public final class MapsList extends Vector {
 	boolean showprogress = false;
 	MapListEntry ml;
 	MapInfoObject mi;
-	String cmp = "FF1" + (new Area(topleft, bottomright)).getEasyFindString();
+	String cmp = "FF1" + (new BoundingBox(topleft, bottomright)).getEasyFindString();
 	String cmppadded = Common.rightPad(cmp, 30);
 	MapInfoObject fittingmap = null;
 	int guess;
@@ -567,7 +568,7 @@ public final class MapsList extends Vector {
 		    ewe.sys.Vm.showWait(true);
 		}
 		ml = (MapListEntry) get(i);
-		if (!Area.containsRoughly(ml.sortEntryBBox, cmp))
+		if (!BoundingBox.containsRoughly(ml.sortEntryBBox, cmp))
 		    // TODO if no map available
 		    continue;
 		else {
@@ -635,9 +636,9 @@ public final class MapsList extends Vector {
 	double minDistLon = 1000000000000000000000000000000000000000000000.0;
 	boolean latNearer, lonNearer;
 	boolean better = false;
-	Area screenArea = null; // getAreaForScreen(screen, lat, lon, bestMIO.scale, bestMIO);
+	BoundingBox screenArea = null; // getAreaForScreen(screen, lat, lon, bestMIO.scale, bestMIO);
 	float lastscale = -1;
-	String cmp = "FF1" + Area.getEasyFindString(ll, MAXDIGITS_IN_FF);
+	String cmp = "FF1" + BoundingBox.getEasyFindString(ll, MAXDIGITS_IN_FF);
 	for (int i = size() - 1; i >= 0; i--) {
 
 	    // test time only after i is incremented 31 times
@@ -651,7 +652,7 @@ public final class MapsList extends Vector {
 
 	    better = false;
 	    ml = (MapListEntry) get(i);
-	    if (!Area.containsRoughly(ml.sortEntryBBox, cmp))
+	    if (!BoundingBox.containsRoughly(ml.sortEntryBBox, cmp))
 		// TODO if no map available
 		continue;
 	    else {
@@ -709,13 +710,13 @@ public final class MapsList extends Vector {
      *            scale (meters per pixel) of the map for which the screen edges are wanted
      * @param map
      *            map for which the screen edges are wanted
-     * @return Area
+     * @return BoundingBox
      */
-    private Area getAreaForScreen(Rect screen, CWPoint ll, float scale, MapInfoObject map) {
-	Area ret = null;
+    private BoundingBox getAreaForScreen(Rect screen, CWPoint ll, float scale, MapInfoObject map) {
+	BoundingBox ret = null;
 	Point xy = map.calcMapXY(ll);
 	Point topleft = new Point(xy.x - screen.x, xy.y - screen.y);
-	ret = new Area(map.calcLatLon(topleft), map.calcLatLon(topleft.x + screen.width, topleft.y + screen.height));
+	ret = new BoundingBox(map.calcLatLon(topleft), map.calcLatLon(topleft.x + screen.width, topleft.y + screen.height));
 	return ret;
     }
 

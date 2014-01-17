@@ -19,8 +19,11 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
-package CacheWolf;
+package CacheWolf.controls;
 
+import CacheWolf.MyLocale;
+import CacheWolf.MyScrollBarPanel;
+import CacheWolf.Preferences;
 import ewe.io.FileReader;
 import ewe.ui.CellConstants;
 import ewe.ui.ControlEvent;
@@ -40,35 +43,33 @@ import ewe.ui.mButton;
  */
 public class InfoScreen extends Form {
 
-	HtmlDisplay disp = new HtmlDisplay();
-	mButton btCancel;
+    HtmlDisplay disp = new HtmlDisplay();
+    mButton btCancel;
 
-	public InfoScreen(String datei, String tit, boolean readFromFile) {
-		String myText = new String();
-		this.setTitle(tit);
-		this.setPreferredSize(Preferences.itself().myAppWidth, Preferences.itself().myAppHeight);
-		if (readFromFile == true) {
-			try {
-				FileReader in = new FileReader(datei);
-				myText = in.readAll();
-				in.close();
-			}
-			catch (Exception ex) {
-			}
-		}
-		else
-			myText = datei;
-		disp.setHtml(myText);
-		ScrollBarPanel sbp = new MyScrollBarPanel(disp, ScrollablePanel.NeverShowHorizontalScrollers);
-		this.addLast(sbp);
-		this.addLast(btCancel = new mButton(MyLocale.getMsg(3000, "Close")), CellConstants.DONTSTRETCH, CellConstants.FILL);
-	}
+    public InfoScreen(String datei, String tit, boolean readFromFile) {
+	String myText = new String();
+	this.setTitle(tit);
+	this.setPreferredSize(Preferences.itself().myAppWidth, Preferences.itself().myAppHeight);
+	if (readFromFile == true) {
+	    try {
+		FileReader in = new FileReader(datei);
+		myText = in.readAll();
+		in.close();
+	    } catch (Exception ex) {
+	    }
+	} else
+	    myText = datei;
+	disp.setHtml(myText);
+	ScrollBarPanel sbp = new MyScrollBarPanel(disp, ScrollablePanel.NeverShowHorizontalScrollers);
+	this.addLast(sbp);
+	this.addLast(btCancel = new mButton(MyLocale.getMsg(3000, "Close")), CellConstants.DONTSTRETCH, CellConstants.FILL);
+    }
 
-	public void onEvent(Event ev) {
-		if (ev instanceof ControlEvent && ev.type == ControlEvent.PRESSED) {
-			if (ev.target == btCancel) {
-				this.close(0);
-			}
-		}
+    public void onEvent(Event ev) {
+	if (ev instanceof ControlEvent && ev.type == ControlEvent.PRESSED) {
+	    if (ev.target == btCancel) {
+		this.close(0);
+	    }
 	}
+    }
 }

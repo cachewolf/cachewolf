@@ -24,6 +24,7 @@ package CacheWolf;
 import CacheWolf.controls.CWProgressBar;
 import CacheWolf.controls.DataMover;
 import CacheWolf.controls.InfoBox;
+import CacheWolf.controls.InfoScreen;
 import CacheWolf.database.CacheDB;
 import CacheWolf.database.CacheHolder;
 import CacheWolf.exp.ASCExporter;
