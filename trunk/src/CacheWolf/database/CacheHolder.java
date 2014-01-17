@@ -22,20 +22,18 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 package CacheWolf.database;
 
 import CacheWolf.Filter;
-import CacheWolf.Global;
 import CacheWolf.MainForm;
 import CacheWolf.MyLocale;
 import CacheWolf.MyTableModel;
 import CacheWolf.OC;
+import CacheWolf.Preferences;
 import CacheWolf.Profile;
 import CacheWolf.SafeXML;
 import CacheWolf.controls.DataMover;
 import CacheWolf.controls.InfoBox;
 import CacheWolf.exp.Exporter;
 import CacheWolf.exp.GarminMap;
-import CacheWolf.navi.CWPoint;
 import CacheWolf.navi.Metrics;
-import CacheWolf.navi.TrackPoint;
 import CacheWolf.navi.TransformCoordinates;
 import CacheWolf.utils.Common;
 import CacheWolf.utils.DateFormat;
@@ -222,7 +220,7 @@ public class CacheHolder {
 		    } catch (IllegalArgumentException ex) {
 			setHard(CacheTerrDiff.CW_DT_ERROR);
 			setIncomplete(true);
-			Global.pref.log(wayPoint, ex, true);
+			Preferences.itself().log(wayPoint, ex, true);
 		    }
 		}
 		start = xmlString.indexOf('"', end + 1);
@@ -235,7 +233,7 @@ public class CacheHolder {
 		    } catch (IllegalArgumentException ex) {
 			setTerrain(CacheTerrDiff.CW_DT_ERROR);
 			setIncomplete(true);
-			Global.pref.log(wayPoint, ex, true);
+			Preferences.itself().log(wayPoint, ex, true);
 		    }
 		}
 		// The next item was 'dirty' but this is no longer used.
@@ -253,7 +251,7 @@ public class CacheHolder {
 		    } catch (IllegalArgumentException ex) {
 			setCacheSize(CacheSize.CW_SIZE_ERROR);
 			setIncomplete(true);
-			Global.pref.log(wayPoint, ex, true);
+			Preferences.itself().log(wayPoint, ex, true);
 		    }
 		}
 		start = xmlString.indexOf('"', end + 1);
@@ -429,7 +427,7 @@ public class CacheHolder {
 		setHasSolver(!details.getSolver().equals(""));
 	    }
 	} catch (Exception ex) {
-	    // Global.pref.log("Ignored Exception in CacheHolder()", ex, true);
+	    // Preferences.itself().log("Ignored Exception in CacheHolder()", ex, true);
 	}
     }
 
@@ -442,12 +440,12 @@ public class CacheHolder {
 	String result = null;
 	String newUnit = null;
 
-	if (this.kilom == this.lastKilom && Global.pref.metricSystem == this.lastMetric) {
+	if (this.kilom == this.lastKilom && Preferences.itself().metricSystem == this.lastMetric) {
 	    result = this.lastDistance;
 	} else {
 	    if (this.kilom >= 0) {
 		double newValue = 0;
-		switch (Global.pref.metricSystem) {
+		switch (Preferences.itself().metricSystem) {
 		case Metrics.IMPERIAL:
 		    newValue = Metrics.convertUnit(this.kilom, Metrics.KILOMETER, Metrics.MILES);
 		    newUnit = Metrics.getUnit(Metrics.MILES);
@@ -460,11 +458,11 @@ public class CacheHolder {
 		}
 		result = MyLocale.formatDouble(newValue, "0.00") + " " + newUnit;
 	    } else {
-		result = "? " + (Global.pref.metricSystem == Metrics.IMPERIAL ? Metrics.getUnit(Metrics.MILES) : Metrics.getUnit(Metrics.KILOMETER));
+		result = "? " + (Preferences.itself().metricSystem == Metrics.IMPERIAL ? Metrics.getUnit(Metrics.MILES) : Metrics.getUnit(Metrics.KILOMETER));
 	    }
 	    // Caching values, so reevaluation is only done when really needed
 	    this.lastKilom = this.kilom;
-	    this.lastMetric = Global.pref.metricSystem;
+	    this.lastMetric = Preferences.itself().metricSystem;
 	    this.lastDistance = result;
 	}
 	return result;
@@ -612,8 +610,8 @@ public class CacheHolder {
 	Hashtable varParams = new Hashtable();
 	CacheHolderDetail det = this.getCacheDetails(false);
 	varParams.put("PROGDIR", FileBase.getProgramDirectory());
-	varParams.put("PROFILDIR", Global.profile.dataDir);
-	varParams.put("ALIAS", Global.pref.myAlias);
+	varParams.put("PROFILDIR", MainForm.profile.dataDir);
+	varParams.put("ALIAS", Preferences.itself().myAlias);
 	varParams.put("TYPE", CacheType.type2TypeTag(type)); // <type>
 	varParams.put("TYPENO", "" + type);
 	varParams.put("SYM", CacheType.type2SymTag(type)); // <sym>
@@ -852,10 +850,10 @@ public class CacheHolder {
 		    imgs.put("COMMENT", comment);
 		    imgs.put("URL", det.images.get(i).getURL());
 		    if (!expName.equals("")) {
-			String src = Global.profile.dataDir + imgFile;
+			String src = MainForm.profile.dataDir + imgFile;
 			String dest;
 			if (expName.endsWith("*")) {
-			    String d1 = Global.pref.getExportPath(expName.substring(0, expName.length() - 1));
+			    String d1 = Preferences.itself().getExportPath(expName.substring(0, expName.length() - 1));
 			    d1 = d1 + imgFile.substring(0, 4).toUpperCase() + "/";
 			    dest = d1 + imgFile.toUpperCase();
 			    if (imgFile.toUpperCase().startsWith(title.toUpperCase())) {
@@ -865,10 +863,10 @@ public class CacheHolder {
 			    }
 			    dest = d1 + Common.getFilenameExtension(dest).toLowerCase();
 			} else {
-			    dest = Global.pref.getExportPath(expName) + imgFile;
+			    dest = Preferences.itself().getExportPath(expName) + imgFile;
 			}
 			if (!DataMover.copy(src, dest)) {
-			    Global.pref.log("[CacheHolder:toHashtable]error copying " + imgFile + " to " + Global.pref.getExportPath(expName));
+			    Preferences.itself().log("[CacheHolder:toHashtable]error copying " + imgFile + " to " + Preferences.itself().getExportPath(expName));
 			}
 		    }
 		    if (!title.toLowerCase().startsWith(wayPoint.toLowerCase())) {
@@ -977,7 +975,7 @@ public class CacheHolder {
 	int imageNo = 0;
 	String imgsrc = "";
 	if (ModTypLongDesc == 1)
-	    imgsrc = "file://" + Global.profile.dataDir;
+	    imgsrc = "file://" + MainForm.profile.dataDir;
 	while (start >= 0 && (pos = chD.LongDescription.indexOf("<img", start)) > 0) {
 	    if (imageNo >= chD.images.size())
 		break;
@@ -1167,7 +1165,7 @@ public class CacheHolder {
 	if (details == null) {
 	    details = new CacheHolderDetail(this);
 	    try {
-		details.readCache(Global.profile.dataDir);
+		details.readCache(MainForm.profile.dataDir);
 	    } catch (IOException e) {
 		if (alarmuser) {
 		    // FIXME: put a message to languages file
@@ -1179,7 +1177,7 @@ public class CacheHolder {
 	    // for importing/spidering reasons helper objects with same waypoint are created
 	    if (details != null && !cachesWithLoadedDetails.contains(this)) {
 		cachesWithLoadedDetails.add(this);
-		if (cachesWithLoadedDetails.size() >= Global.pref.maxDetails)
+		if (cachesWithLoadedDetails.size() >= Preferences.itself().maxDetails)
 		    removeOldestDetails();
 	    }
 	}
@@ -1191,25 +1189,25 @@ public class CacheHolder {
      */
     public void save() {
 	checkIncomplete();
-	this.getCacheDetails(false).saveCacheDetails(Global.profile.dataDir);
+	this.getCacheDetails(false).saveCacheDetails(MainForm.profile.dataDir);
     }
 
     void releaseCacheDetails() {
 	if (details != null && details.hasUnsavedChanges) {
-	    details.saveCacheDetails(Global.profile.dataDir);
+	    details.saveCacheDetails(MainForm.profile.dataDir);
 	}
 	details = null;
 	cachesWithLoadedDetails.remove(this);
     }
 
     // final static int maxDetails = 50;
-    public static Vector cachesWithLoadedDetails = new Vector(Global.pref.maxDetails);
+    public static Vector cachesWithLoadedDetails = new Vector(Preferences.itself().maxDetails);
 
     public static void removeOldestDetails() {
 	CacheHolder ch;
-	for (int i = 0; i < Global.pref.deleteDetails; i++) {
+	for (int i = 0; i < Preferences.itself().deleteDetails; i++) {
 	    // String wp = (String) cachesWithLoadedDetails.get(i);
-	    // CacheHolder ch = Global.profile.cacheDB.get(wp);
+	    // CacheHolder ch = MainForm.profile.cacheDB.get(wp);
 	    ch = (CacheHolder) cachesWithLoadedDetails.get(i);
 	    if (ch != null)
 		ch.releaseCacheDetails();
@@ -1220,7 +1218,7 @@ public class CacheHolder {
 	CacheHolder ch;
 	for (int i = cachesWithLoadedDetails.size() - 1; i >= 0; i--) {
 	    // String wp = (String) cachesWithLoadedDetails.get(i);
-	    // CacheHolder ch = Global.profile.cacheDB.get(wp);
+	    // CacheHolder ch = MainForm.profile.cacheDB.get(wp);
 	    ch = (CacheHolder) cachesWithLoadedDetails.get(i);
 	    if (ch != null && ch.detailsLoaded())
 		ch.releaseCacheDetails();
@@ -1235,13 +1233,13 @@ public class CacheHolder {
 	CacheHolderDetail chD;
 	for (int i = cachesWithLoadedDetails.size() - 1; i >= 0; i--) {
 	    // String wp = (String) cachesWithLoadedDetails.get(i);
-	    // ch = Global.profile.cacheDB.get(wp);
+	    // ch = MainForm.profile.cacheDB.get(wp);
 	    ch = (CacheHolder) cachesWithLoadedDetails.get(i);
 	    if (ch != null) {
 		chD = ch.getCacheDetails(true);
 		if (chD != null && chD.hasUnsavedChanges) {
 		    // ch.calcRecommendationScore();
-		    chD.saveCacheDetails(Global.profile.dataDir);
+		    chD.saveCacheDetails(MainForm.profile.dataDir);
 		}
 	    }
 	}
@@ -1330,9 +1328,9 @@ public class CacheHolder {
     public String getStatusUtcDate() {
 	String statusDate = getStatusDate();
 
-	long timeZoneOffset = Global.profile.getTimeZoneOffsetLong();
+	long timeZoneOffset = MainForm.profile.getTimeZoneOffsetLong();
 
-	if (timeZoneOffset != 0 || Global.profile.getTimeZoneAutoDST()) {
+	if (timeZoneOffset != 0 || MainForm.profile.getTimeZoneAutoDST()) {
 	    //convert to UTC only if time is set
 	    Regex rexTime = new Regex("([0-9]{1,2}:[0-9]{2})");
 	    rexTime.search(getCacheStatus());
@@ -1351,7 +1349,7 @@ public class CacheHolder {
 			    timeZoneOffsetMillis = timeZoneOffset * 3600000;
 			}
 
-			if (Global.profile.getTimeZoneAutoDST()) {
+			if (MainForm.profile.getTimeZoneAutoDST()) {
 			    int lsM = (byte) (31 - ((int) (5 * logTime.year / 4) + 4) % 7);//last Sunday in March
 			    int lsO = (byte) (31 - ((int) (5 * logTime.year / 4) + 1) % 7);//last Sunday in October
 
@@ -1382,9 +1380,9 @@ public class CacheHolder {
     public String getStatusUtcTime() {
 	String statusTime = getStatusTime();
 
-	long timeZoneOffset = Global.profile.getTimeZoneOffsetLong();
+	long timeZoneOffset = MainForm.profile.getTimeZoneOffsetLong();
 
-	if (timeZoneOffset != 0 || Global.profile.getTimeZoneAutoDST()) {
+	if (timeZoneOffset != 0 || MainForm.profile.getTimeZoneAutoDST()) {
 	    //convert to UTC only if time is set
 	    Regex rexTime = new Regex("([0-9]{1,2}:[0-9]{2})");
 	    rexTime.search(getCacheStatus());
@@ -1403,7 +1401,7 @@ public class CacheHolder {
 			    timeZoneOffsetMillis = timeZoneOffset * 3600000;
 			}
 
-			if (Global.profile.getTimeZoneAutoDST()) {
+			if (MainForm.profile.getTimeZoneAutoDST()) {
 			    int lsM = (byte) (31 - ((int) (5 * logTime.year / 4) + 4) % 7);//last Sunday in March
 			    int lsO = (byte) (31 - ((int) (5 * logTime.year / 4) + 1) % 7);//last Sunday in October
 
@@ -1683,11 +1681,11 @@ public class CacheHolder {
      * @return
      */
     public boolean isVisible() {
-	int filter = Global.profile.getFilterActive();
-	boolean noShow = Global.profile.showBlacklisted() != this.is_black();
-	noShow = noShow || Global.profile.showSearchResult() && !this.is_flaged;
-	noShow = noShow || ((filter == Filter.FILTER_ACTIVE || filter == Filter.FILTER_MARKED_ONLY) && this.is_filtered() ^ Global.profile.isFilterInverted());
-	noShow = noShow || (filter == Filter.FILTER_CACHELIST) && !MainForm.itself.cacheList.contains(this.getWayPoint()); // only from CacheTour
+	int filter = MainForm.profile.getFilterActive();
+	boolean noShow = MainForm.profile.showBlacklisted() != this.is_black();
+	noShow = noShow || MainForm.profile.showSearchResult() && !this.is_flaged;
+	noShow = noShow || ((filter == Filter.FILTER_ACTIVE || filter == Filter.FILTER_MARKED_ONLY) && this.is_filtered() ^ MainForm.profile.isFilterInverted());
+	noShow = noShow || (filter == Filter.FILTER_CACHELIST) && !MainForm.itself.contains(this.getWayPoint()); // only from CacheTour
 	boolean showAddi = this.showAddis() && this.mainCache != null && this.mainCache.isVisible();
 	noShow = noShow && !showAddi;
 	return !noShow;
@@ -1699,7 +1697,7 @@ public class CacheHolder {
 	return pos;
     }
 
-    public void setPos(TrackPoint _pos) {
+    public void setPos(CoordinatePoint _pos) {
 	if (_pos.latDec != pos.latDec || _pos.lonDec != pos.lonDec)
 	    setUpdated(true);
 	pos.set(_pos);
@@ -1746,7 +1744,7 @@ public class CacheHolder {
     public void setCacheStatus(String cacheStatus) {
 	if (!cacheStatus.equals(this.cacheStatus)) {
 	    this.cacheStatus = cacheStatus;
-	    Global.profile.notifyUnsavedChanges(true);
+	    MainForm.profile.notifyUnsavedChanges(true);
 	    if ((this.getType() == CacheType.CW_TYPE_FINAL) && (this.mainCache != null)) {
 		this.mainCache.setCacheStatus(this.getCacheStatus());
 		// change the addi's in setFound
@@ -1759,7 +1757,7 @@ public class CacheHolder {
     }
 
     public void setWayPoint(String wayPoint) {
-	Global.profile.notifyUnsavedChanges(!wayPoint.equals(this.wayPoint));
+	MainForm.profile.notifyUnsavedChanges(!wayPoint.equals(this.wayPoint));
 	this.wayPoint = wayPoint;
     }
 
@@ -1768,7 +1766,7 @@ public class CacheHolder {
     }
 
     public void setCacheName(String cacheName) {
-	Global.profile.notifyUnsavedChanges(!cacheName.equals(this.cacheName));
+	MainForm.profile.notifyUnsavedChanges(!cacheName.equals(this.cacheName));
 	this.cacheName = cacheName;
     }
 
@@ -1777,7 +1775,7 @@ public class CacheHolder {
     }
 
     public void setCacheOwner(String cacheOwner) {
-	Global.profile.notifyUnsavedChanges(!cacheOwner.equals(this.cacheOwner));
+	MainForm.profile.notifyUnsavedChanges(!cacheOwner.equals(this.cacheOwner));
 	this.cacheOwner = cacheOwner;
     }
 
@@ -1786,7 +1784,7 @@ public class CacheHolder {
     }
 
     public void setDateHidden(String dateHidden) {
-	Global.profile.notifyUnsavedChanges(!dateHidden.equals(this.dateHidden));
+	MainForm.profile.notifyUnsavedChanges(!dateHidden.equals(this.dateHidden));
 	this.dateHidden = dateHidden;
     }
 
@@ -1795,7 +1793,7 @@ public class CacheHolder {
     }
 
     public void setCacheSize(byte cacheSize) {
-	Global.profile.notifyUnsavedChanges(cacheSize != this.cacheSize);
+	MainForm.profile.notifyUnsavedChanges(cacheSize != this.cacheSize);
 	this.cacheSize = cacheSize;
     }
 
@@ -1804,7 +1802,7 @@ public class CacheHolder {
     }
 
     public void setHard(byte hard) {
-	Global.profile.notifyUnsavedChanges(hard != this.hard);
+	MainForm.profile.notifyUnsavedChanges(hard != this.hard);
 	this.hard = hard;
     }
 
@@ -1813,7 +1811,7 @@ public class CacheHolder {
     }
 
     public void setTerrain(byte terrain) {
-	Global.profile.notifyUnsavedChanges(terrain != this.terrain);
+	MainForm.profile.notifyUnsavedChanges(terrain != this.terrain);
 	this.terrain = terrain;
     }
 
@@ -1833,7 +1831,7 @@ public class CacheHolder {
      *            Cache Type
      */
     public void setType(byte typeId) {
-	Global.profile.notifyUnsavedChanges(typeId != type);
+	MainForm.profile.notifyUnsavedChanges(typeId != type);
 	type = typeId;
     }
 
@@ -1842,7 +1840,7 @@ public class CacheHolder {
     }
 
     public void setArchived(boolean is_archived) {
-	Global.profile.notifyUnsavedChanges(is_archived != this.archived);
+	MainForm.profile.notifyUnsavedChanges(is_archived != this.archived);
 	this.archived = is_archived;
 	if (this.archived) {
 	    this.available = false;
@@ -1854,7 +1852,7 @@ public class CacheHolder {
     }
 
     public void setAvailable(boolean is_available) {
-	Global.profile.notifyUnsavedChanges(is_available != this.available);
+	MainForm.profile.notifyUnsavedChanges(is_available != this.available);
 	this.available = is_available;
 	if (this.available) {
 	    this.archived = false;
@@ -1866,7 +1864,7 @@ public class CacheHolder {
     }
 
     public void setOwned(boolean is_owned) {
-	Global.profile.notifyUnsavedChanges(is_owned != this.owned);
+	MainForm.profile.notifyUnsavedChanges(is_owned != this.owned);
 	this.owned = is_owned;
     }
 
@@ -1876,7 +1874,7 @@ public class CacheHolder {
 
     public void setFound(boolean is_found) {
 	if (is_found != this.found) {
-	    Global.profile.notifyUnsavedChanges(true);
+	    MainForm.profile.notifyUnsavedChanges(true);
 	    this.found = is_found;
 	    if ((this.getType() == CacheType.CW_TYPE_FINAL) && (this.mainCache != null)) {
 		this.mainCache.setFound(is_found);
@@ -1949,7 +1947,7 @@ public class CacheHolder {
     }
 
     public void setFiltered(boolean is_filtered) {
-	Global.profile.notifyUnsavedChanges(is_filtered != this.filtered);
+	MainForm.profile.notifyUnsavedChanges(is_filtered != this.filtered);
 	this.filtered = is_filtered;
     }
 
@@ -1958,7 +1956,7 @@ public class CacheHolder {
     }
 
     public void setLog_updated(boolean is_log_updated) {
-	Global.profile.notifyUnsavedChanges(is_log_updated != this.log_updated);
+	MainForm.profile.notifyUnsavedChanges(is_log_updated != this.log_updated);
 	if (is_log_updated && iconAndTextWPLevel == 1)
 	    iconAndTextWP = null;
 	this.log_updated = is_log_updated;
@@ -1969,7 +1967,7 @@ public class CacheHolder {
     }
 
     public void setUpdated(boolean is_updated) {
-	Global.profile.notifyUnsavedChanges(is_updated != this.cache_updated);
+	MainForm.profile.notifyUnsavedChanges(is_updated != this.cache_updated);
 	if (is_updated && iconAndTextWPLevel == 2)
 	    iconAndTextWP = null;
 	this.cache_updated = is_updated;
@@ -1980,7 +1978,7 @@ public class CacheHolder {
     }
 
     public void setIncomplete(boolean is_incomplete) {
-	Global.profile.notifyUnsavedChanges(is_incomplete != this.incomplete);
+	MainForm.profile.notifyUnsavedChanges(is_incomplete != this.incomplete);
 	if (is_incomplete && iconAndTextWPLevel == 4)
 	    iconAndTextWP = null;
 	this.incomplete = is_incomplete;
@@ -2036,7 +2034,7 @@ public class CacheHolder {
     }
 
     public void setBlack(boolean is_black) {
-	Global.profile.notifyUnsavedChanges(is_black != this.black);
+	MainForm.profile.notifyUnsavedChanges(is_black != this.black);
 	this.black = is_black;
     }
 
@@ -2045,7 +2043,7 @@ public class CacheHolder {
     }
 
     public void setNew(boolean is_new) {
-	Global.profile.notifyUnsavedChanges(is_new != this.newCache);
+	MainForm.profile.notifyUnsavedChanges(is_new != this.newCache);
 	if (is_new && iconAndTextWPLevel == 3)
 	    iconAndTextWP = null;
 	this.newCache = is_new;
@@ -2056,7 +2054,7 @@ public class CacheHolder {
     }
 
     public void setOcCacheID(String ocCacheID) {
-	Global.profile.notifyUnsavedChanges(!ocCacheID.equals(this.ocCacheID));
+	MainForm.profile.notifyUnsavedChanges(!ocCacheID.equals(this.ocCacheID));
 	this.ocCacheID = ocCacheID;
     }
 
@@ -2065,7 +2063,7 @@ public class CacheHolder {
     }
 
     public void setNoFindLogs(byte noFindLogs) {
-	Global.profile.notifyUnsavedChanges(noFindLogs != this.noFindLogs);
+	MainForm.profile.notifyUnsavedChanges(noFindLogs != this.noFindLogs);
 	this.noFindLogs = noFindLogs;
     }
 
@@ -2091,7 +2089,7 @@ public class CacheHolder {
     }
 
     public void setNumRecommended(int numRecommended) {
-	Global.profile.notifyUnsavedChanges(numRecommended != this.numRecommended);
+	MainForm.profile.notifyUnsavedChanges(numRecommended != this.numRecommended);
 	this.numRecommended = numRecommended;
     }
 
@@ -2100,7 +2098,7 @@ public class CacheHolder {
     }
 
     public void setNumFoundsSinceRecommendation(int numFoundsSinceRecommendation) {
-	Global.profile.notifyUnsavedChanges(numFoundsSinceRecommendation != this.numFoundsSinceRecommendation);
+	MainForm.profile.notifyUnsavedChanges(numFoundsSinceRecommendation != this.numFoundsSinceRecommendation);
 	this.numFoundsSinceRecommendation = numFoundsSinceRecommendation;
     }
 
@@ -2109,7 +2107,7 @@ public class CacheHolder {
     }
 
     public void setHas_bugs(boolean has_bug) {
-	Global.profile.notifyUnsavedChanges(has_bug != this.bugs);
+	MainForm.profile.notifyUnsavedChanges(has_bug != this.bugs);
 	this.bugs = has_bug;
     }
 
@@ -2118,7 +2116,7 @@ public class CacheHolder {
     }
 
     public void setHTML(boolean is_HTML) {
-	Global.profile.notifyUnsavedChanges(is_HTML != this.html);
+	MainForm.profile.notifyUnsavedChanges(is_HTML != this.html);
 	this.html = is_HTML;
     }
 
@@ -2127,7 +2125,7 @@ public class CacheHolder {
     }
 
     public void setLastSync(String lastSync) {
-	Global.profile.notifyUnsavedChanges(!lastSync.equals(this.lastSync));
+	MainForm.profile.notifyUnsavedChanges(!lastSync.equals(this.lastSync));
 	this.lastSync = lastSync;
     }
 
@@ -2136,7 +2134,7 @@ public class CacheHolder {
     }
 
     public void setAttribsAsBits(long[] attributesBits) {
-	Global.profile.notifyUnsavedChanges(attributesBits != this.attributesBits);
+	MainForm.profile.notifyUnsavedChanges(attributesBits != this.attributesBits);
 	this.attributesBits = attributesBits;
     }
 
@@ -2145,7 +2143,7 @@ public class CacheHolder {
     }
 
     public void setHasSolver(boolean hasSolver) {
-	Global.profile.notifyUnsavedChanges(hasSolver != this.hasSolver);
+	MainForm.profile.notifyUnsavedChanges(hasSolver != this.hasSolver);
 	this.hasSolver = hasSolver;
     }
 
@@ -2154,7 +2152,7 @@ public class CacheHolder {
     }
 
     public void setHasNote(boolean hasNote) {
-	Global.profile.notifyUnsavedChanges(hasNote != this.hasNote);
+	MainForm.profile.notifyUnsavedChanges(hasNote != this.hasNote);
 	this.hasNote = hasNote;
     }
 
@@ -2171,7 +2169,7 @@ public class CacheHolder {
 	if (details.rename(newWptId)) {
 	    setWayPoint(newWptId);
 	    save();
-	    Global.profile.notifyUnsavedChanges(true);
+	    MainForm.profile.notifyUnsavedChanges(true);
 	    return true;
 	} else {
 	    return false;

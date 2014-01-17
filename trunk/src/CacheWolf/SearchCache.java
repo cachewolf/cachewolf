@@ -47,7 +47,7 @@ public class SearchCache {
      */
     public void search(String searchStr, boolean searchInDescriptionAndNotes, boolean searchInLogs) {
 	if (searchStr.length() > 0) {
-	    Global.profile.selectionChanged = true;
+	    MainForm.profile.selectionChanged = true;
 	    searchStr = searchStr.toUpperCase();
 	    CacheHolder ch;
 	    int counter = 0;
@@ -76,8 +76,8 @@ public class SearchCache {
 		    break;
 	    } // for
 	    cwp.exit(0);
-	    Global.profile.setShowSearchResult(true);
-	    Global.mainTab.tablePanel.selectRow(0);
+	    MainForm.profile.setShowSearchResult(true);
+	    MainTab.itself.tablePanel.selectRow(0);
 	} // if
     }
 
@@ -86,8 +86,8 @@ public class SearchCache {
      * cache database.
      */
     public void clearSearch() {
-	Global.profile.selectionChanged = true;
-	Global.profile.setShowSearchResult(false);
+	MainForm.profile.selectionChanged = true;
+	MainForm.profile.setShowSearchResult(false);
 	for (int i = cacheDB.size() - 1; i >= 0; i--) {
 	    cacheDB.get(i).is_flaged = false;
 	}

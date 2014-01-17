@@ -38,7 +38,7 @@ public class Rebuild {
 
     public void rebuild() {
 	int i;
-	CacheDB cacheDB = Global.profile.cacheDB;
+	CacheDB cacheDB = MainForm.profile.cacheDB;
 
 	myProgressBarForm pbf = new myProgressBarForm();
 	Handle h = new Handle();
@@ -49,7 +49,7 @@ public class Rebuild {
 	pbf.exec();
 	h.progress = (float) 0.5;
 	h.changed();
-	String[] CacheFiles = new FileBugfix(Global.profile.dataDir).list("*.xml", FileBase.LIST_FILES_ONLY | FileBase.LIST_DONT_SORT);
+	String[] CacheFiles = new FileBugfix(MainForm.profile.dataDir).list("*.xml", FileBase.LIST_FILES_ONLY | FileBase.LIST_DONT_SORT);
 	pbf.setTask(h, "preparing XML-files");
 	for (i = 0; i < CacheFiles.length; i++) {
 	    int pos = CacheFiles[i].lastIndexOf('.');
@@ -79,7 +79,7 @@ public class Rebuild {
 		    int start = 0;
 		    boolean doit = true;
 		    try {
-			FileReader in = new FileReader(Global.profile.dataDir + CacheFiles[i]);
+			FileReader in = new FileReader(MainForm.profile.dataDir + CacheFiles[i]);
 			details = in.readAll();
 			in.close();
 			start = details.indexOf("<CACHE ");
@@ -104,17 +104,17 @@ public class Rebuild {
 			CacheHolder ch = new CacheHolder(details.substring(start, end + 2), cacheXmlVersion);
 			cacheDB.add(ch);
 			nAdded++;
-			Global.pref.log(ch.getWayPoint() + " added. (" + nAdded + ")");
+			Preferences.itself().log(ch.getWayPoint() + " added. (" + nAdded + ")");
 			// CacheFiles[i] = null;
 		    } else
-			Global.pref.log("File " + CacheFiles[i] + " not entered to index.xml");
+			Preferences.itself().log("File " + CacheFiles[i] + " not entered to index.xml");
 		    ;
 		}
 		if (pbf.isClosed)
 		    break;
 	    }
-	    Global.profile.buildReferences();
-	    Global.profile.saveIndex(true);
+	    MainForm.profile.buildReferences();
+	    MainForm.profile.saveIndex(true);
 	}
 	pbf.exit(0);
     }

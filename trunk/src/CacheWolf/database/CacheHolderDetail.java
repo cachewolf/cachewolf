@@ -21,7 +21,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 package CacheWolf.database;
 
-import CacheWolf.Global;
+import CacheWolf.MainForm;
+import CacheWolf.Preferences;
 import CacheWolf.SafeXML;
 import CacheWolf.controls.DataMover;
 import CacheWolf.utils.Extractor;
@@ -124,7 +125,7 @@ public class CacheHolderDetail {
     }
 
     public void setCacheLogs(LogList newLogs) {
-	if (Global.pref.overwriteLogs) {
+	if (Preferences.itself().overwriteLogs) {
 	    CacheLogs = newLogs;
 	    getParent().setLog_updated(true);
 	    hasUnsavedChanges = true;
@@ -202,7 +203,7 @@ public class CacheHolderDetail {
 	String imgDesc, imgDestName;
 
 	// Get Image and description
-	FileChooser fc = new FileChooser(FileChooserBase.OPEN, Global.profile.dataDir);
+	FileChooser fc = new FileChooser(FileChooserBase.OPEN, MainForm.profile.dataDir);
 	fc.setTitle("Select image file:");
 	if (fc.execute() != FormBase.IDCANCEL) {
 	    imgFile = fc.getChosenFile();
@@ -211,14 +212,14 @@ public class CacheHolderDetail {
 	    String ext = imgFile.getFileExt().substring(imgFile.getFileExt().lastIndexOf('.'));
 	    imgDestName = getParent().getWayPoint() + "_U_" + (this.userImages.size() + 1) + ext;
 
-	    ImageInfo userImageInfo = new ImageInfo();
-	    userImageInfo.setFilename(imgDestName);
-	    userImageInfo.setTitle(imgDesc);
-	    this.userImages.add(userImageInfo);
+	    CacheImage userCacheImage = new CacheImage();
+	    userCacheImage.setFilename(imgDestName);
+	    userCacheImage.setTitle(imgDesc);
+	    this.userImages.add(userCacheImage);
 	    // Copy File
-	    DataMover.copy(imgFile.getFullPath(), Global.profile.dataDir + imgDestName);
+	    DataMover.copy(imgFile.getFullPath(), MainForm.profile.dataDir + imgDestName);
 	    // Save Data
-	    saveCacheDetails(Global.profile.dataDir);
+	    saveCacheDetails(MainForm.profile.dataDir);
 	}
     }
 
@@ -230,7 +231,7 @@ public class CacheHolderDetail {
     void readCache(String dir) throws IOException {
 	String dummy;
 	FileReader in = null;
-	ImageInfo imageInfo;
+	CacheImage imageInfo;
 	// If parent cache has empty waypoint then don't do anything. This might happen
 	// when a cache object is freshly created to serve as container for imported data
 	if (this.getParent().getWayPoint().equals(CacheHolder.EMPTY))
@@ -252,7 +253,7 @@ public class CacheHolderDetail {
 
 	if (in == null)
 	    throw new FileNotFoundException(dir + getParent().getWayPoint().toLowerCase() + ".xml");
-	Global.pref.log("Reading file " + getParent().getWayPoint() + ".xml");
+	Preferences.itself().log("Reading file " + getParent().getWayPoint() + ".xml");
 	String text = in.readAll();
 	in.close();
 
@@ -284,7 +285,7 @@ public class CacheHolderDetail {
 	    if (ownLogText.indexOf("<img src='") >= 0) {
 		OwnLog = new Log(ownLogText + "]]>");
 	    } else {
-		OwnLog = new Log("icon_smile.gif", "1900-01-01", Global.pref.myAlias, ownLogText);
+		OwnLog = new Log("icon_smile.gif", "1900-01-01", Preferences.itself().myAlias, ownLogText);
 	    }
 	} else {
 	    OwnLog = null;
@@ -302,7 +303,7 @@ public class CacheHolderDetail {
 
 	ex.set(text, "<IMG>", "</IMG>", 0, true);
 	while ((dummy = ex.findNext()).length() > 0) {
-	    imageInfo = new ImageInfo();
+	    imageInfo = new CacheImage();
 	    int pos = dummy.indexOf("<URL>");
 	    if (pos > 0) {
 		imageInfo.setFilename(SafeXML.cleanback(dummy.substring(0, pos)));
@@ -317,8 +318,8 @@ public class CacheHolderDetail {
 	int imgNr = 0;
 	while ((dummy = ex.findNext()).length() > 0) {
 	    if (imgNr >= this.images.size()) {
-		images.add(new ImageInfo()); // this (more IMGTEXT than IMG in the <cache>.xml, but it happens. So avoid an ArrayIndexOutOfBoundException and add an ImageInfo gracefully
-		Global.pref.log("Error reading " + this.getParent().getWayPoint() + "More IMGTEXT tags than IMG tags");
+		images.add(new CacheImage()); // this (more IMGTEXT than IMG in the <cache>.xml, but it happens. So avoid an ArrayIndexOutOfBoundException and add an CacheImage gracefully
+		Preferences.itself().log("Error reading " + this.getParent().getWayPoint() + "More IMGTEXT tags than IMG tags");
 	    }
 	    imageInfo = this.images.get(imgNr);
 	    int pos = dummy.indexOf("<DESC>");
@@ -334,7 +335,7 @@ public class CacheHolderDetail {
 	logImages.clear();
 	ex.set(text, "<LOGIMG>", "</LOGIMG>", 0, true);
 	while ((dummy = ex.findNext()).length() > 0) {
-	    imageInfo = new ImageInfo();
+	    imageInfo = new CacheImage();
 	    imageInfo.setFilename(dummy);
 	    logImages.add(imageInfo);
 	}
@@ -349,7 +350,7 @@ public class CacheHolderDetail {
 	userImages.clear();
 	ex.set(text, "<USERIMG>", "</USERIMG>", 0, true);
 	while ((dummy = ex.findNext()).length() > 0) {
-	    imageInfo = new ImageInfo();
+	    imageInfo = new CacheImage();
 	    imageInfo.setFilename(dummy);
 	    userImages.add(imageInfo);
 	}
@@ -415,7 +416,7 @@ public class CacheHolderDetail {
 	try {
 	    detfile = new PrintWriter(new BufferedWriter(new FileWriter(new File(dir + getParent().getWayPoint().toLowerCase() + ".xml").getAbsolutePath())));
 	} catch (Exception e) {
-	    Global.pref.log("Problem creating details file", e, true);
+	    Preferences.itself().log("Problem creating details file", e, true);
 	    return;
 	}
 	try {
@@ -487,15 +488,15 @@ public class CacheHolderDetail {
 		detfile.print("<SOLVER><![CDATA[" + getSolver() + "]]></SOLVER>\r\n");
 		detfile.print(getParent().toXML()); // This will allow restoration of index.xml
 		detfile.print("</CACHEDETAILS>\n");
-		Global.pref.log("Writing file: " + getParent().getWayPoint().toLowerCase() + ".xml");
+		Preferences.itself().log("Writing file: " + getParent().getWayPoint().toLowerCase() + ".xml");
 	    } // if length
 	} catch (Exception e) {
-	    Global.pref.log("Problem waypoint " + getParent().getWayPoint() + " writing to a details file: ", e);
+	    Preferences.itself().log("Problem waypoint " + getParent().getWayPoint() + " writing to a details file: ", e);
 	}
 	try {
 	    detfile.close();
 	} catch (Exception e) {
-	    Global.pref.log("Problem waypoint " + getParent().getWayPoint() + " writing to a details file: ", e);
+	    Preferences.itself().log("Problem waypoint " + getParent().getWayPoint() + " writing to a details file: ", e);
 	}
 	hasUnsavedChanges = false;
     }
@@ -505,7 +506,7 @@ public class CacheHolderDetail {
      * 
      * @return true if cache has additional info, false otherwise
      */
-    public boolean hasImageInfo() {
+    public boolean hasCacheImage() {
 	for (int i = this.images.size() - 1; i >= 0; i--)
 	    if (!this.images.get(i).getComment().equals(""))
 		return true;
@@ -521,7 +522,7 @@ public class CacheHolderDetail {
      */
     protected boolean rename(String newWptId) {
 	boolean success = false;
-	String profiledir = Global.profile.dataDir;
+	String profiledir = MainForm.profile.dataDir;
 	int oldWptLength = getParent().getWayPoint().length();
 
 	// just in case ... (got the pun? ;) )
@@ -592,7 +593,7 @@ public class CacheHolderDetail {
 	    }
 	    success = true;
 	} catch (Exception e) {
-	    Global.pref.log("Error renaming waypoint details", e, true);
+	    Preferences.itself().log("Error renaming waypoint details", e, true);
 	    // TODO: any chance of a roll back?
 	    // TODO: should we ignore a file not found?
 	}

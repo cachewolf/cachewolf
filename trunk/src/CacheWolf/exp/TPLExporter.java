@@ -21,8 +21,10 @@
 */
 package CacheWolf.exp;
 
-import CacheWolf.Global;
+import CacheWolf.MainForm;
+import CacheWolf.MainTab;
 import CacheWolf.MyLocale;
+import CacheWolf.Preferences;
 import CacheWolf.controls.InfoBox;
 import CacheWolf.database.CacheDB;
 import CacheWolf.database.CacheHolder;
@@ -188,7 +190,7 @@ public class TPLExporter {
     private static GarminMap gm = null;
 
     public TPLExporter(String tpl) {
-	cacheDB = Global.profile.cacheDB;
+	cacheDB = MainForm.profile.cacheDB;
 	tplFile = tpl;
 	File tmpFile = new File(tpl);
 	expName = tmpFile.getName();
@@ -216,7 +218,7 @@ public class TPLExporter {
 	    args.put("filter", myFilter);
 	    Template tpl = new Template(args);
 
-	    FileChooser fc = new FileChooser(FileChooserBase.SAVE, Global.pref.getExportPath(expName));
+	    FileChooser fc = new FileChooser(FileChooserBase.SAVE, Preferences.itself().getExportPath(expName));
 	    fc.setTitle("Select target file:");
 	    fc.addMask(myFilter.out);
 	    if (fc.execute() == FormBase.IDCANCEL) {
@@ -224,10 +226,10 @@ public class TPLExporter {
 		return;
 	    }
 	    File saveTo = fc.getChosenFile();
-	    Global.pref.setExportPath(expName, saveTo.getPath());
+	    Preferences.itself().setExportPath(expName, saveTo.getPath());
 
 	    if (myFilter.sortedBy != -1) {
-		Global.mainTab.tablePanel.myTableModel.sortTable(myFilter.sortedBy, true);
+		MainTab.itself.tablePanel.myTableModel.sortTable(myFilter.sortedBy, true);
 	    }
 
 	    Regex dec = new Regex("[,.]", myFilter.decSep);
@@ -279,7 +281,7 @@ public class TPLExporter {
 				detfile.close();
 			    }
 			} catch (Exception e) {
-			    Global.pref.log("[TplExporter:doIt]" + ch.getWayPoint(), e, true);
+			    Preferences.itself().log("[TplExporter:doIt]" + ch.getWayPoint(), e, true);
 			}
 		    }
 		}
@@ -294,7 +296,7 @@ public class TPLExporter {
 		detfile.close();
 	    }
 	} catch (Exception e) {
-	    Global.pref.log("[TplExporter:doIt]", e, true);
+	    Preferences.itself().log("[TplExporter:doIt]", e, true);
 	} catch (OutOfMemoryError e) {
 	    new InfoBox(MyLocale.getMsg(5500, "Error"), "Not enough memory available to load all cache data (incl. description and logs)\nexport aborted\nFilter caches to minimise memory needed for TPL-Export\nWe recommend to restart CacheWolf now")
 		    .wait(FormBase.OKB);

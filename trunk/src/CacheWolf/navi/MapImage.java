@@ -21,7 +21,7 @@
 */
 package CacheWolf.navi;
 
-import CacheWolf.Global;
+import CacheWolf.Preferences;
 import CacheWolf.utils.Common;
 import ewe.fx.Color;
 import ewe.fx.Dimension;
@@ -63,7 +63,7 @@ public class MapImage extends AniImage {
 	// f kommt aus MapInfoObject.getImagePathAndName
 	if (screenDim == null)
 	    screenDim = new Dimension(0, 0);
-	Global.pref.log("create MapImage from: " + f);
+	Preferences.itself().log("create MapImage from: " + f);
 	if (f.indexOf("!") < 0) {
 	    // the following code is only necessary because of an Bug in ewe 1.49, which doesn't read from a fakefilesystem. 
 	    // If there were no bug, calling super(f) would be sufficient
@@ -109,10 +109,10 @@ public class MapImage extends AniImage {
 		long tileOffset = readReverseLong(bis);
 		long nextOffset = readReverseLong(bis);
 		int length = (int) (nextOffset - tileOffset);
-		Global.pref.log(" tileOffset/length for x/y/zoom (" + xWanted + "/" + yWanted + "/" + ZoomWanted + ")= " + tileOffset + "/" + length);
+		Preferences.itself().log(" tileOffset/length for x/y/zoom (" + xWanted + "/" + yWanted + "/" + ZoomWanted + ")= " + tileOffset + "/" + length);
 
 		if (length == 0) {
-		    Global.pref.log("wanted == 0 (nextOffset - tileOffset)");
+		    Preferences.itself().log("wanted == 0 (nextOffset - tileOffset)");
 		    bis.close();
 		    throw new ImageNotFoundException(f); // in order to behave the same way as file
 		}
@@ -169,7 +169,7 @@ public class MapImage extends AniImage {
 		im = new Image(ba, 0);
 		setImage(im);
 	    } catch (Exception exc) {
-		Global.pref.log(exc + " Error getting image from pack-file " + p[0] + " for " + p[6] + "/" + p[7] + "/" + p[5] + " Bufferlength " + ba.length);
+		Preferences.itself().log(exc + " Error getting image from pack-file " + p[0] + " for " + p[6] + "/" + p[7] + "/" + p[5] + " Bufferlength " + ba.length);
 		// ignore throw new ImageNotFoundException(f); // in order to behave the same way as super would have
 	    }
 	}

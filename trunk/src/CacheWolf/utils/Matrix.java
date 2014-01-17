@@ -21,7 +21,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 package CacheWolf.utils;
 
-import CacheWolf.Global;
+import CacheWolf.Preferences;
 
 public final class Matrix {
     int iDF = 0;
@@ -118,7 +118,7 @@ public final class Matrix {
     public void DumpMatrix() {
 	for (int i = 0; i < matrix.length; i++)
 	    for (int j = 0; j < matrix[i].length; j++)
-		Global.pref.log("[ " + i + " " + j + " ] " + matrix[i][j]);
+		Preferences.itself().log("[ " + i + " " + j + " ] " + matrix[i][j]);
     }
 
     /**
@@ -159,7 +159,7 @@ public final class Matrix {
 			    m[row][i] = f1 * m[col][i] + m[row][i];
 			}
 		    } catch (Exception e) {
-			Global.pref.log("Still Here!!!");
+			Preferences.itself().log("Still Here!!!");
 		    }
 		}
 	    }
@@ -198,7 +198,7 @@ public final class Matrix {
 	double dd = 0;
 
 	if (det == 0) {
-	    Global.pref.log("Determinant Equals 0, Not Invertible.");
+	    Preferences.itself().log("Determinant Equals 0, Not Invertible.");
 	} else {
 	    dd = 1 / det;
 	}

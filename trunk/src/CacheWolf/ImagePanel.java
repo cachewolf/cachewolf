@@ -38,14 +38,19 @@ import ewe.graphics.InteractivePanel;
 import ewe.io.File;
 import ewe.sys.SystemResourceException;
 import ewe.sys.Vm;
+import ewe.ui.CellConstants;
 import ewe.ui.CellPanel;
 import ewe.ui.ControlBase;
 import ewe.ui.ControlEvent;
 import ewe.ui.Event;
+import ewe.ui.Form;
 import ewe.ui.FormBase;
 import ewe.ui.Gui;
+import ewe.ui.Menu;
 import ewe.ui.PenEvent;
+import ewe.ui.ScrollBarPanel;
 import ewe.ui.mButton;
+import ewe.ui.mLabel;
 
 public class ImagePanel extends CellPanel {
     ImagesPanel images;
@@ -63,10 +68,10 @@ public class ImagePanel extends CellPanel {
 	pnlTools.equalWidths = true;
 	pnlTools.addLast(btnAddPicture);
 
-	if (!Global.pref.tabsAtTop)
+	if (!Preferences.itself().tabsAtTop)
 	    addLast(pnlTools, DONTSTRETCH, FILL).setTag(SPAN, new Dimension(3, 1));
 	addLast(imagesPanel, STRETCH, FILL);
-	if (Global.pref.tabsAtTop)
+	if (Preferences.itself().tabsAtTop)
 	    addLast(pnlTools, DONTSTRETCH, FILL).setTag(SPAN, new Dimension(3, 1));
     }
 
@@ -133,7 +138,7 @@ class ImagesPanel extends InteractivePanel {
 	if (cache != oldCache) {
 	    Vm.showWait(true);
 	    clearImages();
-	    thumb_size = ((Global.pref.myAppWidth - 2 * padding) / 3);
+	    thumb_size = ((Preferences.itself().myAppWidth - 2 * padding) / 3);
 	    thumb_size = thumb_size - padding;
 	    double rowCounter1 = 0;
 	    if (cache.images.getDisplayImages(cache.getParent().getWayPoint()).size() > 0) {
@@ -146,7 +151,7 @@ class ImagesPanel extends InteractivePanel {
 		rowCounter2 = java.lang.Math.ceil(rowCounter2 / 3);
 	    }
 	    int rowCounter = (int) (rowCounter1 + rowCounter2);
-	    Rect r = new Rect(0, 0, Global.pref.myAppWidth, rowCounter * thumb_size + rowCounter * padding + padding);
+	    Rect r = new Rect(0, 0, Preferences.itself().myAppWidth, rowCounter * thumb_size + rowCounter * padding + padding);
 	    this.virtualSize = r;
 	    // this.setPreferredSize(pref.myAppWidth, rowCounter*thumb_size+rowCounter*padding+40);
 	    // this.checkScrolls();
@@ -242,10 +247,10 @@ class ImagesPanel extends InteractivePanel {
 		}
 	    }
 	    if (doit) {
-		location = Global.profile.dataDir + location;
+		location = MainForm.profile.dataDir + location;
 		if (!(new File(location)).exists()) {
 		    location = NO_IMAGE;
-		    if (!Global.pref.showDeletedImages)
+		    if (!Preferences.itself().showDeletedImages)
 			continue; // Don't show the deleted Image if user does not want it
 		}
 		try {
@@ -385,5 +390,144 @@ class ImagesPanel extends InteractivePanel {
 	    duration = Vm.getTimeStampLong() - start;
 	}
 	super.onPenEvent(ev);
+    }
+}
+
+/**
+* The ImagePanelImage extends AniImage by a fileName.
+* This is an easy way to identify the image clicked,
+* what is needed to display the full image from the
+* thumbnail.
+*/
+class ImagePanelImage extends AniImage {
+    public String fileName = new String();
+    public String imageText = null;
+    public String imageComment = null;
+
+    public ImagePanelImage(mImage i) {
+	super(i);
+    }
+}
+
+/**
+ * Class creates a view on the image scaled
+ * to the application size, but only if the image is larger than
+ * the available app size.
+ */
+class ImageDetailForm extends Form {
+    ImageInteractivePanel ipp = new ImageInteractivePanel();
+    ScrollBarPanel scp;
+
+    public ImageDetailForm(String imgLoc, String imgTitle, String imgComment) {
+	scp = new MyScrollBarPanel(ipp);
+	ipp.setImage(imgLoc);
+	this.title = "Image";
+	this.setPreferredSize(Preferences.itself().myAppWidth, Preferences.itself().myAppHeight);
+	this.addLast(scp, CellConstants.STRETCH, CellConstants.FILL);
+	this.addLast(new mLabel(imgTitle), CellConstants.DONTSTRETCH, (CellConstants.DONTFILL | CellConstants.WEST));
+	this.addLast(new mLabel(imgComment), CellConstants.DONTSTRETCH, (CellConstants.DONTFILL | CellConstants.WEST));
+    }
+
+    public void onEvent(Event ev) {
+	if (ev instanceof ControlEvent && ev.type == ControlEvent.EXITED) {
+	    ev.consumed = true;
+	    this.close(0);
+	} else
+	    super.onEvent(ev);
+    }
+}
+
+/**
+*	This class handles the resizing im images
+*/
+class ImageInteractivePanel extends InteractivePanel {
+    int state = -1; // 0 = nothing, -1 = scaled to window, 1 = scaled to original size
+    ScrollBarPanel scp;
+    String imgLoc = new String();
+    AniImage pic = null;
+    private Menu mClose = new Menu(new String[] { "Close" }, "");
+
+    public ImageInteractivePanel() {
+	super();
+	this.setMenu(mClose);
+    }
+
+    public void resizeTo(int w, int h) {
+	this.width = w;
+	this.height = h;
+	if (state == -1)
+	    fitImageToWindow();
+	virtualSize = new Rect(0, 0, java.lang.Math.max(w, pic.getWidth()), java.lang.Math.max(h, pic.getHeight()));
+	checkScrolls();
+	super.resizeTo(w, h);
+    }
+
+    public void setImage(String filename) {
+	imgLoc = filename;
+	mImage mI = new mImage(imgLoc);
+	if (pic != null) {
+	    this.removeImage(pic);
+	    pic.freeSource();
+	    pic.free();
+	}
+	pic = new AniImage(mI);
+	pic.setLocation(0, 0);
+	mI.freeSource();
+	// mI.free(); this works in the java-VM, but it will delete the image in the ewe-vm --> leave it commeted out
+	this.addImage(pic);
+	virtualSize = new Rect(pic.getSize(null));
+	checkScrolls();
+    }
+
+    public void fitImageToWindow() {
+	Rect s = this.parent.getRect();
+	int ww = pic.getWidth();
+	int wh = pic.getHeight();
+	double scale = java.lang.Math.max((double) ww / (double) s.width, (double) wh / (double) s.height);
+	if (scale != 1) {
+	    this.removeImage(pic);
+	    AniImage tmp = new AniImage(pic.scale((int) (ww / scale), (int) (wh / scale), null, 0));
+	    pic.freeSource();
+	    pic.free();
+	    pic = tmp;
+	    pic.setLocation(0, 0);
+	    this.addImage(pic);
+	    virtualSize = new Rect(pic.getSize(null));
+	    checkScrolls();
+	}
+
+    }
+
+    public void imageClicked(AniImage which, Point pos) {
+	state = -state;
+	if (state == 1) {
+	    setImage(imgLoc);
+	    this.repaintNow();
+	}
+	if (state == -1) {
+	    fitImageToWindow();
+	    this.repaintNow();
+	}
+    }
+
+    public void penRightReleased(Point p) {
+	menuState.doShowMenu(p, true, null); // direct call (not through doMenu) is neccesary because it will exclude the whole table
+    }
+
+    public void penHeld(Point p) {
+	menuState.doShowMenu(p, true, null);
+    }
+
+    public void popupMenuEvent(Object selectedItem) {
+	postEvent(new ControlEvent(ControlEvent.EXITED, this));
+    }
+
+    public void formClosing() {
+	super.formClosing();
+	if (pic != null) {
+	    pic.freeSource();
+	    pic.free();
+	}
+
     }
 }

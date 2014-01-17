@@ -58,26 +58,26 @@ public class CacheImages {
     }
 
     /**
-     * Adds an ImageInfo object to the list of images. The object is always appended in the
+     * Adds an CacheImage object to the list of images. The object is always appended in the
      * last position.
      * 
      * @param img
-     *            ImageInfo object to add.
+     *            CacheImage object to add.
      */
-    public void add(ImageInfo img) {
+    public void add(CacheImage img) {
 	display = null; // New Image? Force display to get reevaluated
 	getVector().add(img);
     }
 
     /**
-     * Gets the ImageInfo object at the specified position.
+     * Gets the CacheImage object at the specified position.
      * 
      * @param idx
      *            Index of object to retrieve.
-     * @return ImageInfo object
+     * @return CacheImage object
      */
-    public ImageInfo get(int idx) {
-	return (ImageInfo) getVector().get(idx);
+    public CacheImage get(int idx) {
+	return (CacheImage) getVector().get(idx);
     }
 
     /**
@@ -91,7 +91,7 @@ public class CacheImages {
     }
 
     /**
-     * Returns the number of ImageInfo objects in the collection.
+     * Returns the number of CacheImage objects in the collection.
      * 
      * @return Number
      */
@@ -116,12 +116,12 @@ public class CacheImages {
 	    // Loop over every image
 	    for (int i = 0; i < this.size(); i++) {
 		boolean shouldDisplay = true;
-		ImageInfo currImg = this.get(i);
+		CacheImage currImg = this.get(i);
 		// Now check against every other image
 		for (int j = 0; j < this.size(); j++) {
 		    if (i == j)
 			continue; // Except same image
-		    ImageInfo testImg = this.get(j);
+		    CacheImage testImg = this.get(j);
 		    // Are the filenames the same?
 		    if (currImg.getFilename().toLowerCase().equals(testImg.getFilename().toLowerCase())) {
 			// Check if other title is better than current one

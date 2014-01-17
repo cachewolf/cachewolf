@@ -23,6 +23,7 @@ package CacheWolf.navi;
 
 import CacheWolf.MyLocale;
 import CacheWolf.controls.InfoBox;
+import CacheWolf.database.CoordinatePoint;
 import ewe.fx.Color;
 import ewe.io.BufferedWriter;
 import ewe.io.FileWriter;
@@ -34,13 +35,13 @@ import ewe.util.Utils;
 
 public class Track {
     public Color trackColor;
-    private TrackPoint trackPoints[];
+    private CoordinatePoint trackPoints[];
     private int index;
     private int num;
 
     public Track(Color f, int trackSize) {
 	trackColor = f;
-	trackPoints = new TrackPoint[trackSize];
+	trackPoints = new CoordinatePoint[trackSize];
 	num = 0;
 	index = 0;
     }
@@ -54,16 +55,16 @@ public class Track {
     }
 
     public void add(double lat, double lon) {
-	add(new TrackPoint(lat, lon));
+	add(new CoordinatePoint(lat, lon));
     }
 
     /**
      */
-    public void add(TrackPoint t) {
+    public void add(CoordinatePoint t) {
 	if (t == null)
 	    return;
 
-	trackPoints[index] = new TrackPoint(t);
+	trackPoints[index] = new CoordinatePoint(t);
 	index++;
 	if (index >= trackPoints.length)
 	    index = 0;
@@ -82,7 +83,7 @@ public class Track {
     /**
      * returns the i.th point in this track
      */
-    public TrackPoint get(int i) {
+    public CoordinatePoint get(int i) {
 	//The array has never been filled, so first position is 0:
 	if (num < trackPoints.length)
 	    return trackPoints[i];
@@ -97,7 +98,7 @@ public class Track {
 	    return; // TODO error handling
 	int numOfPoints = Utils.readInt(all, 0, 4);
 	for (int i = 0; i <= numOfPoints; i++) {
-	    TrackPoint point = new TrackPoint();
+	    CoordinatePoint point = new CoordinatePoint();
 	    point.latDec = Double.longBitsToDouble(Utils.readLong(all, (i * 2) * 8 + 4));
 	    point.lonDec = Double.longBitsToDouble(Utils.readLong(all, (i * 2 + 1) * 8 + 4));
 	    add(point);

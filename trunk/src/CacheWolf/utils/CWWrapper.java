@@ -21,7 +21,7 @@
  */
 package CacheWolf.utils;
 
-import CacheWolf.Global;
+import CacheWolf.Preferences;
 import ewe.io.StreamReader;
 import ewe.sys.Process;
 import ewe.sys.Vm;
@@ -102,11 +102,11 @@ public final class CWWrapper {
     public static boolean exec(String cmd) {
 	try {
 	    if (cmd == null) {
-		Global.pref.log("execute: empty command", null);
+		Preferences.itself().log("execute: empty command", null);
 		return false;
 	    }
 	    if (cmd.length() == 0) {
-		Global.pref.log("execute: empty command", null);
+		Preferences.itself().log("execute: empty command", null);
 		return false;
 	    }
 
@@ -116,14 +116,14 @@ public final class CWWrapper {
 	    StreamReader errorStream = new StreamReader(p.getErrorStream());
 	    String errorMsg = errorStream.readALine();
 	    if (errorMsg != null) {
-	    Global.pref.log("execute: " + cmd + errorMsg, null);
+	    Preferences.itself().log("execute: " + cmd + errorMsg, null);
 	    return false;
 	    }
 	    errorStream.close();
 	    */
 	    return true;
 	} catch (Exception ex) {
-	    Global.pref.log("execute: " + cmd, ex, true);
+	    Preferences.itself().log("execute: " + cmd, ex, true);
 	    return false;
 	}
     }
@@ -138,11 +138,11 @@ public final class CWWrapper {
     public static boolean execute(String cmd) {
 	try {
 	    if (cmd == null) {
-		Global.pref.log("execute: empty command", null);
+		Preferences.itself().log("execute: empty command", null);
 		return false;
 	    }
 	    if (cmd.length() == 0) {
-		Global.pref.log("execute: empty command", null);
+		Preferences.itself().log("execute: empty command", null);
 		return false;
 	    }
 
@@ -151,13 +151,13 @@ public final class CWWrapper {
 	    StreamReader errorStream = new StreamReader(p.getErrorStream());
 	    String errorMsg = errorStream.readALine();
 	    if (errorMsg != null) {
-		Global.pref.log("execute: " + cmd + errorMsg, null);
+		Preferences.itself().log("execute: " + cmd + errorMsg, null);
 		return false;
 	    }
 	    errorStream.close();
 	    return true;
 	} catch (Exception ex) {
-	    Global.pref.log("execute: " + cmd, ex, true);
+	    Preferences.itself().log("execute: " + cmd, ex, true);
 	    return false;
 	}
     }

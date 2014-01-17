@@ -21,7 +21,8 @@
 */
 package CacheWolf.view.pda;
 
-import CacheWolf.Global;
+import CacheWolf.MainForm;
+import CacheWolf.MainTab;
 import CacheWolf.MyLocale;
 import CacheWolf.TravelbugPickup;
 import CacheWolf.database.CacheDB;
@@ -58,8 +59,8 @@ public class PDATravelbugMenuPanel extends PDAMenu {
 
     public void actionPerformed(String actionCommand) {
 	if (actionCommand.equals(RETRIEVE)) {
-	    int curCacheNo = Global.mainTab.tablePanel.getSelectedCache();
-	    CacheDB cacheDB = Global.profile.cacheDB;
+	    int curCacheNo = MainTab.itself.tablePanel.getSelectedCache();
+	    CacheDB cacheDB = MainForm.profile.cacheDB;
 	    if (curCacheNo >= 0 && curCacheNo < cacheDB.size()) {
 		CacheHolder ch = cacheDB.get(curCacheNo);
 		String waypoint = ch.getWayPoint();
@@ -67,7 +68,7 @@ public class PDATravelbugMenuPanel extends PDAMenu {
 
 		Travelbug tb = TravelbugPickup.pickupTravelbug(tblSrcCache);
 		if (tb != null) {
-		    view.model.allTravelbugJourneys.addTbPickup(tb, Global.profile.name, waypoint);
+		    view.model.allTravelbugJourneys.addTbPickup(tb, MainForm.profile.name, waypoint);
 		    CacheHolderDetail cacheDetails = ch.getCacheDetails(true);
 		    ch.setHas_bugs(cacheDetails.Travelbugs.size() > 0);
 		    ch.save();
@@ -89,11 +90,11 @@ public class PDATravelbugMenuPanel extends PDAMenu {
 	    exit(0);
 	    view.exit(0);
 	} else if (actionCommand.equals(NEW_TB)) {
-	    int curCacheNo = Global.mainTab.tablePanel.getSelectedCache();
-	    CacheDB cacheDB = Global.profile.cacheDB;
+	    int curCacheNo = MainTab.itself.tablePanel.getSelectedCache();
+	    CacheDB cacheDB = MainForm.profile.cacheDB;
 	    CacheHolder ch = cacheDB.get(curCacheNo);
 	    TravelbugJourney tbj = new TravelbugJourney("New");
-	    tbj.setFromProfile(Global.profile.name);
+	    tbj.setFromProfile(MainForm.profile.name);
 	    tbj.setFromWaypoint("");
 	    tbj.setFromLogged(true);
 	    view.model.allTravelbugJourneys.add(tbj);

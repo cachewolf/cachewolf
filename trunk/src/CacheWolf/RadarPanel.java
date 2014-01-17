@@ -80,10 +80,10 @@ public class RadarPanel extends CellPanel {
 	buttonPanel.addNext(btnToggle, CellConstants.HSTRETCH, CellConstants.FILL);
 	buttonPanel.addLast(btnPlus, CellConstants.HSTRETCH, (CellConstants.FILL | CellConstants.EAST));
 
-	if (!Global.pref.tabsAtTop)
+	if (!Preferences.itself().tabsAtTop)
 	    this.addLast(buttonPanel, CellConstants.HSTRETCH, CellConstants.HFILL);
 	this.addLast(iActP = new myInteractivePanel(), CellConstants.STRETCH, CellConstants.FILL);
-	if (Global.pref.tabsAtTop)
+	if (Preferences.itself().tabsAtTop)
 	    this.addLast(buttonPanel, CellConstants.HSTRETCH, CellConstants.HFILL);
     }
 
@@ -95,8 +95,8 @@ public class RadarPanel extends CellPanel {
     public void setParam(CacheDB db, CacheHolder sWp) {
 	selectedWaypoint = sWp;
 	cacheDB = db;
-	height = (Global.pref.myAppHeight) * 6 / 5; // add 10% each at top/bottom
-	width = (Global.pref.myAppWidth) * 6 / 5;
+	height = (Preferences.itself().myAppHeight) * 6 / 5; // add 10% each at top/bottom
+	width = (Preferences.itself().myAppWidth) * 6 / 5;
     }
 
     // Call this after the centre has changed to re-center the radar panel
@@ -132,7 +132,7 @@ public class RadarPanel extends CellPanel {
      * Private method to draw the caches.
      */
     private void drawCaches() {
-	final Font radarFont = new Font("Gui", Font.BOLD, Global.pref.fontSize);
+	final Font radarFont = new Font("Gui", Font.BOLD, Preferences.itself().fontSize);
 	final FontMetrics fm = getFontMetrics(radarFont);
 	AniImage aImg;
 	RadarPanelImage rpi;
@@ -243,7 +243,7 @@ public class RadarPanel extends CellPanel {
 	final AniImage aImg = new AniImage(img);
 	// iActP.addImage(aImg);
 	iActP.backgroundImage = img;
-	final int xPos = (Global.pref.myAppWidth / 2 - width / 2);
+	final int xPos = (Preferences.itself().myAppWidth / 2 - width / 2);
 	aImg.setLocation(xPos, 0);
 	aImg.refresh();
     }

@@ -21,11 +21,12 @@
 */
 package CacheWolf.imp;
 
+import CacheWolf.MainForm;
+import CacheWolf.Preferences;
 import CacheWolf.database.CacheDB;
 import CacheWolf.database.CacheHolder;
-import CacheWolf.Global;
-import CacheWolf.UrlFetcher;
 import CacheWolf.utils.Common;
+import CacheWolf.utils.UrlFetcher;
 import ewe.io.Reader;
 import ewe.io.StringReader;
 import ewe.sys.Handle;
@@ -34,7 +35,6 @@ import ewesoft.xml.MinML;
 import ewesoft.xml.sax.AttributeList;
 
 public class GCVoteImporter extends MinML {
-
     private CacheDB cacheDB;
     private String GCVUser;
     private String GCVPassword;
@@ -46,7 +46,7 @@ public class GCVoteImporter extends MinML {
      * Constructor initalizing profile and cacheDB
      */
     public GCVoteImporter() {
-	this.cacheDB = Global.profile.cacheDB;
+	this.cacheDB = MainForm.profile.cacheDB;
     }
 
     /**
@@ -55,7 +55,7 @@ public class GCVoteImporter extends MinML {
     public void doIt() {
 	ProgressBarForm pbf = new ProgressBarForm();
 	Handle h = new Handle();
-	this.GCVUser = ""; // Global.pref.myAlias;
+	this.GCVUser = ""; // Preferences.itself().myAlias;
 	this.GCVPassword = "";
 
 	int totalWaypoints = cacheDB.countVisible();
@@ -83,14 +83,14 @@ public class GCVoteImporter extends MinML {
 	    GCVURL += "userName=" + GCVUser + "&password=" + GCVPassword + "&waypoints=" + GCVWaypoints;
 
 	    try {
-		Global.pref.log("[GCVote]:Requesting ratings");
+		Preferences.itself().log("[GCVote]:Requesting ratings");
 		GCVResults = UrlFetcher.fetch(GCVURL);
 		// parse response for votes
-		Global.pref.log("[GCVote]:GCVotes = " + GCVResults);
+		Preferences.itself().log("[GCVote]:GCVotes = " + GCVResults);
 		Reader r = new StringReader(GCVResults);
 		parse(r);
 	    } catch (Exception ex) {
-		Global.pref.log("[GCVote:DoIt]", ex, true);
+		Preferences.itself().log("[GCVote:DoIt]", ex, true);
 	    }
 	}
 	pbf.exit(0);
@@ -107,7 +107,7 @@ public class GCVoteImporter extends MinML {
 	    waypoint = atts.getValue("waypoint");
 	    voteAvg = Common.parseDouble(atts.getValue("voteAvg")) * 10.0;
 	    voteCnt = Common.parseInt(atts.getValue("voteCnt"));
-	    Global.pref.log("[GCVote:startElement]:Waypoint = " + waypoint + " - " + voteAvg + "(" + voteCnt + " votes)");
+	    Preferences.itself().log("[GCVote:startElement]:Waypoint = " + waypoint + " - " + voteAvg + "(" + voteCnt + " votes)");
 	    CacheHolder cb = cacheDB.get(waypoint);
 	    cb.setNumRecommended(100 * voteCnt + (int) (voteAvg + 0.5));
 	}

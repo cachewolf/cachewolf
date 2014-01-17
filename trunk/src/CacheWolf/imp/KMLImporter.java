@@ -21,7 +21,7 @@
 */
 package CacheWolf.imp;
 
-import CacheWolf.navi.CWPoint;
+import CacheWolf.database.CWPoint;
 import ewe.io.FileReader;
 import ewe.io.Reader;
 import ewe.sys.Convert;

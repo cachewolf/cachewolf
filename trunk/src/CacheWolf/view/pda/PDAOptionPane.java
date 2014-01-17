@@ -21,7 +21,7 @@
 */
 package CacheWolf.view.pda;
 
-import CacheWolf.Global;
+import CacheWolf.Preferences;
 import ewe.fx.Color;
 import ewe.fx.Font;
 import ewe.ui.ControlEvent;
@@ -42,7 +42,7 @@ public class PDAOptionPane extends Form {
 		PDAOptionPane pane = new PDAOptionPane();
 		pane.title = title;
 		pane.backGround = new Color(255, 128, 128);
-		Font tmpFont = new Font("Helvetica", Font.BOLD, Global.pref.fontSize * 2);
+		Font tmpFont = new Font("Helvetica", Font.BOLD, Preferences.itself().fontSize * 2);
 		mLabel messageLabel = new mLabel(message);
 		messageLabel.font = tmpFont;
 		pane.addLast(messageLabel, HFILL, HSTRETCH);

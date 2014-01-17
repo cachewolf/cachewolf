@@ -21,6 +21,8 @@
 */
 package CacheWolf.navi;
 
+import CacheWolf.database.CWPoint;
+
 public final class GkProjection extends Projection {
     double falseEasting;
     double falseNorthing;

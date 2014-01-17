@@ -21,17 +21,18 @@
  */
 package CacheWolf.imp;
 
-import CacheWolf.Global;
+import CacheWolf.MainForm;
 import CacheWolf.MyLocale;
+import CacheWolf.Preferences;
 import CacheWolf.Profile;
 import CacheWolf.SafeXML;
+import CacheWolf.database.CWPoint;
 import CacheWolf.database.CacheDB;
 import CacheWolf.database.CacheHolder;
 import CacheWolf.database.CacheHolderDetail;
 import CacheWolf.database.CacheSize;
 import CacheWolf.database.CacheTerrDiff;
 import CacheWolf.database.CacheType;
-import CacheWolf.navi.CWPoint;
 import CacheWolf.utils.Common;
 import CacheWolf.utils.DateFormat;
 import CacheWolf.utils.STRreplace;
@@ -51,14 +52,14 @@ public class CSVImporter {
     String[] header;
 
     public CSVImporter(String f) {
-	cacheDB = Global.profile.cacheDB;
+	cacheDB = MainForm.profile.cacheDB;
 	file = f;
     }
 
     public void doIt() {
-	startPos = Global.pref.getCurCentrePt();
+	startPos = Preferences.itself().getCurCentrePt();
 	if (startPos == null || !startPos.isValid()) {
-	    Global.pref.log("Zentrum nicht gesetzt", null);
+	    Preferences.itself().log("Zentrum nicht gesetzt", null);
 	    return;
 	}
 	ImportGui importGui;
@@ -74,7 +75,7 @@ public class CSVImporter {
 		importGui.close(0);
 		return;
 	    }
-	    Global.profile.setDistGC(maxDist);
+	    MainForm.profile.setDistGC(maxDist);
 	}
 	importGui.close(0);
 	try {
@@ -160,7 +161,7 @@ public class CSVImporter {
 			    }
 			    l = mString.split(s, '\t');
 			    if (l.length > nr_of_elements) {
-				Global.pref.log(s);
+				Preferences.itself().log(s);
 				s = "";
 			    }
 			}
@@ -169,25 +170,25 @@ public class CSVImporter {
 		    if (l != null) {
 			if (l.length == nr_of_elements) {
 			    if (!parse(l)) {
-				Global.pref.log(s);
+				Preferences.itself().log(s);
 			    }
 			} else {
-			    Global.pref.log("bug" + s);
+			    Preferences.itself().log("bug" + s);
 			}
 		    }
 
 		} while (t != null);
 
 	    } catch (Exception e) {
-		Global.pref.log("Abort CSVImporter: ", e, true);
+		Preferences.itself().log("Abort CSVImporter: ", e, true);
 		r.close();
-		Global.profile.saveIndex(Profile.NO_SHOW_PROGRESS_BAR);
+		MainForm.profile.saveIndex(Profile.NO_SHOW_PROGRESS_BAR);
 		Vm.showWait(false);
 		return;
 	    }
 	    r.close();
 	    // save Index
-	    Global.profile.saveIndex(Profile.NO_SHOW_PROGRESS_BAR);
+	    MainForm.profile.saveIndex(Profile.NO_SHOW_PROGRESS_BAR);
 	    Vm.showWait(false);
 	} catch (Exception e) {
 	} finally {
@@ -270,14 +271,14 @@ public class CSVImporter {
 	    tmpPos.set(lat, lon);
 	    double tmpDistance = tmpPos.getDistance(startPos);
 	    if (tmpDistance > maxDistance) {
-		// Global.pref.log("CSVImporter: not imported " + l[CACHENAME] + ", Distance = "+ tmpDistance);
+		// Preferences.itself().log("CSVImporter: not imported " + l[CACHENAME] + ", Distance = "+ tmpDistance);
 		return false;
 	    }
 	    if (!tmpPos.isValid()) {
 		return false;
 	    }
 	} catch (Exception e) {
-	    Global.pref.log("Error CSVImporter at: " + l[CACHENAME] + "(" + l[LAT] + " " + l[LON] + ")", e);
+	    Preferences.itself().log("Error CSVImporter at: " + l[CACHENAME] + "(" + l[LAT] + " " + l[LON] + ")", e);
 	    return false;
 	}
 	// 2. Wegpunkt
@@ -300,7 +301,7 @@ public class CSVImporter {
 		wayPoint = getWPofCoordinates(tmpPos);
 		if (wayPoint.length() == 0) {
 		    // nein --> neuer
-		    wayPoint = Global.profile.getNewWayPointName(extractFileName(file).substring(0, 2).toUpperCase());
+		    wayPoint = MainForm.profile.getNewWayPointName(extractFileName(file).substring(0, 2).toUpperCase());
 		} else {
 		}
 	    }

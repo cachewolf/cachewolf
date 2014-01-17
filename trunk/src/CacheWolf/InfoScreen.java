@@ -46,7 +46,7 @@ public class InfoScreen extends Form {
 	public InfoScreen(String datei, String tit, boolean readFromFile) {
 		String myText = new String();
 		this.setTitle(tit);
-		this.setPreferredSize(Global.pref.myAppWidth, Global.pref.myAppHeight);
+		this.setPreferredSize(Preferences.itself().myAppWidth, Preferences.itself().myAppHeight);
 		if (readFromFile == true) {
 			try {
 				FileReader in = new FileReader(datei);

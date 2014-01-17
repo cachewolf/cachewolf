@@ -21,7 +21,7 @@
 */
 package CacheWolf.model;
 
-import CacheWolf.Global;
+import CacheWolf.Preferences;
 import CacheWolf.database.CacheHolder;
 import CacheWolf.database.TravelbugJourney;
 import CacheWolf.database.TravelbugJourneyList;
@@ -38,8 +38,8 @@ public class TravelBugJourneyScreenModel {
     public void toggleOnlyLogged() {
 	onlyLogged = !onlyLogged;
 	createShowSet();
-	Global.pref.travelbugShowOnlyNonLogged = onlyLogged;
-	Global.pref.savePreferences();
+	Preferences.itself().travelbugShowOnlyNonLogged = onlyLogged;
+	Preferences.itself().savePreferences();
     }
 
     public void createShowSet() {

@@ -73,7 +73,7 @@ public class SolverPanel extends CellPanel {
 	pnlButtons.equalWidths = true;
 	pnlStatButtons.addLast(pnlButtons, CellConstants.HSTRETCH, CellConstants.HFILL);
 
-	if (!Global.pref.tabsAtTop)
+	if (!Preferences.itself().tabsAtTop)
 	    this.addLast(pnlStatButtons, HSTRETCH, HFILL).setTag(SPAN, new Dimension(3, 1));
 
 	SplittablePanel split = new SplittablePanel(PanelSplitter.VERTICAL);
@@ -89,7 +89,7 @@ public class SolverPanel extends CellPanel {
 
 	this.addLast(split);
 
-	if (Global.pref.tabsAtTop)
+	if (Preferences.itself().tabsAtTop)
 	    this.addLast(pnlStatButtons, HSTRETCH, HFILL).setTag(SPAN, new Dimension(3, 1));
 
     }
@@ -124,8 +124,8 @@ public class SolverPanel extends CellPanel {
     }
 
     public void setSelectionRange(int startChar, int startLine, int endChar, int endLine) {
-	if (Global.mainTab.solverPanel.mText.setSelectionRange(startChar, startLine, endChar, endLine))
-	    Global.mainTab.solverPanel.mText.repaintNow();
+	if (MainTab.itself.solverPanel.mText.setSelectionRange(startChar, startLine, endChar, endLine))
+	    MainTab.itself.solverPanel.mText.repaintNow();
     }
 
     public void cls() {
@@ -199,7 +199,7 @@ public class SolverPanel extends CellPanel {
     CellPanel programPanel, outputPanel;
 
     public void showSolverMode() {
-	GuiImageBroker.setButtonText(btnDegRad, Global.pref.solverDegMode ? "DEG" : "RAD");
+	GuiImageBroker.setButtonText(btnDegRad, Preferences.itself().solverDegMode ? "DEG" : "RAD");
     }
 
     private void execDirectCommand() {
@@ -241,7 +241,7 @@ public class SolverPanel extends CellPanel {
 		is.execute(parent.getFrame(), Gui.CENTER_FRAME);
 	    }
 	    if (ev.target == btnDegRad) {
-		Global.pref.solverDegMode = !Global.pref.solverDegMode;
+		Preferences.itself().solverDegMode = !Preferences.itself().solverDegMode;
 		showSolverMode();
 	    }
 	}
@@ -262,7 +262,7 @@ public class SolverPanel extends CellPanel {
 	    boolean oldHasSolver = cacheToUpdate.hasSolver();
 	    cacheToUpdate.getCacheDetails(false).setSolver(getInstructions());
 	    if (oldHasSolver != cacheToUpdate.hasSolver()) {
-		Global.mainTab.tablePanel.myTableControl.update(true);
+		MainTab.itself.tablePanel.myTableControl.update(true);
 	    }
 	    cacheToUpdate.save();
 	    originalInstructions = getInstructions();

@@ -21,7 +21,7 @@
 */
 package CacheWolf.view.pda;
 
-import CacheWolf.Global;
+import CacheWolf.Preferences;
 import ewe.fx.Font;
 import ewe.fx.Graphics;
 import ewe.fx.Rect;
@@ -82,7 +82,7 @@ public class PDAListButtonObject extends ButtonObject {
 		}
 		}
 		catch(Exception e){
-			Global.pref.log("Mysterious Exception caught!", e, true);
+			Preferences.itself().log("Mysterious Exception caught!", e, true);
 		}
 	}
 }

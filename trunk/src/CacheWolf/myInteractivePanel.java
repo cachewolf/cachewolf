@@ -55,7 +55,7 @@ public class myInteractivePanel extends InteractivePanel {
     boolean penMoving = false;
     int x1, y1, x2, y2 = 0;
     static Color RED = new Color(255, 0, 0);
-    //Font font = new Font("gui", Font.BOLD,Global.pref.fontSize);
+    //Font font = new Font("gui", Font.BOLD,Preferences.itself().fontSize);
     FontMetrics fm = null;
     long timePenOn = 0;
     AniImage imgInfo;
@@ -64,7 +64,7 @@ public class myInteractivePanel extends InteractivePanel {
     AniImage imgDrag; // Allows the dragging of the cache into the cachelist
     boolean canScroll = true;
     {
-	font = new Font("gui", Font.BOLD, Global.pref.fontSize);
+	font = new Font("gui", Font.BOLD, Preferences.itself().fontSize);
 	fm = getFontMetrics(font);
     }
 
@@ -82,8 +82,8 @@ public class myInteractivePanel extends InteractivePanel {
 	    new String();
 	    if (which instanceof RadarPanelImage) {
 		RadarPanelImage ich = (RadarPanelImage) which;
-		Global.mainTab.clearDetails();
-		Global.mainTab.selectAndActive(ich.rownum);
+		MainTab.itself.clearDetails();
+		MainTab.itself.selectAndActive(ich.rownum);
 	    }
 	} else {
 	    if (imgInfo != null)
@@ -95,7 +95,7 @@ public class myInteractivePanel extends InteractivePanel {
 	timePenOn = Vm.getTimeStampLong();
 	setFont(font);
 	RadarPanelImage imgRP = (RadarPanelImage) which;
-	CacheDB cacheDB = Global.profile.cacheDB;
+	CacheDB cacheDB = MainForm.profile.cacheDB;
 	CacheHolder ch = cacheDB.get(imgRP.rownum);
 	wayPoint = ch.getWayPoint();
 	String s = wayPoint + "  " + CacheSize.getExportShortId(ch.getCacheSize()) + " / " + strDifficulty + "=" + ch.getHard() + "  " + strTerrain + "=" + ch.getTerrain();
@@ -149,7 +149,7 @@ public class myInteractivePanel extends InteractivePanel {
     public void startDragging(DragContext dc) {
 	if (!MainForm.itself.cacheListVisible)
 	    return;
-	CacheHolder ch = Global.profile.cacheDB.get(wayPoint);
+	CacheHolder ch = MainForm.profile.cacheDB.get(wayPoint);
 	if (ch != null) {
 	    IconAndText icnDrag = new IconAndText();
 	    icnDrag.addColumn(CacheType.getTypeImage(ch.getType()));
@@ -172,7 +172,7 @@ public class myInteractivePanel extends InteractivePanel {
 	AniImage dragImage = null;
 	if (which instanceof RadarPanelImage) {
 	    RadarPanelImage imgRP = (RadarPanelImage) which;
-	    CacheDB cacheDB = Global.profile.cacheDB;
+	    CacheDB cacheDB = MainForm.profile.cacheDB;
 	    CacheHolder ch = cacheDB.get(imgRP.rownum);
 	    wayPoint = ch.getWayPoint();
 

@@ -22,11 +22,13 @@
 package CacheWolf.navi;
 
 import CacheWolf.CoordsScreen;
-import CacheWolf.Global;
 import CacheWolf.GuiImageBroker;
 import CacheWolf.InputScreen;
+import CacheWolf.MainTab;
 import CacheWolf.MyLocale;
+import CacheWolf.Preferences;
 import CacheWolf.controls.InfoBox;
+import CacheWolf.database.CWPoint;
 import CacheWolf.database.CacheHolder;
 import CacheWolf.database.CacheType;
 import ewe.fx.Brush;
@@ -188,11 +190,11 @@ public final class GotoPanel extends CellPanel {
 	rosePanel.addLast(icRose, STRETCH, FILL);
 
 	// add Panels
-	if (!Global.pref.tabsAtTop)
+	if (!Preferences.itself().tabsAtTop)
 	    this.addLast(buttonPanel, HSTRETCH, HFILL);
 	this.addLast(coordsPanel, HSTRETCH, HFILL);
 	this.addLast(rosePanel);
-	if (Global.pref.tabsAtTop)
+	if (Preferences.itself().tabsAtTop)
 	    this.addLast(buttonPanel, HSTRETCH, HFILL);
 
     }
@@ -201,13 +203,13 @@ public final class GotoPanel extends CellPanel {
 
 	// select luminary for orientation
 	for (int i = 0; i < SkyOrientation.LUMINARY_NAMES.length; i++) {
-	    if (i == Global.mainTab.navigate.luminary)
+	    if (i == MainTab.itself.navigate.luminary)
 		miLuminary[i].modifiers |= MenuItem.Checked;
 	    else
 		miLuminary[i].modifiers &= MenuItem.Checked;
 	}
 
-	lblPosition.text = Global.mainTab.navigate.gpsPos.toString(CoordsScreen.getLocalSystem(currFormatSel));
+	lblPosition.text = MainTab.itself.navigate.gpsPos.toString(CoordsScreen.getLocalSystem(currFormatSel));
 
 	setText(destination, getGotoBtnText());
 
@@ -220,7 +222,7 @@ public final class GotoPanel extends CellPanel {
 	Rect buttonRect = buttonPanel.getRect();
 	int roseHeight = pHeight - coordsRect.y - coordsRect.height;
 
-	if (Global.pref.tabsAtTop) {
+	if (Preferences.itself().tabsAtTop) {
 	    roseHeight = roseHeight - buttonRect.height;
 	} else {
 
@@ -238,7 +240,7 @@ public final class GotoPanel extends CellPanel {
 	icRose.resizeTo(pWidth, roseHeight);
 	compassRose.resize(pWidth, roseHeight);
 
-	if (Global.pref.tabsAtTop) {
+	if (Preferences.itself().tabsAtTop) {
 	    Rect roseRect = rosePanel.getRect();
 	    buttonPanel.setLocation(0, roseRect.y + roseRect.height);
 	}
@@ -257,10 +259,10 @@ public final class GotoPanel extends CellPanel {
     public void updateDistance() {
 	// update distance
 	float distance = -1.0f;
-	if (Global.mainTab.navigate.gpsPos.isValid() && Global.mainTab.navigate.destination.isValid()) {
-	    distance = (float) Global.mainTab.navigate.gpsPos.getDistance(Global.mainTab.navigate.destination);
+	if (MainTab.itself.navigate.gpsPos.isValid() && MainTab.itself.navigate.destination.isValid()) {
+	    distance = (float) MainTab.itself.navigate.gpsPos.getDistance(MainTab.itself.navigate.destination);
 	}
-	compassRose.setWaypointDirectionDist((float) Global.mainTab.navigate.gpsPos.getBearing(Global.mainTab.navigate.destination), distance);
+	compassRose.setWaypointDirectionDist((float) MainTab.itself.navigate.gpsPos.getBearing(MainTab.itself.navigate.destination), distance);
     }
 
     /**
@@ -270,20 +272,20 @@ public final class GotoPanel extends CellPanel {
 	Double bearMov = new Double();
 	Double speed = new Double();
 	Double sunAzimut = new Double();
-	compassRose.setGpsStatus(fix, Global.mainTab.navigate.gpsPos.getSats(), Global.mainTab.navigate.gpsPos.getSatsInView(), Global.mainTab.navigate.gpsPos.getHDOP());
-	if ((fix > 0) && (Global.mainTab.navigate.gpsPos.getSats() >= 0)) {
+	compassRose.setGpsStatus(fix, MainTab.itself.navigate.gpsPos.getSats(), MainTab.itself.navigate.gpsPos.getSatsInView(), MainTab.itself.navigate.gpsPos.getHDOP());
+	if ((fix > 0) && (MainTab.itself.navigate.gpsPos.getSats() >= 0)) {
 	    // display values only, if signal good
-	    lblPosition.setText(Global.mainTab.navigate.gpsPos.toString(CoordsScreen.getLocalSystem(currFormatSel)));
-	    speed.set(Global.mainTab.navigate.gpsPos.getSpeed());
-	    sunAzimut.set(Global.mainTab.navigate.skyOrientationDir.lonDec);
-	    bearMov.set(Global.mainTab.navigate.gpsPos.getBear());
+	    lblPosition.setText(MainTab.itself.navigate.gpsPos.toString(CoordsScreen.getLocalSystem(currFormatSel)));
+	    speed.set(MainTab.itself.navigate.gpsPos.getSpeed());
+	    sunAzimut.set(MainTab.itself.navigate.skyOrientationDir.lonDec);
+	    bearMov.set(MainTab.itself.navigate.gpsPos.getBear());
 	    updateDistance();
 	    compassRose.setSunMoveDirections((float) sunAzimut.value, (float) bearMov.value, (float) speed.value);
 	    // Set background to signal quality
 	}
 
 	// receiving data, but signal ist not good
-	if ((fix == 0) && (Global.mainTab.navigate.gpsPos.getSats() >= 0)) {
+	if ((fix == 0) && (MainTab.itself.navigate.gpsPos.getSats() >= 0)) {
 	    gpsStatus = YELLOW;
 	}
 	// receiving no data
@@ -291,16 +293,16 @@ public final class GotoPanel extends CellPanel {
 	    if (gpsStatus != RED)
 		new InfoBox(MyLocale.getMsg(5500, "Error"), MyLocale.getMsg(1510, "No data from GPS.\nConnection to serial port/gpsd closed.")).exec();
 	    gpsStatus = RED;
-	    Global.mainTab.navigate.stopGps();
+	    MainTab.itself.navigate.stopGps();
 	}
 	// cannot interpret data
 	if (fix == -2) {
 	    if (gpsStatus != RED)
 		new InfoBox(MyLocale.getMsg(5500, "Error"), MyLocale.getMsg(1511,
 			"Cannot interpret data from GPS/gpsd!\nPossible reasons:\nWrong port,\nwrong baud rate,\ninvalid protocol (need NMEA/gpsd).\nConnection to serial port closed.\nLast String tried to interpret:\n")
-			+ Global.mainTab.navigate.gpsPos.lastStrExamined, FormBase.OKB).exec();
+			+ MainTab.itself.navigate.gpsPos.lastStrExamined, FormBase.OKB).exec();
 	    gpsStatus = RED;
-	    Global.mainTab.navigate.stopGps(); // TODO automatic in myNavigate?
+	    MainTab.itself.navigate.stopGps(); // TODO automatic in myNavigate?
 	}
     }
 
@@ -309,7 +311,7 @@ public final class GotoPanel extends CellPanel {
     }
 
     public void startGps() {
-	Global.mainTab.navigate.startGps(Global.pref.logGPS, Convert.toInt(Global.pref.logGPSTimer));
+	MainTab.itself.navigate.startGps(Preferences.itself().logGPS, Convert.toInt(Preferences.itself().logGPSTimer));
     }
 
     public void gpsStoped() {
@@ -319,10 +321,10 @@ public final class GotoPanel extends CellPanel {
     }
 
     private String getGotoBtnText() {
-	if (Global.mainTab.navigate.destination == null)
+	if (MainTab.itself.navigate.destination == null)
 	    return MyLocale.getMsg(999, "Not set");
 	else
-	    return Global.mainTab.navigate.destination.toString(CoordsScreen.getLocalSystem(currFormatSel));
+	    return MainTab.itself.navigate.destination.toString(CoordsScreen.getLocalSystem(currFormatSel));
     }
 
     private void setText(mButton btn, String text) {
@@ -340,7 +342,7 @@ public final class GotoPanel extends CellPanel {
 		    mnuContextFormt.getItemAt(currFormatSel).modifiers &= ~MenuItem.Checked;
 		    currFormatSel = mnuContextFormt.getInt();
 		    mnuContextFormt.getItemAt(currFormatSel).modifiers |= MenuItem.Checked;
-		    lblPosition.setText(Global.mainTab.navigate.gpsPos.toString(CoordsScreen.getLocalSystem(currFormatSel)));
+		    lblPosition.setText(MainTab.itself.navigate.gpsPos.toString(CoordsScreen.getLocalSystem(currFormatSel)));
 		    setText(destination, getGotoBtnText());
 		} // end lat-lon-format context menu
 		if (((MenuEvent) ev).menu == mnuContextRose) {
@@ -348,9 +350,9 @@ public final class GotoPanel extends CellPanel {
 		    if (action != null) {
 			for (int i = 0; i < miLuminary.length; i++) {
 			    if (action == miLuminary[i]) {
-				Global.mainTab.navigate.setLuminary(i);
+				MainTab.itself.navigate.setLuminary(i);
 				miLuminary[i].modifiers |= MenuItem.Checked;
-				compassRose.setLuminaryName(SkyOrientation.getLuminaryName(Global.mainTab.navigate.luminary));
+				compassRose.setLuminaryName(SkyOrientation.getLuminaryName(MainTab.itself.navigate.luminary));
 			    } else
 				miLuminary[i].modifiers &= ~MenuItem.Checked;
 			}
@@ -374,13 +376,13 @@ public final class GotoPanel extends CellPanel {
 		if (btnGPS.getText().equals(MyLocale.getMsg(1504, "Start")))
 		    startGps();
 		else
-		    Global.mainTab.navigate.stopGps();
+		    MainTab.itself.navigate.stopGps();
 	    }
 
 	    // set current position as centre and recalculate distance of caches in MainTab
 	    if (ev.target == btnCenter) {
-		if (Global.mainTab.navigate.gpsPos.isValid()) {
-		    Global.pref.setCurCentrePt(Global.mainTab.navigate.gpsPos);
+		if (MainTab.itself.navigate.gpsPos.isValid()) {
+		    Preferences.itself().setCurCentrePt(MainTab.itself.navigate.gpsPos);
 		} else
 		    new InfoBox(MyLocale.getMsg(5500, "Error"), MyLocale.getMsg(1514, "Cannot recalculate distances, because the GPS position is not set")).wait(FormBase.OKB);
 	    }
@@ -393,24 +395,24 @@ public final class GotoPanel extends CellPanel {
 	    // create new waypoint with current GPS-position
 	    if (ev.target == btnNewWpt) {
 		CacheHolder ch = new CacheHolder();
-		ch.setPos(Global.mainTab.navigate.gpsPos);
+		ch.setPos(MainTab.itself.navigate.gpsPos);
 		ch.setType(CacheType.CW_TYPE_STAGE); // see CacheType.GC_AW_STAGE_OF_MULTI // TODO unfertig
-		Global.mainTab.newWaypoint(ch);
+		MainTab.itself.newWaypoint(ch);
 	    }
 	    // change destination waypoint
 	    if (ev.target == destination) {
 		if (Vm.isMobile()) {
 		    InputScreen InScr = new InputScreen(CoordsScreen.getLocalSystem(currFormatSel));
-		    if (Global.mainTab.navigate.destination.isValid())
-			InScr.setCoords(Global.mainTab.navigate.destination);
+		    if (MainTab.itself.navigate.destination.isValid())
+			InScr.setCoords(MainTab.itself.navigate.destination);
 		    else
 			InScr.setCoords(new CWPoint(0, 0));
 		    if (InScr.execute(null, TOP) == FormBase.IDOK)
 			Navigate.itself.setDestination(InScr.getCoords());
 		} else {
 		    CoordsScreen cs = new CoordsScreen();
-		    if (Global.mainTab.navigate.destination.isValid())
-			cs.setFields(Global.mainTab.navigate.destination, CoordsScreen.getLocalSystem(currFormatSel));
+		    if (MainTab.itself.navigate.destination.isValid())
+			cs.setFields(MainTab.itself.navigate.destination, CoordsScreen.getLocalSystem(currFormatSel));
 		    else
 			cs.setFields(new CWPoint(0, 0), CoordsScreen.getLocalSystem(currFormatSel));
 		    if (cs.execute(null, TOP) == FormBase.IDOK)
@@ -452,7 +454,7 @@ class GotoRose extends AniImage {
 
     int roseRadius;
 
-    boolean northCentered = Global.pref.northCenteredGoto;
+    boolean northCentered = Preferences.itself().northCenteredGoto;
 
     final static Color RED = new Color(255, 0, 0);
     final static Color YELLOW = new Color(255, 255, 0);
@@ -561,7 +563,7 @@ class GotoRose extends AniImage {
 
 	g.setColor(Color.Black);
 
-	int metricSystem = Global.pref.metricSystem;
+	int metricSystem = Preferences.itself().metricSystem;
 	Double tmp = new Double();
 	strTemp = "";
 	double newDistance = 0;
@@ -627,7 +629,7 @@ class GotoRose extends AniImage {
 	String unit = null;
 
 	// Allow for different metric systems
-	if (Global.pref.metricSystem == Metrics.IMPERIAL) {
+	if (Preferences.itself().metricSystem == Metrics.IMPERIAL) {
 	    tmp.set(Metrics.convertUnit(m_speed, Metrics.KILOMETER, Metrics.MILES));
 	    unit = " mph";
 	    strSpeed = "- mph";
@@ -911,9 +913,9 @@ class GotoRose extends AniImage {
 
     public void setNorthCentered(boolean nc) {
 	northCentered = nc;
-	if (northCentered != Global.pref.northCenteredGoto) {
-	    Global.pref.northCenteredGoto = northCentered;
-	    Global.pref.savePreferences();
+	if (northCentered != Preferences.itself().northCenteredGoto) {
+	    Preferences.itself().northCenteredGoto = northCentered;
+	    Preferences.itself().savePreferences();
 	}
 	refresh();
     }

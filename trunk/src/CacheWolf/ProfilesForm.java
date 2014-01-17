@@ -179,7 +179,7 @@ public class ProfilesForm extends Form {
 		close(-1);
 	    }
 	    if (ev.target == executePanel.applyButton || ev.target == choice) {
-		Global.profile.setFilterActive(Filter.FILTER_INACTIVE);
+		MainForm.profile.setFilterActive(Filter.FILTER_INACTIVE);
 		if (choice.getSelectedItem() != null) {
 		    newSelectedProfile = choice.getSelectedItem().toString();
 		    close(1);
@@ -187,7 +187,7 @@ public class ProfilesForm extends Form {
 	    }
 	    if (ev.target == btnNew) {
 		if (NewProfileWizard.startNewProfileWizard(getFrame())) {
-		    newSelectedProfile = Global.profile.name;
+		    newSelectedProfile = MainForm.profile.name;
 		    close(1);
 		}
 	    }

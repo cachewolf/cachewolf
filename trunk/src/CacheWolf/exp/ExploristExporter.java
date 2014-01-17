@@ -21,15 +21,16 @@
 */
 package CacheWolf.exp;
 
-import CacheWolf.Global;
+import CacheWolf.MainForm;
 import CacheWolf.MyLocale;
+import CacheWolf.Preferences;
 import CacheWolf.controls.InfoBox;
+import CacheWolf.database.CWPoint;
 import CacheWolf.database.CacheDB;
 import CacheWolf.database.CacheHolder;
 import CacheWolf.database.CacheHolderDetail;
 import CacheWolf.database.CacheTerrDiff;
 import CacheWolf.database.CacheType;
-import CacheWolf.navi.CWPoint;
 import CacheWolf.navi.TransformCoordinates;
 import CacheWolf.utils.Common;
 import ewe.filechooser.FileChooser;
@@ -77,7 +78,7 @@ public class ExploristExporter {
     String expName;
 
     public ExploristExporter() {
-	cacheDB = Global.profile.cacheDB;
+	cacheDB = MainForm.profile.cacheDB;
 	expName = this.getClass().getName();
 	// remove package
 	expName = expName.substring(expName.indexOf(".") + 1);
@@ -86,14 +87,14 @@ public class ExploristExporter {
     public void doIt() {
 	File configFile = new File("magellan.cfg");
 	if (configFile.exists()) {
-	    FileChooser fc = new FileChooser(FileChooserBase.DIRECTORY_SELECT, Global.pref.getExportPath(expName + "Dir"));
+	    FileChooser fc = new FileChooser(FileChooserBase.DIRECTORY_SELECT, Preferences.itself().getExportPath(expName + "Dir"));
 	    fc.setTitle(MyLocale.getMsg(2104, "Choose directory for exporting .gs files"));
 	    String targetDir;
 	    if (fc.execute() != FormBase.IDCANCEL) {
 		targetDir = fc.getChosen() + "/";
-		Global.pref.setExportPath(expName + "Dir", targetDir);
+		Preferences.itself().setExportPath(expName + "Dir", targetDir);
 
-		CWPoint centre = Global.profile.centre;
+		CWPoint centre = MainForm.profile.centre;
 		try {
 		    LineNumberReader reader = new LineNumberReader(new BufferedReader(new FileReader(configFile)));
 		    String line, fileName, coordinate;
@@ -179,7 +180,7 @@ public class ExploristExporter {
 	    outp.close();
 	    pbf.exit(0);
 	} catch (IOException ioE) {
-	    Global.pref.log("Error opening " + outFile.getName(), ioE);
+	    Preferences.itself().log("Error opening " + outFile.getName(), ioE);
 	}
 	// try
     }
@@ -191,12 +192,12 @@ public class ExploristExporter {
      */
     public File getOutputFile() {
 	File file;
-	FileChooser fc = new FileChooser(FileChooserBase.SAVE, Global.pref.getExportPath(expName));
+	FileChooser fc = new FileChooser(FileChooserBase.SAVE, Preferences.itself().getExportPath(expName));
 	fc.setTitle(MyLocale.getMsg(2102, "Select target file:"));
 	fc.addMask(mask);
 	if (fc.execute() != FormBase.IDCANCEL) {
 	    file = fc.getChosenFile();
-	    Global.pref.setExportPath(expName, file.getPath());
+	    Preferences.itself().setExportPath(expName, file.getPath());
 	    return file;
 	} else {
 	    return null;

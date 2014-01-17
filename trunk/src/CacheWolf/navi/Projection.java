@@ -21,6 +21,8 @@
  */
 package CacheWolf.navi;
 
+import CacheWolf.database.CWPoint;
+
 abstract class Projection {
     /** when implemented: <br>
      * a) if the projection covers only one epsgCode here it should be written <br>

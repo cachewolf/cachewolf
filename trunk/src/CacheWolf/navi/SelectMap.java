@@ -21,8 +21,9 @@
 */
 package CacheWolf.navi;
 
-import CacheWolf.Global;
+import CacheWolf.MainForm;
 import CacheWolf.MyLocale;
+import CacheWolf.Preferences;
 import CacheWolf.controls.ExecutePanel;
 import CacheWolf.controls.InfoBox;
 import ewe.io.File;
@@ -53,7 +54,7 @@ public class SelectMap extends Form {
     public boolean worldfileexists = false;
 
     public SelectMap() {
-	mapsPath = Global.profile.getMapsDir();
+	mapsPath = MainForm.profile.getMapsDir();
 	top = new CacheWolf.MyScrollBarPanel(CMaps);
 	bot = new CacheWolf.MyScrollBarPanel(nonCMaps);
 	this.title = MyLocale.getMsg(4101, "Maps");
@@ -80,7 +81,7 @@ public class SelectMap extends Form {
 		}
 	    }
 	} catch (Exception ex) {
-	    Global.pref.log("Problem retrieveing map files", ex);
+	    Preferences.itself().log("Problem retrieveing map files", ex);
 	}
 	inf.close(0);
     }

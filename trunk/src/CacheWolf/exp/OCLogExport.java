@@ -21,9 +21,8 @@
 */
 package CacheWolf.exp;
 
-import CacheWolf.Global;
+import CacheWolf.MainForm;
 import CacheWolf.OC;
-import CacheWolf.UrlFetcher;
 import CacheWolf.database.CacheDB;
 import CacheWolf.database.CacheHolder;
 import CacheWolf.database.CacheHolderDetail;
@@ -32,6 +31,7 @@ import CacheWolf.imp.OCGPXfetch;
 import CacheWolf.imp.OCLinkImporter;
 import CacheWolf.utils.DateFormat;
 import CacheWolf.utils.Extractor;
+import CacheWolf.utils.UrlFetcher;
 import ewe.io.IOException;
 import ewe.sys.Handle;
 import ewe.sys.Time;
@@ -45,7 +45,7 @@ public final class OCLogExport {
     public static void doit() {
 
 	if (cacheDB == null)
-	    cacheDB = Global.profile.cacheDB;
+	    cacheDB = MainForm.profile.cacheDB;
 	int totalWaypoints = cacheDB.countVisible();
 	int updated = 0;
 	ProgressBarForm pbf = new ProgressBarForm();

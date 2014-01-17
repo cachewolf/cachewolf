@@ -21,7 +21,7 @@
 */
 package CacheWolf.navi;
 
-import CacheWolf.Global;
+import CacheWolf.Preferences;
 
 /**
  * @author Engywuck
@@ -90,7 +90,7 @@ public final class Metrics {
 	    		stdValue = value / FCT_MILE2FOOT;
 	    		break;
 	    	default:
-	    		Global.pref.log("Cannot convert unit"+getUnit(sourceUnit),null);
+	    		Preferences.itself().log("Cannot convert unit"+getUnit(sourceUnit),null);
 	    		throw new UnsupportedOperationException("Cannot convert unit"+getUnit(sourceUnit));
 	    	}
 	    	
@@ -117,7 +117,7 @@ public final class Metrics {
 	    		result = stdValue * FCT_MILE2FOOT;
 	    		break;
 	    	default:
-	    		Global.pref.log("Cannot convert unit"+getUnit(targetUnit),null);
+	    		Preferences.itself().log("Cannot convert unit"+getUnit(targetUnit),null);
 	    		throw new UnsupportedOperationException("Cannot convert unit"+getUnit(targetUnit));
 	    	}
 	    }	

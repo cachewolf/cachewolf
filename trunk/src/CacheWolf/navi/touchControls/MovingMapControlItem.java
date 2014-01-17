@@ -21,7 +21,7 @@
 */
 package CacheWolf.navi.touchControls;
 
-import CacheWolf.Global;
+import CacheWolf.Preferences;
 import CacheWolf.navi.touchControls.MovingMapControls.Role;
 import ewe.fx.Image;
 import ewe.graphics.AniImage;
@@ -108,7 +108,7 @@ public abstract class MovingMapControlItem {
 
 			}
 			else
-				Global.pref.log("icon " + iconSrc + " is bigger than " + source + "! Icon not loaded", null);
+				Preferences.itself().log("icon " + iconSrc + " is bigger than " + source + "! Icon not loaded", null);
 
 		}
 
@@ -200,7 +200,7 @@ public abstract class MovingMapControlItem {
 
 			Boolean thisElement = (Boolean) roles.get(nextKey);
 			if (!overallRoles.containsKey(nextKey)) {
-				Global.pref.log("Lookup role " + nextKey + " not possible", null);
+				Preferences.itself().log("Lookup role " + nextKey + " not possible", null);
 				return false;
 			}
 

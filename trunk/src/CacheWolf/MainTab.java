@@ -27,7 +27,7 @@ import CacheWolf.database.CacheHolder;
 import CacheWolf.database.CacheHolderDetail;
 import CacheWolf.database.CacheSize;
 import CacheWolf.database.CacheType;
-import CacheWolf.navi.CWPoint;
+import CacheWolf.database.CWPoint;
 import CacheWolf.navi.GotoPanel;
 import CacheWolf.navi.MovingMap;
 import CacheWolf.navi.Navigate;
@@ -53,6 +53,8 @@ import ewe.ui.mTabbedPanel;
  * @see MainMenu
  */
 public class MainTab extends mTabbedPanel {
+
+    public static MainTab itself;
 
     // following numbers depend on tabNames order (MENU_CARD must be the last tabName)
     static int LIST_CARD = 0;
@@ -98,11 +100,11 @@ public class MainTab extends mTabbedPanel {
     Control[] baseControls;
 
     public MainTab() {
-	Global.mainTab = this;
-	if (!Global.pref.tabsAtTop)
+	this.itself = this;
+	if (!Preferences.itself().tabsAtTop)
 	    tabLocation = SOUTH;
 
-	cacheDB = Global.profile.cacheDB;
+	cacheDB = MainForm.profile.cacheDB;
 
 	tablePanel = new TablePanel();
 	detailsPanel = new DetailsPanel();
@@ -166,10 +168,10 @@ public class MainTab extends mTabbedPanel {
 	for (int i = 0; i < tabNames.length; i++) {
 	    CellPanel alles = new CellPanel();
 	    CellPanel selection = new CellPanel();
-	    if (!Global.pref.tabsAtTop)
+	    if (!Preferences.itself().tabsAtTop)
 		alles.addLast(baseControls[i]);
 	    selection.equalWidths = true;
-	    if (Global.pref.noTabs) {
+	    if (Preferences.itself().noTabs) {
 		// navigation with buttons instead of tabs
 		mButton btn = GuiImageBroker.getButton(MyLocale.getMsg(1211, "Home"), "home");
 		btn.name = "select";
@@ -189,11 +191,11 @@ public class MainTab extends mTabbedPanel {
 		}
 	    }
 	    alles.addLast(selection, HSTRETCH, HFILL);
-	    if (Global.pref.tabsAtTop)
+	    if (Preferences.itself().tabsAtTop)
 		alles.addLast(baseControls[i]);
 	    Card c = this.addCard(alles, tabNames[i], null);
-	    c.iconize(GuiImageBroker.getImage(imageNames[i]), Global.pref.useIcons);
-	    if (Global.pref.noTabs) {
+	    c.iconize(GuiImageBroker.getImage(imageNames[i]), Preferences.itself().useIcons);
+	    if (Preferences.itself().noTabs) {
 		((IconAndText) c.image).textPosition = Graphics.Down;
 	    }
 	}
@@ -203,16 +205,16 @@ public class MainTab extends mTabbedPanel {
 	gotoPanel.init(); // do the rest from ctor creation;
 
 	/*
-	if (Global.pref.isBigScreen || !Global.pref.useRadar) {
+	if (Preferences.itself().isBigScreen || !Preferences.itself().useRadar) {
 		// use map
 	}
 
-	if (Global.pref.isBigScreen || Global.pref.useRadar) {
+	if (Preferences.itself().isBigScreen || Preferences.itself().useRadar) {
 		// use radar
 	}
 	*/
 
-	if (Global.pref.noTabs) {
+	if (Preferences.itself().noTabs) {
 	    this.addCard(homePanel = new CellPanel(), MyLocale.getMsg(1211, "Home"), null);
 	    initHomePanel();
 	    this.select(MyLocale.getMsg(1211, "Home"));
@@ -312,7 +314,7 @@ public class MainTab extends mTabbedPanel {
 		if (needTableUpdate) {
 		    // This sorts the waypoint (if it is new) into the right position
 		    this.tablePanel.myTableModel.updateRows();
-		    this.tablePanel.selectRow(Global.profile.getCacheIndex(detailsPanel.cache.getWayPoint()));
+		    this.tablePanel.selectRow(MainForm.profile.getCacheIndex(detailsPanel.cache.getWayPoint()));
 		}
 		// was this.tablePanel.refreshTable();
 		this.tablePanel.myTableControl.update(true); // Update and repaint
@@ -424,7 +426,7 @@ public class MainTab extends mTabbedPanel {
 	// onEnteringPanel(LIST_CARD);
 
 	// to switch to cache selected on map we do action as if leaving LIST_CARD
-	this.tablePanel.selectRow(Global.profile.getCacheIndex(chi.getWayPoint()));
+	this.tablePanel.selectRow(MainForm.profile.getCacheIndex(chi.getWayPoint()));
 	onLeavingPanel(LIST_CARD);
 
 	if (panelNo == DETAILS_CARD) {
@@ -451,10 +453,10 @@ public class MainTab extends mTabbedPanel {
 	updatePendingChanges(); // was: onEnteringPanel(0); oldCard=0;
 
 	mainCache = lastselected;
-	int selectedIndex = Global.profile.getCacheIndex(lastselected);
+	int selectedIndex = MainForm.profile.getCacheIndex(lastselected);
 	if (selectedIndex >= 0) {
 	    // why not using the target ???
-	    CacheHolder selectedCache = Global.profile.cacheDB.get(selectedIndex);
+	    CacheHolder selectedCache = MainForm.profile.cacheDB.get(selectedIndex);
 	    // try to start new waypoint with real coords
 	    if (!pCh.getPos().isValid()) {
 		pCh.setPos(selectedCache.getPos());
@@ -472,17 +474,17 @@ public class MainTab extends mTabbedPanel {
 	    }
 	}
 	if (CacheType.isAddiWpt(pCh.getType()) && mainCache != null && mainCache.length() > 2) {
-	    pCh.setWayPoint(Global.profile.getNewAddiWayPointName(mainCache));
-	    Global.profile.setAddiRef(pCh);
+	    pCh.setWayPoint(MainForm.profile.getNewAddiWayPointName(mainCache));
+	    MainForm.profile.setAddiRef(pCh);
 	} else {
-	    pCh.setWayPoint(Global.profile.getNewWayPointName("CW"));
+	    pCh.setWayPoint(MainForm.profile.getNewWayPointName("CW"));
 	    lastselected = pCh.getWayPoint();
 	}
 	pCh.setCacheSize(CacheSize.CW_SIZE_NOTCHOSEN);
 	chD = pCh.getCacheDetails(false);
 	this.ch = pCh;
 	cacheDB.add(pCh);
-	Global.profile.notifyUnsavedChanges(true); // Just to be sure
+	MainForm.profile.notifyUnsavedChanges(true); // Just to be sure
 	this.tablePanel.myTableModel.numRows++;
 	detailsPanel.setDetails(pCh, true);
 	oldCard = DETAILS_CARD;
@@ -514,8 +516,8 @@ public class MainTab extends mTabbedPanel {
 		    position = new CWPoint(ch.getPos());
 		    navigate.setDestination(ch);
 		} else {
-		    if (Global.pref.getCurCentrePt().isValid()) {
-			position = new CWPoint(Global.pref.getCurCentrePt());
+		    if (Preferences.itself().getCurCentrePt().isValid()) {
+			position = new CWPoint(Preferences.itself().getCurCentrePt());
 			navigate.setDestination(position);
 		    }
 		}
@@ -545,20 +547,20 @@ public class MainTab extends mTabbedPanel {
 	    oldCard = LIST_CARD;
 	}
 	updatePendingChanges();
-	if (Global.profile.hasUnsavedChanges())
-	    Global.profile.saveIndex(true);
+	if (MainForm.profile.hasUnsavedChanges())
+	    MainForm.profile.saveIndex(true);
 	this.tablePanel.saveColWidth();
-	Global.pref.savePreferences();
+	Preferences.itself().savePreferences();
     }
 
     private void updateCurCentrePtFromGPS() {
-	if (Global.pref.setCurrentCentreFromGPSPosition) {
+	if (Preferences.itself().setCurrentCentreFromGPSPosition) {
 	    if (navigate.gpsRunning) {
 		CWPoint whereAmI = navigate.gpsPos;
 		if (whereAmI.isValid()) {
-		    CWPoint curCentr = Global.pref.getCurCentrePt();
+		    CWPoint curCentr = Preferences.itself().getCurCentrePt();
 		    if (whereAmI.latDec != curCentr.latDec || whereAmI.lonDec != curCentr.lonDec) {
-			Global.pref.setCurCentrePt(whereAmI);
+			Preferences.itself().setCurCentrePt(whereAmI);
 		    }
 		}
 	    }

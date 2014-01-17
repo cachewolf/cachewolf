@@ -21,7 +21,7 @@
 */
 package CacheWolf.exp;
 
-import CacheWolf.Global;
+import CacheWolf.Preferences;
 import CacheWolf.database.CacheHolder;
 import CacheWolf.database.CacheHolderDetail;
 import CacheWolf.navi.TransformCoordinates;
@@ -44,7 +44,7 @@ public class LocExporter extends Exporter {
 	super();
 	this.setMask("*.loc");
 	this.setHowManyParams(NO_PARAMS);
-	if (Global.pref.addDetailsToName) {
+	if (Preferences.itself().addDetailsToName) {
 	    this.setNeedCacheDetails(true);
 	}
 	gm = new GarminMap();
@@ -62,22 +62,22 @@ public class LocExporter extends Exporter {
 	StringBuffer strBuf = new StringBuffer(200);
 	strBuf.append("<waypoint>\r\n   <name id=\"");
 	String wptName = simplifyString(ch.getWayPoint());
-	if (Global.pref.addDetailsToWaypoint) {
+	if (Preferences.itself().addDetailsToWaypoint) {
 	    wptName += getShortDetails(ch);
 	}
-	if (Global.pref.garminMaxLen == 0)
+	if (Preferences.itself().garminMaxLen == 0)
 	    strBuf.append(wptName);
 	else {
 	    try {
-		strBuf.append(wptName.substring(wptName.length() - Global.pref.garminMaxLen));
+		strBuf.append(wptName.substring(wptName.length() - Preferences.itself().garminMaxLen));
 	    } catch (Exception ex) {
-		Global.pref.log("[LocExporter:record]Invalid value for garmin.MaxWaypointLength", ex);
+		Preferences.itself().log("[LocExporter:record]Invalid value for garmin.MaxWaypointLength", ex);
 	    }
 	}
 	strBuf.append("\"><![CDATA[");
 	strBuf.append(simplifyString(ch.getCacheName()));
-	if (Global.pref.addDetailsToName) {
-	    if (!Global.pref.addDetailsToWaypoint) {
+	if (Preferences.itself().addDetailsToName) {
+	    if (!Preferences.itself().addDetailsToWaypoint) {
 		strBuf.append(getShortDetails(ch));
 	    }
 	    CacheHolderDetail det = ch.getCacheDetails(true);

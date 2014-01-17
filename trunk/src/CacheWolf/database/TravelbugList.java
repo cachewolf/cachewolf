@@ -25,7 +25,7 @@ package CacheWolf.database;
  * A list of GC travelbugs
  * @author salzkammergut
  */
-import CacheWolf.Global;
+import CacheWolf.Preferences;
 import ewe.io.StringReader;
 import ewe.util.Vector;
 import ewesoft.xml.MinML;
@@ -147,9 +147,9 @@ public class TravelbugList extends MinML {
 	    parse(new StringReader(XMLString));
 	} catch (Exception e) {
 	    if (e instanceof NullPointerException)
-		Global.pref.log("Error reading cache-travelbug list: NullPointerException in Element " + lastName + ". Wrong attribute?", e, true);
+		Preferences.itself().log("Error reading cache-travelbug list: NullPointerException in Element " + lastName + ". Wrong attribute?", e, true);
 	    else
-		Global.pref.log("Error reading cache-travelbug list: ", e);
+		Preferences.itself().log("Error reading cache-travelbug list: ", e);
 	}
 	;
     }

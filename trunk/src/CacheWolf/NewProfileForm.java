@@ -75,7 +75,7 @@ public class NewProfileForm extends Form {
 			    profileDir = "";
 			    this.close(-1);
 			}
-			Global.profile.setFilterActive(Filter.FILTER_INACTIVE);
+			MainForm.profile.setFilterActive(Filter.FILTER_INACTIVE);
 			this.close(0);
 		    }
 		}

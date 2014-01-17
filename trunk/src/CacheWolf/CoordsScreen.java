@@ -23,15 +23,19 @@ package CacheWolf;
 
 import CacheWolf.controls.ExecutePanel;
 import CacheWolf.controls.InfoBox;
+import CacheWolf.database.CWPoint;
 import CacheWolf.imp.GCImporter;
-import CacheWolf.navi.CWPoint;
 import CacheWolf.navi.Navigate;
 import CacheWolf.navi.ProjectedPoint;
 import CacheWolf.navi.TransformCoordinates;
 import CacheWolf.utils.Common;
 import CacheWolf.utils.STRreplace;
+import CacheWolf.utils.UrlFetcher;
+import ewe.io.InputStreamReader;
+import ewe.io.StringStream;
 import ewe.sys.Vm;
 import ewe.ui.CardPanel;
+import ewe.ui.CellConstants;
 import ewe.ui.CellPanel;
 import ewe.ui.CheckBoxGroup;
 import ewe.ui.Control;
@@ -41,11 +45,16 @@ import ewe.ui.Event;
 import ewe.ui.Form;
 import ewe.ui.FormBase;
 import ewe.ui.Gui;
+import ewe.ui.ScrollBarPanel;
 import ewe.ui.mButton;
 import ewe.ui.mCheckBox;
 import ewe.ui.mChoice;
 import ewe.ui.mInput;
 import ewe.ui.mLabel;
+import ewe.ui.mList;
+import ewe.util.Vector;
+import ewesoft.xml.XMLDecoder;
+import ewesoft.xml.XMLElement;
 
 /**
  * Class for entering coordinates<br>
@@ -340,7 +349,7 @@ public class CoordsScreen extends Form {
 		if (inp.startsWith("GC")) {
 		    GCImporter spider = new GCImporter();
 		    coord = new CWPoint(spider.getCacheCoordinates(inp));
-		    Global.pref.setOldGCLanguage();
+		    Preferences.itself().setOldGCLanguage();
 		} else {
 		    coord = new CWPoint(inp);
 		}
@@ -354,7 +363,7 @@ public class CoordsScreen extends Form {
 	    }
 
 	    if (ev.target == btnGps) {
-		Navigate nav = Global.mainTab.navigate;
+		Navigate nav = MainTab.itself.navigate;
 		if (nav.gpsPos.isValid()) {
 		    CWPoint coord = nav.gpsPos;
 		    currFormat = getLocalSystem(combineToFormatSel(chkFormat.getSelectedIndex(), localCooSystem.getInt()));
@@ -406,4 +415,148 @@ public class CoordsScreen extends Form {
 	return ret;
     }
 
+}
+
+/**
+ * Class for entering an address and convert it to lat/lon
+ * starting index in language files: 7300
+ */
+
+class GeoCodeGui extends Form {
+
+    mInput streetInp, cityInp;
+    mButton searchBtn, searchCancelBtn;
+    private final ExecutePanel executePanel;
+    CWPoint coordInp = new CWPoint();
+    CellPanel topLinePanel = new CellPanel();
+    CellPanel mainPanel = new CellPanel();
+    // HtmlDisplay foundTxt;
+    mList choice;
+    int exitKeys[] = { 75009 };
+
+    Vector geoCodeAnsw;
+    String searchText;
+
+    public GeoCodeGui() {
+	topLinePanel.addNext(new mLabel(MyLocale.getMsg(7300, "Street/POI")), CellConstants.DONTSTRETCH, CellConstants.WEST);
+	topLinePanel.addLast(streetInp = new mInput(MyLocale.getMsg(7305, "Hauptbahnhof")), CellConstants.STRETCH, CellConstants.FILL | CellConstants.WEST);
+	//streetInp.setPreferredSize(500, 20);
+	topLinePanel.addNext(new mLabel(MyLocale.getMsg(7301, "City")), CellConstants.DONTSTRETCH, CellConstants.WEST);
+	topLinePanel.addNext(cityInp = new mInput(MyLocale.getMsg(7304, "München, Deutschland")), CellConstants.HSTRETCH, CellConstants.HFILL | CellConstants.WEST);
+	topLinePanel.addNext(searchBtn = new mButton(MyLocale.getMsg(7302, "Search")), CellConstants.DONTSTRETCH, CellConstants.WEST);
+	topLinePanel.addLast(searchCancelBtn = new mButton(MyLocale.getMsg(7303, "Cancel")), CellConstants.DONTSTRETCH, CellConstants.WEST);
+	// inpText.toolTip=MyLocale.getMsg(1406,"Enter coordinates in any format or GCxxxxx");
+
+	this.addLast(topLinePanel, CellConstants.STRETCH, CellConstants.FILL | CellConstants.WEST);
+
+	// Description of found sites
+	choice = new mList(8, 50, false);
+	ScrollBarPanel sbp = new MyScrollBarPanel(choice, 0);
+	sbp.setOptions(MyScrollBarPanel.NeverShowVerticalScrollers);
+	mainPanel.addLast(sbp, CellConstants.STRETCH, CellConstants.FILL | CellConstants.WEST);
+
+	executePanel = new ExecutePanel(mainPanel);
+
+	//add Panels
+	this.addLast(mainPanel, CellConstants.STRETCH, CellConstants.FILL | CellConstants.WEST);
+    }
+
+    public void onEvent(Event ev) {
+
+	if (ev instanceof ControlEvent && ev.type == ControlEvent.PRESSED) {
+	    if (ev.target == searchBtn) {
+		Vm.showWait(true);
+		try {
+		    geoCodeAnsw = GeocoderOsm.geocode(cityInp.text.trim(), streetInp.text.trim());
+		} catch (Exception e) {
+		    geoCodeAnsw = new Vector();
+		    geoCodeAnsw.add(new GeocodeAnswer(new CWPoint(), e.getMessage()));
+		}
+		Vm.showWait(false);
+		if (geoCodeAnsw.size() == 0) {
+		    geoCodeAnsw = new Vector();
+		    geoCodeAnsw.add(new GeocodeAnswer(new CWPoint(), "nothing found"));
+		}
+		choice.items.clear();
+		for (int i = 0; i < geoCodeAnsw.size(); i++) {
+		    GeocodeAnswer ga = (GeocodeAnswer) geoCodeAnsw.get(i);
+		    choice.addItem(ga.where.toString() + " | " + ga.foundname);
+		}
+		choice.updateItems();
+	    }
+
+	    if (ev.target == searchCancelBtn) {
+	    }
+
+	    if (ev.target == executePanel.cancelButton) {
+		this.close(IDCANCEL);
+	    }
+
+	    if (ev.target == executePanel.applyButton) {
+		if (geoCodeAnsw != null && geoCodeAnsw.size() > 0) {
+		    int i = choice.selectedIndex;
+		    coordInp = ((GeocodeAnswer) geoCodeAnsw.get(i)).where;
+		} else
+		    coordInp.makeInvalid();
+		this.close(IDOK);
+	    }
+
+	}
+	super.onEvent(ev);
+    }
+
+}
+
+class GeocoderOsm {
+    //private static final String geocoderUrl = "http://gazetteer.openstreetmap.org/namefinder/search.xml?max=1&find=";
+    private static final String geocoderUrl = "http://nominatim.openstreetmap.org/search?"; //q=135+pilkington+avenue,+birmingham&format=xml&polygon=1&addressdetails=1
+
+    public static Vector geocode(String city, String street) throws Exception {
+	String searchFor;
+	if (street.equals("")) {
+	    searchFor = UrlFetcher.toUtf8Url(city);
+	} else {
+	    searchFor = UrlFetcher.toUtf8Url(street) + "+" + UrlFetcher.toUtf8Url(city);
+	}
+	String answer = UrlFetcher.fetch(geocoderUrl + "q=" + searchFor + "&format=xml");
+	answer = STRreplace.replace(answer, "\'", "\' ");
+	answer = STRreplace.replace(answer, "  ", " ");
+	XMLDecoder xmldec = new XMLDecoder();
+	Vector erg = new Vector();
+	try {
+	    xmldec.parse(new InputStreamReader(new StringStream(answer)));
+	    if ("searchresults".equalsIgnoreCase((String) xmldec.document.tag)) {
+		XMLElement xe;
+		String desc, lat, lon;
+		desc = null;
+		CWPoint where = new CWPoint();
+		if (xmldec.document != null && xmldec.document.subElements != null) {
+		    for (int i = 0; i < xmldec.document.subElements.size(); i++) {
+			xe = (XMLElement) xmldec.document.subElements.elementAt(i);
+			if (xe.tag.equalsIgnoreCase("place")) {
+			    lat = (String) xe.attributes.getPropertyValues("lat").get(0);
+			    lon = (String) xe.attributes.getPropertyValues("lon").get(0);
+			    where.set(Common.parseDouble(lat.trim()), Common.parseDouble(lon.trim()));
+			    desc = (String) xe.attributes.getPropertyValues("display_name").get(0);
+			    erg.add(new GeocodeAnswer(where, desc));
+			}
+		    }
+		}
+	    }
+	} catch (Exception e) {
+	    throw new Exception(e.getMessage());
+	}
+	return erg;
+    }
+
+}
+
+class GeocodeAnswer {
+    String foundname;
+    CWPoint where;
+
+    public GeocodeAnswer(CWPoint where_, String desc_) {
+	where = new CWPoint(where_);
+	foundname = desc_;
+    }
 }
