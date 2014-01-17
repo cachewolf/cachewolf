@@ -21,6 +21,7 @@
 */
 package CacheWolf.navi;
 
+import CacheWolf.database.BoundingBox;
 import CacheWolf.database.CWPoint;
 import CacheWolf.database.CoordinatePoint;
 import CacheWolf.utils.Matrix;
@@ -151,7 +152,7 @@ public final class TransformCoordinates {
     /** use this for south Germany, maximum deviation sub meter, valid in the former BRD (west germany) in 47°00' N ... 50°20' N */
     private static final TransformParameters GK_SOUTH_GERMANY_TO_WGS84 = new TransformParameters(597.1, 71.4, 412.1, -0.894, -0.068, 1.563, -7.580, BESSEL);
 
-    private static Area FORMER_GDR = new Area(new CWPoint(54.923414, 10.503013), new CWPoint(50.402578, 14.520637));
+    private static BoundingBox FORMER_GDR = new BoundingBox(new CWPoint(54.923414, 10.503013), new CWPoint(50.402578, 14.520637));
 
     // taken from http://www.lverma.nrw.de/produkte/druckschriften/verwaltungsvorschriften/images/gps/TrafopsNRW.pdf for NRW this transform has deviations lower than 34cm.
     /** use this for NRW in Germany. Deviations less than 34 cm */
@@ -173,20 +174,20 @@ public final class TransformCoordinates {
     // taken from http://crs.bkg.bund.de/crs-eu/ -> italy -> ROMA40 (change the sign of the rotation parameters!)
     /** The italian variant of Gauß-Krüger (Gauß-Boaga) */
     private static final TransformParameters GB_ITALIAN_PENINSULAR_TO_WGS84 = new TransformParameters(-104.1, -49.1, -9.9, -0.971, 2.917, -0.714, -11.68, HAYFORD1909);
-    //static final Area ITALY_PENINSULAR = new Area(new CWPoint());
+    //static final BoundingBox ITALY_PENINSULAR = new BoundingBox(new CWPoint());
     private static final TransformParameters GB_ITALIAN_SARDINIA_TO_WGS84 = new TransformParameters(-168.6, -34.0, 38.6, 0.374, 0.679, 1.379, 9.48, HAYFORD1909);
     // Pulkovo 1942(83) / 3-degree Gauss-Krueger zone 4
     // WGS84 Bounds: 10.5000, 48.9000, 13.5000, 54.7200
     private static final TransformParameters Pulkovo_1942_TO_WGS84 = new TransformParameters(24, -123, -94, 0.02, -0.25, -0.13, 1.1, KRASSOWSKY1940);
 
-    private static final Area ITALY_SARDINIA = new Area(new CWPoint(42, 6), new CWPoint(38, 11));
-    private static final Area ITALY_SARDINIA_GK = new Area(wgs84ToEpsg(ITALY_SARDINIA.topleft, EPSG_ITALIAN_GB_EW1).toCoordinatePoint(TransformCoordinates.LOCALSYSTEM_ITALIAN_GB), wgs84ToEpsg(ITALY_SARDINIA.bottomright, EPSG_ITALIAN_GB_EW1).toCoordinatePoint(
-	    TransformCoordinates.LOCALSYSTEM_ITALIAN_GB));
+    private static final BoundingBox ITALY_SARDINIA = new BoundingBox(new CWPoint(42, 6), new CWPoint(38, 11));
+    private static final BoundingBox ITALY_SARDINIA_GK = new BoundingBox(wgs84ToEpsg(ITALY_SARDINIA.topleft, EPSG_ITALIAN_GB_EW1).toCoordinatePoint(TransformCoordinates.LOCALSYSTEM_ITALIAN_GB), wgs84ToEpsg(ITALY_SARDINIA.bottomright,
+	    EPSG_ITALIAN_GB_EW1).toCoordinatePoint(TransformCoordinates.LOCALSYSTEM_ITALIAN_GB));
 
     private static final TransformParameters GB_ITALIAN_SICILIA_TO_WGS84 = new TransformParameters(-50.2, -50.4, 84.8, 0.690, 2.012, -0.459, 28.08, HAYFORD1909);
-    private static final Area ITALY_SICILIA = new Area(new CWPoint(39, 12), new CWPoint(36.3, 15.6));
-    private static final Area ITALY_SICILIA_GK = new Area(wgs84ToEpsg(ITALY_SICILIA.topleft, EPSG_ITALIAN_GB_EW2).toCoordinatePoint(TransformCoordinates.LOCALSYSTEM_ITALIAN_GB), wgs84ToEpsg(ITALY_SICILIA.bottomright, EPSG_ITALIAN_GB_EW2).toCoordinatePoint(
-	    TransformCoordinates.LOCALSYSTEM_ITALIAN_GB));
+    private static final BoundingBox ITALY_SICILIA = new BoundingBox(new CWPoint(39, 12), new CWPoint(36.3, 15.6));
+    private static final BoundingBox ITALY_SICILIA_GK = new BoundingBox(wgs84ToEpsg(ITALY_SICILIA.topleft, EPSG_ITALIAN_GB_EW2).toCoordinatePoint(TransformCoordinates.LOCALSYSTEM_ITALIAN_GB), wgs84ToEpsg(ITALY_SICILIA.bottomright,
+	    EPSG_ITALIAN_GB_EW2).toCoordinatePoint(TransformCoordinates.LOCALSYSTEM_ITALIAN_GB));
 
     // see also http://hal.gis.univie.ac.at/karto/lehr/fachbereiche/geoinfo/givi0304/tutorials/ersteschritte/projectionen.htm#ParMGIWGS84
     // taken from taken from http://www.crs-geo.eu/crseu/EN/Home/homepage__node.html?__nnn=true click on "national CRS" -> Austria -> AT (translation *-1 as of 11-8-2009)

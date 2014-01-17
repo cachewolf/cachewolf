@@ -147,7 +147,7 @@ public final class CalcPanel extends CellPanel {
     }
 
     private final int getLocalCooSystem() {
-	return CoordsScreen.getLocalSystem(currFormat);
+	return CoordsInput.getLocalSystem(currFormat);
     }
 
     public final void readFields(CWPoint coords, BearingDistance degKm) {
@@ -249,7 +249,7 @@ public final class CalcPanel extends CellPanel {
 	    if (ev.target == btnChangeLatLon) {
 		if (Vm.isMobile()) {
 		    readFields(coordInp, bearingDistance);
-		    InputScreen InScr = new InputScreen(getLocalCooSystem());
+		    CoordsPDAInput InScr = new CoordsPDAInput(getLocalCooSystem());
 		    if (coordInp.isValid())
 			InScr.setCoords(coordInp);
 		    else
@@ -260,7 +260,7 @@ public final class CalcPanel extends CellPanel {
 			// repaint();
 		    }
 		} else {
-		    CoordsScreen cs = new CoordsScreen();
+		    CoordsInput cs = new CoordsInput();
 		    readFields(coordInp, bearingDistance);
 		    cs.setFields(coordInp, getLocalCooSystem());
 		    if (cs.execute() == FormBase.IDOK) {

@@ -19,26 +19,23 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
-package CacheWolf.navi;
+package CacheWolf.database;
 
-import CacheWolf.database.CWPoint;
-import CacheWolf.database.CoordinatePoint;
+public class BoundingBox {
+    public CWPoint topleft;
+    public CWPoint bottomright;
 
-public class Area {
-    protected CWPoint topleft;
-    protected CWPoint bottomright;
-
-    public Area() {
+    public BoundingBox() {
 	topleft = new CWPoint();
 	bottomright = new CWPoint();
     }
 
-    public Area(CoordinatePoint tl, CoordinatePoint br) {
+    public BoundingBox(CoordinatePoint tl, CoordinatePoint br) {
 	topleft = new CWPoint(tl);
 	bottomright = new CWPoint(br);
     }
 
-    public Area(CWPoint tl, CWPoint br) {
+    public BoundingBox(CWPoint tl, CWPoint br) {
 	topleft = tl;
 	bottomright = br;
     }
@@ -57,54 +54,18 @@ public class Area {
 	    return false;
     }
 
-    /**
-     * test if Area is completely within this
-     * 
-     * @param Area
-     * @return
-     */
-    public final boolean isInBound(Area Area) {
-	return (isInBound(Area.topleft) && isInBound(Area.bottomright));
+    public final boolean isInBound(BoundingBox boundingBox) {
+	return (isInBound(boundingBox.topleft) && isInBound(boundingBox.bottomright));
     }
 
-    public final boolean isOverlapping(Area a) {
+    public final boolean isOverlapping(BoundingBox boundingBox) {
 	// test if not overlapping and invert the result, 
 	// see http://www.geoclub.de/viewtopic.php?f=40&t=38364&p=607033#p607033
-	return !(this.bottomright.latDec > a.topleft.latDec || this.topleft.latDec < a.bottomright.latDec || this.bottomright.lonDec < a.topleft.lonDec || this.topleft.lonDec > a.bottomright.lonDec);
+	return !(this.bottomright.latDec > boundingBox.topleft.latDec || //
+		this.topleft.latDec < boundingBox.bottomright.latDec || //
+		this.bottomright.lonDec < boundingBox.topleft.lonDec || //
+	this.topleft.lonDec > boundingBox.bottomright.lonDec);
     }
-
-    /* not used at the moment
-     public boolean equals(Area a) {
-     if(java.lang.Math.abs(topleft.latDec - a.topleft.latDec) < edgeTolerance 
-    		 && java.lang.Math.abs(topleft.lonDec - a.topleft.lonDec) < edgeTolerance
-    		 && java.lang.Math.abs(bottomright.latDec - a.bottomright.latDec) < edgeTolerance
-    		 && java.lang.Math.abs(bottomright.lonDec - a.bottomright.lonDec) < edgeTolerance )
-    	 return true;
-     else return false;
-    }
-    */
-
-    /* not used at the moment
-    public int getEdge(CWPoint tl, CWPoint br) {
-     if (java.lang.Math.abs(topleft.latDec - br.latDec) < edgeTolerance 
-    		 && java.lang.Math.abs(topleft.lonDec - tl.lonDec) < edgeTolerance 
-    		 && java.lang.Math.abs(bottomright.lonDec - br.lonDec) < edgeTolerance)
-    	 return AT_TOP_EDGE;
-    	 if (java.lang.Math.abs(topleft.latDec - tl.latDec) < edgeTolerance 
-    			 && java.lang.Math.abs(bottomright.lonDec - tl.lonDec) < edgeTolerance 
-    			 && java.lang.Math.abs(bottomright.latDec - br.latDec) < edgeTolerance)
-    		 return AT_RIGHT_EDGE;
-    	 if (java.lang.Math.abs(topleft.lonDec - tl.lonDec) < edgeTolerance 
-    			 && java.lang.Math.abs(bottomright.latDec - tl.latDec) < edgeTolerance 
-    			 && java.lang.Math.abs(bottomright.lonDec - br.lonDec) < edgeTolerance)
-    		 return AT_BOTTOM_EDGE;
-    	 if (java.lang.Math.abs(topleft.latDec - tl.latDec) < edgeTolerance 
-    			 && java.lang.Math.abs(topleft.lonDec - br.lonDec) < edgeTolerance 
-    			 && java.lang.Math.abs(bottomright.latDec - br.latDec) < edgeTolerance)
-    		 return AT_LEFT_EDGE;
-    	 return NOT_ON_EDGE;
-    }
-    */
 
     /**
      * get an easy find string for this area

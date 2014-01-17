@@ -22,10 +22,10 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 package CacheWolf;
 
 import CacheWolf.controls.InfoBox;
+import CacheWolf.database.BoundingBox;
 import CacheWolf.database.CWPoint;
 import CacheWolf.database.CacheDB;
 import CacheWolf.database.CacheHolder;
-import CacheWolf.navi.Area;
 import CacheWolf.navi.TransformCoordinates;
 import CacheWolf.utils.Common;
 import CacheWolf.utils.Extractor;
@@ -611,7 +611,7 @@ public class Profile {
 
     public int numCachesInArea; // only valid after calling getSourroundingArea
 
-    public Area getSourroundingArea(boolean onlyOfSelected) {
+    public BoundingBox getSourroundingArea(boolean onlyOfSelected) {
 	if (cacheDB == null || cacheDB.size() == 0)
 	    return null;
 	CacheHolder ch;
@@ -646,7 +646,7 @@ public class Profile {
 	    }
 	}
 	if (topleft != null && bottomright != null)
-	    return new Area(topleft, bottomright);
+	    return new BoundingBox(topleft, bottomright);
 	else
 	    return null;
     }

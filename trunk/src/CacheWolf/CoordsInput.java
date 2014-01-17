@@ -61,7 +61,7 @@ import ewesoft.xml.XMLElement;
  * Class IDs 1400 and 600 (same as calc panel and preferences screen)<br>
  */
 
-public class CoordsScreen extends Form {
+public class CoordsInput extends Form {
 
     CellPanel dp, zp;
     CardPanel tp;
@@ -74,7 +74,6 @@ public class CoordsScreen extends Form {
     mInput inpText;
     mButton btnCopy, btnPaste, btnParse, btnGps, btnClear, btnSearch;
     private ExecutePanel executePanel = null;
-    InputScreen inpScreen;
 
     CWPoint coordInp = new CWPoint();
     CellPanel topLinePanel = new CellPanel();
@@ -93,16 +92,16 @@ public class CoordsScreen extends Form {
 
     private boolean allowInvalid = false;
 
-    public CoordsScreen(boolean allowInvalidCoords) {
+    public CoordsInput(boolean allowInvalidCoords) {
 	allowInvalid = allowInvalidCoords;
-	InitCoordsScreen();
+	InitCoordsInput();
     }
 
-    public CoordsScreen() {
-	InitCoordsScreen();
+    public CoordsInput() {
+	InitCoordsInput();
     }
 
-    private void InitCoordsScreen() {
+    private void InitCoordsInput() {
 	this.setTitle("");
 	// Radiobuttons for format
 	topLinePanel.addNext(chkDD = new mCheckBox("d.d°"), DONTSTRETCH, LEFT);

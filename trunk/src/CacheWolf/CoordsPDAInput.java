@@ -49,11 +49,15 @@ import ewe.ui.mLabel;
  * Class IDs 1400 and 600 (same as calc panel and preferences screen)<br>
  */
 
-public class InputScreen extends Form {
+public class CoordsPDAInput extends Form {
 
     private static StringBuffer strBufCoords = new StringBuffer(30);
     private static StringBuffer strBufDistanc = new StringBuffer(10);
     private static StringBuffer strBufBear = new StringBuffer(3);
+
+    static final Color ColorEdit = new Color(0, 255, 0);// green
+    static final Color ColorPos = new Color(255, 0, 0);// red
+    static final Color ColorNormal = new Color(192, 192, 192);// grey
 
     private static final int POS_NDD = 2, LEN_NDD = 3;
     private static final int POS_NMM = 6, LEN_NMM = 3;
@@ -65,16 +69,12 @@ public class InputScreen extends Form {
     private int iPosBear = 0, iPosDist = 0;
 
     int currFormatSel;
-    CWPoint CoordsInput = new CWPoint();
-    CWPoint CoordsBack = new CWPoint();
-    CWPoint CoordsBear = new CWPoint();
+    CWPoint coordsInput = new CWPoint();
+    CWPoint coordsBack = new CWPoint();
+    CWPoint coordsBear = new CWPoint();
 
     BearingDistance bd = new BearingDistance();
     private boolean bBearingPanelOnTop = false;
-
-    static Color ColorEdit = new Color(0, 255, 0);// green
-    static Color ColorPos = new Color(255, 0, 0);// red
-    static Color ColorNormal = new Color(192, 192, 192);// grey
     // different panels to avoid spanning
     private CellPanel MainP = new CellPanel();
     private CellPanel TopP = new CellPanel();
@@ -98,66 +98,7 @@ public class InputScreen extends Form {
 
     private boolean allowInvalid = false;
 
-    public class mButtonPos extends mButton {
-	private int iPosition, iPosY = 5, iGap = 1;
-	private FontMetrics tempFm;
-	private int stringHeight;
-	private int sWidth1, sWidth2, sWidth3, stringWidth;
-	private int TextStart;
-
-	mButtonPos(String sValue) {
-	    this.setText(sValue);
-	}
-
-	public void setText(String sValue, int iPos) {
-	    this.setText(sValue);
-	    tempFm = this.getFontMetrics(font);
-	    stringHeight = tempFm.getHeight();
-	    if (sValue.length() >= 3) {
-		sWidth1 = tempFm.getTextWidth(sValue.substring(0, 1));
-		sWidth2 = tempFm.getTextWidth(sValue.substring(1, 2));
-		sWidth3 = tempFm.getTextWidth(sValue.substring(2, 3));
-		stringWidth = tempFm.getTextWidth(sValue);
-		TextStart = (this.width - stringWidth) / 2;
-	    }
-	    iPosition = iPos;
-	}
-
-	public void doPaint(Graphics g, Rect area) {
-	    //if(iPosition > 0) g.setColor(ColorEdit); else  g.setColor(ColorNormal);
-	    super.doPaint(g, area);
-	    g.setPen(new Pen(ColorPos, Pen.SOLID, 2));
-	    //g.fillRect(area.x, area.y, area.height, area.width);
-	    //g.draw3DRect(area, 1, false, ColorEdit, ColorEdit);
-
-	    switch (iPosition) {
-	    case 0:
-		g.setPen(new Pen(ColorNormal, Pen.SOLID, 2));
-		g.drawRect(0, 0, 0, 0);
-		g.draw3DRect(area, ButtonObject.buttonEdge, true, null, ColorNormal);
-		break;
-	    case 1:
-		g.draw3DRect(area, ButtonObject.buttonEdge, true, null, ColorEdit);
-		g.drawRect(TextStart, iPosY, sWidth1 + 1, stringHeight);
-		break;
-	    case 2:
-		g.draw3DRect(area, ButtonObject.buttonEdge, true, null, ColorEdit);
-		g.drawRect(TextStart + sWidth2 + iGap, iPosY, sWidth2 + 1, stringHeight);
-		break;
-	    case 3:
-		g.draw3DRect(area, ButtonObject.buttonEdge, true, null, ColorEdit);
-		g.drawRect(TextStart + sWidth2 + sWidth3, iPosY, sWidth3 + 1, stringHeight);
-		break;
-	    default:
-		g.draw3DRect(area, ButtonObject.buttonEdge, true, null, ColorEdit);
-		break;
-	    }
-
-	}
-
-    }
-
-    public InputScreen(int FormSelect, boolean allowInvalidCoords) {
+    public CoordsPDAInput(int FormSelect, boolean allowInvalidCoords) {
 	allowInvalid = allowInvalidCoords;
 
 	currFormatSel = FormSelect;
@@ -165,7 +106,7 @@ public class InputScreen extends Form {
 	//	setTextButton(sCoords);
     }
 
-    public InputScreen(int FormSelect) {
+    public CoordsPDAInput(int FormSelect) {
 	currFormatSel = FormSelect;
 	InitInputScreen();
 	//	setTextButton(sCoords);
@@ -361,10 +302,10 @@ public class InputScreen extends Form {
 	if (coords.isValid()) {
 	    strBufTemp.append(coords.toString(TransformCoordinates.CW));
 	    strBufCoords.append(strBufTemp.toString());
-	    CoordsInput = coords;
+	    coordsInput = coords;
 	} else {
 	    strBufCoords.append("N 91° 00.000 E 361° 00.000");
-	    CoordsInput = coords;
+	    coordsInput = coords;
 	}
 	if (setFocus) {
 	    setFocusCoords();
@@ -487,8 +428,8 @@ public class InputScreen extends Form {
      * @param format only CWPoint.CW is supported
      */
     public CWPoint getCoords() {
-	CoordsBack.set(strBufCoords.toString(), TransformCoordinates.CW);
-	return CoordsBack;
+	coordsBack.set(strBufCoords.toString(), TransformCoordinates.CW);
+	return coordsBack;
     }
 
     public void onEvent(Event ev) {
@@ -606,11 +547,11 @@ public class InputScreen extends Form {
 	    if (ev.target == btnOk) {
 		iPosition = 0;
 		if (bBearingPanelOnTop) {
-		    CoordsBear = this.getCoords();
+		    coordsBear = this.getCoords();
 		    bd.degrees = Common.parseDouble(btnBearing.getText());
 		    bd.distance = Common.parseDouble(btnDistanc.getText());
 		    // only meters !!
-		    setCoords(CoordsBear.project(bd.degrees, bd.distance / 1000.0));
+		    setCoords(coordsBear.project(bd.degrees, bd.distance / 1000.0));
 		    bBearingPanelOnTop = false;
 		}
 		this.close(IDOK);
@@ -653,13 +594,13 @@ public class InputScreen extends Form {
 
 	    // Button "Expert"
 	    if (ev.target == btnExpert) {
-		CoordsScreen cs = new CoordsScreen(allowInvalid);
+		CoordsInput cs = new CoordsInput(allowInvalid);
 		setCoords(getCoords(), false);
-		//if (CoordsInput.isValid())	cs.setFields(CoordsInput, CoordsScreen.getLocalSystem(currFormatSel));
-		if (CoordsInput.isValid())
-		    cs.setFields(CoordsInput, currFormatSel);
+		//if (CoordsInput.isValid())	cs.setFields(CoordsInput, CoordsInput.getLocalSystem(currFormatSel));
+		if (coordsInput.isValid())
+		    cs.setFields(coordsInput, currFormatSel);
 		else
-		    cs.setFields(new CWPoint(0, 0), CoordsScreen.getLocalSystem(currFormatSel));
+		    cs.setFields(new CWPoint(0, 0), CoordsInput.getLocalSystem(currFormatSel));
 		if (cs.execute(null, CellConstants.TOP) == FormBase.IDOK) {
 		    setCoords(cs.getCoords(), false);
 		    this.close(IDOK);
@@ -669,6 +610,65 @@ public class InputScreen extends Form {
 
 	}
 	super.onEvent(ev);
+    }
+
+    class mButtonPos extends mButton {
+	private int iPosition, iPosY = 5, iGap = 1;
+	private FontMetrics tempFm;
+	private int stringHeight;
+	private int sWidth1, sWidth2, sWidth3, stringWidth;
+	private int TextStart;
+
+	mButtonPos(String sValue) {
+	    this.setText(sValue);
+	}
+
+	public void setText(String sValue, int iPos) {
+	    this.setText(sValue);
+	    tempFm = this.getFontMetrics(font);
+	    stringHeight = tempFm.getHeight();
+	    if (sValue.length() >= 3) {
+		sWidth1 = tempFm.getTextWidth(sValue.substring(0, 1));
+		sWidth2 = tempFm.getTextWidth(sValue.substring(1, 2));
+		sWidth3 = tempFm.getTextWidth(sValue.substring(2, 3));
+		stringWidth = tempFm.getTextWidth(sValue);
+		TextStart = (this.width - stringWidth) / 2;
+	    }
+	    iPosition = iPos;
+	}
+
+	public void doPaint(Graphics g, Rect area) {
+	    //if(iPosition > 0) g.setColor(ColorEdit); else  g.setColor(ColorNormal);
+	    super.doPaint(g, area);
+	    g.setPen(new Pen(ColorPos, Pen.SOLID, 2));
+	    //g.fillRect(area.x, area.y, area.height, area.width);
+	    //g.draw3DRect(area, 1, false, ColorEdit, ColorEdit);
+
+	    switch (iPosition) {
+	    case 0:
+		g.setPen(new Pen(ColorNormal, Pen.SOLID, 2));
+		g.drawRect(0, 0, 0, 0);
+		g.draw3DRect(area, ButtonObject.buttonEdge, true, null, ColorNormal);
+		break;
+	    case 1:
+		g.draw3DRect(area, ButtonObject.buttonEdge, true, null, ColorEdit);
+		g.drawRect(TextStart, iPosY, sWidth1 + 1, stringHeight);
+		break;
+	    case 2:
+		g.draw3DRect(area, ButtonObject.buttonEdge, true, null, ColorEdit);
+		g.drawRect(TextStart + sWidth2 + iGap, iPosY, sWidth2 + 1, stringHeight);
+		break;
+	    case 3:
+		g.draw3DRect(area, ButtonObject.buttonEdge, true, null, ColorEdit);
+		g.drawRect(TextStart + sWidth2 + sWidth3, iPosY, sWidth3 + 1, stringHeight);
+		break;
+	    default:
+		g.draw3DRect(area, ButtonObject.buttonEdge, true, null, ColorEdit);
+		break;
+	    }
+
+	}
+
     }
 
 }

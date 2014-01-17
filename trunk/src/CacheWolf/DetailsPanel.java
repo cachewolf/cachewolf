@@ -533,7 +533,7 @@ public class DetailsPanel extends CellPanel {
 	    else if (ev.target == btnCoordinates) {
 		CWPoint coords = new CWPoint(btnCoordinates.getText(), TransformCoordinates.CW);
 		if (Vm.isMobile()) {
-		    InputScreen InScr = new InputScreen(TransformCoordinates.CW, true);
+		    CoordsPDAInput InScr = new CoordsPDAInput(TransformCoordinates.CW, true);
 		    if (coords.isValid())
 			InScr.setCoords(coords);
 		    else
@@ -550,7 +550,7 @@ public class DetailsPanel extends CellPanel {
 			}
 		    }
 		} else {
-		    final CoordsScreen cs = new CoordsScreen(true);
+		    final CoordsInput cs = new CoordsInput(true);
 		    cs.setFields(coords, TransformCoordinates.CW);
 		    if (cs.execute() == FormBase.IDOK) {
 			dirtyDetails = true;
