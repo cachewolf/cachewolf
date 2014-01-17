@@ -21,7 +21,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 package CacheWolf.database;
 
-import CacheWolf.Global;
+import CacheWolf.Preferences;
 import ewe.util.Vector;
 
 public class LogList {
@@ -214,8 +214,8 @@ public class LogList {
      * @return number of removed logs
      */
     public int purgeLogs() {
-	int maxKeep = Global.pref.maxLogsToKeep;
-	boolean keepOwn = Global.pref.alwaysKeepOwnLogs;
+	int maxKeep = Preferences.itself().maxLogsToKeep;
+	boolean keepOwn = Preferences.itself().alwaysKeepOwnLogs;
 	int purgedLogs = 0;
 	for (int i = logList.size(); i > maxKeep; i--) {
 	    if (!(keepOwn && getLog(i - 1).isOwnLog())) {

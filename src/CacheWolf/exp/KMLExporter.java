@@ -21,7 +21,8 @@
 */
 package CacheWolf.exp;
 
-import CacheWolf.Global;
+import CacheWolf.MainForm;
+import CacheWolf.Preferences;
 import CacheWolf.SafeXML;
 import CacheWolf.database.CacheHolder;
 import CacheWolf.database.CacheHolderDetail;
@@ -98,7 +99,7 @@ public class KMLExporter extends Exporter {
 
 	try {
 	    PrintWriter outp = new PrintWriter(new BufferedWriter(new FileWriter(outFile)));
-	    str = STRreplace.replace(this.header(), "CacheWolf", Global.profile.name);
+	    str = STRreplace.replace(this.header(), "CacheWolf", MainForm.profile.name);
 	    if (str != null)
 		outp.print(str);
 	    for (int cat = 0; cat < categoryNames.length; cat++) {
@@ -164,7 +165,7 @@ public class KMLExporter extends Exporter {
 	    outp.close();
 	    pbf.exit(0);
 	} catch (IOException ioE) {
-	    Global.pref.log("Error opening " + outFile.getName(), ioE);
+	    Preferences.itself().log("Error opening " + outFile.getName(), ioE);
 	}
 	// try
 
@@ -274,9 +275,9 @@ public class KMLExporter extends Exporter {
 	    }
 
 	} catch (ZipException e) {
-	    Global.pref.log("Problem copying Icon", e, true);
+	    Preferences.itself().log("Problem copying Icon", e, true);
 	} catch (IOException e) {
-	    Global.pref.log("Problem copying Icon", e, true);
+	    Preferences.itself().log("Problem copying Icon", e, true);
 	}
     }
 

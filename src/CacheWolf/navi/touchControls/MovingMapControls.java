@@ -21,7 +21,7 @@
 */
 package CacheWolf.navi.touchControls;
 
-import CacheWolf.Global;
+import CacheWolf.Preferences;
 import CacheWolf.navi.MovingMap;
 import ewe.fx.Dimension;
 import ewe.fx.Point;
@@ -77,11 +77,11 @@ public class MovingMapControls implements ICommandListener {
 	private void checkStatesofRole() {
 		Role role = getRole(ROLE_FILL_WHITE);
 		if (role != null) {
-			role.setState(Global.pref.fillWhiteArea);
+			role.setState(Preferences.itself().fillWhiteArea);
 		}
 		role = getRole(ROLE_SHOW_CACHES);
 		if (role != null) {
-			role.setState(Global.pref.showCachesOnMap);
+			role.setState(Preferences.itself().showCachesOnMap);
 		}
 	}
 
@@ -245,7 +245,7 @@ public class MovingMapControls implements ICommandListener {
 	// }
 	// }
 	// if (MOVE_TO_CENTER.equals(item.getActionCommand())) {
-	// if (Global.pref.getCurCentrePt().isValid())
+	// if (Preferences.itself().getCurCentrePt().isValid())
 	// ani.properties &= ~mImage.IsNotHot;
 	// else {
 	// ani.properties |= mImage.IsNotHot;

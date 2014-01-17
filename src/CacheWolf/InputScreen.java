@@ -21,7 +21,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 package CacheWolf;
 
-import CacheWolf.navi.CWPoint;
+import CacheWolf.database.CWPoint;
 import CacheWolf.navi.Navigate;
 import CacheWolf.navi.TransformCoordinates;
 import CacheWolf.utils.Common;
@@ -174,7 +174,7 @@ public class InputScreen extends Form {
     private void InitInputScreen() {
 	int sw = MyLocale.getScreenWidth();
 	int sh = MyLocale.getScreenHeight();
-	int fs = Global.pref.fontSize;
+	int fs = Preferences.itself().fontSize;
 	int psx;
 	int psy;
 	if ((sw > 300) && (sh > 300)) {
@@ -282,7 +282,7 @@ public class InputScreen extends Form {
 	BearP.addNext(btnBearing, CellConstants.STRETCH, (CellConstants.FILL));
 	BearP.addLast(lblBear, CellConstants.STRETCH, (CellConstants.FILL));
 
-	int inpFontSize = (4 * Global.pref.fontSize) / 2;
+	int inpFontSize = (4 * Preferences.itself().fontSize) / 2;
 	Font inpNewFont = new Font("Helvetica", Font.PLAIN, inpFontSize);
 	lblDistanc.setFont(inpNewFont);
 	lblBearing.setFont(inpNewFont);
@@ -645,7 +645,7 @@ public class InputScreen extends Form {
 
 	    // Button "GPS"
 	    if (ev.target == btnGPS) {
-		Navigate nav = Global.mainTab.navigate;
+		Navigate nav = MainTab.itself.navigate;
 		if (nav.gpsPos.isValid()) {
 		    setCoords(nav.gpsPos);
 		}

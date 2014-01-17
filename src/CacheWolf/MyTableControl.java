@@ -28,11 +28,12 @@ import CacheWolf.database.CacheHolder;
 import CacheWolf.database.CacheHolderDetail;
 import CacheWolf.database.CacheType;
 import CacheWolf.exp.OCLogExport;
-import CacheWolf.navi.CWPoint;
+import CacheWolf.database.CWPoint;
 import CacheWolf.navi.Navigate;
 import CacheWolf.navi.TransformCoordinates;
 import CacheWolf.utils.CWWrapper;
 import CacheWolf.utils.STRreplace;
+import CacheWolf.utils.UrlFetcher;
 import ewe.fx.IconAndText;
 import ewe.fx.Point;
 import ewe.fx.Rect;
@@ -61,7 +62,6 @@ import ewe.ui.mList;
  * Implements the user interaction of the list view. Works together with myTableModel and TablePanel
  */
 public class MyTableControl extends TableControl {
-
     public CacheDB cacheDB;
 
     public int clickedColumn = 0;
@@ -76,7 +76,7 @@ public class MyTableControl extends TableControl {
     private MenuItem[] menuItems;
 
     MyTableControl() {
-	cacheDB = Global.profile.cacheDB;
+	cacheDB = MainForm.profile.cacheDB;
 	allowDragSelection = false; // allow only one row to be selected at one time
 
 	miSeparator = new MenuItem("-"); //
@@ -102,7 +102,7 @@ public class MyTableControl extends TableControl {
 
     Menu getTheMenu() {
 	if (menuItems == null) {
-	    if (Global.pref.hasTickColumn) {
+	    if (Preferences.itself().hasTickColumn) {
 		menuItems = new MenuItem[] { miSetDestination, miCenter, miUnhideAddis, miSeparator, //
 			miOpenOnline, miOpenOffline, miLogOnline, miOpenGmaps, miSeparator,//
 			miDelete, miUpdate, miChangeBlack, miSeparator, //
@@ -138,37 +138,37 @@ public class MyTableControl extends TableControl {
 		setSelectForAll(true);
 		ev.consumed = true;
 	    } else {
-		Global.mainTab.clearDetails();
+		MainTab.itself.clearDetails();
 		if (ev.key == IKeys.HOME)
 		    // cursorTo(0,cursor.x+listMode,true);
-		    Global.mainTab.tablePanel.selectRow(0);
+		    MainTab.itself.tablePanel.selectRow(0);
 		else if (ev.key == IKeys.END)
 		    // cursorTo(model.numRows-1,cursor.x+listMode,true);
-		    Global.mainTab.tablePanel.selectRow(model.numRows - 1);
+		    MainTab.itself.tablePanel.selectRow(model.numRows - 1);
 		else if (ev.key == IKeys.PAGE_DOWN)
 		    // cursorTo(java.lang.Math.min(cursor.y+ getOnScreen(null).height-1, model.numRows-1),cursor.x+listMode,true); 
 		    // I don't know why this doesn't work: tablePanel.doScroll(IScroll.Vertical, IScroll.PageHigher, 1);
-		    Global.mainTab.tablePanel.selectRow(java.lang.Math.min(cursor.y + getOnScreen(null).height - 1, model.numRows - 1));
+		    MainTab.itself.tablePanel.selectRow(java.lang.Math.min(cursor.y + getOnScreen(null).height - 1, model.numRows - 1));
 		else if (ev.key == IKeys.PAGE_UP)
 		    // cursorTo(java.lang.Math.max(cursor.y-getOnScreen(null).height+1, 0),cursor.x+listMode,true);
-		    Global.mainTab.tablePanel.selectRow(java.lang.Math.max(cursor.y - getOnScreen(null).height + 1, 0));
+		    MainTab.itself.tablePanel.selectRow(java.lang.Math.max(cursor.y - getOnScreen(null).height + 1, 0));
 		else if (ev.key == IKeys.ACTION || ev.key == IKeys.ENTER)
-		    Global.mainTab.select(MainTab.DESCRIPTION_CARD);
+		    MainTab.itself.select(MainTab.DESCRIPTION_CARD);
 		else if (ev.key == IKeys.DOWN)
-		    Global.mainTab.tablePanel.selectRow(java.lang.Math.min(cursor.y + 1, model.numRows - 1));
+		    MainTab.itself.tablePanel.selectRow(java.lang.Math.min(cursor.y + 1, model.numRows - 1));
 		else if (ev.key == IKeys.UP)
-		    Global.mainTab.tablePanel.selectRow(java.lang.Math.max(cursor.y - 1, 0));
-		else if (ev.key == IKeys.LEFT && MainForm.itself.cacheListVisible && cursor.y >= 0 && cursor.y < Global.mainTab.tablePanel.myTableModel.numRows)
+		    MainTab.itself.tablePanel.selectRow(java.lang.Math.max(cursor.y - 1, 0));
+		else if (ev.key == IKeys.LEFT && MainForm.itself.cacheListVisible && cursor.y >= 0 && cursor.y < MainTab.itself.tablePanel.myTableModel.numRows)
 		    MainForm.itself.cacheList.addCache(cacheDB.get(cursor.y).getWayPoint());
 		else if (ev.key == IKeys.RIGHT) {
-		    CacheHolder ch = cacheDB.get(Global.mainTab.tablePanel.getSelectedCache());
+		    CacheHolder ch = cacheDB.get(MainTab.itself.tablePanel.getSelectedCache());
 		    if (ch.getPos().isValid()) {
 			Navigate.itself.setDestination(ch);
-			Global.mainTab.select(MainTab.GOTO_CARD);
+			MainTab.itself.select(MainTab.GOTO_CARD);
 		    }
 		} else if (ev.key == 6) {
 		    MainMenu.itself.search(); // (char)6 == ctrl + f
-		    Global.mainTab.tablePanel.refreshTable();
+		    MainTab.itself.tablePanel.refreshTable();
 		} else
 		    super.onKeyEvent(ev);
 	    }
@@ -178,8 +178,8 @@ public class MyTableControl extends TableControl {
 
     /** Set all caches either as selected or as deselected, depending on argument */
     private void setSelectForAll(boolean selectStatus) {
-	Global.profile.setSelectForAll(selectStatus);
-	Global.mainTab.tablePanel.refreshTable();
+	MainForm.profile.setSelectForAll(selectStatus);
+	MainTab.itself.tablePanel.refreshTable();
     }
 
     /** always select a whole row */
@@ -254,7 +254,7 @@ public class MyTableControl extends TableControl {
 		    pbf.exec();
 		    h.progress = (float) 0.5;
 		    h.changed();
-		    String[] CacheFiles = new File(Global.profile.dataDir).list(null, FileBase.LIST_FILES_ONLY | FileBase.LIST_DONT_SORT);// null == *.* so no File needed
+		    String[] CacheFiles = new File(MainForm.profile.dataDir).list(null, FileBase.LIST_FILES_ONLY | FileBase.LIST_DONT_SORT);// null == *.* so no File needed
 		    pbf.setTask(h, MyLocale.getMsg(1012, "Delete selected"));
 		    for (int i = size - 1; i >= 0; i--) {// Start Counting down, as the size decreases with each deleted cache
 			ch = cacheDB.get(i);
@@ -263,24 +263,24 @@ public class MyTableControl extends TableControl {
 			    h.progress = ((float) nDeleted) / (float) allCount;
 			    h.changed();
 			    cacheDB.removeElementAt(i);
-			    dm.deleteCacheFiles(ch.getWayPoint(), Global.profile.dataDir, CacheFiles);
+			    dm.deleteCacheFiles(ch.getWayPoint(), MainForm.profile.dataDir, CacheFiles);
 			    ch = null;
 			    if (pbf.isClosed)
 				break;
 			}
 		    }
 		    pbf.exit(0);
-		    Global.mainTab.tablePanel.myTableModel.numRows -= nDeleted;
-		    Global.profile.saveIndex(true);
-		    Global.mainTab.tablePanel.refreshTable();
+		    MainTab.itself.tablePanel.myTableModel.numRows -= nDeleted;
+		    MainForm.profile.saveIndex(true);
+		    MainTab.itself.tablePanel.refreshTable();
 		}
 	    }
 	    Vm.showWait(false);
 	} else
 
 	if (selectedItem == miUpdate) {
-	    MainMenu.updateSelectedCaches(Global.mainTab.tablePanel);
-	    Global.pref.setOldGCLanguage();
+	    MainMenu.updateSelectedCaches(MainTab.itself.tablePanel);
+	    Preferences.itself().setOldGCLanguage();
 	} else
 
 	if (selectedItem == miChangeBlack) {
@@ -298,43 +298,43 @@ public class MyTableControl extends TableControl {
 		    }
 		}
 		// profile.saveIndex(pref,true);
-		Global.profile.buildReferences();
-		Global.mainTab.tablePanel.refreshTable();
+		MainForm.profile.buildReferences();
+		MainTab.itself.tablePanel.refreshTable();
 	    } finally {
 		Vm.showWait(false);
 	    }
 	    ;
 	} else if (selectedItem == this.miSetDestination) {
-	    ch = cacheDB.get(Global.mainTab.tablePanel.getSelectedCache());
+	    ch = cacheDB.get(MainTab.itself.tablePanel.getSelectedCache());
 	    if (ch.getPos().isValid()) {
 		Navigate.itself.setDestination(ch);
-		Global.mainTab.select(MainTab.GOTO_CARD);
+		MainTab.itself.select(MainTab.GOTO_CARD);
 	    }
 	} else if (selectedItem == miCenter) {
-	    if (Global.mainTab.tablePanel.getSelectedCache() < 0) {
-		Global.pref.log("[myTableControl:popupMenuEvent] getSelectedCache() < 0");
+	    if (MainTab.itself.tablePanel.getSelectedCache() < 0) {
+		Preferences.itself().log("[myTableControl:popupMenuEvent] getSelectedCache() < 0");
 		return;
 	    }
-	    CacheHolder thisCache = cacheDB.get(Global.mainTab.tablePanel.getSelectedCache());
+	    CacheHolder thisCache = cacheDB.get(MainTab.itself.tablePanel.getSelectedCache());
 	    CWPoint cp = new CWPoint(thisCache.getPos());
 	    if (!cp.isValid()) {
 		new InfoBox(MyLocale.getMsg(5500, "Error"), MyLocale.getMsg(4111, "Coordinates must be entered in the format N DD MM.MMM E DDD MM.MMM")).wait(FormBase.OKB);
 	    } else {
-		Global.pref.setCurCentrePt(cp);
+		Preferences.itself().setCurCentrePt(cp);
 	    }
 	} else if (selectedItem == miUnhideAddis) {
 	    // This toggles the "showAddis" Flag
-	    ch = cacheDB.get(Global.mainTab.tablePanel.getSelectedCache());
+	    ch = cacheDB.get(MainTab.itself.tablePanel.getSelectedCache());
 	    ch.setShowAddis(!ch.showAddis());
 	    if (ch.addiWpts.size() > 0) {
-		Global.mainTab.tablePanel.refreshTable();
+		MainTab.itself.tablePanel.refreshTable();
 	    } else {
 		// This should never occur, as we check prior to activating the menu if the
 		// cache has addis. But just in case...
 		new InfoBox(MyLocale.getMsg(4201, "Info"), MyLocale.getMsg(1043, "This cache has no additional waypoints.")).wait(FormBase.OKB);
 	    }
 	} else if (selectedItem == miOpenOnline) {
-	    ch = cacheDB.get(Global.mainTab.tablePanel.getSelectedCache());
+	    ch = cacheDB.get(MainTab.itself.tablePanel.getSelectedCache());
 	    mainCache = ch;
 	    if (ch.isAddiWpt() && (ch.mainCache != null)) {
 		mainCache = ch.mainCache;
@@ -356,28 +356,28 @@ public class MyTableControl extends TableControl {
 		}
 	    }
 	    if (url != null) {
-		callExternalProgram(Global.pref.browser, url);
+		callExternalProgram(Preferences.itself().browser, url);
 	    }
 	} else if (selectedItem == miOpenGmaps) {
-	    ch = cacheDB.get(Global.mainTab.tablePanel.getSelectedCache());
+	    ch = cacheDB.get(MainTab.itself.tablePanel.getSelectedCache());
 	    if (ch.getPos().isValid()) {
 		String lat = "" + ch.getPos().getLatDeg(TransformCoordinates.DD);
 		String lon = "" + ch.getPos().getLonDeg(TransformCoordinates.DD);
 		String nameOfCache = UrlFetcher.encodeURL(ch.getCacheName(), false).replace('#', 'N').replace('@', '_');
 		String language = Vm.getLocale().getString(Locale.LANGUAGE_SHORT, 0, 0);
-		if (!Global.pref.language.equalsIgnoreCase("auto")) {
-		    language = Global.pref.language;
+		if (!Preferences.itself().language.equalsIgnoreCase("auto")) {
+		    language = Preferences.itself().language;
 		}
 		url = "http://maps.google." + language + "/maps?q=" + nameOfCache + "@" + lat + "," + lon;
-		callExternalProgram(Global.pref.browser, url);
+		callExternalProgram(Preferences.itself().browser, url);
 		url = "http://www.geocaching.com/map/default.aspx?lat=" + lat + "&lng=" + lon;
-		callExternalProgram(Global.pref.browser, url);
+		callExternalProgram(Preferences.itself().browser, url);
 	    }
 	} else if (selectedItem == miOpenOffline) {
 	    ShowCacheInBrowser sc = new ShowCacheInBrowser();
-	    sc.showCache(cacheDB.get(Global.mainTab.tablePanel.getSelectedCache()));
+	    sc.showCache(cacheDB.get(MainTab.itself.tablePanel.getSelectedCache()));
 	} else if (selectedItem == miLogOnline) {
-	    ch = cacheDB.get(Global.mainTab.tablePanel.getSelectedCache());
+	    ch = cacheDB.get(MainTab.itself.tablePanel.getSelectedCache());
 	    mainCache = ch;
 	    url = "";
 	    if (ch.isAddiWpt() && (ch.mainCache != null)) {
@@ -402,7 +402,7 @@ public class MyTableControl extends TableControl {
 				// OC log (already logged at GC but not at OC)
 				if (clickedColumn == 14) {
 				    OCLogExport.doOneLog(mainCache);
-				    Global.mainTab.tablePanel.refreshTable();
+				    MainTab.itself.tablePanel.refreshTable();
 				} else {
 				    // open OC logpage with GC Logtext in Clipboard
 				    Vm.setClipboardText(chD.OwnLog.getDate() + '\n' + "<br>" + chD.OwnLog.getMessage());
@@ -420,7 +420,7 @@ public class MyTableControl extends TableControl {
 		    }
 
 		    if (url.length() > 0) {
-			callExternalProgram(Global.pref.browser, url);
+			callExternalProgram(Preferences.itself().browser, url);
 		    }
 		}
 	    }
@@ -429,12 +429,12 @@ public class MyTableControl extends TableControl {
 
     // Overrides
     public void penDoubleClicked(Point where) {
-	Global.mainTab.select(MainTab.DESCRIPTION_CARD);
+	MainTab.itself.select(MainTab.DESCRIPTION_CARD);
     }
 
     public void onEvent(Event ev) {
 	if (ev instanceof PenEvent && (ev.type == PenEvent.PEN_DOWN)) {
-	    Global.mainTab.tablePanel.myTableModel.penEventModifiers = ((PenEvent) ev).modifiers;
+	    MainTab.itself.tablePanel.myTableModel.penEventModifiers = ((PenEvent) ev).modifiers;
 	}
 
 	super.onEvent(ev);
@@ -446,10 +446,10 @@ public class MyTableControl extends TableControl {
      * 
      */
     public void adjustAddiHideUnhideMenu() {
-	if (Global.mainTab.tablePanel.getSelectedCache() < 0) {
+	if (MainTab.itself.tablePanel.getSelectedCache() < 0) {
 	    return;
 	}
-	CacheHolder selCache = cacheDB.get(Global.mainTab.tablePanel.getSelectedCache());
+	CacheHolder selCache = cacheDB.get(MainTab.itself.tablePanel.getSelectedCache());
 	if (selCache != null) {
 	    // Depending if it has Addis and the ShowAddis-Flag the menu item to unhide
 	    // addis is properly named and activated or disabled.
@@ -511,7 +511,7 @@ public class MyTableControl extends TableControl {
 		    ((mList) c).makeItemVisible(((mList) c).itemsSize() - 1);
 		}
 	    }
-	    Global.mainTab.tablePanel.selectRow(row);
+	    MainTab.itself.tablePanel.selectRow(row);
 	} else
 	    super.stopDragging(dc);
     }

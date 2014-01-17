@@ -21,7 +21,7 @@
 */
 package CacheWolf.navi.touchControls;
 
-import CacheWolf.Global;
+import CacheWolf.Preferences;
 import CacheWolf.MyLocale;
 import CacheWolf.navi.touchControls.MovingMapControlItemText.TextOptions;
 import CacheWolf.navi.touchControls.MovingMapControls.Role;
@@ -137,7 +137,7 @@ public class MovingMapControlSettings extends MinML implements ICommandListener 
 
 	public MovingMapControlSettings(boolean vga, Hashtable roles) {
 		double fontscale = vga ? 1.5 : 1;
-		this.fontsize = (int) (Global.pref.fontSize * fontscale);
+		this.fontsize = (int) (Preferences.itself().fontSize * fontscale);
 		this.roles = roles;
 	}
 
@@ -149,7 +149,7 @@ public class MovingMapControlSettings extends MinML implements ICommandListener 
 					fontsize = Integer.parseInt(fontsizeString);
 				}
 				catch (Exception e) {
-					Global.pref.log("fontsize not an int " + fontsizeString, e);
+					Preferences.itself().log("fontsize not an int " + fontsizeString, e);
 				}
 			}
 		}
@@ -198,12 +198,12 @@ public class MovingMapControlSettings extends MinML implements ICommandListener 
 			}
 
 			if (xpos < 0) {
-				Global.pref.log("the x position of the button has to be set! " + "use attribute '" + BUTTON_ATTR_FROM_LEFT + "' or '" + BUTTON_ATTR_FROM_RIGHT + "'", null);
+				Preferences.itself().log("the x position of the button has to be set! " + "use attribute '" + BUTTON_ATTR_FROM_LEFT + "' or '" + BUTTON_ATTR_FROM_RIGHT + "'", null);
 				xpos = 0;
 			}
 
 			if (ypos < 0) {
-				Global.pref.log("the y position of the button has to be set! " + "use attribute '" + BUTTON_ATTR_FROM_TOP + "' or '" + BUTTON_ATTR_FROM_BOTTOM + "'", null);
+				Preferences.itself().log("the y position of the button has to be set! " + "use attribute '" + BUTTON_ATTR_FROM_TOP + "' or '" + BUTTON_ATTR_FROM_BOTTOM + "'", null);
 				ypos = 0;
 			}
 
@@ -220,11 +220,11 @@ public class MovingMapControlSettings extends MinML implements ICommandListener 
 			String alignText = attributes.getValue(BUTTON_ATTR_ALIGNTEXT);
 			String content = attributes.getValue(BUTTON_ATTR_CONTENT);
 			if (visibility == null) {
-				Global.pref.log("read MovingMap settings: " + BUTTON_ATTR_VISIBILITY + " not set!", null);
+				Preferences.itself().log("read MovingMap settings: " + BUTTON_ATTR_VISIBILITY + " not set!", null);
 				return;
 			}
 			if (action == -2) {
-				Global.pref.log("read MovingMap settings: " + BUTTON_ATTR_ACTION + " not set!", null);
+				Preferences.itself().log("read MovingMap settings: " + BUTTON_ATTR_ACTION + " not set!", null);
 				return;
 			}
 			int alphavalue = getIntFromFile(attributes, BUTTON_ATTR_ALPHA, -1);
@@ -233,7 +233,7 @@ public class MovingMapControlSettings extends MinML implements ICommandListener 
 
 			if (imageLocation == null) {
 				// something not set
-				Global.pref.log("Image for '" + localeDefault + "' not found", null);
+				Preferences.itself().log("Image for '" + localeDefault + "' not found", null);
 				return;
 			}
 			else {
@@ -352,7 +352,7 @@ public class MovingMapControlSettings extends MinML implements ICommandListener 
 				defaultValue = Integer.parseInt(entry);
 			}
 			catch (Exception e) {
-				Global.pref.log("Can not read int for filed " + field + ": " + entry, e);
+				Preferences.itself().log("Can not read int for filed " + field + ": " + entry, e);
 			}
 		}
 		return defaultValue;
@@ -396,9 +396,9 @@ public class MovingMapControlSettings extends MinML implements ICommandListener 
 		}
 		catch (Exception e) {
 			if (e instanceof NullPointerException)
-				Global.pref.log("Error reading " + path + ": NullPointerException in Element " + "" + ". Wrong attribute, File not existing?", e, true);
+				Preferences.itself().log("Error reading " + path + ": NullPointerException in Element " + "" + ". Wrong attribute, File not existing?", e, true);
 			else
-				Global.pref.log("Error reading " + path + ": ", e);
+				Preferences.itself().log("Error reading " + path + ": ", e);
 			return false;
 		}
 		return true;

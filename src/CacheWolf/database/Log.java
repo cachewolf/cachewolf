@@ -21,7 +21,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 package CacheWolf.database;
 
-import CacheWolf.Global;
+import CacheWolf.Preferences;
 import CacheWolf.MyLocale;
 
 public class Log {
@@ -75,7 +75,7 @@ public class Log {
 	    if (logLine.indexOf("<img") < 0) { // Have we reached the line that states max logs reached
 		icon = MAXLOGICON;
 	    } else {
-		Global.pref.log("Error parsing log: " + logLine, ex);
+		Preferences.itself().log("Error parsing log: " + logLine, ex);
 		icon = INVALIDLOGICON;
 	    }
 	    date = "1900-00-00";
@@ -189,13 +189,13 @@ public class Log {
 	    return "74.png";
 	if (typeText.equals("Unarchived"))
 	    return "12.png";
-	Global.pref.log("GPX Import: warning, unknown logtype " + typeText + " assuming Write note", null);
+	Preferences.itself().log("GPX Import: warning, unknown logtype " + typeText + " assuming Write note", null);
 	return "icon_note.gif";
     }
 
     /** log was written by one of the aliases defined in preferences */
     public boolean isOwnLog() {
-	return this.logger.equalsIgnoreCase(Global.pref.myAlias) || this.logger.equalsIgnoreCase(Global.pref.myAlias2);
+	return this.logger.equalsIgnoreCase(Preferences.itself().myAlias) || this.logger.equalsIgnoreCase(Preferences.itself().myAlias2);
     }
 
     /** Return XML representation of log for storing in cache.xml */

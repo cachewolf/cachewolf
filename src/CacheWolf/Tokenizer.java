@@ -57,7 +57,7 @@ public class Tokenizer {
 	private void err(String str) throws Exception {
 		messageStack.add(MyLocale.getMsg(1700, "Error on line: ") + currentLine + "  " + MyLocale.getMsg(1701, " position: ") + currentPos);
 		messageStack.add(str);
-		Global.mainTab.solverPanel.setSelectionRange(0, currentLine - 1, currentPos, currentLine - 1);
+		MainTab.itself.solverPanel.setSelectionRange(0, currentLine - 1, currentPos, currentLine - 1);
 		throw new Exception("Error " + str);
 	}
 
@@ -325,7 +325,7 @@ public class Tokenizer {
 			}
 		}
 		catch (Exception e) {
-			// Global.pref.log("Ignored Exception", e, true);
+			// Preferences.itself().log("Ignored Exception", e, true);
 		}
 	}
 }

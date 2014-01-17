@@ -21,18 +21,18 @@
 */
 package CacheWolf.imp;
 
-import CacheWolf.Global;
+import CacheWolf.MainForm;
 import CacheWolf.MyLocale;
-import CacheWolf.UrlFetcher;
+import CacheWolf.Preferences;
+import CacheWolf.utils.UrlFetcher;
 import ewe.io.File;
 import ewe.io.IOException;
 import ewe.ui.FormBase;
 
 public class OCGPXfetch {
-
     public static void doIt() {
-	String hostname = Global.pref.lastOCSite;
-	boolean oldDownloadAllOC = Global.pref.downloadAllOC;
+	String hostname = Preferences.itself().lastOCSite;
+	boolean oldDownloadAllOC = Preferences.itself().downloadAllOC;
 	boolean onlyListedAtOC = false;
 	ImportGui importGui = new ImportGui(MyLocale.getMsg(130, "Download from opencaching"), ImportGui.IMAGES | ImportGui.ALL | ImportGui.HOST);
 	importGui.missingCheckBox.setText(MyLocale.getMsg(164, "only listed at OC"));
@@ -40,11 +40,11 @@ public class OCGPXfetch {
 	if (importGui.execute() == FormBase.IDCANCEL) {
 	    return;
 	}
-	onlyListedAtOC = Global.pref.downloadAllOC;
-	Global.pref.downloadAllOC = oldDownloadAllOC;
+	onlyListedAtOC = Preferences.itself().downloadAllOC;
+	Preferences.itself().downloadAllOC = oldDownloadAllOC;
 	if (importGui.domains.getSelectedItem() != null) {
 	    hostname = (String) importGui.domains.getSelectedItem();
-	    Global.pref.lastOCSite = hostname;
+	    Preferences.itself().lastOCSite = hostname;
 	}
 
 	try {
@@ -61,14 +61,14 @@ public class OCGPXfetch {
 	    address += "&logtype=1,7";
 	    address += "&utf8=1&output=gpx&zip=1";
 	    address += "&count=max";
-	    address += "&finder=" + Global.pref.myAlias;
-	    String tmpFile = Global.profile.dataDir + "dummy.zip";
+	    address += "&finder=" + Preferences.itself().myAlias;
+	    String tmpFile = MainForm.profile.dataDir + "dummy.zip";
 	    login();
 	    UrlFetcher.fetchDataFile(address, tmpFile);
 	    File ftmp = new File(tmpFile);
 	    if (ftmp.exists() && ftmp.length() > 0) {
 		GPXImporter gpx = new GPXImporter(tmpFile);
-		if (Global.pref.downloadPics)
+		if (Preferences.itself().downloadPics)
 		    gpx.doIt(GPXImporter.DOIT_WITHSPOILER);
 		else
 		    gpx.doIt(GPXImporter.DOIT_NOSPOILER);
@@ -84,14 +84,14 @@ public class OCGPXfetch {
 	boolean loggedIn = false;
 	String page;
 	try {
-	    String loginDaten = "target=myhome.php&action=login&email=" + Global.pref.myAlias + "&password=" + Global.pref.password;
+	    String loginDaten = "target=myhome.php&action=login&email=" + Preferences.itself().myAlias + "&password=" + Preferences.itself().password;
 	    UrlFetcher.setpostData(loginDaten);
 	    page = UrlFetcher.fetch("http://www.opencaching.de/login.php");
 	    // final PropertyList pl = UrlFetcher.getDocumentProperties();
 	    page = UrlFetcher.fetch("http://www.opencaching.de/myhome.php");
 	    loggedIn = page.indexOf("Eingeloggt als") > -1;
 	} catch (IOException e) {
-	    Global.pref.log("Fehler", e);
+	    Preferences.itself().log("Fehler", e);
 	}
 	return loggedIn;
     }

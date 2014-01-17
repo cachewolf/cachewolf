@@ -69,7 +69,7 @@ public final class GuiImageBroker {
 	    String name = "";
 	    String[] pngFiles;
 	    pngFiles = dir.list("*.png", FileBase.LIST_FILES_ONLY);
-	    Global.pref.log("Nr. of own symbols (png-files) : " + pngFiles.length);
+	    Preferences.itself().log("Nr. of own symbols (png-files) : " + pngFiles.length);
 	    for (int i = 0; i < pngFiles.length; i++) {
 		name = pngFiles[i].substring(0, pngFiles[i].length() - 4).toLowerCase();
 		if (name.endsWith("size")) {
@@ -105,7 +105,7 @@ public final class GuiImageBroker {
 		}
 		if (0 <= id && id <= CacheType.maxCWCType) {
 		    final String s = basedir + pngFiles[i];
-		    Global.pref.log("own symbol: " + (i + 1) + " = " + pngFiles[i]);
+		    Preferences.itself().log("own symbol: " + (i + 1) + " = " + pngFiles[i]);
 		    if (size) {
 			CacheType.setMapImage((byte) id, new Image(s));
 			size = false;
@@ -123,7 +123,7 @@ public final class GuiImageBroker {
      */
     private static void setExtension() {
 	if (extension == null) {
-	    if (Global.pref.useBigIcons)
+	    if (Preferences.itself().useBigIcons)
 		extension = "_vga.png";
 	    else
 		extension = ".png";
@@ -135,7 +135,7 @@ public final class GuiImageBroker {
 	File f = new File(basedir + icon + extension);
 	if (f.exists()) {
 	    in = f.getAbsolutePath();
-	    Global.pref.log("using image " + in);
+	    Preferences.itself().log("using image " + in);
 	} else {
 	    in = icon + extension;
 	}
@@ -143,14 +143,14 @@ public final class GuiImageBroker {
     }
 
     private static String getText(String text) {
-	if (!Global.pref.useText) {
+	if (!Preferences.itself().useText) {
 	    text = "";
 	}
 	return text;
     }
 
     public static Image getImage(String icon) {
-	if (Global.pref.useIcons)
+	if (Preferences.itself().useIcons)
 	    return new Image(getImageName(icon));
 	else
 	    // simply using a small transparent image
@@ -208,8 +208,8 @@ public final class GuiImageBroker {
 
     public static mButton getButton(String text, String icon) {
 	mButton btn;
-	if (Global.pref.useIcons) {
-	    if (Global.pref.leftIcons) {
+	if (Preferences.itself().useIcons) {
+	    if (Preferences.itself().leftIcons) {
 		btn = new mButton(getText(text));
 		// Graphics.Up, Graphics.Down, Graphics.Right, Graphics.Left // über, unter, rechts, links vom Icon
 		btn.textPosition = Graphics.Right;
@@ -236,7 +236,7 @@ public final class GuiImageBroker {
 
     public static PullDownMenu getPullDownMenu(String text, String icon, MenuItem[] menuItems) {
 	PullDownMenu pdm;
-	if (Global.pref.leftIcons) {
+	if (Preferences.itself().leftIcons) {
 	    pdm = new PullDownMenu(getText(text), new Menu(menuItems, null));
 	    pdm.image = getImage(icon);
 	    pdm.textPosition = Graphics.Right; // rechts vom Icon

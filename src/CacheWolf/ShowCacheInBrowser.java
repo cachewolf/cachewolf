@@ -120,7 +120,7 @@ public class ShowCacheInBrowser {
 			Vector imageVect = new Vector(chD.getCacheDetails(true).images.size() - imageNo);
 			for (; imageNo < chD.getCacheDetails(true).images.size(); imageNo++) {
 			    Hashtable imgs = new Hashtable();
-			    imgs.put("IMAGE", "<img src=\"file://" + Global.profile.dataDir + chD.getCacheDetails(true).images.get(imageNo).getFilename() + "\" border=0>");
+			    imgs.put("IMAGE", "<img src=\"file://" + MainForm.profile.dataDir + chD.getCacheDetails(true).images.get(imageNo).getFilename() + "\" border=0>");
 			    imgs.put("IMAGETEXT", chD.getCacheDetails(true).images.get(imageNo).getTitle());
 			    if (imageNo < chD.getCacheDetails(true).images.size())
 				imgs.put("IMAGECOMMENT", chD.getCacheDetails(true).images.get(imageNo).getComment());
@@ -134,7 +134,7 @@ public class ShowCacheInBrowser {
 		    if (!chD.getCacheDetails(true).Hints.equals("null"))
 			tpl.setParam("HINT", Common.rot13(chD.getCacheDetails(true).Hints));
 		} catch (Exception e) {
-		    Global.pref.log("Problem getting parameter , Cache: " + chD.getWayPoint(), e, true);
+		    Preferences.itself().log("Problem getting parameter , Cache: " + chD.getWayPoint(), e, true);
 		}
 	    }
 	    PrintWriter detfile;
@@ -143,14 +143,14 @@ public class ShowCacheInBrowser {
 	    //detfile.print(tpl.output());
 	    detfile.close();
 	    try {
-		CWWrapper.exec(Global.pref.browser, "file://" + STRreplace.replace(saveTo, " ", "%20"));
+		CWWrapper.exec(Preferences.itself().browser, "file://" + STRreplace.replace(saveTo, " ", "%20"));
 	    } catch (IOException ex) {
 		new InfoBox(MyLocale.getMsg(5500, "Error"), MyLocale.getMsg(1034, "Cannot start browser!") + "\n" + ex.toString() + "\n" + MyLocale.getMsg(1035, "Possible reason:") + "\n" + MyLocale.getMsg(1036, "A bug in ewe VM, please be") + "\n"
 			+ MyLocale.getMsg(1037, "patient for an update")).wait(FormBase.OKB);
 	    }
 
 	} catch (Exception e) {
-	    Global.pref.log("Error in ShowCache ", e, true);
+	    Preferences.itself().log("Error in ShowCache ", e, true);
 	} finally {
 	    Vm.showWait(false);
 	}

@@ -21,8 +21,9 @@
 */
 package CacheWolf.view.ewe;
 
-import CacheWolf.Global;
+import CacheWolf.MainForm;
 import CacheWolf.MyLocale;
+import CacheWolf.Preferences;
 import CacheWolf.TravelbugPickup;
 import CacheWolf.database.Travelbug;
 import CacheWolf.database.TravelbugJourney;
@@ -95,7 +96,7 @@ public class TravelbugMenu extends MenuBar {
 		Travelbug tb = TravelbugPickup.pickupTravelbug(view.tblSrcCache);
 		if (tb != null) {
 		    view.chDmodified = true;
-		    model.allTravelbugJourneys.addTbPickup(tb, Global.profile.name, view.waypoint);
+		    model.allTravelbugJourneys.addTbPickup(tb, MainForm.profile.name, view.waypoint);
 		    view.modTbJourneyList.numRows = model.allTravelbugJourneys.size();
 		    view.repaint();
 		}
@@ -104,14 +105,14 @@ public class TravelbugMenu extends MenuBar {
 		if (view.selectedRow >= 0 && view.selectedRow < view.modTbJourneyList.numRows) {
 		    Travelbug tb = model.allTravelbugJourneys.getTBJourney(view.selectedRow).getTb();
 		    view.chD.Travelbugs.add(tb);
-		    model.allTravelbugJourneys.addTbDrop(tb, Global.profile.name, view.waypoint);
+		    model.allTravelbugJourneys.addTbDrop(tb, MainForm.profile.name, view.waypoint);
 		    view.chDmodified = true;
 		    view.ch.setHas_bugs(true);
 		}
 		view.repaint();
 	    } else if (mev.selectedItem == mnuNewTB) {
 		TravelbugJourney tbj = new TravelbugJourney("New");
-		tbj.setFromProfile(Global.profile.name);
+		tbj.setFromProfile(MainForm.profile.name);
 		tbj.setFromWaypoint(view.waypoint);
 		model.allTravelbugJourneys.add(tbj);
 		view.modTbJourneyList.numRows = model.allTravelbugJourneys.size();
@@ -166,7 +167,7 @@ public class TravelbugMenu extends MenuBar {
 			}
 		    }
 		}
-		Global.pref.setOldGCLanguage();
+		Preferences.itself().setOldGCLanguage();
 	    } else if (mev.selectedItem == mnuOpenOnline && view.selectedRow >= 0) {
 		TravelbugJourney tbj = model.allTravelbugJourneys.getTBJourney(view.selectedRow);
 		GCImporter spider = new GCImporter();
@@ -183,13 +184,13 @@ public class TravelbugMenu extends MenuBar {
 			else
 			    s = "http://www.geocaching.com/track/details.aspx?id=" + tbj.getTb().getGuid();
 
-			CWWrapper.exec(Global.pref.browser, s);
-			Global.pref.log("Executed: \"" + Global.pref.browser + "\" \"" + s + "\"");
+			CWWrapper.exec(Preferences.itself().browser, s);
+			Preferences.itself().log("Executed: \"" + Preferences.itself().browser + "\" \"" + s + "\"");
 		    } catch (Exception ioex) {
-			Global.pref.log("Ignored Exception", ioex, true);
+			Preferences.itself().log("Ignored Exception", ioex, true);
 		    }
 		}
-		Global.pref.setOldGCLanguage();
+		Preferences.itself().setOldGCLanguage();
 	    }
 
 	}

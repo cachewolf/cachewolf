@@ -21,9 +21,11 @@
 */
 package CacheWolf.navi;
 
-import CacheWolf.Global;
+import CacheWolf.MainForm;
 import CacheWolf.MyLocale;
+import CacheWolf.Preferences;
 import CacheWolf.controls.InfoBox;
+import CacheWolf.database.CWPoint;
 import CacheWolf.utils.BetterUTF8Codec;
 import CacheWolf.utils.Common;
 import CacheWolf.utils.FileBugfix;
@@ -56,7 +58,7 @@ public final class MapsList extends Vector {
      *            only for adding empty maps
      */
     public MapsList(double lat) {
-	mapsListDir = Global.profile.getMapsDir();
+	mapsListDir = MainForm.profile.getMapsDir();
 	String MapsListPaN = mapsListDir + "MapsList.txt";
 	File MapsListFile = new File(MapsListPaN);
 	boolean dontBuildMapsListFile = MapsListFile.exists();
@@ -83,7 +85,7 @@ public final class MapsList extends Vector {
 	String[] dirstmp;
 	Vector dirs = new Vector();
 	dirs.add(""); // start with the mapsPath (only this one , without its subdirs) =  + dirs.get(0)
-	Global.pref.log("building mapslist started " + mapsListDir);
+	Preferences.itself().log("building mapslist started " + mapsListDir);
 	FileBugfix files = new FileBugfix(mapsListDir);
 	FileBugfix dirList = new FileBugfix(mapsListDir);
 	for (int j = 0; j < dirs.size(); j++) {
@@ -108,7 +110,7 @@ public final class MapsList extends Vector {
 	    if (dateien != null) {
 		if (dateien.length == 0) {
 		    // check if there is a tiles - structure in directories
-		    String p[] = ewe.util.mString.split(Global.profile.getMapsSubDir(aktPath), '/');
+		    String p[] = ewe.util.mString.split(MainForm.profile.getMapsSubDir(aktPath), '/');
 		    if (p.length > 4) {
 			String wmsPaN = FileBase.getProgramDirectory() + "/webmapservices/" + p[p.length - 4] + ".wms";
 			File wmsFile = new File(wmsPaN);
@@ -134,7 +136,7 @@ public final class MapsList extends Vector {
 					int y = Common.parseInt(Common.getFilename(dateien[i]));
 					if (y >= 0) {
 					    String filename = dateien[i].substring(0, dateien[i].lastIndexOf('.'));
-					    MapImageFileNameObject MapImageFileNameObject = new MapImageFileNameObject(Global.profile.getMapsSubDir(aktPath), filename, "");
+					    MapImageFileNameObject MapImageFileNameObject = new MapImageFileNameObject(MainForm.profile.getMapsSubDir(aktPath), filename, "");
 					    MapInfoObject mio = new MapInfoObject(x, y, zoom, MapImageFileNameObject);
 					    MapListEntry mle = new MapListEntry(MapImageFileNameObject, "FF1" + mio.getEasyFindString(), (byte) 2);
 					    if (mle.sortEntryBBox != null)
@@ -148,7 +150,7 @@ public final class MapsList extends Vector {
 		} else {
 		    // all dateien have .wfl extension
 		    for (int i = 0; i < dateien.length; i++) {
-			MapListEntry mle = new MapListEntry(Global.profile.getMapsSubDir(aktPath), dateien[i].substring(0, dateien[i].lastIndexOf('.')));
+			MapListEntry mle = new MapListEntry(MainForm.profile.getMapsSubDir(aktPath), dateien[i].substring(0, dateien[i].lastIndexOf('.')));
 			if (mle.sortEntryBBox != null)
 			    add(mle);
 		    }
@@ -168,7 +170,7 @@ public final class MapsList extends Vector {
 	// if (MapListEntry.rename == 1)
 	// reset static changes to initial values
 	MapListEntry.loadingFinished();
-	Global.pref.log("building mapslist finished " + mapsListDir);
+	Preferences.itself().log("building mapslist finished " + mapsListDir);
     }
 
     private void createMapListEntries(String thePackFile) {
@@ -197,8 +199,8 @@ public final class MapsList extends Vector {
 		    int Stride = MaxX - MinX + 1; // length of stripe
 		    for (int x = MinX; x <= MaxX; x++) {
 			for (int y = MinY; y <= MaxY; y++) {
-			    MapImageFileNameObject MapImageFileNameObject = new MapImageFileNameObject(thePackFile.substring(Global.pref.absoluteMapsBaseDir.length(), thePackFile.length() - 5), MinX + "!" + MinY + "!" + Stride + "!" + OffsetToIndex
-				    + "!" + zoom + "!" + x + "!" + y, "");
+			    MapImageFileNameObject MapImageFileNameObject = new MapImageFileNameObject(thePackFile.substring(Preferences.itself().absoluteMapsBaseDir.length(), thePackFile.length() - 5), MinX + "!" + MinY + "!" + Stride + "!"
+				    + OffsetToIndex + "!" + zoom + "!" + x + "!" + y, "");
 			    MapInfoObject mio = new MapInfoObject(x, y, zoom, MapImageFileNameObject);
 			    MapListEntry mle = new MapListEntry(MapImageFileNameObject, "FF1" + mio.getEasyFindString(), (byte) 3);
 			    if (mle.sortEntryBBox != null)
@@ -247,7 +249,7 @@ public final class MapsList extends Vector {
     }
 
     private void writeMapsListFile(String PathAndName) {
-	Global.pref.log("write started " + PathAndName);
+	Preferences.itself().log("write started " + PathAndName);
 	try {
 	    ewe.io.TextWriter w;
 	    w = new ewe.io.TextWriter(PathAndName, false);
@@ -262,7 +264,7 @@ public final class MapsList extends Vector {
 	} catch (IOException e) {
 
 	}
-	Global.pref.log("write finished " + PathAndName);
+	Preferences.itself().log("write finished " + PathAndName);
     }
 
     private boolean readMapsListFile(String PathAndName) {
@@ -281,15 +283,15 @@ public final class MapsList extends Vector {
 		s = r.readLine();
 		S = ewe.util.mString.split(s, ';');
 		if (S[3].equals("2")) {
-		    if (Common.getImageName(Global.pref.absoluteMapsBaseDir + S[0] + "/" + S[1]) == null) {
+		    if (Common.getImageName(Preferences.itself().absoluteMapsBaseDir + S[0] + "/" + S[1]) == null) {
 			ret = false;
 		    }
 		} else {
 		    File test;
 		    if (S[3].equals("3")) {
-			test = new File(Global.pref.absoluteMapsBaseDir + S[0] + ".pack");
+			test = new File(Preferences.itself().absoluteMapsBaseDir + S[0] + ".pack");
 		    } else { // if (S[3].equals("0")) {
-			test = new File(Global.pref.absoluteMapsBaseDir + S[0] + S[1] + ".wfl");
+			test = new File(Preferences.itself().absoluteMapsBaseDir + S[0] + S[1] + ".wfl");
 		    }
 		    if (!test.exists()) {
 			ret = false;
@@ -383,7 +385,7 @@ public final class MapsList extends Vector {
 			progressBox.exec();
 			progressBox.waitUntilPainted(100);
 			ewe.sys.Vm.showWait(true);
-			Global.pref.log(MyLocale.getMsg(4701, "Searching for best map"));
+			Preferences.itself().log(MyLocale.getMsg(4701, "Searching for best map"));
 		    }
 		}
 		mle = (MapListEntry) get(i);
@@ -832,10 +834,10 @@ final class MapListEntry {
 	    if (filenamei.startsWith("FF1"))
 		sortEntryBBox = filenamei.substring(0, filenamei.indexOf("E-"));
 	} catch (IndexOutOfBoundsException ex) {
-	    Global.pref.log("[MapsList:MapListEntry] Bad File in maps: " + filenamei);
+	    Preferences.itself().log("[MapsList:MapListEntry] Bad File in maps: " + filenamei);
 	}
 
-	String mapsPath = Global.profile.getMapsDir();
+	String mapsPath = MainForm.profile.getMapsDir();
 
 	if (sortEntryBBox == null) {
 	    try {
@@ -868,11 +870,11 @@ final class MapListEntry {
 			imageExtension = Common.getFilenameExtension(f);
 			to = sortEntryBBox + "E-" + filenamei + imageExtension;
 			if (!new File(f).rename(to)) {
-			    Global.pref.log("MapListEntry Failed to rename: " + mapsPath + subPath + filenamei + ": " + f + " to: " + to, null);
+			    Preferences.itself().log("MapListEntry Failed to rename: " + mapsPath + subPath + filenamei + ": " + f + " to: " + to, null);
 			    new InfoBox(MyLocale.getMsg(5500, "Error"), MyLocale.getMsg(4705, "Failed to rename:\n") + f + MyLocale.getMsg(4706, "\nto:\n") + to).wait(FormBase.OKB);
 			}
 		    } else {
-			Global.pref.log("MapListEntry: Could not find image assiciated to: " + mapsPath + subPath + filenamei + ".wfl", null);
+			Preferences.itself().log("MapListEntry: Could not find image assiciated to: " + mapsPath + subPath + filenamei + ".wfl", null);
 			new InfoBox(MyLocale.getMsg(5500, "Error"), MyLocale.getMsg(4709, "Could not find image assiciated to:\n") + mapsPath + subPath + filenamei + ".wfl").wait(FormBase.OKB);
 		    }
 		    // this.MapImageFileNameObject.setMapName(sortEntryBBox + "E-" + filenamei);
@@ -881,10 +883,10 @@ final class MapListEntry {
 		}
 	    } catch (IOException ioex) { // this should not happen
 		new InfoBox(MyLocale.getMsg(5500, "Error"), MyLocale.getMsg(4707, "I/O-Error while reading:") + " " + mapsPath + subPath + filenamei + ": " + ioex.getMessage()).wait(FormBase.OKB);
-		Global.pref.log("MapListEntry: I/O-Error while reading: " + mapsPath + subPath + filenamei + ": ", ioex);
+		Preferences.itself().log("MapListEntry: I/O-Error while reading: " + mapsPath + subPath + filenamei + ": ", ioex);
 	    } catch (Exception ex) {
 		new InfoBox(MyLocale.getMsg(5500, "Error"), MyLocale.getMsg(4706, "Error while reading:") + " " + mapsPath + subPath + filenamei + ": " + ex.getMessage()).wait(FormBase.OKB);
-		Global.pref.log("MapListEntry: Error while reading: " + mapsPath + subPath + filenamei + ": ", ex);
+		Preferences.itself().log("MapListEntry: Error while reading: " + mapsPath + subPath + filenamei + ": ", ex);
 	    }
 	}
     }

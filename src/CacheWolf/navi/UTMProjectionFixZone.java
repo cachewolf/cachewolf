@@ -1,5 +1,7 @@
 package CacheWolf.navi;
 
+import CacheWolf.database.CWPoint;
+
 public class UTMProjectionFixZone extends UTMProjection {
 
     // ctor

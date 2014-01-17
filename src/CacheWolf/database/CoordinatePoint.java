@@ -19,7 +19,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
-package CacheWolf.navi;
+package CacheWolf.database;
 
 /**
  * this is not CWPoint because it should be as small as possible
@@ -27,26 +27,26 @@ package CacheWolf.navi;
  *
  */
 
-public class TrackPoint {
+public class CoordinatePoint {
     public double latDec;
     public double lonDec;
 
-    public TrackPoint() {
+    public CoordinatePoint() {
 	latDec = -91;
 	lonDec = -361;
     }
 
-    public TrackPoint(TrackPoint t) {
+    public CoordinatePoint(CoordinatePoint t) {
 	latDec = t.latDec;
 	lonDec = t.lonDec;
     }
 
-    public TrackPoint(double lat, double lon) {
+    public CoordinatePoint(double lat, double lon) {
 	latDec = lat;
 	lonDec = lon;
     }
 
-    public boolean equals(TrackPoint tp) {
+    public boolean equals(CoordinatePoint tp) {
 	return latDec == tp.latDec && lonDec == tp.lonDec;
     }
 

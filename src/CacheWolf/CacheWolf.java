@@ -23,7 +23,6 @@ package CacheWolf;
 
 import CacheWolf.controls.InfoBox;
 import ewe.sys.Device;
-import ewe.ui.Editor;
 import ewe.ui.FormBase;
 
 public class CacheWolf {
@@ -57,7 +56,7 @@ public class CacheWolf {
 	}
 	// debug = true will permanently set this in pref.xml
 	// !!! debug = false will be overwritten by reading pref.xml
-	Editor mainForm = new MainForm(debug, configfile);
+	MainForm mainForm = new MainForm(debug, configfile);
 	Device.preventIdleState(true);
 	mainForm.execute();
 	Device.preventIdleState(false);
@@ -66,7 +65,6 @@ public class CacheWolf {
 
 }
 
-// for javadoc see: http://java.sun.com/j2se/javadoc/writingdoccomments/index.html#exampleresult
-// or the local files "JavaDoc" directory
+// for javadoc see: http://java.sun.com/j2se/javadoc/writingdoccomments/index.html#exampleresult or the local files "JavaDoc" directory
 // Javadoc Main Page: http://java.sun.com/j2se/javadoc/index.jsp
 // javadoc -classpath ewe.jar -d "cachewolf doc" cachewolf/*.java

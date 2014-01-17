@@ -21,17 +21,20 @@
  */
 package CacheWolf.navi;
 
-import CacheWolf.Global;
 import CacheWolf.MainForm;
 import CacheWolf.MainTab;
 import CacheWolf.MyLocale;
+import CacheWolf.Preferences;
+import CacheWolf.Profile;
 import CacheWolf.controls.ExecutePanel;
 import CacheWolf.controls.InfoBox;
+import CacheWolf.database.CWPoint;
 import CacheWolf.database.CacheDB;
 import CacheWolf.database.CacheHolder;
 import CacheWolf.database.CacheSize;
 import CacheWolf.database.CacheTerrDiff;
 import CacheWolf.database.CacheType;
+import CacheWolf.database.CoordinatePoint;
 import CacheWolf.navi.touchControls.ICommandListener;
 import CacheWolf.navi.touchControls.MovingMapControls;
 import CacheWolf.utils.Common;
@@ -169,8 +172,8 @@ public final class MovingMap extends Form implements ICommandListener {
      */
     public MovingMap() {
 	symbols = new Vector();
-	this.cacheDB = Global.profile.cacheDB;
-	if (Global.pref.myAppHeight <= 640 && Global.pref.myAppWidth <= 640) {
+	this.cacheDB = MainForm.profile.cacheDB;
+	if (Preferences.itself().myAppHeight <= 640 && Preferences.itself().myAppWidth <= 640) {
 	    this.windowFlagsToSet = WindowConstants.FLAG_FULL_SCREEN;
 	}
 	// The following line is commented out,
@@ -179,7 +182,7 @@ public final class MovingMap extends Form implements ICommandListener {
 	// this.windowFlagsToClear = WindowConstants.FLAG_HAS_TITLE | UIConstants.BDR_NOBORDER;
 	this.hasTopBar = false;
 	this.noBorder = true;
-	this.setPreferredSize(Global.pref.myAppWidth, Global.pref.myAppHeight);
+	this.setPreferredSize(Preferences.itself().myAppWidth, Preferences.itself().myAppHeight);
 	this.title = "Moving Map";
 	// background must not be black because black is interpreted as transparent
 	// and transparent images above (eg trackoverlay) want be drawn in windows-VM,
@@ -207,7 +210,7 @@ public final class MovingMap extends Form implements ICommandListener {
 	directionArrows.properties = mImage.AlwaysOnTop;
 	mmp.addImage(directionArrows);
 
-	final int fontSize = (3 * Global.pref.fontSize) / 2;
+	final int fontSize = (3 * Preferences.itself().fontSize) / 2;
 	final Font imageFont = new Font("Helvetica", Font.PLAIN, fontSize);
 	fm = getFontMetrics(imageFont);
 
@@ -235,7 +238,7 @@ public final class MovingMap extends Form implements ICommandListener {
 
 	rebuildOverlaySet(); // show tracks , even if reentering map
 
-	scaleWanted = Global.pref.lastScale;
+	scaleWanted = Preferences.itself().lastScale;
 	mapChangeModus = NORMAL_KEEP_RESOLUTION;
 
 	// a cache could have been deleted (previously shown)
@@ -250,11 +253,11 @@ public final class MovingMap extends Form implements ICommandListener {
 	}
 
 	// if this is not running the destChanged called by navigate did nothing, 
-	if (Global.mainTab.navigate.destinationIsCache) {
-	    destChanged(Global.mainTab.navigate.destinationCache);
+	if (MainTab.itself.navigate.destinationIsCache) {
+	    destChanged(MainTab.itself.navigate.destinationCache);
 	} else {
-	    if (Global.mainTab.navigate.destination.isValid())
-		destChanged(Global.mainTab.navigate.destination);
+	    if (MainTab.itself.navigate.destination.isValid())
+		destChanged(MainTab.itself.navigate.destination);
 	}
 
 	ignoreGps = false;
@@ -262,26 +265,26 @@ public final class MovingMap extends Form implements ICommandListener {
     }
 
     /**
-     * moving the map by Global.mainTab.navigate.gpsPos.
+     * moving the map by MainTab.itself.navigate.gpsPos.
      */
     public void updatePositionFromGps(int fix) {
 	if (!running || ignoreGps)
 	    return;
 	// runMovingMap neccessary in case of multi-threaded Java-VM:
 	// ticked could be called during load of mmp
-	if ((fix > 0) && (Global.mainTab.navigate.gpsPos.getSats() >= 0)) {
+	if ((fix > 0) && (MainTab.itself.navigate.gpsPos.getSats() >= 0)) {
 	    // TODO is getSats really necessary?
-	    directionArrows.setDirections((float) Global.mainTab.navigate.gpsPos.getBearing(Global.mainTab.navigate.destination), (float) Global.mainTab.navigate.skyOrientationDir.lonDec, (float) Global.mainTab.navigate.gpsPos.getBear());
+	    directionArrows.setDirections((float) MainTab.itself.navigate.gpsPos.getBearing(MainTab.itself.navigate.destination), (float) MainTab.itself.navigate.skyOrientationDir.lonDec, (float) MainTab.itself.navigate.gpsPos.getBear());
 	    setGpsStatus(MovingMap.gotFix);
-	    updatePosition(Global.mainTab.navigate.gpsPos);
-	    ShowLastAddedPoint(Global.mainTab.navigate.curTrack);
+	    updatePosition(MainTab.itself.navigate.gpsPos);
+	    ShowLastAddedPoint(MainTab.itself.navigate.curTrack);
 	}
-	if (fix == 0 && Global.mainTab.navigate.gpsPos.getSats() == 0)
+	if (fix == 0 && MainTab.itself.navigate.gpsPos.getSats() == 0)
 	    setGpsStatus(MovingMap.lostFix);
 	if (fix < 0)
 	    setGpsStatus(MovingMap.noGPSData);
-	controlsLayer.updateContent("hdop", Convert.toString(Global.mainTab.navigate.gpsPos.getHDOP()));
-	controlsLayer.updateContent("sats", Convert.toString(Global.mainTab.navigate.gpsPos.getSats()) + "/" + Convert.toString(Global.mainTab.navigate.gpsPos.getSatsInView()));
+	controlsLayer.updateContent("hdop", Convert.toString(MainTab.itself.navigate.gpsPos.getHDOP()));
+	controlsLayer.updateContent("sats", Convert.toString(MainTab.itself.navigate.gpsPos.getSats()) + "/" + Convert.toString(MainTab.itself.navigate.gpsPos.getSatsInView()));
     }
 
     public void destChanged(CWPoint d) {
@@ -378,7 +381,7 @@ public final class MovingMap extends Form implements ICommandListener {
 	    return;
 
 	if (this.maps != null) {
-	    if (!(Global.profile.getMapsDir().equals(this.maps.getDirOfMapsList()))) {
+	    if (!(MainForm.profile.getMapsDir().equals(this.maps.getDirOfMapsList()))) {
 		mapsloaded = false;
 	    }
 	}
@@ -410,7 +413,7 @@ public final class MovingMap extends Form implements ICommandListener {
 	if (currentMap != null) {
 	    double lineLengthMeters = 40 * currentMap.scale;
 
-	    final int metricSystem = Global.pref.metricSystem;
+	    final int metricSystem = Preferences.itself().metricSystem;
 	    double localizedLineLength = 0;
 	    int bigUnit = -1;
 	    int smallUnit = -1;
@@ -475,7 +478,7 @@ public final class MovingMap extends Form implements ICommandListener {
 		final ewe.sys.Double dd = new ewe.sys.Double();
 		String d;
 
-		final int metricSystem = Global.pref.metricSystem;
+		final int metricSystem = Preferences.itself().metricSystem;
 		double localizedDistance = 0;
 		int bigUnit = -1;
 		int smallUnit = -1;
@@ -582,7 +585,7 @@ public final class MovingMap extends Form implements ICommandListener {
 	    for (int xi = 0; xi < 3; xi++) {
 		i = yi * 3 + xi;
 		if (TrackOverlays[i] == null) {
-		    Global.pref.log("addMissingOverlays: widht: " + width + ", height: " + height);
+		    Preferences.itself().log("addMissingOverlays: widht: " + width + ", height: " + height);
 		    TrackOverlays[i] = new TrackOverlay(ScreenXY2LatLon(upperleftOf4.x + (xi - 1) * width, upperleftOf4.y + (yi - 1) * height), width, height, currentMap);
 		    TrackOverlays[i].setLocation(width + 1, height + 1);
 		    // outside of the screen will hide it automatically
@@ -832,9 +835,9 @@ public final class MovingMap extends Form implements ICommandListener {
 	    posCircleY = height / 2;
 	} else {
 	    // maybe this could / should be replaced to windows size
-	    Global.pref.log("Window not yet on screen? This should never happen (again)");
-	    posCircleX = Global.pref.myAppWidth / 2;
-	    posCircleY = Global.pref.myAppHeight / 2;
+	    Preferences.itself().log("Window not yet on screen? This should never happen (again)");
+	    posCircleX = Preferences.itself().myAppWidth / 2;
+	    posCircleY = Preferences.itself().myAppHeight / 2;
 	}
 	posCircle.hidden = false;
 	// always position the middle of a symbol
@@ -889,7 +892,7 @@ public final class MovingMap extends Form implements ICommandListener {
     private Point getMapPositionOnScreen() {
 	// in case no calculation is possible return something outside of the screen
 	if (currentMap == null || !posCircle.where.isValid())
-	    return new Point(Global.pref.myAppWidth + 1, Global.pref.myAppHeight + 1);
+	    return new Point(Preferences.itself().myAppWidth + 1, Preferences.itself().myAppHeight + 1);
 	final Point mapPos = new Point();
 	final Point mapposint = currentMap.calcMapXY(posCircle.where);
 	mapPos.x = posCircleX - mapposint.x;
@@ -901,10 +904,10 @@ public final class MovingMap extends Form implements ICommandListener {
      * Method to calculate Point x,y of the current map using lat and lon target coordinates. There ist no garanty that the returned coordinates are inside of the map. They can be negative.
      * 
      * @param ll
-     *            TrackPoint
+     *            CoordinatePoint
      * @return Point
      */
-    public Point getXYonScreen(TrackPoint ll) {
+    public Point getXYonScreen(CoordinatePoint ll) {
 	if (currentMap == null)
 	    return null;
 	final Point coords = currentMap.calcMapXY(ll);
@@ -937,7 +940,7 @@ public final class MovingMap extends Form implements ICommandListener {
 	addMapSymbol(ms);
     }
 
-    private void setSymbolLocation(MapSymbol symbol, TrackPoint where) {
+    private void setSymbolLocation(MapSymbol symbol, CoordinatePoint where) {
 	final Point pOnScreen = getXYonScreen(where);
 	if (pOnScreen != null) {
 	    symbol.setLocation(pOnScreen.x - symbol.getWidth() / 2, pOnScreen.y - symbol.getHeight() / 2);
@@ -1049,10 +1052,10 @@ public final class MovingMap extends Form implements ICommandListener {
 		// because visible and valid don't change while showing map
 		// -->need no remove
 		if (ch.isVisible() && ch.getPos().isValid()) {
-		    if (Global.pref.showCachesOnMap) {
+		    if (Preferences.itself().showCachesOnMap) {
 			addSymbolIfNecessary(ch.getWayPoint(), ch, CacheType.getBigCacheIcon(ch), ch.getPos());
 		    } else {
-			if (ch.is_Checked || ch == cacheDB.get(Global.mainTab.tablePanel.getSelectedCache())) {
+			if (ch.is_Checked || ch == cacheDB.get(MainTab.itself.tablePanel.getSelectedCache())) {
 			    addSymbolIfNecessary(ch.getWayPoint(), ch, CacheType.getBigCacheIcon(ch), ch.getPos());
 			} else {
 			    removeMapSymbol(ch);
@@ -1073,7 +1076,7 @@ public final class MovingMap extends Form implements ICommandListener {
 	    }
 	    if (gotoPosCH != null) {
 		if (screenArea.isInBound(gotoPosCH.getPos())) {
-		    if (!Global.pref.showCachesOnMap) {
+		    if (!Preferences.itself().showCachesOnMap) {
 			addSymbolIfNecessary(gotoPosCH.getWayPoint(), gotoPosCH, CacheType.getBigCacheIcon(gotoPosCH), gotoPosCH.getPos());
 		    }
 		    addSymbolIfNecessary("goto", gotoPosCH, imgGoto, gotoPos.where);
@@ -1082,7 +1085,7 @@ public final class MovingMap extends Form implements ICommandListener {
 	}
 	// mark Selected
 	removeMapSymbol("selectedCache");
-	ch = cacheDB.get(Global.mainTab.tablePanel.getSelectedCache());
+	ch = cacheDB.get(MainTab.itself.tablePanel.getSelectedCache());
 	if (ch != null) {
 	    if (screenArea.isInBound(ch.getPos())) {
 		addSymbolIfNecessary("selectedCache", ch, imgSelectedCache, ch.getPos());
@@ -1093,7 +1096,7 @@ public final class MovingMap extends Form implements ICommandListener {
     boolean reflectResourceException = true;
 
     private void fillWhiteArea() {
-	Global.pref.log("filling white area");
+	Preferences.itself().log("filling white area");
 	MapImage mainMap = mmp.getMainMap();
 	if (mainMap == null)
 	    return; // if error at map load
@@ -1105,12 +1108,12 @@ public final class MovingMap extends Form implements ICommandListener {
 	    // calculate areas which will not drawn
 	    final Point mapPos = getMapPositionOnScreen();
 	    if (mapPos.x > this.width || mapPos.y > this.height || mapPos.x + mainMap.getWidth() < 0 || mapPos.y + mainMap.getHeight() < 0) {
-		Global.pref.log("map is outside the screen --> you only need to fill the screen");
+		Preferences.itself().log("map is outside the screen --> you only need to fill the screen");
 		whiteAreas.add(new Rect(0, 0, this.width, this.height));
 	    } else {
 		final Rect whiteArea = new Rect((-this.width / 10), (-this.height / 10), (int) (this.width * 1.1), (int) (this.height * 1.1));
 		final Rect blackArea = new Rect(mapPos.x, mapPos.y, mainMap.getWidth(), mainMap.getHeight());
-		Global.pref.log("max wA to cover: " + whiteArea);
+		Preferences.itself().log("max wA to cover: " + whiteArea);
 		addRemainingWhiteAreas(blackArea, whiteArea);
 	    }
 	    // I've sometimes experienced an endless loop which might be caused by a bug in getBestMap.
@@ -1121,7 +1124,7 @@ public final class MovingMap extends Form implements ICommandListener {
 	    MovingMapCache.movingMapCache().clearUsedFlags();
 	    while (isFillWhiteArea() && currentMap.zoomFactor == 1.0 && !mapHidden && !whiteAreas.isEmpty() && count < max && !eventOccurred) {
 		count++;
-		Global.pref.log(eventOccurred + " white Area Nr.: " + count);
+		Preferences.itself().log(eventOccurred + " white Area Nr.: " + count);
 		try {
 		    Rect stillWhite = getMapTileForWhiteArea();
 		    if (stillWhite != null) {
@@ -1170,17 +1173,17 @@ public final class MovingMap extends Form implements ICommandListener {
 	final MapInfoObject bestMap = maps.getBest(centerPoint, screen, currentMap.scale, true, false);
 	if (bestMap == null) {
 	    // No map found, area must be left white
-	    Global.pref.log("!For wA " + whiteArea + middleX + "," + middleY + " got no map");
+	    Preferences.itself().log("!For wA " + whiteArea + middleX + "," + middleY + " got no map");
 	    return whiteArea;
 	}
 	// perhaps a nearby map is found, not containing the (center)Point, perhaps it fits on the screen
 	// but we can't use this map: the splitting into white areas goes wrong in that case
 	if (!(bestMap.bottomright.latDec <= centerPoint.latDec && centerPoint.latDec <= bestMap.topleft.latDec)) {
-	    Global.pref.log("!For wA " + whiteArea + middleX + "," + middleY + " Lat outside " + bestMap.getMapNameForList());
+	    Preferences.itself().log("!For wA " + whiteArea + middleX + "," + middleY + " Lat outside " + bestMap.getMapNameForList());
 	    return whiteArea;
 	}
 	if (!(bestMap.topleft.lonDec <= centerPoint.lonDec && centerPoint.lonDec <= bestMap.bottomright.lonDec)) {
-	    Global.pref.log("!For wA " + whiteArea + middleX + "," + middleY + " Lon outside " + bestMap.getMapNameForList());
+	    Preferences.itself().log("!For wA " + whiteArea + middleX + "," + middleY + " Lon outside " + bestMap.getMapNameForList());
 	    return whiteArea;
 	}
 	final String imagefilename = bestMap.getImagePathAndName();
@@ -1203,18 +1206,18 @@ public final class MovingMap extends Form implements ICommandListener {
 			rect2 = new Dimension(fullImage.getHeight(), fullImage.getWidth());
 			MovingMapCache.movingMapCache().putDimension(imagefilename, rect2);
 		    } else {
-			Global.pref.log("Error getting bestMap from file: " + imagefilename);
+			Preferences.itself().log("Error getting bestMap from file: " + imagefilename);
 			maps.remove(bestMap);
 			return whiteArea;
 		    }
 		}
 		// really adding a map image / tiles of the map image to the MovingMapPanel
 		if (!generateSmallTiles(blackArea, imagefilename, mapPos, rect2, fullImage)) {
-		    Global.pref.log("Error generate SmallTiles from file: " + imagefilename);
+		    Preferences.itself().log("Error generate SmallTiles from file: " + imagefilename);
 		    maps.remove(bestMap);
 		    return whiteArea;
 		}
-		Global.pref.log("For wA " + whiteArea + middleX + "," + middleY + " got " + blackArea + " ='" + bestMap.getMapNameForList() + "'");
+		Preferences.itself().log("For wA " + whiteArea + middleX + "," + middleY + " got " + blackArea + " ='" + bestMap.getMapNameForList() + "'");
 		// Are there any white areas left?
 		addRemainingWhiteAreas(blackArea, whiteArea);
 	    }
@@ -1230,7 +1233,7 @@ public final class MovingMap extends Form implements ICommandListener {
 	    for (int column = 0; column < numCols; column++) {
 		// Tile is not needed, don't process
 		if (!isCoveredByBlackArea(mapPos, row, column, blackArea, rect2)) {
-		    Global.pref.log("not needed");
+		    Preferences.itself().log("not needed");
 		    continue;
 		}
 		// Get tile from cache or 
@@ -1277,7 +1280,7 @@ public final class MovingMap extends Form implements ICommandListener {
 		    mapImage.setImage(image2);
 		    MovingMapCache.movingMapCache().put(filename, row2, column2, mapImage);
 		} catch (Exception e) {
-		    Global.pref.log(e + " Error generating Tile Image from " + filename + " for " + row2 + "/" + column2 + " (" + realWidth + "x" + realHeight + ")");
+		    Preferences.itself().log(e + " Error generating Tile Image from " + filename + " for " + row2 + "/" + column2 + " (" + realWidth + "x" + realHeight + ")");
 		}
 	    }
 	}
@@ -1314,7 +1317,7 @@ public final class MovingMap extends Form implements ICommandListener {
 	    final Rect l = new Rect(whiteArea.x, whiteArea.y, leftWidth, bottomHeight + blackArea.height);
 	    if (l.height > mh) {
 		whiteAreas.add(l);
-		Global.pref.log("Left  : " + l);
+		Preferences.itself().log("Left  : " + l);
 	    }
 	}
 	// top Rect
@@ -1323,7 +1326,7 @@ public final class MovingMap extends Form implements ICommandListener {
 		final Rect t = new Rect(whiteArea.x, topYPos, leftWidth + blackArea.width, topHeight);
 		if (t.width > mw) {
 		    whiteAreas.add(t);
-		    Global.pref.log("Top   : " + t);
+		    Preferences.itself().log("Top   : " + t);
 		}
 	    }
 	}
@@ -1332,7 +1335,7 @@ public final class MovingMap extends Form implements ICommandListener {
 	    final Rect r = new Rect(blackArea.x + blackArea.width, blackArea.y, rightWidth, blackArea.height + topHeight);
 	    if (r.height > mh) {
 		whiteAreas.add(r);
-		Global.pref.log("Right : " + r);
+		Preferences.itself().log("Right : " + r);
 	    }
 	}
 	// bottom Rect
@@ -1340,13 +1343,13 @@ public final class MovingMap extends Form implements ICommandListener {
 	    final Rect b = new Rect(blackArea.x, whiteArea.y, blackArea.width + rightWidth, bottomHeight);
 	    if (b.width > mw) {
 		whiteAreas.add(b);
-		Global.pref.log("Bottom: " + b);
+		Preferences.itself().log("Bottom: " + b);
 	    }
 	}
     }
 
     public void gpsStarted() {
-	addTrack(Global.mainTab.navigate.curTrack);
+	addTrack(MainTab.itself.navigate.curTrack);
 	ignoreGps = false;
     }
 
@@ -1462,9 +1465,9 @@ public final class MovingMap extends Form implements ICommandListener {
      * @return
      */
     public Object[] getRectForMapChange(CWPoint ll) {
-	final int w = (width != 0 ? width : Global.pref.myAppWidth);
+	final int w = (width != 0 ? width : Preferences.itself().myAppWidth);
 	// width == 0 happens if this routine is run before the windows is on the screen
-	final int h = (height != 0 ? height : Global.pref.myAppHeight);
+	final int h = (height != 0 ? height : Preferences.itself().myAppHeight);
 	int pX, pY;
 	CWPoint cll;
 	Boolean posCircleOnScreen = java.lang.Boolean.FALSE;
@@ -1533,7 +1536,7 @@ public final class MovingMap extends Form implements ICommandListener {
      */
     public void setMap(MapInfoObject newmap, CWPoint where) {
 	if (newmap == null) {
-	    Global.pref.log("da ist was schief gelaufen: keine newmap gefunden.");
+	    Preferences.itself().log("da ist was schief gelaufen: keine newmap gefunden.");
 	    return;
 	}
 	if (currentMap != null) {
@@ -1549,7 +1552,7 @@ public final class MovingMap extends Form implements ICommandListener {
 	try {
 	    Vm.showWait(true);
 	    dontUpdatePos = true; // make updatePosition ignore calls during loading new map
-	    Global.pref.log(MyLocale.getMsg(4216, "Loading map...") + newmap.getMapNameForList());
+	    Preferences.itself().log(MyLocale.getMsg(4216, "Loading map...") + newmap.getMapNameForList());
 	    MapImage mainMap = mmp.getMainMap();
 	    try {
 		currentMap = newmap;
@@ -1601,7 +1604,7 @@ public final class MovingMap extends Form implements ICommandListener {
 		forceMapLoad = false;
 	    } catch (final IllegalArgumentException e) {
 		// thrown by new AniImage() in ewe-vm if file not found;
-		Global.pref.log("[MovingMap:setMap]IllegalArgumentException", e, true);
+		Preferences.itself().log("[MovingMap:setMap]IllegalArgumentException", e, true);
 		if (mainMap != null) {
 		    mmp.removeImage(mainMap);
 		    mainMap.free();
@@ -1612,7 +1615,7 @@ public final class MovingMap extends Form implements ICommandListener {
 		updatePositionOfMapElements();
 		new InfoBox(MyLocale.getMsg(5500, "Error"), MyLocale.getMsg(4218, "Could not load map: \n") + newmap.getImagePathAndName()).wait(FormBase.OKB);
 	    } catch (final OutOfMemoryError e) {
-		Global.pref.log("[MovingMap:setMap]OutOfMemoryError", e, true);
+		Preferences.itself().log("[MovingMap:setMap]OutOfMemoryError", e, true);
 		if (mainMap != null) {
 		    mmp.removeImage(mainMap);
 		    mainMap.free();
@@ -1624,7 +1627,7 @@ public final class MovingMap extends Form implements ICommandListener {
 		new InfoBox(MyLocale.getMsg(5500, "Error"), MyLocale.getMsg(4219, "Not enough memory to load map: \n") + newmap.getImagePathAndName() + MyLocale.getMsg(4220, "\nYou can try to close\n all prgrams and \nrestart CacheWolf"))
 			.wait(FormBase.OKB);
 	    } catch (final SystemResourceException e) {
-		Global.pref.log("[MovingMap:setMap]SystemResourceException", e, true);
+		Preferences.itself().log("[MovingMap:setMap]SystemResourceException", e, true);
 		if (mainMap != null) {
 		    mmp.removeImage(mainMap);
 		    mainMap.free();
@@ -1803,7 +1806,7 @@ public final class MovingMap extends Form implements ICommandListener {
 
     public void onEvent(Event ev) {
 	if (ev instanceof FormEvent && (ev.type == FormEvent.CLOSED)) {
-	    Global.pref.lastScale = currentMap.scale;
+	    Preferences.itself().lastScale = currentMap.scale;
 	    running = false;
 	}
 	if (ev instanceof KeyEvent && ev.target == this && ((((KeyEvent) ev).key == IKeys.ESCAPE) || (((KeyEvent) ev).key == IKeys.ENTER) || (((KeyEvent) ev).key == IKeys.ACTION))) {
@@ -1825,12 +1828,12 @@ public final class MovingMap extends Form implements ICommandListener {
 	    return true;
 	}
 	if (CHANGE_MAP_DIR == actionCommand) {
-	    final FileChooser fc = new FileChooser(FileChooserBase.DIRECTORY_SELECT, Global.profile.getMapsDir());
+	    final FileChooser fc = new FileChooser(FileChooserBase.DIRECTORY_SELECT, MainForm.profile.getMapsDir());
 	    fc.addMask("*.wfl");
 	    fc.setTitle(MyLocale.getMsg(4200, "Select map directory:"));
 	    if (fc.execute() != FormBase.IDCANCEL) {
 		// todo : perhaps only a temporary change
-		Global.profile.setRelativeMapsDir(Global.profile.getMapsSubDir(fc.getChosen().toString()));
+		MainForm.profile.setRelativeMapsDir(MainForm.profile.getMapsSubDir(fc.getChosen().toString()));
 		mapsloaded = false;
 		forceMapLoad = true;
 		initMaps(posCircle.where);
@@ -1890,7 +1893,7 @@ public final class MovingMap extends Form implements ICommandListener {
 	    return true;
 	}
 	if (MOVE_TO_CENTER == actionCommand) {
-	    setCenterOfScreen(Global.pref.getCurCentrePt(), true);
+	    setCenterOfScreen(Preferences.itself().getCurCentrePt(), true);
 	    return true;
 	}
 	if (MOVE_TO_DEST == actionCommand) {
@@ -1900,7 +1903,7 @@ public final class MovingMap extends Form implements ICommandListener {
 	    return true;
 	}
 	if (MOVE_TO_GPS == actionCommand) {
-	    Global.mainTab.navigate.startGps(Global.pref.logGPS, Convert.toInt(Global.pref.logGPSTimer));
+	    MainTab.itself.navigate.startGps(Preferences.itself().logGPS, Convert.toInt(Preferences.itself().logGPSTimer));
 	    SnapToGps();
 	    return true;
 	}
@@ -1921,8 +1924,8 @@ public final class MovingMap extends Form implements ICommandListener {
 
     private void manualSelectMap() {
 	CWPoint gpspos;
-	if (Global.mainTab.navigate.gpsPos.Fix > 0)
-	    gpspos = new CWPoint(Global.mainTab.navigate.gpsPos.latDec, Global.mainTab.navigate.gpsPos.lonDec);
+	if (MainTab.itself.navigate.gpsPos.Fix > 0)
+	    gpspos = new CWPoint(MainTab.itself.navigate.gpsPos.latDec, MainTab.itself.navigate.gpsPos.lonDec);
 	else
 	    gpspos = null;
 	final ListBox manualSelectMap = new ListBox(maps, gpspos, getGotoPosWhere(), currentMap);
@@ -1955,8 +1958,8 @@ public final class MovingMap extends Form implements ICommandListener {
     }
 
     private void setFillWhiteArea(boolean fillWhiteArea) {
-	if (Global.pref.fillWhiteArea != fillWhiteArea) {
-	    Global.pref.fillWhiteArea = fillWhiteArea;
+	if (Preferences.itself().fillWhiteArea != fillWhiteArea) {
+	    Preferences.itself().fillWhiteArea = fillWhiteArea;
 	    if (!fillWhiteArea)
 		mmp.clearMapTiles();
 	    else {
@@ -1967,8 +1970,8 @@ public final class MovingMap extends Form implements ICommandListener {
     }
 
     private void setShowCachesOnMap(boolean value) {
-	if (value != Global.pref.showCachesOnMap) {
-	    Global.pref.showCachesOnMap = value;
+	if (value != Preferences.itself().showCachesOnMap) {
+	    Preferences.itself().showCachesOnMap = value;
 	    updatePositionOfMapElements();
 	}
     }
@@ -1992,8 +1995,8 @@ public final class MovingMap extends Form implements ICommandListener {
      */
     private void loadMoreDetailedMap(boolean betterOverview) {
 	// width == 0 happens if this routine is run before the windows is on the screen
-	final int w = (width != 0 ? width : Global.pref.myAppWidth);
-	final int h = (height != 0 ? height : Global.pref.myAppHeight);
+	final int w = (width != 0 ? width : Preferences.itself().myAppWidth);
+	final int h = (height != 0 ? height : Preferences.itself().myAppHeight);
 	final Rect screen = new Rect(0, 0, w, h);
 
 	CWPoint cll;
@@ -2018,7 +2021,7 @@ public final class MovingMap extends Form implements ICommandListener {
     }
 
     private void loadMapForAllCaches() {
-	final Area sur = Global.profile.getSourroundingArea(true);
+	final Area sur = MainForm.profile.getSourroundingArea(true);
 	if (sur == null) {
 	    new InfoBox(MyLocale.getMsg(5500, "Error"), MyLocale.getMsg(4215, "Keine  Caches mit H?ckchen ausgew?hlt")).wait(FormBase.OKB);
 	    return;
@@ -2067,10 +2070,10 @@ public final class MovingMap extends Form implements ICommandListener {
 	autoSelectMap = true;
 	forceMapLoad = true;
 	// showMap(); why this?
-	if (Global.mainTab.navigate.gpsPos.Fix <= 0)
+	if (MainTab.itself.navigate.gpsPos.Fix <= 0)
 	    updatePosition(posCircle.where);
 	else
-	    updatePositionFromGps(Global.mainTab.navigate.gpsPos.getFix());
+	    updatePositionFromGps(MainTab.itself.navigate.gpsPos.getFix());
     }
 
     private void zoom1to1() {
@@ -2162,7 +2165,7 @@ public final class MovingMap extends Form implements ICommandListener {
     }
 
     public boolean isFillWhiteArea() {
-	return Global.pref.fillWhiteArea;
+	return Preferences.itself().fillWhiteArea;
     }
 
     public void addImage(AniImage ani) {
@@ -2527,7 +2530,7 @@ class MovingMapPanel extends InteractivePanel implements EventListener {
 	    /*
 	     * this kontext will be replaced by the settings of the rose in the goto panel
 	     * 
-	     * if ( !(mm.directionArrows.onHotArea(p.x, p.y)) ) { } else { for (int i=0; i<SkyOrientation.LUMINARY_NAMES.length; i++) { kontextMenu.addItem(miLuminary[i]); if (i == mm.Global.mainTab.navigate.luminary) miLuminary[i].modifiers |=
+	     * if ( !(mm.directionArrows.onHotArea(p.x, p.y)) ) { } else { for (int i=0; i<SkyOrientation.LUMINARY_NAMES.length; i++) { kontextMenu.addItem(miLuminary[i]); if (i == mm.MainTab.itself.navigate.luminary) miLuminary[i].modifiers |=
 	     * MenuItem.Checked; else miLuminary[i].modifiers &= MenuItem.Checked; } }
 	     */
 	    onlyIfCache = false;
@@ -2571,11 +2574,11 @@ class MovingMapPanel extends InteractivePanel implements EventListener {
 		    final MenuItem action = (MenuItem) kontextMenu.getSelectedItem();
 		    if (action == gotoMenuItem) {
 			closeKontextMenu();
-			Global.mainTab.navigate.setDestination(mm.ScreenXY2LatLon(saveMapLoc.x, saveMapLoc.y));
+			MainTab.itself.navigate.setDestination(mm.ScreenXY2LatLon(saveMapLoc.x, saveMapLoc.y));
 		    }
 		    if (action == openCacheDescMenuItem || action == openCacheDetailMenuItem) {
 			leaveMovingMap();
-			final MainTab mainT = Global.mainTab;
+			final MainTab mainT = MainTab.itself;
 			if (action == openCacheDescMenuItem)
 			    mainT.openPanel(clickedCache, 2);
 			else
@@ -2583,7 +2586,7 @@ class MovingMapPanel extends InteractivePanel implements EventListener {
 		    }
 		    if (action == gotoCacheMenuItem) {
 			closeKontextMenu();
-			Global.mainTab.navigate.setDestination(clickedCache);
+			MainTab.itself.navigate.setDestination(clickedCache);
 		    }
 		    if (action == markFoundMenuItem) {
 			closeKontextMenu();
@@ -2610,11 +2613,11 @@ class MovingMapPanel extends InteractivePanel implements EventListener {
 			leaveMovingMap();
 			final CacheHolder newWP = new CacheHolder();
 			newWP.setPos(mm.ScreenXY2LatLon(saveMapLoc.x, saveMapLoc.y));
-			Global.mainTab.newWaypoint(newWP);
+			MainTab.itself.newWaypoint(newWP);
 		    }
 		    if (action == addCachetoListMenuItem) {
 			closeKontextMenu();
-			MainForm.itself.cacheList.addCache(clickedCache.getWayPoint());
+			MainForm.itself.addCache(clickedCache.getWayPoint());
 		    }
 		    if (action == hintMenuItem) {
 			new InfoBox("Hint", STRreplace.replace(Common.rot13(clickedCache.getCacheDetails(false).Hints), "<br>", "\n")).wait(FormBase.OKB);
@@ -2623,7 +2626,7 @@ class MovingMapPanel extends InteractivePanel implements EventListener {
 			new InfoBox("Mission", STRreplace.replace(clickedCache.getCacheDetails(false).LongDescription, "<br>", "\n")).wait(FormBase.OKB);
 		    }
 		    /*
-		     * for (int i=0; i<miLuminary.length; i++) { if (action == miLuminary[i]) { kontextMenu.close(); mm.Global.mainTab.navigate.setLuminary(i); mm.updateGps(mm.Global.mainTab.navigate.gpsPos.getFix()); miLuminary[i].modifiers |=
+		     * for (int i=0; i<miLuminary.length; i++) { if (action == miLuminary[i]) { kontextMenu.close(); mm.MainTab.itself.navigate.setLuminary(i); mm.updateGps(mm.MainTab.itself.navigate.gpsPos.getFix()); miLuminary[i].modifiers |=
 		     * MenuItem.Checked; } else miLuminary[i].modifiers &= ~MenuItem.Checked; }
 		     */
 		}
@@ -2825,7 +2828,7 @@ class ArrowsOnMap extends AniImage {
     Point[] moveDirArrow = null;
     Point[] northDirArrow = null;
 
-    int imageSize = Global.pref.fontSize * 8;
+    int imageSize = Preferences.itself().fontSize * 8;
     int arrowThickness = imageSize / 28;
 
     /**

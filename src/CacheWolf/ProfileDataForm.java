@@ -50,20 +50,20 @@ public class ProfileDataForm extends Form {
 		content.setText(MyLocale.getMsg(1115, "Centre"));
 		content.borderStyle = UIConstants.BDR_RAISEDOUTER | UIConstants.BDR_SUNKENINNER | UIConstants.BF_RECT;
 		//defaultTags.set(this.INSETS,new Insets(2,2,2,2));
-		title = MyLocale.getMsg(1118, "Profile") + ": " + Global.profile.name;
+		title = MyLocale.getMsg(1118, "Profile") + ": " + MainForm.profile.name;
 		content.addNext(new mLabel(MyLocale.getMsg(600, "Preferences")));
 		content.addLast(chkSetCurrentCentreFromGPSPosition = new mCheckBox(MyLocale.getMsg(646, "centre from GPS")), CellConstants.DONTSTRETCH, (CellConstants.DONTFILL | CellConstants.WEST));
 		// content.addLast(btnGPS2Cur=new mButton("   v   "),DONTSTRETCH,DONTFILL|LEFT);
-		if (Global.pref.setCurrentCentreFromGPSPosition)
+		if (Preferences.itself().setCurrentCentreFromGPSPosition)
 			chkSetCurrentCentreFromGPSPosition.setState(true);
 		content.addNext(new mLabel(MyLocale.getMsg(1116, "Current")));
-		content.addLast(btnCurrentCentre = new mButton(Global.pref.getCurCentrePt().toString()), HSTRETCH, HFILL | LEFT);
+		content.addLast(btnCurrentCentre = new mButton(Preferences.itself().getCurCentrePt().toString()), HSTRETCH, HFILL | LEFT);
 		content.addNext(new mLabel("      "), HSTRETCH, HFILL);
 		content.addNext(btnCur2Prof = new mButton("   v   "), DONTSTRETCH, DONTFILL | LEFT);
 		content.addNext(new mLabel(MyLocale.getMsg(1117, "copy")));
 		content.addLast(btnProf2Cur = new mButton("   ^   "), DONTSTRETCH, DONTFILL | RIGHT);
 		content.addNext(new mLabel(MyLocale.getMsg(1118, "Profile")));
-		content.addLast(btnProfileCentre = new mButton(Global.profile.centre.toString()), HSTRETCH, HFILL | LEFT);
+		content.addLast(btnProfileCentre = new mButton(MainForm.profile.centre.toString()), HSTRETCH, HFILL | LEFT);
 		addLast(content, HSTRETCH, HFILL);
 		//addLast(new mLabel(""),VSTRETCH,FILL);
 		//addNext(btnCancel = new mButton(MyLocale.getMsg(1604,"Cancel")),DONTSTRETCH,DONTFILL|LEFT);
@@ -81,36 +81,36 @@ public class ProfileDataForm extends Form {
 				close(-1);
 			}*/
 			if (ev.target == btnOK) {
-				Global.pref.setCurrentCentreFromGPSPosition = chkSetCurrentCentreFromGPSPosition.getState();
+				Preferences.itself().setCurrentCentreFromGPSPosition = chkSetCurrentCentreFromGPSPosition.getState();
 				close(1);
 			}
 			if (ev.target == btnCurrentCentre) {
 				CoordsScreen cs = new CoordsScreen();
-				cs.setFields(Global.pref.getCurCentrePt(), TransformCoordinates.CW);
+				cs.setFields(Preferences.itself().getCurCentrePt(), TransformCoordinates.CW);
 				if (cs.execute() == FormBase.IDOK) {
-					Global.pref.setCurCentrePt(cs.getCoords());
-					btnCurrentCentre.setText(Global.pref.getCurCentrePt().toString());
-					Global.profile.updateBearingDistance();
+					Preferences.itself().setCurCentrePt(cs.getCoords());
+					btnCurrentCentre.setText(Preferences.itself().getCurCentrePt().toString());
+					MainForm.profile.updateBearingDistance();
 				}
 			}
 			if (ev.target == btnProfileCentre) {
 				CoordsScreen cs = new CoordsScreen();
-				cs.setFields(Global.profile.centre, TransformCoordinates.CW);
+				cs.setFields(MainForm.profile.centre, TransformCoordinates.CW);
 				if (cs.execute() == FormBase.IDOK) {
-					Global.profile.notifyUnsavedChanges(cs.getCoords().equals(Global.profile.centre));
-					Global.profile.centre.set(cs.getCoords());
-					btnProfileCentre.setText(Global.profile.centre.toString());
+					MainForm.profile.notifyUnsavedChanges(cs.getCoords().equals(MainForm.profile.centre));
+					MainForm.profile.centre.set(cs.getCoords());
+					btnProfileCentre.setText(MainForm.profile.centre.toString());
 				}
 			}
 			if (ev.target == btnCur2Prof) {
-				Global.profile.notifyUnsavedChanges(Global.pref.getCurCentrePt().equals(Global.profile.centre));
-				Global.profile.centre.set(Global.pref.getCurCentrePt());
-				btnProfileCentre.setText(Global.profile.centre.toString());
+				MainForm.profile.notifyUnsavedChanges(Preferences.itself().getCurCentrePt().equals(MainForm.profile.centre));
+				MainForm.profile.centre.set(Preferences.itself().getCurCentrePt());
+				btnProfileCentre.setText(MainForm.profile.centre.toString());
 			}
 			if (ev.target == btnProf2Cur) {
-				Global.pref.setCurCentrePt(Global.profile.centre);
-				btnCurrentCentre.setText(Global.pref.getCurCentrePt().toString());
-				Global.profile.updateBearingDistance();
+				Preferences.itself().setCurCentrePt(MainForm.profile.centre);
+				btnCurrentCentre.setText(Preferences.itself().getCurCentrePt().toString());
+				MainForm.profile.updateBearingDistance();
 			}
 		}
 		super.onEvent(ev);

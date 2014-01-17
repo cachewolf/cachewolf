@@ -21,9 +21,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 package CacheWolf;
 
+import CacheWolf.database.CWPoint;
 import CacheWolf.database.CacheHolder;
 import CacheWolf.database.CacheType;
-import CacheWolf.navi.CWPoint;
 import CacheWolf.navi.Metrics;
 import CacheWolf.navi.Navigate;
 import CacheWolf.navi.TransformCoordinates;
@@ -73,7 +73,7 @@ public final class CalcPanel extends CellPanel {
     private Menu mnuContextFormt;
 
     public CalcPanel() {
-	mainTab = Global.mainTab;
+	mainTab = MainTab.itself;
 
 	CellPanel buttonPanel = new CellPanel();
 	buttonPanel.equalWidths = true;
@@ -81,7 +81,7 @@ public final class CalcPanel extends CellPanel {
 	btnGoto.setToolTip(MyLocale.getMsg(326, "Set as destination and show Compass View"));
 	buttonPanel.addLast(btnSave = GuiImageBroker.getButton(MyLocale.getMsg(311, "Create Waypoint"), "newwpt"));
 	btnSave.setToolTip(MyLocale.getMsg(311, "Create Waypoint"));
-	if (!Global.pref.tabsAtTop)
+	if (!Preferences.itself().tabsAtTop)
 	    this.addLast(buttonPanel, CellConstants.HSTRETCH, CellConstants.HFILL);
 
 	CellPanel TopP = new CellPanel();
@@ -127,7 +127,7 @@ public final class CalcPanel extends CellPanel {
 		INSETS, new ewe.fx.Insets(0, 2, 0, 0));
 	BottomP.addLast(btnCalc = GuiImageBroker.getButton(MyLocale.getMsg(1735, "Solve!"), "calc"), DONTSTRETCH, HFILL);
 
-	if (Global.pref.metricSystem == Metrics.METRIC) {
+	if (Preferences.itself().metricSystem == Metrics.METRIC) {
 	    chcDistUnit.setInt(0); // Meter
 	} else {
 	    chcDistUnit.setInt(3); // Feet
@@ -142,7 +142,7 @@ public final class CalcPanel extends CellPanel {
 	// add Panels
 	this.addLast(TopP, HSTRETCH, HFILL);// .setTag(SPAN,new Dimension(4,1));
 	this.addLast(BottomP); //, VSTRETCH, VFILL | LEFT // .setTag(SPAN,new Dimension(4,1));
-	if (Global.pref.tabsAtTop)
+	if (Preferences.itself().tabsAtTop)
 	    this.addLast(buttonPanel, CellConstants.HSTRETCH, CellConstants.HFILL);
     }
 

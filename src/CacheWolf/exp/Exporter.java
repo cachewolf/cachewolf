@@ -21,8 +21,9 @@
 */
 package CacheWolf.exp;
 
-import CacheWolf.Global;
+import CacheWolf.MainForm;
 import CacheWolf.MyLocale;
+import CacheWolf.Preferences;
 import CacheWolf.controls.InfoBox;
 import CacheWolf.database.CacheDB;
 import CacheWolf.database.CacheHolder;
@@ -74,7 +75,7 @@ public class Exporter {
     String expName;
 
     public Exporter() {
-	cacheDB = Global.profile.cacheDB;
+	cacheDB = MainForm.profile.cacheDB;
 	howManyParams = LAT_LON;
 	expName = this.getClass().getName();
 	// remove package
@@ -123,7 +124,7 @@ public class Exporter {
 		ch = cacheDB.get(i);
 		if (ch.isVisible()) {
 		    if (ch.is_incomplete()) {
-			Global.pref.log("skipping export of incomplete waypoint " + ch.getWayPoint());
+			Preferences.itself().log("skipping export of incomplete waypoint " + ch.getWayPoint());
 			incompleteWaypoints++;
 			continue;
 		    }
@@ -171,7 +172,7 @@ public class Exporter {
 		new InfoBox(MyLocale.getMsg(5500, "Error"), incompleteWaypoints + " incomplete waypoints have not been exported. See log for details.").wait(FormBase.OKB);
 	    }
 	} catch (IOException ioE) {
-	    Global.pref.log("Error opening " + outFile.getName(), ioE);
+	    Preferences.itself().log("Error opening " + outFile.getName(), ioE);
 	}
 	// try
     }
@@ -228,12 +229,12 @@ public class Exporter {
      */
     public File getOutputFile() {
 	File file;
-	FileChooser fc = new FileChooser(FileChooserBase.SAVE, Global.pref.getExportPath(expName));
+	FileChooser fc = new FileChooser(FileChooserBase.SAVE, Preferences.itself().getExportPath(expName));
 	fc.setTitle("Select target file:");
 	fc.addMask(mask);
 	if (fc.execute() != FormBase.IDCANCEL) {
 	    file = fc.getChosenFile();
-	    Global.pref.setExportPath(expName, file.getPath());
+	    Preferences.itself().setExportPath(expName, file.getPath());
 	    return file;
 	} else {
 	    return null;

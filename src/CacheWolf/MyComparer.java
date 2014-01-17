@@ -36,7 +36,7 @@ public class MyComparer implements Comparer {
     Vector cacheDB;
 
     public MyComparer(CacheDB cacheDB, int colToCompare, int visibleSize) {
-	// visibleSize=Global.mainTab.tbP.myMod.numRows;
+	// visibleSize=MainTab.itself.tbP.myMod.numRows;
 	if (visibleSize < 2)
 	    return;
 	for (int i = visibleSize; i < cacheDB.size(); i++) {

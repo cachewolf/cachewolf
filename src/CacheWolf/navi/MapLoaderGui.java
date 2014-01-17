@@ -22,14 +22,17 @@
 package CacheWolf.navi;
 
 import CacheWolf.CoordsScreen;
-import CacheWolf.Global;
+import CacheWolf.MainForm;
+import CacheWolf.MainTab;
 import CacheWolf.MyLocale;
-import CacheWolf.UrlFetcher;
+import CacheWolf.Preferences;
 import CacheWolf.controls.ExecutePanel;
 import CacheWolf.controls.InfoBox;
+import CacheWolf.database.CWPoint;
 import CacheWolf.database.CacheDB;
 import CacheWolf.database.CacheHolder;
 import CacheWolf.utils.Common;
+import CacheWolf.utils.UrlFetcher;
 import ewe.fx.Point;
 import ewe.io.File;
 import ewe.io.IOException;
@@ -76,7 +79,7 @@ public class MapLoaderGui extends Form {
     mComboBox scaleInput = new mComboBox();
     mComboBox scaleInputPerCache = new mComboBox();
     mLabel overlappingLbl = new mLabel(MyLocale.getMsg(1808, "overlapping in pixel:"));
-    mInput overlappingInput = new mInput("" + Global.pref.mapOverlapping);
+    mInput overlappingInput = new mInput("" + Preferences.itself().mapOverlapping);
     mCheckBox fetchOnlyMapWithCacheChkBox = new mCheckBox(MyLocale.getMsg(165, "only for caches"));
     mCheckBox smallTiles = new mCheckBox(MyLocale.getMsg(4280, "Small Tiles"));
     mCheckBox bigTiles = new mCheckBox(MyLocale.getMsg(4282, "BigTiles"));
@@ -105,14 +108,14 @@ public class MapLoaderGui extends Form {
 	super();
 	isCreated = false;
 	this.title = MyLocale.getMsg(1800, "Download georeferenced maps");
-	center = new CWPoint(Global.pref.getCurCentrePt());
+	center = new CWPoint(Preferences.itself().getCurCentrePt());
 	cacheDB = cacheDBi;
 	mapLoader = new MapLoader();
 
 	// sort the items in the list of services in a way that services which cover the current center point.
 	unsortedMapServices = mapLoader.getAvailableOnlineMapServices(center);
 	if (unsortedMapServices.length <= 0) {
-	    Global.pref.log("no OnlineMapServices defined");
+	    Preferences.itself().log("no OnlineMapServices defined");
 	    return;
 	}
 	sortMapServices();
@@ -131,8 +134,8 @@ public class MapLoaderGui extends Form {
 	pnlTiles.addLast(cachesLbl);
 	pnlTiles.addNext(distLbl = new mLabel(MyLocale.getMsg(1810, "Within a rectangle of:")), DONTSTRETCH, (DONTFILL | WEST));
 	distanceInput = new mInput();
-	int tmp = Convert.toInt((Global.profile.getDistOC()));
-	tmp = java.lang.Math.max(tmp, Convert.toInt((Global.profile.getDistGC())));
+	int tmp = Convert.toInt((MainForm.profile.getDistOC()));
+	tmp = java.lang.Math.max(tmp, Convert.toInt((MainForm.profile.getDistGC())));
 	distanceInput.setText(Convert.toString((tmp > 0 ? tmp : 15)));
 	pnlTiles.addNext(distanceInput, DONTSTRETCH, (DONTFILL | WEST));
 	pnlTiles.addLast(km);
@@ -212,8 +215,8 @@ public class MapLoaderGui extends Form {
 	tileHeightInput.setText(Integer.toString(ih));
 	pnlTilestileWidthInput.setText(Integer.toString(iw));
 	pnlTilestileHeightInput.setText(Integer.toString(ih));
-	Global.pref.tileheight = ih;
-	Global.pref.tilewidth = iw;
+	Preferences.itself().tileheight = ih;
+	Preferences.itself().tilewidth = iw;
     }
 
     private void checkTileWidthInput(String w) {
@@ -224,7 +227,7 @@ public class MapLoaderGui extends Form {
 	    iw = mapLoader.getCurrentOnlineMapService().maxPixelSize;
 	tileWidthInput.setText(Integer.toString(iw));
 	pnlTilestileWidthInput.setText(Integer.toString(iw));
-	Global.pref.tilewidth = iw;
+	Preferences.itself().tilewidth = iw;
     }
 
     private void checkTileHeightInput(String h) {
@@ -235,7 +238,7 @@ public class MapLoaderGui extends Form {
 	    ih = mapLoader.getCurrentOnlineMapService().maxPixelSize;
 	tileHeightInput.setText(Integer.toString(ih));
 	pnlTilestileHeightInput.setText(Integer.toString(ih));
-	Global.pref.tileheight = ih;
+	Preferences.itself().tileheight = ih;
     }
 
     private void setRecommScaleInput() {
@@ -308,7 +311,7 @@ public class MapLoaderGui extends Form {
     }
 
     private String getMapsDir() {
-	String mapsDir = Global.profile.getMapsDir() + Common.ClearForFileName(mapLoader.getCurrentOnlineMapService().getMapType()) + "/";
+	String mapsDir = MainForm.profile.getMapsDir() + Common.ClearForFileName(mapLoader.getCurrentOnlineMapService().getMapType()) + "/";
 	// check and create mapsDir
 	if (!(new File(mapsDir).isDirectory())) {
 	    if (new File(mapsDir).mkdirs() == false) {
@@ -331,10 +334,10 @@ public class MapLoaderGui extends Form {
 	mapLoader.setProgressInfoBox(progressBox);
 	Vm.showWait(true);
 
-	Point TileSizeInPixels = new Point(Global.pref.tilewidth, Global.pref.tileheight);
+	Point TileSizeInPixels = new Point(Preferences.itself().tilewidth, Preferences.itself().tileheight);
 	if (forCachesChkBox.getState() || perCache) {
 	    // calculate map boundaries from cacheDB
-	    Area surArea = Global.profile.getSourroundingArea(onlySelected);
+	    Area surArea = MainForm.profile.getSourroundingArea(onlySelected);
 	    if (surArea == null) {
 		new InfoBox(MyLocale.getMsg(5500, "Error"), MyLocale.getMsg(1817, "No Caches are selected")).wait(FormBase.OKB);
 		Vm.showWait(false);
@@ -370,8 +373,8 @@ public class MapLoaderGui extends Form {
 	} else {
 	    CacheHolder ch;
 	    int numdownloaded = 0;
-	    Global.profile.getSourroundingArea(onlySelected);
-	    int numCaches = Global.profile.numCachesInArea;
+	    MainForm.profile.getSourroundingArea(onlySelected);
+	    int numCaches = MainForm.profile.numCachesInArea;
 	    for (int i = cacheDB.size() - 1; i >= 0; i--) {
 		if (!progressBox.isClosed()) {
 		    ch = cacheDB.get(i);
@@ -391,11 +394,11 @@ public class MapLoaderGui extends Form {
 	    }
 	}
 	if (!progressBox.isClosed()) {
-	    if (Global.mainTab.movingMap != null)
-		Global.mainTab.movingMap.setMapsloaded(false);
+	    if (MainTab.itself.movingMap != null)
+		MainTab.itself.movingMap.setMapsloaded(false);
 	    // rebuild MapsList.txt
 	    progressBox.setInfo("rebuild MapsList.txt");
-	    File MapsListFile = new File(Global.profile.getMapsDir() + "/MapsList.txt");
+	    File MapsListFile = new File(MainForm.profile.getMapsDir() + "/MapsList.txt");
 	    MapsListFile.delete();
 	    MapsList maps = new MapsList(center.latDec);
 	    maps.clear();
@@ -527,7 +530,7 @@ public class MapLoaderGui extends Form {
 	    } else if (ev.target == scaleInputPerCache) {
 		scale = checkScale(Common.parseDouble(scaleInputPerCache.getText()));
 	    } else if (ev.target == overlappingInput) {
-		Global.pref.mapOverlapping = Convert.toInt(overlappingInput.getText());
+		Preferences.itself().mapOverlapping = Convert.toInt(overlappingInput.getText());
 	    }
 	}
 	super.onEvent(ev);

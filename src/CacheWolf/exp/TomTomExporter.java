@@ -21,7 +21,8 @@
 */
 package CacheWolf.exp;
 
-import CacheWolf.Global;
+import CacheWolf.MainForm;
+import CacheWolf.Preferences;
 import CacheWolf.database.CacheDB;
 import CacheWolf.database.CacheHolder;
 import CacheWolf.database.CacheSize;
@@ -54,7 +55,7 @@ public class TomTomExporter {
     CacheDB cacheDB;
 
     public TomTomExporter() {
-	cacheDB = Global.profile.cacheDB;
+	cacheDB = MainForm.profile.cacheDB;
     }
 
     public void doIt() {
@@ -66,7 +67,7 @@ public class TomTomExporter {
 	    return;
 	fileFormat = infoScreen.getFormat();
 
-	dirName = Global.pref.getExportPath(expName);
+	dirName = Preferences.itself().getExportPath(expName);
 
 	if (infoScreen.oneFilePerType()) {
 	    FileChooser fc = new FileChooser(FileChooserBase.DIRECTORY_SELECT, dirName);
@@ -74,7 +75,7 @@ public class TomTomExporter {
 	    if (fc.execute() == FormBase.IDCANCEL)
 		return;
 	    dirName = fc.getChosen();
-	    Global.pref.setExportPath(expName, dirName);
+	    Preferences.itself().setExportPath(expName, dirName);
 	    prefix = infoScreen.getPrefix();
 	    writeOneFilePerType(fileFormat, dirName, prefix);
 	} else {
@@ -89,7 +90,7 @@ public class TomTomExporter {
 	    if (fc.execute() == FormBase.IDCANCEL)
 		return;
 	    fileName = fc.getChosen();
-	    Global.pref.setExportPathFromFileName(expName, fileName);
+	    Preferences.itself().setExportPathFromFileName(expName, fileName);
 	    writeSingleFile(fileFormat, fileName);
 	}
     }
@@ -156,7 +157,7 @@ public class TomTomExporter {
 	    }// for wayType
 	    progressForm.exit(0);
 	} catch (IOException e) {
-	    Global.pref.log("Problem creating file! " + fileName, e, true);
+	    Preferences.itself().log("Problem creating file! " + fileName, e, true);
 	}// try
     }
 
@@ -198,7 +199,7 @@ public class TomTomExporter {
 	    copyIcon(0, fileName.substring(0, fileName.indexOf(".")), "");
 	    pbf.exit(0);
 	} catch (Exception e) {
-	    Global.pref.log("Problem writing to file! " + fileName, e, true);
+	    Preferences.itself().log("Problem writing to file! " + fileName, e, true);
 	}// try
     }
 
@@ -223,7 +224,7 @@ public class TomTomExporter {
 	    outp.writeBytes(CacheSize.cw2ExportString(ch.getCacheSize()));
 	    outp.writeBytes("\"\r\n");
 	} catch (IOException e) {
-	    Global.pref.log("Error writing to file", e, true);
+	    Preferences.itself().log("Error writing to file", e, true);
 	}
 	return;
     }
@@ -262,7 +263,7 @@ public class TomTomExporter {
 	    d = 0;
 	    outp.writeByte((byte) d);
 	} catch (IOException e) {
-	    Global.pref.log("Error writing to file", e, true);
+	    Preferences.itself().log("Error writing to file", e, true);
 	}
 
 	return;
@@ -278,7 +279,7 @@ public class TomTomExporter {
 	    outp.writeByte(buf.data[1]);
 	    outp.writeByte(buf.data[0]);
 	} catch (IOException e) {
-	    Global.pref.log("Error writing to file", e, true);
+	    Preferences.itself().log("Error writing to file", e, true);
 	}
 
 	return;
@@ -312,9 +313,9 @@ public class TomTomExporter {
 	    fos.close();
 	    fis.close();
 	} catch (ZipException e) {
-	    Global.pref.log("Problem copying Icon " + "GC-" + typeName + ".bmp", e, true);
+	    Preferences.itself().log("Problem copying Icon " + "GC-" + typeName + ".bmp", e, true);
 	} catch (IOException e) {
-	    Global.pref.log("Problem copying Icon " + "GC-" + typeName + ".bmp", e, true);
+	    Preferences.itself().log("Problem copying Icon " + "GC-" + typeName + ".bmp", e, true);
 	}
     }
 

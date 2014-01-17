@@ -21,8 +21,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 package CacheWolf.controls;
 
-import CacheWolf.Global;
+import CacheWolf.MainForm;
 import CacheWolf.MyLocale;
+import CacheWolf.Preferences;
 import CacheWolf.Profile;
 import CacheWolf.database.CacheDB;
 import CacheWolf.database.CacheHolder;
@@ -33,9 +34,15 @@ import ewe.io.FileBase;
 import ewe.io.FileInputStream;
 import ewe.io.FileOutputStream;
 import ewe.sys.Handle;
+import ewe.ui.CellConstants;
+import ewe.ui.CheckBoxGroup;
+import ewe.ui.Event;
+import ewe.ui.Form;
 import ewe.ui.FormBase;
 import ewe.ui.Gui;
 import ewe.ui.ProgressBarForm;
+import ewe.ui.mCheckBox;
+import ewe.ui.mLabel;
 import ewe.util.Iterator;
 
 /**
@@ -47,7 +54,7 @@ public class DataMover {
     private CacheDB srcDB;
 
     public DataMover() {
-	srcDB = Global.profile.cacheDB;
+	srcDB = MainForm.profile.cacheDB;
     }
 
     public void deleteCaches() {
@@ -59,14 +66,14 @@ public class DataMover {
 
 	processCaches(new Deleter(MyLocale.getMsg(143, "Delete")), mode);
 	// write indexfiles
-	Global.profile.saveIndex(Profile.SHOW_PROGRESS_BAR);
+	MainForm.profile.saveIndex(Profile.SHOW_PROGRESS_BAR);
     }
 
     public void copyCaches() {
 	Profile dstProfile = new Profile();
 
 	dstProfile.dataDir = selectTargetDir();
-	if (dstProfile.dataDir.equals(Global.profile.dataDir) || dstProfile.dataDir.equals(""))
+	if (dstProfile.dataDir.equals(MainForm.profile.dataDir) || dstProfile.dataDir.equals(""))
 	    return;
 
 	//Von Andi P
@@ -163,7 +170,7 @@ public class DataMover {
 	Profile dstProfile = new Profile();
 	// Select destination directory
 	dstProfile.dataDir = selectTargetDir();
-	if (dstProfile.dataDir.equals(Global.profile.dataDir) || dstProfile.dataDir.equals(""))
+	if (dstProfile.dataDir.equals(MainForm.profile.dataDir) || dstProfile.dataDir.equals(""))
 	    return;
 
 	int mode = showMessage(252, "All waypoints will be moved");
@@ -179,7 +186,7 @@ public class DataMover {
 	processCaches(new Mover(MyLocale.getMsg(142, "Move"), dstProfile), mode);
 	// write indexfiles
 	dstProfile.saveIndex(Profile.SHOW_PROGRESS_BAR);
-	Global.profile.saveIndex(Profile.SHOW_PROGRESS_BAR);
+	MainForm.profile.saveIndex(Profile.SHOW_PROGRESS_BAR);
     }
 
     /**
@@ -260,7 +267,7 @@ public class DataMover {
 
     private String selectTargetDir() {
 	// Select destination directory
-	FileChooser fc = new FileChooser(FileChooserBase.DIRECTORY_SELECT, Global.pref.absoluteBaseDir);
+	FileChooser fc = new FileChooser(FileChooserBase.DIRECTORY_SELECT, Preferences.itself().absoluteBaseDir);
 	fc.setTitle(MyLocale.getMsg(148, "Select Target directory"));
 	if (fc.execute() != FormBase.IDCANCEL) {
 	    return fc.getChosen() + "/";
@@ -335,7 +342,7 @@ public class DataMover {
 	    fos.close();
 	    fis.close();
 	} catch (Exception ex) {
-	    Global.pref.log("Filecopy failed: " + sFileSrc + "=>" + sFileDst, ex, true);
+	    Preferences.itself().log("Filecopy failed: " + sFileSrc + "=>" + sFileDst, ex, true);
 	    return false;
 	}
 	return true;
@@ -363,14 +370,14 @@ public class DataMover {
 	    pbf.exec();
 	    h.progress = (float) 0.5;
 	    h.changed();
-	    File destPath = new File(Global.profile.dataDir);
+	    File destPath = new File(MainForm.profile.dataDir);
 	    destFileList = destPath.list(null, FileBase.LIST_FILES_ONLY | FileBase.LIST_DONT_SORT); // null == *.* so no FileBugfix needed
 	    pbf.exit(0);
 	}
 
 	public void doIt(int i, CacheHolder srcHolder) {
 	    srcDB.removeElementAt(i);
-	    deleteCacheFiles(srcHolder.getWayPoint(), Global.profile.dataDir, destFileList);
+	    deleteCacheFiles(srcHolder.getWayPoint(), MainForm.profile.dataDir, destFileList);
 	}
     }
 
@@ -384,7 +391,7 @@ public class DataMover {
 	    pbf.exec();
 	    h.progress = (float) 0.33;
 	    h.changed();
-	    File srcPath = new File(Global.profile.dataDir);
+	    File srcPath = new File(MainForm.profile.dataDir);
 	    srcFileList = srcPath.list(null, FileBase.LIST_FILES_ONLY | FileBase.LIST_DONT_SORT); // null == *.* so no FileBugfix needed
 	    pbf.setTask(h, "Be patient. Reading Destination Directory");
 	    h.progress = (float) 0.66;
@@ -397,7 +404,7 @@ public class DataMover {
 	public void doIt(int i, CacheHolder srcHolder) {
 	    srcHolder.save();
 	    deleteCacheFiles(srcHolder.getWayPoint(), dstProfile.dataDir, destFileList);
-	    copyCacheFiles(srcHolder.getWayPoint(), Global.profile.dataDir, dstProfile.dataDir, srcFileList);
+	    copyCacheFiles(srcHolder.getWayPoint(), MainForm.profile.dataDir, dstProfile.dataDir, srcFileList);
 	    // does cache exists in destDB ?
 	    // Update database
 	    //*wall* when copying addis without their maincache, the maincache in the srcDB will be set to null on saving the dstProfile later.
@@ -430,7 +437,7 @@ public class DataMover {
 	    pbf.exec();
 	    h.progress = (float) 0.33;
 	    h.changed();
-	    File srcPath = new File(Global.profile.dataDir);
+	    File srcPath = new File(MainForm.profile.dataDir);
 	    srcFileList = srcPath.list(null, FileBase.LIST_FILES_ONLY | FileBase.LIST_DONT_SORT); // null == *.* so no FileBugfix needed
 	    pbf.setTask(h, "Be patient. Reading Destination Directory");
 	    h.progress = (float) 0.66;
@@ -443,7 +450,7 @@ public class DataMover {
 	public void doIt(int i, CacheHolder srcHolder) {
 	    srcDB.removeElementAt(i);
 	    deleteCacheFiles(srcHolder.getWayPoint(), dstProfile.dataDir, destFileList);
-	    moveCacheFiles(srcHolder.getWayPoint(), Global.profile.dataDir, dstProfile.dataDir, srcFileList);
+	    moveCacheFiles(srcHolder.getWayPoint(), MainForm.profile.dataDir, dstProfile.dataDir, srcFileList);
 	    // does cache exists in destDB ?
 	    // Update database
 	    int dstPos = dstProfile.getCacheIndex(srcHolder.getWayPoint());
@@ -454,6 +461,73 @@ public class DataMover {
 		dstProfile.cacheDB.add(srcHolder);
 	    }
 	    i--;
+	}
+    }
+}
+
+class DataMoverForm extends Form {
+    private mCheckBox ticked, visible, tickedVisible;
+    private CheckBoxGroup chkFormat = new CheckBoxGroup();
+    private mLabel firstLine;
+
+    public DataMoverForm(String tickedText, String visibleText, String tickedVisibleText, String firstLineText) {
+	title = MyLocale.getMsg(144, "Warning");
+	ticked = new mCheckBox(MyLocale.getMsg(254, "All visible"));
+	ticked.setGroup(chkFormat);
+	visible = new mCheckBox(MyLocale.getMsg(255, "All ticked"));
+	visible.setGroup(chkFormat);
+	tickedVisible = new mCheckBox(MyLocale.getMsg(256, "All visible and ticked"));
+	tickedVisible.setGroup(chkFormat);
+	firstLine = new mLabel("");
+	firstLine.anchor = CellConstants.CENTER;
+	addLast(firstLine);
+	addLast(visible);
+	addLast(ticked);
+	addLast(tickedVisible);
+	mLabel continueQuestion = new mLabel(MyLocale.getMsg(259, "Do You really want to continue?"));
+	continueQuestion.anchor = CellConstants.CENTER;
+	addLast(continueQuestion);
+	doButtons(FormBase.YESB | FormBase.CANCELB);
+	setModefromPref();
+	ticked.text = tickedText;
+	visible.text = visibleText;
+	tickedVisible.text = tickedVisibleText;
+	firstLine.text = firstLineText;
+    }
+
+    /**
+     * Gets the last mode from the preferences
+     */
+    private void setModefromPref() {
+	switch (Preferences.itself().processorMode) {
+	case 1:
+	    ticked.setState(true);
+	    break;
+	case 2:
+	    tickedVisible.setState(true);
+	    break;
+	case 0:
+	    visible.setState(true);
+	    break;
+	}
+    }
+
+    public void onEvent(Event ev) {
+	if (ev.target == yes || ev.target == no) {
+	    Preferences.itself().processorMode = getMode();
+	}
+	super.onEvent(ev);
+    }
+
+    public int getMode() {
+	if (visible.getState()) {
+	    return 0;
+	} else if (ticked.getState()) {
+	    return 1;
+	} else if (tickedVisible.getState()) {
+	    return 2;
+	} else {
+	    throw new IllegalStateException("No radiobutton selected");
 	}
     }
 }

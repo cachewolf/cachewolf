@@ -25,7 +25,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import CacheWolf.Global;
+import CacheWolf.Preferences;
+import CacheWolf.database.CWPoint;
 import CacheWolf.utils.Common;
 import CacheWolf.utils.Extractor;
 import ewe.io.FileWriter;
@@ -154,7 +155,7 @@ public class CWGPSPoint extends CWPoint implements TimerProc {
 	try {
 	    logFile = new FileWriter(logFileName);
 	} catch (IOException e) {
-	    Global.pref.log("Error creating LogFile " + logFileName, e, true);
+	    Preferences.itself().log("Error creating LogFile " + logFileName, e, true);
 	    return -1;
 	}
 	// start timer
@@ -230,7 +231,7 @@ public class CWGPSPoint extends CWPoint implements TimerProc {
 			logFile.write(NMEA.substring(start, end + 3) + "\n");
 			logWritten = true;
 		    } catch (IOException e) {
-			// Global.pref.log("Ignored Exception", e, true);
+			// Preferences.itself().log("Ignored Exception", e, true);
 		    }
 		}
 
@@ -299,7 +300,7 @@ public class CWGPSPoint extends CWPoint implements TimerProc {
 				this.HDOP = Common.parseDouble(currToken);
 				interpreted = true;
 			    } catch (NumberFormatException e) {
-				// Global.pref.log("Ignored Exception", e, true);
+				// Preferences.itself().log("Ignored Exception", e, true);
 			    }
 			    break;
 			case 9:
@@ -307,7 +308,7 @@ public class CWGPSPoint extends CWPoint implements TimerProc {
 				this.Alt = Common.parseDouble(currToken);
 				interpreted = true;
 			    } catch (NumberFormatException e) {
-				// Global.pref.log("Ignored Exception", e, true);
+				// Preferences.itself().log("Ignored Exception", e, true);
 			    }
 			    break;
 			} // switch
@@ -327,17 +328,17 @@ public class CWGPSPoint extends CWPoint implements TimerProc {
 				this.Bear = Common.parseDouble(currToken);
 				interpreted = true;
 			    } catch (NumberFormatException e) {
-				// Global.pref.log("Ignored Exception", e, true);
+				// Preferences.itself().log("Ignored Exception", e, true);
 			    }
 			    if (this.Bear > 360)
-				Global.pref.log("Error bear VTG", null);
+				Preferences.itself().log("Error bear VTG", null);
 			    break;
 			case 7:
 			    try {
 				this.Speed = Common.parseDouble(currToken);
 				interpreted = true;
 			    } catch (NumberFormatException e) {
-				// Global.pref.log("Ignored Exception", e, true);
+				// Preferences.itself().log("Ignored Exception", e, true);
 			    }
 			    break;
 			} // switch
@@ -386,13 +387,13 @@ public class CWGPSPoint extends CWPoint implements TimerProc {
 				lonDeg = currToken.substring(0, 3);
 				interpreted = true;
 			    } catch (IndexOutOfBoundsException e) {
-				// Global.pref.log("Ignored Exception", e, true);
+				// Preferences.itself().log("Ignored Exception", e, true);
 			    }
 			    try {
 				lonMin = currToken.substring(3, currToken.length());
 				interpreted = true;
 			    } catch (IndexOutOfBoundsException e) {
-				// Global.pref.log("Ignored Exception", e, true);
+				// Preferences.itself().log("Ignored Exception", e, true);
 			    }
 			    break;
 			case 6:
@@ -405,7 +406,7 @@ public class CWGPSPoint extends CWPoint implements TimerProc {
 				    this.Speed = Common.parseDouble(currToken) * 1.854;
 				    interpreted = true;
 				} catch (NumberFormatException e) {
-				    // Global.pref.log("Ignored Exception", e, true);
+				    // Preferences.itself().log("Ignored Exception", e, true);
 				}
 			    }
 			    break;
@@ -415,7 +416,7 @@ public class CWGPSPoint extends CWPoint implements TimerProc {
 				    this.Bear = Common.parseDouble(currToken);
 				    interpreted = true;
 				} catch (NumberFormatException e) {
-				    // Global.pref.log("Ignored Exception", e, true);
+				    // Preferences.itself().log("Ignored Exception", e, true);
 				}
 			    }
 			    break;
@@ -425,7 +426,7 @@ public class CWGPSPoint extends CWPoint implements TimerProc {
 				    this.Date = currToken;
 				    interpreted = true;
 				} catch (NumberFormatException e) {
-				    // Global.pref.log("Ignored Exception", e, true);
+				    // Preferences.itself().log("Ignored Exception", e, true);
 				}
 			    }
 			    break;
@@ -455,7 +456,7 @@ public class CWGPSPoint extends CWPoint implements TimerProc {
 
 	    } // while
 	} catch (Exception e) {
-	    Global.pref.log("Exception in examine in CWGPSPoint", e, true);
+	    Preferences.itself().log("Exception in examine in CWGPSPoint", e, true);
 	}
 
 	if (logWritten)
@@ -636,16 +637,16 @@ public class CWGPSPoint extends CWPoint implements TimerProc {
     }
 
     public void printAll() {
-	Global.pref.log("Latitude:     " + this.getLatDeg(TransformCoordinates.DD));
-	Global.pref.log("Longitude:    " + this.getLonDeg(TransformCoordinates.DD));
-	Global.pref.log("Speed:        " + this.Speed);
-	Global.pref.log("Bearing:      " + this.Bear);
-	Global.pref.log("Time:         " + this.Time);
-	Global.pref.log("Fix:          " + this.Fix);
-	Global.pref.log("Sats:         " + this.numSat);
-	Global.pref.log("Sats in view: " + this.numSatsInView);
-	Global.pref.log("HDOP:         " + this.HDOP);
-	Global.pref.log("Alt:          " + this.Alt);
-	Global.pref.log("----------------");
+	Preferences.itself().log("Latitude:     " + this.getLatDeg(TransformCoordinates.DD));
+	Preferences.itself().log("Longitude:    " + this.getLonDeg(TransformCoordinates.DD));
+	Preferences.itself().log("Speed:        " + this.Speed);
+	Preferences.itself().log("Bearing:      " + this.Bear);
+	Preferences.itself().log("Time:         " + this.Time);
+	Preferences.itself().log("Fix:          " + this.Fix);
+	Preferences.itself().log("Sats:         " + this.numSat);
+	Preferences.itself().log("Sats in view: " + this.numSatsInView);
+	Preferences.itself().log("HDOP:         " + this.HDOP);
+	Preferences.itself().log("Alt:          " + this.Alt);
+	Preferences.itself().log("----------------");
     }
 }

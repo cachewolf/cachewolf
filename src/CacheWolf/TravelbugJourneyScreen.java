@@ -120,10 +120,10 @@ public class TravelbugJourneyScreen extends Form {
     private String waypoint = "";
 
     public TravelbugJourneyScreen() {
-	CacheDB cacheDB = Global.profile.cacheDB;
+	CacheDB cacheDB = MainForm.profile.cacheDB;
 	SplittablePanel split = new SplittablePanel(PanelSplitter.VERTICAL);
 	CellPanel tablepane = split.getNextPanel();
-	int curCacheNo = Global.mainTab.tablePanel.getSelectedCache();
+	int curCacheNo = MainTab.itself.tablePanel.getSelectedCache();
 	String cache = "";
 	if (curCacheNo >= 0 && curCacheNo < cacheDB.size()) {
 	    ch = cacheDB.get(curCacheNo);
@@ -214,13 +214,13 @@ public class TravelbugJourneyScreen extends Form {
 	tblMyTravelbugJourneys.readTravelbugsFile();
 	modTbJourneyList.numRows = tblMyTravelbugJourneys.size();
 	// Get the columns to display and their widths from preferences
-	modTbJourneyList.columnMap = TableColumnChooser.str2Array(Global.pref.travelbugColMap, 0, 11, 0, -1);
-	modTbJourneyList.colWidth = TableColumnChooser.str2Array(Global.pref.travelbugColWidth, 10, 1024, 50, -1);
+	modTbJourneyList.columnMap = TableColumnChooser.str2Array(Preferences.itself().travelbugColMap, 0, 11, 0, -1);
+	modTbJourneyList.colWidth = TableColumnChooser.str2Array(Preferences.itself().travelbugColWidth, 10, 1024, 50, -1);
 	modTbJourneyList.numCols = modTbJourneyList.columnMap.length;
 
 	modTbJourneyList.select(0, 12, true);
 	/* Restore the saved setting about showing only non-logged bugs */
-	if (Global.pref.travelbugShowOnlyNonLogged) {
+	if (Preferences.itself().travelbugShowOnlyNonLogged) {
 	    tcTbJourneyList.toggleNonLogged();
 	}
 	updateNumBugs();
@@ -315,14 +315,14 @@ public class TravelbugJourneyScreen extends Form {
 	    tblMyTravelbugJourneys.saveTravelbugsFile();
 	    tblMyTravelbugJourneys.clear();
 	    // Save the flag about showing non-logged journeys only
-	    boolean old = Global.pref.travelbugShowOnlyNonLogged;
-	    Global.pref.travelbugShowOnlyNonLogged = (tcTbJourneyList.mnuToggleList.modifiers & MenuItem.Checked) == MenuItem.Checked;
+	    boolean old = Preferences.itself().travelbugShowOnlyNonLogged;
+	    Preferences.itself().travelbugShowOnlyNonLogged = (tcTbJourneyList.mnuToggleList.modifiers & MenuItem.Checked) == MenuItem.Checked;
 	    String travelbugColWidth = modTbJourneyList.getColWidths();
 	    // If the preferences changed, save the pref.xml file
 	    Vm.showWait(true);
-	    if (!Global.pref.travelbugColWidth.equals(travelbugColWidth) || old != Global.pref.travelbugShowOnlyNonLogged) {
-		Global.pref.travelbugColWidth = travelbugColWidth;
-		Global.pref.savePreferences();
+	    if (!Preferences.itself().travelbugColWidth.equals(travelbugColWidth) || old != Preferences.itself().travelbugShowOnlyNonLogged) {
+		Preferences.itself().travelbugColWidth = travelbugColWidth;
+		Preferences.itself().savePreferences();
 	    }
 	    // If the list of travelbugs in the cache was modified, we need to save the cache too
 	    if (chDmodified) {
@@ -568,7 +568,7 @@ public class TravelbugJourneyScreen extends Form {
 		Travelbug tb = TravelbugPickup.pickupTravelbug(tblSrcCache);
 		if (tb != null) {
 		    chDmodified = true;
-		    tblMyTravelbugJourneys.addTbPickup(tb, Global.profile.name, waypoint);
+		    tblMyTravelbugJourneys.addTbPickup(tb, MainForm.profile.name, waypoint);
 		    modTbJourneyList.numRows = tblMyTravelbugJourneys.size();
 		    tcTbJourneyList.repaint();
 		}
@@ -577,7 +577,7 @@ public class TravelbugJourneyScreen extends Form {
 		if (selectedRow >= 0 && selectedRow < modTbJourneyList.numRows) {
 		    Travelbug tb = tblMyTravelbugJourneys.getTBJourney(selectedRow).getTb();
 		    chD.Travelbugs.add(tb);
-		    tblMyTravelbugJourneys.addTbDrop(tb, Global.profile.name, waypoint);
+		    tblMyTravelbugJourneys.addTbDrop(tb, MainForm.profile.name, waypoint);
 		    chDmodified = true;
 		    ch.setHas_bugs(true);
 		}
@@ -585,7 +585,7 @@ public class TravelbugJourneyScreen extends Form {
 	    }
 	    if (selectedItem == mnuNewTB) {
 		TravelbugJourney tbj = new TravelbugJourney("New");
-		tbj.setFromProfile(Global.profile.name);
+		tbj.setFromProfile(MainForm.profile.name);
 		tbj.setFromWaypoint(waypoint);
 		tblMyTravelbugJourneys.add(tbj);
 		modTbJourneyList.numRows = tblMyTravelbugJourneys.size();
@@ -643,7 +643,7 @@ public class TravelbugJourneyScreen extends Form {
 		inpName.setText(tbj.getTb().getName());
 		lblId.setText(tbj.getTb().getGuid());
 		lowerpane.repaint();
-		Global.pref.setOldGCLanguage();
+		Preferences.itself().setOldGCLanguage();
 	    }
 	    if (selectedItem == mnuOpenOnline && selectedRow >= 0) {
 		TravelbugJourney tbj = tblMyTravelbugJourneys.getTBJourney(selectedRow);
@@ -661,13 +661,13 @@ public class TravelbugJourneyScreen extends Form {
 			else
 			    s = "http://www.geocaching.com/track/details.aspx?id=" + tbj.getTb().getGuid();
 
-			CWWrapper.exec(Global.pref.browser, s);
-			Global.pref.log("Executed: \"" + Global.pref.browser + "\" \"" + s + "\"");
+			CWWrapper.exec(Preferences.itself().browser, s);
+			Preferences.itself().log("Executed: \"" + Preferences.itself().browser + "\" \"" + s + "\"");
 		    } catch (Exception ioex) {
-			// Global.pref.log("Ignored Exception", ioex, true);
+			// Preferences.itself().log("Ignored Exception", ioex, true);
 		    }
 		}
-		Global.pref.setOldGCLanguage();
+		Preferences.itself().setOldGCLanguage();
 	    }
 	    if (selectedItem == mnuToggleList) {
 		toggleNonLogged();

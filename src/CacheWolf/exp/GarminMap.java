@@ -22,7 +22,7 @@
 package CacheWolf.exp;
 
 import CacheWolf.database.CacheHolder;
-import CacheWolf.Global;
+import CacheWolf.Preferences;
 import CacheWolf.database.CacheSize;
 import CacheWolf.database.CacheTerrDiff;
 import ewe.io.File;
@@ -59,9 +59,9 @@ public class GarminMap extends MinML {
 	} catch (Exception e) {
 	    exists = false;
 	    if (e instanceof NullPointerException)
-		Global.pref.log("Error reading garminmap.xml: NullPointerException in Element " + lastName + ". Wrong attribute?", e, true);
+		Preferences.itself().log("Error reading garminmap.xml: NullPointerException in Element " + lastName + ". Wrong attribute?", e, true);
 	    else
-		Global.pref.log("Error reading garminmap.xml: ", e);
+		Preferences.itself().log("Error reading garminmap.xml: ", e);
 	}
     }
 

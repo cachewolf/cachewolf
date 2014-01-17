@@ -22,9 +22,12 @@
 package CacheWolf.navi;
 
 import CacheWolf.CoordsScreen;
-import CacheWolf.Global;
+import CacheWolf.MainForm;
+import CacheWolf.MainTab;
 import CacheWolf.MyLocale;
+import CacheWolf.Preferences;
 import CacheWolf.controls.InfoBox;
+import CacheWolf.database.CWPoint;
 import CacheWolf.utils.Common;
 import ewe.filechooser.FileChooser;
 import ewe.filechooser.FileChooserBase;
@@ -81,7 +84,7 @@ public class MapImporter extends Form {
      * This constructor should be used when importing maps
      */
     public MapImporter() {
-	mapsPath = Global.profile.getMapsDir(); // import to the actual profiles maps dir
+	mapsPath = MainForm.profile.getMapsDir(); // import to the actual profiles maps dir
     }
 
     /**
@@ -92,17 +95,17 @@ public class MapImporter extends Form {
 	this.resizable = true;
 	this.moveable = true;
 	//this.windowFlagsToSet = Window.FLAG_MAXIMIZE;
-	this.setPreferredSize(Global.pref.myAppWidth, Global.pref.myAppHeight);
+	this.setPreferredSize(Preferences.itself().myAppWidth, Preferences.itself().myAppHeight);
 	thisMap = mapToLoad;
-	mapsPath = Global.profile.getMapsDir(); // calibrate the actual profiles maps dir
+	mapsPath = MainForm.profile.getMapsDir(); // calibrate the actual profiles maps dir
 	try {
-	    wfl.getMapImageFileNameObject().setPath(Global.profile.getMapsSubDir(mapsPath));
+	    wfl.getMapImageFileNameObject().setPath(MainForm.profile.getMapsSubDir(mapsPath));
 	    wfl.getMapImageFileNameObject().setMapName(thisMap);
 	    wfl.loadWFL();
 	} catch (FileNotFoundException ex) {
 	} catch (IOException ex) { // is thrown if lat/lon out of range
 	    new InfoBox(MyLocale.getMsg(5500, "Error"), ex.getMessage()).wait(FormBase.OKB);
-	    Global.pref.log("Cannot load world file!", ex);
+	    Preferences.itself().log("Cannot load world file!", ex);
 	}
 	mapInteractivePanel pane = new mapInteractivePanel(this);
 	scp = new CacheWolf.MyScrollBarPanel(pane);
@@ -143,7 +146,7 @@ public class MapImporter extends Form {
      */
     public int importMap() {
 	String rawFileName = "";
-	FileChooser fc = new FileChooser(FileChooserBase.DIRECTORY_SELECT, Global.pref.absoluteBaseDir);
+	FileChooser fc = new FileChooser(FileChooserBase.DIRECTORY_SELECT, Preferences.itself().absoluteBaseDir);
 	fc.addMask("*.png,*.gif,*.bmp,*.jpg");
 	fc.setTitle(MyLocale.getMsg(4100, "Select Directory:"));
 	int tmp = fc.execute();
@@ -195,14 +198,14 @@ public class MapImporter extends Form {
 			ImageInfo tmpII = Image.getImageInfo(header, null);
 			imageWidth = tmpII.width;
 			imageHeight = tmpII.height;
-			out = new FileOutputStream(curOutFullPath); // only create outfile if geImageInfo didn't throw an exception so do it only here not directly after opening input stream
+			out = new FileOutputStream(curOutFullPath); // only create outfile if getImageInfo didn't throw an exception so do it only here not directly after opening input stream
 		    }
 		    out.write(buf, 0, len);
 		}
 	    } catch (IOException ex) {
 		imageerror = true;
 		inf.addWarning("\n" + MyLocale.getMsg(4112, "IO-Error while copying image from: ") + curInFullPath + MyLocale.getMsg(4113, " to: ") + curOutFullPath + MyLocale.getMsg(4114, " error: ") + ex.getMessage());
-	    } catch (IllegalArgumentException e) { // thrown from Image.getImageInfo when it could not interprete the header (e.g. bmp with 32 bits per pixel)
+	    } catch (IllegalArgumentException e) { // thrown from getImageInfo when it could not interprete the header (e.g. bmp with 32 bits per pixel)
 		imageerror = true;
 		inf.addWarning("\n" + MyLocale.getMsg(4115, "Error: could not decode image: ") + curInFullPath + MyLocale.getMsg(4116, " - image not copied"));
 	    } finally {
@@ -212,7 +215,7 @@ public class MapImporter extends Form {
 		    if (out != null)
 			out.close();
 		} catch (Throwable e) {
-		    // Global.pref.log("Ignored Exception", e, true);
+		    // Preferences.itself().log("Ignored Exception", e, true);
 		}
 	    }
 	    //Check for a .map file
@@ -321,7 +324,7 @@ public class MapImporter extends Form {
 			    }
 			     */
 			    wfl.evalGCP(GCPs, imageWidth, imageHeight);
-			    wfl.getMapImageFileNameObject().setPath(Global.profile.getMapsSubDir(mapsPath));
+			    wfl.getMapImageFileNameObject().setPath(MainForm.profile.getMapsSubDir(mapsPath));
 			    wfl.getMapImageFileNameObject().setMapName(rawFileName);
 			    wfl.saveWFL();
 			    GCPs.clear();
@@ -342,8 +345,8 @@ public class MapImporter extends Form {
 	Vm.showWait(this, false);
 	inf.addInfo("\n" + MyLocale.getMsg(4120, "done."));
 	inf.showButton(FormBase.YESB);
-	if (Global.mainTab.movingMap != null)
-	    Global.mainTab.movingMap.setMapsloaded(false);
+	if (MainTab.itself.movingMap != null)
+	    MainTab.itself.movingMap.setMapsloaded(false);
 	return FormBase.IDOK;
     }
 
@@ -370,11 +373,11 @@ public class MapImporter extends Form {
 		while (retry == true) {
 		    try {
 			retry = false;
-			wfl.getMapImageFileNameObject().setPath(Global.profile.getMapsSubDir(mapsPath));
+			wfl.getMapImageFileNameObject().setPath(MainForm.profile.getMapsSubDir(mapsPath));
 			wfl.getMapImageFileNameObject().setMapName(thisMap);
 			wfl.saveWFL();
-			if (Global.mainTab.movingMap != null)
-			    Global.mainTab.movingMap.setMapsloaded(false);
+			if (MainTab.itself.movingMap != null)
+			    MainTab.itself.movingMap.setMapsloaded(false);
 		    } catch (IOException e) {
 			if (new InfoBox(MyLocale.getMsg(5500, "Error"), MyLocale.getMsg(5500, "Error writing file ") + e.getMessage() + MyLocale.getMsg(324, " - retry?")).wait(FormBase.YESB | FormBase.NOB) == FormBase.IDOK)
 			    retry = true;

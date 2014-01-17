@@ -69,7 +69,7 @@ import CacheWolf.database.CacheHolder;
 import CacheWolf.database.CacheSize;
 import CacheWolf.database.CacheTerrDiff;
 import CacheWolf.database.CacheType;
-import CacheWolf.navi.CWPoint;
+import CacheWolf.database.CWPoint;
 import CacheWolf.navi.Metrics;
 import CacheWolf.navi.Navigate;
 import CacheWolf.navi.TransformCoordinates;
@@ -167,7 +167,7 @@ public class Parser {
 	messageStack.add(MyLocale.getMsg(1700, "Error on line: ") + thisToken.line + "  " + MyLocale.getMsg(1701, "position: ") + thisToken.position);
 	messageStack.add(str);
 	// move cursor to error location		
-	Global.mainTab.solverPanel.setSelectionRange(0, thisToken.line - 1, thisToken.position + thisToken.token.length() - 1, thisToken.line - 1);
+	MainTab.itself.solverPanel.setSelectionRange(0, thisToken.line - 1, thisToken.position + thisToken.token.length() - 1, thisToken.line - 1);
 	throw new Exception("Error " + str);
     }
 
@@ -201,7 +201,7 @@ public class Parser {
 
     private boolean isVariable(String varName) {
 	return varName.startsWith("$") || // Global variables exist per default
-		symbolTable.containsKey(Global.pref.solverIgnoreCase ? varName.toUpperCase() : varName);
+		symbolTable.containsKey(Preferences.itself().solverIgnoreCase ? varName.toUpperCase() : varName);
     }
 
     private boolean isInteger(double d) {
@@ -215,7 +215,7 @@ public class Parser {
 
     private Object getVariable(String varName) throws Exception {
 	if (varName.startsWith("$")) { // Potential coordinate
-	    CacheHolder ch = Global.profile.cacheDB.get(varName.substring(1));
+	    CacheHolder ch = MainForm.profile.cacheDB.get(varName.substring(1));
 	    if (ch != null) { // Found it!
 		// Check whether coordinates are valid
 		cwPt.set(ch.getPos());
@@ -225,12 +225,12 @@ public class Parser {
 		    return ""; // Convert invalid coordinates (N 0 0.0 E 0 0.0) into empty string
 	    }
 	}
-	Object result = symbolTable.get(Global.pref.solverIgnoreCase ? varName.toUpperCase() : varName);
+	Object result = symbolTable.get(Preferences.itself().solverIgnoreCase ? varName.toUpperCase() : varName);
 	if (result == null) {
 	    // If it is a global variable, add it with a default value
 	    if (varName.startsWith("$")) {
 		result = "";
-		symbolTable.put(Global.pref.solverIgnoreCase ? varName.toUpperCase() : varName, "");
+		symbolTable.put(Preferences.itself().solverIgnoreCase ? varName.toUpperCase() : varName, "");
 	    } else
 		err(MyLocale.getMsg(1702, "Variable not defined: ") + varName);
 	}
@@ -365,7 +365,7 @@ public class Parser {
 
     /** If we are in DEGree mode, convert the argument to RADiants, if not leave it unchanged */
     private double makeRadiant(double arg) {
-	if (Global.pref.solverDegMode)
+	if (Preferences.itself().solverDegMode)
 	    return arg * java.lang.Math.PI / 180.0;
 	else
 	    return arg;
@@ -373,7 +373,7 @@ public class Parser {
 
     /** If we are in DEGree mode, convert the argument to degrees */
     private double makeDegree(double arg) {
-	if (Global.pref.solverDegMode)
+	if (Preferences.itself().solverDegMode)
 	    return arg / java.lang.Math.PI * 180.0;
 	else
 	    return arg;
@@ -390,24 +390,24 @@ public class Parser {
 	cwPt.set(coordA);
 	double angleDeg = cwPt.getBearing(new CWPoint(coordB));
 	// getBearing returns a result in degrees
-	return Global.pref.solverDegMode ? angleDeg : angleDeg * java.lang.Math.PI / 180.0;
+	return Preferences.itself().solverDegMode ? angleDeg : angleDeg * java.lang.Math.PI / 180.0;
     }
 
     /** Get or set the current centre */
     private void funcCenter(int nargs) throws Exception {
 	if (nargs == 0) {
-	    calcStack.add(Global.pref.getCurCentrePt().toString());
+	    calcStack.add(Preferences.itself().getCurCentrePt().toString());
 	} else {
 	    String coordA = popCalcStackAsString();
 	    if (!isValidCoord(coordA))
 		err(MyLocale.getMsg(1712, "Invalid coordinate: ") + coordA);
-	    Global.pref.setCurCentrePt(new CWPoint(coordA));
+	    Preferences.itself().setCurCentrePt(new CWPoint(coordA));
 	}
     }
 
     /** Clear Screen */
     private void funcCls() {
-	Global.mainTab.solverPanel.cls();
+	MainTab.itself.solverPanel.cls();
     }
 
     private int funcCountChar(String s, char c) {
@@ -438,7 +438,7 @@ public class Parser {
     }
 
     private String funcCp() {
-	return Global.mainTab.navigate.gpsPos.toString();
+	return MainTab.itself.navigate.gpsPos.toString();
     }
 
     /**
@@ -469,8 +469,8 @@ public class Parser {
     }
 
     private void funcDeg(boolean arg) {
-	Global.pref.solverDegMode = arg;
-	Global.mainTab.solverPanel.showSolverMode();
+	Preferences.itself().solverDegMode = arg;
+	MainTab.itself.solverPanel.showSolverMode();
     }
 
     /** Convert degrees into Radiants */
@@ -492,7 +492,7 @@ public class Parser {
 	cwPt.set(coordA);
 	double distKM = cwPt.getDistance(new CWPoint(coordB));
 	result = distKM * 1000.0;
-	if (Global.pref.metricSystem == Metrics.IMPERIAL) {
+	if (Preferences.itself().metricSystem == Metrics.IMPERIAL) {
 	    result = Metrics.convertUnit(distKM, Metrics.KILOMETER, Metrics.YARDS);
 	}
 	return result;
@@ -558,7 +558,7 @@ public class Parser {
      * Implements a goto command goto(coordinate,optionalWaypointName).
      */
     private void funcGoto(int nargs) throws Exception {
-	Navigate nav = Global.mainTab.navigate;
+	Navigate nav = MainTab.itself.navigate;
 	String waypointName = null;
 	if (nargs == 2)
 	    waypointName = popCalcStackAsString();
@@ -569,24 +569,24 @@ public class Parser {
 	nav.setDestination(coord);
 	if (nargs == 2) { // Now set the value of the addi waypoint (it must exist already)
 	    cwPt.set(coord);
-	    CacheHolder ch = Global.profile.cacheDB.get(waypointName);
+	    CacheHolder ch = MainForm.profile.cacheDB.get(waypointName);
 	    if (ch == null) {
 		err(MyLocale.getMsg(1714, "Goto: Waypoint does not exist: ") + waypointName);
 		return;
 	    }
 	    ch.setPos(cwPt);
-	    ch.calcDistance(Global.pref.getCurCentrePt()); // Update distance/bearing
+	    ch.calcDistance(Preferences.itself().getCurCentrePt()); // Update distance/bearing
 	    nav.setDestination(ch);
-	    Global.profile.selectionChanged = true; // Tell moving map to updated displayed waypoints
+	    MainForm.profile.selectionChanged = true; // Tell moving map to updated displayed waypoints
 	}
     }
 
     /** Display or change the case sensitivity of variable names */
     private void funcIgnoreVariableCase(int nargs) throws Exception {
 	if (nargs == 0)
-	    calcStack.add("" + Global.pref.solverIgnoreCase);
+	    calcStack.add("" + Preferences.itself().solverIgnoreCase);
 	else {
-	    Global.pref.solverIgnoreCase = (popCalcStackAsNumber(0) != 0) ? true : false;
+	    Preferences.itself().solverIgnoreCase = (popCalcStackAsNumber(0) != 0) ? true : false;
 	}
     }
 
@@ -646,12 +646,12 @@ public class Parser {
     /** Get or set the profile centre */
     private void funcPz(int nargs) throws Exception {
 	if (nargs == 0) {
-	    calcStack.add(Global.profile.centre.toString());
+	    calcStack.add(MainForm.profile.centre.toString());
 	} else {
 	    String coordA = popCalcStackAsString();
 	    if (!isValidCoord(coordA))
 		err(MyLocale.getMsg(1712, "Invalid coordinate: ") + coordA);
-	    Global.profile.centre.set(coordA);
+	    MainForm.profile.centre.set(coordA);
 	}
     }
 
@@ -676,14 +676,14 @@ public class Parser {
 
 	// Check parameters: Range
 	if (degrees1 < 0 || degrees1 > 360 || degrees2 < 0 || degrees2 > 360) {
-	    if (Global.pref.solverDegMode) {
+	    if (Preferences.itself().solverDegMode) {
 		err(MyLocale.getMsg(1740, "Crossbearing degrees must be in interval [0;360]"));
 	    } else {
 		err(MyLocale.getMsg(1741, "Crossbearing degrees must be in interval [0;2*PI]"));
 	    }
 	}
-	double rAN = Global.pref.solverDegMode ? degrees1 / 180.0 * java.lang.Math.PI : degrees1;
-	double rBN = Global.pref.solverDegMode ? degrees2 / 180.0 * java.lang.Math.PI : degrees2;
+	double rAN = Preferences.itself().solverDegMode ? degrees1 / 180.0 * java.lang.Math.PI : degrees1;
+	double rBN = Preferences.itself().solverDegMode ? degrees2 / 180.0 * java.lang.Math.PI : degrees2;
 
 	CWPoint point1 = new CWPoint(coordinates1);
 	CWPoint point2 = new CWPoint(coordinates2);
@@ -717,10 +717,10 @@ public class Parser {
 	}
 	double distanceInRad = distance / maxRadius;
 	double phiAB = point1.getBearing(point2);
-	if (Global.pref.solverDegMode)
+	if (Preferences.itself().solverDegMode)
 	    phiAB = phiAB / 180.0 * java.lang.Math.PI;
 	double phiBA = point2.getBearing(point1);
-	if (Global.pref.solverDegMode)
+	if (Preferences.itself().solverDegMode)
 	    phiBA = phiBA / 180.0 * java.lang.Math.PI;
 
 	double psi = phiAB - rAN;
@@ -757,10 +757,10 @@ public class Parser {
 	    err(MyLocale.getMsg(1718, "Cannot project a negative distance"));
 	double degrees = popCalcStackAsNumber(0);
 	// If we are not in degree mode, arg is in radiants ==> convert it
-	if (!Global.pref.solverDegMode)
+	if (!Preferences.itself().solverDegMode)
 	    degrees = degrees * 180.0 / java.lang.Math.PI;
 	if (degrees < 0 || degrees > 360)
-	    if (Global.pref.solverDegMode)
+	    if (Preferences.itself().solverDegMode)
 		err(MyLocale.getMsg(1719, "Projection degrees must be in interval [0;360]"));
 	    else
 		err(MyLocale.getMsg(1739, "Projection degrees must be in interval [0;2*PI]"));
@@ -768,7 +768,7 @@ public class Parser {
 	if (!isValidCoord(coord))
 	    err(MyLocale.getMsg(1712, "Invalid coordinate: ") + coord);
 	cwPt.set(coord);
-	if (Global.pref.metricSystem == Metrics.IMPERIAL) {
+	if (Preferences.itself().metricSystem == Metrics.IMPERIAL) {
 	    distance = Metrics.convertUnit(distance, Metrics.YARDS, Metrics.KILOMETER);
 	} else {
 	    distance = distance / 1000.0;
@@ -808,8 +808,8 @@ public class Parser {
      * sk(number)          Create skeleton for number variables
      */
     private void funcSkeleton(int nargs) throws Exception {
-	String waypointName = Global.mainTab.lastselected;
-	CacheHolder c = Global.profile.cacheDB.get(waypointName);
+	String waypointName = MainTab.itself.lastselected;
+	CacheHolder c = MainForm.profile.cacheDB.get(waypointName);
 	if (c == null)
 	    return;
 	// If it is an addi, find its main cache
@@ -822,7 +822,7 @@ public class Parser {
 	}
 	// Remove the sk command from the instructions
 	Regex rex = new Regex("sk\\(.*?\\)", "");
-	Global.mainTab.solverPanel.setText(rex.replaceFirst(Global.mainTab.solverPanel.getInstructions()));
+	MainTab.itself.solverPanel.setText(rex.replaceFirst(MainTab.itself.solverPanel.getInstructions()));
 	StringBuffer op = new StringBuffer(1000);
 	// Check for sk(number)
 	if (nStages > 0 && nStages < 30) { // e.g. sk(3)
@@ -850,13 +850,13 @@ public class Parser {
 		op.append("  goto(" + stageWpt + "); STOP\n");
 		op.append("ENDIF\n");
 	    }
-	    Global.mainTab.solverPanel.appendText(op.toString(), true);
+	    MainTab.itself.solverPanel.appendText(op.toString(), true);
 	    if (didCreateWp) {
-		Global.mainTab.updatePendingChanges();
-		Global.mainTab.tablePanel.refreshTable();
+		MainTab.itself.updatePendingChanges();
+		MainTab.itself.tablePanel.refreshTable();
 	    }
 	} else {
-	    CacheHolder ch = Global.profile.cacheDB.get(waypointName);
+	    CacheHolder ch = MainForm.profile.cacheDB.get(waypointName);
 	    if (ch == null) {
 		err(MyLocale.getMsg(1714, "Goto: Waypoint does not exist: ") + waypointName);
 		return;
@@ -884,7 +884,7 @@ public class Parser {
 		    op.append(addiWpt.getWayPoint());
 		    op.append("); STOP\nENDIF\n\n");
 		}
-		Global.mainTab.solverPanel.appendText(op.toString(), true);
+		MainTab.itself.solverPanel.appendText(op.toString(), true);
 	    }// if hasAddiWpt
 	}
     }
@@ -968,11 +968,11 @@ public class Parser {
 	if (thisToken.tt == TokenObj.TT_VARIABLE && peekToken().token.toUpperCase().equals("THEN")) {
 	    String varName = thisToken.token;
 	    getToken(); // THEN
-	    Object result = symbolTable.get(Global.pref.solverIgnoreCase ? varName.toUpperCase() : varName);
+	    Object result = symbolTable.get(Preferences.itself().solverIgnoreCase ? varName.toUpperCase() : varName);
 	    if (result == null) { // Var not found check whether it is a waypoint
 		if (varName.startsWith("$")) { // Could be a cachename
 		    varName = varName.substring(1);
-		    compRes = Global.profile.getCacheIndex(varName) != -1;
+		    compRes = MainForm.profile.getCacheIndex(varName) != -1;
 		} else
 		    compRes = false;
 	    } else
@@ -1071,22 +1071,22 @@ public class Parser {
 	    return;
 	parseStringExp();
 	if (varName.startsWith("$")) { // Potential coordinate
-	    CacheHolder ch = Global.profile.cacheDB.get(varName.substring(1));
+	    CacheHolder ch = MainForm.profile.cacheDB.get(varName.substring(1));
 	    if (ch != null) { // Yes, is a coordinate
 		// Check whether new coordinates are valid
 		String coord = popCalcStackAsString();
 		cwPt.set(coord);
 		if (cwPt.isValid() || coord.equals("")) { // Can clear coord with empty string
 		    ch.setPos(cwPt);
-		    ch.calcDistance(Global.pref.getCurCentrePt()); // Update distance and bearing
-		    Global.profile.selectionChanged = true; // Tell moving map to updated displayed waypoints
+		    ch.calcDistance(Preferences.itself().getCurCentrePt()); // Update distance and bearing
+		    MainForm.profile.selectionChanged = true; // Tell moving map to updated displayed waypoints
 		    return;
 		} else
 		    err(MyLocale.getMsg(1712, "Invalid coordinate: ") + coord);
 	    }
 	    // Name starts with $ but is not a waypoint, fall through and set it as global variable
 	}
-	symbolTable.put(Global.pref.solverIgnoreCase ? varName.toUpperCase() : varName, popCalcStackAsString());
+	symbolTable.put(Preferences.itself().solverIgnoreCase ? varName.toUpperCase() : varName, popCalcStackAsString());
     }
 
     private void parseStringExp() throws Exception {
@@ -1317,7 +1317,7 @@ public class Parser {
     }
 
     private boolean createWptIfNeeded(String wayPoint, String name, byte type) {
-	int ci = Global.profile.getCacheIndex(wayPoint);
+	int ci = MainForm.profile.getCacheIndex(wayPoint);
 	if (ci >= 0)
 	    return false;
 
@@ -1329,10 +1329,10 @@ public class Parser {
 	ch.setTerrain(CacheTerrDiff.CW_DT_UNSET);
 	ch.setCacheName(name);
 
-	Global.profile.setAddiRef(ch);
+	MainForm.profile.setAddiRef(ch);
 
-	Global.profile.cacheDB.add(ch);
-	Global.mainTab.tablePanel.myTableModel.numRows++;
+	MainForm.profile.cacheDB.add(ch);
+	MainTab.itself.tablePanel.myTableModel.numRows++;
 	return true;
     }
 
