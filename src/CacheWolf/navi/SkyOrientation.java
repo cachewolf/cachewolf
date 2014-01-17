@@ -22,6 +22,7 @@
 package CacheWolf.navi;
 
 import CacheWolf.MyLocale;
+import CacheWolf.database.CWPoint;
 import ewe.sys.Convert;
 
 /**

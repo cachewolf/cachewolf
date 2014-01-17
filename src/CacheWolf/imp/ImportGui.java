@@ -21,9 +21,10 @@
 */
 package CacheWolf.imp;
 
-import CacheWolf.Global;
+import CacheWolf.MainForm;
 import CacheWolf.MyLocale;
 import CacheWolf.OC;
+import CacheWolf.Preferences;
 import CacheWolf.controls.ExecutePanel;
 import CacheWolf.database.CacheType;
 import CacheWolf.imp.GCImporter.SpiderProperties;
@@ -87,7 +88,7 @@ public class ImportGui extends Form {
 	this.title = title;
 
 	if ((options & HOST) > 0) {
-	    domains = new mChoice(OC.OCHostNames(), OC.getSiteIndex(Global.pref.lastOCSite));
+	    domains = new mChoice(OC.OCHostNames(), OC.getSiteIndex(Preferences.itself().lastOCSite));
 	    domains.setTextSize(25, 1);
 	    this.addLast(domains, CellConstants.DONTSTRETCH, CellConstants.DONTFILL | CellConstants.WEST);
 	}
@@ -101,7 +102,7 @@ public class ImportGui extends Form {
 	if ((options & MINDIST) > 0) {
 	    this.addNext(distLbl = new mLabel(MyLocale.getMsg(1628, "min. Distance:")), CellConstants.DONTSTRETCH, (CellConstants.DONTFILL | CellConstants.WEST));
 	    minDistanceInput = new mInput();
-	    minDistanceInput.setText(Global.profile.getMinDistGC());
+	    minDistanceInput.setText(MainForm.profile.getMinDistGC());
 	    this.addNext(minDistanceInput, CellConstants.DONTSTRETCH, (CellConstants.DONTFILL | CellConstants.WEST));
 	    this.addLast(new mLabel(" km/mi."), CellConstants.DONTSTRETCH, (CellConstants.DONTFILL | CellConstants.WEST));
 	}
@@ -112,11 +113,11 @@ public class ImportGui extends Form {
 	    String dist1;
 	    String dist2;
 	    if (isGC) {
-		dist1 = Global.profile.getDistGC();
-		dist2 = Global.profile.getDistOC();
+		dist1 = MainForm.profile.getDistGC();
+		dist2 = MainForm.profile.getDistOC();
 	    } else {
-		dist1 = Global.profile.getDistOC();
-		dist2 = Global.profile.getDistGC();
+		dist1 = MainForm.profile.getDistOC();
+		dist2 = MainForm.profile.getDistGC();
 	    }
 	    if (dist1.equals("") || dist1.equals("0") || dist1.equals("0.0")) {
 		dist1 = dist2;
@@ -129,10 +130,10 @@ public class ImportGui extends Form {
 	if ((options & MAXNUMBER) > 0) {
 	    this.addNext(maxNumberLbl = new mLabel(MyLocale.getMsg(1623, "Max. number:")), CellConstants.DONTSTRETCH, (CellConstants.DONTFILL | CellConstants.WEST));
 	    maxNumberInput = new mInput();
-	    if (Global.pref.maxSpiderNumber < 0 || Global.pref.maxSpiderNumber == Integer.MAX_VALUE) {
+	    if (Preferences.itself().maxSpiderNumber < 0 || Preferences.itself().maxSpiderNumber == Integer.MAX_VALUE) {
 		maxNumberInput.setText("");
 	    } else {
-		maxNumberInput.setText(Integer.toString(Global.pref.maxSpiderNumber));
+		maxNumberInput.setText(Integer.toString(Preferences.itself().maxSpiderNumber));
 	    }
 	    this.addNext(maxNumberInput, CellConstants.DONTSTRETCH, (CellConstants.DONTFILL | CellConstants.WEST));
 	    this.addLast(new mLabel(MyLocale.getMsg(1624, " caches")), CellConstants.DONTSTRETCH, (CellConstants.DONTFILL | CellConstants.WEST));
@@ -149,46 +150,46 @@ public class ImportGui extends Form {
 	if ((options & MAXLOGS) > 0) {
 	    this.addNext(new mLabel(MyLocale.getMsg(1626, "Max. logs:")), CellConstants.DONTSTRETCH, (CellConstants.DONTFILL | CellConstants.WEST));
 	    maxLogsInput = new mInput();
-	    maxLogsInput.setText(Convert.toString(Global.pref.maxLogsToSpider));
+	    maxLogsInput.setText(Convert.toString(Preferences.itself().maxLogsToSpider));
 	    this.addLast(maxLogsInput, CellConstants.DONTSTRETCH, (CellConstants.DONTFILL | CellConstants.WEST));
 	}
 
 	if ((options & IMAGES) > 0) {
 	    imagesCheckBox = new mCheckBox();
 	    imagesCheckBox.setText(MyLocale.getMsg(1602, "Download Images"));
-	    imagesCheckBox.setState(Global.pref.downloadPics);
+	    imagesCheckBox.setState(Preferences.itself().downloadPics);
 	    this.addLast(imagesCheckBox, CellConstants.DONTSTRETCH, CellConstants.DONTFILL | CellConstants.WEST);
 	}
 
 	if ((options & TRAVELBUGS) > 0) {
 	    travelbugsCheckBox = new mCheckBox();
 	    travelbugsCheckBox.setText(MyLocale.getMsg(1625, "Download TBs"));
-	    travelbugsCheckBox.setState(Global.pref.downloadTBs);
+	    travelbugsCheckBox.setState(Preferences.itself().downloadTBs);
 	    this.addLast(travelbugsCheckBox, CellConstants.DONTSTRETCH, CellConstants.DONTFILL | CellConstants.WEST);
 	}
 
 	if ((options & INCLUDEFOUND) > 0) {
 	    foundCheckBox = new mCheckBox();
 	    foundCheckBox.setText(MyLocale.getMsg(1622, "Exclude found caches"));
-	    foundCheckBox.setState(Global.pref.doNotGetFound);
+	    foundCheckBox.setState(Preferences.itself().doNotGetFound);
 	    this.addLast(foundCheckBox, CellConstants.DONTSTRETCH, CellConstants.DONTFILL | CellConstants.WEST);
 	}
 
 	if ((options & ALL) > 0) {
 	    missingCheckBox = new mCheckBox();
 	    missingCheckBox.setText(MyLocale.getMsg(1606, "Alle erneut downloaden"));
-	    missingCheckBox.setState(Global.pref.downloadAllOC);
+	    missingCheckBox.setState(Preferences.itself().downloadAllOC);
 	    this.addLast(missingCheckBox, CellConstants.DONTSTRETCH, CellConstants.DONTFILL | CellConstants.WEST);
 	}
 
 	if ((options & FILENAME) > 0) {
-	    String dir = Global.pref.getImporterPath("LocGpxImporter");
+	    String dir = Preferences.itself().getImporterPath("LocGpxImporter");
 	    FileChooser fc = new FileChooser(FileChooserBase.OPEN, dir);
 	    fc.addMask("*.gpx");
 	    fc.setTitle(MyLocale.getMsg(909, "Select file(s)"));
 	    if (fc.execute() != FormBase.IDCANCEL) {
 		dir = fc.getChosenDirectory().toString();
-		Global.pref.setImporterPath("LocGpxImporter", dir);
+		Preferences.itself().setImporterPath("LocGpxImporter", dir);
 		// String files[] = fc.getAllChosen();
 		fileName = fc.file;
 	    } else {
@@ -206,14 +207,14 @@ public class ImportGui extends Form {
 	    if (ev.target == executePanel.applyButton) {
 		// distOC wird hier noch nicht in Pref eingetragen, damit noch geprüft werden kann, ob es größer oder kleiner ist als vorher
 		if (missingCheckBox != null)
-		    Global.pref.downloadAllOC = missingCheckBox.state;
+		    Preferences.itself().downloadAllOC = missingCheckBox.state;
 		if (imagesCheckBox != null)
-		    Global.pref.downloadPics = imagesCheckBox.state;
+		    Preferences.itself().downloadPics = imagesCheckBox.state;
 		if (travelbugsCheckBox != null)
-		    Global.pref.downloadTBs = travelbugsCheckBox.state;
+		    Preferences.itself().downloadTBs = travelbugsCheckBox.state;
 		if (maxLogsInput != null)
-		    Global.pref.maxLogsToSpider = Common.parseInt(maxLogsInput.getText());
-		Global.pref.savePreferences();
+		    Preferences.itself().maxLogsToSpider = Common.parseInt(maxLogsInput.getText());
+		Preferences.itself().savePreferences();
 		this.close(FormBase.IDOK);
 	    }
 	}

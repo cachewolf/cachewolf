@@ -21,14 +21,15 @@
 */
 package CacheWolf.imp;
 
+import CacheWolf.MainForm;
+import CacheWolf.Preferences;
+import CacheWolf.Profile;
 import CacheWolf.database.CacheDB;
 import CacheWolf.database.CacheHolder;
-import CacheWolf.Global;
-import CacheWolf.Profile;
 import CacheWolf.database.CacheSize;
 import CacheWolf.database.CacheTerrDiff;
 import CacheWolf.database.CacheType;
-import CacheWolf.navi.TrackPoint;
+import CacheWolf.database.CoordinatePoint;
 import CacheWolf.utils.Common;
 import ewe.io.FileReader;
 import ewe.io.Reader;
@@ -49,7 +50,7 @@ public class LOCXMLImporter extends MinML {
     String strData = "";
 
     public LOCXMLImporter(String f) {
-	cacheDB = Global.profile.cacheDB;
+	cacheDB = MainForm.profile.cacheDB;
 	file = f;
     }
 
@@ -62,7 +63,7 @@ public class LOCXMLImporter extends MinML {
 	    parse(r);
 	    r.close();
 	    // save Index
-	    Global.profile.saveIndex(Profile.NO_SHOW_PROGRESS_BAR);
+	    MainForm.profile.saveIndex(Profile.NO_SHOW_PROGRESS_BAR);
 	    Vm.showWait(false);
 	} catch (Exception e) {
 	    Vm.showWait(false);
@@ -72,7 +73,7 @@ public class LOCXMLImporter extends MinML {
     public void startElement(String name, AttributeList atts) {
 	if (debugXML) {
 	    for (int i = 0; i < atts.getLength(); i++) {
-		Global.pref.log(" Name: " + atts.getName(i) + " Value: " + atts.getValue(i), null);
+		Preferences.itself().log(" Name: " + atts.getName(i) + " Value: " + atts.getValue(i), null);
 	    }
 	}
 	strData = "";
@@ -81,7 +82,7 @@ public class LOCXMLImporter extends MinML {
 	    return;
 	}
 	if (name.equals("coord")) {
-	    holder.setPos(new TrackPoint(Common.parseDouble(atts.getValue("lat")), Common.parseDouble(atts.getValue("lon"))));
+	    holder.setPos(new CoordinatePoint(Common.parseDouble(atts.getValue("lat")), Common.parseDouble(atts.getValue("lon"))));
 	    return;
 	}
     }
@@ -104,7 +105,7 @@ public class LOCXMLImporter extends MinML {
 	    }
 	    // save all (after each cache???)
 	    holder.save();
-	    Global.profile.saveIndex(Profile.NO_SHOW_PROGRESS_BAR);
+	    MainForm.profile.saveIndex(Profile.NO_SHOW_PROGRESS_BAR);
 	    return;
 	}
 
@@ -118,7 +119,7 @@ public class LOCXMLImporter extends MinML {
 	String chars = new String(ch, start, length);
 	strData += chars;
 	if (debugXML)
-	    Global.pref.log(strData, null);
+	    Preferences.itself().log(strData, null);
     }
 
     private CacheHolder getHolder(String wpt) {

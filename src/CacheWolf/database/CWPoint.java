@@ -19,9 +19,13 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
-package CacheWolf.navi;
+package CacheWolf.database;
 
 import CacheWolf.MyLocale;
+import CacheWolf.navi.GeodeticCalculator;
+import CacheWolf.navi.ParseLatLon;
+import CacheWolf.navi.ProjectedPoint;
+import CacheWolf.navi.TransformCoordinates;
 import CacheWolf.utils.Common;
 import CacheWolf.utils.STRreplace;
 
@@ -33,7 +37,7 @@ import com.stevesoft.ewe_pat.Regex;
  * distance
  * 
  */
-public class CWPoint extends TrackPoint {
+public class CWPoint extends CoordinatePoint {
 
     /** Degrees/Radians conversion constant. */
     static private final double PiOver180 = Math.PI / 180.0;
@@ -59,12 +63,12 @@ public class CWPoint extends TrackPoint {
     }
 
     /**
-     * Create CWPoint by using a TrackPoint
+     * Create CWPoint by using a CoordinatePoint
      * 
-     * @param trackPoint
+     * @param coordinatePoint
      */
-    public CWPoint(TrackPoint trackPoint) {
-	super(trackPoint.latDec, trackPoint.lonDec);
+    public CWPoint(CoordinatePoint coordinatePoint) {
+	super(coordinatePoint.latDec, coordinatePoint.lonDec);
     }
 
     /**
@@ -114,7 +118,7 @@ public class CWPoint extends TrackPoint {
      *            cwPoint
      */
 
-    public void set(TrackPoint cwPoint) {
+    public void set(CoordinatePoint cwPoint) {
 	this.latDec = cwPoint.latDec;
 	this.lonDec = cwPoint.lonDec;
     }

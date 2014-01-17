@@ -21,15 +21,15 @@
 */
 package CacheWolf.imp;
 
-import CacheWolf.Global;
+import CacheWolf.MainForm;
 import CacheWolf.OC;
 import CacheWolf.SafeXML;
-import CacheWolf.UrlFetcher;
 import CacheWolf.database.CacheDB;
 import CacheWolf.database.CacheHolder;
 import CacheWolf.navi.TransformCoordinates;
 import CacheWolf.utils.Common;
 import CacheWolf.utils.Extractor;
+import CacheWolf.utils.UrlFetcher;
 import ewe.sys.Handle;
 import ewe.sys.Vm;
 import ewe.ui.ProgressBarForm;
@@ -40,7 +40,7 @@ public final class OCLinkImporter {
     public static void doIt() {
 
 	if (cacheDB == null)
-	    cacheDB = Global.profile.cacheDB;
+	    cacheDB = MainForm.profile.cacheDB;
 	int totalWaypoints = cacheDB.countVisible();
 	int updated = 0;
 	ProgressBarForm pbf = new ProgressBarForm();

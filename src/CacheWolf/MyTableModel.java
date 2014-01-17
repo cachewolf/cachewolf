@@ -102,7 +102,7 @@ public class MyTableModel extends TableModel {
 
     public MyTableModel(MyTableControl myTableControl) {
 	super();
-	cacheDB = Global.profile.cacheDB;
+	cacheDB = MainForm.profile.cacheDB;
 	this.fm = myTableControl.getFontMetrics();
 	this.myTableControl = myTableControl;
 	setColumnNamesAndWidths();
@@ -161,8 +161,8 @@ public class MyTableModel extends TableModel {
      * 
      */
     public void setColumnNamesAndWidths() {
-	colMap = TableColumnChooser.str2Array(Global.pref.listColMap, 0, N_COLUMNS - 1, 0, -1);
-	colWidth = TableColumnChooser.str2Array(Global.pref.listColWidth, 10, 1024, 50, colMap.length);
+	colMap = TableColumnChooser.str2Array(Preferences.itself().listColMap, 0, N_COLUMNS - 1, 0, -1);
+	colWidth = TableColumnChooser.str2Array(Preferences.itself().listColWidth, 10, 1024, 50, colMap.length);
 	numCols = colMap.length;
 	clearCellAdjustments();
     }
@@ -201,7 +201,7 @@ public class MyTableModel extends TableModel {
 	    if (!ch.isVisible()) {
 		notVisibleDB.add(ch);
 	    } else { // point is not filtered
-		if (Global.pref.SortingGroupedByCache) {
+		if (Preferences.itself().SortingGroupedByCache) {
 		    if (ch.isAddiWpt()) { // unfiltered Addi Wpt
 			// check if main wpt is filtered
 			if (ch.mainCache != null) { // parent exists
@@ -269,7 +269,7 @@ public class MyTableModel extends TableModel {
 			lineColorBG.set(COLOR_FLAGED);
 		    else if (ch.getCacheStatus().indexOf(MyLocale.getMsg(319, "not found")) > -1)
 			lineColorBG.set(COLOR_STATUS);
-		    else if (Global.pref.debug && ch.detailsLoaded()) {
+		    else if (Preferences.itself().debug && ch.detailsLoaded()) {
 			lineColorBG.set(COLOR_DETAILS_LOADED);
 		    }
 
@@ -298,7 +298,7 @@ public class MyTableModel extends TableModel {
 		    lastColorFG.set(ta.foreground);
 		    lastRow = row;
 		} catch (Exception e) {
-		    Global.pref.log("[myTableModel:getCellAttributes]Ignored row=" + row + " lastRow=" + lastRow, e, true);
+		    Preferences.itself().log("[myTableModel:getCellAttributes]Ignored row=" + row + " lastRow=" + lastRow, e, true);
 		}
 		;
 	    } else {
@@ -307,7 +307,7 @@ public class MyTableModel extends TableModel {
 		ta.fillColor = lastColorBG;
 		ta.foreground = lastColorFG;
 	    }
-	} else if (row == -1 && colMap[col] == 0 && Global.profile.showBlacklisted()) {
+	} else if (row == -1 && colMap[col] == 0 && MainForm.profile.showBlacklisted()) {
 	    ta.fillColor = Color.Black;
 	    lastColorBG.set(ta.fillColor);
 	}
@@ -469,7 +469,7 @@ public class MyTableModel extends TableModel {
 			try {
 			    lastSyncWorker.parse(ch.getLastSync(), "yyyyMMddHHmmss");
 			} catch (IllegalArgumentException e) {
-			    Global.pref.log("Could not parse 'lastSyncDate': " + ch.getLastSync() + ". Reset to empty.", e);
+			    Preferences.itself().log("Could not parse 'lastSyncDate': " + ch.getLastSync() + ". Reset to empty.", e);
 			    ch.setLastSync("");
 			}
 			return lastSyncWorker.format("yyyy-MM-dd HH:mm");
@@ -479,7 +479,7 @@ public class MyTableModel extends TableModel {
 		} // Switch
 	    } // if
 	} catch (Exception e) {
-	    // Global.pref.log("[myTableModel:getCellData]Ignored", e,true);
+	    // Preferences.itself().log("[myTableModel:getCellData]Ignored", e,true);
 	    return null;
 	}
 	return null;
@@ -494,7 +494,7 @@ public class MyTableModel extends TableModel {
 	    // Check whether the click is on the checkbox image
 	    myTableControl.clickedColumn = colMap[cell.x];
 	    if (cell.y >= 0 && colMap[cell.x] == 0) {
-		Global.profile.selectionChanged = true;
+		MainForm.profile.selectionChanged = true;
 		if ((penEventModifiers & IKeys.SHIFT) > 0) {
 		    if (myTableControl.cursor.y >= 0) {
 			// Second row being marked with shift key pressed
@@ -522,7 +522,7 @@ public class MyTableModel extends TableModel {
 		retval = true;
 	    }
 	} catch (NullPointerException npex) {
-	    Global.pref.log("[myTableModel:Penpressed]", npex, true);
+	    Preferences.itself().log("[myTableModel:Penpressed]", npex, true);
 	    Vm.showWait(false);
 	}
 	return retval;
@@ -551,7 +551,7 @@ public class MyTableModel extends TableModel {
 	    // invisibleVector of ch)
 	    // select previously selected Cache again
 	    if (ch != null) {
-		int rownum = Global.profile.getCacheIndex(ch.getWayPoint());
+		int rownum = MainForm.profile.getCacheIndex(ch.getWayPoint());
 		if (rownum >= 0)
 		    myTableControl.cursorTo(rownum, 0, true);
 	    }
@@ -560,7 +560,7 @@ public class MyTableModel extends TableModel {
 	}
 
 	myTableControl.update(true);
-	Global.mainTab.tablePanel.updateStatusBar();
+	MainTab.itself.tablePanel.updateStatusBar();
     }
 
     /**

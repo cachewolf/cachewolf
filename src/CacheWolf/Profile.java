@@ -22,10 +22,10 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 package CacheWolf;
 
 import CacheWolf.controls.InfoBox;
+import CacheWolf.database.CWPoint;
 import CacheWolf.database.CacheDB;
 import CacheWolf.database.CacheHolder;
 import CacheWolf.navi.Area;
-import CacheWolf.navi.CWPoint;
 import CacheWolf.navi.TransformCoordinates;
 import CacheWolf.utils.Common;
 import CacheWolf.utils.Extractor;
@@ -50,7 +50,6 @@ import ewe.ui.ProgressBarForm;
  * 
  */
 public class Profile {
-
     /**
      * The list of caches (CacheHolder objects). A pointer to this object exists in many classes in parallel to this object, i.e. the respective class contains both a {@link Profile} object and a cacheDB Vector.
      */
@@ -109,7 +108,7 @@ public class Profile {
      * Constructor for a profile
      * 
      */
-    public Profile() { // public constructor
+    public Profile() {
     }
 
     /**
@@ -189,17 +188,17 @@ public class Profile {
 	    File index = new File(dataDir + "index.xml");
 	    index.rename("index.bak");
 	} catch (Exception ex) {
-	    Global.pref.log("[Profile:saveIndex]Error deleting backup or renaming index.xml");
+	    Preferences.itself().log("[Profile:saveIndex]Error deleting backup or renaming index.xml");
 	}
 	try {
 	    detfile = new PrintWriter(new BufferedWriter(new FileWriter(new File(dataDir + "index.xml").getAbsolutePath())));
 	} catch (Exception e) {
-	    Global.pref.log("Problem creating index.xml " + dataDir, e);
+	    Preferences.itself().log("Problem creating index.xml " + dataDir, e);
 	    return;
 	}
 	CWPoint savedCentre = centre;
 	if (centre == null || !centre.isValid() || (savedCentre.latDec == 0.0 && savedCentre.lonDec == 0.0))
-	    savedCentre = Global.pref.getCurCentrePt();
+	    savedCentre = Preferences.itself().getCurCentrePt();
 
 	try {
 	    detfile.print("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
@@ -254,7 +253,7 @@ public class Profile {
 	    if (showprogress)
 		pbf.exit(0);
 	} catch (Exception e) {
-	    Global.pref.log("Problem writing to index file ", e);
+	    Preferences.itself().log("Problem writing to index file ", e);
 	    detfile.close();
 	    if (showprogress)
 		pbf.exit(0);
@@ -333,7 +332,7 @@ public class Profile {
 		    int start = text.indexOf("value = \"") + 9;
 		    indexXmlVersion = Integer.valueOf(text.substring(start, text.indexOf("\"", start))).intValue();
 		    if (indexXmlVersion > CURRENTFILEFORMAT) {
-			Global.pref.log("[Profile:readIndex]unsupported file format");
+			Preferences.itself().log("[Profile:readIndex]unsupported file format");
 			clearProfile();
 			return;
 		    }
@@ -474,9 +473,9 @@ public class Profile {
 		saveIndex(true);
 	    }
 	} catch (FileNotFoundException e) {
-	    Global.pref.log("index.xml not found in directory " + dataDir, e);
+	    Preferences.itself().log("index.xml not found in directory " + dataDir, e);
 	} catch (IOException e) {
-	    Global.pref.log("Problem reading index.xml in dir: " + dataDir, e, true);
+	    Preferences.itself().log("Problem reading index.xml in dir: " + dataDir, e, true);
 	}
 	this.getCurrentFilter().normaliseFilters();
 	resetUnsavedChanges();
@@ -659,7 +658,7 @@ public class Profile {
      * @see Extractor
      */
     public void updateBearingDistance() {
-	CWPoint centerPoint = new CWPoint(Global.pref.getCurCentrePt()); // Clone current centre to be sure
+	CWPoint centerPoint = new CWPoint(Preferences.itself().getCurCentrePt()); // Clone current centre to be sure
 	int anz = cacheDB.size();
 	CacheHolder ch;
 	// Jetzt durch die CacheDaten schleifen
@@ -670,8 +669,8 @@ public class Profile {
 	// The following call is not very clean as it mixes UI with base classes
 	// However, calling it from here allows us to recenter the
 	// radar panel with only one call
-	if (Global.mainTab != null)
-	    Global.mainTab.radarPanel.recenterRadar();
+	if (MainTab.itself != null)
+	    MainTab.itself.radarPanel.recenterRadar();
     } // updateBearingDistance
 
     /**
@@ -950,7 +949,7 @@ public class Profile {
     }
 
     public String getMapsDir() {
-	return Global.pref.absoluteMapsBaseDir + relativeMapsDir;
+	return Preferences.itself().absoluteMapsBaseDir + relativeMapsDir;
     }
 
     public String getMapsSubDir(String mapsDir) {
@@ -958,7 +957,7 @@ public class Profile {
 	if (!mapsDir.endsWith("/")) {
 	    mapsDir = mapsDir + "/";
 	}
-	String ret = Global.pref.absoluteMapsBaseDir;
+	String ret = Preferences.itself().absoluteMapsBaseDir;
 	if (mapsDir.startsWith(ret)) {
 	    ret = mapsDir.substring(ret.length());
 	} else

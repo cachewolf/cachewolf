@@ -19,13 +19,12 @@ See http://www.cachewolf.de/ for more information.
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
-package CacheWolf;
+package CacheWolf.utils;
 
 import org.bouncycastle.crypto.tls.AlwaysValidVerifyer;
 import org.bouncycastle.crypto.tls.TlsSocket;
 
-import CacheWolf.utils.CWPartialInputStream;
-import CacheWolf.utils.Common;
+import CacheWolf.Preferences;
 import ewe.data.Property;
 import ewe.data.PropertyList;
 import ewe.io.AsciiCodec;
@@ -145,9 +144,9 @@ public class HttpConnection {
      * afterwards you don't need to set proxy parameters anymore
      */
 
-    private static String proxy = Global.pref.myproxy;
-    private static int proxyPort = Common.parseInt(Global.pref.myproxyport);
-    private static boolean useProxy = Global.pref.proxyActive;
+    private static String proxy = Preferences.itself().myproxy;
+    private static int proxyPort = Common.parseInt(Preferences.itself().myproxyport);
+    private static boolean useProxy = Preferences.itself().proxyActive;
 
     //	FIXME: why is this called immediately from preferences screen? shouldn't we read it from preferences instead?
     public static void setProxy(String proxyi, int proxyporti, boolean useproxyi) {

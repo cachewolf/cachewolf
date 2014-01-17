@@ -23,7 +23,7 @@ package CacheWolf.view;
 
 import java.lang.reflect.Constructor;
 
-import CacheWolf.Global;
+import CacheWolf.Preferences;
 import CacheWolf.TravelbugScreen;
 import CacheWolf.database.TravelbugList;
 import CacheWolf.view.ewe.TravelbugJourneyScreen;
@@ -38,13 +38,13 @@ public class TravelBugScreenFactory {
      */
     private static boolean isSwing;
     static {
-	Global.pref.log("Static initializer start ");
+	Preferences.itself().log("Static initializer start ");
 	Class swingClass = null;
 	try {
 	    swingClass = TravelbugJourneyScreen.class.getClassLoader().loadClass("javax.swing.JTable");
 	} catch (Exception e) {
-	    Global.pref.log("Swing not found");
-	    Global.pref.log(e.toString());
+	    Preferences.itself().log("Swing not found");
+	    Preferences.itself().log(e.toString());
 	    // ignore!
 	}
 	isSwing = swingClass != null && false;
@@ -56,18 +56,18 @@ public class TravelBugScreenFactory {
     private static final boolean isAndroid = false;
 
     public static ITravelbugScreen createTravelbugScreen(TravelbugList tbl, String title, Boolean allowNew) {
-	Global.pref.log("Mobile-Device: " + Vm.isMobile());
-	Global.pref.log("Preference for Mobile-Device: " + Global.pref.mobileGUI);
-	if (Vm.isMobile() && Global.pref.mobileGUI) {
+	Preferences.itself().log("Mobile-Device: " + Vm.isMobile());
+	Preferences.itself().log("Preference for Mobile-Device: " + Preferences.itself().mobileGUI);
+	if (Vm.isMobile() && Preferences.itself().mobileGUI) {
 	    try {
 		Class loadClass = Reflect.getForName("CacheWolf.view.pda.PDATravelbugScreen").getReflectedClass();
 		Constructor constructor = loadClass.getConstructor(new Class[] { TravelbugList.class, String.class, boolean.class });
 		ITravelbugScreen result = (ITravelbugScreen) constructor.newInstance(new Object[] { tbl, title, allowNew });
-		Global.pref.log("TBScreen successfully instantiated");
+		Preferences.itself().log("TBScreen successfully instantiated");
 		return result;
 	    } catch (Throwable e) {
-		Global.pref.log("CacheWolf.view.pda.PDATravelbugScreen not found");
-		Global.pref.log("Error in instantiating TravelBugScreen", e, true);
+		Preferences.itself().log("CacheWolf.view.pda.PDATravelbugScreen not found");
+		Preferences.itself().log("Error in instantiating TravelBugScreen", e, true);
 		e.printStackTrace();
 		// ignore?? VM on WinPC seems to have no classloader
 		return new PDATravelbugScreen(tbl, title, allowNew.booleanValue());

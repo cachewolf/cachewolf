@@ -21,8 +21,9 @@
 */
 package CacheWolf.exp;
 
-import CacheWolf.Global;
+import CacheWolf.MainForm;
 import CacheWolf.MyLocale;
+import CacheWolf.Preferences;
 import CacheWolf.controls.DataMover;
 import CacheWolf.controls.InfoBox;
 import CacheWolf.database.CacheDB;
@@ -64,7 +65,7 @@ public class HTMLExporter {
     public final static String expName = "HTML";
 
     public HTMLExporter() {
-	cacheDB = Global.profile.cacheDB;
+	cacheDB = MainForm.profile.cacheDB;
     }
 
     public void doIt() {
@@ -74,12 +75,12 @@ public class HTMLExporter {
 	Handle h = new Handle();
 	int exportErrors = 0;
 
-	FileChooser fc = new FileChooser(FileChooserBase.DIRECTORY_SELECT, Global.pref.getExportPath(expName));
+	FileChooser fc = new FileChooser(FileChooserBase.DIRECTORY_SELECT, Preferences.itself().getExportPath(expName));
 	fc.setTitle("Select target directory:");
 	String targetDir;
 	if (fc.execute() != FormBase.IDCANCEL) {
 	    targetDir = fc.getChosen() + "/";
-	    Global.pref.setExportPath(expName, targetDir);
+	    Preferences.itself().setExportPath(expName, targetDir);
 	    Vector cache_index = new Vector();
 	    Vector cacheImg = new Vector();
 	    Vector logImg = new Vector();
@@ -111,7 +112,7 @@ public class HTMLExporter {
 		if (ch.isVisible()) {
 		    if (ch.is_incomplete()) {
 			exportErrors++;
-			Global.pref.log("HTMLExport: skipping export of incomplete waypoint " + ch.getWayPoint());
+			Preferences.itself().log("HTMLExport: skipping export of incomplete waypoint " + ch.getWayPoint());
 			continue;
 		    }
 		    det = ch.getCacheDetails(false);
@@ -139,10 +140,10 @@ public class HTMLExporter {
 				String logImgFile = det.logImages.get(j).getFilename();
 				logImgParams.put("FILE", logImgFile);
 				logImgParams.put("TEXT", det.logImages.get(j).getTitle());
-				if (DataMover.copy(Global.profile.dataDir + logImgFile, targetDir + logImgFile))
+				if (DataMover.copy(MainForm.profile.dataDir + logImgFile, targetDir + logImgFile))
 				    logImg.add(logImgParams);
 				else {
-				    Global.pref.log("[HTMLExporter:DataMover]" + logImgFile + " " + ch.getWayPoint());
+				    Preferences.itself().log("[HTMLExporter:DataMover]" + logImgFile + " " + ch.getWayPoint());
 				    exportErrors++;
 				}
 			    }
@@ -155,10 +156,10 @@ public class HTMLExporter {
 				String usrImgFile = new String(det.userImages.get(j).getFilename());
 				usrImgParams.put("FILE", usrImgFile);
 				usrImgParams.put("TEXT", det.userImages.get(j).getTitle());
-				if (DataMover.copy(Global.profile.dataDir + usrImgFile, targetDir + usrImgFile))
+				if (DataMover.copy(MainForm.profile.dataDir + usrImgFile, targetDir + usrImgFile))
 				    usrImg.add(usrImgParams);
 				else {
-				    Global.pref.log("[HTMLExporter:DataMover]" + usrImgFile + " " + ch.getWayPoint());
+				    Preferences.itself().log("[HTMLExporter:DataMover]" + usrImgFile + " " + ch.getWayPoint());
 				    exportErrors++;
 				}
 			    }
@@ -170,25 +171,25 @@ public class HTMLExporter {
 
 			    String mapImgFile = new String(ch.getWayPoint() + "_map.gif");
 			    // check if map file exists
-			    File test = new File(Global.profile.dataDir + mapImgFile);
+			    File test = new File(MainForm.profile.dataDir + mapImgFile);
 
 			    if (test.exists()) {
 				mapImgParams.put("FILE", mapImgFile);
 				mapImgParams.put("TEXT", mapImgFile);
-				if (DataMover.copy(Global.profile.dataDir + mapImgFile, targetDir + mapImgFile))
+				if (DataMover.copy(MainForm.profile.dataDir + mapImgFile, targetDir + mapImgFile))
 				    mapImg.add(mapImgParams);
 				else {
-				    Global.pref.log("[HTMLExporter:DataMover]" + mapImgFile + " " + ch.getWayPoint());
+				    Preferences.itself().log("[HTMLExporter:DataMover]" + mapImgFile + " " + ch.getWayPoint());
 				    exportErrors++;
 				}
 				mapImgParams = new Hashtable();
 				mapImgFile = ch.getWayPoint() + "_map_2.gif";
 				mapImgParams.put("FILE", mapImgFile);
 				mapImgParams.put("TEXT", mapImgFile);
-				if (DataMover.copy(Global.profile.dataDir + mapImgFile, targetDir + mapImgFile))
+				if (DataMover.copy(MainForm.profile.dataDir + mapImgFile, targetDir + mapImgFile))
 				    mapImg.add(mapImgParams);
 				else {
-				    Global.pref.log("[HTMLExporter:DataMover]" + mapImgFile + " " + ch.getWayPoint());
+				    Preferences.itself().log("[HTMLExporter:DataMover]" + mapImgFile + " " + ch.getWayPoint());
 				    exportErrors++;
 				}
 				page_tpl.setParam("mapImg", mapImg);
@@ -201,7 +202,7 @@ public class HTMLExporter {
 			    page_tpl.setParam("logImg", ""); // ???
 			    page_tpl.setParam("userImg", ""); // ???
 			    page_tpl.setParam("mapImg", ""); // ???
-			    Global.pref.log("[HTMLExporter:DoIt]Error " + ch.getWayPoint());
+			    Preferences.itself().log("[HTMLExporter:DoIt]Error " + ch.getWayPoint());
 			    exportErrors++;
 			}
 
@@ -209,12 +210,12 @@ public class HTMLExporter {
 			pagefile.print(page_tpl.output());
 			pagefile.close();
 		    } catch (IllegalArgumentException e) {
-			Global.pref.log("[HTMLExporter:DoIt]" + ch.getWayPoint() + " is incomplete reason: ", e, true);
+			Preferences.itself().log("[HTMLExporter:DoIt]" + ch.getWayPoint() + " is incomplete reason: ", e, true);
 			exportErrors++;
 			ch.setIncomplete(true);
 		    } catch (Exception e) {
 			exportErrors++;
-			Global.pref.log("[HTMLExporter:DoIt]" + ch.getWayPoint(), e, true);
+			Preferences.itself().log("[HTMLExporter:DoIt]" + ch.getWayPoint(), e, true);
 		    }
 		}//if is black, filtered
 	    }
@@ -223,13 +224,13 @@ public class HTMLExporter {
 	    for (int j = 0; j < logIcons.size(); j++) {
 		icon = (String) logIcons.elementAt(j);
 		if (!DataMover.copy(FileBase.getProgramDirectory() + "/" + icon, targetDir + icon)) {
-		    Global.pref.log("[HTMLExporter:DataMover]" + icon, null);
+		    Preferences.itself().log("[HTMLExporter:DataMover]" + icon, null);
 		    exportErrors++;
 		}
 
 	    }
 	    if (!DataMover.copy(FileBase.getProgramDirectory() + "/recommendedlog.gif", targetDir + "recommendedlog.gif")) {
-		Global.pref.log("[HTMLExporter:DataMover]recommendedlog.gif", null);
+		Preferences.itself().log("[HTMLExporter:DataMover]recommendedlog.gif", null);
 		exportErrors++;
 	    }
 
@@ -251,7 +252,7 @@ public class HTMLExporter {
 		// sort by distance
 		sortAndPrintIndex(tpl, cache_index, targetDir + "/index_dist.html", "DISTANCE", 10.0);
 	    } catch (Exception e) {
-		Global.pref.log("[HTMLExporter:writeIndexFiles]Problem writing HTML files", e, true);
+		Preferences.itself().log("[HTMLExporter:writeIndexFiles]Problem writing HTML files", e, true);
 	    }//try
 
 	}//if
@@ -272,7 +273,7 @@ public class HTMLExporter {
 	    detfile.print(tmpl.output());
 	    detfile.close();
 	} catch (IOException e) {
-	    Global.pref.log("[HTMLExporter:sortAndPrintIndex]Problem writing HTML file:" + file, e, true);
+	    Preferences.itself().log("[HTMLExporter:sortAndPrintIndex]Problem writing HTML file:" + file, e, true);
 	}
     }
 
@@ -290,7 +291,7 @@ public class HTMLExporter {
 	    detfile.print(tmpl.output());
 	    detfile.close();
 	} catch (IOException e) {
-	    Global.pref.log("[HTMLExporter:writeIndexFile]Problem writing HTML file:" + file, e, true);
+	    Preferences.itself().log("[HTMLExporter:writeIndexFile]Problem writing HTML file:" + file, e, true);
 	}
     }
 
@@ -308,7 +309,7 @@ public class HTMLExporter {
 	    detfile.print(tmpl.output());
 	    detfile.close();
 	} catch (IOException e) {
-	    Global.pref.log("[HTMLExporter:writeIndexFile]Problem writing HTML file:" + file, e, true);
+	    Preferences.itself().log("[HTMLExporter:writeIndexFile]Problem writing HTML file:" + file, e, true);
 	}
 
     }

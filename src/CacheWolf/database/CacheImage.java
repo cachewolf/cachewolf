@@ -27,7 +27,7 @@ package CacheWolf.database;
  * @author Engywuck
  *
  */
-public class ImageInfo {
+public class CacheImage {
 
     private String filename = null;
     private String title = null;

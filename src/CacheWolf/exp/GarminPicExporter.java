@@ -21,8 +21,9 @@
 */
 package CacheWolf.exp;
 
-import CacheWolf.Global;
+import CacheWolf.MainForm;
 import CacheWolf.MyLocale;
+import CacheWolf.Preferences;
 import CacheWolf.controls.DataMover;
 import CacheWolf.controls.ExecutePanel;
 import CacheWolf.controls.InfoBox;
@@ -30,7 +31,7 @@ import CacheWolf.database.CacheDB;
 import CacheWolf.database.CacheHolder;
 import CacheWolf.database.CacheHolderDetail;
 import CacheWolf.database.CacheType;
-import CacheWolf.database.ImageInfo;
+import CacheWolf.database.CacheImage;
 
 import com.stevesoft.ewe_pat.Regex;
 
@@ -72,20 +73,20 @@ public class GarminPicExporter {
     Regex spoilerRex;
 
     public GarminPicExporter() {
-	cacheDB = Global.profile.cacheDB;
+	cacheDB = MainForm.profile.cacheDB;
     }
 
     public final static String expName = "GARMIN";
 
     public void doIt() {
 	// Select destination directory
-	FileChooser fc = new FileChooser(FileChooserBase.DIRECTORY_SELECT, Global.pref.getExportPath(expName));
+	FileChooser fc = new FileChooser(FileChooserBase.DIRECTORY_SELECT, Preferences.itself().getExportPath(expName));
 	fc.setTitle("Select target directory:");
 	String targetDir;
 	if (fc.execute() == FormBase.IDCANCEL)
 	    return;
 	targetDir = fc.getChosen() + "/";
-	Global.pref.setExportPath(expName, targetDir);
+	Preferences.itself().setExportPath(expName, targetDir);
 
 	// Select export options
 	OptionsForm options = new OptionsForm();
@@ -115,7 +116,7 @@ public class GarminPicExporter {
 	    if (ch.isVisible()) {
 		if (ch.is_incomplete()) {
 		    exportErrors++;
-		    Global.pref.log("GarminPicExporter: skipping export of incomplete waypoint " + ch.getWayPoint());
+		    Preferences.itself().log("GarminPicExporter: skipping export of incomplete waypoint " + ch.getWayPoint());
 		    continue;
 		}
 		exportErrors += copyImages(ch, targetDir);
@@ -146,7 +147,7 @@ public class GarminPicExporter {
 	picsCopied.clear(); // Clear the hashtable which keeps track of pictures copied
 	for (int i = nImg - 1; i >= 0; i--) { // Start from top to get more pics with sensible names
 	    // The pictures embedded in the text description have no title and are at the beginning
-	    ImageInfo imgInfo = det.images.get(i);
+	    CacheImage imgInfo = det.images.get(i);
 	    // Skip this pic if it was already copied
 	    if (picsCopied.containsKey(imgInfo.getFilename())) {
 		continue;
@@ -165,7 +166,7 @@ public class GarminPicExporter {
 		if (copyPic) { // We have to copy this picture
 		    if (!imgInfo.getFilename().endsWith("jpg")) { // relies on filename being lower case
 			// Garmin GPS can only handle jpg files
-			Global.pref.log("GarminPicExporter: Warning: Picture " + imgInfo.getFilename() + " not copied as Garmin GPS can only handle jpg files");
+			Preferences.itself().log("GarminPicExporter: Warning: Picture " + imgInfo.getFilename() + " not copied as Garmin GPS can only handle jpg files");
 			nonJPGimages++;
 			continue; // Move to next pic
 		    }
@@ -180,13 +181,13 @@ public class GarminPicExporter {
 		    picsCopied.put(imgInfo.getFilename(), null); // Remember that we copied this picture
 		    if (isSpoiler) {
 			appendDir(dirName, "Spoilers/");
-			DataMover.copy(Global.profile.dataDir + imgInfo.getFilename(), dirName + "Spoilers/" + sanitizeFileName(imgInfo.getTitle()) + ".JPG");
+			DataMover.copy(MainForm.profile.dataDir + imgInfo.getFilename(), dirName + "Spoilers/" + sanitizeFileName(imgInfo.getTitle()) + ".JPG");
 		    } else {
-			DataMover.copy(Global.profile.dataDir + imgInfo.getFilename(), dirName + sanitizeFileName(imgInfo.getTitle()) + ".JPG");
+			DataMover.copy(MainForm.profile.dataDir + imgInfo.getFilename(), dirName + sanitizeFileName(imgInfo.getTitle()) + ".JPG");
 		    }
 		}
 	    } catch (Exception ex) {
-		Global.pref.log("GarminPicExporter: Error copying file " + imgInfo.getFilename());
+		Preferences.itself().log("GarminPicExporter: Error copying file " + imgInfo.getFilename());
 		retCode = 1; // Signal error to calling program
 	    }
 	}
@@ -232,7 +233,7 @@ public class GarminPicExporter {
 	    String GCF = "GeocachePhotos/";
 	    dirName = appendDir(appendDir(appendDir(appendDir(targetDir, GCF), dir1), dir2), wayPoint);
 	} catch (Exception ex) {
-	    Global.pref.log("GarminPicExporter: Error creating directories for cache " + wayPoint + "\n" + ex.getMessage());
+	    Preferences.itself().log("GarminPicExporter: Error creating directories for cache " + wayPoint + "\n" + ex.getMessage());
 	    return null; // Signal error to calling program
 	}
 	return dirName;

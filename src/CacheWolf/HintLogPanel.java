@@ -98,27 +98,27 @@ public class HintLogPanel extends CellPanel {
 	MyLocale.setSplitterSize(split);
 	split.setSplitter(PanelSplitter.AFTER | PanelSplitter.HIDDEN, PanelSplitter.BEFORE | PanelSplitter.HIDDEN, 0);
 
-	int initialHintHeight = Global.pref.initialHintHeight;
+	int initialHintHeight = Preferences.itself().initialHintHeight;
 	if (initialHintHeight < 0 || initialHintHeight > 1000)
-	    initialHintHeight = Global.pref.DEFAULT_INITIAL_HINT_HEIGHT;
+	    initialHintHeight = Preferences.itself().DEFAULT_INITIAL_HINT_HEIGHT;
 	hintpane.setPreferredSize(100, initialHintHeight);
 
-	if (!Global.pref.tabsAtTop)
+	if (!Preferences.itself().tabsAtTop)
 	    hintpane.addLast(codeButtonPanel, DONTSTRETCH, FILL);
 	ScrollBarPanel sbphint = new MyScrollBarPanel(hint);
 	hint.modify(ControlConstants.NotEditable, 0);
 	hintpane.addLast(sbphint, CellConstants.STRETCH, (CellConstants.FILL | CellConstants.WEST));
-	if (Global.pref.tabsAtTop)
+	if (Preferences.itself().tabsAtTop)
 	    hintpane.addLast(codeButtonPanel, DONTSTRETCH, FILL);
 
-	if (!Global.pref.tabsAtTop)
+	if (!Preferences.itself().tabsAtTop)
 	    logpane.addLast(logButtonPanel, DONTSTRETCH, FILL);
 	sbplog = new MyScrollBarPanel(htmlImagDisp, ScrollablePanel.NeverShowHorizontalScrollers);
-	Rect r = new Rect(new Dimension(Global.pref.myAppWidth - sbplog.vbar.getRect().width, 20));
+	Rect r = new Rect(new Dimension(Preferences.itself().myAppWidth - sbplog.vbar.getRect().width, 20));
 	htmlImagDisp.virtualSize = r;
 	htmlImagDisp.checkScrolls();
 	logpane.addLast(sbplog.getScrollablePanel(), CellConstants.STRETCH, CellConstants.FILL);
-	if (Global.pref.tabsAtTop)
+	if (Preferences.itself().tabsAtTop)
 	    logpane.addLast(logButtonPanel, DONTSTRETCH, FILL);
 
 	this.addLast(split);
@@ -154,7 +154,7 @@ public class HintLogPanel extends CellPanel {
 	StringBuffer dummy = new StringBuffer(DEFAULT_STRINGBUFFER_SIZE);
 	int counter = 0;
 	int nLogs = currCache.CacheLogs.size();
-	int logsPerPage = Global.pref.logsPerPage;
+	int logsPerPage = Preferences.itself().logsPerPage;
 	for (int i = crntLogPosition; i < nLogs; i++) {
 	    dummy.append(SafeXML.cleanback(currCache.CacheLogs.getLog(i).toHtml()));
 	    dummy.append("<br>");
@@ -173,7 +173,7 @@ public class HintLogPanel extends CellPanel {
 	    logs.endHtml();
 	} catch (Exception e) {
 	    logs = new HtmlDisplay();
-	    Global.pref.log("Error rendering HTML", e, true);
+	    Preferences.itself().log("Error rendering HTML", e, true);
 	    logs.setPlainText("Ewe VM: Internal error displaying logs");
 	}
 	int h = logs.getLineHeight() * logs.getNumLines();
@@ -212,7 +212,7 @@ public class HintLogPanel extends CellPanel {
      */
     public void onEvent(Event ev) {
 	if (ev instanceof ControlEvent && ev.type == ControlEvent.PRESSED) {
-	    int minLogs = java.lang.Math.min(Global.pref.logsPerPage, currCache.CacheLogs.size());
+	    int minLogs = java.lang.Math.min(Preferences.itself().logsPerPage, currCache.CacheLogs.size());
 	    if (ev.target == moreBt) {
 		prevBt.modify(0, ControlConstants.Disabled);
 		prevBt.repaintNow();

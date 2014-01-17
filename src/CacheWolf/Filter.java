@@ -27,7 +27,7 @@ import CacheWolf.database.CacheHolder;
 import CacheWolf.database.CacheSize;
 import CacheWolf.database.CacheType;
 import CacheWolf.imp.KMLImporter;
-import CacheWolf.navi.CWPoint;
+import CacheWolf.database.CWPoint;
 import CacheWolf.utils.Common;
 import CacheWolf.utils.Matrix;
 
@@ -125,8 +125,8 @@ public class Filter {
      * Apply a route filter. Each waypoint is on a seperate line. We use a regex method to allow for different formats of waypoints: possible is currently: DD MM.mmm
      */
     public void doFilterRoute(File routeFile, double distance) {
-	Global.profile.selectionChanged = true;
-	CacheDB cacheDB = Global.profile.cacheDB;
+	MainForm.profile.selectionChanged = true;
+	CacheDB cacheDB = MainForm.profile.cacheDB;
 	// load file into a vector:
 	Vector wayPoints = new Vector();
 	Regex rex = new Regex("(N|S).*?([0-9]{1,2}).*?([0-9]{1,3})(,|.)([0-9]{1,3}).*?(E|W).*?([0-9]{1,2}).*?([0-9]{1,3})(,|.)([0-9]{1,3})");
@@ -226,25 +226,25 @@ public class Filter {
     }
 
     /**
-     * Set the filter from the filter data stored in the Global.profile (the filterscreen also updates the Global.profile)
+     * Set the filter from the filter data stored in the MainForm.profile (the filterscreen also updates the MainForm.profile)
      */
     public void setFilter() {
-	archived = Global.profile.getFilterVar().charAt(0) == '1';
-	available = Global.profile.getFilterVar().charAt(1) == '1';
-	foundByMe = Global.profile.getFilterVar().charAt(2) == '1';
-	ownedByMe = Global.profile.getFilterVar().charAt(3) == '1';
-	notArchived = Global.profile.getFilterVar().charAt(4) == '1';
-	notAvailable = Global.profile.getFilterVar().charAt(5) == '1';
-	notFoundByMe = Global.profile.getFilterVar().charAt(6) == '1';
-	notOwnedByMe = Global.profile.getFilterVar().charAt(7) == '1';
-	cacheStatus = Global.profile.getFilterStatus();
-	useRegexp = Global.profile.getFilterUseRegexp();
-	filterNoCoord = Global.profile.getFilterNoCoord();
+	archived = MainForm.profile.getFilterVar().charAt(0) == '1';
+	available = MainForm.profile.getFilterVar().charAt(1) == '1';
+	foundByMe = MainForm.profile.getFilterVar().charAt(2) == '1';
+	ownedByMe = MainForm.profile.getFilterVar().charAt(3) == '1';
+	notArchived = MainForm.profile.getFilterVar().charAt(4) == '1';
+	notAvailable = MainForm.profile.getFilterVar().charAt(5) == '1';
+	notFoundByMe = MainForm.profile.getFilterVar().charAt(6) == '1';
+	notOwnedByMe = MainForm.profile.getFilterVar().charAt(7) == '1';
+	cacheStatus = MainForm.profile.getFilterStatus();
+	useRegexp = MainForm.profile.getFilterUseRegexp();
+	filterNoCoord = MainForm.profile.getFilterNoCoord();
 
-	typeMatchPattern = CacheType.Type_FilterString2Type_FilterPattern(Global.profile.getFilterType());
+	typeMatchPattern = CacheType.Type_FilterString2Type_FilterPattern(MainForm.profile.getFilterType());
 	hasTypeMatchPattern = CacheType.hasTypeMatchPattern(typeMatchPattern);
 	roseMatchPattern = 0;
-	String filterRose = Global.profile.getFilterRose();
+	String filterRose = MainForm.profile.getFilterRose();
 	if (filterRose.charAt(0) == '1')
 	    roseMatchPattern |= NW;
 	if (filterRose.charAt(1) == '1')
@@ -279,7 +279,7 @@ public class Filter {
 	    roseMatchPattern |= WNW;
 	hasRoseMatchPattern = roseMatchPattern != ROSE_ALL;
 	sizeMatchPattern = 0;
-	String filterSize = Global.profile.getFilterSize();
+	String filterSize = MainForm.profile.getFilterSize();
 	if (filterSize.charAt(0) == '1')
 	    sizeMatchPattern |= CacheSize.CW_FILTER_MICRO;
 	if (filterSize.charAt(1) == '1')
@@ -293,24 +293,24 @@ public class Filter {
 	if (filterSize.charAt(5) == '1')
 	    sizeMatchPattern |= CacheSize.CW_FILTER_NONPHYSICAL;
 	hasSizeMatchPattern = sizeMatchPattern != CacheSize.CW_FILTER_ALL;
-	distdirec = Global.profile.getFilterDist().charAt(0) == 'L' ? SMALLER : GREATER;
-	fscDist = Common.parseDouble(Global.profile.getFilterDist().substring(1)); // Distance
-	diffdirec = Global.profile.getFilterDiff().charAt(0) == 'L' ? SMALLER : (Global.profile.getFilterDiff().charAt(0) == '=' ? EQUAL : GREATER);
-	fscDiff = Common.parseDouble(Global.profile.getFilterDiff().substring(1)); // Difficulty
-	terrdirec = Global.profile.getFilterTerr().charAt(0) == 'L' ? SMALLER : (Global.profile.getFilterTerr().charAt(0) == '=' ? EQUAL : GREATER);
-	fscTerr = Common.parseDouble(Global.profile.getFilterTerr().substring(1)); // Terrain
-	attributesPattern = Global.profile.getFilterAttr();
-	attributesChoice = Global.profile.getFilterAttrChoice();
+	distdirec = MainForm.profile.getFilterDist().charAt(0) == 'L' ? SMALLER : GREATER;
+	fscDist = Common.parseDouble(MainForm.profile.getFilterDist().substring(1)); // Distance
+	diffdirec = MainForm.profile.getFilterDiff().charAt(0) == 'L' ? SMALLER : (MainForm.profile.getFilterDiff().charAt(0) == '=' ? EQUAL : GREATER);
+	fscDiff = Common.parseDouble(MainForm.profile.getFilterDiff().substring(1)); // Difficulty
+	terrdirec = MainForm.profile.getFilterTerr().charAt(0) == 'L' ? SMALLER : (MainForm.profile.getFilterTerr().charAt(0) == '=' ? EQUAL : GREATER);
+	fscTerr = Common.parseDouble(MainForm.profile.getFilterTerr().substring(1)); // Terrain
+	attributesPattern = MainForm.profile.getFilterAttr();
+	attributesChoice = MainForm.profile.getFilterAttrChoice();
 	// items from search panel
-	syncDate = Global.profile.getFilterSyncDate();
-	namePattern = Global.profile.getFilterNamePattern();
+	syncDate = MainForm.profile.getFilterSyncDate();
+	namePattern = MainForm.profile.getFilterNamePattern();
     }
 
     /**
      * Apply the filter. Caches that match a criteria are flagged is_filtered = true. The table model is responsible for displaying or not displaying a cache that is filtered.
      */
     public void doFilter() {
-	CacheDB cacheDB = Global.profile.cacheDB;
+	CacheDB cacheDB = MainForm.profile.cacheDB;
 	Hashtable examinedCaches;
 	if (cacheDB.size() == 0)
 	    return;
@@ -319,7 +319,7 @@ public class Filter {
 	    clearFilter();
 	    return;
 	}
-	Global.profile.selectionChanged = true;
+	MainForm.profile.selectionChanged = true;
 	CacheHolder ch;
 	examinedCaches = new Hashtable(cacheDB.size());
 
@@ -340,9 +340,9 @@ public class Filter {
 	    }
 	    ch.setFiltered(filterCache);
 	}
-	Global.profile.setFilterActive(FILTER_ACTIVE);
+	MainForm.profile.setFilterActive(FILTER_ACTIVE);
 	examinedCaches = null;
-	// Global.profile.hasUnsavedChanges=true;
+	// MainForm.profile.hasUnsavedChanges=true;
     }
 
     public boolean excludedByFilter(CacheHolder ch) {
@@ -621,27 +621,27 @@ public class Filter {
      * Switches flag to invert filter property.
      */
     public void invertFilter() {
-	Global.profile.setFilterInverted(!Global.profile.isFilterInverted());
+	MainForm.profile.setFilterInverted(!MainForm.profile.isFilterInverted());
     }
 
     /**
      * Clear the is_filtered flag from the cache database.
      */
     public void clearFilter() {
-	Global.profile.selectionChanged = true;
-	CacheDB cacheDB = Global.profile.cacheDB;
+	MainForm.profile.selectionChanged = true;
+	CacheDB cacheDB = MainForm.profile.cacheDB;
 	for (int i = cacheDB.size() - 1; i >= 0; i--) {
 	    CacheHolder ch = cacheDB.get(i);
 	    ch.setFiltered(false);
 	}
-	Global.profile.setFilterActive(FILTER_INACTIVE);
+	MainForm.profile.setFilterActive(FILTER_INACTIVE);
     }
 
     public boolean hasFilter() {
-	long[] attribs = Global.profile.getFilterAttr();
-	return !(Global.profile.getFilterType().equals(FilterData.FILTERTYPE) && Global.profile.getFilterRose().equals(FilterData.FILTERROSE) && Global.profile.getFilterVar().equals(FilterData.FILTERVAR)
-		&& Global.profile.getFilterSize().equals(FilterData.FILTERSIZE) && Global.profile.getFilterDist().equals("L") && Global.profile.getFilterDiff().equals("L") && Global.profile.getFilterTerr().equals("L") && attribs[0] == 0l
-		&& attribs[1] == 0l && attribs[2] == 0l && attribs[3] == 0l && Global.profile.getFilterStatus().equals("") && Global.profile.getFilterSyncDate().equals("") && Global.profile.getFilterNamePattern().equals("") && Global.profile
+	long[] attribs = MainForm.profile.getFilterAttr();
+	return !(MainForm.profile.getFilterType().equals(FilterData.FILTERTYPE) && MainForm.profile.getFilterRose().equals(FilterData.FILTERROSE) && MainForm.profile.getFilterVar().equals(FilterData.FILTERVAR)
+		&& MainForm.profile.getFilterSize().equals(FilterData.FILTERSIZE) && MainForm.profile.getFilterDist().equals("L") && MainForm.profile.getFilterDiff().equals("L") && MainForm.profile.getFilterTerr().equals("L") && attribs[0] == 0l
+		&& attribs[1] == 0l && attribs[2] == 0l && attribs[3] == 0l && MainForm.profile.getFilterStatus().equals("") && MainForm.profile.getFilterSyncDate().equals("") && MainForm.profile.getFilterNamePattern().equals("") && MainForm.profile
 		    .getFilterNoCoord());
     }
 }

@@ -21,8 +21,10 @@
 */
 package CacheWolf.view.pda;
 
-import CacheWolf.Global;
+import CacheWolf.MainForm;
+import CacheWolf.MainTab;
 import CacheWolf.MyLocale;
+import CacheWolf.Preferences;
 import CacheWolf.database.CacheDB;
 import CacheWolf.database.CacheHolder;
 import CacheWolf.database.CacheHolderDetail;
@@ -67,13 +69,13 @@ public class PDATravelbugDetailMenu extends PDAMenu {
     public void actionPerformed(String action) {
 	if (action.equals(DROP)) {
 	    Travelbug tb = view.getTravelbug().getTb();
-	    int curCacheNo = Global.mainTab.tablePanel.getSelectedCache();
-	    CacheDB cacheDB = Global.profile.cacheDB;
+	    int curCacheNo = MainTab.itself.tablePanel.getSelectedCache();
+	    CacheDB cacheDB = MainForm.profile.cacheDB;
 	    if (curCacheNo >= 0 && curCacheNo < cacheDB.size()) {
 		CacheHolder ch = cacheDB.get(curCacheNo);
 		CacheHolderDetail cacheDetails = ch.getCacheDetails(true);
 		cacheDetails.Travelbugs.add(tb);
-		journeyScreen.model.allTravelbugJourneys.addTbDrop(tb, Global.profile.name, ch.getWayPoint());
+		journeyScreen.model.allTravelbugJourneys.addTbDrop(tb, MainForm.profile.name, ch.getWayPoint());
 		ch.setHas_bugs(true);
 		ch.save();
 		// Set Input fields to the new Values:
@@ -102,13 +104,13 @@ public class PDATravelbugDetailMenu extends PDAMenu {
 		    else
 			s = "http://www.geocaching.com/track/details.aspx?id=" + tb.getGuid();
 
-		    CWWrapper.exec(Global.pref.browser, s);
-		    Global.pref.log("Executed: \"" + Global.pref.browser + "\" \"" + s + "\"");
+		    CWWrapper.exec(Preferences.itself().browser, s);
+		    Preferences.itself().log("Executed: \"" + Preferences.itself().browser + "\" \"" + s + "\"");
 		} catch (Exception ioex) {
-		    Global.pref.log("Ignored Exception", ioex, true);
+		    Preferences.itself().log("Ignored Exception", ioex, true);
 		}
 	    }
-	    Global.pref.setOldGCLanguage();
+	    Preferences.itself().setOldGCLanguage();
 	    exit(0);
 	} else if (action.equals(SPIDER)) {
 	    Travelbug tb = view.getTravelbug().getTb();
@@ -135,7 +137,7 @@ public class PDATravelbugDetailMenu extends PDAMenu {
 	    }
 	    journeyScreen.model.allTravelbugJourneys.saveTravelbugsFile();
 	    Vm.showWait(false);
-	    Global.pref.setOldGCLanguage();
+	    Preferences.itself().setOldGCLanguage();
 	    exit(0);
 	} else if (action.equals(DELETE)) {
 	    // LOESCHEN DES TB's aus der Datenbank ist Boese!!!

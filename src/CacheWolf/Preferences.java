@@ -23,7 +23,7 @@ package CacheWolf;
 
 import CacheWolf.controls.InfoBox;
 import CacheWolf.imp.GCImporter;
-import CacheWolf.navi.CWPoint;
+import CacheWolf.database.CWPoint;
 import CacheWolf.navi.Metrics;
 import CacheWolf.navi.TransformCoordinates;
 import CacheWolf.utils.Common;
@@ -61,7 +61,7 @@ import ewesoft.xml.sax.AttributeList;
  */
 public class Preferences extends MinML {
 
-    private static Preferences thisPreferences;
+    private static Preferences preferences;
 
     public static final int GPSD_DISABLED = 0; // do not use gpsd
     public static final int GPSD_FORMAT_OLD = 1; // use old protocol
@@ -98,11 +98,11 @@ public class Preferences extends MinML {
      * 
      * @return Singleton Preferences object
      */
-    public static Preferences getPrefObject() {
-	if (thisPreferences == null)
+    public static Preferences itself() {
+	if (preferences == null)
 	    // it's ok, we can call this constructor
-	    thisPreferences = new Preferences();
-	return thisPreferences;
+	    preferences = new Preferences();
+	return preferences;
     }
 
     private String pathToConfigFile;
@@ -415,8 +415,8 @@ public class Preferences extends MinML {
 		setMapsBaseDir(mapsBaseDir);
 	    }
 
-	    Global.profile.name = lastProfile;
-	    Global.profile.dataDir = absoluteBaseDir + lastProfile + "/";
+	    MainForm.profile.name = lastProfile;
+	    MainForm.profile.dataDir = absoluteBaseDir + lastProfile + "/";
 	    savePreferences();
 
 	    new InfoBox(MyLocale.getMsg(327, "Information"), MyLocale.getMsg(176, "First start - using default preferences \n For experts only: \n Could not read preferences file:\n") + pathToConfigFile).wait(FormBase.OKB);
@@ -961,8 +961,8 @@ public class Preferences extends MinML {
     public void setCurCentrePt(CWPoint newCentre) {
 	Vm.showWait(true);
 	curCentrePt.set(newCentre);
-	Global.profile.updateBearingDistance();
-	Global.mainTab.tablePanel.autoSort();
+	MainForm.profile.updateBearingDistance();
+	MainTab.itself.tablePanel.autoSort();
 	Vm.showWait(false);
     }
 
@@ -1033,9 +1033,9 @@ public class Preferences extends MinML {
 		// If no profile chosen (includes a new one), terminate
 		if (code == -1)
 		    return false; // Cancel pressed
-		CWPoint savecenter = new CWPoint(Global.profile.centre);
-		Global.profile.clearProfile();
-		Global.profile.setCenterCoords(savecenter);
+		CWPoint savecenter = new CWPoint(MainForm.profile.centre);
+		MainForm.profile.clearProfile();
+		MainForm.profile.setCenterCoords(savecenter);
 		// prof.hasUnsavedChanges = true;
 		// curCentrePt.set(0,0);
 		// No centre yet
@@ -1046,11 +1046,11 @@ public class Preferences extends MinML {
 		new InfoBox(MyLocale.getMsg(144, "Warning"), MyLocale.getMsg(171, "Profile does not exist: ") + lastProfile).wait(FormBase.OKB);
 	} while (profileExists == false);
 	// Now we are sure that baseDir exists and basDir+profile exists
-	Global.profile.name = lastProfile;
-	Global.profile.dataDir = absoluteBaseDir + lastProfile;
-	Global.profile.dataDir = Global.profile.dataDir.replace('\\', '/');
-	if (!Global.profile.dataDir.endsWith("/"))
-	    Global.profile.dataDir += '/';
+	MainForm.profile.name = lastProfile;
+	MainForm.profile.dataDir = absoluteBaseDir + lastProfile;
+	MainForm.profile.dataDir = MainForm.profile.dataDir.replace('\\', '/');
+	if (!MainForm.profile.dataDir.endsWith("/"))
+	    MainForm.profile.dataDir += '/';
 	// pathToProfile = prof.dataDir;
 	savePreferences();
 	return true;
@@ -1193,7 +1193,7 @@ public class Preferences extends MinML {
      *            BE versions or RC versions) by including the line
      * 
      *            <pre>
-     * Global.pref.debug = true;
+     * Preferences.itself().debug = true;
      * </pre>
      * 
      *            in Version.getRelease()
@@ -1244,7 +1244,7 @@ public class Preferences extends MinML {
     public String getExportPath(String exporter) {
 	String dir = (String) exporterPaths.get(exporter);
 	if (dir == null) {
-	    dir = Global.profile.dataDir;
+	    dir = MainForm.profile.dataDir;
 	}
 	return dir;
     }
@@ -1259,7 +1259,7 @@ public class Preferences extends MinML {
     public String getImporterPath(String importer) {
 	String dir = (String) importerPaths.get(importer);
 	if (null == dir)
-	    dir = Global.profile.dataDir;
+	    dir = MainForm.profile.dataDir;
 	return dir;
     }
 

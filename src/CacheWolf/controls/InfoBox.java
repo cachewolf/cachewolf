@@ -21,7 +21,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 package CacheWolf.controls;
 
-import CacheWolf.Global;
+import CacheWolf.Preferences;
 import CacheWolf.MyLocale;
 import ewe.ui.ControlEvent;
 import ewe.ui.Event;
@@ -63,9 +63,9 @@ public class InfoBox extends Form {
 
     public InfoBox(String title, String info, int type, boolean autoWrap) {
 	// Resize InfoBox
-	int psx = Global.pref.fontSize * 16;
-	int psy = Global.pref.fontSize * 12;
-	if (Global.pref.useBigIcons) {
+	int psx = Preferences.itself().fontSize * 16;
+	int psy = Preferences.itself().fontSize * 12;
+	if (Preferences.itself().useBigIcons) {
 	    psx = Math.min(psx + 48, MyLocale.getScreenWidth());
 	    psy = Math.min(psy + 16, MyLocale.getScreenHeight());
 	} else {

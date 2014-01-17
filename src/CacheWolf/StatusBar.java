@@ -21,6 +21,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 package CacheWolf;
 
+import CacheWolf.database.CacheHolder;
+import CacheWolf.database.CacheType;
 import ewe.fx.Color;
 import ewe.sys.Vm;
 import ewe.ui.CellPanel;
@@ -67,7 +69,7 @@ public class StatusBar extends CellPanel {
 	lblCenter.setToolTip(MyLocale.getMsg(195, "Current centre"));
 	// vermeide horizontales scrollen
 	// hängt auch von der Icongrösse / Schriftgrösse ab (ist so nicht korrekt) 
-	if (Global.pref.myAppWidth >= 640) {
+	if (Preferences.itself().myAppWidth >= 640) {
 	    addLast(lblCenter, STRETCH, LEFT | FILL);
 	}
     }
@@ -91,17 +93,17 @@ public class StatusBar extends CellPanel {
 	disp.setToolTip("Cache/Addi +Blacklisted");
 	disp.setText(strStatus);
 	// Indicate that a filter is active in the status line
-	if (Global.profile.getFilterActive() == Filter.FILTER_ACTIVE)
+	if (MainForm.profile.getFilterActive() == Filter.FILTER_ACTIVE)
 	    btnFlt.backGround = new Color(0, 255, 0);
-	else if (Global.profile.getFilterActive() == Filter.FILTER_CACHELIST)
+	else if (MainForm.profile.getFilterActive() == Filter.FILTER_CACHELIST)
 	    btnFlt.backGround = new Color(0, 0, 255);
-	else if (Global.profile.getFilterActive() == Filter.FILTER_MARKED_ONLY)
+	else if (MainForm.profile.getFilterActive() == Filter.FILTER_MARKED_ONLY)
 	    btnFlt.backGround = new Color(0, 255, 255);
 	else
 	    btnFlt.backGround = null;
 	if (bigScreen && lblCenter.backGround == null)
-	    strInfo = "  \u00a4 " + Global.pref.getCurCentrePt().toString();
-	if (Global.pref.sortAutomatic) {
+	    strInfo = "  \u00a4 " + Preferences.itself().getCurCentrePt().toString();
+	if (Preferences.itself().sortAutomatic) {
 	    this.btnNoSorting.backGround = new Color(0, 255, 255);
 	} else {
 	    this.btnNoSorting.backGround = null;
@@ -116,23 +118,115 @@ public class StatusBar extends CellPanel {
 	if (ev instanceof ControlEvent && ev.type == ControlEvent.PRESSED) {
 	    if (ev.target == btnFlt) {
 		Filter flt = new Filter();
-		if (Global.profile.getFilterActive() == Filter.FILTER_INACTIVE) {
+		if (MainForm.profile.getFilterActive() == Filter.FILTER_INACTIVE) {
 		    flt.setFilter();
 		    flt.doFilter();
 		} else {
 		    flt.clearFilter();
 		}
-		Global.mainTab.tablePanel.refreshTable();
+		MainTab.itself.tablePanel.refreshTable();
 	    }
 	    if (ev.target == btnCacheTour) {
 		MainForm.itself.toggleCacheListVisible();
 	    }
 	    if (ev.target == btnNoSorting) {
-		Global.pref.sortAutomatic = !Global.pref.sortAutomatic;
+		Preferences.itself().sortAutomatic = !Preferences.itself().sortAutomatic;
 		myTableModel.sortTable(-1, true);
 	    }
-	    Gui.takeFocus(Global.mainTab.tablePanel.myTableControl, ControlConstants.ByKeyboard);
+	    Gui.takeFocus(MainTab.itself.tablePanel.myTableControl, ControlConstants.ByKeyboard);
 	}
 	super.onEvent(ev);
+    }
+}
+
+/**
+ * @author Marc
+ *         Use this class to obtain statistics or information on a cache database.
+ */
+class DBStats {
+
+    public DBStats() {
+    }
+
+    /**
+     * Method to get the number of caches displayed in the list.
+     * It will count waypoints only that start with
+     * GC,or
+     * OC
+     * 
+     * @return
+     */
+    public String visible(boolean big) {
+	CacheHolder holder;
+	int counter = 0;
+	int whiteCaches = 0;
+	int whiteWaypoints = 0;
+	for (int i = 0; i < MainForm.profile.cacheDB.size(); i++) {
+	    holder = MainForm.profile.cacheDB.get(i);
+	    if (holder.isVisible()) {
+		counter++;
+		if (CacheType.isAddiWpt(holder.getType())) {
+		    whiteWaypoints++;
+		} else {
+		    whiteCaches++;
+		}
+	    }
+	}
+	if (big)
+	    return counter + "(" + whiteCaches + "/" + whiteWaypoints + ")";
+	else
+	    return "" + whiteCaches;
+
+    }
+
+    /**
+     * Method to get the number of caches available for display
+     * 
+     * @return
+     */
+    public String total(boolean big) {
+	CacheHolder holder;
+	int all = MainForm.profile.cacheDB.size();
+	int whiteCaches = 0;
+	int whiteWaypoints = 0;
+	int blackCaches = 0;
+	int blackWaypoints = 0;
+	for (int i = 0; i < all; i++) {
+	    holder = MainForm.profile.cacheDB.get(i);
+	    if (holder.is_black()) {
+		if (CacheType.isAddiWpt(holder.getType())) {
+		    blackWaypoints++;
+		} else {
+		    blackCaches++;
+		}
+	    } else {
+		if (CacheType.isAddiWpt(holder.getType())) {
+		    whiteWaypoints++;
+		} else {
+		    whiteCaches++;
+		}
+	    }
+	}
+	if (big) {
+	    if (blackCaches > 0 || blackWaypoints > 0) {
+		return all + "(" + whiteCaches + "/" + whiteWaypoints + "+" + blackCaches + "/" + blackWaypoints + ")";
+	    } else {
+		return all + "(" + whiteCaches + "/" + whiteWaypoints + ")";
+	    }
+	} else
+	    return "" + whiteCaches;
+    }
+
+    public int totalFound() {
+	CacheHolder holder;
+	int counter = 0;
+	for (int i = 0; i < MainForm.profile.cacheDB.size(); i++) {
+	    holder = MainForm.profile.cacheDB.get(i);
+	    if (holder.is_found() == true) {
+		if (holder.isCacheWpt())
+		    counter++;
+	    }
+	}
+	return counter;
     }
 }

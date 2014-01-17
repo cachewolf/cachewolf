@@ -21,8 +21,10 @@
 */
 package CacheWolf.navi;
 
-import CacheWolf.Global;
 import CacheWolf.MyLocale;
+import CacheWolf.Preferences;
+import CacheWolf.database.CWPoint;
+import CacheWolf.database.CoordinatePoint;
 import CacheWolf.utils.Common;
 import CacheWolf.utils.Matrix;
 import ewe.fx.Point;
@@ -147,7 +149,7 @@ public class MapInfoObject extends Area {
 	//
 	switch (mapListEntry.mapType) {
 	case 1:
-	    Global.pref.log("create MapInfoObject from MapListEntry should never be called for empty map. the MapInfoObject should be created on creation of MapListEntry");
+	    Preferences.itself().log("create MapInfoObject from MapListEntry should never be called for empty map. the MapInfoObject should be created on creation of MapListEntry");
 	    break;
 	case 2:
 	    p = ewe.util.mString.split(mapImageFileNameObject.getPath(), '/');
@@ -155,7 +157,7 @@ public class MapInfoObject extends Area {
 	    x = Common.parseInt(p[p.length - 2]);
 	    y = Common.parseInt(mapImageFileNameObject.getMapName());
 	    calcTile(x, y, zoom);
-	    mapImageFileNameObject.setImageExtension(Common.getFilenameExtension(Common.getImageName(Global.pref.absoluteMapsBaseDir + mapImageFileNameObject.getPath() + mapImageFileNameObject.getMapName())));
+	    mapImageFileNameObject.setImageExtension(Common.getFilenameExtension(Common.getImageName(Preferences.itself().absoluteMapsBaseDir + mapImageFileNameObject.getPath() + mapImageFileNameObject.getMapName())));
 	    break;
 	case 3:
 	    p = ewe.util.mString.split(mapImageFileNameObject.getMapName(), '!');
@@ -204,12 +206,12 @@ public class MapInfoObject extends Area {
 	if (this.mapType == 1)
 	    return ""; // 1=empty map
 	else if (this.mapType == 3) {
-	    return Global.pref.absoluteMapsBaseDir + this.mapImageFileNameObject.getPath() + ".pack!" + this.mapImageFileNameObject.getMapName();
+	    return Preferences.itself().absoluteMapsBaseDir + this.mapImageFileNameObject.getPath() + ".pack!" + this.mapImageFileNameObject.getMapName();
 	} else {
 	    if (this.mapImageFileNameObject.getImageExtension().length() > 0) {
-		return Global.pref.absoluteMapsBaseDir + this.mapImageFileNameObject.getPath() + this.mapImageFileNameObject.getMapName() + this.mapImageFileNameObject.getImageExtension();
+		return Preferences.itself().absoluteMapsBaseDir + this.mapImageFileNameObject.getPath() + this.mapImageFileNameObject.getMapName() + this.mapImageFileNameObject.getImageExtension();
 	    } else {
-		String in = Common.getImageName(Global.pref.absoluteMapsBaseDir + this.mapImageFileNameObject.getPath() + this.mapImageFileNameObject.getMapName());
+		String in = Common.getImageName(Preferences.itself().absoluteMapsBaseDir + this.mapImageFileNameObject.getPath() + this.mapImageFileNameObject.getMapName());
 		this.mapImageFileNameObject.setImageExtension(Common.getFilenameExtension(in));
 		return in;
 	    }
@@ -231,7 +233,7 @@ public class MapInfoObject extends Area {
      *             when affine data is not correct, e.g. it is not possible to inverse affine-transformation
      */
     public void loadWFL() throws IOException, ArithmeticException {
-	final String FilePaN = Global.pref.absoluteMapsBaseDir + mapImageFileNameObject.getPath() + "/" + mapImageFileNameObject.getMapName() + ".wfl";
+	final String FilePaN = Preferences.itself().absoluteMapsBaseDir + mapImageFileNameObject.getPath() + "/" + mapImageFileNameObject.getMapName() + ".wfl";
 	final FileInputStream instream = new FileInputStream(FilePaN);
 	final InputStreamReader in = new InputStreamReader(instream);
 	try {
@@ -407,7 +409,7 @@ public class MapInfoObject extends Area {
     public void saveWFL() throws IOException, IllegalArgumentException {
 	if (affine[0] == 0 && affine[1] == 0 && affine[2] == 0 && affine[3] == 0 && !topleft.isValid())
 	    throw (new IllegalArgumentException(MyLocale.getMsg(4306, "map not calibrated")));
-	String PaN = Global.pref.absoluteMapsBaseDir + this.mapImageFileNameObject.getPath() + this.mapImageFileNameObject.getMapName() + ".wfl";
+	String PaN = Preferences.itself().absoluteMapsBaseDir + this.mapImageFileNameObject.getPath() + this.mapImageFileNameObject.getMapName() + ".wfl";
 	final PrintWriter outp = new PrintWriter(new BufferedWriter(new FileWriter(PaN)));
 	final StringBuffer towriteB = new StringBuffer(400);
 	towriteB.append(Convert.toString(affine[0])).append("\n");
@@ -443,7 +445,7 @@ public class MapInfoObject extends Area {
 	affine[1] = affine[1] * zoomFactor;
 	affine[2] = affine[2] * zoomFactor;
 	affine[3] = affine[3] * zoomFactor;
-	TrackPoint upperleft = calcLatLon(diffX, diffY);
+	CoordinatePoint upperleft = calcLatLon(diffX, diffY);
 	if (coordTrans != 0)
 	    upperleft = TransformCoordinatesProperties.fromWgs84(upperleft, coordTrans);
 	affineTopleft.latDec = upperleft.latDec;
@@ -465,8 +467,8 @@ public class MapInfoObject extends Area {
      * @param ll
      * @return Point
      */
-    public Point calcMapXY(TrackPoint ll) {
-	TrackPoint t;
+    public Point calcMapXY(CoordinatePoint ll) {
+	CoordinatePoint t;
 	if (coordTrans != 0)
 	    t = TransformCoordinatesProperties.fromWgs84(ll, coordTrans);
 	else
@@ -559,7 +561,7 @@ class GCPoint extends CWPoint {
 
 class MapImageFileNameObject {
 
-    private String path; // relativ to Global.pref.absoluteMapsBaseDir
+    private String path; // relativ to Preferences.itself().absoluteMapsBaseDir
     private String mapName; // filename without Extension
     private String imageExtension; // ".png"; with dot
 

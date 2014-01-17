@@ -53,7 +53,7 @@ public class TablePanel extends CellPanel {
 
     public TablePanel() {
 
-	cacheDB = Global.profile.cacheDB;
+	cacheDB = MainForm.profile.cacheDB;
 
 	MyScrollBarPanel theTableControl = new MyScrollBarPanel(myTableControl = new MyTableControl());
 
@@ -63,20 +63,20 @@ public class TablePanel extends CellPanel {
 
 	myTableControl.setTableModel(myTableModel);
 
-	if (Global.pref.showStatus) {
+	if (Preferences.itself().showStatus) {
 	    statusBar = new StatusBar();
 	    statusBar.setMyTableModel(myTableModel);
 	} else
 	    statusBar = null;
 
-	if (!Global.pref.tabsAtTop) {
+	if (!Preferences.itself().tabsAtTop) {
 	    addLast(MainMenu.itself, CellConstants.DONTSTRETCH, CellConstants.FILL);
 	    addLast(theTableControl, STRETCH, FILL);
-	    if (Global.pref.showStatus)
+	    if (Preferences.itself().showStatus)
 		addLast(statusBar, CellConstants.DONTSTRETCH, CellConstants.FILL);
 	} else {
 	    addLast(theTableControl, STRETCH, FILL);
-	    if (Global.pref.showStatus)
+	    if (Preferences.itself().showStatus)
 		addLast(statusBar, CellConstants.DONTSTRETCH, CellConstants.FILL);
 	    addLast(MainMenu.itself, CellConstants.DONTSTRETCH, CellConstants.FILL);
 	}
@@ -117,15 +117,15 @@ public class TablePanel extends CellPanel {
 
     public void saveColWidth() {
 	String colWidths = myTableModel.getColWidths();
-	if (!colWidths.equals(Global.pref.listColWidth)) {
-	    Global.pref.listColWidth = colWidths;
-	    Global.pref.savePreferences();
+	if (!colWidths.equals(Preferences.itself().listColWidth)) {
+	    Preferences.itself().listColWidth = colWidths;
+	    Preferences.itself().savePreferences();
 	}
     }
 
     public void resetModel() {
 	myTableModel.numRows = cacheDB.size();
-	Global.profile.updateBearingDistance(); //profile.updateBearingDistance();
+	MainForm.profile.updateBearingDistance(); //profile.updateBearingDistance();
 	myTableControl.scrollToVisible(0, 0);
 	refreshTable();
     }
@@ -163,7 +163,7 @@ public class TablePanel extends CellPanel {
 	// Check whether the currently selected cache is still visible
 	int rownum = 0;
 	if (wayPoint != null) {
-	    rownum = Global.profile.cacheDB.getIndex(wayPoint); //profile.cacheDB.getIndex(wayPoint);
+	    rownum = MainForm.profile.cacheDB.getIndex(wayPoint); //profile.cacheDB.getIndex(wayPoint);
 	    // If it is not visible: Go backward in the list of the 
 	    // previously visible caches and look if you find
 	    // any cache that is now still visible.
@@ -172,7 +172,7 @@ public class TablePanel extends CellPanel {
 		    int i;
 		    for (i = sel - 1; i >= 0; i--) {
 			CacheHolder checkCache = (CacheHolder) oldVisibleCaches.get(i);
-			rownum = Global.profile.cacheDB.getIndex(checkCache.getWayPoint()); //profile.cacheDB.getIndex(checkCache.getWayPoint());
+			rownum = MainForm.profile.cacheDB.getIndex(checkCache.getWayPoint()); //profile.cacheDB.getIndex(checkCache.getWayPoint());
 			if ((rownum >= 0) && (rownum < myTableModel.numRows))
 			    break;
 			rownum = 0;
@@ -199,7 +199,7 @@ public class TablePanel extends CellPanel {
     public void autoSort() {
 	if (myTableModel != null) {
 	    // corresponding column for "distance" is column 10
-	    if (myTableModel.sortedBy == 10 && Global.pref.sortAutomatic) {
+	    if (myTableModel.sortedBy == 10 && Preferences.itself().sortAutomatic) {
 		myTableModel.isSorted = false;
 		myTableModel.sortTable(myTableModel.sortedBy, myTableModel.sortAscending);
 	    } else

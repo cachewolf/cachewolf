@@ -23,12 +23,13 @@
 package CacheWolf.imp;
 
 import CacheWolf.Filter;
-import CacheWolf.Global;
+import CacheWolf.MainForm;
+import CacheWolf.MainTab;
 import CacheWolf.MyLocale;
 import CacheWolf.OC;
+import CacheWolf.Preferences;
 import CacheWolf.Profile;
 import CacheWolf.SafeXML;
-import CacheWolf.UrlFetcher;
 import CacheWolf.controls.InfoBox;
 import CacheWolf.database.Attribute;
 import CacheWolf.database.CacheDB;
@@ -37,14 +38,15 @@ import CacheWolf.database.CacheHolderDetail;
 import CacheWolf.database.CacheSize;
 import CacheWolf.database.CacheTerrDiff;
 import CacheWolf.database.CacheType;
-import CacheWolf.database.ImageInfo;
+import CacheWolf.database.CacheImage;
 import CacheWolf.database.Log;
+import CacheWolf.database.CoordinatePoint;
 import CacheWolf.database.Travelbug;
-import CacheWolf.navi.TrackPoint;
 import CacheWolf.utils.BetterUTF8Codec;
 import CacheWolf.utils.Common;
 import CacheWolf.utils.Extractor;
 import CacheWolf.utils.STRreplace;
+import CacheWolf.utils.UrlFetcher;
 
 import com.stevesoft.ewe_pat.Regex;
 
@@ -69,7 +71,6 @@ import ewesoft.xml.sax.AttributeList;
  * Class to import Data from an GPX File. If cache data exists, the data from the GPX-File is ignored. Class ID = 4000
  */
 public class GPXImporter extends MinML {
-
     CacheDB cacheDB;
     CacheHolder holder;
     String strData, saveDir, logData, logIcon, logDate, logFinder, logId;
@@ -95,9 +96,9 @@ public class GPXImporter extends MinML {
     private String attInc;
 
     public GPXImporter(String f) {
-	cacheDB = Global.profile.cacheDB;
+	cacheDB = MainForm.profile.cacheDB;
 	files.add(f);
-	saveDir = Global.profile.dataDir;
+	saveDir = MainForm.profile.dataDir;
 	inWpt = false;
 	inCache = false;
 	inLogs = false;
@@ -108,7 +109,7 @@ public class GPXImporter extends MinML {
     public void doIt(int how) {
 	doitHow = how;
 	Filter flt = new Filter();
-	boolean wasFiltered = (Global.profile.getFilterActive() == Filter.FILTER_ACTIVE);
+	boolean wasFiltered = (MainForm.profile.getFilterActive() == Filter.FILTER_ACTIVE);
 	flt.clearFilter();
 	try {
 	    String file;
@@ -151,7 +152,7 @@ public class GPXImporter extends MinML {
 			    tr.codec = new AsciiCodec();
 			    // infB.setTitle(zipEnt.toString());
 			    // infB.setInfo(MyLocale.getMsg(4000, "Loaded caches: ") + zaehlerGel);
-			    Global.mainTab.tablePanel.updateStatusBar(MyLocale.getMsg(4000, "Loaded caches: ") + zaehlerGel);
+			    MainTab.itself.tablePanel.updateStatusBar(MyLocale.getMsg(4000, "Loaded caches: ") + zaehlerGel);
 
 			    String readLine = tr.readLine().toLowerCase();
 			    if (readLine.startsWith("﻿") || readLine.indexOf("encoding=\"utf-8\"") > 0) {
@@ -170,7 +171,7 @@ public class GPXImporter extends MinML {
 		    tr.codec = new AsciiCodec();
 		    // infB.setTitle("Info");
 		    // infB.setInfo(MyLocale.getMsg(4000, "Loaded caches: ") + zaehlerGel);
-		    Global.mainTab.tablePanel.updateStatusBar(MyLocale.getMsg(4000, "Loaded caches: ") + zaehlerGel);
+		    MainTab.itself.tablePanel.updateStatusBar(MyLocale.getMsg(4000, "Loaded caches: ") + zaehlerGel);
 
 		    String readLine = tr.readLine().toLowerCase();
 		    if (readLine.startsWith("﻿") || readLine.indexOf("encoding=\"utf-8\"") > 0) {
@@ -182,7 +183,7 @@ public class GPXImporter extends MinML {
 		    tr.close();
 		}
 		// save Index
-		Global.profile.saveIndex(Profile.SHOW_PROGRESS_BAR);
+		MainForm.profile.saveIndex(Profile.SHOW_PROGRESS_BAR);
 	    }
 	    Vm.showWait(false);
 	    infB.close(0);
@@ -190,15 +191,15 @@ public class GPXImporter extends MinML {
 
 	    if (holder == null) {
 
-		Global.pref.log("[GPXImporter:DoIt] no holder LogID=" + logId, e, true);
+		Preferences.itself().log("[GPXImporter:DoIt] no holder LogID=" + logId, e, true);
 	    } else if (holder.getWayPoint() == null) {
 
-		Global.pref.log("[GPXImporter:DoIt] no waypoint LogID=" + logId, e, true);
+		Preferences.itself().log("[GPXImporter:DoIt] no waypoint LogID=" + logId, e, true);
 	    } else if (holder.getWayPoint().length() > 0) {
 
-		Global.pref.log("[GPXImporter:DoIt] " + holder.getWayPoint() + " LogID=" + logId, e, true);
+		Preferences.itself().log("[GPXImporter:DoIt] " + holder.getWayPoint() + " LogID=" + logId, e, true);
 	    } else {
-		Global.pref.log("[GPXImporter:DoIt] " + holder.getPos().toString() + " LogID=" + logId, e, true);
+		Preferences.itself().log("[GPXImporter:DoIt] " + holder.getPos().toString() + " LogID=" + logId, e, true);
 	    }
 	    infB.close(0);
 	    Vm.showWait(false);
@@ -238,14 +239,14 @@ public class GPXImporter extends MinML {
 	}
 	if (name.equals("wpt")) {
 	    holder = new CacheHolder();
-	    holder.setPos(new TrackPoint(Common.parseDouble(atts.getValue("lat")), Common.parseDouble(atts.getValue("lon"))));
+	    holder.setPos(new CoordinatePoint(Common.parseDouble(atts.getValue("lat")), Common.parseDouble(atts.getValue("lon"))));
 	    inWpt = true;
 	    inLogs = false;
 	    inBug = false;
 	    nameFound = false;
 	    zaehlerGel++;
 	    // infB.setInfo(MyLocale.getMsg(4000, "Loaded caches: ") + zaehlerGel);
-	    Global.mainTab.tablePanel.updateStatusBar(MyLocale.getMsg(4000, "Loaded caches: ") + zaehlerGel);
+	    MainTab.itself.tablePanel.updateStatusBar(MyLocale.getMsg(4000, "Loaded caches: ") + zaehlerGel);
 	    logId = "";
 	    return;
 	}
@@ -332,7 +333,7 @@ public class GPXImporter extends MinML {
 	}
 	if (debugGPX) {
 	    for (int i = 0; i < atts.getLength(); i++) {
-		Global.pref.log("[GPXExporter:startElement]Type: " + atts.getType(i) + " Name: " + atts.getName(i) + " Value: " + atts.getValue(i), null);
+		Preferences.itself().log("[GPXExporter:startElement]Type: " + atts.getType(i) + " Name: " + atts.getName(i) + " Value: " + atts.getValue(i), null);
 	    }
 	}
     }
@@ -362,7 +363,7 @@ public class GPXImporter extends MinML {
 	    if (name.equals("groundspeak:log") || name.equals("log") || name.equals("terra:log")) {
 		holder.getCacheDetails(false).CacheLogs.add(new Log(logIcon, logDate, logFinder, logData));
 		if ((logIcon.equals("icon_smile.gif") || logIcon.equals("icon_camera.gif") || logIcon.equals("icon_attended.gif"))
-			&& (SafeXML.cleanback(logFinder).equalsIgnoreCase(Global.pref.myAlias) || (SafeXML.cleanback(logFinder).equalsIgnoreCase(Global.pref.myAlias2)))) {
+			&& (SafeXML.cleanback(logFinder).equalsIgnoreCase(Preferences.itself().myAlias) || (SafeXML.cleanback(logFinder).equalsIgnoreCase(Preferences.itself().myAlias2)))) {
 		    holder.setCacheStatus(logDate);
 		    holder.setFound(true);
 		    holder.getCacheDetails(false).OwnLogId = logId;
@@ -410,7 +411,7 @@ public class GPXImporter extends MinML {
 		CacheHolder oldCh = cacheDB.get(index);
 		// Preserve images: Copy images from old cache version because here we didn't add
 		// any image information to the holder object.
-		if (Global.pref.downloadPics && holder.isOC()) {
+		if (Preferences.itself().downloadPics && holder.isOC()) {
 		    spiderImagesUsingSpider();
 		} else {
 		    holder.getCacheDetails(false).images = oldCh.getCacheDetails(true).images;
@@ -448,7 +449,7 @@ public class GPXImporter extends MinML {
 		gpxDate.parse(strData.substring(0, 19), "yyyy-MM-dd'T'HH:mm:ss");
 	    } catch (IllegalArgumentException e) {
 		gpxDate.setTime(0);
-		Global.pref.log("[GPXImporter:endElement]Error parsing Element time: '" + strData + "'. Ignoring.");
+		Preferences.itself().log("[GPXImporter:endElement]Error parsing Element time: '" + strData + "'. Ignoring.");
 	    }
 	    return;
 	}
@@ -507,14 +508,14 @@ public class GPXImporter extends MinML {
 	}
 	if (name.equals("groundspeak:owner") || name.equals("owner") || name.equals("terra:owner")) {
 	    holder.setCacheOwner(strData);
-	    if (Global.pref.myAlias.equals(SafeXML.cleanback(strData)) || (SafeXML.cleanback(strData).equalsIgnoreCase(Global.pref.myAlias2)))
+	    if (Preferences.itself().myAlias.equals(SafeXML.cleanback(strData)) || (SafeXML.cleanback(strData).equalsIgnoreCase(Preferences.itself().myAlias2)))
 		holder.setOwned(true);
 	    return;
 	}
 	if (name.equals("groundspeak:placed_by")) {
 	    if (holder.getCacheOwner().equals("")) {
 		holder.setCacheOwner(strData);
-		if (Global.pref.myAlias.equals(SafeXML.cleanback(strData)) || (SafeXML.cleanback(strData).equalsIgnoreCase(Global.pref.myAlias2)))
+		if (Preferences.itself().myAlias.equals(SafeXML.cleanback(strData)) || (SafeXML.cleanback(strData).equalsIgnoreCase(Preferences.itself().myAlias2)))
 		    holder.setOwned(true);
 	    }
 	    return;
@@ -524,7 +525,7 @@ public class GPXImporter extends MinML {
 		holder.setHard(CacheTerrDiff.v1Converter(strData));
 	    } catch (IllegalArgumentException e) {
 
-		Global.pref.log(holder.getCacheName() + ": illegal difficulty value: " + strData);
+		Preferences.itself().log(holder.getCacheName() + ": illegal difficulty value: " + strData);
 	    }
 	    return;
 	}
@@ -533,7 +534,7 @@ public class GPXImporter extends MinML {
 		holder.setTerrain(CacheTerrDiff.v1Converter(strData));
 	    } catch (IllegalArgumentException e) {
 
-		Global.pref.log(holder.getCacheName() + ": illegal terrain value: " + strData);
+		Preferences.itself().log(holder.getCacheName() + ": illegal terrain value: " + strData);
 	    }
 	    return;
 	}
@@ -607,7 +608,7 @@ public class GPXImporter extends MinML {
     public void characters(char[] ch, int start, int length) {
 	strBuf.append(ch, start, length);
 	if (debugGPX)
-	    Global.pref.log("Char: " + strBuf.toString(), null);
+	    Preferences.itself().log("Char: " + strBuf.toString(), null);
     }
 
     public static String TCSizetoText(String size) {
@@ -637,7 +638,7 @@ public class GPXImporter extends MinML {
 	try {
 	    if (fromTC) {
 		// special ;
-		Global.pref.log("[gpx Import]Spider images from TerraCaching not implemented!", null);
+		Preferences.itself().log("[gpx Import]Spider images from TerraCaching not implemented!", null);
 	    } else {
 		if (fromOC) {
 		    chD.images.clear();
@@ -694,7 +695,7 @@ public class GPXImporter extends MinML {
 		// auch egal
 		continue;
 	    }
-	    ImageInfo imageInfo = new ImageInfo();
+	    CacheImage imageInfo = new CacheImage();
 	    imageInfo.setURL(fetchUrl);
 	    imageInfo.setTitle(makeTitle(imgRegexUrl.stringMatched(1), fetchUrl));
 	    getPic(imageInfo);
@@ -711,7 +712,7 @@ public class GPXImporter extends MinML {
 		    String imgType = (fetchUrl.substring(fetchUrl.lastIndexOf('.')).toLowerCase() + "    ").substring(0, 4).trim();
 		    fetchUrl = "http://" + fetchUrl.substring(0, fetchUrl.lastIndexOf('.') + imgType.length());
 		    if (imgType.startsWith(".jpg") || imgType.startsWith(".bmp") || imgType.startsWith(".png") || imgType.startsWith(".gif")) {
-			ImageInfo imageInfo = new ImageInfo();
+			CacheImage imageInfo = new CacheImage();
 			imageInfo.setURL(fetchUrl);
 			imageInfo.setTitle(makeTitle(href, fetchUrl));
 			getPic(imageInfo);
@@ -740,10 +741,10 @@ public class GPXImporter extends MinML {
 	return imgAltText;
     }
 
-    private void getPic(ImageInfo imageInfo) {
+    private void getPic(CacheImage imageInfo) {
 	String fileName = holder.getWayPoint() + "_" + imageInfo.getURL().substring(imageInfo.getURL().lastIndexOf('/') + 1);
 	fileName = Common.ClearForFileName(fileName).toLowerCase();
-	String target = Global.profile.dataDir + fileName;
+	String target = MainForm.profile.dataDir + fileName;
 	imageInfo.setFilename(fileName);
 	try {
 	    File ftest = new File(target);
@@ -754,7 +755,7 @@ public class GPXImporter extends MinML {
 		    holder.getCacheDetails(false).images.add(imageInfo);
 		}
 	    } else {
-		if (Global.pref.downloadPics) {
+		if (Preferences.itself().downloadPics) {
 		    UrlFetcher.fetchDataFile(imageInfo.getURL(), target);
 		    ftest = new File(target);
 		    if (ftest.exists()) {
@@ -787,7 +788,7 @@ public class GPXImporter extends MinML {
 	    } else
 		ErrMessage = MyLocale.getMsg(1618, "Ignoring error in cache: ") + n + " (" + wp + "): ignoring IOException: " + e.getMessage() + " while downloading picture:" + fileName + " from URL:" + imageInfo.getURL();
 	    //}
-	    Global.pref.log(ErrMessage, e, true);
+	    Preferences.itself().log(ErrMessage, e, true);
 	}
 
     }

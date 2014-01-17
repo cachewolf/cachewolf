@@ -376,8 +376,8 @@ public class MyLocale {
      * @return Language (e.g. DE, EN etc.) or ""
      */
     private static String getLanguage() {
-	if (Global.pref != null) {
-	    language = Global.pref.language;
+	if (Preferences.itself() != null) {
+	    language = Preferences.itself().language;
 	} else {
 	    language = "";
 	}
@@ -393,9 +393,9 @@ public class MyLocale {
      *            The language to write
      */
     public static void saveLanguage(String saveLanguage) {
-	if (Global.pref != null) {
-	    Global.pref.language = saveLanguage;
-	    Global.pref.savePreferences();
+	if (Preferences.itself() != null) {
+	    Preferences.itself().language = saveLanguage;
+	    Preferences.itself().savePreferences();
 	}
     }
 

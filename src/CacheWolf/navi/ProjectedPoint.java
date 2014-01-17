@@ -21,6 +21,9 @@
 */
 package CacheWolf.navi;
 
+import CacheWolf.database.CWPoint;
+import CacheWolf.database.CoordinatePoint;
+
 public final class ProjectedPoint {
 
     public static final LambertProjection PJ_AUSTRIAN_LAMBERT_OLD = new LambertProjection(TransformCoordinates.EPSG_AUSTRIAN_LAMBERT_OLD, TransformCoordinates.BESSEL);
@@ -177,8 +180,8 @@ public final class ProjectedPoint {
      * (that means including the stripe number)
      * @return
      */
-    public TrackPoint toTrackPoint(int region) {
-	return new TrackPoint(getNorthing(), getEasting());
+    public CoordinatePoint toCoordinatePoint(int region) {
+	return new CoordinatePoint(getNorthing(), getEasting());
     }
 
     /**

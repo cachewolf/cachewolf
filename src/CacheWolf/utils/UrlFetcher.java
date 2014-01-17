@@ -19,9 +19,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
-package CacheWolf;
-
-import CacheWolf.utils.BetterUTF8Codec;
+package CacheWolf.utils;
 
 import com.jcraft.jzlib.GZIPInputStream;
 
@@ -130,7 +128,7 @@ public class UrlFetcher {
 	}
 	if (value.length() > 0) {
 	    conn.setRequestorProperty("Cookie", value);
-	    //Global.pref.log("Cookies sent for " + conn.getHost() + " : " + value);
+	    //Preferences.itself().log("Cookies sent for " + conn.getHost() + " : " + value);
 	}
     }
 

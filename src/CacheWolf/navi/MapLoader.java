@@ -21,16 +21,19 @@
  */
 package CacheWolf.navi;
 
-import CacheWolf.Global;
+import CacheWolf.MainForm;
 import CacheWolf.MyLocale;
-import CacheWolf.UrlFetcher;
+import CacheWolf.Preferences;
 import CacheWolf.controls.InfoBox;
+import CacheWolf.database.CWPoint;
 import CacheWolf.database.CacheDB;
 import CacheWolf.database.CacheHolder;
+import CacheWolf.database.CoordinatePoint;
 import CacheWolf.utils.CWWrapper;
 import CacheWolf.utils.Common;
 import CacheWolf.utils.FileBugfix;
 import CacheWolf.utils.STRreplace;
+import CacheWolf.utils.UrlFetcher;
 import ewe.fx.Point;
 import ewe.io.BufferedWriter;
 import ewe.io.File;
@@ -243,7 +246,7 @@ public class MapLoader {
 	lon = center.lonDec + (loninc / 2.0);
 	CWPoint br = new CWPoint(lat, lon);
 	Area maparea = new Area(tl, br);
-	CacheDB cacheDB = Global.profile.cacheDB;
+	CacheDB cacheDB = MainForm.profile.cacheDB;
 	for (int i = 0; i < cacheDB.size(); i++) {
 	    CacheHolder ch = cacheDB.get(i);
 	    if (maparea.isInBound(ch.getPos())) {
@@ -288,7 +291,7 @@ public class MapLoader {
 	String imagename = filename; //mio.createMapName(filename);
 
 	mio.getMapImageFileNameObject().setMapName(imagename);
-	mio.getMapImageFileNameObject().setPath(Global.profile.getMapsSubDir(path));
+	mio.getMapImageFileNameObject().setPath(MainForm.profile.getMapsSubDir(path));
 
 	String imagetype = currentOnlineMapService.getImageFileExt();
 	String url = currentOnlineMapService.getUrlForCenterScale(center, scale, sizeInPixels);
@@ -296,7 +299,7 @@ public class MapLoader {
 	File fn = new File(path + imagename + ".wfl");
 	File fn1 = new File(fName);
 	if (!fn.exists() || fn.length() == 0 || !fn1.exists() || fn1.length() == 0) {
-	    Global.pref.log(url);
+	    Preferences.itself().log(url);
 	    downloadImage(url, fName);
 	    mio.saveWFL();
 	}
@@ -335,7 +338,7 @@ public class MapLoader {
 	String imagename = filename; // mio.createMapName(filename);
 
 	mio.getMapImageFileNameObject().setMapName(imagename);
-	mio.getMapImageFileNameObject().setPath(Global.profile.getMapsSubDir(path));
+	mio.getMapImageFileNameObject().setPath(MainForm.profile.getMapsSubDir(path));
 	String imagetype = wms.getImageFileExt();
 	String fName = path + imagename + imagetype;
 	Area maparea = wms.CenterScaleToArea(center, scale, sizeInPixels);
@@ -531,13 +534,13 @@ public class MapLoader {
 		} // while
 		inMap.close();
 	    } catch (IllegalArgumentException ex) { // is thrown from Convert.toDouble and saveWFL if affine[0-5]==0 NumberFormatException is a subclass of IllegalArgumentExepction
-		Global.pref.log(MyLocale.getMsg(4117, "Error while importing .map-file: "), ex);
+		Preferences.itself().log(MyLocale.getMsg(4117, "Error while importing .map-file: "), ex);
 	    } catch (IOException ex) {
-		Global.pref.log(MyLocale.getMsg(4118, "IO-Error while reading or writing calibration file"), ex);
+		Preferences.itself().log(MyLocale.getMsg(4118, "IO-Error while reading or writing calibration file"), ex);
 	    }
 	    mapFile.delete();
 	} else { // if map file.exists
-	    Global.pref.log(MyLocale.getMsg(4119, "No calibration file found for: "), null);
+	    Preferences.itself().log(MyLocale.getMsg(4119, "No calibration file found for: "), null);
 	}
 	return GCPs;
     }
@@ -973,7 +976,7 @@ class WebMapService extends OnlineMapService {
 		+ "&" + "WIDTH=" + sizeInPixels.x //
 		+ "&" + "HEIGHT=" + sizeInPixels.y //
 	;
-	// Global.pref.log(" WGS84: Bottom left: " + bottomleft.toString(TransformCoordinates.DD) + "top right: " + topright.toString(TransformCoordinates.DD));
+	// Preferences.itself().log(" WGS84: Bottom left: " + bottomleft.toString(TransformCoordinates.DD) + "top right: " + topright.toString(TransformCoordinates.DD));
 	return ret;
     }
 
@@ -986,7 +989,7 @@ class WebMapService extends OnlineMapService {
      *            Point for which the epsg code is searched for
      * @return
      */
-    private int getCrs(TrackPoint p) {
+    private int getCrs(CoordinatePoint p) {
 	int crsindex = 0;
 	if (coordinateReferenceSystem.length > 1) {
 	    ProjectedPoint gkbl = TransformCoordinates.wgs84ToLocalsystem(p, TransformCoordinates.getLocalProjectionSystem(coordinateReferenceSystem[0]));
@@ -1007,7 +1010,7 @@ class WebMapService extends OnlineMapService {
 
 	    }
 	    if (crsindex < 0) {
-		Global.pref.log(MyLocale.getMsg(4829, "getUrlForBoundingBox: Point:") + " " + gkbl.toString() + MyLocale.getMsg(4830, "no matching Gauß-Krüger-Stripe in the EPSG-code list in the .wms"));
+		Preferences.itself().log(MyLocale.getMsg(4829, "getUrlForBoundingBox: Point:") + " " + gkbl.toString() + MyLocale.getMsg(4830, "no matching Gauß-Krüger-Stripe in the EPSG-code list in the .wms"));
 		throw new IllegalArgumentException(MyLocale.getMsg(4829, "getUrlForBoundingBox: Point:") + " " + gkbl.toString() + MyLocale.getMsg(4830, "no matching Gauß-Krüger-Stripe in the EPSG-code list in the .wms"));
 	    }
 	}

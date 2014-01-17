@@ -21,9 +21,9 @@
 */
 package CacheWolf.exp;
 
-import CacheWolf.database.CacheHolder;
-import CacheWolf.Global;
+import CacheWolf.MainForm;
 import CacheWolf.SafeXML;
+import CacheWolf.database.CacheHolder;
 import CacheWolf.database.CacheImages;
 import CacheWolf.utils.Common;
 import CacheWolf.utils.URLUTF8Encoder;
@@ -97,7 +97,7 @@ public class SpoilerPOIExporter extends Exporter {
 	for (int i = 0; i < images.size(); i++) {
 	    filename = images.get(i).getFilename();
 	    comment = images.get(i).getTitle();
-	    url = Global.profile.dataDir + filename;
+	    url = MainForm.profile.dataDir + filename;
 
 	    // POILoader can only work with JPG-Files
 	    if (!filename.endsWith(".jpg"))

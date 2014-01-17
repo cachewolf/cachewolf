@@ -21,6 +21,7 @@
 */
 package CacheWolf.navi;
 
+import CacheWolf.database.CWPoint;
 import ewe.sys.Convert;
 
 public class UTMProjection extends Projection {

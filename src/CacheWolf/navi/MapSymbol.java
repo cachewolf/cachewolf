@@ -21,6 +21,8 @@
  */
 package CacheWolf.navi;
 
+import CacheWolf.database.CWPoint;
+
 public class MapSymbol extends MapImage {
     String name;
     String filename;

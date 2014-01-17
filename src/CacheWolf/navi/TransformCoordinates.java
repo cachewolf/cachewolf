@@ -21,6 +21,8 @@
 */
 package CacheWolf.navi;
 
+import CacheWolf.database.CWPoint;
+import CacheWolf.database.CoordinatePoint;
 import CacheWolf.utils.Matrix;
 
 /**
@@ -178,12 +180,12 @@ public final class TransformCoordinates {
     private static final TransformParameters Pulkovo_1942_TO_WGS84 = new TransformParameters(24, -123, -94, 0.02, -0.25, -0.13, 1.1, KRASSOWSKY1940);
 
     private static final Area ITALY_SARDINIA = new Area(new CWPoint(42, 6), new CWPoint(38, 11));
-    private static final Area ITALY_SARDINIA_GK = new Area(wgs84ToEpsg(ITALY_SARDINIA.topleft, EPSG_ITALIAN_GB_EW1).toTrackPoint(TransformCoordinates.LOCALSYSTEM_ITALIAN_GB), wgs84ToEpsg(ITALY_SARDINIA.bottomright, EPSG_ITALIAN_GB_EW1).toTrackPoint(
+    private static final Area ITALY_SARDINIA_GK = new Area(wgs84ToEpsg(ITALY_SARDINIA.topleft, EPSG_ITALIAN_GB_EW1).toCoordinatePoint(TransformCoordinates.LOCALSYSTEM_ITALIAN_GB), wgs84ToEpsg(ITALY_SARDINIA.bottomright, EPSG_ITALIAN_GB_EW1).toCoordinatePoint(
 	    TransformCoordinates.LOCALSYSTEM_ITALIAN_GB));
 
     private static final TransformParameters GB_ITALIAN_SICILIA_TO_WGS84 = new TransformParameters(-50.2, -50.4, 84.8, 0.690, 2.012, -0.459, 28.08, HAYFORD1909);
     private static final Area ITALY_SICILIA = new Area(new CWPoint(39, 12), new CWPoint(36.3, 15.6));
-    private static final Area ITALY_SICILIA_GK = new Area(wgs84ToEpsg(ITALY_SICILIA.topleft, EPSG_ITALIAN_GB_EW2).toTrackPoint(TransformCoordinates.LOCALSYSTEM_ITALIAN_GB), wgs84ToEpsg(ITALY_SICILIA.bottomright, EPSG_ITALIAN_GB_EW2).toTrackPoint(
+    private static final Area ITALY_SICILIA_GK = new Area(wgs84ToEpsg(ITALY_SICILIA.topleft, EPSG_ITALIAN_GB_EW2).toCoordinatePoint(TransformCoordinates.LOCALSYSTEM_ITALIAN_GB), wgs84ToEpsg(ITALY_SICILIA.bottomright, EPSG_ITALIAN_GB_EW2).toCoordinatePoint(
 	    TransformCoordinates.LOCALSYSTEM_ITALIAN_GB));
 
     // see also http://hal.gis.univie.ac.at/karto/lehr/fachbereiche/geoinfo/givi0304/tutorials/ersteschritte/projectionen.htm#ParMGIWGS84
@@ -330,7 +332,7 @@ public final class TransformCoordinates {
      * @return
      */
 
-    public static final TransformParameters getGermanGkTransformParameters(TrackPoint ll) {
+    public static final TransformParameters getGermanGkTransformParameters(CoordinatePoint ll) {
 	if (FORMER_GDR.isInBound(ll))
 	    return GK_GERMANY_2001_TO_WGS84; // exlcude former GDR from the splitting germany in north/middel/south
 	if (ll.latDec <= 55 && ll.latDec >= 52.33333334)
@@ -356,7 +358,7 @@ public final class TransformCoordinates {
 	return GK_GERMANY_2001_TO_WGS84;
     }
 
-    public static final TransformParameters getItalianGkTransformParameters(TrackPoint ll) {
+    public static final TransformParameters getItalianGkTransformParameters(CoordinatePoint ll) {
 	if (ITALY_SARDINIA.isInBound(ll))
 	    return GB_ITALIAN_SARDINIA_TO_WGS84;
 	if (ITALY_SICILIA.isInBound(ll))
@@ -366,19 +368,19 @@ public final class TransformCoordinates {
     }
 
     public static final TransformParameters getItalianTransformParams(ProjectedPoint gk) {
-	if (ITALY_SARDINIA_GK.isInBound(gk.toTrackPoint(TransformCoordinates.LOCALSYSTEM_ITALIAN_GB)))
+	if (ITALY_SARDINIA_GK.isInBound(gk.toCoordinatePoint(TransformCoordinates.LOCALSYSTEM_ITALIAN_GB)))
 	    return GB_ITALIAN_SARDINIA_TO_WGS84;
-	if (ITALY_SICILIA_GK.isInBound(gk.toTrackPoint(TransformCoordinates.LOCALSYSTEM_ITALIAN_GB)))
+	if (ITALY_SICILIA_GK.isInBound(gk.toCoordinatePoint(TransformCoordinates.LOCALSYSTEM_ITALIAN_GB)))
 	    return GB_ITALIAN_SICILIA_TO_WGS84;
 	else
 	    return GB_ITALIAN_PENINSULAR_TO_WGS84;
     }
 
-    public static final ProjectedPoint wgs84ToEpsg(TrackPoint wgs84, int epsg) throws IllegalArgumentException {
+    public static final ProjectedPoint wgs84ToEpsg(CoordinatePoint wgs84, int epsg) throws IllegalArgumentException {
 	return wgs84ToEpsgLocalsystem(wgs84, epsg, false);
     }
 
-    public static final ProjectedPoint wgs84ToLocalsystem(TrackPoint wgs84, int localsystem) throws IllegalArgumentException {
+    public static final ProjectedPoint wgs84ToLocalsystem(CoordinatePoint wgs84, int localsystem) throws IllegalArgumentException {
 	return wgs84ToEpsgLocalsystem(wgs84, localsystem, true);
     }
 
@@ -392,7 +394,7 @@ public final class TransformCoordinates {
      * @throws IllegalArgumentException
      *             if EPSG code is not supported GK or unsupported
      */
-    private static final ProjectedPoint wgs84ToEpsgLocalsystem(TrackPoint wgs84, int epsg_localsystem, boolean isLocalsystem) throws IllegalArgumentException {
+    private static final ProjectedPoint wgs84ToEpsgLocalsystem(CoordinatePoint wgs84, int epsg_localsystem, boolean isLocalsystem) throws IllegalArgumentException {
 	//wgs84.latDec = 47.07472; // Testkoordinaten von http://www.geoclub.de/viewtopic.php?f=54&t=23912&start=30
 	//wgs84.lonDec = 12.69417;
 	// xyzWgs.x = 3657660.66; // test case http://www.epsg.org/ p. 109 WGS72_TO_WGS84
@@ -407,7 +409,7 @@ public final class TransformCoordinates {
 	return ret;
     }
 
-    private static final TransformParameters getTransParams(TrackPoint wgs84, int localsystem) {
+    private static final TransformParameters getTransParams(CoordinatePoint wgs84, int localsystem) {
 	switch (localsystem) {
 	case TransformCoordinates.LOCALSYSTEM_GERMAN_GK:
 	    return getGermanGkTransformParameters(wgs84);
@@ -460,7 +462,7 @@ public final class TransformCoordinates {
 	return transparams;
     }
 
-    private static final XyzCoordinates latLon2xyz(TrackPoint ll, double alt, Ellipsoid ellipsoid) {
+    private static final XyzCoordinates latLon2xyz(CoordinatePoint ll, double alt, Ellipsoid ellipsoid) {
 	if (!ll.isValid())
 	    throw new IllegalArgumentException("latLon2xyz: invalid lat-lon");
 	double e2 = (ellipsoid.a * ellipsoid.a - ellipsoid.b * ellipsoid.b) / (ellipsoid.a * ellipsoid.a);

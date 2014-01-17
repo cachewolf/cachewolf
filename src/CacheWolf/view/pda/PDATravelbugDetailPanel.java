@@ -21,7 +21,7 @@
 */
 package CacheWolf.view.pda;
 
-import CacheWolf.Global;
+import CacheWolf.Preferences;
 import CacheWolf.MyLocale;
 import CacheWolf.database.TravelbugJourney;
 import ewe.fx.Color;
@@ -173,7 +173,7 @@ public class PDATravelbugDetailPanel extends Form {
 	pnlName.addLast(panel, STRETCH, FILL);
 	// VON-Tab
 	mLabel label = new mLabel(MyLocale.getMsg(6058, "Retrieved:"));
-	Font tmpFont = new Font("Helvetica", Font.BOLD, Global.pref.fontSize * 2);
+	Font tmpFont = new Font("Helvetica", Font.BOLD, Preferences.itself().fontSize * 2);
 	label.font = tmpFont;
 	panel.addLast(label, DONTSTRETCH, DONTFILL | WEST);
 	panel.addNext(new mLabel(MyLocale.getMsg(6029, "Profile/Cache:")), DONTSTRETCH, DONTFILL | WEST);
@@ -237,7 +237,7 @@ public class PDATravelbugDetailPanel extends Form {
 	// ------------------------------------------------
 	CellPanel pnlDest = new CellPanel();
 	label = new mLabel(MyLocale.getMsg(6035, "Mission:"));
-	tmpFont = new Font("Helvetica", Font.BOLD, Global.pref.fontSize * 2);
+	tmpFont = new Font("Helvetica", Font.BOLD, Preferences.itself().fontSize * 2);
 	label.setFont(tmpFont);
 	pnlDest.addLast(label, DONTSTRETCH, DONTFILL);
 	txtMission = new HtmlDisplay();

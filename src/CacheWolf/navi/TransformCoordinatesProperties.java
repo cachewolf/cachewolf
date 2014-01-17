@@ -22,6 +22,8 @@
 package CacheWolf.navi;
 
 import CacheWolf.MyLocale;
+import CacheWolf.database.CWPoint;
+import CacheWolf.database.CoordinatePoint;
 
 /**
  * Class to load the parameters of a datum shift of a map and
@@ -45,14 +47,14 @@ public final class TransformCoordinatesProperties {
      * @param ll
      * @return
      */
-    public final static TrackPoint fromWgs84(TrackPoint ll, int epsgCode) {
-	TrackPoint ret = null;
+    public final static CoordinatePoint fromWgs84(CoordinatePoint ll, int epsgCode) {
+	CoordinatePoint ret = null;
 	switch (epsgCode) {
 	case TransformCoordinates.EPSG_WGS84:
 	    ret = ll;
 	    break;
 	case TransformCoordinates.EPSG_Mercator_1SP_Google:
-	    ret = new TrackPoint();
+	    ret = new CoordinatePoint();
 	    ret.lonDec = ll.lonDec * 20037508.34 / 180;
 	    double y = Math.log(Math.tan((90 + ll.latDec) * Math.PI / 360)) / (Math.PI / 180);
 	    ret.latDec = y * 20037508.34 / 180;
@@ -62,7 +64,7 @@ public final class TransformCoordinatesProperties {
 	    int localsystem = TransformCoordinates.getLocalProjectionSystem(epsgCode);
 	    if (localsystem > 0) {
 		ProjectedPoint xy = TransformCoordinates.wgs84ToEpsg(ll, epsgCode);
-		ret = xy.toTrackPoint(localsystem);
+		ret = xy.toCoordinatePoint(localsystem);
 	    } else {
 		throw new IllegalArgumentException(MyLocale.getMsg(4923, "fromWgs84: EPSG code ") + epsgCode + MyLocale.getMsg(4921, " not supported"));
 	    }

@@ -59,10 +59,10 @@ public class DescriptionPanel extends CellPanel {
 	ScrollBarPanel sbp = new MyScrollBarPanel(disp, 0);
 	final CellPanel descP = new CellPanel();
 	descP.addLast(sbp);
-	if (!Global.pref.tabsAtTop)
+	if (!Preferences.itself().tabsAtTop)
 	    this.addLast(buttonPanel, HSTRETCH, HFILL);
 	this.addLast(descP);
-	if (Global.pref.tabsAtTop)
+	if (Preferences.itself().tabsAtTop)
 	    this.addLast(buttonPanel, HSTRETCH, HFILL);
 	clear();
     }
@@ -142,7 +142,7 @@ public class DescriptionPanel extends CellPanel {
 		if (imgUrl.lastIndexOf('.') > 0 && imgUrl.toLowerCase().startsWith("http")) {
 		    String imgType = (imgUrl.substring(imgUrl.lastIndexOf('.')).toLowerCase() + "    ").substring(0, 4).trim();
 		    // If we have an image which we stored when spidering, we can display it
-		    if (Images.size() > 0 && Global.pref.descShowImg) {
+		    if (Images.size() > 0 && Preferences.itself().descShowImg) {
 			if (imgType.startsWith(".png") || imgType.startsWith(".jpg") || imgType.startsWith(".gif")) {
 			    s.append("<img src=\"" + Images.get(imageNo).getFilename() + "\">");
 			    imageNo++;
@@ -161,12 +161,12 @@ public class DescriptionPanel extends CellPanel {
 		s.append(desc.substring(start));
 	    desc = s.toString();
 	    start = Images.size();
-	    if (imageNo < Images.size() && Global.pref.descShowImg) {
+	    if (imageNo < Images.size() && Preferences.itself().descShowImg) {
 		desc += getPicDesc(imageNo, Images);
 	    }
 
 	    disp.startHtml();
-	    disp.getDecoderProperties().set("documentroot", Global.profile.dataDir);
+	    disp.getDecoderProperties().set("documentroot", MainForm.profile.dataDir);
 	    disp.addHtml(desc, new ewe.sys.Handle());
 	    disp.endHtml();
 	} else {
@@ -196,7 +196,7 @@ public class DescriptionPanel extends CellPanel {
 	    if (!ci.get(i).getComment().equals(""))
 		sb.append("<font color='blue'>").append(ci.get(i).getComment()).append("</font>");
 	    // Only show the image if images are enabled
-	    if (Global.pref.descShowImg)
+	    if (Preferences.itself().descShowImg)
 		sb.append("<img src=\"" + ci.get(i).getFilename() + "\"><br>");
 	    sb.append("<br><br><hr>");
 	}
@@ -247,7 +247,7 @@ public class DescriptionPanel extends CellPanel {
 	    }
 	    if (ev.target == btnHtml) {
 		disp.startHtml();
-		disp.getDecoderProperties().set("documentroot", Global.profile.dataDir);
+		disp.getDecoderProperties().set("documentroot", MainForm.profile.dataDir);
 		disp.addHtml(desc, new ewe.sys.Handle());
 		disp.endHtml();
 	    }

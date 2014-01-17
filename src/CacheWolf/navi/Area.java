@@ -21,15 +21,10 @@
 */
 package CacheWolf.navi;
 
+import CacheWolf.database.CWPoint;
+import CacheWolf.database.CoordinatePoint;
+
 public class Area {
-    /* not used
-     public final static int NOT_ON_EDGE = -1;
-     public final static int AT_TOP_EDGE = 1;
-     public final static int AT_RIGHT_EDGE = 2;
-     public final static int AT_BOTTOM_EDGE = 3;
-     public final static int AT_LEFT_EDGE = 4;
-     public static double edgeTolerance = 3 * 360/40000000; // approx 3m will be seen as the same
-    */
     protected CWPoint topleft;
     protected CWPoint bottomright;
 
@@ -38,7 +33,7 @@ public class Area {
 	bottomright = new CWPoint();
     }
 
-    public Area(TrackPoint tl, TrackPoint br) {
+    public Area(CoordinatePoint tl, CoordinatePoint br) {
 	topleft = new CWPoint(tl);
 	bottomright = new CWPoint(br);
     }
@@ -48,7 +43,7 @@ public class Area {
 	bottomright = br;
     }
 
-    public final boolean isInBound(TrackPoint p) {
+    public final boolean isInBound(CoordinatePoint p) {
 	if (topleft.latDec >= p.latDec && topleft.lonDec <= p.lonDec && bottomright.latDec <= p.latDec && bottomright.lonDec >= p.lonDec)
 	    return true;
 	else
