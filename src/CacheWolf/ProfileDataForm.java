@@ -85,7 +85,7 @@ public class ProfileDataForm extends Form {
 				close(1);
 			}
 			if (ev.target == btnCurrentCentre) {
-				CoordsScreen cs = new CoordsScreen();
+				CoordsInput cs = new CoordsInput();
 				cs.setFields(Preferences.itself().getCurCentrePt(), TransformCoordinates.CW);
 				if (cs.execute() == FormBase.IDOK) {
 					Preferences.itself().setCurCentrePt(cs.getCoords());
@@ -94,7 +94,7 @@ public class ProfileDataForm extends Form {
 				}
 			}
 			if (ev.target == btnProfileCentre) {
-				CoordsScreen cs = new CoordsScreen();
+				CoordsInput cs = new CoordsInput();
 				cs.setFields(MainForm.profile.centre, TransformCoordinates.CW);
 				if (cs.execute() == FormBase.IDOK) {
 					MainForm.profile.notifyUnsavedChanges(cs.getCoords().equals(MainForm.profile.centre));

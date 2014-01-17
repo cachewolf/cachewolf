@@ -39,7 +39,7 @@ public class NewProfileWizard {
 	    Preferences.itself().savePreferences(); // Remember that this was the last profile used
 	    MainForm.profile.dataDir = Preferences.itself().absoluteBaseDir + f.profileDir + "/";
 
-	    CoordsScreen cs = new CoordsScreen();
+	    CoordsInput cs = new CoordsInput();
 	    cs.setFields(new CWPoint(), TransformCoordinates.CW);
 	    if (cs.execute() == FormBase.IDOK) {
 		MainForm.profile.setCenterCoords(cs.getCoords());

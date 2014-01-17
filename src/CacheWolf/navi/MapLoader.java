@@ -25,6 +25,7 @@ import CacheWolf.MainForm;
 import CacheWolf.MyLocale;
 import CacheWolf.Preferences;
 import CacheWolf.controls.InfoBox;
+import CacheWolf.database.BoundingBox;
 import CacheWolf.database.CWPoint;
 import CacheWolf.database.CacheDB;
 import CacheWolf.database.CacheHolder;
@@ -245,7 +246,7 @@ public class MapLoader {
 	lat = center.latDec + (latinc / 2.0);
 	lon = center.lonDec + (loninc / 2.0);
 	CWPoint br = new CWPoint(lat, lon);
-	Area maparea = new Area(tl, br);
+	BoundingBox maparea = new BoundingBox(tl, br);
 	CacheDB cacheDB = MainForm.profile.cacheDB;
 	for (int i = 0; i < cacheDB.size(); i++) {
 	    CacheHolder ch = cacheDB.get(i);
@@ -341,7 +342,7 @@ public class MapLoader {
 	mio.getMapImageFileNameObject().setPath(MainForm.profile.getMapsSubDir(path));
 	String imagetype = wms.getImageFileExt();
 	String fName = path + imagename + imagetype;
-	Area maparea = wms.CenterScaleToArea(center, scale, sizeInPixels);
+	BoundingBox maparea = wms.CenterScaleToArea(center, scale, sizeInPixels);
 	CWPoint bottomleft = new CWPoint(maparea.bottomright.latDec, maparea.topleft.lonDec);
 	CWPoint topright = new CWPoint(maparea.topleft.latDec, maparea.bottomright.lonDec);
 
@@ -648,7 +649,7 @@ class OnlineMapService {
     int preselectedRecScaleIndex = 0;
     double minscale;
     double maxscale;
-    Area boundingBox;
+    BoundingBox boundingBox;
     int minPixelSize;
     int maxPixelSize;
     String prefWidthPixelSize;
@@ -699,7 +700,7 @@ class OnlineMapService {
      * @return
      */
     public String getUrlForCenterScale(CWPoint center, float scale, Point sizeInPixels) {
-	Area bbox = CenterScaleToArea(center, scale, sizeInPixels);
+	BoundingBox bbox = CenterScaleToArea(center, scale, sizeInPixels);
 	String url = getUrlForBoundingBoxInternal(bbox, sizeInPixels, scale);
 	return url;
     }
@@ -711,7 +712,7 @@ class OnlineMapService {
      * @param sizeInPixels
      * @return
      */
-    protected String getUrlForBoundingBoxInternal(Area surArea, Point sizeInPixels, double scaleInput) {
+    protected String getUrlForBoundingBoxInternal(BoundingBox surArea, Point sizeInPixels, double scaleInput) {
 	return null;
     }
 
@@ -723,16 +724,16 @@ class OnlineMapService {
      * @param pixelsize
      * @return
      */
-    public Area CenterScaleToArea(CWPoint center, float scale, Point sizeInPixels) {
-	Area bbox = new Area();
+    public BoundingBox CenterScaleToArea(CWPoint center, float scale, Point sizeInPixels) {
+	BoundingBox bbox = new BoundingBox();
 	double halfdiagonal = Math.sqrt(sizeInPixels.x * sizeInPixels.x + sizeInPixels.y * sizeInPixels.y) / 2 * scale / 1000;
 	bbox.topleft = center.project(-45, halfdiagonal);
 	bbox.bottomright = center.project(135, halfdiagonal);
 	return bbox;
     }
 
-    protected MapInfoObject getMapInfoObjectInternal(Area maparea, Point pixelsize) {
-	throw new IllegalArgumentException(MyLocale.getMsg(4811, "OnlineMapService: getMapInfoObjectInternal(Area maparea, Point pixelsize):\n This method must be overloaded in order to be able to use it"));
+    protected MapInfoObject getMapInfoObjectInternal(BoundingBox maparea, Point pixelsize) {
+	throw new IllegalArgumentException(MyLocale.getMsg(4811, "OnlineMapService: getMapInfoObjectInternal(BoundingBox maparea, Point pixelsize):\n This method must be overloaded in order to be able to use it"));
     }
 
     /**
@@ -835,7 +836,7 @@ class WebMapService extends OnlineMapService {
 	    topleft.set(90, -180);
 	if (!bottomright.isValid())
 	    bottomright.set(-90, 180);
-	boundingBox = new Area(topleft, bottomright);
+	boundingBox = new BoundingBox(topleft, bottomright);
 
 	minscaleWMS = Common.parseDouble(wms.getProperty("MinScale", "0").trim());
 	maxscaleWMS = Common.parseDouble(wms.getProperty("MaxScale", Convert.toString(java.lang.Double.MAX_VALUE)).trim());
@@ -886,7 +887,7 @@ class WebMapService extends OnlineMapService {
      * @param maparea
      * @return [0] = topleft, [1] = bottomright, [2] = topright, [3] = bottomleft
      */
-    private ProjectedPoint[] getGkArea(Area maparea) {
+    private ProjectedPoint[] getGkArea(BoundingBox maparea) {
 	ProjectedPoint[] ret = new ProjectedPoint[4];
 	// CWPoint topright = new CWPoint(maparea.topleft.latDec, maparea.bottomright.lonDec);
 	// CWPoint bottomleft = new CWPoint(maparea.bottomright.latDec, maparea.topleft.lonDec);
@@ -906,8 +907,8 @@ class WebMapService extends OnlineMapService {
 	return ret;
     }
 
-    public Area CenterScaleToArea(CWPoint center, float scale, Point pixelsize) {
-	Area bbox = new Area();
+    public BoundingBox CenterScaleToArea(CWPoint center, float scale, Point pixelsize) {
+	BoundingBox bbox = new BoundingBox();
 	int region = TransformCoordinates.getLocalProjectionSystem(coordinateReferenceSystem[0]);
 	if (region > 0) {
 	    int epsg = coordinateReferenceSystem[getCrs(center)];
@@ -937,7 +938,7 @@ class WebMapService extends OnlineMapService {
 	return bbox;
     }
 
-    protected String getUrlForBoundingBoxInternal(Area maparea, Point sizeInPixels, double scaleInput) {
+    protected String getUrlForBoundingBoxInternal(BoundingBox maparea, Point sizeInPixels, double scaleInput) {
 	if (!boundingBox.isOverlapping(maparea))
 	    throw new IllegalArgumentException(MyLocale.getMsg(4822, "area:") + " " + maparea.toString() + MyLocale.getMsg(4823, " not covered by service:") + " " + name + MyLocale.getMsg(4824, ", service area:") + " " + boundingBox.toString());
 	// http://www.geoserver.nrw.de/GeoOgcWms1.3/servlet/TK25?SERVICE=WMS&VERSION=1.1.0&REQUEST=GetMap&SRS=EPSG:31466&BBOX=2577567.0149,5607721.7566,2578567.0077,5608721.7602&WIDTH=500&HEIGHT=500&LAYERS=Raster:TK25_KMF:Farbkombination&STYLES=&FORMAT=image/png
@@ -983,7 +984,7 @@ class WebMapService extends OnlineMapService {
     /**
      * This method gives the number in the array of coordinateReferenceSystems, which should be used a) if only one is in the array 0 is returned b) if there are more, find out which one matches the correct zone (e.g. Gauß-Krüger stripe)
      * 
-     * Call this routine with center of the area (use Area.getcenter())
+     * Call this routine with center of the area (use BoundingBox.getcenter())
      * 
      * @param p
      *            Point for which the epsg code is searched for
@@ -1017,7 +1018,7 @@ class WebMapService extends OnlineMapService {
 	return crsindex;
     }
 
-    protected MapInfoObject getMapInfoObjectInternal(Area maparea, Point pixelsize) {
+    protected MapInfoObject getMapInfoObjectInternal(BoundingBox maparea, Point pixelsize) {
 	if (!boundingBox.isOverlapping(maparea))
 	    throw new IllegalArgumentException(MyLocale.getMsg(4822, "area:") + " " + maparea.toString() + MyLocale.getMsg(4823, " not covered by service:") + " " + name + MyLocale.getMsg(4824, ", service area:") + " " + boundingBox.toString());
 	Vector georef = new Vector(4);

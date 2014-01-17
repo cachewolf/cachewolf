@@ -23,6 +23,7 @@ package CacheWolf.navi;
 
 import CacheWolf.MyLocale;
 import CacheWolf.Preferences;
+import CacheWolf.database.BoundingBox;
 import CacheWolf.database.CWPoint;
 import CacheWolf.database.CoordinatePoint;
 import CacheWolf.utils.Common;
@@ -54,7 +55,7 @@ import ewe.util.mString;
  * @author pfeffer
  * 
  */
-public class MapInfoObject extends Area {
+public class MapInfoObject extends BoundingBox {
     public CWPoint center = new CWPoint();
     public float sizeKm = 0; // Diagonal in meters per pixel
     public float scale; // identifying the scale of the map, automatically adjusted when zooming

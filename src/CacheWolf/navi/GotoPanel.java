@@ -21,9 +21,9 @@
 */
 package CacheWolf.navi;
 
-import CacheWolf.CoordsScreen;
+import CacheWolf.CoordsPDAInput;
+import CacheWolf.CoordsInput;
 import CacheWolf.GuiImageBroker;
-import CacheWolf.InputScreen;
 import CacheWolf.MainTab;
 import CacheWolf.MyLocale;
 import CacheWolf.Preferences;
@@ -209,7 +209,7 @@ public final class GotoPanel extends CellPanel {
 		miLuminary[i].modifiers &= MenuItem.Checked;
 	}
 
-	lblPosition.text = MainTab.itself.navigate.gpsPos.toString(CoordsScreen.getLocalSystem(currFormatSel));
+	lblPosition.text = MainTab.itself.navigate.gpsPos.toString(CoordsInput.getLocalSystem(currFormatSel));
 
 	setText(destination, getGotoBtnText());
 
@@ -275,7 +275,7 @@ public final class GotoPanel extends CellPanel {
 	compassRose.setGpsStatus(fix, MainTab.itself.navigate.gpsPos.getSats(), MainTab.itself.navigate.gpsPos.getSatsInView(), MainTab.itself.navigate.gpsPos.getHDOP());
 	if ((fix > 0) && (MainTab.itself.navigate.gpsPos.getSats() >= 0)) {
 	    // display values only, if signal good
-	    lblPosition.setText(MainTab.itself.navigate.gpsPos.toString(CoordsScreen.getLocalSystem(currFormatSel)));
+	    lblPosition.setText(MainTab.itself.navigate.gpsPos.toString(CoordsInput.getLocalSystem(currFormatSel)));
 	    speed.set(MainTab.itself.navigate.gpsPos.getSpeed());
 	    sunAzimut.set(MainTab.itself.navigate.skyOrientationDir.lonDec);
 	    bearMov.set(MainTab.itself.navigate.gpsPos.getBear());
@@ -324,7 +324,7 @@ public final class GotoPanel extends CellPanel {
 	if (MainTab.itself.navigate.destination == null)
 	    return MyLocale.getMsg(999, "Not set");
 	else
-	    return MainTab.itself.navigate.destination.toString(CoordsScreen.getLocalSystem(currFormatSel));
+	    return MainTab.itself.navigate.destination.toString(CoordsInput.getLocalSystem(currFormatSel));
     }
 
     private void setText(mButton btn, String text) {
@@ -342,7 +342,7 @@ public final class GotoPanel extends CellPanel {
 		    mnuContextFormt.getItemAt(currFormatSel).modifiers &= ~MenuItem.Checked;
 		    currFormatSel = mnuContextFormt.getInt();
 		    mnuContextFormt.getItemAt(currFormatSel).modifiers |= MenuItem.Checked;
-		    lblPosition.setText(MainTab.itself.navigate.gpsPos.toString(CoordsScreen.getLocalSystem(currFormatSel)));
+		    lblPosition.setText(MainTab.itself.navigate.gpsPos.toString(CoordsInput.getLocalSystem(currFormatSel)));
 		    setText(destination, getGotoBtnText());
 		} // end lat-lon-format context menu
 		if (((MenuEvent) ev).menu == mnuContextRose) {
@@ -402,7 +402,7 @@ public final class GotoPanel extends CellPanel {
 	    // change destination waypoint
 	    if (ev.target == destination) {
 		if (Vm.isMobile()) {
-		    InputScreen InScr = new InputScreen(CoordsScreen.getLocalSystem(currFormatSel));
+		    CoordsPDAInput InScr = new CoordsPDAInput(CoordsInput.getLocalSystem(currFormatSel));
 		    if (MainTab.itself.navigate.destination.isValid())
 			InScr.setCoords(MainTab.itself.navigate.destination);
 		    else
@@ -410,11 +410,11 @@ public final class GotoPanel extends CellPanel {
 		    if (InScr.execute(null, TOP) == FormBase.IDOK)
 			Navigate.itself.setDestination(InScr.getCoords());
 		} else {
-		    CoordsScreen cs = new CoordsScreen();
+		    CoordsInput cs = new CoordsInput();
 		    if (MainTab.itself.navigate.destination.isValid())
-			cs.setFields(MainTab.itself.navigate.destination, CoordsScreen.getLocalSystem(currFormatSel));
+			cs.setFields(MainTab.itself.navigate.destination, CoordsInput.getLocalSystem(currFormatSel));
 		    else
-			cs.setFields(new CWPoint(0, 0), CoordsScreen.getLocalSystem(currFormatSel));
+			cs.setFields(new CWPoint(0, 0), CoordsInput.getLocalSystem(currFormatSel));
 		    if (cs.execute(null, TOP) == FormBase.IDOK)
 			Navigate.itself.setDestination(cs.getCoords());
 		}

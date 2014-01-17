@@ -21,7 +21,7 @@
 */
 package CacheWolf.navi;
 
-import CacheWolf.CoordsScreen;
+import CacheWolf.CoordsInput;
 import CacheWolf.MainForm;
 import CacheWolf.MainTab;
 import CacheWolf.MyLocale;
@@ -426,7 +426,7 @@ class mapInteractivePanel extends InteractivePanel {
 	this.repaintNow();
 	f.updatePosition(pos.x, pos.y);
 
-	CoordsScreen cooS = new CoordsScreen(); // (String)lr.get(4108,"Coordinates:"), (String)lr.get(4108,"Coordinates:"), InfoBox.INPUT);
+	CoordsInput cooS = new CoordsInput(); // (String)lr.get(4108,"Coordinates:"), (String)lr.get(4108,"Coordinates:"), InfoBox.INPUT);
 	if (cooS.execute() == FormBase.IDOK) {
 	    GCPoint gcp = new GCPoint(cooS.getCoords());
 	    gcp.bitMapX = pos.x;

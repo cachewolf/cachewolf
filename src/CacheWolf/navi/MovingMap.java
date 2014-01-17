@@ -25,9 +25,9 @@ import CacheWolf.MainForm;
 import CacheWolf.MainTab;
 import CacheWolf.MyLocale;
 import CacheWolf.Preferences;
-import CacheWolf.Profile;
 import CacheWolf.controls.ExecutePanel;
 import CacheWolf.controls.InfoBox;
+import CacheWolf.database.BoundingBox;
 import CacheWolf.database.CWPoint;
 import CacheWolf.database.CacheDB;
 import CacheWolf.database.CacheHolder;
@@ -1045,7 +1045,7 @@ public final class MovingMap extends Form implements ICommandListener {
 
     private void showCachesOnMap() {
 	CacheHolder ch;
-	final Area screenArea = new Area(ScreenXY2LatLon(0, 0), ScreenXY2LatLon(width, height));
+	final BoundingBox screenArea = new BoundingBox(ScreenXY2LatLon(0, 0), ScreenXY2LatLon(width, height));
 	for (int i = cacheDB.size() - 1; i >= 0; i--) {
 	    ch = cacheDB.get(i);
 	    if (screenArea.isInBound(ch.getPos())) {
@@ -2021,7 +2021,7 @@ public final class MovingMap extends Form implements ICommandListener {
     }
 
     private void loadMapForAllCaches() {
-	final Area sur = MainForm.profile.getSourroundingArea(true);
+	final BoundingBox sur = MainForm.profile.getSourroundingArea(true);
 	if (sur == null) {
 	    new InfoBox(MyLocale.getMsg(5500, "Error"), MyLocale.getMsg(4215, "Keine  Caches mit H?ckchen ausgew?hlt")).wait(FormBase.OKB);
 	    return;
@@ -2685,10 +2685,10 @@ class ListBox extends Form {
 	if (gotopos != null && Gps != null) {
 	    list.addItem(MyLocale.getMsg(4272, "--- Maps containing GPS and goto pos. ---"));
 	    row++;
-	    cmp = "FF1" + (new Area(new CWPoint(Gps.latDec, Gps.lonDec), gotopos)).getEasyFindString();
+	    cmp = "FF1" + (new BoundingBox(new CWPoint(Gps.latDec, Gps.lonDec), gotopos)).getEasyFindString();
 	    for (int i = 0; i < maps.size(); i++) {
 		ml = (MapListEntry) maps.get(i);
-		if (!Area.containsRoughly(ml.sortEntryBBox, cmp))
+		if (!BoundingBox.containsRoughly(ml.sortEntryBBox, cmp))
 		    continue; // TODO if no map available
 		else {
 		    mio = ml.getMap();
@@ -2708,10 +2708,10 @@ class ListBox extends Form {
 	if (Gps != null) {
 	    list.addItem(MyLocale.getMsg(4273, "--- Maps containing curr. position ---"));
 	    row++;
-	    cmp = "FF1" + Area.getEasyFindString(new CWPoint(Gps.latDec, Gps.lonDec), 30);
+	    cmp = "FF1" + BoundingBox.getEasyFindString(new CWPoint(Gps.latDec, Gps.lonDec), 30);
 	    for (int i = 0; i < maps.size(); i++) {
 		ml = (MapListEntry) maps.get(i);
-		if (!Area.containsRoughly(ml.sortEntryBBox, cmp))
+		if (!BoundingBox.containsRoughly(ml.sortEntryBBox, cmp))
 		    continue; // TODO if no map available
 		else {
 		    mio = ml.getMap();
@@ -2730,10 +2730,10 @@ class ListBox extends Form {
 	if (gotopos != null) {
 	    list.addItem(MyLocale.getMsg(4274, "--- Karten des Ziels ---"));
 	    row++;
-	    cmp = "FF1" + Area.getEasyFindString(gotopos, 30);
+	    cmp = "FF1" + BoundingBox.getEasyFindString(gotopos, 30);
 	    for (int i = 0; i < maps.size(); i++) {
 		ml = (MapListEntry) maps.get(i);
-		if (!Area.containsRoughly(ml.sortEntryBBox, cmp))
+		if (!BoundingBox.containsRoughly(ml.sortEntryBBox, cmp))
 		    continue; // TODO if no map available
 		else {
 		    mio = ml.getMap();
