@@ -65,11 +65,11 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 package CacheWolf;
 
+import CacheWolf.database.CWPoint;
 import CacheWolf.database.CacheHolder;
 import CacheWolf.database.CacheSize;
 import CacheWolf.database.CacheTerrDiff;
 import CacheWolf.database.CacheType;
-import CacheWolf.database.CWPoint;
 import CacheWolf.navi.Metrics;
 import CacheWolf.navi.Navigate;
 import CacheWolf.navi.TransformCoordinates;
@@ -396,12 +396,12 @@ public class Parser {
     /** Get or set the current centre */
     private void funcCenter(int nargs) throws Exception {
 	if (nargs == 0) {
-	    calcStack.add(Preferences.itself().getCurCentrePt().toString());
+	    calcStack.add(Preferences.itself().curCentrePt.toString());
 	} else {
 	    String coordA = popCalcStackAsString();
 	    if (!isValidCoord(coordA))
 		err(MyLocale.getMsg(1712, "Invalid coordinate: ") + coordA);
-	    Preferences.itself().setCurCentrePt(new CWPoint(coordA));
+	    MainForm.itself.setCurCentrePt(new CWPoint(coordA));
 	}
     }
 
@@ -575,7 +575,7 @@ public class Parser {
 		return;
 	    }
 	    ch.setPos(cwPt);
-	    ch.calcDistance(Preferences.itself().getCurCentrePt()); // Update distance/bearing
+	    ch.calcDistance(Preferences.itself().curCentrePt); // Update distance/bearing
 	    nav.setDestination(ch);
 	    MainForm.profile.selectionChanged = true; // Tell moving map to updated displayed waypoints
 	}
@@ -1078,7 +1078,7 @@ public class Parser {
 		cwPt.set(coord);
 		if (cwPt.isValid() || coord.equals("")) { // Can clear coord with empty string
 		    ch.setPos(cwPt);
-		    ch.calcDistance(Preferences.itself().getCurCentrePt()); // Update distance and bearing
+		    ch.calcDistance(Preferences.itself().curCentrePt); // Update distance and bearing
 		    MainForm.profile.selectionChanged = true; // Tell moving map to updated displayed waypoints
 		    return;
 		} else

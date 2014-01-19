@@ -26,6 +26,7 @@ import CacheWolf.MyLocale;
 import CacheWolf.Preferences;
 import CacheWolf.controls.ExecutePanel;
 import CacheWolf.controls.InfoBox;
+import CacheWolf.controls.MyScrollBarPanel;
 import ewe.io.File;
 import ewe.io.FileBase;
 import ewe.ui.CellConstants;
@@ -55,8 +56,8 @@ public class SelectMap extends Form {
 
     public SelectMap() {
 	mapsPath = MainForm.profile.getMapsDir();
-	top = new CacheWolf.MyScrollBarPanel(CMaps);
-	bot = new CacheWolf.MyScrollBarPanel(nonCMaps);
+	top = new MyScrollBarPanel(CMaps);
+	bot = new MyScrollBarPanel(nonCMaps);
 	this.title = MyLocale.getMsg(4101, "Maps");
 	this.addLast(new mLabel(MyLocale.getMsg(4102, "Calibrated Maps")), CellConstants.STRETCH, CellConstants.FILL);
 	this.addLast(top, CellConstants.STRETCH, CellConstants.FILL);

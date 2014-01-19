@@ -268,7 +268,7 @@ public class GCImporter {
 	cachesToLoad.clear();
 	spiderAllFinds = _spiderAllFinds;
 	// No need to copy curCentrePt as it is only read and not written
-	origin = Preferences.itself().getCurCentrePt();
+	origin = Preferences.itself().curCentrePt;
 	if (!spiderAllFinds && !origin.isValid()) {
 	    new InfoBox(MyLocale.getMsg(5500, "Error"), MyLocale.getMsg(5509, "Coordinates for centre must be set")).wait(FormBase.OKB);
 	    return;
@@ -400,7 +400,7 @@ public class GCImporter {
 	    return;
 
 	// getting the route
-	CWPoint startPos = Preferences.itself().getCurCentrePt();
+	CWPoint startPos = Preferences.itself().curCentrePt;
 	if (!importGui.fileName.equals("")) {
 	    final RouteImporter ri = new RouteImporter(importGui.fileName);
 	    points = ri.doIt();

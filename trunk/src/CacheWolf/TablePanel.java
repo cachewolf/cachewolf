@@ -21,6 +21,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 package CacheWolf;
 
+import CacheWolf.controls.MyScrollBarPanel;
 import CacheWolf.database.CacheDB;
 import CacheWolf.database.CacheHolder;
 import ewe.fx.Dimension;
@@ -38,7 +39,8 @@ public class TablePanel extends CellPanel {
     public MyTableModel myTableModel;
     CacheDB cacheDB;
     MainTab myMaintab;
-    StatusBar statusBar;
+    TablePanelStatusBar statusBar;
+    TablePanelMenu mainMenu;
     /**
      * We keep track of the currently selected cache in two variables(for speed)
      * selectedIdx is the index in cacheDB, selectedch is the actual cache
@@ -54,7 +56,6 @@ public class TablePanel extends CellPanel {
     public TablePanel() {
 
 	cacheDB = MainForm.profile.cacheDB;
-
 	MyScrollBarPanel theTableControl = new MyScrollBarPanel(myTableControl = new MyTableControl());
 
 	myTableModel = new MyTableModel(myTableControl);
@@ -63,14 +64,16 @@ public class TablePanel extends CellPanel {
 
 	myTableControl.setTableModel(myTableModel);
 
+	mainMenu = new TablePanelMenu();
+	mainMenu.setTablePanel(this);
+
 	if (Preferences.itself().showStatus) {
-	    statusBar = new StatusBar();
-	    statusBar.setMyTableModel(myTableModel);
+	    statusBar = new TablePanelStatusBar(myTableModel);
 	} else
 	    statusBar = null;
 
 	if (!Preferences.itself().tabsAtTop) {
-	    addLast(MainMenu.itself, CellConstants.DONTSTRETCH, CellConstants.FILL);
+	    addLast(mainMenu, CellConstants.DONTSTRETCH, CellConstants.FILL);
 	    addLast(theTableControl, STRETCH, FILL);
 	    if (Preferences.itself().showStatus)
 		addLast(statusBar, CellConstants.DONTSTRETCH, CellConstants.FILL);
@@ -78,7 +81,7 @@ public class TablePanel extends CellPanel {
 	    addLast(theTableControl, STRETCH, FILL);
 	    if (Preferences.itself().showStatus)
 		addLast(statusBar, CellConstants.DONTSTRETCH, CellConstants.FILL);
-	    addLast(MainMenu.itself, CellConstants.DONTSTRETCH, CellConstants.FILL);
+	    addLast(mainMenu, CellConstants.DONTSTRETCH, CellConstants.FILL);
 	}
 
     }
@@ -183,7 +186,7 @@ public class TablePanel extends CellPanel {
 	selectRow(rownum);
 
 	myTableControl.update(true); // Update and repaint
-	MainMenu.itself.setfiltApplyImage();
+	mainMenu.setfiltApplyImage();
 	updateStatusBar();
     }
 

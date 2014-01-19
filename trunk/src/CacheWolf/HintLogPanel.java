@@ -21,6 +21,7 @@
 */
 package CacheWolf;
 
+import CacheWolf.controls.MyScrollBarPanel;
 import CacheWolf.database.CacheHolderDetail;
 import CacheWolf.utils.Common;
 import CacheWolf.utils.STRreplace;

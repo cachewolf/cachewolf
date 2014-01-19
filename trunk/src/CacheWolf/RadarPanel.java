@@ -411,7 +411,7 @@ class MyInteractivePanel extends InteractivePanel {
     String wayPoint;
 
     public void startDragging(DragContext dc) {
-	if (!MainForm.itself.cacheListVisible)
+	if (!MainForm.itself.cacheTourVisible)
 	    return;
 	CacheHolder ch = MainForm.profile.cacheDB.get(wayPoint);
 	if (ch != null) {
@@ -428,7 +428,7 @@ class MyInteractivePanel extends InteractivePanel {
     }
 
     public boolean imageBeginDragged(AniImage which, Point pos) {
-	if (!MainForm.itself.cacheListVisible)
+	if (!MainForm.itself.cacheTourVisible)
 	    return false;
 	canScroll = false;
 	clearInfo();
@@ -479,7 +479,7 @@ class MyInteractivePanel extends InteractivePanel {
 	p.y += drag.curPoint.y - origin.y;
 	Control c = getWindow().findChild(p.x, p.y);
 	if (c instanceof mList && c.text.equals("CacheList")) {
-	    if (MainForm.itself.cacheList.addCache(wayPoint)) {
+	    if (MainForm.itself.cacheTour.addCache(wayPoint)) {
 		c.repaintNow();
 		((mList) c).makeItemVisible(((mList) c).itemsSize() - 1);
 	    }

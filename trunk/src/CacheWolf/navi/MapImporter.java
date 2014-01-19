@@ -27,6 +27,7 @@ import CacheWolf.MainTab;
 import CacheWolf.MyLocale;
 import CacheWolf.Preferences;
 import CacheWolf.controls.InfoBox;
+import CacheWolf.controls.MyScrollBarPanel;
 import CacheWolf.database.CWPoint;
 import CacheWolf.utils.Common;
 import ewe.filechooser.FileChooser;
@@ -108,7 +109,7 @@ public class MapImporter extends Form {
 	    Preferences.itself().log("Cannot load world file!", ex);
 	}
 	mapInteractivePanel pane = new mapInteractivePanel(this);
-	scp = new CacheWolf.MyScrollBarPanel(pane);
+	scp = new MyScrollBarPanel(pane);
 	Image img = new Image(Common.getImageName(mapsPath + thisMap));
 	PixelBuffer pB = new PixelBuffer(img);
 	//pB = pB.scale((int)(pref.myAppWidth*0.98),(int)(pref.myAppHeight*0.98));

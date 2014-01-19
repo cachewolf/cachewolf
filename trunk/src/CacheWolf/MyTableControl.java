@@ -23,12 +23,12 @@ package CacheWolf;
 
 import CacheWolf.controls.DataMover;
 import CacheWolf.controls.InfoBox;
+import CacheWolf.database.CWPoint;
 import CacheWolf.database.CacheDB;
 import CacheWolf.database.CacheHolder;
 import CacheWolf.database.CacheHolderDetail;
 import CacheWolf.database.CacheType;
 import CacheWolf.exp.OCLogExport;
-import CacheWolf.database.CWPoint;
 import CacheWolf.navi.Navigate;
 import CacheWolf.navi.TransformCoordinates;
 import CacheWolf.utils.CWWrapper;
@@ -158,8 +158,8 @@ public class MyTableControl extends TableControl {
 		    MainTab.itself.tablePanel.selectRow(java.lang.Math.min(cursor.y + 1, model.numRows - 1));
 		else if (ev.key == IKeys.UP)
 		    MainTab.itself.tablePanel.selectRow(java.lang.Math.max(cursor.y - 1, 0));
-		else if (ev.key == IKeys.LEFT && MainForm.itself.cacheListVisible && cursor.y >= 0 && cursor.y < MainTab.itself.tablePanel.myTableModel.numRows)
-		    MainForm.itself.cacheList.addCache(cacheDB.get(cursor.y).getWayPoint());
+		else if (ev.key == IKeys.LEFT && MainForm.itself.cacheTourVisible && cursor.y >= 0 && cursor.y < MainTab.itself.tablePanel.myTableModel.numRows)
+		    MainForm.itself.cacheTour.addCache(cacheDB.get(cursor.y).getWayPoint());
 		else if (ev.key == IKeys.RIGHT) {
 		    CacheHolder ch = cacheDB.get(MainTab.itself.tablePanel.getSelectedCache());
 		    if (ch.getPos().isValid()) {
@@ -167,7 +167,8 @@ public class MyTableControl extends TableControl {
 			MainTab.itself.select(MainTab.GOTO_CARD);
 		    }
 		} else if (ev.key == 6) {
-		    MainMenu.itself.search(); // (char)6 == ctrl + f
+		    // (char)6 == ctrl + f
+		    MainTab.itself.tablePanel.mainMenu.search();
 		    MainTab.itself.tablePanel.refreshTable();
 		} else
 		    super.onKeyEvent(ev);
@@ -279,11 +280,9 @@ public class MyTableControl extends TableControl {
 	} else
 
 	if (selectedItem == miUpdate) {
-	    MainMenu.updateSelectedCaches(MainTab.itself.tablePanel);
+	    MainTab.itself.tablePanel.mainMenu.updateSelectedCaches();
 	    Preferences.itself().setOldGCLanguage();
-	} else
-
-	if (selectedItem == miChangeBlack) {
+	} else if (selectedItem == miChangeBlack) {
 	    Vm.showWait(true);
 	    try {
 		for (int i = cacheDB.size() - 1; i >= 0; i--) {
@@ -320,7 +319,7 @@ public class MyTableControl extends TableControl {
 	    if (!cp.isValid()) {
 		new InfoBox(MyLocale.getMsg(5500, "Error"), MyLocale.getMsg(4111, "Coordinates must be entered in the format N DD MM.MMM E DDD MM.MMM")).wait(FormBase.OKB);
 	    } else {
-		Preferences.itself().setCurCentrePt(cp);
+		MainForm.itself.setCurCentrePt(cp);
 	    }
 	} else if (selectedItem == miUnhideAddis) {
 	    // This toggles the "showAddis" Flag
@@ -483,7 +482,7 @@ public class MyTableControl extends TableControl {
 	}
 	wayPoint = null;
 	if (p.y >= 0) {
-	    if (!MainForm.itself.cacheListVisible) {
+	    if (!MainForm.itself.cacheTourVisible) {
 		dc.cancelled = true;
 		return;
 	    }
@@ -506,7 +505,7 @@ public class MyTableControl extends TableControl {
 	    p.y += dc.curPoint.y;
 	    Control c = getWindow().findChild(p.x, p.y);
 	    if (c instanceof mList && c.text.equals("CacheList")) {
-		if (MainForm.itself.cacheList.addCache(wayPoint)) {
+		if (MainForm.itself.cacheTour.addCache(wayPoint)) {
 		    c.repaintNow();
 		    ((mList) c).makeItemVisible(((mList) c).itemsSize() - 1);
 		}
