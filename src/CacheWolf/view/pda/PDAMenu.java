@@ -21,7 +21,7 @@
 */
 package CacheWolf.view.pda;
 
-import CacheWolf.MyLocale;
+import CacheWolf.utils.MyLocale;
 import ewe.ui.ControlEvent;
 import ewe.ui.Form;
 

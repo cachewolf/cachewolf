@@ -21,7 +21,7 @@
 */
 package CacheWolf.view.pda;
 
-import CacheWolf.MyLocale;
+import CacheWolf.utils.MyLocale;
 import CacheWolf.model.DefaultListModel;
 import ewe.sys.Vm;
 import ewe.ui.CellConstants;

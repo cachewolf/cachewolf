@@ -21,11 +21,13 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 package CacheWolf;
 
+import CacheWolf.controls.GuiImageBroker;
 import CacheWolf.database.CacheDB;
 import CacheWolf.database.CacheHolder;
 import CacheWolf.database.CacheSize;
 import CacheWolf.database.CacheType;
 import CacheWolf.utils.Common;
+import CacheWolf.utils.MyLocale;
 import ewe.fx.Color;
 import ewe.fx.Dimension;
 import ewe.fx.Font;
@@ -496,5 +498,24 @@ class MyInteractivePanel extends InteractivePanel {
 	    return super.scroll(dx, dy, moved);
 	else
 	    return false;
+    }
+}
+
+/**
+* The ImagePanelImage extends AniImage by a fileName.
+* This is an easy way to identify the image clicked,
+* what is needed to display the full image from the
+* thumbnail.
+*/
+class RadarPanelImage extends AniImage {
+    public String wayPoint = new String();
+    public int rownum;
+
+    public RadarPanelImage(mImage i) {
+	super(i);
+    }
+
+    public RadarPanelImage(Image i) {
+	super(i);
     }
 }

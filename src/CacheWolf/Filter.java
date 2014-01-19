@@ -22,14 +22,15 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 package CacheWolf;
 
 import CacheWolf.controls.InfoBox;
+import CacheWolf.database.CWPoint;
 import CacheWolf.database.CacheDB;
 import CacheWolf.database.CacheHolder;
 import CacheWolf.database.CacheSize;
 import CacheWolf.database.CacheType;
 import CacheWolf.imp.KMLImporter;
-import CacheWolf.database.CWPoint;
 import CacheWolf.utils.Common;
 import CacheWolf.utils.Matrix;
+import CacheWolf.utils.MyLocale;
 
 import com.stevesoft.ewe_pat.Regex;
 

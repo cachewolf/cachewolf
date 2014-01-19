@@ -1,7 +1,6 @@
 package CacheWolf.controls;
 
-import CacheWolf.GuiImageBroker;
-import CacheWolf.MyLocale;
+import CacheWolf.utils.MyLocale;
 import ewe.ui.CellPanel;
 import ewe.ui.ControlConstants;
 import ewe.ui.FormBase;

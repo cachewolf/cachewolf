@@ -22,7 +22,7 @@
 package CacheWolf.imp;
 
 import CacheWolf.MainForm;
-import CacheWolf.MyLocale;
+import CacheWolf.utils.MyLocale;
 import CacheWolf.Preferences;
 import CacheWolf.utils.UrlFetcher;
 import ewe.io.File;

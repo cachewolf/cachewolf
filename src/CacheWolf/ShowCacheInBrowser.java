@@ -25,6 +25,7 @@ import CacheWolf.controls.InfoBox;
 import CacheWolf.database.CacheHolder;
 import CacheWolf.utils.CWWrapper;
 import CacheWolf.utils.Common;
+import CacheWolf.utils.MyLocale;
 import CacheWolf.utils.STRreplace;
 import HTML.Template;
 

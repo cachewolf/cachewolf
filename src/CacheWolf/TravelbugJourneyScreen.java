@@ -34,6 +34,7 @@ package CacheWolf;
 
 import CacheWolf.controls.DateTimeChooser;
 import CacheWolf.controls.MyScrollBarPanel;
+import CacheWolf.controls.TableColumnChooser;
 import CacheWolf.database.CacheDB;
 import CacheWolf.database.CacheHolder;
 import CacheWolf.database.CacheHolderDetail;
@@ -43,6 +44,7 @@ import CacheWolf.database.TravelbugJourneyList;
 import CacheWolf.database.TravelbugList;
 import CacheWolf.imp.GCImporter;
 import CacheWolf.utils.CWWrapper;
+import CacheWolf.utils.MyLocale;
 import ewe.fx.Color;
 import ewe.fx.Dimension;
 import ewe.fx.FontMetrics;

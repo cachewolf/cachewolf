@@ -29,7 +29,7 @@ import org.json.JSONObject;
 
 import CacheWolf.MainForm;
 import CacheWolf.MainTab;
-import CacheWolf.MyLocale;
+import CacheWolf.utils.MyLocale;
 import CacheWolf.Preferences;
 import CacheWolf.controls.InfoBox;
 import CacheWolf.database.CWPoint;

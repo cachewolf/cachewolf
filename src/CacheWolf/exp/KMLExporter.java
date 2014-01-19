@@ -23,12 +23,12 @@ package CacheWolf.exp;
 
 import CacheWolf.MainForm;
 import CacheWolf.Preferences;
-import CacheWolf.SafeXML;
 import CacheWolf.database.CacheHolder;
 import CacheWolf.database.CacheHolderDetail;
 import CacheWolf.database.CacheType;
 import CacheWolf.navi.TransformCoordinates;
 import CacheWolf.utils.STRreplace;
+import CacheWolf.utils.SafeXML;
 import ewe.io.BufferedWriter;
 import ewe.io.File;
 import ewe.io.FileBase;

@@ -21,6 +21,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 package CacheWolf;
 
+import CacheWolf.utils.SafeXML;
+
 /**
  * This class represents the settings of the filter that can be done when the users changes the
  * filter in CacheWolf.

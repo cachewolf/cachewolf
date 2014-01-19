@@ -24,6 +24,8 @@ package CacheWolf;
 import CacheWolf.controls.ExecutePanel;
 import CacheWolf.controls.MyScrollBarPanel;
 import CacheWolf.database.TravelbugList;
+import CacheWolf.utils.MyLocale;
+import CacheWolf.utils.SafeXML;
 import CacheWolf.view.ITravelbugScreen;
 import ewe.ui.ControlEvent;
 import ewe.ui.Event;

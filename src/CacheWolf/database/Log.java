@@ -22,7 +22,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 package CacheWolf.database;
 
 import CacheWolf.Preferences;
-import CacheWolf.MyLocale;
+import CacheWolf.utils.MyLocale;
 
 public class Log {
     private static String MAXLOGICON = "MAXLOG";

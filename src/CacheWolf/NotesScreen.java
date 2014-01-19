@@ -22,9 +22,11 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 package CacheWolf;
 
 import CacheWolf.controls.ExecutePanel;
+import CacheWolf.controls.GuiImageBroker;
 import CacheWolf.controls.InfoBox;
 import CacheWolf.controls.MyScrollBarPanel;
 import CacheWolf.database.CacheHolderDetail;
+import CacheWolf.utils.MyLocale;
 import ewe.fx.Dimension;
 import ewe.sys.Time;
 import ewe.ui.CellConstants;

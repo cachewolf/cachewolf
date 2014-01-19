@@ -28,12 +28,15 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import CacheWolf.controls.ExecutePanel;
+import CacheWolf.controls.GuiImageBroker;
 import CacheWolf.controls.InfoBox;
 import CacheWolf.controls.MyScrollBarPanel;
+import CacheWolf.controls.TableColumnChooser;
 import CacheWolf.navi.Metrics;
 import CacheWolf.utils.Common;
 import CacheWolf.utils.FileBugfix;
 import CacheWolf.utils.HttpConnection;
+import CacheWolf.utils.MyLocale;
 import ewe.filechooser.FileChooser;
 import ewe.filechooser.FileChooserBase;
 import ewe.fx.Color;
@@ -174,7 +177,7 @@ public class PreferencesScreen extends Form {
 	CellPanel importPanel = new CellPanel();
 
 	CellPanel SpiderPanel = new CellPanel();
-	SpiderPanel.setText(MyLocale.getMsg(175, "Import"));
+	SpiderPanel.setText(MyLocale.getMsg(670, "Checking for change"));
 	/*
 	SpiderPanel.addNext(new mLabel(MyLocale.getMsg(639, "Update changed caches?")), DONTSTRETCH, DONTFILL | LEFT);
 	String[] spiderUpdateOptions = { MyLocale.getMsg(640, "Yes"), MyLocale.getMsg(641, "No"), MyLocale.getMsg(642, "Ask") };
@@ -188,10 +191,14 @@ public class PreferencesScreen extends Form {
 	//	
 	SpiderPanel.addLast(chkCheckTBs = new mCheckBox(MyLocale.getMsg(669, "Update if dropped Tbs changed?")));
 	chkCheckTBs.setState(Preferences.itself().checkTBs);
-	//
-	SpiderPanel.addLast(chkOverwriteLogs = new mCheckBox(MyLocale.getMsg(668, "Overwrite saved Logs?")));
-	chkOverwriteLogs.setState(Preferences.itself().overwriteLogs);
 	importPanel.addLast(SpiderPanel, HSTRETCH, HFILL);
+
+	CellPanel LogsPanel = new CellPanel();
+	LogsPanel.setText(MyLocale.getMsg(671, "Storage of logs"));
+	//
+	LogsPanel.addLast(chkOverwriteLogs = new mCheckBox(MyLocale.getMsg(668, "Overwrite saved Logs?")));
+	chkOverwriteLogs.setState(Preferences.itself().overwriteLogs);
+	importPanel.addLast(LogsPanel, HSTRETCH, HFILL);
 
 	mTab.addCard(importPanel, MyLocale.getMsg(175, "Import"), null).iconize(GuiImageBroker.getImage("import"), Preferences.itself().useIcons);
 

@@ -21,10 +21,13 @@
 */
 package CacheWolf;
 
+import CacheWolf.controls.GuiImageBroker;
 import CacheWolf.controls.MyScrollBarPanel;
 import CacheWolf.database.CacheHolderDetail;
 import CacheWolf.utils.Common;
+import CacheWolf.utils.MyLocale;
 import CacheWolf.utils.STRreplace;
+import CacheWolf.utils.SafeXML;
 import ewe.fx.Dimension;
 import ewe.fx.Graphics;
 import ewe.fx.IImage;

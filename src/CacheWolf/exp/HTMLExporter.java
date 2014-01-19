@@ -22,7 +22,6 @@
 package CacheWolf.exp;
 
 import CacheWolf.MainForm;
-import CacheWolf.MyLocale;
 import CacheWolf.Preferences;
 import CacheWolf.controls.DataMover;
 import CacheWolf.controls.InfoBox;
@@ -30,6 +29,7 @@ import CacheWolf.database.CacheDB;
 import CacheWolf.database.CacheHolder;
 import CacheWolf.database.CacheHolderDetail;
 import CacheWolf.utils.Common;
+import CacheWolf.utils.MyLocale;
 import HTML.Template;
 
 import com.stevesoft.ewe_pat.Regex;
