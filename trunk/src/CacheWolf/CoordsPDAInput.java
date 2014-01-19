@@ -25,6 +25,7 @@ import CacheWolf.database.CWPoint;
 import CacheWolf.navi.Navigate;
 import CacheWolf.navi.TransformCoordinates;
 import CacheWolf.utils.Common;
+import CacheWolf.utils.MyLocale;
 import ewe.fx.Color;
 import ewe.fx.Font;
 import ewe.fx.FontMetrics;

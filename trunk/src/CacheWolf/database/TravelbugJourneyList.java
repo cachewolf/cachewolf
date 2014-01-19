@@ -25,7 +25,7 @@ package CacheWolf.database;
  * A list of @see TravelbugJourney s.
  */
 import CacheWolf.Preferences;
-import CacheWolf.SafeXML;
+import CacheWolf.utils.SafeXML;
 import ewe.io.BufferedWriter;
 import ewe.io.File;
 import ewe.io.FileWriter;

@@ -23,6 +23,7 @@ package CacheWolf;
 
 import CacheWolf.controls.DateTimeChooser;
 import CacheWolf.controls.ExecutePanel;
+import CacheWolf.controls.GuiImageBroker;
 import CacheWolf.controls.InfoBox;
 import CacheWolf.controls.MyScrollBarPanel;
 import CacheWolf.database.Attribute;
@@ -37,6 +38,7 @@ import CacheWolf.database.TravelbugJourneyList;
 import CacheWolf.database.TravelbugList;
 import CacheWolf.navi.Navigate;
 import CacheWolf.navi.TransformCoordinates;
+import CacheWolf.utils.MyLocale;
 import ewe.fx.Dimension;
 import ewe.fx.IImage;
 import ewe.fx.Point;

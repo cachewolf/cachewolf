@@ -23,6 +23,7 @@ package CacheWolf;
 
 import CacheWolf.controls.ExecutePanel;
 import CacheWolf.controls.InfoBox;
+import CacheWolf.utils.MyLocale;
 import ewe.io.File;
 import ewe.ui.ControlEvent;
 import ewe.ui.Event;

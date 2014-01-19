@@ -21,9 +21,11 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 package CacheWolf;
 
+import CacheWolf.controls.GuiImageBroker;
 import CacheWolf.controls.InfoScreen;
 import CacheWolf.controls.MyScrollBarPanel;
 import CacheWolf.database.CacheHolder;
+import CacheWolf.utils.MyLocale;
 import ewe.fx.Color;
 import ewe.fx.Dimension;
 import ewe.fx.Point;
@@ -47,8 +49,6 @@ import ewe.util.Vector;
  * Class to create the solver panel.
  * Calls the parser and tokeniser and handles the parser results.
  * 
- * @see Parser
- * @see Tokenizer
  */
 public class SolverPanel extends CellPanel {
     private mButton mBtSolve;

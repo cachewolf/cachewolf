@@ -21,7 +21,7 @@
 */
 package CacheWolf.view.pda;
 
-import CacheWolf.MyLocale;
+import CacheWolf.utils.MyLocale;
 import CacheWolf.database.Travelbug;
 import CacheWolf.database.TravelbugList;
 import CacheWolf.model.DefaultListModel;

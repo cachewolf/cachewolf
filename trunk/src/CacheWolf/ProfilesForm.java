@@ -24,6 +24,7 @@ package CacheWolf;
 import CacheWolf.controls.ExecutePanel;
 import CacheWolf.controls.MyScrollBarPanel;
 import CacheWolf.utils.FileBugfix;
+import CacheWolf.utils.MyLocale;
 import ewe.fx.Graphics;
 import ewe.fx.Insets;
 import ewe.fx.Rect;

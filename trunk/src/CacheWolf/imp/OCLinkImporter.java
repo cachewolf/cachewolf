@@ -23,12 +23,12 @@ package CacheWolf.imp;
 
 import CacheWolf.MainForm;
 import CacheWolf.OC;
-import CacheWolf.SafeXML;
 import CacheWolf.database.CacheDB;
 import CacheWolf.database.CacheHolder;
 import CacheWolf.navi.TransformCoordinates;
 import CacheWolf.utils.Common;
 import CacheWolf.utils.Extractor;
+import CacheWolf.utils.SafeXML;
 import CacheWolf.utils.UrlFetcher;
 import ewe.sys.Handle;
 import ewe.sys.Vm;

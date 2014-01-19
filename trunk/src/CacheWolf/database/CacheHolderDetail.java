@@ -23,9 +23,9 @@ package CacheWolf.database;
 
 import CacheWolf.MainForm;
 import CacheWolf.Preferences;
-import CacheWolf.SafeXML;
 import CacheWolf.controls.DataMover;
 import CacheWolf.utils.Extractor;
+import CacheWolf.utils.SafeXML;
 import ewe.filechooser.FileChooser;
 import ewe.filechooser.FileChooserBase;
 import ewe.io.BufferedWriter;

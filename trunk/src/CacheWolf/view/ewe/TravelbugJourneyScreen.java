@@ -34,12 +34,12 @@ package CacheWolf.view.ewe;
 
 import CacheWolf.MainForm;
 import CacheWolf.MainTab;
-import CacheWolf.MyLocale;
+import CacheWolf.utils.MyLocale;
 import CacheWolf.Preferences;
-import CacheWolf.TableColumnChooser;
 import CacheWolf.TravelbugPickup;
 import CacheWolf.controls.DateTimeChooser;
 import CacheWolf.controls.MyScrollBarPanel;
+import CacheWolf.controls.TableColumnChooser;
 import CacheWolf.database.CacheDB;
 import CacheWolf.database.CacheHolder;
 import CacheWolf.database.CacheHolderDetail;

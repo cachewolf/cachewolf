@@ -23,9 +23,7 @@ package CacheWolf.exp;
 
 import CacheWolf.MainForm;
 import CacheWolf.MainTab;
-import CacheWolf.MyLocale;
 import CacheWolf.Preferences;
-import CacheWolf.SafeXML;
 import CacheWolf.controls.ExecutePanel;
 import CacheWolf.controls.InfoBox;
 import CacheWolf.database.Attribute;
@@ -43,6 +41,8 @@ import CacheWolf.navi.TransformCoordinates;
 import CacheWolf.utils.Common;
 import CacheWolf.utils.DateFormat;
 import CacheWolf.utils.FileBugfix;
+import CacheWolf.utils.MyLocale;
+import CacheWolf.utils.SafeXML;
 
 import com.stevesoft.ewe_pat.Regex;
 import com.stevesoft.ewe_pat.Transformer;

@@ -19,7 +19,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
-package CacheWolf;
+package CacheWolf.utils;
 
 /**
  *	A class to replace unsafe XML characters with characters that a user
@@ -27,7 +27,6 @@ package CacheWolf;
  * 20061222: skg Modified cleanback to speed up the new index.xml reader
  */
 
-import CacheWolf.utils.STRreplace;
 import ewe.util.Hashtable;
 
 public final class SafeXML {

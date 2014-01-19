@@ -23,12 +23,10 @@ package CacheWolf.database;
 
 import CacheWolf.Filter;
 import CacheWolf.MainForm;
-import CacheWolf.MyLocale;
 import CacheWolf.MyTableModel;
 import CacheWolf.OC;
 import CacheWolf.Preferences;
 import CacheWolf.Profile;
-import CacheWolf.SafeXML;
 import CacheWolf.controls.DataMover;
 import CacheWolf.controls.InfoBox;
 import CacheWolf.exp.Exporter;
@@ -37,7 +35,9 @@ import CacheWolf.navi.Metrics;
 import CacheWolf.navi.TransformCoordinates;
 import CacheWolf.utils.Common;
 import CacheWolf.utils.DateFormat;
+import CacheWolf.utils.MyLocale;
 import CacheWolf.utils.STRreplace;
+import CacheWolf.utils.SafeXML;
 
 import com.stevesoft.ewe_pat.Regex;
 

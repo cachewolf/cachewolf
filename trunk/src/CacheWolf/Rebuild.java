@@ -24,6 +24,7 @@ package CacheWolf;
 import CacheWolf.database.CacheDB;
 import CacheWolf.database.CacheHolder;
 import CacheWolf.utils.FileBugfix;
+import CacheWolf.utils.MyLocale;
 import ewe.io.FileBase;
 import ewe.io.FileReader;
 import ewe.io.IOException;

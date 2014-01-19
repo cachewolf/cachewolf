@@ -21,7 +21,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 package CacheWolf.database;
 
-import CacheWolf.SafeXML;
+import CacheWolf.utils.SafeXML;
 
 /**
  * This contains the basic information of a GC travelbug.
