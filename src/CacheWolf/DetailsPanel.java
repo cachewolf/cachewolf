@@ -24,6 +24,7 @@ package CacheWolf;
 import CacheWolf.controls.DateTimeChooser;
 import CacheWolf.controls.ExecutePanel;
 import CacheWolf.controls.InfoBox;
+import CacheWolf.controls.MyScrollBarPanel;
 import CacheWolf.database.Attribute;
 import CacheWolf.database.Attributes;
 import CacheWolf.database.CWPoint;
@@ -544,7 +545,7 @@ public class DetailsPanel extends CellPanel {
 			cache.setPos(coords);
 			btnCoordinates.setText(coords.toString());
 			// If the current centre is valid, calculate the distance and bearing to it
-			final CWPoint centre = Preferences.itself().getCurCentrePt();
+			final CWPoint centre = Preferences.itself().curCentrePt;
 			if (centre.isValid()) {
 			    cache.calcDistance(centre); // todo perhaps sortTable
 			}
@@ -558,7 +559,7 @@ public class DetailsPanel extends CellPanel {
 			cache.setPos(coords);
 			btnCoordinates.setText(coords.toString());
 			// If the current centre is valid, calculate the distance and bearing to it
-			final CWPoint centre = Preferences.itself().getCurCentrePt();
+			final CWPoint centre = Preferences.itself().curCentrePt;
 			if (centre.isValid()) {
 			    cache.calcDistance(centre); // todo perhaps sortTable
 			}

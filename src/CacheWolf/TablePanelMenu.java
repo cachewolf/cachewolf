@@ -25,6 +25,7 @@ import CacheWolf.controls.CWProgressBar;
 import CacheWolf.controls.DataMover;
 import CacheWolf.controls.InfoBox;
 import CacheWolf.controls.InfoScreen;
+import CacheWolf.database.CWPoint;
 import CacheWolf.database.CacheDB;
 import CacheWolf.database.CacheHolder;
 import CacheWolf.exp.ASCExporter;
@@ -54,27 +55,36 @@ import CacheWolf.imp.OCXMLImporter;
 import CacheWolf.navi.MapImporter;
 import CacheWolf.navi.MapLoaderGui;
 import CacheWolf.navi.SelectMap;
+import CacheWolf.navi.TransformCoordinates;
 import CacheWolf.utils.STRreplace;
 import CacheWolf.view.TravelbugJourneyScreenFactory;
 import ewe.filechooser.FileChooser;
 import ewe.filechooser.FileChooserBase;
 import ewe.fx.Font;
 import ewe.fx.IconAndText;
+import ewe.io.File;
 import ewe.io.FileBase;
 import ewe.io.IOException;
 import ewe.sys.Vm;
+import ewe.ui.CellConstants;
+import ewe.ui.CellPanel;
 import ewe.ui.ControlEvent;
 import ewe.ui.Event;
 import ewe.ui.Form;
 import ewe.ui.FormBase;
 import ewe.ui.Gui;
+import ewe.ui.InputBox;
 import ewe.ui.Menu;
 import ewe.ui.MenuBar;
 import ewe.ui.MenuEvent;
 import ewe.ui.MenuItem;
 import ewe.ui.ProgressBarForm;
 import ewe.ui.PullDownMenu;
+import ewe.ui.UIConstants;
 import ewe.ui.mApp;
+import ewe.ui.mButton;
+import ewe.ui.mCheckBox;
+import ewe.ui.mLabel;
 import ewe.util.Vector;
 
 /**
@@ -84,8 +94,7 @@ import ewe.util.Vector;
  * @see MainForm
  * @see MainTab Last change: 20061123 salzkammergut Tidied up, added MyLocale, added additional internationalisation, combine save/filter for small screens, garminConn
  */
-public class MainMenu extends MenuBar {
-    static MainMenu itself;
+public class TablePanelMenu extends MenuBar {
     private MenuItem mnuSeparator = new MenuItem("-");
     private MenuItem appMenuProfile, appMenuPreferences, appMenuContext, appMenuImport, appMenuExport, appMenuMaps, appMenuExit;
     private MenuItem searchMenuContinue, searchMenuStart, searchMenuClr;
@@ -103,16 +112,13 @@ public class MainMenu extends MenuBar {
     private MenuItem mnuNewProfile, mnuOpenProfile, mnuDeleteProfile, mnuRenameProfile, mnuEditCenter, orgRebuild, savenoxit;
     IconAndText filtApplyImage, filtClearImage;
 
-    private Form father;
     private TablePanel tablePanel;
     private FilterScreen scnFilter = new FilterScreen();
     private static boolean searchInDescriptionAndNotes = false;
     private static boolean searchInLogs = false;
     GCVoteImporter sGCV = null;
 
-    public MainMenu(Form f) {
-	itself = this;
-	father = f;
+    public TablePanelMenu() {
 	Preferences.itself().setgpsbabel();
 	this.equalWidths = true;
 	this.addNext(makeApplicationMenu());
@@ -189,6 +195,7 @@ public class MainMenu extends MenuBar {
 		savenoxit = new MenuItem(MyLocale.getMsg(127, "Save")), //
 	};
 	Menu profileMenu = new Menu(mnuProfile, null);
+
 	return profileMenu;
     }
 
@@ -286,16 +293,6 @@ public class MainMenu extends MenuBar {
 	}
     }
 
-    public void allowProfileChange(boolean profileChangeAllowed) {
-	if (profileChangeAllowed) {
-	    mnuNewProfile.modifiers &= ~MenuItem.Disabled;
-	    mnuOpenProfile.modifiers &= ~MenuItem.Disabled;
-	} else {
-	    mnuNewProfile.modifiers |= MenuItem.Disabled;
-	    mnuOpenProfile.modifiers |= MenuItem.Disabled;
-	}
-    }
-
     void search() {
 	SearchBox inp = new SearchBox(MyLocale.getMsg(119, "Search for:"));
 	String srch = inp.input(null, "", searchInDescriptionAndNotes, searchInLogs, 10);
@@ -308,7 +305,8 @@ public class MainMenu extends MenuBar {
 	}
     }
 
-    public static void updateSelectedCaches(TablePanel tablePanel) {
+    // todo check if this must be static
+    public void updateSelectedCaches() {
 	CacheDB cacheDB = MainForm.profile.cacheDB;
 	CacheHolder ch;
 
@@ -399,6 +397,68 @@ public class MainMenu extends MenuBar {
 	}
     }
 
+    /*
+     * operation 2=delete 3=rename
+     */
+    public void editProfile(int operation, int ErrorMsgActive, int ErrorMsg) {
+	Preferences.itself().checkAbsoluteBaseDir(); // perhaps not necessary
+	// select profile
+	ProfilesForm f = new ProfilesForm(Preferences.itself().absoluteBaseDir, "", operation);
+	if (f.execute() == -1)
+	    return; // no select
+	// check selection
+	if (Preferences.itself().lastProfile.equals(f.newSelectedProfile)) {
+	    // aktives Profil kann nicht gelöscht / umbenannt werden;
+	    new InfoBox(MyLocale.getMsg(5500, "Error"), MyLocale.getMsg(ErrorMsgActive, "[Profile active...]")).wait(FormBase.OKB);
+	} else {
+	    boolean err = true;
+	    File profilePath = new File(Preferences.itself().absoluteBaseDir + f.newSelectedProfile);
+	    if (operation == 3) {
+		String newName = new InputBox("Bitte neuen Verzeichnisnamen eingeben : ").input("", 50);
+		if (!newName.equals(null)) {
+		    err = !profilePath.renameTo(new File(Preferences.itself().absoluteBaseDir + newName));
+		}
+	    } else if (operation == 2) {
+		Profile p = new Profile();
+		p.dataDir = Preferences.itself().absoluteBaseDir + f.newSelectedProfile + "/";
+		p.readIndex();
+		String mapsPath = p.getMapsDir();
+		//Really check if the user wants to delete the profile
+		String questionText = MyLocale.getMsg(276, "Do You really want to delete profile '") + f.newSelectedProfile + MyLocale.getMsg(277, "' ?");
+		if (new InfoBox("", questionText).wait(FormBase.MBYESNO) != FormBase.IDOK)
+		    return;
+		if (new InfoBox("", MyLocale.getMsg(1125, "Delete") + " " + MyLocale.getMsg(654, "Maps directory") + "?\n\n" + mapsPath + "\n").wait(FormBase.MBYESNO) == FormBase.IDOK) {
+		    deleteDirectory(new File(mapsPath));
+		}
+		err = !deleteDirectory(profilePath);
+		// ? wait until deleted ?
+	    }
+	    if (err) {
+		new InfoBox(MyLocale.getMsg(5500, "Error"), MyLocale.getMsg(ErrorMsg, "[Profile Error...]")).wait(FormBase.OKB);
+	    }
+	}
+    }
+
+    private boolean deleteDirectory(File path) {
+	if (path.exists()) {
+	    String[] files = path.list();
+	    for (int i = 0; i < files.length; i++) {
+		File f = new File(path.getFullPath() + "/" + files[i]);
+		if (f.isDirectory()) {
+		    deleteDirectory(f);
+		} else {
+		    f.delete();
+		}
+	    }
+	}
+	return (path.delete());
+    }
+
+    public void toggleCacheTourVisible() {
+	cacheTour.modifiers ^= MenuItem.Checked;
+	MainForm.itself.toggleCacheTourVisible();
+    }
+
     public void onEvent(Event ev) {
 	CacheDB cacheDB = MainForm.profile.cacheDB;
 	MainTab.itself.updatePendingChanges();
@@ -410,39 +470,46 @@ public class MainMenu extends MenuBar {
 	    if (mev.selectedItem == mnuNewProfile) {
 		if (NewProfileWizard.startNewProfileWizard(getFrame())) {
 		    tablePanel.myTableModel.numRows = 0;
-		    Preferences.itself().setCurCentrePt(MainForm.profile.centre);
+		    MainForm.itself.setCurCentrePt(MainForm.profile.centre);
 		    filtBlack.modifiers = MainForm.profile.showBlacklisted() ? filtBlack.modifiers | MenuItem.Checked : filtBlack.modifiers & ~MenuItem.Checked;
 		    tablePanel.refreshTable();
 		}
 	    }
 	    if (mev.selectedItem == mnuOpenProfile) {
 		MainTab.itself.saveUnsavedChanges(true);
-		if (Preferences.itself().selectProfile(Preferences.PROFILE_SELECTOR_FORCED_ON, false)) {
+		if (MainForm.itself.selectProfile(MainForm.PROFILE_SELECTOR_FORCED_ON, false)) {
+
+		    MainForm.profile.setFilterActive(Filter.FILTER_INACTIVE);
+
+		    CWPoint savecenter = new CWPoint(MainForm.profile.centre);
+		    MainForm.profile.clearProfile();
+		    MainForm.profile.setCenterCoords(savecenter);
+
 		    tablePanel.myTableModel.sortedBy = -1;
 		    tablePanel.myTableModel.numRows = 0;
-		    CacheHolder.removeAllDetails();
-		    MainForm.profile.cacheDB.clear();
+
 		    InfoBox infB = new InfoBox("CacheWolf", MyLocale.getMsg(5000, "Loading Cache-List"));
 		    infB.exec();
 		    infB.waitUntilPainted(1000);
 		    Vm.showWait(infB, true);
 		    MainForm.profile.readIndex(infB);
 		    Vm.showWait(infB, false);
-		    Preferences.itself().setCurCentrePt(MainForm.profile.centre);
+		    infB.close(0);
+
+		    MainForm.itself.setCurCentrePt(MainForm.profile.centre);
 		    filtBlack.modifiers = MainForm.profile.showBlacklisted() ? filtBlack.modifiers | MenuItem.Checked : filtBlack.modifiers & ~MenuItem.Checked;
 		    MainForm.itself.setTitle(MainForm.profile.name + " - CW " + Version.getRelease());
-		    infB.close(0);
 		    tablePanel.resetModel();
 		}
 	    }
 	    if (mev.selectedItem == mnuDeleteProfile) {
-		Preferences.itself().editProfile(2, 227, 226);
+		editProfile(2, 227, 226);
 	    }
 	    if (mev.selectedItem == mnuRenameProfile) {
-		Preferences.itself().editProfile(3, 228, 229);
+		editProfile(3, 228, 229);
 	    }
 	    if (mev.selectedItem == mnuEditCenter) {
-		ProfileDataForm f = new ProfileDataForm();
+		EditCenter f = new EditCenter();
 		f.execute(getFrame(), Gui.CENTER_FRAME);
 		tablePanel.refreshTable();
 		f.close(0);
@@ -534,7 +601,7 @@ public class MainMenu extends MenuBar {
 		tablePanel.resetModel();
 	    }
 	    if (mev.selectedItem == update) {
-		updateSelectedCaches(tablePanel);
+		updateSelectedCaches();
 		Preferences.itself().setOldGCLanguage();
 	    }
 	    // /////////////////////////////////////////////////////////////////////
@@ -671,7 +738,7 @@ public class MainMenu extends MenuBar {
 	    if (mev.selectedItem == appMenuPreferences) {
 		tablePanel.saveColWidth();
 		PreferencesScreen preferencesScreen = new PreferencesScreen();
-		preferencesScreen.execute(father.getFrame(), Gui.CENTER_FRAME);
+		preferencesScreen.execute(MainForm.itself.getFrame(), Gui.CENTER_FRAME);
 		Preferences.itself().readPrefFile();
 	    }
 	    if (mev.selectedItem == savenoxit) {
@@ -722,7 +789,7 @@ public class MainMenu extends MenuBar {
 		scnFilter.setPreferredSize(450, 480);
 		if (Vm.isMobile())
 		    scnFilter.setPreferredSize(MyLocale.getScreenWidth(), MyLocale.getScreenHeight()); // Fullscreen
-		scnFilter.execute(father.getFrame(), Gui.CENTER_FRAME);
+		scnFilter.execute(MainForm.itself.getFrame(), Gui.CENTER_FRAME);
 		tablePanel.refreshTable();
 	    }
 	    if (mev.selectedItem == filtInvert) {
@@ -836,8 +903,7 @@ public class MainMenu extends MenuBar {
 		tbs.close(0);
 	    }
 	    if (mev.selectedItem == cacheTour) {
-		cacheTour.modifiers ^= MenuItem.Checked;
-		MainForm.itself.toggleCacheListVisible();
+		toggleCacheTourVisible();
 	    }
 
 	    // /////////////////////////////////////////////////////////////////////
@@ -845,15 +911,15 @@ public class MainMenu extends MenuBar {
 	    // /////////////////////////////////////////////////////////////////////
 	    if (mev.selectedItem == about) {
 		InfoScreen is = new InfoScreen(MyLocale.getLocalizedFile("info.html"), MyLocale.getMsg(117, "About"), true);
-		is.execute(father.getFrame(), Gui.CENTER_FRAME);
+		is.execute(MainForm.itself.getFrame(), Gui.CENTER_FRAME);
 	    }
 	    if (mev.selectedItem == legend) {
 		InfoScreen is = new InfoScreen(MyLocale.getLocalizedFile("legende.html"), MyLocale.getMsg(155, "Legend"), true);
-		is.execute(father.getFrame(), Gui.CENTER_FRAME);
+		is.execute(MainForm.itself.getFrame(), Gui.CENTER_FRAME);
 	    }
 	    if (mev.selectedItem == wolflang) {
 		InfoScreen is = new InfoScreen(MyLocale.getLocalizedFile("wolflang.html"), MyLocale.getMsg(118, "WolfLanguage"), true);
-		is.execute(father.getFrame(), Gui.CENTER_FRAME);
+		is.execute(MainForm.itself.getFrame(), Gui.CENTER_FRAME);
 	    }
 	    if (mev.selectedItem == sysinfo) {
 		StringBuffer sb = new StringBuffer(400);
@@ -918,7 +984,7 @@ public class MainMenu extends MenuBar {
 		sb.append("<br>");
 		InfoScreen is = new InfoScreen(sb.toString(), "System", false);
 		Preferences.itself().log(STRreplace.replace(sb.toString(), "<br>", Preferences.NEWLINE), null);
-		is.execute(father.getFrame(), Gui.CENTER_FRAME);
+		is.execute(MainForm.itself.getFrame(), Gui.CENTER_FRAME);
 	    }
 	    if (mev.selectedItem == chkVersion) {
 		new InfoBox(MyLocale.getMsg(178, "Version Checking"), Version.getUpdateMessage()).wait(FormBase.OKB);
@@ -961,6 +1027,90 @@ public class MainMenu extends MenuBar {
 		MainTab.itself.tablePanel.myTableControl.adjustAddiHideUnhideMenu();
 	    }
 	}
+    }
+
+}
+
+/**
+ * It allows the copying of the current centre to the profile centre and versa
+ */
+class EditCenter extends Form {
+
+    private mButton btnOK, btnCurrentCentre, btnProfileCentre, btnCur2Prof, btnProf2Cur;
+    mCheckBox chkSetCurrentCentreFromGPSPosition;
+    private CellPanel content = new CellPanel();
+
+    public EditCenter() {
+	super();
+
+	resizable = false;
+	content.setText(MyLocale.getMsg(1115, "Centre"));
+	content.borderStyle = UIConstants.BDR_RAISEDOUTER | UIConstants.BDR_SUNKENINNER | UIConstants.BF_RECT;
+	//defaultTags.set(this.INSETS,new Insets(2,2,2,2));
+	title = MyLocale.getMsg(1118, "Profile") + ": " + MainForm.profile.name;
+	content.addNext(new mLabel(MyLocale.getMsg(600, "Preferences")));
+	content.addLast(chkSetCurrentCentreFromGPSPosition = new mCheckBox(MyLocale.getMsg(646, "centre from GPS")), CellConstants.DONTSTRETCH, (CellConstants.DONTFILL | CellConstants.WEST));
+	// content.addLast(btnGPS2Cur=new mButton("   v   "),DONTSTRETCH,DONTFILL|LEFT);
+	if (Preferences.itself().setCurrentCentreFromGPSPosition)
+	    chkSetCurrentCentreFromGPSPosition.setState(true);
+	content.addNext(new mLabel(MyLocale.getMsg(1116, "Current")));
+	content.addLast(btnCurrentCentre = new mButton(Preferences.itself().curCentrePt.toString()), HSTRETCH, HFILL | LEFT);
+	content.addNext(new mLabel("      "), HSTRETCH, HFILL);
+	content.addNext(btnCur2Prof = new mButton("   v   "), DONTSTRETCH, DONTFILL | LEFT);
+	content.addNext(new mLabel(MyLocale.getMsg(1117, "copy")));
+	content.addLast(btnProf2Cur = new mButton("   ^   "), DONTSTRETCH, DONTFILL | RIGHT);
+	content.addNext(new mLabel(MyLocale.getMsg(1118, "Profile")));
+	content.addLast(btnProfileCentre = new mButton(MainForm.profile.centre.toString()), HSTRETCH, HFILL | LEFT);
+	addLast(content, HSTRETCH, HFILL);
+	//addLast(new mLabel(""),VSTRETCH,FILL);
+	//addNext(btnCancel = new mButton(MyLocale.getMsg(1604,"Cancel")),DONTSTRETCH,DONTFILL|LEFT);
+	addLast(btnOK = new mButton("OK"), DONTSTRETCH, HFILL | RIGHT);
+    }
+
+    /**
+     * The event handler to react to a users selection.
+     * A return value is created and passed back to the calling form
+     * while it closes itself.
+     */
+    public void onEvent(Event ev) {
+	if (ev instanceof ControlEvent && ev.type == ControlEvent.PRESSED) {
+	    /*if (ev.target == btnCancel){
+	    	close(-1);
+	    }*/
+	    if (ev.target == btnOK) {
+		Preferences.itself().setCurrentCentreFromGPSPosition = chkSetCurrentCentreFromGPSPosition.getState();
+		close(1);
+	    }
+	    if (ev.target == btnCurrentCentre) {
+		CoordsInput cs = new CoordsInput();
+		cs.setFields(Preferences.itself().curCentrePt, TransformCoordinates.CW);
+		if (cs.execute() == FormBase.IDOK) {
+		    MainForm.itself.setCurCentrePt(cs.getCoords());
+		    btnCurrentCentre.setText(Preferences.itself().curCentrePt.toString());
+		    MainForm.profile.updateBearingDistance();
+		}
+	    }
+	    if (ev.target == btnProfileCentre) {
+		CoordsInput cs = new CoordsInput();
+		cs.setFields(MainForm.profile.centre, TransformCoordinates.CW);
+		if (cs.execute() == FormBase.IDOK) {
+		    MainForm.profile.notifyUnsavedChanges(cs.getCoords().equals(MainForm.profile.centre));
+		    MainForm.profile.centre.set(cs.getCoords());
+		    btnProfileCentre.setText(MainForm.profile.centre.toString());
+		}
+	    }
+	    if (ev.target == btnCur2Prof) {
+		MainForm.profile.notifyUnsavedChanges(Preferences.itself().curCentrePt.equals(MainForm.profile.centre));
+		MainForm.profile.centre.set(Preferences.itself().curCentrePt);
+		btnProfileCentre.setText(MainForm.profile.centre.toString());
+	    }
+	    if (ev.target == btnProf2Cur) {
+		MainForm.itself.setCurCentrePt(MainForm.profile.centre);
+		btnCurrentCentre.setText(Preferences.itself().curCentrePt.toString());
+		MainForm.profile.updateBearingDistance();
+	    }
+	}
+	super.onEvent(ev);
     }
 
 }

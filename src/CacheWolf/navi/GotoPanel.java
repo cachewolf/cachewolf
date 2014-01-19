@@ -21,9 +21,10 @@
 */
 package CacheWolf.navi;
 
-import CacheWolf.CoordsPDAInput;
 import CacheWolf.CoordsInput;
+import CacheWolf.CoordsPDAInput;
 import CacheWolf.GuiImageBroker;
+import CacheWolf.MainForm;
 import CacheWolf.MainTab;
 import CacheWolf.MyLocale;
 import CacheWolf.Preferences;
@@ -382,7 +383,7 @@ public final class GotoPanel extends CellPanel {
 	    // set current position as centre and recalculate distance of caches in MainTab
 	    if (ev.target == btnCenter) {
 		if (MainTab.itself.navigate.gpsPos.isValid()) {
-		    Preferences.itself().setCurCentrePt(MainTab.itself.navigate.gpsPos);
+		    MainForm.itself.setCurCentrePt(MainTab.itself.navigate.gpsPos);
 		} else
 		    new InfoBox(MyLocale.getMsg(5500, "Error"), MyLocale.getMsg(1514, "Cannot recalculate distances, because the GPS position is not set")).wait(FormBase.OKB);
 	    }

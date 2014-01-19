@@ -255,10 +255,6 @@ public class MainTab extends mTabbedPanel {
     }
     */
 
-    public TablePanel getTablePanel() {
-	return this.tablePanel;
-    }
-
     public void selectAndActive(int rownum) {
 	// Called from myInteractivePanel.imageClicked
 	this.tablePanel.selectRow(rownum);
@@ -271,14 +267,6 @@ public class MainTab extends mTabbedPanel {
 	detailsPanel.clear(); // Clear only the attributes
 	hintLogPanel.clear(); // Remove the logs
 	solverPanel.setInstructions("loading ...");
-    }
-
-    private void checkProfileChange() {
-	MainMenu.itself.allowProfileChange(false);
-	if (this.getSelectedItem() == LIST_CARD) {// List view selected
-	    MainMenu.itself.allowProfileChange(true);
-	    MyLocale.setSIPOff();
-	}
     }
 
     /**
@@ -516,8 +504,8 @@ public class MainTab extends mTabbedPanel {
 		    position = new CWPoint(ch.getPos());
 		    navigate.setDestination(ch);
 		} else {
-		    if (Preferences.itself().getCurCentrePt().isValid()) {
-			position = new CWPoint(Preferences.itself().getCurCentrePt());
+		    if (Preferences.itself().curCentrePt.isValid()) {
+			position = new CWPoint(Preferences.itself().curCentrePt);
 			navigate.setDestination(position);
 		    }
 		}
@@ -558,9 +546,9 @@ public class MainTab extends mTabbedPanel {
 	    if (navigate.gpsRunning) {
 		CWPoint whereAmI = navigate.gpsPos;
 		if (whereAmI.isValid()) {
-		    CWPoint curCentr = Preferences.itself().getCurCentrePt();
+		    CWPoint curCentr = Preferences.itself().curCentrePt;
 		    if (whereAmI.latDec != curCentr.latDec || whereAmI.lonDec != curCentr.lonDec) {
-			Preferences.itself().setCurCentrePt(whereAmI);
+			MainForm.itself.setCurCentrePt(whereAmI);
 		    }
 		}
 	    }
@@ -572,8 +560,6 @@ public class MainTab extends mTabbedPanel {
 	if (ev instanceof TableEvent) {
 	    clearDetails();
 	} else if (ev instanceof MultiPanelEvent) {
-	    // Check whether a profile change is allowed, if not disable the relevant options
-	    checkProfileChange();
 	    // Perform clean up actions for the panel we are leaving
 	    onLeavingPanel(oldCard);
 	    // Prepare actions for the panel we are about to enter

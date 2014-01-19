@@ -22,6 +22,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 package CacheWolf;
 
 import CacheWolf.controls.ExecutePanel;
+import CacheWolf.controls.MyScrollBarPanel;
 import CacheWolf.utils.FileBugfix;
 import ewe.fx.Graphics;
 import ewe.fx.Insets;
@@ -44,41 +45,6 @@ import ewe.ui.mList;
  * ClassID = 1300
  */
 public class ProfilesForm extends Form {
-
-    // A subclassed mList which allows the highlighting of an entry
-    // Maybe there is an easier way of making this happen, but I could not find it.
-    private class MyList extends mList {
-	private int first = 1;
-	private int select;
-
-	public MyList() {
-	    super(1, 1, false);
-	}
-
-	public void selectLastProfile(String selectedItem) {
-	    selectItem(selectedItem);
-	    select = getSelectedIndex(0);
-	}
-
-	public void doPaint(Graphics gr, Rect area) {
-	    if (first == 1) {
-		first = 0;
-		selectAndView(select);
-		makeVisible(select);
-	    }
-	    super.doPaint(gr, area);
-	}
-
-	// Copied from BasicList.getScrollablePanel(), but exchanging
-	// the standard scroll bar with the fontsize sensitive one.
-	public ScrollablePanel getScrollablePanel() {
-	    dontAutoScroll = amScrolling = true;
-	    ScrollablePanel sp = new MyScrollBarPanel(this);
-	    sp.modify(0, TakeControlEvents);
-	    return sp;
-	}
-
-    }
 
     private MyList choice;
     private ScrollablePanel spMList;
@@ -179,7 +145,6 @@ public class ProfilesForm extends Form {
 		close(-1);
 	    }
 	    if (ev.target == executePanel.applyButton || ev.target == choice) {
-		MainForm.profile.setFilterActive(Filter.FILTER_INACTIVE);
 		if (choice.getSelectedItem() != null) {
 		    newSelectedProfile = choice.getSelectedItem().toString();
 		    close(1);
@@ -193,6 +158,41 @@ public class ProfilesForm extends Form {
 	    }
 	}
 	super.onEvent(ev);
+    }
+
+    // A subclassed mList which allows the highlighting of an entry
+    // Maybe there is an easier way of making this happen, but I could not find it.
+    private class MyList extends mList {
+	private int first = 1;
+	private int select;
+
+	public MyList() {
+	    super(1, 1, false);
+	}
+
+	public void selectLastProfile(String selectedItem) {
+	    selectItem(selectedItem);
+	    select = getSelectedIndex(0);
+	}
+
+	public void doPaint(Graphics gr, Rect area) {
+	    if (first == 1) {
+		first = 0;
+		selectAndView(select);
+		makeVisible(select);
+	    }
+	    super.doPaint(gr, area);
+	}
+
+	// Copied from BasicList.getScrollablePanel(), but exchanging
+	// the standard scroll bar with the fontsize sensitive one.
+	public ScrollablePanel getScrollablePanel() {
+	    dontAutoScroll = amScrolling = true;
+	    ScrollablePanel sp = new MyScrollBarPanel(this);
+	    sp.modify(0, TakeControlEvents);
+	    return sp;
+	}
+
     }
 
 }

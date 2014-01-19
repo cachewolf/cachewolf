@@ -63,11 +63,6 @@ public class MyLocale {
     private static LocalResource lr = null;
     private static Rect s = (Rect) Window.getGuiInfo(WindowConstants.INFO_SCREEN_RECT, null, new Rect(), 0);
     private static String digSeparator = null;
-    /**
-     * Read a non-standard language from the file language. If it is empty,
-     * the default language is used.
-     */
-    public static String language = getLanguage();
 
     public static String initErrors;
 
@@ -123,6 +118,7 @@ public class MyLocale {
 	initErrors = "";
 	// the following logic priority: 1. try to use specified language (if specified), 2. try to use system language, 3. try to use english, 4. use hard coded messages
 	l = null;
+	String language = Preferences.itself().language;
 	if ((language.length() != 0) && (!language.equalsIgnoreCase("auto"))) { // Was a language explicitly specified?
 	    setLocale(language);
 	    if (!(new File(getLocaleFileName(resourcelanguage)).exists())) {
@@ -366,36 +362,6 @@ public class MyLocale {
 	if (Vm.isMobile() && MyLocale.getScreenHeight() > 400) {
 	    split.theSplitter.thickness = 20;
 
-	}
-    }
-
-    /**
-     * Read the language from the prefs and return the specified language (or empty
-     * string if none specified).
-     * 
-     * @return Language (e.g. DE, EN etc.) or ""
-     */
-    private static String getLanguage() {
-	if (Preferences.itself() != null) {
-	    language = Preferences.itself().language;
-	} else {
-	    language = "";
-	}
-	if (language == null)
-	    language = "";
-	return language;
-    }
-
-    /**
-     * Write the override language
-     * 
-     * @param language
-     *            The language to write
-     */
-    public static void saveLanguage(String saveLanguage) {
-	if (Preferences.itself() != null) {
-	    Preferences.itself().language = saveLanguage;
-	    Preferences.itself().savePreferences();
 	}
     }
 

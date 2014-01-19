@@ -39,7 +39,7 @@ import ewe.ui.mLabel;
  * @author Marc Schnitzler
  * 
  */
-public class StatusBar extends CellPanel {
+public class TablePanelStatusBar extends CellPanel {
     private DBStats stats;
     private mLabel disp, lblCenter;
     private mButton btnFlt;
@@ -47,11 +47,9 @@ public class StatusBar extends CellPanel {
     private mButton btnNoSorting;
     private MyTableModel myTableModel;
 
-    public void setMyTableModel(MyTableModel myTableModel) {
+    public TablePanelStatusBar(MyTableModel myTableModel) {
 	this.myTableModel = myTableModel;
-    }
 
-    public StatusBar() {
 	addNext(btnCacheTour = GuiImageBroker.getButton("", "cachetour"), DONTSTRETCH, FILL);
 	btnCacheTour.setToolTip(MyLocale.getMsg(197, "Show/Hide cachetour"));
 
@@ -102,7 +100,7 @@ public class StatusBar extends CellPanel {
 	else
 	    btnFlt.backGround = null;
 	if (bigScreen && lblCenter.backGround == null)
-	    strInfo = "  \u00a4 " + Preferences.itself().getCurCentrePt().toString();
+	    strInfo = "  \u00a4 " + Preferences.itself().curCentrePt.toString();
 	if (Preferences.itself().sortAutomatic) {
 	    this.btnNoSorting.backGround = new Color(0, 255, 255);
 	} else {
@@ -127,7 +125,7 @@ public class StatusBar extends CellPanel {
 		MainTab.itself.tablePanel.refreshTable();
 	    }
 	    if (ev.target == btnCacheTour) {
-		MainForm.itself.toggleCacheListVisible();
+		MainTab.itself.tablePanel.mainMenu.toggleCacheTourVisible();
 	    }
 	    if (ev.target == btnNoSorting) {
 		Preferences.itself().sortAutomatic = !Preferences.itself().sortAutomatic;

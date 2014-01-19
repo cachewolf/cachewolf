@@ -109,7 +109,7 @@ public class MapLoaderGui extends Form {
 	super();
 	isCreated = false;
 	this.title = MyLocale.getMsg(1800, "Download georeferenced maps");
-	center = new CWPoint(Preferences.itself().getCurCentrePt());
+	center = new CWPoint(Preferences.itself().curCentrePt);
 	cacheDB = cacheDBi;
 	mapLoader = new MapLoader();
 

@@ -27,6 +27,7 @@ import CacheWolf.MyLocale;
 import CacheWolf.Preferences;
 import CacheWolf.controls.ExecutePanel;
 import CacheWolf.controls.InfoBox;
+import CacheWolf.controls.MyScrollBarPanel;
 import CacheWolf.database.BoundingBox;
 import CacheWolf.database.CWPoint;
 import CacheWolf.database.CacheDB;
@@ -1893,7 +1894,7 @@ public final class MovingMap extends Form implements ICommandListener {
 	    return true;
 	}
 	if (MOVE_TO_CENTER == actionCommand) {
-	    setCenterOfScreen(Preferences.itself().getCurCentrePt(), true);
+	    setCenterOfScreen(Preferences.itself().curCentrePt, true);
 	    return true;
 	}
 	if (MOVE_TO_DEST == actionCommand) {
@@ -2509,7 +2510,7 @@ class MovingMapPanel extends InteractivePanel implements EventListener {
 			    markFoundMenuItem = new MenuItem(MyLocale.getMsg(msgNr, "Found") + "$m");
 			    kontextMenu.addItem(markFoundMenuItem);
 			}
-			if (MainForm.itself.cacheListVisible) {
+			if (MainForm.itself.cacheTourVisible) {
 			    addCachetoListMenuItem = new MenuItem(MyLocale.getMsg(199, "Add to cachetour"));
 			    kontextMenu.addItem(addCachetoListMenuItem);
 			}
@@ -2763,7 +2764,7 @@ class ListBox extends Form {
 	    }
 	}
 	list.selectItem(oldmap, true);
-	this.addLast(new CacheWolf.MyScrollBarPanel(list), CellConstants.STRETCH, CellConstants.FILL);
+	this.addLast(new MyScrollBarPanel(list), CellConstants.STRETCH, CellConstants.FILL);
 	executePanel = new ExecutePanel(this);
 	executePanel.applyButton.takeFocus(0);
     }
