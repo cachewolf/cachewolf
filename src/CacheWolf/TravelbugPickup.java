@@ -23,6 +23,7 @@ package CacheWolf;
 
 import CacheWolf.database.Travelbug;
 import CacheWolf.database.TravelbugList;
+import CacheWolf.utils.MyLocale;
 import CacheWolf.view.ITravelbugScreen;
 import CacheWolf.view.TravelBugScreenFactory;
 import ewe.ui.InputBox;

@@ -23,7 +23,7 @@ package CacheWolf.view.pda;
 
 import CacheWolf.MainForm;
 import CacheWolf.MainTab;
-import CacheWolf.MyLocale;
+import CacheWolf.utils.MyLocale;
 import CacheWolf.TravelbugPickup;
 import CacheWolf.database.CacheDB;
 import CacheWolf.database.CacheHolder;

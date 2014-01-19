@@ -21,7 +21,7 @@
 */
 package CacheWolf.view.pda;
 
-import CacheWolf.MyLocale;
+import CacheWolf.utils.MyLocale;
 import ewe.fx.Color;
 import ewe.fx.Font;
 import ewe.fx.Rect;

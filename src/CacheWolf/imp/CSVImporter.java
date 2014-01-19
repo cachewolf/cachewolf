@@ -22,10 +22,8 @@
 package CacheWolf.imp;
 
 import CacheWolf.MainForm;
-import CacheWolf.MyLocale;
 import CacheWolf.Preferences;
 import CacheWolf.Profile;
-import CacheWolf.SafeXML;
 import CacheWolf.database.CWPoint;
 import CacheWolf.database.CacheDB;
 import CacheWolf.database.CacheHolder;
@@ -35,7 +33,9 @@ import CacheWolf.database.CacheTerrDiff;
 import CacheWolf.database.CacheType;
 import CacheWolf.utils.Common;
 import CacheWolf.utils.DateFormat;
+import CacheWolf.utils.MyLocale;
 import CacheWolf.utils.STRreplace;
+import CacheWolf.utils.SafeXML;
 import ewe.io.AsciiCodec;
 import ewe.io.JavaUtf8Codec;
 import ewe.sys.Time;

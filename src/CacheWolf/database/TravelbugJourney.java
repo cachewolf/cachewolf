@@ -28,8 +28,9 @@ package CacheWolf.database;
  * transfer has been logged to GC.
  * @author salzkammergut
  */
-import CacheWolf.MyLocale;
-import CacheWolf.SafeXML;
+
+import CacheWolf.utils.MyLocale;
+import CacheWolf.utils.SafeXML;
 import ewe.fx.Image;
 import ewe.sys.Convert;
 import ewe.sys.Time;

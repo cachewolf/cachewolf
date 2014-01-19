@@ -22,11 +22,10 @@
 package CacheWolf.imp;
 
 import CacheWolf.MainForm;
-import CacheWolf.MyLocale;
+import CacheWolf.utils.MyLocale;
 import CacheWolf.OC;
 import CacheWolf.Preferences;
 import CacheWolf.Profile;
-import CacheWolf.SafeXML;
 import CacheWolf.controls.InfoBox;
 import CacheWolf.database.CWPoint;
 import CacheWolf.database.CacheDB;
@@ -39,6 +38,7 @@ import CacheWolf.database.CoordinatePoint;
 import CacheWolf.database.Log;
 import CacheWolf.navi.TransformCoordinates;
 import CacheWolf.utils.Common;
+import CacheWolf.utils.SafeXML;
 import CacheWolf.utils.UrlFetcher;
 
 import com.stevesoft.ewe_pat.Regex;

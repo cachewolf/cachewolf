@@ -26,9 +26,7 @@ import org.json.JSONObject;
 
 import CacheWolf.MainForm;
 import CacheWolf.MainTab;
-import CacheWolf.MyLocale;
 import CacheWolf.Preferences;
-import CacheWolf.SafeXML;
 import CacheWolf.controls.InfoBox;
 import CacheWolf.database.CWPoint;
 import CacheWolf.database.CacheHolder;
@@ -51,7 +49,9 @@ import CacheWolf.utils.BetterUTF8Codec;
 import CacheWolf.utils.Common;
 import CacheWolf.utils.DateFormat;
 import CacheWolf.utils.Extractor;
+import CacheWolf.utils.MyLocale;
 import CacheWolf.utils.STRreplace;
+import CacheWolf.utils.SafeXML;
 import CacheWolf.utils.UrlFetcher;
 
 import com.stevesoft.ewe_pat.Regex;
@@ -1069,7 +1069,7 @@ public class GCImporter {
      *            the name of the waypoint
      * @return the cache coordinates
      */
-    public String getCacheCoordinates(String wayPoint) {
+    public String fetchCacheCoordinates(String wayPoint) {
 	if (!login())
 	    return "";
 	final InfoBox localInfB = new InfoBox("Info", "Loading", InfoBox.PROGRESS_WITH_WARNINGS);
@@ -1502,6 +1502,7 @@ public class GCImporter {
 	    if (ch.getCacheDetails(false).OwnLogId.equals(""))
 		ret = true;
 	}
+
 	final boolean is_available_GC = !is_archived_GC && CacheDescription.indexOf(propAvailable) == -1;
 	if (is_available_GC != ch.is_available()) {
 	    ch.setAvailable(is_available_GC);

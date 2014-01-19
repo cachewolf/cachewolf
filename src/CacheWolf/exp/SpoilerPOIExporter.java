@@ -22,10 +22,10 @@
 package CacheWolf.exp;
 
 import CacheWolf.MainForm;
-import CacheWolf.SafeXML;
 import CacheWolf.database.CacheHolder;
 import CacheWolf.database.CacheImages;
 import CacheWolf.utils.Common;
+import CacheWolf.utils.SafeXML;
 import CacheWolf.utils.URLUTF8Encoder;
 import ewe.io.File;
 import ewe.sys.Time;

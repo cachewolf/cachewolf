@@ -24,6 +24,7 @@ package CacheWolf;
 import CacheWolf.controls.CWProgressBar;
 import CacheWolf.database.CacheDB;
 import CacheWolf.database.CacheHolder;
+import CacheWolf.utils.MyLocale;
 
 /**
  * A class to perform a search on the cache database.

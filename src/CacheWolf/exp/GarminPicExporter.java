@@ -22,7 +22,6 @@
 package CacheWolf.exp;
 
 import CacheWolf.MainForm;
-import CacheWolf.MyLocale;
 import CacheWolf.Preferences;
 import CacheWolf.controls.DataMover;
 import CacheWolf.controls.ExecutePanel;
@@ -30,8 +29,10 @@ import CacheWolf.controls.InfoBox;
 import CacheWolf.database.CacheDB;
 import CacheWolf.database.CacheHolder;
 import CacheWolf.database.CacheHolderDetail;
-import CacheWolf.database.CacheType;
 import CacheWolf.database.CacheImage;
+import CacheWolf.database.CacheType;
+import CacheWolf.utils.MyLocale;
+import CacheWolf.utils.SafeXML;
 
 import com.stevesoft.ewe_pat.Regex;
 
@@ -198,7 +199,7 @@ public class GarminPicExporter {
 	// The next line should not be necessary as picture titles should be correctly stored in UTF8 internally
 	// Unfortunately this is not the case, e.g. GC1ZHRK
 	if (fileName.indexOf("&") >= 0)
-	    fileName = CacheWolf.SafeXML.cleanback(fileName);
+	    fileName = SafeXML.cleanback(fileName);
 	int len = fileName.length();
 	StringBuffer s = new StringBuffer(len);
 	for (int i = 0; i < len; i++) {

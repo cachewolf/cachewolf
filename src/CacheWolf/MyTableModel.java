@@ -21,11 +21,13 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 package CacheWolf;
 
+import CacheWolf.controls.TableColumnChooser;
 import CacheWolf.database.CacheDB;
 import CacheWolf.database.CacheHolder;
 import CacheWolf.database.CacheSize;
 import CacheWolf.database.CacheTerrDiff;
 import CacheWolf.database.CacheType;
+import CacheWolf.utils.MyLocale;
 import ewe.fx.Color;
 import ewe.fx.FontMetrics;
 import ewe.fx.IconAndText;

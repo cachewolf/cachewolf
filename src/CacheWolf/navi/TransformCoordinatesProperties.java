@@ -21,7 +21,7 @@
 */
 package CacheWolf.navi;
 
-import CacheWolf.MyLocale;
+import CacheWolf.utils.MyLocale;
 import CacheWolf.database.CWPoint;
 import CacheWolf.database.CoordinatePoint;
 

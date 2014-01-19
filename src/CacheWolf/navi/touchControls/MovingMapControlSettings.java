@@ -22,7 +22,7 @@
 package CacheWolf.navi.touchControls;
 
 import CacheWolf.Preferences;
-import CacheWolf.MyLocale;
+import CacheWolf.utils.MyLocale;
 import CacheWolf.navi.touchControls.MovingMapControlItemText.TextOptions;
 import CacheWolf.navi.touchControls.MovingMapControls.Role;
 import ewe.io.File;

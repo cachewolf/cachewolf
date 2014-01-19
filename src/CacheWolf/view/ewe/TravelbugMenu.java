@@ -22,7 +22,7 @@
 package CacheWolf.view.ewe;
 
 import CacheWolf.MainForm;
-import CacheWolf.MyLocale;
+import CacheWolf.utils.MyLocale;
 import CacheWolf.Preferences;
 import CacheWolf.TravelbugPickup;
 import CacheWolf.database.Travelbug;

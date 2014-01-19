@@ -22,7 +22,7 @@
 package CacheWolf.navi;
 
 import CacheWolf.MainForm;
-import CacheWolf.MyLocale;
+import CacheWolf.utils.MyLocale;
 import CacheWolf.Preferences;
 import CacheWolf.controls.InfoBox;
 import CacheWolf.database.BoundingBox;

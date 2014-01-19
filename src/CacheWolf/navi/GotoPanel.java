@@ -23,11 +23,11 @@ package CacheWolf.navi;
 
 import CacheWolf.CoordsInput;
 import CacheWolf.CoordsPDAInput;
-import CacheWolf.GuiImageBroker;
 import CacheWolf.MainForm;
 import CacheWolf.MainTab;
-import CacheWolf.MyLocale;
+import CacheWolf.utils.MyLocale;
 import CacheWolf.Preferences;
+import CacheWolf.controls.GuiImageBroker;
 import CacheWolf.controls.InfoBox;
 import CacheWolf.database.CWPoint;
 import CacheWolf.database.CacheHolder;

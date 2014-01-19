@@ -22,7 +22,7 @@
 package CacheWolf.view.pda;
 
 import CacheWolf.Preferences;
-import CacheWolf.MyLocale;
+import CacheWolf.utils.MyLocale;
 import CacheWolf.database.TravelbugJourney;
 import ewe.fx.Color;
 import ewe.fx.Dimension;

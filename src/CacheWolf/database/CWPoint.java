@@ -21,12 +21,12 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 package CacheWolf.database;
 
-import CacheWolf.MyLocale;
 import CacheWolf.navi.GeodeticCalculator;
 import CacheWolf.navi.ParseLatLon;
 import CacheWolf.navi.ProjectedPoint;
 import CacheWolf.navi.TransformCoordinates;
 import CacheWolf.utils.Common;
+import CacheWolf.utils.MyLocale;
 import CacheWolf.utils.STRreplace;
 
 import com.stevesoft.ewe_pat.Regex;

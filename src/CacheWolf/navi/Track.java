@@ -21,7 +21,7 @@
 */
 package CacheWolf.navi;
 
-import CacheWolf.MyLocale;
+import CacheWolf.utils.MyLocale;
 import CacheWolf.controls.InfoBox;
 import CacheWolf.database.CoordinatePoint;
 import ewe.fx.Color;

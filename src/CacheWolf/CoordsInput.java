@@ -22,6 +22,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 package CacheWolf;
 
 import CacheWolf.controls.ExecutePanel;
+import CacheWolf.controls.GuiImageBroker;
 import CacheWolf.controls.InfoBox;
 import CacheWolf.controls.MyScrollBarPanel;
 import CacheWolf.database.CWPoint;
@@ -30,6 +31,7 @@ import CacheWolf.navi.Navigate;
 import CacheWolf.navi.ProjectedPoint;
 import CacheWolf.navi.TransformCoordinates;
 import CacheWolf.utils.Common;
+import CacheWolf.utils.MyLocale;
 import CacheWolf.utils.STRreplace;
 import CacheWolf.utils.UrlFetcher;
 import ewe.io.InputStreamReader;
@@ -348,7 +350,7 @@ public class CoordsInput extends Form {
 		String inp = inpText.getText().trim().toUpperCase();
 		if (inp.startsWith("GC")) {
 		    GCImporter spider = new GCImporter();
-		    coord = new CWPoint(spider.getCacheCoordinates(inp));
+		    coord = new CWPoint(spider.fetchCacheCoordinates(inp));
 		    Preferences.itself().setOldGCLanguage();
 		} else {
 		    coord = new CWPoint(inp);

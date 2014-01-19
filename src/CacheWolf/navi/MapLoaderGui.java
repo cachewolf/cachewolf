@@ -24,7 +24,7 @@ package CacheWolf.navi;
 import CacheWolf.CoordsInput;
 import CacheWolf.MainForm;
 import CacheWolf.MainTab;
-import CacheWolf.MyLocale;
+import CacheWolf.utils.MyLocale;
 import CacheWolf.Preferences;
 import CacheWolf.controls.ExecutePanel;
 import CacheWolf.controls.InfoBox;

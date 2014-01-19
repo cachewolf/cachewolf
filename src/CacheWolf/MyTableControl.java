@@ -32,6 +32,7 @@ import CacheWolf.exp.OCLogExport;
 import CacheWolf.navi.Navigate;
 import CacheWolf.navi.TransformCoordinates;
 import CacheWolf.utils.CWWrapper;
+import CacheWolf.utils.MyLocale;
 import CacheWolf.utils.STRreplace;
 import CacheWolf.utils.UrlFetcher;
 import ewe.fx.IconAndText;

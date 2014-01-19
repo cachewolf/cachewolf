@@ -22,7 +22,6 @@
 package CacheWolf.exp;
 
 import CacheWolf.MainForm;
-import CacheWolf.MyLocale;
 import CacheWolf.Preferences;
 import CacheWolf.controls.InfoBox;
 import CacheWolf.database.CWPoint;
@@ -33,6 +32,7 @@ import CacheWolf.database.CacheTerrDiff;
 import CacheWolf.database.CacheType;
 import CacheWolf.navi.TransformCoordinates;
 import CacheWolf.utils.Common;
+import CacheWolf.utils.MyLocale;
 import ewe.filechooser.FileChooser;
 import ewe.filechooser.FileChooserBase;
 import ewe.io.BufferedReader;
