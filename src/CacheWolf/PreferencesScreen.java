@@ -29,6 +29,7 @@ import org.json.JSONObject;
 
 import CacheWolf.controls.ExecutePanel;
 import CacheWolf.controls.InfoBox;
+import CacheWolf.controls.MyScrollBarPanel;
 import CacheWolf.navi.Metrics;
 import CacheWolf.utils.Common;
 import CacheWolf.utils.FileBugfix;
@@ -242,7 +243,7 @@ public class PreferencesScreen extends Form {
 	int curlang = 0;
 	for (int i = 0; i < tmp.length; i++) {
 	    langs[i + 1] = tmp[i].substring(0, tmp[i].lastIndexOf('.'));
-	    if (langs[i + 1].equalsIgnoreCase(MyLocale.language))
+	    if (langs[i + 1].equalsIgnoreCase(Preferences.itself().language))
 		curlang = i + 1;
 	}
 	// ewe.sys.Vm.copyArray(tmp, 0, langs, 1, tmp.length);
@@ -439,7 +440,7 @@ public class PreferencesScreen extends Form {
 		Preferences.itself().password = inpPassword.getText().trim();
 		Preferences.itself().gcMemberId = inpGcMemberID.getText().trim();
 		Preferences.itself().userID = inpUserID.getText().trim();
-		MyLocale.saveLanguage(MyLocale.language = inpLanguage.getText().toUpperCase().trim());
+		Preferences.itself().language = inpLanguage.getText().toUpperCase().trim();
 		Preferences.itself().browser = Browser.getText();
 		Preferences.itself().myproxy = Proxy.getText();
 		Preferences.itself().myproxyport = ProxyPort.getText();

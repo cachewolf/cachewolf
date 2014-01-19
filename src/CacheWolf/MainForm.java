@@ -22,6 +22,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 package CacheWolf;
 
 import CacheWolf.controls.InfoBox;
+import CacheWolf.controls.MyScrollBarPanel;
+import CacheWolf.database.CWPoint;
 import CacheWolf.database.CacheDB;
 import CacheWolf.database.CacheHolder;
 import CacheWolf.database.CacheType;
@@ -36,6 +38,7 @@ import ewe.fx.Point;
 import ewe.fx.Rect;
 import ewe.fx.mImage;
 import ewe.io.BufferedWriter;
+import ewe.io.File;
 import ewe.io.FileReader;
 import ewe.io.FileWriter;
 import ewe.io.PrintWriter;
@@ -73,91 +76,89 @@ import ewe.util.Comparer;
  */
 public class MainForm extends Editor {
     public static MainForm itself;
+    MainTab mainTab;
     public static Profile profile;
 
     // The next three declares are for the cachelist
-    public boolean cacheListVisible = false;
-    public CacheList cacheList;
+    public boolean cacheTourVisible = false;
+    public CacheTour cacheTour;
     SplittablePanel split;
 
-    MainTab mainTab;
-    MainMenu mainMenu;
+    private Preferences preferences;
 
     /**
      * Constructor for MainForm
      * <p>
      * Loads preferences and the cache index list. Then constructs a MainMenu and the tabbed Panel (MainTab). MainTab holds the different tab panels. MainMenu contains the menu entries.
      * 
-     * @see MainMenu
      * @see MainTab
      */
     public MainForm(boolean dbg, String pathToPrefXml) {
 	itself = this;
-	profile = new Profile(); // sets MainForm.profile static access
-	// Resize the Close und Ok-Buttons of all Forms. This is just a test for the PDA Versions:
-	int fontSize = Preferences.itself().fontSize; // constructor default value
-	FormBase.close = new DrawnIcon(DrawnIcon.CROSS, fontSize, fontSize, new Color(0, 0, 0));
-	FormBase.tick = new DrawnIcon(DrawnIcon.TICK, fontSize, fontSize, new Color(0, 128, 0));
-	FormBase.cross = new DrawnIcon(DrawnIcon.CROSS, fontSize, fontSize, new Color(128, 0, 0));
-
-	Preferences.itself().debug = dbg;
-	// in case pathtoprefxml == null the preferences will determine the path itself
-	Preferences.itself().setPathToConfigFile(pathToPrefXml);
-	doIt();
-    }
-
-    public void doIt() {
 	this.exitSystemOnClose = true;
 	this.resizable = true;
 	this.moveable = true;
 	this.windowFlagsToSet = WindowConstants.FLAG_MAXIMIZE_ON_PDA;
+
+	this.preferences = Preferences.itself(); // implicit calls the constructor (first access) with default values
+
+	// Resize the Close und Ok-Buttons of all Forms. This is just a test for the PDA Versions:
+	int fontSize = this.preferences.fontSize;
+	FormBase.close = new DrawnIcon(DrawnIcon.CROSS, fontSize, fontSize, new Color(0, 0, 0));
+	FormBase.tick = new DrawnIcon(DrawnIcon.TICK, fontSize, fontSize, new Color(0, 128, 0));
+	FormBase.cross = new DrawnIcon(DrawnIcon.CROSS, fontSize, fontSize, new Color(128, 0, 0));
+
+	this.preferences.debug = dbg;
+	// in case pathtoprefxml == null the preferences will determine the path itself
+	this.preferences.setPathToConfigFile(pathToPrefXml);
 	// if (ewe.ui.Gui.screenSize.width <= 350 && ewe.ui.Gui.screenSize.height <= 350)
 	//Rect screen = ((ewe.fx.Rect) (Window.getGuiInfo(WindowConstants.INFO_SCREEN_RECT,null,new ewe.fx.Rect(),0)));
 	//if ( screen.height >= 600 && screen.width >= 800) this.setPreferredSize(800, 600);
 	this.resizeOnSIP = true;
-	InfoBox infB = null;
-	try {
-	    Preferences.itself().readPrefFile();
-	    Preferences.itself().logInit();
-	    if (MyLocale.initErrors.length() != 0) {
-		new InfoBox(MyLocale.getMsg(5500, "Error"), MyLocale.initErrors).wait(FormBase.OKB);
-	    }
-	    if (Vm.isMobile()) {
-		//this.windowFlagsToSet |=Window.FLAG_FULL_SCREEN;
-		this.resizable = false;
-		this.moveable = false;
-	    } else {
-		int h, w;
-		h = Preferences.itself().myAppHeight;
-		if (h > MyLocale.getScreenHeight())
-		    h = MyLocale.getScreenHeight();
-		w = Preferences.itself().myAppWidth;
-		if (w > MyLocale.getScreenWidth())
-		    w = MyLocale.getScreenWidth();
-		this.setPreferredSize(w, h);
-	    }
-	    addGuiFont();
-	    // Replace buildt-in symbols with customized images (if there are some)
-	    GuiImageBroker.customizedSymbols();
+	this.preferences.readPrefFile();
 
-	    if (!Preferences.itself().selectProfile(Preferences.PROFILE_SELECTOR_ONOROFF, true))
-		ewe.sys.Vm.exit(0); // User MUST select or create a profile
-	    Vm.showWait(true);
-
-	    // Load CacheList
-	    infB = new InfoBox("CacheWolf", MyLocale.getMsg(5000, "Loading Cache-List"));
-	    infB.exec();
-	    infB.waitUntilPainted(100);
-	    MainForm.profile.readIndex(infB);
-	    setTitle(MainForm.profile.name + " - CW " + Version.getRelease());
-	} catch (Exception e) {
-	    Preferences.itself().log("[MainForm:DoIt]", e);
+	this.preferences.logInit();
+	if (MyLocale.initErrors.length() != 0) {
+	    new InfoBox(MyLocale.getMsg(5500, "Error"), MyLocale.initErrors).wait(FormBase.OKB);
 	}
+	if (Vm.isMobile()) {
+	    //this.windowFlagsToSet |=Window.FLAG_FULL_SCREEN;
+	    this.resizable = false;
+	    this.moveable = false;
+	} else {
+	    int h, w;
+	    h = this.preferences.myAppHeight;
+	    if (h > MyLocale.getScreenHeight())
+		h = MyLocale.getScreenHeight();
+	    w = this.preferences.myAppWidth;
+	    if (w > MyLocale.getScreenWidth())
+		w = MyLocale.getScreenWidth();
+	    this.setPreferredSize(w, h);
+	}
+	addGuiFont();
+	// Replace buildt-in symbols with customized images (if there are some)
+	GuiImageBroker.customizedSymbols();
+
+	if (!selectProfile(PROFILE_SELECTOR_ONOROFF, true))
+	    ewe.sys.Vm.exit(0); // User MUST select or create a profile
+
+	Vm.showWait(true);
+	InfoBox infB = new InfoBox("CacheWolf", MyLocale.getMsg(5000, "Loading Cache-List"));
+	infB.exec();
+	infB.waitUntilPainted(100);
+	try {
+	    profile = new Profile(); // sets static access to profile
+	    profile.readIndex(infB);
+	} catch (Exception e) {
+	    this.preferences.log("[MainForm:Exception loading CacheList]", e);
+	}
+
+	setTitle(profile.name + " - CW " + Version.getRelease());
 
 	if (Gui.screenIs(Gui.PDA_SCREEN) && Vm.isMobile()) {
 	    Vm.setSIP(Vm.SIP_LEAVE_BUTTON, mApp.mainApp);
 	}
-	if (Preferences.itself().fixSIP) {
+	if (this.preferences.fixSIP) {
 	    if (Gui.screenIs(Gui.PDA_SCREEN) && Vm.isMobile()) {
 		//Vm.setSIP(Vm.SIP_LEAVE_BUTTON|Vm.SIP_ON);
 		Vm.setParameter(Vm.SET_ALWAYS_SHOW_SIP_BUTTON, 1);
@@ -166,11 +167,7 @@ public class MainForm extends Editor {
 	} else
 	    Vm.setSIP(0);
 
-	mainMenu = new MainMenu(this); // ctor prior to mainTab
 	mainTab = new MainTab();
-	Preferences.itself().setCurCentrePt(MainForm.profile.centre); //uses mainTab.tablePanel
-
-	mainMenu.allowProfileChange(true);
 
 	split = new SplittablePanel(PanelSplitter.HORIZONTAL);
 	split.theSplitter.thickness = 0;
@@ -180,74 +177,118 @@ public class MainForm extends Editor {
 	CellPanel pnlMainTab = split.getNextPanel();
 	split.setSplitter(PanelSplitter.MIN_SIZE | PanelSplitter.BEFORE, PanelSplitter.HIDDEN | PanelSplitter.BEFORE, PanelSplitter.CLOSED);
 
-	pnlCacheList.addLast(cacheList = new CacheList(), STRETCH, FILL);
+	pnlCacheList.addLast(cacheTour = new CacheTour(), STRETCH, FILL);
 	pnlMainTab.addLast(mainTab, STRETCH, FILL);
 	this.addLast(split, STRETCH, FILL);
 
-	mainMenu.setTablePanel(mainTab.getTablePanel());
+	this.preferences.curCentrePt.set(profile.centre);
+	profile.updateBearingDistance();
+
+	mainTab.tablePanel.refreshTable();
+	mainTab.tablePanel.autoSort();
+	mainTab.tablePanel.selectFirstRow();
+	this.firstFocus = mainTab.tablePanel.myTableControl; // works if tablePanel is the first screen
+
 	if (infB != null)
 	    infB.close(0);
-	mainTab.tablePanel.refreshTable();
-	mainTab.tablePanel.selectFirstRow();
-	//mainTab.tablePanel.tc.paintSelection();
 	Vm.showWait(false);
-	this.firstFocus = mainTab.tablePanel.myTableControl; // works if tablePanel is the first screen
     }
 
+    // Overrides: checkButtons() in Form
     protected void checkButtons() {
-	if (Preferences.itself().hasCloseButton)
+	if (this.preferences.hasCloseButton)
 	    super.checkButtons();
     }
 
+    // Overrides: canExit(...) in Editor
     protected boolean canExit(int exitCode) {
 	mainTab.saveUnsavedChanges(true);
-	return Preferences.itself().hasCloseButton;
+	return this.preferences.hasCloseButton;
+    }
+
+    static final int PROFILE_SELECTOR_FORCED_ON = 0;
+    static final int PROFILE_SELECTOR_ONOROFF = 2;
+
+    /**
+     * Open Profile selector screen
+     * 
+     * @param prof
+     * @param showProfileSelector
+     * @return True if a profile was selected
+     */
+    public boolean selectProfile(int showProfileSelector, boolean hasNewButton) {
+	preferences.checkAbsoluteBaseDir();
+	boolean profileExists = true;
+	String selectedProfile = preferences.lastProfile;
+	do {
+	    if (!profileExists //
+		    || (showProfileSelector == PROFILE_SELECTOR_FORCED_ON) //
+		    || (showProfileSelector == PROFILE_SELECTOR_ONOROFF && !preferences.autoReloadLastProfile) //
+	    ) {
+		ProfilesForm f = new ProfilesForm(preferences.absoluteBaseDir, selectedProfile, !profileExists || hasNewButton ? 0 : 1);
+		int code = f.execute();
+		if (code == -1)
+		    return false; // Cancel pressed
+		selectedProfile = f.newSelectedProfile;
+	    }
+	    profileExists = (new File(preferences.absoluteBaseDir + selectedProfile)).exists();
+	    if (!profileExists)
+		new InfoBox(MyLocale.getMsg(144, "Warning"), MyLocale.getMsg(171, "Profile does not exist: ") + selectedProfile).wait(FormBase.OKB);
+	} while (profileExists == false);
+	preferences.lastProfile = selectedProfile; // still to open
+	preferences.savePreferences();
+	return true;
     }
 
     private void addGuiFont() {
 	Font defaultGuiFont = mApp.findFont("gui");
-	Font newGuiFont = new Font(Preferences.itself().fontName, defaultGuiFont.getStyle(), Preferences.itself().fontSize);
+	Font newGuiFont = new Font(this.preferences.fontName, defaultGuiFont.getStyle(), this.preferences.fontSize);
 	mApp.addFont(newGuiFont, "gui");
 	mApp.fontsChanged();
 	mApp.mainApp.font = newGuiFont;
     }
 
     public void doPaint(Graphics g, Rect r) {
-	Preferences.itself().myAppHeight = this.height;
-	Preferences.itself().myAppWidth = this.width;
+	this.preferences.myAppHeight = this.height;
+	this.preferences.myAppWidth = this.width;
 	super.doPaint(g, r);
     }
 
-    public void toggleCacheListVisible() {
-	cacheListVisible = !cacheListVisible;
-	if (cacheListVisible) {
+    public void toggleCacheTourVisible() {
+	cacheTourVisible = !cacheTourVisible;
+	if (cacheTourVisible) {
 	    // Make the splitterbar visible with a width of 6
 	    split.theSplitter.modify(0, Invisible);
 	    split.theSplitter.resizeTo(6, split.theSplitter.getRect().height);
-	    MainForm.itself.mainMenu.cacheTour.modifiers |= MenuItem.Checked;
 	} else {
 	    // Hide the splitterbar and set width to 0
 	    split.theSplitter.modify(Invisible, 0);
 	    split.theSplitter.resizeTo(0, split.theSplitter.getRect().height);
-	    MainForm.itself.mainMenu.cacheTour.modifiers &= ~MenuItem.Checked;
 	}
-	split.theSplitter.doOpenClose(cacheListVisible);
-	MainForm.itself.mainMenu.repaint();
+	split.theSplitter.doOpenClose(cacheTourVisible);
     }
 
     public boolean addCache(String wayPoint) {
-	return cacheList.addCache(wayPoint);
+	return cacheTour.addCache(wayPoint);
     }
 
     public boolean contains(String wayPoint) {
-	return cacheList.contains(wayPoint);
+	return cacheTour.contains(wayPoint);
+    }
+
+    public void setCurCentrePt(CWPoint newCentre) {
+	Vm.showWait(true);
+	this.preferences.curCentrePt.set(newCentre);
+	profile.updateBearingDistance();
+	mainTab.tablePanel.autoSort();
+	Vm.showWait(false);
     }
 
     public void onEvent(Event ev) { // Preferences have been changed by PreferencesScreen
-	if (Preferences.itself().dirty) {
-	    mainTab.getTablePanel().myTableModel.setColumnNamesAndWidths();
-	    mainTab.getTablePanel().refreshControl();
-	    Preferences.itself().dirty = false;
+	if (this.preferences.dirty) {
+	    mainTab.tablePanel.myTableModel.setColumnNamesAndWidths();
+	    mainTab.tablePanel.refreshControl();
+	    this.preferences.dirty = false;
 	}
 	super.onEvent(ev);
     }
@@ -259,13 +300,13 @@ public class MainForm extends Editor {
  * or selecting them and pressing the "delete" key. Within the list the selected cache can be moved up/down using two buttons. The finished list can be saved and reloaded with the selected position being stored. The list can be applied as a filter to
  * the main list, thereby hiding all caches that are not in the list and sorting the caches according to the list. Created by skg, Februar 2007
  ********************************************************/
-class CacheList extends CellPanel {
+class CacheTour extends CellPanel {
     /** The extension for cachelists (CL) */
     private final String EXTENSION = "CL";
     private final String TITLE = MyLocale.getMsg(188, "CACHETOUR: NEW");
     private static int applyCount = 0; // Counts the number of times we apply the list
 
-    CacheList() {
+    CacheTour() {
 	this.setPreferredSize(100, -1);
 	this.equalWidths = true;
 	mImage imgDown = new mImage("ewe/downarrowsmall.bmp");

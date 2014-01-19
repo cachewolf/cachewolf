@@ -33,6 +33,7 @@ package CacheWolf;
  */
 
 import CacheWolf.controls.DateTimeChooser;
+import CacheWolf.controls.MyScrollBarPanel;
 import CacheWolf.database.CacheDB;
 import CacheWolf.database.CacheHolder;
 import CacheWolf.database.CacheHolderDetail;

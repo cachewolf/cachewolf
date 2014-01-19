@@ -57,7 +57,7 @@ public class CSVImporter {
     }
 
     public void doIt() {
-	startPos = Preferences.itself().getCurCentrePt();
+	startPos = Preferences.itself().curCentrePt;
 	if (startPos == null || !startPos.isValid()) {
 	    Preferences.itself().log("Zentrum nicht gesetzt", null);
 	    return;

@@ -31,12 +31,12 @@ import CacheWolf.controls.InfoBox;
 import CacheWolf.database.CWPoint;
 import CacheWolf.database.CacheDB;
 import CacheWolf.database.CacheHolder;
+import CacheWolf.database.CacheImage;
 import CacheWolf.database.CacheSize;
 import CacheWolf.database.CacheTerrDiff;
 import CacheWolf.database.CacheType;
-import CacheWolf.database.CacheImage;
-import CacheWolf.database.Log;
 import CacheWolf.database.CoordinatePoint;
+import CacheWolf.database.Log;
 import CacheWolf.navi.TransformCoordinates;
 import CacheWolf.utils.Common;
 import CacheWolf.utils.UrlFetcher;
@@ -188,7 +188,7 @@ public class OCXMLImporter extends MinML {
 	String finalMessage;
 
 	String lastS = MainForm.profile.getLast_sync_opencaching();
-	final CWPoint centre = Preferences.itself().getCurCentrePt(); // No need to clone curCentrePt as centre is only read
+	final CWPoint centre = Preferences.itself().curCentrePt; // No need to clone curCentrePt as centre is only read
 	if (!centre.isValid()) {
 	    new InfoBox(MyLocale.getMsg(5500, "Error"), "Coordinates for centre must be set").wait(FormBase.OKB);
 	    return;

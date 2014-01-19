@@ -23,6 +23,7 @@ package CacheWolf;
 
 import CacheWolf.controls.ExecutePanel;
 import CacheWolf.controls.InfoBox;
+import CacheWolf.controls.MyScrollBarPanel;
 import CacheWolf.database.Attribute;
 import CacheWolf.database.CacheHolder;
 import CacheWolf.database.CacheSize;

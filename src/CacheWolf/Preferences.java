@@ -22,8 +22,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 package CacheWolf;
 
 import CacheWolf.controls.InfoBox;
-import CacheWolf.imp.GCImporter;
 import CacheWolf.database.CWPoint;
+import CacheWolf.imp.GCImporter;
 import CacheWolf.navi.Metrics;
 import CacheWolf.navi.TransformCoordinates;
 import CacheWolf.utils.Common;
@@ -42,7 +42,6 @@ import ewe.sys.Convert;
 import ewe.sys.Time;
 import ewe.sys.Vm;
 import ewe.ui.FormBase;
-import ewe.ui.InputBox;
 import ewe.ui.Window;
 import ewe.ui.WindowConstants;
 import ewe.ui.mApp;
@@ -288,7 +287,7 @@ public class Preferences extends MinML {
     /**
      * The currently used centre point, can be different from the profile's centrepoint. This is used for spidering
      */
-    private CWPoint curCentrePt = new CWPoint();
+    public CWPoint curCentrePt = new CWPoint();
     public boolean changedGCLanguageToEnglish = false;
     /** True if the goto panel is North centered */
     public boolean northCenteredGoto = true;
@@ -954,26 +953,6 @@ public class Preferences extends MinML {
 	}
     }
 
-    public CWPoint getCurCentrePt() {
-	return curCentrePt;
-    }
-
-    public void setCurCentrePt(CWPoint newCentre) {
-	Vm.showWait(true);
-	curCentrePt.set(newCentre);
-	MainForm.profile.updateBearingDistance();
-	MainTab.itself.tablePanel.autoSort();
-	Vm.showWait(false);
-    }
-
-    // ////////////////////////////////////////////////////////////////////////////////////
-    // Profile Selector
-    // ////////////////////////////////////////////////////////////////////////////////////
-
-    static protected final int PROFILE_SELECTOR_FORCED_ON = 0;
-    static protected final int PROFILE_SELECTOR_FORCED_OFF = 1;
-    static protected final int PROFILE_SELECTOR_ONOROFF = 2;
-
     void checkAbsoluteBaseDir() {
 	// If datadir is empty, ask for one
 	if (absoluteBaseDir.length() == 0 || !(new File(absoluteBaseDir)).exists()) {
@@ -1011,110 +990,6 @@ public class Preferences extends MinML {
 	if (test.length() == 0)
 	    test = "/";
 	return test;
-    }
-
-    /**
-     * Open Profile selector screen
-     * 
-     * @param prof
-     * @param showProfileSelector
-     * @return True if a profile was selected
-     */
-    public boolean selectProfile(int showProfileSelector, boolean hasNewButton) {
-	checkAbsoluteBaseDir();
-	boolean profileExists = true; // Assume that the profile exists
-	do {
-	    if (!profileExists//
-		    || (showProfileSelector == PROFILE_SELECTOR_FORCED_ON)//
-		    || (showProfileSelector == PROFILE_SELECTOR_ONOROFF && !autoReloadLastProfile)//
-	    ) {
-		ProfilesForm f = new ProfilesForm(absoluteBaseDir, lastProfile, !profileExists || hasNewButton ? 0 : 1);
-		int code = f.execute();
-		// If no profile chosen (includes a new one), terminate
-		if (code == -1)
-		    return false; // Cancel pressed
-		CWPoint savecenter = new CWPoint(MainForm.profile.centre);
-		MainForm.profile.clearProfile();
-		MainForm.profile.setCenterCoords(savecenter);
-		// prof.hasUnsavedChanges = true;
-		// curCentrePt.set(0,0);
-		// No centre yet
-		lastProfile = f.newSelectedProfile;
-	    }
-	    profileExists = (new File(absoluteBaseDir + lastProfile)).exists();
-	    if (!profileExists)
-		new InfoBox(MyLocale.getMsg(144, "Warning"), MyLocale.getMsg(171, "Profile does not exist: ") + lastProfile).wait(FormBase.OKB);
-	} while (profileExists == false);
-	// Now we are sure that baseDir exists and basDir+profile exists
-	MainForm.profile.name = lastProfile;
-	MainForm.profile.dataDir = absoluteBaseDir + lastProfile;
-	MainForm.profile.dataDir = MainForm.profile.dataDir.replace('\\', '/');
-	if (!MainForm.profile.dataDir.endsWith("/"))
-	    MainForm.profile.dataDir += '/';
-	// pathToProfile = prof.dataDir;
-	savePreferences();
-	return true;
-    }
-
-    static public boolean deleteDirectory(File path) {
-	if (path.exists()) {
-	    String[] files = path.list();
-	    for (int i = 0; i < files.length; i++) {
-		File f = new File(path.getFullPath() + "/" + files[i]);
-		if (f.isDirectory()) {
-		    deleteDirectory(f);
-		} else {
-		    f.delete();
-		}
-	    }
-	}
-	return (path.delete());
-    }
-
-    static public boolean renameDirectory(File OldPath, File NewPath) {
-	return OldPath.renameTo(NewPath);
-    }
-
-    /*
-     * operation 2=delete 3=rename
-     */
-    public void editProfile(int operation, int ErrorMsgActive, int ErrorMsg) {
-	checkAbsoluteBaseDir(); // perhaps not necessary
-	// select profile
-	ProfilesForm f = new ProfilesForm(absoluteBaseDir, "", operation);
-	if (f.execute() == -1)
-	    return; // no select
-	// check selection
-	if (lastProfile.equals(f.newSelectedProfile)) {
-	    // aktives Profil kann nicht gelöscht / umbenannt werden;
-	    new InfoBox(MyLocale.getMsg(5500, "Error"), MyLocale.getMsg(ErrorMsgActive, "[Profile active...]")).wait(FormBase.OKB);
-	} else {
-	    boolean err = true;
-	    File profilePath = new File(absoluteBaseDir + f.newSelectedProfile);
-	    if (operation == 3) {
-		String newName = new InputBox("Bitte neuen Verzeichnisnamen eingeben : ").input("", 50);
-		if (!newName.equals(null)) {
-		    err = !renameDirectory(profilePath, new File(absoluteBaseDir + newName));
-		}
-	    } else if (operation == 2) {
-		Profile p = new Profile();
-		p.dataDir = absoluteBaseDir + f.newSelectedProfile + "/";
-		p.readIndex();
-		String mapsPath = p.getMapsDir();
-		//Really check if the user wants to delete the profile
-		String questionText = MyLocale.getMsg(276, "Do You really want to delete profile '") + f.newSelectedProfile + MyLocale.getMsg(277, "' ?");
-		if (new InfoBox("", questionText).wait(FormBase.MBYESNO) != FormBase.IDOK)
-		    return;
-		if (new InfoBox("", MyLocale.getMsg(1125, "Delete") + " " + MyLocale.getMsg(654, "Maps directory") + "?\n\n" + mapsPath + "\n").wait(FormBase.MBYESNO) == FormBase.IDOK) {
-		    deleteDirectory(new File(mapsPath));
-		}
-		err = !deleteDirectory(profilePath);
-		// ? wait until deleted ?
-	    }
-	    if (err) {
-		new InfoBox(MyLocale.getMsg(5500, "Error"), MyLocale.getMsg(ErrorMsg, "[Profile Error...]")).wait(FormBase.OKB);
-	    }
-	}
     }
 
     // ////////////////////////////////////////////////////////////////////////////////////

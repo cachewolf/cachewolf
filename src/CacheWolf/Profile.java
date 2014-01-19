@@ -50,6 +50,8 @@ import ewe.ui.ProgressBarForm;
  * 
  */
 public class Profile {
+    /** version number of current format for index.xml and waypoint.xml */
+    public static int CURRENTFILEFORMAT = 3;
     /**
      * The list of caches (CacheHolder objects). A pointer to this object exists in many classes in parallel to this object, i.e. the respective class contains both a {@link Profile} object and a cacheDB Vector.
      */
@@ -98,8 +100,6 @@ public class Profile {
     private boolean hasUnsavedChanges = false;
     public boolean byPassIndexActive = false;
     private int indexXmlVersion;
-    /** version number of current format for index.xml and waypoint.xml */
-    public static int CURRENTFILEFORMAT = 3;
 
     // TODO Add other settings, such as max. number of logs to spider
     // TODO Add settings for the preferred mapper to allow for maps other than expedia and other resolutions
@@ -198,7 +198,7 @@ public class Profile {
 	}
 	CWPoint savedCentre = centre;
 	if (centre == null || !centre.isValid() || (savedCentre.latDec == 0.0 && savedCentre.lonDec == 0.0))
-	    savedCentre = Preferences.itself().getCurCentrePt();
+	    savedCentre = Preferences.itself().curCentrePt;
 
 	try {
 	    detfile.print("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
@@ -269,6 +269,13 @@ public class Profile {
      * Method to read the index.xml file that holds the total information on available caches in the database. The database in nothing else than the collection of caches in a directory.
      */
     public void readIndex(InfoBox infoBox) {
+	// Now we are sure that baseDir exists and basDir+profile exists
+	name = Preferences.itself().lastProfile;
+	dataDir = Preferences.itself().absoluteBaseDir + name;
+	dataDir = dataDir.replace('\\', '/');
+	if (!dataDir.endsWith("/"))
+	    dataDir += '/';
+
 	int updFrequ = Vm.isMobile() ? 10 : 40; // Number of caches between screen updates
 	try {
 	    selectionChanged = true;
@@ -288,13 +295,13 @@ public class Profile {
 	    Extractor ex = new Extractor(null, " = \"", "\" ", 0, true);
 
 	    // ewe.sys.Time startT=new ewe.sys.Time();
-	    boolean convertWarningDisplayed = false;
+	    boolean convertWarningAlreadyDisplayed = false;
 	    while ((text = in.readLine()) != null) {
 		// Check for Line with cache data
 		if (text.indexOf("<CACHE ") >= 0) {
-		    if (indexXmlVersion < CURRENTFILEFORMAT && !convertWarningDisplayed) {
+		    if (indexXmlVersion < CURRENTFILEFORMAT && !convertWarningAlreadyDisplayed) {
 			if (indexXmlVersion < CURRENTFILEFORMAT) {
-			    convertWarningDisplayed = true;
+			    convertWarningAlreadyDisplayed = true;
 			    int res = new InfoBox(
 				    MyLocale.getMsg(144, "Warning"),
 				    MyLocale.getMsg(4407,
@@ -499,7 +506,7 @@ public class Profile {
 		setFilterInverted(true); // Needed because previous line inverts filterInverted
 	    }
 	} else if (getFilterActive() == Filter.FILTER_CACHELIST) {
-	    MainForm.itself.cacheList.applyCacheList();
+	    MainForm.itself.cacheTour.applyCacheList();
 	    // flt.filterActive=filterActive;
 	} else if (getFilterActive() == Filter.FILTER_INACTIVE) {
 	    if (clearIfInactive) {
@@ -658,7 +665,7 @@ public class Profile {
      * @see Extractor
      */
     public void updateBearingDistance() {
-	CWPoint centerPoint = new CWPoint(Preferences.itself().getCurCentrePt()); // Clone current centre to be sure
+	CWPoint centerPoint = new CWPoint(Preferences.itself().curCentrePt); // Clone current centre to be sure
 	int anz = cacheDB.size();
 	CacheHolder ch;
 	// Jetzt durch die CacheDaten schleifen

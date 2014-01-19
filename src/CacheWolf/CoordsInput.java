@@ -23,6 +23,7 @@ package CacheWolf;
 
 import CacheWolf.controls.ExecutePanel;
 import CacheWolf.controls.InfoBox;
+import CacheWolf.controls.MyScrollBarPanel;
 import CacheWolf.database.CWPoint;
 import CacheWolf.imp.GCImporter;
 import CacheWolf.navi.Navigate;
