@@ -75,8 +75,13 @@ public class SolverPanel extends CellPanel {
 	pnlButtons.equalWidths = true;
 	pnlStatButtons.addLast(pnlButtons, CellConstants.HSTRETCH, CellConstants.HFILL);
 
-	if (!Preferences.itself().tabsAtTop)
-	    this.addLast(pnlStatButtons, HSTRETCH, HFILL).setTag(SPAN, new Dimension(3, 1));
+	if (Preferences.itself().tabsAtTop) {
+	    if (Preferences.itself().menuAtTab)
+		this.addLast(pnlStatButtons, HSTRETCH, HFILL).setTag(SPAN, new Dimension(3, 1));
+	} else {
+	    if (!Preferences.itself().menuAtTab)
+		this.addLast(pnlStatButtons, HSTRETCH, HFILL).setTag(SPAN, new Dimension(3, 1));
+	}
 
 	SplittablePanel split = new SplittablePanel(PanelSplitter.VERTICAL);
 	MyLocale.setSplitterSize(split);
@@ -91,8 +96,13 @@ public class SolverPanel extends CellPanel {
 
 	this.addLast(split);
 
-	if (Preferences.itself().tabsAtTop)
-	    this.addLast(pnlStatButtons, HSTRETCH, HFILL).setTag(SPAN, new Dimension(3, 1));
+	if (Preferences.itself().tabsAtTop) {
+	    if (!Preferences.itself().menuAtTab)
+		this.addLast(pnlStatButtons, HSTRETCH, HFILL).setTag(SPAN, new Dimension(3, 1));
+	} else {
+	    if (Preferences.itself().menuAtTab)
+		this.addLast(pnlStatButtons, HSTRETCH, HFILL).setTag(SPAN, new Dimension(3, 1));
+	}
 
     }
 

@@ -72,16 +72,30 @@ public class TablePanel extends CellPanel {
 	} else
 	    statusBar = null;
 
-	if (!Preferences.itself().tabsAtTop) {
-	    addLast(mainMenu, CellConstants.DONTSTRETCH, CellConstants.FILL);
-	    addLast(theTableControl, STRETCH, FILL);
-	    if (Preferences.itself().showStatus)
-		addLast(statusBar, CellConstants.DONTSTRETCH, CellConstants.FILL);
+	if (Preferences.itself().tabsAtTop) {
+	    if (Preferences.itself().menuAtTab) {
+		addLast(mainMenu, CellConstants.DONTSTRETCH, CellConstants.FILL);
+		addLast(theTableControl, STRETCH, FILL);
+		if (Preferences.itself().showStatus)
+		    addLast(statusBar, CellConstants.DONTSTRETCH, CellConstants.FILL);
+	    } else {
+		addLast(theTableControl, STRETCH, FILL);
+		if (Preferences.itself().showStatus)
+		    addLast(statusBar, CellConstants.DONTSTRETCH, CellConstants.FILL);
+		addLast(mainMenu, CellConstants.DONTSTRETCH, CellConstants.FILL);
+	    }
 	} else {
-	    addLast(theTableControl, STRETCH, FILL);
-	    if (Preferences.itself().showStatus)
-		addLast(statusBar, CellConstants.DONTSTRETCH, CellConstants.FILL);
-	    addLast(mainMenu, CellConstants.DONTSTRETCH, CellConstants.FILL);
+	    if (Preferences.itself().menuAtTab) {
+		addLast(theTableControl, STRETCH, FILL);
+		if (Preferences.itself().showStatus)
+		    addLast(statusBar, CellConstants.DONTSTRETCH, CellConstants.FILL);
+		addLast(mainMenu, CellConstants.DONTSTRETCH, CellConstants.FILL);
+	    } else {
+		addLast(mainMenu, CellConstants.DONTSTRETCH, CellConstants.FILL);
+		addLast(theTableControl, STRETCH, FILL);
+		if (Preferences.itself().showStatus)
+		    addLast(statusBar, CellConstants.DONTSTRETCH, CellConstants.FILL);
+	    }
 	}
 
     }

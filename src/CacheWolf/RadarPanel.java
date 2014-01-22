@@ -93,11 +93,24 @@ public class RadarPanel extends CellPanel {
 	buttonPanel.addNext(btnToggle, CellConstants.HSTRETCH, CellConstants.FILL);
 	buttonPanel.addLast(btnPlus, CellConstants.HSTRETCH, (CellConstants.FILL | CellConstants.EAST));
 
-	if (!Preferences.itself().tabsAtTop)
-	    this.addLast(buttonPanel, CellConstants.HSTRETCH, CellConstants.HFILL);
+	if (Preferences.itself().tabsAtTop) {
+	    if (Preferences.itself().menuAtTab)
+		this.addLast(buttonPanel, CellConstants.HSTRETCH, CellConstants.HFILL);
+	} else {
+	    if (!Preferences.itself().menuAtTab)
+		this.addLast(buttonPanel, CellConstants.HSTRETCH, CellConstants.HFILL);
+	}
+
 	this.addLast(iActP = new MyInteractivePanel(), CellConstants.STRETCH, CellConstants.FILL);
-	if (Preferences.itself().tabsAtTop)
-	    this.addLast(buttonPanel, CellConstants.HSTRETCH, CellConstants.HFILL);
+
+	if (Preferences.itself().tabsAtTop) {
+	    if (!Preferences.itself().menuAtTab)
+		this.addLast(buttonPanel, CellConstants.HSTRETCH, CellConstants.HFILL);
+	} else {
+	    if (Preferences.itself().menuAtTab)
+		this.addLast(buttonPanel, CellConstants.HSTRETCH, CellConstants.HFILL);
+	}
+
     }
 
     /**

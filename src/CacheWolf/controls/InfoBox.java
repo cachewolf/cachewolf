@@ -21,8 +21,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 package CacheWolf.controls;
 
-import CacheWolf.Preferences;
-import CacheWolf.utils.MyLocale;
 import ewe.ui.ControlEvent;
 import ewe.ui.Event;
 import ewe.ui.Form;
@@ -38,6 +36,9 @@ public class InfoBox extends Form {
     public final static int INPUT = 2;
     public final static int DISPLAY_ONLY = 3;
     public final static int PROGRESS_WITH_WARNINGS = 4;
+
+    public static int preferredWidth;
+    public static int preferredHeight;
 
     private TextMessage msgArea;
     private TextMessage warnings;
@@ -62,17 +63,9 @@ public class InfoBox extends Form {
     }
 
     public InfoBox(String title, String info, int type, boolean autoWrap) {
-	// Resize InfoBox
-	int psx = Preferences.itself().fontSize * 16;
-	int psy = Preferences.itself().fontSize * 12;
-	if (Preferences.itself().useBigIcons) {
-	    psx = Math.min(psx + 48, MyLocale.getScreenWidth());
-	    psy = Math.min(psy + 16, MyLocale.getScreenHeight());
-	} else {
-	    psx = Math.min(psx, MyLocale.getScreenWidth());
-	    psy = Math.min(psy, MyLocale.getScreenHeight());
-	}
-	this.setPreferredSize(psx, psy);
+
+	if (preferredWidth > 0 && preferredHeight > 0)
+	    this.setPreferredSize(preferredWidth, preferredHeight);
 
 	switch (type) {
 	case CHECKBOX:

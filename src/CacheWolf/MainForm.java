@@ -32,7 +32,6 @@ import CacheWolf.utils.MyLocale;
 import ewe.filechooser.FileChooser;
 import ewe.filechooser.FileChooserBase;
 import ewe.fx.Color;
-import ewe.fx.DrawnIcon;
 import ewe.fx.Font;
 import ewe.fx.Graphics;
 import ewe.fx.IconAndText;
@@ -84,7 +83,7 @@ public class MainForm extends Editor {
     // The next three declares are for the cachelist
     public boolean cacheTourVisible = false;
     public CacheTour cacheTour;
-    SplittablePanel split;
+    SplittablePanel ScreenPanel;
 
     private Preferences preferences;
 
@@ -97,31 +96,24 @@ public class MainForm extends Editor {
      */
     public MainForm(boolean dbg, String pathToPrefXml) {
 
+	this.preferences = Preferences.itself(); // implicit calls the constructor (first access) with default values
+	this.preferences.debug = dbg;
+	// in case pathtoprefxml == null the preferences will determine the path itself
+	this.preferences.setPathToConfigFile(pathToPrefXml);
+
+	this.preferences.readPrefFile();
+	this.preferences.logInit(); // also initialises MyLocale (with Language from preferences)
+	if (MyLocale.initErrors.length() != 0) {
+	    new InfoBox(MyLocale.getMsg(5500, "Error"), MyLocale.initErrors).wait(FormBase.OKB);
+	}
+
 	this.exitSystemOnClose = true;
 	this.resizable = true;
 	this.moveable = true;
 	this.resizeOnSIP = true;
 	this.windowFlagsToSet = WindowConstants.FLAG_MAXIMIZE_ON_PDA;
 
-	this.preferences = Preferences.itself(); // implicit calls the constructor (first access) with default values
-
-	// Resize the Close und Ok-Buttons of all Forms. This is just a test for the PDA Versions:
-	int fontSize = this.preferences.fontSize;
-	FormBase.close = new DrawnIcon(DrawnIcon.CROSS, fontSize, fontSize, new Color(0, 0, 0));
-	FormBase.tick = new DrawnIcon(DrawnIcon.TICK, fontSize, fontSize, new Color(0, 128, 0));
-	FormBase.cross = new DrawnIcon(DrawnIcon.CROSS, fontSize, fontSize, new Color(128, 0, 0));
-
-	this.preferences.debug = dbg;
-	// in case pathtoprefxml == null the preferences will determine the path itself
-	this.preferences.setPathToConfigFile(pathToPrefXml);
-	this.preferences.readPrefFile();
-
-	this.preferences.logInit(); // also initialises MyLocale (with Language from preferences)
-	if (MyLocale.initErrors.length() != 0) {
-	    new InfoBox(MyLocale.getMsg(5500, "Error"), MyLocale.initErrors).wait(FormBase.OKB);
-	}
 	if (Vm.isMobile()) {
-	    //this.windowFlagsToSet |=Window.FLAG_FULL_SCREEN;
 	    this.resizable = false;
 	    this.moveable = false;
 	} else {
@@ -134,7 +126,13 @@ public class MainForm extends Editor {
 		w = MyLocale.getScreenWidth();
 	    this.setPreferredSize(w, h);
 	}
-	addGuiFont();
+
+	Font defaultGuiFont = mApp.findFont("gui");
+	Font newGuiFont = new Font(this.preferences.fontName, defaultGuiFont.getStyle(), this.preferences.fontSize);
+	mApp.addFont(newGuiFont, "gui");
+	mApp.fontsChanged();
+	mApp.mainApp.font = newGuiFont;
+
 	// Replace buildt-in symbols with customized images (if there are some)
 	GuiImageBroker.customizedSymbols();
 
@@ -151,42 +149,37 @@ public class MainForm extends Editor {
 	} catch (Exception e) {
 	    this.preferences.log("[MainForm:Exception loading CacheList]", e);
 	}
-
-	setTitle(profile.name + " - CW " + Version.getRelease());
+	this.preferences.curCentrePt.set(profile.centre);
+	profile.updateBearingDistance();
 
 	if (Gui.screenIs(Gui.PDA_SCREEN) && Vm.isMobile()) {
 	    Vm.setSIP(Vm.SIP_LEAVE_BUTTON, mApp.mainApp);
 	}
 	if (this.preferences.fixSIP) {
 	    if (Gui.screenIs(Gui.PDA_SCREEN) && Vm.isMobile()) {
-		//Vm.setSIP(Vm.SIP_LEAVE_BUTTON|Vm.SIP_ON);
 		Vm.setParameter(Vm.SET_ALWAYS_SHOW_SIP_BUTTON, 1);
 		Device.preventIdleState(true);
 	    }
 	} else
 	    Vm.setSIP(0);
 
+	ScreenPanel = new SplittablePanel(PanelSplitter.HORIZONTAL);
+	ScreenPanel.theSplitter.thickness = 0;
+	ScreenPanel.theSplitter.modify(Invisible, 0);
+	CellPanel pnlCacheTour = ScreenPanel.getNextPanel();
+	CellPanel pnlMainTab = ScreenPanel.getNextPanel();
+	ScreenPanel.setSplitter(PanelSplitter.MIN_SIZE | PanelSplitter.BEFORE, PanelSplitter.HIDDEN | PanelSplitter.BEFORE, PanelSplitter.CLOSED);
+	pnlCacheTour.addLast(cacheTour = new CacheTour(), STRETCH, FILL);
+
 	mainTab = new MainTab();
-
-	split = new SplittablePanel(PanelSplitter.HORIZONTAL);
-	split.theSplitter.thickness = 0;
-	split.theSplitter.modify(Invisible, 0);
-	// CacheList for CacheTour
-	CellPanel pnlCacheList = split.getNextPanel();
-	CellPanel pnlMainTab = split.getNextPanel();
-	split.setSplitter(PanelSplitter.MIN_SIZE | PanelSplitter.BEFORE, PanelSplitter.HIDDEN | PanelSplitter.BEFORE, PanelSplitter.CLOSED);
-
-	pnlCacheList.addLast(cacheTour = new CacheTour(), STRETCH, FILL);
-	pnlMainTab.addLast(mainTab, STRETCH, FILL);
-	this.addLast(split, STRETCH, FILL);
-
-	this.preferences.curCentrePt.set(profile.centre);
-	profile.updateBearingDistance();
-
 	mainTab.tablePanel.refreshTable();
 	mainTab.tablePanel.autoSort();
 	mainTab.tablePanel.selectFirstRow();
 	this.firstFocus = mainTab.tablePanel.myTableControl; // works if tablePanel is the first screen
+	pnlMainTab.addLast(mainTab, STRETCH, FILL);
+
+	setTitle(profile.name + " - CW " + Version.getRelease());
+	this.addLast(ScreenPanel, STRETCH, FILL);
 
 	if (infB != null)
 	    infB.close(0);
@@ -237,17 +230,11 @@ public class MainForm extends Editor {
 	    if (!profileExists)
 		new InfoBox(MyLocale.getMsg(144, "Warning"), MyLocale.getMsg(171, "Profile does not exist: ") + selectedProfile).wait(FormBase.OKB);
 	} while (profileExists == false);
-	preferences.lastProfile = selectedProfile; // still to open
-	preferences.savePreferences();
+	if (preferences.lastProfile != selectedProfile) {
+	    preferences.lastProfile = selectedProfile; // still to open
+	    preferences.savePreferences();
+	}
 	return true;
-    }
-
-    private void addGuiFont() {
-	Font defaultGuiFont = mApp.findFont("gui");
-	Font newGuiFont = new Font(this.preferences.fontName, defaultGuiFont.getStyle(), this.preferences.fontSize);
-	mApp.addFont(newGuiFont, "gui");
-	mApp.fontsChanged();
-	mApp.mainApp.font = newGuiFont;
     }
 
     public void doPaint(Graphics g, Rect r) {
@@ -260,14 +247,14 @@ public class MainForm extends Editor {
 	cacheTourVisible = !cacheTourVisible;
 	if (cacheTourVisible) {
 	    // Make the splitterbar visible with a width of 6
-	    split.theSplitter.modify(0, Invisible);
-	    split.theSplitter.resizeTo(6, split.theSplitter.getRect().height);
+	    ScreenPanel.theSplitter.modify(0, Invisible);
+	    ScreenPanel.theSplitter.resizeTo(6, ScreenPanel.theSplitter.getRect().height);
 	} else {
 	    // Hide the splitterbar and set width to 0
-	    split.theSplitter.modify(Invisible, 0);
-	    split.theSplitter.resizeTo(0, split.theSplitter.getRect().height);
+	    ScreenPanel.theSplitter.modify(Invisible, 0);
+	    ScreenPanel.theSplitter.resizeTo(0, ScreenPanel.theSplitter.getRect().height);
 	}
-	split.theSplitter.doOpenClose(cacheTourVisible);
+	ScreenPanel.theSplitter.doOpenClose(cacheTourVisible);
     }
 
     public boolean addCache(String wayPoint) {

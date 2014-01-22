@@ -191,12 +191,25 @@ public final class GotoPanel extends CellPanel {
 	rosePanel.addLast(icRose, STRETCH, FILL);
 
 	// add Panels
-	if (!Preferences.itself().tabsAtTop)
-	    this.addLast(buttonPanel, HSTRETCH, HFILL);
+
+	if (Preferences.itself().tabsAtTop) {
+	    if (Preferences.itself().menuAtTab)
+		this.addLast(buttonPanel, HSTRETCH, HFILL);
+	} else {
+	    if (!Preferences.itself().menuAtTab)
+		this.addLast(buttonPanel, HSTRETCH, HFILL);
+	}
+
 	this.addLast(coordsPanel, HSTRETCH, HFILL);
 	this.addLast(rosePanel);
-	if (Preferences.itself().tabsAtTop)
-	    this.addLast(buttonPanel, HSTRETCH, HFILL);
+
+	if (Preferences.itself().tabsAtTop) {
+	    if (!Preferences.itself().menuAtTab)
+		this.addLast(buttonPanel, HSTRETCH, HFILL);
+	} else {
+	    if (Preferences.itself().menuAtTab)
+		this.addLast(buttonPanel, HSTRETCH, HFILL);
+	}
 
     }
 

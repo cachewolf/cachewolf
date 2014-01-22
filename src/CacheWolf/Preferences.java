@@ -21,6 +21,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 package CacheWolf;
 
+import CacheWolf.controls.GuiImageBroker;
 import CacheWolf.controls.InfoBox;
 import CacheWolf.database.CWPoint;
 import CacheWolf.navi.Metrics;
@@ -32,6 +33,8 @@ import CacheWolf.utils.STRreplace;
 import CacheWolf.utils.SafeXML;
 import ewe.filechooser.FileChooser;
 import ewe.filechooser.FileChooserBase;
+import ewe.fx.Color;
+import ewe.fx.DrawnIcon;
 import ewe.io.BufferedWriter;
 import ewe.io.File;
 import ewe.io.FileBase;
@@ -79,6 +82,15 @@ public class Preferences extends MinML {
     private Hashtable filterList = new Hashtable(15);
     /** screen is big enough to hold additional information like cache notes */
     public boolean isBigScreen;
+
+    /** True if don't use tabs for program navigation */
+    public boolean noTabs = true;
+    /** True if the tabs are to be displayed at the top of the screen */
+    public boolean tabsAtTop = true;
+    public boolean menuAtTab = true;
+    /** True if the status bar is to be displayed (hidden if false) */
+    public boolean showStatus = true;
+
     /** display text (on buttons ...) else display icons. */
     public boolean useText = true;
     /** display icons (on buttons ...) else display text. */
@@ -231,13 +243,6 @@ public class Preferences extends MinML {
     public boolean logGPS = false;
     /** Timer for logging GPS data */
     public String logGPSTimer = "5";
-
-    /** True if don't use tabs for program navigation */
-    public boolean noTabs = true;
-    /** True if the tabs are to be displayed at the top of the screen */
-    public boolean tabsAtTop = true;
-    /** True if the status bar is to be displayed (hidden if false) */
-    public boolean showStatus = true;
     /** True if the application can be closed by clicking on the close button in the top line. This can be set to avoid accidental closing of the application */
     public boolean hasCloseButton = true;
     /** True if the SIP is always visible */
@@ -300,7 +305,7 @@ public class Preferences extends MinML {
      */
     public int deleteDetails = 5;
     /** The locale code (DE, EN, ...) */
-    public String language = "";
+    public String language = "Auto";
     /** The metric system to use */
     public int metricSystem = Metrics.METRIC;
     // /** Load updated caches while spidering */
@@ -396,6 +401,7 @@ public class Preferences extends MinML {
      * Method to open and parse the config file (pref.xml). Results are stored in the public variables of this class. If you want to specify a non default config file call setPathToConfigFile() first.
      */
     public void readPrefFile() {
+	MyLocale.language = language;
 	if (pathToConfigFile == null)
 	    setPathToConfigFile(null); // this sets the default value
 	try {
@@ -415,11 +421,9 @@ public class Preferences extends MinML {
 	    if (f.mkdirs()) {
 		setMapsBaseDir(mapsBaseDir);
 	    }
-
-	    MainForm.profile.name = lastProfile;
-	    MainForm.profile.dataDir = absoluteBaseDir + lastProfile + "/";
 	    savePreferences();
 
+	    setInfoBoxSize();
 	    new InfoBox(MyLocale.getMsg(327, "Information"), MyLocale.getMsg(176, "First start - using default preferences \n For experts only: \n Could not read preferences file:\n") + pathToConfigFile).wait(FormBase.OKB);
 	} catch (Exception e) {
 	    if (e instanceof NullPointerException)
@@ -427,7 +431,34 @@ public class Preferences extends MinML {
 	    else
 		log("Error reading pref.xml: " + lastName, e);
 	}
+
+	// Resize the Close und Ok-Buttons of all Forms. This is just a test for the PDA Versions:
+	FormBase.close = new DrawnIcon(DrawnIcon.CROSS, fontSize, fontSize, new Color(0, 0, 0));
+	FormBase.tick = new DrawnIcon(DrawnIcon.TICK, fontSize, fontSize, new Color(0, 128, 0));
+	FormBase.cross = new DrawnIcon(DrawnIcon.CROSS, fontSize, fontSize, new Color(128, 0, 0));
+	GuiImageBroker.useText = useText;
+	GuiImageBroker.useIcons = useIcons;
+	GuiImageBroker.useBigIcons = useBigIcons;
+	GuiImageBroker.leftIcons = leftIcons;
 	isBigScreen = (MyLocale.getScreenWidth() >= 400) && (MyLocale.getScreenHeight() >= 600);
+	setInfoBoxSize(); // init InfoBox
+	HttpConnection.setProxy(this.myproxy, Common.parseInt(this.myproxyport), this.proxyActive);
+	MyLocale.language = language;
+    }
+
+    private void setInfoBoxSize() {
+	// InfoBox Size
+	int psx = fontSize * 16;
+	int psy = fontSize * 12;
+	if (preferences.useBigIcons) {
+	    psx = Math.min(psx + 48, MyLocale.getScreenWidth());
+	    psy = Math.min(psy + 16, MyLocale.getScreenHeight());
+	} else {
+	    psx = Math.min(psx, MyLocale.getScreenWidth());
+	    psy = Math.min(psy, MyLocale.getScreenHeight());
+	}
+	InfoBox.preferredWidth = psx;
+	InfoBox.preferredHeight = psy;
     }
 
     /**
@@ -575,7 +606,8 @@ public class Preferences extends MinML {
 	    descShowImg = Boolean.valueOf(atts.getValue("showimages")).booleanValue();
 	} else if (name.equals("screen")) {
 	    noTabs = Boolean.valueOf(atts.getValue("noTabs")).booleanValue();
-	    tabsAtTop = Boolean.valueOf(atts.getValue("tabsattop")).booleanValue();
+	    tabsAtTop = Boolean.valueOf(atts.getValue("tabsAtTop")).booleanValue();
+	    menuAtTab = Boolean.valueOf(atts.getValue("menuAtTab")).booleanValue();
 	    showStatus = Boolean.valueOf(atts.getValue("showstatus")).booleanValue();
 	    if (atts.getValue("hasclosebutton") != null)
 		hasCloseButton = Boolean.valueOf(atts.getValue("hasclosebutton")).booleanValue();
@@ -757,8 +789,6 @@ public class Preferences extends MinML {
 	    SortingGroupedByCache = tmp != null && tmp.equalsIgnoreCase("true");
 	} else if (name.equals("MobileGui"))
 	    mobileGUI = Boolean.valueOf(atts.getValue("value")).booleanValue();
-	HttpConnection.setProxy(this.myproxy, Common.parseInt(this.myproxyport), this.proxyActive);
-	MyLocale.language = language;
     }
 
     public void characters(char ch[], int start, int length) {
@@ -858,7 +888,8 @@ public class Preferences extends MinML {
 
 		    + "    <screen" //
 		    + " noTabs=\"" + noTabs + "\"" //
-		    + " tabsattop=\"" + tabsAtTop + "\"" //
+		    + " tabsAtTop=\"" + tabsAtTop + "\"" //
+		    + " menuAtTab=\"" + menuAtTab + "\"" //
 		    + " showstatus=\"" + showStatus + "\"" //
 		    + " hasclosebutton=\"" + hasCloseButton + "\"" //
 		    + " h=\"" + myAppHeight + "\"" //
