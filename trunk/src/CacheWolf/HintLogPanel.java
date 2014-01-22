@@ -107,23 +107,43 @@ public class HintLogPanel extends CellPanel {
 	    initialHintHeight = Preferences.itself().DEFAULT_INITIAL_HINT_HEIGHT;
 	hintpane.setPreferredSize(100, initialHintHeight);
 
-	if (!Preferences.itself().tabsAtTop)
-	    hintpane.addLast(codeButtonPanel, DONTSTRETCH, FILL);
+	if (Preferences.itself().tabsAtTop) {
+	    if (Preferences.itself().menuAtTab)
+		hintpane.addLast(codeButtonPanel, DONTSTRETCH, FILL);
+	} else {
+	    if (!Preferences.itself().menuAtTab)
+		hintpane.addLast(codeButtonPanel, DONTSTRETCH, FILL);
+	}
+
 	ScrollBarPanel sbphint = new MyScrollBarPanel(hint);
 	hint.modify(ControlConstants.NotEditable, 0);
 	hintpane.addLast(sbphint, CellConstants.STRETCH, (CellConstants.FILL | CellConstants.WEST));
-	if (Preferences.itself().tabsAtTop)
-	    hintpane.addLast(codeButtonPanel, DONTSTRETCH, FILL);
 
-	if (!Preferences.itself().tabsAtTop)
-	    logpane.addLast(logButtonPanel, DONTSTRETCH, FILL);
+	if (Preferences.itself().tabsAtTop) {
+	    if (!Preferences.itself().menuAtTab)
+		hintpane.addLast(codeButtonPanel, DONTSTRETCH, FILL);
+	    else
+		logpane.addLast(logButtonPanel, DONTSTRETCH, FILL);
+	} else {
+	    if (Preferences.itself().menuAtTab)
+		hintpane.addLast(codeButtonPanel, DONTSTRETCH, FILL);
+	    else
+		logpane.addLast(logButtonPanel, DONTSTRETCH, FILL);
+	}
+
 	sbplog = new MyScrollBarPanel(htmlImagDisp, ScrollablePanel.NeverShowHorizontalScrollers);
 	Rect r = new Rect(new Dimension(Preferences.itself().myAppWidth - sbplog.vbar.getRect().width, 20));
 	htmlImagDisp.virtualSize = r;
 	htmlImagDisp.checkScrolls();
 	logpane.addLast(sbplog.getScrollablePanel(), CellConstants.STRETCH, CellConstants.FILL);
-	if (Preferences.itself().tabsAtTop)
-	    logpane.addLast(logButtonPanel, DONTSTRETCH, FILL);
+
+	if (Preferences.itself().tabsAtTop) {
+	    if (!Preferences.itself().menuAtTab)
+		logpane.addLast(logButtonPanel, DONTSTRETCH, FILL);
+	} else {
+	    if (Preferences.itself().menuAtTab)
+		logpane.addLast(logButtonPanel, DONTSTRETCH, FILL);
+	}
 
 	this.addLast(split);
 

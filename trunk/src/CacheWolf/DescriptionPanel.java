@@ -62,11 +62,25 @@ public class DescriptionPanel extends CellPanel {
 	ScrollBarPanel sbp = new MyScrollBarPanel(disp, 0);
 	final CellPanel descP = new CellPanel();
 	descP.addLast(sbp);
-	if (!Preferences.itself().tabsAtTop)
-	    this.addLast(buttonPanel, HSTRETCH, HFILL);
+
+	if (Preferences.itself().tabsAtTop) {
+	    if (Preferences.itself().menuAtTab)
+		this.addLast(buttonPanel, HSTRETCH, HFILL);
+	} else {
+	    if (!Preferences.itself().menuAtTab)
+		this.addLast(buttonPanel, HSTRETCH, HFILL);
+	}
+
 	this.addLast(descP);
-	if (Preferences.itself().tabsAtTop)
-	    this.addLast(buttonPanel, HSTRETCH, HFILL);
+
+	if (Preferences.itself().tabsAtTop) {
+	    if (!Preferences.itself().menuAtTab)
+		this.addLast(buttonPanel, HSTRETCH, HFILL);
+	} else {
+	    if (Preferences.itself().menuAtTab)
+		this.addLast(buttonPanel, HSTRETCH, HFILL);
+	}
+
 	clear();
     }
 

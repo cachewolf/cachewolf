@@ -218,8 +218,13 @@ public class DetailsPanel extends CellPanel {
 	btnHiddenDate = GuiImageBroker.getButton("", "calendar");
 	btnHiddenDate.setToolTip(MyLocale.getMsg(31415, "Set hidden date"));
 
-	if (!Preferences.itself().tabsAtTop)
-	    addLast(createToolsPanel(), HSTRETCH, HFILL);//.setTag(SPAN, new Dimension(3, 1)); //, DONTSTRETCH, FILL
+	if (Preferences.itself().tabsAtTop) {
+	    if (Preferences.itself().menuAtTab)
+		addLast(createToolsPanel(), HSTRETCH, HFILL);
+	} else {
+	    if (!Preferences.itself().menuAtTab)
+		addLast(createToolsPanel(), HSTRETCH, HFILL);
+	}
 
 	helperPanel1.addNext(chcType, HSTRETCH, (HFILL | RIGHT));
 	helperPanel1.addLast(btnDiff, DONTSTRETCH, (DONTFILL | EAST));
@@ -276,8 +281,13 @@ public class DetailsPanel extends CellPanel {
 	    waypointNotes.modify(ControlConstants.NotEditable, 0);
 	    addLast(new MyScrollBarPanel(waypointNotes), STRETCH, FILL);
 	}
-	if (Preferences.itself().tabsAtTop)
-	    addLast(createToolsPanel(), HSTRETCH, HFILL);// .setTag(SPAN, new Dimension(3, 1)); //, DONTSTRETCH, FILL
+	if (Preferences.itself().tabsAtTop) {
+	    if (!Preferences.itself().menuAtTab)
+		addLast(createToolsPanel(), HSTRETCH, HFILL);
+	} else {
+	    if (Preferences.itself().menuAtTab)
+		addLast(createToolsPanel(), HSTRETCH, HFILL);
+	}
 
     }
 

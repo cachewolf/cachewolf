@@ -72,11 +72,23 @@ public class ImagePanel extends CellPanel {
 	pnlTools.equalWidths = true;
 	pnlTools.addLast(btnAddPicture);
 
-	if (!Preferences.itself().tabsAtTop)
-	    addLast(pnlTools, DONTSTRETCH, FILL).setTag(SPAN, new Dimension(3, 1));
+	if (Preferences.itself().tabsAtTop) {
+	    if (Preferences.itself().menuAtTab)
+		addLast(pnlTools, DONTSTRETCH, FILL).setTag(SPAN, new Dimension(3, 1));
+	} else {
+	    if (!Preferences.itself().menuAtTab)
+		addLast(pnlTools, DONTSTRETCH, FILL).setTag(SPAN, new Dimension(3, 1));
+	}
+
 	addLast(imagesPanel, STRETCH, FILL);
-	if (Preferences.itself().tabsAtTop)
-	    addLast(pnlTools, DONTSTRETCH, FILL).setTag(SPAN, new Dimension(3, 1));
+
+	if (Preferences.itself().tabsAtTop) {
+	    if (!Preferences.itself().menuAtTab)
+		addLast(pnlTools, DONTSTRETCH, FILL).setTag(SPAN, new Dimension(3, 1));
+	} else {
+	    if (Preferences.itself().menuAtTab)
+		addLast(pnlTools, DONTSTRETCH, FILL).setTag(SPAN, new Dimension(3, 1));
+	}
     }
 
     public void clearImages() {
