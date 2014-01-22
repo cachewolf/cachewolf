@@ -44,6 +44,11 @@ public final class GuiImageBroker {
     static final String basedir = FileBase.getProgramDirectory() + "/symbols/";
     static String extension;
 
+    public static boolean useText = true;
+    public static boolean useIcons = true;
+    public static boolean useBigIcons = true;
+    public static boolean leftIcons = false;
+
     public static Image found;
     public static Image disabled;
     public static Image archived;
@@ -52,7 +57,9 @@ public final class GuiImageBroker {
     public static Image owned;
     public static Image dnf;
 
-    private static Preferences preferences;
+    private static void log(String text) {
+	Preferences.itself().log(text); // log should work without reading preferences
+    }
 
     /**
      * Replaces the build-in symbols by images stored in /symbols:
@@ -61,7 +68,6 @@ public final class GuiImageBroker {
      * Images are NOT checked for size etc.
      */
     public static void customizedSymbols() {
-	preferences = Preferences.itself();
 	setExtension();
 	found = getCacheTypeImage("found");
 	disabled = getCacheTypeImage("disabled");
@@ -77,7 +83,7 @@ public final class GuiImageBroker {
 	File f = new File(basedir + icon + ".png");
 	if (f.exists()) {
 	    in = f.getAbsolutePath();
-	    preferences.log("using image " + in);
+	    log("using image " + in);
 	} else {
 	    in = icon + ".png";
 	}
@@ -93,7 +99,7 @@ public final class GuiImageBroker {
 	File f = new File(basedir + icon + "_map.png");
 	if (f.exists()) {
 	    in = f.getAbsolutePath();
-	    preferences.log("using image " + in);
+	    log("using image " + in);
 	} else {
 	    in = icon + ".png";
 	}
@@ -109,7 +115,7 @@ public final class GuiImageBroker {
      */
     private static void setExtension() {
 	if (extension == null) {
-	    if (preferences.useBigIcons)
+	    if (useBigIcons)
 		extension = "_vga.png";
 	    else
 		extension = ".png";
@@ -121,7 +127,7 @@ public final class GuiImageBroker {
 	File f = new File(basedir + icon + extension);
 	if (f.exists()) {
 	    in = f.getAbsolutePath();
-	    preferences.log("using image " + in);
+	    log("using image " + in);
 	} else {
 	    in = icon + extension;
 	}
@@ -129,14 +135,14 @@ public final class GuiImageBroker {
     }
 
     private static String getText(String text) {
-	if (!preferences.useText) {
+	if (!useText) {
 	    text = "";
 	}
 	return text;
     }
 
     public static Image getImage(String icon) {
-	if (preferences.useIcons)
+	if (useIcons)
 	    return new Image(getImageName(icon));
 	else
 	    // simply using a small transparent image
@@ -194,8 +200,8 @@ public final class GuiImageBroker {
 
     public static mButton getButton(String text, String icon) {
 	mButton btn;
-	if (preferences.useIcons) {
-	    if (preferences.leftIcons) {
+	if (useIcons) {
+	    if (leftIcons) {
 		btn = new mButton(getText(text));
 		// Graphics.Up, Graphics.Down, Graphics.Right, Graphics.Left // über, unter, rechts, links vom Icon
 		btn.textPosition = Graphics.Right;
@@ -222,7 +228,7 @@ public final class GuiImageBroker {
 
     public static PullDownMenu getPullDownMenu(String text, String icon, MenuItem[] menuItems) {
 	PullDownMenu pdm;
-	if (preferences.leftIcons) {
+	if (leftIcons) {
 	    pdm = new PullDownMenu(getText(text), new Menu(menuItems, null));
 	    pdm.image = getImage(icon);
 	    pdm.textPosition = Graphics.Right; // rechts vom Icon

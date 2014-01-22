@@ -90,7 +90,7 @@ public class PreferencesScreen extends Form {
     mChoice inpLanguage, inpMetric, inpSpiderUpdates, chcGarminPort;
     mInput DataDir, MapsDir, Proxy, ProxyPort, Alias, Alias2, Browser, fontName, fontSize, inpLogsPerPage, inpGcMemberID, inpUserID;
     mCheckBox chkAutoLoad, chkShowDeletedImg;
-    mCheckBox chkNoTabs, chkTabsAtTop, chkShowStatus, chkHasCloseButton, chkUseRadar, chkUseText, chkUseIcons, chkUseBigIcons;
+    mCheckBox chkNoTabs, chkTabsAtTop, chkMenuAtTab, chkShowStatus, chkHasCloseButton, chkUseRadar, chkUseText, chkUseIcons, chkUseBigIcons;
     mCheckBox chkSynthShort, chkProxyActive, chkDescShowImg, chkAddDetailsToWaypoint, chkAddDetailsToName, chkSortingGroupedByCache, chkDebug, chkPM;
     mCheckBox chkCheckLog, chkCheckDTS, chkCheckTBs;
     mCheckBox chkOverwriteLogs;
@@ -280,6 +280,8 @@ public class PreferencesScreen extends Form {
 	chkNoTabs.setState(Preferences.itself().noTabs);
 	pnlScreen.addLast(chkTabsAtTop = new mCheckBox(MyLocale.getMsg(627, "Tabs at top")), DONTSTRETCH, DONTFILL | LEFT);
 	chkTabsAtTop.setState(Preferences.itself().tabsAtTop);
+	pnlScreen.addLast(chkMenuAtTab = new mCheckBox(MyLocale.getMsg(626, "Menubuttons under/over Tabselection")), DONTSTRETCH, DONTFILL | LEFT);
+	chkMenuAtTab.setState(Preferences.itself().menuAtTab);
 	pnlScreen.addLast(chkShowStatus = new mCheckBox(MyLocale.getMsg(628, "Status")), DONTSTRETCH, DONTFILL | LEFT);
 	chkShowStatus.setState(Preferences.itself().showStatus);
 
@@ -461,6 +463,7 @@ public class PreferencesScreen extends Form {
 		Preferences.itself().garminGPSBabelOptions = chkSynthShort.state ? "-s" : "";
 		Preferences.itself().noTabs = chkNoTabs.getState();
 		Preferences.itself().tabsAtTop = chkTabsAtTop.getState();
+		Preferences.itself().menuAtTab = chkMenuAtTab.getState();
 		Preferences.itself().showStatus = chkShowStatus.getState();
 		Preferences.itself().hasCloseButton = chkHasCloseButton.getState();
 		Preferences.itself().useText = chkUseText.getState();

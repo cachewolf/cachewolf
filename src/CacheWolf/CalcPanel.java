@@ -84,9 +84,13 @@ public final class CalcPanel extends CellPanel {
 	btnGoto.setToolTip(MyLocale.getMsg(326, "Set as destination and show Compass View"));
 	buttonPanel.addLast(btnSave = GuiImageBroker.getButton(MyLocale.getMsg(311, "Create Waypoint"), "newwpt"));
 	btnSave.setToolTip(MyLocale.getMsg(311, "Create Waypoint"));
-	if (!Preferences.itself().tabsAtTop)
-	    this.addLast(buttonPanel, CellConstants.HSTRETCH, CellConstants.HFILL);
-
+	if (Preferences.itself().tabsAtTop) {
+	    if (Preferences.itself().menuAtTab)
+		this.addLast(buttonPanel, CellConstants.HSTRETCH, CellConstants.HFILL);
+	} else {
+	    if (!Preferences.itself().menuAtTab)
+		this.addLast(buttonPanel, CellConstants.HSTRETCH, CellConstants.HFILL);
+	}
 	CellPanel TopP = new CellPanel();
 	// Format selection for coords context menu
 	MenuItem miCooformat[] = new MenuItem[TransformCoordinates.localSystems.length + 3];
@@ -145,8 +149,13 @@ public final class CalcPanel extends CellPanel {
 	// add Panels
 	this.addLast(TopP, HSTRETCH, HFILL);// .setTag(SPAN,new Dimension(4,1));
 	this.addLast(BottomP); //, VSTRETCH, VFILL | LEFT // .setTag(SPAN,new Dimension(4,1));
-	if (Preferences.itself().tabsAtTop)
-	    this.addLast(buttonPanel, CellConstants.HSTRETCH, CellConstants.HFILL);
+	if (Preferences.itself().tabsAtTop) {
+	    if (!Preferences.itself().menuAtTab)
+		this.addLast(buttonPanel, CellConstants.HSTRETCH, CellConstants.HFILL);
+	} else {
+	    if (Preferences.itself().menuAtTab)
+		this.addLast(buttonPanel, CellConstants.HSTRETCH, CellConstants.HFILL);
+	}
     }
 
     private final int getLocalCooSystem() {
