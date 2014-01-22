@@ -380,6 +380,8 @@ public class TablePanelMenu extends MenuBar {
 	    // cacheDB.clear();
 	    // MainForm.profile.readIndex();
 	}
+	spider.setOldGCLanguage();
+
 	infB.close(0);
 	MainForm.profile.saveIndex(Profile.SHOW_PROGRESS_BAR);
 	MainForm.profile.restoreFilter();
@@ -528,7 +530,7 @@ public class TablePanelMenu extends MenuBar {
 		cacheDB.clear();
 		MainForm.profile.readIndex();
 		tablePanel.resetModel();
-		Preferences.itself().setOldGCLanguage();
+		spGC.setOldGCLanguage();
 	    }
 	    if (mev.selectedItem == spiderRoute) {
 		GCImporter spGC = new GCImporter();
@@ -537,7 +539,7 @@ public class TablePanelMenu extends MenuBar {
 		cacheDB.clear();
 		MainForm.profile.readIndex();
 		tablePanel.resetModel();
-		Preferences.itself().setOldGCLanguage();
+		spGC.setOldGCLanguage();
 	    }
 	    if (mev.selectedItem == spiderAllFinds) {
 		GCImporter spGC = new GCImporter();
@@ -546,7 +548,7 @@ public class TablePanelMenu extends MenuBar {
 		cacheDB.clear();
 		MainForm.profile.readIndex();
 		tablePanel.resetModel();
-		Preferences.itself().setOldGCLanguage();
+		spGC.setOldGCLanguage();
 	    }
 	    if (mev.selectedItem == loadGCVotes) {
 		if (sGCV == null)
@@ -589,7 +591,6 @@ public class TablePanelMenu extends MenuBar {
 		MainForm.profile.setShowBlacklisted(false);
 		filtBlack.modifiers = MainForm.profile.showBlacklisted() ? filtBlack.modifiers | MenuItem.Checked : filtBlack.modifiers & ~MenuItem.Checked;
 		tablePanel.resetModel();
-		Preferences.itself().setOldGCLanguage();
 	    }
 	    if (mev.selectedItem == loadOC) {
 		OCXMLImporter oc = new OCXMLImporter();
@@ -606,7 +607,6 @@ public class TablePanelMenu extends MenuBar {
 	    }
 	    if (mev.selectedItem == update) {
 		updateSelectedCaches();
-		Preferences.itself().setOldGCLanguage();
 	    }
 	    // /////////////////////////////////////////////////////////////////////
 	    // subMenu for export, part of "Application" menu
@@ -915,14 +915,17 @@ public class TablePanelMenu extends MenuBar {
 	    // /////////////////////////////////////////////////////////////////////
 	    if (mev.selectedItem == about) {
 		InfoScreen is = new InfoScreen(MyLocale.getLocalizedFile("info.html"), MyLocale.getMsg(117, "About"), true);
+		is.setPreferredSize(Preferences.itself().myAppWidth, Preferences.itself().myAppHeight);
 		is.execute(MainForm.itself.getFrame(), Gui.CENTER_FRAME);
 	    }
 	    if (mev.selectedItem == legend) {
 		InfoScreen is = new InfoScreen(MyLocale.getLocalizedFile("legende.html"), MyLocale.getMsg(155, "Legend"), true);
+		is.setPreferredSize(Preferences.itself().myAppWidth, Preferences.itself().myAppHeight);
 		is.execute(MainForm.itself.getFrame(), Gui.CENTER_FRAME);
 	    }
 	    if (mev.selectedItem == wolflang) {
 		InfoScreen is = new InfoScreen(MyLocale.getLocalizedFile("wolflang.html"), MyLocale.getMsg(118, "WolfLanguage"), true);
+		is.setPreferredSize(Preferences.itself().myAppWidth, Preferences.itself().myAppHeight);
 		is.execute(MainForm.itself.getFrame(), Gui.CENTER_FRAME);
 	    }
 	    if (mev.selectedItem == sysinfo) {
@@ -987,8 +990,10 @@ public class TablePanelMenu extends MenuBar {
 		sb.append(Version.getReleaseDetailed());
 		sb.append("<br>");
 		InfoScreen is = new InfoScreen(sb.toString(), "System", false);
-		Preferences.itself().log(STRreplace.replace(sb.toString(), "<br>", Preferences.NEWLINE), null);
+		is.setPreferredSize(Preferences.itself().myAppWidth, Preferences.itself().myAppHeight);
 		is.execute(MainForm.itself.getFrame(), Gui.CENTER_FRAME);
+		// Log for debug purposes 
+		Preferences.itself().log(STRreplace.replace(sb.toString(), "<br>", Preferences.NEWLINE), null);
 	    }
 	    if (mev.selectedItem == chkVersion) {
 		new InfoBox(MyLocale.getMsg(178, "Version Checking"), Version.getUpdateMessage()).wait(FormBase.OKB);

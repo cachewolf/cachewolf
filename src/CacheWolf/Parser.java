@@ -439,7 +439,7 @@ public class Parser {
     }
 
     private String funcCp() {
-	return MainTab.itself.navigate.gpsPos.toString();
+	return Navigate.gpsPos.toString();
     }
 
     /**

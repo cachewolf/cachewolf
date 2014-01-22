@@ -22,8 +22,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 package CacheWolf.controls;
 
 import CacheWolf.Preferences;
-import CacheWolf.database.CacheType;
-import CacheWolf.utils.FileBugfix;
 import ewe.fx.Graphics;
 import ewe.fx.IImage;
 import ewe.fx.IconAndText;
@@ -46,77 +44,64 @@ public final class GuiImageBroker {
     static final String basedir = FileBase.getProgramDirectory() + "/symbols/";
     static String extension;
 
-    public static Image found = new Image("found.png");
-    public static Image disabled = new Image("disabled.png");
-    public static Image archived = new Image("archived.png");
-    public static Image solved = new Image("solved.png");
-    public static Image bonus = new Image("bonus.png");
-    public static Image owned = new Image("owned.png");
-    public static Image dnf = new Image("dnf.png");
+    public static Image found;
+    public static Image disabled;
+    public static Image archived;
+    public static Image solved;
+    public static Image bonus;
+    public static Image owned;
+    public static Image dnf;
 
-    private GuiImageBroker() {
-    }
+    private static Preferences preferences;
 
     /**
-     * Replaces the build-in symbols by images stored in /symbols: If the sub directory symbols exists in CW-directory *.png-files are read in and roughly checked for validity (some names must be convertible to integers between 0 and 21). For every
-     * valid file x.png the corresponding typeImages[x] is replaced by the image in x.png. Images are NOT checked for size etc.
+     * Replaces the build-in symbols by images stored in /symbols:
+     * If the sub directory symbols exists in CW-directory *.png-files are read in and roughly checked for validity. 
+     * For every valid file x.png the corresponding typeImages[x] is replaced by the image in x.png. 
+     * Images are NOT checked for size etc.
      */
     public static void customizedSymbols() {
+	preferences = Preferences.itself();
 	setExtension();
-	final FileBugfix dir = new FileBugfix(basedir);
-	if (dir.isDirectory()) {
-	    int id;
-	    boolean size = false;
-	    String name = "";
-	    String[] pngFiles;
-	    pngFiles = dir.list("*.png", FileBase.LIST_FILES_ONLY);
-	    Preferences.itself().log("Nr. of own symbols (png-files) : " + pngFiles.length);
-	    for (int i = 0; i < pngFiles.length; i++) {
-		name = pngFiles[i].substring(0, pngFiles[i].length() - 4).toLowerCase();
-		if (name.endsWith("size")) {
-		    size = true;
-		    name = name.substring(0, name.length() - 4);
-		} else {
-		    if (name.equals("disabled")) {
-			disabled = new Image(basedir + pngFiles[i]);
-		    }
-		    if (name.equals("archived")) {
-			archived = new Image(basedir + pngFiles[i]);
-		    }
-		    if (name.equals("solved")) {
-			solved = new Image(basedir + pngFiles[i]);
-		    }
-		    if (name.equals("bonus")) {
-			bonus = new Image(basedir + pngFiles[i]);
-		    }
-		    if (name.equals("owned")) {
-			owned = new Image(basedir + pngFiles[i]);
-		    }
-		    if (name.equals("dnf")) {
-			dnf = new Image(basedir + pngFiles[i]);
-		    }
-		    if (name.equals("found")) {
-			found = new Image(basedir + pngFiles[i]);
-		    }
-		}
-		try {
-		    id = Integer.parseInt(name);
-		} catch (final Exception E) {
-		    id = -1; // filename invalid for symbols
-		}
-		if (0 <= id && id <= CacheType.maxCWCType) {
-		    final String s = basedir + pngFiles[i];
-		    Preferences.itself().log("own symbol: " + (i + 1) + " = " + pngFiles[i]);
-		    if (size) {
-			CacheType.setMapImage((byte) id, new Image(s));
-			size = false;
+	found = getCacheTypeImage("found");
+	disabled = getCacheTypeImage("disabled");
+	archived = getCacheTypeImage("archived");
+	solved = getCacheTypeImage("solved");
+	bonus = getCacheTypeImage("bonus");
+	owned = getCacheTypeImage("owned");
+	dnf = getCacheTypeImage("dnf");
+    }
 
-		    } else {
-			CacheType.setTypeImage((byte) id, new Image(s));
-		    }
-		}
-	    }
+    private static String getCacheTypeImageName(String icon) {
+	String in;
+	File f = new File(basedir + icon + ".png");
+	if (f.exists()) {
+	    in = f.getAbsolutePath();
+	    preferences.log("using image " + in);
+	} else {
+	    in = icon + ".png";
 	}
+	return in;
+    }
+
+    public static Image getCacheTypeImage(String icon) {
+	return new Image(getCacheTypeImageName(icon));
+    }
+
+    private static String getMapCacheTypeImageName(String icon) {
+	String in;
+	File f = new File(basedir + icon + "_map.png");
+	if (f.exists()) {
+	    in = f.getAbsolutePath();
+	    preferences.log("using image " + in);
+	} else {
+	    in = icon + ".png";
+	}
+	return in;
+    }
+
+    public static Image getMapCacheTypeImage(String icon) {
+	return new Image(getMapCacheTypeImageName(icon));
     }
 
     /**
@@ -124,7 +109,7 @@ public final class GuiImageBroker {
      */
     private static void setExtension() {
 	if (extension == null) {
-	    if (Preferences.itself().useBigIcons)
+	    if (preferences.useBigIcons)
 		extension = "_vga.png";
 	    else
 		extension = ".png";
@@ -136,7 +121,7 @@ public final class GuiImageBroker {
 	File f = new File(basedir + icon + extension);
 	if (f.exists()) {
 	    in = f.getAbsolutePath();
-	    Preferences.itself().log("using image " + in);
+	    preferences.log("using image " + in);
 	} else {
 	    in = icon + extension;
 	}
@@ -144,14 +129,14 @@ public final class GuiImageBroker {
     }
 
     private static String getText(String text) {
-	if (!Preferences.itself().useText) {
+	if (!preferences.useText) {
 	    text = "";
 	}
 	return text;
     }
 
     public static Image getImage(String icon) {
-	if (Preferences.itself().useIcons)
+	if (preferences.useIcons)
 	    return new Image(getImageName(icon));
 	else
 	    // simply using a small transparent image
@@ -209,8 +194,8 @@ public final class GuiImageBroker {
 
     public static mButton getButton(String text, String icon) {
 	mButton btn;
-	if (Preferences.itself().useIcons) {
-	    if (Preferences.itself().leftIcons) {
+	if (preferences.useIcons) {
+	    if (preferences.leftIcons) {
 		btn = new mButton(getText(text));
 		// Graphics.Up, Graphics.Down, Graphics.Right, Graphics.Left // über, unter, rechts, links vom Icon
 		btn.textPosition = Graphics.Right;
@@ -237,7 +222,7 @@ public final class GuiImageBroker {
 
     public static PullDownMenu getPullDownMenu(String text, String icon, MenuItem[] menuItems) {
 	PullDownMenu pdm;
-	if (Preferences.itself().leftIcons) {
+	if (preferences.leftIcons) {
 	    pdm = new PullDownMenu(getText(text), new Menu(menuItems, null));
 	    pdm.image = getImage(icon);
 	    pdm.textPosition = Graphics.Right; // rechts vom Icon

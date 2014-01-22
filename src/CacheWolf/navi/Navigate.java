@@ -29,11 +29,11 @@ import org.json.JSONObject;
 
 import CacheWolf.MainForm;
 import CacheWolf.MainTab;
-import CacheWolf.utils.MyLocale;
 import CacheWolf.Preferences;
 import CacheWolf.controls.InfoBox;
 import CacheWolf.database.CWPoint;
 import CacheWolf.database.CacheHolder;
+import CacheWolf.utils.MyLocale;
 import ewe.fx.Color;
 import ewe.io.IOException;
 import ewe.io.SerialPort;
@@ -53,14 +53,14 @@ import ewe.util.mString;
  */
 public class Navigate {
     public static Navigate itself;
-    public CWPoint destination = new CWPoint();
+    public static int luminary = SkyOrientation.SUN;
+    public static CWGPSPoint gpsPos = new CWGPSPoint();
+    public static CWPoint destination = new CWPoint();
     public CacheHolder destinationCache;
     public boolean destinationIsCache = false;
-    public CWGPSPoint gpsPos = new CWGPSPoint();
     public Track curTrack = null;
     public Color trackColor = new Color(255, 0, 0); // red
     public CWPoint skyOrientationDir = new CWPoint();
-    public int luminary = SkyOrientation.SUN;
 
     public GotoPanel gotoPanel = null;
     private MovingMap movingMap = null;

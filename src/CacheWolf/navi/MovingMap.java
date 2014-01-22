@@ -23,7 +23,6 @@ package CacheWolf.navi;
 
 import CacheWolf.MainForm;
 import CacheWolf.MainTab;
-import CacheWolf.utils.MyLocale;
 import CacheWolf.Preferences;
 import CacheWolf.controls.ExecutePanel;
 import CacheWolf.controls.InfoBox;
@@ -39,6 +38,7 @@ import CacheWolf.database.CoordinatePoint;
 import CacheWolf.navi.touchControls.ICommandListener;
 import CacheWolf.navi.touchControls.MovingMapControls;
 import CacheWolf.utils.Common;
+import CacheWolf.utils.MyLocale;
 import CacheWolf.utils.STRreplace;
 import ewe.filechooser.FileChooser;
 import ewe.filechooser.FileChooserBase;
@@ -257,8 +257,8 @@ public final class MovingMap extends Form implements ICommandListener {
 	if (MainTab.itself.navigate.destinationIsCache) {
 	    destChanged(MainTab.itself.navigate.destinationCache);
 	} else {
-	    if (MainTab.itself.navigate.destination.isValid())
-		destChanged(MainTab.itself.navigate.destination);
+	    if (Navigate.destination.isValid())
+		destChanged(Navigate.destination);
 	}
 
 	ignoreGps = false;
@@ -273,19 +273,19 @@ public final class MovingMap extends Form implements ICommandListener {
 	    return;
 	// runMovingMap neccessary in case of multi-threaded Java-VM:
 	// ticked could be called during load of mmp
-	if ((fix > 0) && (MainTab.itself.navigate.gpsPos.getSats() >= 0)) {
+	if ((fix > 0) && (Navigate.gpsPos.getSats() >= 0)) {
 	    // TODO is getSats really necessary?
-	    directionArrows.setDirections((float) MainTab.itself.navigate.gpsPos.getBearing(MainTab.itself.navigate.destination), (float) MainTab.itself.navigate.skyOrientationDir.lonDec, (float) MainTab.itself.navigate.gpsPos.getBear());
+	    directionArrows.setDirections((float) Navigate.gpsPos.getBearing(Navigate.destination), (float) MainTab.itself.navigate.skyOrientationDir.lonDec, (float) Navigate.gpsPos.getBear());
 	    setGpsStatus(MovingMap.gotFix);
-	    updatePosition(MainTab.itself.navigate.gpsPos);
+	    updatePosition(Navigate.gpsPos);
 	    ShowLastAddedPoint(MainTab.itself.navigate.curTrack);
 	}
-	if (fix == 0 && MainTab.itself.navigate.gpsPos.getSats() == 0)
+	if (fix == 0 && Navigate.gpsPos.getSats() == 0)
 	    setGpsStatus(MovingMap.lostFix);
 	if (fix < 0)
 	    setGpsStatus(MovingMap.noGPSData);
-	controlsLayer.updateContent("hdop", Convert.toString(MainTab.itself.navigate.gpsPos.getHDOP()));
-	controlsLayer.updateContent("sats", Convert.toString(MainTab.itself.navigate.gpsPos.getSats()) + "/" + Convert.toString(MainTab.itself.navigate.gpsPos.getSatsInView()));
+	controlsLayer.updateContent("hdop", Convert.toString(Navigate.gpsPos.getHDOP()));
+	controlsLayer.updateContent("sats", Convert.toString(Navigate.gpsPos.getSats()) + "/" + Convert.toString(Navigate.gpsPos.getSatsInView()));
     }
 
     public void destChanged(CWPoint d) {
@@ -1925,8 +1925,8 @@ public final class MovingMap extends Form implements ICommandListener {
 
     private void manualSelectMap() {
 	CWPoint gpspos;
-	if (MainTab.itself.navigate.gpsPos.Fix > 0)
-	    gpspos = new CWPoint(MainTab.itself.navigate.gpsPos.latDec, MainTab.itself.navigate.gpsPos.lonDec);
+	if (Navigate.gpsPos.Fix > 0)
+	    gpspos = new CWPoint(Navigate.gpsPos.latDec, Navigate.gpsPos.lonDec);
 	else
 	    gpspos = null;
 	final ListBox manualSelectMap = new ListBox(maps, gpspos, getGotoPosWhere(), currentMap);
@@ -2071,10 +2071,10 @@ public final class MovingMap extends Form implements ICommandListener {
 	autoSelectMap = true;
 	forceMapLoad = true;
 	// showMap(); why this?
-	if (MainTab.itself.navigate.gpsPos.Fix <= 0)
+	if (Navigate.gpsPos.Fix <= 0)
 	    updatePosition(posCircle.where);
 	else
-	    updatePositionFromGps(MainTab.itself.navigate.gpsPos.getFix());
+	    updatePositionFromGps(Navigate.gpsPos.getFix());
     }
 
     private void zoom1to1() {

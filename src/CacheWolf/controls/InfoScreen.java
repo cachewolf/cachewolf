@@ -21,17 +21,14 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 package CacheWolf.controls;
 
-import CacheWolf.Preferences;
-import CacheWolf.utils.MyLocale;
 import ewe.io.FileReader;
-import ewe.ui.CellConstants;
 import ewe.ui.ControlEvent;
 import ewe.ui.Event;
 import ewe.ui.Form;
+import ewe.ui.FormBase;
 import ewe.ui.HtmlDisplay;
 import ewe.ui.ScrollBarPanel;
 import ewe.ui.ScrollablePanel;
-import ewe.ui.mButton;
 
 /**
  * This class displays an information screen. It loads the html text to display
@@ -43,12 +40,11 @@ import ewe.ui.mButton;
 public class InfoScreen extends Form {
 
     HtmlDisplay disp = new HtmlDisplay();
-    mButton btCancel;
+    ExecutePanel executePanel;
 
     public InfoScreen(String datei, String tit, boolean readFromFile) {
 	String myText = new String();
 	this.setTitle(tit);
-	this.setPreferredSize(Preferences.itself().myAppWidth, Preferences.itself().myAppHeight);
 	if (readFromFile == true) {
 	    try {
 		FileReader in = new FileReader(datei);
@@ -61,12 +57,12 @@ public class InfoScreen extends Form {
 	disp.setHtml(myText);
 	ScrollBarPanel sbp = new MyScrollBarPanel(disp, ScrollablePanel.NeverShowHorizontalScrollers);
 	this.addLast(sbp);
-	this.addLast(btCancel = new mButton(MyLocale.getMsg(3000, "Close")), CellConstants.DONTSTRETCH, CellConstants.FILL);
+	executePanel = new ExecutePanel(this, FormBase.OKB);
     }
 
     public void onEvent(Event ev) {
 	if (ev instanceof ControlEvent && ev.type == ControlEvent.PRESSED) {
-	    if (ev.target == btCancel) {
+	    if (ev.target == executePanel.applyButton) {
 		this.close(0);
 	    }
 	}

@@ -23,8 +23,8 @@ package CacheWolf.database;
 
 import CacheWolf.MainForm;
 import CacheWolf.Preferences;
-import CacheWolf.controls.DataMover;
 import CacheWolf.utils.Extractor;
+import CacheWolf.utils.Files;
 import CacheWolf.utils.SafeXML;
 import ewe.filechooser.FileChooser;
 import ewe.filechooser.FileChooserBase;
@@ -217,7 +217,7 @@ public class CacheHolderDetail {
 	    userCacheImage.setTitle(imgDesc);
 	    this.userImages.add(userCacheImage);
 	    // Copy File
-	    DataMover.copy(imgFile.getFullPath(), MainForm.profile.dataDir + imgDestName);
+	    Files.copy(imgFile.getFullPath(), MainForm.profile.dataDir + imgDestName);
 	    // Save Data
 	    saveCacheDetails(MainForm.profile.dataDir);
 	}

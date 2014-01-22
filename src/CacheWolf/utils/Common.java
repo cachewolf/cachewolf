@@ -21,13 +21,20 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 package CacheWolf.utils;
 
-import CacheWolf.utils.MyLocale;
 import ewe.io.File;
 
 public final class Common {
 
-    private static char digSep = MyLocale.getDigSeparator().charAt(0);
-    private static char notDigSep = MyLocale.getDigSeparator().charAt(0) == '.' ? ',' : '.';
+    private static char digSep = '.';
+    private static char notDigSep = ',';
+
+    /**
+     * normaly done after init of MyLocale
+     */
+    public static void initDigitalSeparator(char DigitalSeparator) {
+	digSep = DigitalSeparator;
+	notDigSep = digSep == '.' ? ',' : '.';
+    }
 
     /**
      * get double value from string. It interpretes "." and "," as decimal separator

@@ -96,10 +96,11 @@ public class MainForm extends Editor {
      * @see MainTab
      */
     public MainForm(boolean dbg, String pathToPrefXml) {
-	itself = this;
+
 	this.exitSystemOnClose = true;
 	this.resizable = true;
 	this.moveable = true;
+	this.resizeOnSIP = true;
 	this.windowFlagsToSet = WindowConstants.FLAG_MAXIMIZE_ON_PDA;
 
 	this.preferences = Preferences.itself(); // implicit calls the constructor (first access) with default values
@@ -113,13 +114,9 @@ public class MainForm extends Editor {
 	this.preferences.debug = dbg;
 	// in case pathtoprefxml == null the preferences will determine the path itself
 	this.preferences.setPathToConfigFile(pathToPrefXml);
-	// if (ewe.ui.Gui.screenSize.width <= 350 && ewe.ui.Gui.screenSize.height <= 350)
-	//Rect screen = ((ewe.fx.Rect) (Window.getGuiInfo(WindowConstants.INFO_SCREEN_RECT,null,new ewe.fx.Rect(),0)));
-	//if ( screen.height >= 600 && screen.width >= 800) this.setPreferredSize(800, 600);
-	this.resizeOnSIP = true;
 	this.preferences.readPrefFile();
 
-	this.preferences.logInit();
+	this.preferences.logInit(); // also initialises MyLocale (with Language from preferences)
 	if (MyLocale.initErrors.length() != 0) {
 	    new InfoBox(MyLocale.getMsg(5500, "Error"), MyLocale.initErrors).wait(FormBase.OKB);
 	}
@@ -194,6 +191,9 @@ public class MainForm extends Editor {
 	if (infB != null)
 	    infB.close(0);
 	Vm.showWait(false);
+
+	itself = this;
+
     }
 
     // Overrides: checkButtons() in Form
