@@ -497,10 +497,10 @@ public class MainTab extends mTabbedPanel {
     private CWPoint getPositionAndSetDestination() {
 	CWPoint position = null;
 	if (navigate.isGpsPosValid())
-	    position = new CWPoint(navigate.gpsPos);
+	    position = new CWPoint(Navigate.gpsPos);
 	else {
-	    if (navigate.destination.isValid())
-		position = new CWPoint(navigate.destination);
+	    if (Navigate.destination.isValid())
+		position = new CWPoint(Navigate.destination);
 	    else {
 		if (ch != null && ch.getPos().isValid()) {
 		    position = new CWPoint(ch.getPos());
@@ -546,7 +546,7 @@ public class MainTab extends mTabbedPanel {
     private void updateCurCentrePtFromGPS() {
 	if (Preferences.itself().setCurrentCentreFromGPSPosition) {
 	    if (navigate.gpsRunning) {
-		CWPoint whereAmI = navigate.gpsPos;
+		CWPoint whereAmI = Navigate.gpsPos;
 		if (whereAmI.isValid()) {
 		    CWPoint curCentr = Preferences.itself().curCentrePt;
 		    if (whereAmI.latDec != curCentr.latDec || whereAmI.lonDec != curCentr.lonDec) {

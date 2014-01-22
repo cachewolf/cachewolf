@@ -21,8 +21,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 package CacheWolf.utils;
 
-import CacheWolf.Preferences;
-
 public final class Matrix {
     int iDF = 0;
 
@@ -113,15 +111,6 @@ public final class Matrix {
     }
 
     /**
-    *	Method to display the contents of a matrix.
-    */
-    public void DumpMatrix() {
-	for (int i = 0; i < matrix.length; i++)
-	    for (int j = 0; j < matrix[i].length; j++)
-		Preferences.itself().log("[ " + i + " " + j + " ] " + matrix[i][j]);
-    }
-
-    /**
     *	Method used to help calculate determinate
     */
     private double[][] UpperTriangle(double[][] m) {
@@ -159,7 +148,6 @@ public final class Matrix {
 			    m[row][i] = f1 * m[col][i] + m[row][i];
 			}
 		    } catch (Exception e) {
-			Preferences.itself().log("Still Here!!!");
 		    }
 		}
 	    }
@@ -198,7 +186,8 @@ public final class Matrix {
 	double dd = 0;
 
 	if (det == 0) {
-	    Preferences.itself().log("Determinant Equals 0, Not Invertible.");
+	    // todo throw exception 
+	    // "Determinant Equals 0, Not Invertible.")
 	} else {
 	    dd = 1 / det;
 	}

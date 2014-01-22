@@ -355,6 +355,13 @@ public class GCImporter {
 	}
     } // End of DoIt
 
+    public void setOldGCLanguage() {
+	if (Preferences.itself().changedGCLanguageToEnglish) {
+	    GCImporter.setGCLanguage(Preferences.itself().oldGCLanguage);
+	    Preferences.itself().changedGCLanguageToEnglish = false;
+	}
+    }
+
     private int getDistanceInMiles(double value) {
 	// max distance in miles for URL, so we can get more than 80km
 	int toDistanceInMiles = (int) java.lang.Math.ceil(value);

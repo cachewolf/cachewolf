@@ -351,7 +351,7 @@ public class CoordsInput extends Form {
 		if (inp.startsWith("GC")) {
 		    GCImporter spider = new GCImporter();
 		    coord = new CWPoint(spider.fetchCacheCoordinates(inp));
-		    Preferences.itself().setOldGCLanguage();
+		    spider.setOldGCLanguage();
 		} else {
 		    coord = new CWPoint(inp);
 		}
@@ -365,9 +365,8 @@ public class CoordsInput extends Form {
 	    }
 
 	    if (ev.target == btnGps) {
-		Navigate nav = MainTab.itself.navigate;
-		if (nav.gpsPos.isValid()) {
-		    CWPoint coord = nav.gpsPos;
+		if (Navigate.gpsPos.isValid()) {
+		    CWPoint coord = Navigate.gpsPos;
 		    currFormat = getLocalSystem(combineToFormatSel(chkFormat.getSelectedIndex(), localCooSystem.getInt()));
 		    setFields(coord, currFormat);
 		}

@@ -22,7 +22,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 package CacheWolf.controls;
 
 import CacheWolf.Preferences;
-import ewe.sys.Vm;
 import ewe.ui.ScrollBarPanel;
 import ewe.ui.ScrollClient;
 import ewe.ui.ScrollablePanel;
@@ -38,18 +37,15 @@ import ewe.ui.ScrollablePanel;
 public class MyScrollBarPanel extends ScrollBarPanel {
     public MyScrollBarPanel(ScrollClient client, int options) {
 	super(client, options);
-	int s = java.lang.Math.round(Preferences.itself().fontSize / 11f * 15f); // standard fontsize = 1, standard bottum size = 15
+	int s = java.lang.Math.round(Preferences.itself().fontSize / 11f * 15f);
 	setScrollBarSize(s, s, s);
     }
 
     public MyScrollBarPanel(ScrollClient client) {
 	this(client, 0);
-	if (Vm.isMobile()) {
-	    //			hbar.setPreferredSizes(50,50,50);
-	}
-
     }
 
+    // Overrides: getScrollablePanel() in Canvas
     public ScrollablePanel getScrollablePanel() {
 	return new MyScrollBarPanel(getScrollClient());
     }

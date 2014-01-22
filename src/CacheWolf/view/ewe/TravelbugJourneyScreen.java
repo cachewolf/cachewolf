@@ -34,7 +34,6 @@ package CacheWolf.view.ewe;
 
 import CacheWolf.MainForm;
 import CacheWolf.MainTab;
-import CacheWolf.utils.MyLocale;
 import CacheWolf.Preferences;
 import CacheWolf.TravelbugPickup;
 import CacheWolf.controls.DateTimeChooser;
@@ -49,6 +48,7 @@ import CacheWolf.database.TravelbugList;
 import CacheWolf.imp.GCImporter;
 import CacheWolf.model.TravelBugJourneyScreenModel;
 import CacheWolf.utils.CWWrapper;
+import CacheWolf.utils.MyLocale;
 import ewe.fx.Color;
 import ewe.fx.Dimension;
 import ewe.fx.FontMetrics;
@@ -708,7 +708,7 @@ public class TravelbugJourneyScreen extends Form {
 		inpName.setText(tbj.getTb().getName());
 		lblId.setText(tbj.getTb().getGuid());
 		lowerpane.repaint();
-		Preferences.itself().setOldGCLanguage();
+		spider.setOldGCLanguage();
 	    }
 	    if (selectedItem == mnuOpenOnline && selectedRow >= 0) {
 		TravelbugJourney tbj = tbModel.allTravelbugJourneys.getTBJourney(selectedRow);
@@ -732,12 +732,12 @@ public class TravelbugJourneyScreen extends Form {
 			Preferences.itself().log("Ignored Exception", ioex, true);
 		    }
 		}
+		spider.setOldGCLanguage();
 	    }
 	    if (selectedItem == mnuToggleList) {
 		toggleNonLogged();
 	    }
 	    updateNumBugs();
-	    Preferences.itself().setOldGCLanguage();
 	}
 
 	/**

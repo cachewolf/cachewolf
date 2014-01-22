@@ -587,9 +587,8 @@ public class CoordsPDAInput extends Form {
 
 	    // Button "GPS"
 	    if (ev.target == btnGPS) {
-		Navigate nav = MainTab.itself.navigate;
-		if (nav.gpsPos.isValid()) {
-		    setCoords(nav.gpsPos);
+		if (Navigate.gpsPos.isValid()) {
+		    setCoords(Navigate.gpsPos);
 		}
 	    }
 

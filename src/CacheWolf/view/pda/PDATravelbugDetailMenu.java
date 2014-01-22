@@ -23,7 +23,6 @@ package CacheWolf.view.pda;
 
 import CacheWolf.MainForm;
 import CacheWolf.MainTab;
-import CacheWolf.utils.MyLocale;
 import CacheWolf.Preferences;
 import CacheWolf.database.CacheDB;
 import CacheWolf.database.CacheHolder;
@@ -32,6 +31,7 @@ import CacheWolf.database.Travelbug;
 import CacheWolf.database.TravelbugJourney;
 import CacheWolf.imp.GCImporter;
 import CacheWolf.utils.CWWrapper;
+import CacheWolf.utils.MyLocale;
 import ewe.sys.Vm;
 
 public class PDATravelbugDetailMenu extends PDAMenu {
@@ -110,7 +110,7 @@ public class PDATravelbugDetailMenu extends PDAMenu {
 		    Preferences.itself().log("Ignored Exception", ioex, true);
 		}
 	    }
-	    Preferences.itself().setOldGCLanguage();
+	    spider.setOldGCLanguage();
 	    exit(0);
 	} else if (action.equals(SPIDER)) {
 	    Travelbug tb = view.getTravelbug().getTb();
@@ -137,7 +137,7 @@ public class PDATravelbugDetailMenu extends PDAMenu {
 	    }
 	    journeyScreen.model.allTravelbugJourneys.saveTravelbugsFile();
 	    Vm.showWait(false);
-	    Preferences.itself().setOldGCLanguage();
+	    spider.setOldGCLanguage();
 	    exit(0);
 	} else if (action.equals(DELETE)) {
 	    // LOESCHEN DES TB's aus der Datenbank ist Boese!!!

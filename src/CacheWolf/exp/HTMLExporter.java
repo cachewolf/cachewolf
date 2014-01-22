@@ -23,12 +23,12 @@ package CacheWolf.exp;
 
 import CacheWolf.MainForm;
 import CacheWolf.Preferences;
-import CacheWolf.controls.DataMover;
 import CacheWolf.controls.InfoBox;
 import CacheWolf.database.CacheDB;
 import CacheWolf.database.CacheHolder;
 import CacheWolf.database.CacheHolderDetail;
 import CacheWolf.utils.Common;
+import CacheWolf.utils.Files;
 import CacheWolf.utils.MyLocale;
 import HTML.Template;
 
@@ -140,10 +140,10 @@ public class HTMLExporter {
 				String logImgFile = det.logImages.get(j).getFilename();
 				logImgParams.put("FILE", logImgFile);
 				logImgParams.put("TEXT", det.logImages.get(j).getTitle());
-				if (DataMover.copy(MainForm.profile.dataDir + logImgFile, targetDir + logImgFile))
+				if (Files.copy(MainForm.profile.dataDir + logImgFile, targetDir + logImgFile))
 				    logImg.add(logImgParams);
 				else {
-				    Preferences.itself().log("[HTMLExporter:DataMover]" + logImgFile + " " + ch.getWayPoint());
+				    Preferences.itself().log("[HTMLExporter:Files]" + logImgFile + " " + ch.getWayPoint());
 				    exportErrors++;
 				}
 			    }
@@ -156,10 +156,10 @@ public class HTMLExporter {
 				String usrImgFile = new String(det.userImages.get(j).getFilename());
 				usrImgParams.put("FILE", usrImgFile);
 				usrImgParams.put("TEXT", det.userImages.get(j).getTitle());
-				if (DataMover.copy(MainForm.profile.dataDir + usrImgFile, targetDir + usrImgFile))
+				if (Files.copy(MainForm.profile.dataDir + usrImgFile, targetDir + usrImgFile))
 				    usrImg.add(usrImgParams);
 				else {
-				    Preferences.itself().log("[HTMLExporter:DataMover]" + usrImgFile + " " + ch.getWayPoint());
+				    Preferences.itself().log("[HTMLExporter:Files]" + usrImgFile + " " + ch.getWayPoint());
 				    exportErrors++;
 				}
 			    }
@@ -176,20 +176,20 @@ public class HTMLExporter {
 			    if (test.exists()) {
 				mapImgParams.put("FILE", mapImgFile);
 				mapImgParams.put("TEXT", mapImgFile);
-				if (DataMover.copy(MainForm.profile.dataDir + mapImgFile, targetDir + mapImgFile))
+				if (Files.copy(MainForm.profile.dataDir + mapImgFile, targetDir + mapImgFile))
 				    mapImg.add(mapImgParams);
 				else {
-				    Preferences.itself().log("[HTMLExporter:DataMover]" + mapImgFile + " " + ch.getWayPoint());
+				    Preferences.itself().log("[HTMLExporter:Files]" + mapImgFile + " " + ch.getWayPoint());
 				    exportErrors++;
 				}
 				mapImgParams = new Hashtable();
 				mapImgFile = ch.getWayPoint() + "_map_2.gif";
 				mapImgParams.put("FILE", mapImgFile);
 				mapImgParams.put("TEXT", mapImgFile);
-				if (DataMover.copy(MainForm.profile.dataDir + mapImgFile, targetDir + mapImgFile))
+				if (Files.copy(MainForm.profile.dataDir + mapImgFile, targetDir + mapImgFile))
 				    mapImg.add(mapImgParams);
 				else {
-				    Preferences.itself().log("[HTMLExporter:DataMover]" + mapImgFile + " " + ch.getWayPoint());
+				    Preferences.itself().log("[HTMLExporter:Files]" + mapImgFile + " " + ch.getWayPoint());
 				    exportErrors++;
 				}
 				page_tpl.setParam("mapImg", mapImg);
@@ -223,14 +223,14 @@ public class HTMLExporter {
 	    // Copy the log-icons to the destination directory
 	    for (int j = 0; j < logIcons.size(); j++) {
 		icon = (String) logIcons.elementAt(j);
-		if (!DataMover.copy(FileBase.getProgramDirectory() + "/" + icon, targetDir + icon)) {
-		    Preferences.itself().log("[HTMLExporter:DataMover]" + icon, null);
+		if (!Files.copy(FileBase.getProgramDirectory() + "/" + icon, targetDir + icon)) {
+		    Preferences.itself().log("[HTMLExporter:Files]" + icon, null);
 		    exportErrors++;
 		}
 
 	    }
-	    if (!DataMover.copy(FileBase.getProgramDirectory() + "/recommendedlog.gif", targetDir + "recommendedlog.gif")) {
-		Preferences.itself().log("[HTMLExporter:DataMover]recommendedlog.gif", null);
+	    if (!Files.copy(FileBase.getProgramDirectory() + "/recommendedlog.gif", targetDir + "recommendedlog.gif")) {
+		Preferences.itself().log("[HTMLExporter:Files]recommendedlog.gif", null);
 		exportErrors++;
 	    }
 
