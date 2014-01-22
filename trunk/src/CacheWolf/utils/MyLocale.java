@@ -26,7 +26,6 @@ package CacheWolf.utils;
  * 
  */
 
-import CacheWolf.Preferences;
 import ewe.fx.Rect;
 import ewe.io.File;
 import ewe.io.FileBase;
@@ -57,11 +56,16 @@ import ewe.ui.WindowConstants;
  */
 public class MyLocale {
     /** This language used if the system language is not supported by CacheWolf */
-    final static String standardLanguage = "EN";
+    private final static String standardLanguage = "EN";
+    /**
+     * must be set once before (first implicit) call of init()
+     * get it from Preferences two Char language Code or AUTO
+     */
+    public static String language = "EN";
 
     private static Locale l = null;
     private static LocalResource lr = null;
-    private static Rect s = (Rect) Window.getGuiInfo(WindowConstants.INFO_SCREEN_RECT, null, new Rect(), 0);
+    private static Rect screenSize = (Rect) Window.getGuiInfo(WindowConstants.INFO_SCREEN_RECT, null, new Rect(), 0);
     private static String digSeparator = null;
 
     public static String initErrors;
@@ -118,7 +122,6 @@ public class MyLocale {
 	initErrors = "";
 	// the following logic priority: 1. try to use specified language (if specified), 2. try to use system language, 3. try to use english, 4. use hard coded messages
 	l = null;
-	String language = Preferences.itself().language;
 	if ((language.length() != 0) && (!language.equalsIgnoreCase("auto"))) { // Was a language explicitly specified?
 	    setLocale(language);
 	    if (!(new File(getLocaleFileName(resourcelanguage)).exists())) {
@@ -172,6 +175,8 @@ public class MyLocale {
 	    digSeparator = ",";
 	else
 	    digSeparator = ".";
+	Common.initDigitalSeparator(digSeparator.charAt(0));
+
 	inInit = false;
     }
 
@@ -231,7 +236,7 @@ public class MyLocale {
      * @return Width of screen in pixels
      */
     public static int getScreenWidth() {
-	return s.width;
+	return screenSize.width;
     }
 
     /**
@@ -240,7 +245,7 @@ public class MyLocale {
      * @return Height of screen in pixels
      */
     public static int getScreenHeight() {
-	return s.height;
+	return screenSize.height;
     }
 
     /**
@@ -359,7 +364,7 @@ public class MyLocale {
      * @param split
      */
     public static void setSplitterSize(SplittablePanel split) {
-	if (Vm.isMobile() && MyLocale.getScreenHeight() > 400) {
+	if (Vm.isMobile() && screenSize.height > 400) {
 	    split.theSplitter.thickness = 20;
 
 	}

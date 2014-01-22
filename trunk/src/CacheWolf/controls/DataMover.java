@@ -26,13 +26,12 @@ import CacheWolf.Preferences;
 import CacheWolf.Profile;
 import CacheWolf.database.CacheDB;
 import CacheWolf.database.CacheHolder;
+import CacheWolf.utils.Files;
 import CacheWolf.utils.MyLocale;
 import ewe.filechooser.FileChooser;
 import ewe.filechooser.FileChooserBase;
 import ewe.io.File;
 import ewe.io.FileBase;
-import ewe.io.FileInputStream;
-import ewe.io.FileOutputStream;
 import ewe.sys.Handle;
 import ewe.ui.CellConstants;
 import ewe.ui.CheckBoxGroup;
@@ -46,8 +45,8 @@ import ewe.ui.mLabel;
 import ewe.util.Iterator;
 
 /**
- * This class moves or copies the database files of selected caches from one directory to
- * another. It provides also the possibility to delete cachefiles.
+ * This class moves or copies the database files of selected caches from one directory to another.
+ * It provides also the possibility to delete cachefiles.
  */
 public class DataMover {
 
@@ -311,41 +310,9 @@ public class DataMover {
 	wpt = wpt.toLowerCase();
 	for (int i = 0; i < srcFiles.length; i++) {
 	    if (srcFiles[i].toLowerCase().startsWith(wpt + '.') || srcFiles[i].toLowerCase().startsWith(wpt + '_')) {
-		copy(srcDir + srcFiles[i], dstDir + srcFiles[i]);
+		Files.copy(srcDir + srcFiles[i], dstDir + srcFiles[i]);
 	    }
 	}
-    }
-
-    /**
-     * copy a file
-     * 
-     * @param sFileSrc
-     *            source file name
-     * @param sFileDst
-     *            destination file name
-     * @return true on success, false if an error occurred
-     */
-    public static boolean copy(String sFileSrc, String sFileDst) {
-	try {
-	    File fSrc = new File(sFileSrc);
-	    int len = 32768;
-	    byte[] buff = new byte[(int) java.lang.Math.min(len, fSrc.length())];
-	    FileInputStream fis = new FileInputStream(fSrc);
-	    File dDst = new File(File.getDrivePath(sFileDst));
-	    if (!dDst.exists()) {
-		dDst.createDir();
-	    }
-	    FileOutputStream fos = new FileOutputStream(sFileDst);
-	    while (0 < (len = fis.read(buff)))
-		fos.write(buff, 0, len);
-	    fos.flush();
-	    fos.close();
-	    fis.close();
-	} catch (Exception ex) {
-	    Preferences.itself().log("Filecopy failed: " + sFileSrc + "=>" + sFileDst, ex, true);
-	    return false;
-	}
-	return true;
     }
 
     //////////////////////////////////////////////////////////////////////

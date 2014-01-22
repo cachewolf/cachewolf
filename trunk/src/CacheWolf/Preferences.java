@@ -23,10 +23,10 @@ package CacheWolf;
 
 import CacheWolf.controls.InfoBox;
 import CacheWolf.database.CWPoint;
-import CacheWolf.imp.GCImporter;
 import CacheWolf.navi.Metrics;
 import CacheWolf.navi.TransformCoordinates;
 import CacheWolf.utils.Common;
+import CacheWolf.utils.HttpConnection;
 import CacheWolf.utils.MyLocale;
 import CacheWolf.utils.STRreplace;
 import CacheWolf.utils.SafeXML;
@@ -757,6 +757,8 @@ public class Preferences extends MinML {
 	    SortingGroupedByCache = tmp != null && tmp.equalsIgnoreCase("true");
 	} else if (name.equals("MobileGui"))
 	    mobileGUI = Boolean.valueOf(atts.getValue("value")).booleanValue();
+	HttpConnection.setProxy(this.myproxy, Common.parseInt(this.myproxyport), this.proxyActive);
+	MyLocale.language = language;
     }
 
     public void characters(char ch[], int start, int length) {
@@ -1252,12 +1254,5 @@ public class Preferences extends MinML {
 	absoluteMapsBaseDir = absoluteMapsBaseDir.replace('\\', '/');
 	if (!absoluteMapsBaseDir.endsWith("/"))
 	    absoluteMapsBaseDir += "/";
-    }
-
-    public void setOldGCLanguage() {
-	if (changedGCLanguageToEnglish) {
-	    GCImporter.setGCLanguage(oldGCLanguage);
-	    changedGCLanguageToEnglish = false;
-	}
     }
 }

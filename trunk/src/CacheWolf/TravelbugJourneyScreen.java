@@ -640,13 +640,14 @@ public class TravelbugJourneyScreen extends Form {
 		    }
 		}
 
+		spider.setOldGCLanguage();
+
 		Vm.showWait(false);
 		tcTbJourneyList.repaint();
 		txtMission.setHtml(tbj.getTb().getMission());
 		inpName.setText(tbj.getTb().getName());
 		lblId.setText(tbj.getTb().getGuid());
 		lowerpane.repaint();
-		Preferences.itself().setOldGCLanguage();
 	    }
 	    if (selectedItem == mnuOpenOnline && selectedRow >= 0) {
 		TravelbugJourney tbj = tblMyTravelbugJourneys.getTBJourney(selectedRow);
@@ -670,7 +671,7 @@ public class TravelbugJourneyScreen extends Form {
 			// Preferences.itself().log("Ignored Exception", ioex, true);
 		    }
 		}
-		Preferences.itself().setOldGCLanguage();
+		spider.setOldGCLanguage();
 	    }
 	    if (selectedItem == mnuToggleList) {
 		toggleNonLogged();

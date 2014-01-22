@@ -23,7 +23,6 @@ package CacheWolf.exp;
 
 import CacheWolf.MainForm;
 import CacheWolf.Preferences;
-import CacheWolf.controls.DataMover;
 import CacheWolf.controls.ExecutePanel;
 import CacheWolf.controls.InfoBox;
 import CacheWolf.database.CacheDB;
@@ -31,6 +30,7 @@ import CacheWolf.database.CacheHolder;
 import CacheWolf.database.CacheHolderDetail;
 import CacheWolf.database.CacheImage;
 import CacheWolf.database.CacheType;
+import CacheWolf.utils.Files;
 import CacheWolf.utils.MyLocale;
 import CacheWolf.utils.SafeXML;
 
@@ -182,9 +182,9 @@ public class GarminPicExporter {
 		    picsCopied.put(imgInfo.getFilename(), null); // Remember that we copied this picture
 		    if (isSpoiler) {
 			appendDir(dirName, "Spoilers/");
-			DataMover.copy(MainForm.profile.dataDir + imgInfo.getFilename(), dirName + "Spoilers/" + sanitizeFileName(imgInfo.getTitle()) + ".JPG");
+			Files.copy(MainForm.profile.dataDir + imgInfo.getFilename(), dirName + "Spoilers/" + sanitizeFileName(imgInfo.getTitle()) + ".JPG");
 		    } else {
-			DataMover.copy(MainForm.profile.dataDir + imgInfo.getFilename(), dirName + sanitizeFileName(imgInfo.getTitle()) + ".JPG");
+			Files.copy(MainForm.profile.dataDir + imgInfo.getFilename(), dirName + sanitizeFileName(imgInfo.getTitle()) + ".JPG");
 		    }
 		}
 	    } catch (Exception ex) {

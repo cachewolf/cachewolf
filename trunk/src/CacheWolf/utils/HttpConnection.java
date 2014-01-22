@@ -24,7 +24,6 @@ package CacheWolf.utils;
 import org.bouncycastle.crypto.tls.AlwaysValidVerifyer;
 import org.bouncycastle.crypto.tls.TlsSocket;
 
-import CacheWolf.Preferences;
 import ewe.data.Property;
 import ewe.data.PropertyList;
 import ewe.io.AsciiCodec;
@@ -138,15 +137,9 @@ public class HttpConnection {
 
     private Stream bytesToPost;
     private Object originalPostData;
-
-    /**
-     * Set these when the class is instantiated the first time.
-     * afterwards you don't need to set proxy parameters anymore
-     */
-
-    private static String proxy = Preferences.itself().myproxy;
-    private static int proxyPort = Common.parseInt(Preferences.itself().myproxyport);
-    private static boolean useProxy = Preferences.itself().proxyActive;
+    private static String proxy = "";
+    private static int proxyPort = 0;
+    private static boolean useProxy = false;
 
     //	FIXME: why is this called immediately from preferences screen? shouldn't we read it from preferences instead?
     public static void setProxy(String proxyi, int proxyporti, boolean useproxyi) {

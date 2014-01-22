@@ -27,7 +27,6 @@ import CacheWolf.MyTableModel;
 import CacheWolf.OC;
 import CacheWolf.Preferences;
 import CacheWolf.Profile;
-import CacheWolf.controls.DataMover;
 import CacheWolf.controls.InfoBox;
 import CacheWolf.exp.Exporter;
 import CacheWolf.exp.GarminMap;
@@ -35,6 +34,7 @@ import CacheWolf.navi.Metrics;
 import CacheWolf.navi.TransformCoordinates;
 import CacheWolf.utils.Common;
 import CacheWolf.utils.DateFormat;
+import CacheWolf.utils.Files;
 import CacheWolf.utils.MyLocale;
 import CacheWolf.utils.STRreplace;
 import CacheWolf.utils.SafeXML;
@@ -865,7 +865,7 @@ public class CacheHolder {
 			} else {
 			    dest = Preferences.itself().getExportPath(expName) + imgFile;
 			}
-			if (!DataMover.copy(src, dest)) {
+			if (!Files.copy(src, dest)) {
 			    Preferences.itself().log("[CacheHolder:toHashtable]error copying " + imgFile + " to " + Preferences.itself().getExportPath(expName));
 			}
 		    }

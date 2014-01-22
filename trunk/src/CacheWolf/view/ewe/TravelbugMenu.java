@@ -22,7 +22,6 @@
 package CacheWolf.view.ewe;
 
 import CacheWolf.MainForm;
-import CacheWolf.utils.MyLocale;
 import CacheWolf.Preferences;
 import CacheWolf.TravelbugPickup;
 import CacheWolf.database.Travelbug;
@@ -31,6 +30,7 @@ import CacheWolf.database.TravelbugList;
 import CacheWolf.imp.GCImporter;
 import CacheWolf.model.TravelBugJourneyScreenModel;
 import CacheWolf.utils.CWWrapper;
+import CacheWolf.utils.MyLocale;
 import ewe.fx.Rect;
 import ewe.sys.Vm;
 import ewe.ui.Event;
@@ -167,7 +167,7 @@ public class TravelbugMenu extends MenuBar {
 			}
 		    }
 		}
-		Preferences.itself().setOldGCLanguage();
+		spider.setOldGCLanguage();
 	    } else if (mev.selectedItem == mnuOpenOnline && view.selectedRow >= 0) {
 		TravelbugJourney tbj = model.allTravelbugJourneys.getTBJourney(view.selectedRow);
 		GCImporter spider = new GCImporter();
@@ -190,7 +190,7 @@ public class TravelbugMenu extends MenuBar {
 			Preferences.itself().log("Ignored Exception", ioex, true);
 		    }
 		}
-		Preferences.itself().setOldGCLanguage();
+		spider.setOldGCLanguage();
 	    }
 
 	}
