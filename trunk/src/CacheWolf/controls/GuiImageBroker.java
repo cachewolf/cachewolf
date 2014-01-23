@@ -41,13 +41,12 @@ import ewe.ui.mButton;
  */
 
 public final class GuiImageBroker {
-    static final String basedir = FileBase.getProgramDirectory() + "/symbols/";
-    static String extension;
+    private static final String basedir = FileBase.getProgramDirectory() + "/symbols/";
+    private static String extension;
 
-    public static boolean useText = true;
-    public static boolean useIcons = true;
-    public static boolean useBigIcons = true;
-    public static boolean leftIcons = false;
+    private static boolean useText = true;
+    private static boolean useIcons = true;
+    private static boolean leftIcons = false;
 
     public static Image found;
     public static Image disabled;
@@ -62,13 +61,15 @@ public final class GuiImageBroker {
     }
 
     /**
-     * Replaces the build-in symbols by images stored in /symbols:
-     * If the sub directory symbols exists in CW-directory *.png-files are read in and roughly checked for validity. 
-     * For every valid file x.png the corresponding typeImages[x] is replaced by the image in x.png. 
-     * Images are NOT checked for size etc.
+     * should be only called once, before first access of extension
      */
-    public static void customizedSymbols() {
-	setExtension();
+    public static void init(boolean useText, boolean useIcons, boolean useBigIcons, boolean leftIcons) {
+	if (extension == null) {
+	    if (useBigIcons)
+		extension = "_vga.png";
+	    else
+		extension = ".png";
+	}
 	found = getCacheTypeImage("found");
 	disabled = getCacheTypeImage("disabled");
 	archived = getCacheTypeImage("archived");
@@ -108,18 +109,6 @@ public final class GuiImageBroker {
 
     public static Image getMapCacheTypeImage(String icon) {
 	return new Image(getMapCacheTypeImageName(icon));
-    }
-
-    /**
-     * should be only called once, before first access of extension
-     */
-    private static void setExtension() {
-	if (extension == null) {
-	    if (useBigIcons)
-		extension = "_vga.png";
-	    else
-		extension = ".png";
-	}
     }
 
     private static String getImageName(String icon) {

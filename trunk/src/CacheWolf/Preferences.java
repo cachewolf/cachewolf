@@ -123,12 +123,12 @@ public class Preferences extends MinML {
     /**
      * Call this method to set the path of the config file <br>
      * If you call it with null it defaults to [program-dir]/pref.xml if p is a directory "pref.xml" will automatically appended
-     * 
+     * 	// in case pathtoprefxml == null the preferences will determine the path itself
      * @param p
      */
-    public void setPathToConfigFile(String p) {
+    public void setPathToConfigFile(String pathToPrefXml) {
 	String p_;
-	if (p == null) {
+	if (pathToPrefXml == null) {
 	    /*
 	    // returns in java-vm on win xp: c:\<dokumente und Einstellungen>\<username>\<application data> 
 	    String test;
@@ -154,16 +154,16 @@ public class Preferences extends MinML {
 	    */
 	    p_ = FileBase.makePath(FileBase.getProgramDirectory(), "pref.xml");
 	} else {
-	    if (new File(p).isDirectory())
-		p_ = FileBase.makePath(p, "pref.xml");
+	    if (new File(pathToPrefXml).isDirectory())
+		p_ = FileBase.makePath(pathToPrefXml, "pref.xml");
 	    else
-		p_ = p;
+		p_ = pathToPrefXml;
 	}
 	// this is necessary in case that the root dir is the dir where the pref.xml is stored
 	pathToConfigFile = STRreplace.replace(p_, "//", "/");
 	pathToConfigFile = pathToConfigFile.replace('\\', '/');
-	p = System.getProperty("os.name");
-	if (p == null || p.indexOf("indows") != -1) {
+	pathToPrefXml = System.getProperty("os.name");
+	if (pathToPrefXml == null || pathToPrefXml.indexOf("indows") != -1) {
 	    NEWLINE = "\r\n";
 	}
     }
@@ -423,7 +423,7 @@ public class Preferences extends MinML {
 	    }
 	    savePreferences();
 
-	    setInfoBoxSize();
+	    InfoBox.init(fontSize, useBigIcons);
 	    new InfoBox(MyLocale.getMsg(327, "Information"), MyLocale.getMsg(176, "First start - using default preferences \n For experts only: \n Could not read preferences file:\n") + pathToConfigFile).wait(FormBase.OKB);
 	} catch (Exception e) {
 	    if (e instanceof NullPointerException)
@@ -436,29 +436,11 @@ public class Preferences extends MinML {
 	FormBase.close = new DrawnIcon(DrawnIcon.CROSS, fontSize, fontSize, new Color(0, 0, 0));
 	FormBase.tick = new DrawnIcon(DrawnIcon.TICK, fontSize, fontSize, new Color(0, 128, 0));
 	FormBase.cross = new DrawnIcon(DrawnIcon.CROSS, fontSize, fontSize, new Color(128, 0, 0));
-	GuiImageBroker.useText = useText;
-	GuiImageBroker.useIcons = useIcons;
-	GuiImageBroker.useBigIcons = useBigIcons;
-	GuiImageBroker.leftIcons = leftIcons;
 	isBigScreen = (MyLocale.getScreenWidth() >= 400) && (MyLocale.getScreenHeight() >= 600);
-	setInfoBoxSize(); // init InfoBox
+	GuiImageBroker.init(useText, useIcons, useBigIcons, leftIcons);
+	InfoBox.init(fontSize, useBigIcons);
 	HttpConnection.setProxy(this.myproxy, Common.parseInt(this.myproxyport), this.proxyActive);
 	MyLocale.language = language;
-    }
-
-    private void setInfoBoxSize() {
-	// InfoBox Size
-	int psx = fontSize * 16;
-	int psy = fontSize * 12;
-	if (preferences.useBigIcons) {
-	    psx = Math.min(psx + 48, MyLocale.getScreenWidth());
-	    psy = Math.min(psy + 16, MyLocale.getScreenHeight());
-	} else {
-	    psx = Math.min(psx, MyLocale.getScreenWidth());
-	    psy = Math.min(psy, MyLocale.getScreenHeight());
-	}
-	InfoBox.preferredWidth = psx;
-	InfoBox.preferredHeight = psy;
     }
 
     /**

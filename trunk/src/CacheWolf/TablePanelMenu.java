@@ -1096,7 +1096,6 @@ class EditCenter extends Form {
 		if (cs.execute() == FormBase.IDOK) {
 		    MainForm.itself.setCurCentrePt(cs.getCoords());
 		    btnCurrentCentre.setText(Preferences.itself().curCentrePt.toString());
-		    MainForm.profile.updateBearingDistance();
 		}
 	    }
 	    if (ev.target == btnProfileCentre) {
@@ -1116,7 +1115,6 @@ class EditCenter extends Form {
 	    if (ev.target == btnProf2Cur) {
 		MainForm.itself.setCurCentrePt(MainForm.profile.centre);
 		btnCurrentCentre.setText(Preferences.itself().curCentrePt.toString());
-		MainForm.profile.updateBearingDistance();
 	    }
 	}
 	super.onEvent(ev);

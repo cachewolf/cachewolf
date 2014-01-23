@@ -21,6 +21,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 package CacheWolf.controls;
 
+import CacheWolf.utils.MyLocale;
 import ewe.ui.ControlEvent;
 import ewe.ui.Event;
 import ewe.ui.Form;
@@ -37,8 +38,8 @@ public class InfoBox extends Form {
     public final static int DISPLAY_ONLY = 3;
     public final static int PROGRESS_WITH_WARNINGS = 4;
 
-    public static int preferredWidth;
-    public static int preferredHeight;
+    private static int preferredWidth;
+    private static int preferredHeight;
 
     private TextMessage msgArea;
     private TextMessage warnings;
@@ -53,6 +54,21 @@ public class InfoBox extends Form {
      * It can be used to check if a lengthy task needs to be aborted (i.e. spidering)
      */
     private boolean isClosed = false;
+
+    public static void init(int fontSize, boolean useBigIcons) {
+	// InfoBox Size
+	int psx = fontSize * 16;
+	int psy = fontSize * 12;
+	if (useBigIcons) {
+	    psx = Math.min(psx + 48, MyLocale.getScreenWidth());
+	    psy = Math.min(psy + 16, MyLocale.getScreenHeight());
+	} else {
+	    psx = Math.min(psx, MyLocale.getScreenWidth());
+	    psy = Math.min(psy, MyLocale.getScreenHeight());
+	}
+	preferredWidth = psx;
+	preferredHeight = psy;
+    }
 
     public InfoBox(String title, String info) {
 	this(title, info, DISPLAY_ONLY);
