@@ -21,7 +21,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 package CacheWolf;
 
-import CacheWolf.controls.GuiImageBroker;
 import CacheWolf.controls.InfoBox;
 import CacheWolf.controls.MyScrollBarPanel;
 import CacheWolf.database.CWPoint;
@@ -96,11 +95,9 @@ public class MainForm extends Editor {
      */
     public MainForm(boolean dbg, String pathToPrefXml) {
 
-	this.preferences = Preferences.itself(); // implicit calls the constructor (first access) with default values
+	this.preferences = Preferences.itself();
 	this.preferences.debug = dbg;
-	// in case pathtoprefxml == null the preferences will determine the path itself
 	this.preferences.setPathToConfigFile(pathToPrefXml);
-
 	this.preferences.readPrefFile();
 	this.preferences.logInit(); // also initialises MyLocale (with Language from preferences)
 	if (MyLocale.initErrors.length() != 0) {
@@ -108,15 +105,14 @@ public class MainForm extends Editor {
 	}
 
 	this.exitSystemOnClose = true;
-	this.resizable = true;
-	this.moveable = true;
 	this.resizeOnSIP = true;
 	this.windowFlagsToSet = WindowConstants.FLAG_MAXIMIZE_ON_PDA;
-
 	if (Vm.isMobile()) {
 	    this.resizable = false;
 	    this.moveable = false;
 	} else {
+	    this.resizable = true;
+	    this.moveable = true;
 	    int h, w;
 	    h = this.preferences.myAppHeight;
 	    if (h > MyLocale.getScreenHeight())
@@ -133,12 +129,8 @@ public class MainForm extends Editor {
 	mApp.fontsChanged();
 	mApp.mainApp.font = newGuiFont;
 
-	// Replace buildt-in symbols with customized images (if there are some)
-	GuiImageBroker.customizedSymbols();
-
 	if (!selectProfile(PROFILE_SELECTOR_ONOROFF, true))
 	    ewe.sys.Vm.exit(0); // User MUST select or create a profile
-
 	Vm.showWait(true);
 	InfoBox infB = new InfoBox("CacheWolf", MyLocale.getMsg(5000, "Loading Cache-List"));
 	infB.exec();
@@ -149,8 +141,6 @@ public class MainForm extends Editor {
 	} catch (Exception e) {
 	    this.preferences.log("[MainForm:Exception loading CacheList]", e);
 	}
-	this.preferences.curCentrePt.set(profile.centre);
-	profile.updateBearingDistance();
 
 	if (Gui.screenIs(Gui.PDA_SCREEN) && Vm.isMobile()) {
 	    Vm.setSIP(Vm.SIP_LEAVE_BUTTON, mApp.mainApp);
@@ -172,14 +162,16 @@ public class MainForm extends Editor {
 	pnlCacheTour.addLast(cacheTour = new CacheTour(), STRETCH, FILL);
 
 	mainTab = new MainTab();
-	mainTab.tablePanel.refreshTable();
-	mainTab.tablePanel.autoSort();
-	mainTab.tablePanel.selectFirstRow();
 	this.firstFocus = mainTab.tablePanel.myTableControl; // works if tablePanel is the first screen
 	pnlMainTab.addLast(mainTab, STRETCH, FILL);
 
 	setTitle(profile.name + " - CW " + Version.getRelease());
 	this.addLast(ScreenPanel, STRETCH, FILL);
+
+	mainTab.tablePanel.refreshTable();
+	mainTab.tablePanel.selectFirstRow();
+
+	this.setCurCentrePt(profile.centre);
 
 	if (infB != null)
 	    infB.close(0);
@@ -266,9 +258,9 @@ public class MainForm extends Editor {
     }
 
     public void setCurCentrePt(CWPoint newCentre) {
-	Vm.showWait(true);
 	this.preferences.curCentrePt.set(newCentre);
-	profile.updateBearingDistance();
+	Vm.showWait(true);
+	MainForm.profile.updateBearingDistance();
 	mainTab.tablePanel.autoSort();
 	Vm.showWait(false);
     }
