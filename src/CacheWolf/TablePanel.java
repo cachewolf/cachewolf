@@ -38,14 +38,13 @@ public class TablePanel extends CellPanel {
     MyTableControl myTableControl;
     public MyTableModel myTableModel;
     CacheDB cacheDB;
-    MainTab myMaintab;
     TablePanelStatusBar statusBar;
     TablePanelMenu mainMenu;
     /**
      * We keep track of the currently selected cache in two variables(for speed)
-     * selectedIdx is the index in cacheDB, selectedch is the actual cache
+     * selectedIdx is the index in cacheDB, selectedCh is the actual cache
      * selectedIdx=-1 if no caches are visible (i.e. database empty or filtered). In
-     * this case selectedch is "null".
+     * this case selectedCh is "null".
      * Otherwise selectedIdx points to a visible cache.
      * When the cacheDB is reorganised (by sort/filter/search), the selected cache
      * may end up at a new index.
@@ -142,7 +141,7 @@ public class TablePanel extends CellPanel {
 
     public void resetModel() {
 	myTableModel.numRows = cacheDB.size();
-	MainForm.profile.updateBearingDistance(); //profile.updateBearingDistance();
+	MainForm.profile.updateBearingDistance();
 	myTableControl.scrollToVisible(0, 0);
 	refreshTable();
     }

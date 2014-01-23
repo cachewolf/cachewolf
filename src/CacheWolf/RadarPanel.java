@@ -145,8 +145,7 @@ public class RadarPanel extends CellPanel {
 	drawCaches();
 	iActP.repaintNow();
 	if (reCenterImage) {
-	    // Hack to scroll to left origin for a defined position for subsequent
-	    // scroll which centers the image
+	    // Hack to scroll to left origin for a defined position for subsequent scroll which centers the image
 	    iActP.scroll(-1000, -1000);
 	    final Dimension dispSize = getDisplayedSize(null);
 	    iActP.scroll((width - dispSize.width) / 2, (height - dispSize.height + btnMinus.getSize(null).height) / 2);

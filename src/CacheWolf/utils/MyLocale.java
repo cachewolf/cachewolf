@@ -58,7 +58,7 @@ public class MyLocale {
     /** This language used if the system language is not supported by CacheWolf */
     private final static String standardLanguage = "EN";
     /**
-     * must be set once before (first implicit) call of init()
+     * must be set once before (first implicit) call of init()<br>
      * get it from Preferences two Char language Code or AUTO
      */
     public static String language = "EN";
