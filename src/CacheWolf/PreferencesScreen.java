@@ -94,6 +94,7 @@ public class PreferencesScreen extends Form {
     mCheckBox chkSynthShort, chkProxyActive, chkDescShowImg, chkAddDetailsToWaypoint, chkAddDetailsToName, chkSortingGroupedByCache, chkDebug, chkPM;
     mCheckBox chkCheckLog, chkCheckDTS, chkCheckTBs;
     mCheckBox chkOverwriteLogs;
+    mCheckBox chkAskForMaxValues;
     TableColumnChooser tccList, tccBugs;
 
     mInput inpPassword;
@@ -199,6 +200,14 @@ public class PreferencesScreen extends Form {
 	LogsPanel.addLast(chkOverwriteLogs = new mCheckBox(MyLocale.getMsg(668, "Overwrite saved Logs?")));
 	chkOverwriteLogs.setState(Preferences.itself().overwriteLogs);
 	importPanel.addLast(LogsPanel, HSTRETCH, HFILL);
+	// 672, "Maximum number of logs to be stored in DB per cache" 
+
+	CellPanel ViewPanel = new CellPanel();
+	ViewPanel.setText(MyLocale.getMsg(673, "View"));
+	//
+	ViewPanel.addLast(chkAskForMaxValues = new mCheckBox(MyLocale.getMsg(674, "Ask about download limits")));
+	chkAskForMaxValues.setState(Preferences.itself().askForMaxNumbersOnImport);
+	importPanel.addLast(ViewPanel, HSTRETCH, HFILL);
 
 	mTab.addCard(importPanel, MyLocale.getMsg(175, "Import"), null).iconize(GuiImageBroker.getImage("import"), Preferences.itself().useIcons);
 
@@ -490,6 +499,7 @@ public class PreferencesScreen extends Form {
 		Preferences.itself().checkDTS = chkCheckDTS.getState();
 		Preferences.itself().checkTBs = chkCheckTBs.getState();
 		Preferences.itself().overwriteLogs = chkOverwriteLogs.getState();
+		Preferences.itself().askForMaxNumbersOnImport = chkAskForMaxValues.getState();
 
 		Preferences.itself().dirty = true;
 		Preferences.itself().savePreferences();
