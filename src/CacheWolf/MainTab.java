@@ -549,7 +549,7 @@ public class MainTab extends mTabbedPanel {
 		CWPoint whereAmI = Navigate.gpsPos;
 		if (whereAmI.isValid()) {
 		    CWPoint curCentr = Preferences.itself().curCentrePt;
-		    if (whereAmI.latDec != curCentr.latDec || whereAmI.lonDec != curCentr.lonDec) {
+		    if (!whereAmI.equals(curCentr)) {
 			MainForm.itself.setCurCentrePt(whereAmI);
 		    }
 		}

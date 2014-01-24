@@ -76,13 +76,14 @@ import ewe.util.Comparer;
  */
 public class MainForm extends Editor {
     public static MainForm itself;
-    MainTab mainTab;
+
     public static Profile profile;
 
-    // The next three declares are for the cachelist
     public boolean cacheTourVisible = false;
-    public CacheTour cacheTour;
-    SplittablePanel ScreenPanel;
+
+    private SplittablePanel ScreenPanel;
+    private MainTab mainTab;
+    private CacheTour cacheTour;
 
     private Preferences preferences;
 
@@ -159,19 +160,21 @@ public class MainForm extends Editor {
 	CellPanel pnlCacheTour = ScreenPanel.getNextPanel();
 	CellPanel pnlMainTab = ScreenPanel.getNextPanel();
 	ScreenPanel.setSplitter(PanelSplitter.MIN_SIZE | PanelSplitter.BEFORE, PanelSplitter.HIDDEN | PanelSplitter.BEFORE, PanelSplitter.CLOSED);
+
 	pnlCacheTour.addLast(cacheTour = new CacheTour(), STRETCH, FILL);
 
-	mainTab = new MainTab();
-	this.firstFocus = mainTab.tablePanel.myTableControl; // works if tablePanel is the first screen
-	pnlMainTab.addLast(mainTab, STRETCH, FILL);
+	pnlMainTab.addLast(mainTab = new MainTab(), STRETCH, FILL);
 
-	setTitle(profile.name + " - CW " + Version.getRelease());
 	this.addLast(ScreenPanel, STRETCH, FILL);
 
 	mainTab.tablePanel.refreshTable();
 	mainTab.tablePanel.selectFirstRow();
 
 	this.setCurCentrePt(profile.centre);
+
+	this.setTitle(profile.name + " - CW " + Version.getRelease());
+
+	this.firstFocus = mainTab.tablePanel.myTableControl; // works if tablePanel is the first screen
 
 	if (infB != null)
 	    infB.close(0);
@@ -260,26 +263,25 @@ public class MainForm extends Editor {
     public void setCurCentrePt(CWPoint newCentre) {
 	this.preferences.curCentrePt.set(newCentre);
 	Vm.showWait(true);
-	MainForm.profile.updateBearingDistance();
+	profile.updateBearingDistance();
 	mainTab.tablePanel.autoSort();
 	Vm.showWait(false);
     }
 
-    public void onEvent(Event ev) { // Preferences have been changed by PreferencesScreen
-	if (this.preferences.dirty) {
-	    mainTab.tablePanel.myTableModel.setColumnNamesAndWidths();
-	    mainTab.tablePanel.refreshControl();
-	    this.preferences.dirty = false;
-	}
-	super.onEvent(ev);
+    public CacheTour getCacheTour() {
+	return cacheTour;
     }
 
 }
 
 /********************************************************
- * This class implements the core functionality of a flexible cachelist for collecting "Cachetours". Caches can be dragged into the list from the main list view and from the radar panel view. Caches can be removed from the list by dragging them out
- * or selecting them and pressing the "delete" key. Within the list the selected cache can be moved up/down using two buttons. The finished list can be saved and reloaded with the selected position being stored. The list can be applied as a filter to
- * the main list, thereby hiding all caches that are not in the list and sorting the caches according to the list. Created by skg, Februar 2007
+ * This class implements the core functionality of a flexible cachelist for collecting "Cachetours". 
+ * Caches can be dragged into the list from the main list view and from the radar panel view. 
+ * Caches can be removed from the list by dragging them out or selecting them and pressing the "delete" key.
+ * Within the list the selected cache can be moved up/down using two buttons.
+ * The finished list can be saved and reloaded with the selected position being stored.
+ * The list can be applied as a filter to the main list, thereby hiding all caches that are not in the list and sorting the caches according to the list.
+ * Created by skg, Februar 2007
  ********************************************************/
 class CacheTour extends CellPanel {
     /** The extension for cachelists (CL) */
