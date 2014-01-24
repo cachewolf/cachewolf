@@ -25,7 +25,6 @@ import CacheWolf.controls.MyScrollBarPanel;
 import CacheWolf.database.CacheDB;
 import CacheWolf.database.CacheHolder;
 import ewe.fx.Dimension;
-import ewe.ui.CellConstants;
 import ewe.ui.CellPanel;
 import ewe.util.Vector;
 
@@ -73,27 +72,27 @@ public class TablePanel extends CellPanel {
 
 	if (Preferences.itself().tabsAtTop) {
 	    if (Preferences.itself().menuAtTab) {
-		addLast(mainMenu, CellConstants.DONTSTRETCH, CellConstants.FILL);
+		addLast(mainMenu, DONTSTRETCH, FILL);
 		addLast(theTableControl, STRETCH, FILL);
 		if (Preferences.itself().showStatus)
-		    addLast(statusBar, CellConstants.DONTSTRETCH, CellConstants.FILL);
+		    addLast(statusBar, DONTSTRETCH, FILL);
 	    } else {
 		addLast(theTableControl, STRETCH, FILL);
 		if (Preferences.itself().showStatus)
-		    addLast(statusBar, CellConstants.DONTSTRETCH, CellConstants.FILL);
-		addLast(mainMenu, CellConstants.DONTSTRETCH, CellConstants.FILL);
+		    addLast(statusBar, DONTSTRETCH, FILL);
+		addLast(mainMenu, DONTSTRETCH, FILL);
 	    }
 	} else {
 	    if (Preferences.itself().menuAtTab) {
 		addLast(theTableControl, STRETCH, FILL);
 		if (Preferences.itself().showStatus)
-		    addLast(statusBar, CellConstants.DONTSTRETCH, CellConstants.FILL);
-		addLast(mainMenu, CellConstants.DONTSTRETCH, CellConstants.FILL);
+		    addLast(statusBar, DONTSTRETCH, FILL);
+		addLast(mainMenu, DONTSTRETCH, FILL);
 	    } else {
-		addLast(mainMenu, CellConstants.DONTSTRETCH, CellConstants.FILL);
+		addLast(mainMenu, DONTSTRETCH, FILL);
 		addLast(theTableControl, STRETCH, FILL);
 		if (Preferences.itself().showStatus)
-		    addLast(statusBar, CellConstants.DONTSTRETCH, CellConstants.FILL);
+		    addLast(statusBar, DONTSTRETCH, FILL);
 	    }
 	}
 
@@ -222,4 +221,5 @@ public class TablePanel extends CellPanel {
 		myTableControl.repaint();
 	}
     }
+
 }

@@ -493,7 +493,7 @@ class MyInteractivePanel extends InteractivePanel {
 	p.y += drag.curPoint.y - origin.y;
 	Control c = getWindow().findChild(p.x, p.y);
 	if (c instanceof mList && c.text.equals("CacheList")) {
-	    if (MainForm.itself.cacheTour.addCache(wayPoint)) {
+	    if (MainForm.itself.getCacheTour().addCache(wayPoint)) {
 		c.repaintNow();
 		((mList) c).makeItemVisible(((mList) c).itemsSize() - 1);
 	    }
