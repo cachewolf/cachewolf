@@ -471,7 +471,12 @@ public class PreferencesScreen extends Form {
 		if (!Preferences.itself().useText && !Preferences.itself().useIcons)
 		    Preferences.itself().useText = true;
 		Preferences.itself().useBigIcons = chkUseBigIcons.getState();
-		Preferences.itself().travelbugColMap = tccBugs.getSelectedCols();
+		if (!Preferences.itself().travelbugColMap.equals(tccBugs.getSelectedCols())) {
+		    Preferences.itself().travelbugColMap = tccBugs.getSelectedCols();
+		    // TODO it with event raise
+		    MainTab.itself.tablePanel.myTableModel.setColumnNamesAndWidths();
+		    MainTab.itself.tablePanel.refreshControl();
+		}
 		Preferences.itself().listColMap = tccList.getSelectedCols();
 		Preferences.itself().descShowImg = chkDescShowImg.getState();
 		MainTab.itself.tablePanel.myTableModel.setColumnNamesAndWidths();
@@ -486,8 +491,8 @@ public class PreferencesScreen extends Form {
 		Preferences.itself().checkTBs = chkCheckTBs.getState();
 		Preferences.itself().overwriteLogs = chkOverwriteLogs.getState();
 
+		Preferences.itself().dirty = true;
 		Preferences.itself().savePreferences();
-		Preferences.itself().dirty = true; // Need to update table in case columns were enabled/disabled
 		this.close(0);
 	    }
 	    if (ev.target == DataDirBrowseButton) {
@@ -516,7 +521,7 @@ public class PreferencesScreen extends Form {
 		gpo.inputBoxForwardHost.setText(Preferences.itself().forwardGpsHost);
 		gpo.chcUseGpsd.select(Preferences.itself().useGPSD);
 		if (Preferences.itself().gpsdPort != Preferences.itself().DEFAULT_GPSD_PORT) {
-		    gpo.inputBoxGpsdHost.setText(Preferences.itself().gpsdHost + ":" + Convert.toString(Preferences.itself().gpsdPort));
+		    gpo.inputBoxGpsdHost.setText(Preferences.itself().gpsdHost + ":" + Preferences.itself().gpsdPort);
 		} else {
 		    gpo.inputBoxGpsdHost.setText(Preferences.itself().gpsdHost);
 		}

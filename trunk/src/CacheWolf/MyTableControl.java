@@ -160,7 +160,7 @@ public class MyTableControl extends TableControl {
 		else if (ev.key == IKeys.UP)
 		    MainTab.itself.tablePanel.selectRow(java.lang.Math.max(cursor.y - 1, 0));
 		else if (ev.key == IKeys.LEFT && MainForm.itself.cacheTourVisible && cursor.y >= 0 && cursor.y < MainTab.itself.tablePanel.myTableModel.numRows)
-		    MainForm.itself.cacheTour.addCache(cacheDB.get(cursor.y).getWayPoint());
+		    MainForm.itself.getCacheTour().addCache(cacheDB.get(cursor.y).getWayPoint());
 		else if (ev.key == IKeys.RIGHT) {
 		    CacheHolder ch = cacheDB.get(MainTab.itself.tablePanel.getSelectedCache());
 		    if (ch.getPos().isValid()) {
@@ -505,7 +505,7 @@ public class MyTableControl extends TableControl {
 	    p.y += dc.curPoint.y;
 	    Control c = getWindow().findChild(p.x, p.y);
 	    if (c instanceof mList && c.text.equals("CacheList")) {
-		if (MainForm.itself.cacheTour.addCache(wayPoint)) {
+		if (MainForm.itself.getCacheTour().addCache(wayPoint)) {
 		    c.repaintNow();
 		    ((mList) c).makeItemVisible(((mList) c).itemsSize() - 1);
 		}

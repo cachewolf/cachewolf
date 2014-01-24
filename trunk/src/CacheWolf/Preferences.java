@@ -965,8 +965,10 @@ public class Preferences extends MinML {
 		outp.print("    <MobileGui value=\"true\" />\n");
 	    outp.print("</preferences>");
 	    outp.close();
+	    dirty = false;
 	} catch (Exception e) {
 	    log("Problem saving: " + pathToConfigFile, e, true);
+	    dirty = true;
 	}
     }
 

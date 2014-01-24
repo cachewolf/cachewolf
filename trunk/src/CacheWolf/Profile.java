@@ -508,7 +508,7 @@ public class Profile {
 		setFilterInverted(true); // Needed because previous line inverts filterInverted
 	    }
 	} else if (getFilterActive() == Filter.FILTER_CACHELIST) {
-	    MainForm.itself.cacheTour.applyCacheList();
+	    MainForm.itself.getCacheTour().applyCacheList();
 	    // flt.filterActive=filterActive;
 	} else if (getFilterActive() == Filter.FILTER_INACTIVE) {
 	    if (clearIfInactive) {
