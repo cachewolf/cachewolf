@@ -657,87 +657,68 @@ public class GCImporter {
     }
 
     private boolean doDownloadGui(int menu) {
-
-	if (menu == 0 && spiderAllFinds) {
-	    importGui = new ImportGui(MyLocale.getMsg(217, "Spider all finds from geocaching.com"), ImportGui.ISGC | ImportGui.IMAGES | ImportGui.TRAVELBUGS | ImportGui.MAXLOGS | ImportGui.MAXUPDATE);
+	int options = ImportGui.ISGC | ImportGui.IMAGES | ImportGui.MAXLOGS | ImportGui.TRAVELBUGS;
+	if (spiderAllFinds) {
+	    options = options | ImportGui.MAXUPDATE;
+	    if (Preferences.itself().askForMaxNumbersOnImport) {
+		options = options | ImportGui.MAXNUMBER;
+	    }
+	    importGui = new ImportGui(MyLocale.getMsg(217, "Spider all finds from geocaching.com"), options);
 	    // setting defaults for input
 	    importGui.maxNumberUpdates.setText("0");
-	    // doing the input
-	    if (importGui.execute() == FormBase.IDCANCEL) {
-		return false;
-	    }
-	    // setting default values for options not used (if necessary)
-	    maxDistance = 1.0;
-	    minDistance = 0.0;
 	} else if (menu == 0) {
-	    importGui = new ImportGui(MyLocale.getMsg(131, "Download from geocaching.com"), ImportGui.ISGC | ImportGui.TYPE | ImportGui.DIST | ImportGui.INCLUDEFOUND | ImportGui.IMAGES | ImportGui.TRAVELBUGS | ImportGui.MAXLOGS);
-	    // doing the input
-	    if (importGui.execute() == FormBase.IDCANCEL) {
-		return false;
+	    options = options | ImportGui.TYPE | ImportGui.DIST | ImportGui.INCLUDEFOUND;
+	    if (Preferences.itself().askForMaxNumbersOnImport) {
+		options = options | ImportGui.MAXNUMBER | ImportGui.MAXUPDATE;
 	    }
-	    // setting default values for options not used (if necessary)
-	    MainForm.profile.setMinDistGC(Double.toString(0).replace(',', '.'));
-	    doNotgetFound = importGui.foundCheckBox.getState();
+	    importGui = new ImportGui(MyLocale.getMsg(131, "Download from geocaching.com"), options);
 	} else if (menu == 1) {
-	    // menu = 1 input values for get Caches along a route
-	    importGui = new ImportGui(MyLocale.getMsg(137, "Download along a Route from geocaching.com"), ImportGui.ISGC | ImportGui.DIST | ImportGui.INCLUDEFOUND | ImportGui.TRAVELBUGS | ImportGui.IMAGES | ImportGui.MAXLOGS | ImportGui.FILENAME
-		    | ImportGui.TYPE);
-	    // setting defaults for input doing the input
-	    if (importGui.execute() == FormBase.IDCANCEL) {
-		return false;
-	    }
-	    // setting default values for options not used (if necessary)
-	    minDistance = 0.0;
-	    doNotgetFound = importGui.foundCheckBox.getState();
-	    maxUpdate = 0;
-	} else { // if (menu == 2) {
-	    importGui = new ImportGui(MyLocale.getMsg(138, "Qick Import"), ImportGui.ISGC | ImportGui.TYPE | ImportGui.DIST | ImportGui.INCLUDEFOUND);
-	    // setting defaults for input doing the input
-	    if (importGui.execute() == FormBase.IDCANCEL) {
-		return false;
-	    }
-	    doNotgetFound = importGui.foundCheckBox.getState();
-	}
-	if (!spiderAllFinds) {
-	    Preferences.itself().doNotGetFound = doNotgetFound;
-	}
-	if (menu == 0) {
-	    Preferences.itself().maxSpiderNumber = Integer.MAX_VALUE;
-	    if (spiderAllFinds) {
-		maxUpdate = -1;
-		final String maxUpdateString = importGui.maxNumberUpdates.getText();
-		if (maxUpdateString.length() != 0) {
-		    maxUpdate = Common.parseInt(maxUpdateString);
-		}
-		if (maxUpdate == -1)
-		    maxUpdate = Integer.MAX_VALUE;
-	    } else {
-		maxUpdate = Integer.MAX_VALUE;
-	    }
+	    options = options | ImportGui.TYPE | ImportGui.DIST | ImportGui.INCLUDEFOUND | ImportGui.FILENAME;
+	    importGui = new ImportGui(MyLocale.getMsg(137, "Download along a Route from geocaching.com"), options);
+	} else {
+	    return false;
 	}
 
-	// options for all
-
-	if (importGui.maxDistanceInput != null) {
-	    final String maxDist = importGui.maxDistanceInput.getText();
-	    maxDistance = Common.parseDouble(maxDist);
-	    if (maxDistance == 0)
-		return false;
-	    // zur Sicherheit bei "along the route"
-	    // mindenstens 500 meter Umkreis
-	    if (maxDistance < 0.5)
-		maxDistance = 0.5;
-	    MainForm.profile.setDistGC(Double.toString(maxDistance));
+	// doing the input
+	if (importGui.execute() == FormBase.IDCANCEL) {
+	    return false;
 	}
 
-	// works even if TYPE not in options
+	//
 	cacheTypeRestriction = importGui.getCacheTypeRestriction(p);
 	restrictedCacheType = importGui.getRestrictedCacheType(p);
+	//
+	minDistance = 0.0; // no longer really used
+	// MainForm.profile.setMinDistGC(Convert.toString(0).replace(',', '.'));
+	//
+	if ((options & ImportGui.DIST) > 0) {
+	    maxDistance = importGui.getDoubleFromInput(importGui.maxDistanceInput, 0);
+	    if (maxDistance == 0)
+		return false;
+	    if (menu == 1) {
+		// "along the route" mindenstens 500 meter Umkreis
+		if (maxDistance < 0.5)
+		    maxDistance = 0.5;
+	    }
+	    MainForm.profile.setDistGC(Convert.toString(maxDistance));
+	} else {
+	    maxDistance = 1.0; // only to be > minDistance
+	}
+	//
+	Preferences.itself().maxSpiderNumber = importGui.getIntFromInput(importGui.maxNumberInput, Integer.MAX_VALUE);
+	//
+	maxUpdate = importGui.getIntFromInput(importGui.maxNumberUpdates, Integer.MAX_VALUE);
+	if (menu == 1) {
+	    maxUpdate = 0;
+	}
+	//
+	if ((options & ImportGui.INCLUDEFOUND) > 0) {
+	    doNotgetFound = importGui.foundCheckBox.getState();
+	    Preferences.itself().doNotGetFound = doNotgetFound;
+	}
 
 	importGui.close(0);
-
 	return true;
-
     }
 
     private void fillDownloadLists(int maxNew, int maxUpdate, double toDistance, double fromDistance) {

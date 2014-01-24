@@ -63,7 +63,7 @@ TBRex              = /wpttypes/([0-9]+).gif" alt="(.*?)"
 #...size geocache, with difficulty of 3.5, terrain of 3. It...
 #...size geocache, with difficulty of 1, terrain of 1.5. It...
 difficultyRex      = difficulty of (.*?),
-terrainRex         = terrain of (.*?)\\.
+terrainRex         = terrain of (.*?). It
 #                                                  title="About Cache Types"><img src="/images/WptTypes/2.gif" alt="Traditional Cache"
 #<a href="/about/cache_types.aspx" target="_blank" title="About Cache Types"><img src="/images/WptTypes/8.gif" alt="Mystery-Cache" title="Mystery-Cache" /></a>
 cacheTypeRex       = /images/WptTypes/(.*?)\\.gif" alt="
