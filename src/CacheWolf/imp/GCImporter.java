@@ -24,6 +24,7 @@ package CacheWolf.imp;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import CacheWolf.CoordsInput;
 import CacheWolf.MainForm;
 import CacheWolf.MainTab;
 import CacheWolf.Preferences;
@@ -270,8 +271,16 @@ public class GCImporter {
 	// No need to copy curCentrePt as it is only read and not written
 	origin = Preferences.itself().curCentrePt;
 	if (!spiderAllFinds && !origin.isValid()) {
-	    new InfoBox(MyLocale.getMsg(5500, "Error"), MyLocale.getMsg(5509, "Coordinates for centre must be set")).wait(FormBase.OKB);
-	    return;
+	    CoordsInput cs = new CoordsInput();
+	    cs.setFields(Preferences.itself().curCentrePt, TransformCoordinates.CW);
+	    if (cs.execute() == FormBase.IDOK) {
+		MainForm.itself.setCurCentrePt(cs.getCoords());
+		origin = Preferences.itself().curCentrePt;
+	    }
+	    if (!origin.isValid()) {
+		new InfoBox(MyLocale.getMsg(5500, "Error"), MyLocale.getMsg(5509, "Coordinates for centre must be set")).wait(FormBase.OKB);
+		return;
+	    }
 	}
 
 	// Reset states for all caches when spidering (http://tinyurl.com/dzjh7p)
@@ -1321,19 +1330,31 @@ public class GCImporter {
     */
 
     private boolean gcLogin() {
-
-	// Get password 
+	// get username
+	String username = Preferences.itself().myAlias;
+	if (username.equals("")) {
+	    InfoBox localInfB = new InfoBox(MyLocale.getMsg(601, "Your alias:"), MyLocale.getMsg(601, "Your alias:"), InfoBox.INPUT);
+	    localInfB.setInput(username);
+	    int code = FormBase.IDOK;
+	    code = localInfB.execute();
+	    username = localInfB.getInput();
+	    localInfB.close(0);
+	    if (code != FormBase.IDOK)
+		return false;
+	    Preferences.itself().myAlias = username;
+	}
+	// get password 
 	String passwort = Preferences.itself().password;
-	InfoBox localInfB = new InfoBox(MyLocale.getMsg(5506, "Password"), MyLocale.getMsg(5505, "Enter Password"), InfoBox.INPUT);
-	localInfB.setInputPassword(passwort);
-	int code = FormBase.IDOK;
 	if (passwort.equals("")) {
+	    InfoBox localInfB = new InfoBox(MyLocale.getMsg(5506, "Password"), MyLocale.getMsg(5505, "Enter Password"), InfoBox.INPUT);
+	    localInfB.setInputPassword(passwort);
+	    int code = FormBase.IDOK;
 	    code = localInfB.execute();
 	    passwort = localInfB.getInput();
+	    localInfB.close(0);
+	    if (code != FormBase.IDOK)
+		return false;
 	}
-	localInfB.close(0);
-	if (code != FormBase.IDOK)
-	    return false;
 
 	String page;
 	UrlFetcher.clearCookies();
@@ -1348,7 +1369,7 @@ public class GCImporter {
 		+ "&" + "__EVENTARGUMENT="//
 		+ "&" + "__VIEWSTATEFIELDCOUNT=1" //
 		+ "&" + "__VIEWSTATE=" + UrlFetcher.encodeURL(viewstate, false) //
-		+ "&" + "ctl00%24ContentBody%24tbUsername=" + encodeUTF8URL(Utils.encodeJavaUtf8String(Preferences.itself().myAlias)) //
+		+ "&" + "ctl00%24ContentBody%24tbUsername=" + encodeUTF8URL(Utils.encodeJavaUtf8String(username)) //
 		+ "&" + "ctl00%24ContentBody%24tbPassword=" + encodeUTF8URL(Utils.encodeJavaUtf8String(passwort)) //
 		+ "&" + "ctl00%24ContentBody%24cbRememberMe=" + "true" //
 		+ "&" + "ctl00%24ContentBody%24btnSignIn=" + "Login" //

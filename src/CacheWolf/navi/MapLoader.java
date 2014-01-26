@@ -22,7 +22,6 @@
 package CacheWolf.navi;
 
 import CacheWolf.MainForm;
-import CacheWolf.utils.MyLocale;
 import CacheWolf.Preferences;
 import CacheWolf.controls.InfoBox;
 import CacheWolf.database.BoundingBox;
@@ -33,6 +32,7 @@ import CacheWolf.database.CoordinatePoint;
 import CacheWolf.utils.CWWrapper;
 import CacheWolf.utils.Common;
 import CacheWolf.utils.FileBugfix;
+import CacheWolf.utils.MyLocale;
 import CacheWolf.utils.STRreplace;
 import CacheWolf.utils.UrlFetcher;
 import ewe.fx.Point;
@@ -281,7 +281,7 @@ public class MapLoader {
 		downloadMapExternal(center, scale, sizeInPixels, path);
 	    }
 	} catch (Exception e) {
-	    this.progressInfobox.addWarning(MyLocale.getMsg(4805, "Tile") + " " + MyLocale.getMsg(4806, ": Ignoring error:") + " " + e.getMessage() + "\n");
+	    this.progressInfobox.addWarning(MyLocale.getMsg(4805, "Tile") + " " + MyLocale.getMsg(4806, ": Ignoring error:") + " " + e.getMessage());
 	}
 
     }

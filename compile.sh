@@ -26,9 +26,6 @@ compile_json() {
 
 compile_cw \
    -d ./bin/ \
-   ./src/org/bouncycastle/*/*.java \
-   ./src/org/bouncycastle/*/*/*.java \
-   ./src/org/bouncycastle/*/*/*/*.java \
    ./src/CacheWolf/*/*/*.java \
    ./src/CacheWolf/*/*.java
    ./src/CacheWolf/*.java \
