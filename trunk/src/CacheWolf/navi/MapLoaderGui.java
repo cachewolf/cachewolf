@@ -24,7 +24,6 @@ package CacheWolf.navi;
 import CacheWolf.CoordsInput;
 import CacheWolf.MainForm;
 import CacheWolf.MainTab;
-import CacheWolf.utils.MyLocale;
 import CacheWolf.Preferences;
 import CacheWolf.controls.ExecutePanel;
 import CacheWolf.controls.InfoBox;
@@ -33,6 +32,7 @@ import CacheWolf.database.CWPoint;
 import CacheWolf.database.CacheDB;
 import CacheWolf.database.CacheHolder;
 import CacheWolf.utils.Common;
+import CacheWolf.utils.MyLocale;
 import CacheWolf.utils.UrlFetcher;
 import ewe.fx.Point;
 import ewe.io.File;
@@ -387,7 +387,7 @@ public class MapLoaderGui extends Form {
 			    try {
 				mapLoader.downloadMap(ch.getPos(), scale, TileSizeInPixels, mapsDir);
 			    } catch (Exception e) {
-				progressBox.addWarning(MyLocale.getMsg(1822, "Cache:") + " " + ch.getCacheName() + "(" + ch.getWayPoint() + ") " + MyLocale.getMsg(1823, "Ignoring error:") + " " + e.getMessage() + "\n");
+				progressBox.addWarning(MyLocale.getMsg(1822, "Cache:") + " " + ch.getCacheName() + "(" + ch.getWayPoint() + ") " + MyLocale.getMsg(1823, "Ignoring error:") + " " + e.getMessage());
 			    }
 			}
 		    }

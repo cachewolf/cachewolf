@@ -366,7 +366,6 @@ public class MyLocale {
     public static void setSplitterSize(SplittablePanel split) {
 	if (Vm.isMobile() && screenSize.height > 400) {
 	    split.theSplitter.thickness = 20;
-
 	}
     }
 
