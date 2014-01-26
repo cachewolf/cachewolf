@@ -61,25 +61,25 @@ public final class GuiImageBroker {
     }
 
     /**
-     * should be only called once, before first access of extension
+     * 
      */
     public static void init(boolean useText, boolean useIcons, boolean useBigIcons, boolean leftIcons) {
 	GuiImageBroker.useText = useText;
 	GuiImageBroker.useIcons = useIcons;
 	GuiImageBroker.leftIcons = leftIcons;
-	if (extension == null) {
-	    if (useBigIcons)
-		extension = "_vga.png";
-	    else
-		extension = ".png";
+	if (useBigIcons)
+	    extension = "_vga.png";
+	else
+	    extension = ".png";
+	if (found == null) {
+	    found = getCacheTypeImage("found");
+	    disabled = getCacheTypeImage("disabled");
+	    archived = getCacheTypeImage("archived");
+	    solved = getCacheTypeImage("solved");
+	    bonus = getCacheTypeImage("bonus");
+	    owned = getCacheTypeImage("owned");
+	    dnf = getCacheTypeImage("dnf");
 	}
-	found = getCacheTypeImage("found");
-	disabled = getCacheTypeImage("disabled");
-	archived = getCacheTypeImage("archived");
-	solved = getCacheTypeImage("solved");
-	bonus = getCacheTypeImage("bonus");
-	owned = getCacheTypeImage("owned");
-	dnf = getCacheTypeImage("dnf");
     }
 
     private static String getCacheTypeImageName(String icon) {
