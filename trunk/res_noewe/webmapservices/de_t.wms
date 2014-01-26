@@ -8,8 +8,14 @@ ImageFileExtension:                     .jpg
 CoordinateReferenceSystemCacheWolf:     31466 31467 31468 31469
 CoordinateReferenceSystemUrlPart:       SRS=EPSG:31466 SRS=EPSG:31467 SRS=EPSG:31468 SRS=EPSG:31469
 RecommendedScale:                       1 0.5 2 4 8 16 32 64 128 256
-BoundingBoxTopLeftWGS84:                N 56.8548 E 0.1059
-BoundingBoxBottomRightWGS84:            N 20.4489 E 45.2375
+#from Capabilities (more than Germny)
+#<BoundingBox minx="0.105946737" SRS="EPSG:4326" maxx="20.448893173" maxy="56.854767808" miny="45.237541588"/>
+#take following manual Values
+BoundingBoxTopLeftWGS84:                N 55.05860 E 5.86618
+BoundingBoxBottomRightWGS84:            N 47.27010 E 15.04255
+#following values are from dopviewer
+#BoundingBoxTopLeftWGS84:                N 55.0648 E 5.5508
+#BoundingBoxBottomRightWGS84:            N 47.1165 E 15.6229
 ServiceTypeUrlPart:                     SERVICE=WMS
 VersionUrlPart:                         VERSION=1.1.1
 RequestUrlPart:                         REQUEST=GetMap
