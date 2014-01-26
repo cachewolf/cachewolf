@@ -463,7 +463,6 @@ public class PreferencesScreen extends Form {
 		Preferences.itself().myproxy = Proxy.getText();
 		Preferences.itself().myproxyport = ProxyPort.getText();
 		Preferences.itself().proxyActive = chkProxyActive.getState();
-		// TODO generate an error message if proxy port is not a number
 		HttpConnection.setProxy(Preferences.itself().myproxy, Common.parseInt(Preferences.itself().myproxyport), Preferences.itself().proxyActive);
 		Preferences.itself().autoReloadLastProfile = chkAutoLoad.getState();
 		Preferences.itself().isPremium = chkPM.getState();

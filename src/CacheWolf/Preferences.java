@@ -429,6 +429,7 @@ public class Preferences extends MinML {
 	    }
 	    savePreferences();
 
+	    logInit(); // to init MyLocale
 	    InfoBox.init(fontSize, useBigIcons);
 	    new InfoBox(MyLocale.getMsg(327, "Information"), MyLocale.getMsg(176, "First start - using default preferences \n For experts only: \n Could not read preferences file:\n") + pathToConfigFile).wait(FormBase.OKB);
 	} catch (Exception e) {
