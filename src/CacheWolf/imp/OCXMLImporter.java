@@ -22,7 +22,6 @@
 package CacheWolf.imp;
 
 import CacheWolf.MainForm;
-import CacheWolf.utils.MyLocale;
 import CacheWolf.OC;
 import CacheWolf.Preferences;
 import CacheWolf.Profile;
@@ -38,6 +37,7 @@ import CacheWolf.database.CoordinatePoint;
 import CacheWolf.database.Log;
 import CacheWolf.navi.TransformCoordinates;
 import CacheWolf.utils.Common;
+import CacheWolf.utils.MyLocale;
 import CacheWolf.utils.SafeXML;
 import CacheWolf.utils.UrlFetcher;
 
@@ -248,7 +248,7 @@ public class OCXMLImporter extends MinML {
 	    MainForm.profile.setLast_sync_opencaching(dateOfthisSync.format("yyyyMMddHHmmss"));
 	    // Preferences.itself().savePreferences();
 	    finalMessage = MyLocale.getMsg(1607, "Update from opencaching successful");
-	    inf.addWarning("\nNumber of" + "\n...caches new/updated: " + numCacheImported + " / " + numCacheUpdated + "\n...cache descriptions new/updated: " + numDescImported + "\n...logs new/updated: " + numLogImported);
+	    inf.addWarning("Number of" + "\n...caches new/updated: " + numCacheImported + " / " + numCacheUpdated + "\n...cache descriptions new/updated: " + numDescImported + "\n...logs new/updated: " + numLogImported);
 	    inf.setInfo(finalMessage);
 	}
 	inf.showButton(FormBase.YESB);
@@ -874,7 +874,7 @@ public class OCXMLImporter extends MinML {
 	    } else
 		ErrMessage = MyLocale.getMsg(1618, "Ignoring error in cache: ") + n + " (" + wp + "): ignoring IOException: " + e.getMessage() + " while downloading picture:" + fileName + " from URL:" + imageInfo.getURL();
 	    //}
-	    inf.addWarning("\n" + ErrMessage);
+	    inf.addWarning(ErrMessage);
 	    Preferences.itself().log(ErrMessage, e, true);
 	}
 

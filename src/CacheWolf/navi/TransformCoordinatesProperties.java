@@ -21,9 +21,9 @@
 */
 package CacheWolf.navi;
 
-import CacheWolf.utils.MyLocale;
 import CacheWolf.database.CWPoint;
 import CacheWolf.database.CoordinatePoint;
+import CacheWolf.utils.MyLocale;
 
 /**
  * Class to load the parameters of a datum shift of a map and
@@ -40,11 +40,11 @@ import CacheWolf.database.CoordinatePoint;
 public final class TransformCoordinatesProperties {
 
     /**
-     * return ll transformed into the desired coordinate reference system
-     * if the prjection is Gauß-Krüger, easting will be put in lonDec and
-     * northing in latDec
+     * return ll transformed into the desired coordinate reference system<br>
+     * if the projection is Gauß-Krüger, easting will be put in lonDec and northing in latDec
      * 
      * @param ll
+     * @param epsgCode
      * @return
      */
     public final static CoordinatePoint fromWgs84(CoordinatePoint ll, int epsgCode) {
@@ -73,10 +73,11 @@ public final class TransformCoordinatesProperties {
     }
 
     /**
-     * convert any supported coordinate reference system WGS84
+     * convert any supported coordinate reference system to WGS84<br>
      * if p is a Gauß-Krüger point, put latdec = northing, londec = easting
      * 
      * @param p
+     * @param epsgCode
      * @return
      */
     public final static CWPoint toWgs84(CWPoint p, int epsgCode) {

@@ -22,10 +22,13 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 package CacheWolf.controls;
 
 import CacheWolf.utils.MyLocale;
+import ewe.ui.CellPanel;
 import ewe.ui.ControlEvent;
 import ewe.ui.Event;
 import ewe.ui.Form;
 import ewe.ui.FormBase;
+import ewe.ui.PanelSplitter;
+import ewe.ui.SplittablePanel;
 import ewe.ui.TextMessage;
 import ewe.ui.mCheckBox;
 import ewe.ui.mInput;
@@ -103,25 +106,29 @@ public class InfoBox extends Form {
 	    this.addLast(msgArea.getScrollablePanel(), STRETCH, FILL);
 	    break;
 	case PROGRESS_WITH_WARNINGS:
-	    msgArea = new TextMessage("\n\n\n\n");
+	    SplittablePanel splittablePanel = new SplittablePanel(PanelSplitter.VERTICAL);
+	    splittablePanel.theSplitter.thickness = 8;
+	    CellPanel upperPanel = splittablePanel.getNextPanel();
+	    CellPanel lowerPanel = splittablePanel.getNextPanel();
+	    splittablePanel.setSplitter(PanelSplitter.AFTER | PanelSplitter.MIN_SIZE, PanelSplitter.BEFORE | PanelSplitter.MIN_SIZE, PanelSplitter.OPENED);
+	    MyLocale.setSplitterSize(splittablePanel);
+	    msgArea = new TextMessage("");
 	    msgArea.autoWrap = autoWrap;
 	    msgArea.alignment = CENTER;
 	    msgArea.anchor = CENTER;
-	    this.addLast(msgArea.getScrollablePanel());
-	    warnings = new TextMessage("\n\n\n\n");
+	    upperPanel.addLast(msgArea.getScrollablePanel());
+	    warnings = new TextMessage("");
 	    warnings.autoWrap = autoWrap;
-	    this.addLast(warnings.getScrollablePanel());
-	    executePanel = new ExecutePanel(this);
-	    executePanel.hide(FormBase.YESB);
+	    lowerPanel.addLast(warnings.getScrollablePanel());
+	    this.addLast(splittablePanel);
+	    executePanel = new ExecutePanel(this, FormBase.CANCELB);
+	    upperPanel.setMinimumSize(preferredWidth, preferredHeight / 4);
+	    lowerPanel.setMinimumSize(preferredWidth, preferredHeight / 4);
 	    break;
 	}
 	this.title = title;
 	this.type = type;
 	relayout(false);
-	if (warnings != null)
-	    warnings.setText("");
-	if (msgArea != null)
-	    msgArea.setText(info);
     }
 
     public final int wait(int doButtons)
@@ -135,14 +142,6 @@ public class InfoBox extends Form {
 	return waitUntilClosed();
     }
 
-    public void setInfoHeight(int heighti) {
-	msgArea.setPreferredSize(getPreferredSize(null).width, heighti);
-    }
-
-    public void setInfoWidth(int widthi) {
-	msgArea.setPreferredSize(widthi, getPreferredSize(null).height);
-    }
-
     public String getInfo() {
 	return msgArea.getText();
     }
@@ -153,7 +152,7 @@ public class InfoBox extends Form {
     }
 
     public void addInfo(String t) {
-	msgArea.setText(msgArea.text + t);
+	msgArea.setText(msgArea.text + "\n" + t);
 	this.repaintNow();
     }
 
@@ -171,7 +170,7 @@ public class InfoBox extends Form {
     }
 
     public void addWarning(String w) {
-	warnings.setText(warnings.text + w);
+	warnings.setText(warnings.text + "\n" + w);
     }
 
     public boolean getCheckBoxState() {
