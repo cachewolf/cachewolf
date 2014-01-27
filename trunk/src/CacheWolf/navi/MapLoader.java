@@ -115,18 +115,18 @@ public class MapLoader {
     }
 
     public String[] getAvailableOnlineMapServices(CWPoint center) {
-
 	if (center.isValid()) {
 	    MapServiceComparer comparer = new MapServiceComparer(center);
 	    onlineMapServices.sort(comparer, false);
 	}
-
-	int s = onlineMapServices.size();
-	String[] services = new String[s];
-	for (int i = 0; i < s; i++) {
-	    services[i] = onlineMapServices.get(i).toString();
+	String[] s = new String[onlineMapServices.size()];
+	for (int i = 0; i < onlineMapServices.size() - 1; i++) {
+	    BoundingBox bb = ((OnlineMapService) onlineMapServices.get(i)).boundingBox;
+	    String result = (bb.isInBound(center) ? "" : "---");
+	    result = result + ((OnlineMapService) onlineMapServices.get(i)).name;
+	    s[i] = result;
 	}
-	return services;
+	return s;
     }
 
     public void setCurrentMapService(int index) {
@@ -1076,21 +1076,26 @@ class MapServiceComparer implements Comparer {
     }
 
     public int compare(Object one, Object two) {
-	if ((!(one instanceof OnlineMapService)) && (!(two instanceof OnlineMapService))) {
+	if ((!(one instanceof OnlineMapService)) || (!(two instanceof OnlineMapService))) {
 	    return 0;
 	} else {
 	    OnlineMapService a = (OnlineMapService) one;
 	    OnlineMapService b = (OnlineMapService) two;
-	    CWPoint abottomleft = new CWPoint(a.boundingBox.topleft.latDec, a.boundingBox.bottomright.lonDec);
-	    CWPoint bbottomleft = new CWPoint(b.boundingBox.topleft.latDec, b.boundingBox.bottomright.lonDec);
-	    CWPoint atopright = new CWPoint(a.boundingBox.bottomright.latDec, a.boundingBox.topleft.lonDec);
-	    CWPoint btopright = new CWPoint(b.boundingBox.bottomright.latDec, b.boundingBox.topleft.lonDec);
-	    double ad1 = Math.min(a.boundingBox.topleft.getDistance(centre), a.boundingBox.bottomright.getDistance(centre));
-	    double ad2 = Math.min(abottomleft.getDistance(centre), atopright.getDistance(centre));
-	    double bd1 = Math.min(b.boundingBox.topleft.getDistance(centre), b.boundingBox.bottomright.getDistance(centre));
-	    double bd2 = Math.min(bbottomleft.getDistance(centre), btopright.getDistance(centre));
-	    int ret = (int) ((Math.min(ad1, ad2) - Math.min(bd1, bd2)) * 1000);
-	    return ret;
+	    boolean aIsIn = a.boundingBox.isInBound(centre);
+	    boolean bIsIn = b.boundingBox.isInBound(centre);
+	    if (aIsIn && bIsIn) {
+		// vereinfachend in Relation zur BoundingBox Diagonalen vergleichen.
+		double ad = a.boundingBox.getCenter().getDistance(centre) / a.boundingBox.topleft.getDistance(a.boundingBox.bottomright);
+		double bd = b.boundingBox.getCenter().getDistance(centre) / b.boundingBox.topleft.getDistance(b.boundingBox.bottomright);
+		return (int) ((ad - bd) * 1000);
+	    } else {
+		if (aIsIn && !bIsIn) {
+		    return -1;
+		} else if (!aIsIn && bIsIn) {
+		    return 1;
+		}
+		return 0;
+	    }
 	}
     }
 }

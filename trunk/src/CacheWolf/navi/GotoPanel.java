@@ -211,10 +211,6 @@ public final class GotoPanel extends CellPanel {
 		this.addLast(buttonPanel, HSTRETCH, HFILL);
 	}
 
-    }
-
-    public void init() {
-
 	// select luminary for orientation
 	for (int i = 0; i < SkyOrientation.LUMINARY_NAMES.length; i++) {
 	    if (i == Navigate.luminary)
@@ -225,8 +221,7 @@ public final class GotoPanel extends CellPanel {
 
 	lblPosition.text = Navigate.gpsPos.toString(CoordsInput.getLocalSystem(currFormatSel));
 
-	setText(destination, getGotoBtnText());
-
+	GuiImageBroker.setButtonText(destination, getGotoBtnText());
     }
 
     // Overrides
@@ -234,13 +229,7 @@ public final class GotoPanel extends CellPanel {
 	super.resizeTo(pWidth, pHeight);
 	Rect coordsRect = coordsPanel.getRect();
 	Rect buttonRect = buttonPanel.getRect();
-	int roseHeight = pHeight - coordsRect.y - coordsRect.height;
-
-	if (Preferences.itself().tabsAtTop) {
-	    roseHeight = roseHeight - buttonRect.height;
-	} else {
-
-	}
+	int roseHeight = pHeight - buttonRect.height - coordsRect.height;
 
 	if (Gui.screenIs(Gui.PDA_SCREEN) && Vm.isMobile()) {
 	    // some space for the SIP button
@@ -254,15 +243,19 @@ public final class GotoPanel extends CellPanel {
 	icRose.resizeTo(pWidth, roseHeight);
 	compassRose.resize(pWidth, roseHeight);
 
+	Rect roseRect = rosePanel.getRect();
 	if (Preferences.itself().tabsAtTop) {
-	    Rect roseRect = rosePanel.getRect();
-	    buttonPanel.setLocation(0, roseRect.y + roseRect.height);
+	    if (!Preferences.itself().menuAtTab)
+		buttonPanel.setLocation(0, roseRect.y + roseRect.height);
+	} else {
+	    if (Preferences.itself().menuAtTab)
+		buttonPanel.setLocation(0, roseRect.y + roseRect.height);
 	}
     }
 
     // called from myNavigate
     public void destChanged(CWPoint d) {
-	setText(destination, getGotoBtnText());
+	GuiImageBroker.setButtonText(destination, getGotoBtnText());
 	updateDistance();
     }
 
@@ -280,7 +273,7 @@ public final class GotoPanel extends CellPanel {
     }
 
     /**
-     * method which is called if a timer is set up
+     * method which is called if a Navigate.ticked() is set up
      */
     public void updateGps(int fix) {
 	Double bearMov = new Double();
@@ -341,10 +334,6 @@ public final class GotoPanel extends CellPanel {
 	    return Navigate.destination.toString(CoordsInput.getLocalSystem(currFormatSel));
     }
 
-    private void setText(mButton btn, String text) {
-	GuiImageBroker.setButtonText(btn, text);
-    }
-
     /**
      * Eventhandler
      */
@@ -357,7 +346,7 @@ public final class GotoPanel extends CellPanel {
 		    currFormatSel = mnuContextFormt.getInt();
 		    mnuContextFormt.getItemAt(currFormatSel).modifiers |= MenuItem.Checked;
 		    lblPosition.setText(Navigate.gpsPos.toString(CoordsInput.getLocalSystem(currFormatSel)));
-		    setText(destination, getGotoBtnText());
+		    GuiImageBroker.setButtonText(destination, getGotoBtnText());
 		} // end lat-lon-format context menu
 		if (((MenuEvent) ev).menu == mnuContextRose) {
 		    MenuItem action = (MenuItem) mnuContextRose.getSelectedItem();
