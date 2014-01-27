@@ -203,8 +203,7 @@ public class MainTab extends mTabbedPanel {
 	}
 
 	movingMap = new MovingMap();
-	navigate = new Navigate(); // attention gotoP and mm must be created before;
-	gotoPanel.init(); // do the rest from ctor creation;
+	navigate = new Navigate(); // attention movingMap must be created before;
 
 	/*
 	if (Preferences.itself().isBigScreen || !Preferences.itself().useRadar) {
