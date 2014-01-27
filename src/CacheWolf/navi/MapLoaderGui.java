@@ -91,10 +91,7 @@ public class MapLoaderGui extends Form {
     private mInput pnlTilestileWidthInput = new mInput();
     private mInput pnlTilestileHeightInput = new mInput();
     private MapLoader mapLoader;
-    private String[] unsortedMapServices;
-    private String[] sortedmapServices;
-    private int[] sortingMapServices;
-    private boolean[] inbound;
+    private String[] mapServiceNames;
     private CWPoint center;
     private CacheDB cacheDB;
     private boolean perCache;
@@ -114,13 +111,13 @@ public class MapLoaderGui extends Form {
 	mapLoader = new MapLoader();
 
 	// sort the items in the list of services in a way that services which cover the current center point.
-	unsortedMapServices = mapLoader.getAvailableOnlineMapServices(center);
-	if (unsortedMapServices.length <= 0) {
+	mapServiceNames = mapLoader.getAvailableOnlineMapServices(center);
+	if (mapServiceNames.length <= 0) {
 	    Preferences.itself().log("no OnlineMapServices defined");
 	    return;
 	}
-	sortMapServices();
-	mapServiceChoice = new mChoice(sortedmapServices, 0);
+
+	mapServiceChoice = new mChoice(mapServiceNames, 0);
 	MessageArea desc = new MessageArea(descString);
 	desc.modifyAll(ControlConstants.NotEditable | ControlConstants.DisplayOnly | ControlConstants.NoFocus, ControlConstants.TakesKeyFocus);
 	desc.borderStyle = UIConstants.BDR_NOBORDER;
@@ -144,7 +141,7 @@ public class MapLoaderGui extends Form {
 	pnlTiles.addLast(coosBtn = new mButton(center.toString()));
 	pnlTiles.addNext(scaleLbl);
 
-	mapLoader.setCurrentMapService(sortingMapServices[mapServiceChoice.selectedIndex]);
+	mapLoader.setCurrentMapService(mapServiceChoice.selectedIndex);
 
 	this.focusFirst();
 	pnlTiles.addLast(scaleInput);
@@ -270,45 +267,6 @@ public class MapLoaderGui extends Form {
 	scaleInput.setText(Convert.toString(scale));
 	scaleInputPerCache.setText(Convert.toString(scale));
 	return (float) scale;
-    }
-
-    /**
-     * sort the map services in order to have the services, which cover the current center first in the list this sets inbound[], sortedMapServices[] and sortingmapServices[]
-     * 
-     */
-    private void sortMapServices() {
-	sortingMapServices = new int[unsortedMapServices.length + 1];
-	inbound = new boolean[unsortedMapServices.length];
-	int j = 0;
-	for (int i = 0; i < sortingMapServices.length - 1; i++) {
-	    if (((OnlineMapService) mapLoader.getOnlineMapServices().get(i)).boundingBox.isInBound(center)) {
-		sortingMapServices[j] = i;
-		j++;
-		inbound[i] = true;
-	    } else
-		inbound[i] = false;
-	}
-	int k = j;
-	sortedmapServices = new String[unsortedMapServices.length + 1];
-	for (int i = 0; i < sortedmapServices.length - 1; i++) {
-	    if (!inbound[i]) {
-		sortingMapServices[j] = i;
-		j++;
-	    }
-	    sortedmapServices[i] = ((OnlineMapService) mapLoader.getOnlineMapServices().get(sortingMapServices[i])).getName();
-	}
-	sortedmapServices[j] = sortedmapServices[k];
-	sortedmapServices[k] = "===== ===== ===== ===== ===== ===== =====";
-	sortingMapServices[j] = sortingMapServices[k];
-	sortingMapServices[k] = -1;
-    }
-
-    private int getSortedMapServiceIndex(int originalindex) {
-	for (int i = 0; i < sortingMapServices.length; i++) {
-	    if (sortingMapServices[i] == originalindex)
-		return i;
-	}
-	throw new IllegalStateException(MyLocale.getMsg(1818, "getSortedMapServiceIndex: index") + " " + originalindex + MyLocale.getMsg(1819, "not found"));
     }
 
     private String getMapsDir() {
@@ -441,10 +399,7 @@ public class MapLoaderGui extends Form {
 	    if (ev.target == executePanel.cancelButton || ev.target == executePanelPerCache.cancelButton) {
 		this.close(FormBase.IDCANCEL);
 	    } else if (ev.target == executePanel.applyButton || ev.target == executePanelPerCache.applyButton) {
-		if (sortingMapServices[mapServiceChoice.selectedIndex] == -1) {
-		    new InfoBox(MyLocale.getMsg(5500, "Error"), MyLocale.getMsg(1833, "Please don't select the separator line in the wms service option")).wait(FormBase.OKB);
-		}
-		mapLoader.setCurrentMapService(sortingMapServices[mapServiceChoice.selectedIndex]);
+		mapLoader.setCurrentMapService(mapServiceChoice.selectedIndex);
 		if (ev.target == executePanel.applyButton) { // get tiles
 		    this.checkTileSizeInputfields(tileWidthInput.getText(), tileHeightInput.getText());
 		    perCache = false;
@@ -491,9 +446,8 @@ public class MapLoaderGui extends Form {
 		if (cs.execute() != FormBase.IDCANCEL) {
 		    center = cs.getCoords();
 		    coosBtn.setText(center.toString());
-		    int tmp = sortingMapServices[mapServiceChoice.selectedIndex];
-		    sortMapServices();
-		    mapServiceChoice.set(sortedmapServices, (!inbound[tmp] ? 0 : getSortedMapServiceIndex((tmp))));
+		    mapServiceNames = mapLoader.getAvailableOnlineMapServices(center);
+		    mapServiceChoice.set(mapServiceNames, 0);
 		}
 	    } else if (ev.target == forCachesChkBox) {
 		updateForCachesState();
@@ -502,7 +456,7 @@ public class MapLoaderGui extends Form {
 	} // end of "if controllEvent..."
 	if (ev instanceof DataChangeEvent) {
 	    if (ev.target == mapServiceChoice) {
-		mapLoader.setCurrentMapService(sortingMapServices[mapServiceChoice.selectedIndex]);
+		mapLoader.setCurrentMapService(mapServiceChoice.selectedIndex);
 		setRecommScaleInput();
 		setRecommPixelSize();
 		if (mapLoader.getCurrentOnlineMapService() instanceof WebMapService) {
