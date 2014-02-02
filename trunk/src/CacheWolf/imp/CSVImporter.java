@@ -68,15 +68,12 @@ public class CSVImporter {
 	if (importGui.execute() == FormBase.IDCANCEL) {
 	    return;
 	}
-	if (importGui.maxDistanceInput != null) {
-	    final String maxDist = importGui.maxDistanceInput.getText();
-	    maxDistance = Common.parseDouble(maxDist);
-	    if (maxDistance == 0) {
-		importGui.close(0);
-		return;
-	    }
-	    MainForm.profile.setDistGC(maxDist);
+	maxDistance = importGui.getDoubleFromInput(importGui.maxDistanceInput, 0);
+	if (maxDistance == 0) {
+	    importGui.close(0);
+	    return;
 	}
+	MainForm.profile.setDistGC(Common.DoubleToString(maxDistance, 0, 2));
 	importGui.close(0);
 	try {
 	    Vm.showWait(true);

@@ -85,7 +85,7 @@ public class DataMover {
 	// Read indexfile of destination, if one exists
 	File ftest = new File(dstProfile.dataDir + "index.xml");
 	if (ftest.exists()) {
-	    dstProfile.readIndex();
+	    dstProfile.readIndex(null, dstProfile.dataDir);
 	}
 	processCaches(new Copier(MyLocale.getMsg(141, "Copy"), dstProfile), mode);
 	// write indexfiles and keep the filter status
@@ -180,7 +180,7 @@ public class DataMover {
 	// Read indexfile of destination, if one exists
 	File ftest = new File(dstProfile.dataDir + "index.xml");
 	if (ftest.exists()) {
-	    dstProfile.readIndex();
+	    dstProfile.readIndex(null, dstProfile.dataDir);
 	}
 	processCaches(new Mover(MyLocale.getMsg(142, "Move"), dstProfile), mode);
 	// write indexfiles

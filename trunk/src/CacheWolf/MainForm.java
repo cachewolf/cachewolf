@@ -138,7 +138,7 @@ public class MainForm extends Editor {
 	infB.waitUntilPainted(100);
 	try {
 	    profile = new Profile(); // sets static access to profile
-	    profile.readIndex(infB);
+	    profile.readIndex(infB, this.preferences.absoluteBaseDir + this.preferences.lastProfile);
 	} catch (Exception e) {
 	    this.preferences.log("[MainForm:Exception loading CacheList]", e);
 	}

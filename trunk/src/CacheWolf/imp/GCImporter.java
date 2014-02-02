@@ -79,9 +79,6 @@ import ewesoft.xml.sax.AttributeList;
  * Class to spider caches from gc.com
  */
 public class GCImporter {
-
-    public static boolean loggedIn = false;
-
     // Return values for spider action
     /** Ignoring a premium member cache when spidering from a non premium account  */
     public static int SPIDER_IGNORE_PREMIUM = -2;
@@ -93,47 +90,32 @@ public class GCImporter {
     public static int SPIDER_OK = 1;
     /** no probs, but exmpl found und not want this */
     public static int SPIDER_IGNORE = 2;
-
-    /**
-     * This is the pattern for inlined smilies
-     */
-    private static final String iconsRelativePath = "<img src=\"/images/icons/";
-    private int spiderErrors;
-    private static double minDistance = 0;
-    private static double maxDistance = 0;
-
-    private final Vector cachesToLoad = new Vector();
-    private Hashtable cachesToUpdate;
-    private InfoBox infB;
-    private static SpiderProperties p = null;
-    // following filled at doit
-    private CWPoint origin;
-    private String htmlListPage;
-    private final static String loginPageUrl = "https://www.geocaching.com/login/default.aspx";
-
-    ImportGui importGui;
-    private boolean spiderAllFinds;
-
-    private String cacheTypeRestriction;
-    private byte restrictedCacheType = 0;
-    private boolean doNotgetFound;
-    private int maxUpdate;
-
-    static Extractor extractor = new Extractor();
-    Extractor extractValue = new Extractor();
-
-    private static String urlSeek;
-    private static String queryLat;
-    private static String queryLon;
-    private static String queryUserFinds;
-    private static String queryDistance;
+    private final static String distanceUnit = (Preferences.itself().metricSystem == Metrics.IMPERIAL ? " " + Metrics.getUnit(Metrics.MILES) + " " : " " + Metrics.getUnit(Metrics.KILOMETER) + " ");
+    //# CachTypRestrictions
+    private final static String onlyTraditional = "&tx=32bc9333-5e52-4957-b0f6-5a2c8fc7b257";
+    private final static String onlyMulti = "&tx=a5f6d0ad-d2f2-4011-8c14-940a9ebf3c74";
+    private final static String onlyVirtual = "&tx=294d4360-ac86-4c83-84dd-8113ef678d7e";
+    private final static String onlyLetterboxHybrid = "&tx=4bdd8fb2-d7bc-453f-a9c5-968563b15d24";
+    //#allEventTypes     == onlyEvent
+    private final static String onlyEvent = "&tx=69eb8534-b718-4b35-ae3c-a856a55b0874";
+    private final static String onlyMegaEvent = "&tx=69eb8535-b718-4b35-ae3c-a856a55b0874";
+    private final static String onlyCito = "&tx=57150806-bc1a-42d6-9cf0-538d171a2d22";
+    private final static String onlyL_FEvent = "&tx=3ea6533d-bb52-42fe-b2d2-79a3424d4728";
+    private final static String onlyUnknown = "&tx=40861821-1835-4e11-b666-8d41064d03fe";
+    private final static String onlyWebcam = "&tx=31d2ae3c-c358-4b5f-8dcd-2185bf472d3d";
+    private final static String onlyEarth = "&tx=c66f5cf3-9523-4549-b8dd-759cd2f18db8";
+    private final static String onlyWherigo = "&tx=0544fa55-772d-4e5c-96a9-36a51ebcf5c9";
+    //#onlyProjectAPE    = "&tx=2555690d-b2bc-4b55-b5ac-0cb704c0b768";
+    //#onlyGPSAdventure  = "&tx=72e69af2-7986-4990-afd9-bc16cbbb4ce3";
+    // navigate the listPages
+    private final static String gotoPage = "ctl00$ContentBody$pgrTop$lbGoToPage_";// add pagenumber
     private final static String gotoNextPage = "ctl00$ContentBody$pgrTop$ctl08";
     // change to the block (10pages) of the wanted page
-    private static String gotoPreviousBlock = "ctl00$ContentBody$pgrTop$ctl05";
-    private static String gotoNextBlock = "ctl00$ContentBody$pgrTop$ctl06";
-    // add pagenumber
-    private static String gotoPage = "ctl00$ContentBody$pgrTop$lbGoToPage_";
-    private static String queryDoNotGetFound;
+    private final static String gotoPreviousBlock = "ctl00$ContentBody$pgrTop$ctl05";
+    private final static String gotoNextBlock = "ctl00$ContentBody$pgrTop$ctl06";
+
+    private static final String iconsRelativePath = "<img src=\"/images/icons/";
+
     private static Regex RexPropListBlock;
     private static Regex RexPropLine;
     private static Regex RexNumFinds;
@@ -147,7 +129,6 @@ public class GCImporter {
     private static Regex DTSRex;
 
     private final static String wayPointUrl = "http://www.geocaching.com/seek/cache_details.aspx?wp=";
-    private String wayPointPage;
     private static Regex difficultyRex;
     private static Regex terrainRex;
     private static Regex cacheTypeRex;
@@ -160,7 +141,6 @@ public class GCImporter {
     private static Regex shortDescRex;
     private static Regex longDescRex;
     private static Regex hintsRex;
-
     private static String premiumGeocache = "> Premium Member Only Cache";
     private static String unpublishedGeocache = "Unpublished Geocache";
     private static String unavailableGeocache = "This cache is temporarily unavailable";
@@ -168,16 +148,26 @@ public class GCImporter {
     private static String foundByMe = "ctl00_ContentBody_GeoNav_logText";
     // private static String correctedCoordinate = "\"oldLatLngDisplay\":"; //#1200
     // private static String premiumCacheForPM = "Warning NoBottomSpacing" is a PM-Cache for PMs
-
+    // TBs
+    private static String blockExStart, blockExEnd;
+    private static String bugExStart, bugExEnd;
+    private static String bugLinkEnd;
+    private static String bugNameExStart, bugNameExEnd;
+    private static String bugDetailsStart, bugDetailsEnd;
+    // Addis
+    private static String wayBlockExStart, wayBlockExEnd;
+    private static String rowBlockExStart, rowBlockExEnd;
+    private static String prefixExStart, prefixExEnd;
+    private static Regex nameRex;
+    private static Regex koordRex;
+    private static Regex descRex;
+    private static Regex typeRex;
     // images Spoiler
     private static String spoilerSectionStart, spoilerSectionEnd, spoilerSectionStart2;
     private static String imgCommentExStart, imgCommentExEnd;
-
     // attributes
-    private static String attBlockExStart;
-    private static String attBlockExEnd;
-    private static String attExStart;
-    private static String attExEnd;
+    private static String attBlockExStart, attBlockExEnd;
+    private static String attExStart, attExEnd;
 
     private static Regex RexPropWaypoint;
     private static Regex RexPropType;
@@ -186,26 +176,56 @@ public class GCImporter {
     private static String icon_camera;
     private static String icon_attended;
 
+    private static String getBugByNameUrl = "http://www.geocaching.com/track/search.aspx?k=";
+    private static String getBugByGuidUrl = "http://www.geocaching.com/track/details.aspx?guid=";
+    private static String getBugByIdUrl = "http://www.geocaching.com/track/details.aspx?id=";
+    private static String getBugByTrackNrUrl = "http://www.geocaching.com/track/details.aspx?tracker=";
+    private static String bugGuidExStart, bugGuidExEnd;
+    private static String bugNotFound;
+    private static String bugTotalRecords;
+    private static String bugNameStart, bugNameEnd;
+
+    private InfoBox infB;
+
+    private ImportGui importGui;
+    private boolean downloadPics;
+    private byte restrictedCacheType = 0;
+    private String cacheTypeRestriction;
+    private static double minDistance = 0;
+    private static double maxDistance = 0;
+    private int maxNew;
+    private int maxUpdate;
+    private int maxLogsToSpider;
+    private boolean doNotgetFound;
+    private boolean spiderAllFinds;
+
+    private boolean loggedIn = false;
+    private final static int pageLimit = 20; // immer maximal 20 Listpages prüfen, dann download bzw aktualisierung (GC meckerte sonst schon mal)
+    private CWPoint origin;
+    private int lastPageVisited;
+    private String htmlListPage;
     private int numFoundUpdates = 0;
     private int numArchivedUpdates = 0;
     private int numAvailableUpdates = 0;
     private int numLogUpdates = 0;
     private int numPrivate = 0;
-    private int page_number = 1;
+
+    private Vector downloadList = new Vector();
+    private Hashtable updateList;
+
+    private String wayPointPage;
+    private static Extractor extractor = new Extractor();
+    private static Extractor extractValue = new Extractor();
+    private int spiderErrors;
+    private int spiderIgnorePremium;
 
     public GCImporter() {
 	initialiseProperties();
     }
 
     private void initialiseProperties() {
-	p = new SpiderProperties();
+	SpiderProperties p = new SpiderProperties();
 	try {
-	    urlSeek = p.getProp("urlSeek"); // http://www.geocaching.com/seek/nearest.aspx
-	    queryLat = p.getProp("queryLat"); // ?lat=
-	    queryLon = p.getProp("queryLon"); // &lng=
-	    queryUserFinds = p.getProp("queryUserFinds"); // ?ul=
-	    queryDistance = p.getProp("queryDistance"); // &dist=
-	    queryDoNotGetFound = p.getProp("queryDoNotGetFound"); // &f=1
 
 	    RexPropListBlock = new Regex(p.getProp("listBlockRex"));
 	    RexPropLine = new Regex(p.getProp("lineRex"));
@@ -251,9 +271,40 @@ public class GCImporter {
 	    attExStart = p.getProp("attExStart");
 	    attExEnd = p.getProp("attExEnd");
 
+	    blockExStart = p.getProp("blockExStart");
+	    blockExEnd = p.getProp("blockExEnd");
+	    bugExStart = p.getProp("bugExStart");
+	    bugExEnd = p.getProp("bugExEnd");
+	    bugLinkEnd = p.getProp("bugLinkEnd");
+	    bugNameExStart = p.getProp("bugNameExStart");
+	    bugNameExEnd = p.getProp("bugNameExEnd");
+
+	    rowBlockExStart = p.getProp("rowBlockExStart");
+	    rowBlockExEnd = p.getProp("rowBlockExEnd");
+	    nameRex = new Regex(p.getProp("nameRex"));
+	    koordRex = new Regex(p.getProp("koordRex"));
+	    descRex = new Regex(p.getProp("descRex"));
+	    typeRex = new Regex(p.getProp("typeRex"));
+
+	    wayBlockExStart = p.getProp("wayBlockExStart");
+	    wayBlockExEnd = p.getProp("wayBlockExEnd");
+	    prefixExStart = p.getProp("prefixExStart");
+	    prefixExEnd = p.getProp("prefixExEnd");
+
+	    bugGuidExStart = p.getProp("bugGuidExStart");
+	    bugGuidExEnd = p.getProp("bugGuidExEnd");
+	    bugNotFound = p.getProp("bugNotFound");
+	    bugTotalRecords = p.getProp("bugTotalRecords");
+	    bugNameStart = p.getProp("bugNameStart");
+	    bugNameEnd = p.getProp("bugNameEnd");
+
 	} catch (final Exception ex) {
 	    Preferences.itself().log("Error fetching Properties.", ex);
 	}
+    }
+
+    public void setDownloadPics(boolean downloadPics) {
+	this.downloadPics = downloadPics;
     }
 
     /**
@@ -263,10 +314,8 @@ public class GCImporter {
 	doIt(false);
     }
 
-    int lastPageVisited;
-
     public void doIt(boolean _spiderAllFinds) {
-	cachesToLoad.clear();
+	downloadList.clear();
 	spiderAllFinds = _spiderAllFinds;
 	// No need to copy curCentrePt as it is only read and not written
 	origin = Preferences.itself().curCentrePt;
@@ -293,22 +342,20 @@ public class GCImporter {
 	if (doDownloadGui(0)) {
 
 	    Vm.showWait(true);
-	    infB = new InfoBox("Status", MyLocale.getMsg(5502, "Fetching first page..."));
+	    infB = new InfoBox(MyLocale.getMsg(611, "Status"), MyLocale.getMsg(5502, "Fetching first page..."), InfoBox.PROGRESS_WITH_WARNINGS);
 	    infB.exec();
-
-	    double lowerDistance;
-	    double upperDistance = minDistance;
-	    spiderErrors = 0;
-	    int pageLimit = 20; // das sorgt für die Gruppierung
-	    int maxPages = 0;
 	    if (login()) {
-		getFirstListPage(this.getDistanceInMiles(maxDistance));
-		maxPages = (int) java.lang.Math.ceil(getNumFound(htmlListPage) / 20);
+
+		spiderErrors = 0;
+		spiderIgnorePremium = 0;
+
+		fetchFirstListPage(this.getDistanceInMiles(maxDistance));
+		int maxPages = (int) java.lang.Math.ceil(getNumFound(htmlListPage) / 20);
 
 		String s = "ListPages Properties : " + Preferences.NEWLINE;
 		s = s + "minDistance          : " + minDistance + Preferences.NEWLINE;
 		s = s + "maxDistance          : " + maxDistance + Preferences.NEWLINE;
-		s = s + "maxNew               : " + Preferences.itself().maxSpiderNumber + Preferences.NEWLINE;
+		s = s + "maxNew               : " + maxNew + Preferences.NEWLINE;
 		s = s + "maxUpdate            : " + maxUpdate + Preferences.NEWLINE;
 		s = s + "with Founds          : " + (doNotgetFound ? "no" : "yes") + Preferences.NEWLINE;
 		s = s + "alias is premium memb: " + (!Preferences.itself().isPremium ? "no" : "yes") + Preferences.NEWLINE;
@@ -318,43 +365,37 @@ public class GCImporter {
 		s = s + "maxPages for x Miles : " + maxPages + " for " + this.getDistanceInMiles(maxDistance) + Preferences.NEWLINE;
 		Preferences.itself().log(s, null);
 
-		lastPageVisited = -1; // for not to double check pages on next group run
-
 		Preferences.itself().log("Download properties : " + Preferences.NEWLINE //
-			+ "maxLogs: " + Preferences.itself().maxLogsToSpider + Preferences.NEWLINE //
-			+ "with pictures     : " + (!Preferences.itself().downloadPics ? "no" : "yes") + Preferences.NEWLINE //
+			+ "maxLogs: " + maxLogsToSpider + Preferences.NEWLINE //
+			+ "with pictures     : " + (!downloadPics ? "no" : "yes") + Preferences.NEWLINE //
 			+ "with tb           : " + (!Preferences.itself().downloadTBs ? "no" : "yes") + Preferences.NEWLINE, null);
 
-	    } else {
-		upperDistance = maxDistance; // Abbruch
-	    }
-	    while (upperDistance < maxDistance && !infB.isClosed()) {
-		lowerDistance = upperDistance;
-		if ((int) lowerDistance < ((int) maxDistance - 1)) {
-		    upperDistance = this.getUpperDistance(lowerDistance, maxDistance, maxPages, pageLimit);
-		} else {
-		    upperDistance = maxDistance;
+		lastPageVisited = -1; // for not to double check pages on next group run
+		double lowerDistance;
+		double upperDistance = minDistance;
+		while (upperDistance < maxDistance && !infB.isClosed()) {
+		    lowerDistance = upperDistance;
+		    upperDistance = getUpperDistance(lowerDistance, maxPages);
+		    fillDownloadAndUpdateList(lowerDistance, upperDistance);
+		    downloadCaches();
+		    updateCaches();
+		} // while
+
+		if (spiderErrors > 0 || spiderIgnorePremium > 0) {
+		    String infoString = "";
+		    if (spiderErrors > 0) {
+			infoString = spiderErrors + MyLocale.getMsg(5516, " cache descriptions\ncould not be loaded.") + "\n";
+		    }
+		    if (spiderIgnorePremium > 0) {
+			infoString = infoString + spiderIgnorePremium + "Premium " + MyLocale.getMsg(5516, " cache descriptions\ncould not be loaded.");
+		    }
+		    new InfoBox(MyLocale.getMsg(5500, "Error"), infoString).wait(FormBase.OKB);
 		}
-
-		fillDownloadLists(Preferences.itself().maxSpiderNumber, maxUpdate, upperDistance, lowerDistance);
-
-		if (!infB.isClosed()) {
-		    infB.setInfo(MyLocale.getMsg(5511, "Found ") + cachesToLoad.size() + MyLocale.getMsg(5512, " caches"));
-		}
-
+		MainForm.profile.restoreFilter();
+		MainForm.profile.saveIndex(true);
 		MainTab.itself.tablePanel.updateStatusBar();
 
-		downloadCaches();
-		updateCaches();
-
-	    } // while
-
-	    if (spiderErrors > 0) {
-		new InfoBox(MyLocale.getMsg(5500, "Error"), spiderErrors + MyLocale.getMsg(5516, " cache descriptions%0acould not be loaded.")).wait(FormBase.OKB);
 	    }
-
-	    MainForm.profile.restoreFilter();
-	    MainForm.profile.saveIndex(true);
 
 	    if (!infB.isClosed()) {
 		infB.close(0);
@@ -380,27 +421,30 @@ public class GCImporter {
 	return toDistanceInMiles;
     }
 
-    private double getUpperDistance(double fromDistance, double toDistance, int maxPages, int pageLimit) {
+    private double getUpperDistance(double fromDistance, int maxPages) {
+	int fromPage = 1;
+	int toPage = maxPages;
+	double toDistance = maxDistance;
+	if ((int) fromDistance < ((int) toDistance - 1)) {
 
-	int startPage;
-	if (fromDistance > 0) {
-	    getFirstListPage(this.getDistanceInMiles(fromDistance));
-	    startPage = (int) java.lang.Math.ceil(getNumFound(htmlListPage) / 20);
-	} else {
-	    startPage = 1;
+	    if (fromDistance > 0) {
+		fetchFirstListPage(this.getDistanceInMiles(fromDistance));
+		fromPage = (int) java.lang.Math.ceil(getNumFound(htmlListPage) / 20);
+	    }
+
+	    while ((1 + toPage - fromPage) > pageLimit) {
+		toDistance = fromDistance + (toDistance - fromDistance) / 2;
+		if ((int) toDistance <= ((int) fromDistance + 1))
+		    break;
+		fetchFirstListPage(this.getDistanceInMiles(toDistance));
+		toPage = (int) java.lang.Math.ceil(getNumFound(htmlListPage) / 20);
+	    }
 	}
-
-	int endPage = maxPages;
-
-	while ((1 + endPage - startPage) > pageLimit) {
-	    toDistance = fromDistance + (toDistance - fromDistance) / 2;
-	    if ((int) toDistance <= ((int) fromDistance + 1))
-		return toDistance;
-	    getFirstListPage(this.getDistanceInMiles(toDistance));
-	    endPage = (int) java.lang.Math.ceil(getNumFound(htmlListPage) / 20);
-	}
+	String pageString = MyLocale.getMsg(5532, "Page");
+	String fromString = " " + Common.DoubleToString(fromDistance, 0, 2) + distanceUnit + " (" + pageString + " " + fromPage + ") ";
+	String toString = " " + Common.DoubleToString(toDistance, 0, 2) + distanceUnit + " (" + pageString + " " + toPage + ") ";
+	infB.addWarning(MyLocale.getMsg(2001, "from") + fromString + MyLocale.getMsg(1831, "to") + toString);
 	return toDistance;
-
     }
 
     public void doItAlongARoute() {
@@ -417,8 +461,8 @@ public class GCImporter {
 
 	// getting the route
 	CWPoint startPos = Preferences.itself().curCentrePt;
-	if (!importGui.fileName.equals("")) {
-	    final RouteImporter ri = new RouteImporter(importGui.fileName);
+	if (!importGui.getFileName().equals("")) {
+	    final RouteImporter ri = new RouteImporter(importGui.getFileName());
 	    points = ri.doIt();
 	    if (points.size() > 0) {
 		if (navigate.curTrack == null) {
@@ -471,7 +515,7 @@ public class GCImporter {
 	// Load über die Kreise
 	// daher Faktor 1.2
 	lateralDistance = 1.2 * lateralDistance;
-	cachesToLoad.clear();
+	downloadList.clear();
 
 	origin = startPos;
 	CWPoint nextPos = startPos;
@@ -481,7 +525,7 @@ public class GCImporter {
 	    Preferences.itself().log("Start at " + origin + " to check " + points.size() + " points.");
 
 	while (nextPos != null) {
-	    if (importGui.fileName.length() == 0) {
+	    if (importGui.getFileName().length() == 0) {
 		nextPos = nextRoutePoint(startPos, lateralDistance);
 	    } else {
 		double tmpDistance = 0;
@@ -528,11 +572,12 @@ public class GCImporter {
 	    return;
 	} // or ask for download of intermediate result
 
-	int spiderErrors = 0;
+	spiderErrors = 0;
+	spiderIgnorePremium = 0;
 	if (complete) {
 	    // vorhandene Cache werden aus der DB gelöscht
-	    for (int i = 0; i < cachesToLoad.size(); i++) {
-		final int j = MainForm.profile.cacheDB.getIndex((String) cachesToLoad.get(i));
+	    for (int i = 0; i < downloadList.size(); i++) {
+		final int j = MainForm.profile.cacheDB.getIndex((String) downloadList.get(i));
 		if (j != -1)
 		    MainForm.profile.cacheDB.removeElementAt(j);
 	    }
@@ -595,12 +640,12 @@ public class GCImporter {
 	// von origin aus
 	// kein update vorhandener Cache, da
 	int toDistance = (int) java.lang.Math.ceil(radiusKm);
-	getFirstListPage(toDistance);
+	fetchFirstListPage(toDistance);
 	// Number of caches from gcfirst Listpage
 	int numFinds = getNumFound(htmlListPage);
 	if (numFinds == 0)
 	    return;
-	page_number = 1;
+	int page_number = 1;
 	int found_on_page = 0;
 	try {
 	    // Loop pages till maximum distance has been found or no more caches are in the list
@@ -629,9 +674,9 @@ public class GCImporter {
 		    if (distance <= radiusKm) {
 			final CacheHolder ch = MainForm.profile.cacheDB.get(chWaypoint);
 			if (ch == null) { // not in DB
-			    if (!cachesToLoad.contains(chWaypoint)) {
-				cachesToLoad.add(chWaypoint);
-				infB.setInfo(MyLocale.getMsg(5511, "Found ") + cachesToLoad.size());
+			    if (!downloadList.contains(chWaypoint)) {
+				downloadList.add(chWaypoint);
+				infB.setInfo(MyLocale.getMsg(5511, "Found ") + downloadList.size());
 			    }
 			}
 		    } else
@@ -647,16 +692,16 @@ public class GCImporter {
 		    toDistance = 0;
 		if (toDistance > 0) {
 		    if (page_number % 100 == 45) {
-			getAListPage(toDistance, gotoPreviousBlock);
-			getAListPage(toDistance, gotoNextBlock);
+			fetchAListPage(toDistance, gotoPreviousBlock);
+			fetchAListPage(toDistance, gotoNextBlock);
 		    }
-		    if (getAListPage(toDistance, gotoNextPage)) {
+		    if (fetchAListPage(toDistance, gotoNextPage)) {
 			page_number++;
 			found_on_page = 0;
 		    }
 		}
 	    } // loop pages
-	    Preferences.itself().log("Nr Caches now: " + cachesToLoad.size());
+	    Preferences.itself().log("Nr Caches now: " + downloadList.size());
 	} // try
 	catch (final Exception ex) {
 	    Preferences.itself().log("Download error : ", ex, true);
@@ -666,9 +711,9 @@ public class GCImporter {
     }
 
     private boolean doDownloadGui(int menu) {
-	int options = ImportGui.ISGC | ImportGui.IMAGES | ImportGui.MAXLOGS | ImportGui.TRAVELBUGS;
+	int options = ImportGui.ISGC | ImportGui.IMAGES | ImportGui.TRAVELBUGS;
 	if (spiderAllFinds) {
-	    options = options | ImportGui.MAXUPDATE;
+	    options = options | ImportGui.MAXUPDATE | ImportGui.MAXLOGS;
 	    if (Preferences.itself().askForMaxNumbersOnImport) {
 		options = options | ImportGui.MAXNUMBER;
 	    }
@@ -678,7 +723,7 @@ public class GCImporter {
 	} else if (menu == 0) {
 	    options = options | ImportGui.TYPE | ImportGui.DIST | ImportGui.INCLUDEFOUND;
 	    if (Preferences.itself().askForMaxNumbersOnImport) {
-		options = options | ImportGui.MAXNUMBER | ImportGui.MAXUPDATE;
+		options = options | ImportGui.MAXNUMBER | ImportGui.MAXUPDATE | ImportGui.MAXLOGS;
 	    }
 	    importGui = new ImportGui(MyLocale.getMsg(131, "Download from geocaching.com"), options);
 	} else if (menu == 1) {
@@ -693,32 +738,46 @@ public class GCImporter {
 	    return false;
 	}
 
+	downloadPics = importGui.downloadPics;
+	if (!spiderAllFinds) {
+	    Preferences.itself().downloadPics = downloadPics;
+	}
+
 	//
-	cacheTypeRestriction = importGui.getCacheTypeRestriction(p);
-	restrictedCacheType = importGui.getRestrictedCacheType(p);
+	restrictedCacheType = importGui.getRestrictedCacheType();
+	cacheTypeRestriction = getCacheTypeRestriction(restrictedCacheType);
 	//
 	minDistance = 0.0; // no longer really used
 	// MainForm.profile.setMinDistGC(Convert.toString(0).replace(',', '.'));
 	//
 	if ((options & ImportGui.DIST) > 0) {
 	    maxDistance = importGui.getDoubleFromInput(importGui.maxDistanceInput, 0);
-	    if (maxDistance == 0)
+	    if (maxDistance == 0) {
+		importGui.close(0);
 		return false;
+	    }
 	    if (menu == 1) {
 		// "along the route" mindenstens 500 meter Umkreis
 		if (maxDistance < 0.5)
 		    maxDistance = 0.5;
+	    } else {
+		MainForm.profile.setDistGC(Common.DoubleToString(maxDistance, 0, 2));
 	    }
-	    MainForm.profile.setDistGC(Convert.toString(maxDistance));
 	} else {
 	    maxDistance = 1.0; // only to be > minDistance
 	}
 	//
-	Preferences.itself().maxSpiderNumber = importGui.getIntFromInput(importGui.maxNumberInput, Integer.MAX_VALUE);
+	maxNew = Preferences.itself().maxSpiderNumber = importGui.getIntFromInput(importGui.maxNumberInput, Integer.MAX_VALUE);
 	//
 	maxUpdate = importGui.getIntFromInput(importGui.maxNumberUpdates, Integer.MAX_VALUE);
 	if (menu == 1) {
 	    maxUpdate = 0;
+	}
+	//
+	if ((options & ImportGui.MAXLOGS) > 0) {
+	    maxLogsToSpider = importGui.getIntFromInput(importGui.maxLogsInput, 0);
+	} else {
+	    maxLogsToSpider = Preferences.itself().maxLogsToSpider;
 	}
 	//
 	if ((options & ImportGui.INCLUDEFOUND) > 0) {
@@ -730,11 +789,57 @@ public class GCImporter {
 	return true;
     }
 
-    private void fillDownloadLists(int maxNew, int maxUpdate, double toDistance, double fromDistance) {
-	if (cachesToUpdate == null) {
-	    cachesToUpdate = new Hashtable(MainForm.profile.cacheDB.size());
+    private String getCacheTypeRestriction(byte restrictedCacheType) {
+	String cacheTypeRestriction = "";
+
+	switch (restrictedCacheType) {
+	case 0:
+	    cacheTypeRestriction = "";
+	    break;
+	case 1:
+	    cacheTypeRestriction = onlyTraditional;
+	    break;
+	case 2:
+	    cacheTypeRestriction = onlyMulti;
+	    break;
+	case 3:
+	    cacheTypeRestriction = onlyVirtual;
+	    break;
+	case 4:
+	    cacheTypeRestriction = onlyLetterboxHybrid;
+	    break;
+	case 5:
+	    cacheTypeRestriction = onlyEvent;
+	    break;
+	case 6:
+	    cacheTypeRestriction = onlyMegaEvent;
+	    break;
+	case 7:
+	    cacheTypeRestriction = onlyWebcam;
+	    break;
+	case 8:
+	    cacheTypeRestriction = onlyUnknown;
+	    break;
+	case 9:
+	    cacheTypeRestriction = onlyCito;
+	    break;
+	case 10:
+	    cacheTypeRestriction = onlyEarth;
+	    break;
+	case 11:
+	    cacheTypeRestriction = onlyWherigo;
+	    break;
+	default:
+	    cacheTypeRestriction = "";
+	}
+	return cacheTypeRestriction;
+    }
+
+    private void fillDownloadAndUpdateList(double fromDistance, double toDistance) {
+	if (updateList == null) {
+	    updateList = new Hashtable(MainForm.profile.cacheDB.size());
 	} else {
-	    cachesToUpdate.clear();
+	    updateList.clear();
 	}
 	int numFinds;
 	int startPage = 1;
@@ -743,7 +848,7 @@ public class GCImporter {
 	int fromDistanceInMiles = 0;
 	if (fromDistance > 0) {
 	    fromDistanceInMiles = this.getDistanceInMiles(fromDistance) - 1;
-	    getFirstListPage(java.lang.Math.max(fromDistanceInMiles, 1));
+	    fetchFirstListPage(java.lang.Math.max(fromDistanceInMiles, 1));
 	    if (lastPageVisited > -1) {
 		startPage = lastPageVisited;
 	    } else {
@@ -754,19 +859,19 @@ public class GCImporter {
 	lastPageVisited = startPage;
 	// add a mile to be save from different distance calculations in CW and at GC
 	int toDistanceInMiles = this.getDistanceInMiles(toDistance) + 1;
-	getFirstListPage(toDistanceInMiles);
+	fetchFirstListPage(toDistanceInMiles);
 	// Number of caches from gcfirst Listpage
 	numFinds = getNumFound(htmlListPage);
 	if (fromDistance > 0) {
 	    // skip (most of) the pages with distance < fromDistance
 	    for (int i = 0; i < (startPage / 10); i++) {
-		getAListPage(toDistanceInMiles, gotoNextBlock);
+		fetchAListPage(toDistanceInMiles, gotoNextBlock);
 	    }
 	    if (startPage > 1) {
 		if (startPage % 10 == 1)
-		    getAListPage(toDistanceInMiles, gotoNextPage);
+		    fetchAListPage(toDistanceInMiles, gotoNextPage);
 		else
-		    getAListPage(toDistanceInMiles, gotoPage + startPage);
+		    fetchAListPage(toDistanceInMiles, gotoPage + startPage);
 	    }
 	}
 	Preferences.itself().log("[SpiderGC:fillDownloadLists] got Listpage: " + startPage, null);
@@ -783,15 +888,15 @@ public class GCImporter {
 	    if (maxUpdate == 0 && maxNew == 0) {
 		Vm.showWait(false);
 		infB.close(0);
-		cachesToUpdate.clear();
+		updateList.clear();
 		return;
 	    }
 	}
 
 	if (maxUpdate > 0) {
-	    double distanceInKm = toDistance;
+	    double toDistanceInKm = toDistance;
 	    if (Preferences.itself().metricSystem == Metrics.IMPERIAL) {
-		distanceInKm = Metrics.convertUnit(toDistance, Metrics.MILES, Metrics.KILOMETER);
+		toDistanceInKm = Metrics.convertUnit(toDistance, Metrics.MILES, Metrics.KILOMETER);
 	    }
 
 	    double fromDistanceInKm = fromDistance;
@@ -802,24 +907,30 @@ public class GCImporter {
 	    // expecting all are changed (archived caches remain always)
 	    for (int i = 0; i < MainForm.profile.cacheDB.size(); i++) {
 		final CacheHolder ch = MainForm.profile.cacheDB.get(i);
-		if (spiderAllFinds) {
-		    if ((ch.getWayPoint().substring(0, 2).equalsIgnoreCase("GC")) && !ch.is_black()) {
-			cachesToUpdate.put(ch.getWayPoint(), ch);
-		    }
-		} else {
-		    if ((!ch.is_archived()) && (ch.kilom >= fromDistanceInKm) && (ch.kilom <= distanceInKm) && !(doNotgetFound && (ch.is_found() || ch.is_owned())) && (ch.getWayPoint().substring(0, 2).equalsIgnoreCase("GC"))
-			    && ((restrictedCacheType == CacheType.CW_TYPE_ERROR) || (ch.getType() == restrictedCacheType)) && !ch.is_black()) {
-			cachesToUpdate.put(ch.getWayPoint(), ch);
+		if (!ch.is_black()) {
+		    if (ch.getWayPoint().substring(0, 2).equalsIgnoreCase("GC")) {
+			if (spiderAllFinds) {
+			    updateList.put(ch.getWayPoint(), ch);
+			} else {
+			    if (!ch.is_archived() //
+				    && ch.kilom >= fromDistanceInKm //
+				    && ch.kilom <= toDistanceInKm //
+				    && !(doNotgetFound && (ch.is_found() || ch.is_owned())) //
+				    && ((restrictedCacheType == CacheType.CW_TYPE_ERROR) || (ch.getType() == restrictedCacheType))) // all typs or chTyp=selected typ 
+			    {
+				updateList.put(ch.getWayPoint(), ch);
+			    }
+			}
 		    }
 		}
 	    }
 	}
 	// for save reasons
-	final int startSize = cachesToUpdate.size();
+	final int startSize = updateList.size();
 
 	// for don't loose the already done work
 	final Hashtable cFoundForUpdate = new Hashtable(MainForm.profile.cacheDB.size());
-	page_number = 1;
+	int page_number = 1;
 	int found_on_page = 0;
 	try {
 	    // Loop pages till maximum distance has been found or no more caches are in the list
@@ -848,14 +959,14 @@ public class GCImporter {
 		    if (distance <= toDistance) {
 			final CacheHolder ch = MainForm.profile.cacheDB.get(chWaypoint);
 			if (ch == null) { // not in DB
-			    if (distance >= fromDistance && doPMCache(chWaypoint, CacheDescriptionGC) && cachesToLoad.size() < maxNew) {
-				if (!cachesToLoad.contains(chWaypoint)) {
-				    cachesToLoad.add(chWaypoint);
+			    if (distance >= fromDistance && doPMCache(chWaypoint, CacheDescriptionGC) && downloadList.size() < maxNew) {
+				if (!downloadList.contains(chWaypoint)) {
+				    downloadList.add(chWaypoint);
 				}
 			    } else {
 				// Preferences.itself().log("no load of (Premium Cache/other direction/short
 				// Distance ?) " + chWaypoint);
-				cachesToUpdate.remove(chWaypoint);
+				updateList.remove(chWaypoint);
 			    }
 			} else {
 			    if (maxUpdate > 0) {
@@ -865,19 +976,19 @@ public class GCImporter {
 					if (cFoundForUpdate.size() < maxUpdate) {
 					    cFoundForUpdate.put(chWaypoint, ch);
 					} else
-					    cachesToUpdate.remove(chWaypoint);
+					    updateList.remove(chWaypoint);
 				    } else
-					cachesToUpdate.remove(chWaypoint);
+					updateList.remove(chWaypoint);
 				} else
-				    cachesToUpdate.remove(chWaypoint);
+				    updateList.remove(chWaypoint);
 			    }
 			}
-			if (cachesToLoad.size() >= maxNew - numPrivate) {
+			if (downloadList.size() >= maxNew - numPrivate) {
 			    if (cFoundForUpdate.size() >= maxUpdate) {
 				toDistance = 0;
-				cachesToUpdate.clear();
+				updateList.clear();
 			    } else {
-				if (cachesToUpdate.size() <= cFoundForUpdate.size()) {
+				if (updateList.size() <= cFoundForUpdate.size()) {
 				    toDistance = 0;
 				}
 			    }
@@ -888,12 +999,12 @@ public class GCImporter {
 		    RexPropLine.searchFrom(tableOfHtmlListPage, RexPropLine.matchedTo());
 		    if (infB.isClosed()) {
 			toDistance = 0;
-			cachesToUpdate.clear();
+			updateList.clear();
 			break;
 		    }
 		} // next Cache
 
-		infB.setInfo(MyLocale.getMsg(5511, "Found ") + cachesToLoad.size() + " / " + cFoundForUpdate.size() + MyLocale.getMsg(5512, " caches"));
+		infB.setInfo(MyLocale.getMsg(5511, "Found ") + downloadList.size() + " / " + cFoundForUpdate.size() + MyLocale.getMsg(5512, " caches"));
 		if (found_on_page < 20) {
 		    if (spiderAllFinds) {
 			// check all pages ( seen a gc-account with found_on_page less 20 and not on end )
@@ -910,14 +1021,14 @@ public class GCImporter {
 		}
 
 		if (toDistance > 0) {
-		    if (getAListPage(toDistanceInMiles, gotoNextPage)) {
+		    if (fetchAListPage(toDistanceInMiles, gotoNextPage)) {
 			lastPageVisited++;
 			Preferences.itself().log("[SpiderGC:fillDownloadLists] got Listpage: " + lastPageVisited, null);
 			page_number++;
 			found_on_page = 0;
 		    } else {
 			// stop, but download new ones if possible
-			cachesToUpdate.clear();
+			updateList.clear();
 			Preferences.itself().log("[SpiderGC:fillDownloadLists] Stopped at page number: " + page_number + " this is distance: " + distance, null);
 			found_on_page = 0;
 			toDistance = 0;
@@ -929,14 +1040,14 @@ public class GCImporter {
 	    Preferences.itself().log("Download error : ", ex, true);
 	    infB.close(0);
 	    Vm.showWait(false);
-	    cachesToUpdate.clear();
+	    updateList.clear();
 	}
 
 	String s = "Checked " + page_number + " pages" + Preferences.NEWLINE;
 	s = s + "with " + ((page_number - 1) * 20 + found_on_page) + " caches" + Preferences.NEWLINE;
-	s = s + "Found " + cachesToLoad.size() + " new caches" + Preferences.NEWLINE;
-	s = s + "Found " + cachesToUpdate.size() + "/" + cFoundForUpdate.size() + " caches for update" + Preferences.NEWLINE;
-	s = s + "Found " + (cachesToUpdate.size() - cFoundForUpdate.size()) + " caches possibly archived." + Preferences.NEWLINE;
+	s = s + "Found " + downloadList.size() + " new caches" + Preferences.NEWLINE;
+	s = s + "Found " + updateList.size() + "/" + cFoundForUpdate.size() + " caches for update" + Preferences.NEWLINE;
+	s = s + "Found " + (updateList.size() - cFoundForUpdate.size()) + " caches possibly archived." + Preferences.NEWLINE;
 	s = s + "Found " + numPrivate + " Premium Caches (for non Premium Member.)" + Preferences.NEWLINE;
 	s = s + "Found " + numAvailableUpdates + " caches with changed available status." + Preferences.NEWLINE;
 	s = s + "Found " + numLogUpdates + " caches with new found in log." + Preferences.NEWLINE;
@@ -948,24 +1059,24 @@ public class GCImporter {
 	    Preferences.itself().log("Found " + numFoundUpdates + " caches with no found in MainForm.profile." + Preferences.NEWLINE + "Found " + numArchivedUpdates + " caches with changed archived status." + Preferences.NEWLINE, null);
 	}
 
-	if (cachesToUpdate.size() == startSize)
-	    cachesToUpdate.clear(); // there must be something wrong
-	if (cachesToUpdate.size() == 0 // prima, alle tauchen in der gc-Liste auf
-		|| cachesToUpdate.size() > maxUpdate // Restmenge zu gross, wir nehmen nur die sicher geänderten.
+	if (updateList.size() == startSize)
+	    updateList.clear(); // there must be something wrong
+	if (updateList.size() == 0 // prima, alle tauchen in der gc-Liste auf
+		|| updateList.size() > maxUpdate // Restmenge zu gross, wir nehmen nur die sicher geänderten.
 	) {
-	    cachesToUpdate = cFoundForUpdate;
+	    updateList = cFoundForUpdate;
 	} else {
 	    // checking if all is in List by adding the known changed ones
-	    Preferences.itself().log("possibly " + cachesToUpdate.size() + " + known " + cFoundForUpdate.size(), null);
+	    Preferences.itself().log("possibly " + updateList.size() + " + known " + cFoundForUpdate.size(), null);
 	    for (final Enumeration e = cFoundForUpdate.elements(); e.hasMoreElements();) {
 		final CacheHolder ch = (CacheHolder) e.nextElement();
-		cachesToUpdate.put(ch.getWayPoint(), ch);
+		updateList.put(ch.getWayPoint(), ch);
 	    }
-	    Preferences.itself().log("now will update: " + cachesToUpdate.size(), null);
+	    Preferences.itself().log("now will update: " + updateList.size(), null);
 	}
 	s = "These Caches will be updated :" + Preferences.NEWLINE;
 	s = s + "Out of " + startSize + Preferences.NEWLINE;
-	for (final Enumeration e = cachesToUpdate.elements(); e.hasMoreElements();) {
+	for (final Enumeration e = updateList.elements(); e.hasMoreElements();) {
 	    final CacheHolder ch = (CacheHolder) e.nextElement();
 	    s = s + ch.getWayPoint() + "(" + ch.kilom + " km )";
 	    if (cFoundForUpdate.containsKey(ch.getWayPoint())) {
@@ -977,16 +1088,17 @@ public class GCImporter {
     }
 
     private void downloadCaches() {
-	for (int i = 0; i < cachesToLoad.size(); i++) {
+	infB.addWarning(MyLocale.getMsg(5531, "New: ") + downloadList.size());
+	for (int i = 0; i < downloadList.size(); i++) {
 	    if (infB.isClosed())
 		break;
-	    String wpt = (String) cachesToLoad.get(i);
+	    String wpt = (String) downloadList.get(i);
 	    // Get only caches not already available in the DB
 	    if (MainForm.profile.cacheDB.getIndex(wpt) == -1) {
-		infB.setInfo(MyLocale.getMsg(5531, "New: ") + wpt + " (" + (i + 1) + " / " + cachesToLoad.size() + ")");
+		infB.setInfo(MyLocale.getMsg(5531, "New: ") + wpt + " (" + (i + 1) + " / " + downloadList.size() + ")");
 		final CacheHolder ch = new CacheHolder(wpt);
 		ch.initStates(true);
-		final int test = getCacheByWaypointName(ch, Preferences.itself().downloadPics, Preferences.itself().downloadTBs);
+		final int test = getCacheByWaypointName(ch, Preferences.itself().downloadTBs);
 		if (test == SPIDER_CANCEL) {
 		    infB.close(0);
 		    break;
@@ -1001,13 +1113,14 @@ public class GCImporter {
     }
 
     private void updateCaches() {
+	infB.addWarning(MyLocale.getMsg(5530, "Update: ") + updateList.size());
 	int jj = 0;
-	for (final Enumeration e = cachesToUpdate.elements(); e.hasMoreElements();) {
+	for (final Enumeration e = updateList.elements(); e.hasMoreElements();) {
 	    if (infB.isClosed())
 		break;
 	    final CacheHolder ch = (CacheHolder) e.nextElement();
 	    jj++;
-	    infB.setInfo(MyLocale.getMsg(5530, "Update: ") + ch.getWayPoint() + " (" + (jj) + " / " + cachesToUpdate.size() + ")");
+	    infB.setInfo(MyLocale.getMsg(5530, "Update: ") + ch.getWayPoint() + " (" + (jj) + " / " + updateList.size() + ")");
 	    final int test = spiderSingle(MainForm.profile.cacheDB.getIndex(ch), infB);
 	    if (test == SPIDER_CANCEL) {
 		break;
@@ -1018,7 +1131,7 @@ public class GCImporter {
 		} else {
 		    // MainForm.profile.hasUnsavedChanges=true;
 		    if (test == SPIDER_IGNORE_PREMIUM)
-			spiderErrors++;
+			spiderIgnorePremium++;
 		}
 	    }
 	}
@@ -1039,13 +1152,13 @@ public class GCImporter {
 	    try {
 		final CacheHolder ch = new CacheHolder(cacheInDB.getWayPoint());
 		ch.initStates(false);
-		ret = getCacheByWaypointName(ch, Preferences.itself().downloadPics, Preferences.itself().downloadTBs);
+		ret = getCacheByWaypointName(ch, Preferences.itself().downloadTBs);
 		// Save the spidered data
 		if (ret == SPIDER_OK) {
 		    cacheInDB.initStates(false);
 		    // preserve rating information
 		    ch.setNumRecommended(cacheInDB.getNumRecommended());
-		    if (!Preferences.itself().downloadPics) {
+		    if (!downloadPics) {
 			// use existing images, if not downloaded
 			ch.getCacheDetails(false).images = cacheInDB.getCacheDetails(true).images;
 		    }
@@ -1166,13 +1279,13 @@ public class GCImporter {
 
     private int checkGCSettings() {
 	String page = "";
-	String url = "http://www.geocaching.com/account/ManagePreferences.aspx";
+	String gcSettingsUrl = "http://www.geocaching.com/account/ManagePreferences.aspx";
 	UrlFetcher.clearCookies();
 	UrlFetcher.setCookie("userid;www.geocaching.com", Preferences.itself().userID);
 	try {
-	    page = UrlFetcher.fetch(url); // getting the sessionid
+	    page = UrlFetcher.fetch(gcSettingsUrl); // getting the sessionid
 	} catch (final Exception ex) {
-	    Preferences.itself().log("[checkGCSettings]:Exception calling " + url + " with userID " + Preferences.itself().userID, ex);
+	    Preferences.itself().log("[checkGCSettings]:Exception calling " + gcSettingsUrl + " with userID " + Preferences.itself().userID, ex);
 	    return 2;
 	}
 
@@ -1333,12 +1446,12 @@ public class GCImporter {
 	// get username
 	String username = Preferences.itself().myAlias;
 	if (username.equals("")) {
-	    InfoBox localInfB = new InfoBox(MyLocale.getMsg(601, "Your alias:"), MyLocale.getMsg(601, "Your alias:"), InfoBox.INPUT);
-	    localInfB.setInput(username);
+	    InfoBox usernameInput = new InfoBox(MyLocale.getMsg(601, "Your alias:"), MyLocale.getMsg(601, "Your alias:"), InfoBox.INPUT);
+	    usernameInput.setInput(username);
 	    int code = FormBase.IDOK;
-	    code = localInfB.execute();
-	    username = localInfB.getInput();
-	    localInfB.close(0);
+	    code = usernameInput.execute();
+	    username = usernameInput.getInput();
+	    usernameInput.close(0);
 	    if (code != FormBase.IDOK)
 		return false;
 	    Preferences.itself().myAlias = username;
@@ -1346,16 +1459,16 @@ public class GCImporter {
 	// get password 
 	String passwort = Preferences.itself().password;
 	if (passwort.equals("")) {
-	    InfoBox localInfB = new InfoBox(MyLocale.getMsg(5506, "Password"), MyLocale.getMsg(5505, "Enter Password"), InfoBox.INPUT);
-	    localInfB.setInputPassword(passwort);
+	    InfoBox passwortInput = new InfoBox(MyLocale.getMsg(5506, "Password"), MyLocale.getMsg(5505, "Enter Password"), InfoBox.INPUT);
+	    passwortInput.setInputPassword(passwort);
 	    int code = FormBase.IDOK;
-	    code = localInfB.execute();
-	    passwort = localInfB.getInput();
-	    localInfB.close(0);
+	    code = passwortInput.execute();
+	    passwort = passwortInput.getInput();
+	    passwortInput.close(0);
 	    if (code != FormBase.IDOK)
 		return false;
 	}
-
+	String loginPageUrl = "https://www.geocaching.com/login/default.aspx";
 	String page;
 	UrlFetcher.clearCookies();
 	try {
@@ -1394,14 +1507,13 @@ public class GCImporter {
 	return true;
     }
 
-    private void getFirstListPage(int distance) {
-	String url = makeUrl(distance);
-
+    private void fetchFirstListPage(int distance) {
+	String url = makelistPagesUrl(distance);
 	try {
 	    htmlListPage = UrlFetcher.fetch(url);
-	    Preferences.itself().log("[getFirstListPage] Got first page " + url);
+	    Preferences.itself().log("[fetchFirstListPage] Got first page " + url);
 	} catch (final Exception ex) {
-	    Preferences.itself().log("[getFirstListPage] Error fetching first list page " + url, ex, true);
+	    Preferences.itself().log("[fetchFirstListPage] Error fetching first list page " + url, ex, true);
 	    Vm.showWait(false);
 	    infB.close(0);
 	    new InfoBox(MyLocale.getMsg(5500, "Error"), MyLocale.getMsg(5503, "Error fetching first list page.")).wait(FormBase.OKB);
@@ -1412,9 +1524,9 @@ public class GCImporter {
     /**
      * in: distance whatPage out: htmlListPage
      */
-    private boolean getAListPage(int distance, String whatPage) {
+    private boolean fetchAListPage(int distance, String whatPage) {
 	boolean ret = true;
-	String url = makeUrl(distance);
+	String url = makelistPagesUrl(distance);
 
 	final Regex rexViewstate = new Regex("id=\"__VIEWSTATE\" value=\"(.*?)\" />");
 	String viewstate;
@@ -1423,7 +1535,7 @@ public class GCImporter {
 	    viewstate = rexViewstate.stringMatched(1);
 	} else {
 	    viewstate = "";
-	    Preferences.itself().log("[SpiderGC.java:getAListPage] check rexViewstate!", null);
+	    Preferences.itself().log("[SpiderGC.java:fetchAListPage] check rexViewstate!", null);
 	}
 
 	final Regex rexViewstate1 = new Regex("id=\"__VIEWSTATE1\" value=\"(.*?)\" />");
@@ -1433,7 +1545,7 @@ public class GCImporter {
 	    viewstate1 = rexViewstate1.stringMatched(1);
 	} else {
 	    viewstate1 = "";
-	    Preferences.itself().log("[SpiderGC.java:getAListPage] check rexViewstate1!", null);
+	    Preferences.itself().log("[SpiderGC.java:fetchAListPage] check rexViewstate1!", null);
 	}
 
 	final String postData = "__EVENTTARGET=" + URL.encodeURL(whatPage, false) //
@@ -1444,29 +1556,28 @@ public class GCImporter {
 	try {
 	    UrlFetcher.setpostData(postData);
 	    htmlListPage = UrlFetcher.fetch(url);
-	    Preferences.itself().log("[getAListPage] " + whatPage);
+	    Preferences.itself().log("[fetchAListPage] " + whatPage);
 	} catch (final Exception ex) {
-	    Preferences.itself().log("[getAListPage] Error at " + whatPage, ex);
+	    Preferences.itself().log("[fetchAListPage] Error at " + whatPage, ex);
 	    ret = false;
 	}
 	return ret;
     }
 
-    private String makeUrl(int distance) {
-	String url;
+    private String makelistPagesUrl(int distance) {
+	String listPagesUrl = "http://www.geocaching.com/seek/nearest.aspx";
 	if (spiderAllFinds) {
-	    url = urlSeek //
-		    + queryUserFinds + encodeUTF8URL(Utils.encodeJavaUtf8String(Preferences.itself().myAlias));
+	    listPagesUrl = listPagesUrl + "?ul=" + encodeUTF8URL(Utils.encodeJavaUtf8String(Preferences.itself().myAlias));
 	} else {
-	    url = urlSeek //
-		    + queryLat + origin.getLatDeg(TransformCoordinates.DD) //
-		    + queryLon + origin.getLonDeg(TransformCoordinates.DD) //
-		    + queryDistance + Integer.toString(distance); //
+	    listPagesUrl = listPagesUrl //
+		    + "?lat=" + origin.getLatDeg(TransformCoordinates.DD) //
+		    + "&lng=" + origin.getLonDeg(TransformCoordinates.DD) //
+		    + "&dist=" + Integer.toString(distance); //
 	    if (doNotgetFound)
-		url = url + queryDoNotGetFound;
+		listPagesUrl = listPagesUrl + "&f=1";
 	}
-	url = url + cacheTypeRestriction;
-	return url;
+	listPagesUrl = listPagesUrl + cacheTypeRestriction;
+	return listPagesUrl;
     }
 
     /**
@@ -1560,13 +1671,6 @@ public class GCImporter {
 	return ret;
     }
 
-    /**
-     * Get num found
-     * 
-     * @param doc
-     *            A previously fetched cachepage
-     * @return numFound
-     */
     private int getNumFound(String doc) {
 	RexNumFinds.search(doc);
 	if (RexNumFinds.didMatch()) {
@@ -1611,13 +1715,6 @@ public class GCImporter {
 	// = "N"(0),"NE"(45),"E"(90),"SE"(135),"S"(180),"SW"(225),"W"(270),"NW"(315)
     }
 
-    /**
-     * Get the waypoint name
-     * 
-     * @param doc
-     *            A previously fetched cachepage
-     * @return Name of waypoint to add to list
-     */
     private String getWP(String doc) throws Exception {
 	//#<span class="small">
 	//#                            by OlSiTiNi
@@ -1636,9 +1733,6 @@ public class GCImporter {
 	return "GC" + stmp;
     }
 
-    /**
-     * check for Premium Member Cache
-     */
     private boolean doPMCache(String waypoint, String toCheck) {
 	if (Preferences.itself().isPremium)
 	    return true;
@@ -1661,9 +1755,6 @@ public class GCImporter {
 	}
     }
 
-    /*
-     * check for changed Cachetype
-     */
     private boolean typeChanged(CacheHolder ch, String toCheck) {
 	RexPropType.search(toCheck);
 	if (RexPropType.didMatch()) {
@@ -1693,9 +1784,6 @@ public class GCImporter {
 	return res;
     }
 
-    /*
-     * check for changed Difficulty
-     */
     private boolean difficultyChanged(CacheHolder ch, byte toCheck) {
 	if (ch.getHard() == toCheck)
 	    return false;
@@ -1705,9 +1793,6 @@ public class GCImporter {
 	}
     }
 
-    /*
-     * check for changed Terrain
-     */
     private boolean terrainChanged(CacheHolder ch, byte toCheck) {
 	if (ch.getTerrain() == toCheck)
 	    return false;
@@ -1717,9 +1802,6 @@ public class GCImporter {
 	}
     }
 
-    /*
-     * check for changed CacheSize
-     */
     private boolean sizeChanged(CacheHolder ch, byte toCheck) {
 	if (ch.getCacheSize() == toCheck)
 	    return false;
@@ -1729,13 +1811,6 @@ public class GCImporter {
 	}
     }
 
-    /*
-     * @param CacheHolder ch
-     * 
-     * @param String cacheDescGC
-     * 
-     * @return boolean newLogExists
-     */
     private boolean newFoundExists(CacheHolder ch, String cacheDescription) {
 	if (!Preferences.itself().checkLog)
 	    return false;
@@ -1748,11 +1823,6 @@ public class GCImporter {
 		// lastUpdateCW = now
 	    }
 	}
-
-	/*
-	 * don't use real log --> don't read CacheDetails final Time lastLogCW = new Time(); final Log lastLog = ch.getCacheDetails(true).CacheLogs.getLog(0); if (lastLog == null) return true; final String slastLogCW = lastLog.getDate(); if
-	 * (slastLogCW.equals("") || slastLogCW.equals("1900-00-00")) return true; // or check cacheDescGC also no log? lastLogCW.parse(slastLogCW, "yyyy-MM-dd");
-	 */
 
 	logDateRex.search(cacheDescription);
 	if (logDateRex.didMatch()) {
@@ -1776,7 +1846,7 @@ public class GCImporter {
 	return false;
     }
 
-    public int getWayPointPage(String wayPoint) {
+    public int fetchWayPointPage(String wayPoint) {
 	int ret = SPIDER_OK; // initialize value;
 	try {
 	    wayPointPage = UrlFetcher.fetch(wayPointUrl + wayPoint);
@@ -1788,18 +1858,7 @@ public class GCImporter {
 	return ret;
     }
 
-    /**
-     * Read a complete wayPointPage from geocaching.com.<br>
-     * This is used both when updating already existing caches (via spiderSingle) and when spidering around a centre.<br>
-     * It is also used when reading a GPX file and fetching the images.<br>
-     * 
-     * This is the workhorse function of the spider.
-     * 
-     * @param boolean fetchImages True if the pictures are to be fetched
-     * @param boolean fetchTBs True if the TBs are to be fetched
-     * @return -1=SPIDER_CANCEL if the infoBox was closed (cancel spidering), 0=SPIDER_ERROR if there was an error (continue with next cache), 1=SPIDER_OK if everything ok
-     */
-    private int getCacheByWaypointName(CacheHolder ch, boolean fetchImages, boolean fetchTBs) {
+    private int getCacheByWaypointName(CacheHolder ch, boolean fetchTBs) {
 	int ret = SPIDER_OK;
 	ch.setIncomplete(true);
 	CacheHolderDetail chD = ch.getCacheDetails(false);
@@ -1808,7 +1867,7 @@ public class GCImporter {
 	    int spiderTrys = 0;
 	    final int MAX_SPIDER_TRYS = 3;
 	    while (spiderTrys++ < MAX_SPIDER_TRYS) {
-		ret = getWayPointPage(ch.getWayPoint());
+		ret = fetchWayPointPage(ch.getWayPoint());
 		if (ret == SPIDER_OK) {
 		    if (infB.isClosed())
 			ret = SPIDER_CANCEL;
@@ -1876,7 +1935,7 @@ public class GCImporter {
 			if (fetchTBs)
 			    getBugs(chD);
 			ch.setHas_bugs(chD.Travelbugs.size() > 0);
-			if (fetchImages) {
+			if (downloadPics) {
 			    this.getImages(chD);
 			}
 			getAddWaypoints(wayPointPage, ch.getWayPoint(), ch.is_found());
@@ -2060,8 +2119,8 @@ public class GCImporter {
 	int num = 100;
 
 	if (!fetchAllLogs) {
-	    if (Preferences.itself().maxLogsToSpider < 100)
-		num = Preferences.itself().maxLogsToSpider + 1;
+	    if (maxLogsToSpider < 100)
+		num = maxLogsToSpider + 1;
 	}
 
 	do {
@@ -2113,7 +2172,7 @@ public class GCImporter {
 		    foundown = true;
 		    reslts.add(new Log(icon, d, name, logText));
 		}
-		if (nLogs <= Preferences.itself().maxLogsToSpider) {
+		if (nLogs <= maxLogsToSpider) {
 		    reslts.add(new Log(icon, d, name, logText));
 		} else {
 		    if (foundown || !fetchAllLogs) {
@@ -2124,7 +2183,7 @@ public class GCImporter {
 	    }
 	} while (!fertig);
 
-	if (nLogs > Preferences.itself().maxLogsToSpider) {
+	if (nLogs > maxLogsToSpider) {
 	    // there are more logs
 	    reslts.add(Log.maxLog());
 	}
@@ -2161,8 +2220,8 @@ public class GCImporter {
 	if (wayPointPage.indexOf("ctl00_ContentBody_uxTravelBugList_uxNoTrackableItemsLabel") >= 0) {
 	    return; // there are no trackables
 	}
-	final Extractor exBlock = new Extractor(wayPointPage, p.getProp("blockExStart"), p.getProp("blockExEnd"), 0, Extractor.EXCLUDESTARTEND);
-	final Extractor exBug = new Extractor("", p.getProp("bugExStart"), p.getProp("bugExEnd"), 0, Extractor.EXCLUDESTARTEND);
+	final Extractor exBlock = new Extractor(wayPointPage, blockExStart, blockExEnd, 0, Extractor.EXCLUDESTARTEND);
+	final Extractor exBug = new Extractor("", bugExStart, bugExEnd, 0, Extractor.EXCLUDESTARTEND);
 	final Extractor exBugName = new Extractor("", "", "", 0, Extractor.EXCLUDESTARTEND);
 	final String bugBlock;
 	bugBlock = exBlock.findNext();
@@ -2176,19 +2235,19 @@ public class GCImporter {
 		exBugWrong = false;
 		if (infB.isClosed())
 		    break;
-		final int idx = linkPlusBug.indexOf(p.getProp("bugLinkEnd"));
+		final int idx = linkPlusBug.indexOf(bugLinkEnd);
 		if (idx < 0) {
 		    Preferences.itself().log("[SpiderGC.java:getBugs]check TBs bugLinkEnd!", null);
 		    break; // No link/bug pair found
 		}
 		link = linkPlusBug.substring(0, idx);
-		exBugName.set(linkPlusBug, p.getProp("bugNameExStart"), p.getProp("bugNameExEnd"), idx, Extractor.EXCLUDESTARTEND);
+		exBugName.set(linkPlusBug, bugNameExStart, bugNameExEnd, idx, Extractor.EXCLUDESTARTEND);
 		if ((bug = exBugName.findNext()).length() > 0) {
 		    // Found a bug, get its mission
 		    try {
 			infB.setInfo(oldInfoBox + MyLocale.getMsg(5514, "\nGetting bug: ") + SafeXML.cleanback(bug));
 			bugDetails = UrlFetcher.fetch(link);
-			exBugName.set(bugDetails, p.getProp("bugDetailsStart"), p.getProp("bugDetailsEnd"), 0, Extractor.EXCLUDESTARTEND); // reusing
+			exBugName.set(bugDetails, bugDetailsStart, bugDetailsEnd, 0, Extractor.EXCLUDESTARTEND); // reusing
 			// exBugName
 			chD.Travelbugs.add(new Travelbug(link.substring(1 + link.indexOf("=")), bug, exBugName.findNext()));
 		    } catch (final Exception ex) {
@@ -2472,22 +2531,17 @@ public class GCImporter {
     boolean koords_not_yet_found = true;
 
     private void getAddWaypoints(String doc, String wayPoint, boolean is_found) throws Exception {
-	final Extractor exWayBlock = new Extractor(doc, p.getProp("wayBlockExStart"), p.getProp("wayBlockExEnd"), 0, false);
+	final Extractor exWayBlock = new Extractor(doc, wayBlockExStart, wayBlockExEnd, 0, false);
 	String wayBlock;
 	if ((wayBlock = exWayBlock.findNext()).length() > 0) {
 	    if (wayBlock.indexOf("No additional waypoints to display.") < 0) {
-		final Regex nameRex = new Regex(p.getProp("nameRex"));
-		final Regex koordRex = new Regex(p.getProp("koordRex"));
-		final Regex descRex = new Regex(p.getProp("descRex"));
-		final Regex typeRex = new Regex(p.getProp("typeRex"));
 		int counter = 0;
-		final Extractor exRowBlock = new Extractor(wayBlock, p.getProp("rowBlockExStart"), p.getProp("rowBlockExEnd"), 0, false);
-		String rowBlock;
-		rowBlock = exRowBlock.findNext();
+		final Extractor exRowBlock = new Extractor(wayBlock, rowBlockExStart, rowBlockExEnd, 0, false);
+		String rowBlock = exRowBlock.findNext();
 		while ((rowBlock = exRowBlock.findNext()).length() > 0) {
 		    CacheHolder hd = null;
 
-		    final Extractor exPrefix = new Extractor(rowBlock, p.getProp("prefixExStart"), p.getProp("prefixExEnd"), 0, true);
+		    final Extractor exPrefix = new Extractor(rowBlock, prefixExStart, prefixExEnd, 0, true);
 		    final String prefix = exPrefix.findNext();
 		    String adWayPoint;
 		    if (prefix.length() == 2)
@@ -2604,22 +2658,22 @@ public class GCImporter {
 	String bugList;
 	try {
 	    // infB.setInfo(oldInfoBox+"\nGetting bug: "+bug);
-	    bugList = UrlFetcher.fetch(p.getProp("getBugByName") + STRreplace.replace(SafeXML.clean(name), " ", "+"));
+	    bugList = UrlFetcher.fetch(getBugByNameUrl + STRreplace.replace(SafeXML.clean(name), " ", "+"));
 	    Preferences.itself().log("[getBugId] Fetched bugId: " + name);
 	} catch (final Exception ex) {
 	    Preferences.itself().log("[getBugId] Could not fetch bug list" + name, ex);
 	    bugList = "";
 	}
 	try {
-	    if (bugList.equals("") || bugList.indexOf(p.getProp("bugNotFound")) >= 0) {
+	    if (bugList.equals("") || bugList.indexOf(bugNotFound) >= 0) {
 		new InfoBox(MyLocale.getMsg(5500, "Error"), MyLocale.getMsg(6020, "Travelbug not found.")).wait(FormBase.OKB);
 		return "";
 	    }
-	    if (bugList.indexOf(p.getProp("bugTotalRecords")) < 0) {
+	    if (bugList.indexOf(bugTotalRecords) < 0) {
 		new InfoBox(MyLocale.getMsg(5500, "Error"), MyLocale.getMsg(6021, "More than one travelbug found. Specify name more precisely.")).wait(FormBase.OKB);
 		return "";
 	    }
-	    final Extractor exGuid = new Extractor(bugList, p.getProp("bugGuidExStart"), p.getProp("bugGuidExEnd"), 0, Extractor.EXCLUDESTARTEND);
+	    final Extractor exGuid = new Extractor(bugList, bugGuidExStart, bugGuidExEnd, 0, Extractor.EXCLUDESTARTEND);
 	    // TODO Replace with spider.def
 	    return exGuid.findNext();
 	} catch (final Exception ex) {
@@ -2640,20 +2694,20 @@ public class GCImporter {
 	try {
 	    // infB.setInfo(oldInfoBox+"\nGetting bug: "+bug);
 	    if (guid.length() > 10)
-		bugDetails = UrlFetcher.fetch(p.getProp("getBugByGuid") + guid);
+		bugDetails = UrlFetcher.fetch(getBugByGuidUrl + guid);
 	    else
-		bugDetails = UrlFetcher.fetch(p.getProp("getBugById") + guid);
+		bugDetails = UrlFetcher.fetch(getBugByIdUrl + guid);
 	    Preferences.itself().log("[getBugMissionByGuid] Fetched TB detailsById: " + guid);
 	} catch (final Exception ex) {
 	    Preferences.itself().log("[getBugMissionByGuid] Could not fetch TB details " + guid, ex);
 	    bugDetails = "";
 	}
 	try {
-	    if (bugDetails.indexOf(p.getProp("bugNotFound")) >= 0) {
+	    if (bugDetails.indexOf(bugNotFound) >= 0) {
 		new InfoBox(MyLocale.getMsg(5500, "Error"), MyLocale.getMsg(6020, "Travelbug not found.")).wait(FormBase.OKB);
 		return "";
 	    }
-	    final Extractor exDetails = new Extractor(bugDetails, p.getProp("bugDetailsStart"), p.getProp("bugDetailsEnd"), 0, Extractor.EXCLUDESTARTEND);
+	    final Extractor exDetails = new Extractor(bugDetails, bugDetailsStart, bugDetailsEnd, 0, Extractor.EXCLUDESTARTEND);
 	    return exDetails.findNext();
 	} catch (final Exception ex) {
 	    Preferences.itself().log("[getBugMissionByGuid] Error getting TB " + guid, ex);
@@ -2671,18 +2725,18 @@ public class GCImporter {
     public String getBugMissionByTrackNr(String trackNr) {
 	String bugDetails;
 	try {
-	    bugDetails = UrlFetcher.fetch(p.getProp("getBugByTrackNr") + trackNr);
+	    bugDetails = UrlFetcher.fetch(getBugByTrackNrUrl + trackNr);
 	    Preferences.itself().log("[getBugMissionByTrackNr] Fetched bug detailsByTrackNr: " + trackNr);
 	} catch (final Exception ex) {
 	    Preferences.itself().log("[getBugMissionByTrackNr] getBugByTrackNr " + trackNr, ex);
 	    bugDetails = "";
 	}
 	try {
-	    if (bugDetails.indexOf(p.getProp("bugNotFound")) >= 0) {
+	    if (bugDetails.indexOf(bugNotFound) >= 0) {
 		Preferences.itself().log("[getBugMissionByTrackNr], bugNotFound " + trackNr, null);
 		return "";
 	    }
-	    final Extractor exDetails = new Extractor(bugDetails, p.getProp("bugDetailsStart"), p.getProp("bugDetailsEnd"), 0, Extractor.EXCLUDESTARTEND);
+	    final Extractor exDetails = new Extractor(bugDetails, bugDetailsStart, bugDetailsEnd, 0, Extractor.EXCLUDESTARTEND);
 	    return exDetails.findNext();
 	} catch (final Exception ex) {
 	    Preferences.itself().log("[getBugMissionByTrackNr] TB Details, bugNotFound " + trackNr, ex);
@@ -2701,20 +2755,20 @@ public class GCImporter {
 	String bugDetails;
 	final String trackNr = TB.getTrackingNo();
 	try {
-	    bugDetails = UrlFetcher.fetch(p.getProp("getBugByTrackNr") + trackNr);
+	    bugDetails = UrlFetcher.fetch(getBugByTrackNrUrl + trackNr);
 	    Preferences.itself().log("[getBugMissionAndNameByTrackNr] Fetched TB getBugByTrackNr: " + trackNr);
 	} catch (final Exception ex) {
 	    Preferences.itself().log("[getBugMissionAndNameByTrackNr] Could not fetch bug details: " + trackNr, ex);
 	    bugDetails = "";
 	}
 	try {
-	    if (bugDetails.indexOf(p.getProp("bugNotFound")) >= 0) {
+	    if (bugDetails.indexOf(bugNotFound) >= 0) {
 		Preferences.itself().log("[getBugMissionAndNameByTrackNr], bugNotFound: " + trackNr, null);
 		return false;
 	    }
-	    final Extractor exDetails = new Extractor(bugDetails, p.getProp("bugDetailsStart"), p.getProp("bugDetailsEnd"), 0, Extractor.EXCLUDESTARTEND);
+	    final Extractor exDetails = new Extractor(bugDetails, bugDetailsStart, bugDetailsEnd, 0, Extractor.EXCLUDESTARTEND);
 	    TB.setMission(exDetails.findNext());
-	    final Extractor exName = new Extractor(bugDetails, p.getProp("bugNameStart"), p.getProp("bugNameEnd"), 0, Extractor.EXCLUDESTARTEND);
+	    final Extractor exName = new Extractor(bugDetails, bugNameStart, bugNameEnd, 0, Extractor.EXCLUDESTARTEND);
 	    TB.setName(exName.findNext());
 	    return true;
 	} catch (final Exception ex) {

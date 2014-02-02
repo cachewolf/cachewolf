@@ -42,9 +42,7 @@ import ewe.filechooser.FileChooserBase;
 import ewe.fx.Color;
 import ewe.fx.Dimension;
 import ewe.fx.Font;
-import ewe.fx.IconAndText;
 import ewe.fx.Insets;
-import ewe.fx.mImage;
 import ewe.io.FileBase;
 import ewe.io.IOException;
 import ewe.io.SerialPort;
@@ -86,18 +84,26 @@ import ewe.util.mString;
  */
 public class PreferencesScreen extends Form {
     private final ExecutePanel executePanel;
-    mButton DataDirBrowseButton, MapsDirBrowseButton, gpsButton;
-    mChoice inpLanguage, inpMetric, inpSpiderUpdates, chcGarminPort;
-    mInput DataDir, MapsDir, Proxy, ProxyPort, Alias, Alias2, Browser, fontName, fontSize, inpLogsPerPage, inpGcMemberID, inpUserID;
-    mCheckBox chkAutoLoad, chkShowDeletedImg;
-    mCheckBox chkNoTabs, chkTabsAtTop, chkMenuAtTab, chkShowStatus, chkHasCloseButton, chkUseRadar, chkUseText, chkUseIcons, chkUseBigIcons;
-    mCheckBox chkSynthShort, chkProxyActive, chkDescShowImg, chkAddDetailsToWaypoint, chkAddDetailsToName, chkSortingGroupedByCache, chkDebug, chkPM;
-    mCheckBox chkCheckLog, chkCheckDTS, chkCheckTBs;
-    mCheckBox chkOverwriteLogs;
-    mCheckBox chkAskForMaxValues;
-    TableColumnChooser tccList, tccBugs;
+    // cpDataDir
+    private mInput DataDir;
+    private mCheckBox chkAutoLoad;
+    private mButton DataDirBrowseButton;
+    // UserDataPanel
+    private mInput Alias, inpUserID, inpGcMemberID, Alias2, inpPassword;
+    mCheckBox chkPM;
+    // Card Maps / GPS
+    private mInput MapsDir;
+    private mButton MapsDirBrowseButton, gpsButton;
+    // importPanel
+    private mCheckBox chkCheckLog, chkCheckDTS, chkCheckTBs, alwaysKeepOwnLogs, chkOverwriteLogs, chkAskForMaxValues;
+    private mInput maxLogsToKeep, maxLogsToSpider;
 
-    mInput inpPassword;
+    mChoice inpLanguage, inpMetric, inpSpiderUpdates, chcGarminPort;
+    mInput Proxy, ProxyPort, Browser, fontName, fontSize, inpLogsPerPage;
+    mCheckBox chkShowDeletedImg;
+    mCheckBox chkNoTabs, chkTabsAtTop, chkMenuAtTab, chkShowStatus, chkHasCloseButton, chkUseRadar, chkUseText, chkUseIcons, chkUseBigIcons;
+    mCheckBox chkSynthShort, chkProxyActive, chkDescShowImg, chkAddDetailsToWaypoint, chkAddDetailsToName, chkSortingGroupedByCache, chkDebug;
+    TableColumnChooser tccList, tccBugs;
 
     public PreferencesScreen() {
 	int sw = MyLocale.getScreenWidth();
@@ -106,7 +112,7 @@ public class PreferencesScreen extends Form {
 
 	mTabbedPanel mTab = new mTabbedPanel();
 
-	this.title = MyLocale.getMsg(600, "Preferences");
+	this.title = MyLocale.getMsg(108, "Preferences");
 	if ((sw > 240) && (sh > 240))
 	    this.resizable = true;
 
@@ -121,12 +127,10 @@ public class PreferencesScreen extends Form {
 	DataDir = new mInput();
 	DataDir.setText(Preferences.itself().baseDir);
 	cpDataDir.addLast(DataDir, STRETCH, HFILL);
-	cpDataDir.addNext(chkAutoLoad = new mCheckBox(MyLocale.getMsg(629, "Autoload last profile")), DONTSTRETCH, DONTFILL | LEFT);
+	cpDataDir.addNext(chkAutoLoad = new mCheckBox(MyLocale.getMsg(629, "Autoload last profile")), DONTSTRETCH, LEFT);
 	if (Preferences.itself().autoReloadLastProfile)
 	    chkAutoLoad.setState(true);
-	DataDirBrowseButton = new mButton();
-	DataDirBrowseButton.image = new IconAndText(new mImage("search.png"), MyLocale.getMsg(604, "Browse"), null);
-	cpDataDir.addLast(DataDirBrowseButton, DONTSTRETCH, RIGHT);
+	cpDataDir.addLast(DataDirBrowseButton = GuiImageBroker.getButton(MyLocale.getMsg(604, "Browse"), "search"), DONTSTRETCH, RIGHT);
 	pnlGeneral.addLast(cpDataDir, HSTRETCH, HFILL);
 
 	CellPanel UserDataPanel = new CellPanel();
@@ -160,15 +164,12 @@ public class PreferencesScreen extends Form {
 	MapsDir = new mInput();
 	MapsDir.setText(Preferences.itself().mapsBaseDir);
 	cpMaps.addLast(MapsDir, STRETCH, (FILL | LEFT));
-	MapsDirBrowseButton = new mButton();
-	MapsDirBrowseButton.image = new IconAndText(new mImage("search.png"), MyLocale.getMsg(604, "Browse"), null);
-	cpMaps.addLast(MapsDirBrowseButton, DONTSTRETCH, DONTFILL | RIGHT);
+	cpMaps.addLast(MapsDirBrowseButton = GuiImageBroker.getButton(MyLocale.getMsg(604, "Browse"), "search"), DONTSTRETCH, RIGHT);
 	pnlGPSMaps.addLast(cpMaps, HSTRETCH, HFILL);
 
 	CellPanel cpGPS = new CellPanel();
 	cpGPS.setText("GPS");
-	cpGPS.addLast(gpsButton = new mButton(), HSTRETCH, HFILL);
-	gpsButton.image = new IconAndText(FormBase.tools, MyLocale.getMsg(600, "Preferences"), null);
+	cpGPS.addLast(gpsButton = GuiImageBroker.getButton(MyLocale.getMsg(108, "Preferences"), "tools"), HSTRETCH, HFILL);
 	pnlGPSMaps.addLast(cpGPS, HSTRETCH, HFILL);
 
 	mTab.addCard(pnlGPSMaps, MyLocale.getMsg(655, "Maps/GPS"), null).iconize(GuiImageBroker.getImage("globe"), Preferences.itself().useIcons);
@@ -194,13 +195,21 @@ public class PreferencesScreen extends Form {
 	chkCheckTBs.setState(Preferences.itself().checkTBs);
 	importPanel.addLast(SpiderPanel, HSTRETCH, HFILL);
 
-	CellPanel LogsPanel = new CellPanel();
-	LogsPanel.setText(MyLocale.getMsg(671, "Storage of logs"));
+	CellPanel logsPanel = new CellPanel();
+	logsPanel.setText(MyLocale.getMsg(671, "Storage of logs"));
 	//
-	LogsPanel.addLast(chkOverwriteLogs = new mCheckBox(MyLocale.getMsg(668, "Overwrite saved Logs?")));
+
+	logsPanel.addNext(new mLabel(MyLocale.getMsg(672, "Memory limit for logs per cache")), DONTSTRETCH, DONTFILL | LEFT);
+	logsPanel.addLast(maxLogsToKeep = new mInput(Preferences.itself().maxLogsToKeep == Integer.MAX_VALUE ? "" : "" + Preferences.itself().maxLogsToKeep));
+	logsPanel.addLast(alwaysKeepOwnLogs = new mCheckBox(MyLocale.getMsg(600, "Always keep your own logs")));
+	alwaysKeepOwnLogs.setState(Preferences.itself().alwaysKeepOwnLogs);
+
+	logsPanel.addNext(new mLabel(MyLocale.getMsg(1626, "Max. logs:")), DONTSTRETCH, DONTFILL | LEFT);
+	logsPanel.addLast(maxLogsToSpider = new mInput(Preferences.itself().maxLogsToSpider == Integer.MAX_VALUE ? "" : "" + Preferences.itself().maxLogsToSpider));
+	logsPanel.addLast(chkOverwriteLogs = new mCheckBox(MyLocale.getMsg(668, "Overwrite saved Logs?")));
 	chkOverwriteLogs.setState(Preferences.itself().overwriteLogs);
-	importPanel.addLast(LogsPanel, HSTRETCH, HFILL);
-	// 672, "Maximum number of logs to be stored in DB per cache" 
+	importPanel.addLast(logsPanel, HSTRETCH, HFILL);
+	//   
 
 	CellPanel ViewPanel = new CellPanel();
 	ViewPanel.setText(MyLocale.getMsg(673, "View"));
@@ -497,6 +506,12 @@ public class PreferencesScreen extends Form {
 		Preferences.itself().checkLog = chkCheckLog.getState();
 		Preferences.itself().checkDTS = chkCheckDTS.getState();
 		Preferences.itself().checkTBs = chkCheckTBs.getState();
+		String tmp = maxLogsToKeep.getText().trim();
+		Preferences.itself().maxLogsToKeep = (tmp == "" ? Integer.MAX_VALUE : Common.parseInt(tmp));
+		Preferences.itself().alwaysKeepOwnLogs = alwaysKeepOwnLogs.getState();
+		tmp = maxLogsToSpider.getText().trim();
+		Preferences.itself().maxLogsToSpider = (tmp == "" ? Integer.MAX_VALUE : Common.parseInt(tmp));
+
 		Preferences.itself().overwriteLogs = chkOverwriteLogs.getState();
 		Preferences.itself().askForMaxNumbersOnImport = chkAskForMaxValues.getState();
 
