@@ -26,7 +26,6 @@ import CacheWolf.OC;
 import CacheWolf.Preferences;
 import CacheWolf.controls.ExecutePanel;
 import CacheWolf.database.CacheType;
-import CacheWolf.imp.GCImporter.SpiderProperties;
 import CacheWolf.utils.Common;
 import CacheWolf.utils.MyLocale;
 import ewe.filechooser.FileChooser;
@@ -48,17 +47,19 @@ import ewe.ui.mLabel;
  *         20061209 Bugfix: Checking for uninitialised missingCheckBox
  */
 public class ImportGui extends Form {
+    public boolean downloadPics;
     private final ExecutePanel executePanel;
-    mChoice chcType;
-    mInput maxDistanceInput;
-    mInput minDistanceInput;
-    mInput directionInput;
-    mInput maxNumberInput;
-    mInput maxNumberUpdates;
-    mInput maxLogsInput;
-    mCheckBox imagesCheckBox, /* mapsCheckBox, */missingCheckBox, foundCheckBox, travelbugsCheckBox;
-    ewe.ui.mChoice domains;
-    String fileName;
+    public mChoice chcType;
+    public mInput maxDistanceInput;
+    private mInput minDistanceInput;
+    public mInput maxNumberInput;
+    public mInput maxNumberUpdates;
+    public mInput maxLogsInput;
+    private mCheckBox imagesCheckBox, /* mapsCheckBox, */travelbugsCheckBox;
+    public mCheckBox foundCheckBox, missingCheckBox;
+    public mChoice domains;
+
+    private String fileName;
 
     boolean isGC = true;
     public static final int DIST = 1;
@@ -80,6 +81,7 @@ public class ImportGui extends Form {
 	super();
 
 	isGC = ((options & ISGC) > 0);
+	downloadPics = Preferences.itself().downloadPics;
 
 	this.title = title;
 
@@ -152,7 +154,7 @@ public class ImportGui extends Form {
 	if ((options & IMAGES) > 0) {
 	    imagesCheckBox = new mCheckBox();
 	    imagesCheckBox.setText(MyLocale.getMsg(1602, "Download Images"));
-	    imagesCheckBox.setState(Preferences.itself().downloadPics);
+	    imagesCheckBox.setState(downloadPics);
 	    this.addLast(imagesCheckBox, DONTSTRETCH, DONTFILL | WEST);
 	}
 
@@ -194,21 +196,22 @@ public class ImportGui extends Form {
 	executePanel = new ExecutePanel(this);
     }
 
+    public String getFileName() {
+	return fileName;
+    }
+
     public void onEvent(Event ev) {
 	if (ev instanceof ControlEvent && ev.type == ControlEvent.PRESSED) {
 	    if (ev.target == executePanel.cancelButton) {
 		this.close(FormBase.IDCANCEL);
 	    }
 	    if (ev.target == executePanel.applyButton) {
-		// distOC wird hier noch nicht in Pref eingetragen, damit noch geprüft werden kann, ob es größer oder kleiner ist als vorher
 		if (missingCheckBox != null)
 		    Preferences.itself().downloadAllOC = missingCheckBox.state;
 		if (imagesCheckBox != null)
-		    Preferences.itself().downloadPics = imagesCheckBox.state;
+		    downloadPics = imagesCheckBox.state;
 		if (travelbugsCheckBox != null)
 		    Preferences.itself().downloadTBs = travelbugsCheckBox.state;
-		if (maxLogsInput != null)
-		    Preferences.itself().maxLogsToSpider = Common.parseInt(maxLogsInput.getText());
 		Preferences.itself().savePreferences();
 		this.close(FormBase.IDOK);
 	    }
@@ -237,58 +240,7 @@ public class ImportGui extends Form {
 	}
     }
 
-    public String getCacheTypeRestriction(SpiderProperties p) {
-	String cacheTypeRestriction = "";
-
-	if (chcType != null) {
-	    try {
-		switch (chcType.getInt()) {
-		case 0:
-		    cacheTypeRestriction = "";
-		    break;
-		case 1:
-		    cacheTypeRestriction = p.getProp("onlyTraditional");
-		    break;
-		case 2:
-		    cacheTypeRestriction = p.getProp("onlyMulti");
-		    break;
-		case 3:
-		    cacheTypeRestriction = p.getProp("onlyVirtual");
-		    break;
-		case 4:
-		    cacheTypeRestriction = p.getProp("onlyLetterboxHybrid");
-		    break;
-		case 5:
-		    cacheTypeRestriction = p.getProp("onlyEvent");
-		    break;
-		case 6:
-		    cacheTypeRestriction = p.getProp("onlyMegaEvent");
-		    break;
-		case 7:
-		    cacheTypeRestriction = p.getProp("onlyWebcam");
-		    break;
-		case 8:
-		    cacheTypeRestriction = p.getProp("onlyUnknown");
-		    break;
-		case 9:
-		    cacheTypeRestriction = p.getProp("onlyCito");
-		    break;
-		case 10:
-		    cacheTypeRestriction = p.getProp("onlyEarth");
-		    break;
-		case 11:
-		    cacheTypeRestriction = p.getProp("onlyWherigo");
-		    break;
-		default:
-		    cacheTypeRestriction = "";
-		}
-	    } catch (Exception ex) { // Some tag missing from spider.def
-	    }
-	}
-	return cacheTypeRestriction;
-    }
-
-    public byte getRestrictedCacheType(SpiderProperties p) {
+    public byte getRestrictedCacheType() {
 	byte RestrictedType = CacheType.CW_TYPE_ERROR;
 
 	if (chcType != null) {

@@ -121,12 +121,18 @@ public class Preferences extends MinML {
     // Import from GC
     /** Check if lastFound in Listpage is newer than saved log */
     public boolean checkLog = false;
-    /** Check if TBs changed in Listpage */
-    public boolean checkTBs = true;
     /** Check if Difficulty, Terrain or Size changed in Listpage */
     public boolean checkDTS = true;
+    /** Check if TBs changed in Listpage */
+    public boolean checkTBs = true;
+    /** maximum number of logs to store in cache details */
+    public int maxLogsToKeep = Integer.MAX_VALUE;
+    /** keep own logs even when exceeding <code>maxLogsToKeep</code> */
+    public boolean alwaysKeepOwnLogs = true;
+    /** Maximum logs to spider */
+    public int maxLogsToSpider = 99;
     /** overwrite stored Logs with the ones now fetched from GC*/
-    public boolean overwriteLogs = false;
+    public boolean overwriteLogs = true;
     /** */
     public boolean askForMaxNumbersOnImport = false;
     // Export
@@ -226,8 +232,6 @@ public class Preferences extends MinML {
 
     /** Initial height of hints field (set to 0 to hide them initially) */
     public int initialHintHeight = DEFAULT_INITIAL_HINT_HEIGHT;
-    /** Maximum logs to spider */
-    public int maxLogsToSpider = 99;
     /** True if the Solver should ignore the case of variables */
     public boolean solverIgnoreCase = true;
     /**
@@ -248,22 +252,19 @@ public class Preferences extends MinML {
     public boolean changedGCLanguageToEnglish = false;
     /** True if the goto panel is North centered */
     public boolean northCenteredGoto = true;
+
     /** Number of CacheHolder details that are kept in memory */
     public int maxDetails = 50;
-    /**
-     * Number of details to delete when maxDetails have been stored in cachesWithLoadedDetails
-     */
+    /** Number of details to delete when maxDetails have been stored in cachesWithLoadedDetails */
     public int deleteDetails = 5;
+
     /** Download images when loading cache data */
     public boolean downloadPics = true;
     /** Download TB information when loading cache data */
     public boolean downloadTBs = true;
+
     /** Last mode select in the DataMover for processing cache */
     public int processorMode = 0;
-    /** maximum number of logs to store in cache details */
-    public int maxLogsToKeep = Integer.MAX_VALUE;
-    /** keep own logs even when excessing <code>maxLogsToKeep</code> */
-    public boolean alwaysKeepOwnLogs = true;
 
     /** The maximum number of logs to export */
     public int numberOfLogsToExport = 5;

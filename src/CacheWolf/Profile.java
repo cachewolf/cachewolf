@@ -263,20 +263,16 @@ public class Profile {
 	resetUnsavedChanges();
     }
 
-    public void readIndex() {
-	readIndex(null);
-    }
-
     /**
-     * Method to read the index.xml file that holds the total information on available caches in the database. The database in nothing else than the collection of caches in a directory.
+     * Method to read the index.xml file that holds the total information on available caches in the database.<br>
+     * The database in nothing else than the collection of caches in a directory.
      */
-    public void readIndex(InfoBox infoBox) {
-	// Now we are sure that baseDir exists and basDir+profile exists
-	name = Preferences.itself().lastProfile;
-	dataDir = Preferences.itself().absoluteBaseDir + name;
-	dataDir = dataDir.replace('\\', '/');
-	if (!dataDir.endsWith("/"))
-	    dataDir += '/';
+    public void readIndex(InfoBox infoBox, String dataDir) {
+	this.dataDir = dataDir.replace('\\', '/');
+	if (this.dataDir.endsWith("/"))
+	    this.dataDir = this.dataDir.substring(0, this.dataDir.length() - 1);
+	this.name = this.dataDir.substring(this.dataDir.lastIndexOf("/") + 1);
+	this.dataDir += '/';
 
 	int updFrequ = Vm.isMobile() ? 10 : 40; // Number of caches between screen updates
 	try {
@@ -287,7 +283,7 @@ public class Profile {
 	    int lastShownWpt = 0;
 	    char decSep = MyLocale.getDigSeparator().charAt(0);
 	    char notDecSep = decSep == '.' ? ',' : '.';
-	    File indexFile = new File(dataDir + "index.xml");
+	    File indexFile = new File(this.dataDir + "index.xml");
 	    FileReader in = new FileReader(indexFile.getAbsolutePath());
 	    indexXmlVersion = 1; // Initial guess
 	    in.readLine(); // <?xml version= ...
@@ -482,9 +478,9 @@ public class Profile {
 		saveIndex(true);
 	    }
 	} catch (FileNotFoundException e) {
-	    Preferences.itself().log("index.xml not found in directory " + dataDir, e);
+	    Preferences.itself().log("index.xml not found in directory " + this.dataDir, e);
 	} catch (IOException e) {
-	    Preferences.itself().log("Problem reading index.xml in dir: " + dataDir, e, true);
+	    Preferences.itself().log("Problem reading index.xml in dir: " + this.dataDir, e, true);
 	}
 	this.getCurrentFilter().normaliseFilters();
 	resetUnsavedChanges();

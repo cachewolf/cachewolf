@@ -618,29 +618,29 @@ public class TravelbugJourneyScreen extends Form {
 	    }
 	    if (selectedItem == mnuGetMission && selectedRow > -1) {
 		TravelbugJourney tbj = tblMyTravelbugJourneys.getTBJourney(selectedRow);
-		GCImporter spider = new GCImporter();
+		GCImporter gcImporter = new GCImporter();
 		Vm.showWait(true);
 
 		// if we have an ID, get mission by ID
 		if (tbj.getTb().getGuid().length() != 0) {
-		    tbj.getTb().setMission(spider.getBugMissionByGuid(tbj.getTb().getGuid()));
+		    tbj.getTb().setMission(gcImporter.getBugMissionByGuid(tbj.getTb().getGuid()));
 		} else {
 		    // try to get mission and name by tracking number
 		    boolean suceeded = false;
 		    if (tbj.getTb().getTrackingNo().length() != 0) {
-			suceeded = spider.getBugMissionAndNameByTrackNr(tbj.getTb());
+			suceeded = gcImporter.getBugMissionAndNameByTrackNr(tbj.getTb());
 		    }
 		    // if this has't worked, try to get ID by name
 		    if (!suceeded) {
-			tbj.getTb().setGuid(spider.getBugId(tbj.getTb().getName().trim()));
+			tbj.getTb().setGuid(gcImporter.getBugId(tbj.getTb().getName().trim()));
 			// if we have an ID now, get mission by ID
 			if (tbj.getTb().getGuid().length() != 0) {
-			    tbj.getTb().setMission(spider.getBugMissionByGuid(tbj.getTb().getGuid()));
+			    tbj.getTb().setMission(gcImporter.getBugMissionByGuid(tbj.getTb().getGuid()));
 			}
 		    }
 		}
 
-		spider.setOldGCLanguage();
+		gcImporter.setOldGCLanguage();
 
 		Vm.showWait(false);
 		tcTbJourneyList.repaint();
@@ -651,11 +651,11 @@ public class TravelbugJourneyScreen extends Form {
 	    }
 	    if (selectedItem == mnuOpenOnline && selectedRow >= 0) {
 		TravelbugJourney tbj = tblMyTravelbugJourneys.getTBJourney(selectedRow);
-		GCImporter spider = new GCImporter();
+		GCImporter gcImporter = new GCImporter();
 		Vm.showWait(true);
 		// First check whether ID is set, if not get it
 		if (tbj.getTb().getGuid().length() == 0)
-		    tbj.getTb().setGuid(spider.getBugId(tbj.getTb().getName()));
+		    tbj.getTb().setGuid(gcImporter.getBugId(tbj.getTb().getName()));
 		if (tbj.getTb().getGuid().length() != 0) {
 		    Vm.showWait(false);
 		    try {
@@ -671,7 +671,7 @@ public class TravelbugJourneyScreen extends Form {
 			// Preferences.itself().log("Ignored Exception", ioex, true);
 		    }
 		}
-		spider.setOldGCLanguage();
+		gcImporter.setOldGCLanguage();
 	    }
 	    if (selectedItem == mnuToggleList) {
 		toggleNonLogged();
