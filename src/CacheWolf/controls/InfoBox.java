@@ -152,7 +152,7 @@ public class InfoBox extends Form {
     }
 
     public void addInfo(String t) {
-	msgArea.setText(msgArea.text + "\n" + t);
+	msgArea.setText(t + "\n" + msgArea.text);
 	this.repaintNow();
     }
 
@@ -170,7 +170,7 @@ public class InfoBox extends Form {
     }
 
     public void addWarning(String w) {
-	warnings.setText(warnings.text + "\n" + w);
+	warnings.setText(w + "\n" + warnings.text);
     }
 
     public boolean getCheckBoxState() {

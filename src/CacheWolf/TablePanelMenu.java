@@ -313,13 +313,14 @@ public class TablePanelMenu extends MenuBar {
     public void updateSelectedCaches() {
 	CacheDB cacheDB = MainForm.profile.cacheDB;
 	CacheHolder ch;
-
-	if (new ImportGui(MyLocale.getMsg(1014, "updateSelectedCaches"), ImportGui.IMAGES | ImportGui.TRAVELBUGS | ImportGui.MAXLOGS | ImportGui.ALL).execute() == FormBase.IDCANCEL) {
+	ImportGui importGui = new ImportGui(MyLocale.getMsg(1014, "updateSelectedCaches"), ImportGui.IMAGES | ImportGui.TRAVELBUGS | ImportGui.ALL);
+	if (importGui.execute() == FormBase.IDCANCEL) {
 	    return;
 	}
 
-	GCImporter spider = new GCImporter();
-	GCImporter.loggedIn = false;
+	GCImporter gcImporter = new GCImporter();
+	gcImporter.setDownloadPics(importGui.downloadPics);
+
 	OCXMLImporter ocSync = new OCXMLImporter();
 	Vm.showWait(true);
 	boolean alreadySaid = false;
@@ -359,7 +360,7 @@ public class TablePanelMenu extends MenuBar {
 	    infB.setInfo(MyLocale.getMsg(5513, "Loading: ") + ch.getWayPoint() + " (" + (j + 1) + " / " + cachesToUpdate.size() + ")");
 	    infB.redisplay();
 	    if (ch.getWayPoint().substring(0, 2).equalsIgnoreCase("GC")) {
-		int test = spider.spiderSingle(i, infB);
+		int test = gcImporter.spiderSingle(i, infB);
 		if (test == GCImporter.SPIDER_CANCEL) {
 		    infB.close(0);
 		    break;
@@ -380,7 +381,7 @@ public class TablePanelMenu extends MenuBar {
 	    // cacheDB.clear();
 	    // MainForm.profile.readIndex();
 	}
-	spider.setOldGCLanguage();
+	gcImporter.setOldGCLanguage();
 
 	infB.close(0);
 	MainForm.profile.saveIndex(Profile.SHOW_PROGRESS_BAR);
@@ -425,9 +426,9 @@ public class TablePanelMenu extends MenuBar {
 		    err = !profilePath.renameTo(new File(Preferences.itself().absoluteBaseDir + newName));
 		}
 	    } else if (operation == 2) {
+		// Delete
 		Profile p = new Profile();
-		p.dataDir = Preferences.itself().absoluteBaseDir + f.newSelectedProfile + "/";
-		p.readIndex();
+		p.readIndex(null, Preferences.itself().absoluteBaseDir + f.newSelectedProfile + "/");
 		String mapsPath = p.getMapsDir();
 		//Really check if the user wants to delete the profile
 		String questionText = MyLocale.getMsg(276, "Do You really want to delete profile '") + f.newSelectedProfile + MyLocale.getMsg(277, "' ?");
@@ -498,7 +499,7 @@ public class TablePanelMenu extends MenuBar {
 		    infB.exec();
 		    infB.waitUntilPainted(1000);
 		    Vm.showWait(infB, true);
-		    MainForm.profile.readIndex(infB);
+		    MainForm.profile.readIndex(infB, Preferences.itself().absoluteBaseDir + Preferences.itself().lastProfile);
 		    Vm.showWait(infB, false);
 		    infB.close(0);
 
@@ -524,31 +525,31 @@ public class TablePanelMenu extends MenuBar {
 	    // subMenu for import, part of "Application" menu
 	    // /////////////////////////////////////////////////////////////////////
 	    if (mev.selectedItem == spider) {
-		GCImporter spGC = new GCImporter();
+		GCImporter gcImporter = new GCImporter();
 		MainTab.itself.saveUnsavedChanges(false);
-		spGC.doIt();
+		gcImporter.doIt();
 		cacheDB.clear();
-		MainForm.profile.readIndex();
+		MainForm.profile.readIndex(null, Preferences.itself().absoluteBaseDir + Preferences.itself().lastProfile);
 		tablePanel.resetModel();
-		spGC.setOldGCLanguage();
+		gcImporter.setOldGCLanguage();
 	    }
 	    if (mev.selectedItem == spiderRoute) {
-		GCImporter spGC = new GCImporter();
+		GCImporter gcImporter = new GCImporter();
 		MainTab.itself.saveUnsavedChanges(false);
-		spGC.doItAlongARoute();
+		gcImporter.doItAlongARoute();
 		cacheDB.clear();
-		MainForm.profile.readIndex();
+		MainForm.profile.readIndex(null, Preferences.itself().absoluteBaseDir + Preferences.itself().lastProfile);
 		tablePanel.resetModel();
-		spGC.setOldGCLanguage();
+		gcImporter.setOldGCLanguage();
 	    }
 	    if (mev.selectedItem == spiderAllFinds) {
-		GCImporter spGC = new GCImporter();
+		GCImporter gcImporter = new GCImporter();
 		MainTab.itself.saveUnsavedChanges(false);
-		spGC.doIt(true);
+		gcImporter.doIt(true);
 		cacheDB.clear();
-		MainForm.profile.readIndex();
+		MainForm.profile.readIndex(null, Preferences.itself().absoluteBaseDir + Preferences.itself().lastProfile);
 		tablePanel.resetModel();
-		spGC.setOldGCLanguage();
+		gcImporter.setOldGCLanguage();
 	    }
 	    if (mev.selectedItem == loadGCVotes) {
 		if (sGCV == null)
@@ -1057,7 +1058,7 @@ class EditCenter extends Form {
 	content.borderStyle = UIConstants.BDR_RAISEDOUTER | UIConstants.BDR_SUNKENINNER | UIConstants.BF_RECT;
 	//defaultTags.set(this.INSETS,new Insets(2,2,2,2));
 	title = MyLocale.getMsg(1118, "Profile") + ": " + MainForm.profile.name;
-	content.addNext(new mLabel(MyLocale.getMsg(600, "Preferences")));
+	content.addNext(new mLabel(MyLocale.getMsg(108, "Preferences")));
 	content.addLast(chkSetCurrentCentreFromGPSPosition = new mCheckBox(MyLocale.getMsg(646, "centre from GPS")), CellConstants.DONTSTRETCH, (CellConstants.DONTFILL | CellConstants.WEST));
 	// content.addLast(btnGPS2Cur=new mButton("   v   "),DONTSTRETCH,DONTFILL|LEFT);
 	if (Preferences.itself().setCurrentCentreFromGPSPosition)

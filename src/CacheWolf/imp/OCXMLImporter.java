@@ -108,6 +108,7 @@ public class OCXMLImporter extends MinML {
     String processingDescLang;
     boolean isHTML;
     boolean isSyncSingle; // to load archieved
+    boolean downloadPics = true;
 
     public OCXMLImporter() {
 	cacheDB = MainForm.profile.cacheDB;
@@ -171,7 +172,7 @@ public class OCXMLImporter extends MinML {
 	// Build url
 	String url = "http://" + hostname + "/xml/ocxml11.php?" + "modifiedsince=" + lastS + "&cache=1" + "&cachedesc=1";
 
-	if (Preferences.itself().downloadPics)
+	if (downloadPics)
 	    url += "&picture=1";
 	else
 	    url += "&picture=0";
@@ -197,6 +198,7 @@ public class OCXMLImporter extends MinML {
 	if (importGui.execute() == FormBase.IDCANCEL) {
 	    return;
 	}
+	downloadPics = importGui.downloadPics;
 	Vm.showWait(true);
 	String dist = importGui.maxDistanceInput.getText();
 	incFinds = !importGui.foundCheckBox.getState();
@@ -230,7 +232,7 @@ public class OCXMLImporter extends MinML {
 	picCnt = 0;
 	// Build url
 	String url = "http://" + hostname + "/xml/ocxml11.php?" + "modifiedsince=" + lastS + "&cache=1" + "&cachedesc=1";
-	if (Preferences.itself().downloadPics)
+	if (downloadPics)
 	    url += "&picture=1";
 	else
 	    url += "&picture=0";
@@ -637,7 +639,7 @@ public class OCXMLImporter extends MinML {
 	if (name.equals("cachedesc")) {
 	    numDescImported++;
 	    holder.setHTML(isHTML);
-	    if (Preferences.itself().downloadPics && isHTML) {
+	    if (downloadPics && isHTML) {
 		getImageNamesFromDescription();
 	    }
 	    holder.getCacheDetails(false).hasUnsavedChanges = true;
@@ -841,7 +843,7 @@ public class OCXMLImporter extends MinML {
 		    holder.getCacheDetails(false).images.add(imageInfo);
 		}
 	    } else {
-		if (Preferences.itself().downloadPics) {
+		if (downloadPics) {
 		    UrlFetcher.fetchDataFile(imageInfo.getURL(), target);
 		    ftest = new File(target);
 		    if (ftest.exists()) {

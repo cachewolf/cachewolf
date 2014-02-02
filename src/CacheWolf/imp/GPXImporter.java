@@ -25,7 +25,6 @@ package CacheWolf.imp;
 import CacheWolf.Filter;
 import CacheWolf.MainForm;
 import CacheWolf.MainTab;
-import CacheWolf.utils.MyLocale;
 import CacheWolf.OC;
 import CacheWolf.Preferences;
 import CacheWolf.Profile;
@@ -44,6 +43,7 @@ import CacheWolf.database.Travelbug;
 import CacheWolf.utils.BetterUTF8Codec;
 import CacheWolf.utils.Common;
 import CacheWolf.utils.Extractor;
+import CacheWolf.utils.MyLocale;
 import CacheWolf.utils.STRreplace;
 import CacheWolf.utils.SafeXML;
 import CacheWolf.utils.UrlFetcher;
@@ -80,7 +80,7 @@ public class GPXImporter extends MinML {
     private boolean debugGPX = false;
     InfoBox infB;
     boolean spiderOK = true;
-    boolean doSpider = false;
+    boolean downloadPics = false;
     boolean fromOC = false;
     boolean fromTC = false;
     boolean nameFound = false;
@@ -118,15 +118,16 @@ public class GPXImporter extends MinML {
 		if (importGui.execute() == FormBase.IDCANCEL) {
 		    return;
 		}
-		doSpider = importGui.imagesCheckBox.getState();
+		downloadPics = importGui.downloadPics;
 		importGui.close(0);
 	    } else if (how == DOIT_NOSPOILER) {
-		doSpider = false;
+		downloadPics = false;
 	    } else {
-		doSpider = true;
+		downloadPics = true;
 	    }
-	    if (doSpider) {
+	    if (downloadPics) {
 		imgSpider = new GCImporter();
+		imgSpider.setDownloadPics(downloadPics);
 		doitHow = DOIT_WITHSPOILER;
 	    } else {
 		doitHow = DOIT_NOSPOILER;
@@ -382,10 +383,10 @@ public class GPXImporter extends MinML {
 		cacheDB.add(holder);
 		// don't spider additional waypoints, so check
 		// if waypoint starts with "GC"
-		if (doSpider) {
-		    if (spiderOK && holder.is_archived() == false) {
+		if (downloadPics) {
+		    if (spiderOK && !holder.is_archived()) {
 			// spiderImages();
-			spiderImagesUsingSpider();
+			getImages();
 			// Rename image sources
 			String text;
 			String orig;
@@ -411,8 +412,8 @@ public class GPXImporter extends MinML {
 		CacheHolder oldCh = cacheDB.get(index);
 		// Preserve images: Copy images from old cache version because here we didn't add
 		// any image information to the holder object.
-		if (Preferences.itself().downloadPics && holder.isOC()) {
-		    spiderImagesUsingSpider();
+		if (downloadPics && holder.isOC()) {
+		    getImages();
 		} else {
 		    holder.getCacheDetails(false).images = oldCh.getCacheDetails(true).images;
 		}
@@ -626,14 +627,10 @@ public class GPXImporter extends MinML {
 	return "None";
     }
 
-    private void spiderImagesUsingSpider() {
+    private void getImages() {
 	String addresse;
 	String cacheText;
 	CacheHolderDetail chD = holder.getCacheDetails(false);
-
-	// just to be sure to have a spider object
-	if (imgSpider == null)
-	    imgSpider = new GCImporter();
 
 	try {
 	    if (fromTC) {
@@ -651,7 +648,7 @@ public class GPXImporter extends MinML {
 		    String bilder = exBilder.findNext();
 		    getOCPictures(bilder);
 		} else {
-		    imgSpider.getWayPointPage(holder.getWayPoint());
+		    imgSpider.fetchWayPointPage(holder.getWayPoint());
 		    chD.setLongDescription(imgSpider.getDescription());
 		    imgSpider.getImages(chD);
 		    // todo if Attributes are in the gpx (Version 1.1.0) : don't spider them
@@ -698,7 +695,7 @@ public class GPXImporter extends MinML {
 	    CacheImage imageInfo = new CacheImage();
 	    imageInfo.setURL(fetchUrl);
 	    imageInfo.setTitle(makeTitle(imgRegexUrl.stringMatched(1), fetchUrl));
-	    getPic(imageInfo);
+	    getOCPicture(imageInfo);
 	}
 
 	Extractor exHref = new Extractor(html, "<a href=", "</a>", 0, true);
@@ -715,7 +712,7 @@ public class GPXImporter extends MinML {
 			CacheImage imageInfo = new CacheImage();
 			imageInfo.setURL(fetchUrl);
 			imageInfo.setTitle(makeTitle(href, fetchUrl));
-			getPic(imageInfo);
+			getOCPicture(imageInfo);
 		    }
 		} catch (IndexOutOfBoundsException e) {
 		}
@@ -741,7 +738,7 @@ public class GPXImporter extends MinML {
 	return imgAltText;
     }
 
-    private void getPic(CacheImage imageInfo) {
+    private void getOCPicture(CacheImage imageInfo) {
 	String fileName = holder.getWayPoint() + "_" + imageInfo.getURL().substring(imageInfo.getURL().lastIndexOf('/') + 1);
 	fileName = Common.ClearForFileName(fileName).toLowerCase();
 	String target = MainForm.profile.dataDir + fileName;
@@ -755,15 +752,13 @@ public class GPXImporter extends MinML {
 		    holder.getCacheDetails(false).images.add(imageInfo);
 		}
 	    } else {
-		if (Preferences.itself().downloadPics) {
-		    UrlFetcher.fetchDataFile(imageInfo.getURL(), target);
-		    ftest = new File(target);
-		    if (ftest.exists()) {
-			if (ftest.length() > 0) {
-			    holder.getCacheDetails(false).images.add(imageInfo);
-			} else {
-			    ftest.delete();
-			}
+		UrlFetcher.fetchDataFile(imageInfo.getURL(), target);
+		ftest = new File(target);
+		if (ftest.exists()) {
+		    if (ftest.length() > 0) {
+			holder.getCacheDetails(false).images.add(imageInfo);
+		    } else {
+			ftest.delete();
 		    }
 		}
 	    }

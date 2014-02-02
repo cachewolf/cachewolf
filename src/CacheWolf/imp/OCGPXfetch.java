@@ -22,8 +22,8 @@
 package CacheWolf.imp;
 
 import CacheWolf.MainForm;
-import CacheWolf.utils.MyLocale;
 import CacheWolf.Preferences;
+import CacheWolf.utils.MyLocale;
 import CacheWolf.utils.UrlFetcher;
 import ewe.io.File;
 import ewe.io.IOException;
@@ -35,6 +35,7 @@ public class OCGPXfetch {
 	boolean oldDownloadAllOC = Preferences.itself().downloadAllOC;
 	boolean onlyListedAtOC = false;
 	ImportGui importGui = new ImportGui(MyLocale.getMsg(130, "Download from opencaching"), ImportGui.IMAGES | ImportGui.ALL | ImportGui.HOST);
+	boolean downloadPics = importGui.downloadPics;
 	importGui.missingCheckBox.setText(MyLocale.getMsg(164, "only listed at OC"));
 	importGui.missingCheckBox.setState(onlyListedAtOC);
 	if (importGui.execute() == FormBase.IDCANCEL) {
@@ -68,7 +69,7 @@ public class OCGPXfetch {
 	    File ftmp = new File(tmpFile);
 	    if (ftmp.exists() && ftmp.length() > 0) {
 		GPXImporter gpx = new GPXImporter(tmpFile);
-		if (Preferences.itself().downloadPics)
+		if (downloadPics)
 		    gpx.doIt(GPXImporter.DOIT_WITHSPOILER);
 		else
 		    gpx.doIt(GPXImporter.DOIT_NOSPOILER);
