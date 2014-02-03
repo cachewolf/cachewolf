@@ -1,5 +1,5 @@
 ﻿ren 2.png typeTradi.png
-ren 3.png typeMulty.png
+ren 3.png typeMulti.png
 ren 0.png		typeCustom.png
 ren 102.png	typeApe.png
 ren 13.png		typeCito.png
@@ -23,7 +23,7 @@ ren 4.png		typeVirtual.png
 ren 11.png		typeWebcam.png
 ren 101.png	typeWhereigo_map.png
 ren 2size.png typeTradi_map.png
-ren 3size.png typeMulty_map.png
+ren 3size.png typeMulti_map.png
 ren 0size.png		typeCustom_map.png
 ren 102size.png	typeApe_map.png
 ren 13size.png		typeCito_map.png
