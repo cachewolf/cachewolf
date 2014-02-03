@@ -650,6 +650,7 @@ public class Preferences extends MinML {
 	    doNotGetFound = !Boolean.valueOf(atts.getValue("getFinds")).booleanValue();
 	    checkLog = Boolean.valueOf(atts.getValue("checkLog")).booleanValue();
 	    overwriteLogs = Boolean.valueOf(atts.getValue("overwriteLogs")).booleanValue();
+	    askForMaxNumbersOnImport = Boolean.valueOf(atts.getValue("askForMaxNumbersOnImport")).booleanValue();
 	    tmp = atts.getValue("checkTBs");
 	    if (tmp != null)
 		checkTBs = Boolean.valueOf(atts.getValue("checkTBs")).booleanValue();
@@ -773,7 +774,7 @@ public class Preferences extends MinML {
 		showCachesOnMap = Boolean.valueOf(atts.getValue("showCachesOnMap")).booleanValue();
 	    tmp = atts.getValue("lastScale");
 	    if (tmp != null)
-		lastScale = (float) Common.parseDouble(tmp);
+		lastScale = Float.valueOf(tmp).floatValue();
 	} else if (name.equals("SortingGroupedByCache")) {
 	    tmp = atts.getValue("on");
 	    SortingGroupedByCache = tmp != null && tmp.equalsIgnoreCase("true");
@@ -922,6 +923,7 @@ public class Preferences extends MinML {
 		    //+ " spiderUpdates=\"" + SafeXML.strxmlencode(spiderUpdates) + "\"" //
 		    + " checkLog=\"" + SafeXML.strxmlencode(checkLog) + "\"" //
 		    + " overwriteLogs=\"" + SafeXML.strxmlencode(overwriteLogs) + "\"" //
+		    + " askForMaxNumbersOnImport=\"" + SafeXML.strxmlencode(askForMaxNumbersOnImport) + "\"" //
 		    + " checkTBs=\"" + SafeXML.strxmlencode(checkTBs) + "\"" //
 		    + " checkDTS=\"" + SafeXML.strxmlencode(checkDTS) + "\"" //
 		    + " maxSpiderNumber=\"" + SafeXML.strxmlencode(maxSpiderNumber) + "\"" //
