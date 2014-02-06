@@ -320,6 +320,7 @@ public class TablePanelMenu extends MenuBar {
 
 	GCImporter gcImporter = new GCImporter();
 	gcImporter.setDownloadPics(importGui.downloadPics);
+	gcImporter.setMaxLogsToSpider(Preferences.itself().maxLogsToSpider);
 
 	OCXMLImporter ocSync = new OCXMLImporter();
 	Vm.showWait(true);
