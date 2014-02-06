@@ -307,6 +307,10 @@ public class GCImporter {
 	this.downloadPics = downloadPics;
     }
 
+    public void setMaxLogsToSpider(int maxLogsToSpider) {
+	this.maxLogsToSpider = maxLogsToSpider;
+    }
+
     /**
      * Method to start the spider for a search around the centre coordinates
      */
