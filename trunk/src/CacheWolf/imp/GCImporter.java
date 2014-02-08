@@ -354,7 +354,7 @@ public class GCImporter {
 		spiderIgnorePremium = 0;
 
 		fetchFirstListPage(this.getDistanceInMiles(maxDistance));
-		int maxPages = (int) java.lang.Math.ceil(getNumFound(htmlListPage) / 20);
+		int maxPages = (int) java.lang.Math.ceil(getNumFound(htmlListPage) / 20.0);
 
 		String s = "ListPages Properties : " + Preferences.NEWLINE;
 		s = s + "minDistance          : " + minDistance + Preferences.NEWLINE;
@@ -433,7 +433,7 @@ public class GCImporter {
 
 	    if (fromDistance > 0) {
 		fetchFirstListPage(this.getDistanceInMiles(fromDistance));
-		fromPage = (int) java.lang.Math.ceil(getNumFound(htmlListPage) / 20);
+		fromPage = (int) java.lang.Math.ceil(getNumFound(htmlListPage) / 20.0);
 	    }
 
 	    while ((1 + toPage - fromPage) > pageLimit) {
@@ -441,7 +441,7 @@ public class GCImporter {
 		if ((int) toDistance <= ((int) fromDistance + 1))
 		    break;
 		fetchFirstListPage(this.getDistanceInMiles(toDistance));
-		toPage = (int) java.lang.Math.ceil(getNumFound(htmlListPage) / 20);
+		toPage = (int) java.lang.Math.ceil(getNumFound(htmlListPage) / 20.0);
 	    }
 	}
 	String pageString = MyLocale.getMsg(5532, "Page");
@@ -857,7 +857,7 @@ public class GCImporter {
 		startPage = lastPageVisited;
 	    } else {
 		// Number of caches from gc Listpage calc the number of the startpage
-		startPage = (int) java.lang.Math.ceil(getNumFound(htmlListPage) / 20);
+		startPage = (int) java.lang.Math.ceil(getNumFound(htmlListPage) / 20.0);
 	    }
 	}
 	lastPageVisited = startPage;
@@ -908,7 +908,7 @@ public class GCImporter {
 		fromDistanceInKm = Metrics.convertUnit(fromDistance, Metrics.MILES, Metrics.KILOMETER);
 	    }
 
-	    // expecting all are changed (archived caches remain always)
+	    // all of DB (=updateList) - listed by GC = possibly archived (to check separately)
 	    for (int i = 0; i < MainForm.profile.cacheDB.size(); i++) {
 		final CacheHolder ch = MainForm.profile.cacheDB.get(i);
 		if (!ch.is_black()) {
@@ -929,7 +929,7 @@ public class GCImporter {
 		}
 	    }
 	}
-	// for save reasons
+	// remember for safety checks
 	final int startSize = updateList.size();
 
 	// for don't loose the already done work
@@ -1713,8 +1713,12 @@ public class GCImporter {
 	    // Abbruch
 	    return -1.0;
 	}
-	stmp = DistDirRex.stringMatched(3);
-	return Common.parseDouble(stmp);
+	stmp = DistDirRex.stringMatched(4);
+	double d = Common.parseDouble(DistDirRex.stringMatched(3));
+	if (stmp.equals("ft")) {
+	    d = Metrics.convertUnit(d, Metrics.FEET, Metrics.MILES);
+	}
+	return d;
 	// stmp = DistDirRex.stringMatched(1);
 	// = "N"(0),"NE"(45),"E"(90),"SE"(135),"S"(180),"SW"(225),"W"(270),"NW"(315)
     }

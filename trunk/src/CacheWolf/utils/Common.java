@@ -22,18 +22,36 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 package CacheWolf.utils;
 
 import ewe.io.File;
+import ewe.sys.Convert;
 
 public final class Common {
 
     private static char digSep = '.';
     private static char notDigSep = ',';
+    private static boolean mustInitdigSep = true;
 
     /**
      * normaly done after init of MyLocale
      */
-    public static void initDigitalSeparator(char DigitalSeparator) {
-	digSep = DigitalSeparator;
+    private static void initDigitalSeparator() {
+	double testA = Convert.toDouble("1,50") + Convert.toDouble("3,00");
+	if (testA == 4.5)
+	    digSep = ',';
+	else
+	    digSep = '.';
 	notDigSep = digSep == '.' ? ',' : '.';
+	mustInitdigSep = false;
+    }
+
+    /**
+     * Get the decimal separator for this machine
+     * 
+     * @return decimal point ("." or ",")
+     */
+    public static char getDigSeparator() {
+	if (mustInitdigSep)
+	    initDigitalSeparator();
+	return digSep;
     }
 
     /**
@@ -59,6 +77,8 @@ public final class Common {
      * @return
      */
     public static double parseDoubleException(String value) {
+	if (mustInitdigSep)
+	    initDigitalSeparator();
 	return java.lang.Double.parseDouble(value.replace(notDigSep, digSep));
     }
 

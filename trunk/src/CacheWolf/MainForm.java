@@ -101,6 +101,7 @@ public class MainForm extends Editor {
 	this.preferences.setPathToConfigFile(pathToPrefXml);
 	this.preferences.readPrefFile();
 	this.preferences.logInit(); // also initialises MyLocale (with Language from preferences)
+
 	if (MyLocale.initErrors.length() != 0) {
 	    new InfoBox(MyLocale.getMsg(5500, "Error"), MyLocale.initErrors).wait(FormBase.OKB);
 	}
