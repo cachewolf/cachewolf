@@ -21,13 +21,13 @@
 */
 package CacheWolf.navi;
 
-import CacheWolf.utils.MyLocale;
 import CacheWolf.Preferences;
 import CacheWolf.database.BoundingBox;
 import CacheWolf.database.CWPoint;
 import CacheWolf.database.CoordinatePoint;
 import CacheWolf.utils.Common;
 import CacheWolf.utils.Matrix;
+import CacheWolf.utils.MyLocale;
 import ewe.fx.Point;
 import ewe.io.BufferedWriter;
 import ewe.io.FileInputStream;
@@ -423,7 +423,7 @@ public class MapInfoObject extends BoundingBox {
 	towriteB.append(Convert.toString(bottomright.lonDec)).append("\n");
 	towriteB.append(((coordTrans == 0 || coordTrans == TransformCoordinates.EPSG_WGS84) ? "" : Convert.toString(coordTrans) + "\n"));
 	String towrite = towriteB.toString();
-	if (MyLocale.getDigSeparator().equals(","))
+	if (Common.getDigSeparator() == ',')
 	    towrite = towrite.replace(',', '.');
 	outp.print(towrite);
 	outp.close();

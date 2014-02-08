@@ -774,7 +774,7 @@ public class Preferences extends MinML {
 		showCachesOnMap = Boolean.valueOf(atts.getValue("showCachesOnMap")).booleanValue();
 	    tmp = atts.getValue("lastScale");
 	    if (tmp != null)
-		lastScale = Float.valueOf(tmp).floatValue();
+		lastScale = ((int) (Common.parseDouble(tmp) * 100)) / 100f;
 	} else if (name.equals("SortingGroupedByCache")) {
 	    tmp = atts.getValue("on");
 	    SortingGroupedByCache = tmp != null && tmp.equalsIgnoreCase("true");
@@ -965,9 +965,11 @@ public class Preferences extends MinML {
 		    + " tilewidth=\"" + SafeXML.strxmlencode(tilewidth) + "\"" //
 		    + " tileheight=\"" + SafeXML.strxmlencode(tileheight) + "\"" //
 		    + " />\n");
+	    String tmp = Common.DoubleToString(Double.parseDouble(Float.toString(lastScale)), 0, 2);
+	    log("written lastScale: " + tmp + " from value" + lastScale);
 	    outp.print("    <Map" //
 		    + " showCachesOnMap=\"" + SafeXML.strxmlencode(showCachesOnMap) + "\"" //
-		    + " lastScale=\"" + Common.DoubleToString(Double.parseDouble(Float.toString(lastScale)), 0, 2) + "\"" //
+		    + " lastScale=\"" + tmp + "\"" //
 		    + " />\n");
 	    outp.print("    <SortingGroupedByCache on=\"" + SafeXML.strxmlencode(SortingGroupedByCache) + "\" />\n");
 	    if (mobileGUI)

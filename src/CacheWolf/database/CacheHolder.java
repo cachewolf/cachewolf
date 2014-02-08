@@ -155,12 +155,6 @@ public class CacheHolder {
     private IconAndText iconAndTextWP = null;
     private int iconAndTextWPLevel = 0;
 
-    static char decSep, notDecSep;
-    static {
-	decSep = MyLocale.getDigSeparator().charAt(0);
-	notDecSep = (decSep == '.' ? ',' : '.');
-    }
-
     public CacheHolder() {
 	// do nothing
     }
@@ -185,10 +179,10 @@ public class CacheHolder {
 		// Assume coordinates are in decimal format
 		start = xmlString.indexOf('"', end + 1);
 		end = xmlString.indexOf('"', start + 1);
-		double lat = Convert.parseDouble(xmlString.substring(start + 1, end).replace(notDecSep, decSep));
+		double lat = Common.parseDouble(xmlString.substring(start + 1, end));
 		start = xmlString.indexOf('"', end + 1);
 		end = xmlString.indexOf('"', start + 1);
-		double lon = Convert.parseDouble(xmlString.substring(start + 1, end).replace(notDecSep, decSep));
+		double lon = Common.parseDouble(xmlString.substring(start + 1, end));
 		pos.set(lat, lon);
 
 		start = xmlString.indexOf('"', end + 1);
@@ -344,10 +338,10 @@ public class CacheHolder {
 		// Assume coordinates are in decimal format
 		start = xmlString.indexOf('"', end + 1);
 		end = xmlString.indexOf('"', start + 1);
-		double lat = Convert.parseDouble(xmlString.substring(start + 1, end).replace(notDecSep, decSep));
+		double lat = Common.parseDouble(xmlString.substring(start + 1, end));
 		start = xmlString.indexOf('"', end + 1);
 		end = xmlString.indexOf('"', start + 1);
-		double lon = Convert.parseDouble(xmlString.substring(start + 1, end).replace(notDecSep, decSep));
+		double lon = Common.parseDouble(xmlString.substring(start + 1, end));
 		pos = new CWPoint(lat, lon);
 
 		start = xmlString.indexOf('"', end + 1);

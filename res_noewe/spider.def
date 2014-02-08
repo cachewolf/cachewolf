@@ -20,7 +20,7 @@ Archived           = lnk OldWarning Strike Strike
 PM                 = premium_only.png
 #<span class="small NoWrap"><img src="/images/icons/compass/SW.gif" alt="SW" title="SW" />SW<br />0.31km</span>
 #<span class="small NoWrap"><br />Here</span> !!! not handled by Rex
-DistDirRex         = compass/(.*?)\.gif(.*?)<br />(.*?)(?:km|mi|ft)
+DistDirRex         = compass/(.*?)\.gif(.*?)<br />(.*?)(.{2})</span>
 #<span class="small">3.5/1.5</span><br /><img src="/images/icons/container/other.gif" alt="Size: Other" title="Size: Other" />
 #<span class="small">3/2.5</span><br /><img src="/images/icons/container/not_chosen.gif" alt="Size: Not chosen" title="Size: Not chosen" />
 #<span class="small">3/4</span><br /><img src="/images/icons/container/small.gif" alt="Size: Small" title="Size: Small" />
