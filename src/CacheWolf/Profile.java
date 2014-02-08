@@ -281,7 +281,7 @@ public class Profile {
 	    String mainInfoText = MyLocale.getMsg(5000, "Loading Cache-List");
 	    int wptNo = 1;
 	    int lastShownWpt = 0;
-	    char decSep = MyLocale.getDigSeparator().charAt(0);
+	    char decSep = Common.getDigSeparator();
 	    char notDecSep = decSep == '.' ? ',' : '.';
 	    File indexFile = new File(this.dataDir + "index.xml");
 	    FileReader in = new FileReader(indexFile.getAbsolutePath());

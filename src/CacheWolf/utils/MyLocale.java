@@ -33,7 +33,6 @@ import ewe.io.FileReader;
 import ewe.io.IOException;
 import ewe.io.TreeConfigFile;
 import ewe.io.TreeConfigNode;
-import ewe.sys.Convert;
 import ewe.sys.Double;
 import ewe.sys.LocalResource;
 import ewe.sys.Locale;
@@ -66,7 +65,6 @@ public class MyLocale {
     private static Locale l = null;
     private static LocalResource lr = null;
     private static Rect screenSize = (Rect) Window.getGuiInfo(WindowConstants.INFO_SCREEN_RECT, null, new Rect(), 0);
-    private static String digSeparator = null;
 
     public static String initErrors;
 
@@ -170,12 +168,6 @@ public class MyLocale {
 	    };
 
 	}
-	double testA = Convert.toDouble("1,50") + Convert.toDouble("3,00");
-	if (testA == 4.5)
-	    digSeparator = ",";
-	else
-	    digSeparator = ".";
-	Common.initDigitalSeparator(digSeparator.charAt(0));
 
 	inInit = false;
     }
@@ -246,17 +238,6 @@ public class MyLocale {
      */
     public static int getScreenHeight() {
 	return screenSize.height;
-    }
-
-    /**
-     * Get the decimal separator for this machine
-     * 
-     * @return decimal point ("." or ",")
-     */
-    public static String getDigSeparator() {
-	if (digSeparator == null)
-	    init();
-	return digSeparator;
     }
 
     /**

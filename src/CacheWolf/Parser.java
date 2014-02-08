@@ -240,7 +240,7 @@ public class Parser {
 
     private double toNumber(String str) {
 	try {
-	    if (MyLocale.getDigSeparator().equals(","))
+	    if (Common.getDigSeparator() == ',')
 		str = str.replace('.', ',');
 	    else
 		str = str.replace(',', '.');

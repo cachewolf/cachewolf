@@ -57,6 +57,7 @@ import CacheWolf.navi.MapImporter;
 import CacheWolf.navi.MapLoaderGui;
 import CacheWolf.navi.SelectMap;
 import CacheWolf.navi.TransformCoordinates;
+import CacheWolf.utils.Common;
 import CacheWolf.utils.MyLocale;
 import CacheWolf.utils.STRreplace;
 import CacheWolf.view.TravelbugJourneyScreenFactory;
@@ -951,7 +952,7 @@ public class TablePanelMenu extends MenuBar {
 		sb.append("<br>");
 		sb.append(MyLocale.getMsg(263, "Decimal separator is:"));
 		sb.append(" \"");
-		sb.append(MyLocale.getDigSeparator());
+		sb.append(Common.getDigSeparator());
 		sb.append("\"<br>");
 		sb.append(MyLocale.getMsg(264, "Device is PDA:"));
 		sb.append(' ');

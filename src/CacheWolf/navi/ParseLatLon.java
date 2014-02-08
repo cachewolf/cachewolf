@@ -21,7 +21,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 package CacheWolf.navi;
 
-import CacheWolf.utils.MyLocale;
+import CacheWolf.utils.Common;
 import ewe.sys.Convert;
 
 /**
@@ -51,7 +51,7 @@ public class ParseLatLon {
     */
     public ParseLatLon(String ll) {
 	latlon = ll;
-	digSep = MyLocale.getDigSeparator().charAt(0);
+	digSep = Common.getDigSeparator();
     }
 
     /**
@@ -61,7 +61,7 @@ public class ParseLatLon {
     */
     public ParseLatLon(String ll, String tr) {
 	latlon = ll;
-	digSep = MyLocale.getDigSeparator().charAt(0);
+	digSep = Common.getDigSeparator();
     }
 
     private int start;
