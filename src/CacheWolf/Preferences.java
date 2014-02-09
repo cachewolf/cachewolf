@@ -66,15 +66,14 @@ import ewesoft.xml.sax.AttributeList;
 public class Preferences extends MinML {
 
     private static Preferences preferences;
+    /** Log file is in program directory and called log.txt */
+    private final String LOGFILENAME = FileBase.getProgramDirectory() + "/log.txt";
 
     public static final int GPSD_DISABLED = 0; // do not use gpsd
     public static final int GPSD_FORMAT_OLD = 1; // use old protocol
     public static final int GPSD_FORMAT_NEW = 2; // use new protocol (JSON)
-    public static final int YES = 0;
-    public static final int NO = 1;
-    public static final int ASK = 2;
-    public final int DEFAULT_INITIAL_HINT_HEIGHT = 10;
     public final int DEFAULT_GPSD_PORT = 2947;
+    public final int DEFAULT_INITIAL_HINT_HEIGHT = 10;
     public static String NEWLINE = "\n";
     // ////////////////////////////////////////////////////////////////////////////////////
     // Public fields stored in pref.xml
@@ -966,7 +965,6 @@ public class Preferences extends MinML {
 		    + " tileheight=\"" + SafeXML.strxmlencode(tileheight) + "\"" //
 		    + " />\n");
 	    String tmp = Common.DoubleToString(Double.parseDouble(Float.toString(lastScale)), 0, 2);
-	    log("written lastScale: " + tmp + " from value" + lastScale);
 	    outp.print("    <Map" //
 		    + " showCachesOnMap=\"" + SafeXML.strxmlencode(showCachesOnMap) + "\"" //
 		    + " lastScale=\"" + tmp + "\"" //
@@ -1028,22 +1026,21 @@ public class Preferences extends MinML {
     // ////////////////////////////////////////////////////////////////////////////////////
 
     // FIXME: should use path to config file instead of program directory
-    /** Log file is in program directory and called log.txt */
-    private final String LOGFILENAME = FileBase.getProgramDirectory() + "/log.txt";
 
     /**
      * Method to delete an existing log file. Called on every SpiderGC. The log file is also cleared when Preferences is created and the filesize > 60KB
      */
-    public void logInit() {
+    public void emptyLog() {
 	File logFile = new File(LOGFILENAME);
 	logFile.delete();
-	log("CW Version " + Version.getReleaseDetailed(), null, true);
+    }
 
+    public void writeLogHeader() {
+	log("CW Version " + Version.getReleaseDetailed(), null, true);
 	if (System.getProperty("os.name") != null)
 	    log("Operating system: " + System.getProperty("os.name") + "/" + System.getProperty("os.arch"), null, true);
 	if (System.getProperty("java.vendor") != null)
 	    log("Java: " + System.getProperty("java.vendor") + "/" + System.getProperty("java.version"), null, true);
-
     }
 
     boolean forceLog = false;
