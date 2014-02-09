@@ -707,7 +707,7 @@ public class TablePanelMenu extends MenuBar {
 	    // subMenu for maps, part of "Application" menu
 	    // /////////////////////////////////////////////////////////////////////
 	    if (mev.selectedItem == downloadmap) {
-		MapLoaderGui mLG = new MapLoaderGui(cacheDB);
+		MapLoaderGui mLG = new MapLoaderGui();
 		// .execute doesn't work because the tcp-socket uses another thread
 		// which cannot be startet if here .execute() is used!
 		if (mLG.isCreated)
