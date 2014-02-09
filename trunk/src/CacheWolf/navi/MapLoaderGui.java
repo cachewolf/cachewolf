@@ -102,12 +102,12 @@ public class MapLoaderGui extends Form {
 
     public boolean isCreated;
 
-    public MapLoaderGui(CacheDB cacheDBi) {
+    public MapLoaderGui() {
 	super();
 	isCreated = false;
 	this.title = MyLocale.getMsg(1800, "Download georeferenced maps");
 	center = new CWPoint(Preferences.itself().curCentrePt);
-	cacheDB = cacheDBi;
+	cacheDB = MainForm.profile.cacheDB;
 	mapLoader = new MapLoader();
 
 	// sort the items in the list of services in a way that services which cover the current center point.
@@ -363,8 +363,7 @@ public class MapLoaderGui extends Form {
 	    maps.clear();
 	    maps = null;
 	    progressBox.addWarning(MyLocale.getMsg(1826, "Finished downloading and calibration of maps"));
-	    progressBox.disableButton(FormBase.CANCELB);
-	    progressBox.enableButton(FormBase.YESB);
+	    progressBox.setButtonText(MyLocale.getMsg(4107, "Done"), FormBase.CANCELB);
 	    Vm.showWait(false);
 	    progressBox.waitUntilClosed();
 	}
