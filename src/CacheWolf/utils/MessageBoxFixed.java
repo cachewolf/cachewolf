@@ -26,14 +26,15 @@ import ewe.sys.mThread;
 import ewe.ui.MessageBox;
 
 /**
- * this class can be needed, because ewe v1.49 cannot display messageBoxes
- * in some special threds <br>
+ * this class can be needed, because ewe v1.49 cannot display messageBoxes in some special threads <br>
  * <br> but as of CacheWolf v1.0 this class is not used <br>
- * <br> It is included in order to have it available and to include the
- * knowledge about ewe-threading problems, described in comments here <br>
- * This class is not mature -> make it mature or use it only when
- * you get in the ewe-vm the exception: ewe.sys Event Direction Exception: This Task cannot be done within a timer tick <br>
- * when you use the normal MessageBox
+ * <br> It is included in order to have it available and to include the knowledge about ewe-threading problems, described in comments here <br>
+ * This class is not mature -> make it mature<br>
+ * or<br>
+ * use it only when you get in the ewe-vm the exception:<br>
+ *  ewe.sys Event Direction Exception:<br>
+ *  This Task cannot be done within a timer tick <br>
+ *  when you use the normal MessageBox<br>
  * @author pfeffer
  * 
  * FIXME: add javadoc!
