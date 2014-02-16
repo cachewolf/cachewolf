@@ -31,6 +31,7 @@ import CacheWolf.controls.InfoBox;
 import CacheWolf.database.CWPoint;
 import CacheWolf.database.CacheHolder;
 import CacheWolf.database.CacheType;
+import CacheWolf.utils.Metrics;
 import CacheWolf.utils.MyLocale;
 import ewe.fx.Brush;
 import ewe.fx.Color;

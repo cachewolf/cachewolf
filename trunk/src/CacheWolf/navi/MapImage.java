@@ -41,7 +41,7 @@ import ewe.util.ByteArray;
  * class that can be used with any x and any y
  * it will save that location and
  * make itself automatically invisible if it is not on the screen.
- * Call setscreensize to set the screensize
+ * Call setScreenSize to set the ScreenSize
  * 
  * @author pfeffer
  * 
@@ -53,38 +53,51 @@ public class MapImage extends AniImage {
     public static Dimension screenDim;
     boolean hidden = false;
 
+    /**
+     * constructs an empty MapImage
+     */
     public MapImage() {
 	super();
 	if (screenDim == null)
 	    screenDim = new Dimension(0, 0);
     }
 
-    public MapImage(String f) throws ImageDecodingException, UnsupportedImageFormatException, ImageNotFoundException, ewe.sys.SystemResourceException {
+    /**
+     * constructs the MapImage from a filename representing an Image in the Filesystem<br>
+     * or (if filename contains a '!')
+     * extracts the Image from a Cachebox .pack file 
+     * @param filename
+     * @throws ImageDecodingException
+     * @throws UnsupportedImageFormatException
+     * @throws ImageNotFoundException
+     * @throws ewe.sys.SystemResourceException
+     */
+    public MapImage(String filename) throws ImageDecodingException, UnsupportedImageFormatException, ImageNotFoundException, ewe.sys.SystemResourceException {
 	// f kommt aus MapInfoObject.getImagePathAndName
 	if (screenDim == null)
 	    screenDim = new Dimension(0, 0);
-	Preferences.itself().log("create MapImage from: " + f);
-	if (f.indexOf("!") < 0) {
+	Preferences.itself().log("create MapImage from: " + filename);
+	if (filename.indexOf("!") < 0) {
 	    // the following code is only necessary because of an Bug in ewe 1.49, which doesn't read from a fakefilesystem. 
 	    // If there were no bug, calling super(f) would be sufficient
 	    // super(f); 
 	    // copied from super()
 	    ewe.io.File file = ewe.sys.Vm.newFileObject();
-	    file.set(null, f);
+	    file.set(null, filename);
 	    try {
 		// ByteArray imbytes = ewe.io.IO.readAllBytes(input, knownSize, stopAfterKnownSize);(file, null, true); 
 		// this would be possible if ewe 1.49 wouldn't have another bug: 
 		// fakefilesystem doesn't implement (override) length(), it only overrides getLenght(),
 		// that's why readallBytes will call the original File implementation 
 		// and causes a NullpointerException
-		setImage(new Image(new FileInputStream(f).toReadableStream(), 0), 0);
+		setImage(new Image(new FileInputStream(filename).toReadableStream(), 0), 0);
 		freeSource();
 	    } catch (IOException e) {
-		throw new ImageNotFoundException(f); // in order to behave the same way as super would have
+		throw new ImageNotFoundException(filename); // in order to behave the same way as super would have
 	    }
 	} else {
 	    // it is a packfile
-	    String p[] = ewe.util.mString.split(f, '!');
+	    String p[] = ewe.util.mString.split(filename, '!');
 	    int bboxMinX = Common.parseInt(p[1]);
 	    int bboxMinY = Common.parseInt(p[2]);
 	    int bboxStride = Common.parseInt(p[3]);
@@ -114,7 +127,7 @@ public class MapImage extends AniImage {
 		if (length == 0) {
 		    Preferences.itself().log("wanted == 0 (nextOffset - tileOffset)");
 		    bis.close();
-		    throw new ImageNotFoundException(f); // in order to behave the same way as file
+		    throw new ImageNotFoundException(filename); // in order to behave the same way as file
 		}
 
 		skipped = 0;
@@ -187,27 +200,46 @@ public class MapImage extends AniImage {
 	return (long) (((byte1 & 0xFF) << 56) + ((byte2 & 0xFF) << 48) + ((byte3 & 0xFF) << 40) + ((byte4 & 0xFF) << 32) + ((byte5 & 0xFF) << 24) + ((byte6 & 0xFF) << 16) + ((byte7 & 0xFF) << 8) + (byte8 & 0xFF));
     }
 
+    /**
+     * constructs from an existing Instance of mImage
+     * 
+     * @param im
+     */
     public MapImage(mImage im) {
 	super(im);
 	if (screenDim == null)
 	    screenDim = new Dimension(0, 0);
     }
 
-    /**
-     * Best you call this routine before you make any instance of MapImage
-     * If the windows size changes after instantiation call screenDimChanged() for every symbol.
+    /*
      * 
+     */
+
+    /**
+     * Best you call this routine before you make any instance of MapImage<br>
+     * If the windows size changes after instantiation call screenDimChanged() for every symbol.<br>
+     * 
+     * @param w
+     * @param h
      */
     public static void setScreenSize(int w, int h) {
 	screenDim = new Dimension(w, h);
     }
 
+    /**
+     * Overrides: setImage(...) in mImage<br>
+     * make an empty MapImage work<br>
+     * or<br>
+     * changes an existing one
+     * 
+     */
     public void setImage(Image im, Color c) {
 	super.setImage(im, c);
 	if (screenDim == null)
 	    screenDim = new Dimension(0, 0);
     }
 
+    // Overrides: setLocation(...) in AniImage
     public void setLocation(int x, int y) {
 	locAlways.x = x;
 	locAlways.y = y;
@@ -220,6 +252,17 @@ public class MapImage extends AniImage {
 	}
     }
 
+    /**
+     * // Overrides: move(...) in AniImage<br>
+     * setting the localways to x,y
+     * Moves the image
+     *  if it is not hidden and on Screen it is moved to x,y and set visible.<br>
+     *  else it is set invisible and moved to 0,0
+     *  The move of AniImage does:
+     *   If the new location is different to the current location then the HasMoved bit in properties will be set.<br>
+     *   It will NOT clear this bit if the image actually has not moved.<br>
+     *   This bit must be cleared manually.<br>
+     */
     public void move(int x, int y) {
 	locAlways.x = x;
 	locAlways.y = y;
@@ -232,6 +275,13 @@ public class MapImage extends AniImage {
 	}
     }
 
+    /**
+     * uses the locAlways position instead of the Rect locations position<br> 
+     * but uses the locations Dimension width / height<br>
+     * to check against the Screens Dimension screenDim (saved here)<br> 
+     * @return isOnScreen
+     * 
+     */
     public boolean isOnScreen() {
 	if ((locAlways.x + location.width > 0 && locAlways.x < screenDim.width) && (locAlways.y + location.height > 0 && locAlways.y < screenDim.height))
 	    return true;
@@ -239,15 +289,25 @@ public class MapImage extends AniImage {
 	    return false;
     }
 
+    /**
+     * corrects the visibility by doing the move with the remembered locAlways position  
+     * 
+     */
     public void screenDimChanged() {
 	move(locAlways.x, locAlways.y);
     }
 
+    /**
+     * the Image will not be moved. Simply setting the properties.
+     */
     public void hide() {
 	hidden = true;
 	properties |= mImage.IsInvisible;
     }
 
+    /**
+     * the Image will be moved to the remembered locAlways position and checked if it is on screen.
+     */
     public void unhide() {
 	hidden = false;
 	move(locAlways.x, locAlways.y);
