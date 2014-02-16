@@ -70,10 +70,10 @@ import CacheWolf.database.CacheHolder;
 import CacheWolf.database.CacheSize;
 import CacheWolf.database.CacheTerrDiff;
 import CacheWolf.database.CacheType;
-import CacheWolf.navi.Metrics;
 import CacheWolf.navi.Navigate;
 import CacheWolf.navi.TransformCoordinates;
 import CacheWolf.utils.Common;
+import CacheWolf.utils.Metrics;
 import CacheWolf.utils.MyLocale;
 import CacheWolf.utils.STRreplace;
 

@@ -38,6 +38,7 @@ import CacheWolf.database.CoordinatePoint;
 import CacheWolf.navi.touchControls.ICommandListener;
 import CacheWolf.navi.touchControls.MovingMapControls;
 import CacheWolf.utils.Common;
+import CacheWolf.utils.Metrics;
 import CacheWolf.utils.MyLocale;
 import CacheWolf.utils.STRreplace;
 import ewe.filechooser.FileChooser;

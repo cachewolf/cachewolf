@@ -29,7 +29,7 @@ import CacheWolf.database.Attribute;
 import CacheWolf.database.CacheHolder;
 import CacheWolf.database.CacheSize;
 import CacheWolf.database.CacheType;
-import CacheWolf.navi.Metrics;
+import CacheWolf.utils.Metrics;
 import CacheWolf.utils.MyLocale;
 import CacheWolf.utils.STRreplace;
 import ewe.filechooser.FileChooser;
