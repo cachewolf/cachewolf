@@ -32,13 +32,13 @@ public class TlsSocket {
 
 	public boolean close() {
 		boolean b = true;
-/*		try {
+		try {
 			outputStream.close();
 			inputStream.close();
 		} catch (IOException e) {
 			b = false;
-		} */
-		boolean a = true; // socket.close();
+		}
+		boolean a = socket.close();
 		return a && b;
 	}
 }

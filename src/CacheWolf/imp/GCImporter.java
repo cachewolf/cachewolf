@@ -116,16 +116,15 @@ public class GCImporter {
     private final static String gotoPreviousBlock = "ctl00$ContentBody$pgrTop$ctl05";
     private final static String gotoNextBlock = "ctl00$ContentBody$pgrTop$ctl06";
 
-    private static Regex RexPropListBlock;
-    private static Regex RexPropLine;
-    private static Regex RexNumFinds;
-    private static Regex RexPropWaypoint;
+    private static Regex listBlockRex;
+    private static Regex lineRex;
+    private static Regex numFindsRex;
+    private static String propPM;
     private static Regex logDateRex;
     private static String propAvailable;
     private static String propArchived;
     private static String propFound;
-    private static String propPM;
-
+    private static Regex waypointRex;
     private static Regex DistDirRex;
     private static Regex DTSRex;
 
@@ -146,7 +145,7 @@ public class GCImporter {
     private static String unavailableGeocache = "This cache is temporarily unavailable";
     private static String archivedGeocache = "This cache has been archived";
     private static String foundByMe = "ctl00_ContentBody_GeoNav_logText";
-    // private static String correctedCoordinate = "\"oldLatLngDisplay\":"; //#1200
+    private static String correctedCoordinate = "\"isUserDefined\":true";
     // private static String premiumCacheForPM = "Warning NoBottomSpacing" is a PM-Cache for PMs
     // TBs
     private static String blockExStart, blockExEnd;
@@ -199,11 +198,9 @@ public class GCImporter {
     private boolean doNotgetFound;
     private boolean spiderAllFinds;
 
-    private boolean loggedIn = false;
-    private final static int pageLimit = 20; // immer maximal 20 Listpages prüfen, dann download bzw aktualisierung (GC meckerte sonst schon mal)
-    private CWPoint origin;
-    private int lastPageVisited;
     private String htmlListPage;
+    private final static int pageLimit = 20; // immer maximal 20 Listpages prüfen, dann download bzw aktualisierung (GC meckerte sonst schon mal)
+    private int lastPageVisited;
     private int numFoundUpdates = 0;
     private int numArchivedUpdates = 0;
     private int numAvailableUpdates = 0;
@@ -214,10 +211,14 @@ public class GCImporter {
     private Hashtable possibleUpdateList, sureUpdateList;
 
     private String wayPointPage;
-    private static Extractor extractor = new Extractor();
-    private static Extractor extractValue = new Extractor();
+
+    private CWPoint origin;
+    private boolean loggedIn = false;
     private int spiderErrors;
     private int spiderIgnorePremium;
+
+    private static Extractor extractor = new Extractor();
+    private static Extractor extractValue = new Extractor();
 
     private static final String iconsRelativePath = "<img src=\"/images/icons/";
 
@@ -229,20 +230,17 @@ public class GCImporter {
 	SpiderProperties p = new SpiderProperties();
 	try {
 
-	    RexPropListBlock = new Regex(p.getProp("listBlockRex"));
-	    RexPropLine = new Regex(p.getProp("lineRex"));
-	    RexNumFinds = new Regex("Total Records: <b>(.*?)</b>");
+	    listBlockRex = new Regex(p.getProp("listBlockRex"));
+	    lineRex = new Regex(p.getProp("lineRex"));
+	    numFindsRex = new Regex("Total Records: <b>(.*?)</b>");
+	    propPM = p.getProp("PM");
 	    logDateRex = new Regex(p.getProp("logDateRex")); // newFoundExists
-
 	    propAvailable = p.getProp("Available");
 	    propArchived = p.getProp("Archived");
-	    propPM = p.getProp("PM");
 	    propFound = p.getProp("found");
-
 	    DistDirRex = new Regex(p.getProp("DistDirRex"));
 	    DTSRex = new Regex(p.getProp("DTSRex"));
-
-	    RexPropWaypoint = new Regex(p.getProp("waypointRex"));
+	    waypointRex = new Regex(p.getProp("waypointRex"));
 	    RexPropType = new Regex(p.getProp("TypeRex"));
 	    RexUserToken = new Regex(p.getProp("UserTokenRex"));
 	    icon_smile = p.getProp("icon_smile");
@@ -400,7 +398,7 @@ public class GCImporter {
 			infoString = spiderErrors + MyLocale.getMsg(5516, " cache descriptions\ncould not be loaded.") + "\n";
 		    }
 		    if (spiderIgnorePremium > 0) {
-			infoString = infoString + spiderIgnorePremium + "Premium " + MyLocale.getMsg(5516, " cache descriptions\ncould not be loaded.");
+			infoString = infoString + spiderIgnorePremium + " Premium " + MyLocale.getMsg(5516, " cache descriptions\ncould not be loaded.");
 		    }
 		    new InfoBox(MyLocale.getMsg(5500, "Error"), infoString).wait(FormBase.OKB);
 		}
@@ -664,24 +662,24 @@ public class GCImporter {
 	    // Loop pages till maximum distance has been found or no more caches are in the list
 	    while (toDistance > 0) {
 		double distance = 0.0;
-		RexPropListBlock.search(htmlListPage);
+		listBlockRex.search(htmlListPage);
 		String tableOfHtmlListPage;
-		if (RexPropListBlock.didMatch()) {
-		    tableOfHtmlListPage = RexPropListBlock.stringMatched(1);
+		if (listBlockRex.didMatch()) {
+		    tableOfHtmlListPage = listBlockRex.stringMatched(1);
 		} else {
 		    Preferences.itself().log("[SpiderGC.java:fillDownloadLists]check listBlockRex!");
 		    tableOfHtmlListPage = "";
 		}
-		RexPropLine.search(tableOfHtmlListPage);
+		lineRex.search(tableOfHtmlListPage);
 		while (toDistance > 0) {
-		    if (!RexPropLine.didMatch()) {
+		    if (!lineRex.didMatch()) {
 			if (page_number == 1 && found_on_page == 0)
 			    Preferences.itself().log("[SpiderGC.java:fillDownloadLists]check lineRex!");
 			break;
 		    }
 		    found_on_page++;
 		    MainTab.itself.tablePanel.updateStatusBar("working " + page_number + " / " + found_on_page);
-		    final String CacheDescriptionGC = RexPropLine.stringMatched(1);
+		    final String CacheDescriptionGC = lineRex.stringMatched(1);
 		    distance = getDistance(CacheDescriptionGC);
 		    String chWaypoint = getWP(CacheDescriptionGC);
 		    if (distance <= radiusKm) {
@@ -695,7 +693,7 @@ public class GCImporter {
 		    } else
 			// finish this htmlListPage
 			toDistance = 0;
-		    RexPropLine.searchFrom(tableOfHtmlListPage, RexPropLine.matchedTo());
+		    lineRex.searchFrom(tableOfHtmlListPage, lineRex.matchedTo());
 		    if (infB.isClosed()) {
 			toDistance = 0;
 			break;
@@ -849,17 +847,17 @@ public class GCImporter {
 		    break;
 		}
 
-		RexPropListBlock.search(htmlListPage);
+		listBlockRex.search(htmlListPage);
 		String SearchResultsTable;
-		if (RexPropListBlock.didMatch()) {
-		    SearchResultsTable = RexPropListBlock.stringMatched(1);
+		if (listBlockRex.didMatch()) {
+		    SearchResultsTable = listBlockRex.stringMatched(1);
 		} else {
 		    Preferences.itself().log("[SpiderGC.java:fillDownloadLists]check listBlockRex!");
 		    SearchResultsTable = "";
 		}
 
-		RexPropLine.search(SearchResultsTable);
-		if (!RexPropLine.didMatch()) {
+		lineRex.search(SearchResultsTable);
+		if (!lineRex.didMatch()) {
 		    if (page_number == 1 && found_on_page == 0)
 			Preferences.itself().log("[SpiderGC.java:fillDownloadLists]check lineRex!");
 		    break;
@@ -894,7 +892,7 @@ public class GCImporter {
 			}
 		    }
 		}// Loop caches on a ListPage (examine the rows of the SearchResultsTable up to MAXNROFCACHESPERLISTPAGE)
-		while (toDistance > 0 && withinMaxLimits && RexPropLine.searchFrom(SearchResultsTable, RexPropLine.matchedTo()));
+		while (toDistance > 0 && withinMaxLimits && lineRex.searchFrom(SearchResultsTable, lineRex.matchedTo()));
 		infB.setInfo(MyLocale.getMsg(5511, "Found ") + (newTillNow + downloadList.size()) + " / " + (updateTillNow + sureUpdateList.size()) + MyLocale.getMsg(5512, " caches"));
 
 		if (withinMaxLimits) {
@@ -1105,7 +1103,7 @@ public class GCImporter {
 
     private double examineCache(double fromDistance, double toDistance) {
 	// do one Cache
-	final String CacheDescriptionGC = RexPropLine.stringMatched(1);
+	final String CacheDescriptionGC = lineRex.stringMatched(1);
 	double distance;
 	try {
 	    distance = getDistance(CacheDescriptionGC);
@@ -1136,8 +1134,12 @@ public class GCImporter {
 			MainForm.profile.cacheDB.add(ch);
 		    } else {
 			possibleUpdateList.remove(chWaypoint);
-			if (ch.getCacheStatus().length() == 0) {
-			    ch.setCacheStatus("PM");
+			if (!ch.is_found()) {
+			    if (ch.getCacheStatus().indexOf("PM") < 0) {
+				ch.setCacheStatus(ch.getCacheStatus() + "PM");
+			    } else {
+				ch.setCacheStatus("PM");
+			    }
 			    ch.save();
 			}
 		    }
@@ -1641,11 +1643,11 @@ public class GCImporter {
     }
 
     private int getNumFound(String doc) {
-	RexNumFinds.search(doc);
-	if (RexNumFinds.didMatch()) {
-	    return Common.parseInt(RexNumFinds.stringMatched(1));
+	numFindsRex.search(doc);
+	if (numFindsRex.didMatch()) {
+	    return Common.parseInt(numFindsRex.stringMatched(1));
 	} else {
-	    Preferences.itself().log("[SpiderGC.java:getNumFound]check RexNumFinds!", null);
+	    Preferences.itself().log("[SpiderGC.java:getNumFound]check numFindsRex!", null);
 	    return 0;
 	}
     }
@@ -1684,12 +1686,12 @@ public class GCImporter {
 	//#                            Hessen, Germany</span>
 	//#
 	//waypointRex        = \\|\\s+GC(.*?)\\s+\\|
-	RexPropWaypoint.search(doc);
-	if (!RexPropWaypoint.didMatch()) {
+	waypointRex.search(doc);
+	if (!waypointRex.didMatch()) {
 	    Preferences.itself().log("[SpiderGC.java:getWP]check waypointRex!", null);
 	    return "???";
 	}
-	String stmp = RexPropWaypoint.stringMatched(1);
+	String stmp = waypointRex.stringMatched(1);
 	return "GC" + stmp;
     }
 
@@ -1918,13 +1920,11 @@ public class GCImporter {
 		    if (infB.isClosed())
 			ret = SPIDER_CANCEL;
 		    else if (wayPointPage.indexOf(premiumGeocache) > -1) {
-			// old ch.setCacheStatus("PM");
 			// Premium cache spidered by non premium member
 			Preferences.itself().log("Ignoring premium member cache: " + ch.getWayPoint(), null);
 			spiderTrys = MAX_SPIDER_TRYS;
 			ret = SPIDER_IGNORE_PREMIUM;
 		    } else if (wayPointPage.indexOf(unpublishedGeocache) > -1) {
-			// old ch.setCacheStatus("unpublished Geocache");
 			Preferences.itself().log("unpublished Geocache: " + ch.getWayPoint(), null);
 			spiderTrys = MAX_SPIDER_TRYS;
 			ret = SPIDER_IGNORE;
@@ -1938,6 +1938,9 @@ public class GCImporter {
 
 			ch.setAvailable(!(wayPointPage.indexOf(unavailableGeocache) > -1));
 			ch.setArchived(wayPointPage.indexOf(archivedGeocache) > -1);
+			if (wayPointPage.indexOf(correctedCoordinate) > -1) {
+			    ch.setCacheStatus(MyLocale.getMsg(362, "solved"));
+			}
 
 			// Logs
 			getLogs(ch, wayPointPage.indexOf(foundByMe) > -1); // or get finds
