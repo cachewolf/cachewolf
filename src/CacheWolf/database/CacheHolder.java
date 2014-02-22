@@ -476,7 +476,25 @@ public class CacheHolder {
 	this.recommendationScore = ch.recommendationScore;
 	this.setNumFoundsSinceRecommendation(ch.getNumFoundsSinceRecommendation());
 	this.setNumRecommended(ch.getNumRecommended());
-	boolean mayChangeCoordinates = !this.cacheStatus.startsWith(MyLocale.getMsg(362, "solved"));
+	boolean mayChangeCoordinates = this.cacheStatus.indexOf(MyLocale.getMsg(362, "solved")) < 0;
+	boolean hasCorrectedCoordinates = ch.getCacheStatus().indexOf(MyLocale.getMsg(362, "solved")) >= 0;
+	if (hasCorrectedCoordinates)
+	    mayChangeCoordinates = true;
+	boolean origIsPM = this.cacheStatus.indexOf("PM") >= 0;
+	if (origIsPM) {
+	    if (mayChangeCoordinates) {
+		if (ch.getCacheStatus().length() > 0) {
+		    if (ch.getCacheStatus().indexOf("PM") < 0)
+			ch.setCacheStatus("PM, " + ch.getCacheStatus());
+		    else
+			ch.setCacheStatus("PM");
+		} else {
+		    ch.setCacheStatus("PM");
+		}
+	    } else {
+		ch.setCacheStatus("PM, " + MyLocale.getMsg(362, "solved"));
+	    }
+	}
 	/*
 	 * Here we have to distinguish several cases: this.is_found this ch Update 'this' (values are empty or yyyy-mm-dd) ---------------------------------------------------------------------- false any yyyy-mm-dd yes true "Found"
 	 * yyyy-mm-dd yes true yyyy-mm-dd yyyy-mm-dd yes (or no) true yyyy-mm-dd hh:mm yyyy-mm-dd no
@@ -1091,7 +1109,9 @@ public class CacheHolder {
 	} else {
 	    // there may be a found addi , so don't overwrite
 	    if ((this.getType() == CacheType.CW_TYPE_FINAL)) {
-		this.setCacheStatus(mainCh.getCacheStatus());
+		if (this.getPos().isValid()) {
+		    this.setCacheStatus(mainCh.getCacheStatus());
+		}
 		this.setFound(false);
 	    }
 	}
