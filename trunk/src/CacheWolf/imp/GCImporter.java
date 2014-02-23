@@ -1164,9 +1164,9 @@ public class GCImporter {
     private void downloadCaches() {
 
 	infB.addWarning(MyLocale.getMsg(5531, "New: ") + downloadList.size());
-	newTillNow = newTillNow + downloadList.size();
-
-	for (int i = 0; i < downloadList.size(); i++) {
+	int limit = Math.min(downloadList.size(), maxNew - newTillNow);
+	newTillNow = newTillNow + limit;
+	for (int i = 0; i < limit; i++) {
 	    if (infB.isClosed())
 		break;
 	    String wpt = (String) downloadList.get(i);
