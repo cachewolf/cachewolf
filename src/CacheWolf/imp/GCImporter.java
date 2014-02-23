@@ -1192,13 +1192,14 @@ public class GCImporter {
     private void updateCaches() {
 
 	infB.addWarning(MyLocale.getMsg(5530, "Update: ") + possibleUpdateList.size());
-	updateTillNow = updateTillNow + possibleUpdateList.size();
+	int limit = Math.min(possibleUpdateList.size(), maxUpdate - updateTillNow);
+	updateTillNow = updateTillNow + limit;
 	int jj = 0;
 	for (final Enumeration e = possibleUpdateList.elements(); e.hasMoreElements();) {
-	    if (infB.isClosed())
+	    if (jj == limit || infB.isClosed())
 		break;
-	    final CacheHolder ch = (CacheHolder) e.nextElement();
 	    jj++;
+	    final CacheHolder ch = (CacheHolder) e.nextElement();
 	    infB.setInfo(MyLocale.getMsg(5530, "Update: ") + ch.getWayPoint() + " (" + (jj) + " / " + possibleUpdateList.size() + ")");
 	    final int test = spiderSingle(MainForm.profile.cacheDB.getIndex(ch), infB);
 	    if (test == SPIDER_CANCEL) {
