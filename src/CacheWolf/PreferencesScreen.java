@@ -95,7 +95,7 @@ public class PreferencesScreen extends Form {
     private mInput MapsDir;
     private mButton MapsDirBrowseButton, gpsButton;
     // importPanel
-    private mCheckBox chkCheckLog, chkCheckDTS, chkCheckTBs, alwaysKeepOwnLogs, chkOverwriteLogs, chkAskForMaxValues;
+    private mCheckBox chkCheckLog, chkCheckDTS, chkCheckTBs, alwaysKeepOwnLogs, chkOverwriteLogs, chkAskForMaxValues, chkAddPremiumGC;
     private mInput maxLogsToKeep, maxLogsToSpider;
 
     mChoice inpLanguage, inpMetric, inpSpiderUpdates, chcGarminPort;
@@ -216,6 +216,8 @@ public class PreferencesScreen extends Form {
 	//
 	ViewPanel.addLast(chkAskForMaxValues = new mCheckBox(MyLocale.getMsg(674, "Ask about download limits")));
 	chkAskForMaxValues.setState(Preferences.itself().askForMaxNumbersOnImport);
+	ViewPanel.addLast(chkAddPremiumGC = new mCheckBox(MyLocale.getMsg(675, "Create placeholder for PM - cache")));
+	chkAddPremiumGC.setState(Preferences.itself().addPremiumGC);
 	importPanel.addLast(ViewPanel, HSTRETCH, HFILL);
 
 	mTab.addCard(importPanel, MyLocale.getMsg(175, "Import"), null).iconize(GuiImageBroker.getImage("import"), Preferences.itself().useIcons);

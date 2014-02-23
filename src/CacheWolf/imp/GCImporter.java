@@ -500,12 +500,12 @@ public class GCImporter {
 	final boolean complete = true;
 
 	if ((startPos == null) || (startPos != null && !startPos.isValid())) {
-	    new InfoBox(MyLocale.getMsg(5500, "Error"), MyLocale.getMsg(5509, "Coordinates for centre must be set")).wait(FormBase.OKB);
+	    new InfoBox(MyLocale.getMsg(5500, "Error"), MyLocale.getMsg(5533, "No start point found! (Check track / route / center)")).wait(FormBase.OKB);
 	    return; //
 	}
 
 	Vm.showWait(true);
-	infB = new InfoBox("Status", MyLocale.getMsg(5502, "Fetching pages..."));
+	infB = new InfoBox("Status", MyLocale.getMsg(5502, "Fetching pages..."), InfoBox.PROGRESS_WITH_WARNINGS);
 	infB.exec();
 
 	if (!login())
@@ -740,6 +740,8 @@ public class GCImporter {
 	} else if (menu == 1) {
 	    options = options | ImportGui.TYPE | ImportGui.DIST | ImportGui.INCLUDEFOUND | ImportGui.FILENAME;
 	    importGui = new ImportGui(MyLocale.getMsg(137, "Download along a Route from geocaching.com"), options);
+	    importGui.maxDistanceInput.setText("0.5");
+
 	} else {
 	    return false;
 	}
@@ -1125,18 +1127,21 @@ public class GCImporter {
 			}
 		    }
 		} else {
-		    // TODO Schalter einbauen
 		    if (ch == null) {
-			numPrivateNew = numPrivateNew + 1;
-			ch = new CacheHolder(chWaypoint);
-			ch.setCacheStatus("PM");
-			ch.save();
-			MainForm.profile.cacheDB.add(ch);
+			if (Preferences.itself().addPremiumGC) {
+			    numPrivateNew = numPrivateNew + 1;
+			    ch = new CacheHolder(chWaypoint);
+			    ch.setCacheStatus("PM");
+			    ch.save();
+			    MainForm.profile.cacheDB.add(ch);
+			}
 		    } else {
 			possibleUpdateList.remove(chWaypoint);
 			if (!ch.is_found()) {
-			    if (ch.getCacheStatus().indexOf("PM") < 0) {
-				ch.setCacheStatus(ch.getCacheStatus() + "PM");
+			    if (ch.getCacheStatus().length() > 0) {
+				if (ch.getCacheStatus().indexOf("PM") < 0)
+				    ch.setCacheStatus(ch.getCacheStatus() + ", PM");
+				// else nothing to do
 			    } else {
 				ch.setCacheStatus("PM");
 			    }
@@ -2723,7 +2728,6 @@ public class GCImporter {
 		return "";
 	    }
 	    final Extractor exGuid = new Extractor(bugList, bugGuidExStart, bugGuidExEnd, 0, Extractor.EXCLUDESTARTEND);
-	    // TODO Replace with spider.def
 	    return exGuid.findNext();
 	} catch (final Exception ex) {
 	    Preferences.itself().log("[getBugId] Error getting TB", ex);
@@ -2879,6 +2883,7 @@ public class GCImporter {
 		    r.close();
 		    r = new ewe.io.TextReader(_fileName);
 		    r.codec = new BetterUTF8Codec();
+		    s = r.readString(1); // reading the bom will result in error
 		} else {
 		    r.close();
 		    r = new ewe.io.TextReader(_fileName);
