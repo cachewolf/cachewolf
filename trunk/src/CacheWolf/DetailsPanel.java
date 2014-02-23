@@ -295,9 +295,9 @@ public class DetailsPanel extends CellPanel {
 
 	final CellPanel pnlTools = new CellPanel();
 
-	btnTBs = GuiImageBroker.getButton(MyLocale.getMsg(353, "TBs"), "bug");
-	showBugImage = GuiImageBroker.makeImageForButton(btnTBs, MyLocale.getMsg(353, "TBs"), "bug");
-	showBugNoImage = GuiImageBroker.makeImageForButton(btnTBs, MyLocale.getMsg(353, "TBs"), "bug_no");
+	btnTBs = GuiImageBroker.getButton(MyLocale.getMsg(364, "TBs"), "bug");
+	showBugImage = GuiImageBroker.makeImageForButton(btnTBs, MyLocale.getMsg(364, "TBs"), "bug");
+	showBugNoImage = GuiImageBroker.makeImageForButton(btnTBs, MyLocale.getMsg(364, "TBs"), "bug_no");
 	btnTBs.setToolTip(MyLocale.getMsg(346, "Show travelbugs"));
 
 	btnBlackListed = GuiImageBroker.getButton(MyLocale.getMsg(363, "Blacklist"), "is_black");
@@ -364,10 +364,10 @@ public class DetailsPanel extends CellPanel {
 
 	if (mainCache.has_bugs()) {
 	    // btnTBs.modify(Control.Disabled,1);
-	    GuiImageBroker.setButtonIconAndText(btnTBs, MyLocale.getMsg(353, "TBs"), showBugImage);
+	    GuiImageBroker.setButtonIconAndText(btnTBs, MyLocale.getMsg(364, "TBs"), showBugImage);
 	} else {
 	    // btnTBs.modify(Control.Disabled,0);
-	    GuiImageBroker.setButtonIconAndText(btnTBs, MyLocale.getMsg(353, "TBs"), showBugNoImage);
+	    GuiImageBroker.setButtonIconAndText(btnTBs, MyLocale.getMsg(364, "TBs"), showBugNoImage);
 	}
 
 	chcSize.setInt(mainCache.getCacheSize());

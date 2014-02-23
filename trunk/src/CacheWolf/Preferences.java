@@ -134,6 +134,8 @@ public class Preferences extends MinML {
     public boolean overwriteLogs = true;
     /** */
     public boolean askForMaxNumbersOnImport = false;
+    /** */
+    public boolean addPremiumGC = false;
     // Export
     /** Add short details to waypoint on export */
     public boolean addDetailsToWaypoint = false;
@@ -650,6 +652,7 @@ public class Preferences extends MinML {
 	    checkLog = Boolean.valueOf(atts.getValue("checkLog")).booleanValue();
 	    overwriteLogs = Boolean.valueOf(atts.getValue("overwriteLogs")).booleanValue();
 	    askForMaxNumbersOnImport = Boolean.valueOf(atts.getValue("askForMaxNumbersOnImport")).booleanValue();
+	    addPremiumGC = Boolean.valueOf(atts.getValue("addPremiumGC")).booleanValue();
 	    tmp = atts.getValue("checkTBs");
 	    if (tmp != null)
 		checkTBs = Boolean.valueOf(atts.getValue("checkTBs")).booleanValue();
@@ -923,6 +926,7 @@ public class Preferences extends MinML {
 		    + " checkLog=\"" + SafeXML.strxmlencode(checkLog) + "\"" //
 		    + " overwriteLogs=\"" + SafeXML.strxmlencode(overwriteLogs) + "\"" //
 		    + " askForMaxNumbersOnImport=\"" + SafeXML.strxmlencode(askForMaxNumbersOnImport) + "\"" //
+		    + " addPremiumGC=\"" + SafeXML.strxmlencode(addPremiumGC) + "\"" //
 		    + " checkTBs=\"" + SafeXML.strxmlencode(checkTBs) + "\"" //
 		    + " checkDTS=\"" + SafeXML.strxmlencode(checkDTS) + "\"" //
 		    + " maxSpiderNumber=\"" + SafeXML.strxmlencode(maxSpiderNumber) + "\"" //
