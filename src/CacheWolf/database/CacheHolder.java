@@ -539,9 +539,7 @@ public class CacheHolder {
 	this.setLastSync(ch.getLastSync());
 
 	this.setAttribsAsBits(ch.getAttributesBits());
-	if (ch.detailsLoaded()) {
-	    this.getCacheDetails(false).update(ch.getCacheDetails(false));
-	}
+	this.getCacheDetails(false).update(ch.getCacheDetails(false));
     }
 
     /**
