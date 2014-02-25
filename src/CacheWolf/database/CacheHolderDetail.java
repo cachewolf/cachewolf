@@ -25,6 +25,7 @@ import CacheWolf.MainForm;
 import CacheWolf.Preferences;
 import CacheWolf.utils.Extractor;
 import CacheWolf.utils.Files;
+import CacheWolf.utils.STRreplace;
 import CacheWolf.utils.SafeXML;
 import ewe.filechooser.FileChooser;
 import ewe.filechooser.FileChooserBase;
@@ -114,10 +115,36 @@ public class CacheHolderDetail {
     }
 
     public void setCacheNotes(String notes) {
-	if (!CacheNotes.equals(notes))
+	if (!this.CacheNotes.equals(notes))
 	    getParent().setUpdated(true);
-	getParent().setHasNote(!notes.trim().equals(""));
-	CacheNotes = notes;
+	else
+	    return;
+
+	String oldGCNote = new Extractor(this.CacheNotes, "<GC>", "</GC>", 0, false).findNext();
+	String newGCNote = new Extractor(notes, "<GC>", "</GC>", 0, false).findNext();
+	if (newGCNote.length() > 0) {
+	    if (oldGCNote.length() > 0)
+		if (newGCNote.equals(oldGCNote)) {
+		    // manuell was hinzugeschrieben?
+		    this.CacheNotes = notes;
+		} else {
+		    // ersetzt alte GCNote
+		    this.CacheNotes = STRreplace.replace(this.CacheNotes, oldGCNote, "") + newGCNote;
+		}
+	    else
+		// füge neue GCNote hinzu
+		this.CacheNotes += newGCNote;
+	} else {
+	    if (oldGCNote.length() > 0)
+		// alte GCNote bleibt
+		this.CacheNotes = oldGCNote + notes;
+	    else
+		// ersetzt 
+		this.CacheNotes = notes;
+	}
+
+	getParent().setHasNote(!this.CacheNotes.trim().equals(""));
+
     }
 
     public String getCacheNotes() {
@@ -175,6 +202,7 @@ public class CacheHolderDetail {
 	    this.attributes = newCh.attributes;
 	// URL
 	this.URL = newCh.URL;
+	this.setCacheNotes(newCh.CacheNotes);
 	// Images
 	this.images = newCh.images;
 	setLongDescription(newCh.LongDescription);

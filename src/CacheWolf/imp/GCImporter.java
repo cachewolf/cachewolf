@@ -140,6 +140,7 @@ public class GCImporter {
     private static Regex shortDescRex;
     private static Regex longDescRex;
     private static Regex hintsRex;
+    private static Regex notesRex;
     private static String premiumGeocache = "> Premium Member Only Cache";
     private static String unpublishedGeocache = "Unpublished Geocache";
     private static String unavailableGeocache = "This cache is temporarily unavailable";
@@ -259,6 +260,7 @@ public class GCImporter {
 	    shortDescRex = new Regex(p.getProp("shortDescRex"));
 	    longDescRex = new Regex(p.getProp("longDescRex"));
 	    hintsRex = new Regex(p.getProp("hintsRex"));
+	    notesRex = new Regex("<span id=\"cache_note\">((?s).*?)</span>");
 
 	    spoilerSectionStart = p.getProp("spoilerSectionStart");
 	    spoilerSectionEnd = p.getProp("spoilerSectionEnd");
@@ -1993,6 +1995,7 @@ public class GCImporter {
 			if (downloadPics) {
 			    this.getImages(chD);
 			}
+			chD.setCacheNotes(getNotes());
 			getAddWaypoints(wayPointPage, ch.getWayPoint(), ch.is_found());
 			getAttributes(chD);
 			ch.setLastSync((new Time()).format("yyyyMMddHHmmss"));
@@ -2150,6 +2153,22 @@ public class GCImporter {
 	    Preferences.itself().log("[SpiderGC.java:getHints]check hintsRex!", null);
 	    return "";
 	}
+    }
+
+    private String getNotes() {
+	if (Preferences.itself().isPremium) {
+	    notesRex.search(wayPointPage);
+	    if (notesRex.didMatch()) {
+		String tmp = notesRex.stringMatched(1);
+		if (tmp.length() > 0)
+		    return "<GC>" + notesRex.stringMatched(1) + "</GC>";
+		else
+		    return "";
+	    } else {
+		Preferences.itself().log("[getNotes]check notesRex!", null);
+	    }
+	}
+	return "";
     }
 
     /**
