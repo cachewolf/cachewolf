@@ -575,6 +575,7 @@ public class GCImporter {
 		    if (infB.isClosed())
 			break;
 		}
+		downloadCaches();
 		startPos = nextPos;
 	    }
 	    if (infB.isClosed())
@@ -585,29 +586,25 @@ public class GCImporter {
 	    return;
 	} // or ask for download of intermediate result
 
-	spiderErrors = 0;
-	spiderIgnorePremium = 0;
-	if (complete) {
-	    // vorhandene Cache werden aus der DB gelöscht
-	    for (int i = 0; i < downloadList.size(); i++) {
-		final int j = MainForm.profile.cacheDB.getIndex((String) downloadList.get(i));
-		if (j != -1)
-		    MainForm.profile.cacheDB.removeElementAt(j);
+	MainForm.profile.restoreFilter();
+	MainForm.profile.saveIndex(true);
+
+	if (spiderErrors > 0 || spiderIgnorePremium > 0) {
+	    String infoString = "";
+	    if (spiderErrors > 0) {
+		infoString = spiderErrors + MyLocale.getMsg(5516, " cache descriptions\ncould not be loaded.") + "\n";
 	    }
-	    // und frisch geladen
-	    downloadCaches();
-	} else {
-	    // man könnte auch aus der Liste einen Quick - Import erstellen
+	    if (spiderIgnorePremium > 0) {
+		infoString = infoString + spiderIgnorePremium + " Premium " + MyLocale.getMsg(5516, " cache descriptions\ncould not be loaded.");
+	    }
+	    new InfoBox(MyLocale.getMsg(5500, "Error"), infoString).wait(FormBase.OKB);
 	}
+	MainForm.profile.restoreFilter();
+	MainForm.profile.saveIndex(true);
 
 	infB.close(0);
 	Vm.showWait(false);
-	if (spiderErrors > 0) {
-	    new InfoBox(MyLocale.getMsg(5500, "Error"), spiderErrors + MyLocale.getMsg(5516, " cache descriptions%0acould not be loaded.")).wait(FormBase.OKB);
-	}
 
-	MainForm.profile.restoreFilter();
-	MainForm.profile.saveIndex(true);
 	loggedIn = false; // check again login on next spider
 
     }
@@ -1580,16 +1577,24 @@ public class GCImporter {
 
     private void fetchFirstListPage(int distance) {
 	String url = makelistPagesUrl(distance);
-	try {
-	    htmlListPage = UrlFetcher.fetch(url);
-	    Preferences.itself().log("[fetchFirstListPage] Got first page " + url);
-	} catch (final Exception ex) {
-	    Preferences.itself().log("[fetchFirstListPage] Error fetching first list page " + url, ex, true);
-	    Vm.showWait(false);
-	    infB.close(0);
-	    new InfoBox(MyLocale.getMsg(5500, "Error"), MyLocale.getMsg(5503, "Error fetching first list page.")).wait(FormBase.OKB);
-	    return;
+	int retrycount = 0;
+	while (true) {
+	    try {
+		htmlListPage = UrlFetcher.fetch(url);
+		Preferences.itself().log("[fetchFirstListPage] Got first page " + url);
+		return;
+	    } catch (final Exception ex) {
+		Preferences.itself().log("[fetchFirstListPage] Error fetching first list page " + url, ex, true);
+		if (retrycount == 3) {
+		    Vm.showWait(false);
+		    infB.close(0);
+		    new InfoBox(MyLocale.getMsg(5500, "Error") + " (" + retrycount + " x)", MyLocale.getMsg(5503, "Error fetching first list page.")).wait(FormBase.OKB);
+		    return;
+		}
+		retrycount++;
+	    }
 	}
+
     }
 
     /**
