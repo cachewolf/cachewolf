@@ -84,6 +84,8 @@ public class HttpConnection {
     private int port;
 
     private boolean useSslTls;
+    private boolean proxyDocumentIsSslTls;
+    private String proxyDocumentHost;
     /**
      * The document to fetch/submit.
      **/
@@ -172,10 +174,15 @@ public class HttpConnection {
 	if (!redirectTo.startsWith("http")) {
 	    if (!redirectTo.startsWith("/"))
 		redirectTo = "/" + redirectTo;
-	    if (this.useSslTls || port == 443) {
-		redirectTo = "https://" + host + redirectTo;
+
+	    String redirectToHost = host;
+	    if (useProxy)
+		redirectToHost = proxyDocumentHost;
+
+	    if (this.useSslTls || port == 443 || this.proxyDocumentIsSslTls) {
+		redirectTo = "https://" + redirectToHost + redirectTo;
 	    } else {
-		redirectTo = "http://" + host + redirectTo;
+		redirectTo = "http://" + redirectToHost + redirectTo;
 	    }
 	}
 	HttpConnection c = new HttpConnection(redirectTo);
@@ -344,37 +351,50 @@ public class HttpConnection {
     }
 
     public void setUrl(String url) {
+
+	url = FileBase.fixupPath(url);
+
+	String uu = url;
+	if (uu.toLowerCase().startsWith("https://")) {
+	    useSslTls = true;
+	    port = 443;
+	    uu = "http://" + uu.substring(8);
+	} else {
+	    useSslTls = false;
+	    port = 80;
+	}
+
+	if (uu.toLowerCase().startsWith("http://")) {
+	    uu = uu.replace('\\', '/');
+	    host = uu.substring(7);
+	    int first = host.indexOf('/');
+	    if (first == -1)
+		document = "/";
+	    else {
+		document = host.substring(first);
+		host = host.substring(0, first);
+	    }
+	    int colon = host.indexOf(':');
+	    if (colon != -1) {
+		port = ewe.sys.Convert.toInt(host.substring(colon + 1));
+		host = host.substring(0, colon);
+	    }
+	}
+
 	if (useProxy) {
+	    proxyDocumentHost = host;
 	    host = proxy;
 	    port = proxyPort;
 	    document = url;
-	} else {
-	    url = FileBase.fixupPath(url);
-	    port = 80;
-	    String uu = url;
-	    if (uu.toLowerCase().startsWith("https://")) {
-		useSslTls = true;
-		port = 443;
-		uu = "http://" + uu.substring(8);
-	    } else
-		useSslTls = false;
-	    if (uu.toLowerCase().startsWith("http://")) {
-		uu = uu.replace('\\', '/');
-		host = uu.substring(7);
-		int first = host.indexOf('/');
-		if (first == -1)
-		    document = "/";
-		else {
-		    document = host.substring(first);
-		    host = host.substring(0, first);
-		}
-		int colon = host.indexOf(':');
-		if (colon != -1) {
-		    port = ewe.sys.Convert.toInt(host.substring(colon + 1));
-		    host = host.substring(0, colon);
-		}
+	    // todo remember endsWith :443
+	    if (document.toLowerCase().startsWith("https://")) {
+		proxyDocumentIsSslTls = true;
+	    } else {
+		proxyDocumentIsSslTls = false;
 	    }
+
 	}
+
 	getRequestorProperties().clear();
 	command = "GET";
     }
