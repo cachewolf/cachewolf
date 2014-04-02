@@ -381,7 +381,7 @@ public class HttpConnection {
 	    }
 	}
 
-	if (useProxy) {
+	if (HttpConnection.useProxy) {
 	    proxyDocumentHost = host;
 	    host = proxy;
 	    port = proxyPort;
@@ -400,7 +400,10 @@ public class HttpConnection {
     }
 
     public String getHost() {
-	return host;
+	if (HttpConnection.useProxy)
+	    return proxyDocumentHost;
+	else
+	    return host;
     }
 
     //	FIXME: never referenced
