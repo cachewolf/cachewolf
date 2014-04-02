@@ -386,6 +386,7 @@ public class HttpConnection {
 	    host = proxy;
 	    port = proxyPort;
 	    document = url;
+	    useSslTls = false;
 	    // todo remember endsWith :443
 	    if (document.toLowerCase().startsWith("https://")) {
 		proxyDocumentIsSslTls = true;
