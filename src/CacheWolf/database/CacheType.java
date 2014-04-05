@@ -25,55 +25,6 @@ import CacheWolf.controls.GuiImageBroker;
 import CacheWolf.utils.MyLocale;
 import ewe.fx.Image;
 
-final class CTyp {
-    public byte _cwMappedCType; // CW Cache Typ intern
-    public byte _cwCType; // CW Cache Typ intern
-    public char _cwCGroup; // Cache Typ Group intern
-    public String _cwCTypeV1; // V1 Cache Typ
-    public String _gcCTypeSpider; // GC Type on Spider Import from GC.com
-    public String _ocCTypeXmlImport; // GC Type on Spider Import from GC.com
-    public byte _cwCTypeV2; // V2 Cache Typ
-    public char _gpxShortCType; // Short Typ (one char abbreviation)
-    public String _imageName; // name of imageName for Icon, "showCacheInBrowser" and "KML Export"
-    public String _gpxWptTypeTag; // gpx wpt <type> tag
-    public String _gpxWptSymTag; // gpx wpt <sym> tag
-    public String _gpxWptGCextensionTypTag; // gpx cache extension <groundspeak:type> tag
-    public String _gpxAlternativeWptTypTags; // alternative typ - names for gpx from other sources
-    public int _msgNrCTypeName; // message number for gui cache Typ name
-    public int _GUIOrder; // sort Order in GUI selection //TODO more intelligent implementation (now manually change each line on new one)
-    public int _FilterStringPos; // BitNr in Filter String (profile)
-    public int _FilterPattern; // 2**BitNr in Filter int (does not correspond with BitNr in String)
-    public Image _iconImage;
-    public Image _mapImage;
-    public Image[] _modImage = { null, null, null, null, null, null, null };
-
-    public CTyp(byte cwMappedCType, byte cwCType, char cwCGroup, String cwCTypeV1, String gcCTypeSpider, String ocCTypeXmlImport, byte cwCTypeV2, char gpxShortCType, String imageName, String[] gpx, int msgNrCTypeName, int gUIOrder,
-	    int filterStringPos, int filterPattern) {
-
-	_cwMappedCType = cwMappedCType;
-	_cwCType = cwCType;
-	_cwCGroup = cwCGroup;
-	_cwCTypeV1 = cwCTypeV1;
-	_gcCTypeSpider = gcCTypeSpider;
-	_ocCTypeXmlImport = ocCTypeXmlImport;
-	_cwCTypeV2 = cwCTypeV2;
-	_gpxShortCType = gpxShortCType;
-	_imageName = imageName;
-	_gpxWptTypeTag = gpx[0];
-	_gpxWptSymTag = gpx[1];
-	_gpxWptGCextensionTypTag = gpx[2];
-	_gpxAlternativeWptTypTags = gpx[3];
-	_msgNrCTypeName = msgNrCTypeName;
-	_GUIOrder = gUIOrder;
-	_FilterStringPos = filterStringPos;
-	_FilterPattern = filterPattern;
-	if (!_imageName.equals("")) {
-	    _iconImage = GuiImageBroker.getCacheTypeImage(imageName);
-	    _mapImage = GuiImageBroker.getMapCacheTypeImage(imageName);
-	}
-    }
-}
-
 /**
  * Handles all aspects of converting cache type information
  * from and to the various im- and exporters ...
@@ -576,4 +527,53 @@ public final class CacheType {
     }
 
     // TODO it for OCXMLImporterScreen and FilterScreen ?
+}
+
+final class CTyp {
+    public byte _cwMappedCType; // CW Cache Typ intern
+    public byte _cwCType; // CW Cache Typ intern
+    public char _cwCGroup; // Cache Typ Group intern
+    public String _cwCTypeV1; // V1 Cache Typ
+    public String _gcCTypeSpider; // GC Type on Spider Import from GC.com
+    public String _ocCTypeXmlImport; // GC Type on Spider Import from GC.com
+    public byte _cwCTypeV2; // V2 Cache Typ
+    public char _gpxShortCType; // Short Typ (one char abbreviation)
+    public String _imageName; // name of imageName for Icon, "showCacheInBrowser" and "KML Export"
+    public String _gpxWptTypeTag; // gpx wpt <type> tag
+    public String _gpxWptSymTag; // gpx wpt <sym> tag
+    public String _gpxWptGCextensionTypTag; // gpx cache extension <groundspeak:type> tag
+    public String _gpxAlternativeWptTypTags; // alternative typ - names for gpx from other sources
+    public int _msgNrCTypeName; // message number for gui cache Typ name
+    public int _GUIOrder; // sort Order in GUI selection //TODO more intelligent implementation (now manually change each line on new one)
+    public int _FilterStringPos; // BitNr in Filter String (profile)
+    public int _FilterPattern; // 2**BitNr in Filter int (does not correspond with BitNr in String)
+    public Image _iconImage;
+    public Image _mapImage;
+    public Image[] _modImage = { null, null, null, null, null, null, null };
+
+    public CTyp(byte cwMappedCType, byte cwCType, char cwCGroup, String cwCTypeV1, String gcCTypeSpider, String ocCTypeXmlImport, byte cwCTypeV2, char gpxShortCType, String imageName, String[] gpx, int msgNrCTypeName, int gUIOrder,
+	    int filterStringPos, int filterPattern) {
+
+	_cwMappedCType = cwMappedCType;
+	_cwCType = cwCType;
+	_cwCGroup = cwCGroup;
+	_cwCTypeV1 = cwCTypeV1;
+	_gcCTypeSpider = gcCTypeSpider;
+	_ocCTypeXmlImport = ocCTypeXmlImport;
+	_cwCTypeV2 = cwCTypeV2;
+	_gpxShortCType = gpxShortCType;
+	_imageName = imageName;
+	_gpxWptTypeTag = gpx[0];
+	_gpxWptSymTag = gpx[1];
+	_gpxWptGCextensionTypTag = gpx[2];
+	_gpxAlternativeWptTypTags = gpx[3];
+	_msgNrCTypeName = msgNrCTypeName;
+	_GUIOrder = gUIOrder;
+	_FilterStringPos = filterStringPos;
+	_FilterPattern = filterPattern;
+	if (!_imageName.equals("")) {
+	    _iconImage = GuiImageBroker.getCacheTypeImage(imageName);
+	    _mapImage = GuiImageBroker.getMapCacheTypeImage(imageName);
+	}
+    }
 }

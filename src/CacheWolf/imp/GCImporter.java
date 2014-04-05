@@ -1131,6 +1131,10 @@ public class GCImporter {
 			    numPrivateNew = numPrivateNew + 1;
 			    ch = new CacheHolder(chWaypoint);
 			    ch.setCacheStatus("PM");
+			    // next 2 for to avoid warning triangle
+			    ch.setType(CacheType.CW_TYPE_CUSTOM);
+			    ch.setPos(Preferences.itself().curCentrePt); // or MainForm.profile.centre
+			    ch.getCacheDetails(false).setLongDescription(CacheDescriptionGC); // for Info
 			    ch.save();
 			    MainForm.profile.cacheDB.add(ch);
 			}
