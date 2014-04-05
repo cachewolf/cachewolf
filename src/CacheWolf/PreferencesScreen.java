@@ -516,6 +516,7 @@ public class PreferencesScreen extends Form {
 
 		Preferences.itself().overwriteLogs = chkOverwriteLogs.getState();
 		Preferences.itself().askForMaxNumbersOnImport = chkAskForMaxValues.getState();
+		Preferences.itself().addPremiumGC = this.chkAddPremiumGC.getState();
 
 		Preferences.itself().dirty = true;
 		Preferences.itself().savePreferences();

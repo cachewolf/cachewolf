@@ -1839,12 +1839,12 @@ public class CacheHolder {
     /**
      * Sets the type of the cache. As the cache type values are int for the rest of CacheWolf and byte internally of CacheHolder, some conversion has to be done.
      * 
-     * @param typeId
-     *            Cache Type
+     * @param cacheType
+     *            cacheType
      */
-    public void setType(byte typeId) {
-	MainForm.profile.notifyUnsavedChanges(typeId != type);
-	type = typeId;
+    public void setType(byte cacheType) {
+	MainForm.profile.notifyUnsavedChanges(cacheType != type);
+	type = cacheType;
     }
 
     public boolean is_archived() {
