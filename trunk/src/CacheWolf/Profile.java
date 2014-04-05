@@ -58,7 +58,7 @@ public class Profile {
      * The list of caches (CacheHolder objects). A pointer to this object exists in many classes in parallel to this object, i.e. the respective class contains both a {@link Profile} object and a cacheDB Vector.
      */
     public CacheDB cacheDB = new CacheDB();
-    /** The centre point of this group of caches. Read from ans stored to index.xml file */
+    /** The centre point of this group of caches. Read from and stored to index.xml file */
     public CWPoint centre = new CWPoint();
     /**
      * The name of the profile. The baseDir in preferences is appended this name to give the dataDir where the index.xml and cache files live. (Excuse the English spelling of centre)
