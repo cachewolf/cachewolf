@@ -2089,13 +2089,18 @@ public class CacheHolder {
 	if (isOC()) {
 	    return Convert.formatInt(recommendationScore) + " (" + Convert.formatInt(numRecommended) + ")";
 	} else {
-	    int gcVote = numRecommended;
-	    if (gcVote < 100) {
-		return MyLocale.formatDouble((double) gcVote / 10.0, "0.0");
+	    if (Preferences.itself().useGCFavoriteValue) {
+		return "" + numRecommended;
 	    } else {
-		int votes = gcVote / 100;
-		gcVote = gcVote - 100 * votes;
-		return MyLocale.formatDouble((double) gcVote / 10.0, "0.0") + " (" + Convert.formatInt(votes) + ")";
+		int gcVote = numRecommended;
+		if (gcVote < 100) {
+		    // Durchschnittswert der Abstimmung 1, 1.5 ... 4.5, 5 (nur eine Stimme)
+		    return MyLocale.formatDouble((double) gcVote / 10.0, "0.0");
+		} else {
+		    int votes = gcVote / 100; // Anzahl Stimmen
+		    gcVote = gcVote - 100 * votes; // Durchschnittswert der Abstimmung 1, 1.5 ... 4.5, 5
+		    return MyLocale.formatDouble((double) gcVote / 10.0, "0.0") + " (" + Convert.formatInt(votes) + ")";
+		}
 	    }
 	}
     }

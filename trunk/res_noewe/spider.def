@@ -60,6 +60,8 @@ dateHiddenRex      = (?:Hidden|Event Date)\\s*:\\s*((?s).*?)\\s*<
 #not used
 #Size:&nbsp;<span class="minorCacheDetails"><img src="/images/icons/container/micro.gif" alt="Size: micro" title="Size: micro" />&nbsp<small>(micro)</small></span>
 sizeRex            = alt="Size: ((?s).*?)"
+#<span class="favorite-value">                                0                             </span>
+favoriteValueRex   =<span class="favorite-value">\\s*(.*?)\\s*</span>
 #<span id="uxLatLon">N 48° 33.524 E 009° 18.747</span></strong>
 latLonRex          = <span id="uxLatLon">((?s).*?)</span>
 #<span id="ctl00_ContentBody_Location">In Baden-Württemberg, Germany</span><br />

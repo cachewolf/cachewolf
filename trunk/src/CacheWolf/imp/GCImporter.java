@@ -135,6 +135,7 @@ public class GCImporter {
     private static Regex cacheOwnerRex;
     private static Regex dateHiddenRex;
     private static Regex sizeRex;
+    private static Regex favoriteValueRex;
     private static Regex latLonRex;
     private static Regex cacheLocationRex;
     private static Regex shortDescRex;
@@ -255,6 +256,7 @@ public class GCImporter {
 	    cacheOwnerRex = new Regex(p.getProp("cacheOwnerRex"));
 	    dateHiddenRex = new Regex(p.getProp("dateHiddenRex"));
 	    sizeRex = new Regex(p.getProp("sizeRex"));
+	    favoriteValueRex = new Regex(p.getProp("favoriteValueRex"));
 	    latLonRex = new Regex(p.getProp("latLonRex"));
 	    cacheLocationRex = new Regex(p.getProp("cacheLocationRex"));
 	    shortDescRex = new Regex(p.getProp("shortDescRex"));
@@ -1239,8 +1241,8 @@ public class GCImporter {
 		// Save the spidered data
 		if (ret == SPIDER_OK) {
 		    cacheInDB.initStates(false);
-		    // preserve rating information
-		    ch.setNumRecommended(cacheInDB.getNumRecommended());
+		    if (!Preferences.itself().useGCFavoriteValue)
+			ch.setNumRecommended(cacheInDB.getNumRecommended()); // gcvote Bewertung bleibt erhalten
 		    if (!downloadPics) {
 			// use existing images, if not downloaded
 			ch.getCacheDetails(false).images = cacheInDB.getCacheDetails(true).images;
@@ -1973,6 +1975,8 @@ public class GCImporter {
 			    ch.setOwned(true);
 			ch.setDateHidden(getDateHidden());
 			ch.setCacheSize(getSize());
+			if (Preferences.itself().useGCFavoriteValue)
+			    ch.setNumRecommended(Common.parseInt(this.getFavoriteValue()));
 			final String latLon = getLatLon();
 			if (latLon.equals("???")) {
 			    Preferences.itself().log("[SpiderGC.java:getLatLon]check latLonRex!", null);
@@ -2104,6 +2108,15 @@ public class GCImporter {
 	else {
 	    Preferences.itself().log("[SpiderGC.java:getSize]check sizeRex!", null);
 	    return CacheSize.gcSpiderString2Cw("None");
+	}
+    }
+
+    private String getFavoriteValue() {
+	favoriteValueRex.search(wayPointPage);
+	if (favoriteValueRex.didMatch()) {
+	    return favoriteValueRex.stringMatched(1);
+	} else {
+	    return "";
 	}
     }
 

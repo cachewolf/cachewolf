@@ -149,7 +149,16 @@ public class TablePanelMenu extends MenuBar {
 		mnuSeparator, //
 		update = new MenuItem(MyLocale.getMsg(1014, "Update cache data")), //
 	};
+	updateGCVotesMenu();
 	return new Menu(mnuImport, MyLocale.getMsg(175, "Import"));
+    }
+
+    public void updateGCVotesMenu() {
+	if (Preferences.itself().useGCFavoriteValue) {
+	    loadGCVotes.modifiers |= MenuItem.Disabled;
+	} else {
+	    loadGCVotes.modifiers &= ~MenuItem.Disabled;
+	}
     }
 
     private Menu makeExportSubMenu() {
@@ -554,10 +563,12 @@ public class TablePanelMenu extends MenuBar {
 		gcImporter.setOldGCLanguage();
 	    }
 	    if (mev.selectedItem == loadGCVotes) {
-		if (sGCV == null)
-		    sGCV = new GCVoteImporter();
-		sGCV.doIt();
-		tablePanel.resetModel();
+		if (!Preferences.itself().useGCFavoriteValue) {
+		    if (sGCV == null)
+			sGCV = new GCVoteImporter();
+		    sGCV.doIt();
+		    tablePanel.resetModel();
+		}
 	    }
 	    if (mev.selectedItem == fetchOCLink) {
 		OCLinkImporter.doIt();
