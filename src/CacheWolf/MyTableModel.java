@@ -727,13 +727,17 @@ class MyComparer implements Comparer {
 		if (ch.isOC()) {
 		    ch.sort = MyLocale.formatLong(ch.recommendationScore, "000") + MyLocale.formatLong(ch.getNumRecommended(), "00000");
 		} else {
-		    int gcVote = ch.getNumRecommended();
-		    if (gcVote < 100) {
-			ch.sort = MyLocale.formatLong(gcVote, "000") + "00000000";
+		    if (Preferences.itself().useGCFavoriteValue) {
+			ch.sort = MyLocale.formatLong(ch.getNumRecommended(), "000000") + "00000000";
 		    } else {
-			int votes = gcVote / 100;
-			gcVote = gcVote - 100 * votes;
-			ch.sort = MyLocale.formatLong(gcVote, "000") + MyLocale.formatLong(votes, "00000000");
+			int gcVote = ch.getNumRecommended();
+			if (gcVote < 100) {
+			    ch.sort = MyLocale.formatLong(gcVote, "000") + "00000000";
+			} else {
+			    int votes = gcVote / 100;
+			    gcVote = gcVote - 100 * votes;
+			    ch.sort = MyLocale.formatLong(gcVote, "000") + MyLocale.formatLong(votes, "00000000");
+			}
 		    }
 		}
 	    }

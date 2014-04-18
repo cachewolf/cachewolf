@@ -419,7 +419,12 @@ public class GPXImporter extends MinML {
 		}
 		oldCh.initStates(false);
 		if (!oldCh.isOC()) {
-		    holder.setNumRecommended(oldCh.getNumRecommended()); // gcvote Bewertung bleibt
+		    if (Preferences.itself().useGCFavoriteValue) {
+			// todo get GC Favs from gpx if they exist there
+			holder.setNumRecommended(oldCh.getNumRecommended());
+		    } else {
+			holder.setNumRecommended(oldCh.getNumRecommended()); // gcvote Bewertung bleibt erhalten			
+		    }
 		}
 		oldCh.update(holder);
 		oldCh.save();

@@ -95,7 +95,7 @@ public class PreferencesScreen extends Form {
     private mInput MapsDir;
     private mButton MapsDirBrowseButton, gpsButton;
     // importPanel
-    private mCheckBox chkCheckLog, chkCheckDTS, chkCheckTBs, alwaysKeepOwnLogs, chkOverwriteLogs, chkAskForMaxValues, chkAddPremiumGC;
+    private mCheckBox chkCheckLog, chkCheckDTS, chkCheckTBs, alwaysKeepOwnLogs, chkOverwriteLogs, chkAskForMaxValues, chkAddPremiumGC, chkUseGCFavoriteValue;
     private mInput maxLogsToKeep, maxLogsToSpider;
 
     mChoice inpLanguage, inpMetric, inpSpiderUpdates, chcGarminPort;
@@ -218,6 +218,9 @@ public class PreferencesScreen extends Form {
 	chkAskForMaxValues.setState(Preferences.itself().askForMaxNumbersOnImport);
 	ViewPanel.addLast(chkAddPremiumGC = new mCheckBox(MyLocale.getMsg(675, "Create placeholder for PM - cache")));
 	chkAddPremiumGC.setState(Preferences.itself().addPremiumGC);
+	ViewPanel.addLast(chkUseGCFavoriteValue = new mCheckBox(MyLocale.getMsg(676, "Show GC favorites")));
+	chkUseGCFavoriteValue.setState(Preferences.itself().useGCFavoriteValue);
+
 	importPanel.addLast(ViewPanel, HSTRETCH, HFILL);
 
 	mTab.addCard(importPanel, MyLocale.getMsg(175, "Import"), null).iconize(GuiImageBroker.getImage("import"), Preferences.itself().useIcons);
@@ -517,6 +520,8 @@ public class PreferencesScreen extends Form {
 		Preferences.itself().overwriteLogs = chkOverwriteLogs.getState();
 		Preferences.itself().askForMaxNumbersOnImport = chkAskForMaxValues.getState();
 		Preferences.itself().addPremiumGC = this.chkAddPremiumGC.getState();
+		Preferences.itself().useGCFavoriteValue = this.chkUseGCFavoriteValue.getState();
+		MainTab.itself.tablePanel.mainMenu.updateGCVotesMenu();
 
 		Preferences.itself().dirty = true;
 		Preferences.itself().savePreferences();
