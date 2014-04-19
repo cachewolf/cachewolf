@@ -114,35 +114,22 @@ public class CacheHolderDetail {
 	return this.Solver;
     }
 
+    private String gCNotes = "";
+
+    public String getGCNotes() {
+	return gCNotes;
+    }
+
+    public void setGCNotes(String notes) {
+	gCNotes = notes;
+    }
+
     public void setCacheNotes(String notes) {
 	if (!this.CacheNotes.equals(notes))
 	    getParent().setUpdated(true);
 	else
 	    return;
-
-	String oldGCNote = new Extractor(this.CacheNotes, "<GC>", "</GC>", 0, false).findNext();
-	String newGCNote = new Extractor(notes, "<GC>", "</GC>", 0, false).findNext();
-	if (newGCNote.length() > 0) {
-	    if (oldGCNote.length() > 0)
-		if (newGCNote.equals(oldGCNote)) {
-		    // manuell was hinzugeschrieben?
-		    this.CacheNotes = notes;
-		} else {
-		    // ersetzt alte GCNote
-		    this.CacheNotes = STRreplace.replace(this.CacheNotes, oldGCNote, "") + newGCNote;
-		}
-	    else
-		// füge neue GCNote hinzu
-		this.CacheNotes += newGCNote;
-	} else {
-	    if (oldGCNote.length() > 0)
-		// alte GCNote bleibt
-		this.CacheNotes = oldGCNote + notes;
-	    else
-		// ersetzt 
-		this.CacheNotes = notes;
-	}
-
+	this.CacheNotes = notes;
 	getParent().setHasNote(!this.CacheNotes.trim().equals(""));
 
     }
@@ -202,7 +189,14 @@ public class CacheHolderDetail {
 	    this.attributes = newCh.attributes;
 	// URL
 	this.URL = newCh.URL;
-	this.setCacheNotes(newCh.CacheNotes);
+
+	String oldGCNotes = new Extractor(this.CacheNotes, "<GC>", "</GC>", 0, false).findNext();
+	if (oldGCNotes.length() > 0) {
+	    this.setCacheNotes(STRreplace.replace(this.CacheNotes, oldGCNotes, newCh.getGCNotes()));
+	} else {
+	    this.setCacheNotes(newCh.getCacheNotes());
+	}
+
 	// Images
 	this.images = newCh.images;
 	setLongDescription(newCh.LongDescription);

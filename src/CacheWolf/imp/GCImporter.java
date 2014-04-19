@@ -2008,7 +2008,7 @@ public class GCImporter {
 			if (downloadPics) {
 			    this.getImages(chD);
 			}
-			chD.setCacheNotes(getNotes());
+			chD.setGCNotes(getNotes());
 			getAddWaypoints(wayPointPage, ch.getWayPoint(), ch.is_found());
 			getAttributes(chD);
 			ch.setLastSync((new Time()).format("yyyyMMddHHmmss"));
