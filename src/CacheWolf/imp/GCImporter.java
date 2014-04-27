@@ -703,10 +703,6 @@ public class GCImporter {
 		if (found_on_page < MAXNROFCACHESPERLISTPAGE)
 		    toDistance = 0;
 		if (toDistance > 0) {
-		    if (page_number % 100 == 45) {
-			fetchAListPage(toDistance, gotoPreviousBlock);
-			fetchAListPage(toDistance, gotoNextBlock);
-		    }
 		    if (fetchAListPage(toDistance, gotoNextPage)) {
 			page_number++;
 			found_on_page = 0;
@@ -1144,13 +1140,15 @@ public class GCImporter {
 			possibleUpdateList.remove(chWaypoint);
 			if (!ch.is_found()) {
 			    if (ch.getCacheStatus().length() > 0) {
-				if (ch.getCacheStatus().indexOf("PM") < 0)
+				if (ch.getCacheStatus().indexOf("PM") < 0) {
 				    ch.setCacheStatus(ch.getCacheStatus() + ", PM");
+				    ch.save();
+				}
 				// else nothing to do
 			    } else {
 				ch.setCacheStatus("PM");
+				ch.save();
 			    }
-			    ch.save();
 			}
 		    }
 		}
