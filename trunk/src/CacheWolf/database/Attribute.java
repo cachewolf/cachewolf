@@ -246,7 +246,7 @@ public class Attribute {
     private final static int GC_ID = 4; // auch OC neues gpx
     private final static int GC_TEXT = 5; // for export , didn't extract by myself, copied from forum
     private static final String[][] attRef = { // 
-	    { "00", "2502", "available", "38", "13", "Available at all times" },//
+    { "00", "2502", "available", "38", "13", "Available at all times" },//
 	    { "01", "2504", "bicycles", "0", "32", "Bicycles" },//
 	    { "02", "2506", "boat", "52", "4", "Boat" },//
 	    // {"03","2508","cactus","0","0",""},//
@@ -320,8 +320,7 @@ public class Attribute {
 	    { "69", "2642", "tools", "46", "0", "Special Tool required" },//
 	    { "70", "2648", "wiki", "54", "154", "Investigation" }, // OC special
 	    { "71", "2650", "wwwlink", "7", "107", "Hyperlink to another caching portal only" }, // OC special
-	    { "72", "2652", "landf", "0", "45", "Lost And Found Tour" }, { "73", "2654", "rv", "0", "46", "Truck Driver/RV" },
-	    { "74", "2656", "field_puzzle", "0", "47", "Field Puzzle" },//
+	    { "72", "2652", "landf", "0", "45", "Lost And Found Tour" }, { "73", "2654", "rv", "0", "46", "Truck Driver/RV" }, { "74", "2656", "field_puzzle", "0", "47", "Field Puzzle" },//
 	    { "75", "2658", "uv", "0", "48", "UV Light required" }, //
 	    { "76", "2660", "snowshoes", "0", "49", "Snowshoes" }, //
 	    { "77", "2662", "skiis", "0", "50", "Cross Country Skis" }, //
@@ -336,8 +335,14 @@ public class Attribute {
 	    { "86", "2680", "food", "0", "59", "Food nearby" }, //
 	    { "87", "2682", "wirelessbeacon", "0", "60", "Wireless Beacon" }, //
 	    { "88", "2584", "firstaid", "23", "123", "First aid available" }, // OC special
-	    { "89", "2686", "sponsored", "0", "61", "Sponsored Cache" }, { "90", "2688", "frontyard", "0", "65", "Front Yard (Private Residence)" }, { "91", "2690", "seasonal", "0", "62", "Seasonal Access" },
-	    { "92", "2692", "teamwork", "0", "66", "Teamwork Required" }, { "93", "2694", "touristOK", "0", "63", "Tourist Friendly" }, { "94", "2696", "treeclimbing", "0", "64", "Tree Climbing" },
+	    { "89", "2686", "sponsored", "0", "61", "Sponsored Cache" }, //
+	    { "90", "2688", "frontyard", "0", "65", "Front Yard (Private Residence)" }, //
+	    { "91", "2690", "seasonal", "0", "62", "Seasonal Access" }, //
+	    { "92", "2692", "teamwork", "0", "66", "Teamwork Required" }, //
+	    { "93", "2694", "touristOK", "0", "63", "Tourist Friendly" }, //
+	    { "94", "2696", "treeclimbing", "0", "64", "Tree Climbing" }, //
+	    { "95", "2698", "geotour", "0", "67", "GeoTour" }, //
+	    { "96", "2700", "partnership", "0", "61", "Partnership Cache" }, //
     // {"-1","2500","error","0","0",""}, //
     };
     public static int maxAttRef = attRef.length;
