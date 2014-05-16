@@ -2676,7 +2676,8 @@ public class GCImporter {
 
 		    typeRex.search(rowBlock);
 		    if (typeRex.didMatch()) {
-			hd.setType(CacheType.gpxType2CwType("Waypoint|" + typeRex.stringMatched(1)));
+			hd.setType(CacheType.gcSpider2CwType(typeRex.stringMatched(1)));
+			//hd.setType(CacheType.gpxType2CwType("Waypoint|" + typeRex.stringMatched(1)));
 		    } else {
 			Preferences.itself().log("check typeRex in spider.def" + Preferences.NEWLINE + rowBlock);
 		    }
