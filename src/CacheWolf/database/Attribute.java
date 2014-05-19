@@ -335,14 +335,13 @@ public class Attribute {
 	    { "86", "2680", "food", "0", "59", "Food nearby" }, //
 	    { "87", "2682", "wirelessbeacon", "0", "60", "Wireless Beacon" }, //
 	    { "88", "2584", "firstaid", "23", "123", "First aid available" }, // OC special
-	    { "89", "2686", "sponsored", "0", "61", "Sponsored Cache" }, //
+	    { "89", "2686", "partnership", "0", "61", "Partnership Cache" }, // previous : sponsored
 	    { "90", "2688", "frontyard", "0", "65", "Front Yard (Private Residence)" }, //
 	    { "91", "2690", "seasonal", "0", "62", "Seasonal Access" }, //
 	    { "92", "2692", "teamwork", "0", "66", "Teamwork Required" }, //
 	    { "93", "2694", "touristOK", "0", "63", "Tourist Friendly" }, //
 	    { "94", "2696", "treeclimbing", "0", "64", "Tree Climbing" }, //
 	    { "95", "2698", "geotour", "0", "67", "GeoTour" }, //
-	    { "96", "2700", "partnership", "0", "61", "Partnership Cache" }, //
     // {"-1","2500","error","0","0",""}, //
     };
     public static int maxAttRef = attRef.length;
