@@ -1440,11 +1440,8 @@ public class GCImporter {
 	// (is permanent, must be reset)
 	// must do post (get no longer works)
 
-	String languages[] = { "en-US", "de-DE", "fr-FR", "pt-PT", "cs-CZ", //		
-		"da-DK", "sv-SE", "es-ES", "et-EE", "it-IT", //
-		"el-GR", "lv-LV", "nl-NL", "ca-ES", "pl-PL", //
-		"et-EE", "nb-NO", "ko-KR", "hu-HU", "ro-RO", //
-		"ja-JP", //
+	String languages[] = { "en-US", "ca-ES", "cs-CZ", "da-DK", "de-DE", "el-GR", "et-EE", "es-ES", "fr-FR", "it-IT",//		
+		"ja-JP", "ko-KR", "lv-LV", "hu-HU", "nl-NL", "nb-NO", "pl-PL", "pt-PT", "ro-RO", "fi-FI", "sv-SE",//
 	};
 	String languageCode = "00"; // defaults to "en-US"
 	for (int i = 0; i < languages.length; i++) {
