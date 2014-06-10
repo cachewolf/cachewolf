@@ -729,6 +729,7 @@ public class CacheHolder {
 	    varParams.put("DECRYPTEDHINTS", "");
 	    varParams.put("COUNTRY", "");
 	    varParams.put("STATE", "");
+	    varParams.put("OWNLOG", "");
 	} else {
 	    // todo &lt;br&gt;
 	    varParams.put("URL", det.URL);
@@ -813,6 +814,12 @@ public class CacheHolder {
 		logVect.add(logs);
 	    }
 	    varParams.put("LOGS", logVect);
+	    
+	    if (det.OwnLog != null) {
+	    	varParams.put("OWNLOG", (ModTyp == 0) ? SafeXML.cleanGPX(STRreplace.replace(det.OwnLog.getMessage(), "<br />", "\n")) : det.OwnLog.getMessage());
+	    } else {
+	    	varParams.put("OWNLOG", "");
+	    }
 
 	    Vector addiVect = new Vector(addiWpts.size());
 	    for (int i = 0; i < addiWpts.size(); i++) {
