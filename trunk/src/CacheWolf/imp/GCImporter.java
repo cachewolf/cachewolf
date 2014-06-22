@@ -1625,11 +1625,22 @@ public class GCImporter {
 	    Preferences.itself().log("[SpiderGC.java:fetchAListPage] check rexViewstate1!", null);
 	}
 
+	final Regex rexViewstate2 = new Regex("id=\"__VIEWSTATE2\" value=\"(.*?)\" />");
+	String viewstate2;
+	rexViewstate2.search(htmlListPage);
+	if (rexViewstate2.didMatch()) {
+	    viewstate2 = rexViewstate2.stringMatched(1);
+	} else {
+	    viewstate2 = "";
+	    Preferences.itself().log("[SpiderGC.java:fetchAListPage] check rexViewstate2!", null);
+	}
+
 	final String postData = "__EVENTTARGET=" + URL.encodeURL(whatPage, false) //
 		+ "&" + "__EVENTARGUMENT=" //
-		+ "&" + "__VIEWSTATEFIELDCOUNT=2" //
+		+ "&" + "__VIEWSTATEFIELDCOUNT=3" //
 		+ "&" + "__VIEWSTATE=" + URL.encodeURL(viewstate, false) //
-		+ "&" + "__VIEWSTATE1=" + URL.encodeURL(viewstate1, false);
+		+ "&" + "__VIEWSTATE1=" + URL.encodeURL(viewstate1, false)//
+		+ "&" + "__VIEWSTATE2=" + URL.encodeURL(viewstate2, false);
 	try {
 	    UrlFetcher.setpostData(postData);
 	    htmlListPage = UrlFetcher.fetch(url);
