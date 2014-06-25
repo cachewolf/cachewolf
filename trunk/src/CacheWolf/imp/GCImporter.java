@@ -709,7 +709,7 @@ public class GCImporter {
 		    }
 		}
 	    } // loop pages
-	    Preferences.itself().log("Nr Caches now: " + downloadList.size());
+	    Preferences.itself().log("Nr Caches now: " + newTillNow + downloadList.size());
 	} // try
 	catch (final Exception ex) {
 	    Preferences.itself().log("Download error : ", ex, true);
@@ -1190,6 +1190,7 @@ public class GCImporter {
 		} // For test == SPIDER_IGNORE_PREMIUM and SPIDER_IGNORE there is nothing to do
 	    }
 	}
+	downloadList.clear();
     }
 
     private void updateCaches() {
