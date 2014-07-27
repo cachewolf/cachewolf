@@ -831,7 +831,7 @@ public class GCImporter {
     private boolean fillDownloadAndUpdateList(double fromDistance, double toDistance) {
 	boolean withinMaxLimits = true;
 	int numFinds = getFirstListPage(fromDistance, toDistance);
-	presetUpdateList(fromDistance, toDistance);
+	fillPossibleUpdateAndClearSureUpdateList(fromDistance, toDistance);
 	// remember for later checks
 	final int startSize = possibleUpdateList.size();
 	int page_number = 1;
@@ -1053,7 +1053,7 @@ public class GCImporter {
 	return counter;
     }
 
-    private void presetUpdateList(double fromDistance, double toDistance) {
+    private void fillPossibleUpdateAndClearSureUpdateList(double fromDistance, double toDistance) {
 
 	if (possibleUpdateList == null) {
 	    possibleUpdateList = new Hashtable(MainForm.profile.cacheDB.size());
