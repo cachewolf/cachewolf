@@ -364,7 +364,7 @@ public final class CacheType {
      * @return non qualified name of image
      */
     public static String typeImageForId(final byte typeId) {
-	return cTypRef[Ref_Index(typeId)]._imageName;
+	return cTypRef[Ref_Index(typeId)]._imageName + ".png";
     }
 
     /**
