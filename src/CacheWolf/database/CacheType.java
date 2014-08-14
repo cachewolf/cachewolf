@@ -113,7 +113,6 @@ public final class CacheType {
 	    // todo definitions for Filter and Filterselection for APE, MAZE, ...
 	    new CTyp(CW_TYPE_APE, (byte) 102, 'C', "", "9", "", (byte) -1, 'A', "typeApe", new String[] { "Geocache|Project APE Cache", "Geocache", "Project APE Cache", "APE" }, 16, 13, 19, 0x080000),
 	    new CTyp(CW_TYPE_MAZE, (byte) 103, 'C', "", "1304", "", (byte) -1, 'Z', "typeMaze", new String[] { "Geocache|GPS Adventures Exhibit", "Geocache", "GPS Adventures Exhibit", "MAZE" }, 17, 14, 20, 0x100000),
-	    // new CTyp(CW_TYPE_LAB, (byte) 105, 'C', "", "105", "", (byte) -1, 'Z', "typeLab", new String[] { "Geocache|GPS Adventures Exhibit", "Geocache", "GPS Adventures Exhibit", "MAZE" }, 17, 14, 20, 0x100000),
 	    new CTyp(CW_TYPE_GIGA_EVENT, (byte) 106, 'C', "", "7005", "", (byte) -1, 'X', "typeGigaevent", new String[] { "Geocache|Giga-Event Cache", "Geocache", "Giga-Event Cache", "Giga" }, 22, 15, 9, 0x000200),
 	    // additional waypoints
 	    new CTyp(CW_TYPE_PARKING, (byte) 50, 'A', "50", "Parking Area", "", (byte) -78, 'P', "typeParking", new String[] { "Waypoint|Parking Area", "Parking Area", "Parking Area", "" }, 50, 16, 11, 0x000800),
@@ -131,6 +130,8 @@ public final class CacheType {
 	    new CTyp(CW_TYPE_UNKNOWN, (byte) 1, 'C', "", "", "1", (byte) -1, 'U', "", new String[] { "Geocache|Other", "Geocache", "Other", "Other" }, 21, -1, -1, 0),
 	    new CTyp(CW_TYPE_UNKNOWN, (byte) 7, 'C', "7", "", "7", (byte) -121, 'U', "", new String[] { "Geocache|Quiz", "Geocache", "Quiz", "Quiz" }, 7, -1, -1, 0),
 	    new CTyp(CW_TYPE_UNKNOWN, (byte) 9, 'C', "9", "", "9", (byte) -119, 'U', "", new String[] { "Geocache|Moving", "Geocache", "Moving", "Moving" }, 9, -1, -1, 0),
+	    new CTyp(CW_TYPE_LAB, (byte) 0, 'C', "", "105", "", (byte) -1, 'Z', "typeLab", new String[] { "Geocache|Lab Cache", "Geocache", "Geocache|Lab Cache", "LAB" }, 23, 15, 21, 0x100000),
+	    new CTyp(CW_TYPE_LAB, (byte) 0, 'C', "", "105", "", (byte) -1, 'Z', "typeLab", new String[] { "Groundspeak Lost and Found Celebration", "Geocache", "Groundspeak Lost and Found Celebration", "LAB" }, 23, 15, 21, 0x100000),
 	    new CTyp(CW_TYPE_TRADITIONAL, (byte) 10, 'C', "10", "", "10", (byte) -118, 'U', "", new String[] { "Geocache|DriveIn", "Geocache", "DriveIn", "DriveIn" }, 10, -1, -1, 0),
 	    new CTyp(CW_TYPE_EVENT, (byte) 14, 'C', "", "3653", "", (byte) -1, 'X', "", new String[] { "Geocache|Lost and Found Event Cache", "Geocache", "Lost and Found Event Cache", "" }, 6, -1, -1, 0),
 	    new CTyp(CW_TYPE_UNKNOWN, (byte) 108, 'C', "", "", "8", (byte) -1, 'U', "", new String[] { "only on OC download", "", "", "" }, 19, -1, -1, 0),
