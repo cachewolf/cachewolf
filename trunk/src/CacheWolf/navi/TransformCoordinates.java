@@ -190,7 +190,8 @@ public final class TransformCoordinates {
 	    EPSG_ITALIAN_GB_EW2).toCoordinatePoint(TransformCoordinates.LOCALSYSTEM_ITALIAN_GB));
 
     // see also http://hal.gis.univie.ac.at/karto/lehr/fachbereiche/geoinfo/givi0304/tutorials/ersteschritte/projectionen.htm#ParMGIWGS84
-    // taken from taken from http://www.crs-geo.eu/crseu/EN/Home/homepage__node.html?__nnn=true click on "national CRS" -> Austria -> AT (translation *-1 as of 11-8-2009)
+    // taken from taken from http://www.crs-geo.eu/crseu/EN/Home/homepage__node.html?__nnn=true
+    // click on "national CRS" -> Austria -> AT (translation *-1 as of 11-8-2009)
     /** Austria Datum Hermannskogel, AT_MGI accuracy about 1.5m */
     private static final TransformParameters LAMBERT_AUSTRIAN_OLD_TO_WGS84 = new TransformParameters(577.326, 90.129, 463.919, -5.136599, -1.4742, -5.297044, 2.4232, BESSEL);
     // Übersicht über alle Transformparameter und EPSG-Codes und Projektionenm (PORJ4):
