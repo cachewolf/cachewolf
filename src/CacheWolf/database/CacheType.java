@@ -130,12 +130,12 @@ public final class CacheType {
 	    new CTyp(CW_TYPE_UNKNOWN, (byte) 1, 'C', "", "", "1", (byte) -1, 'U', "", new String[] { "Geocache|Other", "Geocache", "Other", "Other" }, 21, -1, -1, 0),
 	    new CTyp(CW_TYPE_UNKNOWN, (byte) 7, 'C', "7", "", "7", (byte) -121, 'U', "", new String[] { "Geocache|Quiz", "Geocache", "Quiz", "Quiz" }, 7, -1, -1, 0),
 	    new CTyp(CW_TYPE_UNKNOWN, (byte) 9, 'C', "9", "", "9", (byte) -119, 'U', "", new String[] { "Geocache|Moving", "Geocache", "Moving", "Moving" }, 9, -1, -1, 0),
-	    new CTyp(CW_TYPE_LAB, (byte) 0, 'C', "", "105", "", (byte) -1, 'Z', "typeLab", new String[] { "Geocache|Lab Cache", "Geocache", "Geocache|Lab Cache", "LAB" }, 23, 15, 21, 0x100000),
-	    new CTyp(CW_TYPE_LAB, (byte) 0, 'C', "", "105", "", (byte) -1, 'Z', "typeLab", new String[] { "Groundspeak Lost and Found Celebration", "Geocache", "Groundspeak Lost and Found Celebration", "LAB" }, 23, 15, 21, 0x100000),
+	    new CTyp(CW_TYPE_LAB, (byte) 0, 'C', "", "105", "", (byte) -1, 'Z', "typeLab", new String[] { "Geocache|Lab Cache", "Geocache", "Geocache|Lab Cache", "LAB" }, 2, 1, 0, 0x000001),
+	    new CTyp(CW_TYPE_LAB, (byte) 0, 'C', "", "105", "", (byte) -1, 'Z', "typeLab", new String[] { "Groundspeak Lost and Found Celebration", "Geocache", "Groundspeak Lost and Found Celebration", "LAB" }, 2, 1, 0, 0x000001),
 	    new CTyp(CW_TYPE_TRADITIONAL, (byte) 10, 'C', "10", "", "10", (byte) -118, 'U', "", new String[] { "Geocache|DriveIn", "Geocache", "DriveIn", "DriveIn" }, 10, -1, -1, 0),
 	    new CTyp(CW_TYPE_EVENT, (byte) 14, 'C', "", "3653", "", (byte) -1, 'X', "", new String[] { "Geocache|Lost and Found Event Cache", "Geocache", "Lost and Found Event Cache", "" }, 6, -1, -1, 0),
-	    new CTyp(CW_TYPE_UNKNOWN, (byte) 108, 'C', "", "", "8", (byte) -1, 'U', "", new String[] { "only on OC download", "", "", "" }, 19, -1, -1, 0),
-	    new CTyp(CW_TYPE_WHEREIGO, (byte) 15, 'C', "", "", "", (byte) -62, 'G', "", new String[] { "Hack for V2 Typ", "", "", "" }, -1, -1, -1, 0), };
+	    new CTyp(CW_TYPE_UNKNOWN, (byte) 108, 'P', "", "", "8", (byte) -1, 'U', "", new String[] { "only on OC download", "", "", "" }, 19, -1, -1, 0),
+	    new CTyp(CW_TYPE_WHEREIGO, (byte) 15, 'P', "", "", "", (byte) -62, 'G', "", new String[] { "Hack for V2 Typ", "", "", "" }, -1, -1, -1, 0), };
     // public static final int anzCacheTyps=cTypRef.length;
     public static final byte maxCWCType = 110;
     static final byte[] Ref_Index = new byte[maxCWCType];
