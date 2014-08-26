@@ -294,6 +294,7 @@ public class UrlFetcher {
 		    */
 		    if (rp.length == 2) {
 			setCookie(rp[0] + ";" + conn.getHost(), rp[1]);
+			// Preferences.itself().log(rp[0], null);
 		    }
 		}
 	    }
