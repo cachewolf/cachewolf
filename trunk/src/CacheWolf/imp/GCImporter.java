@@ -1292,20 +1292,22 @@ public class GCImporter {
 	    retry = false;
 	    retrycount = retrycount + 1;
 	    // we try to get a userId by logging in with username and password
-	    // if (Preferences.itself().userID.length() == 0) {
-	    if (gcLogin()) {
-		UrlFetcher.rememberCookies();
-		Preferences.itself().userID = UrlFetcher.getCookie("userid;www.geocaching.com");
-		if (Preferences.itself().userID == null) {
-		    Preferences.itself().userID = "";
-		    new InfoBox(MyLocale.getMsg(5523, "Login error!"), MyLocale.getMsg(5524, "Please correct your account in preferences\n\n see http://cachewolf.aldos.de/userid.html !")).wait(FormBase.OKB);
+	    if (Preferences.itself().userID.length() == 0) {
+		if (gcLogin()) {
+		    UrlFetcher.rememberCookies();
+		    Preferences.itself().userID = UrlFetcher.getCookie("userid;www.geocaching.com");
+		    Preferences.itself().userID = Preferences.itself().userID + "!" + UrlFetcher.getCookie("gspkuserid;www.geocaching.com");
+		    //
+		    if (Preferences.itself().userID == null) {
+			Preferences.itself().userID = "";
+			new InfoBox(MyLocale.getMsg(5523, "Login error!"), MyLocale.getMsg(5524, "Please correct your account in preferences\n\n see http://cachewolf.aldos.de/userid.html !")).wait(FormBase.OKB);
+			return false;
+		    }
+		} else {
+		    new InfoBox(MyLocale.getMsg(5523, "Login error!"), MyLocale.getMsg(5525, "Perhaps GC is not available. This should not happen!")).wait(FormBase.OKB);
 		    return false;
 		}
-	    } else {
-		new InfoBox(MyLocale.getMsg(5523, "Login error!"), MyLocale.getMsg(5525, "Perhaps GC is not available. This should not happen!")).wait(FormBase.OKB);
-		return false;
 	    }
-	    // }
 
 	    if (Preferences.itself().userID.length() > 0) {
 		// we have a saved userID (perhaps invalid)
@@ -1313,6 +1315,7 @@ public class GCImporter {
 		case 0:
 		    loggedIn = true;
 		    Preferences.itself().userID = UrlFetcher.getCookie("userid;www.geocaching.com");
+		    Preferences.itself().userID = Preferences.itself().userID + "!" + UrlFetcher.getCookie("gspkuserid;www.geocaching.com");
 		    Preferences.itself().savePreferences();
 		    break;
 		case 1:
@@ -1353,8 +1356,12 @@ public class GCImporter {
     private int checkGCSettings() {
 	String page = "";
 	String gcSettingsUrl = "http://www.geocaching.com/account/ManagePreferences.aspx";
-	// UrlFetcher.clearCookies();
-	// UrlFetcher.setCookie("userid;www.geocaching.com", Preferences.itself().userID);
+	UrlFetcher.clearCookies();
+	String cookies[] = mString.split(Preferences.itself().userID, '!');
+	if (cookies.length > 1) {
+	    UrlFetcher.setCookie("userid;www.geocaching.com", cookies[0]);
+	    UrlFetcher.setCookie("gspkuserid;www.geocaching.com", cookies[1]);
+	}
 	try {
 	    page = UrlFetcher.fetch(gcSettingsUrl); // getting the sessionid
 	} catch (final Exception ex) {
