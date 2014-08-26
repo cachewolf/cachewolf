@@ -1292,20 +1292,20 @@ public class GCImporter {
 	    retry = false;
 	    retrycount = retrycount + 1;
 	    // we try to get a userId by logging in with username and password
-	    if (Preferences.itself().userID.length() == 0) {
-		if (gcLogin()) {
-		    UrlFetcher.rememberCookies();
-		    Preferences.itself().userID = UrlFetcher.getCookie("userid;www.geocaching.com");
-		    if (Preferences.itself().userID == null) {
-			Preferences.itself().userID = "";
-			new InfoBox(MyLocale.getMsg(5523, "Login error!"), MyLocale.getMsg(5524, "Please correct your account in preferences\n\n see http://cachewolf.aldos.de/userid.html !")).wait(FormBase.OKB);
-			return false;
-		    }
-		} else {
-		    new InfoBox(MyLocale.getMsg(5523, "Login error!"), MyLocale.getMsg(5525, "Perhaps GC is not available. This should not happen!")).wait(FormBase.OKB);
+	    // if (Preferences.itself().userID.length() == 0) {
+	    if (gcLogin()) {
+		UrlFetcher.rememberCookies();
+		Preferences.itself().userID = UrlFetcher.getCookie("userid;www.geocaching.com");
+		if (Preferences.itself().userID == null) {
+		    Preferences.itself().userID = "";
+		    new InfoBox(MyLocale.getMsg(5523, "Login error!"), MyLocale.getMsg(5524, "Please correct your account in preferences\n\n see http://cachewolf.aldos.de/userid.html !")).wait(FormBase.OKB);
 		    return false;
 		}
+	    } else {
+		new InfoBox(MyLocale.getMsg(5523, "Login error!"), MyLocale.getMsg(5525, "Perhaps GC is not available. This should not happen!")).wait(FormBase.OKB);
+		return false;
 	    }
+	    // }
 
 	    if (Preferences.itself().userID.length() > 0) {
 		// we have a saved userID (perhaps invalid)
@@ -1353,8 +1353,8 @@ public class GCImporter {
     private int checkGCSettings() {
 	String page = "";
 	String gcSettingsUrl = "http://www.geocaching.com/account/ManagePreferences.aspx";
-	UrlFetcher.clearCookies();
-	UrlFetcher.setCookie("userid;www.geocaching.com", Preferences.itself().userID);
+	// UrlFetcher.clearCookies();
+	// UrlFetcher.setCookie("userid;www.geocaching.com", Preferences.itself().userID);
 	try {
 	    page = UrlFetcher.fetch(gcSettingsUrl); // getting the sessionid
 	} catch (final Exception ex) {
@@ -2221,6 +2221,10 @@ public class GCImporter {
 	boolean fertig = false;
 	int num = 100;
 
+	if (maxLogs == -1) {
+	    //maxLogs=Integer.MAX_VALUE;
+	    fetchAllLogs = true;
+	}
 	if (!fetchAllLogs) {
 	    if (maxLogs < 100)
 		num = maxLogs + 1;
@@ -2275,7 +2279,7 @@ public class GCImporter {
 		    foundown = true;
 		    reslts.add(new Log(icon, d, name, logText));
 		}
-		if (nLogs <= maxLogs) {
+		if (nLogs <= maxLogs || fetchAllLogs) {
 		    reslts.add(new Log(icon, d, name, logText));
 		} else {
 		    if (foundown || !fetchAllLogs) {
@@ -2287,8 +2291,10 @@ public class GCImporter {
 	} while (!fertig);
 
 	if (nLogs > maxLogs) {
-	    // there are more logs
-	    reslts.add(Log.maxLog());
+	    if (!fetchAllLogs) {
+		// there are more logs
+		reslts.add(Log.maxLog());
+	    }
 	}
 	// Bei Update wird es doppelt berechnet
 	ch.setNoFindLogs(reslts.countNotFoundLogs());
