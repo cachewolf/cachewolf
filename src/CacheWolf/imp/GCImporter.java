@@ -1294,11 +1294,11 @@ public class GCImporter {
 	    // we try to get a userId by logging in with username and password
 	    if (Preferences.itself().userID.length() == 0) {
 		if (gcLogin()) {
+		    Preferences.itself().log("[gcLogin]");
 		    UrlFetcher.rememberCookies();
 		    Preferences.itself().userID = UrlFetcher.getCookie("userid;www.geocaching.com");
 		    Preferences.itself().userID = Preferences.itself().userID + "!" + UrlFetcher.getCookie("gspkuserid;www.geocaching.com");
-		    //
-		    if (Preferences.itself().userID == null) {
+		    if (Preferences.itself().userID == "null!null") {
 			Preferences.itself().userID = "";
 			new InfoBox(MyLocale.getMsg(5523, "Login error!"), MyLocale.getMsg(5524, "Please correct your account in preferences\n\n see http://cachewolf.aldos.de/userid.html !")).wait(FormBase.OKB);
 			return false;
@@ -1359,8 +1359,10 @@ public class GCImporter {
 	UrlFetcher.clearCookies();
 	String cookies[] = mString.split(Preferences.itself().userID, '!');
 	if (cookies.length > 1) {
-	    UrlFetcher.setCookie("userid;www.geocaching.com", cookies[0]);
-	    UrlFetcher.setCookie("gspkuserid;www.geocaching.com", cookies[1]);
+	    if (cookies[0] != "null")
+		UrlFetcher.setCookie("userid;www.geocaching.com", cookies[0]);
+	    if (cookies[1] != "null")
+		UrlFetcher.setCookie("gspkuserid;www.geocaching.com", cookies[1]);
 	}
 	try {
 	    page = UrlFetcher.fetch(gcSettingsUrl); // getting the sessionid
@@ -1368,7 +1370,7 @@ public class GCImporter {
 	    Preferences.itself().log("[checkGCSettings]:Exception calling " + gcSettingsUrl + " with userID " + Preferences.itself().userID, ex);
 	    return 2;
 	}
-
+	Preferences.itself().log("[checkGCSettings]");
 	UrlFetcher.rememberCookies();
 	String SessionId = UrlFetcher.getCookie("ASP.NET_SessionId;www.geocaching.com");
 	if (SessionId == null) {
