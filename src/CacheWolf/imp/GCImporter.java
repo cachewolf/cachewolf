@@ -1613,44 +1613,44 @@ public class GCImporter {
      */
     private boolean fetchAListPage(int distance, String whatPage) {
 	boolean ret = true;
+	int searchPosition = 0;
 	String url = makelistPagesUrl(distance);
-
-	final Regex rexViewstate = new Regex("id=\"__VIEWSTATE\" value=\"(.*?)\" />");
-	String viewstate;
-	rexViewstate.search(htmlListPage);
-	if (rexViewstate.didMatch()) {
-	    viewstate = rexViewstate.stringMatched(1);
+	final Regex rexViewstateFieldCount = new Regex("id=\"__VIEWSTATEFIELDCOUNT\" value=\"(.*?)\" />");
+	String sfieldcount;
+	rexViewstateFieldCount.search(htmlListPage);
+	if (rexViewstateFieldCount.didMatch()) {
+	    sfieldcount = rexViewstateFieldCount.stringMatched(1);
 	} else {
-	    viewstate = "";
-	    Preferences.itself().log("[SpiderGC.java:fetchAListPage] check rexViewstate!", null);
+	    sfieldcount = "";
+	    Preferences.itself().log("[SpiderGC.java:fetchAListPage] __VIEWSTATEFIELDCOUNT not found!" + htmlListPage, null);
 	}
+	int fieldcount = Common.parseInt(sfieldcount);
+	searchPosition = rexViewstateFieldCount.matchedTo();
 
-	final Regex rexViewstate1 = new Regex("id=\"__VIEWSTATE1\" value=\"(.*?)\" />");
-	String viewstate1;
-	rexViewstate1.search(htmlListPage);
-	if (rexViewstate1.didMatch()) {
-	    viewstate1 = rexViewstate1.stringMatched(1);
-	} else {
-	    viewstate1 = "";
-	    Preferences.itself().log("[SpiderGC.java:fetchAListPage] check rexViewstate1!", null);
-	}
-
-	final Regex rexViewstate2 = new Regex("id=\"__VIEWSTATE2\" value=\"(.*?)\" />");
-	String viewstate2;
-	rexViewstate2.search(htmlListPage);
-	if (rexViewstate2.didMatch()) {
-	    viewstate2 = rexViewstate2.stringMatched(1);
-	} else {
-	    viewstate2 = "";
-	    Preferences.itself().log("[SpiderGC.java:fetchAListPage] check rexViewstate2!", null);
-	}
-
-	final String postData = "__EVENTTARGET=" + URL.encodeURL(whatPage, false) //
+	String postData = "__EVENTTARGET=" + URL.encodeURL(whatPage, false) //
 		+ "&" + "__EVENTARGUMENT=" //
-		+ "&" + "__VIEWSTATEFIELDCOUNT=3" //
-		+ "&" + "__VIEWSTATE=" + URL.encodeURL(viewstate, false) //
-		+ "&" + "__VIEWSTATE1=" + URL.encodeURL(viewstate1, false)//
-		+ "&" + "__VIEWSTATE2=" + URL.encodeURL(viewstate2, false);
+		+ "&" + "__VIEWSTATEFIELDCOUNT=" //
+		+ sfieldcount;
+
+	final Regex rexViewstate = new Regex("id=\"__VIEWSTATE[0-9]?\" value=\"(.*?)\" />");
+	searchPosition = 0;
+	for (int i = 1; i <= fieldcount; i++) {
+	    rexViewstate.searchFrom(rexViewstateFieldCount.right(), searchPosition);
+	    String viewstate;
+	    if (rexViewstate.didMatch()) {
+		viewstate = rexViewstate.stringMatched(1);
+		searchPosition = rexViewstate.matchedTo();
+	    } else {
+		viewstate = "";
+		Preferences.itself().log("[SpiderGC.java:fetchAListPage] Viewstate " + i + " not found." + htmlListPage, null);
+	    }
+	    if (i == 1)
+		postData = postData + "&" + "__VIEWSTATE=" + URL.encodeURL(viewstate, false); //
+	    else
+		postData = postData + "&" + "__VIEWSTATE" + (i - 1) + "=" + URL.encodeURL(viewstate, false); //
+
+	}
+
 	try {
 	    UrlFetcher.setpostData(postData);
 	    htmlListPage = UrlFetcher.fetch(url);
@@ -2247,6 +2247,7 @@ public class GCImporter {
 	    String fetchResult = "";
 	    try {
 		fetchResult = UrlFetcher.fetch(url);
+		/*
 		char[] fr = fetchResult.toCharArray();
 		for (int i = 0; i < fr.length; i++) {
 		    if (fr[i] == 0) {
@@ -2254,6 +2255,7 @@ public class GCImporter {
 		    }
 		}
 		fetchResult = String.valueOf(fr);
+		*/
 		resp = new JSONObject(fetchResult);
 	    } catch (Exception e) {
 		if (fetchResult == null)
