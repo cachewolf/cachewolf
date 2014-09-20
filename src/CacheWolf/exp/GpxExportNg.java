@@ -774,16 +774,20 @@ public class GpxExportNg {
 	} else {
 	    exportlogs = logs.size();
 	}
-	// own log always (found)
-	if (chD.OwnLogId.equals("") || chD.OwnLog == null) {
-	    Preferences.itself().log(chD.getParent().getWayPoint() + " missing own LogID or Log", null);
-	    if (exportStyle == STYLE_GPX_MYFINDS)
-		return "";
-	    if (chD.OwnLog != null) {
-		addLog("4711", chD.OwnLog, finderid, ret);
+	if (ch.is_found()) {
+	    // own log always (found)
+	    if (chD.OwnLogId.equals("") || chD.OwnLog == null) {
+		if (exportStyle == STYLE_GPX_MYFINDS) {
+		    Preferences.itself().log(chD.getParent().getWayPoint() + " missing own LogID or Log", null);
+		    return "";
+		}
+		if (chD.OwnLog != null) {
+		    // chD.OwnLogId muss dann "" sein
+		    addLog("4711", chD.OwnLog, finderid, ret);
+		}
+	    } else {
+		addLog(chD.OwnLogId, chD.OwnLog, finderid, ret);
 	    }
-	} else {
-	    addLog(chD.OwnLogId, chD.OwnLog, finderid, ret);
 	}
 	if (exportStyle != STYLE_GPX_MYFINDS) {
 	    // add log with attributes
@@ -791,6 +795,7 @@ public class GpxExportNg {
 		addLog(ch.GetCacheID() + Integer.toString(exportlogs), createAttrLog(ch), "", ret);
 	    }
 	    // todo dont export ownlog
+	    // CW doesn't save the LogID. So we generate by ch.GetCacheID() + Integer.toString(i)
 	    for (int i = 0; i < exportlogs; i++) {
 		addLog(ch.GetCacheID() + Integer.toString(i), logs.getLog(i), "", ret);
 	    }
