@@ -656,7 +656,7 @@ public class GPXImporter extends MinML {
 		    String wayPoint = holder.getWayPoint();
 		    if (wayPoint.startsWith("GC")) {
 			imgSpider.fetchWayPointPage(wayPoint);
-			chD.setLongDescription(imgSpider.getDescription());
+			chD.setLongDescription(imgSpider.getDescription(0));
 			imgSpider.getImages(chD);
 			// todo if Attributes are in the gpx (Version 1.1.0) : don't spider them
 			imgSpider.getAttributes(chD);
