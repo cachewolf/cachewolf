@@ -73,7 +73,7 @@ import ewesoft.xml.sax.AttributeList;
 public class GPXImporter extends MinML {
     CacheDB cacheDB;
     CacheHolder holder;
-    String strData, saveDir, logData, logIcon, logDate, logFinder, logId;
+    String strData, saveDir, logData, logIcon, logDate, logFinder, logId, finderID;
     boolean inWpt, inCache, inLogs, inBug;
     public XMLElement document;
     private Vector files = new Vector();
@@ -191,13 +191,10 @@ public class GPXImporter extends MinML {
 	} catch (Exception e) {
 
 	    if (holder == null) {
-
 		Preferences.itself().log("[GPXImporter:DoIt] no holder LogID=" + logId, e, true);
 	    } else if (holder.getWayPoint() == null) {
-
 		Preferences.itself().log("[GPXImporter:DoIt] no waypoint LogID=" + logId, e, true);
 	    } else if (holder.getWayPoint().length() > 0) {
-
 		Preferences.itself().log("[GPXImporter:DoIt] " + holder.getWayPoint() + " LogID=" + logId, e, true);
 	    } else {
 		Preferences.itself().log("[GPXImporter:DoIt] " + holder.getPos().toString() + " LogID=" + logId, e, true);
@@ -322,6 +319,10 @@ public class GPXImporter extends MinML {
 	    logId = atts.getValue("id");
 	    return;
 	}
+	if (name.equals("groundspeak:finder") || name.equals("geocacher") || name.equals("finder") || name.equals("terra:user")) {
+	    finderID = atts.getValue("id");
+	    return;
+	}
 	if (name.equals("groundspeak:travelbugs")) {
 	    inBug = true;
 	    holder.getCacheDetails(false).Travelbugs.clear();
@@ -362,13 +363,13 @@ public class GPXImporter extends MinML {
 		return;
 	    }
 	    if (name.equals("groundspeak:log") || name.equals("log") || name.equals("terra:log")) {
-		holder.getCacheDetails(false).CacheLogs.add(new Log(logIcon, logDate, logFinder, logData));
+		holder.getCacheDetails(false).CacheLogs.add(new Log(logId, finderID, logIcon, logDate, logFinder, logData));
 		if ((logIcon.equals("icon_smile.gif") || logIcon.equals("icon_camera.gif") || logIcon.equals("icon_attended.gif"))
-			&& (SafeXML.cleanback(logFinder).equalsIgnoreCase(Preferences.itself().myAlias) || (SafeXML.cleanback(logFinder).equalsIgnoreCase(Preferences.itself().myAlias2)))) {
+			&& (SafeXML.html2iso8859s1(logFinder).equalsIgnoreCase(Preferences.itself().myAlias) || (SafeXML.html2iso8859s1(logFinder).equalsIgnoreCase(Preferences.itself().myAlias2)))) {
 		    holder.setCacheStatus(logDate);
 		    holder.setFound(true);
 		    holder.getCacheDetails(false).OwnLogId = logId;
-		    holder.getCacheDetails(false).OwnLog = new Log(logIcon, logDate, logFinder, logData);
+		    holder.getCacheDetails(false).OwnLog = new Log(logId, finderID, logIcon, logDate, logFinder, logData);
 		}
 		return;
 	    }
@@ -514,14 +515,14 @@ public class GPXImporter extends MinML {
 	}
 	if (name.equals("groundspeak:owner") || name.equals("owner") || name.equals("terra:owner")) {
 	    holder.setCacheOwner(strData);
-	    if (Preferences.itself().myAlias.equals(SafeXML.cleanback(strData)) || (SafeXML.cleanback(strData).equalsIgnoreCase(Preferences.itself().myAlias2)))
+	    if (Preferences.itself().myAlias.equals(SafeXML.html2iso8859s1(strData)) || (SafeXML.html2iso8859s1(strData).equalsIgnoreCase(Preferences.itself().myAlias2)))
 		holder.setOwned(true);
 	    return;
 	}
 	if (name.equals("groundspeak:placed_by")) {
 	    if (holder.getCacheOwner().equals("")) {
 		holder.setCacheOwner(strData);
-		if (Preferences.itself().myAlias.equals(SafeXML.cleanback(strData)) || (SafeXML.cleanback(strData).equalsIgnoreCase(Preferences.itself().myAlias2)))
+		if (Preferences.itself().myAlias.equals(SafeXML.html2iso8859s1(strData)) || (SafeXML.html2iso8859s1(strData).equalsIgnoreCase(Preferences.itself().myAlias2)))
 		    holder.setOwned(true);
 	    }
 	    return;
@@ -571,7 +572,7 @@ public class GPXImporter extends MinML {
 
 	if (name.indexOf("short_description") > -1 || name.equals("summary")) {
 	    if (holder.is_HTML())
-		holder.getCacheDetails(false).LongDescription = SafeXML.cleanback(strData) + "<br>"; // <br> needed because we also use a <br> in SpiderGC. Without it the comparison in ch.update fails
+		holder.getCacheDetails(false).LongDescription = SafeXML.html2iso8859s1(strData) + "<br>"; // <br> needed because we also use a <br> in SpiderGC. Without it the comparison in ch.update fails
 	    else
 		holder.getCacheDetails(false).LongDescription = strData + "\n";
 	    return;
@@ -579,7 +580,7 @@ public class GPXImporter extends MinML {
 
 	if (name.indexOf("long_description") > -1 || name.equals("description") || name.equals("terra:description")) {
 	    if (holder.is_HTML())
-		holder.getCacheDetails(false).LongDescription += SafeXML.cleanback(strData);
+		holder.getCacheDetails(false).LongDescription += SafeXML.html2iso8859s1(strData);
 	    else
 		holder.getCacheDetails(false).LongDescription += strData;
 	    return;

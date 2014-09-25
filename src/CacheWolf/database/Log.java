@@ -22,6 +22,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 package CacheWolf.database;
 
 import CacheWolf.Preferences;
+import CacheWolf.utils.Extractor;
 import CacheWolf.utils.MyLocale;
 
 public class Log {
@@ -32,11 +33,15 @@ public class Log {
     /** The date in format yyyy-mm-dd */
     private String date;
     /** The person who logged the cache */
-    private String logger;
+    private String finder;
     /** The logged message */
     private String message;
     /** true, if the logger recommended the cache */
     private boolean recommended = false;
+    /** GC LogID */
+    private String logID;
+    /** GC FinderID */
+    private String finderID;
 
     /**
      * Create a log from a single line in format<br>
@@ -55,22 +60,30 @@ public class Log {
     public Log(String logLine) {
 	// RECOMMENDED="1"<img src='icon_smile.gif'>&nbsp;2007-01-14 xyz<br>a wonderful log
 	try {
-	    int ic1 = logLine.indexOf("RECOMMENDED=\"1\"");
-	    if (ic1 >= 0)
+	    // mit Extractor ist zwar nicht schneller, aber schöner
+	    Extractor ex = new Extractor(logLine, "logID=\"", "\"", 0, true);
+	    logID = ex.findNext();
+	    ex.set("finderID=\"", "\"", 0);
+	    finderID = ex.findNext();
+	    if (logLine.indexOf("RECOMMENDED=\"1\"") >= 0)
 		recommended = true;
 	    else
 		recommended = false;
-	    ic1 = logLine.indexOf("<img src='");
-	    int ic2 = logLine.indexOf("'", ic1 + 10);
-	    icon = logLine.substring(ic1 + 10, ic2);
-	    int d1 = logLine.indexOf(";");
-	    date = logLine.substring(d1 + 1, d1 + 11);
-	    int l1 = d1 + 12;
-	    if (logLine.substring(l1, l1 + 3).equals("by "))
-		l1 += 3;
-	    int l2 = logLine.indexOf("<br>", l1);
-	    logger = logLine.substring(l1, l2);
-	    message = logLine.substring(l2 + 4, logLine.indexOf("]]>", l1));
+	    //ic1 = logLine.indexOf("<img src='");
+	    //int ic2 = logLine.indexOf("'", ic1 + 10);
+	    //icon = logLine.substring(ic1 + 10, ic2);
+	    icon = ex.set("<img src='", "'", 0).findNext();
+	    //int d1 = logLine.indexOf(";");
+	    //date = logLine.substring(d1 + 1, d1 + 11);
+	    date = ex.set("&nbsp;", " ", ex.searchedFrom()).findNext();
+	    // int l1 = d1 + 12;
+	    // if (logLine.substring(l1, l1 + 3).equals("by "))
+	    // l1 += 3;
+	    //int l2 = logLine.indexOf("<br>", l1);
+	    //finder = logLine.substring(l1, l2);
+	    finder = ex.set("by ", "<br>", ex.searchedFrom()).findNext();
+	    // message = logLine.substring(l2 + 4, logLine.indexOf("]]>", l1));
+	    message = ex.set("<br>", "]]>", ex.searchedFrom()).findNext();
 	} catch (Exception ex) {
 	    if (logLine.indexOf("<img") < 0) { // Have we reached the line that states max logs reached
 		icon = MAXLOGICON;
@@ -79,20 +92,24 @@ public class Log {
 		icon = INVALIDLOGICON;
 	    }
 	    date = "1900-00-00";
-	    logger = message = "";
+	    finder = message = "";
+	    logID = "";
+	    finderID = "";
 	}
     }
 
-    public Log(String icon, String date, String logger, String message) {
-	this(icon, date, logger, message, false);
+    public Log(String logID, String finderID, String icon, String date, String logger, String message) {
+	this(logID, finderID, icon, date, logger, message, false);
     }
 
-    public Log(String icon, String date, String logger, String message, boolean recommended_) {
+    public Log(String logID, String finderID, String icon, String date, String logger, String message, boolean recommended_) {
 	this.icon = icon;
 	this.date = date;
-	this.logger = logger;
+	this.finder = logger;
 	this.message = stripControlChars(message.trim());
 	this.recommended = recommended_;
+	this.logID = logID;
+	this.finderID = finderID;
     }
 
     private String stripControlChars(String desc) {
@@ -106,39 +123,31 @@ public class Log {
     }
 
     public static Log maxLog() {
-	return new Log(MAXLOGICON, "1900-00-00", "", "");
+	return new Log("", "", MAXLOGICON, "1900-00-00", "", "");
+    }
+
+    public String getLogID() {
+	return logID;
+    }
+
+    public String getFinderID() {
+	return finderID;
     }
 
     public String getIcon() {
 	return icon;
     }
 
-    public void setIcon(String icon) {
-	this.icon = icon;
-    }
-
     public String getDate() {
 	return date;
     }
 
-    public void setDate(String date) {
-	this.date = date;
-    }
-
     public String getLogger() {
-	return logger;
-    }
-
-    public void setLogger(String logger) {
-	this.logger = logger;
+	return finder;
     }
 
     public String getMessage() {
 	return message;
-    }
-
-    public void setMessage(String message) {
-	this.message = message.trim();
     }
 
     public boolean isRecomended() {
@@ -195,13 +204,15 @@ public class Log {
 
     /** log was written by one of the aliases defined in preferences */
     public boolean isOwnLog() {
-	return this.logger.equalsIgnoreCase(Preferences.itself().myAlias) || this.logger.equalsIgnoreCase(Preferences.itself().myAlias2);
+	return this.finder.equalsIgnoreCase(Preferences.itself().myAlias) || this.finder.equalsIgnoreCase(Preferences.itself().myAlias2);
     }
 
     /** Return XML representation of log for storing in cache.xml */
     public String toXML() {
 	StringBuffer s = new StringBuffer(400);
 	s.append("<LOG>");
+	s.append("logID=\"" + logID + "\" ");
+	s.append("finderID=\"" + finderID + "\" ");
 	if (recommended)
 	    s.append("RECOMMENDED=\"1\"");
 	s.append("<![CDATA[");
@@ -223,7 +234,7 @@ public class Log {
 	s.append("&nbsp;");
 	s.append(date);
 	s.append(" by ");
-	s.append(logger);
+	s.append(finder);
 	s.append("<br>");
 	s.append(message.trim());
 	return s.toString();

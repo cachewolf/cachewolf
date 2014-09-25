@@ -235,7 +235,7 @@ public class Profile {
 	    detfile.print("    <SYNCOC date = \"" + getLast_sync_opencaching() + "\" dist = \"" + getDistOC() + "\"/>\n");
 	    detfile.print("    <SPIDERGC dist = \"" + getDistGC() + "\" mindist = \"" + getMinDistGC() + "\"/>\n");
 	    detfile.print("    <EXPORT style = \"" + getGpxStyle() + "\" target = \"" + getGpxTarget() + "\" id = \"" + getGpxId() + "\"/>\n");
-	    detfile.print("    <mapspath relativeDir = \"" + SafeXML.clean(relativeMapsDir) + "\"/>\n");
+	    detfile.print("    <mapspath relativeDir = \"" + SafeXML.string2Html(relativeMapsDir) + "\"/>\n");
 	    detfile.print("    <TIMEZONE timeZoneOffset = \"" + getTimeZoneOffset() + "\" timeZoneAutoDST = \"" + getTimeZoneAutoDST() + "\"/>\n");
 	    int size = cacheDB.size();
 	    for (int i = 0; i < size; i++) {
@@ -328,9 +328,9 @@ public class Profile {
 			centre.set(Convert.parseDouble(lat), Convert.parseDouble(lon));
 		    } else {
 			int start = text.indexOf("lat=\"") + 5;
-			String lat = SafeXML.cleanback(text.substring(start, text.indexOf("\"", start)));
+			String lat = SafeXML.html2iso8859s1(text.substring(start, text.indexOf("\"", start)));
 			start = text.indexOf("long=\"") + 6;
-			String lon = SafeXML.cleanback(text.substring(start, text.indexOf("\"", start)));
+			String lon = SafeXML.html2iso8859s1(text.substring(start, text.indexOf("\"", start)));
 			centre.set(lat + " " + lon, TransformCoordinates.CW); // Fast parse
 		    }
 		} else if (text.indexOf("<VERSION") >= 0) {
@@ -348,7 +348,7 @@ public class Profile {
 		    setDistOC(text.substring(start, text.indexOf("\"", start)));
 		} else if (text.indexOf("mapspath") >= 0) {
 		    int start = text.indexOf("relativeDir = \"") + 15;
-		    this.relativeMapsDir = (SafeXML.cleanback(text.substring(start, text.indexOf("\"", start))).replace('\\', '/'));
+		    this.relativeMapsDir = (SafeXML.html2iso8859s1(text.substring(start, text.indexOf("\"", start))).replace('\\', '/'));
 		} else if (text.indexOf("<SPIDERGC") >= 0) {
 		    int start = text.indexOf("dist = \"") + 8;
 		    setDistGC(text.substring(start, text.indexOf("\"", start)));
@@ -435,7 +435,7 @@ public class Profile {
 		    setFilterAttr(filterAttr);
 		    attr = ex.findNext();
 		    setFilterAttrChoice(Convert.parseInt(attr));
-		    setFilterStatus(SafeXML.cleanback(ex.findNext()));
+		    setFilterStatus(SafeXML.html2iso8859s1(ex.findNext()));
 		    setFilterUseRegexp(Boolean.valueOf(ex.findNext()).booleanValue());
 		    attr = ex.findNext();
 		    if (attr != null && !attr.equals("")) {
@@ -452,7 +452,7 @@ public class Profile {
 		    setFilterAttr(filterAttr);
 
 		    // Order within the search items must not be changed
-		    attr = SafeXML.cleanback(ex.findNext());
+		    attr = SafeXML.html2iso8859s1(ex.findNext());
 		    String[] searchFilterList = ewe.util.mString.split(attr, '|'); //'\u0399');
 		    for (int i = 0; i < searchFilterList.length; i++) {
 			if (i == 0)

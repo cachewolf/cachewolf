@@ -301,9 +301,9 @@ public class KMLExporter extends Exporter {
 
 	strBuf.append("   <Placemark>\r\n");
 	if (det.URL != null) {
-	    strBuf.append("      <description>" + SafeXML.clean(det.URL) + "</description>\r\n");
+	    strBuf.append("      <description>" + SafeXML.string2Html(det.URL) + "</description>\r\n");
 	}
-	strBuf.append("      <name>" + ch.getWayPoint() + " - " + SafeXML.clean(ch.getCacheName()) + "</name>\r\n");
+	strBuf.append("      <name>" + ch.getWayPoint() + " - " + SafeXML.string2Html(ch.getCacheName()) + "</name>\r\n");
 	strBuf.append("      <LookAt>\r\n");
 	strBuf.append("         <latitude>" + lat + "</latitude>\r\n");
 	strBuf.append("         <longitude>" + lon + "</longitude>\r\n");

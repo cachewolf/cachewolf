@@ -80,7 +80,7 @@ public class FilterData {
 	// do not change order, cause reading this is done in simple way
 	String saveID = "";
 	if (ID != null && !ID.equals("")) {
-	    saveID = "id = \"" + SafeXML.clean(ID) + "\" ";
+	    saveID = "id = \"" + SafeXML.string2Html(ID) + "\" ";
 	}
 	// '|' is splitter, it'll not work correctly if contained in any search item
 	// alternative: '\u0399'
@@ -96,7 +96,7 @@ public class FilterData {
 		" attributesYes = \"" + filterAttr[0] + "\"" + //
 		" attributesNo = \"" + filterAttr[2] + "\"" + //
 		" attributesChoice = \"" + getFilterAttrChoice() + "\"" + //
-		" status = \"" + SafeXML.clean(getFilterStatus()) + "\"" + //
+		" status = \"" + SafeXML.string2Html(getFilterStatus()) + "\"" + //
 		" useRegexp = \"" + useRegexp() + "\"" + //
 		" noCoord = \"" + getFilterNoCoord() + "\"" + //
 		" attributesYes1 = \"" + filterAttr[1] + "\"" + //

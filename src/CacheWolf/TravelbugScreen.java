@@ -113,7 +113,7 @@ public class TravelbugScreen extends Form implements ITravelbugScreen {
 		return tbl.getTB(idx).getName();
 	    else
 		// If the name contains HTML entities, we need to convert it back
-		return SafeXML.cleanback(tbl.getTB(idx).getName());
+		return SafeXML.html2iso8859s1(tbl.getTB(idx).getName());
 	}
     }
 }

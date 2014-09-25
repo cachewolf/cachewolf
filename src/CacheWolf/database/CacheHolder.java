@@ -170,11 +170,11 @@ public class CacheHolder {
 	    if (version == 1) {
 		start = xmlString.indexOf('"');
 		end = xmlString.indexOf('"', start + 1);
-		setCacheName(SafeXML.cleanback(xmlString.substring(start + 1, end)));
+		setCacheName(SafeXML.html2iso8859s1(xmlString.substring(start + 1, end)));
 
 		start = xmlString.indexOf('"', end + 1);
 		end = xmlString.indexOf('"', start + 1);
-		setCacheOwner(SafeXML.cleanback(xmlString.substring(start + 1, end)));
+		setCacheOwner(SafeXML.html2iso8859s1(xmlString.substring(start + 1, end)));
 
 		// Assume coordinates are in decimal format
 		start = xmlString.indexOf('"', end + 1);
@@ -194,7 +194,7 @@ public class CacheHolder {
 
 		start = xmlString.indexOf('"', end + 1);
 		end = xmlString.indexOf('"', start + 1);
-		setWayPoint(SafeXML.cleanback(xmlString.substring(start + 1, end)));
+		setWayPoint(SafeXML.html2iso8859s1(xmlString.substring(start + 1, end)));
 
 		start = xmlString.indexOf('"', end + 1);
 		end = xmlString.indexOf('"', start + 1);
@@ -329,11 +329,11 @@ public class CacheHolder {
 	    } else if (version == 3 || version == 2) {
 		start = xmlString.indexOf('"');
 		end = xmlString.indexOf('"', start + 1);
-		setCacheName(SafeXML.cleanback(xmlString.substring(start + 1, end)));
+		setCacheName(SafeXML.html2iso8859s1(xmlString.substring(start + 1, end)));
 
 		start = xmlString.indexOf('"', end + 1);
 		end = xmlString.indexOf('"', start + 1);
-		setCacheOwner(SafeXML.cleanback(xmlString.substring(start + 1, end)));
+		setCacheOwner(SafeXML.html2iso8859s1(xmlString.substring(start + 1, end)));
 
 		// Assume coordinates are in decimal format
 		start = xmlString.indexOf('"', end + 1);
@@ -353,7 +353,7 @@ public class CacheHolder {
 
 		start = xmlString.indexOf('"', end + 1);
 		end = xmlString.indexOf('"', start + 1);
-		setWayPoint(SafeXML.cleanback(xmlString.substring(start + 1, end)));
+		setWayPoint(SafeXML.html2iso8859s1(xmlString.substring(start + 1, end)));
 
 		start = xmlString.indexOf('"', end + 1);
 		end = xmlString.indexOf('"', start + 1);
@@ -577,9 +577,9 @@ public class CacheHolder {
 	sb.delete(0, sb.length());
 	sb.append("    <CACHE ");
 	sb.append(" name = \"");
-	sb.append(SafeXML.clean(getCacheName()));
+	sb.append(SafeXML.string2Html(getCacheName()));
 	sb.append("\" owner = \"");
-	sb.append(SafeXML.clean(getCacheOwner()));
+	sb.append(SafeXML.string2Html(getCacheOwner()));
 	sb.append("\" lat = \"");
 	sb.append(pos.latDec);
 	sb.append("\" lon = \"");
@@ -587,7 +587,7 @@ public class CacheHolder {
 	sb.append("\" hidden = \"");
 	sb.append(getDateHidden());
 	sb.append("\" wayp = \"");
-	sb.append(SafeXML.clean(getWayPoint()));
+	sb.append(SafeXML.string2Html(getWayPoint()));
 	sb.append("\" status = \"");
 	sb.append(getCacheStatus());
 	sb.append("\" ocCacheID = \"");

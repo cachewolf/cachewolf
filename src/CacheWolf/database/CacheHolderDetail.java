@@ -253,7 +253,6 @@ public class CacheHolderDetail {
      * images.
      */
     void readCache(String dir) throws IOException {
-	String dummy;
 	FileReader in = null;
 	CacheImage imageInfo;
 	// If parent cache has empty waypoint then don't do anything. This might happen
@@ -277,70 +276,58 @@ public class CacheHolderDetail {
 
 	if (in == null)
 	    throw new FileNotFoundException(dir + getParent().getWayPoint().toLowerCase() + ".xml");
-	Preferences.itself().log("Reading file " + getParent().getWayPoint() + ".xml");
+	// Preferences.itself().log("Reading file " + getParent().getWayPoint() + ".xml");
 	String text = in.readAll();
 	in.close();
 
 	Extractor ex = new Extractor(text, "<DETAILS><![CDATA[", "]]></DETAILS>", 0, true);
 	LongDescription = ex.findNext();
+	Country = ex.findNext("<COUNTRY><![CDATA[", "]]></COUNTRY>");
+	State = ex.findNext("<STATE><![CDATA[", "]]></STATE>");
+	attributes.XmlAttributesEnd(ex.findNext("<ATTRIBUTES>", "</ATTRIBUTES>"));
+	Hints = ex.findNext("<HINTS><![CDATA[", "]]></HINTS>");
 
-	ex.set(text, "<COUNTRY><![CDATA[", "]]></COUNTRY>", 0, true);
-	Country = ex.findNext();
-
-	ex.set(text, "<STATE><![CDATA[", "]]></STATE>", 0, true);
-	State = ex.findNext();
-
-	// Attributes
-	ex.set(text, "<ATTRIBUTES>", "</ATTRIBUTES>", 0, true);
-	attributes.XmlAttributesEnd(ex.findNext());
-
-	ex.set(text, "<HINTS><![CDATA[", "]]></HINTS>", 0, true);
-	Hints = ex.findNext();
-
-	ex.set(text, "<LOGS>", "</LOGS>", 0, true);
-	dummy = ex.findNext();
-
-	ex.set(dummy, "<OWNLOGID>", "</OWNLOGID>", 0, true);
-	OwnLogId = ex.findNext();
-
-	ex.set(dummy, "<OWNLOG><![CDATA[", "]]></OWNLOG>", 0, true);
-	String ownLogText = ex.findNext();
+	Extractor subex = new Extractor(ex.findNext("<LOGS>", "</LOGS>"), "<OWNLOGID>", "</OWNLOGID>", 0, true);
+	OwnLogId = subex.findNext();
+	String ownLogText = subex.findNext("<OWNLOG><![CDATA[", "]]></OWNLOG>");
 	if (ownLogText.length() > 0) {
 	    if (ownLogText.indexOf("<img src='") >= 0) {
 		OwnLog = new Log(ownLogText + "]]>");
 	    } else {
-		OwnLog = new Log("icon_smile.gif", "1900-01-01", Preferences.itself().myAlias, ownLogText);
+		OwnLog = new Log(OwnLogId, "", "icon_smile.gif", "1900-01-01", Preferences.itself().myAlias, ownLogText);
 	    }
 	} else {
 	    OwnLog = null;
 	}
-
 	CacheLogs.clear();
-	ex.set(dummy, "<LOG>", "</LOG>", 0, true);
-	while ((dummy = ex.findNext()).length() > 0) {
+	String dummy = subex.findNext("<LOG>", "</LOG>");
+	while (dummy.length() > 0) {
 	    CacheLogs.add(new Log(dummy));
+	    dummy = subex.findNext();
 	}
 
-	ex.set(text, "<NOTES><![CDATA[", "]]></NOTES>", 0, true);
-	CacheNotes = ex.findNext();
+	CacheNotes = ex.findNext("<NOTES><![CDATA[", "]]></NOTES>");
+
 	images.clear();
 
-	ex.set(text, "<IMG>", "</IMG>", 0, true);
-	while ((dummy = ex.findNext()).length() > 0) {
+	int searchStart = 0;
+	subex.set(ex.findNext("<IMAGES>", "</IMAGES"), "<IMG>", "</IMG>", 0, true);
+	while ((dummy = subex.findNext()).length() > 0) {
 	    imageInfo = new CacheImage();
 	    int pos = dummy.indexOf("<URL>");
 	    if (pos > 0) {
-		imageInfo.setFilename(SafeXML.cleanback(dummy.substring(0, pos)));
-		imageInfo.setURL(SafeXML.cleanback((dummy.substring(pos + 5, dummy.indexOf("</URL>")))));
+		imageInfo.setFilename(SafeXML.html2iso8859s1(dummy.substring(0, pos)));
+		imageInfo.setURL(SafeXML.html2iso8859s1((dummy.substring(pos + 5, dummy.indexOf("</URL>")))));
 	    } else {
-		imageInfo.setFilename(SafeXML.cleanback(dummy));
+		imageInfo.setFilename(SafeXML.html2iso8859s1(dummy));
 	    }
 	    this.images.add(imageInfo);
+	    searchStart = subex.searchedFrom();
 	}
 
-	ex.set(text, "<IMGTEXT>", "</IMGTEXT>", 0, true);
+	subex.set("<IMGTEXT>", "</IMGTEXT>", searchStart);
 	int imgNr = 0;
-	while ((dummy = ex.findNext()).length() > 0) {
+	while ((dummy = subex.findNext()).length() > 0) {
 	    if (imgNr >= this.images.size()) {
 		images.add(new CacheImage()); // this (more IMGTEXT than IMG in the <cache>.xml, but it happens. So avoid an ArrayIndexOutOfBoundException and add an CacheImage gracefully
 		Preferences.itself().log("Error reading " + this.getParent().getWayPoint() + "More IMGTEXT tags than IMG tags");
@@ -354,63 +341,60 @@ public class CacheHolderDetail {
 		imageInfo.setTitle(dummy);
 	    }
 	    imgNr = imgNr + 1;
+	    searchStart = subex.searchedFrom();
 	}
 
 	logImages.clear();
-	ex.set(text, "<LOGIMG>", "</LOGIMG>", 0, true);
-	while ((dummy = ex.findNext()).length() > 0) {
+	subex.set("<LOGIMG>", "</LOGIMG>", searchStart);
+	while ((dummy = subex.findNext()).length() > 0) {
 	    imageInfo = new CacheImage();
 	    imageInfo.setFilename(dummy);
 	    logImages.add(imageInfo);
+	    searchStart = subex.searchedFrom();
 	}
-
-	ex.set(text, "<LOGIMGTEXT>", "</LOGIMGTEXT>", 0, true);
+	subex.set("<LOGIMGTEXT>", "</LOGIMGTEXT>", searchStart);
 	imgNr = 0;
-	while ((dummy = ex.findNext()).length() > 0) {
+	while ((dummy = subex.findNext()).length() > 0) {
 	    imageInfo = logImages.get(imgNr++);
 	    imageInfo.setTitle(dummy);
+	    searchStart = subex.searchedFrom();
 	}
 
 	userImages.clear();
-	ex.set(text, "<USERIMG>", "</USERIMG>", 0, true);
-	while ((dummy = ex.findNext()).length() > 0) {
+	subex.set("<USERIMG>", "</USERIMG>", searchStart);
+	while ((dummy = subex.findNext()).length() > 0) {
 	    imageInfo = new CacheImage();
 	    imageInfo.setFilename(dummy);
 	    userImages.add(imageInfo);
+	    searchStart = subex.searchedFrom();
 	}
-
-	ex.set(text, "<USERIMGTEXT>", "</USERIMGTEXT>", 0, true);
+	subex.set("<USERIMGTEXT>", "</USERIMGTEXT>", searchStart);
 	imgNr = 0;
-	while ((dummy = ex.findNext()).length() > 0) {
+	while ((dummy = subex.findNext()).length() > 0) {
 	    imageInfo = userImages.get(imgNr++);
 	    imageInfo.setTitle(dummy);
+	    searchStart = subex.searchedFrom();
 	}
 
-	ex.set(text, "<TRAVELBUGS>", "</TRAVELBUGS>", 0, false);
-	dummy = ex.findNext();
-	if (dummy.length() == 0) {
-	    ex = new Extractor(text, "<BUGS><![CDATA[", "]]></BUGS>", 0, true);
-	    String Bugs = ex.findNext();
-	    Travelbugs.addFromHTML(Bugs);
-	} else
+	dummy = ex.findNext("<TRAVELBUGS>", "</TRAVELBUGS>");
+	if (dummy.length() > 10) {
 	    Travelbugs.addFromXML(dummy);
+	}
 
-	ex.set(text, "<URL><![CDATA[", "]]></URL>", 0, true);
-	// if no URL is stored, set default URL (at this time only possible for gc.com)
-	dummy = ex.findNext();
+	dummy = ex.findNext("<URL><![CDATA[", "]]></URL>");
 	if (dummy.length() > 10) {
 	    URL = dummy;
 	    int logpos = URL.indexOf("&"); // &Submit &log=y
 	    if (logpos > 0)
 		URL = URL.substring(0, logpos);
 	} else {
+	    // if no URL is stored, set default URL (at this time only possible for gc.com)
 	    if (getParent().getWayPoint().startsWith("GC")) {
 		URL = "http://www.geocaching.com/seek/cache_details.aspx?wp=" + getParent().getWayPoint();
 	    }
 	}
 
-	ex.set(text, "<SOLVER><![CDATA[", "]]></SOLVER>", 0, true);
-	this.setSolver(ex.findNext());
+	this.setSolver(ex.findNext("<SOLVER><![CDATA[", "]]></SOLVER>"));
     }
 
     public void deleteFile(String FileName) {
@@ -472,9 +456,9 @@ public class CacheHolderDetail {
 		    stbuf = images.get(i).getFilename();
 		    String urlBuf = images.get(i).getURL();
 		    if (urlBuf != null && !urlBuf.equals("")) {
-			detfile.print("    <IMG>" + SafeXML.clean(stbuf) + "<URL>" + SafeXML.clean(urlBuf) + "</URL></IMG>\n");
+			detfile.print("    <IMG>" + SafeXML.string2Html(stbuf) + "<URL>" + SafeXML.string2Html(urlBuf) + "</URL></IMG>\n");
 		    } else {
-			detfile.print("    <IMG>" + SafeXML.clean(stbuf) + "</IMG>\n");
+			detfile.print("    <IMG>" + SafeXML.string2Html(stbuf) + "</IMG>\n");
 		    }
 		}
 		int iis = images.size();
@@ -504,9 +488,6 @@ public class CacheHolderDetail {
 		}
 
 		detfile.print("</IMAGES>\n");
-		// detfile.print("<BUGS><![CDATA[\n");
-		// detfile.print(Bugs+"\n");
-		// detfile.print("]]></BUGS>\n");
 		detfile.print(Travelbugs.toXML());
 		detfile.print("<URL><![CDATA[" + URL + "]]></URL>\r\n");
 		detfile.print("<SOLVER><![CDATA[" + getSolver() + "]]></SOLVER>\r\n");

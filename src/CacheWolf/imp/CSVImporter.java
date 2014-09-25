@@ -412,8 +412,8 @@ public class CSVImporter {
 	if (location.length() != 0) {
 	    final int countryStart = location.lastIndexOf(" ");
 	    if (countryStart > -1) {
-		chd.Country = SafeXML.cleanback(location.substring(countryStart + 1).trim());
-		chd.State = SafeXML.cleanback(location.substring(0, countryStart).trim());
+		chd.Country = SafeXML.html2iso8859s1(location.substring(countryStart + 1).trim());
+		chd.State = SafeXML.html2iso8859s1(location.substring(0, countryStart).trim());
 	    } else {
 		chd.Country = location.trim();
 		chd.State = "";
