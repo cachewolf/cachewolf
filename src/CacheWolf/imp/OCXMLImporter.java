@@ -97,7 +97,7 @@ public class OCXMLImporter extends MinML {
     String picID;
     String cacheID;
 
-    String logData, logIcon, logDate, logFinder, logId;
+    String logData, logIcon, logDate, logFinder, logId, finderID;
     boolean loggerRecommended;
     int logtype;
     String user;
@@ -665,7 +665,7 @@ public class OCXMLImporter extends MinML {
 
 	if (name.equals("desc")) { // </desc>
 	    if (isHTML)
-		holder.getCacheDetails(false).LongDescription += SafeXML.cleanback(strData);
+		holder.getCacheDetails(false).LongDescription += SafeXML.html2iso8859s1(strData);
 	    else
 		holder.getCacheDetails(false).LongDescription += strData;
 	    return;
@@ -694,7 +694,7 @@ public class OCXMLImporter extends MinML {
 	if (holder == null)
 	    return;
 	if (name.equals("cachelog")) { // </cachelog>
-	    if (holder.getCacheDetails(false).CacheLogs.merge(new Log(logIcon, logDate, logFinder, logData, loggerRecommended)) > -1) {
+	    if (holder.getCacheDetails(false).CacheLogs.merge(new Log(logId, finderID, logIcon, logDate, logFinder, logData, loggerRecommended)) > -1) {
 		numLogImported++;
 		holder.getCacheDetails(false).hasUnsavedChanges = true; // chD.saveCacheDetails(MainForm.profile.dataDir);
 	    }
@@ -705,7 +705,7 @@ public class OCXMLImporter extends MinML {
 		    holder.setCacheStatus(logDate);
 		    holder.setFound(true);
 		    holder.getCacheDetails(false).OwnLogId = logId;
-		    holder.getCacheDetails(false).OwnLog = new Log(logIcon, logDate, logFinder, logData, loggerRecommended);
+		    holder.getCacheDetails(false).OwnLog = new Log(logId, finderID, logIcon, logDate, logFinder, logData, loggerRecommended);
 		} else {
 		    // if (holder.is_new())
 		    cacheDB.removeElementAt(cacheDB.getIndex(holder));

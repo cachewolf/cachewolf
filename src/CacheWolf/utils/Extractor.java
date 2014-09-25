@@ -72,6 +72,13 @@ public class Extractor {
 	return this;
     }
 
+    public Extractor set(String st, String e, int startOffset) {
+	_startOffset = startOffset;
+	end = e;
+	start = st;
+	return this;
+    }
+
     public Extractor set(String searchText) {
 	_searchText = searchText;
 	_startOffset = 0;
@@ -93,6 +100,10 @@ public class Extractor {
 	start = startText;
 	end = endText;
 	return findNext();
+    }
+
+    public int searchedFrom() {
+	return _startOffset;
     }
 
     /**

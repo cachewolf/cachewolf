@@ -2005,8 +2005,8 @@ public class GCImporter {
 			if (location.length() != 0) {
 			    final int countryStart = location.indexOf(",");
 			    if (countryStart > -1) {
-				chD.Country = SafeXML.cleanback(location.substring(countryStart + 1).trim());
-				chD.State = SafeXML.cleanback(location.substring(0, countryStart).trim());
+				chD.Country = SafeXML.html2iso8859s1(location.substring(countryStart + 1).trim());
+				chD.State = SafeXML.html2iso8859s1(location.substring(0, countryStart).trim());
 			    } else {
 				chD.Country = location.trim();
 				chD.State = "";
@@ -2095,7 +2095,7 @@ public class GCImporter {
 	cacheNameRex.searchFrom(wayPointPage, wayPointPageIndex);
 	if (cacheNameRex.didMatch()) {
 	    wayPointPageIndex = cacheNameRex.matchedTo();
-	    return SafeXML.cleanback(cacheNameRex.stringMatched(1));
+	    return SafeXML.html2iso8859s1(cacheNameRex.stringMatched(1));
 	} else {
 	    Preferences.itself().log("[SpiderGC.java:getName]check cacheNameRex!", null);
 	    return "???";
@@ -2106,7 +2106,7 @@ public class GCImporter {
 	cacheOwnerRex.searchFrom(wayPointPage, wayPointPageIndex);
 	if (cacheOwnerRex.didMatch()) {
 	    wayPointPageIndex = cacheOwnerRex.matchedTo();
-	    return SafeXML.cleanback(cacheOwnerRex.stringMatched(1)).trim();
+	    return SafeXML.html2iso8859s1(cacheOwnerRex.stringMatched(1)).trim();
 	} else {
 	    Preferences.itself().log("[SpiderGC.java:getOwner]check cacheOwnerRex!", null);
 	    return "???";
@@ -2197,7 +2197,7 @@ public class GCImporter {
 	    res = res.substring(0, spanEnd);
 	}
 	// since internal viewer doesn't show html-entities that are now in cacheDescription
-	return SafeXML.cleanback(res);
+	return SafeXML.html2iso8859s1(res);
     }
 
     private String wayPointPageGetHints() {
@@ -2292,24 +2292,26 @@ public class GCImporter {
 
 		final String icon = entry.getString("LogTypeImage");
 		final String name = entry.getString("UserName");
-		String logText = SafeXML.cleanback(entry.getString("LogText"));
+		String logText = SafeXML.html2iso8859s1(entry.getString("LogText"));
 		logText = STRreplace.replace(logText, "\u000b", " ");
 		logText = STRreplace.replace(logText, "<br/>", "<br>");
 		logText = correctSmilies(logText);
-		final String d = DateFormat.toYYMMDD(entry.getString("Visited"));
+		final String visitedDate = DateFormat.toYYMMDD(entry.getString("Visited"));
+		final String logID = entry.getString("LogID");
+		final String finderID = entry.getString("AccountID");
 
 		// if this log says this Cache is found by me
 		if ((icon.equals(icon_smile) || icon.equals(icon_camera) || icon.equals(icon_attended)) && (name.equalsIgnoreCase(Preferences.itself().myAlias) || (name.equalsIgnoreCase(Preferences.itself().myAlias2)))) {
 		    ch.setFound(true);
-		    ch.setCacheStatus(d);
+		    ch.setCacheStatus(visitedDate);
 		    // final String logId = entry.getString("LogID");
-		    chD.OwnLogId = entry.getString("LogID");
-		    chD.OwnLog = new Log(icon, d, name, logText);
+		    chD.OwnLogId = logID;
+		    chD.OwnLog = new Log(logID, finderID, icon, visitedDate, name, logText);
 		    foundown = true;
-		    reslts.add(new Log(icon, d, name, logText));
+		    reslts.add(new Log(logID, finderID, icon, visitedDate, name, logText));
 		}
 		if (nLogs <= maxLogs || fetchAllLogs) {
-		    reslts.add(new Log(icon, d, name, logText));
+		    reslts.add(new Log(logID, finderID, icon, visitedDate, name, logText));
 		} else {
 		    if (foundown || !fetchAllLogs) {
 			fertig = true;
@@ -2383,7 +2385,7 @@ public class GCImporter {
 		if ((bug = exBugName.findNext()).length() > 0) {
 		    // Found a bug, get its mission
 		    try {
-			infB.setInfo(oldInfoBox + MyLocale.getMsg(5514, "\nGetting bug: ") + SafeXML.cleanback(bug));
+			infB.setInfo(oldInfoBox + MyLocale.getMsg(5514, "\nGetting bug: ") + SafeXML.html2iso8859s1(bug));
 			bugDetails = UrlFetcher.fetch(link);
 			exBugName.set(bugDetails, bugDetailsStart, bugDetailsEnd, 0, Extractor.EXCLUDESTARTEND); // reusing
 			// exBugName
@@ -2797,7 +2799,7 @@ public class GCImporter {
 	String bugList;
 	try {
 	    // infB.setInfo(oldInfoBox+"\nGetting bug: "+bug);
-	    bugList = UrlFetcher.fetch(getBugByNameUrl + STRreplace.replace(SafeXML.clean(name), " ", "+"));
+	    bugList = UrlFetcher.fetch(getBugByNameUrl + STRreplace.replace(SafeXML.string2Html(name), " ", "+"));
 	    Preferences.itself().log("[getBugId] Fetched bugId: " + name);
 	} catch (final Exception ex) {
 	    Preferences.itself().log("[getBugId] Could not fetch bug list" + name, ex);

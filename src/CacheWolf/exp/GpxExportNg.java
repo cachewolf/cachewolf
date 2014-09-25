@@ -527,7 +527,9 @@ public class GpxExportNg {
 	    return "";
 
 	if (!ch.getPos().isValid()) {
-	    Preferences.itself().log("[GPX Export:formatCache] " + ch.getWayPoint() + " has invalid coords.");
+	    if (!ch.isAddiWpt()) {
+		Preferences.itself().log("[GPX Export:formatCache] " + ch.getWayPoint() + " has invalid coords.");
+	    }
 	    return "";
 	}
 
@@ -815,7 +817,7 @@ public class GpxExportNg {
 	}
 	if (logText.length() == 0 && !ch.getLastSync().equals(""))
 	    logText.append(MyLocale.getMsg(1051, "Last sync date"));
-	Log log = new Log("icon_note.gif", DateFormat.yyyyMMddHHmmss2gpxLogdate(ch.getLastSync()), "CacheWolf", logText.toString());
+	Log log = new Log("", "", "icon_note.gif", DateFormat.yyyyMMddHHmmss2gpxLogdate(ch.getLastSync()), "CacheWolf", logText.toString());
 	return log;
     }
 
@@ -837,11 +839,19 @@ public class GpxExportNg {
 	    logMessage = ttrans.replaceAll(trans.replaceAll(logMessage));
 	}
 
+	String logID = log.getLogID();
+	if (logID.length() == 0) {
+	    logID = logId;
+	}
+	String finderID = log.getFinderID();
+	if (finderID.length() == 0) {
+	    finderID = FinderID;
+	}
 	trans = new Transformer(true);
-	trans.add(new Regex("@@LOGID@@", logId));
+	trans.add(new Regex("@@LOGID@@", logID));
 	trans.add(new Regex("@@LOGDATE@@", log.getDate()));
 	trans.add(new Regex("@@LOGTYPE@@", CacheHolder.image2TypeText(log.getIcon())));
-	trans.add(new Regex("@@LOGFINDERID@@", FinderID));
+	trans.add(new Regex("@@LOGFINDERID@@", finderID));
 	trans.add(new Regex("@@LOGFINDER@@", SafeXML.cleanGPX(log.getLogger())));
 	trans.add(new Regex("@@LOGENCODE@@", ""));
 	trans.add(new Regex("@@LOGTEXT@@", SafeXML.cleanGPX(logMessage)));

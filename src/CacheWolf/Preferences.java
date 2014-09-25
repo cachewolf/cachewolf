@@ -522,12 +522,12 @@ public class Preferences extends MinML {
 	    if (fontName == null)
 		fontName = mApp.findFont("gui").getName();
 	} else if (name.equals("alias")) {
-	    myAlias = SafeXML.cleanback(atts.getValue("name"));
-	    tmp = SafeXML.cleanback(atts.getValue("password"));
+	    myAlias = SafeXML.html2iso8859s1(atts.getValue("name"));
+	    tmp = SafeXML.html2iso8859s1(atts.getValue("password"));
 	    if (tmp != null)
 		password = tmp;
 	} else if (name.equals("alias2"))
-	    myAlias2 = SafeXML.cleanback(atts.getValue("name"));
+	    myAlias2 = SafeXML.html2iso8859s1(atts.getValue("name"));
 	else if (name.equals("gcmemberid")) {
 	    gcMemberId = atts.getValue("name");
 	    tmp = atts.getValue("Premium");
@@ -710,7 +710,7 @@ public class Preferences extends MinML {
 	    language = atts.getValue("language");
 	} else if (name.equals("FILTERDATA")) {
 	    // Creating a filter object and reading the saved data
-	    String id = SafeXML.cleanback(atts.getValue("id"));
+	    String id = SafeXML.html2iso8859s1(atts.getValue("id"));
 	    FilterData data = new FilterData();
 	    data.setFilterRose(atts.getValue("rose"));
 	    data.setFilterType(atts.getValue("type"));
@@ -726,7 +726,7 @@ public class Preferences extends MinML {
 	    filterAttr[3] = getLongAttr(atts, "attributesNo1");
 	    data.setFilterAttr(filterAttr);
 	    data.setFilterAttrChoice(Convert.parseInt(atts.getValue("attributesChoice")));
-	    data.setFilterStatus(SafeXML.cleanback(atts.getValue("status")));
+	    data.setFilterStatus(SafeXML.html2iso8859s1(atts.getValue("status")));
 	    data.setUseRegexp(Boolean.valueOf(atts.getValue("useRegexp")).booleanValue());
 	    tmp = atts.getValue("noCoord");
 	    if (tmp != null) {
@@ -735,7 +735,7 @@ public class Preferences extends MinML {
 		data.setFilterNoCoord(true);
 	    }
 	    // Order within the search items must not be changed
-	    String searchFilter = SafeXML.cleanback(atts.getValue("search"));
+	    String searchFilter = SafeXML.html2iso8859s1(atts.getValue("search"));
 	    String[] searchFilterList = ewe.util.mString.split(searchFilter, '|'); //'\u0399');
 	    for (int i = 0; i < searchFilterList.length; i++) {
 		if (i == 0)
@@ -822,58 +822,58 @@ public class Preferences extends MinML {
 	    PrintWriter outp = new PrintWriter(new BufferedWriter(new FileWriter(pathToConfigFile)));
 	    outp.print("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" //
 		    + "<preferences>\n" //
-		    + "    <locale language=\"" + SafeXML.clean(language) + "\" />\n" //
+		    + "    <locale language=\"" + SafeXML.string2Html(language) + "\" />\n" //
 
-		    + "    <basedir dir=\"" + SafeXML.clean(baseDir) + "\" />\n"//
+		    + "    <basedir dir=\"" + SafeXML.string2Html(baseDir) + "\" />\n"//
 
 		    + "    <lastprofile" //
 		    + " autoreload=\"" + SafeXML.strxmlencode(autoReloadLastProfile) + "\"" //
 		    + ">" //
-		    + SafeXML.clean(lastProfile) + "</lastprofile>\n" //
+		    + SafeXML.string2Html(lastProfile) + "</lastprofile>\n" //
 
 		    + "    <CurrentCentre" //
 		    + " FromGPSPosition=\"" + SafeXML.strxmlencode(setCurrentCentreFromGPSPosition) + "\"" //
 		    + " />\n" //
 
 		    + "    <alias" //
-		    + " name=\"" + SafeXML.clean(myAlias) + "\"" //
-		    + " password=\"" + SafeXML.clean(password) + "\"" //
+		    + " name=\"" + SafeXML.string2Html(myAlias) + "\"" //
+		    + " password=\"" + SafeXML.string2Html(password) + "\"" //
 		    + " />\n" //
 
-		    + "    <alias2 name=\"" + SafeXML.clean(myAlias2) + "\" />\n" //
+		    + "    <alias2 name=\"" + SafeXML.string2Html(myAlias2) + "\" />\n" //
 
 		    + "    <gcmemberid" //
-		    + " name=\"" + SafeXML.clean(gcMemberId) + "\"" //
+		    + " name=\"" + SafeXML.string2Html(gcMemberId) + "\"" //
 		    + " Premium=\"" + SafeXML.strxmlencode(isPremium) + "\"" //
 		    + " />\n" //
 
-		    + "    <browser name=\"" + SafeXML.clean(browser) + "\" />\n" //
+		    + "    <browser name=\"" + SafeXML.string2Html(browser) + "\" />\n" //
 
 		    + "    <proxy" //
-		    + " prx=\"" + SafeXML.clean(myproxy) + "\"" //
-		    + " prt=\"" + SafeXML.clean(myproxyport) + "\"" //
+		    + " prx=\"" + SafeXML.string2Html(myproxy) + "\"" //
+		    + " prt=\"" + SafeXML.string2Html(myproxyport) + "\"" //
 		    + " active=\"" + SafeXML.strxmlencode(proxyActive) + "\"" //
 		    + " />\n" //
 
 		    + "    <port" //
-		    + " portname=\"" + SafeXML.clean(mySPO.portName) + "\"" //
+		    + " portname=\"" + SafeXML.string2Html(mySPO.portName) + "\"" //
 		    + " baud=\"" + SafeXML.strxmlencode(mySPO.baudRate) + "\"" //
 		    + " />\n" //
 
 		    + "    <portforward" //
 		    + " active=\"" + SafeXML.strxmlencode(forwardGPS) + "\"" //
-		    + " destinationHost=\"" + SafeXML.clean(forwardGpsHost) + "\"" //
+		    + " destinationHost=\"" + SafeXML.string2Html(forwardGpsHost) + "\"" //
 		    + " />\n" //
 
 		    + "    <gpsd" //
 		    + " active=\"" + SafeXML.strxmlencode(useGPSD) + "\"" //
-		    + " host=\"" + SafeXML.clean(gpsdHost) + "\"" //
+		    + " host=\"" + SafeXML.string2Html(gpsdHost) + "\"" //
 		    + " port=\"" + SafeXML.strxmlencode(gpsdPort) + "\"" //
 		    + " />\n" //
 
 		    + "    <portlog" //
 		    + " active=\"" + SafeXML.strxmlencode(logGPS) + "\"" //
-		    + " logTimer=\"" + SafeXML.clean(logGPSTimer) + "\"" //
+		    + " logTimer=\"" + SafeXML.string2Html(logGPSTimer) + "\"" //
 		    + " />\n" //
 
 		    + "    <font" //
@@ -897,13 +897,13 @@ public class Preferences extends MinML {
 		    + "    <fixedsip state=\"" + SafeXML.strxmlencode(fixSIP) + "\" />\n" //
 
 		    + "    <listview" //
-		    + " colmap=\"" + SafeXML.clean(listColMap) + "\"" //
-		    + " colwidths=\"" + SafeXML.clean(listColWidth) + "\"" //
+		    + " colmap=\"" + SafeXML.string2Html(listColMap) + "\"" //
+		    + " colwidths=\"" + SafeXML.string2Html(listColWidth) + "\"" //
 		    + " />\n" //
 
 		    + "    <travelbugs" //
-		    + " colmap=\"" + SafeXML.clean(travelbugColMap) + "\"" //
-		    + " colwidths=\"" + SafeXML.clean(travelbugColWidth) + "\"" //
+		    + " colmap=\"" + SafeXML.string2Html(travelbugColMap) + "\"" //
+		    + " colwidths=\"" + SafeXML.string2Html(travelbugColWidth) + "\"" //
 		    + " shownonlogged=\"" + SafeXML.strxmlencode(travelbugShowOnlyNonLogged) + "\"" //
 		    + " />\n");
 	    outp.print("    <descpanel showimages=\"" + SafeXML.strxmlencode(descShowImg) + "\" />\n");
@@ -915,14 +915,14 @@ public class Preferences extends MinML {
 		    + " />\n");
 	    outp.print("    <solver ignorevariablecase=\"" + SafeXML.strxmlencode(solverIgnoreCase) + "\" degMode=\"" + SafeXML.strxmlencode(solverDegMode) + "\" />\n");
 	    outp.print("    <garmin" //
-		    + " connection=\"" + SafeXML.clean(garminConn) + "\"" //
-		    + " GPSBabelOptions=\"" + SafeXML.clean(garminGPSBabelOptions) + "\"" //
+		    + " connection=\"" + SafeXML.string2Html(garminConn) + "\"" //
+		    + " GPSBabelOptions=\"" + SafeXML.string2Html(garminGPSBabelOptions) + "\"" //
 		    + " MaxWaypointLength=\"" + SafeXML.strxmlencode(garminMaxLen) + "\"" //
 		    + " addDetailsToWaypoint=\"" + SafeXML.strxmlencode(addDetailsToWaypoint) + "\"" //
 		    + " addDetailsToName=\"" + SafeXML.strxmlencode(addDetailsToName) + "\"" //
 		    + " />\n");
 	    outp.print("    <opencaching lastSite=\"" + lastOCSite + "\" downloadMissing=\"" + SafeXML.strxmlencode(downloadAllOC) + "\" />\n");
-	    outp.print("    <location lat=\"" + SafeXML.clean(curCentrePt.getLatDeg(TransformCoordinates.DD)) + "\" long=\"" + SafeXML.clean(curCentrePt.getLonDeg(TransformCoordinates.DD)) + "\" />\n");
+	    outp.print("    <location lat=\"" + SafeXML.string2Html(curCentrePt.getLatDeg(TransformCoordinates.DD)) + "\" long=\"" + SafeXML.string2Html(curCentrePt.getLonDeg(TransformCoordinates.DD)) + "\" />\n");
 	    outp.print("    <spider" //
 		    //+ " spiderUpdates=\"" + SafeXML.strxmlencode(spiderUpdates) + "\"" //
 		    + " checkLog=\"" + SafeXML.strxmlencode(checkLog) + "\"" //
@@ -935,7 +935,7 @@ public class Preferences extends MinML {
 		    + " maxSpiderNumber=\"" + SafeXML.strxmlencode(maxSpiderNumber) + "\"" //
 		    + " downloadPics=\"" + SafeXML.strxmlencode(downloadPics) + "\"" //
 		    + " downloadTBs=\"" + SafeXML.strxmlencode(downloadTBs) + "\"" //
-		    + " UserID=\"" + SafeXML.clean(userID) + "\"" //
+		    + " UserID=\"" + SafeXML.string2Html(userID) + "\"" //
 		    + " getFinds=\"" + SafeXML.strxmlencode(!doNotGetFound) + "\"" //
 		    + " />\n");
 	    outp.print("    <gotopanel northcentered=\"" + SafeXML.strxmlencode(northCenteredGoto) + "\" />\n");
@@ -945,7 +945,7 @@ public class Preferences extends MinML {
 		    + SafeXML.strxmlencode(exportLogsAsPlainText) + "\" exportGpxAsMyFinds=\"" + SafeXML.strxmlencode(exportGpxAsMyFinds) + "\" />\n");
 	    outp.print("    <datamover processorMode=\"" + SafeXML.strxmlencode(processorMode) + "\" />\n");
 	    if (mapsBaseDir != null)
-		outp.print("    <mapspath dir=\"" + SafeXML.clean(mapsBaseDir) + "\" />\n");
+		outp.print("    <mapspath dir=\"" + SafeXML.string2Html(mapsBaseDir) + "\" />\n");
 	    // Saving filters
 	    String[] filterIDs = this.getFilterIDs();
 	    for (int i = 0; i < filterIDs.length; i++) {
@@ -957,12 +957,12 @@ public class Preferences extends MinML {
 	    MapEntry entry;
 	    while (itPath.hasNext()) {
 		entry = (MapEntry) itPath.next();
-		outp.print("    <expPath key = \"" + SafeXML.clean(entry.getKey().toString()) + "\" value = \"" + SafeXML.clean(entry.getValue().toString().replace('\\', '/')) + "\" />\n");
+		outp.print("    <expPath key = \"" + SafeXML.string2Html(entry.getKey().toString()) + "\" value = \"" + SafeXML.string2Html(entry.getValue().toString().replace('\\', '/')) + "\" />\n");
 	    }
 	    itPath = importerPaths.entries();
 	    while (itPath.hasNext()) {
 		entry = (MapEntry) itPath.next();
-		outp.print("    <impPath key = \"" + SafeXML.clean(entry.getKey().toString()) + "\" value = \"" + SafeXML.clean(entry.getValue().toString().replace('\\', '/')) + "\" />\n");
+		outp.print("    <impPath key = \"" + SafeXML.string2Html(entry.getKey().toString()) + "\" value = \"" + SafeXML.string2Html(entry.getValue().toString().replace('\\', '/')) + "\" />\n");
 	    }
 	    outp.print("    <logkeeping maximum=\"" + SafeXML.strxmlencode(maxLogsToKeep) + "\" keepown=\"" + SafeXML.strxmlencode(alwaysKeepOwnLogs) + "\" />\n");
 	    outp.print("    <fillWhiteArea on=\"" + SafeXML.strxmlencode(fillWhiteArea) + "\" />\n");

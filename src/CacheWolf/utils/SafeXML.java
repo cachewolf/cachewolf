@@ -67,7 +67,7 @@ public final class SafeXML {
      * @return A <code>String</code> containing only ISO8859-1
      *         characters
      */
-    public final static String cleanback(String htmlString) {
+    public final static String html2iso8859s1(String htmlString) {
 	int indexStart;
 	// return immediately if string is null or does not contain &
 	if (htmlString != null && (indexStart = htmlString.indexOf(ENTITY_START)) >= 0) {
@@ -161,9 +161,9 @@ public final class SafeXML {
 	    if (c < 127) {
 		// leave alone as equivalent string.
 		return null;
-		// faster than String.valueOf( c ).intern();
 	    } else {
 		// use the &#nnn; form
+		// faster than String.valueOf( c ).intern();
 		return "&#" + Integer.toString(c) + ";";
 	    }
 	} // end switch
@@ -175,11 +175,11 @@ public final class SafeXML {
      * passes unchanged. Does not convert space to &nbsp;
      * 
      * @param text
-     *            raw text to be processed. Must not be null.
+     *            raw text to be processed.
      * 
      * @return translated text, or null if input is null.
      */
-    public final static String clean(String text) {
+    public final static String string2Html(String text) {
 	if (text == null)
 	    return null;
 	int originalTextLength = text.length();

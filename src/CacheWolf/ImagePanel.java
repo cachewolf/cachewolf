@@ -307,7 +307,7 @@ class ImagesPanel extends InteractivePanel {
 			if (location.equals(NO_IMAGE))
 			    imgText = MyLocale.getMsg(342, "Deleted");
 			else
-			    imgText = SafeXML.cleanback(pImages.get(i).getTitle());
+			    imgText = SafeXML.html2iso8859s1(pImages.get(i).getTitle());
 			if (imgText.length() == 0)
 			    imgText = "???";
 			AimgText = new AniImage();
@@ -316,7 +316,7 @@ class ImagesPanel extends InteractivePanel {
 			addImage(AimgText);
 			AimgText.refresh();
 			ipi.imageText = imgText;
-			ipi.imageComment = SafeXML.cleanback(pImages.get(i).getComment());
+			ipi.imageComment = SafeXML.html2iso8859s1(pImages.get(i).getComment());
 		    }
 		    ipi.refresh();
 		    locX = locX + thumb_size + padding;
