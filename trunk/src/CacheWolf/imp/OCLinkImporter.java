@@ -99,7 +99,7 @@ public final class OCLinkImporter {
 		    String nLat = ch.getPos().getLatDeg(TransformCoordinates.DD);
 		    String nLon = ch.getPos().getLonDeg(TransformCoordinates.DD);
 		    url = baseurl + "mode=locate&lat=" + nLat + "&lon=" + nLon;
-		    result = SafeXML.cleanback(UrlFetcher.fetch(url));
+		    result = SafeXML.html2iso8859s1(UrlFetcher.fetch(url));
 		    String ocCacheName = new Extractor(result, "name=\"", "\"", 0, true).findNext();
 		    if (ch.getCacheName().equals(ocCacheName)) {
 			hasOC = true;

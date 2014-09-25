@@ -199,7 +199,7 @@ public class GarminPicExporter {
 	// The next line should not be necessary as picture titles should be correctly stored in UTF8 internally
 	// Unfortunately this is not the case, e.g. GC1ZHRK
 	if (fileName.indexOf("&") >= 0)
-	    fileName = SafeXML.cleanback(fileName);
+	    fileName = SafeXML.html2iso8859s1(fileName);
 	int len = fileName.length();
 	StringBuffer s = new StringBuffer(len);
 	for (int i = 0; i < len; i++) {

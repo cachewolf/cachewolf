@@ -117,7 +117,7 @@ public class SpoilerPOIExporter extends Exporter {
 		strBuf.append("  Hint: " + SafeXML.cleanGPX(Common.rot13(ch.getCacheDetails(true).Hints)) + "\r\n");
 	    }
 	    if (comment != null) {
-		strBuf.append("  Comment: " + SafeXML.cleanGPX(SafeXML.cleanback(comment)) + "\r\n");
+		strBuf.append("  Comment: " + SafeXML.cleanGPX(SafeXML.html2iso8859s1(comment)) + "\r\n");
 	    }
 	    strBuf.append("  </cmt>\r\n");
 	    strBuf.append("  <desc>GCcode: " + ch.getWayPoint() + " </desc>\r\n");

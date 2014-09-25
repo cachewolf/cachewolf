@@ -156,8 +156,8 @@ public class TravelbugJourneyList extends MinML {
     public void startElement(String name, AttributeList atts) {
 	lastName = name;
 	if (name.equals("tbj")) {
-	    tbJ = new TravelbugJourney(atts.getValue("id"), "", atts.getValue("trackingNo"), SafeXML.cleanback(atts.getValue("fromProfile")), atts.getValue("fromWaypoint"), atts.getValue("fromDate"), atts.getValue("fromLogged"),
-		    SafeXML.cleanback(atts.getValue("toProfile")), atts.getValue("toWaypoint"), atts.getValue("toDate"), atts.getValue("toLogged"), "");
+	    tbJ = new TravelbugJourney(atts.getValue("id"), "", atts.getValue("trackingNo"), SafeXML.html2iso8859s1(atts.getValue("fromProfile")), atts.getValue("fromWaypoint"), atts.getValue("fromDate"), atts.getValue("fromLogged"),
+		    SafeXML.html2iso8859s1(atts.getValue("toProfile")), atts.getValue("toWaypoint"), atts.getValue("toDate"), atts.getValue("toLogged"), "");
 	}
     }
 

@@ -355,7 +355,7 @@ public class TravelbugJourney {
 	s.append(name);
 	s.append("=\"");
 	if (clean)
-	    s.append(SafeXML.clean(value));
+	    s.append(SafeXML.string2Html(value));
 	else
 	    s.append(value);
 	s.append("\"");

@@ -51,7 +51,7 @@ public class Travelbug {
     /** Construct a travelbug with id, name and mission */
     public Travelbug(String guid, String name, String mission) {
 	this.guid = guid;
-	this.name = SafeXML.cleanback(name);
+	this.name = SafeXML.html2iso8859s1(name);
 	this.mission = mission;
 	setTrackingNo("");
     }
@@ -69,7 +69,7 @@ public class Travelbug {
     }
 
     public void setName(String name) {
-	this.name = SafeXML.cleanback(name);
+	this.name = SafeXML.html2iso8859s1(name);
     }
 
     public String getTrackingNo() {
