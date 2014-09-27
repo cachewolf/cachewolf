@@ -70,9 +70,9 @@ public class SearchCache {
 		if (ch.getWayPoint().toUpperCase().indexOf(searchStr) < 0 && ch.getCacheName().toUpperCase().indexOf(searchStr) < 0 && ch.getCacheStatus().toUpperCase().indexOf(searchStr) < 0
 			&& (!searchInDescriptionAndNotes || ch.getCacheDetails(true).LongDescription.toUpperCase().indexOf(searchStr) < 0 && ch.getCacheDetails(true).getCacheNotes().toUpperCase().indexOf(searchStr) < 0)
 			&& (!searchInLogs || ch.getCacheDetails(true).CacheLogs.allMessages().toUpperCase().indexOf(searchStr) < 0)) {
-		    ch.is_flaged = false;
+		    ch.isFlagged = false;
 		} else
-		    ch.is_flaged = true;
+		    ch.isFlagged = true;
 		if (cwp.isClosed())
 		    break;
 	    } // for
@@ -90,7 +90,7 @@ public class SearchCache {
 	MainForm.profile.selectionChanged = true;
 	MainForm.profile.setShowSearchResult(false);
 	for (int i = cacheDB.size() - 1; i >= 0; i--) {
-	    cacheDB.get(i).is_flaged = false;
+	    cacheDB.get(i).isFlagged = false;
 	}
     }
 }

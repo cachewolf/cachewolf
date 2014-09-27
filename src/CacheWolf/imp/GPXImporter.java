@@ -385,7 +385,7 @@ public class GPXImporter extends MinML {
 		// don't spider additional waypoints, so check
 		// if waypoint starts with "GC"
 		if (downloadPics) {
-		    if (spiderOK && !holder.is_archived()) {
+		    if (spiderOK && !holder.isArchived()) {
 			// spiderImages();
 			getImages();
 			// Rename image sources
@@ -571,7 +571,7 @@ public class GPXImporter extends MinML {
 	}
 
 	if (name.indexOf("short_description") > -1 || name.equals("summary")) {
-	    if (holder.is_HTML())
+	    if (holder.isHTML())
 		holder.getCacheDetails(false).LongDescription = SafeXML.html2iso8859s1(strData) + "<br>"; // <br> needed because we also use a <br> in SpiderGC. Without it the comparison in ch.update fails
 	    else
 		holder.getCacheDetails(false).LongDescription = strData + "\n";
@@ -579,7 +579,7 @@ public class GPXImporter extends MinML {
 	}
 
 	if (name.indexOf("long_description") > -1 || name.equals("description") || name.equals("terra:description")) {
-	    if (holder.is_HTML())
+	    if (holder.isHTML())
 		holder.getCacheDetails(false).LongDescription += SafeXML.html2iso8859s1(strData);
 	    else
 		holder.getCacheDetails(false).LongDescription += strData;

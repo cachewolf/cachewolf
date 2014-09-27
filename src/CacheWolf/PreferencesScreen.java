@@ -205,7 +205,7 @@ public class PreferencesScreen extends Form {
 	alwaysKeepOwnLogs.setState(Preferences.itself().alwaysKeepOwnLogs);
 
 	logsPanel.addNext(new mLabel(MyLocale.getMsg(1626, "Max. logs:")), DONTSTRETCH, DONTFILL | LEFT);
-	logsPanel.addLast(maxLogsToSpider = new mInput(Preferences.itself().maxLogsToSpider == Integer.MAX_VALUE ? "" : "" + Preferences.itself().maxLogsToSpider));
+	logsPanel.addLast(maxLogsToSpider = new mInput(Preferences.itself().maxLogsToSpider == -1 ? "" : "" + Preferences.itself().maxLogsToSpider));
 	logsPanel.addLast(chkOverwriteLogs = new mCheckBox(MyLocale.getMsg(668, "Overwrite saved Logs?")));
 	chkOverwriteLogs.setState(Preferences.itself().overwriteLogs);
 	importPanel.addLast(logsPanel, HSTRETCH, HFILL);
@@ -512,10 +512,10 @@ public class PreferencesScreen extends Form {
 		Preferences.itself().checkDTS = chkCheckDTS.getState();
 		Preferences.itself().checkTBs = chkCheckTBs.getState();
 		String tmp = maxLogsToKeep.getText().trim();
-		Preferences.itself().maxLogsToKeep = (tmp == "" ? Integer.MAX_VALUE : Common.parseInt(tmp));
+		Preferences.itself().maxLogsToKeep = (tmp.length() == 0 ? Integer.MAX_VALUE : Common.parseInt(tmp));
 		Preferences.itself().alwaysKeepOwnLogs = alwaysKeepOwnLogs.getState();
 		tmp = maxLogsToSpider.getText().trim();
-		Preferences.itself().maxLogsToSpider = (tmp == "" ? Integer.MAX_VALUE : Common.parseInt(tmp));
+		Preferences.itself().maxLogsToSpider = (tmp.length() == 0 ? -1 : Common.parseInt(tmp));
 
 		Preferences.itself().overwriteLogs = chkOverwriteLogs.getState();
 		Preferences.itself().askForMaxNumbersOnImport = chkAskForMaxValues.getState();

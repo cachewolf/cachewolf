@@ -1018,7 +1018,7 @@ public class FilterScreen extends Form {
 	data.setUseRegexp(chkUseRegexp.getState());
 	data.setFilterNoCoord(chkNoCoord.getState());
 
-	if (inpSrchSyncDate.getText() == "") {
+	if (inpSrchSyncDate.getText().length() == 0) {
 	    data.setSyncDate("");
 	} else {
 	    // last sync has a special format, remove '-'

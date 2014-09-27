@@ -223,7 +223,7 @@ public class MyTableControl extends TableControl {
 	    boolean deleteFiltered = true; // Bisheriges Verhalten
 	    for (int i = cacheDB.size() - 1; i >= 0; i--) {
 		CacheHolder currCache = cacheDB.get(i);
-		if (currCache.is_Checked) {
+		if (currCache.isChecked) {
 		    allCount++;
 		    if (!currCache.isVisible()) {
 			if (currCache.isAddiWpt()) {
@@ -260,7 +260,7 @@ public class MyTableControl extends TableControl {
 		    pbf.setTask(h, MyLocale.getMsg(1012, "Delete selected"));
 		    for (int i = size - 1; i >= 0; i--) {// Start Counting down, as the size decreases with each deleted cache
 			ch = cacheDB.get(i);
-			if (ch.is_Checked && (ch.isVisible() || deleteFiltered)) {
+			if (ch.isChecked && (ch.isVisible() || deleteFiltered)) {
 			    nDeleted++;
 			    h.progress = ((float) nDeleted) / (float) allCount;
 			    h.changed();
@@ -287,11 +287,11 @@ public class MyTableControl extends TableControl {
 	    try {
 		for (int i = cacheDB.size() - 1; i >= 0; i--) {
 		    CacheHolder currCache = cacheDB.get(i);
-		    if (currCache.isVisible() && currCache.is_Checked) {
+		    if (currCache.isVisible() && currCache.isChecked) {
 			if (currCache.isAddiWpt()) {
 			    // currCache.setBlack(!currCache.is_black());
 			} else {
-			    currCache.setBlack(!currCache.is_black());
+			    currCache.setBlack(!currCache.isBlack());
 			    currCache.save(); // to reflect it in xml and what takes time reading+writing
 			}
 		    }

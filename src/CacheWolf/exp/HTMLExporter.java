@@ -110,7 +110,7 @@ public class HTMLExporter {
 
 		ch = cacheDB.get(i);
 		if (ch.isVisible()) {
-		    if (ch.is_incomplete()) {
+		    if (ch.isIncomplete()) {
 			exportErrors++;
 			Preferences.itself().log("HTMLExport: skipping export of incomplete waypoint " + ch.getWayPoint());
 			continue;
@@ -332,7 +332,7 @@ public class HTMLExporter {
 	    currEntry = (Hashtable) list.get(i);
 	    currValue = (String) currEntry.get(field);
 	    currValue = currValue.toUpperCase();
-	    if (currValue == null || currValue == "")
+	    if (currValue == null || currValue.length() == 0)
 		continue;
 	    try {
 		if (fullCompare) {

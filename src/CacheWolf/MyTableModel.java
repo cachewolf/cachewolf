@@ -264,11 +264,11 @@ public class MyTableModel extends TableModel {
 		    // Now find out if the line should be painted in an other color.
 		    // Selected lines are not considered, so far
 		    CacheHolder ch = cacheDB.get(row);
-		    if (ch.is_owned())
+		    if (ch.isOwned())
 			lineColorBG.set(COLOR_OWNED);
-		    else if (ch.is_found())
+		    else if (ch.isFound())
 			lineColorBG.set(COLOR_FOUND);
-		    else if (ch.is_flaged)
+		    else if (ch.isFlagged)
 			lineColorBG.set(COLOR_FLAGED);
 		    else if (ch.getCacheStatus().indexOf(MyLocale.getMsg(319, "not found")) > -1)
 			lineColorBG.set(COLOR_STATUS);
@@ -276,14 +276,14 @@ public class MyTableModel extends TableModel {
 			lineColorBG.set(COLOR_DETAILS_LOADED);
 		    }
 
-		    if (ch.is_archived()) {
+		    if (ch.isArchived()) {
 			if (lineColorBG.equals(COLOR_WHITE)) {
 			    lineColorBG.set(COLOR_ARCHIVED);
 			    ta.foreground = COLOR_WHITE;
 			} else {
 			    ta.foreground = COLOR_ARCHIVED;
 			}
-		    } else if (!ch.is_available()) {
+		    } else if (!ch.isAvailable()) {
 			if (lineColorBG.equals(COLOR_WHITE)) {
 			    lineColorBG.set(COLOR_AVAILABLE);
 			} else {
@@ -373,7 +373,7 @@ public class MyTableModel extends TableModel {
 		// needed here??
 		switch (colMap[col]) { // Faster than using column names
 		case 0: // Checkbox
-		    if (ch.is_Checked)
+		    if (ch.isChecked)
 			return checkboxTicked;
 		    else
 			return checkboxUnticked;
@@ -393,13 +393,13 @@ public class MyTableModel extends TableModel {
 		    }
 		case 4: // Waypoint
 		    if (showExtraWptInfo) {
-			if (ch.is_incomplete())
+			if (ch.isIncomplete())
 			    return ch.getIconAndTextWP(4, fm);
-			if (ch.is_new())
+			if (ch.isNew())
 			    return ch.getIconAndTextWP(3, fm);
-			if (ch.is_updated())
+			if (ch.isUpdated())
 			    return ch.getIconAndTextWP(2, fm);
-			if (ch.is_log_updated())
+			if (ch.isLogUpdated())
 			    return ch.getIconAndTextWP(1, fm);
 		    }
 		    return ch.getWayPoint();
@@ -585,7 +585,7 @@ public class MyTableModel extends TableModel {
 	    if (singleRow) {
 		// If its a single row click, then toggle the cache. Remember to
 		// toggle addis too, if there are.
-		ch.is_Checked = !ch.is_Checked;
+		ch.isChecked = !ch.isChecked;
 		checkAddiWpts = true;
 	    } else {
 		// If not a single row click...
@@ -594,7 +594,7 @@ public class MyTableModel extends TableModel {
 		    // range that will be toggled
 		    int mainIdx = cacheDB.getIndex(ch.mainCache);
 		    if (mainIdx < from - 1 || mainIdx > to) {
-			ch.is_Checked = !ch.is_Checked;
+			ch.isChecked = !ch.isChecked;
 		    } else {
 			// Otherwise the addis will be toggled along with their
 			// main caches, so nothing is to do here.
@@ -602,7 +602,7 @@ public class MyTableModel extends TableModel {
 		} else {
 		    // If its a main cache, then toggle it and remember to
 		    // toggle the addis, too.
-		    ch.is_Checked = !ch.is_Checked;
+		    ch.isChecked = !ch.isChecked;
 		    checkAddiWpts = true;
 		}
 	    }
@@ -617,7 +617,7 @@ public class MyTableModel extends TableModel {
 		    addiWpt = (CacheHolder) ch.addiWpts.get(i);
 		    // Set all addi check states to the state of the
 		    // main cache.
-		    addiWpt.is_Checked = ch.is_Checked;
+		    addiWpt.isChecked = ch.isChecked;
 		    if (addiWpt.isVisible()) {
 			myTableControl.repaintCell(cacheDB.getIndex(addiWpt), x);
 		    }

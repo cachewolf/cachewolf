@@ -786,11 +786,11 @@ class WebMapService extends OnlineMapService {
 	this.filename = Common.getFilename(FileBase.getFileExt(wmsFilePaN)); //only the name
 
 	name = wms.getProperty("Name", "").trim();
-	if (name == "")
+	if (name.length() == 0)
 	    throw new IllegalArgumentException(MyLocale.getMsg(4812, "WebMapService: property >Name:< missing in file:\n") + filename);
 	mainUrl = wms.getProperty("MainUrl", "").trim();
 	//
-	if (mainUrl == "")
+	if (mainUrl.length() == 0)
 	    throw new IllegalArgumentException(MyLocale.getMsg(4813, "WebMapService: property >MainUrl:< missing in file:\n") + filename);
 	//takenFromUrl = wms.getProperty("TakenFromUrl", "").trim();
 	//getCapabilitiesUrl = wms.getProperty("GetCapabilitiesUrl", "").trim();
@@ -821,7 +821,7 @@ class WebMapService extends OnlineMapService {
 	coordinateReferenceSystemUrlPart = new String[tmp2.length];
 	for (int i = 0; i < tmp2.length; i++) {
 	    coordinateReferenceSystemUrlPart[i] = tmp2[i].trim();
-	    if (coordinateReferenceSystemUrlPart[i] == "")
+	    if (coordinateReferenceSystemUrlPart[i].length() == 0)
 		throw new IllegalArgumentException(MyLocale.getMsg(4820, "WebMapService: property >CoordinateReferenceSystemUrlPart:< incorrect in file:\n") + filename);
 	}
 	requestUrlPart = wms.getProperty("RequestUrlPart", "REQUEST=GetMap").trim();
@@ -843,7 +843,7 @@ class WebMapService extends OnlineMapService {
 	minscale = minscaleWMS / Math.sqrt(2); // in WMS scale is measured diagonal while in CacheWolf it is measured vertical
 	maxscale = maxscaleWMS / Math.sqrt(2);
 	imageFileExt = wms.getProperty("ImageFileExtension", "").trim();
-	if (imageFileExt == "")
+	if (imageFileExt.length() == 0)
 	    throw new IllegalArgumentException(MyLocale.getMsg(4821, "WebMapService: property >ImageFileExtension:< missing in file:\n") + filename);
 	String[] recommendedScalesStr = mString.split(wms.getProperty("RecommendedScale", "5").trim(), ' ');
 	// convert recommended scales to doube[], sort them and set preselected recommended scale

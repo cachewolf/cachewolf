@@ -1057,7 +1057,7 @@ public final class MovingMap extends Form implements ICommandListener {
 		    if (Preferences.itself().showCachesOnMap) {
 			addSymbolIfNecessary(ch.getWayPoint(), ch, CacheType.getBigCacheIcon(ch), ch.getPos());
 		    } else {
-			if (ch.is_Checked || ch == cacheDB.get(MainTab.itself.tablePanel.getSelectedCache())) {
+			if (ch.isChecked || ch == cacheDB.get(MainTab.itself.tablePanel.getSelectedCache())) {
 			    addSymbolIfNecessary(ch.getWayPoint(), ch, CacheType.getBigCacheIcon(ch), ch.getPos());
 			} else {
 			    removeMapSymbol(ch);
@@ -2506,7 +2506,7 @@ class MovingMapPanel extends InteractivePanel implements EventListener {
 			kontextMenu.addItem(openCacheDetailMenuItem);
 			gotoCacheMenuItem = new MenuItem(MyLocale.getMsg(4279, "Goto") + "$g");
 			kontextMenu.addItem(gotoCacheMenuItem);
-			if (!clickedCache.is_found()) {
+			if (!clickedCache.isFound()) {
 			    int msgNr = clickedCache.getLogMsgNr();
 			    markFoundMenuItem = new MenuItem(MyLocale.getMsg(msgNr, "Found") + "$m");
 			    kontextMenu.addItem(markFoundMenuItem);
@@ -2776,7 +2776,7 @@ class ListBox extends Form {
 	    int mapNum = 0;
 	    String it = new String();
 	    it = list.getText();
-	    if (it != "") {
+	    if (it.length() > 0) {
 		it = it.substring(0, it.indexOf(':'));
 		mapNum = Convert.toInt(it);
 		selectedMap = ((MapListEntry) maps.get(mapNum)).getMap();

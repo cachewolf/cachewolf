@@ -270,6 +270,8 @@ public class Preferences extends MinML {
 
     /** The maximum number of logs to export */
     public int numberOfLogsToExport = 5;
+    /** max Size (nr of waypoints) of a gpx-file to export.*/
+    public int splitSize = -1;
     public boolean exportLogsAsPlainText = true;
     /** Add Travelbugs when exporting */
     public boolean exportTravelbugs = false;
@@ -695,6 +697,10 @@ public class Preferences extends MinML {
 	    if (tmp != null)
 		numberOfLogsToExport = Convert.parseInt(tmp);
 
+	    tmp = atts.getValue("splitSize");
+	    if (tmp != null)
+		splitSize = Convert.parseInt(tmp);
+
 	    tmp = atts.getValue("exportLogsAsPlainText");
 	    if (tmp != null)
 		exportLogsAsPlainText = Boolean.valueOf(tmp).booleanValue();
@@ -941,8 +947,8 @@ public class Preferences extends MinML {
 	    outp.print("    <gotopanel northcentered=\"" + SafeXML.strxmlencode(northCenteredGoto) + "\" />\n");
 	    outp.print("    <details cacheSize=\"" + SafeXML.strxmlencode(maxDetails) + "\" delete=\"" + SafeXML.strxmlencode(deleteDetails) + "\" />\n");
 	    outp.print("    <metric type=\"" + SafeXML.strxmlencode(metricSystem) + "\" />\n");
-	    outp.print("    <export numberOfLogsToExport=\"" + SafeXML.strxmlencode(numberOfLogsToExport) + "\" exportTravelbugs=\"" + SafeXML.strxmlencode(exportTravelbugs) + "\" exportLogsAsPlainText=\""
-		    + SafeXML.strxmlencode(exportLogsAsPlainText) + "\" exportGpxAsMyFinds=\"" + SafeXML.strxmlencode(exportGpxAsMyFinds) + "\" />\n");
+	    outp.print("    <export numberOfLogsToExport=\"" + SafeXML.strxmlencode(numberOfLogsToExport) + "\" splitSize=\"" + SafeXML.strxmlencode(splitSize) + "\" exportTravelbugs=\"" + SafeXML.strxmlencode(exportTravelbugs)
+		    + "\" exportLogsAsPlainText=\"" + SafeXML.strxmlencode(exportLogsAsPlainText) + "\" exportGpxAsMyFinds=\"" + SafeXML.strxmlencode(exportGpxAsMyFinds) + "\" />\n");
 	    outp.print("    <datamover processorMode=\"" + SafeXML.strxmlencode(processorMode) + "\" />\n");
 	    if (mapsBaseDir != null)
 		outp.print("    <mapspath dir=\"" + SafeXML.string2Html(mapsBaseDir) + "\" />\n");
