@@ -904,7 +904,7 @@ public class Parser {
 	for (int i = 0; i < s.length(); i++) {
 	    int pos = "abcdefghijklmnopqrstuvwxyz".indexOf(s.charAt(i));
 	    if (pos >= 0)
-		res += (res == "" ? "" : " ") + MyLocale.formatLong(pos + 1, "00");
+		res += (res.length() == 0 ? "" : " ") + MyLocale.formatLong(pos + 1, "00");
 	}
 	return res;
     }

@@ -130,7 +130,7 @@ public class ShowCacheInBrowser {
 			}
 			tpl.setParam("IMAGES", imageVect);
 		    }
-		    if (!chD.is_available())
+		    if (!chD.isAvailable())
 			tpl.setParam("UNAVAILABLE", "1");
 		    if (!chD.getCacheDetails(true).Hints.equals("null"))
 			tpl.setParam("HINT", Common.rot13(chD.getCacheDetails(true).Hints));

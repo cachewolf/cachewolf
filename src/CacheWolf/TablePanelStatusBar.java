@@ -193,7 +193,7 @@ class DBStats {
 	int blackWaypoints = 0;
 	for (int i = 0; i < all; i++) {
 	    holder = MainForm.profile.cacheDB.get(i);
-	    if (holder.is_black()) {
+	    if (holder.isBlack()) {
 		if (CacheType.isAddiWpt(holder.getType())) {
 		    blackWaypoints++;
 		} else {
@@ -222,7 +222,7 @@ class DBStats {
 	int counter = 0;
 	for (int i = 0; i < MainForm.profile.cacheDB.size(); i++) {
 	    holder = MainForm.profile.cacheDB.get(i);
-	    if (holder.is_found() == true) {
+	    if (holder.isFound() == true) {
 		if (holder.isCacheWpt())
 		    counter++;
 	    }

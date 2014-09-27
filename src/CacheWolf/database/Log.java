@@ -130,8 +130,16 @@ public class Log {
 	return logID;
     }
 
+    public void setLogID(String value) {
+	logID = value;
+    }
+
     public String getFinderID() {
 	return finderID;
+    }
+
+    public void setFinderID(String value) {
+	finderID = value;
     }
 
     public String getIcon() {

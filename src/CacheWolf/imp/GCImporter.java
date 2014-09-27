@@ -620,7 +620,7 @@ public class GCImporter {
 	CacheHolder ch = null;
 	for (int i = 0; i < MainForm.profile.cacheDB.size(); i++) {
 	    ch = MainForm.profile.cacheDB.get(i);
-	    if (ch.is_Checked && ch.getPos().isValid()) {
+	    if (ch.isChecked && ch.getPos().isValid()) {
 		final CWPoint tmpPos = ch.getPos();
 		final double tmpDistance = tmpPos.getDistance(startPos);
 		if (nextDistance == 0) {
@@ -628,17 +628,17 @@ public class GCImporter {
 		    index = i;
 		    nextDistance = tmpDistance;
 		    nextCache = ch;
-		    nextCache.is_Checked = false;
+		    nextCache.isChecked = false;
 		} else {
 		    if (tmpDistance > lateralDistance) {
 			if (tmpDistance < nextDistance) {
 			    index = i;
 			    nextDistance = tmpDistance;
 			    nextCache = ch;
-			    nextCache.is_Checked = false;
+			    nextCache.isChecked = false;
 			}
 		    } else {
-			ch.is_Checked = false;
+			ch.isChecked = false;
 		    }
 		}
 	    }
@@ -786,7 +786,7 @@ public class GCImporter {
 	}
 	//
 	if ((options & ImportGui.MAXLOGS) > 0) {
-	    maxLogs = importGui.getIntFromInput(importGui.maxLogsInput, 0);
+	    maxLogs = importGui.getIntFromInput(importGui.maxLogsInput, -1);
 	} else {
 	    maxLogs = Preferences.itself().maxLogsToSpider;
 	}
@@ -1046,7 +1046,7 @@ public class GCImporter {
 	int counter = 0;
 	for (int i = 0; i < MainForm.profile.cacheDB.size(); i++) {
 	    CacheHolder ch = MainForm.profile.cacheDB.get(i);
-	    if (ch.is_found()) {
+	    if (ch.isFound()) {
 		if (ch.getWayPoint().startsWith("GC"))
 		    counter++;
 	    }
@@ -1080,14 +1080,14 @@ public class GCImporter {
 	    // all of DB (=possibleUpdateList) - listed by GC = possibly archived (to check separately)
 	    for (int i = 0; i < MainForm.profile.cacheDB.size(); i++) {
 		final CacheHolder ch = MainForm.profile.cacheDB.get(i);
-		if (!ch.is_black()) {
+		if (!ch.isBlack()) {
 		    if (ch.getWayPoint().substring(0, 2).equalsIgnoreCase("GC")) {
 			if (spiderAllFinds //
 				|| ( //
-				(!ch.is_archived()) //
+				(!ch.isArchived()) //
 					&& ch.kilom >= fromDistanceInKm //
 					&& ch.kilom <= toDistanceInKm //
-					&& (!(doNotgetFound && (ch.is_found() || ch.is_owned()))) //
+					&& (!(doNotgetFound && (ch.isFound() || ch.isOwned()))) //
 				&& (restrictedCacheType == CacheType.CW_TYPE_ERROR || restrictedCacheType == ch.getType()) // all typs or chTyp=selected typ
 				) //
 			) //
@@ -1139,7 +1139,7 @@ public class GCImporter {
 			}
 		    } else {
 			possibleUpdateList.remove(chWaypoint);
-			if (!ch.is_found()) {
+			if (!ch.isFound()) {
 			    if (ch.getCacheStatus().length() > 0) {
 				if (ch.getCacheStatus().indexOf("PM") < 0) {
 				    ch.setCacheStatus(ch.getCacheStatus() + ", PM");
@@ -1300,7 +1300,7 @@ public class GCImporter {
 		    UrlFetcher.rememberCookies();
 		    Preferences.itself().userID = UrlFetcher.getCookie("userid;www.geocaching.com");
 		    Preferences.itself().userID = Preferences.itself().userID + "!" + UrlFetcher.getCookie("gspkuserid;www.geocaching.com");
-		    if (Preferences.itself().userID == "null!null") {
+		    if (Preferences.itself().userID.equals("null!null")) {
 			Preferences.itself().userID = "";
 			new InfoBox(MyLocale.getMsg(5523, "Login error!"), MyLocale.getMsg(5524, "Please correct your account in preferences\n\n see http://cachewolf.aldos.de/userid.html !")).wait(FormBase.OKB);
 			return false;
@@ -1361,9 +1361,9 @@ public class GCImporter {
 	UrlFetcher.clearCookies();
 	String cookies[] = mString.split(Preferences.itself().userID, '!');
 	if (cookies.length > 1) {
-	    if (cookies[0] != "null")
+	    if (!(cookies[0].equals("null")))
 		UrlFetcher.setCookie("userid;www.geocaching.com", cookies[0]);
-	    if (cookies[1] != "null")
+	    if (!cookies[1].equals("null"))
 		UrlFetcher.setCookie("gspkuserid;www.geocaching.com", cookies[1]);
 	}
 	try {
@@ -1756,18 +1756,18 @@ public class GCImporter {
 	boolean is_archived_GC = false;
 	boolean is_found_GC = false;
 
-	if (ch.is_black())
+	if (ch.isBlack())
 	    return false;
 
 	if (spiderAllFinds) {
-	    if (!ch.is_found()) {
+	    if (!ch.isFound()) {
 		ch.setFound(true);
 		save = true;
 		numFoundUpdates += 1;
 		ret = true;
 	    }
 	    is_archived_GC = CacheDescription.indexOf(propArchived) != -1;
-	    if (is_archived_GC != ch.is_archived()) {
+	    if (is_archived_GC != ch.isArchived()) {
 		ch.setArchived(is_archived_GC);
 		save = true;
 		numArchivedUpdates += 1;
@@ -1775,21 +1775,21 @@ public class GCImporter {
 	    }
 	} else if (!doNotgetFound) { // there could be a found or own ...
 	    is_found_GC = CacheDescription.indexOf(propFound) != -1;
-	    if (is_found_GC != ch.is_found()) {
+	    if (is_found_GC != ch.isFound()) {
 		ch.setFound(is_found_GC);
 		save = true;
 		ret = true;
 	    }
 	}
 
-	if (ch.is_found()) {
+	if (ch.isFound()) {
 	    // check for missing ownLogID (and logtext)
 	    if (ch.getCacheDetails(false).OwnLogId.equals(""))
 		ret = true;
 	}
 
 	final boolean is_available_GC = !is_archived_GC && CacheDescription.indexOf(propAvailable) == -1;
-	if (is_available_GC != ch.is_available()) {
+	if (is_available_GC != ch.isAvailable()) {
 	    ch.setAvailable(is_available_GC);
 	    save = true;
 	    numAvailableUpdates += 1;
@@ -2026,7 +2026,7 @@ public class GCImporter {
 			}
 
 			chD.setGCNotes(getNotes());
-			getAddWaypoints(wayPointPage, ch.getWayPoint(), ch.is_found());
+			getAddWaypoints(wayPointPage, ch.getWayPoint(), ch.isFound());
 			getAttributes(chD);
 			ch.setLastSync((new Time()).format("yyyyMMddHHmmss"));
 			ch.setIncomplete(false);
@@ -2230,7 +2230,8 @@ public class GCImporter {
     /**
      * Get the logs
      */
-    private void getLogs(CacheHolder ch, boolean fetchAllLogs) throws Exception {
+    private void getLogs(CacheHolder ch, boolean isFoundByMe) throws Exception {
+	boolean fetchAllLogs = isFoundByMe;
 	final CacheHolderDetail chD = ch.getCacheDetails(false);
 	final LogList reslts = chD.CacheLogs;
 	reslts.clear();
@@ -2249,9 +2250,9 @@ public class GCImporter {
 	int num = 100;
 
 	if (maxLogs == -1) {
-	    //maxLogs=Integer.MAX_VALUE;
 	    fetchAllLogs = true;
 	}
+
 	if (!fetchAllLogs) {
 	    if (maxLogs < 100)
 		num = maxLogs + 1;
@@ -2265,15 +2266,6 @@ public class GCImporter {
 	    String fetchResult = "";
 	    try {
 		fetchResult = UrlFetcher.fetch(url);
-		/*
-		char[] fr = fetchResult.toCharArray();
-		for (int i = 0; i < fr.length; i++) {
-		    if (fr[i] == 0) {
-			fr[i] = ' ';
-		    }
-		}
-		fetchResult = String.valueOf(fr);
-		*/
 		resp = new JSONObject(fetchResult);
 	    } catch (Exception e) {
 		if (fetchResult == null)
@@ -2308,12 +2300,14 @@ public class GCImporter {
 		    chD.OwnLogId = logID;
 		    chD.OwnLog = new Log(logID, finderID, icon, visitedDate, name, logText);
 		    foundown = true;
-		    reslts.add(new Log(logID, finderID, icon, visitedDate, name, logText));
 		}
 		if (nLogs <= maxLogs || fetchAllLogs) {
 		    reslts.add(new Log(logID, finderID, icon, visitedDate, name, logText));
 		} else {
+		    // don't add more logs, but still searching own log
 		    if (foundown || !fetchAllLogs) {
+			// ownLog or the last one (perhaps maxLogs + 1, the ownLog is pssibly not found)
+			reslts.add(new Log(logID, finderID, icon, visitedDate, name, logText));
 			fertig = true;
 			break;
 		    }
@@ -2745,10 +2739,10 @@ public class GCImporter {
 			hd.save();
 		    } else {
 			final CacheHolder cx = MainForm.profile.cacheDB.get(idx);
-			final boolean checked = cx.is_Checked;
+			final boolean checked = cx.isChecked;
 			cx.initStates(false);
 			cx.update(hd);
-			cx.is_Checked = checked;
+			cx.isChecked = checked;
 			cx.save();
 		    }
 		}

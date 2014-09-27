@@ -86,14 +86,14 @@ public class GarminMap extends MinML {
 		match = match && ((icon.terrain == null) || ch.getTerrain() == 0 || icon.terrain.equals(CacheTerrDiff.shortDT(ch.getTerrain())));
 		match = match && ((icon.difficulty == null) || ch.getHard() == 0 || icon.difficulty.equals(CacheTerrDiff.shortDT(ch.getHard())));
 		match = match && ((icon.status == null) || ch.getCacheStatus().startsWith(icon.status));
-		match = match && ((icon.found == null) || ch.is_found());
+		match = match && ((icon.found == null) || ch.isFound());
 		if (match)
 		    return icon.name;
 	    }
 	}
 
 	// If it is not a mapped type, just use the standard mapping
-	if (ch.is_found())
+	if (ch.isFound())
 	    return "Geocache Found";
 	else
 	    return "Geocache";
@@ -112,7 +112,7 @@ public class GarminMap extends MinML {
 		match = match && ((icon.terrain == null) || ch.getTerrain() == 0 || icon.terrain.equals(CacheTerrDiff.shortDT(ch.getTerrain())));
 		match = match && ((icon.difficulty == null) || ch.getHard() == 0 || icon.difficulty.equals(CacheTerrDiff.shortDT(ch.getHard())));
 		match = match && ((icon.status == null) || ch.getCacheStatus().startsWith(icon.status));
-		match = match && ((icon.found == null) || ch.is_found());
+		match = match && ((icon.found == null) || ch.isFound());
 		if (match)
 		    return icon.poiId;
 	    }
@@ -133,7 +133,7 @@ public class GarminMap extends MinML {
 		match = match && ((icon.terrain == null) || ch.getTerrain() == 0 || icon.terrain.equals(CacheTerrDiff.shortDT(ch.getTerrain())));
 		match = match && ((icon.difficulty == null) || ch.getHard() == 0 || icon.difficulty.equals(CacheTerrDiff.shortDT(ch.getHard())));
 		match = match && ((icon.status == null) || ch.getCacheStatus().startsWith(icon.status));
-		match = match && ((icon.found == null) || ch.is_found());
+		match = match && ((icon.found == null) || ch.isFound());
 		if (match)
 		    return icon.ozicolor;
 	    }

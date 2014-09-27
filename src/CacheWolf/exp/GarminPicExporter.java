@@ -115,7 +115,7 @@ public class GarminPicExporter {
 
 	    CacheHolder ch = cacheDB.get(i);
 	    if (ch.isVisible()) {
-		if (ch.is_incomplete()) {
+		if (ch.isIncomplete()) {
 		    exportErrors++;
 		    Preferences.itself().log("GarminPicExporter: skipping export of incomplete waypoint " + ch.getWayPoint());
 		    continue;

@@ -319,7 +319,6 @@ public class TablePanelMenu extends MenuBar {
 	}
     }
 
-    // todo check if this must be static
     public void updateSelectedCaches() {
 	CacheDB cacheDB = MainForm.profile.cacheDB;
 	CacheHolder ch;
@@ -342,21 +341,21 @@ public class TablePanelMenu extends MenuBar {
 	Vector cachesToUpdate = new Vector();
 	for (int i = 0; i < cacheDB.size(); i++) {
 	    ch = cacheDB.get(i);
-	    if (ch.is_Checked == true && ch.isVisible()) {
+	    if (ch.isChecked == true && ch.isVisible()) {
 		// should work even if only the wayPoint is created
 		if ((ch.getWayPoint().toUpperCase().startsWith("GC") || ch.isOC()))
 		// Notiz: Wenn es ein addi Wpt ist, sollte eigentlich der Maincache gespidert werden
-		// Alter code prft aber nur ob ein Maincache von GC existiert und versucht dann den addi direkt zu spidern, was nicht funktioniert
+		// Alter code prüft aber nur ob ein Maincache von GC existiert und versucht dann den addi direkt zu spidern, was nicht funktioniert
 		{
 		    cachesToUpdate.add(new Integer(i));
 		} else {
-		    if (ch.isAddiWpt() && ch.mainCache != null && !ch.mainCache.is_Checked && !alreadySaid2) {
+		    if (ch.isAddiWpt() && ch.mainCache != null && !ch.mainCache.isChecked && !alreadySaid2) {
 			alreadySaid2 = true;
 			new InfoBox(MyLocale.getMsg(327, "Information"), MyLocale.getMsg(5001, "Can't spider additional waypoint directly. Please check main cache.")).wait(FormBase.OKB);
 		    }
 		    if (!ch.isAddiWpt() && !alreadySaid) {
 			alreadySaid = true;
-			new InfoBox(MyLocale.getMsg(327, "Information"), ch.getWayPoint() + MyLocale.getMsg(5002, ": At the moment this function is only applicable for geocaching.com and opencaching.de/.cz/.org.uk .")).wait(FormBase.OKB);
+			new InfoBox(MyLocale.getMsg(327, "Information"), ch.getWayPoint() + MyLocale.getMsg(5002, ": At the moment this function is only applicable for geocaching.com and opencaching.")).wait(FormBase.OKB);
 		    }
 		}
 
@@ -367,7 +366,6 @@ public class TablePanelMenu extends MenuBar {
 	for (int j = 0; j < cachesToUpdate.size(); j++) {
 	    int i = ((Integer) cachesToUpdate.get(j)).intValue();
 	    ch = cacheDB.get(i);
-	    // infB.setInfo("Loading: " + ch.wayPoint);
 	    infB.setInfo(MyLocale.getMsg(5513, "Loading: ") + ch.getWayPoint() + " (" + (j + 1) + " / " + cachesToUpdate.size() + ")");
 	    infB.redisplay();
 	    if (ch.getWayPoint().substring(0, 2).equalsIgnoreCase("GC")) {
@@ -388,9 +386,6 @@ public class TablePanelMenu extends MenuBar {
 		    // MainForm.profile.hasUnsavedChanges=true;
 		}
 	    }
-
-	    // cacheDB.clear();
-	    // MainForm.profile.readIndex();
 	}
 	gcImporter.setOldGCLanguage();
 
@@ -823,7 +818,7 @@ public class TablePanelMenu extends MenuBar {
 		    ch = cacheDB.get(i);
 		    // This is an incremental filter, i.e. it keeps the existing filter
 		    // status and only adds the marked caches to the filtered set
-		    if (ch.is_Checked && ch.isVisible()) {
+		    if (ch.isChecked && ch.isVisible()) {
 			ch.setFiltered(true);
 			filterChanged = true;
 		    }
@@ -841,7 +836,7 @@ public class TablePanelMenu extends MenuBar {
 		    ch = cacheDB.get(i);
 		    // incremental filter. Keeps status of all marked caches and
 		    // adds unmarked caches to filtered list
-		    if (!ch.is_Checked && ch.isVisible()) {
+		    if (!ch.isChecked && ch.isVisible()) {
 			ch.setFiltered(true);
 			filterChanged = true;
 		    }

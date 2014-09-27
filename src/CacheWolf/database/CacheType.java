@@ -433,22 +433,22 @@ public final class CacheType {
     public static Image getBigCacheIcon(CacheHolder ch) {
 	byte typeId = ch.getType();
 	Image im = cTypRef[Ref_Index(typeId)]._mapImage;
-	if (ch.is_found()) {
+	if (ch.isFound()) {
 	    if (cTypRef[Ref_Index(typeId)]._modImage[found] == null) {
 		cTypRef[Ref_Index(typeId)]._modImage[found] = newOverlayedImage(im, GuiImageBroker.found);
 	    }
 	    im = cTypRef[Ref_Index(typeId)]._modImage[found];
-	} else if (ch.is_archived()) {
+	} else if (ch.isArchived()) {
 	    if (cTypRef[Ref_Index(typeId)]._modImage[archived] == null) {
 		cTypRef[Ref_Index(typeId)]._modImage[archived] = newOverlayedImage(im, GuiImageBroker.archived);
 	    }
 	    im = cTypRef[Ref_Index(typeId)]._modImage[archived];
-	} else if (!ch.is_available()) {
+	} else if (!ch.isAvailable()) {
 	    if (cTypRef[Ref_Index(typeId)]._modImage[disabled] == null) {
 		cTypRef[Ref_Index(typeId)]._modImage[disabled] = newOverlayedImage(im, GuiImageBroker.disabled);
 	    }
 	    im = cTypRef[Ref_Index(typeId)]._modImage[disabled];
-	} else if (ch.is_owned()) {
+	} else if (ch.isOwned()) {
 	    if (cTypRef[Ref_Index(typeId)]._modImage[owned] == null) {
 		cTypRef[Ref_Index(typeId)]._modImage[owned] = newOverlayedImage(im, GuiImageBroker.owned);
 	    }

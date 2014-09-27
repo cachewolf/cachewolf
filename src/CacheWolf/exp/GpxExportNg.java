@@ -119,6 +119,7 @@ public class GpxExportNg {
     private static GarminMap poiMapper = new GarminMap();
     /** maximum number of logs to export. can be overwritten with preferences, default unlimited */
     private int maxLogs = ewe.math.Number.INTEGER_MAX_VALUE;
+    private int splitSize = -1;
     /** number of errors / warnings during export */
     private int exportErrors = 0;
     /**  */
@@ -282,7 +283,7 @@ public class GpxExportNg {
 		    CacheHolder ch = MainForm.profile.cacheDB.get(i);
 		    if (!ch.isVisible()) {
 			continue;
-		    } else if (ch.is_incomplete()) {
+		    } else if (ch.isIncomplete()) {
 			Preferences.itself().log("skipping export of incomplete waypoint " + ch.getWayPoint(), null);
 		    } else {
 			String poiId = poiMapper.getPoiId(ch);
@@ -409,6 +410,11 @@ public class GpxExportNg {
 		    Preferences.itself().numberOfLogsToExport = maxLogs;
 		    Preferences.itself().dirty = true;
 		}
+		splitSize = exportOptions.getSplitSize();
+		if (splitSize != Preferences.itself().splitSize) {
+		    Preferences.itself().splitSize = splitSize;
+		    Preferences.itself().dirty = true;
+		}
 	    }
 
 	    final File file;
@@ -429,29 +435,39 @@ public class GpxExportNg {
 		file.createTempFile("gpxexport", null, null);
 	    }
 
+	    Vm.showWait(true);
+	    InfoBox infB = new InfoBox("Info", "Exporting", InfoBox.PROGRESS_WITH_WARNINGS);
 	    try {
-		Vm.showWait(true);
-		// ProgressBarForm pbf = new ProgressBarForm();
-		// Handle h = new Handle();
 		PrintWriter outp = new PrintWriter(new BufferedWriter(new FileWriter(file)));
 		int expCount = 0;
 		int totalCount = MainForm.profile.cacheDB.countVisible();
 
-		outp.print(formatHeader());
+		infB.exec();
 
-		// pbf.showMainTask = false;
-		// pbf.setTask(h, "Exporting ...");
-		// pbf.exec();
-		// h.progressResolution=0;
+		outp.print(formatHeader());
 
 		Preferences.itself().log("start: " + new Time().getTime());
 		CacheDB cDB = MainForm.profile.cacheDB;
 		for (int i = 0; i < cDB.size(); i++) {
+		    if (splitSize > 0) {
+			if (i % splitSize == 0) {
+			    if (i > 0) {
+				// schliesse Ausgabedatei
+				outp.print("</gpx>" + newLine);
+				outp.close();
+				// mache neue Ausgabedatei
+				String newFileName = Common.getFilename(file.getAbsolutePath()) + (i / splitSize) + Common.getFilenameExtension(file.getFileExt());
+				outp = new PrintWriter(new BufferedWriter(new FileWriter(newFileName)));
+				outp.print(formatHeader());
+			    }
+			}
+		    }
 		    CacheHolder ch = cDB.get(i);
 		    if (!ch.isVisible()) {
 			continue;
-		    } else if (ch.is_incomplete()) {
+		    } else if (ch.isIncomplete()) {
 			exportErrors++;
+			infB.addWarning("Skipping export of incomplete waypoint " + ch.getWayPoint());
 			Preferences.itself().log("GPX Export: skipping export of incomplete waypoint " + ch.getWayPoint(), null);
 		    } else {
 			String strOut = formatCache(ch);
@@ -460,16 +476,18 @@ public class GpxExportNg {
 			    expCount++;
 			}
 		    }
-
-		    // h.progress = expCount / totalCount;
-		    // h.changed();
-
-		    MainTab.itself.tablePanel.updateStatusBar(" " + ((expCount * 100) / totalCount) + "% ");
+		    if (expCount % 100 == 0) {
+			infB.setInfo("Exporting " + expCount + " ( " + totalCount + " )");
+			infB.redisplay();
+			MainTab.itself.tablePanel.updateStatusBar(" " + ((expCount * 100) / totalCount) + "% ");
+		    }
+		    if (infB.isClosed()) {
+			break;
+		    }
 		}
 
 		Preferences.itself().log("stop: " + new Time().getTime());
 		MainTab.itself.tablePanel.updateStatusBar("done:" + expCount);
-		// pbf.exit(0);
 
 		outp.print("</gpx>" + newLine);
 		outp.close();
@@ -479,6 +497,7 @@ public class GpxExportNg {
 		new InfoBox(MyLocale.getMsg(5500, "Error"), "unable to write output to " + file.toString()).wait(FormBase.OKB);
 		return;
 	    } finally {
+		infB.close(0);
 		Vm.showWait(false);
 	    }
 
@@ -523,7 +542,7 @@ public class GpxExportNg {
      */
     private String formatCache(CacheHolder ch) {
 	// no addis or custom in MyFindsPq - and of course only finds
-	if ((STYLE_GPX_MYFINDS == exportStyle) && (ch.isCustomWpt() || ch.isAddiWpt() || !ch.is_found()))
+	if ((STYLE_GPX_MYFINDS == exportStyle) && (ch.isCustomWpt() || ch.isAddiWpt() || !ch.isFound()))
 	    return "";
 
 	if (!ch.getPos().isValid()) {
@@ -656,7 +675,7 @@ public class GpxExportNg {
 		ret.append("    <sym>").append(CacheType.type2SymTag(ch.getType())).append("</sym>").append(newLine);
 	    } else if (ch.isCustomWpt()) {
 		ret.append("    <sym>Custom</sym>").append(newLine);
-	    } else if (ch.is_found()) {
+	    } else if (ch.isFound()) {
 		ret.append("    <sym>Geocache Found</sym>").append(newLine);
 	    } else {
 		ret.append("    <sym>Geocache</sym>").append(newLine);
@@ -685,8 +704,8 @@ public class GpxExportNg {
 	    return "";
 	StringBuffer ret = new StringBuffer();
 	ret.append("    <groundspeak:cache id=\"").append(ch.GetCacheID())//
-		.append("\" available=\"").append(ch.is_available() ? TRUE : FALSE)//
-		.append("\" archived=\"").append(ch.is_archived() ? TRUE : FALSE)//
+		.append("\" available=\"").append(ch.isAvailable() ? TRUE : FALSE)//
+		.append("\" archived=\"").append(ch.isArchived() ? TRUE : FALSE)//
 		.append("\" xmlns:groundspeak=\"http://www.groundspeak.com/cache/1/0\">").append(newLine)//
 		.append("      <groundspeak:name>").append(SafeXML.cleanGPX(ch.getCacheName())).append("</groundspeak:name>").append(newLine)//
 		.append("      <groundspeak:placed_by>").append(SafeXML.cleanGPX(ch.getCacheOwner())).append("</groundspeak:placed_by>").append(newLine)//
@@ -700,8 +719,8 @@ public class GpxExportNg {
 		.append("      <groundspeak:terrain>").append(CacheTerrDiff.shortDT(ch.getTerrain())).append("</groundspeak:terrain>").append(newLine)//
 		.append("      <groundspeak:country>").append(SafeXML.cleanGPX(ch.getCacheDetails(true).Country)).append("</groundspeak:country>").append(newLine)//
 		.append("      <groundspeak:state>").append(SafeXML.cleanGPX(ch.getCacheDetails(true).State)).append("</groundspeak:state>").append(newLine)//
-		.append("      <groundspeak:short_description html=\"").append(ch.is_HTML() ? TRUE : FALSE).append("\"></groundspeak:short_description>").append(newLine)//
-		.append("      <groundspeak:long_description html=\"").append(ch.is_HTML() ? TRUE : FALSE).append("\">").append(SafeXML.cleanGPX(formatLongDescription(ch))).append("</groundspeak:long_description>").append(newLine)//
+		.append("      <groundspeak:short_description html=\"").append(ch.isHTML() ? TRUE : FALSE).append("\"></groundspeak:short_description>").append(newLine)//
+		.append("      <groundspeak:long_description html=\"").append(ch.isHTML() ? TRUE : FALSE).append("\">").append(SafeXML.cleanGPX(formatLongDescription(ch))).append("</groundspeak:long_description>").append(newLine)//
 		.append("      <groundspeak:encoded_hints>").append(SafeXML.cleanGPX(Common.rot13(ch.getCacheDetails(true).Hints))).append("</groundspeak:encoded_hints>").append(newLine)//
 		.append("      <groundspeak:logs>").append(newLine)//
 		.append(formatLogs(ch))//
@@ -759,6 +778,8 @@ public class GpxExportNg {
 	return ret.toString();
     }
 
+    private StringBuffer ret = new StringBuffer();
+
     /**
      * format cache logs as found in a gc.com GPX file
      * 
@@ -769,37 +790,50 @@ public class GpxExportNg {
     private String formatLogs(CacheHolder ch) {
 	CacheHolderDetail chD = ch.getCacheDetails(false);
 	LogList logs = chD.CacheLogs;
-	StringBuffer ret = new StringBuffer();
+	ret.setLength(0);
 	int exportlogs;
 	if (exportStyle == STYLE_GPX_PQLIKE && maxLogs < logs.size()) {
 	    exportlogs = maxLogs;
 	} else {
 	    exportlogs = logs.size();
 	}
-	if (ch.is_found()) {
+	if (ch.isFound()) {
 	    // own log always (found)
-	    if (chD.OwnLogId.equals("") || chD.OwnLog == null) {
+	    if (chD.OwnLog == null) {
 		if (exportStyle == STYLE_GPX_MYFINDS) {
-		    Preferences.itself().log(chD.getParent().getWayPoint() + " missing own LogID or Log", null);
+		    Preferences.itself().log(chD.getParent().getWayPoint() + " missing own Log", null);
 		    return "";
 		}
-		if (chD.OwnLog != null) {
-		    // chD.OwnLogId muss dann "" sein
-		    addLog("4711", chD.OwnLog, finderid, ret);
-		}
 	    } else {
-		addLog(chD.OwnLogId, chD.OwnLog, finderid, ret);
+		addLog(chD.OwnLog);
 	    }
 	}
 	if (exportStyle != STYLE_GPX_MYFINDS) {
-	    // add log with attributes
+	    // add logs
+	    final String cacheID = ch.GetCacheID();
 	    if (attrib2Log) {
-		addLog(ch.GetCacheID() + Integer.toString(exportlogs), createAttrLog(ch), "", ret);
+		// with attributes as log
+		Log attrLog = createAttrLog(ch);
+		// attrLog.setFinderID(""); // default is ""
+		attrLog.setLogID(cacheID + Integer.toString(exportlogs));
+		addLog(attrLog);
 	    }
-	    // todo dont export ownlog
-	    // CW doesn't save the LogID. So we generate by ch.GetCacheID() + Integer.toString(i)
+	    // CW doesn't save the LogID (upto version ~1.3.3394). So we generate by ch.GetCacheID() + Integer.toString(i)
 	    for (int i = 0; i < exportlogs; i++) {
-		addLog(ch.GetCacheID() + Integer.toString(i), logs.getLog(i), "", ret);
+		Log theLog = logs.getLog(i);
+
+		String logID = theLog.getLogID();
+		if (logID.length() == 0) {
+		    theLog.setLogID(cacheID + Integer.toString(i));
+		}
+
+		if (theLog.isOwnLog()) {
+		    if (!theLog.isFoundLog()) {
+			addLog(theLog);
+		    }
+		} else {
+		    addLog(theLog);
+		}
 	    }
 	}
 	return ret.toString();
@@ -821,7 +855,7 @@ public class GpxExportNg {
 	return log;
     }
 
-    private StringBuffer addLog(String logId, Log log, String FinderID, StringBuffer ret) {
+    private void addLog(Log log) {
 
 	String logMessage = log.getMessage();
 	Transformer trans = new Transformer(true);
@@ -839,24 +873,15 @@ public class GpxExportNg {
 	    logMessage = ttrans.replaceAll(trans.replaceAll(logMessage));
 	}
 
-	String logID = log.getLogID();
-	if (logID.length() == 0) {
-	    logID = logId;
-	}
-	String finderID = log.getFinderID();
-	if (finderID.length() == 0) {
-	    finderID = FinderID;
-	}
 	trans = new Transformer(true);
-	trans.add(new Regex("@@LOGID@@", logID));
+	trans.add(new Regex("@@LOGID@@", log.getLogID()));
 	trans.add(new Regex("@@LOGDATE@@", log.getDate()));
 	trans.add(new Regex("@@LOGTYPE@@", CacheHolder.image2TypeText(log.getIcon())));
-	trans.add(new Regex("@@LOGFINDERID@@", finderID));
+	trans.add(new Regex("@@LOGFINDERID@@", log.getFinderID()));
 	trans.add(new Regex("@@LOGFINDER@@", SafeXML.cleanGPX(log.getLogger())));
 	trans.add(new Regex("@@LOGENCODE@@", ""));
 	trans.add(new Regex("@@LOGTEXT@@", SafeXML.cleanGPX(logMessage)));
 	ret.append(trans.replaceAll(GPXLOG));
-	return ret;
     }
 
     /**
@@ -899,7 +924,7 @@ public class GpxExportNg {
 	    StringBuffer ret = new StringBuffer();
 	    String delim = "";
 	    ret.append(ch.getCacheDetails(true).LongDescription);
-	    if (ch.is_HTML()) {
+	    if (ch.isHTML()) {
 		delim = "<br />";
 	    } else {
 		delim = newLine;
@@ -907,7 +932,7 @@ public class GpxExportNg {
 	    // FIXME: format is not quite right yet
 	    // FIXME: cut Addis off in GPXimporter otherwise people who use GPX to feed CacheWolf have them doubled
 	    if (ch.addiWpts.size() > 0 && exportStyle != STYLE_GPX_MYFINDS) {
-		if (ch.is_HTML()) {
+		if (ch.isHTML()) {
 		    ret.append(newLine).append(newLine).append("<p>Additional Waypoints</p>");
 		} else {
 		    ret.append(newLine).append(newLine).append("Additional Waypoints").append(newLine);
@@ -1020,7 +1045,7 @@ public class GpxExportNg {
     private class GpxExportNgForm extends Form {
 
 	private mCheckBox cbCustomIcons, cbSendToGarmin, cbSeperateHints, cbAttrib2Log;
-	private mInput ibMaxLogs, ibPrefix;
+	private mInput ibMaxLogs, ibSplitSize, ibPrefix;
 	private final ExecutePanel executePanel;
 	private boolean hasBitmapsFrm;
 	private boolean hasGarminMapFrm;
@@ -1048,55 +1073,50 @@ public class GpxExportNg {
 	    chIds = new mChoice();
 	    chIds.dontSearchForKeys = true;
 	    // if you change the order of strings make sure to fix the event handler as well
-	    chIds.addItem(MyLocale.getMsg(31415, "Classic IDs")); // index 0
-	    chIds.addItem(MyLocale.getMsg(31415, "Smart IDs")); // index 1
+	    chIds.addItem(MyLocale.getMsg(2002, "Classic IDs")); // index 0
+	    chIds.addItem(MyLocale.getMsg(2003, "Smart IDs")); // index 1
 	    // chIds.addItem(MyLocale.getMsg(31415,"Smart Names")); // index 2
 	    chIds.select(chosenIds);
 
 	    chStyle = new mChoice();
 	    chStyle.dontSearchForKeys = true;
 	    // if you change the order of strings make sure to fix the event handler as well
-	    chStyle.addItem(MyLocale.getMsg(31415, "Compact")); // index 0
-	    chStyle.addItem(MyLocale.getMsg(31415, "PQ like")); // index 1
-	    chStyle.addItem(MyLocale.getMsg(31415, "MyFinds")); // index 2
+	    chStyle.addItem(MyLocale.getMsg(2004, "Compact")); // index 0
+	    chStyle.addItem(MyLocale.getMsg(2005, "PQ like")); // index 1
+	    chStyle.addItem(MyLocale.getMsg(2006, "MyFinds")); // index 2
 	    chStyle.select(chosenStyle);
 
 	    chTarget = new mChoice();
 	    chTarget.dontSearchForKeys = true;
 	    // if you change the order of strings make sure to fix the event handler as well
-	    chTarget.addItem(MyLocale.getMsg(31415, "Single GPX")); // index 0
-	    chTarget.addItem(MyLocale.getMsg(31415, "Separate GPX")); // index 1
+	    chTarget.addItem(MyLocale.getMsg(2007, "Single GPX")); // index 0
+	    chTarget.addItem(MyLocale.getMsg(2008, "Separate GPX")); // index 1
 	    if (hasBitmaps && hasGarminMap && hasGpsbabel) {
-		chTarget.addItem(MyLocale.getMsg(31415, "POI")); // index 2
+		chTarget.addItem(MyLocale.getMsg(2009, "POI")); // index 2
 	    }
 	    chTarget.select(chosenTarget);
 
 	    ibPrefix = new mInput("GC-");
 	    ibPrefix.modify(ControlConstants.Disabled, 0);
 
-	    ibMaxLogs = new mInput(String.valueOf(Preferences.itself().numberOfLogsToExport));
-	    ibMaxLogs.modify(ControlConstants.Disabled, 0);
-
-	    cbSeperateHints = new mCheckBox(MyLocale.getMsg(31415, "Separate Hints"));
+	    cbSeperateHints = new mCheckBox(MyLocale.getMsg(2010, "Separate Hints"));
 	    cbSeperateHints.modify(ControlConstants.Disabled, 0);
 
-	    cbSendToGarmin = new mCheckBox(MyLocale.getMsg(31415, "send to Garmin"));
+	    cbSendToGarmin = new mCheckBox(MyLocale.getMsg(2011, "send to Garmin"));
 	    if (!hasGpsbabel)
 		cbSendToGarmin.modify(ControlConstants.Disabled, 0);
 
-	    cbCustomIcons = new mCheckBox(MyLocale.getMsg(31415, "Custom Icons"));
+	    cbCustomIcons = new mCheckBox(MyLocale.getMsg(2012, "Custom Icons"));
 	    if (!hasGarminMap)
 		cbCustomIcons.modify(ControlConstants.Disabled, 0);
 
-	    cbAttrib2Log = new mCheckBox(MyLocale.getMsg(31415, "Attrib.->Log"));
-
-	    addNext(new mLabel(MyLocale.getMsg(31415, "GPX Style")));
+	    addNext(new mLabel(MyLocale.getMsg(2013, "GPX Style")));
 	    addLast(chStyle);
 
-	    addNext(new mLabel(MyLocale.getMsg(31415, "WP Names")));
+	    addNext(new mLabel(MyLocale.getMsg(2014, "WP Names")));
 	    addLast(chIds);
 
-	    addNext(new mLabel(MyLocale.getMsg(31415, "Output")));
+	    addNext(new mLabel(MyLocale.getMsg(2015, "Output")));
 	    addLast(chTarget);
 
 	    addNext(cbCustomIcons);
@@ -1104,13 +1124,23 @@ public class GpxExportNg {
 
 	    // addLast(cbSeperateHints);
 
-	    addNext(new mLabel(MyLocale.getMsg(31415, "Prefix")));
+	    addNext(new mLabel(MyLocale.getMsg(2016, "Prefix")));
 	    addLast(ibPrefix);
 
+	    cbAttrib2Log = new mCheckBox(MyLocale.getMsg(2017, "Attrib.->Log"));
 	    addLast(cbAttrib2Log);
 
-	    addNext(new mLabel(MyLocale.getMsg(31415, "Max Logs")));
+	    ibMaxLogs = new mInput(String.valueOf(Preferences.itself().numberOfLogsToExport));
+	    ibMaxLogs.modify(ControlConstants.Disabled, 0);
+	    addNext(new mLabel(MyLocale.getMsg(2018, "Max Logs")));
 	    addLast(ibMaxLogs);
+
+	    int iSplitSize = Preferences.itself().splitSize;
+	    String splitSize = (iSplitSize == -1) ? "" : String.valueOf(iSplitSize);
+	    ibSplitSize = new mInput(splitSize);
+	    ibSplitSize.modify(ControlConstants.Disabled, 0);
+	    addNext(new mLabel(MyLocale.getMsg(2019, "SplitSize")));
+	    addLast(ibSplitSize);
 
 	    executePanel = new ExecutePanel(this);
 
@@ -1123,6 +1153,9 @@ public class GpxExportNg {
 	 * in : chStyle.selectedIndex; out : chosenStyle
 	 */
 	private void checkStyle() {
+
+	    if (ibSplitSize.change(ControlConstants.Disabled, 0))
+		ibSplitSize.repaint();
 	    if (chStyle.selectedIndex == 2) { // my finds export
 		chIds.select(0);
 		if (chIds.change(ControlConstants.Disabled, 0))
@@ -1154,9 +1187,6 @@ public class GpxExportNg {
 		if (cbSeperateHints.change(ControlConstants.Disabled, 0))
 		    cbSeperateHints.repaint();
 
-		if (ibMaxLogs.change(ControlConstants.Disabled, 0))
-		    ibMaxLogs.repaint();
-
 		if (ibPrefix.change(ControlConstants.Disabled, 0))
 		    ibPrefix.repaint();
 	    } else if (chStyle.selectedIndex == 1) { // PQ like export
@@ -1185,6 +1215,10 @@ public class GpxExportNg {
 
 		if (ibPrefix.change(ControlConstants.Disabled, 0))
 		    ibPrefix.repaint();
+
+		if (ibSplitSize.change(0, ControlConstants.Disabled))
+		    ibSplitSize.repaint();
+
 	    } else { // compact export
 		if (chIds.change(0, ControlConstants.Disabled))
 		    chIds.repaint();
@@ -1289,10 +1323,20 @@ public class GpxExportNg {
 		    MainForm.profile.setGpxTarget(Convert.toString(chosenTarget));
 		    MainForm.profile.setGpxId(Convert.toString(chosenIds));
 		    if (chosenStyle == GpxExportNg.STYLE_GPX_PQLIKE) {
+			boolean mayclose = true;
+			try {
+			    getSplitSize();
+			} catch (NumberFormatException e) {
+			    ibSplitSize.setText("");
+			    ibSplitSize.takeFocus(0);
+			    Sound.beep();
+			    mayclose = false;
+			}
 			try {
 			    int logs = getMaxLogs();
 			    if (logs > -1) {
-				close(1);
+				if (mayclose)
+				    close(1);
 			    } else {
 				ibMaxLogs.selectAll();
 				ibMaxLogs.takeFocus(0);
@@ -1364,6 +1408,18 @@ public class GpxExportNg {
 	 */
 	private int getMaxLogs() {
 	    return Convert.parseInt(ibMaxLogs.getText());
+	}
+
+	/**
+	 * get max Size (nr of waypoints) of a gpx-file to export.
+	 * 
+	 * @return number of logs to export
+	 */
+	private int getSplitSize() {
+	    if (ibSplitSize.getText().length() == 0)
+		return -1;
+	    else
+		return Convert.parseInt(ibSplitSize.getText());
 	}
 
 	/**

@@ -214,10 +214,9 @@ public class LogList {
      * @return number of removed logs
      */
     public int purgeLogs() {
-	int maxKeep = Preferences.itself().maxLogsToKeep;
 	boolean keepOwn = Preferences.itself().alwaysKeepOwnLogs;
 	int purgedLogs = 0;
-	for (int i = logList.size(); i > maxKeep; i--) {
+	for (int i = logList.size(); i > Preferences.itself().maxLogsToKeep; i--) {
 	    if (!(keepOwn && getLog(i - 1).isOwnLog())) {
 		this.remove(i - 1);
 		purgedLogs++;
