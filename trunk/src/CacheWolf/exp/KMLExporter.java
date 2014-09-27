@@ -192,13 +192,13 @@ public class KMLExporter extends Exporter {
 	    ch = cacheDB.get(i);
 	    // TODO Das Argument nach STring zu casten gef?llt mir nicht ganz...
 	    if (ch.isVisible() && !ch.isAddiWpt()) {
-		if (ch.is_found()) {
+		if (ch.isFound()) {
 		    tmp = (Vector) outCacheDB[FOUND].get(String.valueOf(ch.getType()));
-		} else if (ch.is_owned()) {
+		} else if (ch.isOwned()) {
 		    tmp = (Vector) outCacheDB[OWNED].get(String.valueOf(ch.getType()));
-		} else if (ch.is_archived() || !ch.is_available()) {
+		} else if (ch.isArchived() || !ch.isAvailable()) {
 		    tmp = (Vector) outCacheDB[NOT_AVAILABLE].get(String.valueOf(ch.getType()));
-		} else if (ch.is_available()) {
+		} else if (ch.isAvailable()) {
 		    tmp = (Vector) outCacheDB[AVAILABLE].get(String.valueOf(ch.getType()));
 		} else {
 		    tmp = (Vector) outCacheDB[UNKNOWN].get(String.valueOf(ch.getType()));
@@ -339,11 +339,11 @@ public class KMLExporter extends Exporter {
     }
 
     private String getColor(CacheHolder ch) {
-	if (ch.is_found())
+	if (ch.isFound())
 	    return COLOR_FOUND;
-	if (ch.is_owned())
+	if (ch.isOwned())
 	    return COLOR_OWNED;
-	if (ch.is_archived() || !ch.is_available())
+	if (ch.isArchived() || !ch.isAvailable())
 	    return COLOR_NOT_AVAILABLE;
 
 	return COLOR_AVAILABLE;

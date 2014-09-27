@@ -166,7 +166,7 @@ public class CacheHolderDetail {
     public CacheHolderDetail update(CacheHolderDetail newCh) {
 	// flags
 	CacheHolder ch = getParent();
-	if (ch.is_found() && ch.getCacheStatus().equals("")) {
+	if (ch.isFound() && ch.getCacheStatus().equals("")) {
 	    ch.setCacheStatus(ch.getFoundText());
 	}
 	// travelbugs:GPX-File contains all actual travelbugs but not the missions
@@ -289,12 +289,17 @@ public class CacheHolderDetail {
 
 	Extractor subex = new Extractor(ex.findNext("<LOGS>", "</LOGS>"), "<OWNLOGID>", "</OWNLOGID>", 0, true);
 	OwnLogId = subex.findNext();
+	if (OwnLogId.length() == 0) {
+	    OwnLogId = "4711";
+	}
 	String ownLogText = subex.findNext("<OWNLOG><![CDATA[", "]]></OWNLOG>");
 	if (ownLogText.length() > 0) {
 	    if (ownLogText.indexOf("<img src='") >= 0) {
 		OwnLog = new Log(ownLogText + "]]>");
+		OwnLog.setLogID(OwnLogId);
+		OwnLog.setFinderID(Preferences.itself().gcMemberId);
 	    } else {
-		OwnLog = new Log(OwnLogId, "", "icon_smile.gif", "1900-01-01", Preferences.itself().myAlias, ownLogText);
+		OwnLog = new Log(OwnLogId, Preferences.itself().gcMemberId, "icon_smile.gif", "1900-01-01", Preferences.itself().myAlias, ownLogText);
 	    }
 	} else {
 	    OwnLog = null;

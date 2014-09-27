@@ -147,7 +147,11 @@ public class ImportGui extends Form {
 	if ((options & MAXLOGS) > 0) {
 	    this.addNext(new mLabel(MyLocale.getMsg(1626, "Max. logs:")), DONTSTRETCH, (DONTFILL | WEST));
 	    maxLogsInput = new mInput();
-	    maxLogsInput.setText(Convert.toString(Preferences.itself().maxLogsToSpider));
+	    if (Preferences.itself().maxLogsToSpider == -1) {
+		maxLogsInput.setText("");
+	    } else {
+		maxLogsInput.setText(Convert.toString(Preferences.itself().maxLogsToSpider));
+	    }
 	    this.addLast(maxLogsInput, DONTSTRETCH, (DONTFILL | WEST));
 	}
 

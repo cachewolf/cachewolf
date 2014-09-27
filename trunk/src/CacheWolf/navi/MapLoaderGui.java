@@ -337,7 +337,7 @@ public class MapLoaderGui extends Form {
 	    for (int i = cacheDB.size() - 1; i >= 0; i--) {
 		if (!progressBox.isClosed()) {
 		    ch = cacheDB.get(i);
-		    if (!this.onlySelected || ch.is_Checked) {
+		    if (!this.onlySelected || ch.isChecked) {
 			// TODO != 0 sollte verschwinden, sobald das handling von nicht gesetzten Koos überall korrekt ist
 			if (ch.getPos().isValid() && ch.getPos().latDec != 0 && ch.getPos().lonDec != 0) {
 			    numdownloaded++;

@@ -349,13 +349,13 @@ public class DetailsPanel extends CellPanel {
 	chcStatus.setText(ch.getStatusText());
 	chcType.setInt(CacheType.cw2GuiSelect(ch.getType()));
 
-	if (ch.is_black()) {
+	if (ch.isBlack()) {
 	    GuiImageBroker.setButtonIconAndText(btnBlackListed, MyLocale.getMsg(363, "Blacklist"), btnImageBlackListed);
 	} else {
 	    GuiImageBroker.setButtonIconAndText(btnBlackListed, MyLocale.getMsg(363, "Blacklist"), btnImageNotBlackListed);
 	}
 
-	blackStatus = ch.is_black();
+	blackStatus = ch.isBlack();
 	blackStatusChanged = false;
 
 	if (inpWaypoint.getText().length() == 0) {
@@ -515,14 +515,14 @@ public class DetailsPanel extends CellPanel {
 		ts.execute(this.getFrame(), Gui.CENTER_FRAME);
 
 	    } else if (ev.target == btnBlackListed) {
-		if (cache.is_black()) {
+		if (cache.isBlack()) {
 		    cache.setBlack(false);
 		    GuiImageBroker.setButtonIconAndText(btnBlackListed, MyLocale.getMsg(363, "Blacklist"), btnImageNotBlackListed);
 		} else {
 		    cache.setBlack(true);
 		    GuiImageBroker.setButtonIconAndText(btnBlackListed, MyLocale.getMsg(363, "Blacklist"), btnImageBlackListed);
 		}
-		blackStatus = cache.is_black();
+		blackStatus = cache.isBlack();
 		cache.setAttributesToAddiWpts();
 		dirtyDetails = true;
 		blackStatusChanged = true;
@@ -703,7 +703,7 @@ public class DetailsPanel extends CellPanel {
 	}
 	cache.setOwned(cache.getCacheStatus().equals(MyLocale.getMsg(320, "Owner")));
 	// Avoid setting is_owned if alias is empty and username is empty
-	if (!cache.is_owned()) {
+	if (!cache.isOwned()) {
 	    cache.setOwned((!Preferences.itself().myAlias.equals("") && Preferences.itself().myAlias.equalsIgnoreCase(cache.getCacheOwner())) || (Preferences.itself().myAlias2.equalsIgnoreCase(cache.getCacheOwner())));
 	}
 	cache.setBlack(blackStatus);

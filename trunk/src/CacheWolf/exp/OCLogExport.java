@@ -71,7 +71,7 @@ public final class OCLogExport {
     }
 
     public static void doOneLog(CacheHolder ch) {
-	if (!ch.is_found())
+	if (!ch.isFound())
 	    return;
 	// take GC log direct to OC, needs valid ch
 	Vm.showWait(true);

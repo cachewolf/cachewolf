@@ -656,7 +656,7 @@ public class OCXMLImporter extends MinML {
 	    // if a long description has been entered in this run (==holder.cache_updated is true),
 	    // then this one is added (for another language)
 	    // otherwise all previous descriptions will be overwritten ( or there are none yet)
-	    if (holder.is_updated())
+	    if (holder.isUpdated())
 		holder.getCacheDetails(false).LongDescription += linebraek + processingDescLang + ":" + linebraek + strData + linebraek;
 	    else
 		holder.getCacheDetails(false).LongDescription = processingDescLang + ":" + linebraek + strData + linebraek;
@@ -676,7 +676,7 @@ public class OCXMLImporter extends MinML {
 		linebreak = "<br>\n";
 	    else
 		linebreak = "\n";
-	    if (holder.is_updated())
+	    if (holder.isUpdated())
 		holder.getCacheDetails(false).Hints += linebreak + "[" + processingDescLang + ":]" + linebreak + Common.rot13(strData) + linebreak;
 	    else
 		holder.getCacheDetails(false).Hints = "[" + processingDescLang + ":]" + linebreak + Common.rot13(strData) + linebreak;
@@ -700,7 +700,7 @@ public class OCXMLImporter extends MinML {
 	    }
 	    //
 	    if ((logFinder.toLowerCase().compareTo(user) == 0 || logFinder.equalsIgnoreCase(Preferences.itself().myAlias2)) && logtype == 1) {
-		if (incFinds || !holder.is_new()) {
+		if (incFinds || !holder.isNew()) {
 		    // aber vorhandene werden mit gefunden aktualisiert
 		    holder.setCacheStatus(logDate);
 		    holder.setFound(true);

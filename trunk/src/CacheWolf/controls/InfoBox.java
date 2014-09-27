@@ -52,10 +52,6 @@ public class InfoBox extends Form {
 
     private int type = 0;
 
-    /**
-     * This variable is set to true (by canExit()), if the user closed the Info window by clicking the "close" button.
-     * It can be used to check if a lengthy task needs to be aborted (i.e. spidering)
-     */
     private boolean isClosed = false;
 
     public static void init(int fontSize, boolean useBigIcons) {
@@ -201,6 +197,10 @@ public class InfoBox extends Form {
 	executePanel.setText(text, button);
     }
 
+    /**
+     * The user can close the Info window to abort operation
+     * Use this to check.
+     */
     public boolean isClosed() {
 	return isClosed;
     }

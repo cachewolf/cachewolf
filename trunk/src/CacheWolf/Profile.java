@@ -598,18 +598,18 @@ public class Profile {
 	    ch = cacheDB.get(i);
 	    if (selectStatus) {
 		if (ch.isVisible()) {
-		    ch.is_Checked = selectStatus; // set the ceckbox also for addi wpts
+		    ch.isChecked = selectStatus; // set the ceckbox also for addi wpts
 		    if (ch.hasAddiWpt()) {
 			CacheHolder addiWpt;
 			int addiCount = ch.addiWpts.getCount();
 			for (int j = 0; j < addiCount; j++) {
 			    addiWpt = (CacheHolder) ch.addiWpts.get(j);
-			    addiWpt.is_Checked = selectStatus;
+			    addiWpt.isChecked = selectStatus;
 			}
 		    }
 		}
 	    } else /* selectStatus==false */{
-		ch.is_Checked = selectStatus;
+		ch.isChecked = selectStatus;
 	    }
 	}
     }
@@ -626,7 +626,7 @@ public class Profile {
 	boolean isAddi = false;
 	for (int i = cacheDB.size() - 1; i >= 0; i--) {
 	    ch = cacheDB.get(i);
-	    if (!onlyOfSelected || ch.is_Checked) {
+	    if (!onlyOfSelected || ch.isChecked) {
 		if (ch.getPos().isValid()) { // done: && ch.pos.latDec != 0 && ch.pos.lonDec != 0 TO-DO != 0 sollte rausgenommen werden sobald in der Liste vernünftig mit nicht gesetzten pos umgegangen wird
 		    isAddi = ch.isAddiWpt();
 		    // test for plausiblity of coordinates of Additional Waypoints: more then 1000 km away from main Waypoint is unplausible ->
