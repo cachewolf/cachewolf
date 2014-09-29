@@ -158,7 +158,7 @@ public class MapInfoObject extends BoundingBox {
 	    x = Common.parseInt(p[p.length - 2]);
 	    y = Common.parseInt(mapImageFileNameObject.getMapName());
 	    calcTile(x, y, zoom);
-	    mapImageFileNameObject.setImageExtension(Common.getFilenameExtension(Common.getImageName(Preferences.itself().absoluteMapsBaseDir + mapImageFileNameObject.getPath() + mapImageFileNameObject.getMapName())));
+	    mapImageFileNameObject.setImageExtension(Common.getExtension(Common.getImageName(Preferences.itself().absoluteMapsBaseDir + mapImageFileNameObject.getPath() + mapImageFileNameObject.getMapName())));
 	    break;
 	case 3:
 	    p = ewe.util.mString.split(mapImageFileNameObject.getMapName(), '!');
@@ -213,7 +213,7 @@ public class MapInfoObject extends BoundingBox {
 		return Preferences.itself().absoluteMapsBaseDir + this.mapImageFileNameObject.getPath() + this.mapImageFileNameObject.getMapName() + this.mapImageFileNameObject.getImageExtension();
 	    } else {
 		String in = Common.getImageName(Preferences.itself().absoluteMapsBaseDir + this.mapImageFileNameObject.getPath() + this.mapImageFileNameObject.getMapName());
-		this.mapImageFileNameObject.setImageExtension(Common.getFilenameExtension(in));
+		this.mapImageFileNameObject.setImageExtension(Common.getExtension(in));
 		return in;
 	    }
 	}

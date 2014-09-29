@@ -204,7 +204,7 @@ public final class Common {
      * @param fn
      * @return
      */
-    public static String getFilenameExtension(String fn) {
+    public static String getExtension(String fn) {
 	if (fn == null || fn.length() == 0)
 	    return "";
 	int dot = fn.lastIndexOf('.');
@@ -219,7 +219,7 @@ public final class Common {
      * @param fn
      * @return the path and name without extension
      */
-    public static String getFilename(String fn) {
+    public static String getPathAndFilename(String fn) {
 	if (fn == null || fn.length() == 0)
 	    return "";
 	int dot = fn.lastIndexOf('.');

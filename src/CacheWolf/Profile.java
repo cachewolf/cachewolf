@@ -79,7 +79,7 @@ public class Profile {
 
     private String gpxStyle = new String();
     private String gpxTarget = new String();
-    private String gpxId = new String();
+    private String wpNameStyle = new String();
 
     /** path (there may be subdirs) to the maps of the profile, relative to the preferences maps dir with ending / */
     private String relativeMapsDir = "";
@@ -147,7 +147,7 @@ public class Profile {
 	setDistOC("");
 	setDistGC("");
 	setMinDistGC("");
-	setGpxId("0");
+	setWpNameStyle("0");
 	setGpxStyle("0");
 	setGpxTarget("0");
 	relativeMapsDir = "";
@@ -234,7 +234,7 @@ public class Profile {
 	    detfile.print(this.getCurrentFilter().toXML(""));
 	    detfile.print("    <SYNCOC date = \"" + getLast_sync_opencaching() + "\" dist = \"" + getDistOC() + "\"/>\n");
 	    detfile.print("    <SPIDERGC dist = \"" + getDistGC() + "\" mindist = \"" + getMinDistGC() + "\"/>\n");
-	    detfile.print("    <EXPORT style = \"" + getGpxStyle() + "\" target = \"" + getGpxTarget() + "\" id = \"" + getGpxId() + "\"/>\n");
+	    detfile.print("    <EXPORT style = \"" + getGpxStyle() + "\" target = \"" + getGpxTarget() + "\" id = \"" + wpNameStyle + "\"/>\n");
 	    detfile.print("    <mapspath relativeDir = \"" + SafeXML.string2Html(relativeMapsDir) + "\"/>\n");
 	    detfile.print("    <TIMEZONE timeZoneOffset = \"" + getTimeZoneOffset() + "\" timeZoneAutoDST = \"" + getTimeZoneAutoDST() + "\"/>\n");
 	    int size = cacheDB.size();
@@ -370,9 +370,9 @@ public class Profile {
 			setGpxTarget(text.substring(start, text.indexOf("\"", start)));
 		    start = text.indexOf("id = \"") + 6;
 		    if (start == 5) {
-			setGpxId("0");
+			wpNameStyle = "0";
 		    } else
-			setGpxId(text.substring(start, text.indexOf("\"", start)));
+			wpNameStyle = text.substring(start, text.indexOf("\"", start));
 		} else if (text.indexOf("<TIMEZONE") >= 0) {
 		    int start = text.indexOf("timeZoneOffset = \"") + 18;
 		    if (start == 17) {
@@ -918,8 +918,13 @@ public class Profile {
 	return Convert.toInt(gpxTarget);
     }
 
-    public int getGpxId() {
-	return Convert.toInt(gpxId);
+    public int getWpNameStyle() {
+	return Convert.toInt(wpNameStyle);
+    }
+
+    public void setWpNameStyle(String id) {
+	this.notifyUnsavedChanges(!id.equals(this.wpNameStyle));
+	this.wpNameStyle = id;
     }
 
     //
@@ -941,11 +946,6 @@ public class Profile {
     public void setGpxTarget(String target) {
 	this.notifyUnsavedChanges(!target.equals(this.gpxTarget));
 	this.gpxTarget = target;
-    }
-
-    public void setGpxId(String id) {
-	this.notifyUnsavedChanges(!id.equals(this.gpxId));
-	this.gpxId = id;
     }
 
     public void setRelativeMapsDir(String relativeMapsDir) {
