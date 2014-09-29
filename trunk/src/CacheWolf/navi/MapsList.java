@@ -134,7 +134,7 @@ public final class MapsList extends Vector {
 				if (x >= 0) {
 				    // int y from dateien
 				    for (int i = 0; i < dateien.length; i++) {
-					int y = Common.parseInt(Common.getFilename(dateien[i]));
+					int y = Common.parseInt(Common.getPathAndFilename(dateien[i]));
 					if (y >= 0) {
 					    String filename = dateien[i].substring(0, dateien[i].lastIndexOf('.'));
 					    MapImageFileNameObject MapImageFileNameObject = new MapImageFileNameObject(MainForm.profile.getMapsSubDir(aktPath), filename, "");
@@ -868,7 +868,7 @@ final class MapListEntry {
 			new InfoBox(MyLocale.getMsg(5500, "Error"), MyLocale.getMsg(4705, "Failed to rename:\n") + f + MyLocale.getMsg(4706, "\nto:\n") + to).wait(FormBase.OKB);
 		    f = Common.getImageName(mapsPath + subPath + filenamei);
 		    if (f != null) {
-			imageExtension = Common.getFilenameExtension(f);
+			imageExtension = Common.getExtension(f);
 			to = sortEntryBBox + "E-" + filenamei + imageExtension;
 			if (!new File(f).rename(to)) {
 			    Preferences.itself().log("MapListEntry Failed to rename: " + mapsPath + subPath + filenamei + ": " + f + " to: " + to, null);

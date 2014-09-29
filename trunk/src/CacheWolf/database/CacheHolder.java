@@ -874,11 +874,11 @@ public class CacheHolder {
 			    d1 = d1 + imgFile.substring(0, 4).toUpperCase() + "/";
 			    dest = d1 + imgFile.toUpperCase();
 			    if (imgFile.toUpperCase().startsWith(title.toUpperCase())) {
-				d1 = Common.getFilename(dest);
+				d1 = Common.getPathAndFilename(dest);
 			    } else {
-				d1 = Common.getFilename(dest) + " - " + Common.ClearForFileName(title);
+				d1 = Common.getPathAndFilename(dest) + " - " + Common.ClearForFileName(title);
 			    }
-			    dest = d1 + Common.getFilenameExtension(dest).toLowerCase();
+			    dest = d1 + Common.getExtension(dest).toLowerCase();
 			} else {
 			    dest = Preferences.itself().getExportPath(expName) + imgFile;
 			}

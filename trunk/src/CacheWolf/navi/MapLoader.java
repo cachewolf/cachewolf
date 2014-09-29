@@ -783,7 +783,7 @@ class WebMapService extends OnlineMapService {
 	}
 	in.close();
 	//
-	this.filename = Common.getFilename(FileBase.getFileExt(wmsFilePaN)); //only the name
+	this.filename = Common.getPathAndFilename(FileBase.getFileExt(wmsFilePaN)); //only the name
 
 	name = wms.getProperty("Name", "").trim();
 	if (name.length() == 0)

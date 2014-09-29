@@ -93,6 +93,8 @@ public class Preferences extends MinML {
     public String userID = "";
     /** The own GC member ID (for gpx - export)*/
     public String gcMemberId = "";
+    /** for gpx - export */
+    public boolean exportWithInvalidAddiCoords;
     /** This is an alternative alias used to identify found caches */
     public String myAlias2 = "";
     /** Optional password, if empty you are asked. (OC equal GC) */
