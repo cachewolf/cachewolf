@@ -554,7 +554,7 @@ public class GpxExportNg {
 		Preferences.itself().log("[GPX Export:formatCache] " + ch.getWayPoint() + " has invalid coords.");
 		return "";
 	    }
-	    if (!Preferences.itself().exportWithInvalidAddiCoords) {
+	    if (!Preferences.itself().exportAddiWithInvalidCoords) {
 		return "";
 	    }
 	}
@@ -1051,7 +1051,7 @@ public class GpxExportNg {
      */
     private class GpxExportNgForm extends Form {
 
-	private mCheckBox cbCustomIcons, cbSendToGarmin, cbWithInvalidAddiCoords, cbAttrib2Log;
+	private mCheckBox cbCustomIcons, cbSendToGarmin, cbAddiWithInvalidCoords, cbAttrib2Log;
 	private mInput ibMaxLogs, ibSplitSize, ibPrefix;
 	private final ExecutePanel executePanel;
 	private boolean hasBitmapsFrm;
@@ -1128,9 +1128,9 @@ public class GpxExportNg {
 	    addNext(new mLabel(MyLocale.getMsg(2016, "Prefix")));
 	    addLast(ibPrefix);
 
-	    cbWithInvalidAddiCoords = new mCheckBox(MyLocale.getMsg(2020, "Export Addis without coordinates?"));
-	    addLast(cbWithInvalidAddiCoords);
-	    cbWithInvalidAddiCoords.state = Preferences.itself().exportWithInvalidAddiCoords;
+	    cbAddiWithInvalidCoords = new mCheckBox(MyLocale.getMsg(2020, "Export Addis without coordinates?"));
+	    addLast(cbAddiWithInvalidCoords);
+	    cbAddiWithInvalidCoords.state = Preferences.itself().exportAddiWithInvalidCoords;
 
 	    cbAttrib2Log = new mCheckBox(MyLocale.getMsg(2017, "Attrib.->Log"));
 	    addLast(cbAttrib2Log);
@@ -1171,7 +1171,7 @@ public class GpxExportNg {
 		disable(cbCustomIcons);
 		cbAttrib2Log.state = false;
 		disable(cbAttrib2Log);
-		disable(cbWithInvalidAddiCoords);
+		disable(cbAddiWithInvalidCoords);
 		disable(ibSplitSize);
 		disable(ibPrefix);
 	    } else if (chStyle.selectedIndex == 1) { // PQ like export
@@ -1179,7 +1179,7 @@ public class GpxExportNg {
 		chTarget.select(0);
 		disable(chTarget);
 		enable(cbAttrib2Log);
-		enable(cbWithInvalidAddiCoords);
+		enable(cbAddiWithInvalidCoords);
 		enable(ibMaxLogs);
 		disable(ibPrefix);
 		enable(ibSplitSize);
@@ -1195,7 +1195,7 @@ public class GpxExportNg {
 		enable(chWpNameStyle);
 		enable(chTarget);
 		disable(cbAttrib2Log);
-		disable(cbWithInvalidAddiCoords);
+		disable(cbAddiWithInvalidCoords);
 		disable(ibMaxLogs);
 		disable(ibSplitSize);
 		if (hasGpsbabelFrm)
@@ -1267,8 +1267,8 @@ public class GpxExportNg {
 		    checkTarget();
 		} else if (ev.target == chWpNameStyle && chWpNameStyle.selectedIndex != wpNameStyle) {
 		    wpNameStyle = chWpNameStyle.selectedIndex;
-		} else if (ev.target == cbWithInvalidAddiCoords) {
-		    Preferences.itself().exportWithInvalidAddiCoords = cbWithInvalidAddiCoords.state;
+		} else if (ev.target == cbAddiWithInvalidCoords) {
+		    Preferences.itself().exportAddiWithInvalidCoords = cbAddiWithInvalidCoords.state;
 		    Preferences.itself().dirty = true;
 		}
 

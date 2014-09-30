@@ -192,11 +192,11 @@ public class CacheHolderDetail {
 
 	String oldGCNotes = new Extractor(this.CacheNotes, "<GC>", "</GC>", 0, false).findNext();
 	if (oldGCNotes.length() > 0) {
-	    if (newCh.getGCNotes().length() > 0) {
-		this.setCacheNotes(STRreplace.replace(this.CacheNotes, oldGCNotes, newCh.getGCNotes()));
-	    }
+	    // if (newCh.getGCNotes().length() > 0) {
+	    this.setCacheNotes(STRreplace.replace(this.CacheNotes, oldGCNotes, newCh.getGCNotes()));
+	    // die}
 	} else {
-	    this.setCacheNotes(newCh.getCacheNotes());
+	    this.setCacheNotes(this.CacheNotes + newCh.getGCNotes());
 	}
 
 	// Images
