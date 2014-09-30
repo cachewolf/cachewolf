@@ -21,8 +21,6 @@
  */
 package CacheWolf.utils;
 
-import CacheWolf.Preferences;
-
 import com.jcraft.jzlib.GZIPInputStream;
 
 import ewe.data.Property;
@@ -253,7 +251,7 @@ public class UrlFetcher {
 	    } else {
 		//  redirection
 		urltmp = conn.documentProperties.getString("location", null);
-		Preferences.itself().log("Url Redirected to " + urltmp);
+		// Preferences.itself().log("Url Redirected to " + urltmp);
 		rememberCookies();
 		addCookies2RequestorProperties();
 		conn.disconnect();
@@ -297,7 +295,7 @@ public class UrlFetcher {
 		    */
 		    if (rp.length == 2) {
 			setCookie(rp[0] + ";" + conn.getHost(), rp[1]);
-			Preferences.itself().log("Remembered Cookie: " + rp[0] + " = " + rp[1]);
+			// Preferences.itself().log("Remembered Cookie: " + rp[0] + " = " + rp[1]);
 		    }
 		}
 	    }
