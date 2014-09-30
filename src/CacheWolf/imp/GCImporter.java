@@ -2168,7 +2168,7 @@ public class GCImporter {
 
     boolean shortDescRex_not_yet_found = true;
 
-    public String getDescription(int from) {
+    public String getDescription() {
 	wayPointPageIndex = 0;
 	return wayPointPageGetDescription();
     }
@@ -2216,8 +2216,8 @@ public class GCImporter {
 	    notesRex.search(wayPointPage);
 	    if (notesRex.didMatch()) {
 		String tmp = notesRex.stringMatched(1);
-		if (tmp.length() > 0)
-		    return "<GC>" + notesRex.stringMatched(1) + "</GC>";
+		if (tmp.length() > 2)
+		    return "<GC>" + tmp + "</GC>";
 		else
 		    return "";
 	    } else {
