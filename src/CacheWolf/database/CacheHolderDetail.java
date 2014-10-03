@@ -289,10 +289,13 @@ public class CacheHolderDetail {
 
 	Extractor subex = new Extractor(ex.findNext("<LOGS>", "</LOGS>"), "<OWNLOGID>", "</OWNLOGID>", 0, true);
 	OwnLogId = subex.findNext();
-	if (OwnLogId.length() == 0) {
-	    OwnLogId = "4711";
-	}
 	String ownLogText = subex.findNext("<OWNLOG><![CDATA[", "]]></OWNLOG>");
+	if (ownLogText.length() > 0) {
+	    if (OwnLogId.length() == 0)
+		OwnLogId = "4711";
+	} else {
+	    OwnLogId = "";
+	}
 	if (ownLogText.length() > 0) {
 	    if (ownLogText.indexOf("<img src='") >= 0) {
 		OwnLog = new Log(ownLogText + "]]>");
