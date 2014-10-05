@@ -77,10 +77,6 @@ public class Profile {
     private String distGC = "";
     private String minDistGC = "";
 
-    private String gpxStyle = new String();
-    private String gpxTarget = new String();
-    private String wpNameStyle = new String();
-
     /** path (there may be subdirs) to the maps of the profile, relative to the preferences maps dir with ending / */
     private String relativeMapsDir = "";
 
@@ -103,8 +99,15 @@ public class Profile {
     public boolean byPassIndexActive = false;
     private int indexXmlVersion;
 
-    // TODO Add other settings, such as max. number of logs to spider
     // TODO Add settings for the preferred mapper to allow for maps other than expedia and other resolutions
+
+    // Profile Settings
+    private String profilesLastUsedGpxStyle = "";
+    /** The maximum number of logs to export */
+    public int numberOfLogsToExport = 5;
+    /** max Size (nr of waypoints) of a gpx-file to export.*/
+    public int splitSize = -1;
+    public boolean exportLogsAsPlainText = true;
 
     /**
      * Constructor for a profile
@@ -147,9 +150,7 @@ public class Profile {
 	setDistOC("");
 	setDistGC("");
 	setMinDistGC("");
-	setWpNameStyle("0");
-	setGpxStyle("0");
-	setGpxTarget("0");
+	setProfilesLastUsedGpxStyle(0);
 	relativeMapsDir = "";
 	resetUnsavedChanges();
     }
@@ -234,7 +235,7 @@ public class Profile {
 	    detfile.print(this.getCurrentFilter().toXML(""));
 	    detfile.print("    <SYNCOC date = \"" + getLast_sync_opencaching() + "\" dist = \"" + getDistOC() + "\"/>\n");
 	    detfile.print("    <SPIDERGC dist = \"" + getDistGC() + "\" mindist = \"" + getMinDistGC() + "\"/>\n");
-	    detfile.print("    <EXPORT style = \"" + getGpxStyle() + "\" target = \"" + getGpxTarget() + "\" id = \"" + wpNameStyle + "\"/>\n");
+	    detfile.print("    <EXPORT style = \"" + getProfilesLastUsedGpxStyle() + "\"/>\n");
 	    detfile.print("    <mapspath relativeDir = \"" + SafeXML.string2Html(relativeMapsDir) + "\"/>\n");
 	    detfile.print("    <TIMEZONE timeZoneOffset = \"" + getTimeZoneOffset() + "\" timeZoneAutoDST = \"" + getTimeZoneAutoDST() + "\"/>\n");
 	    int size = cacheDB.size();
@@ -360,19 +361,9 @@ public class Profile {
 		} else if (text.indexOf("<EXPORT") >= 0) {
 		    int start = text.indexOf("style = \"") + 9;
 		    if (start == 8) {
-			setGpxStyle("0");
+			setProfilesLastUsedGpxStyle(0);
 		    } else
-			setGpxStyle(text.substring(start, text.indexOf("\"", start)));
-		    start = text.indexOf("target = \"") + 10;
-		    if (start == 9) {
-			setGpxTarget("0");
-		    } else
-			setGpxTarget(text.substring(start, text.indexOf("\"", start)));
-		    start = text.indexOf("id = \"") + 6;
-		    if (start == 5) {
-			wpNameStyle = "0";
-		    } else
-			wpNameStyle = text.substring(start, text.indexOf("\"", start));
+			setProfilesLastUsedGpxStyle(Common.parseInt(text.substring(start, text.indexOf("\"", start))));
 		} else if (text.indexOf("<TIMEZONE") >= 0) {
 		    int start = text.indexOf("timeZoneOffset = \"") + 18;
 		    if (start == 17) {
@@ -910,24 +901,6 @@ public class Profile {
 	return minDistGC;
     }
 
-    public int getGpxStyle() {
-	return Convert.toInt(gpxStyle);
-    }
-
-    public int getGpxTarget() {
-	return Convert.toInt(gpxTarget);
-    }
-
-    public int getWpNameStyle() {
-	return Convert.toInt(wpNameStyle);
-    }
-
-    public void setWpNameStyle(String id) {
-	this.notifyUnsavedChanges(!id.equals(this.wpNameStyle));
-	this.wpNameStyle = id;
-    }
-
-    //
     public void setMinDistGC(String minDistGC) {
 	this.notifyUnsavedChanges(!minDistGC.equals(this.minDistGC));
 	this.minDistGC = minDistGC;
@@ -938,14 +911,14 @@ public class Profile {
 	this.distGC = distGC;
     }
 
-    public void setGpxStyle(String style) {
-	this.notifyUnsavedChanges(!style.equals(this.gpxStyle));
-	this.gpxStyle = style;
+    public int getProfilesLastUsedGpxStyle() {
+	return Common.parseInt(profilesLastUsedGpxStyle);
     }
 
-    public void setGpxTarget(String target) {
-	this.notifyUnsavedChanges(!target.equals(this.gpxTarget));
-	this.gpxTarget = target;
+    public void setProfilesLastUsedGpxStyle(int _style) {
+	String style = "" + _style;
+	this.notifyUnsavedChanges(!style.equals(this.profilesLastUsedGpxStyle));
+	this.profilesLastUsedGpxStyle = style;
     }
 
     public void setRelativeMapsDir(String relativeMapsDir) {
