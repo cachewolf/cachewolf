@@ -963,22 +963,29 @@ public class Preferences extends MinML {
 		}
 		outp.print("/>\n");
 	    }
-
-	    // save last path of different exporters
+	    // save last path of im and exporters
+	    exporterPaths.remove("key"); // relikt bereinigen
+	    exporterPaths.remove("value"); // relikt bereinigen
 	    Iterator itPath = exporterPaths.entries();
-	    outp.print("    <expPath ");
-	    while (itPath.hasNext()) {
-		MapEntry entry = (MapEntry) itPath.next();
-		outp.print(entry.getKey().toString() + "=\"" + (String) entry.getValue() + "\" ");
+	    if (itPath.hasNext()) {
+		outp.print("    <expPath ");
+		while (itPath.hasNext()) {
+		    MapEntry entry = (MapEntry) itPath.next();
+		    outp.print(entry.getKey().toString() + "=\"" + (String) entry.getValue() + "\" ");
+		}
+		outp.print("/>\n");
 	    }
-	    outp.print("/>\n");
+	    importerPaths.remove("key"); // relikt bereinigen
+	    importerPaths.remove("value"); // relikt bereinigen
 	    itPath = importerPaths.entries();
-	    outp.print("    <impPath ");
-	    while (itPath.hasNext()) {
-		MapEntry entry = (MapEntry) itPath.next();
-		outp.print(entry.getKey().toString() + "=\"" + (String) entry.getValue() + "\" ");
+	    if (itPath.hasNext()) {
+		outp.print("    <impPath ");
+		while (itPath.hasNext()) {
+		    MapEntry entry = (MapEntry) itPath.next();
+		    outp.print(entry.getKey().toString() + "=\"" + (String) entry.getValue() + "\" ");
+		}
+		outp.print("/>\n");
 	    }
-	    outp.print("/>\n");
 	    outp.print("    <logkeeping maximum=\"" + SafeXML.strxmlencode(maxLogsToKeep) + "\" keepown=\"" + SafeXML.strxmlencode(alwaysKeepOwnLogs) + "\" />\n");
 	    outp.print("    <fillWhiteArea on=\"" + SafeXML.strxmlencode(fillWhiteArea) + "\" />\n");
 	    outp.print("    <mapLoader" //
