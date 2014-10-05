@@ -59,7 +59,6 @@ import ewe.io.IOException;
 import ewe.io.InputStream;
 import ewe.io.PrintWriter;
 import ewe.io.StreamReader;
-import ewe.sys.Convert;
 import ewe.sys.Date;
 import ewe.sys.Handle;
 import ewe.sys.Process;
@@ -88,28 +87,32 @@ import ewe.util.zip.ZipFile;
  * experimental GPX exporter that should better handle the various tasks that can be accomplished with GPX
  */
 public class GpxExportNg {
-    /** new line */
     final static String newLine = "\r\n";
-    /** decimal separator for lat- and lon-String */
-    // final static char decimalSeparator='.';
-    /** export is in compact format */
-    final static int STYLE_GPX_COMPACT = 0;
+    final static String WPNAMESTYLE = "wpNameStyle";
+    final static String SPLITSIZE = "splitSize";
+    final static String EXPORTADDIWITHINVALIDCOORDS = "exportAddiWithInvalidCoords";
+    final static String USECUSTOMICONS = "useCustomIcons";
+    final static String SENDTOGARMIN = "sendToGarmin";
+    final static String EXPORTLOGASPLAINTEXT = "exportLogsAsPlainText";
+    final static String ATTRIB2LOG = "attrib2Log";
+    final static String MAXNUMBEROFLOGSTOEXPORT = "maxNumberOfLogsToExport";
+    final static String PREFIX = "prefix";
+    /** write compcat single GPX file */
+    final static int STYLE_COMPCAT_OUTPUT_SINGLE = 0;
+    /** write compact one file per "type" as determined by garminmap.xml */
+    final static int STYLE_COMPCAT_OUTPUT_SEPARATE = 1;
+    /** generate GPI files with gpsbabel using garminmap.xml types */
+    final static int STYLE_COMPCAT_OUTPUT_POI = 2;
     /** export is PQ like */
-    final static int STYLE_GPX_PQLIKE = 1;
+    final static int STYLE_GPX_PQLIKE = 3;
     /** export follows gc.com MyFinds format */
-    final static int STYLE_GPX_MYFINDS = 2;
+    final static int STYLE_GPX_MYFINDS = 4;
     /** export uses only waypoint id */
     final static int WPNAME_ID_CLASSIC = 0;
     /** export uses waypointid + type, terrain, difficulty, size */
     final static int WPNAME_ID_SMART = 1;
     /** export uses cache names (will be made unique by gpsbabel) */
     final static int WPNAME_NAME_SMART = 2;
-    /** write single GPX file */
-    final static int OUTPUT_SINGLE = 0;
-    /** write one file per "type" as determined by garminmap.xml */
-    final static int OUTPUT_SEPARATE = 1;
-    /** generate GPI files with gpsbabel using garminmap.xml types */
-    final static int OUTPUT_POI = 2;
     /** name used as key when storing preferences */
     final static String expName = "GpxExportNG";
     /** string representation of true */
@@ -117,10 +120,7 @@ public class GpxExportNg {
     /** string representation of false */
     final static String FALSE = "False";
     /** object used to determine custom symbols and POI categories */
-    private static GarminMap poiMapper = new GarminMap();
-    /** maximum number of logs to export. can be overwritten with preferences, default unlimited */
-    private int maxLogs = ewe.math.Number.INTEGER_MAX_VALUE;
-    private int splitSize = -1;
+    private static GarminMap garminMap = new GarminMap();
     /** number of errors / warnings during export */
     private int exportErrors = 0;
     /**  */
@@ -170,12 +170,10 @@ public class GpxExportNg {
 	    + ("@@ADDILAT@@ @@ADDILON@@@@ADDIDELIM@@")//
 	    + ("@@ADDILONG@@@@ADDIDELIM@@");//
 
-    private static boolean customIcons;
     private static boolean sendToGarmin;
     private static boolean attrib2Log;
+    private static int maxLogs;
 
-    private static int exportIds;
-    private static int exportTarget;
     private static int exportStyle;
 
     private static boolean hasBitmaps;
@@ -198,25 +196,24 @@ public class GpxExportNg {
 	    Preferences.itself().log("GPX Export: warning gcmemberid not set, check pref.xml", null);
     }
 
+    private GpxExportNgForm exportOptions;
+    private StringBuffer theLogs = new StringBuffer();
+
     public void doit() {
-	GpxExportNgForm exportOptions;
-	int ret;
 
-	exportOptions = new GpxExportNgForm(poiMapper.exists, hasBitmaps, hasGpsbabel);
-	ret = exportOptions.execute();
-
-	if (FormBase.IDCANCEL == ret) {
+	exportOptions = new GpxExportNgForm(garminMap.exists, hasBitmaps, hasGpsbabel);
+	if (exportOptions.execute() == FormBase.IDCANCEL) {
 	    return;
 	}
 
-	exportStyle = exportOptions.getExportStyle();
-	exportIds = exportOptions.getWpNameStyle();
-	exportTarget = exportOptions.getOutputTarget();
+	exportStyle = exportOptions.getGpxStyle();
 	sendToGarmin = exportOptions.getSendToGarmin();
-	customIcons = exportOptions.getCustomIcons();
-	attrib2Log = exportOptions.getAttrib2Log();
+	if (exportStyle == STYLE_GPX_PQLIKE) {
+	    maxLogs = exportOptions.getMaxLogs();
+	    attrib2Log = exportOptions.getAttrib2Log();
+	}
 
-	if (exportTarget == OUTPUT_SEPARATE || exportTarget == OUTPUT_POI) {
+	if (exportStyle == STYLE_COMPCAT_OUTPUT_SEPARATE || exportStyle == STYLE_COMPCAT_OUTPUT_POI) {
 	    final Hashtable fileHandles = new Hashtable();
 	    final String outDir;
 	    final String tempDir;
@@ -225,31 +222,28 @@ public class GpxExportNg {
 	    final FileChooser fc;
 	    ZipFile poiZip = null;
 
-	    if (exportTarget == OUTPUT_POI) {
+	    if (exportStyle == STYLE_COMPCAT_OUTPUT_POI) {
 		fc = new FileChooser(FileChooserBase.DIRECTORY_SELECT, Preferences.itself().getExportPath(expName + "-POI"));
 	    } else {
 		fc = new FileChooser(FileChooserBase.DIRECTORY_SELECT, Preferences.itself().getExportPath(expName + "-GPI"));
 	    }
-
 	    fc.setTitle("Select target directory:");
-
 	    if (fc.execute() == FormBase.IDCANCEL)
 		return;
-
 	    outDir = fc.getChosenFile().getFullPath();
-	    if (exportTarget == OUTPUT_POI) {
+	    if (exportStyle == STYLE_COMPCAT_OUTPUT_POI) {
 		Preferences.itself().setExportPath(expName + "-POI", outDir);
 	    } else {
 		Preferences.itself().setExportPath(expName + "-GPI", outDir);
 	    }
 
-	    if (!poiMapper.exists) {
+	    if (!garminMap.exists) {
 		Preferences.itself().log("GPX Export: unable to load garminmap.xml", null);
 		new InfoBox(MyLocale.getMsg(5500, "Error"), "unable to load garminmap.xml").wait(FormBase.OKB);
 		return;
 	    }
 
-	    if (exportTarget == OUTPUT_POI) {
+	    if (exportStyle == STYLE_COMPCAT_OUTPUT_POI) {
 		// FIXME: create proper tempdir
 		tempDir = baseDir + FileBase.separator + "GPXExporterNG.tmp";
 		new File(tempDir).mkdir();
@@ -287,7 +281,7 @@ public class GpxExportNg {
 		    } else if (ch.isIncomplete()) {
 			Preferences.itself().log("skipping export of incomplete waypoint " + ch.getWayPoint(), null);
 		    } else {
-			String poiId = poiMapper.getPoiId(ch);
+			String poiId = garminMap.getPoiId(ch);
 			if (null == poiId) {
 			    Preferences.itself().log("GPX Export: unmatched POI ID for " + ch.getWayPoint() + " of type " + ch.getType(), null);
 			    exportErrors++;
@@ -319,7 +313,7 @@ public class GpxExportNg {
 		    exportErrors++;
 		}
 
-		if (exportTarget == OUTPUT_POI) {
+		if (exportStyle == STYLE_COMPCAT_OUTPUT_POI) {
 		    // only clean up output directory if user has chosen non empty prefix,
 		    // since otherwise all present POI would be deleted
 		    if (!prefix.equals("")) {
@@ -343,7 +337,7 @@ public class GpxExportNg {
 
 		    writer.print("</gpx>" + newLine);
 		    writer.close();
-		    if (exportTarget == OUTPUT_POI) {
+		    if (exportStyle == STYLE_COMPCAT_OUTPUT_POI) {
 			poiCounter++;
 			h.progress = (float) poiCounter / (float) poiCategories;
 			h.changed();
@@ -354,7 +348,7 @@ public class GpxExportNg {
 			    continue;
 			}
 
-			if (exportTarget == OUTPUT_POI) {
+			if (exportStyle == STYLE_COMPCAT_OUTPUT_POI) {
 			    String[] cmdStack = new String[9];
 			    cmdStack[0] = Preferences.itself().gpsbabel;
 			    cmdStack[1] = "-i";
@@ -380,7 +374,7 @@ public class GpxExportNg {
 		    }
 		}
 
-		if (exportTarget == OUTPUT_POI) {
+		if (exportStyle == STYLE_COMPCAT_OUTPUT_POI) {
 		    File tmpdir = new File(tempDir);
 		    String tmp[] = new FileBugfix(tempDir).list(prefix + "*.*", ewe.io.FileBase.LIST_FILES_ONLY);
 		    for (int i = 0; i < tmp.length; i++) {
@@ -398,23 +392,9 @@ public class GpxExportNg {
 		pbf.exit(0);
 	    }
 	} else {
-	    if (customIcons) {
-		if (!poiMapper.exists) {
-		    customIcons = false;
+	    if (exportOptions.getUseCustomIcons()) {
+		if (!garminMap.exists) {
 		    Preferences.itself().log("unable to load garminmap.xml", null);
-		}
-	    }
-
-	    if (exportStyle == STYLE_GPX_PQLIKE) {
-		maxLogs = exportOptions.getMaxLogs();
-		if (maxLogs != Preferences.itself().numberOfLogsToExport) {
-		    Preferences.itself().numberOfLogsToExport = maxLogs;
-		    Preferences.itself().dirty = true;
-		}
-		splitSize = exportOptions.getSplitSize();
-		if (splitSize != Preferences.itself().splitSize) {
-		    Preferences.itself().splitSize = splitSize;
-		    Preferences.itself().dirty = true;
 		}
 	    }
 
@@ -459,6 +439,7 @@ public class GpxExportNg {
 			infB.addWarning("Skipping export of incomplete waypoint " + ch.getWayPoint());
 			Preferences.itself().log("GPX Export: skipping export of incomplete waypoint " + ch.getWayPoint(), null);
 		    } else {
+			int splitSize = exportOptions.getSplitSize();
 			if (splitSize > 0) {
 			    if (expCount % splitSize == 0) {
 				if (expCount > 0) {
@@ -554,7 +535,7 @@ public class GpxExportNg {
 		Preferences.itself().log("[GPX Export:formatCache] " + ch.getWayPoint() + " has invalid coords.");
 		return "";
 	    }
-	    if (!Preferences.itself().exportAddiWithInvalidCoords) {
+	    if (!exportOptions.getExportAddiWithInvalidCoords()) {
 		return "";
 	    }
 	}
@@ -564,8 +545,7 @@ public class GpxExportNg {
 	try {
 	    ret.append(formatCompact(ch));
 
-	    //if (exportStyle != STYLE_GPX_COMPACT && !(ch.isCustomWpt() || ch.isAddiWpt())) {
-	    if (exportStyle != STYLE_GPX_COMPACT) {
+	    if (exportStyle == STYLE_GPX_PQLIKE || exportStyle == STYLE_GPX_MYFINDS) {
 		ret.append(formatPqExtensions(ch));
 	    }
 
@@ -598,7 +578,7 @@ public class GpxExportNg {
 
 	ret.append("  <wpt lat=\"" + ch.getPos().getLatDeg(TransformCoordinates.DD) + "\" lon=\"" + ch.getPos().getLonDeg(TransformCoordinates.DD) + "\">").append(newLine);
 
-	if (exportStyle != STYLE_GPX_COMPACT) {
+	if (exportStyle == STYLE_GPX_PQLIKE || exportStyle == STYLE_GPX_MYFINDS) {
 	    if (ch.isAddiWpt()) {
 		try {
 		    ret.append("    <time>" + ch.mainCache.getDateHidden() + "T07:00:00Z</time>").append(newLine);
@@ -614,7 +594,7 @@ public class GpxExportNg {
 	    }
 	}
 
-	if (exportIds == WPNAME_ID_SMART) {
+	if (exportOptions.getWpNameStyle() == WPNAME_ID_SMART) {
 	    if (ch.isAddiWpt()) {
 		ret.append("    <name>").append(SafeXML.cleanGPX(ch.mainCache.getWayPoint())).append(" ").append(ch.getWayPoint().substring(0, 2)).append("</name>").append(newLine);
 	    } else if (ch.isCustomWpt()) {
@@ -629,7 +609,7 @@ public class GpxExportNg {
 			.append(String.valueOf(ch.getNoFindLogs()))//
 			.append("</name>").append(newLine);
 	    }
-	} else if (exportIds == WPNAME_NAME_SMART) {
+	} else if (exportOptions.getWpNameStyle() == WPNAME_NAME_SMART) {
 	    // TBD
 	} else {
 	    ret.append("    <name>").append(SafeXML.cleanGPX(ch.getWayPoint())).append("</name>").append(newLine);
@@ -637,13 +617,13 @@ public class GpxExportNg {
 
 	// no <cmt> for custom
 	if (!ch.isCustomWpt()) {
-	    if (exportIds == WPNAME_ID_SMART && exportStyle == STYLE_GPX_COMPACT) {
+	    if (exportOptions.getWpNameStyle() == WPNAME_ID_SMART && (exportStyle == STYLE_COMPCAT_OUTPUT_SINGLE || exportStyle == STYLE_COMPCAT_OUTPUT_SEPARATE || exportStyle == STYLE_COMPCAT_OUTPUT_POI)) {
 		if (ch.isAddiWpt()) {
 		    ret.append("    <cmt>").append(SafeXML.cleanGPX(ch.getCacheName() + " " + ch.getCacheDetails(true).LongDescription)).append("</cmt>").append(newLine);
 		} else {
 		    ret.append("    <cmt>").append(SafeXML.cleanGPX(ch.getCacheName() + " " + Common.rot13(ch.getCacheDetails(true).Hints))).append("</cmt>").append(newLine);
 		}
-	    } else if (exportIds == WPNAME_NAME_SMART) {
+	    } else if (exportOptions.getWpNameStyle() == WPNAME_NAME_SMART) {
 		// TBD
 	    } else {
 		if (ch.isAddiWpt()) {
@@ -668,15 +648,15 @@ public class GpxExportNg {
 		    .append("</desc>").append(newLine);
 	}
 
-	if (exportStyle != STYLE_GPX_COMPACT) {
+	if (exportStyle == STYLE_GPX_PQLIKE || exportStyle == STYLE_GPX_MYFINDS) {
 	    if (!ch.isCustomWpt()) {
 		ret.append("    <url>").append(ch.getCacheDetails(true).URL).append("</url>").append(newLine);
 		ret.append("    <urlname>").append(SafeXML.cleanGPX(ch.getCacheName())).append("</urlname>").append(newLine);
 	    }
 	}
 
-	if (customIcons) {
-	    ret.append("    <sym>").append(poiMapper.getIcon(ch)).append("</sym>").append(newLine);
+	if (exportOptions.getUseCustomIcons()) {
+	    ret.append("    <sym>").append(garminMap.getIcon(ch)).append("</sym>").append(newLine);
 	} else {
 	    if (ch.isAddiWpt()) {
 		ret.append("    <sym>").append(CacheType.type2SymTag(ch.getType())).append("</sym>").append(newLine);
@@ -689,7 +669,7 @@ public class GpxExportNg {
 	    }
 	}
 
-	if (exportStyle != STYLE_GPX_COMPACT) {
+	if (exportStyle == STYLE_GPX_PQLIKE || exportStyle == STYLE_GPX_MYFINDS) {
 	    ret.append("    <type>").append(CacheType.type2TypeTag(ch.getType())).append("</type>").append(newLine);
 	}
 
@@ -785,39 +765,32 @@ public class GpxExportNg {
 	return ret.toString();
     }
 
-    private StringBuffer ret = new StringBuffer();
-
-    /**
-     * format cache logs as found in a gc.com GPX file
-     * 
-     * @param ch
-     *            CacheHolder containing the logs
-     * @return formatted logs or empty string if no logs are present
-     */
     private String formatLogs(CacheHolder ch) {
 	CacheHolderDetail chD = ch.getCacheDetails(false);
 	LogList logs = chD.CacheLogs;
-	ret.setLength(0);
-	int exportlogs;
-	if (exportStyle == STYLE_GPX_PQLIKE && maxLogs < logs.size()) {
-	    exportlogs = maxLogs;
-	} else {
-	    exportlogs = logs.size();
-	}
-	if (ch.isFound()) {
-	    // own log always (found)
-	    if (chD.OwnLog == null) {
-		if (exportStyle == STYLE_GPX_MYFINDS) {
+	theLogs.setLength(0);
+
+	if (exportStyle == STYLE_GPX_MYFINDS) {
+	    if (ch.isFound()) {
+		// perhaps there is no Ownlog yet
+		if (chD.OwnLog == null) {
 		    Preferences.itself().log(chD.getParent().getWayPoint() + " missing own Log", null);
 		    return "";
+		} else {
+		    addLog(chD.OwnLog);
 		}
-	    } else {
-		addLog(chD.OwnLog);
 	    }
-	}
-	if (exportStyle != STYLE_GPX_MYFINDS) {
-	    // add logs
+	} else { // it is PQ
+
+	    int exportlogs;
+	    if (maxLogs < logs.size()) {
+		exportlogs = maxLogs;
+	    } else {
+		exportlogs = logs.size();
+	    }
+
 	    final String cacheID = ch.GetCacheID();
+
 	    if (attrib2Log) {
 		// with attributes as log
 		Log attrLog = createAttrLog(ch);
@@ -825,25 +798,20 @@ public class GpxExportNg {
 		attrLog.setLogID(cacheID + Integer.toString(exportlogs));
 		addLog(attrLog);
 	    }
-	    // CW doesn't save the LogID (upto version ~1.3.3394). So we generate by ch.GetCacheID() + Integer.toString(i)
+
+	    // CW doesn't save the LogID (upto version ~1.3.3394). 
+	    // So we generate one by ch.GetCacheID() + Integer.toString(i)
 	    for (int i = 0; i < exportlogs; i++) {
 		Log theLog = logs.getLog(i);
-
 		String logID = theLog.getLogID();
 		if (logID.length() == 0) {
 		    theLog.setLogID(cacheID + Integer.toString(i));
 		}
-
-		if (theLog.isOwnLog()) {
-		    if (!theLog.isFoundLog()) {
-			addLog(theLog);
-		    }
-		} else {
-		    addLog(theLog);
-		}
+		addLog(theLog);
 	    }
+
 	}
-	return ret.toString();
+	return theLogs.toString();
     }
 
     private Log createAttrLog(CacheHolder ch) {
@@ -867,7 +835,7 @@ public class GpxExportNg {
 	String logMessage = log.getMessage();
 	Transformer trans = new Transformer(true);
 
-	if (Preferences.itself().exportLogsAsPlainText) {
+	if (exportOptions.getExportLogsAsPlainText()) {
 	    trans.add(new Regex("\r", ""));
 	    trans.add(new Regex("\n", " "));
 	    trans.add(new Regex("<br>", "\n"));
@@ -888,7 +856,7 @@ public class GpxExportNg {
 	trans.add(new Regex("@@LOGFINDER@@", SafeXML.cleanGPX(log.getLogger())));
 	trans.add(new Regex("@@LOGENCODE@@", ""));
 	trans.add(new Regex("@@LOGTEXT@@", SafeXML.cleanGPX(logMessage)));
-	ret.append(trans.replaceAll(GPXLOG));
+	theLogs.append(trans.replaceAll(GPXLOG));
     }
 
     /**
@@ -1051,207 +1019,259 @@ public class GpxExportNg {
      */
     private class GpxExportNgForm extends Form {
 
-	private mCheckBox cbCustomIcons, cbSendToGarmin, cbAddiWithInvalidCoords, cbAttrib2Log;
+	private mLabel lblWpNameStyle, lblAddiWithInvalidCoords, lblSplitSize, lblUseCustomIcons, lblSendToGarmin, lblMaxLogs, lblExportLogsAsPlainText, lblAttrib2Log, lblPrefix;
+	private int gpxStyle;
+	private mCheckBox cbUseCustomIcons, cbSendToGarmin, cbAddiWithInvalidCoords, cbAttrib2Log, cbExportLogsAsPlainText;
 	private mInput ibMaxLogs, ibSplitSize, ibPrefix;
+	private mChoice chStyle, chWpNameStyle;
 	private final ExecutePanel executePanel;
-	private boolean hasBitmapsFrm;
-	private boolean hasGarminMapFrm;
-	private boolean hasGpsbabelFrm;
 
-	private mChoice chStyle, chTarget, chWpNameStyle;
-	private int chosenStyle, chosenTarget, wpNameStyle;
+	private boolean hasIcons;
+	private boolean hasGarminMap;
+	private boolean isGpsBabelInstalled;
+
+	private Hashtable exportValues;
 
 	/**
 	 * set up the form / dialog
 	 */
-	private GpxExportNgForm(boolean hasGarminMap, boolean hasBitmaps, boolean hasGpsbabel) {
-
-	    this.hasBitmapsFrm = hasBitmaps;
-	    this.hasGarminMapFrm = hasGarminMap;
-	    this.hasGpsbabelFrm = hasGpsbabel;
-
-	    chosenStyle = MainForm.profile.getGpxStyle();
-	    chosenTarget = MainForm.profile.getGpxTarget();
-	    wpNameStyle = MainForm.profile.getWpNameStyle();
+	private GpxExportNgForm(boolean _hasGarminMap, boolean _hasBitmaps, boolean _hasGpsbabel) {
 
 	    this.setTitle("GPX Export");
 	    this.resizable = false;
 
+	    gpxStyle = MainForm.profile.getProfilesLastUsedGpxStyle();
+
+	    hasIcons = _hasBitmaps;
+	    hasGarminMap = _hasGarminMap;
+	    isGpsBabelInstalled = _hasGpsbabel;
+
+	    addNext(new mLabel(MyLocale.getMsg(2013, "GPX Style")));
+	    chStyle = new mChoice();
+	    chStyle.dontSearchForKeys = true;
+	    // if you change the order of strings make sure to fix the event handler as well
+	    chStyle.addItem(MyLocale.getMsg(2004, "Compact") + ": " + MyLocale.getMsg(2007, "Single GPX")); // index 0
+	    chStyle.addItem(MyLocale.getMsg(2004, "Compact") + ": " + MyLocale.getMsg(2008, "Separate GPX")); // index 1
+	    chStyle.addItem(MyLocale.getMsg(2004, "Compact") + ": " + MyLocale.getMsg(2009, "POI")); // index 2
+	    chStyle.addItem(MyLocale.getMsg(2005, "PQ like")); // index 3
+	    chStyle.addItem(MyLocale.getMsg(2006, "MyFinds")); // index 4
+	    chStyle.select(gpxStyle);
+	    addLast(chStyle);
+
+	    addNext(lblWpNameStyle = new mLabel(MyLocale.getMsg(2014, "WP Names")));
 	    chWpNameStyle = new mChoice();
 	    chWpNameStyle.dontSearchForKeys = true;
 	    // if you change the order of strings make sure to fix the event handler as well
 	    chWpNameStyle.addItem(MyLocale.getMsg(2002, "keep")); // index 0
 	    chWpNameStyle.addItem(MyLocale.getMsg(2003, "add details")); // index 1
 	    // chIds.addItem(MyLocale.getMsg(31415,"Smart Names")); // index 2
-	    chWpNameStyle.select(wpNameStyle);
-
-	    chStyle = new mChoice();
-	    chStyle.dontSearchForKeys = true;
-	    // if you change the order of strings make sure to fix the event handler as well
-	    chStyle.addItem(MyLocale.getMsg(2004, "Compact")); // index 0
-	    chStyle.addItem(MyLocale.getMsg(2005, "PQ like")); // index 1
-	    chStyle.addItem(MyLocale.getMsg(2006, "MyFinds")); // index 2
-	    chStyle.select(chosenStyle);
-
-	    chTarget = new mChoice();
-	    chTarget.dontSearchForKeys = true;
-	    // if you change the order of strings make sure to fix the event handler as well
-	    chTarget.addItem(MyLocale.getMsg(2007, "Single GPX")); // index 0
-	    chTarget.addItem(MyLocale.getMsg(2008, "Separate GPX")); // index 1
-	    if (hasBitmaps && hasGarminMap && hasGpsbabel) {
-		chTarget.addItem(MyLocale.getMsg(2009, "POI")); // index 2
-	    }
-	    chTarget.select(chosenTarget);
-
-	    ibPrefix = new mInput("GC-");
-	    ibPrefix.modify(ControlConstants.Disabled, 0);
-
-	    addNext(new mLabel(MyLocale.getMsg(2013, "GPX Style")));
-	    addLast(chStyle);
-
-	    addNext(new mLabel(MyLocale.getMsg(2014, "WP Names")));
 	    addLast(chWpNameStyle);
 
-	    addNext(new mLabel(MyLocale.getMsg(2015, "Output")));
-	    addLast(chTarget);
+	    addNext(lblSplitSize = new mLabel(MyLocale.getMsg(2019, "SplitSize")));
+	    ibSplitSize = new mInput("");
+	    addLast(ibSplitSize);
 
-	    cbCustomIcons = new mCheckBox(MyLocale.getMsg(2012, "Custom Icons"));
-	    if (!hasGarminMap)
-		cbCustomIcons.modify(ControlConstants.Disabled, 0);
-	    addLast(cbCustomIcons);
+	    addNext(lblAddiWithInvalidCoords = new mLabel(MyLocale.getMsg(2020, "Export Addis without coordinates?")));
+	    cbAddiWithInvalidCoords = new mCheckBox("");
+	    addLast(cbAddiWithInvalidCoords);
 
-	    cbSendToGarmin = new mCheckBox(MyLocale.getMsg(2011, "send to Garmin"));
-	    if (!hasGpsbabel)
-		cbSendToGarmin.modify(ControlConstants.Disabled, 0);
+	    addNext(lblUseCustomIcons = new mLabel(MyLocale.getMsg(2012, "Custom Icons")));
+	    cbUseCustomIcons = new mCheckBox("");
+	    addLast(cbUseCustomIcons);
+
+	    addNext(lblSendToGarmin = new mLabel(MyLocale.getMsg(2011, "send to Garmin")));
+	    cbSendToGarmin = new mCheckBox("");
 	    addLast(cbSendToGarmin);
 
-	    addNext(new mLabel(MyLocale.getMsg(2016, "Prefix")));
-	    addLast(ibPrefix);
+	    addNext(lblExportLogsAsPlainText = new mLabel(MyLocale.getMsg(2010, "HTML - Tags aus Logs entfernen")));
+	    cbExportLogsAsPlainText = new mCheckBox("");
+	    addLast(cbExportLogsAsPlainText);
 
-	    cbAddiWithInvalidCoords = new mCheckBox(MyLocale.getMsg(2020, "Export Addis without coordinates?"));
-	    addLast(cbAddiWithInvalidCoords);
-	    cbAddiWithInvalidCoords.state = Preferences.itself().exportAddiWithInvalidCoords;
-
-	    cbAttrib2Log = new mCheckBox(MyLocale.getMsg(2017, "Attrib.->Log"));
+	    addNext(lblAttrib2Log = new mLabel(MyLocale.getMsg(2017, "Attrib.->Log")));
+	    cbAttrib2Log = new mCheckBox("");
 	    addLast(cbAttrib2Log);
 
-	    ibMaxLogs = new mInput(String.valueOf(Preferences.itself().numberOfLogsToExport));
-	    ibMaxLogs.modify(ControlConstants.Disabled, 0);
-	    addNext(new mLabel(MyLocale.getMsg(2018, "Max Logs")));
+	    addNext(lblMaxLogs = new mLabel(MyLocale.getMsg(2018, "Max Logs")));
+	    ibMaxLogs = new mInput("");
 	    addLast(ibMaxLogs);
 
-	    int iSplitSize = Preferences.itself().splitSize;
-	    String splitSize = (iSplitSize == -1) ? "" : String.valueOf(iSplitSize);
-	    ibSplitSize = new mInput(splitSize);
-	    ibSplitSize.modify(ControlConstants.Disabled, 0);
-	    addNext(new mLabel(MyLocale.getMsg(2019, "SplitSize")));
-	    addLast(ibSplitSize);
+	    addNext(lblPrefix = new mLabel(MyLocale.getMsg(2016, "Prefix")));
+	    ibPrefix = new mInput("");
+	    addLast(ibPrefix);
 
 	    executePanel = new ExecutePanel(this);
 
 	    checkStyle();
-	    checkTarget();
-	    wpNameStyle = chWpNameStyle.selectedIndex;
 	}
 
-	/**
-	 * in : chStyle.selectedIndex; out : chosenStyle
-	 */
+	private void setFromPreferences() {
+	    chWpNameStyle.select(Common.parseInt(getExportValue(WPNAMESTYLE)));
+	    int splitSize = Common.parseInt(getExportValue(SPLITSIZE));
+	    ibSplitSize.setText((splitSize == -1) ? "" : String.valueOf(splitSize));
+	    cbAddiWithInvalidCoords.setState(Boolean.valueOf(getExportValue(EXPORTADDIWITHINVALIDCOORDS)).booleanValue());
+	    cbUseCustomIcons.setState(Boolean.valueOf(getExportValue(USECUSTOMICONS)).booleanValue());
+	    cbSendToGarmin.setState(Boolean.valueOf(getExportValue(SENDTOGARMIN)).booleanValue());
+	    cbExportLogsAsPlainText.setState(Boolean.valueOf(getExportValue(EXPORTLOGASPLAINTEXT)).booleanValue());
+	    cbAttrib2Log.setState(Boolean.valueOf(getExportValue(ATTRIB2LOG)).booleanValue());
+	    String strMaxNumberOfLogsToExport = getExportValue(MAXNUMBEROFLOGSTOEXPORT);
+	    int maxNumberOfLogsToExport = (strMaxNumberOfLogsToExport.length() == 0) ? 5 : Common.parseInt(strMaxNumberOfLogsToExport);
+	    ibMaxLogs.setText((maxNumberOfLogsToExport == -1) ? "" : String.valueOf(maxNumberOfLogsToExport));
+	    ibPrefix.setText(getExportValue(PREFIX));
+	    if (ibPrefix.getText().length() == 0)
+		ibPrefix.setText("GC-"); //default	    
+	}
+
+	private String getExportValue(String item) {
+	    if (exportValues == null)
+		return "";
+	    String ret = (String) exportValues.get(item);
+	    if (ret == null) {
+		return "";
+	    } else {
+		return ret;
+	    }
+	}
+
+	public int getGpxStyle() {
+	    return chStyle.selectedIndex;
+	}
+
+	public boolean getSendToGarmin() {
+	    return cbSendToGarmin.getState();
+	}
+
+	public String getPrefix() {
+	    return ibPrefix.text;
+	}
+
+	public int getWpNameStyle() {
+	    return chWpNameStyle.selectedIndex;
+	}
+
+	public boolean getUseCustomIcons() {
+	    return cbUseCustomIcons.getState();
+	}
+
+	public boolean getExportLogsAsPlainText() {
+	    return cbExportLogsAsPlainText.getState();
+	}
+
+	public boolean getExportAddiWithInvalidCoords() {
+	    return cbAddiWithInvalidCoords.getState();
+	}
+
+	public int getMaxLogs() {
+	    if (ibMaxLogs.getText().length() == 0) {
+		ibMaxLogs.setText("-1");
+		return -1;
+	    } else
+		return Common.parseInt(ibMaxLogs.getText());
+	}
+
+	public int getSplitSize() {
+	    if (ibSplitSize.getText().length() == 0)
+		return -1;
+	    else
+		return Common.parseInt(ibSplitSize.getText());
+	}
+
+	public boolean getAttrib2Log() {
+	    return cbAttrib2Log.getState();
+	}
+
 	private void checkStyle() {
-	    if (chStyle.selectedIndex == 2) { // my finds export
+	    gpxStyle = chStyle.selectedIndex;
+	    exportValues = Preferences.itself().getGpxExportPreferences(Preferences.itself().gpxStyles[gpxStyle]);
+	    setFromPreferences();
+	    if (gpxStyle == STYLE_GPX_MYFINDS) {
 		chWpNameStyle.select(0);
-		disable(chWpNameStyle);
-		chTarget.select(0);
-		disable(chTarget);
-		disable(ibPrefix);
-		disable(ibMaxLogs);
-		cbSendToGarmin.state = false;
-		disable(cbSendToGarmin);
-		cbCustomIcons.state = false;
-		disable(cbCustomIcons);
-		cbAttrib2Log.state = false;
-		disable(cbAttrib2Log);
-		disable(cbAddiWithInvalidCoords);
-		disable(ibSplitSize);
-		disable(ibPrefix);
-	    } else if (chStyle.selectedIndex == 1) { // PQ like export
-		enable(chWpNameStyle);
-		chTarget.select(0);
-		disable(chTarget);
-		enable(cbAttrib2Log);
-		enable(cbAddiWithInvalidCoords);
-		enable(ibMaxLogs);
-		disable(ibPrefix);
-		enable(ibSplitSize);
-		if (hasGpsbabelFrm)
-		    enable(cbSendToGarmin);
-		else
-		    disable(cbSendToGarmin);
-		if (hasGarminMapFrm)
-		    enable(cbCustomIcons);
-		else
-		    disable(cbCustomIcons);
+		disable(lblWpNameStyle, chWpNameStyle);
+		disable(lblAddiWithInvalidCoords, cbAddiWithInvalidCoords);
+		cbAddiWithInvalidCoords.setState(false);
+		disable(lblUseCustomIcons, cbUseCustomIcons);
+		cbUseCustomIcons.setState(false);
+		disable(lblSendToGarmin, cbSendToGarmin);
+		cbSendToGarmin.setState(false);
+		enable(lblExportLogsAsPlainText, cbExportLogsAsPlainText);
+		disable(lblMaxLogs, ibMaxLogs);
+		disable(lblAttrib2Log, cbAttrib2Log);
+		cbAttrib2Log.setState(false);
+		disable(lblSplitSize, ibSplitSize);
+		disable(lblPrefix, ibPrefix);
+	    } else if (gpxStyle == STYLE_GPX_PQLIKE) {
+		enable(lblWpNameStyle, chWpNameStyle);
+		enable(lblAddiWithInvalidCoords, cbAddiWithInvalidCoords);
+		enable(lblSplitSize, ibSplitSize);
+		if (hasGarminMap)
+		    enable(lblUseCustomIcons, cbUseCustomIcons);
+		else {
+		    disable(lblUseCustomIcons, cbUseCustomIcons);
+		    cbUseCustomIcons.setState(false);
+		}
+		if (isGpsBabelInstalled)
+		    enable(lblSendToGarmin, cbSendToGarmin);
+		else {
+		    disable(lblSendToGarmin, cbSendToGarmin);
+		    cbSendToGarmin.setState(false);
+		}
+		enable(lblExportLogsAsPlainText, cbExportLogsAsPlainText);
+		enable(lblMaxLogs, ibMaxLogs);
+		enable(lblAttrib2Log, cbAttrib2Log);
+		disable(lblPrefix, ibPrefix);
 	    } else { // compact export
-		enable(chWpNameStyle);
-		enable(chTarget);
-		disable(cbAttrib2Log);
-		disable(cbAddiWithInvalidCoords);
-		disable(ibMaxLogs);
-		disable(ibSplitSize);
-		if (hasGpsbabelFrm)
-		    enable(cbSendToGarmin);
-		else
-		    disable(cbSendToGarmin);
-		if (hasGarminMapFrm)
-		    enable(cbCustomIcons);
-		else
-		    disable(cbCustomIcons);
+		enable(lblWpNameStyle, chWpNameStyle);
+		disable(lblAddiWithInvalidCoords, cbAddiWithInvalidCoords);
+		cbAddiWithInvalidCoords.setState(false);
+		disable(lblSplitSize, ibSplitSize);
+		if (hasGarminMap)
+		    enable(lblUseCustomIcons, cbUseCustomIcons);
+		else {
+		    disable(lblUseCustomIcons, cbUseCustomIcons);
+		    cbUseCustomIcons.setState(false);
+		}
+		disable(lblExportLogsAsPlainText, cbExportLogsAsPlainText);
+		cbExportLogsAsPlainText.setState(false);
+		disable(lblMaxLogs, ibMaxLogs);
+		disable(lblAttrib2Log, cbAttrib2Log);
+		if (gpxStyle == STYLE_COMPCAT_OUTPUT_SINGLE) {
+		    if (isGpsBabelInstalled)
+			enable(lblSendToGarmin, cbSendToGarmin);
+		    else {
+			disable(lblSendToGarmin, cbSendToGarmin);
+			cbSendToGarmin.setState(false);
+		    }
+		    disable(lblPrefix, ibPrefix);
+
+		} else if (gpxStyle == STYLE_COMPCAT_OUTPUT_SEPARATE) {
+		    disable(lblSendToGarmin, cbSendToGarmin);
+		    cbSendToGarmin.setState(false);
+		    if (hasIcons)
+			enable(lblUseCustomIcons, cbUseCustomIcons);
+		    else {
+			disable(lblUseCustomIcons, cbUseCustomIcons);
+			cbUseCustomIcons.setState(false);
+		    }
+		    enable(lblPrefix, ibPrefix);
+		} else if (gpxStyle == STYLE_COMPCAT_OUTPUT_POI) {
+		    disable(lblUseCustomIcons, cbUseCustomIcons);
+		    cbUseCustomIcons.setState(false);
+		    disable(lblSendToGarmin, cbSendToGarmin);
+		    cbSendToGarmin.setState(false);
+		    enable(lblPrefix, ibPrefix);
+		}
 	    }
-	    chosenStyle = chStyle.selectedIndex;
-	    chosenTarget = chTarget.selectedIndex;
-	    wpNameStyle = chWpNameStyle.selectedIndex;
 	}
 
-	/**
-	 * in : chTarget.selectedIndex out: chosenTarget
-	 */
-	private void checkTarget() {
-	    if (chTarget.selectedIndex == 2) { // Compact + POI
-		cbSendToGarmin.state = false;
-		disable(cbSendToGarmin);
-		cbCustomIcons.state = false;
-		disable(cbCustomIcons);
-		enable(ibPrefix);
-	    } else if (chTarget.selectedIndex == 1) { // Compact + Separate Files
-		cbSendToGarmin.state = false;
-		disable(cbSendToGarmin);
-		if (hasBitmapsFrm)
-		    enable(cbCustomIcons);
-		else
-		    disable(cbCustomIcons);
-		enable(ibPrefix);
-	    } else { // Compact + Single GPX
-		if (hasGpsbabelFrm)
-		    enable(cbSendToGarmin);
-		else
-		    disable(cbSendToGarmin);
-		if (hasGarminMapFrm)
-		    enable(cbCustomIcons);
-		else
-		    disable(cbCustomIcons);
-		disable(ibPrefix);
-	    }
-	    chosenStyle = chStyle.selectedIndex;
-	    chosenTarget = chTarget.selectedIndex;
-	    wpNameStyle = chWpNameStyle.selectedIndex;
-	}
-
-	private void disable(Control c) {
+	private void disable(mLabel l, Control c) {
+	    if (l.change(ControlConstants.Disabled, 0))
+		l.repaint();
 	    if (c.change(ControlConstants.Disabled, 0))
 		c.repaint();
 	}
 
-	private void enable(Control c) {
+	private void enable(mLabel l, Control c) {
+	    if (l.change(0, ControlConstants.Disabled))
+		l.repaint();
 	    if (c.change(0, ControlConstants.Disabled))
 		c.repaint();
 	}
@@ -1261,45 +1281,20 @@ public class GpxExportNg {
 	 */
 	public void onEvent(Event ev) {
 	    if (ev instanceof DataChangeEvent && ev.type == DataChangeEvent.DATA_CHANGED) {
-		if (ev.target == chStyle && chStyle.selectedIndex != chosenStyle) {
+		if (ev.target == chStyle && chStyle.selectedIndex != gpxStyle) {
 		    checkStyle();
-		} else if (ev.target == chTarget && chTarget.selectedIndex != chosenTarget) {
-		    checkTarget();
-		} else if (ev.target == chWpNameStyle && chWpNameStyle.selectedIndex != wpNameStyle) {
-		    wpNameStyle = chWpNameStyle.selectedIndex;
-		} else if (ev.target == cbAddiWithInvalidCoords) {
-		    Preferences.itself().exportAddiWithInvalidCoords = cbAddiWithInvalidCoords.state;
-		    Preferences.itself().dirty = true;
 		}
-
 	    } else if (ev instanceof ControlEvent && ev.type == ControlEvent.PRESSED) {
 		if (ev.target == executePanel.cancelButton) {
 		    close(-1);
 		} else if (ev.target == executePanel.applyButton) {
-		    MainForm.profile.setGpxStyle(Convert.toString(chosenStyle));
-		    MainForm.profile.setGpxTarget(Convert.toString(chosenTarget));
-		    MainForm.profile.setWpNameStyle(Convert.toString(wpNameStyle));
-		    if (chosenStyle == GpxExportNg.STYLE_GPX_PQLIKE) {
-			boolean mayclose = true;
-			try {
-			    getSplitSize();
-			} catch (NumberFormatException e) {
-			    ibSplitSize.setText("");
-			    ibSplitSize.takeFocus(0);
-			    Sound.beep();
-			    mayclose = false;
-			}
-			try {
-			    int logs = getMaxLogs();
-			    if (logs > -1) {
-				if (mayclose)
-				    close(1);
-			    } else {
-				ibMaxLogs.selectAll();
-				ibMaxLogs.takeFocus(0);
-				Sound.beep();
-			    }
-			} catch (NumberFormatException e) {
+		    boolean mayclose = true; // if plausibility checks fail: set to false
+		    if (gpxStyle == GpxExportNg.STYLE_GPX_PQLIKE) {
+			int logs = getMaxLogs();
+			if (logs >= -1) {
+			    if (mayclose)
+				close(1);
+			} else {
 			    ibMaxLogs.selectAll();
 			    ibMaxLogs.takeFocus(0);
 			    Sound.beep();
@@ -1307,94 +1302,47 @@ public class GpxExportNg {
 		    } else {
 			close(1);
 		    }
+		    if (mayclose) {
+			MainForm.profile.setProfilesLastUsedGpxStyle(gpxStyle);
+			setPreferences();
+		    }
 		}
 	    }
 
 	    super.onEvent(ev);
 	}
 
-	/**
-	 * amount of data to be exported
-	 * 
-	 * @return 0 Compact, 1 PQ like, 2 MyFinds
-	 */
-	private int getExportStyle() {
-	    return chosenStyle;
-	}
-
-	/**
-	 * style of waypoint identifiers
-	 * 
-	 * @return 0 Classic IDs, 1 Smart IDs, 3 Smart Names (should only be used with gpsbabel)
-	 */
-	private int getWpNameStyle() {
-	    return wpNameStyle;
-	}
-
-	/**
-	 * what kind of output should be generated
-	 * 
-	 * @return 0 single file, 1 separate files, 2 POI (GPI) files
-	 */
-	private int getOutputTarget() {
-	    return chosenTarget;
-	}
-
-	/**
-	 * check if user wants to send output straight to a Garmin GPSr
-	 * 
-	 * @return true for GPSr transfer, false otherwise
-	 */
-	private boolean getSendToGarmin() {
-	    return cbSendToGarmin.state;
-	}
-
-	/**
-	 * check if user wants custom icons
-	 * 
-	 * @return true if user wants custom icons, false otherwise
-	 */
-	private boolean getCustomIcons() {
-	    return cbCustomIcons.state;
-	}
-
-	/**
-	 * get the number of logs to export. used in PQlike export.
-	 * 
-	 * @return number of logs to export
-	 */
-	private int getMaxLogs() {
-	    return Convert.parseInt(ibMaxLogs.getText());
-	}
-
-	/**
-	 * get max Size (nr of waypoints) of a gpx-file to export.
-	 * 
-	 * @return number of logs to export
-	 */
-	private int getSplitSize() {
-	    if (ibSplitSize.getText().length() == 0)
-		return -1;
-	    else
-		return Convert.parseInt(ibSplitSize.getText());
-	}
-
-	/**
-	 * get prefix for separate file export
-	 * 
-	 * @return prefix for separate file export
-	 */
-	private String getPrefix() {
-	    return ibPrefix.getText();
-	}
-
-	/**
-	 * check if user wants to export attributes as log
-	 * 
-	 * @return true if attributes should exported as log, false otherwise
-	 */
-	private boolean getAttrib2Log() {
-	    return cbAttrib2Log.state;
+	private void setPreferences() {
+	    switch (gpxStyle) {
+	    case STYLE_COMPCAT_OUTPUT_SINGLE:
+		exportValues.put(WPNAMESTYLE, "" + chWpNameStyle.selectedIndex);
+		exportValues.put(USECUSTOMICONS, SafeXML.strxmlencode(cbUseCustomIcons.getState()));
+		exportValues.put(SENDTOGARMIN, SafeXML.strxmlencode(cbSendToGarmin.getState()));
+		break;
+	    case STYLE_COMPCAT_OUTPUT_SEPARATE:
+		exportValues.put(WPNAMESTYLE, "" + chWpNameStyle.selectedIndex);
+		exportValues.put(USECUSTOMICONS, SafeXML.strxmlencode(cbUseCustomIcons.getState()));
+		exportValues.put(PREFIX, ibPrefix.text);
+		break;
+	    case STYLE_COMPCAT_OUTPUT_POI:
+		exportValues.put(WPNAMESTYLE, "" + chWpNameStyle.selectedIndex);
+		exportValues.put(PREFIX, ibPrefix.text);
+		break;
+	    case STYLE_GPX_PQLIKE:
+		exportValues.put(WPNAMESTYLE, "" + chWpNameStyle.selectedIndex);
+		exportValues.put(SPLITSIZE, ibSplitSize.text);
+		exportValues.put(ATTRIB2LOG, SafeXML.strxmlencode(cbAttrib2Log.getState()));
+		exportValues.put(EXPORTADDIWITHINVALIDCOORDS, SafeXML.strxmlencode(cbAddiWithInvalidCoords.getState()));
+		exportValues.put(USECUSTOMICONS, SafeXML.strxmlencode(cbUseCustomIcons.getState()));
+		exportValues.put(SENDTOGARMIN, SafeXML.strxmlencode(cbSendToGarmin.getState()));
+		exportValues.put(EXPORTLOGASPLAINTEXT, SafeXML.strxmlencode(cbExportLogsAsPlainText.getState()));
+		exportValues.put(MAXNUMBEROFLOGSTOEXPORT, ibMaxLogs.text);
+		break;
+	    case STYLE_GPX_MYFINDS:
+		exportValues.put(EXPORTLOGASPLAINTEXT, SafeXML.strxmlencode(cbExportLogsAsPlainText.getState()));
+		break;
+	    }
+	    // save is done after input of outputfile
 	}
     }
 }
