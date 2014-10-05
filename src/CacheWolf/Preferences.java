@@ -93,8 +93,13 @@ public class Preferences extends MinML {
     public String userID = "";
     /** The own GC member ID (for gpx - export)*/
     public String gcMemberId = "";
-    /** for gpx - export */
-    public boolean exportAddiWithInvalidCoords;
+    public final String[] gpxStyles = { //
+    "STYLE_COMPCAT_OUTPUT_SINGLE", //
+	    "STYLE_COMPCAT_OUTPUT_SEPARATE", //
+	    "STYLE_COMPCAT_OUTPUT_POI", //
+	    "STYLE_GPX_PQLIKE", //
+	    "STYLE_GPX_MYFINDS" //
+    };
     /** This is an alternative alias used to identify found caches */
     public String myAlias2 = "";
     /** Optional password, if empty you are asked. (OC equal GC) */
@@ -269,16 +274,6 @@ public class Preferences extends MinML {
 
     /** Last mode select in the DataMover for processing cache */
     public int processorMode = 0;
-
-    /** The maximum number of logs to export */
-    public int numberOfLogsToExport = 5;
-    /** max Size (nr of waypoints) of a gpx-file to export.*/
-    public int splitSize = -1;
-    public boolean exportLogsAsPlainText = true;
-    /** Add Travelbugs when exporting */
-    public boolean exportTravelbugs = false;
-    /** Try to make a MyFinds GPX when exporting to GPX */
-    public boolean exportGpxAsMyFinds = true;
     // maps
     /** Determines whether to fill the white areas on the map */
     public boolean fillWhiteArea = false;
@@ -641,11 +636,19 @@ public class Preferences extends MinML {
 	    setMapsBaseDir(atts.getValue("dir"));
 	} else if (name.equals("debug"))
 	    debug = Boolean.valueOf(atts.getValue("value")).booleanValue();
-
-	else if (name.equals("expPath")) {
-	    exporterPaths.put(atts.getValue("key"), atts.getValue("value"));
+	else if (isGpxStyleName(name)) {
+	    Hashtable h = getGpxExportPreferences(name);
+	    for (int i = 0; i < atts.getLength(); i++) {
+		h.put(atts.getName(i), atts.getValue(i));
+	    }
+	} else if (name.equals("expPath")) {
+	    for (int i = 0; i < atts.getLength(); i++) {
+		exporterPaths.put(atts.getName(i), atts.getValue(i));
+	    }
 	} else if (name.equals("impPath")) {
-	    importerPaths.put(atts.getValue("key"), atts.getValue("value"));
+	    for (int i = 0; i < atts.getLength(); i++) {
+		importerPaths.put(atts.getName(i), atts.getValue(i));
+	    }
 	} else if (name.equals("travelbugs")) {
 	    travelbugColMap = atts.getValue("colmap");
 	    travelbugColWidth = atts.getValue("colwidths");
@@ -694,26 +697,6 @@ public class Preferences extends MinML {
 	    if (metricSystem != Metrics.METRIC && metricSystem != Metrics.IMPERIAL) {
 		metricSystem = Metrics.METRIC;
 	    }
-	} else if (name.equals("export")) {
-	    tmp = atts.getValue("numberOfLogsToExport");
-	    if (tmp != null)
-		numberOfLogsToExport = Convert.parseInt(tmp);
-
-	    tmp = atts.getValue("splitSize");
-	    if (tmp != null)
-		splitSize = Convert.parseInt(tmp);
-
-	    tmp = atts.getValue("exportLogsAsPlainText");
-	    if (tmp != null)
-		exportLogsAsPlainText = Boolean.valueOf(tmp).booleanValue();
-
-	    tmp = atts.getValue("exportTravelbugs");
-	    if (tmp != null)
-		exportTravelbugs = Boolean.valueOf(tmp).booleanValue();
-
-	    tmp = atts.getValue("exportGpxAsMyFinds");
-	    if (tmp != null)
-		exportGpxAsMyFinds = Boolean.valueOf(tmp).booleanValue();
 	} else if (name.equals("locale")) {
 	    language = atts.getValue("language");
 	} else if (name.equals("FILTERDATA")) {
@@ -792,6 +775,14 @@ public class Preferences extends MinML {
 	    SortingGroupedByCache = tmp != null && tmp.equalsIgnoreCase("true");
 	} else if (name.equals("MobileGui"))
 	    mobileGUI = Boolean.valueOf(atts.getValue("value")).booleanValue();
+    }
+
+    private boolean isGpxStyleName(String name) {
+	for (int i = 0; i < this.gpxStyles.length; i++) {
+	    if (name.equals(gpxStyles[i]))
+		return true;
+	}
+	return false;
     }
 
     public void characters(char ch[], int start, int length) {
@@ -949,8 +940,6 @@ public class Preferences extends MinML {
 	    outp.print("    <gotopanel northcentered=\"" + SafeXML.strxmlencode(northCenteredGoto) + "\" />\n");
 	    outp.print("    <details cacheSize=\"" + SafeXML.strxmlencode(maxDetails) + "\" delete=\"" + SafeXML.strxmlencode(deleteDetails) + "\" />\n");
 	    outp.print("    <metric type=\"" + SafeXML.strxmlencode(metricSystem) + "\" />\n");
-	    outp.print("    <export numberOfLogsToExport=\"" + SafeXML.strxmlencode(numberOfLogsToExport) + "\" splitSize=\"" + SafeXML.strxmlencode(splitSize) + "\" exportTravelbugs=\"" + SafeXML.strxmlencode(exportTravelbugs)
-		    + "\" exportLogsAsPlainText=\"" + SafeXML.strxmlencode(exportLogsAsPlainText) + "\" exportGpxAsMyFinds=\"" + SafeXML.strxmlencode(exportGpxAsMyFinds) + "\" />\n");
 	    outp.print("    <datamover processorMode=\"" + SafeXML.strxmlencode(processorMode) + "\" />\n");
 	    if (mapsBaseDir != null)
 		outp.print("    <mapspath dir=\"" + SafeXML.string2Html(mapsBaseDir) + "\" />\n");
@@ -960,18 +949,36 @@ public class Preferences extends MinML {
 		outp.print(this.getFilter(filterIDs[i]).toXML(filterIDs[i]));
 	    }
 	    outp.print("    <debug value=\"" + SafeXML.strxmlencode(debug) + "\" />\n");
+	    // save the exportValues of the gpxStyles
+	    Iterator itGpxExportPreferences = gpxExportPreferences.entries();
+	    while (itGpxExportPreferences.hasNext()) {
+		MapEntry gpxExportPreference = (MapEntry) itGpxExportPreferences.next();
+		String gpxStyle = (String) gpxExportPreference.getKey();
+		Hashtable exportValues = (Hashtable) gpxExportPreference.getValue();
+		Iterator itExportValues = exportValues.entries();
+		outp.print("    <" + gpxStyle + " ");
+		while (itExportValues.hasNext()) {
+		    MapEntry entry = (MapEntry) itExportValues.next();
+		    outp.print(entry.getKey().toString() + "=\"" + (String) entry.getValue() + "\" ");
+		}
+		outp.print("/>\n");
+	    }
+
 	    // save last path of different exporters
 	    Iterator itPath = exporterPaths.entries();
-	    MapEntry entry;
+	    outp.print("    <expPath ");
 	    while (itPath.hasNext()) {
-		entry = (MapEntry) itPath.next();
-		outp.print("    <expPath key = \"" + SafeXML.string2Html(entry.getKey().toString()) + "\" value = \"" + SafeXML.string2Html(entry.getValue().toString().replace('\\', '/')) + "\" />\n");
+		MapEntry entry = (MapEntry) itPath.next();
+		outp.print(entry.getKey().toString() + "=\"" + (String) entry.getValue() + "\" ");
 	    }
+	    outp.print("/>\n");
 	    itPath = importerPaths.entries();
+	    outp.print("    <impPath ");
 	    while (itPath.hasNext()) {
-		entry = (MapEntry) itPath.next();
-		outp.print("    <impPath key = \"" + SafeXML.string2Html(entry.getKey().toString()) + "\" value = \"" + SafeXML.string2Html(entry.getValue().toString().replace('\\', '/')) + "\" />\n");
+		MapEntry entry = (MapEntry) itPath.next();
+		outp.print(entry.getKey().toString() + "=\"" + (String) entry.getValue() + "\" ");
 	    }
+	    outp.print("/>\n");
 	    outp.print("    <logkeeping maximum=\"" + SafeXML.strxmlencode(maxLogsToKeep) + "\" keepown=\"" + SafeXML.strxmlencode(alwaysKeepOwnLogs) + "\" />\n");
 	    outp.print("    <fillWhiteArea on=\"" + SafeXML.strxmlencode(fillWhiteArea) + "\" />\n");
 	    outp.print("    <mapLoader" //
@@ -1162,7 +1169,7 @@ public class Preferences extends MinML {
     public String getExportPath(String exporter) {
 	String dir = (String) exporterPaths.get(exporter);
 	if (dir == null) {
-	    dir = MainForm.profile.dataDir;
+	    dir = Preferences.itself().absoluteBaseDir;
 	}
 	return dir;
     }
@@ -1177,8 +1184,19 @@ public class Preferences extends MinML {
     public String getImporterPath(String importer) {
 	String dir = (String) importerPaths.get(importer);
 	if (null == dir)
-	    dir = MainForm.profile.dataDir;
+	    dir = Preferences.itself().absoluteBaseDir;
 	return dir;
+    }
+
+    private Hashtable gpxExportPreferences = new Hashtable(4);
+
+    public Hashtable getGpxExportPreferences(String gpxStyle) {
+	Hashtable ret = (Hashtable) gpxExportPreferences.get(gpxStyle);
+	if (ret == null) {
+	    gpxExportPreferences.put(gpxStyle, new Hashtable());
+	    ret = (Hashtable) gpxExportPreferences.get(gpxStyle);
+	}
+	return ret;
     }
 
     /**

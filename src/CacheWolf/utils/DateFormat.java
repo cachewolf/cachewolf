@@ -165,7 +165,6 @@ public class DateFormat {
 	    d.parse(yyyyMMddHHmmss, "yyyyMMddHHmmss");
 	} catch (IllegalArgumentException e) {
 	    d = new Time();
-	    d.parse(yyyyMMddHHmmss, "yyyyMMddHHmmss");
 	}
 	return d.format("yyyy-MM-dd"); // +d.format("HH:mm:ss"); is set to 00:00:00 at gpxExport
     }
