@@ -794,7 +794,10 @@ public class GpxExportNg {
 
 	    int exportlogs;
 	    if (maxLogs < logs.size()) {
-		exportlogs = maxLogs;
+		if (maxLogs == -1)
+		    exportlogs = logs.size();
+		else
+		    exportlogs = maxLogs;
 	    } else {
 		exportlogs = logs.size();
 	    }
