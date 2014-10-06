@@ -799,6 +799,14 @@ public class GpxExportNg {
 		addLog(attrLog);
 	    }
 
+	    // don't export the "dummy" lastLog (possibly accidently no Log.MAXLOGICON set, so check if empty)
+	    if (exportlogs > 0) {
+		Log lastLog = logs.getLog(exportlogs - 1);
+		if (lastLog.getIcon().equals(Log.MAXLOGICON))
+		    exportlogs = exportlogs - 1;
+		else if (lastLog.getIcon().length() == 0)
+		    exportlogs = exportlogs - 1;
+	    }
 	    // CW doesn't save the LogID (upto version ~1.3.3394). 
 	    // So we generate one by ch.GetCacheID() + Integer.toString(i)
 	    for (int i = 0; i < exportlogs; i++) {
@@ -809,7 +817,6 @@ public class GpxExportNg {
 		}
 		addLog(theLog);
 	    }
-
 	}
 	return theLogs.toString();
     }
@@ -1072,23 +1079,23 @@ public class GpxExportNg {
 	    addLast(ibSplitSize);
 
 	    addNext(lblAddiWithInvalidCoords = new mLabel(MyLocale.getMsg(2020, "Export Addis without coordinates?")));
-	    cbAddiWithInvalidCoords = new mCheckBox("");
+	    cbAddiWithInvalidCoords = new mCheckBox(" ");
 	    addLast(cbAddiWithInvalidCoords);
 
 	    addNext(lblUseCustomIcons = new mLabel(MyLocale.getMsg(2012, "Custom Icons")));
-	    cbUseCustomIcons = new mCheckBox("");
+	    cbUseCustomIcons = new mCheckBox(" ");
 	    addLast(cbUseCustomIcons);
 
 	    addNext(lblSendToGarmin = new mLabel(MyLocale.getMsg(2011, "send to Garmin")));
-	    cbSendToGarmin = new mCheckBox("");
+	    cbSendToGarmin = new mCheckBox(" ");
 	    addLast(cbSendToGarmin);
 
 	    addNext(lblExportLogsAsPlainText = new mLabel(MyLocale.getMsg(2010, "HTML - Tags aus Logs entfernen")));
-	    cbExportLogsAsPlainText = new mCheckBox("");
+	    cbExportLogsAsPlainText = new mCheckBox(" ");
 	    addLast(cbExportLogsAsPlainText);
 
 	    addNext(lblAttrib2Log = new mLabel(MyLocale.getMsg(2017, "Attrib.->Log")));
-	    cbAttrib2Log = new mCheckBox("");
+	    cbAttrib2Log = new mCheckBox(" ");
 	    addLast(cbAttrib2Log);
 
 	    addNext(lblMaxLogs = new mLabel(MyLocale.getMsg(2018, "Max Logs")));
@@ -1107,7 +1114,7 @@ public class GpxExportNg {
 	private void setFromPreferences() {
 	    chWpNameStyle.select(Common.parseInt(getExportValue(WPNAMESTYLE)));
 	    int splitSize = Common.parseInt(getExportValue(SPLITSIZE));
-	    ibSplitSize.setText((splitSize == -1) ? "" : String.valueOf(splitSize));
+	    ibSplitSize.setText((splitSize < 1) ? "" : String.valueOf(splitSize));
 	    cbAddiWithInvalidCoords.setState(Boolean.valueOf(getExportValue(EXPORTADDIWITHINVALIDCOORDS)).booleanValue());
 	    cbUseCustomIcons.setState(Boolean.valueOf(getExportValue(USECUSTOMICONS)).booleanValue());
 	    cbSendToGarmin.setState(Boolean.valueOf(getExportValue(SENDTOGARMIN)).booleanValue());
