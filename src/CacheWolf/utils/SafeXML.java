@@ -114,11 +114,18 @@ public final class SafeXML {
     private final static void appendEntityAsIsoChar(String entity, StringBuffer addto) {
 	if (entity.startsWith("&#")) {
 	    try {
-		if (entity.charAt(2) == 'x' || entity.charAt(2) == 'X') // number in hexadecimal // not tested because I don't have an XML containing hexadecimal encodings
-		    addto.append((char) Integer.parseInt(entity.substring(3, entity.length() - 1), 16));
-		else
+		int value;
+		if (entity.charAt(2) == 'x' || entity.charAt(2) == 'X') {
+		    // number in hexadecimal // not tested because I don't have an XML containing hexadecimal encodings
+		    value = Integer.parseInt(entity.substring(3, entity.length() - 1), 16);
+		} else {
 		    // number is decimal
-		    addto.append((char) Integer.parseInt(entity.substring(2, entity.length() - 1)));
+		    value = Integer.parseInt(entity.substring(2, entity.length() - 1));
+		}
+		if (value < 256)
+		    addto.append((char) value);
+		else
+		    addto.append(entity); // no valid Iso
 	    } catch (NumberFormatException e) {
 		addto.append(entity); // not a valid number, insert original text
 	    }

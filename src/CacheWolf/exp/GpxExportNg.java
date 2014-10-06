@@ -88,6 +88,7 @@ import ewe.util.zip.ZipFile;
  */
 public class GpxExportNg {
     final static String newLine = "\r\n";
+
     final static String WPNAMESTYLE = "wpNameStyle";
     final static String SPLITSIZE = "splitSize";
     final static String EXPORTADDIWITHINVALIDCOORDS = "exportAddiWithInvalidCoords";
@@ -97,6 +98,7 @@ public class GpxExportNg {
     final static String ATTRIB2LOG = "attrib2Log";
     final static String MAXNUMBEROFLOGSTOEXPORT = "maxNumberOfLogsToExport";
     final static String PREFIX = "prefix";
+
     /** write compcat single GPX file */
     final static int STYLE_COMPCAT_OUTPUT_SINGLE = 0;
     /** write compact one file per "type" as determined by garminmap.xml */
@@ -107,20 +109,23 @@ public class GpxExportNg {
     final static int STYLE_GPX_PQLIKE = 3;
     /** export follows gc.com MyFinds format */
     final static int STYLE_GPX_MYFINDS = 4;
+
     /** export uses only waypoint id */
     final static int WPNAME_ID_CLASSIC = 0;
     /** export uses waypointid + type, terrain, difficulty, size */
     final static int WPNAME_ID_SMART = 1;
     /** export uses cache names (will be made unique by gpsbabel) */
     final static int WPNAME_NAME_SMART = 2;
+
     /** name used as key when storing preferences */
-    final static String expName = "GpxExportNG";
+    final static String exporterName = "GpxExportNG";
     /** string representation of true */
     final static String TRUE = "True";
     /** string representation of false */
     final static String FALSE = "False";
+
     /** object used to determine custom symbols and POI categories */
-    private static GarminMap garminMap = new GarminMap();
+    private GarminMap garminMap;
     /** number of errors / warnings during export */
     private int exportErrors = 0;
     /**  */
@@ -182,6 +187,8 @@ public class GpxExportNg {
     private static String bitmapFileName;
 
     public GpxExportNg() {
+	garminMap = new GarminMap();
+
 	bitmapFileName = FileBase.getProgramDirectory() + "/exporticons/GarminPOI.zip"; // own version
 	if (!(hasBitmaps = new File(bitmapFileName).exists())) {
 	    // cw default version
@@ -223,18 +230,18 @@ public class GpxExportNg {
 	    ZipFile poiZip = null;
 
 	    if (exportStyle == STYLE_COMPCAT_OUTPUT_POI) {
-		fc = new FileChooser(FileChooserBase.DIRECTORY_SELECT, Preferences.itself().getExportPath(expName + "-POI"));
+		fc = new FileChooser(FileChooserBase.DIRECTORY_SELECT, Preferences.itself().getExportPath(exporterName + "-POI"));
 	    } else {
-		fc = new FileChooser(FileChooserBase.DIRECTORY_SELECT, Preferences.itself().getExportPath(expName + "-GPI"));
+		fc = new FileChooser(FileChooserBase.DIRECTORY_SELECT, Preferences.itself().getExportPath(exporterName + "-GPI"));
 	    }
 	    fc.setTitle("Select target directory:");
 	    if (fc.execute() == FormBase.IDCANCEL)
 		return;
 	    outDir = fc.getChosenFile().getFullPath();
 	    if (exportStyle == STYLE_COMPCAT_OUTPUT_POI) {
-		Preferences.itself().setExportPath(expName + "-POI", outDir);
+		Preferences.itself().setExportPath(exporterName + "-POI", outDir);
 	    } else {
-		Preferences.itself().setExportPath(expName + "-GPI", outDir);
+		Preferences.itself().setExportPath(exporterName + "-GPI", outDir);
 	    }
 
 	    if (!garminMap.exists) {
@@ -401,7 +408,7 @@ public class GpxExportNg {
 	    final File file;
 
 	    if (!sendToGarmin) {
-		final FileChooser fc = new FileChooser(FileChooserBase.SAVE, Preferences.itself().getExportPath(expName + "-GPX"));
+		final FileChooser fc = new FileChooser(FileChooserBase.SAVE, Preferences.itself().getExportPath(exporterName + "-GPX"));
 
 		fc.setTitle("Select target GPX file:");
 		fc.addMask("*.gpx");
@@ -410,7 +417,7 @@ public class GpxExportNg {
 		    return;
 
 		file = fc.getChosenFile();
-		Preferences.itself().setExportPath(expName + "-GPX", file.getPath());
+		Preferences.itself().setExportPath(exporterName + "-GPX", file.getPath());
 	    } else {
 		file = new File("");
 		file.createTempFile("gpxexport", null, null);
@@ -617,7 +624,10 @@ public class GpxExportNg {
 
 	// no <cmt> for custom
 	if (!ch.isCustomWpt()) {
-	    if (exportOptions.getWpNameStyle() == WPNAME_ID_SMART && (exportStyle == STYLE_COMPCAT_OUTPUT_SINGLE || exportStyle == STYLE_COMPCAT_OUTPUT_SEPARATE || exportStyle == STYLE_COMPCAT_OUTPUT_POI)) {
+	    if (exportOptions.getWpNameStyle() == WPNAME_ID_SMART && // 
+		    (exportStyle == STYLE_COMPCAT_OUTPUT_SINGLE //
+			    || exportStyle == STYLE_COMPCAT_OUTPUT_SEPARATE //
+		    || exportStyle == STYLE_COMPCAT_OUTPUT_POI)) {
 		if (ch.isAddiWpt()) {
 		    ret.append("    <cmt>").append(SafeXML.cleanGPX(ch.getCacheName() + " " + ch.getCacheDetails(true).LongDescription)).append("</cmt>").append(newLine);
 		} else {
