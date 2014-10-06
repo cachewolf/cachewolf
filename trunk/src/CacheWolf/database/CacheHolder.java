@@ -795,9 +795,9 @@ public class CacheHolder {
 	    for (int i = 0; i < maxlogs; i++) {
 		Hashtable logs = new Hashtable();
 		String stmp;
-		if (det.CacheLogs.getLog(i).getIcon().equals("MAXLOG")) {
+		if (det.CacheLogs.getLog(i).getIcon().equals(Log.MAXLOGICON)) {
 		    logs.put("WAYPOINT", wayPoint);
-		    logs.put("ICON", "");
+		    logs.put("ICON", Log.MAXLOGICON);
 		    logs.put("LOGTYPE", "");
 		    logs.put("DATE", "");
 		    logs.put("LOGGER", "");
