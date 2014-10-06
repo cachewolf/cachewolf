@@ -262,16 +262,18 @@ public class GPXImporter extends MinML {
 	    holder.setArchived(strArchived != null && strArchived.equalsIgnoreCase("True"));
 	    // OC now has GC - Format, get CacheID -- missing p.ex. on GcTour gpx
 	    /* */
-	    for (int i = 0; i < atts.getLength(); i++) {
-		if (atts.getName(i).equals("id")) {
-		    holder.setOcCacheID(atts.getValue("id"));
-		    break;
+	    if (holder.isOC()) {
+		for (int i = 0; i < atts.getLength(); i++) {
+		    if (atts.getName(i).equals("id")) {
+			holder.setOcCacheID(atts.getValue("id"));
+			break;
+		    }
 		}
 	    }
 	    /* */
 	    return;
 	}
-	// OC
+	// OC ? obsolete ?
 	if (name.equals("geocache") || name.equals("cache")) {
 	    boolean available = false;
 	    boolean archived = false;

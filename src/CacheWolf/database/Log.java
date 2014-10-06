@@ -26,7 +26,7 @@ import CacheWolf.utils.Extractor;
 import CacheWolf.utils.MyLocale;
 
 public class Log {
-    private static String MAXLOGICON = "MAXLOG";
+    public final static String MAXLOGICON = "MAXLOG";
     private static String INVALIDLOGICON = null;
     /** The icon which describes the log e.g. icon_sad */
     private String icon;
@@ -234,7 +234,7 @@ public class Log {
     public String toHtml() {
 	// <img src='icon_smile.gif'>&nbsp;2007-01-14 xyz<br>a wonderful log
 	if (icon.equals(MAXLOGICON))
-	    return "<hr>" + MyLocale.getMsg(736, "Too many logs") + "<hr>";
+	    message = "<hr>" + MyLocale.getMsg(736, "Too many logs") + "<hr>";
 	StringBuffer s = new StringBuffer(300);
 	s.append("<img src='" + icon + "'>");
 	if (recommended)
