@@ -67,19 +67,6 @@ public class Profile {
     /** This is the directory for the profile. It contains a closing /. */
     public String dataDir = "";
 
-    /** Last sync date for opencaching caches */
-    private String last_sync_opencaching = "";
-
-    /** Distance for opencaching caches */
-    private String distOC = "";
-
-    /** Distance for geocaching caches */
-    private String distGC = "";
-    private String minDistGC = "";
-
-    /** path (there may be subdirs) to the maps of the profile, relative to the preferences maps dir with ending / */
-    private String relativeMapsDir = "";
-
     public final static boolean SHOW_PROGRESS_BAR = true;
     public final static boolean NO_SHOW_PROGRESS_BAR = false;
 
@@ -97,17 +84,22 @@ public class Profile {
      */
     private boolean hasUnsavedChanges = false;
     public boolean byPassIndexActive = false;
-    private int indexXmlVersion;
 
     // TODO Add settings for the preferred mapper to allow for maps other than expedia and other resolutions
 
     // Profile Settings
-    private String profilesLastUsedGpxStyle = "";
-    /** The maximum number of logs to export */
-    public int numberOfLogsToExport = 5;
-    /** max Size (nr of waypoints) of a gpx-file to export.*/
-    public int splitSize = -1;
-    public boolean exportLogsAsPlainText = true;
+    private int indexXmlVersion;
+    /** Last sync date for opencaching caches */
+    private String last_sync_opencaching = "";
+    /** Distance for opencaching caches */
+    private String distOC = "";
+    /** path (there may be subdirs) to the maps of the profile, relative to the preferences maps dir with ending / */
+    private String relativeMapsDir = "";
+    /** Distance for geocaching caches */
+    private String distGC = "";
+    private String minDistGC = "";
+    private String lastUsedGpxStyle = "";
+    private String gpxOutputTo = "";
 
     /**
      * Constructor for a profile
@@ -150,7 +142,7 @@ public class Profile {
 	setDistOC("");
 	setDistGC("");
 	setMinDistGC("");
-	setProfilesLastUsedGpxStyle(0);
+	setLastUsedGpxStyle(0);
 	relativeMapsDir = "";
 	resetUnsavedChanges();
     }
@@ -209,35 +201,35 @@ public class Profile {
 	    detfile.print("    <VERSION value = \"3\"/>\n");
 	    if (savedCentre.isValid())
 		detfile.print("    <CENTRE lat=\"" + savedCentre.latDec + "\" lon=\"" + savedCentre.lonDec + "\"/>\n");
-	    if (getLast_sync_opencaching() == null || getLast_sync_opencaching().endsWith("null") || getLast_sync_opencaching().equals("")) {
-		setLast_sync_opencaching("20050801000000");
+	    if (last_sync_opencaching == null || last_sync_opencaching.endsWith("null") || last_sync_opencaching.equals("")) {
+		last_sync_opencaching = "20050801000000";
 	    }
-	    if (getDistOC() == null || getDistOC().endsWith("null") || getDistOC().equals("")) {
-		setDistOC("0.0");
+	    if (distOC == null || distOC.endsWith("null") || distOC.equals("")) {
+		distOC = "0.0";
 	    }
-	    if (getDistGC() == null || getDistGC().endsWith("null") || getDistGC().equals("")) {
-		setDistGC("0.0");
+	    if (distGC == null || distGC.endsWith("null") || distGC.equals("")) {
+		distGC = "0.0";
 	    }
-	    if (getMinDistGC() == null || getMinDistGC().endsWith("null") || getMinDistGC().equals("")) {
-		setMinDistGC("0.0");
+	    if (minDistGC == null || minDistGC.endsWith("null") || minDistGC.equals("")) {
+		minDistGC = "0.0";
 	    }
 
 	    // If the current filter is a CacheTour filter, then save it as
 	    // normal filter, because after loading there is no cache tour defined
 	    // which could be used as filter criterium.
 	    int activeFilterForSave;
-	    if (getFilterActive() == Filter.FILTER_CACHELIST) {
+	    if (filterActive == Filter.FILTER_CACHELIST) {
 		activeFilterForSave = Filter.FILTER_ACTIVE;
 	    } else {
-		activeFilterForSave = getFilterActive();
+		activeFilterForSave = filterActive;
 	    }
-	    detfile.print("    <FILTERCONFIG status = \"" + activeFilterForSave + (isFilterInverted() ? "T" : "F") + "\" showBlacklist = \"" + showBlacklisted() + "\" />\n");
-	    detfile.print(this.getCurrentFilter().toXML(""));
-	    detfile.print("    <SYNCOC date = \"" + getLast_sync_opencaching() + "\" dist = \"" + getDistOC() + "\"/>\n");
-	    detfile.print("    <SPIDERGC dist = \"" + getDistGC() + "\" mindist = \"" + getMinDistGC() + "\"/>\n");
-	    detfile.print("    <EXPORT style = \"" + getProfilesLastUsedGpxStyle() + "\"/>\n");
+	    detfile.print("    <FILTERCONFIG status = \"" + activeFilterForSave + (filterInverted ? "T" : "F") + "\" showBlacklist = \"" + showBlacklisted + "\" />\n");
+	    detfile.print(currentFilter.toXML(""));
+	    detfile.print("    <SYNCOC date = \"" + last_sync_opencaching + "\" dist = \"" + distOC + "\"/>\n");
+	    detfile.print("    <SPIDERGC dist = \"" + distGC + "\" mindist = \"" + minDistGC + "\"/>\n");
+	    detfile.print("    <EXPORT style = \"" + lastUsedGpxStyle + "\" to = \"" + gpxOutputTo + "\"/>\n");
 	    detfile.print("    <mapspath relativeDir = \"" + SafeXML.string2Html(relativeMapsDir) + "\"/>\n");
-	    detfile.print("    <TIMEZONE timeZoneOffset = \"" + getTimeZoneOffset() + "\" timeZoneAutoDST = \"" + getTimeZoneAutoDST() + "\"/>\n");
+	    detfile.print("    <TIMEZONE timeZoneOffset = \"" + timeZoneOffset + "\" timeZoneAutoDST = \"" + timeZoneAutoDST + "\"/>\n");
 	    int size = cacheDB.size();
 	    for (int i = 0; i < size; i++) {
 		if (showprogress) {
@@ -344,38 +336,43 @@ public class Profile {
 		    }
 		} else if (text.indexOf("<SYNCOC") >= 0) {
 		    int start = text.indexOf("date = \"") + 8;
-		    setLast_sync_opencaching(text.substring(start, text.indexOf("\"", start)));
+		    last_sync_opencaching = text.substring(start, text.indexOf("\"", start));
 		    start = text.indexOf("dist = \"") + 8;
-		    setDistOC(text.substring(start, text.indexOf("\"", start)));
+		    distOC = text.substring(start, text.indexOf("\"", start));
 		} else if (text.indexOf("mapspath") >= 0) {
 		    int start = text.indexOf("relativeDir = \"") + 15;
 		    this.relativeMapsDir = (SafeXML.html2iso8859s1(text.substring(start, text.indexOf("\"", start))).replace('\\', '/'));
 		} else if (text.indexOf("<SPIDERGC") >= 0) {
 		    int start = text.indexOf("dist = \"") + 8;
-		    setDistGC(text.substring(start, text.indexOf("\"", start)));
+		    distGC = text.substring(start, text.indexOf("\"", start));
 		    start = text.indexOf("mindist = \"") + 11;
 		    if (start == 10) {
-			setMinDistGC("0");
+			minDistGC = "0";
 		    } else
-			setMinDistGC(text.substring(start, text.indexOf("\"", start)));
+			minDistGC = text.substring(start, text.indexOf("\"", start));
 		} else if (text.indexOf("<EXPORT") >= 0) {
 		    int start = text.indexOf("style = \"") + 9;
 		    if (start == 8) {
-			setProfilesLastUsedGpxStyle(0);
+			lastUsedGpxStyle = "0";
 		    } else
-			setProfilesLastUsedGpxStyle(Common.parseInt(text.substring(start, text.indexOf("\"", start))));
+			lastUsedGpxStyle = text.substring(start, text.indexOf("\"", start));
+		    start = text.indexOf("to = \"") + 6;
+		    if (start == 5) {
+			this.gpxOutputTo = "";
+		    } else
+			this.gpxOutputTo = text.substring(start, text.indexOf("\"", start));
 		} else if (text.indexOf("<TIMEZONE") >= 0) {
 		    int start = text.indexOf("timeZoneOffset = \"") + 18;
 		    if (start == 17) {
-			setTimeZoneOffset("0");
+			timeZoneOffset = "0";
 		    } else {
-			setTimeZoneOffset(text.substring(start, text.indexOf("\"", start)));
+			timeZoneOffset = text.substring(start, text.indexOf("\"", start));
 		    }
 		    start = text.indexOf("timeZoneAutoDST = \"") + 19;
 		    if (start == 18) {
-			setTimeZoneAutoDST(false);
+			timeZoneAutoDST = false;
 		    } else {
-			setTimeZoneAutoDST(text.substring(start, text.indexOf("\"", start)));
+			timeZoneAutoDST = Boolean.valueOf(text.substring(start, text.indexOf("\"", start))).booleanValue();
 		    }
 		} else if (indexXmlVersion <= 2 && text.indexOf("<FILTER") >= 0) {
 		    // Read filter data of file versions 1 and 2. (Legacy code)
@@ -473,7 +470,7 @@ public class Profile {
 	} catch (IOException e) {
 	    Preferences.itself().log("Problem reading index.xml in dir: " + this.dataDir, e, true);
 	}
-	this.getCurrentFilter().normaliseFilters();
+	currentFilter.normaliseFilters();
 	resetUnsavedChanges();
     }
 
@@ -487,17 +484,17 @@ public class Profile {
     void restoreFilter(boolean clearIfInactive) {
 	boolean inverted = isFilterInverted(); // Save it as doFilter will clear filterInverted
 	Filter flt = new Filter();
-	if (getFilterActive() == Filter.FILTER_ACTIVE) {
+	if (filterActive == Filter.FILTER_ACTIVE) {
 	    flt.setFilter();
 	    flt.doFilter();
 	    if (inverted) {
 		flt.invertFilter();
 		setFilterInverted(true); // Needed because previous line inverts filterInverted
 	    }
-	} else if (getFilterActive() == Filter.FILTER_CACHELIST) {
+	} else if (filterActive == Filter.FILTER_CACHELIST) {
 	    MainForm.itself.getCacheTour().applyCacheList();
 	    // flt.filterActive=filterActive;
-	} else if (getFilterActive() == Filter.FILTER_INACTIVE) {
+	} else if (filterActive == Filter.FILTER_INACTIVE) {
 	    if (clearIfInactive) {
 		flt.clearFilter();
 	    }
@@ -534,7 +531,7 @@ public class Profile {
 	String waypoint;
 	do {
 	    waypoint = MyLocale.formatLong(++wptNo, "00") + forcache.substring(2);
-	} while (getCacheIndex(waypoint) >= 0);
+	} while (cacheDB.getIndex(waypoint) >= 0);
 	return waypoint;
     }
 
@@ -545,17 +542,17 @@ public class Profile {
      */
     public void setAddiRef(CacheHolder ch) {
 	String mainwpt = ch.getWayPoint().substring(2);
-	int mainindex = getCacheIndex("GC" + mainwpt);
+	int mainindex = cacheDB.getIndex("GC" + mainwpt);
 	if (mainindex < 0 || !cacheDB.get(mainindex).isCacheWpt()) {
 	    for (int i = 0; i < OC.OCSites.length; i++) {
-		mainindex = getCacheIndex(OC.OCSites[i][OC.OC_PREFIX] + mainwpt);
+		mainindex = cacheDB.getIndex(OC.OCSites[i][OC.OC_PREFIX] + mainwpt);
 		if (mainindex >= 0 && cacheDB.get(mainindex).isCacheWpt()) {
 		    break;
 		}
 	    }
 	}
 	if (mainindex < 0 || !cacheDB.get(mainindex).isCacheWpt())
-	    mainindex = getCacheIndex("CW" + mainwpt);
+	    mainindex = cacheDB.getIndex("CW" + mainwpt);
 	if (mainindex < 0 /* || !cacheDB.get(mainindex)..isCacheWpt() */) {
 	    ch.setIncomplete(true);
 	} else {
@@ -571,7 +568,7 @@ public class Profile {
     }
 
     public String toString() {
-	return "Profile: Name=" + name + "\nCentre=" + centre.toString() + "\ndataDir=" + dataDir + "\nlastSyncOC=" + getLast_sync_opencaching() + "\ndistOC=" + getDistOC() + "\ndistGC=" + getDistGC();
+	return "Profile: Name=" + name + "\nCentre=" + centre.toString() + "\ndataDir=" + dataDir + "\nlastSyncOC=" + last_sync_opencaching + "\ndistOC=" + distOC + "\ndistGC=" + distGC;
     }
 
     /**
@@ -912,13 +909,22 @@ public class Profile {
     }
 
     public int getProfilesLastUsedGpxStyle() {
-	return Common.parseInt(profilesLastUsedGpxStyle);
+	return Common.parseInt(lastUsedGpxStyle);
     }
 
-    public void setProfilesLastUsedGpxStyle(int _style) {
+    public void setLastUsedGpxStyle(int _style) {
 	String style = "" + _style;
-	this.notifyUnsavedChanges(!style.equals(this.profilesLastUsedGpxStyle));
-	this.profilesLastUsedGpxStyle = style;
+	this.notifyUnsavedChanges(!style.equals(this.lastUsedGpxStyle));
+	this.lastUsedGpxStyle = style;
+    }
+
+    public String getGpxOutputTo() {
+	return gpxOutputTo;
+    }
+
+    public void setGpxOutputTo(String value) {
+	notifyUnsavedChanges(!value.equals(gpxOutputTo));
+	gpxOutputTo = value;
     }
 
     public void setRelativeMapsDir(String relativeMapsDir) {
@@ -973,18 +979,6 @@ public class Profile {
     public void setTimeZoneAutoDST(boolean autoDST) {
 	this.notifyUnsavedChanges(autoDST != this.timeZoneAutoDST);
 	this.timeZoneAutoDST = autoDST;
-    }
-
-    public void setTimeZoneAutoDST(String autoDST) {
-	boolean newAutoDST = false;
-
-	try {
-	    newAutoDST = Convert.toBoolean(autoDST);
-	} catch (Exception e) {
-	    newAutoDST = false;
-	}
-
-	setTimeZoneAutoDST(newAutoDST);
     }
 
     /**
