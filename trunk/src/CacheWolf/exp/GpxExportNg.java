@@ -72,6 +72,7 @@ import ewe.ui.Event;
 import ewe.ui.Form;
 import ewe.ui.FormBase;
 import ewe.ui.ProgressBarForm;
+import ewe.ui.mButton;
 import ewe.ui.mCheckBox;
 import ewe.ui.mChoice;
 import ewe.ui.mInput;
@@ -222,27 +223,11 @@ public class GpxExportNg {
 
 	if (exportStyle == STYLE_COMPCAT_OUTPUT_SEPARATE || exportStyle == STYLE_COMPCAT_OUTPUT_POI) {
 	    final Hashtable fileHandles = new Hashtable();
-	    final String outDir;
+	    final String outDir = exportOptions.getGpxOutputTo();
 	    final String tempDir;
 	    final String baseDir = FileBase.getProgramDirectory();
 	    final String prefix = exportOptions.getPrefix();
-	    final FileChooser fc;
 	    ZipFile poiZip = null;
-
-	    if (exportStyle == STYLE_COMPCAT_OUTPUT_POI) {
-		fc = new FileChooser(FileChooserBase.DIRECTORY_SELECT, Preferences.itself().getExportPath(exporterName + "-POI"));
-	    } else {
-		fc = new FileChooser(FileChooserBase.DIRECTORY_SELECT, Preferences.itself().getExportPath(exporterName + "-GPI"));
-	    }
-	    fc.setTitle("Select target directory:");
-	    if (fc.execute() == FormBase.IDCANCEL)
-		return;
-	    outDir = fc.getChosenFile().getFullPath();
-	    if (exportStyle == STYLE_COMPCAT_OUTPUT_POI) {
-		Preferences.itself().setExportPath(exporterName + "-POI", outDir);
-	    } else {
-		Preferences.itself().setExportPath(exporterName + "-GPI", outDir);
-	    }
 
 	    if (!garminMap.exists) {
 		Preferences.itself().log("GPX Export: unable to load garminmap.xml", null);
@@ -407,20 +392,11 @@ public class GpxExportNg {
 
 	    final File file;
 
-	    if (!sendToGarmin) {
-		final FileChooser fc = new FileChooser(FileChooserBase.SAVE, Preferences.itself().getExportPath(exporterName + "-GPX"));
-
-		fc.setTitle("Select target GPX file:");
-		fc.addMask("*.gpx");
-
-		if (fc.execute() == FormBase.IDCANCEL)
-		    return;
-
-		file = fc.getChosenFile();
-		Preferences.itself().setExportPath(exporterName + "-GPX", file.getPath());
-	    } else {
+	    if (sendToGarmin) {
 		file = new File("");
 		file.createTempFile("gpxexport", null, null);
+	    } else {
+		file = new File(exportOptions.getGpxOutputTo());
 	    }
 
 	    Vm.showWait(true);
@@ -1042,8 +1018,9 @@ public class GpxExportNg {
 	private mLabel lblWpNameStyle, lblAddiWithInvalidCoords, lblSplitSize, lblUseCustomIcons, lblSendToGarmin, lblMaxLogs, lblExportLogsAsPlainText, lblAttrib2Log, lblPrefix;
 	private int gpxStyle;
 	private mCheckBox cbUseCustomIcons, cbSendToGarmin, cbAddiWithInvalidCoords, cbAttrib2Log, cbExportLogsAsPlainText;
-	private mInput ibMaxLogs, ibSplitSize, ibPrefix;
+	private mInput ibMaxLogs, ibSplitSize, ibPrefix, ibFilename;
 	private mChoice chStyle, chWpNameStyle;
+	private mButton btnFilename;
 	private final ExecutePanel executePanel;
 
 	private boolean hasIcons;
@@ -1119,84 +1096,14 @@ public class GpxExportNg {
 	    ibPrefix = new mInput("");
 	    addLast(ibPrefix);
 
+	    addNext(btnFilename = new mButton(MyLocale.getMsg(2021, "Ausgabedatei") + " ... "));
+	    ibFilename = new mInput("");
+	    addLast(ibFilename);
+	    disable(new mLabel(""), ibFilename);
+
 	    executePanel = new ExecutePanel(this);
 
 	    checkStyle();
-	}
-
-	private void setFromPreferences() {
-	    chWpNameStyle.select(Common.parseInt(getExportValue(WPNAMESTYLE)));
-	    int splitSize = Common.parseInt(getExportValue(SPLITSIZE));
-	    ibSplitSize.setText((splitSize < 1) ? "" : String.valueOf(splitSize));
-	    cbAddiWithInvalidCoords.setState(Boolean.valueOf(getExportValue(EXPORTADDIWITHINVALIDCOORDS)).booleanValue());
-	    cbUseCustomIcons.setState(Boolean.valueOf(getExportValue(USECUSTOMICONS)).booleanValue());
-	    cbSendToGarmin.setState(Boolean.valueOf(getExportValue(SENDTOGARMIN)).booleanValue());
-	    cbExportLogsAsPlainText.setState(Boolean.valueOf(getExportValue(EXPORTLOGASPLAINTEXT)).booleanValue());
-	    cbAttrib2Log.setState(Boolean.valueOf(getExportValue(ATTRIB2LOG)).booleanValue());
-	    String strMaxNumberOfLogsToExport = getExportValue(MAXNUMBEROFLOGSTOEXPORT);
-	    int maxNumberOfLogsToExport = (strMaxNumberOfLogsToExport.length() == 0) ? 5 : Common.parseInt(strMaxNumberOfLogsToExport);
-	    ibMaxLogs.setText((maxNumberOfLogsToExport == -1) ? "" : String.valueOf(maxNumberOfLogsToExport));
-	    ibPrefix.setText(getExportValue(PREFIX));
-	    if (ibPrefix.getText().length() == 0)
-		ibPrefix.setText("GC-"); //default	    
-	}
-
-	private String getExportValue(String item) {
-	    if (exportValues == null)
-		return "";
-	    String ret = (String) exportValues.get(item);
-	    if (ret == null) {
-		return "";
-	    } else {
-		return ret;
-	    }
-	}
-
-	public int getGpxStyle() {
-	    return chStyle.selectedIndex;
-	}
-
-	public boolean getSendToGarmin() {
-	    return cbSendToGarmin.getState();
-	}
-
-	public String getPrefix() {
-	    return ibPrefix.text;
-	}
-
-	public int getWpNameStyle() {
-	    return chWpNameStyle.selectedIndex;
-	}
-
-	public boolean getUseCustomIcons() {
-	    return cbUseCustomIcons.getState();
-	}
-
-	public boolean getExportLogsAsPlainText() {
-	    return cbExportLogsAsPlainText.getState();
-	}
-
-	public boolean getExportAddiWithInvalidCoords() {
-	    return cbAddiWithInvalidCoords.getState();
-	}
-
-	public int getMaxLogs() {
-	    if (ibMaxLogs.getText().length() == 0) {
-		ibMaxLogs.setText("-1");
-		return -1;
-	    } else
-		return Common.parseInt(ibMaxLogs.getText());
-	}
-
-	public int getSplitSize() {
-	    if (ibSplitSize.getText().length() == 0)
-		return -1;
-	    else
-		return Common.parseInt(ibSplitSize.getText());
-	}
-
-	public boolean getAttrib2Log() {
-	    return cbAttrib2Log.getState();
 	}
 
 	private void checkStyle() {
@@ -1296,6 +1203,86 @@ public class GpxExportNg {
 		c.repaint();
 	}
 
+	private void setFromPreferences() {
+	    chWpNameStyle.select(Common.parseInt(getExportValue(WPNAMESTYLE)));
+	    int splitSize = Common.parseInt(getExportValue(SPLITSIZE));
+	    ibSplitSize.setText((splitSize < 1) ? "" : String.valueOf(splitSize));
+	    cbAddiWithInvalidCoords.setState(Boolean.valueOf(getExportValue(EXPORTADDIWITHINVALIDCOORDS)).booleanValue());
+	    cbUseCustomIcons.setState(Boolean.valueOf(getExportValue(USECUSTOMICONS)).booleanValue());
+	    cbSendToGarmin.setState(Boolean.valueOf(getExportValue(SENDTOGARMIN)).booleanValue());
+	    cbExportLogsAsPlainText.setState(Boolean.valueOf(getExportValue(EXPORTLOGASPLAINTEXT)).booleanValue());
+	    cbAttrib2Log.setState(Boolean.valueOf(getExportValue(ATTRIB2LOG)).booleanValue());
+	    String strMaxNumberOfLogsToExport = getExportValue(MAXNUMBEROFLOGSTOEXPORT);
+	    int maxNumberOfLogsToExport = (strMaxNumberOfLogsToExport.length() == 0) ? 5 : Common.parseInt(strMaxNumberOfLogsToExport);
+	    ibMaxLogs.setText((maxNumberOfLogsToExport == -1) ? "" : String.valueOf(maxNumberOfLogsToExport));
+	    ibPrefix.setText(getExportValue(PREFIX));
+	    if (ibPrefix.getText().length() == 0)
+		ibPrefix.setText("GC-"); //default	
+	    ibFilename.setText(MainForm.profile.getGpxOutputTo());
+	}
+
+	private String getExportValue(String item) {
+	    if (exportValues == null)
+		return "";
+	    String ret = (String) exportValues.get(item);
+	    if (ret == null) {
+		return "";
+	    } else {
+		return ret;
+	    }
+	}
+
+	public int getGpxStyle() {
+	    return chStyle.selectedIndex;
+	}
+
+	public boolean getSendToGarmin() {
+	    return cbSendToGarmin.getState();
+	}
+
+	public String getPrefix() {
+	    return ibPrefix.text;
+	}
+
+	public int getWpNameStyle() {
+	    return chWpNameStyle.selectedIndex;
+	}
+
+	public boolean getUseCustomIcons() {
+	    return cbUseCustomIcons.getState();
+	}
+
+	public boolean getExportLogsAsPlainText() {
+	    return cbExportLogsAsPlainText.getState();
+	}
+
+	public boolean getExportAddiWithInvalidCoords() {
+	    return cbAddiWithInvalidCoords.getState();
+	}
+
+	public int getMaxLogs() {
+	    if (ibMaxLogs.getText().length() == 0) {
+		ibMaxLogs.setText("-1");
+		return -1;
+	    } else
+		return Common.parseInt(ibMaxLogs.getText());
+	}
+
+	public int getSplitSize() {
+	    if (ibSplitSize.getText().length() == 0)
+		return -1;
+	    else
+		return Common.parseInt(ibSplitSize.getText());
+	}
+
+	public boolean getAttrib2Log() {
+	    return cbAttrib2Log.getState();
+	}
+
+	public String getGpxOutputTo() {
+	    return ibFilename.getText();
+	}
+
 	/**
 	 * react to GUI events and toogle access to the checkboxes according to radio button settings pass everything else to <code>super()</code>
 	 */
@@ -1305,9 +1292,7 @@ public class GpxExportNg {
 		    checkStyle();
 		}
 	    } else if (ev instanceof ControlEvent && ev.type == ControlEvent.PRESSED) {
-		if (ev.target == executePanel.cancelButton) {
-		    close(-1);
-		} else if (ev.target == executePanel.applyButton) {
+		if (ev.target == executePanel.applyButton) {
 		    boolean mayclose = true; // if plausibility checks fail: set to false
 		    if (gpxStyle == GpxExportNg.STYLE_GPX_PQLIKE) {
 			int logs = getMaxLogs();
@@ -1323,12 +1308,26 @@ public class GpxExportNg {
 			close(1);
 		    }
 		    if (mayclose) {
-			MainForm.profile.setProfilesLastUsedGpxStyle(gpxStyle);
+			MainForm.profile.setLastUsedGpxStyle(gpxStyle);
+			MainForm.profile.setGpxOutputTo(ibFilename.getText());
 			setPreferences();
 		    }
+		} else if (ev.target == executePanel.cancelButton) {
+		    close(-1);
+		} else if (ev.target == this.btnFilename) {
+		    String tmp;
+		    switch (gpxStyle) {
+		    case STYLE_COMPCAT_OUTPUT_SEPARATE:
+		    case STYLE_COMPCAT_OUTPUT_POI:
+			tmp = this.getOutputTo(FileChooser.DIRECTORY_SELECT);
+			break;
+		    default:
+			tmp = this.getOutputTo(FileChooser.SAVE | FileChooser.QUICK_SELECT);
+		    }
+		    if (tmp.length() > 0)
+			this.ibFilename.setText(tmp);
 		}
 	    }
-
 	    super.onEvent(ev);
 	}
 
@@ -1363,6 +1362,20 @@ public class GpxExportNg {
 		break;
 	    }
 	    // save is done after input of outputfile
+	}
+
+	private String getOutputTo(int what) {
+	    FileChooser fc;
+	    fc = new FileChooser(what, ibFilename.getText());
+	    if (what == FileChooserBase.DIRECTORY_SELECT) {
+		fc.setTitle(MyLocale.getMsg(616, "Verzeichnis auswählen"));
+	    } else {
+		fc.setTitle(MyLocale.getMsg(2021, "Ausgabedatei"));
+		fc.addMask("*.gpx");
+	    }
+	    if (fc.execute() == FormBase.IDCANCEL)
+		return "";
+	    return fc.getChosenFile().getFullPath();
 	}
     }
 }
