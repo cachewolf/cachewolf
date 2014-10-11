@@ -186,6 +186,9 @@ public class GpxExportNg {
     private static boolean hasGpsbabel;
 
     private static String bitmapFileName;
+    private Transformer handleLinebreaks;
+    private Transformer removeHTMLTags;
+    private Transformer removeNumericEntities;
 
     public GpxExportNg() {
 	garminMap = new GarminMap();
@@ -202,6 +205,22 @@ public class GpxExportNg {
 	finderid = Preferences.itself().gcMemberId;
 	if (finderid.equals(""))
 	    Preferences.itself().log("GPX Export: warning gcmemberid not set, check pref.xml", null);
+
+	handleLinebreaks = new Transformer(true);
+	handleLinebreaks.add(new Regex("\r", ""));
+	handleLinebreaks.add(new Regex("\n", " "));
+	handleLinebreaks.add(new Regex("<br>", "\n"));
+	handleLinebreaks.add(new Regex("<p>", "\n"));
+	handleLinebreaks.add(new Regex("<hr>", "\n"));
+	handleLinebreaks.add(new Regex("<br />", "\n"));
+	// handleLinebreaks.add(new Regex("<(.*?)>", "")); // check if this is needed twice
+
+	removeHTMLTags = new Transformer(true);
+	removeHTMLTags.add(new Regex("<(.*?)>", ""));
+
+	removeNumericEntities = new Transformer(true);
+	removeNumericEntities.add(new Regex("&#([xX]?)([a-fA-F0-9]*?);", ""));
+
     }
 
     private GpxExportNgForm exportOptions;
@@ -510,8 +529,10 @@ public class GpxExportNg {
      */
     private String formatCache(CacheHolder ch) {
 	// no addis or custom in MyFindsPq - and of course only finds
-	if ((STYLE_GPX_MYFINDS == exportStyle) && (ch.isCustomWpt() || ch.isAddiWpt() || !ch.isFound()))
-	    return "";
+	if (STYLE_GPX_MYFINDS == exportStyle) {
+	    if ((!ch.isFound() || ch.isCustomWpt() || ch.isAddiWpt()))
+		return "";
+	}
 
 	if (!ch.getPos().isValid()) {
 	    if (!ch.isAddiWpt()) {
@@ -526,6 +547,7 @@ public class GpxExportNg {
 	StringBuffer ret = new StringBuffer();
 	ch.getCacheDetails(true);
 	try {
+
 	    ret.append(formatCompact(ch));
 
 	    if (exportStyle == STYLE_GPX_PQLIKE || exportStyle == STYLE_GPX_MYFINDS) {
@@ -829,30 +851,22 @@ public class GpxExportNg {
     private void addLog(Log log) {
 
 	String logMessage = log.getMessage();
-	Transformer trans = new Transformer(true);
 
 	if (exportOptions.getExportLogsAsPlainText()) {
-	    trans.add(new Regex("\r", ""));
-	    trans.add(new Regex("\n", " "));
-	    trans.add(new Regex("<br>", "\n"));
-	    trans.add(new Regex("<p>", "\n"));
-	    trans.add(new Regex("<hr>", "\n"));
-	    trans.add(new Regex("<br />", "\n"));
-	    trans.add(new Regex("<(.*?)>", ""));
-	    Transformer ttrans = new Transformer(true);
-	    ttrans.add(new Regex("<(.*?)>", ""));
-	    logMessage = ttrans.replaceAll(trans.replaceAll(logMessage));
+	    logMessage = removeHTMLTags.replaceAll(handleLinebreaks.replaceAll(logMessage));
 	}
 
-	trans = new Transformer(true);
-	trans.add(new Regex("@@LOGID@@", log.getLogID()));
-	trans.add(new Regex("@@LOGDATE@@", log.getDate()));
-	trans.add(new Regex("@@LOGTYPE@@", CacheHolder.image2TypeText(log.getIcon())));
-	trans.add(new Regex("@@LOGFINDERID@@", log.getFinderID()));
-	trans.add(new Regex("@@LOGFINDER@@", SafeXML.cleanGPX(log.getLogger())));
-	trans.add(new Regex("@@LOGENCODE@@", ""));
-	trans.add(new Regex("@@LOGTEXT@@", SafeXML.cleanGPX(logMessage)));
-	theLogs.append(trans.replaceAll(GPXLOG));
+	logMessage = removeNumericEntities.replaceAll(logMessage);
+
+	Transformer replacePlaceholder = new Transformer(true);
+	replacePlaceholder.add(new Regex("@@LOGID@@", log.getLogID()));
+	replacePlaceholder.add(new Regex("@@LOGDATE@@", log.getDate()));
+	replacePlaceholder.add(new Regex("@@LOGTYPE@@", CacheHolder.image2TypeText(log.getIcon())));
+	replacePlaceholder.add(new Regex("@@LOGFINDERID@@", log.getFinderID()));
+	replacePlaceholder.add(new Regex("@@LOGFINDER@@", SafeXML.cleanGPX(log.getLogger())));
+	replacePlaceholder.add(new Regex("@@LOGENCODE@@", ""));
+	replacePlaceholder.add(new Regex("@@LOGTEXT@@", SafeXML.cleanGPX(logMessage)));
+	theLogs.append(replacePlaceholder.replaceAll(GPXLOG));
     }
 
     /**

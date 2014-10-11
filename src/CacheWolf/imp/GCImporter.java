@@ -669,7 +669,7 @@ public class GCImporter {
 		if (listBlockRex.didMatch()) {
 		    tableOfWebPage = listBlockRex.stringMatched(1);
 		} else {
-		    Preferences.itself().log("[SpiderGC.java:fillDownloadLists]check listBlockRex!");
+		    Preferences.itself().log("[SpiderGC.java:fillDownloadLists]check listBlockRex!" + WebPage);
 		    tableOfWebPage = "";
 		}
 		lineRex.search(tableOfWebPage);
@@ -852,7 +852,7 @@ public class GCImporter {
 		if (listBlockRex.didMatch()) {
 		    SearchResultsTable = listBlockRex.stringMatched(1);
 		} else {
-		    Preferences.itself().log("[SpiderGC.java:fillDownloadLists]check listBlockRex!");
+		    Preferences.itself().log("[SpiderGC.java:fillDownloadLists]check listBlockRex!" + WebPage);
 		    SearchResultsTable = "";
 		}
 
@@ -1005,19 +1005,21 @@ public class GCImporter {
 	// Number of caches from gcfirst Listpage
 	numFinds = getNumFound(WebPage);
 
+	// skip (most of) the pages with distance < fromDistance
 	if (fromDistance > 0) {
-	    // skip (most of) the pages with distance < fromDistance
-	    for (int i = 0; i < (startPage / 10); i++) {
+	    // 1..10, 11..20, ...
+	    for (int i = 0; i < ((startPage - 1) / 10); i++) {
 		fetchAListPage(toDistanceInMiles, gotoNextBlock);
 	    }
-	    if (startPage > 1) {
-		if (startPage % 10 == 1)
-		    fetchAListPage(toDistanceInMiles, gotoNextPage);
-		else
-		    fetchAListPage(toDistanceInMiles, gotoPage + startPage);
+	    if (startPage % 10 == 1) {
+		// 1, 11 , 21
+		// fetchAListPage(toDistanceInMiles, gotoNextPage);
+	    } else {
+		// 2..10, 12..20, 22-30
+		fetchAListPage(toDistanceInMiles, gotoPage + startPage);
 	    }
 	}
-	Preferences.itself().log("[SpiderGC:fillDownloadLists] got Listpage: " + startPage, null);
+	Preferences.itself().log("[SpiderGC:fillDownloadLists] got Listpage: " + startPage);
 
 	int endPage = (int) (numFinds / MAXNROFCACHESPERLISTPAGE);
 	int anzPages = 1 + endPage - startPage;
@@ -1609,6 +1611,7 @@ public class GCImporter {
 	try {
 	    UrlFetcher.setpostData(postData);
 	    WebPage = UrlFetcher.fetch(url);
+	    Preferences.itself().log("[fetchAListPage] " + whatPage);
 	} catch (final Exception ex) {
 	    Preferences.itself().log("[fetchAListPage] Error at " + whatPage, ex);
 	    ret = false;
