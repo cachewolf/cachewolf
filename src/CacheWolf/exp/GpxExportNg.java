@@ -581,7 +581,10 @@ public class GpxExportNg {
 
 	// .append("\t\t<desc>@@WPDESC@@</desc>").append(newLine)
 
-	ret.append("  <wpt lat=\"" + ch.getPos().getLatDeg(TransformCoordinates.DD) + "\" lon=\"" + ch.getPos().getLonDeg(TransformCoordinates.DD) + "\">").append(newLine);
+	if (ch.getPos().isValid())
+	    ret.append("  <wpt lat=\"" + ch.getPos().getLatDeg(TransformCoordinates.DD) + "\" lon=\"" + ch.getPos().getLonDeg(TransformCoordinates.DD) + "\">").append(newLine);
+	else
+	    ret.append("  <wpt lat=\"" + "0" + "\" lon=\"" + "0" + "\">").append(newLine);
 
 	if (exportStyle == STYLE_GPX_PQLIKE || exportStyle == STYLE_GPX_MYFINDS) {
 	    if (ch.isAddiWpt()) {
@@ -818,6 +821,7 @@ public class GpxExportNg {
 		else if (lastLog.getIcon().length() == 0)
 		    exportlogs = exportlogs - 1;
 	    }
+	    int anzOwnLogs = 0;
 	    // CW doesn't save the LogID (upto version ~1.3.3394). 
 	    // So we generate one by ch.GetCacheID() + Integer.toString(i)
 	    for (int i = 0; i < exportlogs; i++) {
@@ -827,6 +831,12 @@ public class GpxExportNg {
 		    theLog.setLogID(cacheID + Integer.toString(i));
 		}
 		addLog(theLog);
+		if (theLog.isOwnLog()) {
+		    anzOwnLogs = anzOwnLogs + 1;
+		    if (anzOwnLogs > 1) {
+			Preferences.itself().log("doppelter eigener Fund" + ch.getWayPoint(), null);
+		    }
+		}
 	    }
 	}
 	return theLogs.toString();
