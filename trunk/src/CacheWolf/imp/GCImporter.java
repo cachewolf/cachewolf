@@ -1387,9 +1387,13 @@ public class GCImporter {
 	}
 	Preferences.itself().log("[checkGCSettings]");
 	UrlFetcher.rememberCookies();
+	if (cookies.length > 1)
+	    return 0;
+	if (cookies.length <= 1)
+	    return 0;
 	String SessionId = UrlFetcher.getCookie("ASP.NET_SessionId;www.geocaching.com");
 	if (SessionId == null) {
-	    Preferences.itself().log("[checkGCSettings]:got no SessionID.");
+	    Preferences.itself().log("[checkGCSettings]:got no SessionID." + page);
 	    return 5;
 	}
 
