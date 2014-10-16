@@ -1370,7 +1370,7 @@ public class GCImporter {
 
     private int checkGCSettings() {
 	String page = "";
-	String gcSettingsUrl = "http://www.geocaching.com/account/ManagePreferences.aspx";
+	String gcSettingsUrl = "https://www.geocaching.com/myaccount/settings/preferences";
 	UrlFetcher.clearCookies();
 	String cookies[] = mString.split(Preferences.itself().userID, '!');
 	if (cookies.length > 1) {
@@ -1382,56 +1382,41 @@ public class GCImporter {
 	try {
 	    page = UrlFetcher.fetch(gcSettingsUrl); // getting the sessionid
 	} catch (final Exception ex) {
-	    Preferences.itself().log("[checkGCSettings]:Exception calling " + gcSettingsUrl + " with userID " + Preferences.itself().userID, ex);
+	    Preferences.itself().log("[checkGCSettings]:Exception calling " + gcSettingsUrl + " with userID ", ex);
 	    return 2;
 	}
-	Preferences.itself().log("[checkGCSettings]");
 	UrlFetcher.rememberCookies();
-	if (cookies.length > 1)
-	    return 0;
-	if (cookies.length <= 1)
-	    return 0;
+	/*
+	no longer used	 
 	String SessionId = UrlFetcher.getCookie("ASP.NET_SessionId;www.geocaching.com");
 	if (SessionId == null) {
 	    Preferences.itself().log("[checkGCSettings]:got no SessionID." + page);
 	    return 5;
 	}
-
-	//1.) http://www.geocaching.com/my/
-	//<a href="http://www.geocaching.com/my/" class="CommonUsername" title="arbor95" target="_self">arbor95</a>	
-	String userBlock = extractor.set(page, "http://www.geocaching.com/my/", "</a>", 0, true).findNext();
-	String loggedInAs = extractValue.set(userBlock, "title=\"", "\"", 0, true).findNext();
-	Preferences.itself().log("[checkGCSettings]:loggedInAs= " + loggedInAs);
+	*/
+	// 1.) loggedInAs
+	String loggedInAs = extractor.set(page, "accesskey=\"p\">", "<", 0, true).findNext();
+	Preferences.itself().log("[checkGCSettings]:loggedInAs= " + loggedInAs, null);
 	if (loggedInAs.length() == 0)
 	    return 6;
 
-	//2.) ctl00$ContentBody$uxLanguagePreference
-	//<select name="ctl00$ContentBody$uxLanguagePreference" id="ctl00_ContentBody_uxLanguagePreference" class="Select">
-	//<option selected="selected" value="en-US">English</option>
-	//oder
-	//<option selected=\"selected\" value=\"de-DE">Deutsch</option>	
-	String languageBlock = extractor.findNext("ctl00$ContentBody$uxLanguagePreference", "</select>");
-	String oldLanguage = extractValue.set(languageBlock, "<option selected=\"selected\" value=\"", "\">", 0, true).findNext();
-	Preferences.itself().log("[checkGCSettings]:Language= " + oldLanguage);
+	// 2.) oldLanguage
+	String languageBlock = extractor.findNext("selected\"><a href=\"/myaccount", "</li>");
+	String oldLanguage = extractValue.set(languageBlock, "culture=", "\"", 0, true).findNext();
+	Preferences.itself().log("[checkGCSettings]:Language= " + oldLanguage, null);
 
-	//3.) ctl00$ContentBody$uxTimeZone
-
-	//4.) ctl00_ContentBody_uxDisplayUnits
-	//<table id="ctl00_ContentBody_uxDisplayUnits" .. </table>
-	//<input id="ctl00_ContentBody_uxDisplayUnits_1" type="radio" name="ctl00$ContentBody$uxDisplayUnits" value="1" checked="checked" /><label for="ctl00_ContentBody_uxDisplayUnits_1">Metric</label>
-	String distanceUnitBlock = extractor.findNext("ctl00_ContentBody_uxDisplayUnits", "</table>");
-	String distanceUnit = extractValue.set(extractValue.set(distanceUnitBlock, "\"checked\"", "</td>", 0, true).findNext(), "\">", "</label>", 0, true).findNext();
+	//4.) distanceUnit
+	String distanceUnitBlock = extractor.findNext("checked\" id=\"DistanceUnits", "/label");
+	String distanceUnit = extractValue.set(distanceUnitBlock, "/> ", "<", 0, true).findNext();
 	Preferences.itself().log("[checkGCSettings]:Units= " + distanceUnit, null);
 	if (!distanceUnit.equalsIgnoreCase(Preferences.itself().metricSystem == Metrics.METRIC ? "Metric" : "Imperial")) {
 	    return 3;
 	}
 
-	//5.) ctl00$ContentBody$uxDateTimeFormat
-	//<select name="ctl00$ContentBody$uxDateTimeFormat" id="ctl00_ContentBody_uxDateTimeFormat" class="Select">
-	//<option selected="selected" value="yyyy-MM-dd"> 2013-12-04</option>
-	String GCDateFormatBlock = extractor.findNext("ctl00$ContentBody$uxDateTimeFormat", "</select>");
+	//5.) GCDateFormat
+	String GCDateFormatBlock = extractor.findNext("<label for=\"SelectedDateFormat", "<label for=\"SelectedGPXVersion");
 	String GCDateFormat = extractValue.set(GCDateFormatBlock, "selected\" value=\"", "\">", 0, true).findNext();
-	Preferences.itself().log("[checkGCSettings]:GCDateFormat= " + GCDateFormat);
+	Preferences.itself().log("[checkGCSettings]:GCDateFormat= " + GCDateFormat, null);
 	DateFormat.GCDateFormat = GCDateFormat;
 
 	//6.)ctl00$ContentBody$uxInstantMessengerProvider
