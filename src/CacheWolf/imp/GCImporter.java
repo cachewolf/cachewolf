@@ -283,6 +283,8 @@ public class GCImporter {
 	    bugLinkEnd = p.getProp("bugLinkEnd");
 	    bugNameExStart = p.getProp("bugNameExStart");
 	    bugNameExEnd = p.getProp("bugNameExEnd");
+	    bugDetailsStart = p.getProp("bugDetailsStart");
+	    bugDetailsEnd = p.getProp("bugDetailsEnd");
 
 	    rowBlockExStart = p.getProp("rowBlockExStart");
 	    rowBlockExEnd = p.getProp("rowBlockExEnd");
@@ -1417,7 +1419,7 @@ public class GCImporter {
 	String GCDateFormatBlock = extractor.findNext("<label for=\"SelectedDateFormat", "<label for=\"SelectedGPXVersion");
 	String GCDateFormat = extractValue.set(GCDateFormatBlock, "selected\" value=\"", "\">", 0, true).findNext();
 	Preferences.itself().log("[checkGCSettings]:GCDateFormat= " + GCDateFormat, null);
-	DateFormat.GCDateFormat = GCDateFormat;
+	DateFormat.setGCDateFormat(GCDateFormat);
 
 	//6.)ctl00$ContentBody$uxInstantMessengerProvider
 
@@ -2025,7 +2027,7 @@ public class GCImporter {
 			Preferences.itself().log("ready " + ch.getWayPoint() + " : " + ch.getLastSync());
 			break;
 		    } catch (final Exception ex) {
-			Preferences.itself().log("[getCacheByWaypointName: ]Error reading cache: " + ch.getWayPoint(), ex);
+			Preferences.itself().log("[getCacheByWaypointName: ]Error reading cache: " + ch.getWayPoint(), ex, true);
 		    }
 		}
 	    } // spiderTrys
