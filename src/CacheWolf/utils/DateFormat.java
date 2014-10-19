@@ -34,7 +34,16 @@ import ewe.util.mString;
 
 public class DateFormat {
 
-    public static String GCDateFormat = "";
+    static int dayPos = 0;
+    static int monthPos = 1;
+
+    //static int yearPos = 2;
+
+    public static void setGCDateFormat(String gCDateFormat) {
+	dayPos = gCDateFormat.indexOf("d");
+	monthPos = gCDateFormat.indexOf("M");
+	//yearPos = gCDateFormat.indexOf("y");
+    }
 
     /** Convert the US Format into a sortable format */
     public static String toYYMMDD(String date) {
@@ -44,13 +53,13 @@ public class DateFormat {
     public static Time toDate(String ds) {
 	if (ds == null || ds.equals("") || ds.indexOf("1900") > -1)
 	    return new Time(1, 1, 1900);
-	final long adaylong = new Time(2, 1, 2000).getTime() - new Time(1, 1, 2000).getTime();
 	Time d = new Time();
 	d.hour = 0;
 	d.minute = 0;
 	d.second = 0;
 	d.millis = 0;
 	if (ds.indexOf("day") > 0) {
+	    final long adaylong = new Time(2, 1, 2000).getTime() - new Time(1, 1, 2000).getTime();
 	    if (ds.indexOf("Yesterday") > -1) {
 		d.setTime(d.getTime() - adaylong);
 	    } else {
@@ -66,20 +75,22 @@ public class DateFormat {
 		    SDate = mString.split(ds, '/');
 		else if (ds.indexOf('-') > -1)
 		    SDate = mString.split(ds, '-');
+		else if (ds.indexOf('.') > -1)
+		    SDate = mString.split(ds, '.');
 		// trying to determine Dateformat
 		int v0 = Common.parseInt(SDate[0]);
 		int v1 = Common.parseInt(SDate[1]);
 		int v2 = Common.parseInt(SDate[2]);
 		int dd, mm, yy;
 		if (v0 > 31) {
-		    // yyyy mm dd
+		    // yyyy MM dd
 		    yy = v0;
 		    mm = v1;
 		    dd = v2;
 		} else {
 		    yy = v2;
 		    if ((v0 == 0) || (v1 == 0)) {
-			// month as text
+			// month as text MMM
 			String month;
 			if (v0 == 0) {
 			    month = SDate[0];
@@ -90,8 +101,8 @@ public class DateFormat {
 			}
 			mm = monthName2int(month);
 		    } else {
-			// mm dd yyyy (doesn't work for dd mm yyyy)
-			if (GCDateFormat.equals("dd/MM/yyyy")) {
+			// MM dd yyyy (doesn't work for dd MM yyyy)
+			if (dayPos < monthPos) {
 			    dd = v0;
 			    mm = v1;
 			} else {
