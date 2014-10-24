@@ -351,7 +351,7 @@ public class GCImporter {
 	}
 
 	if (doDownloadGui(0)) {
-
+	    Time startZeit = new Time();
 	    Vm.showWait(true);
 	    infB = new InfoBox(MyLocale.getMsg(611, "Status"), MyLocale.getMsg(5502, "Fetching first page..."), InfoBox.PROGRESS_WITH_WARNINGS);
 	    infB.exec();
@@ -415,11 +415,17 @@ public class GCImporter {
 
 	    }
 
-	    if (!infB.isClosed()) {
-		infB.close(0);
-	    }
 	    Vm.showWait(false);
 	    loggedIn = false; // check again login on next spider
+	    Time endZeit = new Time();
+	    long benoetigteZeit = (endZeit.getTime() - startZeit.getTime()) / 1000; // sec
+	    if (!infB.isClosed()) {
+		infB.setInfo(MyLocale.getMsg(5535, "Caches added:   ") + newTillNow + "\n" + //
+			MyLocale.getMsg(5536, "Caches updated: ") + updateTillNow + "\n" + //
+			MyLocale.getMsg(5534, "Time required: ") + (benoetigteZeit / 60) + " min " + (benoetigteZeit % 60) + " sec "//
+		);
+		infB.setButtonText(MyLocale.getMsg(4107, "Done"), FormBase.CANCELB);
+	    }
 	}
     } // End of DoIt
 
@@ -1457,7 +1463,7 @@ public class GCImporter {
 	// must do post (get no longer works)
 
 	String languages[] = { "en-US", "ca-ES", "cs-CZ", "da-DK", "de-DE", "el-GR", "et-EE", "es-ES", "fr-FR", "it-IT",//		
-		"ja-JP", "ko-KR", "lv-LV", "hu-HU", "nl-NL", "nb-NO", "pl-PL", "pt-PT", "ro-RO", "fi-FI", "sv-SE",//
+		"ja-JP", "ko-KR", "lv-LV", "hu-HU", "nl-NL", "nb-NO", "pl-PL", "pt-PT", "ro-RO", "ru-RU", "fi-FI", "sv-SE",//
 	};
 	String languageCode = "00"; // defaults to "en-US"
 	for (int i = 0; i < languages.length; i++) {
