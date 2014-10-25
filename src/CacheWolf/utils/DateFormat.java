@@ -45,7 +45,7 @@ public class DateFormat {
 	//yearPos = gCDateFormat.indexOf("y");
     }
 
-    /** Convert the US Format into a sortable format */
+    /** Convert the US Format DateHidden/DateVisited into a sortable format */
     public static String toYYMMDD(String date) {
 	return toYYMMDD(toDate(date));
     }
@@ -180,4 +180,21 @@ public class DateFormat {
 	return d.format("yyyy-MM-dd"); // +d.format("HH:mm:ss"); is set to 00:00:00 at gpxExport
     }
 
+    public static String formatLastSyncDate(String timeRepresentation, String format) {
+	if (!timeRepresentation.equals("")) {
+	    try {
+		Time t = new Time();
+		t.parse(timeRepresentation, "yyyyMMddHHmmss");
+		if (format.length() == 0)
+		    return t.toString();
+		else
+		    return t.format(format);
+	    } catch (Exception e) {
+	    }
+	    return "";
+	} else {
+	    return "";
+	}
+
+    }
 }

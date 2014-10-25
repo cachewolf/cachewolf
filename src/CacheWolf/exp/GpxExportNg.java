@@ -28,7 +28,6 @@ import CacheWolf.controls.ExecutePanel;
 import CacheWolf.controls.InfoBox;
 import CacheWolf.database.Attribute;
 import CacheWolf.database.CWPoint;
-import CacheWolf.database.CacheDB;
 import CacheWolf.database.CacheHolder;
 import CacheWolf.database.CacheHolderDetail;
 import CacheWolf.database.CacheSize;
@@ -42,6 +41,7 @@ import CacheWolf.utils.Common;
 import CacheWolf.utils.DateFormat;
 import CacheWolf.utils.FileBugfix;
 import CacheWolf.utils.MyLocale;
+import CacheWolf.utils.STRreplace;
 import CacheWolf.utils.SafeXML;
 
 import com.stevesoft.ewe_pat.Regex;
@@ -85,12 +85,14 @@ import ewe.util.zip.ZipException;
 import ewe.util.zip.ZipFile;
 
 /**
- * experimental GPX exporter that should better handle the various tasks that can be accomplished with GPX
+ * GPX exporter that should better handle the various tasks that can be accomplished with GPX
  */
 public class GpxExportNg {
     final static String newLine = "\r\n";
 
     final static String WPNAMESTYLE = "wpNameStyle";
+    final static String GPXVERSION = "GPXVersion";
+    final static String WITHGSAKEXTENSIONS = "withGSAKExtensions";
     final static String SPLITSIZE = "splitSize";
     final static String EXPORTADDIWITHINVALIDCOORDS = "exportAddiWithInvalidCoords";
     final static String USECUSTOMICONS = "useCustomIcons";
@@ -131,45 +133,59 @@ public class GpxExportNg {
     private int exportErrors = 0;
     /**  */
     private String finderid;
-
+    /*
+     * groundspeak PQ Extensions
+     * 1.0 Basic Definition of PQ Extensions
+     * 1.0.1 Extensions
+     * added the inc for <groundspeak:attributes>: attributes like 'dog-friendly' or 'handicapped access' will be listed. ID corresponds to an enum in the Geocaching.com database
+     * <groundspeak:attribute id="1" inc="1">Dogs allowed</groundspeak:attribute>
+     * 1.1 Extensions
+     * Owner : Added GUID for transition to database redesign. Both GUID and ID are now optional  Owner ID corresponds to an account on Geocaching.com.
+     * Added <groundspeak:lastUpdated>:  "xs:dateTime" is the last time the cache has been edited by the user
+     * Added <groundspeak:exported>: ="xs:dateTime" for the benefit of splitting out caches -->
+    */
     // we need to fake desc to make clients like GSAK accept additional waypoints together with caches
-    final static String GPXHEADER = "<?xml version=\"1.0\" encoding=\"utf-8\"?>" + (newLine)//
-	    + ("<gpx")//
-	    + (" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"")//
-	    + (" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\"")//
-	    + (" version=\"1.0\"")//
-	    + (" creator=\"CacheWolf\"")//
-	    + (" xsi:schemaLocation=\"")//
-	    + ("http://www.topografix.com/GPX/1/0 ")//
-	    + ("http://www.topografix.com/GPX/1/0/gpx.xsd ")//
-	    + ("http://www.groundspeak.com/cache/1/0/1 ")//
-	    + ("http://www.groundspeak.com/cache/1/0/1/cache.xsd")//
-	    + ("\"")//
-	    + (" xmlns=\"http://www.topografix.com/GPX/1/0\"")//
-	    + (">")//
-	    + (newLine)//
-	    + ("<name>@@NAME@@</name>") + (newLine)//
-	    + ("<desc>This is an individual cache generated from Geocaching.com</desc>") + (newLine)//
-	    + ("<author>Various users from geocaching.com and/or opencaching.de</author>") + (newLine)//
-	    + ("<email>contact@cachewolf.de</email>") + (newLine)//
-	    + ("<url>http://www.cachewolf.de/</url>") + (newLine)//
-	    + ("<urlname>CacheWolf - Paperless Geocaching</urlname>") + (newLine)//
-	    + ("<time>@@CREATEDATE@@T07:00:00Z</time>") + (newLine)//
-	    + ("<keywords>cache, geocache, waypoints</keywords>") + (newLine)//
+    final static String GPXHEADER = "<?xml version=\"1.0\" encoding=\"utf-8\"?>" + newLine//
+	    + "<gpx"//
+	    + " xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\""//
+	    + " xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\""//
+	    + " version=\"1.0\""//
+	    + " creator=\"CacheWolf\""//
+	    + " xsi:schemaLocation=\""//
+	    + "@@GPX@@"//
+	    + " @@PQEXTENSION@@" //
+	    + " @@GSAKEXTENSION@@" //
+	    + "\""//
+	    + " xmlns=\"http://www.topografix.com/GPX/1/0\""//
+	    + ">"//
+	    + newLine//
+	    + "<name>@@NAME@@</name>" + newLine//
+	    + "<desc>This is an individual cache generated from Geocaching.com</desc>" + newLine//
+	    + "<author>Various users from geocaching.com and/or opencaching.de</author>" + newLine//
+	    + "<email>contact@cachewolf.de</email>" + newLine//
+	    + "<url>http://www.cachewolf.de/</url>" + newLine//
+	    + "<urlname>CacheWolf - Paperless Geocaching</urlname>" + newLine//
+	    + "<time>@@CREATEDATE@@T07:00:00Z</time>" + newLine//
+	    + "<keywords>cache, geocache, waypoints</keywords>" + newLine//
     // TODO: is it worth a second loop?
     // +("<bounds minlat=\"50.91695\" minlon=\"6.876383\" maxlat=\"50.935183\" maxlon=\"6.918817\" />")
     ;
+    final static String XMLNSGPX = "http://www.topografix.com/GPX/@";
+    private String xmlnsgpx;
+    final static String XMLNSGSAK = "http://www.gsak.net/xmlv1/@";
+    private String xmlnsgsak;
+    final static String XMLNSPQ = "http://www.groundspeak.com/cache/@";
+    private String xmlnspq;
+    final static String GPXLOG = "\t\t\t\t<groundspeak:log id=\"@@LOGID@@\">" + newLine//
+	    + ("\t\t\t\t\t<groundspeak:date>@@LOGDATE@@T00:00:00</groundspeak:date>") + newLine//
+	    + ("\t\t\t\t\t<groundspeak:type>@@LOGTYPE@@</groundspeak:type>") + newLine//
+	    + ("\t\t\t\t\t<groundspeak:finder id=\"@@LOGFINDERID@@\">@@LOGFINDER@@</groundspeak:finder>") + newLine//
+	    + ("\t\t\t\t\t<groundspeak:text encoded=\"@@LOGENCODE@@\">@@LOGTEXT@@</groundspeak:text>") + newLine//
+	    + ("\t\t\t\t</groundspeak:log>") + newLine;//
 
-    final static String GPXLOG = "\t\t\t\t<groundspeak:log id=\"@@LOGID@@\">" + (newLine)//
-	    + ("\t\t\t\t\t<groundspeak:date>@@LOGDATE@@T00:00:00</groundspeak:date>") + (newLine)//
-	    + ("\t\t\t\t\t<groundspeak:type>@@LOGTYPE@@</groundspeak:type>") + (newLine)//
-	    + ("\t\t\t\t\t<groundspeak:finder id=\"@@LOGFINDERID@@\">@@LOGFINDER@@</groundspeak:finder>") + (newLine)//
-	    + ("\t\t\t\t\t<groundspeak:text encoded=\"@@LOGENCODE@@\">@@LOGTEXT@@</groundspeak:text>") + (newLine)//
-	    + ("\t\t\t\t</groundspeak:log>") + (newLine);//
-
-    final static String GPXTB = "\t\t\t\t<groundspeak:travelbug id=\"@@TBID@@\" ref=\"@@TBREF@@\">" + (newLine)//
-	    + ("\t\t\t\t\t<groundspeak:name>@@TBNAME@@</groundspeak:name>") + (newLine)//
-	    + ("\t\t\t\t</groundspeak:travelbug>") + (newLine);//
+    final static String GPXTB = "\t\t\t\t<groundspeak:travelbug id=\"@@TBID@@\" ref=\"@@TBREF@@\">" + newLine//
+	    + ("\t\t\t\t\t<groundspeak:name>@@TBNAME@@</groundspeak:name>") + newLine//
+	    + ("\t\t\t\t</groundspeak:travelbug>") + newLine;//
 
     // FIXME: don't use this until GPX import can strip this off as well
     final static String GPXADDIINMAIN = "@@ADDIID@@ - @@ADDISHORT@@@@ADDIDELIM@@"//
@@ -225,6 +241,8 @@ public class GpxExportNg {
 
     private GpxExportNgForm exportOptions;
     private StringBuffer theLogs = new StringBuffer();
+    private CacheHolder ch;
+    private CacheHolderDetail chD;
 
     public void doit() {
 
@@ -286,7 +304,8 @@ public class GpxExportNg {
 		pbf.exec();
 
 		for (int i = 0; i < MainForm.profile.cacheDB.size(); i++) {
-		    CacheHolder ch = MainForm.profile.cacheDB.get(i);
+		    ch = MainForm.profile.cacheDB.get(i);
+		    chD = ch.getCacheDetails(false);
 		    if (!ch.isVisible()) {
 			continue;
 		    } else if (ch.isIncomplete()) {
@@ -305,7 +324,7 @@ public class GpxExportNg {
 				fileHandles.put(poiId, writer);
 				writer.print(formatHeader());
 			    }
-			    String strOut = formatCache(ch);
+			    String strOut = formatCache();
 			    if (!strOut.equals("")) {
 				writer.print(strOut);
 			    }
@@ -431,9 +450,10 @@ public class GpxExportNg {
 		outp.print(formatHeader());
 
 		Preferences.itself().log("start: " + new Time().getTime());
-		CacheDB cDB = MainForm.profile.cacheDB;
-		for (int i = 0; i < cDB.size(); i++) {
-		    CacheHolder ch = cDB.get(i);
+		Time startZeit = new Time();
+		for (int i = 0; i < MainForm.profile.cacheDB.size(); i++) {
+		    ch = MainForm.profile.cacheDB.get(i);
+		    chD = ch.getCacheDetails(false);
 		    if (!ch.isVisible()) {
 			continue;
 		    } else if (ch.isIncomplete()) {
@@ -457,17 +477,24 @@ public class GpxExportNg {
 				}
 			    }
 			}
-			String strOut = formatCache(ch);
+			String strOut = formatCache();
 			if (!strOut.equals("")) {
 			    outp.print(strOut);
 			    expCount++;
 			}
 		    }
-		    if (expCount % 100 == 0) {
+		    Time endZeit = new Time();
+		    long benoetigteZeit = (endZeit.getTime() - startZeit.getTime()) / 1000; // sec
+		    if (benoetigteZeit > 1) {
+			startZeit = endZeit;
 			infB.setInfo("Exporting " + expCount + " ( " + totalCount + " )");
 			infB.redisplay();
-			MainTab.itself.tablePanel.updateStatusBar(" " + ((expCount * 100) / totalCount) + "% ");
 		    }
+		    int prozent = ((expCount * 100) / totalCount);
+		    if ((prozent * totalCount) == (expCount * 100)) {
+			MainTab.itself.tablePanel.updateStatusBar(" " + prozent + "% ");
+		    }
+
 		    if (infB.isClosed()) {
 			break;
 		    }
@@ -527,9 +554,9 @@ public class GpxExportNg {
      * @param ch
      * @return
      */
-    private String formatCache(CacheHolder ch) {
+    private String formatCache() {
 	// no addis or custom in MyFindsPq - and of course only finds
-	if (STYLE_GPX_MYFINDS == exportStyle) {
+	if (exportStyle == STYLE_GPX_MYFINDS) {
 	    if ((!ch.isFound() || ch.isCustomWpt() || ch.isAddiWpt()))
 		return "";
 	}
@@ -548,10 +575,15 @@ public class GpxExportNg {
 	ch.getCacheDetails(true);
 	try {
 
-	    ret.append(formatCompact(ch));
+	    ret.append(formatCompact());
 
 	    if (exportStyle == STYLE_GPX_PQLIKE || exportStyle == STYLE_GPX_MYFINDS) {
-		ret.append(formatPqExtensions(ch));
+		ret.append("  <extensions>" + newLine); // ab gpx 1.1
+		ret.append(formatPqExtensions());
+		if (this.exportOptions.getWithGSAKExtensions()) {
+		    ret.append(formatGSAKExtensions());
+		}
+		ret.append("  </extensions>" + newLine);
 	    }
 
 	    ret.append("  </wpt>").append(newLine);
@@ -575,7 +607,7 @@ public class GpxExportNg {
      * @param ch
      * @return
      */
-    private String formatCompact(CacheHolder ch) {
+    private String formatCompact() {
 
 	StringBuffer ret = new StringBuffer();
 
@@ -619,7 +651,7 @@ public class GpxExportNg {
 	    }
 	} else if (exportOptions.getWpNameStyle() == WPNAME_NAME_SMART) {
 	    // TBD
-	} else {
+	} else { // WPNAME_ID_CLASSIC
 	    ret.append("    <name>").append(SafeXML.cleanGPX(ch.getWayPoint())).append("</name>").append(newLine);
 	}
 
@@ -690,11 +722,9 @@ public class GpxExportNg {
     /**
      * format gc.com extended cache information as found in a PQ
      * 
-     * @param ch
-     *            cacheholder
      * @return formatted cache information for cache waypoints or emty string for all other waypoints (additional / custom)
      */
-    private String formatPqExtensions(CacheHolder ch) {
+    private String formatPqExtensions() {
 
 	// no details for addis or custom waypoints
 	// if (ch.isCustomWpt() || ch.isAddiWpt())
@@ -704,36 +734,66 @@ public class GpxExportNg {
 	ret.append("    <groundspeak:cache id=\"").append(ch.GetCacheID())//
 		.append("\" available=\"").append(ch.isAvailable() ? TRUE : FALSE)//
 		.append("\" archived=\"").append(ch.isArchived() ? TRUE : FALSE)//
-		.append("\" xmlns:groundspeak=\"http://www.groundspeak.com/cache/1/0\">").append(newLine)//
+		.append("\" xmlns:groundspeak=\"" + xmlnspq + "\">").append(newLine)//
 		.append("      <groundspeak:name>").append(SafeXML.cleanGPX(ch.getCacheName())).append("</groundspeak:name>").append(newLine)//
 		.append("      <groundspeak:placed_by>").append(SafeXML.cleanGPX(ch.getCacheOwner())).append("</groundspeak:placed_by>").append(newLine)//
 		.append("      <groundspeak:owner id=\"").append("31415").append("\">").append(SafeXML.cleanGPX(ch.getCacheOwner())).append("</groundspeak:owner>").append(newLine)//
 		.append("      <groundspeak:type>").append(CacheType.type2GSTypeTag(ch.getType())).append("</groundspeak:type>").append(newLine)//
 		.append("      <groundspeak:container>").append(CacheSize.cw2ExportString(ch.getCacheSize())).append("</groundspeak:container>").append(newLine)//
 		.append("      <groundspeak:attributes>").append(newLine)//
-		.append(formatAttributes(ch))//
+		.append(formatAttributes())// ab pq Version 1/0/1
 		.append("      </groundspeak:attributes>").append(newLine)//
 		.append("      <groundspeak:difficulty>").append(CacheTerrDiff.shortDT(ch.getHard())).append("</groundspeak:difficulty>").append(newLine)//
 		.append("      <groundspeak:terrain>").append(CacheTerrDiff.shortDT(ch.getTerrain())).append("</groundspeak:terrain>").append(newLine)//
 		.append("      <groundspeak:country>").append(SafeXML.cleanGPX(ch.getCacheDetails(true).Country)).append("</groundspeak:country>").append(newLine)//
 		.append("      <groundspeak:state>").append(SafeXML.cleanGPX(ch.getCacheDetails(true).State)).append("</groundspeak:state>").append(newLine)//
 		.append("      <groundspeak:short_description html=\"").append(ch.isHTML() ? TRUE : FALSE).append("\"></groundspeak:short_description>").append(newLine)//
-		.append("      <groundspeak:long_description html=\"").append(ch.isHTML() ? TRUE : FALSE).append("\">").append(SafeXML.cleanGPX(formatLongDescription(ch))).append("</groundspeak:long_description>").append(newLine)//
+		.append("      <groundspeak:long_description html=\"").append(ch.isHTML() ? TRUE : FALSE).append("\">").append(SafeXML.cleanGPX(formatLongDescription())).append("</groundspeak:long_description>").append(newLine)//
 		.append("      <groundspeak:encoded_hints>").append(SafeXML.cleanGPX(Common.rot13(ch.getCacheDetails(true).Hints))).append("</groundspeak:encoded_hints>").append(newLine)//
 		.append("      <groundspeak:logs>").append(newLine)//
-		.append(formatLogs(ch))//
+		.append(formatLogs())//
 		.append("      </groundspeak:logs>").append(newLine)//
 		.append("      <groundspeak:travelbugs>").append(newLine)//
-		.append(formatTbs(ch))//
+		.append(formatTbs())//
 		.append("      </groundspeak:travelbugs>").append(newLine)//
 		.append("    </groundspeak:cache>").append(newLine);//
 	return ret.toString();
     }
 
-    /**
-     *
-     */
-    private String formatTbs(CacheHolder ch) {
+    private String formatGSAKExtensions() {
+	if (ch.isAddiWpt())
+	    return "";
+	StringBuffer ret_____ = new StringBuffer();
+	ret_____.append("    <gsak:wptExtension xmlns:gsak=\"" + xmlnsgsak + "\">").append(newLine); //
+	if (ch.hasNote()) // eigentlich  nur die von GC, aber
+	    ret_____.append("      <gsak:GcNote>").append(SafeXML.cleanGPX(ch.getCacheDetails(false).getGCNotes())).append("</gsak:GcNote>").append(newLine); //
+	if (ch.getCacheStatus().indexOf(MyLocale.getMsg(362, "solved")) >= 0) {
+	    // wir kennen die OriginalKoordinaten nicht, aber es gibt wohl nichts für nur corrected coordinates
+	    ret_____.append("      <gsak:LatBeforeCorrect>").append(ch.getPos().getLatDeg(TransformCoordinates.DD)).append("</gsak:LatBeforeCorrect>").append(newLine) //
+		    .append("      <gsak:LonBeforeCorrect>").append(ch.getPos().getLonDeg(TransformCoordinates.DD)).append("</gsak:LonBeforeCorrect>").append(newLine); //
+	}
+	if (Preferences.itself().useGCFavoriteValue)
+	    ret_____.append("      <gsak:FavPoints>").append("" + ch.getNumRecommended()).append("</gsak:FavPoints>").append(newLine); //
+	if (ch.getCacheStatus().indexOf("PM") >= 0)
+	    ret_____.append("      <gsak:IsPremium>").append("true").append("</gsak:IsPremium>").append(newLine); //
+	// ret_____.append("      <gsak:CacheImages>").append("").append("</gsak:CacheImages>").append(newLine) // replace "" by format spoilers
+	ret_____.append("    </gsak:wptExtension>").append(newLine);//
+	return ret_____.toString();
+    }
+
+    private String formatCacheboxExtensions() {
+	if (ch.isAddiWpt())
+	    return "";
+	StringBuffer ret_____ = new StringBuffer();
+	//cachebox-extension
+	// /note
+	// /solver
+	// /clue = bei Wegpunkten Beschreibung 
+	// /Parent = bei Wegpunkten - GCxxxx
+	return ret_____.toString();
+    }
+
+    private String formatTbs() {
 	StringBuffer ret = new StringBuffer();
 	Travelbug Tb;
 	for (int i = 0; i < ch.getCacheDetails(true).Travelbugs.size(); i++) {
@@ -756,7 +816,7 @@ public class GpxExportNg {
     /**
      *
      */
-    private String formatAttributes(CacheHolder ch) {
+    private String formatAttributes() {
 	StringBuffer ret = new StringBuffer();
 	Attribute attrib;
 	for (int i = 0; i < ch.getCacheDetails(true).attributes.count(); i++) {
@@ -776,8 +836,7 @@ public class GpxExportNg {
 	return ret.toString();
     }
 
-    private String formatLogs(CacheHolder ch) {
-	CacheHolderDetail chD = ch.getCacheDetails(false);
+    private String formatLogs() {
 	LogList logs = chD.CacheLogs;
 	theLogs.setLength(0);
 
@@ -805,13 +864,8 @@ public class GpxExportNg {
 
 	    final String cacheID = ch.GetCacheID();
 
-	    if (attrib2Log) {
-		// with attributes as log
-		Log attrLog = createAttrLog(ch);
-		attrLog.setFinderID("-2"); // default is ""
-		attrLog.setLogID(cacheID + Integer.toString(exportlogs));
-		addLog(attrLog);
-	    }
+	    // with a special log
+	    addLog(createAttrLog(exportlogs));
 
 	    // don't export the "dummy" lastLog (possibly accidently no Log.MAXLOGICON set, so check if empty)
 	    if (exportlogs > 0) {
@@ -842,24 +896,37 @@ public class GpxExportNg {
 	return theLogs.toString();
     }
 
-    private Log createAttrLog(CacheHolder ch) {
-	Attribute attrib;
+    private Log createAttrLog(int exportlogs) {
 	StringBuffer logText = new StringBuffer();
-	for (int i = 0; i < ch.getCacheDetails(true).attributes.count(); i++) {
-	    attrib = ch.getCacheDetails(true).attributes.getAttribute(i);
-	    logText.append(attrib.getInc() == 1 ? "Yes: " : "No: ").append(attrib.getMsg()).append("<br />").append(newLine);
+	if (attrib2Log) {
+	    for (int i = 0; i < ch.getCacheDetails(true).attributes.count(); i++) {
+		Attribute attrib = ch.getCacheDetails(true).attributes.getAttribute(i);
+		logText.append(attrib.getInc() == 1 ? "Yes: " : "No: ").append(attrib.getMsg()).append("<br />").append(newLine);
+	    }
 	}
+
+	if (ch.getCacheStatus().indexOf(MyLocale.getMsg(362, "solved")) >= 0) {
+	    logText.append(MyLocale.getMsg(362, "solved"));
+	}
+
 	if (ch.hasNote()) {
-	    logText.append(SafeXML.cleanGPX(ch.getCacheDetails(true).getCacheNotes())).append("<br />").append(newLine);
+	    logText.append(SafeXML.cleanGPX(ch.getCacheDetails(false).getCacheNotes())).append("<br />").append(newLine);
 	}
-	if (logText.length() == 0 && !ch.getLastSync().equals(""))
-	    logText.append(MyLocale.getMsg(1051, "Last sync date"));
-	Log log = new Log("", "", "icon_note.gif", DateFormat.yyyyMMddHHmmss2gpxLogdate(ch.getLastSync()), "CacheWolf", logText.toString());
-	return log;
+
+	/*
+	if (!ch.getLastSync().equals(""))
+	    logText.append(MyLocale.getMsg(1051, "Last sync date") + ": " + DateFormat.formatLastSyncDate(ch.getLastSync(), "")).append(newLine);
+	*/
+	if (logText.length() > 0) {
+	    Log log = new Log(ch.GetCacheID() + Integer.toString(exportlogs), "-2", "icon_note.gif", DateFormat.yyyyMMddHHmmss2gpxLogdate(ch.getLastSync()), "CacheWolf", logText.toString());
+	    return log;
+	} else
+	    return null;
     }
 
     private void addLog(Log log) {
-
+	if (log == null)
+	    return;
 	String logMessage = log.getMessage();
 
 	if (exportOptions.getExportLogsAsPlainText()) {
@@ -879,42 +946,60 @@ public class GpxExportNg {
 	theLogs.append(replacePlaceholder.replaceAll(GPXLOG));
     }
 
-    /**
-     * format the header of the GPX file
-     * 
-     * @return
-     */
     private String formatHeader() {
-	// FIXME: extend MainForm.profile to add <bounds minlat=\"50.91695\" minlon=\"6.876383\" maxlat=\"50.935183\"
-	// maxlon=\"6.918817\" />
+	// FIXME: extend MainForm.profile to add <bounds minlat=\"50.91695\" minlon=\"6.876383\" maxlat=\"50.935183\" maxlon=\"6.918817\" />
 	// MainForm.profile.getSourroundingArea(false);
+	//http://www.topografix.com/GPX/1/0 http://www.topografix.com/GPX/1/0/gpx.xsd
+	// GPX
+	String gpx = "";
+	String gpxVersion = "1/1"; // "1/0" ohne das <extensions> tag
+	xmlnsgpx = STRreplace.replace(XMLNSGPX, "@", gpxVersion);
+	gpx = xmlnsgpx + " " + xmlnsgpx + "/gpx.xsd";
+	// PQ Groundspeak
+	String pq = "";
+	String pqVersion;
+	switch (exportOptions.getPQVersion()) {
+	case 0:
+	    pqVersion = "1/0";
+	    break;
+	case 2:
+	    pqVersion = "1/1";
+	    break;
+	default:
+	    pqVersion = "1/0/1";
+	}
+	pqVersion = "1/0/1";
+	xmlnspq = STRreplace.replace(XMLNSPQ, "@", pqVersion);
+	pq = xmlnspq + " " + xmlnspq + "/cache.xsd";
+	// GSAK
+	String gsak = "";
+	String gsakVersion = "6";
+	xmlnsgsak = STRreplace.replace(XMLNSGSAK, "@", gsakVersion);
+	if (this.exportOptions.getWithGSAKExtensions()) {
+	    gsak = xmlnsgsak + " " + xmlnsgsak + "/gsak.xsd";
+	}
+
 	Transformer trans = new Transformer(true);
-	trans.add(new Regex("@@CREATEDATE@@", new Date().setToCurrentTime().setFormat("yyyy-MM-dd").toString()));
 	if (exportStyle == STYLE_GPX_MYFINDS) {
 	    trans.add(new Regex("@@NAME@@", "My Finds Pocket Query"));
 	} else {
 	    trans.add(new Regex("@@NAME@@", "Waypoints for Cache Listings, Generated by CacheWolf"));
 	}
+	trans.add(new Regex("@@CREATEDATE@@", new Date().setToCurrentTime().setFormat("yyyy-MM-dd").toString()));
+	trans.add(new Regex("@@GPX@@", gpx));
+	trans.add(new Regex("@@PQEXTENSION@@", pq));
+	trans.add(new Regex("@@GSAKEXTENSION@@", gsak));
 	return trans.replaceFirst(GPXHEADER);
-	/*
-	 * String ret = STRreplace.replace(GPXHEADER,"@@CREATEDATE@@", new Date().setToCurrentTime().setFormat("yyyy-MM-dd").toString());
-	 * if (exportStyle==STYLE_GPX_MYFINDS)
-	 * { ret=STRreplace.replace(ret,"@@NAME@@","My Finds Pocket Query");}
-	 * else { ret=STRreplace.replace(ret,"@@NAME@@","Waypoints for Cache Listings, Generated by CacheWolf");}
-	 * return ret;
-	 */
     }
 
     /**
      * format a long description as found in the gc.com GPX files
      * 
-     * @param ch
-     *            CacheHolder to format
      * @return formatted output
      */
-    private String formatLongDescription(CacheHolder ch) {
+    private String formatLongDescription() {
 	if (ch.isAddiWpt() || ch.isCustomWpt()) {
-	    return ch.getCacheDetails(true).LongDescription;
+	    return ch.getCacheDetails(false).LongDescription;
 	} else {
 	    StringBuffer ret = new StringBuffer();
 	    String delim = "";
@@ -1039,11 +1124,11 @@ public class GpxExportNg {
      */
     private class GpxExportNgForm extends Form {
 
-	private mLabel lblWpNameStyle, lblAddiWithInvalidCoords, lblSplitSize, lblUseCustomIcons, lblSendToGarmin, lblMaxLogs, lblExportLogsAsPlainText, lblAttrib2Log, lblPrefix;
+	private mLabel lblPQVersion, lblWithGSAKExtensions, lblWpNameStyle, lblAddiWithInvalidCoords, lblSplitSize, lblUseCustomIcons, lblSendToGarmin, lblMaxLogs, lblExportLogsAsPlainText, lblAttrib2Log, lblPrefix;
 	private int gpxStyle;
-	private mCheckBox cbUseCustomIcons, cbSendToGarmin, cbAddiWithInvalidCoords, cbAttrib2Log, cbExportLogsAsPlainText;
+	private mCheckBox cbWithGSAKExtensions, cbUseCustomIcons, cbSendToGarmin, cbAddiWithInvalidCoords, cbAttrib2Log, cbExportLogsAsPlainText;
 	private mInput ibMaxLogs, ibSplitSize, ibPrefix, ibFilename;
-	private mChoice chStyle, chWpNameStyle;
+	private mChoice chStyle, chPQVersion, chWpNameStyle;
 	private mButton btnFilename;
 	private final ExecutePanel executePanel;
 
@@ -1078,6 +1163,21 @@ public class GpxExportNg {
 	    chStyle.addItem(MyLocale.getMsg(2006, "MyFinds")); // index 4
 	    chStyle.select(gpxStyle);
 	    addLast(chStyle);
+
+	    lblPQVersion = new mLabel(MyLocale.getMsg(2022, "GPX Version"));
+	    //addNext(lblPQVersion);
+	    chPQVersion = new mChoice();
+	    chPQVersion.dontSearchForKeys = true;
+	    // if you change the order of strings make sure to fix the event handler as well
+	    chPQVersion.addItem("1.0"); // index 0
+	    chPQVersion.addItem("1.0.1"); // index 1
+	    chPQVersion.addItem("1.1"); // index 2
+	    chPQVersion.select(gpxStyle);
+	    //addLast(chPQVersion);
+
+	    addNext(lblWithGSAKExtensions = new mLabel(MyLocale.getMsg(2023, "With GSAK Extensions")));
+	    cbWithGSAKExtensions = new mCheckBox(" ");
+	    addLast(cbWithGSAKExtensions);
 
 	    addNext(lblWpNameStyle = new mLabel(MyLocale.getMsg(2014, "WP Names")));
 	    chWpNameStyle = new mChoice();
@@ -1137,6 +1237,8 @@ public class GpxExportNg {
 	    if (gpxStyle == STYLE_GPX_MYFINDS) {
 		chWpNameStyle.select(0);
 		disable(lblWpNameStyle, chWpNameStyle);
+		disable(lblPQVersion, chPQVersion);
+		disable(lblWithGSAKExtensions, cbWithGSAKExtensions);
 		disable(lblAddiWithInvalidCoords, cbAddiWithInvalidCoords);
 		cbAddiWithInvalidCoords.setState(false);
 		disable(lblUseCustomIcons, cbUseCustomIcons);
@@ -1151,6 +1253,8 @@ public class GpxExportNg {
 		disable(lblPrefix, ibPrefix);
 	    } else if (gpxStyle == STYLE_GPX_PQLIKE) {
 		enable(lblWpNameStyle, chWpNameStyle);
+		enable(lblPQVersion, chPQVersion);
+		enable(lblWithGSAKExtensions, cbWithGSAKExtensions);
 		enable(lblAddiWithInvalidCoords, cbAddiWithInvalidCoords);
 		enable(lblSplitSize, ibSplitSize);
 		if (hasGarminMap)
@@ -1171,6 +1275,8 @@ public class GpxExportNg {
 		disable(lblPrefix, ibPrefix);
 	    } else { // compact export
 		enable(lblWpNameStyle, chWpNameStyle);
+		disable(lblPQVersion, chPQVersion);
+		disable(lblWithGSAKExtensions, cbWithGSAKExtensions);
 		disable(lblAddiWithInvalidCoords, cbAddiWithInvalidCoords);
 		cbAddiWithInvalidCoords.setState(false);
 		disable(lblSplitSize, ibSplitSize);
@@ -1229,6 +1335,8 @@ public class GpxExportNg {
 
 	private void setFromPreferences() {
 	    chWpNameStyle.select(Common.parseInt(getExportValue(WPNAMESTYLE)));
+	    chPQVersion.select(Common.parseInt(getExportValue(GPXVERSION)));
+	    cbWithGSAKExtensions.setState(Boolean.valueOf(getExportValue(WITHGSAKEXTENSIONS)).booleanValue());
 	    int splitSize = Common.parseInt(getExportValue(SPLITSIZE));
 	    ibSplitSize.setText((splitSize < 1) ? "" : String.valueOf(splitSize));
 	    cbAddiWithInvalidCoords.setState(Boolean.valueOf(getExportValue(EXPORTADDIWITHINVALIDCOORDS)).booleanValue());
@@ -1270,6 +1378,14 @@ public class GpxExportNg {
 
 	public int getWpNameStyle() {
 	    return chWpNameStyle.selectedIndex;
+	}
+
+	public int getPQVersion() {
+	    return chPQVersion.selectedIndex;
+	}
+
+	public boolean getWithGSAKExtensions() {
+	    return this.cbWithGSAKExtensions.getState();
 	}
 
 	public boolean getUseCustomIcons() {
@@ -1373,6 +1489,8 @@ public class GpxExportNg {
 		break;
 	    case STYLE_GPX_PQLIKE:
 		exportValues.put(WPNAMESTYLE, "" + chWpNameStyle.selectedIndex);
+		exportValues.put(GPXVERSION, "" + chPQVersion.selectedIndex);
+		exportValues.put(WITHGSAKEXTENSIONS, SafeXML.strxmlencode(cbWithGSAKExtensions.getState()));
 		exportValues.put(SPLITSIZE, ibSplitSize.text);
 		exportValues.put(ATTRIB2LOG, SafeXML.strxmlencode(cbAttrib2Log.getState()));
 		exportValues.put(EXPORTADDIWITHINVALIDCOORDS, SafeXML.strxmlencode(cbAddiWithInvalidCoords.getState()));
