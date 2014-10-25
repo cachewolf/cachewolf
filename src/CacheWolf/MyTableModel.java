@@ -27,6 +27,7 @@ import CacheWolf.database.CacheHolder;
 import CacheWolf.database.CacheSize;
 import CacheWolf.database.CacheTerrDiff;
 import CacheWolf.database.CacheType;
+import CacheWolf.utils.DateFormat;
 import CacheWolf.utils.MyLocale;
 import ewe.fx.Color;
 import ewe.fx.FontMetrics;
@@ -468,17 +469,7 @@ public class MyTableModel extends TableModel {
 			return "";
 		    }
 		case 19: // Last sync date
-		    if (!ch.getLastSync().equals("")) {
-			try {
-			    lastSyncWorker.parse(ch.getLastSync(), "yyyyMMddHHmmss");
-			} catch (IllegalArgumentException e) {
-			    Preferences.itself().log("Could not parse 'lastSyncDate': " + ch.getLastSync() + ". Reset to empty.", e);
-			    ch.setLastSync("");
-			}
-			return lastSyncWorker.format("yyyy-MM-dd HH:mm");
-		    } else {
-			return "";
-		    }
+		    return DateFormat.formatLastSyncDate(ch.getLastSync(), "yyyy-MM-dd HH:mm");
 		} // Switch
 	    } // if
 	} catch (Exception e) {
