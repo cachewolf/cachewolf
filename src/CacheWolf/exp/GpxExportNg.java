@@ -92,6 +92,7 @@ public class GpxExportNg {
 
     final static String WPNAMESTYLE = "wpNameStyle";
     final static String GPXVERSION = "GPXVersion";
+    final static String PQVERSION = "PQVersion";
     final static String WITHGSAKEXTENSIONS = "withGSAKExtensions";
     final static String SPLITSIZE = "splitSize";
     final static String EXPORTADDIWITHINVALIDCOORDS = "exportAddiWithInvalidCoords";
@@ -548,12 +549,6 @@ public class GpxExportNg {
 	}
     }
 
-    /**
-     * wrapper for formatting a cache. will call some subroutines to do the actual work
-     * 
-     * @param ch
-     * @return
-     */
     private String formatCache() {
 	// no addis or custom in MyFindsPq - and of course only finds
 	if (exportStyle == STYLE_GPX_MYFINDS) {
@@ -578,12 +573,14 @@ public class GpxExportNg {
 	    ret.append(formatCompact());
 
 	    if (exportStyle == STYLE_GPX_PQLIKE || exportStyle == STYLE_GPX_MYFINDS) {
-		ret.append("  <extensions>" + newLine); // ab gpx 1.1
+		if (this.exportOptions.getGPXVersion() == 1)
+		    ret.append("  <extensions>" + newLine);
 		ret.append(formatPqExtensions());
 		if (this.exportOptions.getWithGSAKExtensions()) {
 		    ret.append(formatGSAKExtensions());
 		}
-		ret.append("  </extensions>" + newLine);
+		if (this.exportOptions.getGPXVersion() == 1)
+		    ret.append("  </extensions>" + newLine);
 	    }
 
 	    ret.append("  </wpt>").append(newLine);
@@ -601,12 +598,6 @@ public class GpxExportNg {
 	return ret.toString();
     }
 
-    /**
-     * generate minimal waypoint information according to GPX specification
-     * 
-     * @param ch
-     * @return
-     */
     private String formatCompact() {
 
 	StringBuffer ret = new StringBuffer();
@@ -952,12 +943,20 @@ public class GpxExportNg {
 	//http://www.topografix.com/GPX/1/0 http://www.topografix.com/GPX/1/0/gpx.xsd
 	// GPX
 	String gpx = "";
-	String gpxVersion = "1/1"; // "1/0" ohne das <extensions> tag
+	String gpxVersion;
+	switch (exportOptions.getGPXVersion()) {
+	case 0:
+	    gpxVersion = "1/0"; //ohne das <extensions> tag
+	    break;
+	default:
+	    gpxVersion = "1/1"; //mit <extensions> tag
+	}
 	xmlnsgpx = STRreplace.replace(XMLNSGPX, "@", gpxVersion);
 	gpx = xmlnsgpx + " " + xmlnsgpx + "/gpx.xsd";
 	// PQ Groundspeak
 	String pq = "";
 	String pqVersion;
+	/*
 	switch (exportOptions.getPQVersion()) {
 	case 0:
 	    pqVersion = "1/0";
@@ -968,6 +967,7 @@ public class GpxExportNg {
 	default:
 	    pqVersion = "1/0/1";
 	}
+	*/
 	pqVersion = "1/0/1";
 	xmlnspq = STRreplace.replace(XMLNSPQ, "@", pqVersion);
 	pq = xmlnspq + " " + xmlnspq + "/cache.xsd";
@@ -1124,11 +1124,11 @@ public class GpxExportNg {
      */
     private class GpxExportNgForm extends Form {
 
-	private mLabel lblPQVersion, lblWithGSAKExtensions, lblWpNameStyle, lblAddiWithInvalidCoords, lblSplitSize, lblUseCustomIcons, lblSendToGarmin, lblMaxLogs, lblExportLogsAsPlainText, lblAttrib2Log, lblPrefix;
-	private int gpxStyle;
+	private mLabel lblGPXVersion, lblWithGSAKExtensions, lblWpNameStyle, lblAddiWithInvalidCoords, lblSplitSize, lblUseCustomIcons, lblSendToGarmin, lblMaxLogs, lblExportLogsAsPlainText, lblAttrib2Log, lblPrefix;
+	private int gpxStyle, gpxVersion;
 	private mCheckBox cbWithGSAKExtensions, cbUseCustomIcons, cbSendToGarmin, cbAddiWithInvalidCoords, cbAttrib2Log, cbExportLogsAsPlainText;
 	private mInput ibMaxLogs, ibSplitSize, ibPrefix, ibFilename;
-	private mChoice chStyle, chPQVersion, chWpNameStyle;
+	private mChoice chStyle, chGPXVersion, chWpNameStyle;
 	private mButton btnFilename;
 	private final ExecutePanel executePanel;
 
@@ -1164,16 +1164,14 @@ public class GpxExportNg {
 	    chStyle.select(gpxStyle);
 	    addLast(chStyle);
 
-	    lblPQVersion = new mLabel(MyLocale.getMsg(2022, "GPX Version"));
-	    //addNext(lblPQVersion);
-	    chPQVersion = new mChoice();
-	    chPQVersion.dontSearchForKeys = true;
-	    // if you change the order of strings make sure to fix the event handler as well
-	    chPQVersion.addItem("1.0"); // index 0
-	    chPQVersion.addItem("1.0.1"); // index 1
-	    chPQVersion.addItem("1.1"); // index 2
-	    chPQVersion.select(gpxStyle);
-	    //addLast(chPQVersion);
+	    lblGPXVersion = new mLabel(MyLocale.getMsg(2022, "GPX Version"));
+	    addNext(lblGPXVersion);
+	    chGPXVersion = new mChoice();
+	    chGPXVersion.dontSearchForKeys = true;
+	    chGPXVersion.addItem("1.0"); // index 0
+	    chGPXVersion.addItem("1.1"); // index 1
+	    chGPXVersion.select(gpxVersion);
+	    addLast(chGPXVersion);
 
 	    addNext(lblWithGSAKExtensions = new mLabel(MyLocale.getMsg(2023, "With GSAK Extensions")));
 	    cbWithGSAKExtensions = new mCheckBox(" ");
@@ -1237,7 +1235,7 @@ public class GpxExportNg {
 	    if (gpxStyle == STYLE_GPX_MYFINDS) {
 		chWpNameStyle.select(0);
 		disable(lblWpNameStyle, chWpNameStyle);
-		disable(lblPQVersion, chPQVersion);
+		disable(lblGPXVersion, chGPXVersion);
 		disable(lblWithGSAKExtensions, cbWithGSAKExtensions);
 		disable(lblAddiWithInvalidCoords, cbAddiWithInvalidCoords);
 		cbAddiWithInvalidCoords.setState(false);
@@ -1253,7 +1251,7 @@ public class GpxExportNg {
 		disable(lblPrefix, ibPrefix);
 	    } else if (gpxStyle == STYLE_GPX_PQLIKE) {
 		enable(lblWpNameStyle, chWpNameStyle);
-		enable(lblPQVersion, chPQVersion);
+		enable(lblGPXVersion, chGPXVersion);
 		enable(lblWithGSAKExtensions, cbWithGSAKExtensions);
 		enable(lblAddiWithInvalidCoords, cbAddiWithInvalidCoords);
 		enable(lblSplitSize, ibSplitSize);
@@ -1275,7 +1273,7 @@ public class GpxExportNg {
 		disable(lblPrefix, ibPrefix);
 	    } else { // compact export
 		enable(lblWpNameStyle, chWpNameStyle);
-		disable(lblPQVersion, chPQVersion);
+		disable(lblGPXVersion, chGPXVersion);
 		disable(lblWithGSAKExtensions, cbWithGSAKExtensions);
 		disable(lblAddiWithInvalidCoords, cbAddiWithInvalidCoords);
 		cbAddiWithInvalidCoords.setState(false);
@@ -1335,7 +1333,7 @@ public class GpxExportNg {
 
 	private void setFromPreferences() {
 	    chWpNameStyle.select(Common.parseInt(getExportValue(WPNAMESTYLE)));
-	    chPQVersion.select(Common.parseInt(getExportValue(GPXVERSION)));
+	    chGPXVersion.select(Common.parseInt(getExportValue(GPXVERSION)));
 	    cbWithGSAKExtensions.setState(Boolean.valueOf(getExportValue(WITHGSAKEXTENSIONS)).booleanValue());
 	    int splitSize = Common.parseInt(getExportValue(SPLITSIZE));
 	    ibSplitSize.setText((splitSize < 1) ? "" : String.valueOf(splitSize));
@@ -1380,8 +1378,8 @@ public class GpxExportNg {
 	    return chWpNameStyle.selectedIndex;
 	}
 
-	public int getPQVersion() {
-	    return chPQVersion.selectedIndex;
+	public int getGPXVersion() {
+	    return chGPXVersion.selectedIndex;
 	}
 
 	public boolean getWithGSAKExtensions() {
@@ -1489,7 +1487,7 @@ public class GpxExportNg {
 		break;
 	    case STYLE_GPX_PQLIKE:
 		exportValues.put(WPNAMESTYLE, "" + chWpNameStyle.selectedIndex);
-		exportValues.put(GPXVERSION, "" + chPQVersion.selectedIndex);
+		exportValues.put(GPXVERSION, "" + chGPXVersion.selectedIndex);
 		exportValues.put(WITHGSAKEXTENSIONS, SafeXML.strxmlencode(cbWithGSAKExtensions.getState()));
 		exportValues.put(SPLITSIZE, ibSplitSize.text);
 		exportValues.put(ATTRIB2LOG, SafeXML.strxmlencode(cbAttrib2Log.getState()));

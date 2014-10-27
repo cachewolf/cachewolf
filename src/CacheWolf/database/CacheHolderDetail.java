@@ -125,13 +125,11 @@ public class CacheHolderDetail {
     }
 
     public void setCacheNotes(String notes) {
-	if (!this.CacheNotes.equals(notes))
+	if (!this.CacheNotes.equals(notes)) {
 	    getParent().setUpdated(true);
-	else
-	    return;
-	this.CacheNotes = notes;
-	getParent().setHasNote(!this.CacheNotes.trim().equals(""));
-
+	    this.CacheNotes = notes;
+	    getParent().setHasNote(!this.CacheNotes.trim().equals(""));
+	}
     }
 
     public String getCacheNotes() {
@@ -165,7 +163,7 @@ public class CacheHolderDetail {
      */
     public CacheHolderDetail update(CacheHolderDetail newCh) {
 	// flags
-	CacheHolder ch = getParent();
+	CacheHolder ch = parent;
 	if (ch.isFound() && ch.getCacheStatus().equals("")) {
 	    ch.setCacheStatus(ch.getFoundText());
 	}
@@ -190,11 +188,8 @@ public class CacheHolderDetail {
 	// URL
 	this.URL = newCh.URL;
 
-	String oldGCNotes = new Extractor(this.CacheNotes, "<GC>", "</GC>", 0, false).findNext();
-	if (oldGCNotes.length() > 0) {
-	    // if (newCh.getGCNotes().length() > 0) {
-	    this.setCacheNotes(STRreplace.replace(this.CacheNotes, oldGCNotes, newCh.getGCNotes()));
-	    // die}
+	if (this.gCNotes.length() > 0) {
+	    this.setCacheNotes(STRreplace.replace(this.CacheNotes, this.gCNotes, newCh.getGCNotes()));
 	} else {
 	    this.setCacheNotes(this.CacheNotes + newCh.getGCNotes());
 	}
@@ -206,8 +201,9 @@ public class CacheHolderDetail {
 	setCacheLogs(newCh.CacheLogs);
 	if (newCh.OwnLogId.length() > 0)
 	    this.OwnLogId = newCh.OwnLogId;
-	if (newCh.OwnLog != null)
+	if (newCh.OwnLog != null) {
 	    this.OwnLog = newCh.OwnLog;
+	}
 	if (newCh.Country.length() > 0)
 	    this.Country = newCh.Country;
 	if (newCh.State.length() > 0)
@@ -288,24 +284,30 @@ public class CacheHolderDetail {
 	Hints = ex.findNext("<HINTS><![CDATA[", "]]></HINTS>");
 
 	Extractor subex = new Extractor(ex.findNext("<LOGS>", "</LOGS>"), "<OWNLOGID>", "</OWNLOGID>", 0, true);
-	OwnLogId = subex.findNext();
-	String ownLogText = subex.findNext("<OWNLOG><![CDATA[", "]]></OWNLOG>");
-	if (ownLogText.length() > 0) {
-	    if (OwnLogId.length() == 0)
-		OwnLogId = "4711";
-	} else {
-	    OwnLogId = "";
-	}
-	if (ownLogText.length() > 0) {
-	    if (ownLogText.indexOf("<img src='") >= 0) {
-		OwnLog = new Log(ownLogText + "]]>");
-		OwnLog.setLogID(OwnLogId);
-		OwnLog.setFinderID(Preferences.itself().gcMemberId);
-	    } else {
-		OwnLog = new Log(OwnLogId, Preferences.itself().gcMemberId, "icon_smile.gif", "1900-01-01", Preferences.itself().myAlias, ownLogText);
-	    }
-	} else {
+	if (!parent.isFound()) {
+	    this.OwnLogId = "";
 	    OwnLog = null;
+	} else {
+	    OwnLogId = subex.findNext();
+
+	    String ownLogText = subex.findNext("<OWNLOG><![CDATA[", "]]></OWNLOG>");
+	    if (ownLogText.length() > 0) {
+		if (OwnLogId.length() == 0)
+		    OwnLogId = "4711";
+	    } else {
+		OwnLogId = "";
+	    }
+	    if (ownLogText.length() > 0) {
+		if (ownLogText.indexOf("<img src='") >= 0) {
+		    OwnLog = new Log(ownLogText + "]]>");
+		    OwnLog.setLogID(OwnLogId);
+		    OwnLog.setFinderID(Preferences.itself().gcMemberId);
+		} else {
+		    OwnLog = new Log(OwnLogId, Preferences.itself().gcMemberId, "icon_smile.gif", "1900-01-01", Preferences.itself().myAlias, ownLogText);
+		}
+	    } else {
+		OwnLog = null;
+	    }
 	}
 	CacheLogs.clear();
 	String dummy = subex.findNext("<LOG>", "</LOG>");
@@ -315,6 +317,7 @@ public class CacheHolderDetail {
 	}
 
 	CacheNotes = ex.findNext("<NOTES><![CDATA[", "]]></NOTES>");
+	gCNotes = new Extractor(CacheNotes, "<GC>", "</GC>", 0, false).findNext();
 
 	images.clear();
 
