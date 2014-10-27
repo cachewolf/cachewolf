@@ -122,6 +122,7 @@ public class DetailsPanel extends CellPanel {
     private static mComboBox chcStatus;
     /** notes for way point. */
     private static mTextPad waypointNotes;
+    private static mTextPad ownLog;
     /** shows number of additional way points. */
     private static mLabel lblAddiCount;
 
@@ -277,6 +278,9 @@ public class DetailsPanel extends CellPanel {
 	addLast(attViewer);
 
 	if (Preferences.itself().isBigScreen) {
+	    ownLog = new mTextPad();
+	    // ownLog.modify(ControlConstants.NotEditable, 0);
+	    addLast(new MyScrollBarPanel(ownLog), STRETCH, FILL);
 	    waypointNotes = new mTextPad();
 	    waypointNotes.modify(ControlConstants.NotEditable, 0);
 	    addLast(new MyScrollBarPanel(waypointNotes), STRETCH, FILL);
@@ -421,7 +425,9 @@ public class DetailsPanel extends CellPanel {
 	lblAddiCount.setText(": " + addiCount); //MyLocale.getMsg(1044, "Addis") + 
 
 	if (Preferences.itself().isBigScreen) {
-	    waypointNotes.setText(ch.getCacheDetails(true).getCacheNotes());
+	    if (ownLog != null)
+		ownLog.setText(ch.getCacheDetails(false).OwnLog.getMessageWithoutHTML());
+	    waypointNotes.setText(ch.getCacheDetails(false).getCacheNotes());
 	}
     }
 
@@ -505,7 +511,7 @@ public class DetailsPanel extends CellPanel {
 	    if (ev.target == btnNotes) {
 		dirtyNotes = true; // TODO I think this is redundant, because
 		// the notes are saved separately by the notes screen itself
-		final NotesScreen nsc = new NotesScreen(cache.getCacheDetails(true));
+		final NotesScreen nsc = new NotesScreen(cache);
 		nsc.execute(this.getFrame(), Gui.CENTER_FRAME);
 		if (Preferences.itself().isBigScreen) {
 		    waypointNotes.setText(cache.getCacheDetails(true).getCacheNotes());
