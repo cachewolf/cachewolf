@@ -25,9 +25,14 @@ import CacheWolf.Preferences;
 import CacheWolf.utils.Extractor;
 import CacheWolf.utils.MyLocale;
 
+import com.stevesoft.ewe_pat.Regex;
+import com.stevesoft.ewe_pat.Transformer;
+
 public class Log {
     public final static String MAXLOGICON = "MAXLOG";
     private static String INVALIDLOGICON = null;
+    private Transformer handleLinebreaks;
+    private Transformer removeHTMLTags;
     /** The icon which describes the log e.g. icon_sad */
     private String icon;
     /** The date in format yyyy-mm-dd */
@@ -156,6 +161,21 @@ public class Log {
 
     public String getMessage() {
 	return message;
+    }
+
+    public String getMessageWithoutHTML() {
+	handleLinebreaks = new Transformer(true);
+	handleLinebreaks.add(new Regex("\r", ""));
+	handleLinebreaks.add(new Regex("\n", " "));
+	handleLinebreaks.add(new Regex("<br>", "\n"));
+	handleLinebreaks.add(new Regex("<p>", "\n"));
+	handleLinebreaks.add(new Regex("<hr>", "\n"));
+	handleLinebreaks.add(new Regex("<br />", "\n"));
+
+	removeHTMLTags = new Transformer(true);
+	removeHTMLTags.add(new Regex("<(.*?)>", ""));
+
+	return removeHTMLTags.replaceAll(handleLinebreaks.replaceAll(message));
     }
 
     public boolean isRecomended() {

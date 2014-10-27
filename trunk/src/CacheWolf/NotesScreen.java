@@ -25,6 +25,7 @@ import CacheWolf.controls.ExecutePanel;
 import CacheWolf.controls.GuiImageBroker;
 import CacheWolf.controls.InfoBox;
 import CacheWolf.controls.MyScrollBarPanel;
+import CacheWolf.database.CacheHolder;
 import CacheWolf.database.CacheHolderDetail;
 import CacheWolf.utils.MyLocale;
 import ewe.fx.Dimension;
@@ -46,16 +47,18 @@ import ewe.ui.mTextPad;
 public class NotesScreen extends Form {
     mTextPad wayNotes = new mTextPad();
     private final ExecutePanel executePanel;
+    CacheHolder ch = null;
     CacheHolderDetail chD = null;
     mButton addDateTime;
     ScrollBarPanel sbp = new MyScrollBarPanel(wayNotes);
 
-    public NotesScreen(CacheHolderDetail ch) {
+    public NotesScreen(CacheHolder _ch) {
 	addDateTime = GuiImageBroker.getButton("", "date_time");
 	this.title = "Notes";
 	setPreferredSize(Preferences.itself().myAppWidth, Preferences.itself().myAppHeight);
 	this.resizeOnSIP = true;
-	chD = ch;
+	ch = _ch;
+	chD = _ch.getCacheDetails(false);
 	wayNotes.setText(chD.getCacheNotes());
 	addLast(sbp.setTag(CellConstants.SPAN, new Dimension(3, 1)), CellConstants.STRETCH, (CellConstants.FILL | CellConstants.WEST));
 	titleControls = new CellPanel();
@@ -79,7 +82,7 @@ public class NotesScreen extends Form {
 	    }
 	    if (ev.target == executePanel.applyButton) {
 		chD.setCacheNotes(wayNotes.getText());
-		chD.getParent().save();
+		chD.saveCacheDetails(MainForm.profile.dataDir);
 		this.close(0);
 	    }
 	    if (ev.target == executePanel.cancelButton) {
@@ -94,7 +97,7 @@ public class NotesScreen extends Form {
 		if ((!chD.getCacheNotes().equals(wayNotes.getText()))) {
 		    if (new InfoBox(MyLocale.getMsg(144, "Warning"), "Save changes made to the notes?").wait(FormBase.YESB | FormBase.NOB) == FormBase.IDYES) {
 			chD.setCacheNotes(wayNotes.getText());
-			chD.getParent().save();
+			chD.saveCacheDetails(MainForm.profile.dataDir);
 		    }
 		}
 	    }

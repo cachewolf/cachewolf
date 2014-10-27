@@ -24,6 +24,7 @@ package CacheWolf;
 import CacheWolf.controls.CWProgressBar;
 import CacheWolf.database.CacheDB;
 import CacheWolf.database.CacheHolder;
+import CacheWolf.database.CacheHolderDetail;
 import CacheWolf.utils.MyLocale;
 
 /**
@@ -65,13 +66,18 @@ public class SearchCache {
 	    for (int i = 0; i < cacheDB.size(); i++) {
 		cwp.setPosition(i);
 		ch = cacheDB.get(i);
+		CacheHolderDetail chD = ch.getCacheDetails(false);
 		if (!ch.isVisible())
 		    break; // Reached end of visible records
-		if (ch.getWayPoint().toUpperCase().indexOf(searchStr) < 0 && ch.getCacheName().toUpperCase().indexOf(searchStr) < 0 && ch.getCacheStatus().toUpperCase().indexOf(searchStr) < 0
-			&& (!searchInDescriptionAndNotes || ch.getCacheDetails(true).LongDescription.toUpperCase().indexOf(searchStr) < 0 && ch.getCacheDetails(true).getCacheNotes().toUpperCase().indexOf(searchStr) < 0)
-			&& (!searchInLogs || ch.getCacheDetails(true).CacheLogs.allMessages().toUpperCase().indexOf(searchStr) < 0)) {
+		if (ch.getWayPoint().toUpperCase().indexOf(searchStr) < 0 //
+			&& ch.getCacheName().toUpperCase().indexOf(searchStr) < 0 //
+			&& ch.getCacheStatus().toUpperCase().indexOf(searchStr) < 0 && (!searchInDescriptionAndNotes //
+			|| chD.LongDescription.toUpperCase().indexOf(searchStr) < 0 //
+				&& chD.getCacheNotes().toUpperCase().indexOf(searchStr) < 0) //
+			&& (!searchInLogs //
+			|| chD.CacheLogs.allMessages().toUpperCase().indexOf(searchStr) < 0))//
 		    ch.isFlagged = false;
-		} else
+		else
 		    ch.isFlagged = true;
 		if (cwp.isClosed())
 		    break;
