@@ -425,7 +425,7 @@ public class DetailsPanel extends CellPanel {
 	lblAddiCount.setText(": " + addiCount); //MyLocale.getMsg(1044, "Addis") + 
 
 	if (Preferences.itself().isBigScreen) {
-	    if (ownLog != null)
+	    if (ch.getCacheDetails(false).OwnLog != null)
 		ownLog.setText(ch.getCacheDetails(false).OwnLog.getMessageWithoutHTML());
 	    waypointNotes.setText(ch.getCacheDetails(false).getCacheNotes());
 	}
