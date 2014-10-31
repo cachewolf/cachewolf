@@ -63,15 +63,21 @@ public class SearchCache {
 	    //Mark finds by setting is_flaged
 	    //TableModel will be responsible for displaying
 	    //marked caches.
+	    CacheHolderDetail chD;
 	    for (int i = 0; i < cacheDB.size(); i++) {
 		cwp.setPosition(i);
 		ch = cacheDB.get(i);
-		CacheHolderDetail chD = ch.getCacheDetails(false);
 		if (!ch.isVisible())
 		    break; // Reached end of visible records
+		if (searchInDescriptionAndNotes || searchInLogs) {
+		    chD = ch.getCacheDetails(false);
+		} else {
+		    chD = null;
+		}
 		if (ch.getWayPoint().toUpperCase().indexOf(searchStr) < 0 //
 			&& ch.getCacheName().toUpperCase().indexOf(searchStr) < 0 //
-			&& ch.getCacheStatus().toUpperCase().indexOf(searchStr) < 0 && (!searchInDescriptionAndNotes //
+			&& ch.getCacheStatus().toUpperCase().indexOf(searchStr) < 0 //
+			&& (!searchInDescriptionAndNotes //
 			|| chD.LongDescription.toUpperCase().indexOf(searchStr) < 0 //
 				&& chD.getCacheNotes().toUpperCase().indexOf(searchStr) < 0) //
 			&& (!searchInLogs //
