@@ -1409,15 +1409,17 @@ public class GCImporter {
 	    return 6;
 
 	// 2.) oldLanguage
-	String languageBlock = extractor.findNext("selected\"><a href=\"/myaccount", "</li>");
+	String languageBlock = extractor.findNext("selected\"><a href=\"/account", "</li>");
 	String oldLanguage = extractValue.set(languageBlock, "culture=", "\"", 0, true).findNext();
 	Preferences.itself().log("[checkGCSettings]:Language= " + oldLanguage, null);
 
 	//4.) distanceUnit
+	//<label><input checked="checked" id="DistanceUnits" name="DistanceUnits" type="radio" value="Metric" /> Metric</label>
 	String distanceUnitBlock = extractor.findNext("checked\" id=\"DistanceUnits", "/label");
 	String distanceUnit = extractValue.set(distanceUnitBlock, "/> ", "<", 0, true).findNext();
 	Preferences.itself().log("[checkGCSettings]:Units= " + distanceUnit, null);
 	if (!distanceUnit.equalsIgnoreCase(Preferences.itself().metricSystem == Metrics.METRIC ? "Metric" : "Imperial")) {
+	    Preferences.itself().log(page);
 	    return 3;
 	}
 
