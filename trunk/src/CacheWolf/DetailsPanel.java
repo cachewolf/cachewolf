@@ -33,6 +33,7 @@ import CacheWolf.database.CacheHolder;
 import CacheWolf.database.CacheSize;
 import CacheWolf.database.CacheTerrDiff;
 import CacheWolf.database.CacheType;
+import CacheWolf.database.Log;
 import CacheWolf.database.Travelbug;
 import CacheWolf.database.TravelbugJourneyList;
 import CacheWolf.database.TravelbugList;
@@ -148,6 +149,8 @@ public class DetailsPanel extends CellPanel {
     public boolean evWaypointChanged = false;
     private String warnedForWaypoint = "";
 
+    MyScrollBarPanel pnlLog;
+
     // TODO: move images to image broker
     // mImage imgBlack, imgBlackNo, imgShowBug, imgShowBugNo, imgNewWpt, imgGoto, imgShowMaps, imgAddImages, imgNotes;
 
@@ -158,7 +161,7 @@ public class DetailsPanel extends CellPanel {
 	super();
 	// ===== local objects =====
 	/** helper panels to organize layout */
-	CellPanel helperPanel1, helperPanel2, helperPanel3, helperPanel4, helperPanel5, leftPanel, helperPanel6;
+	CellPanel pnlType, helperPanel2, helperPanel3, helperPanel4, helperPanel5, leftPanel, helperPanel6;
 
 	// ===== initialize flags =====
 	dirtyNotes = false;
@@ -170,7 +173,7 @@ public class DetailsPanel extends CellPanel {
 	// ===== initialize GUI objects =====
 	// ----- main body -----
 
-	helperPanel1 = new CellPanel();
+	pnlType = new CellPanel();
 	helperPanel2 = new CellPanel();
 	helperPanel3 = new CellPanel();
 	helperPanel4 = new CellPanel();
@@ -227,8 +230,8 @@ public class DetailsPanel extends CellPanel {
 		addLast(createToolsPanel(), HSTRETCH, HFILL);
 	}
 
-	helperPanel1.addNext(chcType, HSTRETCH, (HFILL | RIGHT));
-	helperPanel1.addLast(btnDiff, DONTSTRETCH, (DONTFILL | EAST));
+	pnlType.addNext(chcType, HSTRETCH, (HFILL | RIGHT));
+	pnlType.addLast(btnDiff, DONTSTRETCH, (DONTFILL | EAST));
 
 	helperPanel2.addNext(chcSize, HSTRETCH, (HFILL | RIGHT));
 	helperPanel2.addLast(btnTerr, DONTSTRETCH, (DONTFILL | EAST));
@@ -248,17 +251,17 @@ public class DetailsPanel extends CellPanel {
 
 	// ----- main body -----
 
+	leftPanel.addNext(new mLabel(MyLocale.getMsg(303, "Name:")), DONTSTRETCH, (DONTFILL | LEFT));
+	leftPanel.addLast(inpName, HSTRETCH, HFILL).setTag(SPAN, new Dimension(2, 1));
+
 	leftPanel.addNext(new mLabel(MyLocale.getMsg(300, "Type:")), DONTSTRETCH, (DONTFILL | LEFT));
-	leftPanel.addLast(helperPanel1, HSTRETCH, HFILL).setTag(SPAN, new Dimension(2, 1));
+	leftPanel.addLast(pnlType, HSTRETCH, HFILL).setTag(SPAN, new Dimension(2, 1));
 
 	leftPanel.addNext(new mLabel(MyLocale.getMsg(301, "Size:")), DONTSTRETCH, (DONTFILL | LEFT));
 	leftPanel.addLast(helperPanel2, HSTRETCH, HFILL).setTag(SPAN, new Dimension(2, 1));
 
 	leftPanel.addNext(new mLabel(MyLocale.getMsg(302, "Waypoint:")), DONTSTRETCH, (DONTFILL | LEFT));
 	leftPanel.addLast(helperPanel3, HSTRETCH, HFILL).setTag(SPAN, new Dimension(2, 1));
-
-	leftPanel.addNext(new mLabel(MyLocale.getMsg(303, "Name:")), DONTSTRETCH, (DONTFILL | LEFT));
-	leftPanel.addLast(inpName, HSTRETCH, HFILL).setTag(SPAN, new Dimension(2, 1));
 
 	leftPanel.addNext(new mLabel(MyLocale.getMsg(304, "Coordinates:")), DONTSTRETCH, (DONTFILL | LEFT));
 	leftPanel.addLast(helperPanel6, HSTRETCH, HFILL).setTag(SPAN, new Dimension(2, 1));
@@ -279,8 +282,9 @@ public class DetailsPanel extends CellPanel {
 
 	if (Preferences.itself().isBigScreen) {
 	    ownLog = new mTextPad();
-	    // ownLog.modify(ControlConstants.NotEditable, 0);
-	    addLast(new MyScrollBarPanel(ownLog), STRETCH, FILL);
+	    pnlLog = new MyScrollBarPanel(ownLog);
+	    pnlLog.setText(" "); //(MyLocale.getMsg(278, "Eigener Log: ") + "1234567890");
+	    addLast(pnlLog, STRETCH, FILL);
 	    waypointNotes = new mTextPad();
 	    waypointNotes.modify(ControlConstants.NotEditable, 0);
 	    addLast(new MyScrollBarPanel(waypointNotes), STRETCH, FILL);
@@ -425,8 +429,11 @@ public class DetailsPanel extends CellPanel {
 	lblAddiCount.setText(": " + addiCount); //MyLocale.getMsg(1044, "Addis") + 
 
 	if (Preferences.itself().isBigScreen) {
+	    pnlLog.setText(MyLocale.getMsg(278, "Eigener Log: ") + ch.getCacheDetails(false).OwnLogId);
 	    if (ch.getCacheDetails(false).OwnLog != null)
 		ownLog.setText(ch.getCacheDetails(false).OwnLog.getMessageWithoutHTML());
+	    else
+		ownLog.setText("");
 	    waypointNotes.setText(ch.getCacheDetails(false).getCacheNotes());
 	}
     }
@@ -514,7 +521,7 @@ public class DetailsPanel extends CellPanel {
 		final NotesScreen nsc = new NotesScreen(cache);
 		nsc.execute(this.getFrame(), Gui.CENTER_FRAME);
 		if (Preferences.itself().isBigScreen) {
-		    waypointNotes.setText(cache.getCacheDetails(true).getCacheNotes());
+		    waypointNotes.setText(cache.getCacheDetails(false).getCacheNotes());
 		}
 	    } else if (ev.target == btnTBs) {
 		final TravelbugInCacheScreen ts = new TravelbugInCacheScreen(cache.getCacheDetails(true).Travelbugs.toHtml(), "Travelbugs");
@@ -733,15 +740,23 @@ public class DetailsPanel extends CellPanel {
 	}
 	final byte oldType = cache.getType();
 	cache.setType(CacheType.guiSelect2Cw(chcType.getInt()));
-	// thisCache.saveCacheDetails(profile.dataDir); // this is redundant,
-	// because all changes
-	// affecting the details are immediately saved
+	String ownLogText = ownLog.getText();
+	if (ownLogText.length() > 0) {
+	    String OwnLogId = cache.getCacheDetails(false).OwnLogId;
+	    cache.getCacheDetails(false).OwnLog = new Log(OwnLogId, Preferences.itself().gcMemberId, "2.png", "1900-01-01", Preferences.itself().myAlias, ownLogText);
+	}
+
+	// thisCache.saveCacheDetails(profile.dataDir); 
+	// this is redundant, because all changes affecting the details are immediately saved
 	// Now update the table
 
 	cache.checkIncomplete();
 
 	/*
-	 * The references have to be rebuilt if: - the cachetype changed from addi->normal or from normal->addi - the old cachetype or the new cachetype were 'addi' and the waypointname has changed
+	 * The references have to be rebuilt if:
+	 *  the cachetype changed from addi->normal 
+	 *  or from normal->addi
+	 *  or the new cachetype were 'addi' and the waypointname has changed
 	 */
 	if (CacheType.isAddiWpt(cache.getType()) != CacheType.isAddiWpt(oldType) || ((CacheType.isAddiWpt(cache.getType()) || CacheType.isAddiWpt(oldType)) && !cache.getWayPoint().equals(oldWaypoint))) {
 	    // If we changed the type to addi, check that a parent exists
