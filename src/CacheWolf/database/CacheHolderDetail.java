@@ -284,30 +284,18 @@ public class CacheHolderDetail {
 	Hints = ex.findNext("<HINTS><![CDATA[", "]]></HINTS>");
 
 	Extractor subex = new Extractor(ex.findNext("<LOGS>", "</LOGS>"), "<OWNLOGID>", "</OWNLOGID>", 0, true);
-	if (!parent.isFound()) {
-	    this.OwnLogId = "";
-	    OwnLog = null;
+	OwnLogId = subex.findNext();
+	String ownLogText = subex.findNext("<OWNLOG><![CDATA[", "]]></OWNLOG>");
+	if (ownLogText.length() > 0) {
+	    if (ownLogText.indexOf("<img src='") >= 0) {
+		OwnLog = new Log(ownLogText + "]]>");
+		OwnLog.setLogID(OwnLogId);
+		OwnLog.setFinderID(Preferences.itself().gcMemberId);
+	    } else {
+		OwnLog = new Log(OwnLogId, Preferences.itself().gcMemberId, "2.png", "1900-01-01", Preferences.itself().myAlias, ownLogText);
+	    }
 	} else {
-	    OwnLogId = subex.findNext();
-
-	    String ownLogText = subex.findNext("<OWNLOG><![CDATA[", "]]></OWNLOG>");
-	    if (ownLogText.length() > 0) {
-		if (OwnLogId.length() == 0)
-		    OwnLogId = "4711";
-	    } else {
-		OwnLogId = "";
-	    }
-	    if (ownLogText.length() > 0) {
-		if (ownLogText.indexOf("<img src='") >= 0) {
-		    OwnLog = new Log(ownLogText + "]]>");
-		    OwnLog.setLogID(OwnLogId);
-		    OwnLog.setFinderID(Preferences.itself().gcMemberId);
-		} else {
-		    OwnLog = new Log(OwnLogId, Preferences.itself().gcMemberId, "icon_smile.gif", "1900-01-01", Preferences.itself().myAlias, ownLogText);
-		}
-	    } else {
-		OwnLog = null;
-	    }
+	    OwnLog = null;
 	}
 	CacheLogs.clear();
 	String dummy = subex.findNext("<LOG>", "</LOG>");
