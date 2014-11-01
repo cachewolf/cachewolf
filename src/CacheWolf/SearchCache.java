@@ -61,8 +61,7 @@ public class SearchCache {
 	    cwp.allowExit(true);
 	    //Search through complete database
 	    //Mark finds by setting is_flaged
-	    //TableModel will be responsible for displaying
-	    //marked caches.
+	    //TableModel will be responsible for displaying marked caches.
 	    CacheHolderDetail chD;
 	    for (int i = 0; i < cacheDB.size(); i++) {
 		cwp.setPosition(i);
