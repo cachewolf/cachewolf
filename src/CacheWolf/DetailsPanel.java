@@ -80,6 +80,7 @@ import ewe.ui.mTextPad;
  */
 public class DetailsPanel extends CellPanel {
 
+    private final String[] tdSelectionList = new String[] { "1.0", "1.5", "2.0", "2.5", "3.0", "3.5", "4.0", "4.5", "5.0" };
     // ===== GUI elements =====
     /** way point id. */
     private static mInput inpWaypoint;
@@ -89,9 +90,9 @@ public class DetailsPanel extends CellPanel {
     private static mInput inpHidden;
     /** way point owner. */
     private static mInput inpOwner;
+    private mButton btnType;
     /** way point coordinates, open change coordinates dialog. */
     private static mButton btnCoordinates;
-
     /** create a new way point. */
     private static mButton btnNewWpt;
     /** set this waypoint as destination and change to compass view */
@@ -112,13 +113,11 @@ public class DetailsPanel extends CellPanel {
     /** set hidden date. */
     private static mButton btnHiddenDate;
     /** set terrain value. */
-    private static mButton btnTerr;
+    private mButton btnTerr;
     /** set difficulty value. */
-    private static mButton btnDiff;
-    /** drop down list with cache types. */
-    private static mChoice chcType;
-    /** drop down list with container sizes. */
-    private static mChoice chcSize;
+    private mButton btnDiff;
+    /** container sizes. */
+    private mButton btnSize;
     /** select way point status. */
     private static mComboBox chcStatus;
     /** notes for way point. */
@@ -148,7 +147,8 @@ public class DetailsPanel extends CellPanel {
     private final static String DTINVALID = ": -.-";
     public boolean evWaypointChanged = false;
     private String warnedForWaypoint = "";
-
+    private byte newCacheType;
+    private byte newCacheSize;
     MyScrollBarPanel pnlLog;
 
     // TODO: move images to image broker
@@ -161,7 +161,7 @@ public class DetailsPanel extends CellPanel {
 	super();
 	// ===== local objects =====
 	/** helper panels to organize layout */
-	CellPanel pnlType, helperPanel2, helperPanel3, helperPanel4, helperPanel5, leftPanel, helperPanel6;
+	CellPanel helperPanel1, helperPanel2, helperPanel3, helperPanel4, helperPanel5, leftPanel, helperPanel6;
 
 	// ===== initialize flags =====
 	dirtyNotes = false;
@@ -173,19 +173,16 @@ public class DetailsPanel extends CellPanel {
 	// ===== initialize GUI objects =====
 	// ----- main body -----
 
-	pnlType = new CellPanel();
+	helperPanel1 = new CellPanel();
 	helperPanel2 = new CellPanel();
 	helperPanel3 = new CellPanel();
 	helperPanel4 = new CellPanel();
 	helperPanel5 = new CellPanel();
 	leftPanel = new CellPanel();
 	helperPanel6 = new CellPanel();
+
 	attViewer = new AttributesViewer();
 
-	chcType = new mChoice(CacheType.guiTypeStrings(), 0);
-	chcType.alwaysDrop = true;
-	chcSize = new mChoice(CacheSize.guiSizeStrings(), 0);
-	chcSize.alwaysDrop = true;
 	chcStatus = new mComboBox(CacheHolder.GetGuiLogTypes(), 0);
 	inpWaypoint = new mInput();
 	inpName = new mInput();
@@ -205,11 +202,9 @@ public class DetailsPanel extends CellPanel {
 	// ----- helper panels -----
 
 	btnDiff = new mButton(MyLocale.getMsg(1000, "D") + ": 5.5");
-	btnDiff.setPreferredSize(Preferences.itself().fontSize * 3, chcSize.getPreferredSize(null).height);
 	btnDiff.setToolTip(MyLocale.getMsg(31415, "Edit difficulty"));
 
 	btnTerr = new mButton(MyLocale.getMsg(1001, "T") + ": 5.5");
-	btnTerr.setPreferredSize(Preferences.itself().fontSize * 3, chcSize.getPreferredSize(null).height);
 	btnTerr.setToolTip(MyLocale.getMsg(31415, "Edit terrain"));
 
 	btnNewWpt = GuiImageBroker.getButton(MyLocale.getMsg(733, "Addi Wpt"), "newwpt");
@@ -230,38 +225,39 @@ public class DetailsPanel extends CellPanel {
 		addLast(createToolsPanel(), HSTRETCH, HFILL);
 	}
 
-	pnlType.addNext(chcType, HSTRETCH, (HFILL | RIGHT));
-	pnlType.addLast(btnDiff, DONTSTRETCH, (DONTFILL | EAST));
-
-	helperPanel2.addNext(chcSize, HSTRETCH, (HFILL | RIGHT));
-	helperPanel2.addLast(btnTerr, DONTSTRETCH, (DONTFILL | EAST));
-
-	helperPanel3.addNext(inpWaypoint, HSTRETCH, (HFILL | RIGHT));
-	helperPanel3.addNext(btnNewWpt, DONTSTRETCH, DONTFILL);
-	helperPanel3.addLast(lblAddiCount, DONTSTRETCH, RIGHT);
-
 	helperPanel4.addNext(chcStatus, HSTRETCH, (HFILL | RIGHT));
 	helperPanel4.addLast(btnFoundDate, DONTSTRETCH, DONTFILL);
-
-	helperPanel5.addNext(inpHidden, HSTRETCH, (HFILL | RIGHT));
-	helperPanel5.addLast(btnHiddenDate, DONTSTRETCH, DONTFILL);
 
 	helperPanel6.addNext(btnCoordinates, HSTRETCH, HFILL);
 	helperPanel6.addLast(btnSetDestination, DONTSTRETCH, RIGHT);
 
 	// ----- main body -----
 
-	leftPanel.addNext(new mLabel(MyLocale.getMsg(303, "Name:")), DONTSTRETCH, (DONTFILL | LEFT));
+	leftPanel.addNext(inpWaypoint, DONTSTRETCH, (FILL | LEFT));
+	leftPanel.addLast(helperPanel3, HSTRETCH, HFILL); // empty dummy
+
+	leftPanel.addNext(btnType = GuiImageBroker.getButton(CacheType.type2Gui(CacheType.CW_TYPE_REFERENCE), CacheType.typeImageNameForId(CacheType.CW_TYPE_TRADITIONAL)), DONTSTRETCH, (DONTFILL | LEFT));
 	leftPanel.addLast(inpName, HSTRETCH, HFILL).setTag(SPAN, new Dimension(2, 1));
 
-	leftPanel.addNext(new mLabel(MyLocale.getMsg(300, "Type:")), DONTSTRETCH, (DONTFILL | LEFT));
-	leftPanel.addLast(pnlType, HSTRETCH, HFILL).setTag(SPAN, new Dimension(2, 1));
+	leftPanel.addNext(new mLabel(MyLocale.getMsg(306, "Owner:")), DONTSTRETCH, (DONTFILL | LEFT));
+	helperPanel5.addNext(inpOwner, HSTRETCH, HFILL).setTag(SPAN, new Dimension(2, 1));
+	helperPanel5.addNext(new mLabel(MyLocale.getMsg(305, "Hidden on:")), DONTSTRETCH, (DONTFILL | LEFT));
+	helperPanel5.addNext(inpHidden, HSTRETCH, (HFILL | RIGHT));
+	helperPanel5.addLast(btnHiddenDate, DONTSTRETCH, DONTFILL);
+	leftPanel.addLast(helperPanel5, HSTRETCH, HFILL).setTag(SPAN, new Dimension(2, 1));
 
-	leftPanel.addNext(new mLabel(MyLocale.getMsg(301, "Size:")), DONTSTRETCH, (DONTFILL | LEFT));
-	leftPanel.addLast(helperPanel2, HSTRETCH, HFILL).setTag(SPAN, new Dimension(2, 1));
+	helperPanel1.addNext(btnNewWpt, DONTSTRETCH, DONTFILL);
+	helperPanel1.addNext(lblAddiCount, DONTSTRETCH, RIGHT);
+	helperPanel2.addNext(btnSize = GuiImageBroker.getButton(CacheType.type2Gui(CacheType.CW_TYPE_REFERENCE), CacheType.typeImageNameForId(CacheType.CW_TYPE_TRADITIONAL)), DONTSTRETCH, (DONTFILL | LEFT));
+	helperPanel2.addNext(btnDiff, DONTSTRETCH, (DONTFILL | EAST));
+	helperPanel2.addNext(btnTerr, DONTSTRETCH, (DONTFILL | EAST));
+	leftPanel.addNext(helperPanel1, DONTSTRETCH, FILL);
+	leftPanel.addLast(helperPanel2, HSTRETCH, HFILL);
+	// btnDiff.setPreferredSize(btnSize.getPreferredSize(null).width, btnSize.getPreferredSize(null).height);
+	// btnTerr.setPreferredSize(btnSize.getPreferredSize(null).width, btnSize.getPreferredSize(null).height);
 
-	leftPanel.addNext(new mLabel(MyLocale.getMsg(302, "Waypoint:")), DONTSTRETCH, (DONTFILL | LEFT));
-	leftPanel.addLast(helperPanel3, HSTRETCH, HFILL).setTag(SPAN, new Dimension(2, 1));
+	//leftPanel.addNext(new mLabel(MyLocale.getMsg(302, "Waypoint:")), DONTSTRETCH, (DONTFILL | LEFT));
+	//leftPanel.addLast(helperPanel3, HSTRETCH, HFILL).setTag(SPAN, new Dimension(2, 1));
 
 	leftPanel.addNext(new mLabel(MyLocale.getMsg(304, "Coordinates:")), DONTSTRETCH, (DONTFILL | LEFT));
 	leftPanel.addLast(helperPanel6, HSTRETCH, HFILL).setTag(SPAN, new Dimension(2, 1));
@@ -269,14 +265,7 @@ public class DetailsPanel extends CellPanel {
 	leftPanel.addNext(new mLabel(MyLocale.getMsg(307, "Status:")), DONTSTRETCH, (DONTFILL | LEFT));
 	leftPanel.addLast(helperPanel4, HSTRETCH, HFILL).setTag(SPAN, new Dimension(2, 1));
 
-	leftPanel.addNext(new mLabel(MyLocale.getMsg(306, "Owner:")), DONTSTRETCH, (DONTFILL | LEFT));
-	leftPanel.addLast(inpOwner, HSTRETCH, HFILL).setTag(SPAN, new Dimension(2, 1));
-
-	leftPanel.addNext(new mLabel(MyLocale.getMsg(305, "Hidden on:")), DONTSTRETCH, (DONTFILL | LEFT));
-	leftPanel.addLast(helperPanel5, HSTRETCH, HFILL).setTag(SPAN, new Dimension(2, 1));
-
 	addLast(leftPanel, HSTRETCH, HFILL);
-	// addLast(rightPanel, HSTRETCH, HFILL | LEFT);
 
 	addLast(attViewer);
 
@@ -355,8 +344,8 @@ public class DetailsPanel extends CellPanel {
 	inpHidden.setText(mainCache.getDateHidden());
 	inpOwner.setText(mainCache.getCacheOwner());
 	chcStatus.setText(ch.getStatusText());
-	chcType.setInt(CacheType.cw2GuiSelect(ch.getType()));
-
+	newCacheType = ch.getType();
+	GuiImageBroker.setButtonIconAndText(btnType, CacheType.type2Gui(newCacheType), GuiImageBroker.makeImageForButton(btnType, CacheType.type2Gui(newCacheType), CacheType.typeImageNameForId(newCacheType)));
 	if (ch.isBlack()) {
 	    GuiImageBroker.setButtonIconAndText(btnBlackListed, MyLocale.getMsg(363, "Blacklist"), btnImageBlackListed);
 	} else {
@@ -378,13 +367,14 @@ public class DetailsPanel extends CellPanel {
 	    GuiImageBroker.setButtonIconAndText(btnTBs, MyLocale.getMsg(364, "TBs"), showBugNoImage);
 	}
 
-	chcSize.setInt(mainCache.getCacheSize());
+	newCacheSize = ch.getCacheSize();
+	GuiImageBroker.setButtonIconAndText(btnSize, CacheSize.cw2ExportString(newCacheSize), GuiImageBroker.makeImageForButton(btnSize, CacheSize.cw2ExportString(newCacheSize), CacheSize.cacheSize2ImageName(newCacheSize)));
 
 	attViewer.showImages(ch.getCacheDetails(true).attributes);
 	if (ch.isAddiWpt() || ch.isCustomWpt()) {
 	    deactivateControl(btnTerr);
 	    deactivateControl(btnDiff);
-	    deactivateControl(chcSize);
+	    deactivateControl(btnSize);
 	    deactivateControl(inpOwner);
 	    deactivateControl(inpHidden);
 	    deactivateControl(btnTBs);
@@ -392,7 +382,7 @@ public class DetailsPanel extends CellPanel {
 	} else {
 	    activateControl(btnTerr);
 	    activateControl(btnDiff);
-	    activateControl(chcSize);
+	    activateControl(btnSize);
 	    activateControl(inpOwner);
 	    activateControl(inpHidden);
 	    activateControl(btnTBs);
@@ -402,7 +392,6 @@ public class DetailsPanel extends CellPanel {
 	if (ch.isCustomWpt()) {
 	    btnTerr.setText(MyLocale.getMsg(1001, "T") + DTINVALID);
 	    btnDiff.setText(MyLocale.getMsg(1000, "D") + DTINVALID);
-	    chcSize.select(0);
 	} else {
 	    if (CacheTerrDiff.isValidTD(mainCache.getTerrain())) {
 		btnTerr.setText(MyLocale.getMsg(1001, "T") + ": " + CacheTerrDiff.longDT(mainCache.getTerrain()));
@@ -443,17 +432,16 @@ public class DetailsPanel extends CellPanel {
      */
     public void createWptName() {
 	final String wpt = inpWaypoint.getText().toUpperCase();
-	if (CacheType.isAddiWpt(CacheType.guiSelect2Cw(chcType.getInt())) //
+	if (CacheType.isAddiWpt(newCacheType) //
 		&& MainTab.itself.mainCache != null //
 		&& (MainTab.itself.mainCache.startsWith("GC") //
 			|| OC.isOC(MainTab.itself.mainCache) //
 		|| MainTab.itself.mainCache.startsWith("CW")) && wpt.startsWith("CW")) {
 	    // for creating the Addiname on creating a new Waypoint
 	    MainTab.itself.lastselected = MainTab.itself.mainCache;
-
 	    inpWaypoint.setText(MainForm.profile.getNewAddiWayPointName(MainTab.itself.mainCache));
 	}
-	if (!CacheType.isAddiWpt(CacheType.guiSelect2Cw(chcType.getInt())) && !(wpt.startsWith("GC") || OC.isOC(wpt) || wpt.startsWith("CW"))) {
+	if (!CacheType.isAddiWpt(newCacheType) && !(wpt.startsWith("GC") || OC.isOC(wpt) || wpt.startsWith("CW"))) {
 	    inpWaypoint.setText(MainForm.profile.getNewWayPointName("CW"));
 	}
     }
@@ -487,28 +475,6 @@ public class DetailsPanel extends CellPanel {
 		    evWaypointChanged = true;
 		}
 		// FIXME: if name was changed, we should rename the waypoint.xml file. how? where?
-	    } else if (ev.target == chcType) {
-		createWptName();
-		if (CacheType.isCacheWpt(CacheType.guiSelect2Cw(chcType.selectedIndex))) {
-		    activateControl(btnTerr);
-		    activateControl(btnDiff);
-		    activateControl(chcSize);
-		    activateControl(inpOwner);
-		    activateControl(inpHidden);
-		    activateControl(btnTBs);
-		    activateControl(btnBlackListed);
-		} else {
-		    deactivateControl(btnTerr);
-		    deactivateControl(btnDiff);
-		    deactivateControl(chcSize);
-		    deactivateControl(inpOwner);
-		    deactivateControl(inpHidden);
-		    deactivateControl(btnTBs);
-		    deactivateControl(btnBlackListed);
-		    chcSize.select(0);
-		    btnTerr.setText(MyLocale.getMsg(1001, "T") + DTINVALID);
-		    btnDiff.setText(MyLocale.getMsg(1000, "D") + DTINVALID);
-		}
 	    }
 	    // FIXME: check if something was actually changed, since datacachnge events also occur if you just hop through the fields with the tab key (Why? don't know!)
 	    dirtyDetails = true;
@@ -651,19 +617,66 @@ public class DetailsPanel extends CellPanel {
 		}
 	    } else if (ev.target == btnTerr) {
 		int returnValue;
-		final TerrDiffForm tdf = new TerrDiffForm(true, decodeTerrDiff(btnTerr, MyLocale.getMsg(1001, "T"), CacheType.isCacheWpt(CacheType.guiSelect2Cw(chcType.getInt()))));
+		int startIndex = decodeTerrDiff(btnTerr, MyLocale.getMsg(1001, "T"), CacheType.isCacheWpt(newCacheType));
+		startIndex = (startIndex > 0) ? (startIndex - 10) / 5 : 0;
+		final MyChoice tdf = new MyChoice(MyLocale.getMsg(31415, "Terrain"), startIndex, tdSelectionList);
 		returnValue = tdf.execute();
 		if (returnValue == 1) {
-		    btnTerr.setText(MyLocale.getMsg(1001, "T") + ": " + CacheTerrDiff.longDT(tdf.getDT()));
+		    btnTerr.setText(MyLocale.getMsg(1001, "T") + ": " + CacheTerrDiff.longDT((byte) (tdf.getSelectedIndex() * 5 + 10)));
 		    dirtyDetails = true;
 		}
 	    } else if (ev.target == btnDiff) {
 		int returnValue;
-		final TerrDiffForm tdf = new TerrDiffForm(false, decodeTerrDiff(btnDiff, MyLocale.getMsg(1001, "D"), CacheType.isCacheWpt(CacheType.guiSelect2Cw(chcType.getInt()))));
-
+		int startIndex = decodeTerrDiff(btnDiff, MyLocale.getMsg(1001, "D"), CacheType.isCacheWpt(newCacheType));
+		startIndex = (startIndex > 0) ? (startIndex - 10) / 5 : 0;
+		final MyChoice tdf = new MyChoice(MyLocale.getMsg(31415, "Difficulty"), startIndex, tdSelectionList);
 		returnValue = tdf.execute();
 		if (returnValue == 1) {
-		    btnDiff.setText(MyLocale.getMsg(1000, "D") + ": " + CacheTerrDiff.longDT(tdf.getDT()));
+		    btnDiff.setText(MyLocale.getMsg(1000, "D") + ": " + CacheTerrDiff.longDT((byte) (tdf.getSelectedIndex() * 5 + 10)));
+		    dirtyDetails = true;
+		}
+	    } else if (ev.target == this.btnType) {
+		int returnValue;
+		int startIndex = CacheType.cw2GuiSelect(newCacheType);
+		final MyChoice tdf = new MyChoice(MyLocale.getMsg(300, "Type:"), startIndex, CacheType.guiTypeStrings());
+		returnValue = tdf.execute();
+		if (returnValue == 1) {
+		    newCacheType = CacheType.guiSelect2Cw(tdf.getSelectedIndex());
+		    GuiImageBroker.setButtonIconAndText(btnType, CacheType.type2Gui(newCacheType), GuiImageBroker.makeImageForButton(btnType, CacheType.type2Gui(newCacheType), CacheType.typeImageNameForId(newCacheType)));
+
+		    createWptName();
+		    if (CacheType.isCacheWpt(newCacheType)) {
+			activateControl(btnTerr);
+			activateControl(btnDiff);
+			activateControl(btnSize);
+			activateControl(inpOwner);
+			activateControl(inpHidden);
+			activateControl(btnTBs);
+			activateControl(btnBlackListed);
+		    } else {
+			deactivateControl(btnTerr);
+			deactivateControl(btnDiff);
+			deactivateControl(btnSize);
+			deactivateControl(inpOwner);
+			deactivateControl(inpHidden);
+			deactivateControl(btnTBs);
+			deactivateControl(btnBlackListed);
+			newCacheSize = CacheSize.CW_SIZE_NOTCHOSEN;
+			GuiImageBroker.setButtonIconAndText(btnSize, CacheSize.cw2ExportString(newCacheSize), GuiImageBroker.makeImageForButton(btnSize, CacheSize.cw2ExportString(newCacheSize), CacheSize.cacheSize2ImageName(newCacheSize)));
+			btnTerr.setText(MyLocale.getMsg(1001, "T") + DTINVALID);
+			btnDiff.setText(MyLocale.getMsg(1000, "D") + DTINVALID);
+		    }
+
+		    dirtyDetails = true;
+		}
+	    } else if (ev.target == this.btnSize) {
+		int returnValue;
+		int startIndex = CacheSize.cwSizeId2GuiSizeId(newCacheSize);
+		final MyChoice tdf = new MyChoice(MyLocale.getMsg(301, "Size:"), startIndex, CacheSize.guiSizeStrings());
+		returnValue = tdf.execute();
+		if (returnValue == 1) {
+		    newCacheSize = CacheSize.guiSizeStrings2CwSize(tdf.getSelectedValue());
+		    GuiImageBroker.setButtonIconAndText(btnSize, CacheSize.cw2ExportString(newCacheSize), GuiImageBroker.makeImageForButton(btnSize, CacheSize.cw2ExportString(newCacheSize), CacheSize.cacheSize2ImageName(newCacheSize)));
 		    dirtyDetails = true;
 		}
 	    }
@@ -723,7 +736,7 @@ public class DetailsPanel extends CellPanel {
 	final String oldWaypoint = cache.getWayPoint();
 	cache.setWayPoint(inpWaypoint.getText().toUpperCase().trim());
 	if (!cache.isAddiWpt()) {
-	    cache.setCacheSize(CacheSize.guiSizeStrings2CwSize(chcSize.getText()));
+	    cache.setCacheSize(newCacheSize);
 	}
 	// If the waypoint does not have a name, give it one
 	if (cache.getWayPoint().equals("")) {
@@ -739,26 +752,23 @@ public class DetailsPanel extends CellPanel {
 	    cache.setDateHidden(inpHidden.getText().trim());
 	}
 	final byte oldType = cache.getType();
-	cache.setType(CacheType.guiSelect2Cw(chcType.getInt()));
+	cache.setType(newCacheType);
 	String ownLogText = ownLog.getText();
 	if (ownLogText.length() > 0) {
 	    String OwnLogId = cache.getCacheDetails(false).OwnLogId;
 	    cache.getCacheDetails(false).OwnLog = new Log(OwnLogId, Preferences.itself().gcMemberId, "2.png", "1900-01-01", Preferences.itself().myAlias, ownLogText);
 	}
 
-	// thisCache.saveCacheDetails(profile.dataDir); 
-	// this is redundant, because all changes affecting the details are immediately saved
-	// Now update the table
-
 	cache.checkIncomplete();
 
 	/*
 	 * The references have to be rebuilt if:
-	 *  the cachetype changed from addi->normal 
-	 *  or from normal->addi
-	 *  or the new cachetype were 'addi' and the waypointname has changed
+	 *  the cachetype changed from addi->normal or from normal->addi
+	 *  or the old or new cachetype is 'addi' and the waypointname has changed
 	 */
-	if (CacheType.isAddiWpt(cache.getType()) != CacheType.isAddiWpt(oldType) || ((CacheType.isAddiWpt(cache.getType()) || CacheType.isAddiWpt(oldType)) && !cache.getWayPoint().equals(oldWaypoint))) {
+	if (CacheType.isAddiWpt(cache.getType()) != CacheType.isAddiWpt(oldType) //
+		|| ((CacheType.isAddiWpt(cache.getType()) || CacheType.isAddiWpt(oldType)) && !cache.getWayPoint().equals(oldWaypoint)) //
+	) {
 	    // If we changed the type to addi, check that a parent exists
 	    // FIXME: if cache was renamed we need to rebuild CacheDB.hashDB first
 	    MainForm.profile.buildReferences();
@@ -901,18 +911,19 @@ public class DetailsPanel extends CellPanel {
 	}
     }
 
-    private class TerrDiffForm extends Form {
+    private class MyChoice extends Form {
 	private final mChoice mcDT;
 	private final ExecutePanel executePanel;
-	private final String[] DT = new String[] { "1.0", "1.5", "2.0", "2.5", "3.0", "3.5", "4.0", "4.5", "5.0" };
+	private final String[] selectionList;
 
-	public TerrDiffForm(boolean terrain, int startVal) {
+	public MyChoice(String message, int startValue, String[] _selectionList) {
 	    super();
-	    mcDT = new mChoice(DT, (startVal > 0) ? (startVal - 10) / 5 : 0);
+	    selectionList = _selectionList;
+	    mcDT = new mChoice(selectionList, startValue);
 	    resizable = false;
-	    setTitle(MyLocale.getMsg(31415, "D & T"));
+	    setTitle(message);
 
-	    addNext(new mLabel(terrain ? MyLocale.getMsg(31415, "Terrain") : MyLocale.getMsg(31415, "Difficulty")));
+	    // addNext(new mLabel(message));
 	    addLast(mcDT);
 	    executePanel = new ExecutePanel(this);
 	}
@@ -927,8 +938,12 @@ public class DetailsPanel extends CellPanel {
 	    }
 	}
 
-	public byte getDT() {
-	    return (byte) (mcDT.selectedIndex * 5 + 10);
+	public int getSelectedIndex() {
+	    return mcDT.selectedIndex;
+	}
+
+	public String getSelectedValue() {
+	    return mcDT.getSelectedItem().toString();
 	}
     }
 }
