@@ -40,7 +40,6 @@ import CacheWolf.database.TravelbugList;
 import CacheWolf.navi.Navigate;
 import CacheWolf.navi.TransformCoordinates;
 import CacheWolf.utils.MyLocale;
-import ewe.fx.Dimension;
 import ewe.fx.IImage;
 import ewe.fx.Point;
 import ewe.fx.Rect;
@@ -86,8 +85,6 @@ public class DetailsPanel extends CellPanel {
     private static mInput inpWaypoint;
     /** way point name. */
     private static mInput inpName;
-    /** way point hidden date. */
-    private static mInput inpHidden;
     /** way point owner. */
     private static mInput inpOwner;
     private mButton btnType;
@@ -111,7 +108,7 @@ public class DetailsPanel extends CellPanel {
     /** set found date. */
     private static mButton btnFoundDate;
     /** set hidden date. */
-    private static mButton btnHiddenDate;
+    private mButton btnHiddenDate;
     /** set terrain value. */
     private mButton btnTerr;
     /** set difficulty value. */
@@ -134,21 +131,22 @@ public class DetailsPanel extends CellPanel {
 
     // ===== flags =====
     /** notes have changes */
-    private boolean dirtyNotes;
+    private boolean dirtyNotes = false;
     /** details have changed FIXME: make this obsolete */
-    private boolean dirtyDetails;
+    private boolean dirtyDetails = false;
     /** cache is blacklisted FIXME: make this obsolete */
-    private boolean blackStatus;
+    private boolean blackStatus = false;
     /** blacklist status was changed by user FIXME: make this obsolete */
-    private boolean blackStatusChanged;
+    private boolean blackStatusChanged = false;
     /** FIXME */
-    private boolean needsTableUpdate;
+    private boolean needsTableUpdate = false;
     /** String to display for invalid or not applicable terrain or difficulty values. */
     private final static String DTINVALID = ": -.-";
     public boolean evWaypointChanged = false;
     private String warnedForWaypoint = "";
     private byte newCacheType;
     private byte newCacheSize;
+    private String newHiddenDate;
     MyScrollBarPanel pnlLog;
 
     // TODO: move images to image broker
@@ -159,63 +157,6 @@ public class DetailsPanel extends CellPanel {
      */
     public DetailsPanel() {
 	super();
-	// ===== local objects =====
-	/** helper panels to organize layout */
-	CellPanel helperPanel1, helperPanel2, helperPanel3, helperPanel4, helperPanel5, leftPanel, helperPanel6;
-
-	// ===== initialize flags =====
-	dirtyNotes = false;
-	dirtyDetails = false;
-	blackStatus = false;
-	blackStatusChanged = false;
-	needsTableUpdate = false;
-
-	// ===== initialize GUI objects =====
-	// ----- main body -----
-
-	helperPanel1 = new CellPanel();
-	helperPanel2 = new CellPanel();
-	helperPanel3 = new CellPanel();
-	helperPanel4 = new CellPanel();
-	helperPanel5 = new CellPanel();
-	leftPanel = new CellPanel();
-	helperPanel6 = new CellPanel();
-
-	attViewer = new AttributesViewer();
-
-	chcStatus = new mComboBox(CacheHolder.GetGuiLogTypes(), 0);
-	inpWaypoint = new mInput();
-	inpName = new mInput();
-
-	btnCoordinates = new mButton();
-	btnCoordinates.setToolTip(MyLocale.getMsg(31415, "Edit coordinates"));
-
-	btnSetDestination = GuiImageBroker.getButton(MyLocale.getMsg(1500, "Destination"), "goto"); //345, "Go to these coordinates"
-	btnSetDestination.setToolTip(MyLocale.getMsg(326, "Set as destination and show Compass View"));
-
-	inpOwner = new mInput();
-	inpHidden = new mInput();
-	inpHidden.modifyAll(DisplayOnly, 0);
-
-	// ===== put the controls onto the GUI =====
-
-	// ----- helper panels -----
-
-	btnDiff = new mButton(MyLocale.getMsg(1000, "D") + ": 5.5");
-	btnDiff.setToolTip(MyLocale.getMsg(31415, "Edit difficulty"));
-
-	btnTerr = new mButton(MyLocale.getMsg(1001, "T") + ": 5.5");
-	btnTerr.setToolTip(MyLocale.getMsg(31415, "Edit terrain"));
-
-	btnNewWpt = GuiImageBroker.getButton(MyLocale.getMsg(733, "Addi Wpt"), "newwpt");
-	btnNewWpt.setToolTip(MyLocale.getMsg(311, "Create Waypoint"));
-	lblAddiCount = new mLabel(": 888"); //MyLocale.getMsg(1044, "Addis") + 
-
-	btnFoundDate = GuiImageBroker.getButton("", "calendar");
-	btnFoundDate.setToolTip(MyLocale.getMsg(31415, "Set found date / time"));
-
-	btnHiddenDate = GuiImageBroker.getButton("", "calendar");
-	btnHiddenDate.setToolTip(MyLocale.getMsg(31415, "Set hidden date"));
 
 	if (Preferences.itself().tabsAtTop) {
 	    if (Preferences.itself().menuAtTab)
@@ -225,49 +166,71 @@ public class DetailsPanel extends CellPanel {
 		addLast(createToolsPanel(), HSTRETCH, HFILL);
 	}
 
-	helperPanel4.addNext(chcStatus, HSTRETCH, (HFILL | RIGHT));
-	helperPanel4.addLast(btnFoundDate, DONTSTRETCH, DONTFILL);
+	CellPanel leftPanel = new CellPanel();
+	inpWaypoint = new mInput();
+	leftPanel.addLast(inpWaypoint, DONTSTRETCH, FILL);
+	leftPanel.addLast(btnType = GuiImageBroker.getButton(CacheType.type2Gui(CacheType.CW_TYPE_REFERENCE), CacheType.typeImageNameForId(CacheType.CW_TYPE_TRADITIONAL)), DONTSTRETCH, FILL);
+	btnDiff = new mButton(MyLocale.getMsg(1000, "D") + ": 5.5");
+	btnDiff.setToolTip(MyLocale.getMsg(31415, "Edit difficulty"));
+	leftPanel.addLast(btnDiff, DONTSTRETCH, FILL);
+	btnTerr = new mButton(MyLocale.getMsg(1001, "T") + ": 5.5");
+	btnTerr.setToolTip(MyLocale.getMsg(31415, "Edit terrain"));
+	leftPanel.addLast(btnTerr, DONTSTRETCH, FILL);
+	leftPanel.addLast(btnSize = GuiImageBroker.getButton(CacheType.type2Gui(CacheType.CW_TYPE_REFERENCE), CacheType.typeImageNameForId(CacheType.CW_TYPE_TRADITIONAL)), DONTSTRETCH, FILL);
 
-	helperPanel6.addNext(btnCoordinates, HSTRETCH, HFILL);
-	helperPanel6.addLast(btnSetDestination, DONTSTRETCH, RIGHT);
+	btnNewWpt = GuiImageBroker.getButton(MyLocale.getMsg(733, "Addi Wpt"), "newwpt");
+	btnNewWpt.setToolTip(MyLocale.getMsg(311, "Create Waypoint"));
+	CellPanel wptPanel = new CellPanel();
+	wptPanel.addNext(btnNewWpt, DONTSTRETCH, FILL);
+	lblAddiCount = new mLabel(": 888"); //MyLocale.getMsg(1044, "Addis") + 
+	wptPanel.addNext(lblAddiCount, DONTSTRETCH, RIGHT);
+	leftPanel.addLast(wptPanel, DONTSTRETCH, FILL);
 
-	// ----- main body -----
+	CellPanel rightPanel = new CellPanel();
+	CellPanel namePanel = new CellPanel();
+	inpName = new mInput();
+	namePanel.addNext(inpName, STRETCH, FILL);
+	btnBlackListed = GuiImageBroker.getButton(MyLocale.getMsg(363, "Blacklist"), "is_black");
+	btnImageNotBlackListed = GuiImageBroker.makeImageForButton(btnBlackListed, MyLocale.getMsg(363, "Blacklist"), "no_black");
+	btnImageBlackListed = GuiImageBroker.makeImageForButton(btnBlackListed, MyLocale.getMsg(363, "Blacklist"), "is_black");
+	btnBlackListed.setToolTip(MyLocale.getMsg(349, "Toggle Blacklist status"));
+	namePanel.addLast(btnBlackListed, DONTSTRETCH, DONTFILL);
+	rightPanel.addLast(namePanel, HSTRETCH, HFILL);
 
-	leftPanel.addNext(inpWaypoint, DONTSTRETCH, (FILL | LEFT));
-	leftPanel.addLast(helperPanel3, HSTRETCH, HFILL); // empty dummy
+	CellPanel ownerPanel = new CellPanel();
+	ownerPanel.addNext(new mLabel(MyLocale.getMsg(306, "Owner:")), DONTSTRETCH, DONTFILL | LEFT);
+	inpOwner = new mInput();
+	ownerPanel.addNext(inpOwner, STRETCH, FILL);
+	btnHiddenDate = GuiImageBroker.getButton(MyLocale.getMsg(305, "Hidden on:") + MyLocale.getMsg(31415, "Set hidden date"), "calendar");
+	btnHiddenDate.setToolTip(MyLocale.getMsg(31415, "Set hidden date"));
+	ownerPanel.addLast(btnHiddenDate, DONTSTRETCH, DONTFILL);
+	rightPanel.addLast(ownerPanel, HSTRETCH, HFILL);
 
-	leftPanel.addNext(btnType = GuiImageBroker.getButton(CacheType.type2Gui(CacheType.CW_TYPE_REFERENCE), CacheType.typeImageNameForId(CacheType.CW_TYPE_TRADITIONAL)), DONTSTRETCH, (DONTFILL | LEFT));
-	leftPanel.addLast(inpName, HSTRETCH, HFILL).setTag(SPAN, new Dimension(2, 1));
+	CellPanel coordinatesPanel = new CellPanel();
+	btnCoordinates = new mButton();
+	btnCoordinates.setToolTip(MyLocale.getMsg(31415, "Edit coordinates"));
+	coordinatesPanel.addNext(btnCoordinates, HSTRETCH, HFILL);
+	rightPanel.addLast(coordinatesPanel, HSTRETCH, HFILL);
 
-	leftPanel.addNext(new mLabel(MyLocale.getMsg(306, "Owner:")), DONTSTRETCH, (DONTFILL | LEFT));
-	helperPanel5.addNext(inpOwner, HSTRETCH, HFILL).setTag(SPAN, new Dimension(2, 1));
-	helperPanel5.addNext(new mLabel(MyLocale.getMsg(305, "Hidden on:")), DONTSTRETCH, (DONTFILL | LEFT));
-	helperPanel5.addNext(inpHidden, HSTRETCH, (HFILL | RIGHT));
-	helperPanel5.addLast(btnHiddenDate, DONTSTRETCH, DONTFILL);
-	leftPanel.addLast(helperPanel5, HSTRETCH, HFILL).setTag(SPAN, new Dimension(2, 1));
+	CellPanel attribsPanel = new CellPanel();
+	attViewer = new AttributesViewer();
+	attribsPanel.addLast(attViewer);
+	attribsPanel.setBorder(EDGE_BUMP, 5);
+	rightPanel.addLast(attribsPanel);
 
-	helperPanel1.addNext(btnNewWpt, DONTSTRETCH, DONTFILL);
-	helperPanel1.addNext(lblAddiCount, DONTSTRETCH, RIGHT);
-	helperPanel2.addNext(btnSize = GuiImageBroker.getButton(CacheType.type2Gui(CacheType.CW_TYPE_REFERENCE), CacheType.typeImageNameForId(CacheType.CW_TYPE_TRADITIONAL)), DONTSTRETCH, (DONTFILL | LEFT));
-	helperPanel2.addNext(btnDiff, DONTSTRETCH, (DONTFILL | EAST));
-	helperPanel2.addNext(btnTerr, DONTSTRETCH, (DONTFILL | EAST));
-	leftPanel.addNext(helperPanel1, DONTSTRETCH, FILL);
-	leftPanel.addLast(helperPanel2, HSTRETCH, HFILL);
-	// btnDiff.setPreferredSize(btnSize.getPreferredSize(null).width, btnSize.getPreferredSize(null).height);
-	// btnTerr.setPreferredSize(btnSize.getPreferredSize(null).width, btnSize.getPreferredSize(null).height);
+	CellPanel mainPanel = new CellPanel();
+	mainPanel.addNext(leftPanel, DONTSTRETCH, DONTFILL | LEFT | TOP);
+	mainPanel.addLast(rightPanel, HSTRETCH, FILL | LEFT);
+	addLast(mainPanel);
 
-	//leftPanel.addNext(new mLabel(MyLocale.getMsg(302, "Waypoint:")), DONTSTRETCH, (DONTFILL | LEFT));
-	//leftPanel.addLast(helperPanel3, HSTRETCH, HFILL).setTag(SPAN, new Dimension(2, 1));
-
-	leftPanel.addNext(new mLabel(MyLocale.getMsg(304, "Coordinates:")), DONTSTRETCH, (DONTFILL | LEFT));
-	leftPanel.addLast(helperPanel6, HSTRETCH, HFILL).setTag(SPAN, new Dimension(2, 1));
-
-	leftPanel.addNext(new mLabel(MyLocale.getMsg(307, "Status:")), DONTSTRETCH, (DONTFILL | LEFT));
-	leftPanel.addLast(helperPanel4, HSTRETCH, HFILL).setTag(SPAN, new Dimension(2, 1));
-
-	addLast(leftPanel, HSTRETCH, HFILL);
-
-	addLast(attViewer);
+	CellPanel statusPanel = new CellPanel();
+	statusPanel.addNext(new mLabel(MyLocale.getMsg(307, "Status:")), DONTSTRETCH, DONTFILL | LEFT);
+	chcStatus = new mComboBox(CacheHolder.GetGuiLogTypes(), 0);
+	statusPanel.addNext(chcStatus, HSTRETCH, (HFILL | RIGHT));
+	btnFoundDate = GuiImageBroker.getButton("", "calendar");
+	btnFoundDate.setToolTip(MyLocale.getMsg(31415, "Set found date / time"));
+	statusPanel.addLast(btnFoundDate, DONTSTRETCH, DONTFILL);
+	addLast(statusPanel);
 
 	if (Preferences.itself().isBigScreen) {
 	    ownLog = new mTextPad();
@@ -297,10 +260,8 @@ public class DetailsPanel extends CellPanel {
 	showBugNoImage = GuiImageBroker.makeImageForButton(btnTBs, MyLocale.getMsg(364, "TBs"), "bug_no");
 	btnTBs.setToolTip(MyLocale.getMsg(346, "Show travelbugs"));
 
-	btnBlackListed = GuiImageBroker.getButton(MyLocale.getMsg(363, "Blacklist"), "is_black");
-	btnImageNotBlackListed = GuiImageBroker.makeImageForButton(btnBlackListed, MyLocale.getMsg(363, "Blacklist"), "no_black");
-	btnImageBlackListed = GuiImageBroker.makeImageForButton(btnBlackListed, MyLocale.getMsg(363, "Blacklist"), "is_black");
-	btnBlackListed.setToolTip(MyLocale.getMsg(349, "Toggle Blacklist status"));
+	btnSetDestination = GuiImageBroker.getButton(MyLocale.getMsg(1500, "Destination"), "goto"); //345, "Go to these coordinates"
+	btnSetDestination.setToolTip(MyLocale.getMsg(326, "Set as destination and show Compass View"));
 
 	btnNotes = GuiImageBroker.getButton(MyLocale.getMsg(308, "Notes"), "notes");
 	btnNotes.setToolTip(MyLocale.getMsg(351, "Add/Edit notes"));
@@ -308,7 +269,7 @@ public class DetailsPanel extends CellPanel {
 	pnlTools.equalWidths = true;
 	pnlTools.addNext(btnNotes);
 	pnlTools.addNext(btnTBs);
-	pnlTools.addLast(btnBlackListed);
+	pnlTools.addLast(btnSetDestination);
 
 	return pnlTools;
     }
@@ -341,7 +302,8 @@ public class DetailsPanel extends CellPanel {
 	inpWaypoint.setText(ch.getWayPoint());
 	inpName.setText(ch.getCacheName());
 	btnCoordinates.setText(ch.getPos().toString());
-	inpHidden.setText(mainCache.getDateHidden());
+	newHiddenDate = mainCache.getDateHidden();
+	GuiImageBroker.setButtonText(btnHiddenDate, MyLocale.getMsg(305, "Hidden on:") + mainCache.getDateHidden());
 	inpOwner.setText(mainCache.getCacheOwner());
 	chcStatus.setText(ch.getStatusText());
 	newCacheType = ch.getType();
@@ -367,7 +329,7 @@ public class DetailsPanel extends CellPanel {
 	    GuiImageBroker.setButtonIconAndText(btnTBs, MyLocale.getMsg(364, "TBs"), showBugNoImage);
 	}
 
-	newCacheSize = ch.getCacheSize();
+	newCacheSize = mainCache.getCacheSize();
 	GuiImageBroker.setButtonIconAndText(btnSize, CacheSize.cw2ExportString(newCacheSize), GuiImageBroker.makeImageForButton(btnSize, CacheSize.cw2ExportString(newCacheSize), CacheSize.cacheSize2ImageName(newCacheSize)));
 
 	attViewer.showImages(ch.getCacheDetails(true).attributes);
@@ -376,7 +338,7 @@ public class DetailsPanel extends CellPanel {
 	    deactivateControl(btnDiff);
 	    deactivateControl(btnSize);
 	    deactivateControl(inpOwner);
-	    deactivateControl(inpHidden);
+	    deactivateControl(this.btnHiddenDate);
 	    deactivateControl(btnTBs);
 	    deactivateControl(btnBlackListed);
 	} else {
@@ -384,7 +346,7 @@ public class DetailsPanel extends CellPanel {
 	    activateControl(btnDiff);
 	    activateControl(btnSize);
 	    activateControl(inpOwner);
-	    activateControl(inpHidden);
+	    activateControl(this.btnHiddenDate);
 	    activateControl(btnTBs);
 	    activateControl(btnBlackListed);
 	}
@@ -604,14 +566,14 @@ public class DetailsPanel extends CellPanel {
 		final DateChooser dc = new DateChooser(Vm.getLocale());
 		dc.title = MyLocale.getMsg(329, "Hidden date");
 		dc.setPreferredSize(240, 240);
-		if (inpHidden.getText().length() == 10)
+		if (newHiddenDate.length() == 10)
 		    try {
-			dc.setDate(new Time(Convert.parseInt(inpHidden.getText().substring(8)), Convert.parseInt(inpHidden.getText().substring(5, 7)), Convert.parseInt(inpHidden.getText().substring(0, 4))));
+			dc.setDate(new Time(Convert.parseInt(newHiddenDate.substring(8)), Convert.parseInt(newHiddenDate.substring(5, 7)), Convert.parseInt(newHiddenDate.substring(0, 4))));
 		    } catch (NumberFormatException e) {
 			dc.reset(new Time());
 		    }
 		if (dc.execute() == ewe.ui.FormBase.IDOK) {
-		    inpHidden.setText(Convert.toString(dc.year) + "-" + MyLocale.formatLong(dc.month, "00") + "-" + MyLocale.formatLong(dc.day, "00"));
+		    newHiddenDate = Convert.toString(dc.year) + "-" + MyLocale.formatLong(dc.month, "00") + "-" + MyLocale.formatLong(dc.day, "00");
 		    dirtyDetails = true;
 		    // profile.hasUnsavedChanges=true;
 		}
@@ -650,7 +612,7 @@ public class DetailsPanel extends CellPanel {
 			activateControl(btnDiff);
 			activateControl(btnSize);
 			activateControl(inpOwner);
-			activateControl(inpHidden);
+			activateControl(this.btnHiddenDate);
 			activateControl(btnTBs);
 			activateControl(btnBlackListed);
 		    } else {
@@ -658,7 +620,7 @@ public class DetailsPanel extends CellPanel {
 			deactivateControl(btnDiff);
 			deactivateControl(btnSize);
 			deactivateControl(inpOwner);
-			deactivateControl(inpHidden);
+			deactivateControl(this.btnHiddenDate);
 			deactivateControl(btnTBs);
 			deactivateControl(btnBlackListed);
 			newCacheSize = CacheSize.CW_SIZE_NOTCHOSEN;
@@ -749,7 +711,7 @@ public class DetailsPanel extends CellPanel {
 	    cache.setWayPoint(cache.getWayPoint() + " ");
 	cache.setCacheName(inpName.getText().trim());
 	if (!cache.isAddiWpt()) {
-	    cache.setDateHidden(inpHidden.getText().trim());
+	    cache.setDateHidden(newHiddenDate.trim());
 	}
 	final byte oldType = cache.getType();
 	cache.setType(newCacheType);
