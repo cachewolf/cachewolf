@@ -346,17 +346,17 @@ public class FilterScreen extends Form {
 
 	final CellPanel pnlContainerList;
 	pnlContainer.addLast(pnlContainerList = new CellPanel());
-	pnlContainerList.addNext(addImg(new Image(CacheSize.CW_GUIIMG_MICRO)), HSHRINK, HCONTRACT);
+	pnlContainerList.addNext(addImg(new Image(CacheSize.CW_GUIIMG_MICRO + ".png")), HSHRINK, HCONTRACT);
 	pnlContainerList.addLast(chkMicro = new mCheckBox("Micro"), HGROW, FILL);
-	pnlContainerList.addNext(addImg(new Image(CacheSize.CW_GUIIMG_SMALL)), HSHRINK, HCONTRACT);
+	pnlContainerList.addNext(addImg(new Image(CacheSize.CW_GUIIMG_SMALL + ".png")), HSHRINK, HCONTRACT);
 	pnlContainerList.addLast(chkSmall = new mCheckBox("Small"), HGROW, FILL);
-	pnlContainerList.addNext(addImg(new Image(CacheSize.CW_GUIIMG_NORMAL)), HSHRINK, HCONTRACT);
+	pnlContainerList.addNext(addImg(new Image(CacheSize.CW_GUIIMG_NORMAL + ".png")), HSHRINK, HCONTRACT);
 	pnlContainerList.addLast(chkRegular = new mCheckBox("Regular"), HGROW, FILL);
-	pnlContainerList.addNext(addImg(new Image(CacheSize.CW_GUIIMG_LARGE)), HSHRINK, HCONTRACT);
+	pnlContainerList.addNext(addImg(new Image(CacheSize.CW_GUIIMG_LARGE + ".png")), HSHRINK, HCONTRACT);
 	pnlContainerList.addLast(chkLarge = new mCheckBox("Large"), HGROW, FILL);
-	pnlContainerList.addNext(addImg(new Image(CacheSize.CW_GUIIMG_VERYLARGE)), HSHRINK, HCONTRACT);
+	pnlContainerList.addNext(addImg(new Image(CacheSize.CW_GUIIMG_VERYLARGE + ".png")), HSHRINK, HCONTRACT);
 	pnlContainerList.addLast(chkVeryLarge = new mCheckBox("Very Large"), HGROW, FILL);
-	pnlContainerList.addNext(addImg(new Image(CacheSize.CW_GUIIMG_NONPHYSICAL)), HSHRINK, HCONTRACT);
+	pnlContainerList.addNext(addImg(new Image(CacheSize.CW_GUIIMG_NONPHYSICAL + ".png")), HSHRINK, HCONTRACT);
 	pnlContainerList.addLast(chkOther = new mCheckBox("Other"), HGROW, FILL);
 	pnlContainerList.addLast(new mLabel(""), VSTRETCH, HCONTRACT);
 

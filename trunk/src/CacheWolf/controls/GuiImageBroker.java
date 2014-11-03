@@ -100,7 +100,7 @@ public final class GuiImageBroker {
 
     private static String getMapCacheTypeImageName(String icon) {
 	String in;
-	File f = new File(basedir + icon + "_map.png");
+	File f = new File(basedir + icon + "_vga.png");
 	if (f.exists()) {
 	    in = f.getAbsolutePath();
 	    log("using image " + in);
