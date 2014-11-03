@@ -436,7 +436,7 @@ public class MyTableModel extends TableModel {
 		    if (ch.isAddiWpt()) {
 			return "";
 		    } else {
-			return sizePics[CacheSize.guiSizeImageId(ch.getCacheSize())];
+			return sizePics[CacheSize.cacheSize2ImageId(ch.getCacheSize())];
 		    }
 		case 13: // OC / gcvote Bewertung
 		    return ch.getRecommended();

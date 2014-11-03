@@ -94,17 +94,17 @@ public final class CacheSize {
      * non physical caches are represented by the same symbol
      */
     /** GUI image for micro caches */
-    public static final String CW_GUIIMG_MICRO = "sizeMicro.png";
+    public static final String CW_GUIIMG_MICRO = "sizeMicro";
     /** GUI image for small caches */
-    public static final String CW_GUIIMG_SMALL = "sizeSmall.png";
+    public static final String CW_GUIIMG_SMALL = "sizeSmall";
     /** GUI image for regular / normal caches */
-    public static final String CW_GUIIMG_NORMAL = "sizeReg.png";
+    public static final String CW_GUIIMG_NORMAL = "sizeReg";
     /** GUI image for large caches */
-    public static final String CW_GUIIMG_LARGE = "sizeLarge.png";
+    public static final String CW_GUIIMG_LARGE = "sizeLarge";
     /** GUI image for non physical caches */
-    public static final String CW_GUIIMG_NONPHYSICAL = "sizeNonPhysical.png";
+    public static final String CW_GUIIMG_NONPHYSICAL = "sizeNonPhysical";
     /** GUI image for very large caches */
-    public static final String CW_GUIIMG_VERYLARGE = "sizeVLarge.png";
+    public static final String CW_GUIIMG_VERYLARGE = "sizeVLarge";
 
     /*
      * IDs for the sizePics[] array in TableModel therefore they must start with
@@ -151,17 +151,17 @@ public final class CacheSize {
     public static String sizeImageForId(final byte size) throws IllegalArgumentException {
 	switch (size) {
 	case CW_GUIIMGID_MICRO:
-	    return CW_GUIIMG_MICRO;
+	    return CW_GUIIMG_MICRO + ".png";
 	case CW_GUIIMGID_SMALL:
-	    return CW_GUIIMG_SMALL;
+	    return CW_GUIIMG_SMALL + ".png";
 	case CW_GUIIMGID_NORMAL:
-	    return CW_GUIIMG_NORMAL;
+	    return CW_GUIIMG_NORMAL + ".png";
 	case CW_GUIIMGID_LARGE:
-	    return CW_GUIIMG_LARGE;
+	    return CW_GUIIMG_LARGE + ".png";
 	case CW_GUIIMGID_NONPHYSICAL:
-	    return CW_GUIIMG_NONPHYSICAL;
+	    return CW_GUIIMG_NONPHYSICAL + ".png";
 	case CW_GUIIMGID_VERYLARGE:
-	    return CW_GUIIMG_VERYLARGE;
+	    return CW_GUIIMG_VERYLARGE + ".png";
 	default:
 	    throw (new IllegalArgumentException("unmatched argument " + size + " in CacheSize cw2ExportString()"));
 	}
@@ -318,14 +318,14 @@ public final class CacheSize {
     /**
      * get name of the image to be displayed in CW index panel
      * 
-     * @param size
+     * @param cacheSize
      *            CW internal representation of cache size
      * @return filename of image to be displayed in main panel as size icon
      * @throws IllegalArgumentException
      *             if <code>size</code> can not be mapped
      */
-    public static byte guiSizeImageId(final byte size) throws IllegalArgumentException {
-	switch (size) {
+    public static byte cacheSize2ImageId(final byte cacheSize) throws IllegalArgumentException {
+	switch (cacheSize) {
 	case CW_SIZE_MICRO:
 	    return CW_GUIIMGID_MICRO;
 	case CW_SIZE_SMALL:
@@ -345,7 +345,32 @@ public final class CacheSize {
 	case CW_SIZE_NONE:
 	    return CW_GUIIMGID_NONPHYSICAL;
 	default:
-	    throw (new IllegalArgumentException("unmatched argument " + size + " in CacheSize guiSizeImage()"));
+	    throw (new IllegalArgumentException("unmatched argument " + cacheSize + " in CacheSize guiSizeImage()"));
+	}
+    }
+
+    public static String cacheSize2ImageName(final byte cacheSize) throws IllegalArgumentException {
+	switch (cacheSize) {
+	case CW_SIZE_MICRO:
+	    return CW_GUIIMG_MICRO;
+	case CW_SIZE_SMALL:
+	    return CW_GUIIMG_SMALL;
+	case CW_SIZE_REGULAR:
+	    return CW_GUIIMG_NORMAL;
+	case CW_SIZE_LARGE:
+	    return CW_GUIIMG_LARGE;
+	case CW_SIZE_NOTCHOSEN:
+	    return CW_GUIIMG_NONPHYSICAL;
+	case CW_SIZE_OTHER:
+	    return CW_GUIIMG_NONPHYSICAL;
+	case CW_SIZE_VIRTUAL:
+	    return CW_GUIIMG_NONPHYSICAL;
+	case CW_SIZE_VERYLARGE:
+	    return CW_GUIIMG_VERYLARGE;
+	case CW_SIZE_NONE:
+	    return CW_GUIIMG_NONPHYSICAL;
+	default:
+	    throw (new IllegalArgumentException("unmatched argument " + cacheSize + " in CacheSize guiSizeImage()"));
 	}
     }
 

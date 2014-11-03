@@ -1416,10 +1416,11 @@ public class GCImporter {
 	//4.) distanceUnit
 	//<label><input checked="checked" id="DistanceUnits" name="DistanceUnits" type="radio" value="Metric" /> Metric</label>
 	String distanceUnitBlock = extractor.findNext("checked\" id=\"DistanceUnits", "/label");
-	String distanceUnit = extractValue.set(distanceUnitBlock, "/> ", "<", 0, true).findNext();
+	String distanceUnit = extractValue.set(distanceUnitBlock, "value=\"", "\"", 0, true).findNext();
 	Preferences.itself().log("[checkGCSettings]:Units= " + distanceUnit, null);
-	if (!distanceUnit.equalsIgnoreCase(Preferences.itself().metricSystem == Metrics.METRIC ? "Metric" : "Imperial")) {
-	    Preferences.itself().log(page);
+	String compareTo = Preferences.itself().metricSystem == Metrics.METRIC ? "Metric" : "Imperial";
+	if (!distanceUnit.equalsIgnoreCase(compareTo)) {
+	    Preferences.itself().log(page, null);
 	    return 3;
 	}
 

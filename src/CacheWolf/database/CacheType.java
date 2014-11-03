@@ -368,6 +368,10 @@ public final class CacheType {
 	return cTypRef[Ref_Index(typeId)]._imageName + ".png";
     }
 
+    public static String typeImageNameForId(final byte typeId) {
+	return cTypRef[Ref_Index(typeId)]._imageName;
+    }
+
     /**
      * generate type description matching those of GC for GPX export
      * 
