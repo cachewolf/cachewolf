@@ -51,6 +51,29 @@ import ewe.util.Vector;
  * Used MyLocale
  */
 public class MyTableModel extends TableModel {
+    public final String[] colHeaderNames = { " ", //
+	    "?", //
+	    MyLocale.getMsg(1000, "D"), //
+	    MyLocale.getMsg(1001, "T"), //
+	    MyLocale.getMsg(1002, "Waypoint"), //
+	    "Name", //
+	    MyLocale.getMsg(1004, "Location"), //
+	    MyLocale.getMsg(1005, "Owner"), //
+	    MyLocale.getMsg(1006, "Hidden"), //
+	    MyLocale.getMsg(1007, "Status"), //
+	    MyLocale.getMsg(1008, "Dist"), //
+	    MyLocale.getMsg(1009, "Bear"), //
+	    MyLocale.getMsg(1017, "S"), //
+	    MyLocale.getMsg(1026, "#Rec"), //
+	    MyLocale.getMsg(1027, "OC-IDX"), //
+	    MyLocale.getMsg(1038, "S"), //
+	    MyLocale.getMsg(1040, "N"), //
+	    MyLocale.getMsg(1047, "A"), //
+	    MyLocale.getMsg(1049, "DNF"), //
+	    MyLocale.getMsg(1051, "Last synced"), //
+	    MyLocale.getMsg(677, "PM"), //
+	    MyLocale.getMsg(362, "solved"), //
+    };
 
     // Colors for Cache status (BG unless otherwise stated)
     private static final Color COLOR_STATUS = new Color(206, 152, 255);
@@ -69,19 +92,15 @@ public class MyTableModel extends TableModel {
     private int lastRow = -2;
     private CacheDB cacheDB;
     /** The max number of columns in the list view */
-    public static final int N_COLUMNS = 20;
+    public static final int N_COLUMNS = 22;
     /**
      * How the columns are mapped onto the list view. If colMap[i]=j, it means that the element j (as per the list below) is visible in column i. [0]TickBox, [1]Type, [2]Distance, [3]Terrain, [4]waypoint, [5]name, [6]coordinates, [7]owner,
      * [8]datehidden, [9]status, [10]distance, [11]bearing, [12] Size, [13] # of OC recommend. [14] OC index, [15] Solver exists, [16] Note exists, [17] # Additionals, [18] # DNF [19] Last Sync Date
      * 
-     * Attention: When adding columns here, also add a default width in Preferences.listColWidth
-     */
+      */
     private int[] colMap;
     /** The column widths corresponding to the list of columns above */
     private int[] colWidth;
-    private String[] colName = { " ", "?", MyLocale.getMsg(1000, "D"), MyLocale.getMsg(1001, "T"), MyLocale.getMsg(1002, "Waypoint"), "Name", MyLocale.getMsg(1004, "Location"), MyLocale.getMsg(1005, "Owner"), MyLocale.getMsg(1006, "Hidden"),
-	    MyLocale.getMsg(1007, "Status"), MyLocale.getMsg(1008, "Dist"), MyLocale.getMsg(1009, "Bear"), MyLocale.getMsg(1017, "S"), MyLocale.getMsg(1026, "#Rec"), MyLocale.getMsg(1027, "OC-IDX"), MyLocale.getMsg(1038, "S"),
-	    MyLocale.getMsg(1040, "N"), MyLocale.getMsg(1047, "A"), MyLocale.getMsg(1049, "DNF"), MyLocale.getMsg(1051, "Last synced") };
 
     private static Image noFindLogs[] = new Image[4];
     public static mImage red, blue, yellow; // skull, green
@@ -97,6 +116,8 @@ public class MyTableModel extends TableModel {
     // picSizeMicro,picSizeSmall,picSizeReg,picSizeLarge,picSizeVLarge,picSizeNonPhysical;
     private mImage picHasSolver, picHasNotes;
     private mImage[] sizePics = new mImage[CacheSize.CW_TOTAL_SIZE_IMAGES];
+    private mImage picIsPM;
+    private mImage picIsSolved;
     /**
      * This is the modifier (Shift & Control key status) for Pen Events it is set in myTableControl.onEvent
      */
@@ -135,19 +156,6 @@ public class MyTableModel extends TableModel {
 	imgSortDown = new mImage("sortdown.png");
 	imgSortDown.transparentColor = Color.White;
 
-	// picSizeMicro=new mImage("sizeMicro.png");
-	// picSizeMicro.transparentColor=Color.White;
-	// picSizeSmall=new mImage("sizeSmall.png");
-	// picSizeSmall.transparentColor=Color.White;
-	// picSizeReg=new mImage("sizeReg.png");
-	// picSizeReg.transparentColor=Color.White;
-	// picSizeLarge=new mImage("sizeLarge.png");
-	// picSizeLarge.transparentColor=Color.White;
-	// picSizeVLarge=new mImage("sizeVLarge.png");
-	// picSizeVLarge.transparentColor=Color.White;
-	// picSizeNonPhysical=new mImage("sizeNonPhysical.png");
-	// picSizeNonPhysical.transparentColor=Color.White;
-
 	for (byte i = 0; i < CacheSize.CW_TOTAL_SIZE_IMAGES; i++) {
 	    sizePics[i] = new mImage(CacheSize.sizeImageForId(i));
 	    sizePics[i].transparentColor = Color.White;
@@ -157,7 +165,9 @@ public class MyTableModel extends TableModel {
 	picHasSolver.transparentColor = Color.White;
 	picHasNotes = new mImage("notes_exist.png");
 	picHasNotes.transparentColor = Color.White;
-	// updateRows();
+
+	picIsPM = new mImage("isPM.png");
+	picIsSolved = new mImage("edit.png");
     }
 
     /**
@@ -271,7 +281,7 @@ public class MyTableModel extends TableModel {
 			lineColorBG.set(COLOR_FOUND);
 		    else if (ch.isFlagged)
 			lineColorBG.set(COLOR_FLAGED);
-		    else if (ch.getCacheStatus().indexOf(MyLocale.getMsg(319, "not found")) > -1)
+		    else if (ch.cacheStatus().indexOf(MyLocale.getMsg(319, "not found")) > -1)
 			lineColorBG.set(COLOR_STATUS);
 		    else if (Preferences.itself().debug && ch.detailsLoaded()) {
 			lineColorBG.set(COLOR_DETAILS_LOADED);
@@ -358,14 +368,14 @@ public class MyTableModel extends TableModel {
 	if (row == -1) {
 	    if (colMap[col] == sortedBy && isSorted) {
 		if (sortAscending) {
-		    return new IconAndText(imgSortUp, colName[colMap[col]], fm);
+		    return new IconAndText(imgSortUp, colHeaderNames[colMap[col]], fm);
 		    // return "^ "+colName[colMap[col]];
 		} else {
-		    return new IconAndText(imgSortDown, colName[colMap[col]], fm);
+		    return new IconAndText(imgSortDown, colHeaderNames[colMap[col]], fm);
 		    // return "v "+colName[colMap[col]];
 		}
 	    } else {
-		return colName[colMap[col]];
+		return colHeaderNames[colMap[col]];
 	    }
 	}
 	try { // Access to row can fail if many caches are deleted
@@ -406,11 +416,11 @@ public class MyTableModel extends TableModel {
 		    return ch.getWayPoint();
 		case 5: // Cachename
 			// Fast return for majority of case
-		    if (!showExtraWptInfo || (ch.has_bugs() == false && ch.getNoFindLogs() == 0))
+		    if (!showExtraWptInfo || (ch.hasBugs() == false && ch.getNoFindLogs() == 0))
 			return ch.getCacheName();
 		    // Now need more checks
 		    IconAndText wpVal = new IconAndText();
-		    if (ch.has_bugs() == true)
+		    if (ch.hasBugs() == true)
 			wpVal.addColumn(bug);
 		    if (ch.getNoFindLogs() > 0) {
 			if (ch.getNoFindLogs() > noFindLogs.length)
@@ -427,7 +437,7 @@ public class MyTableModel extends TableModel {
 		case 8: // Date hidden
 		    return ch.getDateHidden();
 		case 9: // Status
-		    return ch.getCacheStatus();
+		    return ch.cacheStatus();
 		case 10: // Distance
 		    return ch.getDistance();
 		case 11: // Bearing
@@ -470,6 +480,16 @@ public class MyTableModel extends TableModel {
 		    }
 		case 19: // Last sync date
 		    return DateFormat.formatLastSyncDate(ch.getLastSync(), "yyyy-MM-dd HH:mm");
+		case 20: // PM
+		    if (ch.isPMCache())
+			return picIsPM;
+		    else
+			return null;
+		case 21: // isSolved
+		    if (ch.isSolved())
+			return picIsSolved;
+		    else
+			return null;
 		} // Switch
 	    } // if
 	} catch (Exception e) {
@@ -685,7 +705,7 @@ class MyComparer implements Comparer {
 	} else if (colToCompare == 9) {
 	    for (int i = 0; i < visibleSize; i++) {
 		CacheHolder ch = cacheDB.get(i);
-		ch.sort = ch.getCacheStatus();
+		ch.sort = ch.cacheStatus();
 	    }
 	} else if (colToCompare == 10) {
 	    for (int i = 0; i < visibleSize; i++) {
@@ -778,6 +798,24 @@ class MyComparer implements Comparer {
 	    for (int i = 0; i < visibleSize; i++) {
 		CacheHolder ch = cacheDB.get(i);
 		ch.sort = ch.getLastSync();
+	    }
+	} else if (colToCompare == 20) {
+	    for (int i = 0; i < visibleSize; i++) {
+		CacheHolder ch = cacheDB.get(i);
+		if (ch.isPMCache()) {
+		    ch.sort = "1";
+		} else {
+		    ch.sort = "2";
+		}
+	    }
+	} else if (colToCompare == 21) {
+	    for (int i = 0; i < visibleSize; i++) {
+		CacheHolder ch = cacheDB.get(i);
+		if (ch.isSolved()) {
+		    ch.sort = "1";
+		} else {
+		    ch.sort = "2";
+		}
 	    }
 	}
     }

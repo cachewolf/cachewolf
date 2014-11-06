@@ -142,7 +142,7 @@ public class GCImporter {
     private static Regex longDescRex;
     private static Regex hintsRex;
     private static Regex notesRex;
-    private static String premiumGeocache = "> Premium Member Only Cache";
+    private static String premiumGeocache = "Premium Member Only Cache";
     private static String unpublishedGeocache = "Unpublished Geocache";
     private static String unavailableGeocache = "This cache is temporarily unavailable";
     private static String archivedGeocache = "This cache has been archived";
@@ -1135,11 +1135,15 @@ public class GCImporter {
 	    if (distance <= toDistance) {
 		final String chWaypoint = getWP();
 		CacheHolder ch = MainForm.profile.cacheDB.get(chWaypoint);
-
-		if (isAllowedPM(chWaypoint)) {
+		boolean isPM = isPM();
+		if (Preferences.itself().isPremium || !isPM) {
 		    if (ch == null) { // not in DB
 			downloadList.add(chWaypoint);
 		    } else {
+			if (ch.isPMCache() != isPM) {
+			    ch.setIsPMCache(isPM);
+			    ch.save();
+			}
 			possibleUpdateList.remove(chWaypoint);
 			if (updateExists(ch)) {
 			    sureUpdateList.put(chWaypoint, ch);
@@ -1150,7 +1154,7 @@ public class GCImporter {
 			if (Preferences.itself().addPremiumGC) {
 			    numPrivateNew = numPrivateNew + 1;
 			    ch = new CacheHolder(chWaypoint);
-			    ch.setCacheStatus("PM");
+			    ch.setIsPMCache(true);
 			    // next 2 for to avoid warning triangle
 			    ch.setType(CacheType.CW_TYPE_CUSTOM);
 			    ch.setPos(Preferences.itself().curCentrePt); // or MainForm.profile.centre
@@ -1160,17 +1164,9 @@ public class GCImporter {
 			}
 		    } else {
 			possibleUpdateList.remove(chWaypoint);
-			if (!ch.isFound()) {
-			    if (ch.getCacheStatus().length() > 0) {
-				if (ch.getCacheStatus().indexOf("PM") < 0) {
-				    ch.setCacheStatus(ch.getCacheStatus() + ", PM");
-				    ch.save();
-				}
-				// else nothing to do
-			    } else {
-				ch.setCacheStatus("PM");
-				ch.save();
-			    }
+			if (!ch.isPMCache()) {
+			    ch.setIsPMCache(true);
+			    ch.save();
 			}
 		    }
 		}
@@ -1206,6 +1202,12 @@ public class GCImporter {
 		    break;
 		} else if (test == SPIDER_ERROR) {
 		    spiderErrors++;
+		} else if (test == SPIDER_IGNORE_PREMIUM) {
+		    if (Preferences.itself().addPremiumGC) {
+			ch.setIsPMCache(true);
+			MainForm.profile.cacheDB.add(ch);
+			ch.save();
+		    }
 		} else if (test == SPIDER_OK) {
 		    MainForm.profile.cacheDB.add(ch);
 		    ch.save();
@@ -1236,8 +1238,9 @@ public class GCImporter {
 		    Preferences.itself().log("[updateCaches] could not spider " + ch.getWayPoint(), null);
 		} else {
 		    // MainForm.profile.hasUnsavedChanges=true;
-		    if (test == SPIDER_IGNORE_PREMIUM)
+		    if (test == SPIDER_IGNORE_PREMIUM) {
 			spiderIgnorePremium++;
+		    }
 		}
 	    }
 	}
@@ -1270,6 +1273,12 @@ public class GCImporter {
 		    }
 		    cacheInDB.update(ch);
 		    cacheInDB.save();
+		}
+		if (ret == SPIDER_IGNORE_PREMIUM) {
+		    if (!cacheInDB.isPMCache()) {
+			cacheInDB.setIsPMCache(true);
+			cacheInDB.save();
+		    }
 		}
 	    } catch (final Exception ex) {
 		Preferences.itself().log("[spiderSingle] Error spidering " + cacheInDB.getWayPoint(), ex);
@@ -1333,7 +1342,7 @@ public class GCImporter {
 	    }
 
 	    if (Preferences.itself().userID.length() > 0) {
-		// we have a saved userID (perhaps invalid)
+		// we have a (saved) userID (perhaps invalid)
 		switch (checkGCSettings()) {
 		case 0:
 		    loggedIn = true;
@@ -1355,9 +1364,6 @@ public class GCImporter {
 		    break;
 		case 4:
 		    break;
-		case 5:
-		    new InfoBox(MyLocale.getMsg(5523, "Login error!"), MyLocale.getMsg(5529, "got no SessionID")).wait(FormBase.OKB);
-		    break;
 		case 6:
 		    // no correct login
 		    Preferences.itself().userID = "";
@@ -1378,7 +1384,7 @@ public class GCImporter {
 
     private int checkGCSettings() {
 	String page = "";
-	String gcSettingsUrl = "https://www.geocaching.com/myaccount/settings/preferences";
+	String gcSettingsUrl = "https://www.geocaching.com/account/settings/preferences";
 	UrlFetcher.clearCookies();
 	String cookies[] = mString.split(Preferences.itself().userID, '!');
 	if (cookies.length > 1) {
@@ -1434,17 +1440,16 @@ public class GCImporter {
 
 	//7.) ctl00$ContentBody$ddlGPXVersion
 
+	int retCode = 0;
 	if (oldLanguage.equals("en-US")) {
 	    Preferences.itself().changedGCLanguageToEnglish = false;
-	    return 0;
 	} else {
 	    Preferences.itself().oldGCLanguage = oldLanguage;
 	    if (setGCLanguage("en-US")) {
 		Preferences.itself().changedGCLanguageToEnglish = true;
-		return 0;
 	    } else {
 		Preferences.itself().changedGCLanguageToEnglish = false;
-		return 1;
+		retCode = 1;
 	    }
 	}
 
@@ -1457,6 +1462,26 @@ public class GCImporter {
 	    return 0;
 	}
 	*/
+
+	//8.)
+	if (retCode == 0) {
+	    page = "";
+	    gcSettingsUrl = "https://www.geocaching.com/account/settings/membership";
+	    try {
+		page = UrlFetcher.fetch(gcSettingsUrl);
+		//9.)    
+		String membershipBlock = extractor.set(page, "membership-details\">", "</dl>", 0, true).findNext();
+		String memberId = extractValue.set(membershipBlock, "<dd>", "</dd>", 0, true).findNext();
+		Preferences.itself().gcMemberId = memberId;
+		String membership = extractValue.findNext();
+		membership = membership.trim();
+		Preferences.itself().isPremium = membership.indexOf("Basic") == -1;
+	    } catch (final Exception ex) {
+		Preferences.itself().log("[checkGCSettings] " + gcSettingsUrl + page, ex);
+	    }
+	}
+
+	return retCode;
 
     }
 
@@ -1741,15 +1766,12 @@ public class GCImporter {
 	return "GC" + stmp;
     }
 
-    private boolean isAllowedPM(String waypoint) {
-	if (Preferences.itself().isPremium)
-	    return true;
+    private boolean isPM() {
 	if (aCacheDescriptionOfListPage.indexOf(propPM) <= 0) {
-	    return true;
+	    return false;
 	} else {
 	    numPrivate = numPrivate + 1;
-	    Preferences.itself().log(waypoint + " is only for PM.", null);
-	    return false;
+	    return true;
 	}
     }
 
@@ -1925,7 +1947,7 @@ public class GCImporter {
 	// simplified Version: only presence is checked
 	if (Preferences.itself().downloadTBs && Preferences.itself().checkTBs) {
 	    final boolean hasTB = aCacheDescriptionOfListPage.indexOf("data-tbcount") > -1;
-	    return ch.has_bugs() != (hasTB);
+	    return ch.hasBugs() != (hasTB);
 	}
 	return false;
     }
@@ -1975,9 +1997,9 @@ public class GCImporter {
 			ch.setAvailable(!(wayPointPage.indexOf(unavailableGeocache) > -1));
 			ch.setArchived(wayPointPage.indexOf(archivedGeocache) > -1);
 			if (wayPointPage.indexOf(correctedCoordinate) > -1) {
-			    ch.setCacheStatus(MyLocale.getMsg(362, "solved"));
+			    ch.setIsSolved(true);
 			}
-
+			ch.setIsPMCache(wayPointPage.indexOf(premiumGeocache) > -1);
 			// Logs
 			getLogs(ch, wayPointPage.indexOf(foundByMe) > -1); // or get finds
 

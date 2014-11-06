@@ -164,7 +164,7 @@ public class CacheHolderDetail {
     public CacheHolderDetail update(CacheHolderDetail newCh) {
 	// flags
 	CacheHolder ch = parent;
-	if (ch.isFound() && ch.getCacheStatus().equals("")) {
+	if (ch.isFound() && ch.cacheStatus().equals("")) {
 	    ch.setCacheStatus(ch.getFoundText());
 	}
 	// travelbugs:GPX-File contains all actual travelbugs but not the missions

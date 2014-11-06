@@ -92,25 +92,25 @@ public class CacheHolder {
     /** The cache type (@see CacheType for translation table) */
     private byte type;
     /** True if the cache has been archived */
-    private boolean archived = false;
+    private boolean isArchived = false;
     /** True if the cache is available for searching */
-    private boolean available = true;
+    private boolean isAvailable = true;
     /** True if we own this cache */
-    private boolean owned = false;
+    private boolean isOwned = false;
     /** True if we have found this cache */
-    private boolean found = false;
+    private boolean isFound = false;
     /** If this is true, the cache has been filtered (is currently invisible) */
-    private boolean filtered = false;
+    private boolean isFiltered = false;
     /** True if the number of logs for this cache has changed */
-    private boolean log_updated = false;
+    private boolean isLogUpdated = false;
     /** True if cache details have changed: longDescription, Hints, */
-    private boolean cache_updated = false;
+    private boolean isUpdated = false;
     /** True if the cache data is incomplete (e.g. an error occurred during spidering */
-    private boolean incomplete = false;
+    private boolean isIncomplete = false;
     /** True if the cache is blacklisted */
-    private boolean black = false;
+    private boolean isBlack = false;
     /** True if the cache is new */
-    private boolean newCache = false;
+    private boolean isNew = false;
     /** True if the cache is part of the results of a search */
     public boolean isFlagged = false;
     /** True if additional waypoints for this cache should be displayed regardless of the filter settings */
@@ -128,9 +128,9 @@ public class CacheHolder {
     /** Recommendation score: calculated as rations numRecommended / numLogsSinceRecommendation * 100 */
     public int recommendationScore = 0;
     /** True if this cache has travelbugs */
-    private boolean bugs = false;
+    private boolean hasBugs = false;
     /** True if the cache description is stored in HTML format */
-    private boolean html = true;
+    private boolean isHTML = true;
     /** List of additional waypoints associated with this waypoint */
     public Vector addiWpts = new Vector();
     /** in range is used by the route filter to identify caches in range of a segment */
@@ -143,6 +143,8 @@ public class CacheHolder {
     private boolean hasSolver = false;
     /** True if a note is entered for the cache */
     private boolean hasNote = false;
+    private boolean isSolved = false;
+    private boolean isPMCache = false;
     private CacheHolderDetail details = null;
     /**
      * When sorting the cacheDB this field is used. The relevant field is copied here and the sort is always done on this field to speed up the sorting process
@@ -299,7 +301,7 @@ public class CacheHolder {
 
 		start = xmlString.indexOf('"', end + 1);
 		end = xmlString.indexOf('"', start + 1);
-		setIncomplete(xmlString.substring(start + 1, end).equals("true") || incomplete);
+		setIncomplete(xmlString.substring(start + 1, end).equals("true") || isIncomplete);
 
 		start = xmlString.indexOf('"', end + 1);
 		end = xmlString.indexOf('"', start + 1);
@@ -476,39 +478,21 @@ public class CacheHolder {
 	this.recommendationScore = ch.recommendationScore;
 	this.setNumFoundsSinceRecommendation(ch.getNumFoundsSinceRecommendation());
 	this.setNumRecommended(ch.getNumRecommended());
-	boolean mayChangeCoordinates = this.cacheStatus.indexOf(MyLocale.getMsg(362, "solved")) < 0;
-	boolean hasCorrectedCoordinates = ch.getCacheStatus().indexOf(MyLocale.getMsg(362, "solved")) >= 0;
-	if (hasCorrectedCoordinates)
-	    mayChangeCoordinates = true;
-	boolean origIsPM = this.cacheStatus.indexOf("PM") >= 0;
-	if (origIsPM) {
-	    if (mayChangeCoordinates) {
-		if (ch.getCacheStatus().length() > 0) {
-		    if (ch.getCacheStatus().indexOf("PM") < 0)
-			ch.setCacheStatus("PM, " + ch.getCacheStatus());
-		    else
-			ch.setCacheStatus("PM");
-		} else {
-		    ch.setCacheStatus("PM");
-		}
-	    } else {
-		ch.setCacheStatus("PM, " + MyLocale.getMsg(362, "solved"));
-	    }
-	}
+	this.setIsPMCache(ch.isPMCache());
 	/*
 	 * Here we have to distinguish several cases: this.isFound this ch Update 'this' (values are empty or yyyy-mm-dd) ---------------------------------------------------------------------- false any yyyy-mm-dd yes true "Found"
 	 * yyyy-mm-dd yes true yyyy-mm-dd yyyy-mm-dd yes (or no) true yyyy-mm-dd hh:mm yyyy-mm-dd no
 	 */
-	if (!this.found || this.cacheStatus.indexOf(":") < 0) {
+	if (!this.isFound || this.cacheStatus.indexOf(":") < 0) {
 	    // don't overwrite with empty data
-	    if (!ch.getCacheStatus().trim().equals("")) {
-		this.setCacheStatus(ch.getCacheStatus());
+	    if (!ch.cacheStatus().trim().equals("")) {
+		this.setCacheStatus(ch.cacheStatus());
 	    }
 	    this.setFound(ch.isFound());
 	}
 	// Don't overwrite valid coordinates with invalid ones
 	if (ch.pos.isValid() || !this.pos.isValid()) {
-	    if (mayChangeCoordinates) {
+	    if (!this.isSolved) {
 		this.pos = ch.pos;
 	    }
 	}
@@ -533,7 +517,7 @@ public class CacheHolder {
 	if (ch.getOcCacheID().length() > 0)
 	    this.setOcCacheID(ch.getOcCacheID());
 	this.setNoFindLogs(ch.getNoFindLogs());
-	this.setHas_bugs(ch.has_bugs());
+	this.setHas_bugs(ch.hasBugs());
 	this.setHTML(ch.isHTML());
 	this.sort = ch.sort;
 	this.setLastSync(ch.getLastSync());
@@ -589,7 +573,7 @@ public class CacheHolder {
 	sb.append("\" wayp = \"");
 	sb.append(SafeXML.string2Html(getWayPoint()));
 	sb.append("\" status = \"");
-	sb.append(getCacheStatus());
+	sb.append(cacheStatus());
 	sb.append("\" ocCacheID = \"");
 	sb.append(getOcCacheID());
 	sb.append("\" lastSyncOC = \"");
@@ -710,15 +694,15 @@ public class CacheHolder {
 	varParams.put("NAME", cn);
 	String shortName = shortenName(cn, shortNameLength);
 	varParams.put("SHORTNAME", shortName);
-	varParams.put("TRAVELBUG", (bugs ? "Y" : "N"));
+	varParams.put("TRAVELBUG", (hasBugs ? "Y" : "N"));
 	if (gm != null)
 	    varParams.put("GMTYPE", gm.getIcon(this));
 	varParams.put("NOW_DATE", nowdate().setToCurrentTime().toString());
 	varParams.put("NOW_TIME", nowtime().setToCurrentTime().toString());
 	varParams.put("CACHEID", GetCacheID());
-	varParams.put("AVAILABLE", available ? "TRUE" : "FALSE");
-	varParams.put("ARCHIVED", archived ? "TRUE" : "FALSE");
-	varParams.put("HTML", html ? "TRUE" : "FALSE");
+	varParams.put("AVAILABLE", isAvailable ? "TRUE" : "FALSE");
+	varParams.put("ARCHIVED", isArchived ? "TRUE" : "FALSE");
+	varParams.put("HTML", isHTML ? "TRUE" : "FALSE");
 	varParams.put("VOTE", getRecommended());
 	// () ? TRUE : FALSE
 	if (det == null) {
@@ -733,7 +717,7 @@ public class CacheHolder {
 	} else {
 	    // todo &lt;br&gt;
 	    varParams.put("URL", det.URL);
-	    if (html) {
+	    if (isHTML) {
 		if (ModTyp == 0) {
 		    varParams.put("DESCRIPTION", SafeXML.cleanGPX(det.LongDescription));
 		} else {
@@ -1106,8 +1090,8 @@ public class CacheHolder {
 	CacheHolder mainCh = this.mainCache;
 	this.setCacheOwner(mainCh.getCacheOwner());
 	if (mainCh.isFound()) {
-	    if (!this.found) {
-		this.setCacheStatus(mainCh.getCacheStatus());
+	    if (!this.isFound) {
+		this.setCacheStatus(mainCh.cacheStatus());
 		this.setFound(true);
 	    }
 	    // else addi is already found (perhaps at other time)
@@ -1115,7 +1099,7 @@ public class CacheHolder {
 	    // there may be a found addi , so don't overwrite
 	    if ((this.getType() == CacheType.CW_TYPE_FINAL)) {
 		if (this.getPos().isValid()) {
-		    this.setCacheStatus(mainCh.getCacheStatus());
+		    this.setCacheStatus(mainCh.cacheStatus());
 		}
 		this.setFound(false);
 	    }
@@ -1302,7 +1286,7 @@ public class CacheHolder {
 	if ((cacheStatus.length() == 10 || cacheStatus.length() == 16) && cacheStatus.charAt(4) == '-') {
 	    return getFoundText() + " " + cacheStatus;
 	} else {
-	    if (found) {
+	    if (isFound) {
 		return getFoundText();
 	    } else {
 		return cacheStatus;
@@ -1313,9 +1297,9 @@ public class CacheHolder {
     public String getStatusDate() {
 	String statusDate = "";
 
-	if (isFound() || getCacheStatus().indexOf(MyLocale.getMsg(319, "not found")) > 10) {
+	if (isFound() || cacheStatus().indexOf(MyLocale.getMsg(319, "not found")) > 10) {
 	    Regex rexDate = new Regex("([0-9]{4}-[0-9]{2}-[0-9]{2})");
-	    rexDate.search(getCacheStatus());
+	    rexDate.search(cacheStatus());
 	    if (rexDate.stringMatched(1) != null) {
 		statusDate = rexDate.stringMatched(1);
 	    }
@@ -1327,14 +1311,14 @@ public class CacheHolder {
     public String getStatusTime() {
 	String statusTime = "";
 
-	if (isFound() || getCacheStatus().indexOf(MyLocale.getMsg(319, "not found")) > 10) {
+	if (isFound() || cacheStatus().indexOf(MyLocale.getMsg(319, "not found")) > 10) {
 	    Regex rexTime = new Regex("([0-9]{1,2}:[0-9]{2})");
-	    rexTime.search(getCacheStatus());
+	    rexTime.search(cacheStatus());
 	    if (rexTime.stringMatched(1) != null) {
 		statusTime = rexTime.stringMatched(1);
 	    } else {
 		Regex rexDate = new Regex("([0-9]{4}-[0-9]{2}-[0-9]{2})");
-		rexDate.search(getCacheStatus());
+		rexDate.search(cacheStatus());
 		if (rexDate.stringMatched(1) != null) {
 		    statusTime = "00:00";
 		}
@@ -1352,7 +1336,7 @@ public class CacheHolder {
 	if (timeZoneOffset != 0 || MainForm.profile.getTimeZoneAutoDST()) {
 	    //convert to UTC only if time is set
 	    Regex rexTime = new Regex("([0-9]{1,2}:[0-9]{2})");
-	    rexTime.search(getCacheStatus());
+	    rexTime.search(cacheStatus());
 	    if (rexTime.stringMatched(1) != null) {
 		String statusDateTime = (statusDate + " " + getStatusTime()).trim();
 		if (statusDateTime.length() > 0) {
@@ -1404,7 +1388,7 @@ public class CacheHolder {
 	if (timeZoneOffset != 0 || MainForm.profile.getTimeZoneAutoDST()) {
 	    //convert to UTC only if time is set
 	    Regex rexTime = new Regex("([0-9]{1,2}:[0-9]{2})");
-	    rexTime.search(getCacheStatus());
+	    rexTime.search(cacheStatus());
 	    if (rexTime.stringMatched(1) != null) {
 		String statusDateTime = (getStatusDate() + " " + statusTime).trim();
 		if (statusDateTime.length() > 0) {
@@ -1484,10 +1468,11 @@ public class CacheHolder {
     private final static int MSG_NR = 0;
     private final static int GC_MSG = 1;
     private final static int IDX_WRITENOTE = 5;
+    private final static String sSolved = MyLocale.getMsg(362, "Solved");
     private final static String[][] _logType = { { "353", "" }, { "318", "Found it" }, { "355", "Attended" }, { "361", "Webcam Photo Taken" }, { "319", "Didn't find it" },
 	    { "314", "Write note" }, // at change do change IDX_WRITENOTE = 5;
 	    { "315", "Needs Archived" }, { "316", "Needs Maintenance" }, { "317", "Search" }, { "354", "Will Attend" }, { "320", "Owner" }, { "359", "Owner Maintenance" }, { "356", "Temporarily Disable Listing" }, { "357", "Enable Listing" },
-	    { "358", "Post Reviewer Note" }, { "362", "Solved" }, { "313", "Flag 1" }, { "360", "Flag 2" }, };
+	    { "358", "Post Reviewer Note" }, { "313", "Flag 1" }, { "360", "Flag 2" }, };
 
     public final static String[] GetGuiLogTypes() {
 	String[] ret = new String[_logType.length];
@@ -1513,7 +1498,7 @@ public class CacheHolder {
 		}
 	    }
 	} else {
-	    String CacheStatus = getCacheStatus();
+	    String CacheStatus = cacheStatus();
 	    for (int i = 1; i < _logType.length; i++) {
 		if (CacheStatus.endsWith(MyLocale.getMsg(Common.parseInt(_logType[i][MSG_NR]), ""))) {
 		    gcLogType = _logType[i][GC_MSG];
@@ -1561,9 +1546,23 @@ public class CacheHolder {
 	// To get the same list of visible caches after loading a profile,
 	// the property isVisible() is saved instead of isFiltered(), but at
 	// the place where isFiltered() is read.
-	long value = bool2BitMask(!this.isVisible(), 1) | bool2BitMask(this.isAvailable(), 2) | bool2BitMask(this.isArchived(), 3) | bool2BitMask(this.has_bugs(), 4) | bool2BitMask(this.isBlack(), 5) | bool2BitMask(this.isOwned(), 6)
-		| bool2BitMask(this.isFound(), 7) | bool2BitMask(this.isNew(), 8) | bool2BitMask(this.isLogUpdated(), 9) | bool2BitMask(this.isUpdated(), 10) | bool2BitMask(this.isHTML(), 11) | bool2BitMask(this.isIncomplete(), 12)
-		| bool2BitMask(this.hasNote(), 13) | bool2BitMask(this.hasSolver(), 14);
+	long value = bool2BitMask(!this.isVisible(), 1) //
+		| bool2BitMask(this.isAvailable, 2) //
+		| bool2BitMask(this.isArchived, 3) //
+		| bool2BitMask(this.hasBugs, 4) //
+		| bool2BitMask(this.isBlack, 5) //
+		| bool2BitMask(this.isOwned, 6) //
+		| bool2BitMask(this.isFound, 7) //
+		| bool2BitMask(this.isNew, 8) //
+		| bool2BitMask(this.isLogUpdated, 9) //
+		| bool2BitMask(this.isUpdated, 10) //
+		| bool2BitMask(this.isHTML, 11) //
+		| bool2BitMask(this.isIncomplete, 12) //
+		| bool2BitMask(this.hasNote, 13) //
+		| bool2BitMask(this.hasSolver, 14) //
+		| bool2BitMask(this.isPMCache, 15) //
+		| bool2BitMask(this.isSolved, 16) //
+	;
 	return value;
     }
 
@@ -1645,20 +1644,22 @@ public class CacheHolder {
      *            The bit field as long value
      */
     private void long2boolFields(long value) {
-	this.setFiltered((value & this.bool2BitMask(true, 1)) != 0);
-	this.setAvailable((value & this.bool2BitMask(true, 2)) != 0);
-	this.setArchived((value & this.bool2BitMask(true, 3)) != 0);
-	this.setHas_bugs((value & this.bool2BitMask(true, 4)) != 0);
-	this.setBlack((value & this.bool2BitMask(true, 5)) != 0);
-	this.setOwned((value & this.bool2BitMask(true, 6)) != 0);
-	this.setFound((value & this.bool2BitMask(true, 7)) != 0);
-	this.setNew((value & this.bool2BitMask(true, 8)) != 0);
-	this.setLog_updated((value & this.bool2BitMask(true, 9)) != 0);
-	this.setUpdated((value & this.bool2BitMask(true, 10)) != 0);
-	this.setHTML((value & this.bool2BitMask(true, 11)) != 0);
-	this.setIncomplete(((value & this.bool2BitMask(true, 12)) != 0) || this.isIncomplete());
-	this.setHasNote((value & this.bool2BitMask(true, 13)) != 0);
-	this.setHasSolver((value & this.bool2BitMask(true, 14)) != 0);
+	isFiltered = (value & this.bool2BitMask(true, 1)) != 0;
+	isAvailable = (value & this.bool2BitMask(true, 2)) != 0;
+	isArchived = (value & this.bool2BitMask(true, 3)) != 0;
+	hasBugs = (value & this.bool2BitMask(true, 4)) != 0;
+	isBlack = (value & this.bool2BitMask(true, 5)) != 0;
+	isOwned = (value & this.bool2BitMask(true, 6)) != 0;
+	isFound = (value & this.bool2BitMask(true, 7)) != 0;
+	isNew = (value & this.bool2BitMask(true, 8)) != 0;
+	isLogUpdated = (value & this.bool2BitMask(true, 9)) != 0;
+	isUpdated = (value & this.bool2BitMask(true, 10)) != 0;
+	isHTML = (value & this.bool2BitMask(true, 11)) != 0;
+	isIncomplete = (value & this.bool2BitMask(true, 12)) != 0 || this.isIncomplete();
+	hasNote = (value & this.bool2BitMask(true, 13)) != 0;
+	hasSolver = (value & this.bool2BitMask(true, 14)) != 0;
+	isPMCache = isPMCache || (value & this.bool2BitMask(true, 15)) != 0; // only used on reading the index, previously updated from Status 
+	isSolved = isSolved || (value & this.bool2BitMask(true, 16)) != 0; //  only used on reading the index, previously updated from Status
     }
 
     /**
@@ -1756,16 +1757,25 @@ public class CacheHolder {
 	return iconAndTextWP;
     }
 
-    public String getCacheStatus() {
+    public String cacheStatus() {
 	return cacheStatus;
     }
 
-    public void setCacheStatus(String cacheStatus) {
-	if (!cacheStatus.equals(this.cacheStatus)) {
-	    this.cacheStatus = cacheStatus;
+    public void setCacheStatus(String s) {
+	if (!s.equals(this.cacheStatus)) {
+	    // move from Status to Bit
+	    if (s.indexOf("PM") > -1) {
+		this.isPMCache = true;
+		s = new Regex(",?\\s*PM\\s*,?", "").replaceFirst(s);
+	    }
+	    if (s.indexOf(sSolved) > -1) {
+		this.isSolved = true;
+		s = new Regex(",?\\s*" + sSolved + "\\s*,?", "").replaceFirst(s);
+	    }
+	    this.cacheStatus = s.trim();
 	    MainForm.profile.notifyUnsavedChanges(true);
 	    if ((this.getType() == CacheType.CW_TYPE_FINAL) && (this.mainCache != null)) {
-		this.mainCache.setCacheStatus(this.getCacheStatus());
+		this.mainCache.setCacheStatus(this.cacheStatus);
 		// change the addi's in setFound
 	    }
 	}
@@ -1855,46 +1865,46 @@ public class CacheHolder {
     }
 
     public boolean isArchived() {
-	return archived;
+	return isArchived;
     }
 
     public void setArchived(boolean isArchived) {
-	MainForm.profile.notifyUnsavedChanges(isArchived != this.archived);
-	this.archived = isArchived;
-	if (this.archived) {
-	    this.available = false;
+	MainForm.profile.notifyUnsavedChanges(isArchived != this.isArchived);
+	this.isArchived = isArchived;
+	if (this.isArchived) {
+	    this.isAvailable = false;
 	}
     }
 
     public boolean isAvailable() {
-	return available;
+	return isAvailable;
     }
 
     public void setAvailable(boolean isAvailable) {
-	MainForm.profile.notifyUnsavedChanges(isAvailable != this.available);
-	this.available = isAvailable;
-	if (this.available) {
-	    this.archived = false;
+	MainForm.profile.notifyUnsavedChanges(isAvailable != this.isAvailable);
+	this.isAvailable = isAvailable;
+	if (this.isAvailable) {
+	    this.isArchived = false;
 	}
     }
 
     public boolean isOwned() {
-	return owned;
+	return isOwned;
     }
 
     public void setOwned(boolean isOwned) {
-	MainForm.profile.notifyUnsavedChanges(isOwned != this.owned);
-	this.owned = isOwned;
+	MainForm.profile.notifyUnsavedChanges(isOwned != this.isOwned);
+	this.isOwned = isOwned;
     }
 
     public boolean isFound() {
-	return found;
+	return isFound;
     }
 
     public void setFound(boolean isFound) {
-	if (isFound != this.found) {
+	if (isFound != this.isFound) {
 	    MainForm.profile.notifyUnsavedChanges(true);
-	    this.found = isFound;
+	    this.isFound = isFound;
 	    if ((this.getType() == CacheType.CW_TYPE_FINAL) && (this.mainCache != null)) {
 		this.mainCache.setFound(isFound);
 		// done in setCacheStatus this.mainCache.setCacheStatus(this.getCacheStatus());
@@ -1962,45 +1972,45 @@ public class CacheHolder {
      * @return <code>True</code> if filter criteria are matched
      */
     public boolean isFiltered() {
-	return filtered;
+	return isFiltered;
     }
 
     public void setFiltered(boolean isFiltered) {
-	MainForm.profile.notifyUnsavedChanges(isFiltered != this.filtered);
-	this.filtered = isFiltered;
+	MainForm.profile.notifyUnsavedChanges(isFiltered != this.isFiltered);
+	this.isFiltered = isFiltered;
     }
 
     public boolean isLogUpdated() {
-	return log_updated;
+	return isLogUpdated;
     }
 
     public void setLog_updated(boolean isLogUpdated) {
-	MainForm.profile.notifyUnsavedChanges(isLogUpdated != this.log_updated);
+	MainForm.profile.notifyUnsavedChanges(isLogUpdated != this.isLogUpdated);
 	if (isLogUpdated && iconAndTextWPLevel == 1)
 	    iconAndTextWP = null;
-	this.log_updated = isLogUpdated;
+	this.isLogUpdated = isLogUpdated;
     }
 
     public boolean isUpdated() {
-	return cache_updated;
+	return isUpdated;
     }
 
     public void setUpdated(boolean isUpdated) {
-	MainForm.profile.notifyUnsavedChanges(isUpdated != this.cache_updated);
+	MainForm.profile.notifyUnsavedChanges(isUpdated != this.isUpdated);
 	if (isUpdated && iconAndTextWPLevel == 2)
 	    iconAndTextWP = null;
-	this.cache_updated = isUpdated;
+	this.isUpdated = isUpdated;
     }
 
     public boolean isIncomplete() {
-	return incomplete;
+	return isIncomplete;
     }
 
     public void setIncomplete(boolean isIncomplete) {
-	MainForm.profile.notifyUnsavedChanges(isIncomplete != this.incomplete);
+	MainForm.profile.notifyUnsavedChanges(isIncomplete != this.isIncomplete);
 	if (isIncomplete && iconAndTextWPLevel == 4)
 	    iconAndTextWP = null;
-	this.incomplete = isIncomplete;
+	this.isIncomplete = isIncomplete;
     }
 
     /** checks the waypoint data integrity to set a warning flag if something is missing */
@@ -2043,47 +2053,57 @@ public class CacheHolder {
     }
 
     /**
-     * Determines if the blacklist status is set for the cache. Do not use this method to check if the cache should be displayed. Use <code>isVisible()</code> for this, which already does this (and other) checks.<br>
+     * Determines if the blacklist status is set for the cache. 
+     * Do not use this method to check if the cache should be displayed. 
+     * Use <code>isVisible()</code> for this, which already does this (and other) checks.<br>
      * Only use this method if you really want to inform yourself about the black status of the cache!
      * 
-     * @return <code>true</code> if he black status of the cache is set.
+     * @return <code>true</code> if the black status of the cache is set.
      */
     public boolean isBlack() {
-	return black;
+	return isBlack;
     }
 
-    public void setBlack(boolean isBlack) {
-	MainForm.profile.notifyUnsavedChanges(isBlack != this.black);
-	this.black = isBlack;
+    public void setBlack(boolean b) {
+	if (b != this.isBlack) {
+	    MainForm.profile.notifyUnsavedChanges(true);
+	    this.isBlack = b;
+	}
     }
 
     public boolean isNew() {
-	return newCache;
+	return isNew;
     }
 
-    public void setNew(boolean isNew) {
-	MainForm.profile.notifyUnsavedChanges(isNew != this.newCache);
-	if (isNew && iconAndTextWPLevel == 3)
-	    iconAndTextWP = null;
-	this.newCache = isNew;
+    public void setNew(boolean b) {
+	if (b != this.isNew) {
+	    MainForm.profile.notifyUnsavedChanges(true);
+	    if (b && iconAndTextWPLevel == 3)
+		iconAndTextWP = null;
+	    this.isNew = b;
+	}
     }
 
     public String getOcCacheID() {
 	return ocCacheID;
     }
 
-    public void setOcCacheID(String ocCacheID) {
-	MainForm.profile.notifyUnsavedChanges(!ocCacheID.equals(this.ocCacheID));
-	this.ocCacheID = ocCacheID;
+    public void setOcCacheID(String s) {
+	if (!s.equals(this.ocCacheID)) {
+	    MainForm.profile.notifyUnsavedChanges(true);
+	    this.ocCacheID = s;
+	}
     }
 
     public byte getNoFindLogs() {
 	return noFindLogs;
     }
 
-    public void setNoFindLogs(byte noFindLogs) {
-	MainForm.profile.notifyUnsavedChanges(noFindLogs != this.noFindLogs);
-	this.noFindLogs = noFindLogs;
+    public void setNoFindLogs(byte b) {
+	if (b != this.noFindLogs) {
+	    MainForm.profile.notifyUnsavedChanges(true);
+	    this.noFindLogs = b;
+	}
     }
 
     public int getNumRecommended() {
@@ -2112,45 +2132,55 @@ public class CacheHolder {
 	}
     }
 
-    public void setNumRecommended(int numRecommended) {
-	MainForm.profile.notifyUnsavedChanges(numRecommended != this.numRecommended);
-	this.numRecommended = numRecommended;
+    public void setNumRecommended(int i) {
+	if (i != this.numRecommended) {
+	    MainForm.profile.notifyUnsavedChanges(true);
+	    this.numRecommended = i;
+	}
     }
 
     public int getNumFoundsSinceRecommendation() {
 	return numFoundsSinceRecommendation;
     }
 
-    public void setNumFoundsSinceRecommendation(int numFoundsSinceRecommendation) {
-	MainForm.profile.notifyUnsavedChanges(numFoundsSinceRecommendation != this.numFoundsSinceRecommendation);
-	this.numFoundsSinceRecommendation = numFoundsSinceRecommendation;
+    public void setNumFoundsSinceRecommendation(int i) {
+	if (i != this.numFoundsSinceRecommendation) {
+	    MainForm.profile.notifyUnsavedChanges(true);
+	    this.numFoundsSinceRecommendation = i;
+	}
     }
 
-    public boolean has_bugs() {
-	return bugs;
+    public boolean hasBugs() {
+	return hasBugs;
     }
 
-    public void setHas_bugs(boolean has_bug) {
-	MainForm.profile.notifyUnsavedChanges(has_bug != this.bugs);
-	this.bugs = has_bug;
+    public void setHas_bugs(boolean b) {
+	if (b != this.hasBugs) {
+	    MainForm.profile.notifyUnsavedChanges(true);
+	    this.hasBugs = b;
+	}
     }
 
     public boolean isHTML() {
-	return html;
+	return isHTML;
     }
 
-    public void setHTML(boolean isHTML) {
-	MainForm.profile.notifyUnsavedChanges(isHTML != this.html);
-	this.html = isHTML;
+    public void setHTML(boolean b) {
+	if (b != this.isHTML) {
+	    MainForm.profile.notifyUnsavedChanges(true);
+	    this.isHTML = b;
+	}
     }
 
     public String getLastSync() {
 	return lastSync;
     }
 
-    public void setLastSync(String lastSync) {
-	MainForm.profile.notifyUnsavedChanges(!lastSync.equals(this.lastSync));
-	this.lastSync = lastSync;
+    public void setLastSync(String s) {
+	if (!s.equals(this.lastSync)) {
+	    MainForm.profile.notifyUnsavedChanges(true);
+	    this.lastSync = s;
+	}
     }
 
     public long[] getAttributesBits() {
@@ -2166,18 +2196,44 @@ public class CacheHolder {
 	return hasSolver;
     }
 
-    public void setHasSolver(boolean hasSolver) {
-	MainForm.profile.notifyUnsavedChanges(hasSolver != this.hasSolver);
-	this.hasSolver = hasSolver;
+    public void setHasSolver(boolean b) {
+	if (b != this.hasSolver) {
+	    MainForm.profile.notifyUnsavedChanges(true);
+	    this.hasSolver = b;
+	}
+    }
+
+    public boolean isSolved() {
+	return isSolved;
+    }
+
+    public void setIsSolved(boolean b) {
+	if (b != this.isSolved) {
+	    MainForm.profile.notifyUnsavedChanges(true);
+	    this.isSolved = b;
+	}
+    }
+
+    public boolean isPMCache() {
+	return this.isPMCache;
+    }
+
+    public void setIsPMCache(boolean b) {
+	if (b != this.isPMCache) {
+	    MainForm.profile.notifyUnsavedChanges(true);
+	    this.isPMCache = b;
+	}
     }
 
     public boolean hasNote() {
 	return hasNote;
     }
 
-    public void setHasNote(boolean hasNote) {
-	MainForm.profile.notifyUnsavedChanges(hasNote != this.hasNote);
-	this.hasNote = hasNote;
+    public void setHasNote(boolean b) {
+	if (b != this.hasNote) {
+	    MainForm.profile.notifyUnsavedChanges(true);
+	    this.hasNote = b;
+	}
     }
 
     /**
