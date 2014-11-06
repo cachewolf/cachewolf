@@ -1273,6 +1273,16 @@ public class CacheHolder {
 	return "";
     }
 
+    public String getGCFoundIcon() {
+	String iconName = "2.png";
+	if (type == CacheType.CW_TYPE_WEBCAM) {
+	    iconName = "11.png";
+	} else if (type == CacheType.CW_TYPE_EVENT || type == CacheType.CW_TYPE_MEGA_EVENT || type == CacheType.CW_TYPE_MAZE) {
+	    iconName = "10.png";
+	}
+	return iconName;
+    }
+
     public String getCWLogText(String s) {
 	for (int i = 0; i < _logType.length; i++) {
 	    if ((s).equals(_logType[i][GC_MSG])) {
