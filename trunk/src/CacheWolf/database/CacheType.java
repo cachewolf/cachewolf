@@ -457,12 +457,12 @@ public final class CacheType {
 		cTypRef[Ref_Index(typeId)]._modImage[owned] = newOverlayedImage(im, GuiImageBroker.owned);
 	    }
 	    im = cTypRef[Ref_Index(typeId)]._modImage[owned];
-	} else if (ch.getCacheStatus().startsWith(MyLocale.getMsg(362, "solved"))) {
+	} else if (ch.isSolved()) {
 	    if (cTypRef[Ref_Index(typeId)]._modImage[solved] == null) {
 		cTypRef[Ref_Index(typeId)]._modImage[solved] = newOverlayedImage(im, GuiImageBroker.solved);
 	    }
 	    im = cTypRef[Ref_Index(typeId)]._modImage[solved];
-	} else if (ch.getCacheStatus().indexOf(MyLocale.getMsg(319, "Not Found")) > -1) {
+	} else if (ch.cacheStatus().indexOf(MyLocale.getMsg(319, "Not Found")) > -1) {
 	    if (cTypRef[Ref_Index(typeId)]._modImage[dnf] == null) {
 		cTypRef[Ref_Index(typeId)]._modImage[dnf] = newOverlayedImage(im, GuiImageBroker.dnf);
 	    }

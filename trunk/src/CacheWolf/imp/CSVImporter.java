@@ -359,12 +359,12 @@ public class CSVImporter {
 	    }
 	    if (wayPoint.startsWith("GC")) {
 		if (dnf) {
-		    statusText = MyLocale.getMsg(362, "Solved");
+		    ch.setIsSolved(true);
 		    gefunden = false;
 		} else {
 		    if (l[STATUS].length() == 0) {
 			gefunden = false;
-			statusText = MyLocale.getMsg(362, "Solved");
+			ch.setIsSolved(true);
 		    }
 		}
 	    }

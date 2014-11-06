@@ -75,7 +75,7 @@ public class SearchCache {
 		}
 		if (ch.getWayPoint().toUpperCase().indexOf(searchStr) < 0 //
 			&& ch.getCacheName().toUpperCase().indexOf(searchStr) < 0 //
-			&& ch.getCacheStatus().toUpperCase().indexOf(searchStr) < 0 //
+			&& ch.cacheStatus().toUpperCase().indexOf(searchStr) < 0 //
 			&& (!searchInDescriptionAndNotes //
 			|| chD.LongDescription.toUpperCase().indexOf(searchStr) < 0 //
 				&& chD.getCacheNotes().toUpperCase().indexOf(searchStr) < 0) //

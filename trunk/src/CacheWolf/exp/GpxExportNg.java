@@ -761,15 +761,14 @@ public class GpxExportNg {
 	ret_____.append("    <gsak:wptExtension xmlns:gsak=\"" + xmlnsgsak + "\">").append(newLine); //
 	if (ch.hasNote()) // eigentlich  nur die von GC, aber
 	    ret_____.append("      <gsak:GcNote>").append(SafeXML.cleanGPX(ch.getCacheDetails(false).getGCNotes())).append("</gsak:GcNote>").append(newLine); //
-	if (ch.getCacheStatus().indexOf(MyLocale.getMsg(362, "solved")) >= 0) {
+	if (ch.isSolved()) {
 	    // wir kennen die OriginalKoordinaten nicht, aber es gibt wohl nichts für nur corrected coordinates
 	    ret_____.append("      <gsak:LatBeforeCorrect>").append(ch.getPos().getLatDeg(TransformCoordinates.DD)).append("</gsak:LatBeforeCorrect>").append(newLine) //
 		    .append("      <gsak:LonBeforeCorrect>").append(ch.getPos().getLonDeg(TransformCoordinates.DD)).append("</gsak:LonBeforeCorrect>").append(newLine); //
 	}
 	if (Preferences.itself().useGCFavoriteValue)
 	    ret_____.append("      <gsak:FavPoints>").append("" + ch.getNumRecommended()).append("</gsak:FavPoints>").append(newLine); //
-	if (ch.getCacheStatus().indexOf("PM") >= 0)
-	    ret_____.append("      <gsak:IsPremium>").append("true").append("</gsak:IsPremium>").append(newLine); //
+	ret_____.append("      <gsak:IsPremium>").append(SafeXML.strxmlencode(ch.isPMCache())).append("</gsak:IsPremium>").append(newLine); //
 	// ret_____.append("      <gsak:CacheImages>").append("").append("</gsak:CacheImages>").append(newLine) // replace "" by format spoilers
 	ret_____.append("    </gsak:wptExtension>").append(newLine);//
 	return ret_____.toString();
@@ -900,7 +899,7 @@ public class GpxExportNg {
 	    }
 	}
 
-	if (ch.getCacheStatus().indexOf(MyLocale.getMsg(362, "solved")) >= 0) {
+	if (ch.isSolved()) {
 	    logText.append(MyLocale.getMsg(362, "solved"));
 	}
 

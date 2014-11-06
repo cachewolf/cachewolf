@@ -85,7 +85,7 @@ public class GarminMap extends MinML {
 		match = match && ((icon.size == null) || ch.getCacheSize() == 0 || icon.size.equalsIgnoreCase(CacheSize.getExportShortId(ch.getCacheSize())));
 		match = match && ((icon.terrain == null) || ch.getTerrain() == 0 || icon.terrain.equals(CacheTerrDiff.shortDT(ch.getTerrain())));
 		match = match && ((icon.difficulty == null) || ch.getHard() == 0 || icon.difficulty.equals(CacheTerrDiff.shortDT(ch.getHard())));
-		match = match && ((icon.status == null) || ch.getCacheStatus().startsWith(icon.status));
+		match = match && ((icon.status == null) || ch.cacheStatus().startsWith(icon.status));
 		match = match && ((icon.found == null) || ch.isFound());
 		if (match)
 		    return icon.name;
@@ -111,7 +111,7 @@ public class GarminMap extends MinML {
 		match = match && ((icon.size == null) || ch.getCacheSize() == 0 || icon.size.equalsIgnoreCase(CacheSize.getExportShortId(ch.getCacheSize())));
 		match = match && ((icon.terrain == null) || ch.getTerrain() == 0 || icon.terrain.equals(CacheTerrDiff.shortDT(ch.getTerrain())));
 		match = match && ((icon.difficulty == null) || ch.getHard() == 0 || icon.difficulty.equals(CacheTerrDiff.shortDT(ch.getHard())));
-		match = match && ((icon.status == null) || ch.getCacheStatus().startsWith(icon.status));
+		match = match && ((icon.status == null) || ch.cacheStatus().startsWith(icon.status));
 		match = match && ((icon.found == null) || ch.isFound());
 		if (match)
 		    return icon.poiId;
@@ -132,7 +132,7 @@ public class GarminMap extends MinML {
 		match = match && ((icon.size == null) || ch.getCacheSize() == 0 || icon.size.equalsIgnoreCase(CacheSize.getExportShortId(ch.getCacheSize())));
 		match = match && ((icon.terrain == null) || ch.getTerrain() == 0 || icon.terrain.equals(CacheTerrDiff.shortDT(ch.getTerrain())));
 		match = match && ((icon.difficulty == null) || ch.getHard() == 0 || icon.difficulty.equals(CacheTerrDiff.shortDT(ch.getHard())));
-		match = match && ((icon.status == null) || ch.getCacheStatus().startsWith(icon.status));
+		match = match && ((icon.status == null) || ch.cacheStatus().startsWith(icon.status));
 		match = match && ((icon.found == null) || ch.isFound());
 		if (match)
 		    return icon.ozicolor;

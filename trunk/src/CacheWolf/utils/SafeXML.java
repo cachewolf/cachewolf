@@ -165,14 +165,17 @@ public final class SafeXML {
 	case '\'':
 	    return "&apos;";
 	default:
+	    return null;
+	    /*
 	    if (c < 127) {
-		// leave alone as equivalent string.
-		return null;
+	    // leave alone as equivalent string.
+	    return null;
 	    } else {
-		// use the &#nnn; form
-		// faster than String.valueOf( c ).intern();
-		return "&#" + Integer.toString(c) + ";";
+	    // use the &#nnn; form
+	    // faster than String.valueOf( c ).intern();
+	    return "&#" + Integer.toString(c) + ";";
 	    }
+	    */
 	} // end switch
     } // end charToEntity
 

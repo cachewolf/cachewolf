@@ -83,6 +83,29 @@ import ewe.util.mString;
  * This class displays a user interface allowing the user to change and set preferences. It also provides a method to save the changed preferences that are saved immediately when the user presses "Apply". Class ID=600
  */
 public class PreferencesScreen extends Form {
+    public final String[] colNames = new String[] { MyLocale.getMsg(599, "checkbox"), //
+	    MyLocale.getMsg(598, "type"), //
+	    MyLocale.getMsg(606, "Difficulty"), //
+	    MyLocale.getMsg(607, "Terrain"), //
+	    MyLocale.getMsg(597, "waypoint"), //
+	    MyLocale.getMsg(596, "name"), //
+	    MyLocale.getMsg(608, "Location"), //
+	    MyLocale.getMsg(609, "Owner"), //
+	    MyLocale.getMsg(610, "Hidden"), //
+	    MyLocale.getMsg(611, "Status"), //
+	    MyLocale.getMsg(612, "Distance"), //
+	    MyLocale.getMsg(613, "Bearing"), //
+	    MyLocale.getMsg(635, "Size"), //
+	    MyLocale.getMsg(636, "OC Empfehlungen"), //
+	    MyLocale.getMsg(637, "OC Index"), //
+	    MyLocale.getMsg(1039, "Solver exists"), //
+	    MyLocale.getMsg(1041, "Note exists"), //
+	    MyLocale.getMsg(1046, "# Additionals"), //
+	    MyLocale.getMsg(1048, "# DNF Logs"), //
+	    MyLocale.getMsg(1051, "Last sync date"), //
+	    MyLocale.getMsg(677, "PM"), //
+	    MyLocale.getMsg(362, "solved"), //
+    };
     private final ExecutePanel executePanel;
     // cpDataDir
     private mInput DataDir;
@@ -387,28 +410,9 @@ public class PreferencesScreen extends Form {
 	// ///////////////////////////////////////////////////////
 	// Card - Listview
 	// ///////////////////////////////////////////////////////
+
 	mTab.addCard(tccList = new TableColumnChooser(//
-		new String[] { MyLocale.getMsg(599, "checkbox"), //
-			MyLocale.getMsg(598, "type"), //
-			MyLocale.getMsg(606, "Difficulty"), //
-			MyLocale.getMsg(607, "Terrain"), //
-			MyLocale.getMsg(597, "waypoint"), //
-			MyLocale.getMsg(596, "name"), //
-			MyLocale.getMsg(608, "Location"), //
-			MyLocale.getMsg(609, "Owner"), //
-			MyLocale.getMsg(610, "Hidden"), //
-			MyLocale.getMsg(611, "Status"), //
-			MyLocale.getMsg(612, "Distance"), //
-			MyLocale.getMsg(613, "Bearing"), //
-			MyLocale.getMsg(635, "Size"), //
-			MyLocale.getMsg(636, "OC Empfehlungen"), //
-			MyLocale.getMsg(637, "OC Index"), //
-			MyLocale.getMsg(1039, "Solver exists"), //
-			MyLocale.getMsg(1041, "Note exists"), //
-			MyLocale.getMsg(1046, "# Additionals"), //
-			MyLocale.getMsg(1048, "# DNF Logs"), //
-			MyLocale.getMsg(1051, "Last sync date") //
-		}, Preferences.itself().listColMap), MyLocale.getMsg(595, "List"), null).iconize(GuiImageBroker.getImage("list"), Preferences.itself().useIcons);
+		colNames, Preferences.itself().listColMap), MyLocale.getMsg(595, "List"), null).iconize(GuiImageBroker.getImage("list"), Preferences.itself().useIcons);
 
 	// ///////////////////////////////////////////////////////
 	// Card - Travelbugs
