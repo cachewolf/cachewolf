@@ -45,8 +45,8 @@ import ewe.util.Vector;
 public class TableColumnChooser extends CellPanel {
 
     String[] colNames;
-    Vector shownCols = new Vector(20);
-    Vector hiddenCols = new Vector(20);
+    Vector shownCols = new Vector(22);
+    Vector hiddenCols = new Vector(22);
     private mButton btnDown, btnUp, btnLeft, btnRight;
     private myList lstShown, lstHidden;
 

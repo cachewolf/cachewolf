@@ -321,10 +321,7 @@ public class MainTab extends mTabbedPanel {
 		    chD.setSolver(solverPanel.getInstructions());
 		    if (oldHasSolver != chD.getParent().hasSolver())
 			this.tablePanel.myTableControl.update(true);
-		    // For safety reasons: Immediately save solver
-		    // instructions when
-		    // switching panels
-		    updatePendingChanges();
+		    // For safety reasons: Immediately save solver instructions when switching panels updatePendingChanges();
 		} else {
 		    boolean oldHasSolver = chMain.hasSolver();
 		    chMain.getCacheDetails(true).setSolver(solverPanel.getInstructions());

@@ -173,7 +173,7 @@ public class Profile {
 	    pbf.exec();
 	}
 	CacheHolder.saveAllModifiedDetails(); // this must be called first as it makes some calculations
-	PrintWriter detfile;
+	PrintWriter cacheDBIndexFile;
 	CacheHolder ch;
 	try {
 	    File backup = new File(dataDir + "index.bak");
@@ -186,7 +186,7 @@ public class Profile {
 	    Preferences.itself().log("[Profile:saveIndex]Error deleting backup or renaming index.xml");
 	}
 	try {
-	    detfile = new PrintWriter(new BufferedWriter(new FileWriter(new File(dataDir + "index.xml").getAbsolutePath())));
+	    cacheDBIndexFile = new PrintWriter(new BufferedWriter(new FileWriter(new File(dataDir + "index.xml").getAbsolutePath())));
 	} catch (Exception e) {
 	    Preferences.itself().log("Problem creating index.xml " + dataDir, e);
 	    return;
@@ -196,11 +196,11 @@ public class Profile {
 	    savedCentre = Preferences.itself().curCentrePt;
 
 	try {
-	    detfile.print("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
-	    detfile.print("<CACHELIST format=\"decimal\">\n");
-	    detfile.print("    <VERSION value = \"3\"/>\n");
+	    cacheDBIndexFile.print("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
+	    cacheDBIndexFile.print("<CACHELIST format=\"decimal\">\n");
+	    cacheDBIndexFile.print("    <VERSION value = \"3\"/>\n");
 	    if (savedCentre.isValid())
-		detfile.print("    <CENTRE lat=\"" + savedCentre.latDec + "\" lon=\"" + savedCentre.lonDec + "\"/>\n");
+		cacheDBIndexFile.print("    <CENTRE lat=\"" + savedCentre.latDec + "\" lon=\"" + savedCentre.lonDec + "\"/>\n");
 	    if (last_sync_opencaching == null || last_sync_opencaching.endsWith("null") || last_sync_opencaching.equals("")) {
 		last_sync_opencaching = "20050801000000";
 	    }
@@ -223,13 +223,13 @@ public class Profile {
 	    } else {
 		activeFilterForSave = filterActive;
 	    }
-	    detfile.print("    <FILTERCONFIG status = \"" + activeFilterForSave + (filterInverted ? "T" : "F") + "\" showBlacklist = \"" + showBlacklisted + "\" />\n");
-	    detfile.print(currentFilter.toXML(""));
-	    detfile.print("    <SYNCOC date = \"" + last_sync_opencaching + "\" dist = \"" + distOC + "\"/>\n");
-	    detfile.print("    <SPIDERGC dist = \"" + distGC + "\" mindist = \"" + minDistGC + "\"/>\n");
-	    detfile.print("    <EXPORT style = \"" + lastUsedGpxStyle + "\" to = \"" + gpxOutputTo + "\"/>\n");
-	    detfile.print("    <mapspath relativeDir = \"" + SafeXML.string2Html(relativeMapsDir) + "\"/>\n");
-	    detfile.print("    <TIMEZONE timeZoneOffset = \"" + timeZoneOffset + "\" timeZoneAutoDST = \"" + timeZoneAutoDST + "\"/>\n");
+	    cacheDBIndexFile.print("    <FILTERCONFIG status = \"" + activeFilterForSave + (filterInverted ? "T" : "F") + "\" showBlacklist = \"" + showBlacklisted + "\" />\n");
+	    cacheDBIndexFile.print(currentFilter.toXML(""));
+	    cacheDBIndexFile.print("    <SYNCOC date = \"" + last_sync_opencaching + "\" dist = \"" + distOC + "\"/>\n");
+	    cacheDBIndexFile.print("    <SPIDERGC dist = \"" + distGC + "\" mindist = \"" + minDistGC + "\"/>\n");
+	    cacheDBIndexFile.print("    <EXPORT style = \"" + lastUsedGpxStyle + "\" to = \"" + gpxOutputTo + "\"/>\n");
+	    cacheDBIndexFile.print("    <mapspath relativeDir = \"" + SafeXML.string2Html(relativeMapsDir) + "\"/>\n");
+	    cacheDBIndexFile.print("    <TIMEZONE timeZoneOffset = \"" + timeZoneOffset + "\" timeZoneAutoDST = \"" + timeZoneAutoDST + "\"/>\n");
 	    int size = cacheDB.size();
 	    for (int i = 0; i < size; i++) {
 		if (showprogress) {
@@ -239,17 +239,17 @@ public class Profile {
 		}
 		ch = cacheDB.get(i);
 		if (ch.getWayPoint().length() > 0) {
-		    detfile.print(ch.toXML());
+		    cacheDBIndexFile.print(ch.toXML());
 		}
 	    }
-	    detfile.print("</CACHELIST>\n");
-	    detfile.close();
+	    cacheDBIndexFile.print("</CACHELIST>\n");
+	    cacheDBIndexFile.close();
 	    buildReferences(); // TODO Why is this needed here?
 	    if (showprogress)
 		pbf.exit(0);
 	} catch (Exception e) {
 	    Preferences.itself().log("Problem writing to index file ", e);
-	    detfile.close();
+	    cacheDBIndexFile.close();
 	    if (showprogress)
 		pbf.exit(0);
 	}

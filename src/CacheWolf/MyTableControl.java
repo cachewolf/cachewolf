@@ -385,9 +385,9 @@ public class MyTableControl extends TableControl {
 	    if (mainCache.isCacheWpt()) {
 		chD = mainCache.getCacheDetails(false);
 		if (chD != null) {
-		    String notes = chD.getCacheNotes();
-		    if (notes.length() > 0) {
-			Vm.setClipboardText(mainCache.getCacheStatus() + '\n' + "<br>" + notes);
+		    String ownLogMessage = chD.OwnLog.getMessage();
+		    if (ownLogMessage.length() > 0) {
+			Vm.setClipboardText(mainCache.cacheStatus() + '\n' + "<br>" + ownLogMessage);
 		    }
 		    if (mainCache.isOC()) {
 			url = chD.URL;
@@ -396,20 +396,20 @@ public class MyTableControl extends TableControl {
 			}
 		    } else {
 			if (chD.OwnLogId.length() > 0) {
-			    String wpName = mainCache.getOcCacheID();
-			    if (wpName.length() > 0 && wpName.charAt(0) < 65) {
+			    String ocWpName = mainCache.getOcCacheID();
+			    if (ocWpName.length() > 0 && ocWpName.charAt(0) < 65) {
 				// OC log (already logged at GC but not at OC)
 				if (clickedColumn == 14) {
 				    OCLogExport.doOneLog(mainCache);
 				    MainTab.itself.tablePanel.refreshTable();
 				} else {
-				    // open OC logpage with GC Logtext in Clipboard
-				    Vm.setClipboardText(chD.OwnLog.getDate() + '\n' + "<br>" + chD.OwnLog.getMessage());
-				    if (wpName.length() > 1) {
-					if (wpName.charAt(0) < 65) {
-					    wpName = mainCache.getOcCacheID().substring(1);
+				    // open OC logpage with Logtext in Clipboard
+				    Vm.setClipboardText(chD.OwnLog.getDate() + '\n' + "<br>" + ownLogMessage);
+				    if (ocWpName.length() > 1) {
+					if (ocWpName.charAt(0) < 65) {
+					    ocWpName = ocWpName.substring(1);
 					}
-					url = "http://" + OC.getOCHostName(wpName) + "/log.php?wp=" + wpName;
+					url = "http://" + OC.getOCHostName(ocWpName) + "/log.php?wp=" + ocWpName;
 				    }
 				}
 			    }
@@ -421,6 +421,11 @@ public class MyTableControl extends TableControl {
 		    if (url.length() > 0) {
 			callExternalProgram(Preferences.itself().browser, url);
 		    }
+		}
+	    } else {
+		if (mainCache.isCustomWpt() && mainCache.getWayPoint().startsWith("GC")) {
+		    url = "http://www.geocaching.com/seek/log.aspx?ID=" + mainCache.GetCacheID();
+		    callExternalProgram(Preferences.itself().browser, url);
 		}
 	    }
 	}

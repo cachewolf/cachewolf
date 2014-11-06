@@ -67,6 +67,7 @@ import ewe.ui.MenuItem;
 import ewe.ui.ScrollBarPanel;
 import ewe.ui.ScrollablePanel;
 import ewe.ui.mButton;
+import ewe.ui.mCheckBox;
 import ewe.ui.mChoice;
 import ewe.ui.mComboBox;
 import ewe.ui.mInput;
@@ -105,6 +106,7 @@ public class DetailsPanel extends CellPanel {
     /** add or edit notes for way point. */
     private static mButton btnNotes;
 
+    private mCheckBox cbIsSolved;
     /** set found date. */
     private static mButton btnFoundDate;
     /** set hidden date. */
@@ -148,9 +150,6 @@ public class DetailsPanel extends CellPanel {
     private byte newCacheSize;
     private String newHiddenDate;
     MyScrollBarPanel pnlLog;
-
-    // TODO: move images to image broker
-    // mImage imgBlack, imgBlackNo, imgShowBug, imgShowBugNo, imgNewWpt, imgGoto, imgShowMaps, imgAddImages, imgNotes;
 
     /**
      * public constructor for detail panels. should only be called from main tab.
@@ -212,25 +211,34 @@ public class DetailsPanel extends CellPanel {
 	coordinatesPanel.addNext(btnCoordinates, HSTRETCH, HFILL);
 	rightPanel.addLast(coordinatesPanel, HSTRETCH, HFILL);
 
-	CellPanel attribsPanel = new CellPanel();
 	attViewer = new AttributesViewer();
-	attribsPanel.addLast(attViewer);
-	attribsPanel.setBorder(EDGE_BUMP, 5);
-	rightPanel.addLast(attribsPanel);
+	attViewer.setBorder(EDGE_BUMP, 5);
+	rightPanel.addLast(attViewer);
 
 	CellPanel mainPanel = new CellPanel();
 	mainPanel.addNext(leftPanel, DONTSTRETCH, DONTFILL | LEFT | TOP);
 	mainPanel.addLast(rightPanel, HSTRETCH, FILL | LEFT);
-	addLast(mainPanel);
+	if (Preferences.itself().isBigScreen)
+	    mainPanel.setText(MyLocale.getMsg(1201, "Details"));
+	addLast(mainPanel, HSTRETCH, HFILL);
 
 	CellPanel statusPanel = new CellPanel();
-	statusPanel.addNext(new mLabel(MyLocale.getMsg(307, "Status:")), DONTSTRETCH, DONTFILL | LEFT);
+	CellPanel solvedPanel = new CellPanel();
+	solvedPanel.addNext(new mLabel(MyLocale.getMsg(362, "solved") + ": "), DONTSTRETCH, DONTFILL | LEFT);
+	cbIsSolved = new mCheckBox("");
+	solvedPanel.addLast(cbIsSolved);
+	statusPanel.addLast(solvedPanel, HSTRETCH, HFILL);
+	CellPanel foundPanel = new CellPanel();
+	foundPanel.addNext(new mLabel(MyLocale.getMsg(307, "Status:")), DONTSTRETCH, DONTFILL | LEFT);
 	chcStatus = new mComboBox(CacheHolder.GetGuiLogTypes(), 0);
-	statusPanel.addNext(chcStatus, HSTRETCH, (HFILL | RIGHT));
+	foundPanel.addNext(chcStatus, HSTRETCH, (HFILL | RIGHT));
 	btnFoundDate = GuiImageBroker.getButton("", "calendar");
 	btnFoundDate.setToolTip(MyLocale.getMsg(31415, "Set found date / time"));
-	statusPanel.addLast(btnFoundDate, DONTSTRETCH, DONTFILL);
-	addLast(statusPanel);
+	foundPanel.addLast(btnFoundDate, DONTSTRETCH, DONTFILL);
+	statusPanel.addLast(foundPanel, HSTRETCH, HFILL);
+	if (Preferences.itself().isBigScreen)
+	    statusPanel.setText(MyLocale.getMsg(307, "Status:"));
+	addLast(statusPanel, HSTRETCH, HFILL);
 
 	if (Preferences.itself().isBigScreen) {
 	    ownLog = new mTextPad();
@@ -239,7 +247,9 @@ public class DetailsPanel extends CellPanel {
 	    addLast(pnlLog, STRETCH, FILL);
 	    waypointNotes = new mTextPad();
 	    waypointNotes.modify(ControlConstants.NotEditable, 0);
-	    addLast(new MyScrollBarPanel(waypointNotes), STRETCH, FILL);
+	    MyScrollBarPanel sp = new MyScrollBarPanel(waypointNotes);
+	    sp.setText(MyLocale.getMsg(308, "Notes"));
+	    addLast(sp, STRETCH, FILL);
 	}
 	if (Preferences.itself().tabsAtTop) {
 	    if (!Preferences.itself().menuAtTab)
@@ -305,6 +315,7 @@ public class DetailsPanel extends CellPanel {
 	newHiddenDate = mainCache.getDateHidden();
 	GuiImageBroker.setButtonText(btnHiddenDate, MyLocale.getMsg(305, "Hidden on:") + mainCache.getDateHidden());
 	inpOwner.setText(mainCache.getCacheOwner());
+	this.cbIsSolved.setState(ch.isSolved());
 	chcStatus.setText(ch.getStatusText());
 	newCacheType = ch.getType();
 	GuiImageBroker.setButtonIconAndText(btnType, CacheType.type2Gui(newCacheType), GuiImageBroker.makeImageForButton(btnType, CacheType.type2Gui(newCacheType), CacheType.typeImageNameForId(newCacheType)));
@@ -321,7 +332,7 @@ public class DetailsPanel extends CellPanel {
 	    createWptName();
 	}
 
-	if (mainCache.has_bugs()) {
+	if (mainCache.hasBugs()) {
 	    // btnTBs.modify(Control.Disabled,1);
 	    GuiImageBroker.setButtonIconAndText(btnTBs, MyLocale.getMsg(364, "TBs"), showBugImage);
 	} else {
@@ -475,16 +486,12 @@ public class DetailsPanel extends CellPanel {
 		ch.setTerrain(CacheTerrDiff.CW_DT_UNSET);
 		ch.setCacheSize(CacheSize.CW_SIZE_NOTCHOSEN);
 		MainTab.itself.newWaypoint(ch);
-	    }
-
-	    else if (ev.target == btnSetDestination) {
+	    } else if (ev.target == btnSetDestination) {
 		if (cache.getPos().isValid()) {
 		    Navigate.itself.setDestination(cache);
 		    MainTab.itself.select(MainTab.GOTO_CARD);
 		}
-	    }
-
-	    else if (ev.target == btnCoordinates) {
+	    } else if (ev.target == btnCoordinates) {
 		CWPoint coords = new CWPoint(btnCoordinates.getText(), TransformCoordinates.CW);
 		if (Vm.isMobile()) {
 		    CoordsPDAInput InScr = new CoordsPDAInput(TransformCoordinates.CW, true);
@@ -677,7 +684,10 @@ public class DetailsPanel extends CellPanel {
 	    cache.setCacheStatus(chcStatus.getText());
 	}
 
-	if (chcStatus.getText().startsWith(MyLocale.getMsg(msgNr, "Found")) || (cache.getCacheStatus().length() == 10 || cache.getCacheStatus().length() == 16) && cache.getCacheStatus().charAt(4) == '-') {
+	if (cache.isSolved() != this.cbIsSolved.getState())
+	    cache.setIsSolved(this.cbIsSolved.getState());
+
+	if (chcStatus.getText().startsWith(MyLocale.getMsg(msgNr, "Found")) || (cache.cacheStatus().length() == 10 || cache.cacheStatus().length() == 16) && cache.cacheStatus().charAt(4) == '-') {
 	    // Use same heuristic condition as in setDetails(CacheHolder) to
 	    // determine, if this
 	    // cache
@@ -689,7 +699,7 @@ public class DetailsPanel extends CellPanel {
 	if (!cache.isAddiWpt()) {
 	    cache.setCacheOwner(inpOwner.getText().trim());
 	}
-	cache.setOwned(cache.getCacheStatus().equals(MyLocale.getMsg(320, "Owner")));
+	cache.setOwned(cache.cacheStatus().equals(MyLocale.getMsg(320, "Owner")));
 	// Avoid setting is_owned if alias is empty and username is empty
 	if (!cache.isOwned()) {
 	    cache.setOwned((!Preferences.itself().myAlias.equals("") && Preferences.itself().myAlias.equalsIgnoreCase(cache.getCacheOwner())) || (Preferences.itself().myAlias2.equalsIgnoreCase(cache.getCacheOwner())));
@@ -823,9 +833,7 @@ public class DetailsPanel extends CellPanel {
 
 	    public void penRightReleased(Point p) {
 		setMenu(mnuPopup);
-		doShowMenu(p); // direct call (not through doMenu) is neccesary
-		// because it will
-		// exclude the whole table
+		doShowMenu(p); // direct call (not through doMenu) is neccesary because it will exclude the whole table
 	    }
 
 	    public void penHeld(Point p) {
