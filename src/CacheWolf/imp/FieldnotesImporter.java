@@ -22,9 +22,11 @@
 package CacheWolf.imp;
 
 import CacheWolf.MainForm;
+import CacheWolf.Preferences;
 import CacheWolf.Profile;
 import CacheWolf.database.CacheDB;
 import CacheWolf.database.CacheHolder;
+import CacheWolf.database.Log;
 import ewe.io.FileReader;
 import ewe.io.IOException;
 import ewe.io.JavaUtf8Codec;
@@ -101,6 +103,8 @@ public class FieldnotesImporter {
 	    }
 	    String wayPoint = l1[WPPOS];
 	    CacheHolder ch = cacheDB.get(wayPoint);
+	    Time logTime = new Time();
+	    String foundIcon = "";
 	    if (ch != null) {
 		if (l1[LOGTYPPOS].equals(ch.getGCFoundText())) {
 		    // String stmp=ch.getCacheStatus();
@@ -109,7 +113,6 @@ public class FieldnotesImporter {
 
 		    if (timeZoneOffset != 0 || MainForm.profile.getTimeZoneAutoDST()) {
 			try {
-			    Time logTime = new Time();
 			    logTime.parse(logTimeString, "yyyy-MM-dd HH:mm");
 
 			    long timeZoneOffsetMillis = 0;
@@ -145,6 +148,7 @@ public class FieldnotesImporter {
 
 		    ch.setCacheStatus(logTimeString);
 		    ch.setFound(true);
+		    foundIcon = ch.getGCFoundIcon();
 		} else {
 		    String stmp = ch.getCWLogText(l1[LOGTYPPOS]);
 		    if (stmp.equals(""))
@@ -152,9 +156,10 @@ public class FieldnotesImporter {
 		    else
 			ch.setCacheStatus(stmp); // Statustext (ohne Datum/Uhrzeit)
 		    ch.setFound(false);
+		    foundIcon = "3.png";
 		}
-		if (!logText.equals(""))
-		    ch.getCacheDetails(false).setCacheNotes(logText);
+		if (logText.length() > 0)
+		    ch.getCacheDetails(false).OwnLog = new Log(null, Preferences.itself().gcMemberId, foundIcon, logTime.format("yyyy-MM-dd"), Preferences.itself().myAlias, logText);
 		ch.save();
 	    }
 	}
