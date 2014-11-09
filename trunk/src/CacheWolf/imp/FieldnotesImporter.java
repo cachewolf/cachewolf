@@ -158,9 +158,11 @@ public class FieldnotesImporter {
 		    ch.setFound(false);
 		    foundIcon = "3.png";
 		}
-		if (logText.length() > 0)
-		    ch.getCacheDetails(false).OwnLog = new Log(null, Preferences.itself().gcMemberId, foundIcon, logTime.format("yyyy-MM-dd"), Preferences.itself().myAlias, logText);
-		ch.save();
+		if (logText.length() > 0) {
+		    ch.getCacheDetails(false).OwnLog = new Log("", Preferences.itself().gcMemberId, foundIcon, logTime.format("yyyy-MM-dd"), Preferences.itself().myAlias, logText);
+		    ch.getCacheDetails(false).OwnLogId = "";
+		    ch.save();
+		}
 	    }
 	}
     }
