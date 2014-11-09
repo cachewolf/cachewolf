@@ -142,7 +142,7 @@ public class GCImporter {
     private static Regex longDescRex;
     private static Regex hintsRex;
     private static Regex notesRex;
-    private static String premiumGeocache = "Premium Member Only Cache";
+    private static String premiumGeocache = "Premium Member Only";
     private static String unpublishedGeocache = "Unpublished Geocache";
     private static String unavailableGeocache = "This cache is temporarily unavailable";
     private static String archivedGeocache = "This cache has been archived";
@@ -1974,14 +1974,17 @@ public class GCImporter {
 	    final int MAX_SPIDER_TRYS = 3;
 	    while (spiderTrys++ < MAX_SPIDER_TRYS) {
 		ret = fetchWayPointPage(ch.getWayPoint());
+		ch.setIsPMCache(wayPointPage.indexOf(premiumGeocache) > -1);
 		if (ret == SPIDER_OK) {
 		    if (infB.isClosed())
 			ret = SPIDER_CANCEL;
-		    else if (wayPointPage.indexOf(premiumGeocache) > -1) {
-			// Premium cache spidered by non premium member
-			Preferences.itself().log("Ignoring premium member cache: " + ch.getWayPoint(), null);
-			spiderTrys = MAX_SPIDER_TRYS;
-			ret = SPIDER_IGNORE_PREMIUM;
+		    else if (ch.isPMCache()) {
+			if (wayPointPage.indexOf("PersonalCacheNote") == -1) {
+			    // Premium cache spidered by non premium member (nicht PM hat keine PersonalCacheNote)
+			    Preferences.itself().log("Ignoring premium member cache: " + ch.getWayPoint(), null);
+			    spiderTrys = MAX_SPIDER_TRYS;
+			    ret = SPIDER_IGNORE_PREMIUM;
+			}
 		    } else if (wayPointPage.indexOf(unpublishedGeocache) > -1) {
 			Preferences.itself().log("unpublished Geocache: " + ch.getWayPoint(), null);
 			spiderTrys = MAX_SPIDER_TRYS;
@@ -1999,7 +2002,6 @@ public class GCImporter {
 			if (wayPointPage.indexOf(correctedCoordinate) > -1) {
 			    ch.setIsSolved(true);
 			}
-			ch.setIsPMCache(wayPointPage.indexOf(premiumGeocache) > -1);
 			// Logs
 			getLogs(ch, wayPointPage.indexOf(foundByMe) > -1); // or get finds
 
