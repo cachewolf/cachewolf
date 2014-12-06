@@ -638,7 +638,7 @@ public class OCXMLImporter extends MinML {
 	    return;
 	if (name.equals("cachedesc")) {
 	    numDescImported++;
-	    holder.setHTML(isHTML);
+	    holder.isHTML(isHTML);
 	    if (downloadPics && isHTML) {
 		getImageNamesFromDescription();
 	    }

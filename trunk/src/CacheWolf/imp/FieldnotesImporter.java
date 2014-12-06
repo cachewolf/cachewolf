@@ -27,6 +27,7 @@ import CacheWolf.Profile;
 import CacheWolf.database.CacheDB;
 import CacheWolf.database.CacheHolder;
 import CacheWolf.database.Log;
+import CacheWolf.utils.STRreplace;
 import ewe.io.FileReader;
 import ewe.io.IOException;
 import ewe.io.JavaUtf8Codec;
@@ -111,40 +112,40 @@ public class FieldnotesImporter {
 
 		    String logTimeString = l1[DATEPOS].replace('T', ' ').replace('Z', ' ').trim();
 
-		    if (timeZoneOffset != 0 || MainForm.profile.getTimeZoneAutoDST()) {
-			try {
-			    logTime.parse(logTimeString, "yyyy-MM-dd HH:mm");
+		    //if (timeZoneOffset != 0 || MainForm.profile.getTimeZoneAutoDST()) {
+		    try {
+			logTime.parse(logTimeString, "yyyy-MM-dd HH:mm");
 
-			    long timeZoneOffsetMillis = 0;
+			long timeZoneOffsetMillis = 0;
 
-			    if (timeZoneOffset == 100) { //autodetect
-				timeZoneOffsetMillis = Time.convertSystemTime(logTime.getTime(), false) - logTime.getTime();
-			    } else {
-				timeZoneOffsetMillis = timeZoneOffset * 3600000;
-			    }
-
-			    if (MainForm.profile.getTimeZoneAutoDST()) {
-				int lsM = (byte) (31 - ((int) (5 * logTime.year / 4) + 4) % 7);//last Sunday in March
-				int lsO = (byte) (31 - ((int) (5 * logTime.year / 4) + 1) % 7);//last Sunday in October
-
-				Time dstStart = new Time(lsM, 3, logTime.year);
-				dstStart.hour = 2;
-				dstStart.setTime(dstStart.getTime() - timeZoneOffsetMillis);
-				Time dstEnd = new Time(lsO, 10, logTime.year);
-				dstEnd.hour = 1;
-				dstEnd.minute = 59;
-				dstEnd.setTime(dstEnd.getTime() - timeZoneOffsetMillis);
-
-				if (logTime.after(dstStart) && logTime.before(dstEnd)) {
-				    timeZoneOffsetMillis += 3600000;
-				}
-			    }
-
-			    logTime.setTime(logTime.getTime() + timeZoneOffsetMillis);
-			    logTimeString = logTime.format("yyyy-MM-dd HH:mm");
-			} catch (IllegalArgumentException e) {
+			if (timeZoneOffset == 100) { //autodetect
+			    timeZoneOffsetMillis = Time.convertSystemTime(logTime.getTime(), false) - logTime.getTime();
+			} else {
+			    timeZoneOffsetMillis = timeZoneOffset * 3600000;
 			}
+
+			if (MainForm.profile.getTimeZoneAutoDST()) {
+			    int lsM = (byte) (31 - ((int) (5 * logTime.year / 4) + 4) % 7);//last Sunday in March
+			    int lsO = (byte) (31 - ((int) (5 * logTime.year / 4) + 1) % 7);//last Sunday in October
+
+			    Time dstStart = new Time(lsM, 3, logTime.year);
+			    dstStart.hour = 2;
+			    dstStart.setTime(dstStart.getTime() - timeZoneOffsetMillis);
+			    Time dstEnd = new Time(lsO, 10, logTime.year);
+			    dstEnd.hour = 1;
+			    dstEnd.minute = 59;
+			    dstEnd.setTime(dstEnd.getTime() - timeZoneOffsetMillis);
+
+			    if (logTime.after(dstStart) && logTime.before(dstEnd)) {
+				timeZoneOffsetMillis += 3600000;
+			    }
+			}
+
+			logTime.setTime(logTime.getTime() + timeZoneOffsetMillis);
+			logTimeString = logTime.format("yyyy-MM-dd HH:mm");
+		    } catch (IllegalArgumentException e) {
 		    }
+		    //}
 
 		    ch.setCacheStatus(logTimeString);
 		    ch.setFound(true);
@@ -159,7 +160,7 @@ public class FieldnotesImporter {
 		    foundIcon = "3.png";
 		}
 		if (logText.length() > 0) {
-		    ch.getCacheDetails(false).OwnLog = new Log("", Preferences.itself().gcMemberId, foundIcon, logTime.format("yyyy-MM-dd"), Preferences.itself().myAlias, logText);
+		    ch.getCacheDetails(false).OwnLog = new Log("", Preferences.itself().gcMemberId, foundIcon, logTime.format("yyyy-MM-dd"), Preferences.itself().myAlias, STRreplace.replace(logText, "\n", "<br />"));
 		    ch.getCacheDetails(false).OwnLogId = "";
 		    ch.save();
 		}

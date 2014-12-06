@@ -76,7 +76,7 @@ public class PDATravelbugDetailMenu extends PDAMenu {
 		CacheHolderDetail cacheDetails = ch.getCacheDetails(true);
 		cacheDetails.Travelbugs.add(tb);
 		journeyScreen.model.allTravelbugJourneys.addTbDrop(tb, MainForm.profile.name, ch.getWayPoint());
-		ch.setHas_bugs(true);
+		ch.hasBugs(true);
 		ch.save();
 		// Set Input fields to the new Values:
 		view.getInpToWaypoint().setText(view.getTravelbug().getToWaypoint());

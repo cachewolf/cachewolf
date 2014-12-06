@@ -157,21 +157,18 @@ public class CacheHolderDetail {
      * Method to update an existing cache with new data. This is
      * necessary to avoid missing old logs. Called from GPX Importer
      * 
-     * @param newCh
+     * @param newChD
      *            new cache data
      * @return CacheHolder with updated data
      */
-    public CacheHolderDetail update(CacheHolderDetail newCh) {
+    public CacheHolderDetail update(CacheHolderDetail newChD) {
 	// flags
 	CacheHolder ch = parent;
-	if (ch.isFound() && ch.cacheStatus().equals("")) {
-	    ch.setCacheStatus(ch.getFoundText());
-	}
 	// travelbugs:GPX-File contains all actual travelbugs but not the missions
 	// we need to check whether the travelbug is already in the existing list
-	getParent().setHas_bugs(newCh.Travelbugs.size() > 0);
-	for (int i = newCh.Travelbugs.size() - 1; i >= 0; i--) {
-	    Travelbug tb = newCh.Travelbugs.getTB(i);
+	ch.hasBugs(newChD.Travelbugs.size() > 0);
+	for (int i = newChD.Travelbugs.size() - 1; i >= 0; i--) {
+	    Travelbug tb = newChD.Travelbugs.getTB(i);
 	    Travelbug oldTB = this.Travelbugs.find(tb.getName());
 	    // If the bug is already in the cache, we keep it
 	    if (oldTB != null) {
@@ -179,37 +176,34 @@ public class CacheHolderDetail {
 		    oldTB.setMission(tb.getMission());
 		if (tb.getGuid().length() > 0)
 		    oldTB.setGuid(tb.getGuid());
-		newCh.Travelbugs.replace(i, oldTB);
+		newChD.Travelbugs.replace(i, oldTB);
 	    }
 	}
-	this.Travelbugs = newCh.Travelbugs;
-	if (newCh.attributes.count() > 0)
-	    this.attributes = newCh.attributes;
-	// URL
-	this.URL = newCh.URL;
+	this.Travelbugs = newChD.Travelbugs;
 
+	if (newChD.attributes.count() > 0)
+	    this.attributes = newChD.attributes;
+	this.URL = newChD.URL;
 	if (this.gCNotes.length() > 0) {
-	    this.setCacheNotes(STRreplace.replace(this.CacheNotes, this.gCNotes, newCh.getGCNotes()));
+	    this.setCacheNotes(STRreplace.replace(this.CacheNotes, this.gCNotes, newChD.getGCNotes()));
 	} else {
-	    this.setCacheNotes(this.CacheNotes + newCh.getGCNotes());
+	    this.setCacheNotes(this.CacheNotes + newChD.getGCNotes());
 	}
-
-	// Images
-	this.images = newCh.images;
-	setLongDescription(newCh.LongDescription);
-	setHints(newCh.Hints);
-	setCacheLogs(newCh.CacheLogs);
-	if (newCh.OwnLogId.length() > 0)
-	    this.OwnLogId = newCh.OwnLogId;
-	if (newCh.OwnLog != null) {
-	    this.OwnLog = newCh.OwnLog;
+	this.images = newChD.images;
+	setLongDescription(newChD.LongDescription);
+	setHints(newChD.Hints);
+	setCacheLogs(newChD.CacheLogs);
+	if (newChD.OwnLogId.length() > 0)
+	    this.OwnLogId = newChD.OwnLogId;
+	if (newChD.OwnLog != null) {
+	    this.OwnLog = newChD.OwnLog;
 	}
-	if (newCh.Country.length() > 0)
-	    this.Country = newCh.Country;
-	if (newCh.State.length() > 0)
-	    this.State = newCh.State;
-	if (newCh.getSolver().length() > 0)
-	    this.setSolver(newCh.getSolver());
+	if (newChD.Country.length() > 0)
+	    this.Country = newChD.Country;
+	if (newChD.State.length() > 0)
+	    this.State = newChD.State;
+	if (newChD.getSolver().length() > 0)
+	    this.setSolver(newChD.getSolver());
 	return this;
     }
 

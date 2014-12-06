@@ -384,44 +384,55 @@ public class MyTableControl extends TableControl {
 	    }
 	    if (mainCache.isCacheWpt()) {
 		chD = mainCache.getCacheDetails(false);
+		String ownLogMessage = "";
 		if (chD != null) {
-		    String ownLogMessage = chD.OwnLog.getMessage();
-		    if (ownLogMessage.length() > 0) {
-			Vm.setClipboardText(mainCache.cacheStatus() + '\n' + "<br>" + ownLogMessage);
+		    if (chD.OwnLog != null) {
+			// Cache schon im CW gelogged
+			ownLogMessage = chD.OwnLog.getMessage();
+			if (ownLogMessage.length() > 0) {
+			    Vm.setClipboardText(mainCache.cacheStatus() + '\n' + "<br>" + ownLogMessage);
+			}
 		    }
-		    if (mainCache.isOC()) {
+		}
+		if (mainCache.isOC()) {
+		    if (chD != null) {
 			url = chD.URL;
 			if (url.indexOf("viewcache") >= 0) {
 			    url = STRreplace.replace(url, "viewcache", "log");
 			}
 		    } else {
-			if (chD.OwnLogId.length() > 0) {
-			    String ocWpName = mainCache.getOcCacheID();
-			    if (ocWpName.length() > 0 && ocWpName.charAt(0) < 65) {
-				// OC log (already logged at GC but not at OC)
-				if (clickedColumn == 14) {
-				    OCLogExport.doOneLog(mainCache);
-				    MainTab.itself.tablePanel.refreshTable();
-				} else {
-				    // open OC logpage with Logtext in Clipboard
-				    Vm.setClipboardText(chD.OwnLog.getDate() + '\n' + "<br>" + ownLogMessage);
-				    if (ocWpName.length() > 1) {
-					if (ocWpName.charAt(0) < 65) {
-					    ocWpName = ocWpName.substring(1);
-					}
-					url = "http://" + OC.getOCHostName(ocWpName) + "/log.php?wp=" + ocWpName;
+			// OC Url aus Cachenamen http://www.opencaching.de/log.php?wp=OC11871
+			url = "http://" + OC.getOCHostName(mainCache.getWayPoint()) + "/log.php?wp=" + mainCache.getWayPoint();
+		    }
+		} else {
+		    // GC und schon gelogged --> log bei OC eintragen, wenn auf OC-Index-Spalte geklickt
+		    if (chD.OwnLogId.length() > 0) {
+			String ocWpName = mainCache.getOcCacheID();
+			if (ocWpName.length() > 0 && ocWpName.charAt(0) < 65) {
+			    // OC log (already logged at GC but not at OC)
+			    if (clickedColumn == 14) {
+				OCLogExport.doOneLog(mainCache);
+				MainTab.itself.tablePanel.refreshTable();
+			    } else {
+				// open OC logpage with Logtext in Clipboard
+				Vm.setClipboardText(chD.OwnLog.getDate() + '\n' + "<br>" + ownLogMessage);
+				if (ocWpName.length() > 1) {
+				    if (ocWpName.charAt(0) < 65) {
+					ocWpName = ocWpName.substring(1);
 				    }
+				    url = "http://" + OC.getOCHostName(ocWpName) + "/log.php?wp=" + ocWpName;
 				}
 			    }
-			} else
-			    // GC log
-			    url = "http://www.geocaching.com/seek/log.aspx?ID=" + mainCache.GetCacheID();
-		    }
-
-		    if (url.length() > 0) {
-			callExternalProgram(Preferences.itself().browser, url);
-		    }
+			}
+		    } else
+			// bei GC loggen
+			url = "http://www.geocaching.com/seek/log.aspx?ID=" + mainCache.GetCacheID();
 		}
+
+		if (url.length() > 0) {
+		    callExternalProgram(Preferences.itself().browser, url);
+		}
+
 	    } else {
 		if (mainCache.isCustomWpt() && mainCache.getWayPoint().startsWith("GC")) {
 		    url = "http://www.geocaching.com/seek/log.aspx?ID=" + mainCache.GetCacheID();

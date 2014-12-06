@@ -65,7 +65,6 @@ public class Log {
     public Log(String logLine) {
 	// RECOMMENDED="1"<img src='icon_smile.gif'>&nbsp;2007-01-14 xyz<br>a wonderful log
 	try {
-	    // mit Extractor ist zwar nicht schneller, aber schöner
 	    Extractor ex = new Extractor(logLine, "logID=\"", "\"", 0, true);
 	    logID = ex.findNext();
 	    ex.set("finderID=\"", "\"", 0);
@@ -74,21 +73,10 @@ public class Log {
 		recommended = true;
 	    else
 		recommended = false;
-	    //ic1 = logLine.indexOf("<img src='");
-	    //int ic2 = logLine.indexOf("'", ic1 + 10);
-	    //icon = logLine.substring(ic1 + 10, ic2);
 	    icon = ex.set("<img src='", "'", 0).findNext();
-	    //int d1 = logLine.indexOf(";");
-	    //date = logLine.substring(d1 + 1, d1 + 11);
-	    date = ex.set("&nbsp;", " ", ex.searchedFrom()).findNext();
-	    // int l1 = d1 + 12;
-	    // if (logLine.substring(l1, l1 + 3).equals("by "))
-	    // l1 += 3;
-	    //int l2 = logLine.indexOf("<br>", l1);
-	    //finder = logLine.substring(l1, l2);
-	    finder = ex.set("by ", "<br>", ex.searchedFrom()).findNext();
-	    // message = logLine.substring(l2 + 4, logLine.indexOf("]]>", l1));
-	    message = ex.set("<br>", "]]>", ex.searchedFrom()).findNext();
+	    date = ex.findNext("&nbsp;", " ");
+	    finder = ex.findNext("by ", "<br>");
+	    message = ex.findNext("<br>", "]]>");
 	} catch (Exception ex) {
 	    if (logLine.indexOf("<img") < 0) { // Have we reached the line that states max logs reached
 		icon = MAXLOGICON;

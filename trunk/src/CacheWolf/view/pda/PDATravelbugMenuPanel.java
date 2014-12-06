@@ -70,7 +70,7 @@ public class PDATravelbugMenuPanel extends PDAMenu {
 		if (tb != null) {
 		    view.model.allTravelbugJourneys.addTbPickup(tb, MainForm.profile.name, waypoint);
 		    CacheHolderDetail cacheDetails = ch.getCacheDetails(true);
-		    ch.setHas_bugs(cacheDetails.Travelbugs.size() > 0);
+		    ch.hasBugs(cacheDetails.Travelbugs.size() > 0);
 		    ch.save();
 		    view.model.allTravelbugJourneys.saveTravelbugsFile();
 		}
@@ -99,7 +99,7 @@ public class PDATravelbugMenuPanel extends PDAMenu {
 	    tbj.setFromLogged(true);
 	    view.model.allTravelbugJourneys.add(tbj);
 	    CacheHolderDetail cacheDetails = ch.getCacheDetails(true);
-	    ch.setHas_bugs(cacheDetails.Travelbugs.size() > 0);
+	    ch.hasBugs(cacheDetails.Travelbugs.size() > 0);
 	    ch.save();
 	    view.model.allTravelbugJourneys.saveTravelbugsFile();
 	    view.createShowSet();

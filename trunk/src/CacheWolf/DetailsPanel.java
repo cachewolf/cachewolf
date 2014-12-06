@@ -40,6 +40,7 @@ import CacheWolf.database.TravelbugList;
 import CacheWolf.navi.Navigate;
 import CacheWolf.navi.TransformCoordinates;
 import CacheWolf.utils.MyLocale;
+import CacheWolf.utils.STRreplace;
 import ewe.fx.IImage;
 import ewe.fx.Point;
 import ewe.fx.Rect;
@@ -243,7 +244,7 @@ public class DetailsPanel extends CellPanel {
 	if (Preferences.itself().isBigScreen) {
 	    ownLog = new mTextPad();
 	    pnlLog = new MyScrollBarPanel(ownLog);
-	    pnlLog.setText(" "); //(MyLocale.getMsg(278, "Eigener Log: ") + "1234567890");
+	    pnlLog.setText(" ");
 	    addLast(pnlLog, STRETCH, FILL);
 	    waypointNotes = new mTextPad();
 	    waypointNotes.modify(ControlConstants.NotEditable, 0);
@@ -725,7 +726,7 @@ public class DetailsPanel extends CellPanel {
 	}
 	final byte oldType = cache.getType();
 	cache.setType(newCacheType);
-	String ownLogText = ownLog.getText();
+	String ownLogText = STRreplace.replace(ownLog.getText(), "\n", "<br />");
 	if (ownLogText.length() > 0) {
 	    String OwnLogId = cache.getCacheDetails(false).OwnLogId;
 	    cache.getCacheDetails(false).OwnLog = new Log(OwnLogId, Preferences.itself().gcMemberId, "2.png", "1900-01-01", Preferences.itself().myAlias, ownLogText);
@@ -855,7 +856,7 @@ public class DetailsPanel extends CellPanel {
 			tbjList.saveTravelbugsFile();
 			setHtml(cache.getCacheDetails(true).Travelbugs.toHtml());
 			repaint();
-			cache.setHas_bugs(cache.getCacheDetails(true).Travelbugs.size() > 0);
+			cache.hasBugs(cache.getCacheDetails(true).Travelbugs.size() > 0);
 		    }
 		} else if (selectedItem.equals(mnuDropTB)) {
 		    TravelbugJourneyList tbjList;
@@ -870,7 +871,7 @@ public class DetailsPanel extends CellPanel {
 			tbjList.addTbDrop(tb, MainForm.profile.name, cache.getWayPoint());
 		    }
 		    tbjList.saveTravelbugsFile();
-		    cache.setHas_bugs(cache.getCacheDetails(true).Travelbugs.size() > 0);
+		    cache.hasBugs(cache.getCacheDetails(true).Travelbugs.size() > 0);
 		    setHtml(cache.getCacheDetails(true).Travelbugs.toHtml());
 		    repaint();
 		    dirtyDetails = true;
