@@ -107,7 +107,7 @@ public class TravelbugMenu extends MenuBar {
 		    view.chD.Travelbugs.add(tb);
 		    model.allTravelbugJourneys.addTbDrop(tb, MainForm.profile.name, view.waypoint);
 		    view.chDmodified = true;
-		    view.ch.setHas_bugs(true);
+		    view.ch.hasBugs(true);
 		}
 		view.repaint();
 	    } else if (mev.selectedItem == mnuNewTB) {

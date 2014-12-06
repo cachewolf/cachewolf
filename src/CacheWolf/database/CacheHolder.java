@@ -260,7 +260,7 @@ public class CacheHolder {
 
 		start = xmlString.indexOf('"', end + 1);
 		end = xmlString.indexOf('"', start + 1);
-		setHas_bugs(xmlString.substring(start + 1, end).equals("true"));
+		hasBugs(xmlString.substring(start + 1, end).equals("true"));
 
 		start = xmlString.indexOf('"', end + 1);
 		end = xmlString.indexOf('"', start + 1);
@@ -289,7 +289,7 @@ public class CacheHolder {
 
 		start = xmlString.indexOf('"', end + 1);
 		end = xmlString.indexOf('"', start + 1);
-		setHTML(!xmlString.substring(start + 1, end).equals("false"));
+		isHTML(!xmlString.substring(start + 1, end).equals("false"));
 
 		start = xmlString.indexOf('"', end + 1);
 		end = xmlString.indexOf('"', start + 1);
@@ -478,23 +478,44 @@ public class CacheHolder {
 	this.recommendationScore = ch.recommendationScore;
 	this.setNumFoundsSinceRecommendation(ch.getNumFoundsSinceRecommendation());
 	this.setNumRecommended(ch.getNumRecommended());
-	this.setIsPMCache(ch.isPMCache());
-	/*
-	 * Here we have to distinguish several cases: this.isFound this ch Update 'this' (values are empty or yyyy-mm-dd) ---------------------------------------------------------------------- false any yyyy-mm-dd yes true "Found"
-	 * yyyy-mm-dd yes true yyyy-mm-dd yyyy-mm-dd yes (or no) true yyyy-mm-dd hh:mm yyyy-mm-dd no
-	 */
-	if (!this.isFound || this.cacheStatus.indexOf(":") < 0) {
-	    // don't overwrite with empty data
-	    if (!ch.cacheStatus().trim().equals("")) {
-		this.setCacheStatus(ch.cacheStatus());
-	    }
-	    this.setFound(ch.isFound());
+	this.setIsPMCache(ch.isPMCache);
+	ch.setCacheStatus(ch.cacheStatus.trim());
+	if (ch.isFound() && ch.cacheStatus.equals("")) {
+	    ch.setCacheStatus(ch.getFoundText());
 	}
+	/*
+	 * Here we have to distinguish several cases: 
+	 * this.isFound this.Status      ch.isFound   ch.Status    this.isFound this.Status 
+	 * --------------------------------------------------------------------------------
+	 *  true        Found            true         Date         =            ch.Status(if not empty ?== Date )
+	 *  true        yyyy-mm-dd       true         Date         =            ch.Status(if not empty ?== Date )
+	 *  true        yyyy-mm-dd hh:mm true         Date         =            =
+	 *  false       something        false        something    =            ch.Status(if not empty ?merge somehow ) 
+	 *  false       something        true         Date         true         ch.Status(if not empty ?== Date )
+	 */
+	if (this.isFound) {
+	    if (this.cacheStatus.indexOf(":") < 0) {
+		if (ch.cacheStatus().length() > 0) {
+		    this.setCacheStatus(ch.cacheStatus());
+		    this.setFound(ch.isFound());
+		}
+	    }
+	} else {
+	    if (ch.cacheStatus().length() > 0) {
+		this.setCacheStatus(ch.cacheStatus());
+		this.setFound(ch.isFound());
+	    }
+	}
+
 	// Don't overwrite valid coordinates with invalid ones
 	if (ch.pos.isValid() || !this.pos.isValid()) {
 	    if (!this.isSolved) {
 		this.pos = ch.pos;
 	    }
+	}
+	// the new from GC if coords are changed there
+	if (ch.isSolved) {
+	    this.setIsSolved(ch.isSolved);
 	}
 	this.setWayPoint(ch.getWayPoint());
 	this.setCacheName(ch.getCacheName());
@@ -517,8 +538,8 @@ public class CacheHolder {
 	if (ch.getOcCacheID().length() > 0)
 	    this.setOcCacheID(ch.getOcCacheID());
 	this.setNoFindLogs(ch.getNoFindLogs());
-	this.setHas_bugs(ch.hasBugs());
-	this.setHTML(ch.isHTML());
+	this.hasBugs(ch.hasBugs());
+	this.isHTML(ch.isHTML());
 	this.sort = ch.sort;
 	this.setLastSync(ch.getLastSync());
 
@@ -1479,7 +1500,11 @@ public class CacheHolder {
     private final static int GC_MSG = 1;
     private final static int IDX_WRITENOTE = 5;
     private final static String sSolved = MyLocale.getMsg(362, "Solved");
-    private final static String[][] _logType = { { "353", "" }, { "318", "Found it" }, { "355", "Attended" }, { "361", "Webcam Photo Taken" }, { "319", "Didn't find it" },
+    private final static String[][] _logType = { { "353", "" },
+	    { "319", "Didn't find it" }, //
+	    { "318", "Found it" }, //
+	    { "355", "Attended" }, //
+	    { "361", "Webcam Photo Taken" }, //
 	    { "314", "Write note" }, // at change do change IDX_WRITENOTE = 5;
 	    { "315", "Needs Archived" }, { "316", "Needs Maintenance" }, { "317", "Search" }, { "354", "Will Attend" }, { "320", "Owner" }, { "359", "Owner Maintenance" }, { "356", "Temporarily Disable Listing" }, { "357", "Enable Listing" },
 	    { "358", "Post Reviewer Note" }, { "313", "Flag 1" }, { "360", "Flag 2" }, };
@@ -2164,7 +2189,7 @@ public class CacheHolder {
 	return hasBugs;
     }
 
-    public void setHas_bugs(boolean b) {
+    public void hasBugs(boolean b) {
 	if (b != this.hasBugs) {
 	    MainForm.profile.notifyUnsavedChanges(true);
 	    this.hasBugs = b;
@@ -2175,7 +2200,7 @@ public class CacheHolder {
 	return isHTML;
     }
 
-    public void setHTML(boolean b) {
+    public void isHTML(boolean b) {
 	if (b != this.isHTML) {
 	    MainForm.profile.notifyUnsavedChanges(true);
 	    this.isHTML = b;

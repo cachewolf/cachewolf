@@ -365,7 +365,7 @@ public class TravelbugJourneyScreen extends Form {
 	    // If the list of travelbugs in the cache was modified, we need to
 	    // save the cache too
 	    if (chDmodified) {
-		ch.setHas_bugs(chD.Travelbugs.size() > 0);
+		ch.hasBugs(chD.Travelbugs.size() > 0);
 		ch.save();
 	    }
 	    Vm.showWait(false);
@@ -641,7 +641,7 @@ public class TravelbugJourneyScreen extends Form {
 		    chD.Travelbugs.add(tb);
 		    tbModel.allTravelbugJourneys.addTbDrop(tb, MainForm.profile.name, waypoint);
 		    chDmodified = true;
-		    ch.setHas_bugs(true);
+		    ch.hasBugs(true);
 		}
 		repaint();
 	    }

@@ -29,8 +29,8 @@ package CacheWolf.utils;
 public class Extractor {
     int _startOffset;
     String _searchText;
-    String start;
-    String end;
+    String leftDelimiter;
+    String rightDelimiter;
     boolean _betweenonly;
     public static boolean INCLUDESTARTEND = false;
     public static boolean EXCLUDESTARTEND = true;
@@ -54,8 +54,8 @@ public class Extractor {
     public Extractor(String searchText, String st, String e, int startOffset, boolean betweenonly) {
 	_startOffset = startOffset;
 	_searchText = searchText;
-	end = e;
-	start = st;
+	rightDelimiter = e;
+	leftDelimiter = st;
 	_betweenonly = betweenonly;
     }
 
@@ -66,16 +66,16 @@ public class Extractor {
     public Extractor set(String searchText, String st, String e, int startOffset, boolean betweenonly) {
 	_startOffset = startOffset;
 	_searchText = searchText;
-	end = e;
-	start = st;
+	rightDelimiter = e;
+	leftDelimiter = st;
 	_betweenonly = betweenonly;
 	return this;
     }
 
     public Extractor set(String st, String e, int startOffset) {
 	_startOffset = startOffset;
-	end = e;
-	start = st;
+	rightDelimiter = e;
+	leftDelimiter = st;
 	return this;
     }
 
@@ -92,13 +92,13 @@ public class Extractor {
     }
 
     public String findNext(String startText) {
-	start = startText;
+	leftDelimiter = startText;
 	return findNext();
     }
 
     public String findNext(String startText, String endText) {
-	start = startText;
-	end = endText;
+	leftDelimiter = startText;
+	rightDelimiter = endText;
 	return findNext();
     }
 
@@ -110,22 +110,24 @@ public class Extractor {
      * Method to find the next occurance of a string that is enclosed by
      * that start (st) and end string (e).
      * if end is not found empty string is returned.
+     * _startOffset for search is at end of extracted string (ret without rightDelimiter), 
+     * so a delimiter string(rightDelimiter) can be used twice: first for rightDelimiter and then for leftDelimiter
      */
     public String findNext() {
 	String ret = "";
-	if (_searchText != null && _searchText.length() > _startOffset + start.length() + end.length()) {
-	    int idxStart = _searchText.indexOf(start, _startOffset);
-	    int idxEnd = -1;
-	    if (idxStart > -1) {
-		idxEnd = _searchText.indexOf(end, idxStart + start.length());
-		if (idxEnd > -1) {
-		    _startOffset = idxEnd;
-		    ret = _searchText.substring(idxStart + start.length(), idxEnd);
+	if (_searchText != null && _searchText.length() > _startOffset + leftDelimiter.length() + rightDelimiter.length()) {
+	    int idxLeftDelimiter = _searchText.indexOf(leftDelimiter, _startOffset);
+	    int idxRightDelimiter = -1;
+	    if (idxLeftDelimiter > -1) {
+		idxRightDelimiter = _searchText.indexOf(rightDelimiter, idxLeftDelimiter + leftDelimiter.length());
+		if (idxRightDelimiter > -1) {
+		    _startOffset = idxRightDelimiter;
+		    ret = _searchText.substring(idxLeftDelimiter + leftDelimiter.length(), idxRightDelimiter);
 		    if (!this._betweenonly)
-			ret = start + ret + end;
+			ret = leftDelimiter + ret + rightDelimiter;
 		}
 	    }
-	    if (idxEnd == -1) {
+	    if (idxRightDelimiter == -1) {
 		_startOffset = _searchText.length(); // Schluss
 	    }
 	}
