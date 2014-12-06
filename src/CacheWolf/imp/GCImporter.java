@@ -532,6 +532,15 @@ public class GCImporter {
 		ch.initStates(false);
 	}
 
+	if (possibleUpdateList == null) {
+	    possibleUpdateList = new Hashtable(MainForm.profile.cacheDB.size());
+	    sureUpdateList = new Hashtable(MainForm.profile.cacheDB.size());
+
+	} else {
+	    possibleUpdateList.clear();
+	    sureUpdateList.clear();
+	}
+
 	double lateralDistance = maxDistance; // Seitenabstand in km
 	if (Preferences.itself().metricSystem == Metrics.IMPERIAL) {
 	    lateralDistance = Metrics.convertUnit(maxDistance, Metrics.MILES, Metrics.KILOMETER);
@@ -548,6 +557,7 @@ public class GCImporter {
 	if (points != null)
 	    Preferences.itself().log("Start at " + origin + " to check " + points.size() + " points.");
 
+	Time startZeit = new Time();
 	while (nextPos != null) {
 	    if (importGui.getFileName().length() == 0) {
 		nextPos = nextRoutePoint(startPos, lateralDistance);
@@ -587,6 +597,7 @@ public class GCImporter {
 			break;
 		}
 		downloadCaches();
+		updateCaches();
 		startPos = nextPos;
 	    }
 	    if (infB.isClosed())
@@ -596,9 +607,6 @@ public class GCImporter {
 	    Vm.showWait(false);
 	    return;
 	} // or ask for download of intermediate result
-
-	MainForm.profile.restoreFilter();
-	MainForm.profile.saveIndex(true);
 
 	if (spiderErrors > 0 || spiderIgnorePremium > 0) {
 	    String infoString = "";
@@ -612,12 +620,19 @@ public class GCImporter {
 	}
 	MainForm.profile.restoreFilter();
 	MainForm.profile.saveIndex(true);
-
-	infB.close(0);
 	Vm.showWait(false);
 
 	loggedIn = false; // check again login on next spider
 
+	Time endZeit = new Time();
+	long benoetigteZeit = (endZeit.getTime() - startZeit.getTime()) / 1000; // sec
+	if (!infB.isClosed()) {
+	    infB.setInfo(MyLocale.getMsg(5535, "Caches added:   ") + newTillNow + "\n" + //
+		    MyLocale.getMsg(5536, "Caches updated: ") + updateTillNow + "\n" + //
+		    MyLocale.getMsg(5534, "Time required: ") + (benoetigteZeit / 60) + " min " + (benoetigteZeit % 60) + " sec "//
+	    );
+	    infB.setButtonText(MyLocale.getMsg(4107, "Done"), FormBase.CANCELB);
+	}
     }
 
     private CWPoint nextRoutePoint(CWPoint startPos, double lateralDistance) {
@@ -698,6 +713,10 @@ public class GCImporter {
 			    if (!downloadList.contains(chWaypoint)) {
 				downloadList.add(chWaypoint);
 				infB.setInfo(MyLocale.getMsg(5511, "Found ") + downloadList.size());
+			    }
+			} else {
+			    if (updateExists(ch)) {
+				possibleUpdateList.put(ch.getWayPoint(), ch);
 			    }
 			}
 		    } else
@@ -1993,7 +2012,7 @@ public class GCImporter {
 		}
 		if (ret == SPIDER_OK) {
 		    try {
-			ch.setHTML(true);
+			ch.isHTML(true);
 			ch.addiWpts.clear();
 			chD.images.clear();
 
@@ -2047,7 +2066,7 @@ public class GCImporter {
 
 			if (fetchTBs)
 			    getBugs(chD);
-			ch.setHas_bugs(chD.Travelbugs.size() > 0);
+			ch.hasBugs(chD.Travelbugs.size() > 0);
 			if (downloadPics) {
 			    this.getImages(chD);
 			}

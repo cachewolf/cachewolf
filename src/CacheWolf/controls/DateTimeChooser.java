@@ -253,7 +253,7 @@ public class DateTimeChooser extends Editor {
 	    super.onControlEvent(ev);
     }
 
-    public void setDate(Time t) {
+    private void setDate(Time t) {
 	dateSet = t;
 	if (!t.isValid())
 	    t = new Time();
@@ -268,7 +268,7 @@ public class DateTimeChooser extends Editor {
 	toControls("day,month,year,monthName,time");
     }
 
-    public void newDate() {
+    private void newDate() {
 	Time t = new Time(day, month, year);
 	t.hour = hour;
 	t.minute = minute;

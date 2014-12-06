@@ -305,11 +305,11 @@ public class GPXImporter extends MinML {
 	}
 
 	if (name.indexOf("long_description") > -1) {
-	    holder.setHTML(atts.getValue("html").toLowerCase().equals("true"));
+	    holder.isHTML(atts.getValue("html").toLowerCase().equals("true"));
 	}
 	if (name.equals("description") || name.equals("terra:description")) {
 	    // set HTML always to true if from oc.de or TC
-	    holder.setHTML(true);
+	    holder.isHTML(true);
 	}
 
 	if (name.equals("groundspeak:logs") || name.equals("logs") || name.equals("terra:logs")) {
@@ -449,7 +449,7 @@ public class GPXImporter extends MinML {
 	if (name.equals("groundspeak:name") && inBug) {
 	    Travelbug tb = new Travelbug(strData);
 	    holder.getCacheDetails(false).Travelbugs.add(tb);
-	    holder.setHas_bugs(true);
+	    holder.hasBugs(true);
 	    return;
 	}
 
@@ -498,7 +498,7 @@ public class GPXImporter extends MinML {
 	// Text for additional waypoints, no HTML
 	if (name.equals("cmt") && inWpt) {
 	    holder.getCacheDetails(false).LongDescription = strData;
-	    holder.setHTML(false);
+	    holder.isHTML(false);
 	    return;
 	}
 
