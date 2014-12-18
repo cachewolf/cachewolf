@@ -38,6 +38,7 @@ import CacheWolf.database.Log;
 import CacheWolf.navi.TransformCoordinates;
 import CacheWolf.utils.Common;
 import CacheWolf.utils.MyLocale;
+import CacheWolf.utils.STRreplace;
 import CacheWolf.utils.SafeXML;
 import CacheWolf.utils.UrlFetcher;
 
@@ -701,8 +702,13 @@ public class OCXMLImporter extends MinML {
 	    //
 	    if ((logFinder.toLowerCase().compareTo(user) == 0 || logFinder.equalsIgnoreCase(Preferences.itself().myAlias2)) && logtype == 1) {
 		if (incFinds || !holder.isNew()) {
-		    // aber vorhandene werden mit gefunden aktualisiert
-		    holder.setCacheStatus(logDate);
+		    if (holder.cacheStatus().indexOf(":") < 0) {
+			holder.setCacheStatus(logDate);
+		    } else {
+			if (!Preferences.itself().keepTimeOnUpdate) {
+			    holder.setCacheStatus(logDate);
+			}
+		    }
 		    holder.setFound(true);
 		    holder.getCacheDetails(false).OwnLogId = logId;
 		    holder.getCacheDetails(false).OwnLog = new Log(logId, finderID, logIcon, logDate, logFinder, logData, loggerRecommended);
@@ -728,7 +734,7 @@ public class OCXMLImporter extends MinML {
 	    return;
 	}
 	if (name.equals("text")) {
-	    logData = strData;
+	    logData = STRreplace.replace(strData, "\n", "<br />");
 	    return;
 	}
 

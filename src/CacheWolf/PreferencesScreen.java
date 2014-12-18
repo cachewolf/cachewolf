@@ -118,7 +118,7 @@ public class PreferencesScreen extends Form {
     private mInput MapsDir;
     private mButton MapsDirBrowseButton, gpsButton;
     // importPanel
-    private mCheckBox chkCheckLog, chkCheckDTS, chkCheckTBs, alwaysKeepOwnLogs, chkOverwriteLogs, chkAskForMaxValues, chkAddPremiumGC, chkUseGCFavoriteValue;
+    private mCheckBox chkCheckLog, chkCheckDTS, chkCheckTBs, alwaysKeepOwnLogs, chkOverwriteLogs, chkKeepTimeOnUpdate, chkAskForMaxValues, chkAddPremiumGC, chkUseGCFavoriteValue;
     private mInput maxLogsToKeep, maxLogsToSpider;
 
     mChoice inpLanguage, inpMetric, inpSpiderUpdates, chcGarminPort;
@@ -231,6 +231,8 @@ public class PreferencesScreen extends Form {
 	logsPanel.addLast(maxLogsToSpider = new mInput(Preferences.itself().maxLogsToSpider == -1 ? "" : "" + Preferences.itself().maxLogsToSpider));
 	logsPanel.addLast(chkOverwriteLogs = new mCheckBox(MyLocale.getMsg(668, "Overwrite saved Logs?")));
 	chkOverwriteLogs.setState(Preferences.itself().overwriteLogs);
+	logsPanel.addLast(chkKeepTimeOnUpdate = new mCheckBox(MyLocale.getMsg(678, "Keep logtime")));
+	chkKeepTimeOnUpdate.setState(Preferences.itself().keepTimeOnUpdate);
 	importPanel.addLast(logsPanel, HSTRETCH, HFILL);
 	//   
 
@@ -522,6 +524,7 @@ public class PreferencesScreen extends Form {
 		Preferences.itself().maxLogsToSpider = (tmp.length() == 0 ? -1 : Common.parseInt(tmp));
 
 		Preferences.itself().overwriteLogs = chkOverwriteLogs.getState();
+		Preferences.itself().keepTimeOnUpdate = chkKeepTimeOnUpdate.getState();
 		Preferences.itself().askForMaxNumbersOnImport = chkAskForMaxValues.getState();
 		Preferences.itself().addPremiumGC = this.chkAddPremiumGC.getState();
 		Preferences.itself().useGCFavoriteValue = this.chkUseGCFavoriteValue.getState();

@@ -480,8 +480,11 @@ public class CacheHolder {
 	this.setNumRecommended(ch.getNumRecommended());
 	this.setIsPMCache(ch.isPMCache);
 	ch.setCacheStatus(ch.cacheStatus.trim());
-	if (ch.isFound() && ch.cacheStatus.equals("")) {
-	    ch.setCacheStatus(ch.getFoundText());
+	if (ch.isFound()) {
+	    if (ch.cacheStatus.length() == 0) {
+		// wenn kein Datum drin ist (also z.B. nicht von GC gespidert) 
+		ch.setCacheStatus(ch.getFoundText());
+	    }
 	}
 	/*
 	 * Here we have to distinguish several cases: 
@@ -489,15 +492,22 @@ public class CacheHolder {
 	 * --------------------------------------------------------------------------------
 	 *  true        Found            true         Date         =            ch.Status(if not empty ?== Date )
 	 *  true        yyyy-mm-dd       true         Date         =            ch.Status(if not empty ?== Date )
-	 *  true        yyyy-mm-dd hh:mm true         Date         =            =
+	 *  true        yyyy-mm-dd hh:mm true         Date         =            ch.Status(Date)
 	 *  false       something        false        something    =            ch.Status(if not empty ?merge somehow ) 
 	 *  false       something        true         Date         true         ch.Status(if not empty ?== Date )
 	 */
 	if (this.isFound) {
 	    if (this.cacheStatus.indexOf(":") < 0) {
 		if (ch.cacheStatus().length() > 0) {
+		    // ch.isFound
 		    this.setCacheStatus(ch.cacheStatus());
-		    this.setFound(ch.isFound());
+		}
+	    } else {
+		if (!Preferences.itself().keepTimeOnUpdate) {
+		    if (ch.cacheStatus().length() > 0) {
+			// ch.isFound
+			this.setCacheStatus(ch.cacheStatus());
+		    }
 		}
 	    }
 	} else {
