@@ -135,6 +135,8 @@ public class Preferences extends MinML {
     public int maxLogsToKeep = Integer.MAX_VALUE;
     /** keep own logs even when exceeding <code>maxLogsToKeep</code> */
     public boolean alwaysKeepOwnLogs = true;
+    /** GC (and OC) don't save the logTime. CW perhaps has the time.*/
+    public boolean keepTimeOnUpdate = true;
     /** Maximum logs to spider */
     public int maxLogsToSpider = 99;
     /** overwrite stored Logs with the ones now fetched from GC*/
@@ -751,6 +753,11 @@ public class Preferences extends MinML {
 	    tmp = atts.getValue("keepown");
 	    if (tmp != null)
 		alwaysKeepOwnLogs = Boolean.valueOf(tmp).booleanValue();
+
+	    tmp = atts.getValue("keepTimeOnUpdate");
+	    if (tmp != null)
+		keepTimeOnUpdate = Boolean.valueOf(tmp).booleanValue();
+
 	} else if (name.equals("fillWhiteArea")) {
 	    tmp = atts.getValue("on");
 	    fillWhiteArea = tmp != null && tmp.equalsIgnoreCase("true");
@@ -986,7 +993,11 @@ public class Preferences extends MinML {
 		}
 		outp.print("/>\n");
 	    }
-	    outp.print("    <logkeeping maximum=\"" + SafeXML.strxmlencode(maxLogsToKeep) + "\" keepown=\"" + SafeXML.strxmlencode(alwaysKeepOwnLogs) + "\" />\n");
+	    outp.print("    <logkeeping" //
+		    + " maximum=\"" + SafeXML.strxmlencode(maxLogsToKeep) + "\"" //
+		    + " keepown=\"" + SafeXML.strxmlencode(alwaysKeepOwnLogs) + "\"" //
+		    + " keepTimeOnUpdate=\"" + SafeXML.strxmlencode(keepTimeOnUpdate) + "\"" //
+		    + " />\n");
 	    outp.print("    <fillWhiteArea on=\"" + SafeXML.strxmlencode(fillWhiteArea) + "\" />\n");
 	    outp.print("    <mapLoader" //
 		    + " overlapping=\"" + SafeXML.strxmlencode(mapOverlapping) + "\"" //
