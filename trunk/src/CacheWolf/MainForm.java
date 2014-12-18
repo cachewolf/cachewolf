@@ -132,6 +132,8 @@ public class MainForm extends Editor {
 	mApp.fontsChanged();
 	mApp.mainApp.font = newGuiFont;
 
+	profile = new Profile(); // used ua on new profile sets static access to profile
+	itself = this; // used ua on new profile
 	if (!selectProfile(PROFILE_SELECTOR_ONOROFF, true))
 	    ewe.sys.Vm.exit(0); // User MUST select or create a profile
 	Vm.showWait(true);
@@ -139,7 +141,6 @@ public class MainForm extends Editor {
 	infB.exec();
 	infB.waitUntilPainted(100);
 	try {
-	    profile = new Profile(); // sets static access to profile
 	    profile.readIndex(infB, this.preferences.absoluteBaseDir + this.preferences.lastProfile);
 	} catch (Exception e) {
 	    this.preferences.log("[MainForm:Exception loading CacheList]", e);
@@ -181,8 +182,6 @@ public class MainForm extends Editor {
 	if (infB != null)
 	    infB.close(0);
 	Vm.showWait(false);
-
-	itself = this;
 
     }
 
