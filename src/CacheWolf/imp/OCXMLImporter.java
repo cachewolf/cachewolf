@@ -700,7 +700,7 @@ public class OCXMLImporter extends MinML {
 		holder.getCacheDetails(false).hasUnsavedChanges = true; // chD.saveCacheDetails(MainForm.profile.dataDir);
 	    }
 	    //
-	    if ((logFinder.toLowerCase().compareTo(user) == 0 || logFinder.equalsIgnoreCase(Preferences.itself().myAlias2)) && logtype == 1) {
+	    if ((logFinder.equalsIgnoreCase(user) || logFinder.equalsIgnoreCase(Preferences.itself().myAlias2)) && logtype == 1) {
 		if (incFinds || !holder.isNew()) {
 		    if (holder.cacheStatus().indexOf(":") < 0) {
 			holder.setCacheStatus(logDate);

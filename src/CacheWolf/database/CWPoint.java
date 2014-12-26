@@ -55,11 +55,10 @@ public class CWPoint extends CoordinatePoint {
     }
 
     /**
-     * Creates an empty CWPoint, use set methods for filling
+     * Creates an inValid CWPoint, use set methods for filling
      */
     public CWPoint() {
-	super(-361, -361); // construct with unvalid == unset lat/lon 
-
+	super();
     }
 
     /**
@@ -181,7 +180,8 @@ public class CWPoint extends CoordinatePoint {
 				)
 	*/
 	String crsid = null;
-	if ((coord.length() >= 2) && (coord.charAt(2) == '.') && (coord.indexOf(' ') >= 0)) { // first 2 letters = Internet domain of projected area
+	if ((coord.length() >= 2) && (coord.charAt(2) == '.') && (coord.indexOf(' ') >= 0)) {
+	    // first 2 letters = Internet domain of projected area
 	    crsid = coord.substring(0, coord.indexOf(' '));
 	    if (TransformCoordinates.getLocalSystemCode(crsid) != -1) {
 		coord = coord.substring(coord.indexOf(' ') + 1, coord.length());

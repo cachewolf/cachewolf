@@ -22,15 +22,19 @@
 package CacheWolf.database;
 
 /**
- * this is not CWPoint because it should be as small as possible
+ * stores latDec and lonDec as public double (no getter/setter)<br>
+ * implements .equals(anotherPoint) and .isValid()<br>
  * @author pfeffer
  *
  */
-
 public class CoordinatePoint {
     public double latDec;
     public double lonDec;
 
+    /**
+     * Creates an inValid CoordinatePoint<br>
+     * set latDec and lonDec to make valid
+     */
     public CoordinatePoint() {
 	latDec = -91;
 	lonDec = -361;
@@ -46,13 +50,10 @@ public class CoordinatePoint {
 	lonDec = lon;
     }
 
-    public boolean equals(CoordinatePoint tp) {
-	return latDec == tp.latDec && lonDec == tp.lonDec;
+    public boolean equals(CoordinatePoint testpoint) {
+	return latDec == testpoint.latDec && lonDec == testpoint.lonDec;
     }
 
-    /**
-     * Returns true if the coordinates are valid
-     */
     public boolean isValid() {
 	return latDec <= 90.0 && latDec >= -90.0 && lonDec <= 360 && lonDec >= -360;
     }
