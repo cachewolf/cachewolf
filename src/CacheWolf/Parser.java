@@ -647,12 +647,12 @@ public class Parser {
     /** Get or set the profile centre */
     private void funcPz(int nargs) throws Exception {
 	if (nargs == 0) {
-	    calcStack.add(MainForm.profile.centre.toString());
+	    calcStack.add(MainForm.profile.center.toString());
 	} else {
 	    String coordA = popCalcStackAsString();
 	    if (!isValidCoord(coordA))
 		err(MyLocale.getMsg(1712, "Invalid coordinate: ") + coordA);
-	    MainForm.profile.centre.set(coordA);
+	    MainForm.profile.center.set(coordA);
 	}
     }
 

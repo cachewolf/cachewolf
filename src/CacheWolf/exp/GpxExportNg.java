@@ -103,8 +103,8 @@ public class GpxExportNg {
     final static String MAXNUMBEROFLOGSTOEXPORT = "maxNumberOfLogsToExport";
     final static String PREFIX = "prefix";
 
-    /** write compcat single GPX file */
-    final static int STYLE_COMPCAT_OUTPUT_SINGLE = 0;
+    /** write compact single GPX file */
+    final static int STYLE_COMPACT_OUTPUT_SINGLE = 0;
     /** write compact one file per "type" as determined by garminmap.xml */
     final static int STYLE_COMPACT_OUTPUT_SEPARATE = 1;
     /** generate GPI files with gpsbabel using garminmap.xml types */
@@ -652,7 +652,7 @@ public class GpxExportNg {
 	// no <cmt> for custom
 	if (!ch.isCustomWpt()) {
 	    if (exportOptions.getWpNameStyle() == WPNAME_ID_SMART && // 
-		    (exportStyle == STYLE_COMPCAT_OUTPUT_SINGLE //
+		    (exportStyle == STYLE_COMPACT_OUTPUT_SINGLE //
 			    || exportStyle == STYLE_COMPACT_OUTPUT_SEPARATE //
 		    || exportStyle == STYLE_COMPACT_OUTPUT_POI)) {
 		if (ch.isAddiWpt()) {
@@ -774,17 +774,19 @@ public class GpxExportNg {
 	return ret_____.toString();
     }
 
+    /*
     private String formatCacheboxExtensions() {
-	if (ch.isAddiWpt())
-	    return "";
-	StringBuffer ret_____ = new StringBuffer();
-	//cachebox-extension
-	// /note
-	// /solver
-	// /clue = bei Wegpunkten Beschreibung 
-	// /Parent = bei Wegpunkten - GCxxxx
-	return ret_____.toString();
+    if (ch.isAddiWpt())
+        return "";
+    StringBuffer ret_____ = new StringBuffer();
+    //cachebox-extension
+    // /note
+    // /solver
+    // /clue = bei Wegpunkten Beschreibung 
+    // /Parent = bei Wegpunkten - GCxxxx
+    return ret_____.toString();
     }
+    */
 
     private String formatTbs() {
 	StringBuffer ret = new StringBuffer();
@@ -1291,7 +1293,7 @@ public class GpxExportNg {
 		cbExportLogsAsPlainText.setState(false);
 		disable(lblMaxLogs, ibMaxLogs);
 		disable(lblAttrib2Log, cbAttrib2Log);
-		if (gpxStyle == STYLE_COMPCAT_OUTPUT_SINGLE) {
+		if (gpxStyle == STYLE_COMPACT_OUTPUT_SINGLE) {
 		    if (isGpsBabelInstalled)
 			enable(lblSendToGarmin, cbSendToGarmin);
 		    else {
@@ -1474,7 +1476,7 @@ public class GpxExportNg {
 
 	private void setPreferences() {
 	    switch (gpxStyle) {
-	    case STYLE_COMPCAT_OUTPUT_SINGLE:
+	    case STYLE_COMPACT_OUTPUT_SINGLE:
 		exportValues.put(WPNAMESTYLE, "" + chWpNameStyle.selectedIndex);
 		exportValues.put(USECUSTOMICONS, SafeXML.strxmlencode(cbUseCustomIcons.getState()));
 		exportValues.put(SENDTOGARMIN, SafeXML.strxmlencode(cbSendToGarmin.getState()));

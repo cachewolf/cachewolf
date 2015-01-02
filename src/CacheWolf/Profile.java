@@ -52,16 +52,23 @@ import ewe.ui.ProgressBarForm;
  * 
  */
 public class Profile {
-    /** version number of current format for index.xml and waypoint.xml */
+    /**
+     * version number of current format for index.xml and waypoint.xml
+     */
     public static int CURRENTFILEFORMAT = 3;
     /**
-     * The list of caches (CacheHolder objects). A pointer to this object exists in many classes in parallel to this object, i.e. the respective class contains both a {@link Profile} object and a cacheDB Vector.
+     * The list of caches (CacheHolder objects).<br>
+     * A pointer to this object exists in many classes in parallel to this object,<br>
+     * i.e. the respective class contains both a {@link Profile} object and a cacheDB Vector.
      */
     public CacheDB cacheDB = new CacheDB();
-    /** The centre point of this group of caches. Read from and stored to index.xml file */
-    public CWPoint centre = new CWPoint();
+    /** The center point of this group of caches.<br>
+     *  Read from and stored to index.xml file<br>
+     */
+    public CWPoint center = new CWPoint();
     /**
-     * The name of the profile. The baseDir in preferences is appended this name to give the dataDir where the index.xml and cache files live. (Excuse the English spelling of centre)
+     * The name of the profile.<br>
+     * The baseDir in preferences is appended this name to give the dataDir where the index.xml and cache files live.
      */
     public String name = "";
     /** This is the directory for the profile. It contains a closing /. */
@@ -135,7 +142,7 @@ public class Profile {
     public void clearProfile() {
 	CacheHolder.removeAllDetails();
 	cacheDB.clear();
-	centre.set(-361, -361);
+	center.set(-361, -361);
 	name = "";
 	dataDir = "";
 	setLast_sync_opencaching("");
@@ -148,8 +155,8 @@ public class Profile {
     }
 
     public void setCenterCoords(CWPoint coords) {
-	this.notifyUnsavedChanges(coords.equals(this.centre));
-	this.centre.set(coords);
+	this.notifyUnsavedChanges(coords.equals(this.center));
+	this.center.set(coords);
     }
 
     /**
@@ -191,8 +198,8 @@ public class Profile {
 	    Preferences.itself().log("Problem creating index.xml " + dataDir, e);
 	    return;
 	}
-	CWPoint savedCentre = centre;
-	if (centre == null || !centre.isValid() || (savedCentre.latDec == 0.0 && savedCentre.lonDec == 0.0))
+	CWPoint savedCentre = center;
+	if (center == null || !center.isValid() || (savedCentre.latDec == 0.0 && savedCentre.lonDec == 0.0))
 	    savedCentre = Preferences.itself().curCentrePt;
 
 	try {
@@ -318,13 +325,13 @@ public class Profile {
 			String lat = text.substring(start, text.indexOf("\"", start)).replace(notDecSep, decSep);
 			start = text.indexOf("lon=\"") + 5;
 			String lon = text.substring(start, text.indexOf("\"", start)).replace(notDecSep, decSep);
-			centre.set(Convert.parseDouble(lat), Convert.parseDouble(lon));
+			center.set(Convert.parseDouble(lat), Convert.parseDouble(lon));
 		    } else {
 			int start = text.indexOf("lat=\"") + 5;
 			String lat = SafeXML.html2iso8859s1(text.substring(start, text.indexOf("\"", start)));
 			start = text.indexOf("long=\"") + 6;
 			String lon = SafeXML.html2iso8859s1(text.substring(start, text.indexOf("\"", start)));
-			centre.set(lat + " " + lon, TransformCoordinates.CW); // Fast parse
+			center.set(lat + " " + lon, TransformCoordinates.CW); // Fast parse
 		    }
 		} else if (text.indexOf("<VERSION") >= 0) {
 		    int start = text.indexOf("value = \"") + 9;
@@ -568,7 +575,7 @@ public class Profile {
     }
 
     public String toString() {
-	return "Profile: Name=" + name + "\nCentre=" + centre.toString() + "\ndataDir=" + dataDir + "\nlastSyncOC=" + last_sync_opencaching + "\ndistOC=" + distOC + "\ndistGC=" + distGC;
+	return "Profile: Name=" + name + "\nCentre=" + center.toString() + "\ndataDir=" + dataDir + "\nlastSyncOC=" + last_sync_opencaching + "\ndistOC=" + distOC + "\ndistGC=" + distGC;
     }
 
     /**
