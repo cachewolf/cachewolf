@@ -313,40 +313,6 @@ public final class CacheType {
     }
 
     /**
-     * convert version1 type information to current values
-     * 
-     * @param type
-     *            version1 cache type information
-     * @return current version cache type information or -1
-     * @deprecated remove once v1 file version compatibility is abandoned
-     */
-    public static byte v1Converter(final String type) {
-	for (int i = 0; i < cTypRef.length; i++) {
-	    if (cTypRef[i]._cwCTypeV1.equals(type)) {
-		return cTypRef[i]._cwMappedCType;
-	    }
-	}
-	return -1;
-    }
-
-    /**
-     * convert version2 type information to current values
-     * 
-     * @param type
-     *            version2 cache type information
-     * @return current version cache type information or -1
-     * @deprecated remove once v2 file version compatibility is abandoned
-     */
-    public static byte v2Converter(final byte type) {
-	for (int i = 0; i < cTypRef.length; i++) {
-	    if (cTypRef[i]._cwCTypeV2 == type) {
-		return cTypRef[i]._cwMappedCType;
-	    }
-	}
-	return -1;
-    }
-
-    /**
      * translate cache type to a short version for compact exporters or "smart" cache names.
      * 
      * @param typeId

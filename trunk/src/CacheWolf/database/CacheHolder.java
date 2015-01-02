@@ -169,166 +169,7 @@ public class CacheHolder {
     public CacheHolder(String xmlString, int version) {
 	int start, end;
 	try {
-	    if (version == 1) {
-		start = xmlString.indexOf('"');
-		end = xmlString.indexOf('"', start + 1);
-		setCacheName(SafeXML.html2iso8859s1(xmlString.substring(start + 1, end)));
-
-		start = xmlString.indexOf('"', end + 1);
-		end = xmlString.indexOf('"', start + 1);
-		setCacheOwner(SafeXML.html2iso8859s1(xmlString.substring(start + 1, end)));
-
-		// Assume coordinates are in decimal format
-		start = xmlString.indexOf('"', end + 1);
-		end = xmlString.indexOf('"', start + 1);
-		double lat = Common.parseDouble(xmlString.substring(start + 1, end));
-		start = xmlString.indexOf('"', end + 1);
-		end = xmlString.indexOf('"', start + 1);
-		double lon = Common.parseDouble(xmlString.substring(start + 1, end));
-		pos.set(lat, lon);
-
-		start = xmlString.indexOf('"', end + 1);
-		end = xmlString.indexOf('"', start + 1);
-		setDateHidden(xmlString.substring(start + 1, end));
-		// Convert the US format to YYYY-MM-DD if necessary
-		if (getDateHidden().indexOf('/') > -1)
-		    setDateHidden(DateFormat.toYYMMDD(getDateHidden()));
-
-		start = xmlString.indexOf('"', end + 1);
-		end = xmlString.indexOf('"', start + 1);
-		setWayPoint(SafeXML.html2iso8859s1(xmlString.substring(start + 1, end)));
-
-		start = xmlString.indexOf('"', end + 1);
-		end = xmlString.indexOf('"', start + 1);
-		setCacheStatus(xmlString.substring(start + 1, end));
-
-		start = xmlString.indexOf('"', end + 1);
-		end = xmlString.indexOf('"', start + 1);
-		setType(CacheType.v1Converter((xmlString.substring(start + 1, end))));
-
-		start = xmlString.indexOf('"', end + 1);
-		end = xmlString.indexOf('"', start + 1);
-		if (isAddiWpt() || isCustomWpt()) {
-		    setHard(CacheTerrDiff.CW_DT_UNSET);
-		} else {
-		    try {
-			setHard(CacheTerrDiff.v1Converter(xmlString.substring(start + 1, end)));
-		    } catch (IllegalArgumentException ex) {
-			setHard(CacheTerrDiff.CW_DT_ERROR);
-			setIncomplete(true);
-			Preferences.itself().log(wayPoint, ex, true);
-		    }
-		}
-		start = xmlString.indexOf('"', end + 1);
-		end = xmlString.indexOf('"', start + 1);
-		if (isAddiWpt() || isCustomWpt()) {
-		    setTerrain(CacheTerrDiff.CW_DT_UNSET);
-		} else {
-		    try {
-			setTerrain(CacheTerrDiff.v1Converter(xmlString.substring(start + 1, end)));
-		    } catch (IllegalArgumentException ex) {
-			setTerrain(CacheTerrDiff.CW_DT_ERROR);
-			setIncomplete(true);
-			Preferences.itself().log(wayPoint, ex, true);
-		    }
-		}
-		// The next item was 'dirty' but this is no longer used.
-		start = xmlString.indexOf('"', end + 1);
-		end = xmlString.indexOf('"', start + 1);
-		setFiltered(xmlString.substring(start + 1, end).equals("true"));
-
-		start = xmlString.indexOf('"', end + 1);
-		end = xmlString.indexOf('"', start + 1);
-		if (isAddiWpt() || isCustomWpt()) {
-		    setCacheSize(CacheSize.CW_SIZE_NOTCHOSEN);
-		} else {
-		    try {
-			setCacheSize(CacheSize.v1Converter(xmlString.substring(start + 1, end)));
-		    } catch (IllegalArgumentException ex) {
-			setCacheSize(CacheSize.CW_SIZE_ERROR);
-			setIncomplete(true);
-			Preferences.itself().log(wayPoint, ex, true);
-		    }
-		}
-		start = xmlString.indexOf('"', end + 1);
-		end = xmlString.indexOf('"', start + 1);
-		setAvailable(xmlString.substring(start + 1, end).equals("true"));
-
-		start = xmlString.indexOf('"', end + 1);
-		end = xmlString.indexOf('"', start + 1);
-		setArchived(xmlString.substring(start + 1, end).equals("true"));
-
-		start = xmlString.indexOf('"', end + 1);
-		end = xmlString.indexOf('"', start + 1);
-		hasBugs(xmlString.substring(start + 1, end).equals("true"));
-
-		start = xmlString.indexOf('"', end + 1);
-		end = xmlString.indexOf('"', start + 1);
-		setBlack(xmlString.substring(start + 1, end).equals("true"));
-
-		start = xmlString.indexOf('"', end + 1);
-		end = xmlString.indexOf('"', start + 1);
-		setOwned(xmlString.substring(start + 1, end).equals("true"));
-
-		start = xmlString.indexOf('"', end + 1);
-		end = xmlString.indexOf('"', start + 1);
-		setFound(xmlString.substring(start + 1, end).equals("true"));
-
-		start = xmlString.indexOf('"', end + 1);
-		end = xmlString.indexOf('"', start + 1);
-		setNew(xmlString.substring(start + 1, end).equals("true"));
-
-		start = xmlString.indexOf('"', end + 1);
-		end = xmlString.indexOf('"', start + 1);
-		setLog_updated(xmlString.substring(start + 1, end).equals("true"));
-
-		start = xmlString.indexOf('"', end + 1);
-		end = xmlString.indexOf('"', start + 1);
-		setUpdated(xmlString.substring(start + 1, end).equals("true"));
-		// for backwards compatibility set value to true, if it is not in the file
-
-		start = xmlString.indexOf('"', end + 1);
-		end = xmlString.indexOf('"', start + 1);
-		isHTML(!xmlString.substring(start + 1, end).equals("false"));
-
-		start = xmlString.indexOf('"', end + 1);
-		end = xmlString.indexOf('"', start + 1);
-		setNoFindLogs((byte) Convert.toInt(xmlString.substring(start + 1, end)));
-
-		start = xmlString.indexOf('"', end + 1);
-		end = xmlString.indexOf('"', start + 1);
-		setOcCacheID(xmlString.substring(start + 1, end));
-
-		start = xmlString.indexOf('"', end + 1);
-		end = xmlString.indexOf('"', start + 1);
-		setIncomplete(xmlString.substring(start + 1, end).equals("true") || isIncomplete);
-
-		start = xmlString.indexOf('"', end + 1);
-		end = xmlString.indexOf('"', start + 1);
-		setLastSync(xmlString.substring(start + 1, end));
-
-		start = xmlString.indexOf('"', end + 1);
-		end = xmlString.indexOf('"', start + 1);
-		setNumRecommended(Convert.toInt(xmlString.substring(start + 1, end)));
-
-		start = xmlString.indexOf('"', end + 1);
-		end = xmlString.indexOf('"', start + 1);
-		setNumFoundsSinceRecommendation(Convert.toInt(xmlString.substring(start + 1, end)));
-		recommendationScore = LogList.getScore(getNumRecommended(), getNumFoundsSinceRecommendation());
-
-		start = xmlString.indexOf('"', end + 1);
-		end = xmlString.indexOf('"', start + 1);
-		long[] attribsBits = { 0l, 0l, 0l, 0l };
-		if (start > -1 && end > -1) {
-		    attribsBits[0] = (Convert.parseLong(xmlString.substring(start + 1, end)));
-
-		    start = xmlString.indexOf('"', end + 1);
-		    end = xmlString.indexOf('"', start + 1);
-		    if (start > -1 && end > -1)
-			attribsBits[2] = (Convert.parseLong(xmlString.substring(start + 1, end)));
-		}
-		setAttribsAsBits(attribsBits);
-	    } else if (version == 3 || version == 2) {
+	    if (version == 3) {
 		start = xmlString.indexOf('"');
 		end = xmlString.indexOf('"', start + 1);
 		setCacheName(SafeXML.html2iso8859s1(xmlString.substring(start + 1, end)));
@@ -396,11 +237,7 @@ public class CacheHolder {
 
 		start = xmlString.indexOf('"', end + 1);
 		end = xmlString.indexOf('"', start + 1);
-		if (version == 2) {
-		    long2byteFieldsv2(Convert.parseLong(xmlString.substring(start + 1, end)));
-		} else {
-		    long2byteFields(Convert.parseLong(xmlString.substring(start + 1, end)));
-		}
+		long2byteFields(Convert.parseLong(xmlString.substring(start + 1, end)));
 		start = xmlString.indexOf('"', end + 1);
 		end = xmlString.indexOf('"', start + 1);
 		if (start > -1 && end > -1) {
@@ -1637,34 +1474,6 @@ public class CacheHolder {
 
 	if (getHard() == CacheTerrDiff.CW_DT_ERROR || getTerrain() == CacheTerrDiff.CW_DT_ERROR || getCacheSize() == CacheSize.CW_SIZE_ERROR || getType() == CacheType.CW_TYPE_ERROR) {
 	    setIncomplete(true);
-	}
-    }
-
-    /**
-     * convert a v2 byte filed to the current structures
-     * 
-     * @param value
-     */
-    private void long2byteFieldsv2(long value) {
-	setHard(byteFromLong(value, 1));
-	setTerrain(byteFromLong(value, 2));
-	setType(CacheType.v2Converter(byteFromLong(value, 3)));
-	setCacheSize(byteFromLong(value, 4));
-	setNoFindLogs((byteFromLong(value, 5)));
-	if (getHard() == -1 || getTerrain() == -1 || getCacheSize() == -1) {
-	    if (isAddiWpt() || isCustomWpt()) {
-		// Addis don't have their own values for difficulty, terrain and size
-		// Custom waypoints can't be updated to remove incomplete flag, so we
-		// have to set reasonable values.
-		if (getHard() == CacheTerrDiff.CW_DT_ERROR)
-		    setHard(CacheTerrDiff.CW_DT_UNSET);
-		if (getTerrain() == CacheTerrDiff.CW_DT_ERROR)
-		    setTerrain(CacheTerrDiff.CW_DT_UNSET);
-		if (getCacheSize() == CacheSize.CW_SIZE_ERROR)
-		    setCacheSize(CacheSize.CW_SIZE_NONE);
-	    } else {
-		setIncomplete(true);
-	    }
 	}
     }
 

@@ -66,7 +66,9 @@ abstract class Projection {
 	return epsgCode + pp.zone;
     }
 
-    public abstract ProjectedPoint set(double northing, double easting, ProjectedPoint pp);
+    public ProjectedPoint set(double northing, double easting, ProjectedPoint pp) {
+	throw new UnsupportedOperationException("Projection.set: set() requires zone, use set with 1 more parameter");
+    }
 
     public ProjectedPoint set(double northing, double easting, String zone, ProjectedPoint pp) {
 	throw new UnsupportedOperationException("Projection.set (double, double String, ProjectedPoint): This projection uses no seperate zones");
@@ -74,10 +76,6 @@ abstract class Projection {
 
     public String getZone(ProjectedPoint pp) {
 	throw new UnsupportedOperationException("Projection.getZone (double, double String, ProjectedPoint): This projection uses no seperate zones");
-    }
-
-    public String toHumanReadableString(ProjectedPoint pp) {
-	return pp.toString(0, "", " ");
     }
 
     /**

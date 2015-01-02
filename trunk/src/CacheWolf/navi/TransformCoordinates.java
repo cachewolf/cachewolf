@@ -178,7 +178,7 @@ public final class TransformCoordinates {
     private static final TransformParameters GB_ITALIAN_SARDINIA_TO_WGS84 = new TransformParameters(-168.6, -34.0, 38.6, 0.374, 0.679, 1.379, 9.48, HAYFORD1909);
     // Pulkovo 1942(83) / 3-degree Gauss-Krueger zone 4
     // WGS84 Bounds: 10.5000, 48.9000, 13.5000, 54.7200
-    private static final TransformParameters Pulkovo_1942_TO_WGS84 = new TransformParameters(24, -123, -94, 0.02, -0.25, -0.13, 1.1, KRASSOWSKY1940);
+    // private static final TransformParameters Pulkovo_1942_TO_WGS84 = new TransformParameters(24, -123, -94, 0.02, -0.25, -0.13, 1.1, KRASSOWSKY1940);
 
     private static final BoundingBox ITALY_SARDINIA = new BoundingBox(new CWPoint(42, 6), new CWPoint(38, 11));
     private static final BoundingBox ITALY_SARDINIA_GK = new BoundingBox(wgs84ToEpsg(ITALY_SARDINIA.topleft, EPSG_ITALIAN_GB_EW1).toCoordinatePoint(TransformCoordinates.LOCALSYSTEM_ITALIAN_GB), wgs84ToEpsg(ITALY_SARDINIA.bottomright,

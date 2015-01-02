@@ -259,7 +259,7 @@ public final class ProjectedPoint {
     }
 
     public String toHumanReadableString() {
-	return projection.toHumanReadableString(this);
+	return toString(0, "", " ");
     }
 
     public CWPoint unproject() {

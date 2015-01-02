@@ -483,7 +483,7 @@ public class TablePanelMenu extends MenuBar {
 	    if (mev.selectedItem == mnuNewProfile) {
 		if (NewProfileWizard.startNewProfileWizard(getFrame())) {
 		    tablePanel.myTableModel.numRows = 0;
-		    MainForm.itself.setCurCentrePt(MainForm.profile.centre);
+		    MainForm.itself.setCurCentrePt(MainForm.profile.center);
 		    filtBlack.modifiers = MainForm.profile.showBlacklisted() ? filtBlack.modifiers | MenuItem.Checked : filtBlack.modifiers & ~MenuItem.Checked;
 		    tablePanel.refreshTable();
 		}
@@ -494,7 +494,7 @@ public class TablePanelMenu extends MenuBar {
 
 		    MainForm.profile.setFilterActive(Filter.FILTER_INACTIVE);
 
-		    CWPoint savecenter = new CWPoint(MainForm.profile.centre);
+		    CWPoint savecenter = new CWPoint(MainForm.profile.center);
 		    MainForm.profile.clearProfile();
 		    MainForm.profile.setCenterCoords(savecenter);
 
@@ -509,7 +509,7 @@ public class TablePanelMenu extends MenuBar {
 		    Vm.showWait(infB, false);
 		    infB.close(0);
 
-		    MainForm.itself.setCurCentrePt(MainForm.profile.centre);
+		    MainForm.itself.setCurCentrePt(MainForm.profile.center);
 		    filtBlack.modifiers = MainForm.profile.showBlacklisted() ? filtBlack.modifiers | MenuItem.Checked : filtBlack.modifiers & ~MenuItem.Checked;
 		    MainForm.itself.setTitle(MainForm.profile.name + " - CW " + Version.getRelease());
 		    tablePanel.resetModel();
@@ -1078,7 +1078,7 @@ class EditCenter extends Form {
 	content.addNext(new mLabel(MyLocale.getMsg(1117, "copy")));
 	content.addLast(btnProf2Cur = new mButton("   ^   "), DONTSTRETCH, DONTFILL | RIGHT);
 	content.addNext(new mLabel(MyLocale.getMsg(1118, "Profile")));
-	content.addLast(btnProfileCentre = new mButton(MainForm.profile.centre.toString()), HSTRETCH, HFILL | LEFT);
+	content.addLast(btnProfileCentre = new mButton(MainForm.profile.center.toString()), HSTRETCH, HFILL | LEFT);
 	addLast(content, HSTRETCH, HFILL);
 	//addLast(new mLabel(""),VSTRETCH,FILL);
 	//addNext(btnCancel = new mButton(MyLocale.getMsg(1604,"Cancel")),DONTSTRETCH,DONTFILL|LEFT);
@@ -1109,20 +1109,20 @@ class EditCenter extends Form {
 	    }
 	    if (ev.target == btnProfileCentre) {
 		CoordsInput cs = new CoordsInput();
-		cs.setFields(MainForm.profile.centre, TransformCoordinates.CW);
+		cs.setFields(MainForm.profile.center, TransformCoordinates.CW);
 		if (cs.execute() == FormBase.IDOK) {
-		    MainForm.profile.notifyUnsavedChanges(cs.getCoords().equals(MainForm.profile.centre));
-		    MainForm.profile.centre.set(cs.getCoords());
-		    btnProfileCentre.setText(MainForm.profile.centre.toString());
+		    MainForm.profile.notifyUnsavedChanges(cs.getCoords().equals(MainForm.profile.center));
+		    MainForm.profile.center.set(cs.getCoords());
+		    btnProfileCentre.setText(MainForm.profile.center.toString());
 		}
 	    }
 	    if (ev.target == btnCur2Prof) {
-		MainForm.profile.notifyUnsavedChanges(Preferences.itself().curCentrePt.equals(MainForm.profile.centre));
-		MainForm.profile.centre.set(Preferences.itself().curCentrePt);
-		btnProfileCentre.setText(MainForm.profile.centre.toString());
+		MainForm.profile.notifyUnsavedChanges(Preferences.itself().curCentrePt.equals(MainForm.profile.center));
+		MainForm.profile.center.set(Preferences.itself().curCentrePt);
+		btnProfileCentre.setText(MainForm.profile.center.toString());
 	    }
 	    if (ev.target == btnProf2Cur) {
-		MainForm.itself.setCurCentrePt(MainForm.profile.centre);
+		MainForm.itself.setCurCentrePt(MainForm.profile.center);
 		btnCurrentCentre.setText(Preferences.itself().curCentrePt.toString());
 	    }
 	}

@@ -81,22 +81,18 @@ public final class TransformCoordinatesProperties {
      * @return
      */
     public final static CWPoint toWgs84(CWPoint p, int epsgCode) {
-	CWPoint ret = null;
 	switch (epsgCode) {
 	case TransformCoordinates.EPSG_WGS84:
-	    ret = p;
-	    break;
+	    return p;
 	case TransformCoordinates.EPSG_Mercator_1SP_Google:
-	    ret = new CWPoint();
+	    CWPoint ret = new CWPoint();
 	    ret.lonDec = (p.lonDec / 20037508.34) * 180;
 	    double lat = (p.latDec / 20037508.34) * 180;
 	    ret.latDec = 180 / Math.PI * (2 * Math.atan(Math.exp(lat * Math.PI / 180)) - Math.PI / 2);
-	    break;
-	}
-	if (ret == null) {
+	    return ret;
+	default:
 	    ProjectedPoint xy = new ProjectedPoint(p, epsgCode, true, false);
-	    ret = TransformCoordinates.ProjectedEpsgToWgs84(xy, epsgCode);
+	    return TransformCoordinates.ProjectedEpsgToWgs84(xy, epsgCode);
 	}
-	return ret;
     }
 }

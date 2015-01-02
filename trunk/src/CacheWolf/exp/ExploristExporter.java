@@ -94,7 +94,7 @@ public class ExploristExporter {
 		targetDir = fc.getChosen() + "/";
 		Preferences.itself().setExportPath(expName + "Dir", targetDir);
 
-		CWPoint centre = MainForm.profile.centre;
+		CWPoint centre = MainForm.profile.center;
 		try {
 		    LineNumberReader reader = new LineNumberReader(new BufferedReader(new FileReader(configFile)));
 		    String line, fileName, coordinate;

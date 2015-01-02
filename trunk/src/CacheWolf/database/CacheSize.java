@@ -375,41 +375,6 @@ public final class CacheSize {
     }
 
     /**
-     * convert v1 style size string to the new internal representation
-     * 
-     * @param v1Size
-     *            old size string
-     * @return CW internal representation of cache size
-     * @throws IllegalArgumentException if <code>v1Size</code> can not be mapped
-     * @deprecated remove once v1 file version compatibility is abandoned
-     */
-    public static final byte v1Converter(final String v1Size) throws IllegalArgumentException {
-	if (v1Size.equals(GC_SIZE_MICRO)) {
-	    return CW_SIZE_MICRO;
-	} else if (v1Size.equals(GC_SIZE_SMALL)) {
-	    return CW_SIZE_SMALL;
-	} else if (v1Size.equals(GC_SIZE_REGULAR)) {
-	    return CW_SIZE_REGULAR;
-	} else if (v1Size.equals(GC_SIZE_LARGE)) {
-	    return CW_SIZE_LARGE;
-	} else if (v1Size.equalsIgnoreCase(GC_SIZE_NOTCHOSEN)) {
-	    return CW_SIZE_NOTCHOSEN;
-	} else if (v1Size.equals(GC_SIZE_OTHER)) {
-	    return CW_SIZE_OTHER;
-	} else if (v1Size.equals(GC_SIZE_VIRTUAL)) {
-	    return CW_SIZE_VIRTUAL;
-	} else if (v1Size.equals(OCTC_SIZE_NONE)) {
-	    return CW_SIZE_NONE;
-	} else if (v1Size.equals(OCTC_SIZE_VERYLARGE)) {
-	    return CW_SIZE_VERYLARGE;
-	} else if (v1Size.equals("")) {
-	    return CW_SIZE_NOTCHOSEN;
-	} else {
-	    throw (new IllegalArgumentException("unmatched argument " + v1Size + " in v1Converter()"));
-	}
-    }
-
-    /**
      * return a bit mask representing the caches size for use in the Filter
      * 
      * @param size
