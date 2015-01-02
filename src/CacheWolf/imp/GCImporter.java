@@ -102,7 +102,7 @@ public class GCImporter {
     private final static String onlyEvent = "&tx=69eb8534-b718-4b35-ae3c-a856a55b0874";
     private final static String onlyMegaEvent = "&tx=69eb8535-b718-4b35-ae3c-a856a55b0874";
     private final static String onlyCito = "&tx=57150806-bc1a-42d6-9cf0-538d171a2d22";
-    private final static String onlyL_FEvent = "&tx=3ea6533d-bb52-42fe-b2d2-79a3424d4728";
+    // private final static String onlyL_FEvent = "&tx=3ea6533d-bb52-42fe-b2d2-79a3424d4728";
     private final static String onlyUnknown = "&tx=40861821-1835-4e11-b666-8d41064d03fe";
     private final static String onlyWebcam = "&tx=31d2ae3c-c358-4b5f-8dcd-2185bf472d3d";
     private final static String onlyEarth = "&tx=c66f5cf3-9523-4549-b8dd-759cd2f18db8";
@@ -113,7 +113,7 @@ public class GCImporter {
     private final static String gotoPage = "ctl00$ContentBody$pgrTop$lbGoToPage_";// add pagenumber
     private final static String gotoNextPage = "ctl00$ContentBody$pgrTop$ctl08";
     // change to the block (10pages) of the wanted page
-    private final static String gotoPreviousBlock = "ctl00$ContentBody$pgrTop$ctl05";
+    // private final static String gotoPreviousBlock = "ctl00$ContentBody$pgrTop$ctl05";
     private final static String gotoNextBlock = "ctl00$ContentBody$pgrTop$ctl06";
 
     private static Regex listBlockRex;
@@ -509,8 +509,6 @@ public class GCImporter {
 	    } else
 		startPos = null;
 	}
-
-	final boolean complete = true;
 
 	if ((startPos == null) || (startPos != null && !startPos.isValid())) {
 	    new InfoBox(MyLocale.getMsg(5500, "Error"), MyLocale.getMsg(5533, "No start point found! (Check track / route / center)")).wait(FormBase.OKB);

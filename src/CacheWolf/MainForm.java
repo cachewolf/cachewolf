@@ -173,7 +173,7 @@ public class MainForm extends Editor {
 	mainTab.tablePanel.refreshTable();
 	mainTab.tablePanel.selectFirstRow();
 
-	this.setCurCentrePt(profile.centre);
+	this.setCurCentrePt(profile.center);
 
 	this.setTitle(profile.name + " - CW " + Version.getRelease());
 

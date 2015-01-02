@@ -27,10 +27,11 @@ import ewe.sys.Convert;
 public class UTMProjection extends Projection {
     Ellipsoid ellip;
 
-    public UTMProjection(Ellipsoid ellip_) {
-	ellip = ellip_;
+    public UTMProjection(Ellipsoid ellip) {
+	this.ellip = ellip;
 	zoneSeperately = true;
-	epsgCode = -1; // set to something else than 0 causes ProjectedPoint not to set epsgCode. 
+	// set to something else than 0 causes ProjectedPoint not to set epsgCode. 
+	epsgCode = -1;
     }
 
     public double getEasting(ProjectedPoint pp) {
@@ -47,36 +48,29 @@ public class UTMProjection extends Projection {
     }
 
     private char getZoneLetter(int number) {
-	if (((char) (number)) >= 'i' - 'a')
+	if (((char) (number)) > 'i' - 'a')
 	    number++; // skip I
-	if (((char) (number)) >= 'o' - 'a')
+	if (((char) (number)) > 'o' - 'a')
 	    number++; // skip O
 	char ret = (char) (number + (int) 'A' - 1);
 	return ret;
     }
 
     public ProjectedPoint project(CWPoint wgs84, ProjectedPoint pp) {
-	int stripe = (int) Math.floor((wgs84.lonDec - 180) / 6); // we start with stripe 0, but officially this is stripe 1
+	// we start with stripe 0, but officially this is stripe 1
+	int stripe = (int) Math.floor((wgs84.lonDec - 180) / 6);
 	if (stripe < 0)
 	    stripe += 60;
 	GkProjection.project(wgs84, ellip, 6, (stripe >= 30 ? stripe - 30 : stripe + 30), 3, 0.9996, pp);
-	pp.zone = stripe;
-	pp.zone += (int) (Math.floor((wgs84.latDec) / 8) + 13) * 200; // zone letter
+	// @pfeffer:todo we get a wgs84 here that is not wgs84, so zone calculation is wrong 
+	pp.zone = stripe + (int) (Math.floor((wgs84.latDec) / 8) + 13) * 200;
 	return pp;
-    }
-
-    public String toHumanReadableString(ProjectedPoint pp) {
-	return pp.toString(0, "", " ");
     }
 
     public ProjectedPoint project(CWPoint ll, ProjectedPoint pp, int epsg) {
 	if (epsg == TransformCoordinates.LOCALSYSTEM_UTM_WGS84)
 	    return project(ll, pp);
 	throw new UnsupportedOperationException("UTMProjection: prject by epsg-code not supported");
-    }
-
-    public ProjectedPoint set(double northing, double easting, ProjectedPoint pp) {
-	throw new UnsupportedOperationException("UTMProjection.set: set() requires zone, use set with 1 more parameter");
     }
 
     public ProjectedPoint set(double northing, double easting, String zone, ProjectedPoint pp) {

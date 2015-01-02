@@ -35,7 +35,6 @@ import ewe.fx.IconAndText;
 import ewe.fx.Image;
 import ewe.fx.Point;
 import ewe.fx.mImage;
-import ewe.sys.Time;
 import ewe.sys.Vm;
 import ewe.ui.CellConstants;
 import ewe.ui.IKeys;
@@ -88,7 +87,6 @@ public class MyTableModel extends TableModel {
     private Color lineColorBG = new Color(255, 255, 255);
     private Color lastColorBG = new Color(255, 255, 255);
     private Color lastColorFG = new Color(0, 0, 0);
-    private static final Time lastSyncWorker = new Time();
     private int lastRow = -2;
     private CacheDB cacheDB;
     /** The max number of columns in the list view */
