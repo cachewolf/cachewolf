@@ -493,9 +493,9 @@ public class DetailsPanel extends CellPanel {
 		    MainTab.itself.select(MainTab.GOTO_CARD);
 		}
 	    } else if (ev.target == btnCoordinates) {
-		CWPoint coords = new CWPoint(btnCoordinates.getText(), TransformCoordinates.CW);
+		CWPoint coords = new CWPoint(btnCoordinates.getText(), TransformCoordinates.DMM);
 		if (Vm.isMobile()) {
-		    CoordsPDAInput InScr = new CoordsPDAInput(TransformCoordinates.CW, true);
+		    CoordsPDAInput InScr = new CoordsPDAInput(TransformCoordinates.DMM, true);
 		    if (coords.isValid())
 			InScr.setCoords(coords);
 		    else
@@ -513,7 +513,7 @@ public class DetailsPanel extends CellPanel {
 		    }
 		} else {
 		    final CoordsInput cs = new CoordsInput(true);
-		    cs.setFields(coords, TransformCoordinates.CW);
+		    cs.setFields(coords, TransformCoordinates.DMM);
 		    if (cs.execute() == FormBase.IDOK) {
 			dirtyDetails = true;
 			coords = cs.getCoords();

@@ -137,7 +137,7 @@ public final class GotoPanel extends CellPanel {
 	miCooformat[1].modifiers |= MenuItem.Checked; // default
 	mnuContextFormt.addItem(miCooformat[2] = new MenuItem("d°m\'s\""));
 	miCooformat[2].modifiers &= ~MenuItem.Checked;
-	mnuContextFormt.addItems(TransformCoordinates.getProjectedSystemNames());
+	mnuContextFormt.addItems(TransformCoordinates.localSystemsFriendlyShortname());
 
 	CellPanel destinationPanel = new CellPanel();
 	lblDestination = new mLabel("DST: ");

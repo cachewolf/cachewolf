@@ -134,7 +134,7 @@ public class CWPoint extends CoordinatePoint {
 
 	if (coord != null) {
 	    switch (format) {
-	    case TransformCoordinates.CW:
+	    case TransformCoordinates.DMM:
 		ParseLatLon pll = new ParseLatLon(coord);
 		try {
 		    pll.parse();
@@ -181,7 +181,8 @@ public class CWPoint extends CoordinatePoint {
 	*/
 	String crsid = null;
 	if ((coord.length() >= 2) && (coord.charAt(2) == '.') && (coord.indexOf(' ') >= 0)) {
-	    // first 2 letters = Internet domain of projected area
+	    // first 2 letters = Internet domain of projected area (ex: "dk utm <koords>" wird zu "utm <koords>", Implemented since se and dk EPSGs)
+	    // removed from List, since there is already utm in the List. Why this additional prefix?) 
 	    crsid = coord.substring(0, coord.indexOf(' '));
 	    if (TransformCoordinates.getLocalSystemCode(crsid) != -1) {
 		coord = coord.substring(coord.indexOf(' ') + 1, coord.length());
@@ -629,7 +630,7 @@ public class CWPoint extends CoordinatePoint {
      * @return string like N 49° 33.167 E 011° 21.608
      */
     public String toString() {
-	return toString(TransformCoordinates.CW);
+	return toString(TransformCoordinates.DMM);
 
     }
 

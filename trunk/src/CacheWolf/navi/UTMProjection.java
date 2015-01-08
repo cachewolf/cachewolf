@@ -34,28 +34,7 @@ public class UTMProjection extends Projection {
 	epsgCode = -1;
     }
 
-    public double getEasting(ProjectedPoint pp) {
-	return pp.easting + 500000;
-    }
-
-    public double getNorthing(ProjectedPoint pp) {
-	return (pp.northing >= 0 ? pp.northing : pp.northing + 10000000);
-    }
-
-    public String getZone(ProjectedPoint pp) {
-	int zoneletter = (int) Math.floor(pp.zone / 200);
-	return Convert.formatInt(pp.zone - zoneletter * 200 + 1) + getZoneLetter(zoneletter);
-    }
-
-    private char getZoneLetter(int number) {
-	if (((char) (number)) > 'i' - 'a')
-	    number++; // skip I
-	if (((char) (number)) > 'o' - 'a')
-	    number++; // skip O
-	char ret = (char) (number + (int) 'A' - 1);
-	return ret;
-    }
-
+    //Overrides: project(...) in Projection
     public ProjectedPoint project(CWPoint wgs84, ProjectedPoint pp) {
 	// we start with stripe 0, but officially this is stripe 1
 	int stripe = (int) Math.floor((wgs84.lonDec - 180) / 6);
@@ -67,12 +46,31 @@ public class UTMProjection extends Projection {
 	return pp;
     }
 
+    //Overrides: project(...) in Projection
     public ProjectedPoint project(CWPoint ll, ProjectedPoint pp, int epsg) {
 	if (epsg == TransformCoordinates.LOCALSYSTEM_UTM_WGS84)
 	    return project(ll, pp);
-	throw new UnsupportedOperationException("UTMProjection: prject by epsg-code not supported");
+	throw new UnsupportedOperationException("UTMProjection: project by epsg-code not supported");
     }
 
+    //Overrides: unproject(...) in Projection
+    public CWPoint unproject(ProjectedPoint pp) {
+	int stripe = pp.zone - (int) Math.floor(pp.zone / 200) * 200;
+	int stripelon = stripe * 6 - 177;
+	return GkProjection.unproject(pp, stripelon, ellip, 0.9996);
+    }
+
+    //Overrides: getNorthing(...) in Projection
+    public double getNorthing(ProjectedPoint pp) {
+	return (pp.rawNorthing >= 0 ? pp.rawNorthing : pp.rawNorthing + 10000000);
+    }
+
+    //Overrides: getEasting(...) in Projection
+    public double getEasting(ProjectedPoint pp) {
+	return pp.rawEasting + 500000;
+    }
+
+    //Overrides: set(...) in Projection
     public ProjectedPoint set(double northing, double easting, String zone, ProjectedPoint pp) {
 	if (zone.length() < 1)
 	    throw new IllegalArgumentException("UTMProjection.set: zone must be set");
@@ -100,30 +98,38 @@ public class UTMProjection extends Projection {
 	return set(northing, easting, zonenumer, zoneletter, pp);
     }
 
+    //Overrides: getZone(...) in Projection
+    public String getZone(ProjectedPoint pp) {
+	int zoneletter = (int) Math.floor(pp.zone / 200);
+	return Convert.formatInt(pp.zone - zoneletter * 200 + 1) + getZoneLetter(zoneletter);
+    }
+
+    private char getZoneLetter(int number) {
+	if (((char) (number)) > 'i' - 'a')
+	    number++; // skip I
+	if (((char) (number)) > 'o' - 'a')
+	    number++; // skip O
+	char ret = (char) (number + (int) 'A' - 1);
+	return ret;
+    }
+
     /**
      * 
      * @param northing
      * @param easting
-     * @param zone: official stripe number (internally it starts by 0, officially by 1)
+     * @param zone
      * @param zoneletternumber
      * @param pp
      * @return
      */
     public ProjectedPoint set(double northing, double easting, int zone, int zoneletternumber, ProjectedPoint pp) {
-	pp.easting = easting - 500000;
+	pp.rawEasting = easting - 500000;
 	if (northing > 10000000)
-	    pp.northing = northing - 10000000;
+	    pp.rawNorthing = northing - 10000000;
 	else
-	    pp.northing = northing;
+	    pp.rawNorthing = northing;
 	pp.zone = zone - 1 + zoneletternumber * 200; // internally zone number starts with 0
 	return pp;
-    }
-
-    public CWPoint unproject(ProjectedPoint pp) {
-	int stripe = pp.zone - (int) Math.floor(pp.zone / 200) * 200;
-	int stripelon = stripe * 6 - 177;
-	return GkProjection.unproject(pp, stripelon, ellip, 0.9996);
-
     }
 
 }

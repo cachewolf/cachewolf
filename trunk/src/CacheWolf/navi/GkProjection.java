@@ -43,12 +43,14 @@ public final class GkProjection extends Projection {
 	ellip = ellip_;
     }
 
+    //Overrides: getEasting(...) in Projection
     public double getEasting(ProjectedPoint pp) {
-	return pp.easting + falseEasting + pp.zone * stripeFactor;
+	return pp.rawEasting + falseEasting + pp.zone * stripeFactor;
     }
 
+    //Overrides: getNorthing(...) in Projection
     public double getNorthing(ProjectedPoint pp) {
-	return pp.northing + falseNorthing;
+	return pp.rawNorthing + falseNorthing;
     }
 
     /**
@@ -68,6 +70,7 @@ public final class GkProjection extends Projection {
 	return project(ll, ellip, stripeWidth, stripe, degreeOfStripe0, scale, pp);
     }
 
+    //Overrides: project(...) in Projection
     public ProjectedPoint project(CWPoint ll, ProjectedPoint pp, int epsg) {
 	if (pp == null)
 	    pp = new ProjectedPoint(this);
@@ -75,6 +78,7 @@ public final class GkProjection extends Projection {
 	return project(ll, ellip, stripeWidth, epsg - epsgCode, degreeOfStripe0, scale, pp);
     }
 
+    //Overrides: set(...) in Projection
     public ProjectedPoint set(double northing, double easting, ProjectedPoint pp) {
 	double stripei = Math.floor(easting / stripeFactor);
 	pp.setzone((int) stripei);
@@ -82,6 +86,7 @@ public final class GkProjection extends Projection {
 	return pp;
     }
 
+    //Overrides: unproject(...) in Projection
     /**
      * Converts Gauß-Krüger-coordinates into lat/lon on the respective ellipsoid
      * @param gkp

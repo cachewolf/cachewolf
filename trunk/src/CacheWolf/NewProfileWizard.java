@@ -40,7 +40,7 @@ public class NewProfileWizard {
 	    MainForm.profile.dataDir = Preferences.itself().absoluteBaseDir + f.profileDir + "/";
 
 	    CoordsInput cs = new CoordsInput();
-	    cs.setFields(new CWPoint(), TransformCoordinates.CW);
+	    cs.setFields(new CWPoint(), TransformCoordinates.DMM);
 	    if (cs.execute() == FormBase.IDOK) {
 		MainForm.profile.setCenterCoords(cs.getCoords());
 	    }

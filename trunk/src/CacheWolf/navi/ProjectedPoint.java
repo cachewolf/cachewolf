@@ -31,7 +31,7 @@ public final class ProjectedPoint {
     public static final LambertProjection PJ_FRENCH_LAMBERT_NTF_II = new LambertProjection(TransformCoordinates.EPSG_FRENCH_LAMBERT_NTF_II, TransformCoordinates.CLARKE1880IGN);
     public static final LambertProjection PJ_TEST = new LambertProjection(TransformCoordinates.EPSG_TEST, TransformCoordinates.CLARKE1866);
     static {
-	PJ_AUSTRIAN_LAMBERT_OLD.setup(400000, 400000, 49.0, 46.0, 1, 47.5, 13.333333); // actually this should be done inside the constructor. But Ewe doesn't support more than 8 parameters (at least for constructors)
+	PJ_AUSTRIAN_LAMBERT_OLD.setup(400000, 400000, 49.0, 46.0, 1, 47.5, 13.333333);
 	PJ_AUSTRIAN_LAMBERT_NEW.setup(400000, 400000, 49.0, 46.0, 1, 47.5, 13.333333);
 	PJ_FRENCH_LAMBERT_NTF_II.setup(2200000, 600000, 46.8, 46.8, 0.99987742, 46.8, 2.337229172 /*(2+20/60+14.025/3600) */);
 	PJ_TEST.setup(150000, 250000, 18, 18, 1, 18, -77);
@@ -41,30 +41,29 @@ public final class ProjectedPoint {
     public static final UTMProjection PJ_UTM_WGS84 = new UTMProjection(TransformCoordinates.WGS84);
     public static final UTMProjectionFixZone PJ_UTM_WGS84FZ = new UTMProjectionFixZone(TransformCoordinates.WGS84);
 
+    public double rawNorthing;
+    public double rawEasting;
     // because it is not clear for routines from outside if the stripe number is included, make this available only through methods
-    protected double northing;
-    protected double easting;
-    protected int zone;
+    public int zone;
     public Projection projection;
 
     public ProjectedPoint() {
-	super();
     }
 
-    public ProjectedPoint(Projection p) {
-	projection = p;
+    public ProjectedPoint(Projection projection) {
+	this.projection = projection;
     }
 
     public ProjectedPoint(ProjectedPoint pp) {
-	northing = pp.northing;
-	easting = pp.easting;
+	rawNorthing = pp.rawNorthing;
+	rawEasting = pp.rawEasting;
 	zone = pp.zone;
-	projection = pp.projection;
+	this.projection = pp.projection;
     }
 
-    public ProjectedPoint(CWPoint wgs84, Projection projection_) {
-	projection = projection_;
-	projection.project(wgs84, this);
+    public ProjectedPoint(CWPoint wgs84, Projection projection) {
+	this.projection = projection;
+	this.projection.project(wgs84, this);
     }
 
     /**
@@ -95,11 +94,45 @@ public final class ProjectedPoint {
 	}
     }
 
-    public ProjectedPoint(CWPoint p, String zone, int epsg_localsystem, boolean isLocalsystem) {
-	set(p, zone, epsg_localsystem, isLocalsystem);
+    /**
+     * Set with local notation, incl. falsenorthing and -easting
+     * @param northing_
+     * @param easting_
+     * @param zone only put something here if the zone is not included in easting or northing and must be known, otherwise zone should be null
+     */
+    public void set(CWPoint projected, String zone, int epsg_localsystem, boolean isLocalsystem) {
+	projection = (isLocalsystem ? getProjectionFromLs(epsg_localsystem) : getProjection(epsg_localsystem));
+	if (projection.epsgCode == 0) {
+	    if (isLocalsystem)
+		projection.epsgCode = projection.getEpsgcode(epsg_localsystem);
+	    else
+		projection.epsgCode = epsg_localsystem; // pass the epsg code to the projection if the projection works for several epsg code which are not directly one after the other
+	}
+	set(projected.latDec, projected.lonDec, zone);
     }
 
-    public static Projection getProjection(int epsg) {
+    /**
+     * easting measured in meters from stripe middle
+     * @return
+     */
+    public double getRawEasting() {
+	return rawEasting;
+    }
+
+    /**
+     * northing measured in meters from stripe middle
+     * @return
+     */
+    public double getRawNorthing() {
+	return rawNorthing;
+    }
+
+    public void setRaw(double northing_, double easting_) {
+	rawNorthing = northing_;
+	rawEasting = easting_;
+    }
+
+    static Projection getProjection(int epsg) {
 	if (epsg >= 25828 && epsg <= 25838)
 	    return PJ_UTM_WGS84FZ;
 	switch (epsg) {
@@ -126,7 +159,7 @@ public final class ProjectedPoint {
 	}
     }
 
-    public static Projection getProjectionFromLs(int localsystem) {
+    private static Projection getProjectionFromLs(int localsystem) {
 	switch (localsystem) {
 	case TransformCoordinates.LOCALSYSTEM_AUSTRIAN_LAMBERT_OLD:
 	    return PJ_AUSTRIAN_LAMBERT_OLD;
@@ -149,20 +182,10 @@ public final class ProjectedPoint {
 	}
     }
 
-    /**
-     *
-     * @param northing: raw, without false northing, e.g. can be negative
-     * @param easting
-     * @param pj
-     */
-
-    /*
-    public ProjectedPoint(double northing_, double easting_, Projection pj) {
-    	northing = northing_;
-    	easting = easting_;
-    	projection = pj;
+    public ProjectedPoint(CWPoint p, String zone, int epsg_localsystem, boolean isLocalsystem) {
+	set(p, zone, epsg_localsystem, isLocalsystem);
     }
-     */
+
     public double getNorthing() {
 	return projection.getNorthing(this);
     }
@@ -175,34 +198,8 @@ public final class ProjectedPoint {
 	return new ProjectedPoint(this);
     }
 
-    /**
-     * This will give you the normal projected (e.g.Gauß-Krüger) easting value
-     * (that means including the stripe number)
-     * @return
-     */
-    public CoordinatePoint toCoordinatePoint(int region) {
+    public CoordinatePoint toCoordinatePoint() {
 	return new CoordinatePoint(getNorthing(), getEasting());
-    }
-
-    /**
-     * easting measured in meters from stripe middle
-     * @return
-     */
-    public double getRawEasting() {
-	return easting;
-    }
-
-    /**
-     * easting measured in meters from stripe middle
-     * @return
-     */
-    public double getRawNorthing() {
-	return northing;
-    }
-
-    public void setRaw(double northing_, double easting_) {
-	northing = northing_;
-	easting = easting_;
     }
 
     public void setzone(int z) {
@@ -237,21 +234,8 @@ public final class ProjectedPoint {
 	    projection.set(northing_, easting_, zone, this);
     }
 
-    /**
-     * Set with local notation, incl. falsenorthing and -easting
-     * @param northing_
-     * @param easting_
-     * @param zone only put something here if the zone is not included in easting or northing and must be known, otherwise zone should be null
-     */
-    public void set(CWPoint projected, String zone, int epsg_localsystem, boolean isLocalsystem) {
-	projection = (isLocalsystem ? getProjectionFromLs(epsg_localsystem) : getProjection(epsg_localsystem));
-	if (projection.epsgCode == 0) {
-	    if (isLocalsystem)
-		projection.epsgCode = projection.getEpsgcode(epsg_localsystem);
-	    else
-		projection.epsgCode = epsg_localsystem; // pass the epsg code to the projection if the projection works for several epsg code which are not directly one after the other
-	}
-	set(projected.latDec, projected.lonDec, zone);
+    public CWPoint unproject() {
+	return projection.unproject(this);
     }
 
     public String toString() {
@@ -260,10 +244,6 @@ public final class ProjectedPoint {
 
     public String toHumanReadableString() {
 	return toString(0, "", " ");
-    }
-
-    public CWPoint unproject() {
-	return projection.unproject(this);
     }
 
     public String toString(int decimalplaces, String prefix, String seperator) {
@@ -285,10 +265,10 @@ public final class ProjectedPoint {
     public void shift(double meters, int direction) {
 	switch (direction) { // TODO this works correctly only within a stripe/zone
 	case 0:
-	    northing += meters;
+	    rawNorthing += meters;
 	    return;
 	case 1:
-	    easting += meters;
+	    rawEasting += meters;
 	    return;
 	}
     }

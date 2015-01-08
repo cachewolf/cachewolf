@@ -11,7 +11,7 @@ public class UTMProjectionFixZone extends UTMProjection {
 	epsgCode = 0; // =0 causes Projected Point to set the epsgCode before calling set() which is necessary to be able to determine the stripe
     }
 
-    // Overrides
+    //Overrides: project(...) in UTMProjection
     public ProjectedPoint project(CWPoint wgs84, ProjectedPoint pp, int epsg) {
 	int stripe = getStripeByEpsg(epsg) - 1; // official stripes start by 1, we internally start by 0
 	if (stripe == Integer.MAX_VALUE)
@@ -24,11 +24,12 @@ public class UTMProjectionFixZone extends UTMProjection {
 	return pp;
     }
 
-    // Overrides
+    //Overrides: project(...) in UTMProjection
     public ProjectedPoint project(CWPoint wgs84, ProjectedPoint pp) {
 	return project(wgs84, pp, epsgCode);
     }
 
+    //Overrides: set(...) in Projection
     public ProjectedPoint set(double northing, double easting, ProjectedPoint pp) {
 	if (epsgCode == 0)
 	    throw new UnsupportedOperationException("UTMProjectionFixZone.set: set() requires zone/epsg code, set projection.epsgcode first");
@@ -42,7 +43,7 @@ public class UTMProjectionFixZone extends UTMProjection {
      * @param epsg
      * @return
      */
-    public int getStripeByEpsg(int epsg) {
+    private int getStripeByEpsg(int epsg) {
 	if (epsg >= 25828 && epsg <= 25838)
 	    return epsg - 25800;
 	switch (epsg) {
@@ -53,6 +54,7 @@ public class UTMProjectionFixZone extends UTMProjection {
 	}
     }
 
+    //Overrides: getEpsgcode(...) in Projection
     public int getEpsgcode(int localsystem) {
 	switch (localsystem) {
 	case TransformCoordinates.LOCALSYSTEM_SWEDEN:
