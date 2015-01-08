@@ -27,20 +27,24 @@ import CacheWolf.database.CoordinatePoint;
 import CacheWolf.utils.Matrix;
 
 /**
- * Class to transform coordinates and shift datums
- * it uses the 7 parameter Helmert Transformation
- * programmed according to http://www.geoclub.de/files/GK_nach_GPS.xls
- * and http://www.geoclub.de/files/GPS_nach_GK.xls
- * The only difference to the excel-model is that shifting is done before rotation
- * this makes calculations easier, without changing the output.
- * 
- * For verification data see:
- * * http://crs.bkg.bund.de/crseu/crs/descrtrans/BeTA/BETA2007testdaten.csv
- * * http://www.lverma.nrw.de/produkte/raumbezug/koordinatentransformation/Koordinatentransformation.htm
- * Now, that this is completed: there is a much more precise method right now published
- * by the Bundesamt für Kartographie und Geodäsie for whole Germany: see:
- * * http://crs.bkg.bund.de/crseu/crs/descrtrans/BeTA/BETA2007dokumentation.pdf
- * * http://crs.bkg.bund.de/crs-eu/ click on "national CRS" -> germany -> DE_DHDN / GK_3 -> DE_DHDN (BeTA, 2007) to ETRS89
+ * Class to transform coordinates and shift datums.<br>
+ * It uses the 7 parameter Helmert Transformation programmed according to<br> 
+ * http://www.geoclub.de/files/GK_nach_GPS.xls.<br>
+ * and<br>
+ * http://www.geoclub.de/files/GPS_nach_GK.xls.<br>
+ * <br>
+ * The only difference to the excel-model is that shifting is done before rotation.<br>
+ * This makes calculations easier, without changing the output.<br>
+ * <br>
+ * For verification data see:<br>
+ * http://crs.bkg.bund.de/crseu/crs/descrtrans/BeTA/BETA2007testdaten.csv<br>
+ * http://www.lverma.nrw.de/produkte/raumbezug/koordinatentransformation/Koordinatentransformation.htm<br>
+ * <br>
+ * Now, that this is completed:<br> 
+ * There is a much more precise method right now published by the Bundesamt für Kartographie und Geodäsie for whole Germany:<br>
+ * see:<br>
+ * http://crs.bkg.bund.de/crseu/crs/descrtrans/BeTA/BETA2007dokumentation.pdf<br>
+ * http://crs.bkg.bund.de/crs-eu/ click on "national CRS" -> germany -> DE_DHDN / GK_3 -> DE_DHDN (BeTA, 2007) to ETRS89<br>
  * 
  * Start offset in languages file: 4900
  * 
@@ -48,6 +52,10 @@ import CacheWolf.utils.Matrix;
  * 
  */
 public final class TransformCoordinates {
+
+    private TransformCoordinates() {
+	// as all members are static, so avoid instantiation
+    }
 
     public static final int EPSG_WGS84 = 4326;
     /** Gauß-Krüger, Bessel 1841, Potsdam (DHDN) */
@@ -104,8 +112,6 @@ public final class TransformCoordinates {
     public static final int LON_LAT = 10005;
     /** it is a projected point or not WGS84 = none of the above */
     public static final int CUSTOM = 10006;
-    /** define default */
-    public static final int CW = DMM;
     /** only used as format to read */
     public static final int REGEX = 10008;
     public static final int UTM = LOCALSYSTEM_UTM_WGS84;
@@ -181,13 +187,11 @@ public final class TransformCoordinates {
     // private static final TransformParameters Pulkovo_1942_TO_WGS84 = new TransformParameters(24, -123, -94, 0.02, -0.25, -0.13, 1.1, KRASSOWSKY1940);
 
     private static final BoundingBox ITALY_SARDINIA = new BoundingBox(new CWPoint(42, 6), new CWPoint(38, 11));
-    private static final BoundingBox ITALY_SARDINIA_GK = new BoundingBox(wgs84ToEpsg(ITALY_SARDINIA.topleft, EPSG_ITALIAN_GB_EW1).toCoordinatePoint(TransformCoordinates.LOCALSYSTEM_ITALIAN_GB), wgs84ToEpsg(ITALY_SARDINIA.bottomright,
-	    EPSG_ITALIAN_GB_EW1).toCoordinatePoint(TransformCoordinates.LOCALSYSTEM_ITALIAN_GB));
+    private static final BoundingBox ITALY_SARDINIA_GK = new BoundingBox(wgs84ToEpsg(ITALY_SARDINIA.topleft, EPSG_ITALIAN_GB_EW1).toCoordinatePoint(), wgs84ToEpsg(ITALY_SARDINIA.bottomright, EPSG_ITALIAN_GB_EW1).toCoordinatePoint());
 
     private static final TransformParameters GB_ITALIAN_SICILIA_TO_WGS84 = new TransformParameters(-50.2, -50.4, 84.8, 0.690, 2.012, -0.459, 28.08, HAYFORD1909);
     private static final BoundingBox ITALY_SICILIA = new BoundingBox(new CWPoint(39, 12), new CWPoint(36.3, 15.6));
-    private static final BoundingBox ITALY_SICILIA_GK = new BoundingBox(wgs84ToEpsg(ITALY_SICILIA.topleft, EPSG_ITALIAN_GB_EW2).toCoordinatePoint(TransformCoordinates.LOCALSYSTEM_ITALIAN_GB), wgs84ToEpsg(ITALY_SICILIA.bottomright,
-	    EPSG_ITALIAN_GB_EW2).toCoordinatePoint(TransformCoordinates.LOCALSYSTEM_ITALIAN_GB));
+    private static final BoundingBox ITALY_SICILIA_GK = new BoundingBox(wgs84ToEpsg(ITALY_SICILIA.topleft, EPSG_ITALIAN_GB_EW2).toCoordinatePoint(), wgs84ToEpsg(ITALY_SICILIA.bottomright, EPSG_ITALIAN_GB_EW2).toCoordinatePoint());
 
     // see also http://hal.gis.univie.ac.at/karto/lehr/fachbereiche/geoinfo/givi0304/tutorials/ersteschritte/projectionen.htm#ParMGIWGS84
     // taken from taken from http://www.crs-geo.eu/crseu/EN/Home/homepage__node.html?__nnn=true
@@ -198,17 +202,13 @@ public final class TransformCoordinates {
     // http://svn.osgeo.org/metacrs/proj/trunk/proj/nad/epsg
     //public static final TransformParameters WGS72_TO_WGS84 =  new TransformParameters(0, 0, 4.5, 0, 0, -0.554, 0.219);
     private static final TransformParameters LAMBERT_FRENCH_NTF_TO_WGS84 = new TransformParameters(-168, -60, 320, 0, 0, 0, 0, CLARKE1880IGN);
-    private static final TransformParameters NO_DATUM_SHIFT = new TransformParameters(0, 0, 0, 0, 0, 0, 0, WGS84);
-
-    private TransformCoordinates() {
-	// as all members are static, so avoid instantiation
-    }
+    static final TransformParameters NO_DATUM_SHIFT = new TransformParameters(0, 0, 0, 0, 0, 0, 0, WGS84);
 
     /**
      * @return String[] of short friendly names all supported projected systems
      *         the position in this array matches the position in localSystems[]
      */
-    public static final String[] getProjectedSystemNames() {
+    public static final String[] localSystemsFriendlyShortname() {
 	String[] ls = new String[TransformCoordinates.localSystems.length];
 	for (int i = 0; i < TransformCoordinates.localSystems.length; i++) {
 	    ls[i] = TransformCoordinates.localSystems[i].friendlyShortname;
@@ -227,7 +227,7 @@ public final class TransformCoordinates {
 	else if (idl.equals("utm"))
 	    return TransformCoordinates.UTM;
 	else if (idl.equals("cw"))
-	    return TransformCoordinates.CW;
+	    return TransformCoordinates.DMM;
 	else {
 	    for (int i = 0; i < localSystems.length; i++) {
 		if (localSystems[i].id.equals(idl))
@@ -370,9 +370,9 @@ public final class TransformCoordinates {
     }
 
     public static final TransformParameters getItalianTransformParams(ProjectedPoint gk) {
-	if (ITALY_SARDINIA_GK.isInBound(gk.toCoordinatePoint(TransformCoordinates.LOCALSYSTEM_ITALIAN_GB)))
+	if (ITALY_SARDINIA_GK.isInBound(gk.toCoordinatePoint()))
 	    return GB_ITALIAN_SARDINIA_TO_WGS84;
-	if (ITALY_SICILIA_GK.isInBound(gk.toCoordinatePoint(TransformCoordinates.LOCALSYSTEM_ITALIAN_GB)))
+	if (ITALY_SICILIA_GK.isInBound(gk.toCoordinatePoint()))
 	    return GB_ITALIAN_SICILIA_TO_WGS84;
 	else
 	    return GB_ITALIAN_PENINSULAR_TO_WGS84;
@@ -431,7 +431,7 @@ public final class TransformCoordinates {
 	}
     }
 
-    private static final TransformParameters getTransParams(ProjectedPoint pp, int localsystem) {
+    static final TransformParameters getTransParams(ProjectedPoint pp, int localsystem) {
 	TransformParameters transparams;
 	switch (localsystem) {
 	case TransformCoordinates.LOCALSYSTEM_GERMAN_GK:
@@ -464,7 +464,7 @@ public final class TransformCoordinates {
 	return transparams;
     }
 
-    private static final XyzCoordinates latLon2xyz(CoordinatePoint ll, double alt, Ellipsoid ellipsoid) {
+    static final XyzCoordinates latLon2xyz(CoordinatePoint ll, double alt, Ellipsoid ellipsoid) {
 	if (!ll.isValid())
 	    throw new IllegalArgumentException("latLon2xyz: invalid lat-lon");
 	double e2 = (ellipsoid.a * ellipsoid.a - ellipsoid.b * ellipsoid.b) / (ellipsoid.a * ellipsoid.a);
@@ -476,7 +476,7 @@ public final class TransformCoordinates {
 	return ret;
     }
 
-    private static final XyzCoordinates transform(XyzCoordinates from, TransformParameters transParams) {
+    static final XyzCoordinates transform(XyzCoordinates from, TransformParameters transParams) {
 
 	Matrix coos = new Matrix(3, 1);
 	coos.matrix[0][0] = from.x;
@@ -508,7 +508,7 @@ public final class TransformCoordinates {
 	return new XyzCoordinates(coos.matrix[0][0], coos.matrix[1][0], coos.matrix[2][0]);
     }
 
-    private static final CWPoint xyz2Latlon(XyzCoordinates from, Ellipsoid ellipsoid) {
+    static final CWPoint xyz2Latlon(XyzCoordinates from, Ellipsoid ellipsoid) {
 	double e2 = (ellipsoid.a * ellipsoid.a - ellipsoid.b * ellipsoid.b) / (ellipsoid.a * ellipsoid.a);
 	double s = Math.sqrt(Math.pow(from.x, 2) + Math.pow(from.y, 2));
 	double T = Math.atan(from.z * ellipsoid.a / (s * ellipsoid.b));

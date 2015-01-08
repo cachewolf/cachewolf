@@ -331,7 +331,7 @@ public class Profile {
 			String lat = SafeXML.html2iso8859s1(text.substring(start, text.indexOf("\"", start)));
 			start = text.indexOf("long=\"") + 6;
 			String lon = SafeXML.html2iso8859s1(text.substring(start, text.indexOf("\"", start)));
-			center.set(lat + " " + lon, TransformCoordinates.CW); // Fast parse
+			center.set(lat + " " + lon, TransformCoordinates.DMM); // Fast parse
 		    }
 		} else if (text.indexOf("<VERSION") >= 0) {
 		    int start = text.indexOf("value = \"") + 9;

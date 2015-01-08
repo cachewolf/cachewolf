@@ -417,11 +417,11 @@ public class MapInfoObject extends BoundingBox {
 	towriteB.append(Convert.toString(affine[1])).append("\n");
 	towriteB.append(Convert.toString(affine[2])).append("\n");
 	towriteB.append(Convert.toString(affine[3])).append("\n");
-	towriteB.append(Convert.toString(affineTopleft.latDec)).append("\n");
-	towriteB.append(Convert.toString(affineTopleft.lonDec)).append("\n");
-	towriteB.append(Convert.toString(bottomright.latDec)).append("\n");
-	towriteB.append(Convert.toString(bottomright.lonDec)).append("\n");
-	towriteB.append(((coordTrans == 0 || coordTrans == TransformCoordinates.EPSG_WGS84) ? "" : Convert.toString(coordTrans) + "\n"));
+	towriteB.append(Convert.toString(affineTopleft.latDec)).append("\n"); // EPSG values
+	towriteB.append(Convert.toString(affineTopleft.lonDec)).append("\n"); // EPSG values
+	towriteB.append(Convert.toString(bottomright.latDec)).append("\n"); // WGS84 values
+	towriteB.append(Convert.toString(bottomright.lonDec)).append("\n"); // WGS84 values
+	towriteB.append(((coordTrans == 0 || coordTrans == TransformCoordinates.EPSG_WGS84) ? "" : "" + coordTrans + "\n"));
 	String towrite = towriteB.toString();
 	if (Common.getDigSeparator() == ',')
 	    towrite = towrite.replace(',', '.');

@@ -441,7 +441,7 @@ public class MapLoaderGui extends Form {
 		this.download();
 	    } else if (ev.target == coosBtn) {
 		CoordsInput cs = new CoordsInput();
-		cs.setFields(center, TransformCoordinates.CW);
+		cs.setFields(center, TransformCoordinates.DMM);
 		if (cs.execute() != FormBase.IDCANCEL) {
 		    center = cs.getCoords();
 		    coosBtn.setText(center.toString());
