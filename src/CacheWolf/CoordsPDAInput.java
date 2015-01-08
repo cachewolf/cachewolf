@@ -301,7 +301,7 @@ public class CoordsPDAInput extends Form {
 	strBufCoords.delete(0, strBufCoords.length());
 
 	if (coords.isValid()) {
-	    strBufTemp.append(coords.toString(TransformCoordinates.CW));
+	    strBufTemp.append(coords.toString(TransformCoordinates.DMM));
 	    strBufCoords.append(strBufTemp.toString());
 	    coordsInput = coords;
 	} else {
@@ -429,7 +429,7 @@ public class CoordsPDAInput extends Form {
      * @param format only CWPoint.CW is supported
      */
     public CWPoint getCoords() {
-	coordsBack.set(strBufCoords.toString(), TransformCoordinates.CW);
+	coordsBack.set(strBufCoords.toString(), TransformCoordinates.DMM);
 	return coordsBack;
     }
 

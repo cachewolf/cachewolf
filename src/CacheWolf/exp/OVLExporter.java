@@ -82,8 +82,8 @@ public class OVLExporter extends Exporter {
 	str.append("MapName=Gesamtes Bundesgebiet (D1000)\r\n");
 	str.append("DimmFc=100\r\n");
 	str.append("ZoomFc=100\r\n");
-	str.append("CenterLat=" + Preferences.itself().curCentrePt.getLatDeg(TransformCoordinates.CW) + ".00\r\n");
-	str.append("CenterLong=" + Preferences.itself().curCentrePt.getLonDeg(TransformCoordinates.CW) + ".00\r\n");
+	str.append("CenterLat=" + Preferences.itself().curCentrePt.getLatDeg(TransformCoordinates.DMM) + ".00\r\n");
+	str.append("CenterLong=" + Preferences.itself().curCentrePt.getLonDeg(TransformCoordinates.DMM) + ".00\r\n");
 	str.append("RefColor=255\r\n");
 	str.append("RefRad=58\r\n");
 	str.append("RefLine=6\r\n");

@@ -64,7 +64,7 @@ public final class TransformCoordinatesProperties {
 	    int localsystem = TransformCoordinates.getLocalProjectionSystem(epsgCode);
 	    if (localsystem > 0) {
 		ProjectedPoint xy = TransformCoordinates.wgs84ToEpsg(ll, epsgCode);
-		ret = xy.toCoordinatePoint(localsystem);
+		ret = xy.toCoordinatePoint();
 	    } else {
 		throw new IllegalArgumentException(MyLocale.getMsg(4923, "fromWgs84: EPSG code ") + epsgCode + MyLocale.getMsg(4921, " not supported"));
 	    }
@@ -91,8 +91,22 @@ public final class TransformCoordinatesProperties {
 	    ret.latDec = 180 / Math.PI * (2 * Math.atan(Math.exp(lat * Math.PI / 180)) - Math.PI / 2);
 	    return ret;
 	default:
-	    ProjectedPoint xy = new ProjectedPoint(p, epsgCode, true, false);
-	    return TransformCoordinates.ProjectedEpsgToWgs84(xy, epsgCode);
+	    Projection projection = ProjectedPoint.getProjection(epsgCode);
+	    ProjectedPoint lp = new ProjectedPoint(projection);
+	    projection.set(p.latDec, p.lonDec, lp);
+	    CWPoint ll = projection.unproject(lp);
+
+	    int ls = TransformCoordinates.getLocalProjectionSystem(epsgCode);
+	    TransformParameters transparams = TransformCoordinates.getTransParams(lp, ls);
+
+	    if (transparams == TransformCoordinates.NO_DATUM_SHIFT)
+		return ll;
+	    else {
+		XyzCoordinates xyzorig = TransformCoordinates.latLon2xyz(ll, 0, transparams.ellip);
+		XyzCoordinates xyzwgs84 = TransformCoordinates.transform(xyzorig, transparams);
+		return TransformCoordinates.xyz2Latlon(xyzwgs84, TransformCoordinates.WGS84);
+	    }
+	    // return TransformCoordinates.ProjectedEpsgToWgs84(new ProjectedPoint(p, epsgCode, true, false), epsgCode);
 	}
     }
 }

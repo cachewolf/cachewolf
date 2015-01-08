@@ -102,7 +102,7 @@ public final class CalcPanel extends CellPanel {
 	miCooformat[1].modifiers |= MenuItem.Checked; // default
 	mnuContextFormt.addItem(miCooformat[2] = new MenuItem("d°m\'s\""));
 	miCooformat[2].modifiers &= ~MenuItem.Checked;
-	mnuContextFormt.addItems(TransformCoordinates.getProjectedSystemNames());
+	mnuContextFormt.addItems(TransformCoordinates.localSystemsFriendlyShortname());
 
 	btnChangeLatLon = GuiImageBroker.getButton("from", "from");
 	btnChangeLatLon.setMenu(mnuContextFormt);

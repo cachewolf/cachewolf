@@ -24,11 +24,10 @@ package CacheWolf.navi;
 import CacheWolf.database.CWPoint;
 
 abstract class Projection {
-    /** when implemented: <br>
-     * a) if the projection covers only one epsgCode here it should be written <br>
-     * b) if the projection covers several zones which have different epsg codes
-     * put here the figure which must be added to the zone number to get the 
-     * corresponding epsg-codes (see method getEpsgcode)
+    /** in Implementation: <br>
+     * a) if the projection covers only one epsgCode (== one zone)<br>
+     * b) if the projection covers different epsgCodes (== different zones)<br> 
+     * put here the calculation from zone number to the epsgCode(s) (method getEpsgcode)
      */
     public int epsgCode;
     public boolean zoneSeperately = false;
@@ -51,6 +50,11 @@ abstract class Projection {
      */
     public abstract ProjectedPoint project(CWPoint ll, ProjectedPoint pp, int epsg);
 
+    /**
+     * unproject
+     * @param pp
+     * @return
+     */
     public abstract CWPoint unproject(ProjectedPoint pp);
 
     /**
@@ -60,30 +64,63 @@ abstract class Projection {
      */
     public abstract double getNorthing(ProjectedPoint pp);
 
+    /**
+     * Returns the projected Easting in local notation
+     * @param pp
+     * @return
+     */
     public abstract double getEasting(ProjectedPoint pp);
 
-    public int getEpsgcode(ProjectedPoint pp) {
-	return epsgCode + pp.zone;
-    }
-
+    /**
+     * set by
+     * @param northing
+     * @param easting
+     * @param pp
+     * @return
+     */
     public ProjectedPoint set(double northing, double easting, ProjectedPoint pp) {
 	throw new UnsupportedOperationException("Projection.set: set() requires zone, use set with 1 more parameter");
     }
 
+    /**
+     * set by
+     * @param northing
+     * @param easting
+     * @param zone
+     * @param pp
+     * @return
+     */
     public ProjectedPoint set(double northing, double easting, String zone, ProjectedPoint pp) {
 	throw new UnsupportedOperationException("Projection.set (double, double String, ProjectedPoint): This projection uses no seperate zones");
     }
 
+    /**
+     * Returns Zone
+     * @param pp
+     * @return
+     */
     public String getZone(ProjectedPoint pp) {
 	throw new UnsupportedOperationException("Projection.getZone (double, double String, ProjectedPoint): This projection uses no seperate zones");
     }
 
     /**
-     * In case the same Projection-class is used for several epsg codes, this
-     * method translates the localsystem to the corresponding epsg code.  
-     * It is used by UTMProjectionFixZone which can be used to project all
-     * epsg codes which represent just one UTM stripe, like Sweden. 
-     * ProjectedPoint sets projection.epsgCode, if it is zero. 
+     * Returns EPSGCode
+     * @param pp
+     * @return
+     */
+    public int getEpsgcode(ProjectedPoint pp) {
+	return epsgCode + pp.zone;
+    }
+
+    /**
+     * In case the same Projection-class is used for several epsg codes,<br>
+     * this method translates the localsystem to the corresponding epsg code.<br>
+     *   
+     * It is used by UTMProjectionFixZone<br>
+     * which can be used to project all epsg codes which represent just one UTM stripe, like Sweden.<br> 
+     * ProjectedPoint sets projection.epsgCode, if it is zero.<br>
+     * @param localsystem
+     * @return
      */
     public int getEpsgcode(int localsystem) {
 	throw new UnsupportedOperationException("Projection.getEpsg(localsystem): This projection has getEpsg not implemented.");

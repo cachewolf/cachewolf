@@ -332,7 +332,7 @@ public class GCImporter {
 	origin = Preferences.itself().curCentrePt;
 	if (!spiderAllFinds && !origin.isValid()) {
 	    CoordsInput cs = new CoordsInput();
-	    cs.setFields(Preferences.itself().curCentrePt, TransformCoordinates.CW);
+	    cs.setFields(Preferences.itself().curCentrePt, TransformCoordinates.DMM);
 	    if (cs.execute() == FormBase.IDOK) {
 		MainForm.itself.setCurCentrePt(cs.getCoords());
 		origin = Preferences.itself().curCentrePt;

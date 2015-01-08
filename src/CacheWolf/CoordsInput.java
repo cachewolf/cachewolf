@@ -113,8 +113,7 @@ public class CoordsInput extends Form {
 	// topLinePanel.addNext(chkUTM =new mCheckBox("UTM"),DONTSTRETCH, LEFT);
 	topLinePanel.addNext(chkCustom = new mCheckBox(""), DONTSTRETCH, LEFT);
 
-	String[] ls = TransformCoordinates.getProjectedSystemNames();
-	topLinePanel.addLast(localCooSystem = new mChoice(ls, 0), DONTSTRETCH, LEFT);
+	topLinePanel.addLast(localCooSystem = new mChoice(TransformCoordinates.localSystemsFriendlyShortname(), 0), DONTSTRETCH, LEFT);
 
 	chkDD.setGroup(chkFormat);
 	chkDD.exitKeys = exitKeys;
@@ -250,7 +249,8 @@ public class CoordsInput extends Form {
 
     public void setFields(CWPoint coords, int format) {
 	int formatsel = localSystemToformatSel(format);
-	if (formatsel >= formatSelToLocalSystem.length) { // projected point = neither dd, dd° mm.mm nor dd° mm' ss.s"
+	if (formatsel >= formatSelToLocalSystem.length) {
+	    // projected point = neither dd, dd° mm.mm nor dd° mm' ss.s"
 	    if (coords.isValid()) {
 		localCooSystem.setInt(formatsel - formatSelToLocalSystem.length);
 		ProjectedPoint pp = TransformCoordinates.wgs84ToLocalsystem(coords, format);

@@ -49,6 +49,16 @@ public final class LambertProjection extends Projection {
 	ellip = ellip_;
     }
 
+    /**
+     *  actually this should be done inside the constructor. But Ewe doesn't support more than 8 parameters (at least for constructors)
+     * @param falseNorthing_
+     * @param falseEasting_
+     * @param firstStandardParallel_
+     * @param secondSandardParallel_
+     * @param scale_
+     * @param centralLat_
+     * @param centralLon_
+     */
     public void setup(double falseNorthing_, double falseEasting_, double firstStandardParallel_, double secondSandardParallel_, double scale_, double centralLat_, double centralLon_) {
 	falseNorthing = falseNorthing_;
 	falseEasting = falseEasting_;
@@ -103,9 +113,8 @@ public final class LambertProjection extends Projection {
     }
 
     public CWPoint unproject(ProjectedPoint pp) {
-
-	double ns = Rb - pp.northing;
-	double es = pp.easting;
+	double ns = Rb - pp.rawNorthing;
+	double es = pp.rawEasting;
 	double R = java.lang.Math.sqrt(es * es + ns * ns) * java.lang.Math.abs(n) / n;
 	double t = java.lang.Math.pow(R / (ellip.a * F0), 1 / n);
 	double gamma = java.lang.Math.atan2(es, ns); // TODO unsure, whether always the correct sign is produced
@@ -124,17 +133,17 @@ public final class LambertProjection extends Projection {
     }
 
     public double getNorthing(ProjectedPoint pp) {
-	return pp.northing + falseNorthing;
+	return pp.rawNorthing + falseNorthing;
     }
 
     public double getEasting(ProjectedPoint pp) {
-	return pp.easting + falseEasting;
+	return pp.rawEasting + falseEasting;
     }
 
+    //Overrides: set(...) in Projection
     public ProjectedPoint set(double northing_, double easting_, ProjectedPoint pp) {
 	if (pp == null) {
-	    pp = new ProjectedPoint();
-	    pp.projection = this;
+	    pp = new ProjectedPoint(this);
 	}
 	pp.setRaw(northing_ - falseNorthing, easting_ - falseEasting);
 	return pp;

@@ -1101,7 +1101,7 @@ class EditCenter extends Form {
 	    }
 	    if (ev.target == btnCurrentCentre) {
 		CoordsInput cs = new CoordsInput();
-		cs.setFields(Preferences.itself().curCentrePt, TransformCoordinates.CW);
+		cs.setFields(Preferences.itself().curCentrePt, TransformCoordinates.DMM);
 		if (cs.execute() == FormBase.IDOK) {
 		    MainForm.itself.setCurCentrePt(cs.getCoords());
 		    btnCurrentCentre.setText(Preferences.itself().curCentrePt.toString());
@@ -1109,7 +1109,7 @@ class EditCenter extends Form {
 	    }
 	    if (ev.target == btnProfileCentre) {
 		CoordsInput cs = new CoordsInput();
-		cs.setFields(MainForm.profile.center, TransformCoordinates.CW);
+		cs.setFields(MainForm.profile.center, TransformCoordinates.DMM);
 		if (cs.execute() == FormBase.IDOK) {
 		    MainForm.profile.notifyUnsavedChanges(cs.getCoords().equals(MainForm.profile.center));
 		    MainForm.profile.center.set(cs.getCoords());
