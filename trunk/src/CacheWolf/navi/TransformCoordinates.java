@@ -513,7 +513,7 @@ public final class TransformCoordinates {
 	double s = Math.sqrt(Math.pow(from.x, 2) + Math.pow(from.y, 2));
 	double T = Math.atan(from.z * ellipsoid.a / (s * ellipsoid.b));
 	double B = Math.atan((from.z + e2 * Math.pow(ellipsoid.a, 2) / ellipsoid.b * Math.pow(Math.sin(T), 3)) / (s - e2 * ellipsoid.a * Math.pow(Math.cos(T), 3)));
-	double L = Math.atan(from.y / from.x);
+	double L = Math.atan2(from.y, from.x);
 	// not used: double N = ellipsoid.a / Math.sqrt(1 - e2 * Math.pow(Math.sin(B),2));
 	// not used: double h = s / Math.cos(B)- N;
 	CWPoint ret = new CWPoint();

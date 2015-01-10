@@ -41,7 +41,6 @@ public class UTMProjection extends Projection {
 	if (stripe < 0)
 	    stripe += 60;
 	GkProjection.project(wgs84, ellip, 6, (stripe >= 30 ? stripe - 30 : stripe + 30), 3, 0.9996, pp);
-	// @pfeffer:todo we get a wgs84 here that is not wgs84, so zone calculation is wrong 
 	pp.zone = stripe + (int) (Math.floor((wgs84.latDec) / 8) + 13) * 200;
 	return pp;
     }
