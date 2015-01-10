@@ -123,7 +123,7 @@ public class UTMProjection extends Projection {
      */
     public ProjectedPoint set(double northing, double easting, int zone, int zoneletternumber, ProjectedPoint pp) {
 	pp.rawEasting = easting - 500000;
-	if (northing > 10000000)
+	if (zoneletternumber < 'n' - 'a' -1) // 'n' is the first band in northern hemisphere,  -1: skip the letter i
 	    pp.rawNorthing = northing - 10000000;
 	else
 	    pp.rawNorthing = northing;
