@@ -286,7 +286,7 @@ public class CacheHolderDetail {
 		OwnLog.setLogID(OwnLogId);
 		OwnLog.setFinderID(Preferences.itself().gcMemberId);
 	    } else {
-		OwnLog = new Log(OwnLogId, Preferences.itself().gcMemberId, "2.png", "1900-01-01", Preferences.itself().myAlias, ownLogText);
+		OwnLog = new Log(OwnLogId, Preferences.itself().gcMemberId, "2.png", "1900-02-02", Preferences.itself().myAlias, ownLogText);
 	    }
 	} else {
 	    OwnLog = null;

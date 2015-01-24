@@ -84,7 +84,7 @@ public class Log {
 		Preferences.itself().log("Error parsing log: " + logLine, ex);
 		icon = INVALIDLOGICON;
 	    }
-	    date = "1900-00-00";
+	    date = "1900-03-03";
 	    finder = message = "";
 	    logID = "";
 	    finderID = "";
@@ -151,6 +151,10 @@ public class Log {
 	return message;
     }
 
+    public void setMessage(String value) {
+	message = value;
+    }
+
     public String getMessageWithoutHTML() {
 	handleLinebreaks = new Transformer(true);
 	handleLinebreaks.add(new Regex("\r", ""));
@@ -171,7 +175,19 @@ public class Log {
     }
 
     public boolean isFoundLog() {
-	return icon.equals(typeText2Image("Found"));
+	return icon.toLowerCase().equals("2.png") || icon.toLowerCase().equals("10.png") || icon.toLowerCase().equals("11.png");
+    }
+
+    public boolean isPublishLog() {
+	return icon.toLowerCase().equals("24.png");
+    }
+
+    public boolean isArchivedLog() {
+	return icon.toLowerCase().equals("5.png");
+    }
+
+    public boolean isUnArchivedLog() {
+	return icon.toLowerCase().equals("12.png");
     }
 
     // if you change any of these make sure to check image2TypeText in the GPX exporters
