@@ -53,9 +53,12 @@ public class NewCSVExporter extends Exporter {
     public String record(CacheHolder ch, String lat, String lon) {
 	CacheHolderDetail chD = ch.getCacheDetails(false);
 	if (chD != null) {
-	    Time ownDate = DateFormat.toDate(chD.OwnLog.getDate());
-	    if (ownDate.year == 1900) {
-		return ch.getWayPoint() + "\n";
+	    Log ownLog = chD.OwnLog;
+	    if (ownLog != null) {
+		Time ownDate = DateFormat.toDate(ownLog.getDate());
+		if (ownDate.year == 1900) {
+		    return ch.getWayPoint() + "\n";
+		}
 	    }
 	}
 	return null;
