@@ -52,12 +52,13 @@ public class NewCSVExporter extends Exporter {
 
     public String record(CacheHolder ch, String lat, String lon) {
 	CacheHolderDetail chD = ch.getCacheDetails(false);
-	Time ownDate = DateFormat.toDate(chD.OwnLog.getDate());
-	if (ownDate.year == 1900) {
-	    return ch.getWayPoint() + "\n";
-	} else {
-	    return null;
+	if (chD != null) {
+	    Time ownDate = DateFormat.toDate(chD.OwnLog.getDate());
+	    if (ownDate.year == 1900) {
+		return ch.getWayPoint() + "\n";
+	    }
 	}
+	return null;
     }
 
     public String record_finddays(CacheHolder ch, String lat, String lon) {
