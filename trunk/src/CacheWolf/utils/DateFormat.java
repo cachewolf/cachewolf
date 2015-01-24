@@ -52,7 +52,7 @@ public class DateFormat {
 
     public static Time toDate(String ds) {
 	if (ds == null || ds.equals("") || ds.indexOf("1900") > -1)
-	    return new Time(1, 1, 1900);
+	    return new Time(5, 5, 1900);
 	Time d = new Time();
 	d.hour = 0;
 	d.minute = 0;

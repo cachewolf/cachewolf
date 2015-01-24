@@ -727,11 +727,17 @@ public class DetailsPanel extends CellPanel {
 	final byte oldType = cache.getType();
 	cache.setType(newCacheType);
 	String ownLogText = STRreplace.replace(ownLog.getText(), "\n", "<br />");
-	if (ownLogText.length() > 0) {
-	    String OwnLogId = cache.getCacheDetails(false).OwnLogId;
-	    cache.getCacheDetails(false).OwnLog = new Log(OwnLogId, Preferences.itself().gcMemberId, "2.png", "1900-01-01", Preferences.itself().myAlias, ownLogText);
+	Log oldLog = cache.getCacheDetails(false).OwnLog;
+	if (oldLog == null) {
+	    if (ownLogText.length() > 0) {
+		String OwnLogId = cache.getCacheDetails(false).OwnLogId;
+		// todo must get date from status
+		// todo must set icon to correct value
+		cache.getCacheDetails(false).OwnLog = new Log(OwnLogId, Preferences.itself().gcMemberId, "2.png", "1900-01-01", Preferences.itself().myAlias, ownLogText);
+	    }
+	} else {
+	    oldLog.setMessage(ownLogText);
 	}
-
 	cache.checkIncomplete();
 
 	/*
