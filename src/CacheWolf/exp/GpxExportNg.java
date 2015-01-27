@@ -178,7 +178,7 @@ public class GpxExportNg {
     final static String XMLNSPQ = "http://www.groundspeak.com/cache/@";
     private String xmlnspq;
     final static String GPXLOG = "\t\t\t\t<groundspeak:log id=\"@@LOGID@@\">" + newLine//
-	    + ("\t\t\t\t\t<groundspeak:date>@@LOGDATE@@T00:00:00</groundspeak:date>") + newLine//
+	    + ("\t\t\t\t\t<groundspeak:date>@@LOGDATE@@T19:00:00Z</groundspeak:date>") + newLine//
 	    + ("\t\t\t\t\t<groundspeak:type>@@LOGTYPE@@</groundspeak:type>") + newLine//
 	    + ("\t\t\t\t\t<groundspeak:finder id=\"@@LOGFINDERID@@\">@@LOGFINDER@@</groundspeak:finder>") + newLine//
 	    + ("\t\t\t\t\t<groundspeak:text encoded=\"@@LOGENCODE@@\">@@LOGTEXT@@</groundspeak:text>") + newLine//
@@ -619,12 +619,12 @@ public class GpxExportNg {
 		} catch (Exception e) {
 		    Preferences.itself().log(ch.getWayPoint() + " has no parent", null);
 		    exportErrors++;
-		    ret.append("    <time>1970-01-01T00:00:00</time>").append(newLine);
+		    ret.append("    <time>1970-01-01T19:00:00Z</time>").append(newLine);
 		}
 	    } else if (ch.isCustomWpt()) {
-		ret.append("    <time>1970-01-01T00:00:00</time>").append(newLine);
+		ret.append("    <time>1970-01-01T19:00:00Z</time>").append(newLine);
 	    } else {
-		ret.append("    <time>" + ch.getDateHidden() + "T00:00:00</time>").append(newLine);
+		ret.append("    <time>" + ch.getDateHidden() + "T19:00:00Z</time>").append(newLine);
 	    }
 	}
 
