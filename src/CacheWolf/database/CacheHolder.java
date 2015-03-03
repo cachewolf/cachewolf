@@ -570,6 +570,7 @@ public class CacheHolder {
 	varParams.put("CACHEID", GetCacheID());
 	varParams.put("AVAILABLE", isAvailable ? "TRUE" : "FALSE");
 	varParams.put("ARCHIVED", isArchived ? "TRUE" : "FALSE");
+	varParams.put("SOLVED", isSolved ? "TRUE" : "FALSE");
 	varParams.put("HTML", isHTML ? "TRUE" : "FALSE");
 	varParams.put("VOTE", getRecommended());
 	// () ? TRUE : FALSE

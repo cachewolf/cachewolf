@@ -27,6 +27,8 @@ import CacheWolf.database.Log;
 import CacheWolf.database.LogList;
 import CacheWolf.utils.DateFormat;
 import ewe.sys.Time;
+import ewe.util.Enumeration;
+import ewe.util.Hashtable;
 
 /**
  * Class to export the cache database (index) to an CSV File which can bei easy
@@ -40,8 +42,7 @@ public class NewCSVExporter extends Exporter {
 	super();
 	this.setMask("*.cl");
 	this.setDecimalSeparator(',');
-	this.setNeedCacheDetails(true);
-	this.setHowManyParams(LAT_LON);
+	this.setHowManyParams(NO_PARAMS);
     }
 
     public String header() {
@@ -50,7 +51,33 @@ public class NewCSVExporter extends Exporter {
 
     private int sum = 0;
 
-    public String record(CacheHolder ch, String lat, String lon) {
+    private static Hashtable sumPerDay = new Hashtable(365);
+
+    public String record(CacheHolder ch) {
+	String sdate = ch.getStatusDate();
+	if (sumPerDay.containsKey(sdate)) {
+	    Integer tillNow = (Integer) sumPerDay.get(sdate);
+	    tillNow = new Integer(tillNow.intValue() + 1);
+	    sumPerDay.put(sdate, tillNow);
+	} else {
+	    sumPerDay.put(sdate, new Integer(1));
+	}
+	return null;
+    }
+
+    public String trailer() {
+	String ret = "";
+	for (final Enumeration e = sumPerDay.keys(); e.hasMoreElements();) {
+	    String key = (String) e.nextElement();
+	    int i = ((Integer) sumPerDay.get(key)).intValue();
+	    if (i >= 12) {
+		ret = ret + key + " Anz: " + i + "\r\n";
+	    }
+	}
+	return ret;
+    }
+
+    public String record_wrong_ownlog_date(CacheHolder ch) {
 	CacheHolderDetail chD = ch.getCacheDetails(false);
 	if (chD != null) {
 	    Log ownLog = chD.OwnLog;
@@ -64,7 +91,7 @@ public class NewCSVExporter extends Exporter {
 	return null;
     }
 
-    public String record_finddays(CacheHolder ch, String lat, String lon) {
+    public String record_finddays_between_ownLog_previousLog(CacheHolder ch) {
 	CacheHolderDetail chD = ch.getCacheDetails(false);
 	LogList logs = chD.CacheLogs;
 	Time ownDate = DateFormat.toDate(chD.OwnLog.getDate());

@@ -46,7 +46,6 @@ public class SpoilerPOIExporter extends Exporter {
 	super();
 	this.setMask("*.gpx");
 	this.setHowManyParams(LAT_LON);
-	this.setNeedCacheDetails(true);
     }
 
     public void doIt() {
