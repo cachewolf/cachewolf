@@ -67,7 +67,7 @@ public class Exporter {
     char decimalSeparator = '.';
     // if true, the complete cache details are read
     // before a call to the record method is made
-    boolean needCacheDetails = false;
+    // boolean needCacheDetails = false;
     // selection, which method should be called
     int howManyParams = 0;
 
@@ -200,9 +200,9 @@ public class Exporter {
      * 
      * @param how
      */
-    public void setNeedCacheDetails(boolean how) {
-	this.needCacheDetails = how;
-    }
+    //public void setNeedCacheDetails(boolean how) {
+    //this.needCacheDetails = how;
+    //}
 
     /**
      * sets howManyParams

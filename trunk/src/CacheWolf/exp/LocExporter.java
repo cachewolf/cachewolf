@@ -44,9 +44,6 @@ public class LocExporter extends Exporter {
 	super();
 	this.setMask("*.loc");
 	this.setHowManyParams(NO_PARAMS);
-	if (Preferences.itself().addDetailsToName) {
-	    this.setNeedCacheDetails(true);
-	}
 	gm = new GarminMap();
     }
 
