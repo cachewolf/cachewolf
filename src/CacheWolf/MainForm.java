@@ -203,8 +203,8 @@ public class MainForm extends Editor {
     /**
      * Open Profile selector screen
      * 
-     * @param prof
      * @param showProfileSelector
+     * @param hasNewButton
      * @return True if a profile was selected
      */
     public boolean selectProfile(int showProfileSelector, boolean hasNewButton) {
@@ -216,21 +216,28 @@ public class MainForm extends Editor {
 		    || (showProfileSelector == PROFILE_SELECTOR_FORCED_ON) //
 		    || (showProfileSelector == PROFILE_SELECTOR_ONOROFF && !preferences.autoReloadLastProfile) //
 	    ) {
-		ProfilesForm f = new ProfilesForm(preferences.absoluteBaseDir, selectedProfile, !profileExists || hasNewButton ? 0 : 1);
-		int code = f.execute();
-		if (code == -1)
-		    return false; // Cancel pressed
-		selectedProfile = f.newSelectedProfile;
+		selectedProfile = selectProfileDir(preferences.absoluteBaseDir, selectedProfile, !profileExists || hasNewButton ? 0 : 1);
+		if (selectedProfile.length() == 0)
+		    return false;
 	    }
 	    profileExists = (new File(preferences.absoluteBaseDir + selectedProfile)).exists();
 	    if (!profileExists)
 		new InfoBox(MyLocale.getMsg(144, "Warning"), MyLocale.getMsg(171, "Profile does not exist: ") + selectedProfile).wait(FormBase.OKB);
 	} while (profileExists == false);
+
 	if (preferences.lastProfile != selectedProfile) {
 	    preferences.lastProfile = selectedProfile; // still to open
 	    preferences.savePreferences();
 	}
 	return true;
+    }
+
+    public String selectProfileDir(String baseDir, String selectedProfile, int outfit) {
+	ProfilesForm f = new ProfilesForm(baseDir, selectedProfile, outfit);
+	int code = f.execute();
+	if (code == -1)
+	    return ""; // Cancel pressed
+	return f.newSelectedProfile;
     }
 
     public void doPaint(Graphics g, Rect r) {

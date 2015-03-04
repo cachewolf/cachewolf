@@ -28,8 +28,6 @@ import CacheWolf.database.CacheDB;
 import CacheWolf.database.CacheHolder;
 import CacheWolf.utils.Files;
 import CacheWolf.utils.MyLocale;
-import ewe.filechooser.FileChooser;
-import ewe.filechooser.FileChooserBase;
 import ewe.io.File;
 import ewe.io.FileBase;
 import ewe.sys.Handle;
@@ -68,12 +66,12 @@ public class DataMover {
 	MainForm.profile.saveIndex(Profile.SHOW_PROGRESS_BAR);
     }
 
-    public void copyCaches() {
-	Profile dstProfile = new Profile();
-
-	dstProfile.dataDir = selectTargetDir();
-	if (dstProfile.dataDir.equals(MainForm.profile.dataDir) || dstProfile.dataDir.equals(""))
+    public void copyCaches(String targetDir) {
+	if (targetDir.equals(MainForm.profile.dataDir) || targetDir.equals(""))
 	    return;
+
+	Profile dstProfile = new Profile();
+	dstProfile.dataDir = targetDir;
 
 	//Von Andi P
 	int mode = showMessage(253, "All waypoints will be copied");
@@ -165,12 +163,12 @@ public class DataMover {
 	return MyLocale.getMsg(256, "All visible and ticked") + " (" + countMainWP + ' ' + MyLocale.getMsg(257, "Main") + ", " + countAddiWP + MyLocale.getMsg(258, " Addi") + ')';
     }
 
-    public void moveCaches() {
-	Profile dstProfile = new Profile();
-	// Select destination directory
-	dstProfile.dataDir = selectTargetDir();
-	if (dstProfile.dataDir.equals(MainForm.profile.dataDir) || dstProfile.dataDir.equals(""))
+    public void moveCaches(String targetDir) {
+	if (targetDir.equals(MainForm.profile.dataDir) || targetDir.equals(""))
 	    return;
+
+	Profile dstProfile = new Profile();
+	dstProfile.dataDir = targetDir;
 
 	int mode = showMessage(252, "All waypoints will be moved");
 	if (mode == -1) {
@@ -263,16 +261,6 @@ public class DataMover {
     //////////////////////////////////////////////////////////////////////
     // Utility functions
     //////////////////////////////////////////////////////////////////////
-
-    private String selectTargetDir() {
-	// Select destination directory
-	FileChooser fc = new FileChooser(FileChooserBase.DIRECTORY_SELECT, Preferences.itself().absoluteBaseDir);
-	fc.setTitle(MyLocale.getMsg(148, "Select Target directory"));
-	if (fc.execute() != FormBase.IDCANCEL) {
-	    return fc.getChosen() + "/";
-	} else
-	    return "";
-    }
 
     public void deleteCacheFiles(String wpt, String dir, String[] tmp) {
 	if (wpt.length() == 0) {

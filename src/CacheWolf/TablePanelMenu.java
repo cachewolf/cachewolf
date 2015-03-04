@@ -869,14 +869,14 @@ public class TablePanelMenu extends MenuBar {
 	    if (mev.selectedItem == orgCopy) {
 		MainForm.profile.saveIndex(Profile.SHOW_PROGRESS_BAR);
 		DataMover dm = new DataMover();
-		dm.copyCaches();
+		dm.copyCaches(Preferences.itself().absoluteBaseDir + MainForm.itself.selectProfileDir(Preferences.itself().absoluteBaseDir, Preferences.itself().lastProfile, 0) + "/");
 		tablePanel.refreshTable();
 	    }
 
 	    if (mev.selectedItem == orgMove) {
 		MainForm.profile.saveIndex(Profile.SHOW_PROGRESS_BAR);
 		DataMover dm = new DataMover();
-		dm.moveCaches();
+		dm.moveCaches(Preferences.itself().absoluteBaseDir + MainForm.itself.selectProfileDir(Preferences.itself().absoluteBaseDir, Preferences.itself().lastProfile, 0) + "/");
 		tablePanel.refreshTable();
 	    }
 
