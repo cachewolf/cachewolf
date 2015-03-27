@@ -1426,15 +1426,11 @@ public class GCImporter {
 	}
 	*/
 	// 1.) loggedInAs
-	String loggedInAs = extractor.set(page, "accesskey=\"p\">", "<", 0, true).findNext();
+	extractor.set(page, "<a href=\"/my/default.aspx\"", ">", 0, true).findNext();
+	String loggedInAs = extractor.findNext("<span>", "</span>");
 	Preferences.itself().log("[checkGCSettings]:loggedInAs= " + loggedInAs, null);
 	if (loggedInAs.length() == 0)
 	    return 6;
-
-	// 2.) oldLanguage
-	String languageBlock = extractor.findNext("selected\"><a href=\"/account", "</li>");
-	String oldLanguage = extractValue.set(languageBlock, "culture=", "\"", 0, true).findNext();
-	Preferences.itself().log("[checkGCSettings]:Language= " + oldLanguage, null);
 
 	//4.) distanceUnit
 	//<label><input checked="checked" id="DistanceUnits" name="DistanceUnits" type="radio" value="Metric" /> Metric</label>
@@ -1452,6 +1448,11 @@ public class GCImporter {
 	String GCDateFormat = extractValue.set(GCDateFormatBlock, "selected\" value=\"", "\">", 0, true).findNext();
 	Preferences.itself().log("[checkGCSettings]:GCDateFormat= " + GCDateFormat, null);
 	DateFormat.setGCDateFormat(GCDateFormat);
+
+	// 2.) oldLanguage
+	String languageBlock = extractor.findNext("selected\"><a href=\"/account", "</li>");
+	String oldLanguage = extractValue.set(languageBlock, "culture=", "\"", 0, true).findNext();
+	Preferences.itself().log("[checkGCSettings]:Language= " + oldLanguage, null);
 
 	//6.)ctl00$ContentBody$uxInstantMessengerProvider
 
