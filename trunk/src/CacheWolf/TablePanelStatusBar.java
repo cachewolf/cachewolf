@@ -69,7 +69,7 @@ public class TablePanelStatusBar extends CellPanel {
 	lblCenter.setToolTip(MyLocale.getMsg(195, "Current centre"));
 	// vermeide horizontales scrollen
 	// hängt auch von der Icongrösse / Schriftgrösse ab (ist so nicht korrekt) 
-	if (Preferences.itself().myAppWidth >= 640) {
+	if (Preferences.itself().getScreenWidth() >= 640) {
 	    addLast(lblCenter, STRETCH, LEFT | FILL);
 	}
     }
@@ -87,7 +87,7 @@ public class TablePanelStatusBar extends CellPanel {
 	    oldInfo = strInfo;
 	}
 	String strStatus = "";
-	// boolean bigScreen=(MyLocale.getScreenWidth()>=480) && !(MobileVGA && (pref.fontSize > 20));
+	// boolean bigScreen=(Preferences.itself().getScreenWidth()>=480) && !(MobileVGA && (pref.fontSize > 20));
 	boolean bigScreen = !Vm.isMobile();
 	strStatus += MyLocale.getMsg(4500, "Tot:") + " " + stats.total(bigScreen) + " " + MyLocale.getMsg(4501, "Dsp:") + " " + stats.visible(bigScreen) + " " + MyLocale.getMsg(4502, "Fnd:") + " " + stats.totalFound() + "  ";
 	disp.setToolTip("Cache/Addi +Blacklisted");

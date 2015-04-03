@@ -121,8 +121,8 @@ public class RadarPanel extends CellPanel {
     public void setParam(CacheDB db, CacheHolder sWp) {
 	selectedWaypoint = sWp;
 	cacheDB = db;
-	height = (Preferences.itself().myAppHeight) * 6 / 5; // add 10% each at top/bottom
-	width = (Preferences.itself().myAppWidth) * 6 / 5;
+	height = (Preferences.itself().getScreenHeight()) * 6 / 5; // add 10% each at top/bottom
+	width = (Preferences.itself().getScreenWidth()) * 6 / 5;
     }
 
     // Call this after the centre has changed to re-center the radar panel
@@ -268,7 +268,7 @@ public class RadarPanel extends CellPanel {
 	final AniImage aImg = new AniImage(img);
 	// iActP.addImage(aImg);
 	iActP.backgroundImage = img;
-	final int xPos = (Preferences.itself().myAppWidth / 2 - width / 2);
+	final int xPos = (Preferences.itself().getScreenWidth() / 2 - width / 2);
 	aImg.setLocation(xPos, 0);
 	aImg.refresh();
     }

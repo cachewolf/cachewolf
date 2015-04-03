@@ -125,7 +125,7 @@ public final class CalcPanel extends CellPanel {
 	BottomP.addNext(inpDistance = new mInput(), DONTSTRETCH, (DONTFILL | LEFT));
 	inpDistance.setText("0");
 	// Check for narrow screen and reduce width of fields to avoid horizontal scroll panel
-	if (MyLocale.getScreenWidth() <= 240) {
+	if (Preferences.itself().getScreenWidth() <= 240) {
 	    FontMetrics fm = getFontMetrics(inpBearing.getFont());
 	    inpBearing.setPreferredSize(fm.getTextWidth("99999999"), fm.getHeight() * 4 / 3);
 	    inpDistance.setPreferredSize(fm.getTextWidth("99999999"), fm.getHeight() * 4 / 3);

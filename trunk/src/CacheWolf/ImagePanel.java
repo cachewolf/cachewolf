@@ -154,7 +154,7 @@ class ImagesPanel extends InteractivePanel {
 	if (cache != oldCache) {
 	    Vm.showWait(true);
 	    clearImages();
-	    thumb_size = ((Preferences.itself().myAppWidth - 2 * padding) / 3);
+	    thumb_size = ((Preferences.itself().getScreenWidth() - 2 * padding) / 3);
 	    thumb_size = thumb_size - padding;
 	    double rowCounter1 = 0;
 	    if (cache.images.getDisplayImages(cache.getParent().getWayPoint()).size() > 0) {
@@ -167,7 +167,7 @@ class ImagesPanel extends InteractivePanel {
 		rowCounter2 = java.lang.Math.ceil(rowCounter2 / 3);
 	    }
 	    int rowCounter = (int) (rowCounter1 + rowCounter2);
-	    Rect r = new Rect(0, 0, Preferences.itself().myAppWidth, rowCounter * thumb_size + rowCounter * padding + padding);
+	    Rect r = new Rect(0, 0, Preferences.itself().getScreenWidth(), rowCounter * thumb_size + rowCounter * padding + padding);
 	    this.virtualSize = r;
 	    // this.setPreferredSize(pref.myAppWidth, rowCounter*thumb_size+rowCounter*padding+40);
 	    // this.checkScrolls();
@@ -438,7 +438,7 @@ class ImageDetailForm extends Form {
 	scp = new MyScrollBarPanel(ipp);
 	ipp.setImage(imgLoc);
 	this.title = "Image";
-	this.setPreferredSize(Preferences.itself().myAppWidth, Preferences.itself().myAppHeight);
+	this.setPreferredSize(Preferences.itself().getScreenWidth(), Preferences.itself().getScreenHeight());
 	this.addLast(scp, CellConstants.STRETCH, CellConstants.FILL);
 	this.addLast(new mLabel(imgTitle), CellConstants.DONTSTRETCH, (CellConstants.DONTFILL | CellConstants.WEST));
 	this.addLast(new mLabel(imgComment), CellConstants.DONTSTRETCH, (CellConstants.DONTFILL | CellConstants.WEST));

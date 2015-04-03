@@ -239,7 +239,6 @@ public class Preferences extends MinML {
     // Hashtable is saving filter data objects the user wants to save
     private Hashtable filterList = new Hashtable(15);
     /** screen is big enough to hold additional information like cache notes */
-    public boolean isBigScreen;
 
     /** Initial height of hints field (set to 0 to hide them initially) */
     public int initialHintHeight = DEFAULT_INITIAL_HINT_HEIGHT;
@@ -398,9 +397,9 @@ public class Preferences extends MinML {
     // ////////////////////////////////////////////////////////////////////////////////////
 
     /** The height of the application */
-    public int myAppHeight = 600;
+    private int screenHeight = 600;
     /** The width of the application */
-    public int myAppWidth = 800;
+    private int screenWidth = 800;
     /** True if the preferences were changed and need to be saved */
     public boolean dirty = false;
 
@@ -447,7 +446,6 @@ public class Preferences extends MinML {
 	FormBase.close = new DrawnIcon(DrawnIcon.CROSS, fontSize, fontSize, new Color(0, 0, 0));
 	FormBase.tick = new DrawnIcon(DrawnIcon.TICK, fontSize, fontSize, new Color(0, 128, 0));
 	FormBase.cross = new DrawnIcon(DrawnIcon.CROSS, fontSize, fontSize, new Color(128, 0, 0));
-	isBigScreen = (MyLocale.getScreenWidth() >= 400) && (MyLocale.getScreenHeight() >= 600);
 	GuiImageBroker.init(useText, useIcons, useBigIcons, leftIcons);
 	InfoBox.init(fontSize, useBigIcons);
 	HttpConnection.setProxy(this.myproxy, Common.parseInt(this.myproxyport), this.proxyActive);
@@ -487,6 +485,22 @@ public class Preferences extends MinML {
 		}
 	}
 	return "";
+    }
+
+    public int getScreenWidth() {
+	return screenWidth;
+    }
+
+    public void setScreenWidth(int myAppWidth) {
+	this.screenWidth = myAppWidth;
+    }
+
+    public int getScreenHeight() {
+	return screenHeight;
+    }
+
+    public void setScreenHeight(int myAppHeight) {
+	screenHeight = myAppHeight;
     }
 
     /** Helper variables for XML parser */
@@ -605,8 +619,8 @@ public class Preferences extends MinML {
 	    if (atts.getValue("hasclosebutton") != null)
 		hasCloseButton = Boolean.valueOf(atts.getValue("hasclosebutton")).booleanValue();
 	    if (atts.getValue("h") != null) {
-		myAppHeight = Convert.toInt(atts.getValue("h"));
-		myAppWidth = Convert.toInt(atts.getValue("w"));
+		screenHeight = Convert.toInt(atts.getValue("h"));
+		screenWidth = Convert.toInt(atts.getValue("w"));
 	    }
 	    if (atts.getValue("useText") != null)
 		useText = Boolean.valueOf(atts.getValue("useText")).booleanValue();
@@ -619,7 +633,7 @@ public class Preferences extends MinML {
 	    if (atts.getValue("useBigIcons") != null)
 		useBigIcons = Boolean.valueOf(atts.getValue("useBigIcons")).booleanValue();
 	    else {
-		useBigIcons = MyLocale.getScreenWidth() >= 400 && Vm.isMobile();
+		useBigIcons = screenWidth >= 400 && Vm.isMobile();
 	    }
 	} else if (name.equals("hintlogpanel")) {
 	    logsPerPage = Convert.parseInt(atts.getValue("logsperpage"));
@@ -893,8 +907,8 @@ public class Preferences extends MinML {
 		    + " menuAtTab=\"" + menuAtTab + "\"" //
 		    + " showstatus=\"" + showStatus + "\"" //
 		    + " hasclosebutton=\"" + hasCloseButton + "\"" //
-		    + " h=\"" + myAppHeight + "\"" //
-		    + " w=\"" + myAppWidth + "\"" //
+		    + " h=\"" + screenHeight + "\"" //
+		    + " w=\"" + screenWidth + "\"" //
 		    + " useText=\"" + useText + "\"" //
 		    + " useIcons=\"" + useIcons + "\"" //
 		    + " useBigIcons=\"" + useBigIcons + "\"" //

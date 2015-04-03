@@ -374,7 +374,7 @@ public class MovingMapControlSettings extends MinML implements ICommandListener 
 		if (Vm.isMobile()) {
 			tmp = CONFIG_RELATIVE_PATH + "pda/";
 
-			if (MyLocale.getScreenHeight() >= 480 && MyLocale.getScreenWidth() >= 480) {
+			if (Preferences.itself().getScreenHeight() >= 480 && Preferences.itself().getScreenWidth() >= 480) {
 				tmp = CONFIG_RELATIVE_PATH + "pda_vga/";
 			}
 		}
@@ -383,7 +383,7 @@ public class MovingMapControlSettings extends MinML implements ICommandListener 
 		path = path.replace('\\', '/');
 		File file = new File(path, CONFIG_FILE_NAME_OVERWRITE);
 		if (!file.exists()) {
-			file = new File(path, "" + MyLocale.getScreenWidth() + "x" + MyLocale.getScreenHeight() + ".xml");
+			file = new File(path, "" + Preferences.itself().getScreenWidth() + "x" + Preferences.itself().getScreenHeight() + ".xml");
 		}
 		if (!file.exists()) {
 			file = new File(path, CONFIG_FILE_NAME);

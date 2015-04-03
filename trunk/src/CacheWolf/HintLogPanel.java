@@ -132,7 +132,7 @@ public class HintLogPanel extends CellPanel {
 	}
 
 	sbplog = new MyScrollBarPanel(htmlImagDisp, ScrollablePanel.NeverShowHorizontalScrollers);
-	Rect r = new Rect(new Dimension(Preferences.itself().myAppWidth - sbplog.vbar.getRect().width, 20));
+	Rect r = new Rect(new Dimension(Preferences.itself().getScreenWidth() - sbplog.vbar.getRect().width, 20));
 	htmlImagDisp.virtualSize = r;
 	htmlImagDisp.checkScrolls();
 	logpane.addLast(sbplog.getScrollablePanel(), CellConstants.STRETCH, CellConstants.FILL);
