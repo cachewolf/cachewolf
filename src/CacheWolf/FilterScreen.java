@@ -397,7 +397,7 @@ public class FilterScreen extends Form {
 	// Panel 8 - Cache attributes
 	//////////////////////////
 
-	if (MyLocale.getScreenHeight() > 240)
+	if (Preferences.itself().getScreenHeight() > 240)
 	    addTitle(pnlCacheAttributes, MyLocale.getMsg(737, "Attributes"));
 	pnlCacheAttributes.addNext(new mLabel(MyLocale.getMsg(739, "Filter on") + ":"), DONTSTRETCH, LEFT);
 	pnlCacheAttributes.addLast(chcAttrib = new mChoice(new String[] { MyLocale.getMsg(740, "all"), MyLocale.getMsg(741, "one"), MyLocale.getMsg(742, "none") }, 0), DONTSTRETCH, LEFT);
@@ -454,8 +454,8 @@ public class FilterScreen extends Form {
 	executePanel = new ExecutePanel(lastPanel);
 	this.addLast(lastPanel);
 
-	int sw = MyLocale.getScreenWidth();
-	int sh = MyLocale.getScreenHeight();
+	int sw = Preferences.itself().getScreenWidth();
+	int sh = Preferences.itself().getScreenHeight();
 	int fs = Preferences.itself().fontSize;
 	int psx;
 	int psy;
@@ -1056,18 +1056,18 @@ class AttributesSelector extends Panel {
 	W_OFFSET = 100;
 	H_OFFSET = 150;
 	if (Vm.isMobile()) {
-	    if (MyLocale.getScreenWidth() == 240 & MyLocale.getScreenHeight() == 320) {
+	    if (Preferences.itself().getScreenWidth() == 240 & Preferences.itself().getScreenHeight() == 320) {
 		TILESIZE = 28;
 		W_OFFSET = 80;
 		H_OFFSET = 120;
 	    }
-	    if (MyLocale.getScreenWidth() == 320 & MyLocale.getScreenHeight() == 240) {
+	    if (Preferences.itself().getScreenWidth() == 320 & Preferences.itself().getScreenHeight() == 240) {
 	    }
-	    if (MyLocale.getScreenWidth() == 480 & MyLocale.getScreenHeight() == 640) {
+	    if (Preferences.itself().getScreenWidth() == 480 & Preferences.itself().getScreenHeight() == 640) {
 	    }
-	    if (MyLocale.getScreenWidth() == 480 & MyLocale.getScreenHeight() == 800) {
+	    if (Preferences.itself().getScreenWidth() == 480 & Preferences.itself().getScreenHeight() == 800) {
 	    }
-	    if (MyLocale.getScreenWidth() == 640 & MyLocale.getScreenHeight() == 480) {
+	    if (Preferences.itself().getScreenWidth() == 640 & Preferences.itself().getScreenHeight() == 480) {
 	    }
 	} else {
 	    TILESIZE = 36;

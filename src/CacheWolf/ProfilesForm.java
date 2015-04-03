@@ -68,8 +68,8 @@ public class ProfilesForm extends Form {
     public ProfilesForm(String baseDir, String selectedProfile, int outfit) {
 	super();
 	resizable = false;
-	int w = MyLocale.getScreenWidth();
-	int h = MyLocale.getScreenHeight();
+	int w = Preferences.itself().getScreenWidth();
+	int h = Preferences.itself().getScreenHeight();
 	if (w > 240)
 	    w = 240;
 	if (h > 320)

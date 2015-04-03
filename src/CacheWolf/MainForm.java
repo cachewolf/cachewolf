@@ -117,12 +117,12 @@ public class MainForm extends Editor {
 	    this.resizable = true;
 	    this.moveable = true;
 	    int h, w;
-	    h = this.preferences.myAppHeight;
-	    if (h > MyLocale.getScreenHeight())
-		h = MyLocale.getScreenHeight();
-	    w = this.preferences.myAppWidth;
-	    if (w > MyLocale.getScreenWidth())
-		w = MyLocale.getScreenWidth();
+	    h = this.preferences.getScreenHeight();
+	    if (h > Preferences.itself().getScreenHeight())
+		h = Preferences.itself().getScreenHeight();
+	    w = this.preferences.getScreenWidth();
+	    if (w > Preferences.itself().getScreenWidth())
+		w = Preferences.itself().getScreenWidth();
 	    this.setPreferredSize(w, h);
 	}
 
@@ -241,8 +241,8 @@ public class MainForm extends Editor {
     }
 
     public void doPaint(Graphics g, Rect r) {
-	this.preferences.myAppHeight = this.height;
-	this.preferences.myAppWidth = this.width;
+	this.preferences.setScreenHeight(this.height);
+	this.preferences.setScreenWidth(this.width);
 	super.doPaint(g, r);
     }
 

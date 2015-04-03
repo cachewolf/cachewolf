@@ -21,6 +21,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 package CacheWolf.controls;
 
+import CacheWolf.Preferences;
 import CacheWolf.utils.MyLocale;
 import ewe.fx.Color;
 import ewe.fx.DrawnIcon;
@@ -118,7 +119,7 @@ public class DateTimeChooser extends Editor {
 
     public CellPanel addTopSection(CellPanel addTo, Control cp) {
 	int IconSize;
-	if (Vm.isMobile() && MyLocale.getScreenWidth() >= 400)
+	if (Vm.isMobile() && Preferences.itself().getScreenWidth() >= 400)
 	    IconSize = 30;
 	else
 	    IconSize = 30;

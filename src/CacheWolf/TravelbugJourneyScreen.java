@@ -211,7 +211,7 @@ public class TravelbugJourneyScreen extends Form {
 
 	split.setSplitter(PanelSplitter.AFTER | PanelSplitter.HIDDEN, PanelSplitter.BEFORE | PanelSplitter.HIDDEN, 0);
 	addLast(split, STRETCH, FILL);
-	// setPreferredSize(MyLocale.getScreenWidth()<=240?240:MyLocale.getScreenWidth()*2/3,240);
+	// setPreferredSize(Preferences.itself().getScreenWidth()<=240?240:Preferences.itself().getScreenWidth()*2/3,240);
 
 	tblMyTravelbugJourneys = new TravelbugJourneyList();
 	tblMyTravelbugJourneys.readTravelbugsFile();

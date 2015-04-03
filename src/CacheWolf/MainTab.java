@@ -125,7 +125,7 @@ public class MainTab extends mTabbedPanel {
 
 	// Don't expand tabs if the screen is very narrow, 
 	// i.e. HP IPAQ 65xx, 69xx
-	// int sw = MyLocale.getScreenWidth();
+	// int sw = Preferences.itself().getScreenWidth();
 	// if (sw <= 480)
 	//	this.dontExpandTabs = true;
 	// if true no Tab outside is shown (big icons)
@@ -205,16 +205,6 @@ public class MainTab extends mTabbedPanel {
 	movingMap = new MovingMap();
 	navigate = new Navigate(); // attention movingMap must be created before;
 
-	/*
-	if (Preferences.itself().isBigScreen || !Preferences.itself().useRadar) {
-		// use map
-	}
-
-	if (Preferences.itself().isBigScreen || Preferences.itself().useRadar) {
-		// use radar
-	}
-	*/
-
 	if (Preferences.itself().noTabs) {
 	    this.addCard(homePanel = new CellPanel(), MyLocale.getMsg(1211, "Home"), null);
 	    initHomePanel();
@@ -242,19 +232,6 @@ public class MainTab extends mTabbedPanel {
 	    }
 	}
     }
-
-    /* replaced by select(index of Card) where used 
-    // Overrrides
-    // direct select by baseControl no longer works see ctor: Card c = this.addCard(alles, tabNames[i], null);
-    public void select(Control c) {
-    	for (int i = 0; i < baseControls.length; i++) {
-    		if (baseControls[i] == c) {
-    			select(i);
-    			break;
-    		}
-    	}
-    }
-    */
 
     public void selectAndActive(int rownum) {
 	// Called from myInteractivePanel.imageClicked

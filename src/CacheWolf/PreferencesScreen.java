@@ -129,8 +129,8 @@ public class PreferencesScreen extends Form {
     TableColumnChooser tccList, tccBugs;
 
     public PreferencesScreen() {
-	int sw = MyLocale.getScreenWidth();
-	int sh = MyLocale.getScreenHeight();
+	int sw = Preferences.itself().getScreenWidth();
+	int sh = Preferences.itself().getScreenHeight();
 	setPreferredSize(Math.min(sw, Preferences.itself().fontSize * 26), Math.min(sh, Preferences.itself().fontSize * 20));
 
 	mTabbedPanel mTab = new mTabbedPanel();
