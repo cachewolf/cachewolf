@@ -128,7 +128,7 @@ public class TablePanelMenu extends MenuBar {
 	this.equalWidths = true;
 	this.addNext(makeApplicationMenu());
 	// Depending on screen width display either filter and search menus or the combined menu
-	if (MyLocale.getScreenWidth() > 300) {
+	if (Preferences.itself().getScreenWidth() > 300) {
 	    this.addNext(makeSearchMenu());
 	}
 	this.addNext(makeFilterMenu());
@@ -252,7 +252,7 @@ public class TablePanelMenu extends MenuBar {
 	filtNonSelected = GuiImageBroker.getMenuItem(MyLocale.getMsg(1011, "Filter out non selected"), "filternonselected");
 	filtBlack = GuiImageBroker.getMenuItem(MyLocale.getMsg(161, "Show Blacklist"), "no_black");
 	MenuItem[] filterMenuItems;
-	if (MyLocale.getScreenWidth() > 300) {
+	if (Preferences.itself().getScreenWidth() > 300) {
 	    if (Preferences.itself().hasTickColumn) {
 		filterMenuItems = new MenuItem[] { filtApply, filtCreate, filtInvert, mnuSeparator, filtSelected, filtNonSelected, mnuSeparator, filtBlack };
 	    } else {
@@ -763,7 +763,9 @@ public class TablePanelMenu extends MenuBar {
 	     * if(mev.selectedItem == savenexit){ MainForm.profile.saveIndex(pref,Profile.SHOW_PROGRESS_BAR); tablePanel.saveColWidth(pref); ewe.sys.Vm.exit(0); }
 	     */
 	    if (mev.selectedItem == appMenuExit) {
+		Preferences.itself().log("End CacheWolf");
 		MainTab.itself.saveUnsavedChanges(true);
+		Preferences.itself().log("End CacheWolf: changes saved!");
 		ewe.sys.Vm.exit(0);
 	    }
 
@@ -802,7 +804,7 @@ public class TablePanelMenu extends MenuBar {
 		scnFilter.setData(MainForm.profile.getCurrentFilter());
 		scnFilter.setPreferredSize(450, 480);
 		if (Vm.isMobile())
-		    scnFilter.setPreferredSize(MyLocale.getScreenWidth(), MyLocale.getScreenHeight()); // Fullscreen
+		    scnFilter.setPreferredSize(Preferences.itself().getScreenWidth(), Preferences.itself().getScreenHeight()); // Fullscreen
 		scnFilter.execute(MainForm.itself.getFrame(), Gui.CENTER_FRAME);
 		tablePanel.refreshTable();
 	    }
@@ -912,7 +914,7 @@ public class TablePanelMenu extends MenuBar {
 	    }
 	    if (mev.selectedItem == orgTravelbugs) {
 		Form tbs = TravelbugJourneyScreenFactory.createTravelbugJourneyScreen();
-		tbs.setPreferredSize(MyLocale.getScreenWidth(), MyLocale.getScreenHeight());
+		tbs.setPreferredSize(Preferences.itself().getScreenWidth(), Preferences.itself().getScreenHeight());
 		tbs.execute();
 		tbs.close(0);
 	    }
@@ -925,17 +927,17 @@ public class TablePanelMenu extends MenuBar {
 	    // /////////////////////////////////////////////////////////////////////
 	    if (mev.selectedItem == about) {
 		InfoScreen is = new InfoScreen(MyLocale.getLocalizedFile("info.html"), MyLocale.getMsg(117, "About"), true);
-		is.setPreferredSize(Preferences.itself().myAppWidth, Preferences.itself().myAppHeight);
+		is.setPreferredSize(Preferences.itself().getScreenWidth(), Preferences.itself().getScreenHeight());
 		is.execute(MainForm.itself.getFrame(), Gui.CENTER_FRAME);
 	    }
 	    if (mev.selectedItem == legend) {
 		InfoScreen is = new InfoScreen(MyLocale.getLocalizedFile("legende.html"), MyLocale.getMsg(155, "Legend"), true);
-		is.setPreferredSize(Preferences.itself().myAppWidth, Preferences.itself().myAppHeight);
+		is.setPreferredSize(Preferences.itself().getScreenWidth(), Preferences.itself().getScreenHeight());
 		is.execute(MainForm.itself.getFrame(), Gui.CENTER_FRAME);
 	    }
 	    if (mev.selectedItem == wolflang) {
 		InfoScreen is = new InfoScreen(MyLocale.getLocalizedFile("wolflang.html"), MyLocale.getMsg(118, "WolfLanguage"), true);
-		is.setPreferredSize(Preferences.itself().myAppWidth, Preferences.itself().myAppHeight);
+		is.setPreferredSize(Preferences.itself().getScreenWidth(), Preferences.itself().getScreenHeight());
 		is.execute(MainForm.itself.getFrame(), Gui.CENTER_FRAME);
 	    }
 	    if (mev.selectedItem == sysinfo) {
@@ -967,9 +969,9 @@ public class TablePanelMenu extends MenuBar {
 		sb.append("<br>");
 		sb.append(MyLocale.getMsg(265, "Screen:"));
 		sb.append(' ');
-		sb.append(MyLocale.getScreenWidth());
+		sb.append(Preferences.itself().getScreenWidth());
 		sb.append(" x ");
-		sb.append(MyLocale.getScreenHeight());
+		sb.append(Preferences.itself().getScreenHeight());
 		sb.append("<br>");
 		sb.append(MyLocale.getMsg(266, "Font size:"));
 		sb.append(' ');
@@ -1000,7 +1002,7 @@ public class TablePanelMenu extends MenuBar {
 		sb.append(Version.getReleaseDetailed());
 		sb.append("<br>");
 		InfoScreen is = new InfoScreen(sb.toString(), "System", false);
-		is.setPreferredSize(Preferences.itself().myAppWidth, Preferences.itself().myAppHeight);
+		is.setPreferredSize(Preferences.itself().getScreenWidth(), Preferences.itself().getScreenHeight());
 		is.execute(MainForm.itself.getFrame(), Gui.CENTER_FRAME);
 		// Log for debug purposes 
 		Preferences.itself().log(STRreplace.replace(sb.toString(), "<br>", Preferences.NEWLINE), null);

@@ -64,6 +64,7 @@ public class MyLocale {
 
     private static Locale l = null;
     private static LocalResource lr = null;
+    // size of maximized window
     private static Rect screenSize = (Rect) Window.getGuiInfo(WindowConstants.INFO_SCREEN_RECT, null, new Rect(), 0);
 
     public static String initErrors;
@@ -220,24 +221,6 @@ public class MyLocale {
 	if (l == null)
 	    init();
 	return l.getString(Locale.COUNTRY_SHORT, 0, 0);
-    }
-
-    /**
-     * Get the screen width
-     * 
-     * @return Width of screen in pixels
-     */
-    public static int getScreenWidth() {
-	return screenSize.width;
-    }
-
-    /**
-     * Get the screen height
-     * 
-     * @return Height of screen in pixels
-     */
-    public static int getScreenHeight() {
-	return screenSize.height;
     }
 
     /**

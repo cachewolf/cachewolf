@@ -96,7 +96,7 @@ public class MapImporter extends Form {
 	this.resizable = true;
 	this.moveable = true;
 	//this.windowFlagsToSet = Window.FLAG_MAXIMIZE;
-	this.setPreferredSize(Preferences.itself().myAppWidth, Preferences.itself().myAppHeight);
+	this.setPreferredSize(Preferences.itself().getScreenWidth(), Preferences.itself().getScreenHeight());
 	thisMap = mapToLoad;
 	mapsPath = MainForm.profile.getMapsDir(); // calibrate the actual profiles maps dir
 	try {

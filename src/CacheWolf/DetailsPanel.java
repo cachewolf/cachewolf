@@ -22,7 +22,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 package CacheWolf;
 
 import CacheWolf.controls.DateTimeChooser;
-import CacheWolf.controls.ExecutePanel;
 import CacheWolf.controls.GuiImageBroker;
 import CacheWolf.controls.InfoBox;
 import CacheWolf.controls.MyScrollBarPanel;
@@ -51,7 +50,6 @@ import ewe.io.File;
 import ewe.sys.Convert;
 import ewe.sys.Time;
 import ewe.sys.Vm;
-import ewe.ui.CellConstants;
 import ewe.ui.CellPanel;
 import ewe.ui.Control;
 import ewe.ui.ControlConstants;
@@ -64,16 +62,18 @@ import ewe.ui.FormBase;
 import ewe.ui.Gui;
 import ewe.ui.HtmlDisplay;
 import ewe.ui.Menu;
+import ewe.ui.MenuEvent;
 import ewe.ui.MenuItem;
 import ewe.ui.ScrollBarPanel;
 import ewe.ui.ScrollablePanel;
 import ewe.ui.mButton;
 import ewe.ui.mCheckBox;
-import ewe.ui.mChoice;
 import ewe.ui.mComboBox;
 import ewe.ui.mInput;
 import ewe.ui.mLabel;
 import ewe.ui.mTextPad;
+import ewe.util.Iterator;
+import ewe.util.Vector;
 
 /**
  * Class to create the panel to show the way point details.<br>
@@ -83,41 +83,33 @@ public class DetailsPanel extends CellPanel {
 
     private final String[] tdSelectionList = new String[] { "1.0", "1.5", "2.0", "2.5", "3.0", "3.5", "4.0", "4.5", "5.0" };
     // ===== GUI elements =====
+    private MenuItem btnTBs;
+    private MenuItem btnSetDestination;
+    private MenuItem btnNotes;
+    private MenuItem btnNewWpt;
     /** way point id. */
     private static mInput inpWaypoint;
     /** way point name. */
     private static mInput inpName;
     /** way point owner. */
     private static mInput inpOwner;
-    private mButton btnType;
+    private MyChoice btnType;
+    private MyChoice btnDiff;
+    private MyChoice btnTerr;
+    private MyChoice btnSize;
     /** way point coordinates, open change coordinates dialog. */
     private static mButton btnCoordinates;
-    /** create a new way point. */
-    private static mButton btnNewWpt;
     /** set this waypoint as destination and change to compass view */
-    private static mButton btnSetDestination;
     /** show details for travel bus in way point. */
-    private static mButton btnTBs;
     private static IImage showBugImage;
     private static IImage showBugNoImage;
-    /** toggle blacklist status. */
-    private static mButton btnBlackListed;
-    private static IImage btnImageBlackListed;
-    private static IImage btnImageNotBlackListed;
-    /** add or edit notes for way point. */
-    private static mButton btnNotes;
 
     private mCheckBox cbIsSolved;
+    private mCheckBox cbIsBlacklisted;
     /** set found date. */
     private static mButton btnFoundDate;
     /** set hidden date. */
     private mButton btnHiddenDate;
-    /** set terrain value. */
-    private mButton btnTerr;
-    /** set difficulty value. */
-    private mButton btnDiff;
-    /** container sizes. */
-    private mButton btnSize;
     /** select way point status. */
     private static mComboBox chcStatus;
     /** notes for way point. */
@@ -151,6 +143,7 @@ public class DetailsPanel extends CellPanel {
     private byte newCacheSize;
     private String newHiddenDate;
     MyScrollBarPanel pnlLog;
+    boolean isBigScreen;
 
     /**
      * public constructor for detail panels. should only be called from main tab.
@@ -158,76 +151,80 @@ public class DetailsPanel extends CellPanel {
     public DetailsPanel() {
 	super();
 
-	if (Preferences.itself().tabsAtTop) {
-	    if (Preferences.itself().menuAtTab)
-		addLast(createToolsPanel(), HSTRETCH, HFILL);
-	} else {
-	    if (!Preferences.itself().menuAtTab)
-		addLast(createToolsPanel(), HSTRETCH, HFILL);
-	}
-
-	CellPanel leftPanel = new CellPanel();
-	inpWaypoint = new mInput();
-	leftPanel.addLast(inpWaypoint, DONTSTRETCH, FILL);
-	leftPanel.addLast(btnType = GuiImageBroker.getButton(CacheType.type2Gui(CacheType.CW_TYPE_REFERENCE), CacheType.typeImageNameForId(CacheType.CW_TYPE_TRADITIONAL)), DONTSTRETCH, FILL);
-	btnDiff = new mButton(MyLocale.getMsg(1000, "D") + ": 5.5");
-	btnDiff.setToolTip(MyLocale.getMsg(31415, "Edit difficulty"));
-	leftPanel.addLast(btnDiff, DONTSTRETCH, FILL);
-	btnTerr = new mButton(MyLocale.getMsg(1001, "T") + ": 5.5");
-	btnTerr.setToolTip(MyLocale.getMsg(31415, "Edit terrain"));
-	leftPanel.addLast(btnTerr, DONTSTRETCH, FILL);
-	leftPanel.addLast(btnSize = GuiImageBroker.getButton(CacheType.type2Gui(CacheType.CW_TYPE_REFERENCE), CacheType.typeImageNameForId(CacheType.CW_TYPE_TRADITIONAL)), DONTSTRETCH, FILL);
-
-	btnNewWpt = GuiImageBroker.getButton(MyLocale.getMsg(733, "Addi Wpt"), "newwpt");
-	btnNewWpt.setToolTip(MyLocale.getMsg(311, "Create Waypoint"));
-	CellPanel wptPanel = new CellPanel();
-	wptPanel.addNext(btnNewWpt, DONTSTRETCH, FILL);
-	lblAddiCount = new mLabel(": 888"); //MyLocale.getMsg(1044, "Addis") + 
-	wptPanel.addNext(lblAddiCount, DONTSTRETCH, RIGHT);
-	leftPanel.addLast(wptPanel, DONTSTRETCH, FILL);
-
-	CellPanel rightPanel = new CellPanel();
-	CellPanel namePanel = new CellPanel();
 	inpName = new mInput();
-	namePanel.addNext(inpName, STRETCH, FILL);
-	btnBlackListed = GuiImageBroker.getButton(MyLocale.getMsg(363, "Blacklist"), "is_black");
-	btnImageNotBlackListed = GuiImageBroker.makeImageForButton(btnBlackListed, MyLocale.getMsg(363, "Blacklist"), "no_black");
-	btnImageBlackListed = GuiImageBroker.makeImageForButton(btnBlackListed, MyLocale.getMsg(363, "Blacklist"), "is_black");
-	btnBlackListed.setToolTip(MyLocale.getMsg(349, "Toggle Blacklist status"));
-	namePanel.addLast(btnBlackListed, DONTSTRETCH, DONTFILL);
-	rightPanel.addLast(namePanel, HSTRETCH, HFILL);
+
+	inpWaypoint = new mInput();
+	btnHiddenDate = GuiImageBroker.getButton(MyLocale.getMsg(305, "Hidden on:") + MyLocale.getMsg(31415, "Set hidden date"), "calendar");
+	btnHiddenDate.setToolTip(MyLocale.getMsg(31415, "Set hidden date"));
+
+	btnDiff = new MyChoice(MyLocale.getMsg(1000, "D") + ": 5.5", tdSelectionList); // MyLocale.getMsg(31415, "Difficulty")
+	btnDiff.btn.setToolTip(MyLocale.getMsg(31415, "Edit difficulty"));
+
+	btnTerr = new MyChoice(MyLocale.getMsg(1001, "T") + ": 5.5", tdSelectionList); // MyLocale.getMsg(31415, "Terrain")
+	btnTerr.btn.setToolTip(MyLocale.getMsg(31415, "Edit terrain"));
+
+	btnType = new MyChoice(CacheType.type2Gui(CacheType.CW_TYPE_REFERENCE), CacheType.typeImageNameForId(CacheType.CW_TYPE_TRADITIONAL), CacheType.guiTypeStrings());
+	// MyLocale.getMsg(300, "Type:")
+
+	btnSize = new MyChoice(CacheType.type2Gui(CacheType.CW_TYPE_REFERENCE), CacheType.typeImageNameForId(CacheType.CW_TYPE_TRADITIONAL), CacheSize.guiSizeStrings());
+	// MyLocale.getMsg(301, "Size:")
 
 	CellPanel ownerPanel = new CellPanel();
 	ownerPanel.addNext(new mLabel(MyLocale.getMsg(306, "Owner:")), DONTSTRETCH, DONTFILL | LEFT);
 	inpOwner = new mInput();
 	ownerPanel.addNext(inpOwner, STRETCH, FILL);
-	btnHiddenDate = GuiImageBroker.getButton(MyLocale.getMsg(305, "Hidden on:") + MyLocale.getMsg(31415, "Set hidden date"), "calendar");
-	btnHiddenDate.setToolTip(MyLocale.getMsg(31415, "Set hidden date"));
-	ownerPanel.addLast(btnHiddenDate, DONTSTRETCH, DONTFILL);
-	rightPanel.addLast(ownerPanel, HSTRETCH, HFILL);
 
-	CellPanel coordinatesPanel = new CellPanel();
 	btnCoordinates = new mButton();
 	btnCoordinates.setToolTip(MyLocale.getMsg(31415, "Edit coordinates"));
-	coordinatesPanel.addNext(btnCoordinates, HSTRETCH, HFILL);
-	rightPanel.addLast(coordinatesPanel, HSTRETCH, HFILL);
 
 	attViewer = new AttributesViewer();
-	attViewer.setBorder(EDGE_BUMP, 5);
-	rightPanel.addLast(attViewer);
 
 	CellPanel mainPanel = new CellPanel();
-	mainPanel.addNext(leftPanel, DONTSTRETCH, DONTFILL | LEFT | TOP);
-	mainPanel.addLast(rightPanel, HSTRETCH, FILL | LEFT);
-	if (Preferences.itself().isBigScreen)
+	mainPanel.equalWidths = true;
+	Vector panelControls = new Vector();
+	panelControls.add(inpWaypoint);
+	panelControls.add(btnType.btn);
+	panelControls.add(btnHiddenDate);
+	panelControls.add(ownerPanel);
+	panelControls.add(btnDiff.btn);
+	panelControls.add(btnTerr.btn);
+	panelControls.add(btnSize.btn);
+	panelControls.add(btnCoordinates);
+	panelControls.add(createToolsPanel());
+
+	mainPanel.addLast(inpName);
+	int anzPerLine = Math.max(1, Preferences.itself().getScreenWidth() / 200);
+	//isBigScreen = (Preferences.itself().getScreenWidth() >= 400) && (Preferences.itself().getScreenHeight() >= 600);
+	isBigScreen = anzPerLine > 1;
+	int i = 0;
+	for (Iterator ite = panelControls.iterator(); ite.hasNext();) {
+	    Control ctrl = (Control) ite.next();
+	    i++;
+	    if ((i % anzPerLine) == 0) {
+		mainPanel.addLast(ctrl);
+	    } else {
+		mainPanel.addNext(ctrl);
+	    }
+	}
+	mainPanel.addLast(null);
+	if (isBigScreen) {
 	    mainPanel.setText(MyLocale.getMsg(1201, "Details"));
+	    mainPanel.addLast(attViewer, HSTRETCH, HFILL);
+	}
+
 	addLast(mainPanel, HSTRETCH, HFILL);
 
 	CellPanel statusPanel = new CellPanel();
 	CellPanel solvedPanel = new CellPanel();
 	solvedPanel.addNext(new mLabel(MyLocale.getMsg(362, "solved") + ": "), DONTSTRETCH, DONTFILL | LEFT);
 	cbIsSolved = new mCheckBox("");
-	solvedPanel.addLast(cbIsSolved);
+	solvedPanel.addNext(cbIsSolved);
+
+	solvedPanel.addNext(new mLabel(MyLocale.getMsg(363, "Blacklist") + ": "), DONTSTRETCH, DONTFILL | LEFT);
+	//.setToolTip(MyLocale.getMsg(349, "Toggle Blacklist status"));
+	cbIsBlacklisted = new mCheckBox("");
+	solvedPanel.addNext(cbIsBlacklisted);
+
 	statusPanel.addLast(solvedPanel, HSTRETCH, HFILL);
 	CellPanel foundPanel = new CellPanel();
 	foundPanel.addNext(new mLabel(MyLocale.getMsg(307, "Status:")), DONTSTRETCH, DONTFILL | LEFT);
@@ -237,11 +234,11 @@ public class DetailsPanel extends CellPanel {
 	btnFoundDate.setToolTip(MyLocale.getMsg(31415, "Set found date / time"));
 	foundPanel.addLast(btnFoundDate, DONTSTRETCH, DONTFILL);
 	statusPanel.addLast(foundPanel, HSTRETCH, HFILL);
-	if (Preferences.itself().isBigScreen)
+	if (isBigScreen)
 	    statusPanel.setText(MyLocale.getMsg(307, "Status:"));
 	addLast(statusPanel, HSTRETCH, HFILL);
 
-	if (Preferences.itself().isBigScreen) {
+	if (isBigScreen) {
 	    ownLog = new mTextPad();
 	    pnlLog = new MyScrollBarPanel(ownLog);
 	    pnlLog.setText(" ");
@@ -251,21 +248,16 @@ public class DetailsPanel extends CellPanel {
 	    MyScrollBarPanel sp = new MyScrollBarPanel(waypointNotes);
 	    sp.setText(MyLocale.getMsg(308, "Notes"));
 	    addLast(sp, STRETCH, FILL);
-	}
-	if (Preferences.itself().tabsAtTop) {
-	    if (!Preferences.itself().menuAtTab)
-		addLast(createToolsPanel(), HSTRETCH, HFILL);
 	} else {
-	    if (Preferences.itself().menuAtTab)
-		addLast(createToolsPanel(), HSTRETCH, HFILL);
+	    addLast(attViewer, HSTRETCH, HFILL);
 	}
 
     }
 
     private CellPanel createToolsPanel() {
-
 	final CellPanel pnlTools = new CellPanel();
-
+	/*    
+	private static mButton btnTBs;
 	btnTBs = GuiImageBroker.getButton(MyLocale.getMsg(364, "TBs"), "bug");
 	showBugImage = GuiImageBroker.makeImageForButton(btnTBs, MyLocale.getMsg(364, "TBs"), "bug");
 	showBugNoImage = GuiImageBroker.makeImageForButton(btnTBs, MyLocale.getMsg(364, "TBs"), "bug_no");
@@ -277,11 +269,22 @@ public class DetailsPanel extends CellPanel {
 	btnNotes = GuiImageBroker.getButton(MyLocale.getMsg(308, "Notes"), "notes");
 	btnNotes.setToolTip(MyLocale.getMsg(351, "Add/Edit notes"));
 
-	pnlTools.equalWidths = true;
-	pnlTools.addNext(btnNotes);
-	pnlTools.addNext(btnTBs);
-	pnlTools.addLast(btnSetDestination);
+	btnNewWpt = GuiImageBroker.getButton(MyLocale.getMsg(733, "Addi Wpt"), "newwpt");
+	btnNewWpt.setToolTip(MyLocale.getMsg(311, "Create Waypoint"));
+	CellPanel wptPanel = new CellPanel();
+	wptPanel.addNext(btnNewWpt, DONTSTRETCH, FILL);
+	lblAddiCount = new mLabel(": 888"); //MyLocale.getMsg(1044, "Addis") + 
+	wptPanel.addNext(lblAddiCount, DONTSTRETCH, RIGHT);
+	*/
 
+	btnTBs = GuiImageBroker.getMenuItem(MyLocale.getMsg(346, "Show travelbugs"), "bug");
+	btnSetDestination = GuiImageBroker.getMenuItem(MyLocale.getMsg(326, "Set as destination and show Compass View"), "goto"); //345, "Go to these coordinates"
+	btnNotes = GuiImageBroker.getMenuItem(MyLocale.getMsg(351, "Add/Edit notes"), "notes");
+	btnNewWpt = GuiImageBroker.getMenuItem(MyLocale.getMsg(311, "Create Waypoint"), "newwpt");
+
+	MenuItem[] appMenuItems;
+	appMenuItems = new MenuItem[] { btnTBs, btnSetDestination, btnNotes, btnNewWpt };
+	pnlTools.addLast((GuiImageBroker.getPullDownMenu(MyLocale.getMsg(632, "More"), "more", appMenuItems)));
 	return pnlTools;
     }
 
@@ -319,12 +322,8 @@ public class DetailsPanel extends CellPanel {
 	this.cbIsSolved.setState(ch.isSolved());
 	chcStatus.setText(ch.getStatusText());
 	newCacheType = ch.getType();
-	GuiImageBroker.setButtonIconAndText(btnType, CacheType.type2Gui(newCacheType), GuiImageBroker.makeImageForButton(btnType, CacheType.type2Gui(newCacheType), CacheType.typeImageNameForId(newCacheType)));
-	if (ch.isBlack()) {
-	    GuiImageBroker.setButtonIconAndText(btnBlackListed, MyLocale.getMsg(363, "Blacklist"), btnImageBlackListed);
-	} else {
-	    GuiImageBroker.setButtonIconAndText(btnBlackListed, MyLocale.getMsg(363, "Blacklist"), btnImageNotBlackListed);
-	}
+	GuiImageBroker.setButtonIconAndText(btnType.btn, CacheType.type2Gui(newCacheType), GuiImageBroker.makeImageForButton(btnType.btn, CacheType.type2Gui(newCacheType), CacheType.typeImageNameForId(newCacheType)));
+	this.cbIsBlacklisted.setState(ch.isBlack());
 
 	blackStatus = ch.isBlack();
 	blackStatusChanged = false;
@@ -334,50 +333,52 @@ public class DetailsPanel extends CellPanel {
 	}
 
 	if (mainCache.hasBugs()) {
-	    // btnTBs.modify(Control.Disabled,1);
-	    GuiImageBroker.setButtonIconAndText(btnTBs, MyLocale.getMsg(364, "TBs"), showBugImage);
+	    btnTBs.modifiers &= ~MenuItem.Disabled;
+	    // GuiImageBroker.setButtonIconAndText(btnTBs, MyLocale.getMsg(364, "TBs"), showBugImage);
 	} else {
-	    // btnTBs.modify(Control.Disabled,0);
-	    GuiImageBroker.setButtonIconAndText(btnTBs, MyLocale.getMsg(364, "TBs"), showBugNoImage);
+	    btnTBs.modifiers |= MenuItem.Disabled;
+	    // GuiImageBroker.setButtonIconAndText(btnTBs, MyLocale.getMsg(364, "TBs"), showBugNoImage);
 	}
 
 	newCacheSize = mainCache.getCacheSize();
-	GuiImageBroker.setButtonIconAndText(btnSize, CacheSize.cw2ExportString(newCacheSize), GuiImageBroker.makeImageForButton(btnSize, CacheSize.cw2ExportString(newCacheSize), CacheSize.cacheSize2ImageName(newCacheSize)));
+	String text = CacheSize.cw2ExportString(newCacheSize);
+	String icon = CacheSize.cacheSize2ImageName(newCacheSize);
+	IImage btnSizeNewImage = GuiImageBroker.makeImageForButton(btnSize.btn, text, icon);
+	GuiImageBroker.setButtonIconAndText(btnSize.btn, CacheSize.cw2ExportString(newCacheSize), btnSizeNewImage);
 
 	attViewer.showImages(ch.getCacheDetails(true).attributes);
+
 	if (ch.isAddiWpt() || ch.isCustomWpt()) {
-	    deactivateControl(btnTerr);
-	    deactivateControl(btnDiff);
-	    deactivateControl(btnSize);
+	    deactivateControl(btnTerr.btn);
+	    deactivateControl(btnDiff.btn);
+	    deactivateControl(btnSize.btn);
 	    deactivateControl(inpOwner);
 	    deactivateControl(this.btnHiddenDate);
-	    deactivateControl(btnTBs);
-	    deactivateControl(btnBlackListed);
+	    deactivateControl(this.cbIsBlacklisted);
 	} else {
-	    activateControl(btnTerr);
-	    activateControl(btnDiff);
-	    activateControl(btnSize);
+	    activateControl(btnTerr.btn);
+	    activateControl(btnDiff.btn);
+	    activateControl(btnSize.btn);
 	    activateControl(inpOwner);
 	    activateControl(this.btnHiddenDate);
-	    activateControl(btnTBs);
-	    activateControl(btnBlackListed);
+	    activateControl(this.cbIsBlacklisted);
 	}
 
 	if (ch.isCustomWpt()) {
-	    btnTerr.setText(MyLocale.getMsg(1001, "T") + DTINVALID);
-	    btnDiff.setText(MyLocale.getMsg(1000, "D") + DTINVALID);
+	    btnTerr.btn.setText(MyLocale.getMsg(1001, "T") + DTINVALID);
+	    btnDiff.btn.setText(MyLocale.getMsg(1000, "D") + DTINVALID);
 	} else {
 	    if (CacheTerrDiff.isValidTD(mainCache.getTerrain())) {
-		btnTerr.setText(MyLocale.getMsg(1001, "T") + ": " + CacheTerrDiff.longDT(mainCache.getTerrain()));
+		btnTerr.btn.setText(MyLocale.getMsg(1001, "T") + ": " + CacheTerrDiff.longDT(mainCache.getTerrain()));
 	    } else {
-		btnTerr.setText("T: -.-");
+		btnTerr.btn.setText("T: -.-");
 		mainCache.setIncomplete(true);
 		Preferences.itself().log(mainCache.getWayPoint() + " has wrong terrain " + mainCache.getTerrain());
 	    }
 	    if (CacheTerrDiff.isValidTD(mainCache.getHard())) {
-		btnDiff.setText(MyLocale.getMsg(1000, "D") + ": " + CacheTerrDiff.longDT(mainCache.getHard()));
+		btnDiff.btn.setText(MyLocale.getMsg(1000, "D") + ": " + CacheTerrDiff.longDT(mainCache.getHard()));
 	    } else {
-		btnDiff.setText("D: -.-");
+		btnDiff.btn.setText("D: -.-");
 		mainCache.setIncomplete(true);
 		Preferences.itself().log(mainCache.getWayPoint() + " has wrong difficulty " + mainCache.getHard());
 	    }
@@ -389,9 +390,9 @@ public class DetailsPanel extends CellPanel {
 	} else {
 	    addiCount = ch.mainCache.addiWpts.size();
 	}
-	lblAddiCount.setText(": " + addiCount); //MyLocale.getMsg(1044, "Addis") + 
+	//lblAddiCount.setText(": " + addiCount); //MyLocale.getMsg(1044, "Addis") + 
 
-	if (Preferences.itself().isBigScreen) {
+	if (isBigScreen) {
 	    pnlLog.setText(MyLocale.getMsg(278, "Eigener Log: ") + ch.getCacheDetails(false).OwnLogId);
 	    if (ch.getCacheDetails(false).OwnLog != null)
 		ownLog.setText(ch.getCacheDetails(false).OwnLog.getMessageWithoutHTML());
@@ -454,44 +455,101 @@ public class DetailsPanel extends CellPanel {
 	    dirtyDetails = true;
 	    needsTableUpdate = true;
 	}
-	if (ev instanceof ControlEvent && ev.type == ControlEvent.PRESSED) {
-	    if (ev.target == btnNotes) {
-		dirtyNotes = true; // TODO I think this is redundant, because
-		// the notes are saved separately by the notes screen itself
-		final NotesScreen nsc = new NotesScreen(cache);
-		nsc.execute(this.getFrame(), Gui.CENTER_FRAME);
-		if (Preferences.itself().isBigScreen) {
-		    waypointNotes.setText(cache.getCacheDetails(false).getCacheNotes());
-		}
-	    } else if (ev.target == btnTBs) {
-		final TravelbugInCacheScreen ts = new TravelbugInCacheScreen(cache.getCacheDetails(true).Travelbugs.toHtml(), "Travelbugs");
-		ts.execute(this.getFrame(), Gui.CENTER_FRAME);
 
-	    } else if (ev.target == btnBlackListed) {
+	if (ev instanceof MenuEvent) { // && ev.type == MenuEvent.PRESSED
+	    MenuEvent mev = (MenuEvent) ev;
+	    // /////////////////////////////////////////////////////////////////////
+	    // subMenu for MainForm.profiles, part of "Application" menu
+	    // /////////////////////////////////////////////////////////////////////
+	    if (ev.type == MenuEvent.SELECTED) {
+		Menu menu = ((MenuEvent) ev).menu;
+		if (menu == this.btnType.menu) {
+		    if (btnType.mark(btnType.selectedIndex)) {
+			newCacheType = CacheType.guiSelect2Cw(btnType.selectedIndex);
+			GuiImageBroker.setButtonIconAndText(btnType.btn, CacheType.type2Gui(newCacheType), GuiImageBroker.makeImageForButton(btnType.btn, CacheType.type2Gui(newCacheType), CacheType.typeImageNameForId(newCacheType)));
+			createWptName();
+			if (CacheType.isCacheWpt(newCacheType)) {
+			    activateControl(btnTerr.btn);
+			    activateControl(btnDiff.btn);
+			    activateControl(btnSize.btn);
+			    activateControl(inpOwner);
+			    activateControl(this.btnHiddenDate);
+			    btnTBs.modifiers &= ~MenuItem.Disabled;
+			    activateControl(this.cbIsBlacklisted);
+			} else {
+			    deactivateControl(btnTerr.btn);
+			    deactivateControl(btnDiff.btn);
+			    deactivateControl(btnSize.btn);
+			    deactivateControl(inpOwner);
+			    deactivateControl(this.btnHiddenDate);
+			    btnTBs.modifiers |= MenuItem.Disabled;
+			    deactivateControl(this.cbIsBlacklisted);
+			    newCacheSize = CacheSize.CW_SIZE_NOTCHOSEN;
+			    GuiImageBroker.setButtonIconAndText(btnSize.btn, CacheSize.cw2ExportString(newCacheSize),
+				    GuiImageBroker.makeImageForButton(btnSize.btn, CacheSize.cw2ExportString(newCacheSize), CacheSize.cacheSize2ImageName(newCacheSize)));
+			    btnTerr.btn.setText(MyLocale.getMsg(1001, "T") + DTINVALID);
+			    btnDiff.btn.setText(MyLocale.getMsg(1000, "D") + DTINVALID);
+			}
+			dirtyDetails = true;
+		    }
+		} else if (menu == this.btnDiff.menu) {
+		    if (btnDiff.mark(btnDiff.selectedIndex)) {
+			btnDiff.btn.setText(MyLocale.getMsg(1000, "D") + ": " + CacheTerrDiff.longDT((byte) (btnDiff.selectedIndex * 5 + 10)));
+			dirtyDetails = true;
+		    }
+		} else if (menu == this.btnSize.menu) {
+		    if (btnSize.mark(btnSize.selectedIndex)) {
+			newCacheSize = CacheSize.guiSizeStrings2CwSize(btnSize.getSelectedValue());
+			GuiImageBroker.setButtonIconAndText(btnSize.btn, CacheSize.cw2ExportString(newCacheSize), GuiImageBroker.makeImageForButton(btnSize.btn, CacheSize.cw2ExportString(newCacheSize), CacheSize.cacheSize2ImageName(newCacheSize)));
+			dirtyDetails = true;
+		    }
+		} else if (menu == this.btnTerr.menu) {
+		    if (btnTerr.mark(btnTerr.selectedIndex)) {
+			btnTerr.btn.setText(MyLocale.getMsg(1001, "T") + ": " + CacheTerrDiff.longDT((byte) (btnTerr.selectedIndex * 5 + 10)));
+			dirtyDetails = true;
+		    }
+		}
+		menu.close();
+	    } else {
+		if (mev.selectedItem == btnTBs) {
+		    final TravelbugInCacheScreen ts = new TravelbugInCacheScreen(cache.getCacheDetails(true).Travelbugs.toHtml(), "Travelbugs");
+		    ts.execute(this.getFrame(), Gui.CENTER_FRAME);
+		} else if (mev.selectedItem == btnNewWpt) {
+		    final CacheHolder ch = new CacheHolder();
+		    ch.setPos(cache.getPos());
+		    ch.setType(CacheType.CW_TYPE_STAGE);
+		    ch.setHard(CacheTerrDiff.CW_DT_UNSET);
+		    ch.setTerrain(CacheTerrDiff.CW_DT_UNSET);
+		    ch.setCacheSize(CacheSize.CW_SIZE_NOTCHOSEN);
+		    MainTab.itself.newWaypoint(ch);
+		} else if (mev.selectedItem == btnNotes) {
+		    dirtyNotes = true; // TODO I think this is redundant, because
+		    // the notes are saved separately by the notes screen itself
+		    final NotesScreen nsc = new NotesScreen(cache);
+		    nsc.execute(this.getFrame(), Gui.CENTER_FRAME);
+		    if (isBigScreen) {
+			waypointNotes.setText(cache.getCacheDetails(false).getCacheNotes());
+		    }
+		} else if (mev.selectedItem == btnSetDestination) {
+		    if (cache.getPos().isValid()) {
+			Navigate.itself.setDestination(cache);
+			MainTab.itself.select(MainTab.GOTO_CARD);
+		    }
+		}
+	    }
+	}
+
+	if (ev instanceof ControlEvent && ev.type == ControlEvent.PRESSED) {
+	    if (ev.target == this.cbIsBlacklisted) {
 		if (cache.isBlack()) {
 		    cache.setBlack(false);
-		    GuiImageBroker.setButtonIconAndText(btnBlackListed, MyLocale.getMsg(363, "Blacklist"), btnImageNotBlackListed);
 		} else {
 		    cache.setBlack(true);
-		    GuiImageBroker.setButtonIconAndText(btnBlackListed, MyLocale.getMsg(363, "Blacklist"), btnImageBlackListed);
 		}
 		blackStatus = cache.isBlack();
 		cache.setAttributesToAddiWpts();
 		dirtyDetails = true;
 		blackStatusChanged = true;
-	    } else if (ev.target == btnNewWpt) {
-		final CacheHolder ch = new CacheHolder();
-		ch.setPos(cache.getPos());
-		ch.setType(CacheType.CW_TYPE_STAGE);
-		ch.setHard(CacheTerrDiff.CW_DT_UNSET);
-		ch.setTerrain(CacheTerrDiff.CW_DT_UNSET);
-		ch.setCacheSize(CacheSize.CW_SIZE_NOTCHOSEN);
-		MainTab.itself.newWaypoint(ch);
-	    } else if (ev.target == btnSetDestination) {
-		if (cache.getPos().isValid()) {
-		    Navigate.itself.setDestination(cache);
-		    MainTab.itself.select(MainTab.GOTO_CARD);
-		}
 	    } else if (ev.target == btnCoordinates) {
 		CWPoint coords = new CWPoint(btnCoordinates.getText(), TransformCoordinates.DMM);
 		if (Vm.isMobile()) {
@@ -585,70 +643,24 @@ public class DetailsPanel extends CellPanel {
 		    dirtyDetails = true;
 		    // profile.hasUnsavedChanges=true;
 		}
-	    } else if (ev.target == btnTerr) {
-		int returnValue;
-		int startIndex = decodeTerrDiff(btnTerr, MyLocale.getMsg(1001, "T"), CacheType.isCacheWpt(newCacheType));
+	    } else if (ev.target == btnDiff.btn) {
+		int startIndex = decodeTerrDiff(btnDiff.btn, MyLocale.getMsg(1001, "D"), CacheType.isCacheWpt(newCacheType));
 		startIndex = (startIndex > 0) ? (startIndex - 10) / 5 : 0;
-		final MyChoice tdf = new MyChoice(MyLocale.getMsg(31415, "Terrain"), startIndex, tdSelectionList);
-		returnValue = tdf.execute();
-		if (returnValue == 1) {
-		    btnTerr.setText(MyLocale.getMsg(1001, "T") + ": " + CacheTerrDiff.longDT((byte) (tdf.getSelectedIndex() * 5 + 10)));
-		    dirtyDetails = true;
-		}
-	    } else if (ev.target == btnDiff) {
-		int returnValue;
-		int startIndex = decodeTerrDiff(btnDiff, MyLocale.getMsg(1001, "D"), CacheType.isCacheWpt(newCacheType));
+		btnDiff.mark(startIndex);
+		btnDiff.showMenu();
+	    } else if (ev.target == btnTerr.btn) {
+		int startIndex = decodeTerrDiff(btnTerr.btn, MyLocale.getMsg(1001, "T"), CacheType.isCacheWpt(newCacheType));
 		startIndex = (startIndex > 0) ? (startIndex - 10) / 5 : 0;
-		final MyChoice tdf = new MyChoice(MyLocale.getMsg(31415, "Difficulty"), startIndex, tdSelectionList);
-		returnValue = tdf.execute();
-		if (returnValue == 1) {
-		    btnDiff.setText(MyLocale.getMsg(1000, "D") + ": " + CacheTerrDiff.longDT((byte) (tdf.getSelectedIndex() * 5 + 10)));
-		    dirtyDetails = true;
-		}
-	    } else if (ev.target == this.btnType) {
-		int returnValue;
-		int startIndex = CacheType.cw2GuiSelect(newCacheType);
-		final MyChoice tdf = new MyChoice(MyLocale.getMsg(300, "Type:"), startIndex, CacheType.guiTypeStrings());
-		returnValue = tdf.execute();
-		if (returnValue == 1) {
-		    newCacheType = CacheType.guiSelect2Cw(tdf.getSelectedIndex());
-		    GuiImageBroker.setButtonIconAndText(btnType, CacheType.type2Gui(newCacheType), GuiImageBroker.makeImageForButton(btnType, CacheType.type2Gui(newCacheType), CacheType.typeImageNameForId(newCacheType)));
-
-		    createWptName();
-		    if (CacheType.isCacheWpt(newCacheType)) {
-			activateControl(btnTerr);
-			activateControl(btnDiff);
-			activateControl(btnSize);
-			activateControl(inpOwner);
-			activateControl(this.btnHiddenDate);
-			activateControl(btnTBs);
-			activateControl(btnBlackListed);
-		    } else {
-			deactivateControl(btnTerr);
-			deactivateControl(btnDiff);
-			deactivateControl(btnSize);
-			deactivateControl(inpOwner);
-			deactivateControl(this.btnHiddenDate);
-			deactivateControl(btnTBs);
-			deactivateControl(btnBlackListed);
-			newCacheSize = CacheSize.CW_SIZE_NOTCHOSEN;
-			GuiImageBroker.setButtonIconAndText(btnSize, CacheSize.cw2ExportString(newCacheSize), GuiImageBroker.makeImageForButton(btnSize, CacheSize.cw2ExportString(newCacheSize), CacheSize.cacheSize2ImageName(newCacheSize)));
-			btnTerr.setText(MyLocale.getMsg(1001, "T") + DTINVALID);
-			btnDiff.setText(MyLocale.getMsg(1000, "D") + DTINVALID);
-		    }
-
-		    dirtyDetails = true;
-		}
-	    } else if (ev.target == this.btnSize) {
-		int returnValue;
+		btnTerr.mark(startIndex);
+		btnTerr.showMenu();
+	    } else if (ev.target == this.btnSize.btn) {
 		int startIndex = CacheSize.cwSizeId2GuiSizeId(newCacheSize);
-		final MyChoice tdf = new MyChoice(MyLocale.getMsg(301, "Size:"), startIndex, CacheSize.guiSizeStrings());
-		returnValue = tdf.execute();
-		if (returnValue == 1) {
-		    newCacheSize = CacheSize.guiSizeStrings2CwSize(tdf.getSelectedValue());
-		    GuiImageBroker.setButtonIconAndText(btnSize, CacheSize.cw2ExportString(newCacheSize), GuiImageBroker.makeImageForButton(btnSize, CacheSize.cw2ExportString(newCacheSize), CacheSize.cacheSize2ImageName(newCacheSize)));
-		    dirtyDetails = true;
-		}
+		btnSize.mark(startIndex);
+		btnSize.showMenu();
+	    } else if (ev.target == this.btnType.btn) {
+		int startIndex = CacheType.cw2GuiSelect(newCacheType);
+		btnType.mark(startIndex);
+		btnType.showMenu();
 	    }
 	    ev.consumed = true;
 	}
@@ -756,8 +768,8 @@ public class DetailsPanel extends CellPanel {
 	    cache.setAttributesToAddiWpts();
 	}
 	if (!cache.isAddiWpt()) {
-	    cache.setHard(decodeTerrDiff(btnDiff, MyLocale.getMsg(1000, "D"), cache.isCacheWpt()));
-	    cache.setTerrain(decodeTerrDiff(btnTerr, MyLocale.getMsg(1001, "T"), cache.isCacheWpt()));
+	    cache.setHard(decodeTerrDiff(btnDiff.btn, MyLocale.getMsg(1000, "D"), cache.isCacheWpt()));
+	    cache.setTerrain(decodeTerrDiff(btnTerr.btn, MyLocale.getMsg(1001, "T"), cache.isCacheWpt()));
 	}
 	dirtyNotes = false;
 	dirtyDetails = false;
@@ -810,7 +822,7 @@ public class DetailsPanel extends CellPanel {
 	TravelbugInCacheScreen(String text, String title) {
 	    super();
 	    this.setTitle(title);
-	    this.setPreferredSize(Preferences.itself().myAppWidth, Preferences.itself().myAppHeight);
+	    this.setPreferredSize(Preferences.itself().getScreenWidth(), Preferences.itself().getScreenHeight());
 	    disp.setHtml(text);
 	    final ScrollBarPanel sbp = new MyScrollBarPanel(disp, ScrollablePanel.NeverShowHorizontalScrollers);
 	    this.addLast(sbp);
@@ -888,47 +900,65 @@ public class DetailsPanel extends CellPanel {
 	}
     }
 
-    private class MyChoice extends Form {
-	private final mChoice mcDT;
-	private final ExecutePanel executePanel;
-	private final String[] selectionList;
+    private class MyChoice extends Menu {
+	private mButton btn;
+	private Menu menu;
+	private MenuItem miList[];
+	private String[] selectionList;
+	private int currentIndex;
 
-	public MyChoice(String message, int startValue, String[] _selectionList) {
-	    super();
+	public MyChoice(String btnText, String[] _selectionList) {
+	    btn = new mButton(btnText);
 	    selectionList = _selectionList;
-	    mcDT = new mChoice(selectionList, startValue);
-	    resizable = false;
-	    setTitle(message);
-
-	    // addNext(new mLabel(message));
-	    addLast(mcDT);
-	    executePanel = new ExecutePanel(this);
+	    init();
 	}
 
-	public void onEvent(Event ev) {
-	    if (ev instanceof ControlEvent && ev.type == ControlEvent.PRESSED) {
-		if (ev.target == executePanel.cancelButton) {
-		    close(-1);
-		} else if (ev.target == executePanel.applyButton) {
-		    close(1);
-		}
+	public MyChoice(String btnText, String icon, String[] _selectionList) {
+	    btn = GuiImageBroker.getButton(btnText, icon);
+	    selectionList = _selectionList;
+	    init();
+	}
+
+	private void init() {
+	    menu = this;
+	    miList = new MenuItem[selectionList.length];
+	    for (int i = 0; i < selectionList.length; i++) {
+		menu.addItem(miList[i] = new MenuItem(selectionList[i]));
+		miList[i].modifiers &= ~MenuItem.Checked;
+	    }
+	    miList[0].modifiers |= MenuItem.Checked;
+	    btn.setMenu(menu);
+	    btn.modifyAll(ControlConstants.WantHoldDown, 0);
+	    currentIndex = 0;
+	}
+
+	public boolean mark(int newIndex) {
+	    if (newIndex == currentIndex) {
+		return false;
+	    } else {
+		miList[currentIndex].modifiers &= ~MenuItem.Checked;
+		miList[newIndex].modifiers |= MenuItem.Checked;
+		currentIndex = newIndex;
+		return true;
 	    }
 	}
 
-	public int getSelectedIndex() {
-	    return mcDT.selectedIndex;
+	public String getSelectedValue() {
+	    return selectionList[selectedIndex]; // or currentIndex
 	}
 
-	public String getSelectedValue() {
-	    return mcDT.getSelectedItem().toString();
+	public void showMenu() {
+	    Rect startPos = menu.getRect();
+	    btn.startDropMenu(new Point(startPos.width, 0));
 	}
     }
 }
 
 class AttributesViewer extends CellPanel {
     protected static int TILESIZE = Attribute.getImageWidth() + 2;
-    protected final static int ICONS_PER_ROW = MyLocale.getScreenWidth() / TILESIZE < Attributes.MAXATTRIBS ? MyLocale.getScreenWidth() / TILESIZE : Attributes.MAXATTRIBS;
-    protected final static int ICONROWS = (Attributes.MAXATTRIBS + ICONS_PER_ROW - 1) / ICONS_PER_ROW;
+    protected final static int MAX_ICONS_PER_ROW = Preferences.itself().getScreenWidth() / (TILESIZE + 6);
+    protected final static int MAX_ROWS = 1 + Attributes.MAXATTRIBS / MAX_ICONS_PER_ROW;
+    protected InteractivePanel iap;
     protected mLabel mInfo;
 
     protected class attInteractivePanel extends InteractivePanel {
@@ -956,31 +986,28 @@ class AttributesViewer extends CellPanel {
     }
 
     public AttributesViewer() {
-	Rect r = new Rect(0, 0, TILESIZE * ICONS_PER_ROW, TILESIZE * ICONROWS); // As on GC: 6 wide, 2 high
-	iap.virtualSize = r;
-	iap.setFixedSize(TILESIZE * ICONS_PER_ROW, TILESIZE * ICONROWS);
-	addLast(iap, CellConstants.HSTRETCH, CellConstants.FILL);
-	addLast(mInfo = new mLabel(""), HSTRETCH, HFILL);
+	iap = new attInteractivePanel();
+	mInfo = new mLabel("");
+	//iap.virtualSize = new Rect(0, 0, Preferences.itself().getScreenWidth(), TILESIZE * MAX_ROWS);
+	iap.setPreferredSize(10, TILESIZE * MAX_ROWS);
+	addLast(iap, HSTRETCH, HFILL);
+	addLast(mInfo, HSTRETCH, HFILL);
+	setBorder(EDGE_BUMP, 5);
     }
-
-    protected InteractivePanel iap = new attInteractivePanel();
 
     public void showImages(Attributes atts) {
 	iap.images.clear();
 	for (int i = 0; i < atts.count(); i++) {
 	    attAniImage img = new attAniImage(atts.getAttribute(i).getImage());
 	    img.info = atts.getAttribute(i).getMsg();
-	    img.location = new Rect((i % ICONS_PER_ROW) * TILESIZE, (i / ICONS_PER_ROW) * TILESIZE, TILESIZE, TILESIZE);
+	    img.location = new Rect((i % MAX_ICONS_PER_ROW) * TILESIZE, (i / MAX_ICONS_PER_ROW) * TILESIZE, TILESIZE, TILESIZE);
 	    iap.addImage(img);
 	}
-	iap.repaintNow();
+	iap.repaint();
     }
 
     public void clear() {
 	iap.images.clear();
     }
-    /*	public void resizeTo(int width, int height) {
-    		super.resizeTo(width,height);
-    	}
-    */
+
 }

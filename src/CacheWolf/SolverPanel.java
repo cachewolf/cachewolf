@@ -216,7 +216,7 @@ public class SolverPanel extends CellPanel {
 
     private void execDirectCommand() {
 	InpScreen boxInp = new InpScreen(MyLocale.getMsg(1733, "Input command"));
-	boxInp.input(parent.getFrame(), "", 100); //,MyLocale.getScreenWidth()*4/5);
+	boxInp.input(parent.getFrame(), "", 100); //,Preferences.itself().getScreenWidth()*4/5);
 	String s = boxInp.getInput();
 	if (s.equals("") || (boxInp.exitValue == FormBase.IDCANCEL))
 	    return;
@@ -250,7 +250,7 @@ public class SolverPanel extends CellPanel {
 	    }
 	    if (ev.target == btnWolfLang) {
 		InfoScreen is = new InfoScreen(MyLocale.getLocalizedFile("wolflang.html"), MyLocale.getMsg(118, "WolfLanguage"), true);
-		is.setPreferredSize(Preferences.itself().myAppWidth, Preferences.itself().myAppHeight);
+		is.setPreferredSize(Preferences.itself().getScreenWidth(), Preferences.itself().getScreenHeight());
 		is.execute(parent.getFrame(), Gui.CENTER_FRAME);
 	    }
 	    if (ev.target == btnDegRad) {

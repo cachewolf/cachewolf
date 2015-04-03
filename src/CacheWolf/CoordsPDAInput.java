@@ -114,8 +114,8 @@ public class CoordsPDAInput extends Form {
     }
 
     private void InitInputScreen() {
-	int sw = MyLocale.getScreenWidth();
-	int sh = MyLocale.getScreenHeight();
+	int sw = Preferences.itself().getScreenWidth();
+	int sh = Preferences.itself().getScreenHeight();
 	int fs = Preferences.itself().fontSize;
 	int psx;
 	int psy;

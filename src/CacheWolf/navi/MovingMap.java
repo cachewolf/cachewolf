@@ -175,7 +175,7 @@ public final class MovingMap extends Form implements ICommandListener {
     public MovingMap() {
 	symbols = new Vector();
 	this.cacheDB = MainForm.profile.cacheDB;
-	if (Preferences.itself().myAppHeight <= 640 && Preferences.itself().myAppWidth <= 640) {
+	if (Preferences.itself().getScreenHeight() <= 640 && Preferences.itself().getScreenWidth() <= 640) {
 	    this.windowFlagsToSet = WindowConstants.FLAG_FULL_SCREEN;
 	}
 	// The following line is commented out,
@@ -184,7 +184,7 @@ public final class MovingMap extends Form implements ICommandListener {
 	// this.windowFlagsToClear = WindowConstants.FLAG_HAS_TITLE | UIConstants.BDR_NOBORDER;
 	this.hasTopBar = false;
 	this.noBorder = true;
-	this.setPreferredSize(Preferences.itself().myAppWidth, Preferences.itself().myAppHeight);
+	this.setPreferredSize(Preferences.itself().getScreenWidth(), Preferences.itself().getScreenHeight());
 	this.title = "Moving Map";
 	// background must not be black because black is interpreted as transparent
 	// and transparent images above (eg trackoverlay) want be drawn in windows-VM,
@@ -194,7 +194,7 @@ public final class MovingMap extends Form implements ICommandListener {
 	mmp = new MovingMapPanel(this);
 	this.addLast(mmp);
 
-	if (Vm.isMobile() && MyLocale.getScreenWidth() >= 400)
+	if (Vm.isMobile() && Preferences.itself().getScreenWidth() >= 400)
 	    mobileVGA = true;
 	String imagesize = "";
 	if (mobileVGA)
@@ -838,8 +838,8 @@ public final class MovingMap extends Form implements ICommandListener {
 	} else {
 	    // maybe this could / should be replaced to windows size
 	    Preferences.itself().log("Window not yet on screen? This should never happen (again)");
-	    posCircleX = Preferences.itself().myAppWidth / 2;
-	    posCircleY = Preferences.itself().myAppHeight / 2;
+	    posCircleX = Preferences.itself().getScreenWidth() / 2;
+	    posCircleY = Preferences.itself().getScreenHeight() / 2;
 	}
 	posCircle.hidden = false;
 	// always position the middle of a symbol
@@ -894,7 +894,7 @@ public final class MovingMap extends Form implements ICommandListener {
     private Point getMapPositionOnScreen() {
 	// in case no calculation is possible return something outside of the screen
 	if (currentMap == null || !posCircle.where.isValid())
-	    return new Point(Preferences.itself().myAppWidth + 1, Preferences.itself().myAppHeight + 1);
+	    return new Point(Preferences.itself().getScreenWidth() + 1, Preferences.itself().getScreenHeight() + 1);
 	final Point mapPos = new Point();
 	final Point mapposint = currentMap.calcMapXY(posCircle.where);
 	mapPos.x = posCircleX - mapposint.x;
@@ -1467,9 +1467,9 @@ public final class MovingMap extends Form implements ICommandListener {
      * @return
      */
     public Object[] getRectForMapChange(CWPoint ll) {
-	final int w = (width != 0 ? width : Preferences.itself().myAppWidth);
+	final int w = (width != 0 ? width : Preferences.itself().getScreenWidth());
 	// width == 0 happens if this routine is run before the windows is on the screen
-	final int h = (height != 0 ? height : Preferences.itself().myAppHeight);
+	final int h = (height != 0 ? height : Preferences.itself().getScreenHeight());
 	int pX, pY;
 	CWPoint cll;
 	Boolean posCircleOnScreen = java.lang.Boolean.FALSE;
@@ -1997,8 +1997,8 @@ public final class MovingMap extends Form implements ICommandListener {
      */
     private void loadMoreDetailedMap(boolean betterOverview) {
 	// width == 0 happens if this routine is run before the windows is on the screen
-	final int w = (width != 0 ? width : Preferences.itself().myAppWidth);
-	final int h = (height != 0 ? height : Preferences.itself().myAppHeight);
+	final int w = (width != 0 ? width : Preferences.itself().getScreenWidth());
+	final int h = (height != 0 ? height : Preferences.itself().getScreenHeight());
 	final Rect screen = new Rect(0, 0, w, h);
 
 	CWPoint cll;
@@ -2673,7 +2673,7 @@ class ListBox extends Form {
 	// else
 	// set width to screenwidth *3/4 but to at least 240 if the screen
 	// is big engough for 240px width
-	this.setPreferredSize(java.lang.Math.max(MyLocale.getScreenWidth() * 3 / 4, java.lang.Math.min(240, MyLocale.getScreenWidth())), MyLocale.getScreenHeight() * 3 / 4);
+	this.setPreferredSize(java.lang.Math.max(Preferences.itself().getScreenWidth() * 3 / 4, java.lang.Math.min(240, Preferences.itself().getScreenWidth())), Preferences.itself().getScreenHeight() * 3 / 4);
 	this.maps = maps;
 	MapInfoObject mio;
 	MapListEntry ml;
