@@ -26,10 +26,10 @@ import CacheWolf.Preferences;
 import CacheWolf.Profile;
 import CacheWolf.database.CacheDB;
 import CacheWolf.database.CacheHolder;
+import CacheWolf.database.CacheHolderDetail;
 import CacheWolf.utils.Files;
 import CacheWolf.utils.MyLocale;
 import ewe.io.File;
-import ewe.io.FileBase;
 import ewe.sys.Handle;
 import ewe.ui.CellConstants;
 import ewe.ui.CheckBoxGroup;
@@ -41,6 +41,7 @@ import ewe.ui.ProgressBarForm;
 import ewe.ui.mCheckBox;
 import ewe.ui.mLabel;
 import ewe.util.Iterator;
+import ewe.util.Vector;
 
 /**
  * This class moves or copies the database files of selected caches from one directory to another.
@@ -54,48 +55,56 @@ public class DataMover {
 	srcDB = MainForm.profile.cacheDB;
     }
 
-    public void deleteCaches() {
-
-	int mode = showMessage(251, "All waypoints will be deleted");
-	if (mode == -1) {
-	    return;
+    public void deleteCaches(boolean ask) {
+	int mode = 1;
+	if (ask) {
+	    mode = confirmAction(251, "All waypoints will be deleted");
+	    if (mode == -1) {
+		return;
+	    }
 	}
 
 	processCaches(new Deleter(MyLocale.getMsg(143, "Delete")), mode);
-	// write indexfiles
 	MainForm.profile.saveIndex(Profile.SHOW_PROGRESS_BAR);
     }
 
     public void copyCaches(String targetDir) {
-	if (targetDir.equals(MainForm.profile.dataDir) || targetDir.equals(""))
+	if (targetDir.equals(MainForm.profile.dataDir) || targetDir.length() == 0)
 	    return;
 
-	Profile dstProfile = new Profile();
-	dstProfile.dataDir = targetDir;
-
-	//Von Andi P
-	int mode = showMessage(253, "All waypoints will be copied");
+	int mode = confirmAction(253, "All waypoints will be copied");
 	if (mode == -1) {
 	    return;
 	}
-	//Ende
 
-	// Read indexfile of destination, if one exists
+	Profile dstProfile = new Profile();
+	dstProfile.dataDir = targetDir;
 	File ftest = new File(dstProfile.dataDir + "index.xml");
 	if (ftest.exists()) {
 	    dstProfile.readIndex(null, dstProfile.dataDir);
 	}
 	processCaches(new Copier(MyLocale.getMsg(141, "Copy"), dstProfile), mode);
-	// write indexfiles and keep the filter status
 	dstProfile.saveIndex(Profile.SHOW_PROGRESS_BAR);
-	//Now repair the cache-Vector:
-	for (int i = 0; i < srcDB.size(); i++) {
-	    CacheHolder holder = srcDB.get(i);
-	    for (Iterator j = holder.addiWpts.iterator(); j.hasNext();) {
-		CacheHolder element = (CacheHolder) j.next();
-		element.mainCache = holder;
-	    }
+    }
+
+    public void moveCaches(String targetDir) {
+	if (targetDir.equals(MainForm.profile.dataDir) || targetDir.length() == 0)
+	    return;
+
+	int mode = confirmAction(252, "All waypoints will be moved");
+	if (mode == -1) {
+	    return;
 	}
+
+	Profile dstProfile = new Profile();
+	dstProfile.dataDir = targetDir;
+	File ftest = new File(dstProfile.dataDir + "index.xml");
+	if (ftest.exists()) {
+	    dstProfile.readIndex(null, dstProfile.dataDir);
+	}
+	processCaches(new Mover(MyLocale.getMsg(142, "Move"), dstProfile), mode);
+	dstProfile.saveIndex(Profile.SHOW_PROGRESS_BAR);
+	MainForm.profile.saveIndex(Profile.SHOW_PROGRESS_BAR);
     }
 
     /**
@@ -108,7 +117,7 @@ public class DataMover {
      * 
      * @return mode selected by the user
      */
-    private int showMessage(int actionTextNr, String defaultValue) {
+    private int confirmAction(int actionTextNr, String defaultValue) {
 	DataMoverForm cpf = new DataMoverForm(makeTickedText(), makeVisibleText(), makeVisibleTickedText(), MyLocale.getMsg(actionTextNr, defaultValue));
 	int dialogResult = cpf.execute(null, Gui.CENTER_FRAME);
 	if (dialogResult != FormBase.IDOK) {
@@ -161,29 +170,6 @@ public class DataMover {
 	    }
 	}
 	return MyLocale.getMsg(256, "All visible and ticked") + " (" + countMainWP + ' ' + MyLocale.getMsg(257, "Main") + ", " + countAddiWP + MyLocale.getMsg(258, " Addi") + ')';
-    }
-
-    public void moveCaches(String targetDir) {
-	if (targetDir.equals(MainForm.profile.dataDir) || targetDir.equals(""))
-	    return;
-
-	Profile dstProfile = new Profile();
-	dstProfile.dataDir = targetDir;
-
-	int mode = showMessage(252, "All waypoints will be moved");
-	if (mode == -1) {
-	    return;
-	}
-
-	// Read indexfile of destination, if one exists
-	File ftest = new File(dstProfile.dataDir + "index.xml");
-	if (ftest.exists()) {
-	    dstProfile.readIndex(null, dstProfile.dataDir);
-	}
-	processCaches(new Mover(MyLocale.getMsg(142, "Move"), dstProfile), mode);
-	// write indexfiles
-	dstProfile.saveIndex(Profile.SHOW_PROGRESS_BAR);
-	MainForm.profile.saveIndex(Profile.SHOW_PROGRESS_BAR);
     }
 
     /**
@@ -259,80 +245,79 @@ public class DataMover {
     }
 
     //////////////////////////////////////////////////////////////////////
-    // Utility functions
-    //////////////////////////////////////////////////////////////////////
-
-    public void deleteCacheFiles(String wpt, String dir, String[] tmp) {
-	if (wpt.length() == 0) {
-	    return;
-	}
-
-	// delete files in dstDir to clean up trash
-	wpt = wpt.toLowerCase();
-	for (int i = 0; i < tmp.length; i++) {
-	    if (tmp[i].toLowerCase().startsWith(wpt + '.') || tmp[i].toLowerCase().startsWith(wpt + '_')) {
-		File tmpFile = new File(dir + tmp[i]);
-		tmpFile.delete();
-	    }
-	}
-    }
-
-    private void moveCacheFiles(String wpt, String srcDir, String dstDir, String[] srcFiles) {
-	if (wpt.length() == 0) {
-	    return;
-	}
-	wpt = wpt.toLowerCase();
-	for (int i = 0; i < srcFiles.length; i++) {
-	    if (srcFiles[i].toLowerCase().startsWith(wpt + '.') || srcFiles[i].toLowerCase().startsWith(wpt + '_')) {
-		File srcFile = new File(srcDir + srcFiles[i]);
-		File dstFile = new File(dstDir + srcFiles[i]);
-		srcFile.move(dstFile);
-	    }
-	}
-    }
-
-    private void copyCacheFiles(String wpt, String srcDir, String dstDir, String[] srcFiles) {
-	if (wpt.length() == 0) {
-	    return;
-	}
-	wpt = wpt.toLowerCase();
-	for (int i = 0; i < srcFiles.length; i++) {
-	    if (srcFiles[i].toLowerCase().startsWith(wpt + '.') || srcFiles[i].toLowerCase().startsWith(wpt + '_')) {
-		Files.copy(srcDir + srcFiles[i], dstDir + srcFiles[i]);
-	    }
-	}
-    }
-
-    //////////////////////////////////////////////////////////////////////
     // Executor
     //////////////////////////////////////////////////////////////////////
 
     private abstract class Executor {
 	String title;
 	Profile dstProfile;
-	String[] destFileList;
-	String[] srcFileList;
 
 	public abstract void doIt(int i, CacheHolder srcHolder);
+
+	protected void deleteCacheFiles(Vector fileNames, String dataDir) {
+	    for (Iterator ite = fileNames.iterator(); ite.hasNext();) {
+		String fileName = (String) ite.next();
+		deleteFile(fileName, dataDir);
+	    }
+	}
+
+	protected void copyCacheFiles(Vector fileNames, String srcDataDir, String dstDataDir) {
+	    for (Iterator ite = fileNames.iterator(); ite.hasNext();) {
+		String fileName = (String) ite.next();
+		Files.copy(srcDataDir + fileName, dstDataDir + fileName);
+	    }
+	}
+
+	protected void moveCacheFiles(Vector fileNames, String srcDataDir, String dstDataDir) {
+	    for (Iterator ite = fileNames.iterator(); ite.hasNext();) {
+		String fileName = (String) ite.next();
+		(new File(srcDataDir + fileName)).move(new File(dstDataDir + fileName));
+	    }
+	}
+
+	protected Vector getFileNames(CacheHolder ch) {
+	    Vector fileNames = new Vector();
+	    CacheHolderDetail chD = ch.getCacheDetails(false);
+	    //chD.images : Description Images,  Spoiler Images
+	    for (int i = 0; i < chD.images.size(); i++) {
+		fileNames.add(chD.images.get(i).getFilename());
+	    }
+	    //chD.logImages
+	    for (int i = 0; i < chD.logImages.size(); i++) {
+		fileNames.add(chD.logImages.get(i).getFilename());
+	    }
+	    //chD.userImages
+	    for (int i = 0; i < chD.userImages.size(); i++) {
+		fileNames.add(chD.userImages.get(i).getFilename());
+	    }
+	    // Cache XML
+	    fileNames.add(ch.getWayPoint() + ".xml");
+	    return fileNames;
+	}
+
+	private void deleteFile(String fileName, String dataDir) {
+	    // MainForm.profile.dataDir + FileName + ".xml"
+	    String FileName = dataDir + fileName;
+	    boolean exists = (new File(FileName)).exists();
+	    if (exists) {
+		(new File(FileName)).delete();
+	    }
+	    boolean exists2 = (new File(FileName.toLowerCase())).exists();
+	    if (exists2) {
+		(new File(FileName.toLowerCase())).delete();
+	    }
+	}
+
     }
 
-    private class Deleter extends Executor {
+    public class Deleter extends Executor {
 	Deleter(String title) {
 	    this.title = title;
-	    myProgressBarForm pbf = new myProgressBarForm();
-	    Handle h = new Handle();
-	    pbf.setTask(h, "Be patient. Reading Source Directory");
-	    pbf.exec();
-	    h.progress = (float) 0.5;
-	    h.changed();
-	    File destPath = new File(MainForm.profile.dataDir);
-	    destFileList = destPath.list(null, FileBase.LIST_FILES_ONLY | FileBase.LIST_DONT_SORT); // null == *.* so no FileBugfix needed
-	    pbf.exit(0);
 	}
 
 	public void doIt(int i, CacheHolder srcHolder) {
+	    deleteCacheFiles(getFileNames(srcHolder), MainForm.profile.dataDir);
 	    srcDB.removeElementAt(i);
-	    deleteCacheFiles(srcHolder.getWayPoint(), MainForm.profile.dataDir, destFileList);
 	}
     }
 
@@ -340,26 +325,13 @@ public class DataMover {
 	Copier(String title, Profile dstProfile) {
 	    this.title = title;
 	    this.dstProfile = dstProfile;
-	    myProgressBarForm pbf = new myProgressBarForm();
-	    Handle h = new Handle();
-	    pbf.setTask(h, "Be patient. Reading Source Directory");
-	    pbf.exec();
-	    h.progress = (float) 0.33;
-	    h.changed();
-	    File srcPath = new File(MainForm.profile.dataDir);
-	    srcFileList = srcPath.list(null, FileBase.LIST_FILES_ONLY | FileBase.LIST_DONT_SORT); // null == *.* so no FileBugfix needed
-	    pbf.setTask(h, "Be patient. Reading Destination Directory");
-	    h.progress = (float) 0.66;
-	    h.changed();
-	    File destPath = new File(dstProfile.dataDir);
-	    destFileList = destPath.list(null, FileBase.LIST_FILES_ONLY | FileBase.LIST_DONT_SORT); // null == *.* so no FileBugfix needed
-	    pbf.exit(0);
 	}
 
 	public void doIt(int i, CacheHolder srcHolder) {
 	    srcHolder.save();
-	    deleteCacheFiles(srcHolder.getWayPoint(), dstProfile.dataDir, destFileList);
-	    copyCacheFiles(srcHolder.getWayPoint(), MainForm.profile.dataDir, dstProfile.dataDir, srcFileList);
+	    Vector srcFiles = getFileNames(srcHolder);
+	    deleteCacheFiles(srcFiles, dstProfile.dataDir);
+	    copyCacheFiles(srcFiles, MainForm.profile.dataDir, dstProfile.dataDir);
 	    // does cache exists in destDB ?
 	    // Update database
 	    //*wall* when copying addis without their maincache, the maincache in the srcDB will be set to null on saving the dstProfile later.
@@ -386,36 +358,19 @@ public class DataMover {
 	Mover(String title, Profile dstProfile) {
 	    this.title = title;
 	    this.dstProfile = dstProfile;
-	    myProgressBarForm pbf = new myProgressBarForm();
-	    Handle h = new Handle();
-	    pbf.setTask(h, "Be patient. Reading Source Directory");
-	    pbf.exec();
-	    h.progress = (float) 0.33;
-	    h.changed();
-	    File srcPath = new File(MainForm.profile.dataDir);
-	    srcFileList = srcPath.list(null, FileBase.LIST_FILES_ONLY | FileBase.LIST_DONT_SORT); // null == *.* so no FileBugfix needed
-	    pbf.setTask(h, "Be patient. Reading Destination Directory");
-	    h.progress = (float) 0.66;
-	    h.changed();
-	    File destPath = new File(dstProfile.dataDir);
-	    destFileList = destPath.list(null, FileBase.LIST_FILES_ONLY | FileBase.LIST_DONT_SORT); // null == *.* so no FileBugfix needed
-	    pbf.exit(0);
 	}
 
 	public void doIt(int i, CacheHolder srcHolder) {
-	    srcDB.removeElementAt(i);
-	    deleteCacheFiles(srcHolder.getWayPoint(), dstProfile.dataDir, destFileList);
-	    moveCacheFiles(srcHolder.getWayPoint(), MainForm.profile.dataDir, dstProfile.dataDir, srcFileList);
-	    // does cache exists in destDB ?
-	    // Update database
+	    Vector srcFiles = getFileNames(srcHolder);
+	    deleteCacheFiles(srcFiles, dstProfile.dataDir);
+	    moveCacheFiles(srcFiles, MainForm.profile.dataDir, dstProfile.dataDir);
 	    int dstPos = dstProfile.getCacheIndex(srcHolder.getWayPoint());
 	    if (dstPos >= 0) {
 		dstProfile.cacheDB.set(dstPos, srcHolder);
 	    } else {
-		// Update database
 		dstProfile.cacheDB.add(srcHolder);
 	    }
-	    i--;
+	    srcDB.removeElementAt(i);
 	}
     }
 }
