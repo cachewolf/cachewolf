@@ -38,10 +38,7 @@ import CacheWolf.utils.UrlFetcher;
 import ewe.fx.IconAndText;
 import ewe.fx.Point;
 import ewe.fx.Rect;
-import ewe.io.File;
-import ewe.io.FileBase;
 import ewe.io.IOException;
-import ewe.sys.Handle;
 import ewe.sys.Locale;
 import ewe.sys.Vm;
 import ewe.ui.Control;
@@ -249,32 +246,7 @@ public class MyTableControl extends TableControl {
 	    if (shouldDeleteCount > 0) {
 		if (new InfoBox(MyLocale.getMsg(144, "Warning"), MyLocale.getMsg(1022, "Delete selected caches (") + shouldDeleteCount + MyLocale.getMsg(1028, ") ?")).wait(FormBase.YESB | FormBase.NOB) == FormBase.IDYES) {
 		    DataMover dm = new DataMover();
-		    myProgressBarForm pbf = new myProgressBarForm();
-		    Handle h = new Handle();
-		    int nDeleted = 0;
-		    int size = cacheDB.size();
-		    pbf.setTask(h, "Be patient. Reading directory");
-		    pbf.exec();
-		    h.progress = (float) 0.5;
-		    h.changed();
-		    String[] CacheFiles = new File(MainForm.profile.dataDir).list(null, FileBase.LIST_FILES_ONLY | FileBase.LIST_DONT_SORT);// null == *.* so no File needed
-		    pbf.setTask(h, MyLocale.getMsg(1012, "Delete selected"));
-		    for (int i = size - 1; i >= 0; i--) {// Start Counting down, as the size decreases with each deleted cache
-			ch = cacheDB.get(i);
-			if (ch.isChecked && (ch.isVisible() || deleteFiltered)) {
-			    nDeleted++;
-			    h.progress = ((float) nDeleted) / (float) allCount;
-			    h.changed();
-			    cacheDB.removeElementAt(i);
-			    dm.deleteCacheFiles(ch.getWayPoint(), MainForm.profile.dataDir, CacheFiles);
-			    ch = null;
-			    if (pbf.isClosed)
-				break;
-			}
-		    }
-		    pbf.exit(0);
-		    MainTab.itself.tablePanel.myTableModel.numRows -= nDeleted;
-		    MainForm.profile.saveIndex(true);
+		    dm.deleteCaches(false);
 		    MainTab.itself.tablePanel.refreshTable();
 		}
 	    }

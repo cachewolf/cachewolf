@@ -885,7 +885,7 @@ public class TablePanelMenu extends MenuBar {
 	    if (mev.selectedItem == orgDelete) {
 		MainForm.profile.saveIndex(Profile.SHOW_PROGRESS_BAR);
 		DataMover dm = new DataMover();
-		dm.deleteCaches();
+		dm.deleteCaches(true);
 		tablePanel.refreshTable();
 	    }
 	    if (mev.selectedItem == orgRebuild) {
