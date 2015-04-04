@@ -19,8 +19,7 @@ public class UTMProjectionFixZone extends UTMProjection {
 	if (stripe < 0)
 	    stripe += 60;
 	GkProjection.project(wgs84, ellip, 6, (stripe >= 30 ? stripe - 30 : stripe + 30), 3, 0.9996, pp);
-	pp.zone = stripe;
-	pp.zone += (int) (Math.floor((wgs84.latDec) / 8) + 13) * 200; // zone letter
+	pp.zone = stripe + (int) (Math.floor((wgs84.latDec) / 8) + 13) * 200;
 	return pp;
     }
 
@@ -34,7 +33,8 @@ public class UTMProjectionFixZone extends UTMProjection {
 	if (epsgCode == 0)
 	    throw new UnsupportedOperationException("UTMProjectionFixZone.set: set() requires zone/epsg code, set projection.epsgcode first");
 	int stripe = getStripeByEpsg(epsgCode);
-	return set(northing, easting, stripe, 0, pp);
+	int zoneletterNumber = (int) ((northing + 10000000) / 1000000); // calc from northing
+	return set(northing, easting, stripe, zoneletterNumber, pp);
     }
 
     /**
