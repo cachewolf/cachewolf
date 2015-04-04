@@ -491,27 +491,28 @@ public class DetailsPanel extends CellPanel {
 			    btnDiff.btn.setText(MyLocale.getMsg(1000, "D") + DTINVALID);
 			}
 			dirtyDetails = true;
+			menu.close();
 		    }
 		} else if (menu == this.btnDiff.menu) {
 		    if (btnDiff.mark(btnDiff.selectedIndex)) {
 			btnDiff.btn.setText(MyLocale.getMsg(1000, "D") + ": " + CacheTerrDiff.longDT((byte) (btnDiff.selectedIndex * 5 + 10)));
 			dirtyDetails = true;
+			menu.close();
 		    }
 		} else if (menu == this.btnSize.menu) {
 		    if (btnSize.mark(btnSize.selectedIndex)) {
 			newCacheSize = CacheSize.guiSizeStrings2CwSize(btnSize.getSelectedValue());
 			GuiImageBroker.setButtonIconAndText(btnSize.btn, CacheSize.cw2ExportString(newCacheSize), GuiImageBroker.makeImageForButton(btnSize.btn, CacheSize.cw2ExportString(newCacheSize), CacheSize.cacheSize2ImageName(newCacheSize)));
 			dirtyDetails = true;
+			menu.close();
 		    }
 		} else if (menu == this.btnTerr.menu) {
 		    if (btnTerr.mark(btnTerr.selectedIndex)) {
 			btnTerr.btn.setText(MyLocale.getMsg(1001, "T") + ": " + CacheTerrDiff.longDT((byte) (btnTerr.selectedIndex * 5 + 10)));
 			dirtyDetails = true;
+			menu.close();
 		    }
-		}
-		menu.close();
-	    } else {
-		if (mev.selectedItem == btnTBs) {
+		} else if (mev.selectedItem == btnTBs) {
 		    final TravelbugInCacheScreen ts = new TravelbugInCacheScreen(cache.getCacheDetails(true).Travelbugs.toHtml(), "Travelbugs");
 		    ts.execute(this.getFrame(), Gui.CENTER_FRAME);
 		} else if (mev.selectedItem == btnNewWpt) {
