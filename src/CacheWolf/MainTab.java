@@ -271,7 +271,7 @@ public class MainTab extends mTabbedPanel {
 	    }
 	}
 	if (panelNo == MainTab.DETAILS_CARD) {
-	    detailsPanel.evWaypointChanged = false;
+	    detailsPanel.reactOnWaypointChange = false;
 	    // Update chD with Details
 	    if (detailsPanel.isDirty()) {
 		cacheDirty = true;

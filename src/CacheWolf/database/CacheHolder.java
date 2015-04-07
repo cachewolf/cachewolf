@@ -980,7 +980,7 @@ public class CacheHolder {
 	this.setNew(mainCh.isNew());
     }
 
-    public void setAttributesToAddiWpts() {
+    public void setAttributesFromMainCacheToAddiWpts() {
 	if (this.hasAddiWpt()) {
 	    CacheHolder addiWpt;
 	    for (int i = this.addiWpts.getCount() - 1; i >= 0; i--) {
@@ -1640,18 +1640,26 @@ public class CacheHolder {
 	return wayPoint;
     }
 
-    public void setWayPoint(String wayPoint) {
-	MainForm.profile.notifyUnsavedChanges(!wayPoint.equals(this.wayPoint));
-	this.wayPoint = wayPoint;
+    public boolean setWayPoint(String wayPoint) {
+	boolean ret = !wayPoint.equals(this.wayPoint);
+	if (ret) {
+	    MainForm.profile.notifyUnsavedChanges(ret);
+	    this.wayPoint = wayPoint;
+	}
+	return ret;
     }
 
     public String getCacheName() {
 	return cacheName;
     }
 
-    public void setCacheName(String cacheName) {
-	MainForm.profile.notifyUnsavedChanges(!cacheName.equals(this.cacheName));
-	this.cacheName = cacheName;
+    public boolean setCacheName(String cacheName) {
+	boolean ret = !cacheName.equals(this.cacheName);
+	if (ret) {
+	    MainForm.profile.notifyUnsavedChanges(ret);
+	    this.cacheName = cacheName;
+	}
+	return ret;
     }
 
     public String getCacheOwner() {
@@ -1765,7 +1773,7 @@ public class CacheHolder {
 		// done in setCacheStatus this.mainCache.setCacheStatus(this.getCacheStatus());
 		// so setFound should be called after setCacheStatus
 		if (isFound)
-		    this.mainCache.setAttributesToAddiWpts();
+		    this.mainCache.setAttributesFromMainCacheToAddiWpts();
 	    }
 	}
     }
