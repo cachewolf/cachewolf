@@ -81,36 +81,27 @@ import ewe.util.Vector;
  */
 public class DetailsPanel extends CellPanel {
 
-    private static mInput inpWaypoint;
-    private static mInput inpName;
-    private static mInput inpOwner;
+    private mInput inpWaypoint;
+    private mInput inpName;
+    private mInput inpOwner;
     private MyChoice btnType;
     private MyChoice btnDiff;
     private MyChoice btnTerr;
     private MyChoice btnSize;
     private MyChoice btnMore;
-    /** way point coordinates, open change coordinates dialog. */
-    private static mButton btnCoordinates;
-    /** set this waypoint as destination and change to compass view */
-    /** show details for travel bus in way point. */
-
+    private mButton btnCoordinates;
     private mCheckBox cbIsSolved;
     private mCheckBox cbIsBlacklisted;
-    /** set found date. */
-    private static mButton btnFoundDate;
-    /** set hidden date. */
+    private mButton btnFoundDate;
     private mButton btnHiddenDate;
-    /** select way point status. */
-    private static mComboBox chcStatus;
-    /** notes for way point. */
-    private static mTextPad waypointNotes;
-    private static mTextPad ownLog;
+    private mComboBox chcStatus;
+    private mTextPad waypointNotes;
+    private mTextPad ownLog;
+    private AttributesViewer attViewer;
 
     // ===== data handles =====
     /** waypoint to be displayed. */
     public CacheHolder cache;
-    /** panel to display waypoint attributes */
-    private static AttributesViewer attViewer;
 
     // ===== flags =====
     /** notes have changes */
@@ -124,8 +115,9 @@ public class DetailsPanel extends CellPanel {
     /** FIXME */
     private boolean needsTableUpdate = false;
     /** String to display for invalid or not applicable terrain or difficulty values. */
-    private final static String DTINVALID = ": -.-";
-    public boolean evWaypointChanged = false;
+
+    private final String DTINVALID = ": -.-";
+    public boolean reactOnWaypointChange = false;
     private String warnedForWaypoint = "";
     private byte newCacheType;
     private byte newCacheSize;
@@ -237,7 +229,7 @@ public class DetailsPanel extends CellPanel {
 	    pnlLog.setText(" ");
 	    addLast(pnlLog, STRETCH, FILL);
 	    waypointNotes = new mTextPad();
-	    waypointNotes.modify(ControlConstants.NotEditable, 0);
+	    // waypointNotes.modify(ControlConstants.NotEditable, 0);
 	    MyScrollBarPanel sp = new MyScrollBarPanel(waypointNotes);
 	    sp.setText(MyLocale.getMsg(308, "Notes"));
 	    addLast(sp, STRETCH, FILL);
@@ -386,13 +378,15 @@ public class DetailsPanel extends CellPanel {
     public void onEvent(final Event ev) {
 	ev.consumed = true;
 	if (ev instanceof DataChangeEvent) {
+	    if (cache == null)
+		return;
 	    if (ev.target == inpWaypoint) {
-		if (evWaypointChanged) {
+		if (reactOnWaypointChange) {
 		    String iTmp = inpWaypoint.getText();
 		    String uTmp = iTmp.toUpperCase();
 		    if (!iTmp.equals(uTmp)) {
 			inpWaypoint.setText(uTmp); // If user entered LowerCase -> convert directly to UpperCase
-			evWaypointChanged = false; // next DataChangeEvent fired by change to UpperCase will be ignored
+			reactOnWaypointChange = false; // next DataChangeEvent fired by change to UpperCase will be ignored
 		    }
 		    // already warned(multi same DataChangeEvents) or same waypointname as before edit !!!
 		    if (!warnedForWaypoint.equals(uTmp) && !uTmp.equals(this.cache.getWayPoint())) {
@@ -404,16 +398,31 @@ public class DetailsPanel extends CellPanel {
 			    inpWaypoint.setText(this.cache.getWayPoint());
 			}
 		    }
+		    dirtyDetails = true;
+		    needsTableUpdate = true;
 		} else {
 		    // first DataChangeEvent is fired by Klick into (after reload).
 		    // that really didn't change anything
-		    evWaypointChanged = true;
+		    reactOnWaypointChange = true;
 		}
 		// FIXME: if name was changed, we should rename the waypoint.xml file. how? where?
+	    } else if (ev.target == this.inpName) {
+		if (cache.setCacheName(inpName.getText().trim())) {
+		    dirtyDetails = true;
+		}
+	    } else if (ev.target == this.inpOwner) {
+		dirtyDetails = true;
+	    } else if (ev.target == this.ownLog) {
+		dirtyDetails = true;
+	    } else if (ev.target == this.waypointNotes) {
+		if (cache.getCacheDetails(false).setCacheNotes(waypointNotes.getText())) {
+		    dirtyDetails = true;
+		}
+	    } else {
+		//Preferences.itself().log("DataChangeEvent at Details for " + ev.target.toString() + ". DirtyDetails not set.");
+		dirtyDetails = true;
 	    }
 	    // FIXME: check if something was actually changed, since datacachnge events also occur if you just hop through the fields with the tab key (Why? don't know!)
-	    dirtyDetails = true;
-	    needsTableUpdate = true;
 	} else if (ev instanceof MenuEvent) {
 	    if (ev.type == MenuEvent.SELECTED) {
 		Menu menu = ((MenuEvent) ev).menu;
@@ -470,7 +479,7 @@ public class DetailsPanel extends CellPanel {
 		} else if (menu == this.btnMore.getMnu()) {
 		    switch (btnMore.getSelectedIndex()) {
 		    case BUG:
-			final TravelbugInCacheScreen ts = new TravelbugInCacheScreen(cache.getCacheDetails(true).Travelbugs.toHtml(), "Travelbugs");
+			final TravelbugInCacheScreen ts = new TravelbugInCacheScreen(cache.getCacheDetails(false).Travelbugs.toHtml(), "Travelbugs");
 			ts.execute(this.getFrame(), Gui.CENTER_FRAME);
 			break;
 		    case NEWWPT:
@@ -528,7 +537,7 @@ public class DetailsPanel extends CellPanel {
 		    cache.setBlack(true);
 		}
 		blackStatus = cache.isBlack();
-		cache.setAttributesToAddiWpts();
+		cache.setAttributesFromMainCacheToAddiWpts();
 		dirtyDetails = true;
 		blackStatusChanged = true;
 	    } else if (ev.target == btnCoordinates) {
@@ -691,12 +700,14 @@ public class DetailsPanel extends CellPanel {
 	// updateBearingDistance
 	if (cache.getWayPoint().length() < 2)
 	    cache.setWayPoint(cache.getWayPoint() + " ");
+
 	cache.setCacheName(inpName.getText().trim());
 	if (!cache.isAddiWpt()) {
 	    cache.setDateHidden(newHiddenDate.trim());
 	}
 	final byte oldType = cache.getType();
 	cache.setType(newCacheType);
+
 	String ownLogText = STRreplace.replace(ownLog.getText(), "\n", "<br />");
 	Log oldLog = cache.getCacheDetails(false).OwnLog;
 	if (oldLog == null) {
@@ -707,8 +718,14 @@ public class DetailsPanel extends CellPanel {
 		cache.getCacheDetails(false).OwnLog = new Log(OwnLogId, Preferences.itself().gcMemberId, "2.png", "1900-01-01", Preferences.itself().myAlias, ownLogText);
 	    }
 	} else {
-	    oldLog.setMessage(ownLogText);
+	    if (ownLogText.length() > 0)
+		oldLog.setMessage(ownLogText);
+	    else {
+		oldLog.setLogID("");
+		oldLog.setMessage("");
+	    }
 	}
+
 	cache.checkIncomplete();
 
 	/*
@@ -716,7 +733,7 @@ public class DetailsPanel extends CellPanel {
 	 *  the cachetype changed from addi->normal or from normal->addi
 	 *  or the old or new cachetype is 'addi' and the waypointname has changed
 	 */
-	if (CacheType.isAddiWpt(cache.getType()) != CacheType.isAddiWpt(oldType) //
+	if (CacheType.isAddiWpt(newCacheType) != CacheType.isAddiWpt(oldType) //
 		|| ((CacheType.isAddiWpt(cache.getType()) || CacheType.isAddiWpt(oldType)) && !cache.getWayPoint().equals(oldWaypoint)) //
 	) {
 	    // If we changed the type to addi, check that a parent exists
@@ -724,7 +741,7 @@ public class DetailsPanel extends CellPanel {
 	    MainForm.profile.buildReferences();
 	} else {
 	    // set status also on addi wpts
-	    cache.setAttributesToAddiWpts();
+	    cache.setAttributesFromMainCacheToAddiWpts();
 	}
 	if (!cache.isAddiWpt()) {
 	    cache.setHard(decodeTerrDiff(btnDiff.getBtn(), MyLocale.getMsg(1000, "D"), cache.isCacheWpt()));
@@ -951,9 +968,9 @@ class MyChoice extends Menu {
 }
 
 class AttributesViewer extends CellPanel {
-    protected static int TILESIZE = Attribute.getImageWidth() + 2;
-    protected final static int MAX_ICONS_PER_ROW = Preferences.itself().getScreenWidth() / (TILESIZE + 6);
-    protected final static int MAX_ROWS = 1 + Attributes.MAXATTRIBS / MAX_ICONS_PER_ROW;
+    protected int TILESIZE = Attribute.getImageWidth() + 2;
+    protected final int MAX_ICONS_PER_ROW = Preferences.itself().getScreenWidth() / (TILESIZE + 6);
+    protected final int MAX_ROWS = 1 + Attributes.MAXATTRIBS / MAX_ICONS_PER_ROW;
     protected InteractivePanel iap;
     protected mLabel mInfo;
 

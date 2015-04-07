@@ -124,12 +124,14 @@ public class CacheHolderDetail {
 	gCNotes = notes;
     }
 
-    public void setCacheNotes(String notes) {
-	if (!this.CacheNotes.equals(notes)) {
+    public boolean setCacheNotes(String notes) {
+	boolean ret = !this.CacheNotes.equals(notes);
+	if (ret) {
 	    getParent().setUpdated(true);
 	    this.CacheNotes = notes;
 	    getParent().setHasNote(!this.CacheNotes.trim().equals(""));
 	}
+	return ret;
     }
 
     public String getCacheNotes() {
