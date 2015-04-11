@@ -944,6 +944,10 @@ public class CacheHolder {
 	return OC.isOC(wayPoint);
     }
 
+    public boolean isGC() {
+	return wayPoint.startsWith("GC");
+    }
+
     public void calcDistance(CWPoint toPoint) {
 	if (pos.isValid()) {
 	    kilom = pos.getDistance(toPoint);
