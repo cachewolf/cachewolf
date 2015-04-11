@@ -167,32 +167,40 @@ public class MainTab extends mTabbedPanel {
 		"globe", //
 	};
 
+	int sw = Preferences.itself().getScreenWidth();
+	int buttonsPerLine = Math.min(9, sw / 115);
 	for (int i = 0; i < tabNames.length; i++) {
 	    CellPanel alles = new CellPanel();
 	    CellPanel selection = new CellPanel();
 	    if (!Preferences.itself().tabsAtTop)
 		alles.addLast(baseControls[i]);
-	    selection.equalWidths = true;
+	    //selection.equalWidths = true;
 	    if (Preferences.itself().noTabs) {
 		// navigation with buttons instead of tabs
-		mButton btn = GuiImageBroker.getButton(MyLocale.getMsg(1211, "Home"), "home");
+		mButton btn;
+
+		btn = GuiImageBroker.getButton("", "home");//MyLocale.getMsg(1211, "Home")
 		btn.name = "select";
 		btn.setTag(999, "" + tabNames.length);
-		selection.addNext(btn);
-		if (i > 0) {
-		    btn = GuiImageBroker.getButton(tabNames[i - 1], imageNames[i - 1]);
-		    btn.name = "select";
-		    btn.setTag(999, "" + (i - 1));
-		    selection.addNext(btn);
+		selection.addNext(btn, DONTSTRETCH | DONTFILL, LEFT);
+
+		int start = Math.max(0, i - (buttonsPerLine / 2));
+		if (start + buttonsPerLine >= tabNames.length) {
+		    start = tabNames.length - buttonsPerLine - 1;
 		}
-		if (i < tabNames.length - 1) {
-		    btn = GuiImageBroker.getButton(tabNames[i + 1], imageNames[i + 1]);
-		    btn.name = "select";
-		    btn.setTag(999, "" + (i + 1));
-		    selection.addLast(btn);
+		for (int j = start; j <= start + buttonsPerLine; j++) {
+		    if (j != i) {
+			btn = GuiImageBroker.getButton(tabNames[j], imageNames[j]);
+			btn.name = "select";
+			btn.setTag(999, "" + (j));
+			selection.addNext(btn);
+		    } else {
+		    }
 		}
 	    }
+	    selection.addLast(null);
 	    alles.addLast(selection, HSTRETCH, HFILL);
+
 	    if (Preferences.itself().tabsAtTop)
 		alles.addLast(baseControls[i]);
 	    Card c = this.addCard(alles, tabNames[i], null);
@@ -280,7 +288,7 @@ public class MainTab extends mTabbedPanel {
 		if (needTableUpdate) {
 		    // This sorts the waypoint (if it is new) into the right position
 		    this.tablePanel.myTableModel.updateRows();
-		    this.tablePanel.selectRow(MainForm.profile.getCacheIndex(detailsPanel.cache.getWayPoint()));
+		    this.tablePanel.selectRow(MainForm.profile.getCacheIndex(detailsPanel.getCache().getWayPoint()));
 		}
 		// was this.tablePanel.refreshTable();
 		this.tablePanel.myTableControl.update(true); // Update and repaint

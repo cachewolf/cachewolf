@@ -192,21 +192,25 @@ public final class GuiImageBroker {
 
     public static mButton getButton(String text, String icon) {
 	mButton btn;
-	if (useIcons) {
-	    if (leftIcons) {
-		btn = new mButton(getText(text));
-		// Graphics.Up, Graphics.Down, Graphics.Right, Graphics.Left // über, unter, rechts, links vom Icon
-		btn.textPosition = Graphics.Right;
-		btn.image = getImage(icon);
-	    } else {
-		// Icons in the middle of the Button (as IconAndText)
-		btn = new mButton(getText(text), getImageName(icon), null);
-	    }
+	if (icon.length() == 0) {
+	    btn = new mButton(text);
 	} else {
-	    if (text.length() == 0) {
-		btn = new mButton("", getImageName(icon), null);
+	    if (useIcons) {
+		if (leftIcons) {
+		    btn = new mButton(getText(text));
+		    // Graphics.Up, Graphics.Down, Graphics.Right, Graphics.Left // über, unter, rechts, links vom Icon
+		    btn.textPosition = Graphics.Right;
+		    btn.image = getImage(icon);
+		} else {
+		    // Icons in the middle of the Button (as IconAndText)
+		    btn = new mButton(getText(text), getImageName(icon), null);
+		}
 	    } else {
-		btn = new mButton(getText(text)); //, "leer", null
+		if (text.length() == 0) {
+		    btn = new mButton("", getImageName(icon), null);
+		} else {
+		    btn = new mButton(getText(text));
+		}
 	    }
 	}
 	//btn.backGround = Color.LightGreen;
