@@ -710,7 +710,6 @@ public class OCXMLImporter extends MinML {
 			}
 		    }
 		    holder.setFound(true);
-		    holder.getCacheDetails(false).OwnLogId = logId;
 		    holder.getCacheDetails(false).OwnLog = new Log(logId, finderID, logIcon, logDate, logFinder, logData, loggerRecommended);
 		} else {
 		    // if (holder.is_new())

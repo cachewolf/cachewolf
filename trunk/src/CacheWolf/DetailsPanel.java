@@ -366,9 +366,9 @@ public class DetailsPanel extends CellPanel {
 	    deactivateControl(btnLogToOC);
 	    deactivateControl(btnLog);
 	    if (ch.isCacheWpt()) {
-		logPanel.setText(MyLocale.getMsg(278, "Eigener Log: ") + ch.getCacheDetails(false).OwnLogId);
 		if (ch.getCacheDetails(false).OwnLog != null) {
-		    if (ch.getCacheDetails(false).OwnLogId.length() == 0) {
+		    logPanel.setText(MyLocale.getMsg(278, "Eigener Log: ") + ch.getCacheDetails(false).OwnLog.getLogID());
+		    if (ch.getCacheDetails(false).OwnLog.getLogID().length() == 0) {
 			activateControl(btnLog);
 		    } else {
 			activateControl(btnEditLog);
@@ -381,6 +381,7 @@ public class DetailsPanel extends CellPanel {
 		    }
 		    ownLog.setText(ch.getCacheDetails(false).OwnLog.getMessageWithoutHTML());
 		} else {
+		    logPanel.setText(" ");
 		    ownLog.setText("");
 		    activateControl(btnLog);
 		    deactivateControl(btnEditLog);
@@ -720,7 +721,7 @@ public class DetailsPanel extends CellPanel {
 		    if (chD != null) {
 			if (chD.OwnLog != null) {
 			    if (ch.isGC()) {
-				url = "http://www.geocaching.com/seek/log.aspx?LID=" + chD.OwnLogId;
+				url = "http://www.geocaching.com/seek/log.aspx?LID=" + chD.OwnLog.getLogID();
 				callExternalProgram(Preferences.itself().browser, url);
 			    }
 			}
@@ -817,10 +818,9 @@ public class DetailsPanel extends CellPanel {
 	Log oldLog = ch.getCacheDetails(false).OwnLog;
 	if (oldLog == null) {
 	    if (ownLogText.length() > 0) {
-		String OwnLogId = ch.getCacheDetails(false).OwnLogId;
 		// todo must get date from status
 		// todo must set icon to correct value
-		ch.getCacheDetails(false).OwnLog = new Log(OwnLogId, Preferences.itself().gcMemberId, "2.png", "1900-01-01", Preferences.itself().myAlias, ownLogText);
+		ch.getCacheDetails(false).OwnLog = new Log("", Preferences.itself().gcMemberId, "2.png", "1900-01-01", Preferences.itself().myAlias, ownLogText);
 	    }
 	} else {
 	    if (ownLogText.length() > 0)

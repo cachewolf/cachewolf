@@ -370,7 +370,6 @@ public class GPXImporter extends MinML {
 			&& (SafeXML.html2iso8859s1(logFinder).equalsIgnoreCase(Preferences.itself().myAlias) || (SafeXML.html2iso8859s1(logFinder).equalsIgnoreCase(Preferences.itself().myAlias2)))) {
 		    holder.setCacheStatus(logDate);
 		    holder.setFound(true);
-		    holder.getCacheDetails(false).OwnLogId = logId;
 		    holder.getCacheDetails(false).OwnLog = new Log(logId, finderID, logIcon, logDate, logFinder, logData);
 		}
 		return;

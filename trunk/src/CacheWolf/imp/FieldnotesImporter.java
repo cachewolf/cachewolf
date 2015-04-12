@@ -161,7 +161,6 @@ public class FieldnotesImporter {
 		}
 		if (logText.length() > 0) {
 		    ch.getCacheDetails(false).OwnLog = new Log("", Preferences.itself().gcMemberId, foundIcon, logTime.format("yyyy-MM-dd"), Preferences.itself().myAlias, STRreplace.replace(logText, "\n", "<br />"));
-		    ch.getCacheDetails(false).OwnLogId = "";
 		    ch.save();
 		}
 	    }
