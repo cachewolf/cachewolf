@@ -1827,8 +1827,12 @@ public class GCImporter {
 
 	if (ch.isFound()) {
 	    // check for missing ownLogID (and logtext)
-	    if (ch.getCacheDetails(false).OwnLogId.equals(""))
+	    if (ch.getCacheDetails(false).OwnLog == null) {
 		ret = true;
+	    } else {
+		if (ch.getCacheDetails(false).OwnLog.getLogID().length() == 0)
+		    ret = true;
+	    }
 	}
 
 	final boolean is_available_GC = !is_archived_GC && aCacheDescriptionOfListPage.indexOf(propAvailable) == -1;
@@ -2337,16 +2341,25 @@ public class GCImporter {
 		final String logID = entry.getString("LogID");
 		final String finderID = entry.getString("AccountID");
 
-		// if this log says this Cache is found by me
-		if ((icon.equals(icon_smile) || icon.equals(icon_camera) || icon.equals(icon_attended)) && (name.equalsIgnoreCase(Preferences.itself().myAlias) || (name.equalsIgnoreCase(Preferences.itself().myAlias2)))) {
-		    ch.setFound(true);
-		    ch.setCacheStatus(visitedDate);
-		    // final String logId = entry.getString("LogID");
-		    chD.OwnLogId = logID;
-		    chD.OwnLog = new Log(logID, finderID, icon, visitedDate, name, logText);
-		    foundown = true;
-		    nrOfOwnFinds = nrOfOwnFinds + 1;
+		// if this log says this Cache is found by me or other logtype
+		if ((name.equalsIgnoreCase(Preferences.itself().myAlias)) || (name.equalsIgnoreCase(Preferences.itself().myAlias2))) {
+		    if ((icon.equals(icon_smile) || icon.equals(icon_camera) || icon.equals(icon_attended))) {
+			ch.setFound(true);
+			ch.setCacheStatus(visitedDate);
+			// final String logId = entry.getString("LogID");
+			chD.OwnLog = new Log(logID, finderID, icon, visitedDate, name, logText);
+			foundown = true;
+			nrOfOwnFinds = nrOfOwnFinds + 1;
+		    } else {
+			// make it possible to edit a "write note"
+			if (!ch.isFound()) {
+			    // do not overwrite a find log 
+			    chD.OwnLog = new Log(logID, finderID, icon, visitedDate, name, logText);
+			    ch.setCacheStatus(chD.OwnLog.icon2Message());
+			}
+		    }
 		}
+
 		if (nLogs <= maxLogs || fetchAllLogs) {
 		    reslts.add(new Log(logID, finderID, icon, visitedDate, name, logText));
 		} else {

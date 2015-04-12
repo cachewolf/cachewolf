@@ -934,7 +934,7 @@ public class GpxExportNg {
 	Transformer replacePlaceholder = new Transformer(true);
 	replacePlaceholder.add(new Regex("@@LOGID@@", log.getLogID()));
 	replacePlaceholder.add(new Regex("@@LOGDATE@@", log.getDate()));
-	replacePlaceholder.add(new Regex("@@LOGTYPE@@", CacheHolder.image2TypeText(log.getIcon())));
+	replacePlaceholder.add(new Regex("@@LOGTYPE@@", log.icon2GPXType()));
 	replacePlaceholder.add(new Regex("@@LOGFINDERID@@", log.getFinderID()));
 	replacePlaceholder.add(new Regex("@@LOGFINDER@@", SafeXML.cleanGPX(log.getLogger())));
 	replacePlaceholder.add(new Regex("@@LOGENCODE@@", ""));

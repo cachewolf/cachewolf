@@ -41,7 +41,7 @@ import ewe.ui.InputBox;
 import ewe.util.Vector;
 
 public class CacheHolderDetail {
-    /** CacheHolder which holds the detail. <b>Only</b> set by CacheHolder when creating detail! **/
+    /** CacheHolder of the detail. <b>Only</b> set by CacheHolder when creating detail! **/
     private CacheHolder parent = null;
     public String LongDescription = CacheHolder.EMPTY;
     public String LastUpdate = CacheHolder.EMPTY;
@@ -57,7 +57,6 @@ public class CacheHolderDetail {
     // public String Bugs = EMPTY; Superceded by Travelbugs
     public String URL = CacheHolder.EMPTY;
     private String Solver = CacheHolder.EMPTY;
-    public String OwnLogId = CacheHolder.EMPTY;
     public Log OwnLog = null;
     public String Country = CacheHolder.EMPTY;
     public String State = CacheHolder.EMPTY;
@@ -195,8 +194,6 @@ public class CacheHolderDetail {
 	setLongDescription(newChD.LongDescription);
 	setHints(newChD.Hints);
 	setCacheLogs(newChD.CacheLogs);
-	if (newChD.OwnLogId.length() > 0)
-	    this.OwnLogId = newChD.OwnLogId;
 	if (newChD.OwnLog != null) {
 	    this.OwnLog = newChD.OwnLog;
 	}
@@ -280,7 +277,7 @@ public class CacheHolderDetail {
 	Hints = ex.findNext("<HINTS><![CDATA[", "]]></HINTS>");
 
 	Extractor subex = new Extractor(ex.findNext("<LOGS>", "</LOGS>"), "<OWNLOGID>", "</OWNLOGID>", 0, true);
-	OwnLogId = subex.findNext();
+	String OwnLogId = subex.findNext();
 	String ownLogText = subex.findNext("<OWNLOG><![CDATA[", "]]></OWNLOG>");
 	if (ownLogText.length() > 0) {
 	    if (ownLogText.indexOf("<img src='") >= 0) {
@@ -433,10 +430,11 @@ public class CacheHolderDetail {
 		detfile.print(attributes.XmlAttributesWrite());
 		detfile.print("<HINTS><![CDATA[" + Hints + "]]></HINTS>\r\n");
 		detfile.print("<LOGS>\r\n");
-		detfile.print("<OWNLOGID>" + OwnLogId + "</OWNLOGID>\r\n");
 		if (OwnLog != null) {
+		    detfile.print("<OWNLOGID>" + OwnLog.getLogID() + "</OWNLOGID>\r\n");
 		    detfile.print("<OWNLOG><![CDATA[" + OwnLog.toHtml() + "]]></OWNLOG>\r\n");
 		} else {
+		    detfile.print("<OWNLOGID></OWNLOGID>\r\n");
 		    detfile.print("<OWNLOG><![CDATA[]]></OWNLOG>\r\n");
 		}
 		for (int i = 0; i < CacheLogs.size(); i++) {
