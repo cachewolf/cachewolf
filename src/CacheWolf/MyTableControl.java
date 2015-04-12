@@ -65,7 +65,7 @@ public class MyTableControl extends TableControl {
     public int clickedColumn = 0;
 
     private MenuItem miSetDestination, miCenter, miUnhideAddis;
-    private MenuItem miOpenOnline, miOpenOffline, miLogOnline, miEditLog, miOpenGmaps;
+    private MenuItem miOpenOnline, miOpenOffline, miLogOnline, miOpenGmaps;
     private MenuItem miDelete, miUpdate, miChangeBlack;
     private MenuItem miTickAll, miUntickAll;
     private MenuItem miSeparator;
@@ -86,7 +86,6 @@ public class MyTableControl extends TableControl {
 	miOpenOnline = new MenuItem(MyLocale.getMsg(1020, "Open in $browser online")); //
 	miOpenOffline = new MenuItem(MyLocale.getMsg(1018, "Open in browser offline")); //
 	miLogOnline = new MenuItem(MyLocale.getMsg(1052, "Log online in Browser")); //
-	miEditLog = new MenuItem(MyLocale.getMsg(1055, "Change log (online)")); //
 
 	miOpenGmaps = new MenuItem(MyLocale.getMsg(1053, "Open in Google maps online")); //
 
@@ -103,7 +102,7 @@ public class MyTableControl extends TableControl {
 	if (menuItems == null) {
 	    if (Preferences.itself().hasTickColumn) {
 		menuItems = new MenuItem[] { miSetDestination, miCenter, miUnhideAddis, miSeparator, //
-			miOpenOnline, miOpenOffline, miLogOnline, miEditLog, miOpenGmaps, miSeparator,//
+			miOpenOnline, miOpenOffline, miLogOnline, miOpenGmaps, miSeparator,//
 			miDelete, miUpdate, miChangeBlack, miSeparator, //
 			miTickAll, miUntickAll };
 	    } else {
@@ -348,22 +347,6 @@ public class MyTableControl extends TableControl {
 	} else if (selectedItem == miOpenOffline) {
 	    ShowCacheInBrowser sc = new ShowCacheInBrowser();
 	    sc.showCache(cacheDB.get(MainTab.itself.tablePanel.getSelectedCache()));
-	} else if (selectedItem == miEditLog) {
-	    ch = cacheDB.get(MainTab.itself.tablePanel.getSelectedCache());
-	    mainCache = ch;
-	    url = "";
-	    if (ch.isAddiWpt() && (ch.mainCache != null)) {
-		mainCache = ch.mainCache;
-	    }
-	    if (mainCache.isCacheWpt()) {
-		chD = mainCache.getCacheDetails(false);
-		if (chD != null) {
-		    if (chD.OwnLog != null) {
-			url = "http://www.geocaching.com/seek/log.aspx?LID=" + chD.OwnLogId;
-			callExternalProgram(Preferences.itself().browser, url);
-		    }
-		}
-	    }
 	} else if (selectedItem == miLogOnline) {
 	    ch = cacheDB.get(MainTab.itself.tablePanel.getSelectedCache());
 	    mainCache = ch;
@@ -394,28 +377,30 @@ public class MyTableControl extends TableControl {
 			url = "http://" + OC.getOCHostName(mainCache.getWayPoint()) + "/log.php?wp=" + mainCache.getWayPoint();
 		    }
 		} else {
-		    // GC und schon gelogged --> log bei OC eintragen, wenn auf OC-Index-Spalte geklickt
-		    if (chD.OwnLogId.length() > 0) {
-			String ocWpName = mainCache.getOcCacheID();
-			if (ocWpName.length() > 0 && ocWpName.charAt(0) < 65) {
-			    // OC log (already logged at GC but not at OC)
-			    if (clickedColumn == 14) {
-				OCLogExport.doOneLog(mainCache);
-				MainTab.itself.tablePanel.refreshTable();
-			    } else {
-				// open OC logpage with Logtext in Clipboard
-				Vm.setClipboardText(chD.OwnLog.getDate() + '\n' + "<br>" + ownLogMessage);
-				if (ocWpName.length() > 1) {
-				    if (ocWpName.charAt(0) < 65) {
-					ocWpName = ocWpName.substring(1);
+		    if (chD.OwnLog != null) {
+			if (chD.OwnLog.getLogID().length() > 0) {
+			    // GC und schon gelogged --> log bei OC eintragen, wenn auf OC-Index-Spalte geklickt
+			    String ocWpName = mainCache.getOcCacheID();
+			    if (ocWpName.length() > 0 && ocWpName.charAt(0) < 65) {
+				// OC log (already logged at GC but not at OC)
+				if (clickedColumn == 14) {
+				    OCLogExport.doOneLog(mainCache);
+				    MainTab.itself.tablePanel.refreshTable();
+				} else {
+				    // open OC logpage with Logtext in Clipboard
+				    Vm.setClipboardText(chD.OwnLog.getDate() + '\n' + "<br>" + ownLogMessage);
+				    if (ocWpName.length() > 1) {
+					if (ocWpName.charAt(0) < 65) {
+					    ocWpName = ocWpName.substring(1);
+					}
+					url = "http://" + OC.getOCHostName(ocWpName) + "/log.php?wp=" + ocWpName;
 				    }
-				    url = "http://" + OC.getOCHostName(ocWpName) + "/log.php?wp=" + ocWpName;
 				}
 			    }
-			}
-		    } else
-			// bei GC loggen
-			url = "http://www.geocaching.com/seek/log.aspx?ID=" + mainCache.GetCacheID();
+			} else
+			    // bei GC loggen
+			    url = "http://www.geocaching.com/seek/log.aspx?ID=" + mainCache.GetCacheID();
+		    }
 		}
 
 		if (url.length() > 0) {

@@ -658,7 +658,7 @@ public class CacheHolder {
 		} else {
 		    logs.put("WAYPOINT", wayPoint);
 		    logs.put("ICON", det.CacheLogs.getLog(i).getIcon());
-		    logs.put("LOGTYPE", image2TypeText(det.CacheLogs.getLog(i).getIcon()));
+		    logs.put("LOGTYPE", det.CacheLogs.getLog(i).icon2GPXType());
 		    logs.put("DATE", det.CacheLogs.getLog(i).getDate());
 		    logs.put("LOGGER", (ModTyp == 0) ? SafeXML.cleanGPX(det.CacheLogs.getLog(i).getLogger()) : det.CacheLogs.getLog(i).getLogger());
 		    stmp = STRreplace.replace(det.CacheLogs.getLog(i).getMessage().trim(), "http://www.geocaching.com/images/icons/", null);
@@ -747,87 +747,6 @@ public class CacheHolder {
 	    varParams.put("cacheImg", imgVect);
 	}
 	return varParams;
-    }
-
-    /**
-     * generate a gc.com compatible string representation of log derived from the internally stored image
-     * 
-     * @param image
-     *            name of the image to display
-     * @return log type. will default to "Write note" for unknown logtypes
-     */
-    public static final String image2TypeText(String image) {
-	if (image.equals("icon_smile.gif"))
-	    return "Found it";
-	if (image.equals("icon_sad.gif"))
-	    return "Didn't find it";
-	if (image.equals("icon_note.gif"))
-	    return "Write note";
-	if (image.equals("icon_enabled.gif"))
-	    return "Enable Listing";
-	if (image.equals("icon_disabled.gif"))
-	    return "Temporarily Disable Listing";
-	if (image.equals("icon_camera.gif"))
-	    return "Webcam Photo Taken";
-	if (image.equals("icon_attended.gif"))
-	    return "Attended";
-	if (image.equals("icon_greenlight.gif"))
-	    return "Publish Listing";
-	if (image.equals("icon_rsvp.gif"))
-	    return "Will Attend";
-	if (image.equals("big_smile.gif"))
-	    return "Post Reviewer Note";
-	if (image.equals("traffic_cone.gif"))
-	    return "Archive";
-	if (image.equals("icon_maint.gif"))
-	    return "Owner Maintenance";
-	if (image.equals("icon_needsmaint.gif"))
-	    return "Needs Maintenance";
-	if (image.equals("coord_update.gif"))
-	    return "Update Coordinates";
-	if (image.equals("icon_remove.gif"))
-	    return "Needs Archived";
-	if (image.equals("icon_redlight.gif"))
-	    return "Retract Listing";
-
-	if (image.equals("2.png"))
-	    return "Found it";
-	if (image.equals("3.png"))
-	    return "Didn't find it";
-	if (image.equals("4.png"))
-	    return "Write note";
-	if (image.equals("5.png"))
-	    return "Archive";
-	if (image.equals("7.png"))
-	    return "Needs Archived";
-	if (image.equals("9.png"))
-	    return "Will Attend";
-	if (image.equals("10.png"))
-	    return "Attended";
-	if (image.equals("11.png"))
-	    return "Webcam Photo Taken";
-	if (image.equals("12.png"))
-	    return "Unarchived"; // new todo check gpx-export/import
-	if (image.equals("18.png"))
-	    return "Post Reviewer Note";
-	if (image.equals("22.png"))
-	    return "Temporarily Disable Listing";
-	if (image.equals("23.png"))
-	    return "Enable Listing";
-	if (image.equals("24.png"))
-	    return "Publish Listing";
-	if (image.equals("25.png"))
-	    return "Retract Listing";
-	if (image.equals("45.png"))
-	    return "Needs Maintenance";
-	if (image.equals("46.png"))
-	    return "Owner Maintenance";
-	if (image.equals("47.png"))
-	    return "Update Coordinates";
-	if (image.equals("74.png"))
-	    return "Announcement"; // new todo check gpx-export/import
-
-	return "unknown logtype " + image;
     }
 
     /**

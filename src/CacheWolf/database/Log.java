@@ -234,6 +234,125 @@ public class Log {
 	return "icon_note.gif";
     }
 
+    /**
+     * generate a gc.com compatible string representation of log
+     * 
+     * @return log type. will default to "Write note" for unknown logtypes
+     */
+    public final String icon2GPXType() {
+	if (icon.equals("icon_smile.gif"))
+	    return "Found it";
+	if (icon.equals("icon_sad.gif"))
+	    return "Didn't find it";
+	if (icon.equals("icon_note.gif"))
+	    return "Write note";
+	if (icon.equals("icon_enabled.gif"))
+	    return "Enable Listing";
+	if (icon.equals("icon_disabled.gif"))
+	    return "Temporarily Disable Listing";
+	if (icon.equals("icon_camera.gif"))
+	    return "Webcam Photo Taken";
+	if (icon.equals("icon_attended.gif"))
+	    return "Attended";
+	if (icon.equals("icon_greenlight.gif"))
+	    return "Publish Listing";
+	if (icon.equals("icon_rsvp.gif"))
+	    return "Will Attend";
+	if (icon.equals("big_smile.gif"))
+	    return "Post Reviewer Note";
+	if (icon.equals("traffic_cone.gif"))
+	    return "Archive";
+	if (icon.equals("icon_maint.gif"))
+	    return "Owner Maintenance";
+	if (icon.equals("icon_needsmaint.gif"))
+	    return "Needs Maintenance";
+	if (icon.equals("coord_update.gif"))
+	    return "Update Coordinates";
+	if (icon.equals("icon_remove.gif"))
+	    return "Needs Archived";
+	if (icon.equals("icon_redlight.gif"))
+	    return "Retract Listing";
+
+	if (icon.equals("2.png"))
+	    return "Found it";
+	if (icon.equals("3.png"))
+	    return "Didn't find it";
+	if (icon.equals("4.png"))
+	    return "Write note";
+	if (icon.equals("5.png"))
+	    return "Archive";
+	if (icon.equals("7.png"))
+	    return "Needs Archived";
+	if (icon.equals("9.png"))
+	    return "Will Attend";
+	if (icon.equals("10.png"))
+	    return "Attended";
+	if (icon.equals("11.png"))
+	    return "Webcam Photo Taken";
+	if (icon.equals("12.png"))
+	    return "Unarchived"; // new todo check gpx-export/import
+	if (icon.equals("18.png"))
+	    return "Post Reviewer Note";
+	if (icon.equals("22.png"))
+	    return "Temporarily Disable Listing";
+	if (icon.equals("23.png"))
+	    return "Enable Listing";
+	if (icon.equals("24.png"))
+	    return "Publish Listing";
+	if (icon.equals("25.png"))
+	    return "Retract Listing";
+	if (icon.equals("45.png"))
+	    return "Needs Maintenance";
+	if (icon.equals("46.png"))
+	    return "Owner Maintenance";
+	if (icon.equals("47.png"))
+	    return "Update Coordinates";
+	if (icon.equals("74.png"))
+	    return "Announcement"; // new todo check gpx-export/import
+
+	return "unknown logtype " + icon;
+    }
+
+    public final String icon2Message() {
+	if (icon.equals("2.png"))
+	    return MyLocale.getMsg(318, "Found it");
+	if (icon.equals("3.png"))
+	    return MyLocale.getMsg(319, "Didn't find it");
+	if (icon.equals("4.png"))
+	    return MyLocale.getMsg(314, "Write note");
+	if (icon.equals("5.png"))
+	    return MyLocale.getMsg(710, "Archived"); //Archive
+	if (icon.equals("7.png"))
+	    return MyLocale.getMsg(315, "Needs Archived");
+	if (icon.equals("9.png"))
+	    return MyLocale.getMsg(354, "Will Attend");
+	if (icon.equals("10.png"))
+	    return MyLocale.getMsg(355, "Attended");
+	if (icon.equals("11.png"))
+	    return MyLocale.getMsg(361, "Webcam Photo Taken");
+	if (icon.equals("12.png"))
+	    return "Unarchived"; // new todo check gpx-export/import
+	if (icon.equals("18.png"))
+	    return MyLocale.getMsg(358, "Post Reviewer Note");
+	if (icon.equals("22.png"))
+	    return MyLocale.getMsg(356, "Temporarily Disable Listing");
+	if (icon.equals("23.png"))
+	    return MyLocale.getMsg(357, "Enable Listing");
+	if (icon.equals("24.png"))
+	    return "Publish Listing";
+	if (icon.equals("25.png"))
+	    return "Retract Listing";
+	if (icon.equals("45.png"))
+	    return MyLocale.getMsg(316, "Needs Maintenance");
+	if (icon.equals("46.png"))
+	    return MyLocale.getMsg(359, "Owner Maintenance");
+	if (icon.equals("47.png"))
+	    return "Update Coordinates";
+	if (icon.equals("74.png"))
+	    return "Announcement";
+	return "";
+    }
+
     /** log was written by one of the aliases defined in preferences */
     public boolean isOwnLog() {
 	return this.finder.equalsIgnoreCase(Preferences.itself().myAlias) || this.finder.equalsIgnoreCase(Preferences.itself().myAlias2);
