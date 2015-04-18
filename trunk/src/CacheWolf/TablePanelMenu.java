@@ -115,7 +115,7 @@ public class TablePanelMenu extends MenuBar {
     private MenuItem orgNewWP, orgCopy, orgMove, orgDelete, orgCheckNotesAndSolver;
     public MenuItem cacheTour, orgTravelbugs, orgAbout;
     private MenuItem mnuNewProfile, mnuOpenProfile, mnuDeleteProfile, mnuRenameProfile, mnuEditCenter, orgRebuild, savenoxit;
-    IconAndText filtApplyImage, filtClearImage;
+    IconAndText filtApplyImage, filtClearImage, filtBlackImage, filtWhiteImage;
 
     private TablePanel tablePanel;
     private FilterScreen scnFilter = new FilterScreen();
@@ -250,7 +250,9 @@ public class TablePanelMenu extends MenuBar {
 	filtInvert = GuiImageBroker.getMenuItem(MyLocale.getMsg(115, "Invert"), "filterinvert");
 	filtSelected = GuiImageBroker.getMenuItem(MyLocale.getMsg(160, "Filter selected"), "filterselected");
 	filtNonSelected = GuiImageBroker.getMenuItem(MyLocale.getMsg(1011, "Filter out non selected"), "filternonselected");
-	filtBlack = GuiImageBroker.getMenuItem(MyLocale.getMsg(161, "Show Blacklist"), "no_black");
+	filtBlack = GuiImageBroker.getMenuItem(MyLocale.getMsg(161, "Show Blacklist"), "blacklist");
+	filtBlackImage = (IconAndText) filtBlack.image;
+	filtWhiteImage = GuiImageBroker.getIconAndText(MyLocale.getMsg(166, "Show Whitelist"), "whitelist");
 	MenuItem[] filterMenuItems;
 	if (Preferences.itself().getScreenWidth() > 300) {
 	    if (Preferences.itself().hasTickColumn) {
@@ -269,7 +271,7 @@ public class TablePanelMenu extends MenuBar {
 	// filtApply.modifiers = (MainForm.profile.getFilterActive() == Filter.FILTER_ACTIVE) ? filtApply.modifiers | MenuItem.Checked : filtApply.modifiers & ~MenuItem.Checked;
 	// filtApply.image = (MainForm.profile.getFilterActive() == Filter.FILTER_ACTIVE) ? filtClearImage : filtApplyImage;
 	setfiltApplyImage();
-	filtBlack.modifiers = MainForm.profile.showBlacklisted() ? filtBlack.modifiers | MenuItem.Checked : filtBlack.modifiers & ~MenuItem.Checked;
+	setFiltBlackImage();
 	return GuiImageBroker.getPullDownMenu(MyLocale.getMsg(159, "Filter"), "filter", filterMenuItems);
     }
 
@@ -343,7 +345,7 @@ public class TablePanelMenu extends MenuBar {
 	    ch = cacheDB.get(i);
 	    if (ch.isChecked == true && ch.isVisible()) {
 		// should work even if only the wayPoint is created
-		if ((ch.getWayPoint().toUpperCase().startsWith("GC") || ch.isOC()))
+		if (ch.isGC() || ch.isOC())
 		// Notiz: Wenn es ein addi Wpt ist, sollte eigentlich der Maincache gespidert werden
 		// Alter code prüft aber nur ob ein Maincache von GC existiert und versucht dann den addi direkt zu spidern, was nicht funktioniert
 		{
@@ -368,7 +370,7 @@ public class TablePanelMenu extends MenuBar {
 	    ch = cacheDB.get(i);
 	    infB.setInfo(MyLocale.getMsg(5513, "Loading: ") + ch.getWayPoint() + " (" + (j + 1) + " / " + cachesToUpdate.size() + ")");
 	    infB.redisplay();
-	    if (ch.getWayPoint().substring(0, 2).equalsIgnoreCase("GC")) {
+	    if (ch.isGC()) {
 		int test = gcImporter.spiderSingle(i, infB);
 		if (test == GCImporter.SPIDER_CANCEL) {
 		    infB.close(0);
@@ -407,6 +409,17 @@ public class TablePanelMenu extends MenuBar {
 	} else {
 	    // filtApply.modifiers = filtApply.modifiers & ~MenuItem.Checked;
 	    filtApply.image = filtApplyImage;
+	}
+    }
+
+    public void setFiltBlackImage() {
+	//filtBlack.modifiers = MainForm.profile.showBlacklisted() ? filtBlack.modifiers | MenuItem.Checked : filtBlack.modifiers & ~MenuItem.Checked;
+	if (MainForm.profile.showBlacklisted()) {
+	    filtBlack.image = this.filtWhiteImage;
+	    filtBlack.modifiers = filtBlack.modifiers | MenuItem.Checked;
+	} else {
+	    filtBlack.image = this.filtBlackImage;
+	    filtBlack.modifiers = filtBlack.modifiers & ~MenuItem.Checked;
 	}
     }
 
@@ -484,7 +497,7 @@ public class TablePanelMenu extends MenuBar {
 		if (NewProfileWizard.startNewProfileWizard(getFrame())) {
 		    tablePanel.myTableModel.numRows = 0;
 		    MainForm.itself.setCurCentrePt(MainForm.profile.center);
-		    filtBlack.modifiers = MainForm.profile.showBlacklisted() ? filtBlack.modifiers | MenuItem.Checked : filtBlack.modifiers & ~MenuItem.Checked;
+		    setFiltBlackImage();
 		    tablePanel.refreshTable();
 		}
 	    }
@@ -510,7 +523,7 @@ public class TablePanelMenu extends MenuBar {
 		    infB.close(0);
 
 		    MainForm.itself.setCurCentrePt(MainForm.profile.center);
-		    filtBlack.modifiers = MainForm.profile.showBlacklisted() ? filtBlack.modifiers | MenuItem.Checked : filtBlack.modifiers & ~MenuItem.Checked;
+		    setFiltBlackImage();
 		    MainForm.itself.setTitle(MainForm.profile.name + " - CW " + Version.getRelease());
 		    tablePanel.resetModel();
 		}
@@ -598,20 +611,20 @@ public class TablePanelMenu extends MenuBar {
 		    }
 		}
 		MainForm.profile.setShowBlacklisted(false);
-		filtBlack.modifiers = MainForm.profile.showBlacklisted() ? filtBlack.modifiers | MenuItem.Checked : filtBlack.modifiers & ~MenuItem.Checked;
+		setFiltBlackImage();
 		tablePanel.resetModel();
 	    }
 	    if (mev.selectedItem == loadOC) {
 		OCXMLImporter oc = new OCXMLImporter();
 		oc.doIt();
 		MainForm.profile.setShowBlacklisted(false);
-		filtBlack.modifiers = MainForm.profile.showBlacklisted() ? filtBlack.modifiers | MenuItem.Checked : filtBlack.modifiers & ~MenuItem.Checked;
+		setFiltBlackImage();
 		tablePanel.resetModel();
 	    }
 	    if (mev.selectedItem == loadOCFinds) {
 		OCGPXfetch.doIt();
 		MainForm.profile.setShowBlacklisted(false);
-		filtBlack.modifiers = MainForm.profile.showBlacklisted() ? filtBlack.modifiers | MenuItem.Checked : filtBlack.modifiers & ~MenuItem.Checked;
+		setFiltBlackImage();
 		tablePanel.resetModel();
 	    }
 	    if (mev.selectedItem == update) {
@@ -852,7 +865,7 @@ public class TablePanelMenu extends MenuBar {
 	    if (mev.selectedItem == filtBlack) {
 		// filtBlack.modifiers=filtBlack.modifiers|MenuItem.Checked;
 		MainForm.profile.setShowBlacklisted(!MainForm.profile.showBlacklisted());
-		filtBlack.modifiers = MainForm.profile.showBlacklisted() ? filtBlack.modifiers | MenuItem.Checked : filtBlack.modifiers & ~MenuItem.Checked;
+		setFiltBlackImage();
 		SearchCache ssc = new SearchCache(cacheDB);
 		ssc.clearSearch();// Clear search & restore filter status
 		tablePanel.refreshTable();

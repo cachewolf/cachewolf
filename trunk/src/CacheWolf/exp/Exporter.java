@@ -372,7 +372,7 @@ public class Exporter {
 	StringBuffer strBuf = new StringBuffer(7);
 	strBuf.append(CacheType.getExportShortId(ch.getType()).toLowerCase());
 	if (!ch.isAddiWpt()) {
-	    strBuf.append(ch.getHard());
+	    strBuf.append(ch.getDifficulty());
 	    strBuf.append("/");
 	    strBuf.append(ch.getTerrain());
 	    strBuf.append(CacheSize.getExportShortId(ch.getCacheSize()));

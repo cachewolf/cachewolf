@@ -61,7 +61,7 @@ public class OziExporter extends Exporter {
 	if (ch.isCustomWpt() || ch.isAddiWpt()) {
 	    strBuf.append(ch.getWayPoint() + ",");
 	} else {
-	    strBuf.append(ch.getWayPoint().concat(" ").concat(CacheType.getExportShortId(ch.getType())).concat(String.valueOf(ch.getHard())).concat(String.valueOf(ch.getTerrain())).concat(CacheSize.getExportShortId(ch.getCacheSize())).concat(","));
+	    strBuf.append(ch.getWayPoint().concat(" ").concat(CacheType.getExportShortId(ch.getType())).concat(String.valueOf(ch.getDifficulty())).concat(String.valueOf(ch.getTerrain())).concat(CacheSize.getExportShortId(ch.getCacheSize())).concat(","));
 	}
 	// Field 3 : Latitude - decimal degrees.
 	strBuf.append(lat + ",");

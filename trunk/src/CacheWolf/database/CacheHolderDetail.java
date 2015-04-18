@@ -381,7 +381,7 @@ public class CacheHolderDetail {
 		URL = URL.substring(0, logpos);
 	} else {
 	    // if no URL is stored, set default URL (at this time only possible for gc.com)
-	    if (getParent().getWayPoint().startsWith("GC")) {
+	    if (getParent().isGC()) {
 		URL = "http://www.geocaching.com/seek/cache_details.aspx?wp=" + getParent().getWayPoint();
 	    }
 	}

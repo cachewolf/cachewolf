@@ -86,7 +86,7 @@ public class CacheHolder {
     /** The angle (0=North, 180=South) from the current centre to this point */
     public double degrees = 0;
     /** The difficulty of the cache from 1 to 5 in .5 incements */
-    private byte hard = CacheTerrDiff.CW_DT_UNSET;
+    private byte difficulty = CacheTerrDiff.CW_DT_UNSET;
     /** The terrain rating of the cache from 1 to 5 in .5 incements */
     private byte terrain = CacheTerrDiff.CW_DT_UNSET;
     /** The cache type (@see CacheType for translation table) */
@@ -372,7 +372,7 @@ public class CacheHolder {
 	this.kilom = ch.kilom;
 	this.bearing = ch.bearing;
 	this.degrees = ch.degrees;
-	this.setHard(ch.getHard());
+	this.setDifficulty(ch.getDifficulty());
 	this.setTerrain(ch.getTerrain());
 	this.setType(ch.getType());
 	this.setArchived(ch.isArchived());
@@ -490,10 +490,10 @@ public class CacheHolder {
 		cn = badChars.replaceAll(cn);
 	    } // use for "NAME"
 	    varParams.put("MAINWPNAME", cn);
-	    varParams.put("DIFFICULTY", (ch.hard < 0) ? "!<!" : decSep.replaceAll(CacheTerrDiff.longDT(ch.hard)));
-	    String sHard = Integer.toString(ch.hard);
-	    varParams.put("SHORTDIFFICULTY", (ch.hard < 0) ? "" : sHard);
-	    varParams.put("SHDIFFICULTY", (ch.hard < 0) ? "" : sHard.substring(0, 1));
+	    varParams.put("DIFFICULTY", (ch.difficulty < 0) ? "!<!" : decSep.replaceAll(CacheTerrDiff.longDT(ch.difficulty)));
+	    String sHard = Integer.toString(ch.difficulty);
+	    varParams.put("SHORTDIFFICULTY", (ch.difficulty < 0) ? "" : sHard);
+	    varParams.put("SHDIFFICULTY", (ch.difficulty < 0) ? "" : sHard.substring(0, 1));
 	    varParams.put("TERRAIN", (ch.terrain < 0) ? "" : decSep.replaceAll(CacheTerrDiff.longDT(ch.terrain)));
 	    String sTerrain = Integer.toString(ch.terrain);
 	    varParams.put("SHORTTERRAIN", (ch.terrain < 0) ? "" : sTerrain);
@@ -505,10 +505,10 @@ public class CacheHolder {
 	} else {
 	    varParams.put("MAINWP", "");
 	    varParams.put("MAINWPNAME", "");
-	    varParams.put("DIFFICULTY", (isCustomWpt() || hard < 0) ? "" : decSep.replaceAll(CacheTerrDiff.longDT(hard)));
-	    String sHard = Integer.toString(hard);
-	    varParams.put("SHORTDIFFICULTY", (isCustomWpt() || hard < 0) ? "" : sHard);
-	    varParams.put("SHDIFFICULTY", (isCustomWpt() || hard < 0) ? "" : sHard.substring(0, 1));
+	    varParams.put("DIFFICULTY", (isCustomWpt() || difficulty < 0) ? "" : decSep.replaceAll(CacheTerrDiff.longDT(difficulty)));
+	    String sHard = Integer.toString(difficulty);
+	    varParams.put("SHORTDIFFICULTY", (isCustomWpt() || difficulty < 0) ? "" : sHard);
+	    varParams.put("SHDIFFICULTY", (isCustomWpt() || difficulty < 0) ? "" : sHard.substring(0, 1));
 	    varParams.put("TERRAIN", (isCustomWpt() || terrain < 0) ? "" : decSep.replaceAll(CacheTerrDiff.longDT(terrain)));
 	    String sTerrain = Integer.toString(terrain);
 	    varParams.put("SHORTTERRAIN", (isCustomWpt() || terrain < 0) ? "" : sTerrain);
@@ -864,7 +864,7 @@ public class CacheHolder {
     }
 
     public boolean isGC() {
-	return wayPoint.startsWith("GC");
+	return wayPoint.substring(0, 2).equalsIgnoreCase("GC");
     }
 
     public void calcDistance(CWPoint toPoint) {
@@ -1379,7 +1379,7 @@ public class CacheHolder {
      * @return long value representing the byte field
      */
     private long byteFields2long() {
-	long value = byteBitMask(hard, 1) | byteBitMask(terrain, 2) | byteBitMask(type, 3) | byteBitMask(cacheSize, 4) | byteBitMask(this.noFindLogs, 5);
+	long value = byteBitMask(difficulty, 1) | byteBitMask(terrain, 2) | byteBitMask(type, 3) | byteBitMask(cacheSize, 4) | byteBitMask(this.noFindLogs, 5);
 	return value;
     }
 
@@ -1390,13 +1390,13 @@ public class CacheHolder {
      *            The long value which contains up to 8 bytes.
      */
     private void long2byteFields(long value) {
-	setHard(byteFromLong(value, 1));
+	setDifficulty(byteFromLong(value, 1));
 	setTerrain(byteFromLong(value, 2));
 	setType(byteFromLong(value, 3));
 	setCacheSize(byteFromLong(value, 4));
 	setNoFindLogs((byteFromLong(value, 5)));
 
-	if (getHard() == CacheTerrDiff.CW_DT_ERROR || getTerrain() == CacheTerrDiff.CW_DT_ERROR || getCacheSize() == CacheSize.CW_SIZE_ERROR || getType() == CacheType.CW_TYPE_ERROR) {
+	if (getDifficulty() == CacheTerrDiff.CW_DT_ERROR || getTerrain() == CacheTerrDiff.CW_DT_ERROR || getCacheSize() == CacheSize.CW_SIZE_ERROR || getType() == CacheType.CW_TYPE_ERROR) {
 	    setIncomplete(true);
 	}
     }
@@ -1612,13 +1612,13 @@ public class CacheHolder {
 	this.cacheSize = cacheSize;
     }
 
-    public byte getHard() {
-	return hard;
+    public byte getDifficulty() {
+	return this.difficulty;
     }
 
-    public void setHard(byte hard) {
-	MainForm.profile.notifyUnsavedChanges(hard != this.hard);
-	this.hard = hard;
+    public void setDifficulty(byte difficulty) {
+	MainForm.profile.notifyUnsavedChanges(difficulty != this.difficulty);
+	this.difficulty = difficulty;
     }
 
     public byte getTerrain() {
@@ -1804,7 +1804,7 @@ public class CacheHolder {
 	// TODO: discuss if we should only check cache waypoints and silently "fix" everything else
 	boolean ret;
 	if (isCacheWpt()) {
-	    if (getWayPoint().length() < 3 || getHard() < CacheTerrDiff.CW_DT_UNSET || getTerrain() < CacheTerrDiff.CW_DT_UNSET || getCacheSize() == CacheSize.CW_SIZE_ERROR || getCacheOwner().length() == 0 || getDateHidden().length() == 0
+	    if (getWayPoint().length() < 3 || getDifficulty() < CacheTerrDiff.CW_DT_UNSET || getTerrain() < CacheTerrDiff.CW_DT_UNSET || getCacheSize() == CacheSize.CW_SIZE_ERROR || getCacheOwner().length() == 0 || getDateHidden().length() == 0
 		    || getCacheName().length() == 0)
 		ret = true;
 	    else
@@ -1814,7 +1814,7 @@ public class CacheHolder {
 	    // FIXME: find out why we only check waypoints with IDs of a certain length ???
 	    // if (mainCache == null
 	    // || getHard() != CacheTerrDiff.CW_DT_UNSET
-	    if (getHard() != CacheTerrDiff.CW_DT_UNSET || getCacheSize() != CacheSize.CW_SIZE_NOTCHOSEN || getTerrain() != CacheTerrDiff.CW_DT_UNSET || getWayPoint().length() < 3
+	    if (getDifficulty() != CacheTerrDiff.CW_DT_UNSET || getCacheSize() != CacheSize.CW_SIZE_NOTCHOSEN || getTerrain() != CacheTerrDiff.CW_DT_UNSET || getWayPoint().length() < 3
 	    // || getCacheOwner().length() > 0
 	    // || getDateHidden().length() > 0
 		    || getCacheName().length() == 0)
@@ -1822,7 +1822,7 @@ public class CacheHolder {
 	    else
 		ret = false;
 	} else if (isCustomWpt()) {
-	    if (getHard() != CacheTerrDiff.CW_DT_UNSET || getTerrain() != CacheTerrDiff.CW_DT_UNSET || getCacheSize() != CacheSize.CW_SIZE_NOTCHOSEN || getWayPoint().length() < 3
+	    if (getDifficulty() != CacheTerrDiff.CW_DT_UNSET || getTerrain() != CacheTerrDiff.CW_DT_UNSET || getCacheSize() != CacheSize.CW_SIZE_NOTCHOSEN || getWayPoint().length() < 3
 	    // || getCacheOwner().length() > 0
 	    // || getDateHidden().length() > 0
 	    // || getCacheName().length() == 0

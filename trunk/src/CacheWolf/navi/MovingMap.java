@@ -2487,7 +2487,7 @@ class MovingMapPanel extends InteractivePanel implements EventListener {
 			    if (!ch.isCustomWpt()) {
 				kontextMenu.addItem(new MenuItem( //
 					CacheSize.cw2ExportString(ch.getCacheSize()) + //
-						" D: " + CacheTerrDiff.longDT(ch.getHard()) + //
+						" D: " + CacheTerrDiff.longDT(ch.getDifficulty()) + //
 						" T: " + CacheTerrDiff.longDT(ch.getTerrain()) + //
 						""));
 				kontextMenu.addItem(new MenuItem( //

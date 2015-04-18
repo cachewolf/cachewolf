@@ -70,7 +70,7 @@ public final class OCLinkImporter {
 	Vm.showWait(true);
 	boolean save = false;
 	String wp = ch.getWayPoint();
-	if (wp.startsWith("GC")) {
+	if (ch.isGC()) {
 	    String wpName = ch.getOcCacheID();
 	    if (wpName.length() > 0) {
 		if (wpName.charAt(0) < 65)
