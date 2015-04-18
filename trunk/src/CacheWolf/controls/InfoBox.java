@@ -91,7 +91,7 @@ public class InfoBox extends Form {
 	    break;
 	case INPUT:
 	    mLabel mL = new mLabel(info);
-	    this.addNext(mL, STRETCH, FILL);
+	    this.addLast(mL, STRETCH, FILL);
 	    this.addLast(feedback, STRETCH, FILL);
 	    executePanel = new ExecutePanel(this);
 	    break;
