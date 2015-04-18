@@ -392,7 +392,7 @@ public class MyTableModel extends TableModel {
 		    if (!ch.isCacheWpt()) {
 			return "";
 		    } else {
-			return CacheTerrDiff.longDT(ch.getHard());
+			return CacheTerrDiff.longDT(ch.getDifficulty());
 		    }
 		case 3: // Terrain
 		    if (!ch.isCacheWpt()) {
@@ -449,7 +449,7 @@ public class MyTableModel extends TableModel {
 		case 13: // OC / gcvote Bewertung
 		    return ch.getRecommended();
 		case 14: //
-		    if (ch.getWayPoint().startsWith("GC"))
+		    if (ch.isGC())
 			return ch.getOcCacheID();
 		    else {
 			return OC.getGCWayPoint(ch.getCacheOwner());
@@ -668,7 +668,7 @@ class MyComparer implements Comparer {
 	} else if (colToCompare == 2) {
 	    for (int i = 0; i < visibleSize; i++) {
 		CacheHolder ch = cacheDB.get(i);
-		ch.sort = String.valueOf(ch.getHard());
+		ch.sort = String.valueOf(ch.getDifficulty());
 	    }
 	} else if (colToCompare == 3) {
 	    for (int i = 0; i < visibleSize; i++) {
@@ -753,7 +753,7 @@ class MyComparer implements Comparer {
 	} else if (colToCompare == 14) {
 	    for (int i = 0; i < visibleSize; i++) {
 		CacheHolder ch = cacheDB.get(i);
-		if (ch.getWayPoint().startsWith("GC"))
+		if (ch.isGC())
 		    if (ch.getOcCacheID().length() == 0)
 			ch.sort = "\uFFFF";
 		    else

@@ -1087,7 +1087,7 @@ public class GCImporter {
 	for (int i = 0; i < MainForm.profile.cacheDB.size(); i++) {
 	    CacheHolder ch = MainForm.profile.cacheDB.get(i);
 	    if (ch.isFound()) {
-		if (ch.getWayPoint().startsWith("GC"))
+		if (ch.isGC())
 		    counter++;
 	    }
 	}
@@ -1121,7 +1121,7 @@ public class GCImporter {
 	    for (int i = 0; i < MainForm.profile.cacheDB.size(); i++) {
 		final CacheHolder ch = MainForm.profile.cacheDB.get(i);
 		if (!ch.isBlack()) {
-		    if (ch.getWayPoint().substring(0, 2).equalsIgnoreCase("GC")) {
+		    if (ch.isGC()) {
 			if (spiderAllFinds //
 				|| ( //
 				(!ch.isArchived()) //
@@ -1913,10 +1913,10 @@ public class GCImporter {
     }
 
     private boolean difficultyChanged(CacheHolder ch, byte toCheck) {
-	if (ch.getHard() == toCheck)
+	if (ch.getDifficulty() == toCheck)
 	    return false;
 	else {
-	    ch.setHard(toCheck);
+	    ch.setDifficulty(toCheck);
 	    return true;
 	}
     }
@@ -2029,7 +2029,7 @@ public class GCImporter {
 
 			// order of occurrence in wayPointPage 
 			wayPointPageIndex = 0;
-			ch.setHard(wayPointPageGetDiff());
+			ch.setDifficulty(wayPointPageGetDiff());
 			ch.setTerrain(wayPointPageGetTerr());
 			ch.setType(wayPointPageGetType());
 			ch.setCacheName(wayPointPageGetName());
@@ -2715,6 +2715,8 @@ public class GCImporter {
 	}
     }
 
+    boolean koords_not_yet_found = true;
+
     /**
      * Read all additional waypoints from a previously fetched cachepage.
      * 
@@ -2724,9 +2726,8 @@ public class GCImporter {
      *            The name of the cache
      * @param is_found
      *            Found status of the cached (is inherited by the additional waypoints)
+     * @throws Exception
      */
-    boolean koords_not_yet_found = true;
-
     private void getAddWaypoints(String doc, String wayPoint, boolean is_found) throws Exception {
 	final Extractor exWayBlock = new Extractor(doc, wayBlockExStart, wayBlockExEnd, 0, false);
 	String wayBlock;
@@ -2794,7 +2795,7 @@ public class GCImporter {
 		    }
 		    hd.setFound(is_found);
 		    hd.setCacheSize(CacheSize.CW_SIZE_NOTCHOSEN);
-		    hd.setHard(CacheTerrDiff.CW_DT_UNSET);
+		    hd.setDifficulty(CacheTerrDiff.CW_DT_UNSET);
 		    hd.setTerrain(CacheTerrDiff.CW_DT_UNSET);
 
 		    if (idx < 0) {

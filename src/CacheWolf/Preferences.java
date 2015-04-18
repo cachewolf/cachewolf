@@ -35,6 +35,7 @@ import ewe.filechooser.FileChooser;
 import ewe.filechooser.FileChooserBase;
 import ewe.fx.Color;
 import ewe.fx.DrawnIcon;
+import ewe.fx.Rect;
 import ewe.io.BufferedWriter;
 import ewe.io.File;
 import ewe.io.FileBase;
@@ -167,7 +168,7 @@ public class Preferences extends MinML {
     /** display icons (on buttons ...) else display text. */
     public boolean useIcons = true;
     /** display big icons. default only true for VGA PDAs */
-    public boolean useBigIcons = true;
+    public boolean useBigIcons = false;
     /** True if don't use tabs for program navigation (using Buttons with a homepage) */
     public boolean noTabs = true;
     /** True if the tabs are to be displayed at the top of the screen */
@@ -396,10 +397,11 @@ public class Preferences extends MinML {
     // Public fields not stored in pref.xml
     // ////////////////////////////////////////////////////////////////////////////////////
 
+    private Rect screenSize = (Rect) Window.getGuiInfo(WindowConstants.INFO_SCREEN_RECT, null, new Rect(), 0);
     /** The height of the application */
-    private int screenHeight = 600;
+    private int screenHeight = screenSize.height;
     /** The width of the application */
-    private int screenWidth = 800;
+    private int screenWidth = screenSize.width;
     /** True if the preferences were changed and need to be saved */
     public boolean dirty = false;
 
@@ -633,7 +635,7 @@ public class Preferences extends MinML {
 	    if (atts.getValue("useBigIcons") != null)
 		useBigIcons = Boolean.valueOf(atts.getValue("useBigIcons")).booleanValue();
 	    else {
-		useBigIcons = screenWidth >= 400 && Vm.isMobile();
+		useBigIcons = screenWidth >= 400; // && Vm.isMobile()
 	    }
 	} else if (name.equals("hintlogpanel")) {
 	    logsPerPage = Convert.parseInt(atts.getValue("logsperpage"));

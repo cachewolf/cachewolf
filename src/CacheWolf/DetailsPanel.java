@@ -124,9 +124,10 @@ public class DetailsPanel extends CellPanel {
     private boolean needsTableUpdate = false;
     /** String to display for invalid or not applicable terrain or difficulty values. */
 
-    private final String DTINVALID = ": -.-";
     public boolean reactOnWaypointChange = false;
     private String warnedForWaypoint = "";
+    private byte newDifficulty;
+    private byte newTerrain;
     private byte newCacheType;
     private byte newCacheSize;
     private String newHiddenDate;
@@ -149,10 +150,10 @@ public class DetailsPanel extends CellPanel {
 	btnHiddenDate.setToolTip(MyLocale.getMsg(31415, "Set hidden date"));
 
 	final String[] tdSelectionList = new String[] { "1.0", "1.5", "2.0", "2.5", "3.0", "3.5", "4.0", "4.5", "5.0" };
-	btnDiff = new MyChoice(MyLocale.getMsg(1000, "D") + ": 5.5", tdSelectionList);
+	btnDiff = new MyChoice(MyLocale.getMsg(1000, "D"), "-.-star", tdSelectionList);
 	btnDiff.getBtn().setToolTip(MyLocale.getMsg(31415, "Edit difficulty"));
 
-	btnTerr = new MyChoice(MyLocale.getMsg(1001, "T") + ": 5.5", tdSelectionList);
+	btnTerr = new MyChoice(MyLocale.getMsg(1001, "T"), "-.-star", tdSelectionList);
 	btnTerr.getBtn().setToolTip(MyLocale.getMsg(31415, "Edit terrain"));
 
 	btnType = new MyChoice(CacheType.type2Gui(CacheType.CW_TYPE_REFERENCE), CacheType.typeImageNameForId(CacheType.CW_TYPE_TRADITIONAL), CacheType.guiTypeStrings());
@@ -316,40 +317,41 @@ public class DetailsPanel extends CellPanel {
 	attViewer.showImages(ch.getCacheDetails(true).attributes);
 
 	if (ch.isAddiWpt() || ch.isCustomWpt()) {
-	    deactivateControl(btnTerr.getBtn());
 	    deactivateControl(btnDiff.getBtn());
+	    deactivateControl(btnTerr.getBtn());
 	    deactivateControl(btnSize.getBtn());
 	    deactivateControl(inpOwner);
 	    deactivateControl(this.btnHiddenDate);
 	    deactivateControl(this.cbIsBlacklisted);
 	} else {
-	    activateControl(btnTerr.getBtn());
 	    activateControl(btnDiff.getBtn());
+	    activateControl(btnTerr.getBtn());
 	    activateControl(btnSize.getBtn());
 	    activateControl(inpOwner);
 	    activateControl(this.btnHiddenDate);
 	    activateControl(this.cbIsBlacklisted);
 	}
 
-	if (ch.isCustomWpt()) {
-	    btnTerr.getBtn().setText(MyLocale.getMsg(1001, "T") + DTINVALID);
-	    btnDiff.getBtn().setText(MyLocale.getMsg(1000, "D") + DTINVALID);
-	} else {
-	    if (CacheTerrDiff.isValidTD(mainCache.getTerrain())) {
-		btnTerr.getBtn().setText(MyLocale.getMsg(1001, "T") + ": " + CacheTerrDiff.longDT(mainCache.getTerrain()));
+	newDifficulty = mainCache.getDifficulty();
+	String longD = "-.-"; // Custom or invalid
+	newTerrain = mainCache.getTerrain();
+	String longT = "-.-"; // Custom or invalid
+	if (!ch.isCustomWpt()) {
+	    if (CacheTerrDiff.isValidTD(newTerrain)) {
+		longT = CacheTerrDiff.longDT(newTerrain);
 	    } else {
-		btnTerr.getBtn().setText("T: -.-");
 		mainCache.setIncomplete(true);
-		Preferences.itself().log(mainCache.getWayPoint() + " has wrong terrain " + mainCache.getTerrain());
+		Preferences.itself().log(mainCache.getWayPoint() + " has wrong terrain " + newTerrain);
 	    }
-	    if (CacheTerrDiff.isValidTD(mainCache.getHard())) {
-		btnDiff.getBtn().setText(MyLocale.getMsg(1000, "D") + ": " + CacheTerrDiff.longDT(mainCache.getHard()));
+	    if (CacheTerrDiff.isValidTD(newDifficulty)) {
+		longD = CacheTerrDiff.longDT(newDifficulty);
 	    } else {
-		btnDiff.getBtn().setText("D: -.-");
 		mainCache.setIncomplete(true);
-		Preferences.itself().log(mainCache.getWayPoint() + " has wrong difficulty " + mainCache.getHard());
+		Preferences.itself().log(mainCache.getWayPoint() + " has wrong difficulty " + newDifficulty);
 	    }
 	}
+	GuiImageBroker.setButtonIconAndText(btnDiff.getBtn(), MyLocale.getMsg(1000, "D"), GuiImageBroker.makeImageForButton(btnDiff.getBtn(), MyLocale.getMsg(1000, "D") + " " + longD, longD + "star"));
+	GuiImageBroker.setButtonIconAndText(btnTerr.getBtn(), MyLocale.getMsg(1001, "T"), GuiImageBroker.makeImageForButton(btnTerr.getBtn(), MyLocale.getMsg(1001, "T") + " " + longT, longT + "star"));
 
 	/*
 	int addiCount = 0;
@@ -487,15 +489,27 @@ public class DetailsPanel extends CellPanel {
 			    newCacheSize = CacheSize.CW_SIZE_NOTCHOSEN;
 			    GuiImageBroker.setButtonIconAndText(btnSize.getBtn(), CacheSize.cw2ExportString(newCacheSize),
 				    GuiImageBroker.makeImageForButton(btnSize.getBtn(), CacheSize.cw2ExportString(newCacheSize), CacheSize.cacheSize2ImageName(newCacheSize)));
-			    btnTerr.getBtn().setText(MyLocale.getMsg(1001, "T") + DTINVALID);
-			    btnDiff.getBtn().setText(MyLocale.getMsg(1000, "D") + DTINVALID);
+			    this.newTerrain = CacheTerrDiff.CW_DT_UNSET;
+			    this.newDifficulty = CacheTerrDiff.CW_DT_UNSET;
+			    GuiImageBroker.setButtonIconAndText(btnDiff.getBtn(), MyLocale.getMsg(1000, "D"), GuiImageBroker.makeImageForButton(btnDiff.getBtn(), MyLocale.getMsg(1000, "D"), "-.-star"));
+			    GuiImageBroker.setButtonIconAndText(btnTerr.getBtn(), MyLocale.getMsg(1001, "T"), GuiImageBroker.makeImageForButton(btnTerr.getBtn(), MyLocale.getMsg(1001, "T"), "-.-star"));
 			}
 			dirtyDetails = true;
 			menu.close();
 		    }
 		} else if (menu == this.btnDiff.getMnu()) {
 		    if (btnDiff.mark(btnDiff.getSelectedIndex())) {
-			btnDiff.getBtn().setText(MyLocale.getMsg(1000, "D") + ": " + CacheTerrDiff.longDT((byte) (btnDiff.getSelectedIndex() * 5 + 10)));
+			this.newDifficulty = (byte) (this.btnDiff.getSelectedIndex() * 5 + 10);
+			String longD = CacheTerrDiff.longDT(this.newDifficulty);
+			GuiImageBroker.setButtonIconAndText(btnDiff.getBtn(), MyLocale.getMsg(1000, "D"), GuiImageBroker.makeImageForButton(btnDiff.getBtn(), MyLocale.getMsg(1000, "D") + " " + longD, longD + "star"));
+			dirtyDetails = true;
+			menu.close();
+		    }
+		} else if (menu == this.btnTerr.getMnu()) {
+		    if (btnTerr.mark(btnTerr.getSelectedIndex())) {
+			this.newTerrain = (byte) (btnTerr.getSelectedIndex() * 5 + 10);
+			String longT = CacheTerrDiff.longDT(this.newTerrain);
+			GuiImageBroker.setButtonIconAndText(btnTerr.getBtn(), MyLocale.getMsg(1001, "T"), GuiImageBroker.makeImageForButton(btnTerr.getBtn(), MyLocale.getMsg(1001, "T") + " " + longT, longT + "star"));
 			dirtyDetails = true;
 			menu.close();
 		    }
@@ -504,12 +518,6 @@ public class DetailsPanel extends CellPanel {
 			newCacheSize = CacheSize.guiSizeStrings2CwSize(btnSize.getSelectedValue());
 			GuiImageBroker.setButtonIconAndText(btnSize.getBtn(), CacheSize.cw2ExportString(newCacheSize),
 				GuiImageBroker.makeImageForButton(btnSize.getBtn(), CacheSize.cw2ExportString(newCacheSize), CacheSize.cacheSize2ImageName(newCacheSize)));
-			dirtyDetails = true;
-			menu.close();
-		    }
-		} else if (menu == this.btnTerr.getMnu()) {
-		    if (btnTerr.mark(btnTerr.getSelectedIndex())) {
-			btnTerr.getBtn().setText(MyLocale.getMsg(1001, "T") + ": " + CacheTerrDiff.longDT((byte) (btnTerr.getSelectedIndex() * 5 + 10)));
 			dirtyDetails = true;
 			menu.close();
 		    }
@@ -523,7 +531,7 @@ public class DetailsPanel extends CellPanel {
 			final CacheHolder newCache = new CacheHolder();
 			newCache.setPos(ch.getPos());
 			newCache.setType(CacheType.CW_TYPE_STAGE);
-			newCache.setHard(CacheTerrDiff.CW_DT_UNSET);
+			newCache.setDifficulty(CacheTerrDiff.CW_DT_UNSET);
 			newCache.setTerrain(CacheTerrDiff.CW_DT_UNSET);
 			newCache.setCacheSize(CacheSize.CW_SIZE_NOTCHOSEN);
 			MainTab.itself.newWaypoint(newCache);
@@ -546,12 +554,12 @@ public class DetailsPanel extends CellPanel {
 	    }
 	} else if (ev instanceof ControlEvent && ev.type == ControlEvent.PRESSED) {
 	    if (ev.target == btnDiff.getBtn()) {
-		int startIndex = decodeTerrDiff(btnDiff.getBtn(), MyLocale.getMsg(1001, "D"), CacheType.isCacheWpt(newCacheType));
+		int startIndex = this.newDifficulty;
 		startIndex = (startIndex > 0) ? (startIndex - 10) / 5 : 0;
 		btnDiff.mark(startIndex);
 		btnDiff.showMenu();
 	    } else if (ev.target == btnTerr.getBtn()) {
-		int startIndex = decodeTerrDiff(btnTerr.getBtn(), MyLocale.getMsg(1001, "T"), CacheType.isCacheWpt(newCacheType));
+		int startIndex = this.newTerrain;
 		startIndex = (startIndex > 0) ? (startIndex - 10) / 5 : 0;
 		btnTerr.mark(startIndex);
 		btnTerr.showMenu();
@@ -849,8 +857,8 @@ public class DetailsPanel extends CellPanel {
 	    ch.setAttributesFromMainCacheToAddiWpts();
 	}
 	if (!ch.isAddiWpt()) {
-	    ch.setHard(decodeTerrDiff(btnDiff.getBtn(), MyLocale.getMsg(1000, "D"), ch.isCacheWpt()));
-	    ch.setTerrain(decodeTerrDiff(btnTerr.getBtn(), MyLocale.getMsg(1001, "T"), ch.isCacheWpt()));
+	    ch.setDifficulty(this.newDifficulty);
+	    ch.setTerrain(this.newTerrain);
 	}
 	dirtyNotes = false;
 	dirtyDetails = false;
@@ -860,39 +868,6 @@ public class DetailsPanel extends CellPanel {
 	    // Delete old XML - File
 	    ch.getCacheDetails(false).deleteFile(MainForm.profile.dataDir + oldWaypoint + ".xml");
 	}
-    }
-
-    /**
-     * convert the string displayed in the terrain in difficulty buttons to a byte for intrernal use<br>
-     * assumes that the relevant information will at positions 3 and 5 in a 0 indexed string
-     * 
-     * @param button
-     *            button control to get the text from
-     * @param td
-     *            localized string for abbreviation of terrain or difficulty
-     * @param isCache
-     *            true if waypoint is a cache, false for addis and custom
-     * @return 0 for additional or custum waypoints, -1 for caches if td is not valid, parsed byte otherwise
-     */
-    private byte decodeTerrDiff(mButton button, String td, boolean isCache) {
-	// terrain and difficulty are always unset for non cache waypoints
-	if (!isCache)
-	    return CacheTerrDiff.CW_DT_UNSET;
-
-	// cut off beginning of string
-	String buttonText = button.getText().substring(td.length() + 2);
-	// we now should have a string of length 3
-	if (buttonText.length() != 3)
-	    return -1;
-
-	final StringBuffer tdv = new StringBuffer(2);
-	buttonText = tdv.append(buttonText.charAt(0)).append(buttonText.charAt(2)).toString();
-
-	// unset value is invalid
-	if ("--".equals(buttonText))
-	    return CacheTerrDiff.CW_DT_ERROR;
-
-	return Byte.parseByte(buttonText);
     }
 
     private class TravelbugInCacheScreen extends Form {
