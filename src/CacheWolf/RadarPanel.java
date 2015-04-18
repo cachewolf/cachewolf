@@ -376,7 +376,7 @@ class MyInteractivePanel extends InteractivePanel {
 	CacheDB cacheDB = MainForm.profile.cacheDB;
 	CacheHolder ch = cacheDB.get(imgRP.rownum);
 	wayPoint = ch.getWayPoint();
-	String s = wayPoint + "  " + CacheSize.getExportShortId(ch.getCacheSize()) + " / " + strDifficulty + "=" + ch.getHard() + "  " + strTerrain + "=" + ch.getTerrain();
+	String s = wayPoint + "  " + CacheSize.getExportShortId(ch.getCacheSize()) + " / " + strDifficulty + "=" + ch.getDifficulty() + "  " + strTerrain + "=" + ch.getTerrain();
 	String s1 = ch.getCacheName();
 	if (s1.length() > 40)
 	    s1 = s1.substring(0, 40);

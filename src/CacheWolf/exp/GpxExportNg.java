@@ -637,7 +637,7 @@ public class GpxExportNg {
 		ret.append("    <name>").append(SafeXML.cleanGPX(ch.getWayPoint()))//
 			.append(" ")//
 			.append(CacheType.getExportShortId(ch.getType()))//
-			.append(String.valueOf(ch.getHard()))//
+			.append(String.valueOf(ch.getDifficulty()))//
 			.append(String.valueOf(ch.getTerrain()))//
 			.append(CacheSize.getExportShortId(ch.getCacheSize()))//
 			.append(String.valueOf(ch.getNoFindLogs()))//
@@ -678,7 +678,7 @@ public class GpxExportNg {
 		    .append(", ")//
 		    .append(CacheType.type2GSTypeTag(ch.getType()))//
 		    .append(" (")//
-		    .append(CacheTerrDiff.shortDT(ch.getHard()))//
+		    .append(CacheTerrDiff.shortDT(ch.getDifficulty()))//
 		    .append("/")//
 		    .append(CacheTerrDiff.shortDT(ch.getTerrain()))//
 		    .append(")")//
@@ -737,7 +737,7 @@ public class GpxExportNg {
 		.append("      <groundspeak:attributes>").append(newLine)//
 		.append(formatAttributes())// ab pq Version 1/0/1
 		.append("      </groundspeak:attributes>").append(newLine)//
-		.append("      <groundspeak:difficulty>").append(CacheTerrDiff.shortDT(ch.getHard())).append("</groundspeak:difficulty>").append(newLine)//
+		.append("      <groundspeak:difficulty>").append(CacheTerrDiff.shortDT(ch.getDifficulty())).append("</groundspeak:difficulty>").append(newLine)//
 		.append("      <groundspeak:terrain>").append(CacheTerrDiff.shortDT(ch.getTerrain())).append("</groundspeak:terrain>").append(newLine)//
 		.append("      <groundspeak:country>").append(SafeXML.cleanGPX(ch.getCacheDetails(true).Country)).append("</groundspeak:country>").append(newLine)//
 		.append("      <groundspeak:state>").append(SafeXML.cleanGPX(ch.getCacheDetails(true).State)).append("</groundspeak:state>").append(newLine)//

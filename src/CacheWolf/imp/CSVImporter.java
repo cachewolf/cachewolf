@@ -390,7 +390,7 @@ public class CSVImporter {
 	// ... fixed to work
 	ch.setType(CacheType.CW_TYPE_TRADITIONAL);
 	ch.setCacheSize(CacheSize.CW_SIZE_OTHER);
-	ch.setHard(CacheTerrDiff.CW_DT_10);
+	ch.setDifficulty(CacheTerrDiff.CW_DT_10);
 	ch.setTerrain(CacheTerrDiff.CW_DT_10);
 	// Koordinaten
 	ch.setPos(tmpPos);

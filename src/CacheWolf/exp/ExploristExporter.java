@@ -276,7 +276,7 @@ public class ExploristExporter {
 
 	sb.append(toGsDateFormat(lastFound)); // lastFound - DDMMYYY, YYY = year - 1900
 	sb.append(",");
-	sb.append(CacheTerrDiff.longDT(ch.getHard()));
+	sb.append(CacheTerrDiff.longDT(ch.getDifficulty()));
 	sb.append(",");
 	sb.append(CacheTerrDiff.longDT(ch.getTerrain()));
 	sb.append("*41");

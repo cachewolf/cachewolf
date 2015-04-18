@@ -408,7 +408,7 @@ public class MyTableControl extends TableControl {
 		}
 
 	    } else {
-		if (mainCache.isCustomWpt() && mainCache.getWayPoint().startsWith("GC")) {
+		if (mainCache.isCustomWpt() && mainCache.isGC()) {
 		    url = "http://www.geocaching.com/seek/log.aspx?ID=" + mainCache.GetCacheID();
 		    callExternalProgram(Preferences.itself().browser, url);
 		}

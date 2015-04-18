@@ -505,7 +505,7 @@ public class GPXImporter extends MinML {
 	if (name.equals("type") && inWpt && !inCache && strData.startsWith("Waypoint")) {
 	    holder.setType(CacheType.gpxType2CwType(strData));
 	    holder.setCacheSize(CacheSize.CW_SIZE_NOTCHOSEN);
-	    holder.setHard(CacheTerrDiff.CW_DT_UNSET);
+	    holder.setDifficulty(CacheTerrDiff.CW_DT_UNSET);
 	    holder.setTerrain(CacheTerrDiff.CW_DT_UNSET);
 	    holder.setLastSync("");
 	}
@@ -530,7 +530,7 @@ public class GPXImporter extends MinML {
 	}
 	if (name.equals("groundspeak:difficulty") || name.equals("difficulty") || name.equals("terra:mental_challenge")) {
 	    try {
-		holder.setHard(CacheTerrDiff.v1Converter(strData));
+		holder.setDifficulty(CacheTerrDiff.v1Converter(strData));
 	    } catch (IllegalArgumentException e) {
 
 		Preferences.itself().log(holder.getCacheName() + ": illegal difficulty value: " + strData);
@@ -550,7 +550,7 @@ public class GPXImporter extends MinML {
 	    holder.setType(CacheType.gpxType2CwType(strData));
 	    if (holder.isCustomWpt()) {
 		holder.setCacheSize(CacheSize.CW_SIZE_NOTCHOSEN);
-		holder.setHard(CacheTerrDiff.CW_DT_UNSET);
+		holder.setDifficulty(CacheTerrDiff.CW_DT_UNSET);
 		holder.setTerrain(CacheTerrDiff.CW_DT_UNSET);
 	    }
 	    return;
