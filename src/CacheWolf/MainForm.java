@@ -575,7 +575,6 @@ class CacheTour extends CellPanel {
 	updateScreen(cacheList.size() - wrongVisStatus);
 	if (wrongVisStatus > 0)
 	    new InfoBox(MyLocale.getMsg(5500, "Error"), MyLocale.getMsg(4600, "Some cache(s) cannot be shown because of wrong blacklist status")).wait(FormBase.OKB);
-
     }
 
     /**
