@@ -41,6 +41,7 @@ import CacheWolf.exp.OCLogExport;
 import CacheWolf.navi.Navigate;
 import CacheWolf.navi.TransformCoordinates;
 import CacheWolf.utils.CWWrapper;
+import CacheWolf.utils.Common;
 import CacheWolf.utils.MyLocale;
 import CacheWolf.utils.STRreplace;
 import ewe.fx.IImage;
@@ -94,6 +95,7 @@ public class DetailsPanel extends CellPanel {
     private MyChoice btnSize;
     private MyChoice btnMore;
     private mButton btnCoordinates;
+    private mButton btnHint;
     private mCheckBox cbIsSolved;
     private mCheckBox cbIsBlacklisted;
     private mButton btnFoundDate;
@@ -131,6 +133,7 @@ public class DetailsPanel extends CellPanel {
     private byte newCacheType;
     private byte newCacheSize;
     private String newHiddenDate;
+    private String hint;
     private boolean isBigScreen;
     private final int BUG = 0;
     private final int GOTO = 1;
@@ -168,6 +171,8 @@ public class DetailsPanel extends CellPanel {
 	btnCoordinates = new mButton();
 	btnCoordinates.setToolTip(MyLocale.getMsg(31415, "Edit coordinates"));
 
+	btnHint = GuiImageBroker.getButton(MyLocale.getMsg(402, "Hint"), "decode");
+
 	attViewer = new AttributesViewer();
 
 	String[] texts = new String[] { MyLocale.getMsg(346, "Show travelbugs"), MyLocale.getMsg(326, "Set as destination and show Compass View"), MyLocale.getMsg(351, "Add/Edit notes"), MyLocale.getMsg(311, "Create Waypoint") };
@@ -185,6 +190,7 @@ public class DetailsPanel extends CellPanel {
 	panelControls.add(btnTerr.getBtn());
 	panelControls.add(btnSize.getBtn());
 	panelControls.add(btnCoordinates);
+	panelControls.add(btnHint);
 	panelControls.add(btnMore.getBtn());
 
 	mainPanel.addLast(inpName);
@@ -249,6 +255,7 @@ public class DetailsPanel extends CellPanel {
 	    sp.setText(MyLocale.getMsg(308, "Notes"));
 	    addLast(sp, STRETCH, FILL);
 	} else {
+	    addLast(btnHint);
 	    addLast(attViewer, HSTRETCH, HFILL);
 	}
 
@@ -312,7 +319,7 @@ public class DetailsPanel extends CellPanel {
 	String text = CacheSize.cw2ExportString(newCacheSize);
 	String icon = CacheSize.cacheSize2ImageName(newCacheSize);
 	IImage btnSizeNewImage = GuiImageBroker.makeImageForButton(btnSize.getBtn(), text, icon);
-	GuiImageBroker.setButtonIconAndText(btnSize.getBtn(), CacheSize.cw2ExportString(newCacheSize), btnSizeNewImage);
+	GuiImageBroker.setButtonIconAndText(btnSize.getBtn(), text, btnSizeNewImage);
 
 	attViewer.showImages(ch.getCacheDetails(true).attributes);
 
@@ -362,6 +369,20 @@ public class DetailsPanel extends CellPanel {
 	}
 	lblAddiCount.setText(": " + addiCount); //MyLocale.getMsg(1044, "Addis") + 
 	*/
+
+	hint = "";
+	if (ch.isAddiWpt()) {
+	    hint = STRreplace.replace(ch.getCacheDetails(false).LongDescription, "<br>", "\n");
+	    if (hint.length() > 0) {
+		hint = hint + "\n-\n";
+	    }
+	}
+	hint += STRreplace.replace(Common.rot13(mainCache.getCacheDetails(false).Hints), "<br>", "\n");
+	if (hint.length() > 0) {
+	    activateControl(btnHint);
+	} else {
+	    deactivateControl(btnHint);
+	}
 
 	if (isBigScreen) {
 	    deactivateControl(btnEditLog);
@@ -735,6 +756,8 @@ public class DetailsPanel extends CellPanel {
 			}
 		    }
 		}
+	    } else if (ev.target == this.btnHint) {
+		new InfoBox(MyLocale.getMsg(402, "Hint"), hint).wait(FormBase.OKB);
 	    }
 	}
     }
