@@ -153,10 +153,10 @@ public class DetailsPanel extends CellPanel {
 	btnHiddenDate.setToolTip(MyLocale.getMsg(31415, "Set hidden date"));
 
 	final String[] tdSelectionList = new String[] { "1.0", "1.5", "2.0", "2.5", "3.0", "3.5", "4.0", "4.5", "5.0" };
-	btnDiff = new MyChoice(MyLocale.getMsg(1000, "D"), "-.-star", tdSelectionList);
+	btnDiff = new MyChoice(MyLocale.getMsg(1000, "D"), "star0", tdSelectionList);
 	btnDiff.getBtn().setToolTip(MyLocale.getMsg(31415, "Edit difficulty"));
 
-	btnTerr = new MyChoice(MyLocale.getMsg(1001, "T"), "-.-star", tdSelectionList);
+	btnTerr = new MyChoice(MyLocale.getMsg(1001, "T"), "star0", tdSelectionList);
 	btnTerr.getBtn().setToolTip(MyLocale.getMsg(31415, "Edit terrain"));
 
 	btnType = new MyChoice(CacheType.type2Gui(CacheType.CW_TYPE_REFERENCE), CacheType.typeImageNameForId(CacheType.CW_TYPE_TRADITIONAL), CacheType.guiTypeStrings());
@@ -357,8 +357,8 @@ public class DetailsPanel extends CellPanel {
 		Preferences.itself().log(mainCache.getWayPoint() + " has wrong difficulty " + newDifficulty);
 	    }
 	}
-	GuiImageBroker.setButtonIconAndText(btnDiff.getBtn(), MyLocale.getMsg(1000, "D"), GuiImageBroker.makeImageForButton(btnDiff.getBtn(), MyLocale.getMsg(1000, "D") + " " + longD, longD + "star"));
-	GuiImageBroker.setButtonIconAndText(btnTerr.getBtn(), MyLocale.getMsg(1001, "T"), GuiImageBroker.makeImageForButton(btnTerr.getBtn(), MyLocale.getMsg(1001, "T") + " " + longT, longT + "star"));
+	GuiImageBroker.setButtonIconAndText(btnDiff.getBtn(), MyLocale.getMsg(1000, "D"), GuiImageBroker.makeImageForButton(btnDiff.getBtn(), MyLocale.getMsg(1000, "D") + " " + longD, "star" + newDifficulty));
+	GuiImageBroker.setButtonIconAndText(btnTerr.getBtn(), MyLocale.getMsg(1001, "T"), GuiImageBroker.makeImageForButton(btnTerr.getBtn(), MyLocale.getMsg(1001, "T") + " " + longT, "star" + newTerrain));
 
 	/*
 	int addiCount = 0;
@@ -512,8 +512,8 @@ public class DetailsPanel extends CellPanel {
 				    GuiImageBroker.makeImageForButton(btnSize.getBtn(), CacheSize.cw2ExportString(newCacheSize), CacheSize.cacheSize2ImageName(newCacheSize)));
 			    this.newTerrain = CacheTerrDiff.CW_DT_UNSET;
 			    this.newDifficulty = CacheTerrDiff.CW_DT_UNSET;
-			    GuiImageBroker.setButtonIconAndText(btnDiff.getBtn(), MyLocale.getMsg(1000, "D"), GuiImageBroker.makeImageForButton(btnDiff.getBtn(), MyLocale.getMsg(1000, "D"), "-.-star"));
-			    GuiImageBroker.setButtonIconAndText(btnTerr.getBtn(), MyLocale.getMsg(1001, "T"), GuiImageBroker.makeImageForButton(btnTerr.getBtn(), MyLocale.getMsg(1001, "T"), "-.-star"));
+			    GuiImageBroker.setButtonIconAndText(btnDiff.getBtn(), MyLocale.getMsg(1000, "D"), GuiImageBroker.makeImageForButton(btnDiff.getBtn(), MyLocale.getMsg(1000, "D"), "star0"));
+			    GuiImageBroker.setButtonIconAndText(btnTerr.getBtn(), MyLocale.getMsg(1001, "T"), GuiImageBroker.makeImageForButton(btnTerr.getBtn(), MyLocale.getMsg(1001, "T"), "star0"));
 			}
 			dirtyDetails = true;
 			menu.close();
@@ -522,7 +522,7 @@ public class DetailsPanel extends CellPanel {
 		    if (btnDiff.mark(btnDiff.getSelectedIndex())) {
 			this.newDifficulty = (byte) (this.btnDiff.getSelectedIndex() * 5 + 10);
 			String longD = CacheTerrDiff.longDT(this.newDifficulty);
-			GuiImageBroker.setButtonIconAndText(btnDiff.getBtn(), MyLocale.getMsg(1000, "D"), GuiImageBroker.makeImageForButton(btnDiff.getBtn(), MyLocale.getMsg(1000, "D") + " " + longD, longD + "star"));
+			GuiImageBroker.setButtonIconAndText(btnDiff.getBtn(), MyLocale.getMsg(1000, "D"), GuiImageBroker.makeImageForButton(btnDiff.getBtn(), MyLocale.getMsg(1000, "D") + " " + longD, "star" + this.newDifficulty));
 			dirtyDetails = true;
 			menu.close();
 		    }
@@ -530,7 +530,7 @@ public class DetailsPanel extends CellPanel {
 		    if (btnTerr.mark(btnTerr.getSelectedIndex())) {
 			this.newTerrain = (byte) (btnTerr.getSelectedIndex() * 5 + 10);
 			String longT = CacheTerrDiff.longDT(this.newTerrain);
-			GuiImageBroker.setButtonIconAndText(btnTerr.getBtn(), MyLocale.getMsg(1001, "T"), GuiImageBroker.makeImageForButton(btnTerr.getBtn(), MyLocale.getMsg(1001, "T") + " " + longT, longT + "star"));
+			GuiImageBroker.setButtonIconAndText(btnTerr.getBtn(), MyLocale.getMsg(1001, "T"), GuiImageBroker.makeImageForButton(btnTerr.getBtn(), MyLocale.getMsg(1001, "T") + " " + longT, "star" + this.newTerrain));
 			dirtyDetails = true;
 			menu.close();
 		    }
