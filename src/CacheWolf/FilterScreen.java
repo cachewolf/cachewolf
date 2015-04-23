@@ -1130,6 +1130,7 @@ class AttributesSelector extends Panel {
 	    return true;
 	}
 
+	//Overrides: imagePressed(...) in InteractivePanel
 	public boolean imagePressed(AniImage which, Point pos) {
 	    if (which != null) {
 		int value = ((attImage) which).att.getInc();
