@@ -469,9 +469,9 @@ public class MainTab extends mTabbedPanel {
     private void switchToMovingMap() {
 	CWPoint centerTo = getPositionAndSetDestination();
 	// lade entsprechende Karte
-	if (centerTo != null && centerTo.isValid())
+	if (centerTo != null && centerTo.isValid()) {
 	    movingMap.display(centerTo);
-	else
+	} else
 	    new InfoBox(MyLocale.getMsg(5500, "Error"), MyLocale.getMsg(1513, "Cannot start moving map without valid coordinates. Please enter coordinates as destination, as center, in selected cache or start GPS")).wait(FormBase.OKB);
     }
 
@@ -480,19 +480,19 @@ public class MainTab extends mTabbedPanel {
 	if (navigate.isGpsPosValid())
 	    position = new CWPoint(Navigate.gpsPos);
 	else {
-	    if (Navigate.destination.isValid())
-		position = new CWPoint(Navigate.destination);
-	    else {
-		if (ch != null && ch.getPos().isValid()) {
-		    position = new CWPoint(ch.getPos());
-		    navigate.setDestination(ch);
-		} else {
-		    if (Preferences.itself().curCentrePt.isValid()) {
-			position = new CWPoint(Preferences.itself().curCentrePt);
-			navigate.setDestination(position);
-		    }
+	    //if (Navigate.destination.isValid())
+	    //position = new CWPoint(Navigate.destination);
+	    //else {
+	    if (ch != null && ch.getPos().isValid()) {
+		position = new CWPoint(ch.getPos());
+		navigate.setDestination(ch);
+	    } else {
+		if (Preferences.itself().curCentrePt.isValid()) {
+		    position = new CWPoint(Preferences.itself().curCentrePt);
+		    navigate.setDestination(position);
 		}
 	    }
+	    //}
 	}
 	return position;
     }
