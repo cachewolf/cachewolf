@@ -356,6 +356,7 @@ public class MyTableControl extends TableControl {
 	    }
 	    if (mainCache.isCacheWpt()) {
 		chD = mainCache.getCacheDetails(false);
+
 		String ownLogMessage = "";
 		if (chD != null) {
 		    if (chD.OwnLog != null) {
@@ -366,6 +367,7 @@ public class MyTableControl extends TableControl {
 			}
 		    }
 		}
+
 		if (mainCache.isOC()) {
 		    if (chD != null) {
 			url = chD.URL;
@@ -377,6 +379,7 @@ public class MyTableControl extends TableControl {
 			url = "http://" + OC.getOCHostName(mainCache.getWayPoint()) + "/log.php?wp=" + mainCache.getWayPoint();
 		    }
 		} else {
+		    url = "http://www.geocaching.com/seek/log.aspx?ID=" + mainCache.GetCacheID();
 		    if (chD.OwnLog != null) {
 			if (chD.OwnLog.getLogID().length() > 0) {
 			    // GC und schon gelogged --> log bei OC eintragen, wenn auf OC-Index-Spalte geklickt
@@ -397,9 +400,7 @@ public class MyTableControl extends TableControl {
 				    }
 				}
 			    }
-			} else
-			    // bei GC loggen
-			    url = "http://www.geocaching.com/seek/log.aspx?ID=" + mainCache.GetCacheID();
+			}
 		    }
 		}
 
