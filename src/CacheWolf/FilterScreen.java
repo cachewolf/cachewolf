@@ -388,7 +388,7 @@ public class FilterScreen extends Form {
 	CellPanel pnlName = new CellPanel();
 	pnlName.setText(MyLocale.getMsg(303, "Name :"));
 	pnlName.addNext(srchNameCaseSensitive = new mCheckBox(MyLocale.getMsg(750, "Upper / lower case")));
-	pnlName.addLast(srchNameCompare = new mChoice(new String[] { MyLocale.getMsg(744, "begins with"), MyLocale.getMsg(745, "contains"), MyLocale.getMsg(746, "ends with") }, 0));
+	pnlName.addLast(srchNameCompare = new mChoice(new String[] { MyLocale.getMsg(744, "begins with"), MyLocale.getMsg(745, "contains"), MyLocale.getMsg(746, "ends with"), MyLocale.getMsg(755, "Doesn't contain") }, 0));
 	pnlName.addLast(srchNameInput = new mInput());
 	pnlName.addLast(btnSrchNameClear = GuiImageBroker.getButton("", "clear"));
 	pnlSearch.addLast(pnlName, HSHRINK, HFILL);
