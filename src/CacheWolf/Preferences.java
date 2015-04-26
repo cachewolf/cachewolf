@@ -745,12 +745,18 @@ public class Preferences extends MinML {
 	    }
 	    // Order within the search items must not be changed
 	    String searchFilter = SafeXML.html2iso8859s1(atts.getValue("search"));
-	    String[] searchFilterList = ewe.util.mString.split(searchFilter, '|'); //'\u0399');
+	    String[] searchFilterList = ewe.util.mString.split(searchFilter, '|');
 	    for (int i = 0; i < searchFilterList.length; i++) {
 		if (i == 0)
 		    data.setSyncDate(searchFilterList[i]);
 		if (i == 1)
 		    data.setNamePattern(searchFilterList[i]);
+		if (i == 2) {
+		    if (searchFilterList[i].length() >= 2) {
+			data.setNameCompare(Integer.parseInt(searchFilterList[i].substring(0, 1)));
+			data.setNameCaseSensitive(searchFilterList[i].substring(1, 2).equals("0") ? false : true);
+		    }
+		}
 	    }
 	    // Filter object is remembered under the given ID
 	    this.addFilter(id, data);

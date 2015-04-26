@@ -71,7 +71,7 @@ public final class OCLinkImporter {
 	boolean save = false;
 	String wp = ch.getWayPoint();
 	if (ch.isGC()) {
-	    String wpName = ch.getOcCacheID();
+	    String wpName = ch.getOCWayPoint();
 	    if (wpName.length() > 0) {
 		if (wpName.charAt(0) < 65)
 		    wp = wpName.substring(1);
@@ -81,7 +81,7 @@ public final class OCLinkImporter {
 		}
 		if (!wp.startsWith("OC")) {
 		    // other OC sites
-		    ch.setOcCacheID(""); // there may be a value from gpx - import
+		    ch.setOCWayPoint(""); // there may be a value from gpx - import
 		    save = true;
 		}
 	    }
@@ -128,8 +128,8 @@ public final class OCLinkImporter {
 			String ocwp = result.substring(start, idend);
 			if (!found)
 			    ocwp = "-" + ocwp;
-			if (!ocwp.equals(ch.getOcCacheID())) {
-			    ch.setOcCacheID(ocwp);
+			if (!ocwp.equals(ch.getOCWayPoint())) {
+			    ch.setOCWayPoint(ocwp);
 			    save = true;
 			}
 		    }

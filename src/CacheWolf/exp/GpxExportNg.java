@@ -725,7 +725,7 @@ public class GpxExportNg {
 	if (ch.isAddiWpt())
 	    return "";
 	StringBuffer ret = new StringBuffer();
-	ret.append("    <groundspeak:cache id=\"").append(ch.GetCacheID())//
+	ret.append("    <groundspeak:cache id=\"").append(ch.getCacheID())//
 		.append("\" available=\"").append(ch.isAvailable() ? TRUE : FALSE)//
 		.append("\" archived=\"").append(ch.isArchived() ? TRUE : FALSE)//
 		.append("\" xmlns:groundspeak=\"" + xmlnspq + "\">").append(newLine)//
@@ -858,7 +858,7 @@ public class GpxExportNg {
 		exportlogs = logs.size();
 	    }
 
-	    final String cacheID = ch.GetCacheID();
+	    final String cacheID = ch.getCacheID();
 
 	    // with a special log
 	    addLog(createAttrLog(exportlogs));
@@ -914,7 +914,7 @@ public class GpxExportNg {
 	    logText.append(MyLocale.getMsg(1051, "Last sync date") + ": " + DateFormat.formatLastSyncDate(ch.getLastSync(), "")).append(newLine);
 	*/
 	if (logText.length() > 0) {
-	    Log log = new Log(ch.GetCacheID() + Integer.toString(exportlogs), "-2", "icon_note.gif", DateFormat.yyyyMMddHHmmss2gpxLogdate(ch.getLastSync()), "CacheWolf", logText.toString());
+	    Log log = new Log(ch.getCacheID() + Integer.toString(exportlogs), "-2", "icon_note.gif", DateFormat.yyyyMMddHHmmss2gpxLogdate(ch.getLastSync()), "CacheWolf", logText.toString());
 	    return log;
 	} else
 	    return null;
