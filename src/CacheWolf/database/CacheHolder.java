@@ -118,7 +118,7 @@ public class CacheHolder {
     /** True if the cache has been selected using the tick box in the list view */
     public boolean isChecked = false;
     /** The unique OC cache ID */
-    private String ocCacheID = EMPTY;
+    private String ocWayPoint = EMPTY;
     /** The number of times this cache has not been found (max. 5) */
     private byte noFindLogs = 0;
     /** Number of recommendations (from the opencaching logs) */
@@ -204,7 +204,7 @@ public class CacheHolder {
 
 		start = xmlString.indexOf('"', end + 1);
 		end = xmlString.indexOf('"', start + 1);
-		setOcCacheID(xmlString.substring(start + 1, end));
+		setOCWayPoint(xmlString.substring(start + 1, end));
 
 		start = xmlString.indexOf('"', end + 1);
 		end = xmlString.indexOf('"', start + 1);
@@ -382,8 +382,7 @@ public class CacheHolder {
 	this.setIncomplete(ch.isIncomplete());
 	this.addiWpts = ch.addiWpts;
 	this.mainCache = ch.mainCache;
-	if (ch.getOcCacheID().length() > 0)
-	    this.setOcCacheID(ch.getOcCacheID());
+	this.setOCWayPoint(ch.getOCWayPoint());
 	this.setNoFindLogs(ch.getNoFindLogs());
 	this.hasBugs(ch.hasBugs());
 	this.isHTML(ch.isHTML());
@@ -443,7 +442,7 @@ public class CacheHolder {
 	sb.append("\" status = \"");
 	sb.append(cacheStatus());
 	sb.append("\" ocCacheID = \"");
-	sb.append(getOcCacheID());
+	sb.append(getOCWayPoint());
 	sb.append("\" lastSyncOC = \"");
 	sb.append(getLastSync());
 	sb.append("\" num_recommended = \"");
@@ -567,7 +566,7 @@ public class CacheHolder {
 	    varParams.put("GMTYPE", gm.getIcon(this));
 	varParams.put("NOW_DATE", nowdate().setToCurrentTime().toString());
 	varParams.put("NOW_TIME", nowtime().setToCurrentTime().toString());
-	varParams.put("CACHEID", GetCacheID());
+	varParams.put("CACHEID", getCacheID());
 	varParams.put("AVAILABLE", isAvailable ? "TRUE" : "FALSE");
 	varParams.put("ARCHIVED", isArchived ? "TRUE" : "FALSE");
 	varParams.put("SOLVED", isSolved ? "TRUE" : "FALSE");
@@ -1234,7 +1233,7 @@ public class CacheHolder {
 	return statusTime;
     }
 
-    public String GetCacheID() {
+    public String getCacheID() {
 	String result = "";
 	String pattern = wayPoint.toUpperCase();
 
@@ -1261,7 +1260,7 @@ public class CacheHolder {
 
 	    result = Integer.toString(gcId);
 	} else if (isOC()) {
-	    result = getOcCacheID();
+	    result = getOCWayPoint();
 	}
 
 	return result;
@@ -1870,14 +1869,14 @@ public class CacheHolder {
 	}
     }
 
-    public String getOcCacheID() {
-	return ocCacheID;
+    public String getOCWayPoint() {
+	return ocWayPoint;
     }
 
-    public void setOcCacheID(String s) {
-	if (!s.equals(this.ocCacheID)) {
+    public void setOCWayPoint(String s) {
+	if (!s.equals(this.ocWayPoint)) {
 	    MainForm.profile.notifyUnsavedChanges(true);
-	    this.ocCacheID = s;
+	    this.ocWayPoint = s;
 	}
     }
 

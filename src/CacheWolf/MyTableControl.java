@@ -312,7 +312,7 @@ public class MyTableControl extends TableControl {
 	    }
 	    chD = mainCache.getCacheDetails(true);
 	    url = chD.URL;
-	    String wpName = mainCache.getOcCacheID();
+	    String wpName = mainCache.getOCWayPoint();
 	    if (clickedColumn == 14) {
 		if (mainCache.isOC()) {
 		    String s = OC.getGCWayPoint(ch.getCacheOwner());
@@ -321,7 +321,7 @@ public class MyTableControl extends TableControl {
 		} else {
 		    if (wpName.length() > 0) {
 			if (wpName.charAt(0) < 65)
-			    wpName = mainCache.getOcCacheID().substring(1);
+			    wpName = mainCache.getOCWayPoint().substring(1);
 			url = "http://" + OC.getOCHostName(wpName) + "/viewcache.php?wp=" + wpName;
 		    }
 		}
@@ -379,16 +379,17 @@ public class MyTableControl extends TableControl {
 			url = "http://" + OC.getOCHostName(mainCache.getWayPoint()) + "/log.php?wp=" + mainCache.getWayPoint();
 		    }
 		} else {
-		    url = "http://www.geocaching.com/seek/log.aspx?ID=" + mainCache.GetCacheID();
+		    url = "http://www.geocaching.com/seek/log.aspx?ID=" + mainCache.getCacheID();
 		    if (chD.OwnLog != null) {
 			if (chD.OwnLog.getLogID().length() > 0) {
 			    // GC und schon gelogged --> log bei OC eintragen, wenn auf OC-Index-Spalte geklickt
-			    String ocWpName = mainCache.getOcCacheID();
+			    String ocWpName = mainCache.getOCWayPoint();
 			    if (ocWpName.length() > 0 && ocWpName.charAt(0) < 65) {
 				// OC log (already logged at GC but not at OC)
 				if (clickedColumn == 14) {
 				    OCLogExport.doOneLog(mainCache);
 				    MainTab.itself.tablePanel.refreshTable();
+				    url = "";
 				} else {
 				    // open OC logpage with Logtext in Clipboard
 				    Vm.setClipboardText(chD.OwnLog.getDate() + '\n' + "<br>" + ownLogMessage);
@@ -410,7 +411,7 @@ public class MyTableControl extends TableControl {
 
 	    } else {
 		if (mainCache.isCustomWpt() && mainCache.isGC()) {
-		    url = "http://www.geocaching.com/seek/log.aspx?ID=" + mainCache.GetCacheID();
+		    url = "http://www.geocaching.com/seek/log.aspx?ID=" + mainCache.getCacheID();
 		    callExternalProgram(Preferences.itself().browser, url);
 		}
 	    }

@@ -454,6 +454,12 @@ public class Profile {
 			    setFilterSyncDate(searchFilterList[i]);
 			if (i == 1)
 			    setFilterNamePattern(searchFilterList[i]);
+			if (i == 2) {
+			    if (searchFilterList[i].length() >= 2) {
+				this.setFilterNameCompare(Integer.parseInt(searchFilterList[i].substring(0, 1)));
+				this.setFilterNameCaseSensitive(searchFilterList[i].substring(1, 2).equals("0") ? false : true);
+			    }
+			}
 		    }
 
 		} else if (text.indexOf("<FILTERCONFIG") >= 0) {
@@ -870,7 +876,7 @@ public class Profile {
     }
 
     public void setFilterSyncDate(String lastDate) {
-	this.notifyUnsavedChanges(lastDate != this.getCurrentFilter().getSyncDate());
+	this.notifyUnsavedChanges(lastDate != currentFilter.getSyncDate());
 	this.currentFilter.setSyncDate(lastDate);
     }
 
@@ -879,8 +885,26 @@ public class Profile {
     }
 
     public void setFilterNamePattern(String pattern) {
-	this.notifyUnsavedChanges(pattern != this.getCurrentFilter().getNamePattern());
+	this.notifyUnsavedChanges(pattern != currentFilter.getNamePattern());
 	this.currentFilter.setNamePattern(pattern);
+    }
+
+    public int getFilterNameCompare() {
+	return currentFilter.getNameCompare();
+    }
+
+    public void setFilterNameCompare(int compare) {
+	this.notifyUnsavedChanges(compare != currentFilter.getNameCompare());
+	this.currentFilter.setNameCompare(compare);
+    }
+
+    public boolean getFilterNameCaseSensitive() {
+	return currentFilter.getNameCaseSensitive();
+    }
+
+    public void setFilterNameCaseSensitive(boolean caseSensitiv) {
+	this.notifyUnsavedChanges(caseSensitiv != currentFilter.getNameCaseSensitive());
+	this.currentFilter.setNameCaseSensitive(caseSensitiv);
     }
 
     public void setLast_sync_opencaching(String last_sync_opencaching) {

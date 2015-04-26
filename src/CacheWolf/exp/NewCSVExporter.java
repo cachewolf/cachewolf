@@ -24,10 +24,6 @@ package CacheWolf.exp;
 import CacheWolf.database.CacheHolder;
 import CacheWolf.database.CacheHolderDetail;
 import CacheWolf.database.Log;
-import CacheWolf.database.LogList;
-import CacheWolf.utils.DateFormat;
-import ewe.sys.Time;
-import ewe.util.Enumeration;
 import ewe.util.Hashtable;
 
 /**
@@ -45,119 +41,151 @@ public class NewCSVExporter extends Exporter {
 	this.setHowManyParams(NO_PARAMS);
     }
 
+    private Hashtable reviewers = new Hashtable(50);
+
     public String header() {
-	return ">";
+	return ">\r\n";
     }
 
-    private int sum = 0;
-
-    private static Hashtable sumPerDay = new Hashtable(365);
-
     public String record(CacheHolder ch) {
-	String sdate = ch.getStatusDate();
-	if (sumPerDay.containsKey(sdate)) {
-	    Integer tillNow = (Integer) sumPerDay.get(sdate);
-	    tillNow = new Integer(tillNow.intValue() + 1);
-	    sumPerDay.put(sdate, tillNow);
-	} else {
-	    sumPerDay.put(sdate, new Integer(1));
+	CacheHolderDetail chD = ch.getCacheDetails(false);
+	//if (chD.State.equals("Baden-Württemberg")) {
+	int anz = chD.CacheLogs.size();
+	for (int i = anz - 1; i >= 0; i--) {
+	    Log log = chD.CacheLogs.getLog(i);
+	    if (log.isPublishLog()) {
+		if (reviewers.containsKey(log.getLogger())) {
+		    return null;
+		} else {
+		    reviewers.put(log.getLogger(), ch);
+		    //String ret = ch.getWayPoint() + " published by " + log.getLogger() + ".\r\n";
+		    return null;
+		}
+	    }
 	}
-	return null;
+	//}
+	return ch.getWayPoint() + "\r\n";
     }
 
     public String trailer() {
-	String ret = "";
-	for (final Enumeration e = sumPerDay.keys(); e.hasMoreElements();) {
-	    String key = (String) e.nextElement();
-	    int i = ((Integer) sumPerDay.get(key)).intValue();
-	    if (i >= 12) {
-		ret = ret + key + " Anz: " + i + "\r\n";
-	    }
-	}
+	String ret = "\r\n";
 	return ret;
     }
 
-    public String record_wrong_ownlog_date(CacheHolder ch) {
-	CacheHolderDetail chD = ch.getCacheDetails(false);
-	if (chD != null) {
-	    Log ownLog = chD.OwnLog;
-	    if (ownLog != null) {
-		Time ownDate = DateFormat.toDate(ownLog.getDate());
-		if (ownDate.year == 1900) {
-		    return ch.getWayPoint() + "\n";
-		}
-	    }
-	}
-	return null;
+    /*
+    private Hashtable sumPerDay = new Hashtable(365);
+
+    public String record(CacheHolder ch) {
+    String sdate = ch.getStatusDate();
+    if (sumPerDay.containsKey(sdate)) {
+        Integer tillNow = (Integer) sumPerDay.get(sdate);
+        tillNow = new Integer(tillNow.intValue() + 1);
+        sumPerDay.put(sdate, tillNow);
+    } else {
+        sumPerDay.put(sdate, new Integer(1));
+    }
+    return null;
     }
 
-    public String record_finddays_between_ownLog_previousLog(CacheHolder ch) {
-	CacheHolderDetail chD = ch.getCacheDetails(false);
-	LogList logs = chD.CacheLogs;
-	Time ownDate = DateFormat.toDate(chD.OwnLog.getDate());
-	int diffDays = 0;
-	int ownDays = getDays(ownDate);
-	String strLogDate = "";
-	boolean unarchiveStatus = false;
-	for (int i = 0; i < logs.size(); i++) {
-	    Log theLog = logs.getLog(i);
-	    strLogDate = theLog.getDate();
-	    if (theLog.isFoundLog() || theLog.isPublishLog()) {
-		Time logDate = DateFormat.toDate(strLogDate);
-		if (ownDate.after(logDate)) {
-		    diffDays = ownDays - getDays(logDate);
-		    break;
-		}
-	    }
-	    if (theLog.isUnArchivedLog()) {
-		unarchiveStatus = true;
-	    }
-	    if (theLog.isPublishLog() || (theLog.isArchivedLog() && !unarchiveStatus)) {
-		// ownDate before logDate
-		// es könnte noch ein foundlog vor dem publish kommen
-		// es könnte ein log nach dem archive kommen der aber durch unarchive aufgehoben ist
-		diffDays = 0;
-		break;
-	    }
-	}
-	if (diffDays > 6 * 31) {
-	    sum = sum + diffDays;
-	    StringBuffer str = new StringBuffer(200);
-	    str.append("\"" + ch.getCacheName() + "\";");
-	    str.append("\"" + chD.OwnLog.getDate() + "\";");
-	    str.append("\"" + strLogDate + "\";");
-	    str.append("\"" + diffDays + "\";");
-	    str.append("\"" + sum + "\";");
-	    str.append("\"" + ch.getWayPoint() + "\"\r\n");
-
-	    return str.toString();
-	}
-	return "";
+    public String trailer() {
+    String ret = "";
+    for (final Enumeration e = sumPerDay.keys(); e.hasMoreElements();) {
+        String key = (String) e.nextElement();
+        int i = ((Integer) sumPerDay.get(key)).intValue();
+        if (i >= 12) {
+    	ret = ret + key + " Anz: " + i + "\r\n";
+        }
     }
+    return ret;
+    }
+    */
+    /*
+     // _wrong_ownlog_date
+    public String record(CacheHolder ch) {
+    CacheHolderDetail chD = ch.getCacheDetails(false);
+    if (chD != null) {
+        Log ownLog = chD.OwnLog;
+        if (ownLog != null) {
+    	Time ownDate = DateFormat.toDate(ownLog.getDate());
+    	if (ownDate.year == 1900) {
+    	    return ch.getWayPoint() + "\n";
+    	}
+        }
+    }
+    return null;
+    }
+    */
 
+    /*
+    private int sum = 0;
+     //_finddays_between_ownLog_previousLog
+    public String record(CacheHolder ch) {
+    CacheHolderDetail chD = ch.getCacheDetails(false);
+    LogList logs = chD.CacheLogs;
+    Time ownDate = DateFormat.toDate(chD.OwnLog.getDate());
+    int diffDays = 0;
+    int ownDays = getDays(ownDate);
+    String strLogDate = "";
+    boolean unarchiveStatus = false;
+    for (int i = 0; i < logs.size(); i++) {
+        Log theLog = logs.getLog(i);
+        strLogDate = theLog.getDate();
+        if (theLog.isFoundLog() || theLog.isPublishLog()) {
+    	Time logDate = DateFormat.toDate(strLogDate);
+    	if (ownDate.after(logDate)) {
+    	    diffDays = ownDays - getDays(logDate);
+    	    break;
+    	}
+        }
+        if (theLog.isUnArchivedLog()) {
+    	unarchiveStatus = true;
+        }
+        if (theLog.isPublishLog() || (theLog.isArchivedLog() && !unarchiveStatus)) {
+    	// ownDate before logDate
+    	// es könnte noch ein foundlog vor dem publish kommen
+    	// es könnte ein log nach dem archive kommen der aber durch unarchive aufgehoben ist
+    	diffDays = 0;
+    	break;
+        }
+    }
+    if (diffDays > 6 * 31) {
+        sum = sum + diffDays;
+        StringBuffer str = new StringBuffer(200);
+        str.append("\"" + ch.getCacheName() + "\";");
+        str.append("\"" + chD.OwnLog.getDate() + "\";");
+        str.append("\"" + strLogDate + "\";");
+        str.append("\"" + diffDays + "\";");
+        str.append("\"" + sum + "\";");
+        str.append("\"" + ch.getWayPoint() + "\"\r\n");
+
+        return str.toString();
+    }
+    return "";
+    }
     static int dim[] = new int[] { 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 };
 
     private static int getDays(int day, int month, int year)
     //-------------------------------------------------------------------
     {
-	int ret = -1;
-	if (year < 1600)
-	    return ret;
-	int yearsPast = (year - 1600 - 1);
-	int leaps = yearsPast / 4 - (yearsPast / 100) + (yearsPast / 400);
-	if (yearsPast >= 1)
-	    leaps++;
-	if (month > 2 && Time.isLeapYear(year))
-	    leaps++;
-	int daysPast = leaps;
-	for (int i = 1; i < month; i++)
-	    daysPast += dim[i - 1];
-	daysPast += day - 1;
-	daysPast += (yearsPast + 1) * 365;
-	return daysPast;
+    int ret = -1;
+    if (year < 1600)
+        return ret;
+    int yearsPast = (year - 1600 - 1);
+    int leaps = yearsPast / 4 - (yearsPast / 100) + (yearsPast / 400);
+    if (yearsPast >= 1)
+        leaps++;
+    if (month > 2 && Time.isLeapYear(year))
+        leaps++;
+    int daysPast = leaps;
+    for (int i = 1; i < month; i++)
+        daysPast += dim[i - 1];
+    daysPast += day - 1;
+    daysPast += (yearsPast + 1) * 365;
+    return daysPast;
     }
 
     private static int getDays(Time t) {
-	return getDays(t.day, t.month, t.year);
+    return getDays(t.day, t.month, t.year);
     }
+    */
 }
