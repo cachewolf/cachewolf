@@ -652,6 +652,11 @@ public class Filter {
 			cacheFiltered = true;
 			break;
 		    }
+		} else if (nameCompare == 3) {
+		    if (cacheName.indexOf(namePattern) >= 0) {
+			cacheFiltered = true;
+			break;
+		    }
 		}
 	    }
 
