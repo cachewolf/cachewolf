@@ -34,7 +34,7 @@ public class FilterData {
     // which ensures backward compatibility. Normally no change should be needed
     public final static String FILTERTYPE = "111111111111111111111";
     public final static String FILTERROSE = "1111111111111111";
-    public final static String FILTERVAR = "11111111";
+    public final static String FILTERVAR = "111111111111";
     public final static String FILTERSIZE = "111111";
 
     private String filterType = new String(FILTERTYPE);
@@ -58,6 +58,8 @@ public class FilterData {
     // filter items of the search panel
     private String syncDate = "";
     private String namePattern = "";
+    private int nameCompare = 0;
+    private boolean nameCaseSensitive = false;
 
     /**
      * Constructor for a profile
@@ -84,7 +86,7 @@ public class FilterData {
 	}
 	// '|' is splitter, it'll not work correctly if contained in any search item
 	// alternative: '\u0399'
-	String searchSeparator = "|"; // '\u0399'
+	String searchSeparator = "|";
 	// just one entry for search to make it easier extendable later
 	return "    <FILTERDATA " + saveID + "rose = \"" + getFilterRose() + "\"" + //
 		" type = \"" + getFilterType() + "\"" + //
@@ -101,7 +103,7 @@ public class FilterData {
 		" noCoord = \"" + getFilterNoCoord() + "\"" + //
 		" attributesYes1 = \"" + filterAttr[1] + "\"" + //
 		" attributesNo1 = \"" + filterAttr[3] + "\"" + //
-		" search = \"" + getSyncDate() + searchSeparator + getNamePattern() + "\"" + //
+		" search = \"" + syncDate + searchSeparator + namePattern + searchSeparator + nameCompare + (nameCaseSensitive ? "1" : "0") + "\"" + //
 		" />\n";
     }
 
@@ -243,5 +245,21 @@ public class FilterData {
 
     public void setNamePattern(String pattern) {
 	this.namePattern = pattern;
+    }
+
+    public int getNameCompare() {
+	return this.nameCompare;
+    }
+
+    public void setNameCompare(int compare) {
+	this.nameCompare = compare;
+    }
+
+    public boolean getNameCaseSensitive() {
+	return this.nameCaseSensitive;
+    }
+
+    public void setNameCaseSensitive(boolean caseSensitiv) {
+	this.nameCaseSensitive = caseSensitiv;
     }
 }

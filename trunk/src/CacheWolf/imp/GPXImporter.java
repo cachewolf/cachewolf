@@ -265,7 +265,7 @@ public class GPXImporter extends MinML {
 	    if (holder.isOC()) {
 		for (int i = 0; i < atts.getLength(); i++) {
 		    if (atts.getName(i).equals("id")) {
-			holder.setOcCacheID(atts.getValue("id"));
+			holder.setOCWayPoint(atts.getValue("id"));
 			break;
 		    }
 		}
@@ -281,7 +281,7 @@ public class GPXImporter extends MinML {
 	    // get CacheID -- missing p.ex. on GcTour gpx
 	    for (int i = 0; i < atts.getLength(); i++) {
 		if (atts.getName(i).equals("id")) {
-		    holder.setOcCacheID(atts.getValue("id"));
+		    holder.setOCWayPoint(atts.getValue("id"));
 		    break;
 		}
 	    }

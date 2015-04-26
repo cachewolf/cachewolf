@@ -122,9 +122,9 @@ public class OCXMLImporter extends MinML {
 	CacheHolder ch;
 	for (int i = 0; i < cacheDB.size(); i++) {
 	    ch = cacheDB.get(i);
-	    if (!ch.getOcCacheID().equals(""))
-		DBindexID.put(ch.getOcCacheID(), ch.getWayPoint());
-	}// for
+	    if (!ch.getOCWayPoint().equals(""))
+		DBindexID.put(ch.getOCWayPoint(), ch.getWayPoint());
+	}
 
     }
 
@@ -557,7 +557,7 @@ public class OCXMLImporter extends MinML {
 	if (name.equals("id")) { // </id>
 	    // the guid (=strData) is not part of gpx , so we use id of cacheID
 	    holder = getHolder(cacheID, true); // Allocate a new CacheHolder object
-	    holder.setOcCacheID(cacheID);
+	    holder.setOCWayPoint(cacheID);
 	    holder.getCacheDetails(false).URL = "http://" + hostname + "/viewcache.php?cacheid=" + cacheID;
 	    return;
 	}
@@ -571,7 +571,7 @@ public class OCXMLImporter extends MinML {
 		numCacheImported++;
 		holder.setNew(true);
 		cacheDB.add(holder);
-		DBindexID.put(holder.getOcCacheID(), holder.getWayPoint());
+		DBindexID.put(holder.getOCWayPoint(), holder.getWayPoint());
 	    }
 	    // update (overwrite) data
 	    else {
@@ -579,7 +579,7 @@ public class OCXMLImporter extends MinML {
 		holder.setNew(false);
 		holder.setIncomplete(false);
 		cacheDB.get(index).update(holder);
-		DBindexID.put(holder.getOcCacheID(), holder.getWayPoint());
+		DBindexID.put(holder.getOCWayPoint(), holder.getWayPoint());
 	    }
 	    // clear data (picture, logs) if we do a complete Update
 	    if (!incUpdate) {
@@ -714,7 +714,7 @@ public class OCXMLImporter extends MinML {
 		} else {
 		    // if (holder.is_new())
 		    cacheDB.removeElementAt(cacheDB.getIndex(holder));
-		    DBindexID.remove(holder.GetCacheID());
+		    DBindexID.remove(holder.getCacheID());
 		    // und Dateien löschen?
 		    final File tmpFile = new File(MainForm.profile.dataDir + holder.getWayPoint() + ".xml");
 		    tmpFile.delete();

@@ -91,18 +91,20 @@ public class FilterScreen extends Form {
     //
     private mCheckBox chkParking, chkStage, chkQuestion, chkFinal, chkTrailhead, chkReference;
     private mCheckBox chkMicro, chkSmall, chkRegular, chkLarge, chkVeryLarge, chkOther;
-    private mCheckBox chkFound, chkNotFound, chkOwned, chkNotOwned, chkArchived, chkNotArchived, chkAvailable, chkNotAvailable;
+    private mCheckBox chkPremium, chkNoPremium, chkSolved, chkNotSolved, chkFound, chkNotFound, chkOwned, chkNotOwned, chkArchived, chkNotArchived, chkAvailable, chkNotAvailable;
     private mCheckBox chkNW, chkNNW, chkN, chkNNE, chkNE, chkENE, chkE, chkESE, chkSE, chkSSE, chkS, chkSSW, chkSW, chkWSW, chkW, chkWNW, chkNoCoord;
     private mComboBox chcStatus;
     private mChoice fltList;
     private mCheckBox chkUseRegexp;
 
     // elements for the search panel
-    private mChoice chcSrchSyncDateCmp;
-    private mInput inpSrchSyncDate;
+    private mChoice syncDateCompare;
+    private mChoice srchNameCompare;
+    private mCheckBox srchNameCaseSensitive;
+    private mInput syncDateInput;
     private mButton btnSrchSyncDate;
     private mButton btnSrchSyncDateClear;
-    private mInput inpSrchName;
+    private mInput srchNameInput;
     private mButton btnSrchNameClear;
 
     private mButton btnClearSearch;
@@ -116,7 +118,6 @@ public class FilterScreen extends Form {
     private CellPanel pnlRatings = new CellPanel();
     private CellPanel pnlCacheTypes = new CellPanel();
     private CellPanel pnlContainer = new CellPanel();
-    private CellPanel pnlSearch = new CellPanel();
     private CellPanel pnlRose = new CellPanel();
     private CellPanel pnlAddi = new CellPanel();
     private CellPanel pnlCacheAttributes = new CellPanel();
@@ -242,6 +243,12 @@ public class FilterScreen extends Form {
 	pnlAttributes.addNext(chkOwned = new mCheckBox(MyLocale.getMsg(707, "Owned")), DONTSTRETCH, FILL);
 	pnlAttributes.addLast(chkNotOwned = new mCheckBox(MyLocale.getMsg(732, "Anderer Besitzer")), DONTSTRETCH, FILL);
 
+	pnlAttributes.addNext(chkPremium = new mCheckBox(MyLocale.getMsg(751, "Is Premium")), DONTSTRETCH, FILL);
+	pnlAttributes.addLast(chkNoPremium = new mCheckBox(MyLocale.getMsg(752, "Isn't Premium")), DONTSTRETCH, FILL);
+
+	pnlAttributes.addNext(chkSolved = new mCheckBox(MyLocale.getMsg(753, "Is solved")), DONTSTRETCH, FILL);
+	pnlAttributes.addLast(chkNotSolved = new mCheckBox(MyLocale.getMsg(754, "Isn't solved")), DONTSTRETCH, FILL);
+
 	pnlAttributes.addNext(new mLabel(MyLocale.getMsg(307, "Status:")), DONTSTRETCH, (DONTFILL | WEST));
 	pnlAttributes.addLast(chcStatus = new mComboBox(CacheHolder.GetGuiLogTypes(), 0), HSTRETCH, (HFILL | WEST));
 	pnlAttributes.addLast(chkUseRegexp = new mCheckBox(MyLocale.getMsg(299, "Regular expression")));
@@ -364,34 +371,33 @@ public class FilterScreen extends Form {
 	// Panel 7 - Search
 	//////////////////////////
 
+	CellPanel pnlSearch = new CellPanel();
 	addTitle(pnlSearch, MyLocale.getMsg(133, "Search"));
 
 	// Search for sync date
-	pnlSearch.addLast(new mLabel(MyLocale.getMsg(1051, "Last sync date:")), DONTSTRETCH, (DONTFILL | WEST));
-
-	pnlSearch.addNext(chcSrchSyncDateCmp = new mChoice(new String[] { "Before", "At", "After" }, 0), HSHRINK, (FILL | WEST));
-	pnlSearch.addNext(inpSrchSyncDate = new mInput(""), HSTRETCH, FILL);
-	pnlSearch.addNext(btnSrchSyncDate = GuiImageBroker.getButton("", "calendar"), DONTSTRETCH, FILL);
-	pnlSearch.addLast(btnSrchSyncDateClear = GuiImageBroker.getButton("", "clear"), DONTSTRETCH, FILL);
-	inpSrchSyncDate.modifyAll(DisplayOnly, 0);
+	CellPanel pnlSyncDate = new CellPanel();
+	pnlSyncDate.setText(MyLocale.getMsg(1051, "Last sync date:"));
+	pnlSyncDate.addLast(syncDateCompare = new mChoice(new String[] { MyLocale.getMsg(747, "is before"), MyLocale.getMsg(748, "is at"), MyLocale.getMsg(749, "is after") }, 0));
+	pnlSyncDate.addNext(syncDateInput = new mInput(""));
+	pnlSyncDate.addLast(btnSrchSyncDate = GuiImageBroker.getButton("", "calendar"));
+	pnlSyncDate.addLast(btnSrchSyncDateClear = GuiImageBroker.getButton("", "clear"));
+	syncDateInput.modifyAll(DisplayOnly, 0);
 	btnSrchSyncDate.setToolTip(MyLocale.getMsg(31415, "Set found date / time"));
-
-	pnlSearch.addLast(new mLabel(""), DONTSTRETCH, FILL);
-
+	pnlSearch.addLast(pnlSyncDate, HSHRINK, HFILL);
 	// Search for cache name
-	pnlSearch.addLast(new mLabel("Cache " + MyLocale.getMsg(303, "Name contains:")), DONTSTRETCH, (DONTFILL | WEST));
-	pnlSearch.addNext(inpSrchName = new mInput(), HSTRETCH, FILL | EAST);
-	inpSrchName.setTag(SPAN, new Dimension(3, 1));
-	pnlSearch.addLast(btnSrchNameClear = GuiImageBroker.getButton("", "clear"), DONTSTRETCH, FILL);
+	CellPanel pnlName = new CellPanel();
+	pnlName.setText(MyLocale.getMsg(303, "Name :"));
+	pnlName.addNext(srchNameCaseSensitive = new mCheckBox(MyLocale.getMsg(750, "Upper / lower case")));
+	pnlName.addLast(srchNameCompare = new mChoice(new String[] { MyLocale.getMsg(744, "begins with"), MyLocale.getMsg(745, "contains"), MyLocale.getMsg(746, "ends with") }, 0));
+	pnlName.addLast(srchNameInput = new mInput());
+	pnlName.addLast(btnSrchNameClear = GuiImageBroker.getButton("", "clear"));
+	pnlSearch.addLast(pnlName, HSHRINK, HFILL);
 
 	// Search for owner
 	// coming soon
 
 	// Clear button for whole search panel
-	pnlSearch.addLast(new mLabel(""), DONTSTRETCH, FILL);
-	pnlSearch.addLast(btnClearSearch = GuiImageBroker.getButton("Clear Search", "clear"), HSHRINK, HCONTRACT);
-
-	pnlSearch.addLast(new mLabel(""), STRETCH, FILL);
+	pnlSearch.addLast(btnClearSearch = GuiImageBroker.getButton("Clear Search", "clear"), HSHRINK | HFILL, BOTTOM);
 
 	//////////////////////////
 	// Panel 8 - Cache attributes
@@ -551,6 +557,10 @@ public class FilterScreen extends Form {
 	chkNotAvailable.state = fltVar.charAt(5) == '1';
 	chkNotFound.state = fltVar.charAt(6) == '1';
 	chkNotOwned.state = fltVar.charAt(7) == '1';
+	chkPremium.state = fltVar.charAt(8) == '1';
+	chkNoPremium.state = fltVar.charAt(9) == '1';
+	chkSolved.state = fltVar.charAt(10) == '1';
+	chkNotSolved.state = fltVar.charAt(11) == '1';
 	chcStatus.setText(data.getFilterStatus());
 	chkUseRegexp.setState(data.useRegexp());
 
@@ -640,19 +650,21 @@ public class FilterScreen extends Form {
 	    // First sign is <, =, >, followed by '-' and then yyyymmdd
 	    String theOperator = syncDate.substring(0, 1);
 	    String theDate = syncDate.substring(2, 10);
-	    inpSrchSyncDate.setText(theDate.substring(0, 4) + "-" + theDate.substring(4, 6) + "-" + theDate.substring(6, 8));
-	    chcSrchSyncDateCmp.select(2);
+	    syncDateInput.setText(theDate.substring(0, 4) + "-" + theDate.substring(4, 6) + "-" + theDate.substring(6, 8));
+	    syncDateCompare.select(2);
 	    if (theOperator.equals("<"))
-		chcSrchSyncDateCmp.select(0);
+		syncDateCompare.select(0);
 	    if (theOperator.equals("="))
-		chcSrchSyncDateCmp.select(1);
+		syncDateCompare.select(1);
 	    if (theOperator.equals(">"))
-		chcSrchSyncDateCmp.select(2);
+		syncDateCompare.select(2);
 	} else {
-	    inpSrchSyncDate.setText("");
+	    syncDateInput.setText("");
 	}
 
-	inpSrchName.setText(data.getNamePattern());
+	this.srchNameInput.setText(data.getNamePattern());
+	this.srchNameCompare.select(data.getNameCompare());
+	this.srchNameCaseSensitive.setState(data.getNameCaseSensitive());
 
 	//////////////////////////
 	// Panel 8 - Cache attributes
@@ -680,12 +692,13 @@ public class FilterScreen extends Form {
 	btnBearing.repaint();
 
 	// Panel 2 - Cache attributes
-	if (!(chkArchived.state && chkAvailable.state && chkFound.state && chkOwned.state && chkNotArchived.state && chkNotAvailable.state && chkNotFound.state && chkNotOwned.state && chcStatus.getText().equals("")))
+	if (!(chkArchived.state && chkAvailable.state && chkFound.state && chkOwned.state && chkNotArchived.state && chkNotAvailable.state && chkNotFound.state && chkNotOwned.state && chkPremium.state && chkNoPremium.state && chkSolved.state
+		&& chkNotSolved.state && chcStatus.getText().equals("")))
 	    btnAttributes.backGround = COLOR_FILTERACTIVE;
 	else
 	    btnAttributes.backGround = COLOR_FILTERINACTIVE;
 	if ((chkArchived.state == false && chkNotArchived.state == false) || (chkAvailable.state == false && chkNotAvailable.state == false) || (chkFound.state == false && chkNotFound.state == false)
-		|| (chkOwned.state == false && chkNotOwned.state == false))
+		|| (chkOwned.state == false && chkNotOwned.state == false) || (chkPremium.state == false && chkNoPremium.state == false) || (chkSolved.state == false && chkNotSolved.state == false))
 	    btnAttributes.backGround = COLOR_FILTERALL;
 	btnAttributes.repaint();
 
@@ -735,7 +748,7 @@ public class FilterScreen extends Form {
 	btnContainer.repaint();
 
 	// Panel 7 - Search
-	if (inpSrchSyncDate.getText().length() > 0 || inpSrchName.getText().length() > 0) {
+	if (syncDateInput.getText().length() > 0 || srchNameInput.getText().length() > 0) {
 	    btnSearch.backGround = COLOR_FILTERACTIVE;
 	} else {
 	    btnSearch.backGround = COLOR_FILTERINACTIVE;
@@ -910,28 +923,28 @@ public class FilterScreen extends Form {
 		final DateChooser dc = new DateChooser(Vm.getLocale());
 		dc.title = "Last Update Time";
 		dc.setPreferredSize(240, 240);
-		if (inpSrchSyncDate.getText().length() == 10)
+		if (syncDateInput.getText().length() == 10)
 		    try {
-			dc.setDate(new Time(Convert.parseInt(inpSrchSyncDate.getText().substring(8)), Convert.parseInt(inpSrchSyncDate.getText().substring(5, 7)), Convert.parseInt(inpSrchSyncDate.getText().substring(0, 4))));
+			dc.setDate(new Time(Convert.parseInt(syncDateInput.getText().substring(8)), Convert.parseInt(syncDateInput.getText().substring(5, 7)), Convert.parseInt(syncDateInput.getText().substring(0, 4))));
 		    } catch (NumberFormatException e) {
 			dc.reset(new Time());
 		    }
 		if (dc.execute() == ewe.ui.FormBase.IDOK) {
-		    inpSrchSyncDate.setText(Convert.toString(dc.year) + "-" + MyLocale.formatLong(dc.month, "00") + "-" + MyLocale.formatLong(dc.day, "00"));
+		    syncDateInput.setText(Convert.toString(dc.year) + "-" + MyLocale.formatLong(dc.month, "00") + "-" + MyLocale.formatLong(dc.day, "00"));
 		}
 		setColors();
 		repaint();
 	    } else if (ev.target == btnSrchSyncDateClear) {
-		inpSrchSyncDate.setText("");
+		syncDateInput.setText("");
 		setColors();
 		repaint();
 	    } else if (ev.target == btnSrchNameClear) {
-		inpSrchName.setText("");
+		srchNameInput.setText("");
 		setColors();
 		repaint();
 	    } else if (ev.target == btnClearSearch) {
-		inpSrchSyncDate.setText("");
-		inpSrchName.setText("");
+		syncDateInput.setText("");
+		srchNameInput.setText("");
 		setColors();
 		repaint();
 	    }
@@ -970,7 +983,7 @@ public class FilterScreen extends Form {
     private FilterData getDataFromScreen() {
 	FilterData data = new FilterData();
 	data.setFilterVar((chkArchived.state ? "1" : "0") + (chkAvailable.state ? "1" : "0") + (chkFound.state ? "1" : "0") + (chkOwned.state ? "1" : "0") + (chkNotArchived.state ? "1" : "0") + (chkNotAvailable.state ? "1" : "0")
-		+ (chkNotFound.state ? "1" : "0") + (chkNotOwned.state ? "1" : "0"));
+		+ (chkNotFound.state ? "1" : "0") + (chkNotOwned.state ? "1" : "0") + (chkPremium.state ? "1" : "0") + (chkNoPremium.state ? "1" : "0") + (chkSolved.state ? "1" : "0") + (chkNotSolved.state ? "1" : "0"));
 	data.setFilterType((chkTrad.state ? "1" : "0") + (chkMulti.state ? "1" : "0") + (chkVirtual.state ? "1" : "0") + (chkLetter.state ? "1" : "0") + (chkEvent.state ? "1" : "0") + (chkWebcam.state ? "1" : "0") + (chkMystery.state ? "1" : "0")
 		+ (chkEarth.state ? "1" : "0") + (chkLocless.state ? "1" : "0") + (chkMega.state ? "1" : "0") + (chkCustom.state ? "1" : "0") + (chkParking.state ? "1" : "0") + (chkStage.state ? "1" : "0") + (chkQuestion.state ? "1" : "0")
 		+ (chkFinal.state ? "1" : "0") + (chkTrailhead.state ? "1" : "0") + (chkReference.state ? "1" : "0") + (chkCito.state ? "1" : "0") + (chkWherigo.state ? "1" : "0") + (chkApe.state ? "1" : "0") + (chkMaze.state ? "1" : "0"));
@@ -1018,22 +1031,25 @@ public class FilterScreen extends Form {
 	data.setUseRegexp(chkUseRegexp.getState());
 	data.setFilterNoCoord(chkNoCoord.getState());
 
-	if (inpSrchSyncDate.getText().length() == 0) {
+	if (syncDateInput.getText().length() == 0) {
 	    data.setSyncDate("");
 	} else {
 	    // last sync has a special format, remove '-'
-	    String aDate = STRreplace.replace(inpSrchSyncDate.getText(), "-", "");
+	    String aDate = STRreplace.replace(syncDateInput.getText(), "-", "");
 	    String aDirection = ">-";
-	    if (chcSrchSyncDateCmp.selectedIndex == 0) {
+	    if (syncDateCompare.selectedIndex == 0) {
 		aDirection = "<-";
-	    } else if (chcSrchSyncDateCmp.selectedIndex == 1) {
+	    } else if (syncDateCompare.selectedIndex == 1) {
 		aDirection = "=-";
 	    } else {
 		aDirection = ">-";
 	    }
 	    data.setSyncDate(aDirection + aDate);
 	}
-	data.setNamePattern(inpSrchName.getText());
+
+	data.setNamePattern(srchNameInput.getText());
+	data.setNameCompare(this.srchNameCompare.selectedIndex);
+	data.setNameCaseSensitive(this.srchNameCaseSensitive.getState());
 
 	return data;
     }

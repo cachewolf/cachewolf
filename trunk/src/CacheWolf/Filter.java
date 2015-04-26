@@ -112,6 +112,12 @@ public class Filter {
     private boolean archived = false;
     private boolean notArchived = false;
 
+    private boolean premium = false;
+    private boolean noPremium = false;
+
+    private boolean solved = false;
+    private boolean notSolved = false;
+
     private boolean available = false;
     private boolean notAvailable = false;
     double pi180 = java.lang.Math.PI / 180.0;
@@ -121,6 +127,8 @@ public class Filter {
 
     private String syncDate = "";
     private String namePattern = "";
+    private int nameCompare = 0;
+    private boolean nameCaseSensitive = true;
 
     /**
      * Apply a route filter. Each waypoint is on a seperate line. We use a regex method to allow for different formats of waypoints: possible is currently: DD MM.mmm
@@ -238,6 +246,10 @@ public class Filter {
 	notAvailable = MainForm.profile.getFilterVar().charAt(5) == '1';
 	notFoundByMe = MainForm.profile.getFilterVar().charAt(6) == '1';
 	notOwnedByMe = MainForm.profile.getFilterVar().charAt(7) == '1';
+	premium = MainForm.profile.getFilterVar().charAt(8) == '1';
+	noPremium = MainForm.profile.getFilterVar().charAt(9) == '1';
+	solved = MainForm.profile.getFilterVar().charAt(10) == '1';
+	notSolved = MainForm.profile.getFilterVar().charAt(11) == '1';
 	cacheStatus = MainForm.profile.getFilterStatus();
 	useRegexp = MainForm.profile.getFilterUseRegexp();
 	filterNoCoord = MainForm.profile.getFilterNoCoord();
@@ -304,7 +316,12 @@ public class Filter {
 	attributesChoice = MainForm.profile.getFilterAttrChoice();
 	// items from search panel
 	syncDate = MainForm.profile.getFilterSyncDate();
-	namePattern = MainForm.profile.getFilterNamePattern();
+	nameCaseSensitive = MainForm.profile.getFilterNameCaseSensitive();
+	if (nameCaseSensitive)
+	    namePattern = MainForm.profile.getFilterNamePattern();
+	else
+	    namePattern = MainForm.profile.getFilterNamePattern().toLowerCase();
+	nameCompare = MainForm.profile.getFilterNameCompare();
     }
 
     /**
@@ -502,6 +519,14 @@ public class Filter {
 		cacheFiltered = true;
 		break;
 	    }
+	    if ((ch.isPMCache() && !premium) || (!ch.isPMCache() && !noPremium)) {
+		cacheFiltered = true;
+		break;
+	    }
+	    if ((ch.isSolved() && !solved) || (!ch.isSolved() && !notSolved)) {
+		cacheFiltered = true;
+		break;
+	    }
 	    // /////////////////////////////
 	    // Filter criterium 10: Size
 	    // /////////////////////////////
@@ -606,10 +631,27 @@ public class Filter {
 		    }
 		}
 	    }
-	    if (!namePattern.equals("")) {
-		if (ch.getCacheName().indexOf(namePattern) < 0) {
-		    cacheFiltered = true;
-		    break;
+	    if (namePattern.length() > 0) {
+		String cacheName;
+		if (nameCaseSensitive)
+		    cacheName = ch.getCacheName();
+		else
+		    cacheName = ch.getCacheName().toLowerCase();
+		if (nameCompare == 0) {
+		    if (!cacheName.startsWith(namePattern)) {
+			cacheFiltered = true;
+			break;
+		    }
+		} else if (nameCompare == 1) {
+		    if (cacheName.indexOf(namePattern) < 0) {
+			cacheFiltered = true;
+			break;
+		    }
+		} else if (nameCompare == 2) {
+		    if (!cacheName.endsWith(namePattern)) {
+			cacheFiltered = true;
+			break;
+		    }
 		}
 	    }
 

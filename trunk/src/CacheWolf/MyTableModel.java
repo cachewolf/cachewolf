@@ -64,7 +64,7 @@ public class MyTableModel extends TableModel {
 	    MyLocale.getMsg(1009, "Bear"), //
 	    MyLocale.getMsg(1017, "S"), //
 	    MyLocale.getMsg(1026, "#Rec"), //
-	    MyLocale.getMsg(1027, "OC-IDX"), //
+	    MyLocale.getMsg(1027, "OC-Waypoint"), //
 	    MyLocale.getMsg(1038, "S"), //
 	    MyLocale.getMsg(1040, "N"), //
 	    MyLocale.getMsg(1047, "A"), //
@@ -450,7 +450,7 @@ public class MyTableModel extends TableModel {
 		    return ch.getRecommended();
 		case 14: //
 		    if (ch.isGC())
-			return ch.getOcCacheID();
+			return ch.getOCWayPoint();
 		    else {
 			return OC.getGCWayPoint(ch.getCacheOwner());
 		    }
@@ -754,10 +754,10 @@ class MyComparer implements Comparer {
 	    for (int i = 0; i < visibleSize; i++) {
 		CacheHolder ch = cacheDB.get(i);
 		if (ch.isGC())
-		    if (ch.getOcCacheID().length() == 0)
+		    if (ch.getOCWayPoint().length() == 0)
 			ch.sort = "\uFFFF";
 		    else
-			ch.sort = ch.getOcCacheID();
+			ch.sort = ch.getOCWayPoint();
 		else {
 		    ch.sort = OC.getGCWayPoint(ch.getCacheOwner());
 		    if (ch.sort.length() == 0)

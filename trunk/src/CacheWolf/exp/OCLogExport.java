@@ -75,14 +75,14 @@ public final class OCLogExport {
 	    return;
 	// take GC log direct to OC, needs valid ch
 	Vm.showWait(true);
-	String wpName = ch.getOcCacheID();
+	String wpName = ch.getOCWayPoint();
 	if (wpName.length() > 1) {
 	    if (!loggedIn)
 		loggedIn = OCGPXfetch.login();
 	    if (loggedIn) {
 		if (wpName.charAt(0) < 65) {
 		    // noch nicht bei OC gelogged
-		    wpName = ch.getOcCacheID().substring(1);
+		    wpName = ch.getOCWayPoint().substring(1);
 		    String url = "http://" + OC.getOCHostName(wpName) + "/log.php?wp=" + wpName;
 		    String page = "";
 		    try {
@@ -105,8 +105,8 @@ public final class OCLogExport {
 			    UrlFetcher.setpostData(postData);
 			    page = UrlFetcher.fetch(url);
 			    OCLinkImporter.updateOCLink(ch);
-			    if (ch.getOcCacheID().startsWith("-")) {
-				ch.setOcCacheID("!" + ch.getOcCacheID().substring(1));
+			    if (ch.getOCWayPoint().startsWith("-")) {
+				ch.setOCWayPoint("!" + ch.getOCWayPoint().substring(1));
 				ch.save();
 			    }
 			}

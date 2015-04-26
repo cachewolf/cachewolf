@@ -655,7 +655,7 @@ public class TablePanelMenu extends MenuBar {
 	    }
 	    if (mev.selectedItem == exportMSARCSV) {
 		MSARCSVExporter msar = new MSARCSVExporter();
-		// NewCSVExporter msar = new NewCSVExporter();
+		//NewCSVExporter msar = new NewCSVExporter();
 		msar.doIt();
 	    }
 	    if (mev.selectedItem == exportLOC) {

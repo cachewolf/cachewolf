@@ -410,7 +410,7 @@ public class DetailsPanel extends CellPanel {
 			activateControl(btnLog);
 		    } else {
 			activateControl(btnEditLog);
-			String ocWpName = ch.getOcCacheID();
+			String ocWpName = ch.getOCWayPoint();
 			if (ocWpName.length() > 0 && ocWpName.charAt(0) < 65) {
 			    activateControl(btnLogToOC);
 			} else {
@@ -741,7 +741,7 @@ public class DetailsPanel extends CellPanel {
 			    url = "http://" + OC.getOCHostName(mainCache.getWayPoint()) + "/log.php?wp=" + mainCache.getWayPoint();
 			}
 		    } else { // bei GC loggen
-			url = "http://www.geocaching.com/seek/log.aspx?ID=" + mainCache.GetCacheID();
+			url = "http://www.geocaching.com/seek/log.aspx?ID=" + mainCache.getCacheID();
 		    }
 
 		    if (url.length() > 0) {
@@ -750,7 +750,7 @@ public class DetailsPanel extends CellPanel {
 
 		} else {
 		    if (mainCache.isCustomWpt() && mainCache.getWayPoint().startsWith("GC")) {
-			url = "http://www.geocaching.com/seek/log.aspx?ID=" + mainCache.GetCacheID();
+			url = "http://www.geocaching.com/seek/log.aspx?ID=" + mainCache.getCacheID();
 			callExternalProgram(Preferences.itself().browser, url);
 		    }
 		}

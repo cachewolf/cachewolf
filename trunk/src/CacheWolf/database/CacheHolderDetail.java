@@ -59,6 +59,7 @@ public class CacheHolderDetail {
     private String Solver = CacheHolder.EMPTY;
     public Log OwnLog = null;
     public String Country = CacheHolder.EMPTY;
+    /** *<groundspeak:state> */
     public String State = CacheHolder.EMPTY;
     /**
      * For faster cache import (from opencaching) changes are only written when the details are freed from memory
