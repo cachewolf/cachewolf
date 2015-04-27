@@ -198,8 +198,20 @@ public class DetailsPanel extends CellPanel {
 	panelControls.add(btnMore.getBtn());
 
 	mainPanel.addLast(inpName);
-	int anzPerLine = Math.max(1, Preferences.itself().getScreenWidth() / 200);
-	isBigScreen = anzPerLine > 1;
+	int anzPerLine = Math.max(1, Preferences.itself().getScreenWidth() / 257);
+	//         ist | big icons | small icons | no icons | small icon | big icon
+	//         257 | +text     |  +text      | only text| no text    | no text
+	// 240  ->  1  |     1     |   1         |   1      |     1      |    1
+	// 320  ->  1  |     1     |   1         |   1      |     2      |    1
+	// 480  ->  1  |     2     |   2         |   2      |     3      |    2
+	// 514  ->  2
+	// 640  ->  2  |     3     |   3         |   3      |     4      |    3
+	// 771  ->  3
+	// 800  ->  3  |     3     |   4         |   4      |     6      |    4
+	// 1028 ->  4
+	// 1280 ->  4  |     4     |   6         |   7      |     9      |    7
+	// 1285 ->  5
+	// 1920 ->  7  |     9     |  10         |  11      |    11      |   11
 	int i = 0;
 	for (Iterator ite = panelControls.iterator(); ite.hasNext();) {
 	    Control ctrl = (Control) ite.next();
