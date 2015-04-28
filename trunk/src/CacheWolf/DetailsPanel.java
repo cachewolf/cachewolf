@@ -199,6 +199,7 @@ public class DetailsPanel extends CellPanel {
 
 	mainPanel.addLast(inpName);
 	int anzPerLine = Math.max(1, Preferences.itself().getScreenWidth() / 257);
+	isBigScreen = anzPerLine > 1;
 	//         ist | big icons | small icons | no icons | small icon | big icon
 	//         257 | +text     |  +text      | only text| no text    | no text
 	// 240  ->  1  |     1     |   1         |   1      |     1      |    1
@@ -253,10 +254,10 @@ public class DetailsPanel extends CellPanel {
 	    statusPanel.setText(MyLocale.getMsg(307, "Status:"));
 	addLast(statusPanel, HSTRETCH, HFILL);
 
+	ownLog = new mTextPad();
 	if (isBigScreen) {
 	    logPanel = new CellPanel();
 	    logPanel.setText(" ");
-	    ownLog = new mTextPad();
 	    btnLog = GuiImageBroker.getButton(MyLocale.getMsg(1052, "Log online in Browser"), "");
 	    btnLogToOC = GuiImageBroker.getButton(MyLocale.getMsg(1210, "logs to OC"), "");
 	    btnEditLog = GuiImageBroker.getButton(MyLocale.getMsg(1055, "Change log (online)"), "");
@@ -411,6 +412,7 @@ public class DetailsPanel extends CellPanel {
 	}
 	lastLogs.refresh();
 
+	ownLog.setText("");
 	if (isBigScreen) {
 	    deactivateControl(btnEditLog);
 	    deactivateControl(btnLogToOC);
@@ -432,7 +434,6 @@ public class DetailsPanel extends CellPanel {
 		    ownLog.setText(ch.getCacheDetails(false).OwnLog.getMessageWithoutHTML());
 		} else {
 		    logPanel.setText(" ");
-		    ownLog.setText("");
 		    activateControl(btnLog);
 		    deactivateControl(btnEditLog);
 		    deactivateControl(btnLogToOC);
