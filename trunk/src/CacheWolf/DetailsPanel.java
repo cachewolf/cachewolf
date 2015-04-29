@@ -51,7 +51,7 @@ import ewe.fx.Rect;
 import ewe.fx.mImage;
 import ewe.graphics.AniImage;
 import ewe.graphics.InteractivePanel;
-import ewe.graphics.Mosaic;
+import ewe.graphics.MosaicPanel;
 import ewe.io.File;
 import ewe.io.IOException;
 import ewe.sys.Convert;
@@ -79,6 +79,7 @@ import ewe.ui.mComboBox;
 import ewe.ui.mInput;
 import ewe.ui.mLabel;
 import ewe.ui.mTextPad;
+import ewe.util.Hashtable;
 import ewe.util.Iterator;
 import ewe.util.Vector;
 
@@ -98,7 +99,7 @@ public class DetailsPanel extends CellPanel {
     private MyChoice btnMore;
     private mButton btnCoordinates;
     private mButton btnHint;
-    private Mosaic lastLogs;
+    private LastLogsPanel lastLogs;
     private mCheckBox cbIsSolved;
     private mCheckBox cbIsBlacklisted;
     private mButton btnFoundDate;
@@ -175,7 +176,7 @@ public class DetailsPanel extends CellPanel {
 	btnCoordinates.setToolTip(MyLocale.getMsg(31415, "Edit coordinates"));
 
 	btnHint = GuiImageBroker.getButton(MyLocale.getMsg(402, "Hint"), "decode");
-	lastLogs = new Mosaic();
+	lastLogs = new LastLogsPanel();
 	attViewer = new AttributesViewer();
 
 	String[] texts = new String[] { MyLocale.getMsg(346, "Show travelbugs"), MyLocale.getMsg(326, "Set as destination and show Compass View"), MyLocale.getMsg(351, "Add/Edit notes"), MyLocale.getMsg(311, "Create Waypoint") };
@@ -406,9 +407,10 @@ public class DetailsPanel extends CellPanel {
 	int lastLogsHeight = lastLogsDimension.height;
 	int anz = Math.min(5, mainCacheDetails.CacheLogs.size());
 	for (int i = 0; i < anz; i++) {
-	    AniImage ai = new AniImage(mainCacheDetails.CacheLogs.getLog(i).getIcon());
+	    Log log = mainCacheDetails.CacheLogs.getLog(i);
+	    AniImage ai = new AniImage(log.getIcon());
 	    ai.setLocation(i * Math.max(ai.getWidth(), (int) (lastLogsWidth / anz)), (int) ((lastLogsHeight - ai.getHeight()) / 2));
-	    lastLogs.addImage(ai);
+	    lastLogs.addImage(ai, log);
 	}
 	lastLogs.refresh();
 
@@ -1105,30 +1107,6 @@ class AttributesViewer extends CellPanel {
     protected InteractivePanel iap;
     protected mLabel mInfo;
 
-    protected class attInteractivePanel extends InteractivePanel {
-	public boolean imageMovedOn(AniImage which) {
-	    if (!((attAniImage) which).info.startsWith("*")) { // If text starts with * we have no explanation yet
-		mInfo.setText(((attAniImage) which).info);
-		mInfo.repaintNow();
-	    }
-	    return true;
-	}
-
-	public boolean imageMovedOff(AniImage which) {
-	    mInfo.setText("");
-	    mInfo.repaintNow();
-	    return true;
-	}
-    }
-
-    protected class attAniImage extends AniImage {
-	public String info;
-
-	attAniImage(mImage img) {
-	    super(img);
-	}
-    }
-
     public AttributesViewer() {
 	iap = new attInteractivePanel();
 	mInfo = new mLabel("");
@@ -1153,4 +1131,48 @@ class AttributesViewer extends CellPanel {
 	iap.images.clear();
     }
 
+    protected class attInteractivePanel extends InteractivePanel {
+	public boolean imageMovedOn(AniImage which) {
+	    if (!((attAniImage) which).info.startsWith("*")) { // If text starts with * we have no explanation yet
+		mInfo.setText(((attAniImage) which).info);
+		mInfo.repaintNow();
+	    }
+	    return true;
+	}
+
+	public boolean imageMovedOff(AniImage which) {
+	    mInfo.setText("");
+	    mInfo.repaintNow();
+	    return true;
+	}
+    }
+
+    protected class attAniImage extends AniImage {
+	public String info;
+
+	attAniImage(mImage img) {
+	    super(img);
+	}
+    }
+}
+
+class LastLogsPanel extends MosaicPanel {
+    Hashtable reference = new Hashtable(5);
+
+    public void addImage(AniImage im, Log log) {
+	reference.put(im, log);
+	addImage(im);
+    }
+
+    public boolean imagePressed(AniImage which, Point pos) {
+	if (reference.containsKey(which)) {
+	    HtmlDisplay log = new HtmlDisplay();
+	    log.startHtml();
+	    log.addHtml(((Log) reference.get(which)).toHtml(), new ewe.sys.Handle());
+	    log.endHtml();
+	    log.scrollTo(0, false);
+	    new InfoBox(MyLocale.getMsg(403, "Log"), log, (int) (0.75 * Preferences.itself().getScreenWidth()), (int) (0.5 * Preferences.itself().getScreenHeight())).wait(FormBase.OKB);
+	}
+	return true;
+    }
 }

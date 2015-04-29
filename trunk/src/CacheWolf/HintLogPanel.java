@@ -135,6 +135,7 @@ public class HintLogPanel extends CellPanel {
 	Rect r = new Rect(new Dimension(Preferences.itself().getScreenWidth() - sbplog.vbar.getRect().width, 20));
 	htmlImagDisp.virtualSize = r;
 	htmlImagDisp.checkScrolls();
+
 	logpane.addLast(sbplog.getScrollablePanel(), CellConstants.STRETCH, CellConstants.FILL);
 
 	if (Preferences.itself().tabsAtTop) {
@@ -201,12 +202,14 @@ public class HintLogPanel extends CellPanel {
 	    logs.setPlainText("Ewe VM: Internal error displaying logs");
 	}
 	int h = logs.getLineHeight() * logs.getNumLines();
+
 	htmlTxtImage = new AniImage(new Image(width, h));
 	htmlTxtImage.setLocation(0, 0);
 	htmlTxtImage.properties |= mImage.IsMoveable;
 	Graphics draw = new Graphics(htmlTxtImage.image);
 	logs.resizeTo(htmlTxtImage.getWidth() - lastScrollbarWidth, htmlTxtImage.getHeight());
 	logs.doPaint(draw, new Rect(0, 0, htmlTxtImage.getWidth(), htmlTxtImage.getHeight()));
+
 	htmlImagDisp.addImage(htmlTxtImage);
 	Rect r = new Rect(new Dimension(width, h));
 	htmlImagDisp.virtualSize = r;
