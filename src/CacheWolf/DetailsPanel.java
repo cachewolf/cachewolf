@@ -374,8 +374,8 @@ public class DetailsPanel extends CellPanel {
 		Preferences.itself().log(mainCache.getWayPoint() + " has wrong difficulty " + newDifficulty);
 	    }
 	}
-	GuiImageBroker.setButtonIconAndText(btnDiff.getBtn(), MyLocale.getMsg(1000, "D"), GuiImageBroker.makeImageForButton(btnDiff.getBtn(), MyLocale.getMsg(1000, "D") + " " + longD, "star" + newDifficulty));
-	GuiImageBroker.setButtonIconAndText(btnTerr.getBtn(), MyLocale.getMsg(1001, "T"), GuiImageBroker.makeImageForButton(btnTerr.getBtn(), MyLocale.getMsg(1001, "T") + " " + longT, "star" + newTerrain));
+	GuiImageBroker.setButtonIconAndText(btnDiff.getBtn(), MyLocale.getMsg(1000, "D") + " " + longD, GuiImageBroker.makeImageForButton(btnDiff.getBtn(), MyLocale.getMsg(1000, "D") + " " + longD, "star" + newDifficulty));
+	GuiImageBroker.setButtonIconAndText(btnTerr.getBtn(), MyLocale.getMsg(1001, "T") + " " + longT, GuiImageBroker.makeImageForButton(btnTerr.getBtn(), MyLocale.getMsg(1001, "T") + " " + longT, "star" + newTerrain));
 
 	/*
 	int addiCount = 0;
@@ -552,7 +552,7 @@ public class DetailsPanel extends CellPanel {
 		    if (btnDiff.mark(btnDiff.getSelectedIndex())) {
 			this.newDifficulty = (byte) (this.btnDiff.getSelectedIndex() * 5 + 10);
 			String longD = CacheTerrDiff.longDT(this.newDifficulty);
-			GuiImageBroker.setButtonIconAndText(btnDiff.getBtn(), MyLocale.getMsg(1000, "D"), GuiImageBroker.makeImageForButton(btnDiff.getBtn(), MyLocale.getMsg(1000, "D") + " " + longD, "star" + this.newDifficulty));
+			GuiImageBroker.setButtonIconAndText(btnDiff.getBtn(), MyLocale.getMsg(1000, "D") + " " + longD, GuiImageBroker.makeImageForButton(btnDiff.getBtn(), MyLocale.getMsg(1000, "D") + " " + longD, "star" + this.newDifficulty));
 			dirtyDetails = true;
 			menu.close();
 		    }
@@ -560,7 +560,7 @@ public class DetailsPanel extends CellPanel {
 		    if (btnTerr.mark(btnTerr.getSelectedIndex())) {
 			this.newTerrain = (byte) (btnTerr.getSelectedIndex() * 5 + 10);
 			String longT = CacheTerrDiff.longDT(this.newTerrain);
-			GuiImageBroker.setButtonIconAndText(btnTerr.getBtn(), MyLocale.getMsg(1001, "T"), GuiImageBroker.makeImageForButton(btnTerr.getBtn(), MyLocale.getMsg(1001, "T") + " " + longT, "star" + this.newTerrain));
+			GuiImageBroker.setButtonIconAndText(btnTerr.getBtn(), MyLocale.getMsg(1001, "T") + " " + longT, GuiImageBroker.makeImageForButton(btnTerr.getBtn(), MyLocale.getMsg(1001, "T") + " " + longT, "star" + this.newTerrain));
 			dirtyDetails = true;
 			menu.close();
 		    }
@@ -1165,13 +1165,15 @@ class LastLogsPanel extends MosaicPanel {
     }
 
     public boolean imagePressed(AniImage which, Point pos) {
-	if (reference.containsKey(which)) {
-	    HtmlDisplay log = new HtmlDisplay();
-	    log.startHtml();
-	    log.addHtml(((Log) reference.get(which)).toHtml(), new ewe.sys.Handle());
-	    log.endHtml();
-	    log.scrollTo(0, false);
-	    new InfoBox(MyLocale.getMsg(403, "Log"), log, (int) (0.75 * Preferences.itself().getScreenWidth()), (int) (0.5 * Preferences.itself().getScreenHeight())).wait(FormBase.OKB);
+	if (which != null) {
+	    if (reference.containsKey(which)) {
+		HtmlDisplay log = new HtmlDisplay();
+		log.startHtml();
+		log.addHtml(((Log) reference.get(which)).toHtml(), new ewe.sys.Handle());
+		log.endHtml();
+		log.scrollTo(0, false);
+		new InfoBox(MyLocale.getMsg(403, "Log"), log, (int) (0.75 * Preferences.itself().getScreenWidth()), (int) (0.5 * Preferences.itself().getScreenHeight())).wait(FormBase.OKB);
+	    }
 	}
 	return true;
     }
