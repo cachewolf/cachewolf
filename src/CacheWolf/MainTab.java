@@ -279,7 +279,6 @@ public class MainTab extends mTabbedPanel {
 	    }
 	}
 	if (panelNo == MainTab.DETAILS_CARD) {
-	    detailsPanel.reactOnWaypointChange = false;
 	    // Update chD with Details
 	    if (detailsPanel.isDirty()) {
 		cacheDirty = true;
@@ -387,7 +386,7 @@ public class MainTab extends mTabbedPanel {
      * @param panelNo
      *            1=DetailsPanel 2=Description Panel
      */
-    public void openPanel(CacheHolder chi, int panelNo) {
+    public void openPanel(String _wayPoint, int panelNo) {
 	// oldCard could have been DETAILS_CARD or GOTO_CARD
 	// on DETAILS_CARD changes already should have been applied before entering map
 	// on GOTO_CARD there is no action
@@ -397,17 +396,10 @@ public class MainTab extends mTabbedPanel {
 	// onEnteringPanel(LIST_CARD);
 
 	// to switch to cache selected on map we do action as if leaving LIST_CARD
-	this.tablePanel.selectRow(MainForm.profile.getCacheIndex(chi.getWayPoint()));
+	this.tablePanel.selectRow(MainForm.profile.getCacheIndex(_wayPoint));
 	onLeavingPanel(LIST_CARD);
-
-	if (panelNo == DETAILS_CARD) {
-	    onEnteringPanel(DETAILS_CARD);
-	    select(DETAILS_CARD);
-	} else if (panelNo == DESCRIPTION_CARD) {
-	    onEnteringPanel(DESCRIPTION_CARD);
-	    select(DESCRIPTION_CARD);
-	}
-
+	onEnteringPanel(panelNo);
+	select(panelNo);
     }
 
     /**

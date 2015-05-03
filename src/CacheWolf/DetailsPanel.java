@@ -82,6 +82,7 @@ import ewe.ui.mTextPad;
 import ewe.util.Hashtable;
 import ewe.util.Iterator;
 import ewe.util.Vector;
+import ewe.util.mString;
 
 /**
  * Class to create the panel to show the way point details.<br>
@@ -89,7 +90,7 @@ import ewe.util.Vector;
  */
 public class DetailsPanel extends CellPanel {
 
-    private mInput inpWaypoint;
+    private MyChoice btnWaypoint;
     private mInput inpName;
     private mInput inpOwner;
     private MyChoice btnType;
@@ -130,8 +131,7 @@ public class DetailsPanel extends CellPanel {
     private boolean needsTableUpdate = false;
     /** String to display for invalid or not applicable terrain or difficulty values. */
 
-    public boolean reactOnWaypointChange = false;
-    private String warnedForWaypoint = "";
+    private String newWaypoint;
     private byte newDifficulty;
     private byte newTerrain;
     private byte newCacheType;
@@ -152,7 +152,8 @@ public class DetailsPanel extends CellPanel {
 
 	inpName = new mInput();
 
-	inpWaypoint = new mInput();
+	this.btnWaypoint = new MyChoice("blabla", new String[] { "blabla" });
+
 	btnHiddenDate = GuiImageBroker.getButton(MyLocale.getMsg(305, "Hidden on:") + MyLocale.getMsg(31415, "Set hidden date"), "calendar");
 	btnHiddenDate.setToolTip(MyLocale.getMsg(31415, "Set hidden date"));
 
@@ -179,14 +180,19 @@ public class DetailsPanel extends CellPanel {
 	lastLogs = new LastLogsPanel();
 	attViewer = new AttributesViewer();
 
-	String[] texts = new String[] { MyLocale.getMsg(346, "Show travelbugs"), MyLocale.getMsg(326, "Set as destination and show Compass View"), MyLocale.getMsg(351, "Add/Edit notes"), MyLocale.getMsg(311, "Create Waypoint") };
+	String[] texts = new String[] { MyLocale.getMsg(346, "Show travelbugs"), //
+		MyLocale.getMsg(326, "Set as destination and show Compass View"), //
+		MyLocale.getMsg(351, "Add/Edit notes"), //
+		MyLocale.getMsg(311, "Create Waypoint") //
+	};
+
 	String[] icons = new String[] { "bug", "goto", "notes", "newwpt" };
 	btnMore = new MyChoice(MyLocale.getMsg(632, "More"), "more", texts, icons);
 
 	CellPanel mainPanel = new CellPanel();
 	mainPanel.equalWidths = true;
 	Vector panelControls = new Vector();
-	panelControls.add(inpWaypoint);
+	panelControls.add(btnWaypoint.getBtn());
 	panelControls.add(btnType.getBtn());
 	panelControls.add(btnHiddenDate);
 	panelControls.add(ownerPanel);
@@ -307,7 +313,26 @@ public class DetailsPanel extends CellPanel {
 	}
 	dirtyNotes = false;
 	dirtyDetails = false;
-	inpWaypoint.setText(ch.getWayPoint());
+
+	GuiImageBroker.setButtonText(btnWaypoint.getBtn(), ch.getWayPoint());
+	int wptsSize = mainCache.addiWpts.size() + 2;
+	String[] waypointList = new String[wptsSize];
+	String[] iconList = new String[wptsSize];
+	waypointList[0] = mainCache.getWayPoint();
+	iconList[0] = CacheType.typeImageNameForId(mainCache.getType());
+	int tomark = 0;
+	for (int i = 0; i < mainCache.addiWpts.size(); i++) {
+	    CacheHolder tmpCh = (CacheHolder) mainCache.addiWpts.get(i);
+	    if (ch == tmpCh)
+		tomark = i + 1;
+	    waypointList[i + 1] = tmpCh.getWayPoint() + " " + tmpCh.getCacheName();
+	    iconList[i + 1] = CacheType.typeImageNameForId(tmpCh.getType());
+	}
+	waypointList[wptsSize - 1] = MyLocale.getMsg(311, "Create Waypoint");
+	iconList[wptsSize - 1] = "newwpt";
+	this.btnWaypoint.setSelectionList(waypointList, iconList);
+	this.btnWaypoint.mark(tomark);
+
 	inpName.setText(ch.getCacheName());
 	btnCoordinates.setText(ch.getPos().toString());
 	newHiddenDate = mainCache.getDateHidden();
@@ -322,7 +347,8 @@ public class DetailsPanel extends CellPanel {
 	blackStatus = ch.isBlack();
 	blackStatusChanged = false;
 
-	if (inpWaypoint.getText().length() == 0) {
+	this.newWaypoint = ch.getWayPoint();
+	if (this.newWaypoint.length() == 0) {
 	    createWptName();
 	}
 
@@ -408,9 +434,11 @@ public class DetailsPanel extends CellPanel {
 	int anz = Math.min(5, mainCacheDetails.CacheLogs.size());
 	for (int i = 0; i < anz; i++) {
 	    Log log = mainCacheDetails.CacheLogs.getLog(i);
-	    AniImage ai = new AniImage(log.getIcon());
-	    ai.setLocation(i * Math.max(ai.getWidth(), (int) (lastLogsWidth / anz)), (int) ((lastLogsHeight - ai.getHeight()) / 2));
-	    lastLogs.addImage(ai, log);
+	    if (!(log.getIcon().equals(Log.MAXLOGICON))) {
+		AniImage ai = new AniImage(log.getIcon());
+		ai.setLocation(i * Math.max(ai.getWidth(), (int) (lastLogsWidth / anz)), (int) ((lastLogsHeight - ai.getHeight()) / 2));
+		lastLogs.addImage(ai, log);
+	    }
 	}
 	lastLogs.refresh();
 
@@ -449,7 +477,7 @@ public class DetailsPanel extends CellPanel {
      * if is addi -> returns the respective AddiWpt if is main -> returns the respective MainWpt
      */
     public void createWptName() {
-	final String wpt = inpWaypoint.getText().toUpperCase();
+	final String wpt = this.newWaypoint.toUpperCase();
 	if (CacheType.isAddiWpt(newCacheType) //
 		&& MainTab.itself.mainCache != null //
 		&& (MainTab.itself.mainCache.startsWith("GC") //
@@ -457,10 +485,10 @@ public class DetailsPanel extends CellPanel {
 		|| MainTab.itself.mainCache.startsWith("CW")) && wpt.startsWith("CW")) {
 	    // for creating the Addiname on creating a new Waypoint
 	    MainTab.itself.lastselected = MainTab.itself.mainCache;
-	    inpWaypoint.setText(MainForm.profile.getNewAddiWayPointName(MainTab.itself.mainCache));
+	    this.newWaypoint = MainForm.profile.getNewAddiWayPointName(MainTab.itself.mainCache);
 	}
 	if (!CacheType.isAddiWpt(newCacheType) && !(wpt.startsWith("GC") || OC.isOC(wpt) || wpt.startsWith("CW"))) {
-	    inpWaypoint.setText(MainForm.profile.getNewWayPointName("CW"));
+	    this.newWaypoint = MainForm.profile.getNewWayPointName("CW");
 	}
     }
 
@@ -472,33 +500,7 @@ public class DetailsPanel extends CellPanel {
 	if (ev instanceof DataChangeEvent) {
 	    if (ch == null)
 		return;
-	    if (ev.target == inpWaypoint) {
-		if (reactOnWaypointChange) {
-		    String iTmp = inpWaypoint.getText();
-		    String uTmp = iTmp.toUpperCase();
-		    if (!iTmp.equals(uTmp)) {
-			inpWaypoint.setText(uTmp); // If user entered LowerCase -> convert directly to UpperCase
-			reactOnWaypointChange = false; // next DataChangeEvent fired by change to UpperCase will be ignored
-		    }
-		    // already warned(multi same DataChangeEvents) or same waypointname as before edit !!!
-		    if (!warnedForWaypoint.equals(uTmp) && !uTmp.equals(this.ch.getWayPoint())) {
-			if ((new File(MainForm.profile.dataDir + iTmp.toLowerCase() + ".xml")).exists()) {
-			    warnedForWaypoint = uTmp;
-			    // filename is LowerCase
-			    new InfoBox("Warning :", uTmp + "\n" + MyLocale.getMsg(275, "Waypoint already exists!")).wait(FormBase.OKB);
-			    // revert waypointname
-			    inpWaypoint.setText(this.ch.getWayPoint());
-			}
-		    }
-		    dirtyDetails = true;
-		    needsTableUpdate = true;
-		} else {
-		    // first DataChangeEvent is fired by Klick into (after reload).
-		    // that really didn't change anything
-		    reactOnWaypointChange = true;
-		}
-		// FIXME: if name was changed, we should rename the waypoint.xml file. how? where?
-	    } else if (ev.target == this.inpName) {
+	    if (ev.target == this.inpName) {
 		if (ch.setCacheName(inpName.getText().trim())) {
 		    dirtyDetails = true;
 		}
@@ -548,6 +550,34 @@ public class DetailsPanel extends CellPanel {
 			dirtyDetails = true;
 			menu.close();
 		    }
+		} else if (menu == this.btnWaypoint.getMnu()) {
+		    String selectedValue = (String) btnWaypoint.getSelectedValue();
+		    if (selectedValue.startsWith(ch.getWayPoint())) {
+			// editieren
+			InfoBox inf = new InfoBox("Eingabe", "Wegpunkt ändern", InfoBox.INPUT);
+			inf.setInput(ch.getWayPoint());
+			if (inf.execute() == FormBase.IDOK) {
+			    this.newWaypoint = inf.getInput().trim().toUpperCase();
+			    if (!this.newWaypoint.equals(this.ch.getWayPoint())) {
+				// perhaps check against internal DB
+				// filename is LowerCase
+				if ((new File(MainForm.profile.dataDir + this.newWaypoint.toLowerCase() + ".xml")).exists()) {
+				    new InfoBox("Warning :", this.newWaypoint + "\n" + MyLocale.getMsg(275, "Waypoint already exists!")).wait(FormBase.OKB);
+				    // revert waypointname
+				    this.newWaypoint = this.ch.getWayPoint();
+				} else {
+				    dirtyDetails = true;
+				    needsTableUpdate = true;
+				}
+			    }
+			}
+		    } else if (selectedValue.equals(MyLocale.getMsg(311, "Create Waypoint"))) {
+			// new waypoint
+			this.createWaypoint();
+		    } else {
+			// change to
+			MainTab.itself.openPanel(mString.split(selectedValue, ' ')[0], 1);
+		    }
 		} else if (menu == this.btnDiff.getMnu()) {
 		    if (btnDiff.mark(btnDiff.getSelectedIndex())) {
 			this.newDifficulty = (byte) (this.btnDiff.getSelectedIndex() * 5 + 10);
@@ -579,13 +609,7 @@ public class DetailsPanel extends CellPanel {
 			ts.execute(this.getFrame(), Gui.CENTER_FRAME);
 			break;
 		    case NEWWPT:
-			final CacheHolder newCache = new CacheHolder();
-			newCache.setPos(ch.getPos());
-			newCache.setType(CacheType.CW_TYPE_STAGE);
-			newCache.setDifficulty(CacheTerrDiff.CW_DT_UNSET);
-			newCache.setTerrain(CacheTerrDiff.CW_DT_UNSET);
-			newCache.setCacheSize(CacheSize.CW_SIZE_NOTCHOSEN);
-			MainTab.itself.newWaypoint(newCache);
+			this.createWaypoint();
 			break;
 		    case NOTES:
 			final NotesScreen nsc = new NotesScreen(ch);
@@ -624,6 +648,9 @@ public class DetailsPanel extends CellPanel {
 		btnType.showMenu();
 	    } else if (ev.target == this.btnMore.getBtn()) {
 		btnMore.showMenu();
+	    } else if (ev.target == btnWaypoint.getBtn()) {
+		// mark selected cache
+		btnWaypoint.showMenu();
 	    } else if (ev.target == this.cbIsBlacklisted) {
 		if (ch.isBlack()) {
 		    ch.setBlack(false);
@@ -792,6 +819,16 @@ public class DetailsPanel extends CellPanel {
 	}
     }
 
+    private void createWaypoint() {
+	final CacheHolder newCache = new CacheHolder();
+	newCache.setPos(ch.getPos());
+	newCache.setType(CacheType.CW_TYPE_STAGE);
+	newCache.setDifficulty(CacheTerrDiff.CW_DT_UNSET);
+	newCache.setTerrain(CacheTerrDiff.CW_DT_UNSET);
+	newCache.setCacheSize(CacheSize.CW_SIZE_NOTCHOSEN);
+	MainTab.itself.newWaypoint(newCache);
+    }
+
     private void callExternalProgram(String program, String parameter) {
 	try {
 	    CWWrapper.exec(program, parameter);
@@ -853,7 +890,7 @@ public class DetailsPanel extends CellPanel {
 	ch.setBlack(blackStatus);
 
 	final String oldWaypoint = ch.getWayPoint();
-	ch.setWayPoint(inpWaypoint.getText().toUpperCase().trim());
+	ch.setWayPoint(this.newWaypoint);
 	if (!ch.isAddiWpt()) {
 	    ch.setCacheSize(newCacheSize);
 	}
@@ -1020,41 +1057,39 @@ class MyChoice extends Menu {
 
     public MyChoice(String btnText, String[] _selectionList) {
 	btn = new mButton(btnText);
-	selectionList = _selectionList;
-	iconList = null;
-	init();
+	setSelectionList(_selectionList, null);
     }
 
     public MyChoice(String btnText, String icon, String[] _selectionList) {
 	btn = GuiImageBroker.getButton(btnText, icon);
-	selectionList = _selectionList;
-	iconList = null;
-	init();
+	setSelectionList(_selectionList, null);
     }
 
     public MyChoice(String btnText, String icon, String[] _selectionList, String[] _iconList) {
 	btn = GuiImageBroker.getButton(btnText, icon);
-	selectionList = _selectionList;
-	iconList = _iconList;
-	init();
+	setSelectionList(_selectionList, _iconList);
     }
 
-    private void init() {
-	mnu = this;
+    public void setSelectionList(String[] _selectionList, String[] _iconList) {
+	selectionList = _selectionList;
+	iconList = _iconList;
 	miList = new MenuItem[selectionList.length];
+	this.keepFrame = false;
+	this.items.clear();
 	for (int i = 0; i < selectionList.length; i++) {
 	    if (iconList == null) {
-		mnu.addItem(miList[i] = new MenuItem(selectionList[i]));
+		this.addItem(miList[i] = new MenuItem(selectionList[i]));
 	    } else {
 		if (iconList[i].length() > 0)
-		    mnu.addItem(miList[i] = GuiImageBroker.getMenuItem(selectionList[i], iconList[i]));
+		    this.addItem(miList[i] = GuiImageBroker.getMenuItem(selectionList[i], iconList[i]));
 		else
-		    mnu.addItem(miList[i] = new MenuItem(selectionList[i]));
+		    this.addItem(miList[i] = new MenuItem(selectionList[i]));
 	    }
 	}
-	btn.setMenu(mnu);
-	btn.modifyAll(ControlConstants.WantHoldDown, 0);
+	btn.setMenu(this);
 	currentIndex = -1;
+	btn.modifyAll(ControlConstants.WantHoldDown, 0);
+	mnu = this;
     }
 
     public mButton getBtn() {
@@ -1090,7 +1125,7 @@ class MyChoice extends Menu {
     }
 
     public String getSelectedValue() {
-	return selectionList[currentIndex];
+	return selectionList[selectedIndex];
     }
 
     public void showMenu() {
