@@ -166,6 +166,10 @@ public class CacheHolder {
 	type = CacheType.CW_TYPE_ERROR;
     }
 
+    public String toString() {
+	return wayPoint;
+    }
+
     public CacheHolder(String xmlString, int version) {
 	int start, end;
 	try {
