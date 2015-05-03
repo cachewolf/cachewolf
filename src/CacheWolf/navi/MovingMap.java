@@ -2582,9 +2582,9 @@ class MovingMapPanel extends InteractivePanel implements EventListener {
 			leaveMovingMap();
 			final MainTab mainT = MainTab.itself;
 			if (action == openCacheDescMenuItem)
-			    mainT.openPanel(clickedCache, 2);
+			    mainT.openPanel(clickedCache.getWayPoint(), 2);
 			else
-			    mainT.openPanel(clickedCache, 1);
+			    mainT.openPanel(clickedCache.getWayPoint(), 1);
 		    }
 		    if (action == gotoCacheMenuItem) {
 			closeKontextMenu();
