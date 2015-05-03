@@ -554,7 +554,7 @@ public class DetailsPanel extends CellPanel {
 		    String selectedValue = (String) btnWaypoint.getSelectedValue();
 		    if (selectedValue.startsWith(ch.getWayPoint())) {
 			// editieren
-			InfoBox inf = new InfoBox("Eingabe", "Wegpunkt ändern", InfoBox.INPUT);
+			InfoBox inf = new InfoBox(MyLocale.getMsg(757, "Input"), MyLocale.getMsg(756, "Edit waypoint"), InfoBox.INPUT);
 			inf.setInput(ch.getWayPoint());
 			if (inf.execute() == FormBase.IDOK) {
 			    this.newWaypoint = inf.getInput().trim().toUpperCase();
@@ -573,9 +573,11 @@ public class DetailsPanel extends CellPanel {
 			}
 		    } else if (selectedValue.equals(MyLocale.getMsg(311, "Create Waypoint"))) {
 			// new waypoint
+			// perhaps save changes
 			this.createWaypoint();
 		    } else {
 			// change to
+			// perhaps save changes
 			MainTab.itself.openPanel(mString.split(selectedValue, ' ')[0], 1);
 		    }
 		} else if (menu == this.btnDiff.getMnu()) {
