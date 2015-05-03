@@ -379,23 +379,14 @@ public class MainTab extends mTabbedPanel {
     }
 
     /**
-     * this is called from MovingMap Cache context menu
      * 
-     * @param chi
-     *            , the CacheHolder for the Cache to switch to
+     * @param _wayPoint
+     *            the wayPoint for the Cache to switch to
      * @param panelNo
-     *            1=DetailsPanel 2=Description Panel
+     *            1=DetailsPanel 2=Description Panel ...
      */
     public void openPanel(String _wayPoint, int panelNo) {
-	// oldCard could have been DETAILS_CARD or GOTO_CARD
-	// on DETAILS_CARD changes already should have been applied before entering map
-	// on GOTO_CARD there is no action
-	// onLeavingPanel(oldCard);
-
-	// do we really need this actions ???
-	// onEnteringPanel(LIST_CARD);
-
-	// to switch to cache selected on map we do action as if leaving LIST_CARD
+	// to switch to cache we do action as if leaving LIST_CARD
 	this.tablePanel.selectRow(MainForm.profile.getCacheIndex(_wayPoint));
 	onLeavingPanel(LIST_CARD);
 	onEnteringPanel(panelNo);
