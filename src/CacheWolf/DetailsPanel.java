@@ -583,6 +583,10 @@ public class DetailsPanel extends CellPanel {
 		    } else {
 			// change to
 			// perhaps save changes
+			if (!mainCache.showAddis()) {
+			    mainCache.setShowAddis(true);
+			    MainTab.itself.tablePanel.refreshTable();
+			}
 			MainTab.itself.openPanel(mString.split(selectedValue, ' ')[0], 1);
 		    }
 		} else if (menu == this.btnDiff.getMnu()) {
