@@ -428,12 +428,12 @@ public final class CacheType {
 		cTypRef[Ref_Index(typeId)]._modImage[solved] = newOverlayedImage(im, GuiImageBroker.solved);
 	    }
 	    im = cTypRef[Ref_Index(typeId)]._modImage[solved];
-	} else if (ch.cacheStatus().indexOf(MyLocale.getMsg(319, "Not Found")) > -1) {
+	} else if (ch.getStatus().indexOf(MyLocale.getMsg(319, "Not Found")) > -1) {
 	    if (cTypRef[Ref_Index(typeId)]._modImage[dnf] == null) {
 		cTypRef[Ref_Index(typeId)]._modImage[dnf] = newOverlayedImage(im, GuiImageBroker.dnf);
 	    }
 	    im = cTypRef[Ref_Index(typeId)]._modImage[dnf];
-	} else if (ch.getCacheName().toLowerCase().indexOf("bonus") > -1) {
+	} else if (ch.getName().toLowerCase().indexOf("bonus") > -1) {
 	    if (cTypRef[Ref_Index(typeId)]._modImage[bonus] == null) {
 		cTypRef[Ref_Index(typeId)]._modImage[bonus] = newOverlayedImage(im, GuiImageBroker.bonus);
 	    }
@@ -501,7 +501,20 @@ public final class CacheType {
 	return modImage;
     }
 
-    // TODO it for OCXMLImporterScreen and FilterScreen ?
+    public static int getLogMsgNr(byte type) {
+	int msgNr = 318; // normal found
+	if (type == CW_TYPE_WEBCAM) {
+	    msgNr = 361;
+	} else if (type == CW_TYPE_EVENT || type == CW_TYPE_MEGA_EVENT || type == CW_TYPE_MAZE) {
+	    msgNr = 355;
+	}
+	return msgNr;
+    }
+
+    public static String getFoundText(byte type) {
+	return MyLocale.getMsg(CacheType.getLogMsgNr(type), "Found");
+    }
+
 }
 
 final class CTyp {

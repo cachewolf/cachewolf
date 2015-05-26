@@ -82,10 +82,10 @@ public class GarminMap extends MinML {
 		boolean match = true;
 		// If a certain attribute is not null it must match the current caches values
 		match = match && ((icon.type == null) || icon.type.equals(String.valueOf(ch.getType())));
-		match = match && ((icon.size == null) || ch.getCacheSize() == 0 || icon.size.equalsIgnoreCase(CacheSize.getExportShortId(ch.getCacheSize())));
+		match = match && ((icon.size == null) || ch.getSize() == 0 || icon.size.equalsIgnoreCase(CacheSize.getExportShortId(ch.getSize())));
 		match = match && ((icon.terrain == null) || ch.getTerrain() == 0 || icon.terrain.equals(CacheTerrDiff.shortDT(ch.getTerrain())));
 		match = match && ((icon.difficulty == null) || ch.getDifficulty() == 0 || icon.difficulty.equals(CacheTerrDiff.shortDT(ch.getDifficulty())));
-		match = match && ((icon.status == null) || ch.cacheStatus().startsWith(icon.status));
+		match = match && ((icon.status == null) || ch.getStatus().startsWith(icon.status));
 		match = match && ((icon.found == null) || ch.isFound());
 		if (match)
 		    return icon.name;
@@ -108,10 +108,10 @@ public class GarminMap extends MinML {
 		boolean match = true;
 		// If a certain attribute is not null it must match the current caches values
 		match = match && ((icon.type == null) || ch.getType() == 0 || icon.type.equals(String.valueOf(ch.getType())));
-		match = match && ((icon.size == null) || ch.getCacheSize() == 0 || icon.size.equalsIgnoreCase(CacheSize.getExportShortId(ch.getCacheSize())));
+		match = match && ((icon.size == null) || ch.getSize() == 0 || icon.size.equalsIgnoreCase(CacheSize.getExportShortId(ch.getSize())));
 		match = match && ((icon.terrain == null) || ch.getTerrain() == 0 || icon.terrain.equals(CacheTerrDiff.shortDT(ch.getTerrain())));
 		match = match && ((icon.difficulty == null) || ch.getDifficulty() == 0 || icon.difficulty.equals(CacheTerrDiff.shortDT(ch.getDifficulty())));
-		match = match && ((icon.status == null) || ch.cacheStatus().startsWith(icon.status));
+		match = match && ((icon.status == null) || ch.getStatus().startsWith(icon.status));
 		match = match && ((icon.found == null) || ch.isFound());
 		if (match)
 		    return icon.poiId;
@@ -129,10 +129,10 @@ public class GarminMap extends MinML {
 		boolean match = true;
 		// If a certain attribute is not null it must match the current caches values
 		match = match && ((icon.type == null) || ch.getType() == 0 || icon.type.equals(String.valueOf(ch.getType())));
-		match = match && ((icon.size == null) || ch.getCacheSize() == 0 || icon.size.equalsIgnoreCase(CacheSize.getExportShortId(ch.getCacheSize())));
+		match = match && ((icon.size == null) || ch.getSize() == 0 || icon.size.equalsIgnoreCase(CacheSize.getExportShortId(ch.getSize())));
 		match = match && ((icon.terrain == null) || ch.getTerrain() == 0 || icon.terrain.equals(CacheTerrDiff.shortDT(ch.getTerrain())));
 		match = match && ((icon.difficulty == null) || ch.getDifficulty() == 0 || icon.difficulty.equals(CacheTerrDiff.shortDT(ch.getDifficulty())));
-		match = match && ((icon.status == null) || ch.cacheStatus().startsWith(icon.status));
+		match = match && ((icon.status == null) || ch.getStatus().startsWith(icon.status));
 		match = match && ((icon.found == null) || ch.isFound());
 		if (match)
 		    return icon.ozicolor;

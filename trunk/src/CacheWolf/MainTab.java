@@ -60,15 +60,15 @@ public class MainTab extends mTabbedPanel {
 
     // following numbers depend on tabNames order (MENU_CARD must be the last tabName)
     static int LIST_CARD = 0;
-    static int DETAILS_CARD = 1;
-    static int DESCRIPTION_CARD = 2;
+    public static int DETAILS_CARD = 1;
+    public static int DESCRIPTION_CARD = 2;
     static int IMAGES_CARD = 3;
     static int HINTSANDLOGS_CARD = 4;
     static int SOLVER_CARD = 5;
     static int CALC_CARD = 6;
     static int GOTO_CARD = 7;
     static int RADAR_CARD = 8;
-    static int MAP_CARD = 9;
+    public static int MAP_CARD = 9;
     static int MENU_CARD = 10;
 
     public TablePanel tablePanel;
@@ -273,9 +273,9 @@ public class MainTab extends mTabbedPanel {
 		lastselected = "";
 	    } else {
 		ch = cacheDB.get(this.tablePanel.getSelectedCache());
-		lastselected = ch.getWayPoint(); // Used in
+		lastselected = ch.getCode(); // Used in
 		// Parser.Skeleton
-		chD = ch.getCacheDetails(true);
+		chD = ch.getDetails();
 	    }
 	}
 	if (panelNo == MainTab.DETAILS_CARD) {
@@ -287,7 +287,7 @@ public class MainTab extends mTabbedPanel {
 		if (needTableUpdate) {
 		    // This sorts the waypoint (if it is new) into the right position
 		    this.tablePanel.myTableModel.updateRows();
-		    this.tablePanel.selectRow(MainForm.profile.getCacheIndex(detailsPanel.getCache().getWayPoint()));
+		    this.tablePanel.selectRow(MainForm.profile.getCacheIndex(detailsPanel.getCache().getCode()));
 		}
 		// was this.tablePanel.refreshTable();
 		this.tablePanel.myTableControl.update(true); // Update and repaint
@@ -308,10 +308,10 @@ public class MainTab extends mTabbedPanel {
 		    // For safety reasons: Immediately save solver instructions when switching panels updatePendingChanges();
 		} else {
 		    boolean oldHasSolver = chMain.hasSolver();
-		    chMain.getCacheDetails(true).setSolver(solverPanel.getInstructions());
+		    chMain.getDetails().setSolver(solverPanel.getInstructions());
 		    if (oldHasSolver != chMain.hasSolver())
 			this.tablePanel.myTableControl.update(true);
-		    chMain.save();
+		    chMain.saveCacheDetails();
 		    chMain = null;
 		}
 	    }
@@ -342,13 +342,13 @@ public class MainTab extends mTabbedPanel {
 	    descriptionPanel.setText(ch);
 	} else if (panelNo == IMAGES_CARD) {
 	    if (ch.isAddiWpt()) {
-		imagePanel.setImages(ch.mainCache.getCacheDetails(true));
+		imagePanel.setImages(ch.mainCache.getDetails());
 	    } else {
 		imagePanel.setImages(chD);
 	    }
 	} else if (panelNo == HINTSANDLOGS_CARD) {
 	    if (ch.isAddiWpt()) {
-		hintLogPanel.setText(ch.mainCache.getCacheDetails(true));
+		hintLogPanel.setText(ch.mainCache.getDetails());
 	    } else {
 		hintLogPanel.setText(chD);
 	    }
@@ -382,15 +382,16 @@ public class MainTab extends mTabbedPanel {
      * 
      * @param _wayPoint
      *            the wayPoint for the Cache to switch to
-     * @param panelNo
+     * @param toPanel
      *            1=DetailsPanel 2=Description Panel ...
      */
-    public void openPanel(String _wayPoint, int panelNo) {
+    public void openPanel(int fromPanel, String _wayPoint, int toPanel) {
+	onLeavingPanel(fromPanel);
 	// to switch to cache we do action as if leaving LIST_CARD
 	this.tablePanel.selectRow(MainForm.profile.getCacheIndex(_wayPoint));
 	onLeavingPanel(LIST_CARD);
-	onEnteringPanel(panelNo);
-	select(panelNo);
+	onEnteringPanel(toPanel);
+	select(toPanel);
     }
 
     /**
@@ -412,15 +413,15 @@ public class MainTab extends mTabbedPanel {
 	    // why not using the target ???
 	    CacheHolder selectedCache = MainForm.profile.cacheDB.get(selectedIndex);
 	    // try to start new waypoint with real coords
-	    if (!pCh.getPos().isValid()) {
-		pCh.setPos(selectedCache.getPos());
+	    if (!pCh.getWpt().isValid()) {
+		pCh.setWpt(selectedCache.getWpt());
 	    }
 	    if (selectedCache.isAddiWpt()) {
 		if (selectedCache.mainCache != null) {
-		    mainCache = selectedCache.mainCache.getWayPoint();
+		    mainCache = selectedCache.mainCache.getCode();
 		    // try to start new waypoint with real coords
-		    if (!pCh.getPos().isValid()) {
-			pCh.setPos(selectedCache.mainCache.getPos());
+		    if (!pCh.getWpt().isValid()) {
+			pCh.setWpt(selectedCache.mainCache.getWpt());
 		    }
 		} else {
 		    mainCache = null;
@@ -428,14 +429,14 @@ public class MainTab extends mTabbedPanel {
 	    }
 	}
 	if (CacheType.isAddiWpt(pCh.getType()) && mainCache != null && mainCache.length() > 2) {
-	    pCh.setWayPoint(MainForm.profile.getNewAddiWayPointName(mainCache));
+	    pCh.setCode(MainForm.profile.getNewAddiWayPointName(mainCache));
 	    MainForm.profile.setAddiRef(pCh);
 	} else {
-	    pCh.setWayPoint(MainForm.profile.getNewWayPointName("CW"));
-	    lastselected = pCh.getWayPoint();
+	    pCh.setCode(MainForm.profile.getNewWayPointName("CW"));
+	    lastselected = pCh.getCode();
 	}
-	pCh.setCacheSize(CacheSize.CW_SIZE_NOTCHOSEN);
-	chD = pCh.getCacheDetails(false);
+	pCh.setSize(CacheSize.CW_SIZE_NOTCHOSEN);
+	chD = pCh.getDetails();
 	this.ch = pCh;
 	cacheDB.add(pCh);
 	MainForm.profile.notifyUnsavedChanges(true); // Just to be sure
@@ -466,8 +467,8 @@ public class MainTab extends mTabbedPanel {
 	    //if (Navigate.destination.isValid())
 	    //position = new CWPoint(Navigate.destination);
 	    //else {
-	    if (ch != null && ch.getPos().isValid()) {
-		position = new CWPoint(ch.getPos());
+	    if (ch != null && ch.getWpt().isValid()) {
+		position = new CWPoint(ch.getWpt());
 		navigate.setDestination(ch);
 	    } else {
 		if (Preferences.itself().curCentrePt.isValid()) {
@@ -483,7 +484,7 @@ public class MainTab extends mTabbedPanel {
     void updatePendingChanges() {
 	if (cacheDirty) {
 	    if (chD != null)
-		chD.getParent().save();
+		chD.getParent().saveCacheDetails();
 	    cacheDirty = false;
 	}
     }

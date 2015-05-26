@@ -311,11 +311,11 @@ public class GpxExportNg {
 		if (!ch.isVisible()) {
 		    continue;
 		} else if (ch.isIncomplete()) {
-		    Preferences.itself().log("skipping export of incomplete waypoint " + ch.getWayPoint(), null);
+		    Preferences.itself().log("skipping export of incomplete waypoint " + ch.getCode(), null);
 		} else {
 		    String poiId = garminMap.getPoiId(ch);
 		    if (null == poiId) {
-			Preferences.itself().log("GPX Export: unmatched POI ID for " + ch.getWayPoint() + " of type " + ch.getType(), null);
+			Preferences.itself().log("GPX Export: unmatched POI ID for " + ch.getCode() + " of type " + ch.getType(), null);
 			exportErrors++;
 		    } else {
 			PrintWriter writer;
@@ -468,8 +468,8 @@ public class GpxExportNg {
 		    continue;
 		} else if (ch.isIncomplete()) {
 		    exportErrors++;
-		    infB.addWarning("Skipping export of incomplete waypoint " + ch.getWayPoint());
-		    Preferences.itself().log("GPX Export: skipping export of incomplete waypoint " + ch.getWayPoint(), null);
+		    infB.addWarning("Skipping export of incomplete waypoint " + ch.getCode());
+		    Preferences.itself().log("GPX Export: skipping export of incomplete waypoint " + ch.getCode(), null);
 		} else {
 		    int splitSize = exportOptions.getSplitSize();
 		    if (splitSize > 0) {
@@ -562,9 +562,9 @@ public class GpxExportNg {
 		return "";
 	}
 
-	if (!ch.getPos().isValid()) {
+	if (!ch.getWpt().isValid()) {
 	    if (!ch.isAddiWpt()) {
-		Preferences.itself().log("[GPX Export:formatCache] " + ch.getWayPoint() + " has invalid coords.");
+		Preferences.itself().log("[GPX Export:formatCache] " + ch.getCode() + " has invalid coords.");
 		return "";
 	    }
 	    if (!exportOptions.getExportAddiWithInvalidCoords()) {
@@ -573,7 +573,7 @@ public class GpxExportNg {
 	}
 
 	StringBuffer ret = new StringBuffer();
-	ch.getCacheDetails(false);
+	ch.getDetails();
 	try {
 	    ret.append(formatCompact());
 	    if (exportStyle == PQEXTENSIONS || exportStyle == MYFINDS) {
@@ -590,11 +590,11 @@ public class GpxExportNg {
 	} catch (IllegalArgumentException e) {
 	    exportErrors++;
 	    ch.checkIncomplete(); // ch.setIncomplete(true);
-	    Preferences.itself().log("GPX Export: " + ch.getWayPoint() + " check incomplete ", e, true);
+	    Preferences.itself().log("GPX Export: " + ch.getCode() + " check incomplete ", e, true);
 	    return "";
 	} catch (Exception e) {
 	    exportErrors++;
-	    Preferences.itself().log("GPX Export: " + ch.getWayPoint() + " caused ", e, true);
+	    Preferences.itself().log("GPX Export: " + ch.getCode() + " caused ", e, true);
 	    return "";
 	}
 
@@ -607,46 +607,46 @@ public class GpxExportNg {
 
 	// .append("\t\t<desc>@@WPDESC@@</desc>").append(newLine)
 
-	if (ch.getPos().isValid())
-	    ret.append("  <wpt lat=\"" + ch.getPos().getLatDeg(TransformCoordinates.DD) + "\" lon=\"" + ch.getPos().getLonDeg(TransformCoordinates.DD) + "\">").append(newLine);
+	if (ch.getWpt().isValid())
+	    ret.append("  <wpt lat=\"" + ch.getWpt().getLatDeg(TransformCoordinates.DD) + "\" lon=\"" + ch.getWpt().getLonDeg(TransformCoordinates.DD) + "\">").append(newLine);
 	else
 	    ret.append("  <wpt lat=\"" + "0" + "\" lon=\"" + "0" + "\">").append(newLine);
 
 	if (exportStyle == PQEXTENSIONS || exportStyle == MYFINDS) {
 	    if (ch.isAddiWpt()) {
 		try {
-		    ret.append("    <time>" + ch.mainCache.getDateHidden() + "T07:00:00Z</time>").append(newLine);
+		    ret.append("    <time>" + ch.mainCache.getHidden() + "T07:00:00Z</time>").append(newLine);
 		} catch (Exception e) {
-		    Preferences.itself().log(ch.getWayPoint() + " has no parent", null);
+		    Preferences.itself().log(ch.getCode() + " has no parent", null);
 		    exportErrors++;
 		    ret.append("    <time>1970-01-01T19:00:00Z</time>").append(newLine);
 		}
 	    } else if (ch.isCustomWpt()) {
 		ret.append("    <time>1970-01-01T19:00:00Z</time>").append(newLine);
 	    } else {
-		ret.append("    <time>" + ch.getDateHidden() + "T19:00:00Z</time>").append(newLine);
+		ret.append("    <time>" + ch.getHidden() + "T19:00:00Z</time>").append(newLine);
 	    }
 	}
 
 	if (exportOptions.getWpNameStyle() == WPNAME_ID_SMART) {
 	    if (ch.isAddiWpt()) {
-		ret.append("    <name>").append(SafeXML.cleanGPX(ch.mainCache.getWayPoint())).append(" ").append(ch.getWayPoint().substring(0, 2)).append("</name>").append(newLine);
+		ret.append("    <name>").append(SafeXML.cleanGPX(ch.mainCache.getCode())).append(" ").append(ch.getCode().substring(0, 2)).append("</name>").append(newLine);
 	    } else if (ch.isCustomWpt()) {
-		ret.append("    <name>").append(SafeXML.cleanGPX(ch.getWayPoint())).append("</name>").append(newLine);
+		ret.append("    <name>").append(SafeXML.cleanGPX(ch.getCode())).append("</name>").append(newLine);
 	    } else {
-		ret.append("    <name>").append(SafeXML.cleanGPX(ch.getWayPoint()))//
+		ret.append("    <name>").append(SafeXML.cleanGPX(ch.getCode()))//
 			.append(" ")//
 			.append(CacheType.getExportShortId(ch.getType()))//
 			.append(String.valueOf(ch.getDifficulty()))//
 			.append(String.valueOf(ch.getTerrain()))//
-			.append(CacheSize.getExportShortId(ch.getCacheSize()))//
+			.append(CacheSize.getExportShortId(ch.getSize()))//
 			.append(String.valueOf(ch.getNoFindLogs()))//
 			.append("</name>").append(newLine);
 	    }
 	} else if (exportOptions.getWpNameStyle() == WPNAME_NAME_SMART) {
 	    // TBD
 	} else { // WPNAME_ID_CLASSIC
-	    ret.append("    <name>").append(SafeXML.cleanGPX(ch.getWayPoint())).append("</name>").append(newLine);
+	    ret.append("    <name>").append(SafeXML.cleanGPX(ch.getCode())).append("</name>").append(newLine);
 	}
 
 	// no <cmt> for custom
@@ -656,25 +656,25 @@ public class GpxExportNg {
 			    || exportStyle == STYLE_COMPACT_OUTPUT_SEPARATE //
 		    || exportStyle == STYLE_COMPACT_OUTPUT_POI)) {
 		if (ch.isAddiWpt()) {
-		    ret.append("    <cmt>").append(SafeXML.cleanGPX(ch.getCacheName() + " " + ch.getCacheDetails(false).LongDescription)).append("</cmt>").append(newLine);
+		    ret.append("    <cmt>").append(SafeXML.cleanGPX(ch.getName() + " " + ch.getDetails().LongDescription)).append("</cmt>").append(newLine);
 		} else {
-		    ret.append("    <cmt>").append(SafeXML.cleanGPX(ch.getCacheName() + " " + Common.rot13(ch.getCacheDetails(false).Hints))).append("</cmt>").append(newLine);
+		    ret.append("    <cmt>").append(SafeXML.cleanGPX(ch.getName() + " " + Common.rot13(ch.getDetails().Hints))).append("</cmt>").append(newLine);
 		}
 	    } else if (exportOptions.getWpNameStyle() == WPNAME_NAME_SMART) {
 		// TBD
 	    } else {
 		if (ch.isAddiWpt()) {
-		    ret.append("    <cmt>").append(SafeXML.cleanGPX(ch.getCacheDetails(true).LongDescription)).append("</cmt>").append(newLine);
+		    ret.append("    <cmt>").append(SafeXML.cleanGPX(ch.getDetails().LongDescription)).append("</cmt>").append(newLine);
 		} // caches have no <cmt> in gc.com PQs
 	    }
 	}
 
 	if (ch.isAddiWpt() || ch.isCustomWpt()) {
-	    ret.append("    <desc>").append(SafeXML.cleanGPX(ch.getCacheName())).append("</desc>").append(newLine);
+	    ret.append("    <desc>").append(SafeXML.cleanGPX(ch.getName())).append("</desc>").append(newLine);
 	} else {
-	    ret.append("    <desc>").append(SafeXML.cleanGPX(ch.getCacheName()))//
+	    ret.append("    <desc>").append(SafeXML.cleanGPX(ch.getName()))//
 		    .append(" by ")//
-		    .append(SafeXML.cleanGPX(ch.getCacheOwner()))//
+		    .append(SafeXML.cleanGPX(ch.getOwner()))//
 		    .append(", ")//
 		    .append(CacheType.type2GSTypeTag(ch.getType()))//
 		    .append(" (")//
@@ -687,8 +687,8 @@ public class GpxExportNg {
 
 	if (exportStyle == PQEXTENSIONS || exportStyle == MYFINDS) {
 	    if (!ch.isCustomWpt()) {
-		ret.append("    <url>").append(ch.getCacheDetails(true).URL).append("</url>").append(newLine);
-		ret.append("    <urlname>").append(SafeXML.cleanGPX(ch.getCacheName())).append("</urlname>").append(newLine);
+		ret.append("    <url>").append(ch.getDetails().URL).append("</url>").append(newLine);
+		ret.append("    <urlname>").append(SafeXML.cleanGPX(ch.getName())).append("</urlname>").append(newLine);
 	    }
 	}
 
@@ -729,21 +729,21 @@ public class GpxExportNg {
 		.append("\" available=\"").append(ch.isAvailable() ? TRUE : FALSE)//
 		.append("\" archived=\"").append(ch.isArchived() ? TRUE : FALSE)//
 		.append("\" xmlns:groundspeak=\"" + xmlnspq + "\">").append(newLine)//
-		.append("      <groundspeak:name>").append(SafeXML.cleanGPX(ch.getCacheName())).append("</groundspeak:name>").append(newLine)//
-		.append("      <groundspeak:placed_by>").append(SafeXML.cleanGPX(ch.getCacheOwner())).append("</groundspeak:placed_by>").append(newLine)//
-		.append("      <groundspeak:owner id=\"").append("31415").append("\">").append(SafeXML.cleanGPX(ch.getCacheOwner())).append("</groundspeak:owner>").append(newLine)//
+		.append("      <groundspeak:name>").append(SafeXML.cleanGPX(ch.getName())).append("</groundspeak:name>").append(newLine)//
+		.append("      <groundspeak:placed_by>").append(SafeXML.cleanGPX(ch.getOwner())).append("</groundspeak:placed_by>").append(newLine)//
+		.append("      <groundspeak:owner id=\"").append("31415").append("\">").append(SafeXML.cleanGPX(ch.getOwner())).append("</groundspeak:owner>").append(newLine)//
 		.append("      <groundspeak:type>").append(CacheType.type2GSTypeTag(ch.getType())).append("</groundspeak:type>").append(newLine)//
-		.append("      <groundspeak:container>").append(CacheSize.cw2ExportString(ch.getCacheSize())).append("</groundspeak:container>").append(newLine)//
+		.append("      <groundspeak:container>").append(CacheSize.cw2ExportString(ch.getSize())).append("</groundspeak:container>").append(newLine)//
 		.append("      <groundspeak:attributes>").append(newLine)//
 		.append(formatAttributes())// ab pq Version 1/0/1
 		.append("      </groundspeak:attributes>").append(newLine)//
 		.append("      <groundspeak:difficulty>").append(CacheTerrDiff.shortDT(ch.getDifficulty())).append("</groundspeak:difficulty>").append(newLine)//
 		.append("      <groundspeak:terrain>").append(CacheTerrDiff.shortDT(ch.getTerrain())).append("</groundspeak:terrain>").append(newLine)//
-		.append("      <groundspeak:country>").append(SafeXML.cleanGPX(ch.getCacheDetails(true).Country)).append("</groundspeak:country>").append(newLine)//
-		.append("      <groundspeak:state>").append(SafeXML.cleanGPX(ch.getCacheDetails(true).State)).append("</groundspeak:state>").append(newLine)//
+		.append("      <groundspeak:country>").append(SafeXML.cleanGPX(ch.getDetails().Country)).append("</groundspeak:country>").append(newLine)//
+		.append("      <groundspeak:state>").append(SafeXML.cleanGPX(ch.getDetails().State)).append("</groundspeak:state>").append(newLine)//
 		.append("      <groundspeak:short_description html=\"").append(ch.isHTML() ? TRUE : FALSE).append("\"></groundspeak:short_description>").append(newLine)//
 		.append("      <groundspeak:long_description html=\"").append(ch.isHTML() ? TRUE : FALSE).append("\">").append(SafeXML.cleanGPX(formatLongDescription())).append("</groundspeak:long_description>").append(newLine)//
-		.append("      <groundspeak:encoded_hints>").append(SafeXML.cleanGPX(Common.rot13(ch.getCacheDetails(true).Hints))).append("</groundspeak:encoded_hints>").append(newLine)//
+		.append("      <groundspeak:encoded_hints>").append(SafeXML.cleanGPX(Common.rot13(ch.getDetails().Hints))).append("</groundspeak:encoded_hints>").append(newLine)//
 		.append("      <groundspeak:logs>").append(newLine)//
 		.append(formatLogs())//
 		.append("      </groundspeak:logs>").append(newLine)//
@@ -760,11 +760,11 @@ public class GpxExportNg {
 	StringBuffer ret_____ = new StringBuffer();
 	ret_____.append("    <gsak:wptExtension xmlns:gsak=\"" + xmlnsgsak + "\">").append(newLine); //
 	if (ch.hasNote()) // eigentlich  nur die von GC, aber
-	    ret_____.append("      <gsak:GcNote>").append(SafeXML.cleanGPX(ch.getCacheDetails(false).getGCNotes())).append("</gsak:GcNote>").append(newLine); //
+	    ret_____.append("      <gsak:GcNote>").append(SafeXML.cleanGPX(ch.getDetails().getGCNotes())).append("</gsak:GcNote>").append(newLine); //
 	if (ch.isSolved()) {
 	    // wir kennen die OriginalKoordinaten nicht, aber es gibt wohl nichts für nur corrected coordinates
-	    ret_____.append("      <gsak:LatBeforeCorrect>").append(ch.getPos().getLatDeg(TransformCoordinates.DD)).append("</gsak:LatBeforeCorrect>").append(newLine) //
-		    .append("      <gsak:LonBeforeCorrect>").append(ch.getPos().getLonDeg(TransformCoordinates.DD)).append("</gsak:LonBeforeCorrect>").append(newLine); //
+	    ret_____.append("      <gsak:LatBeforeCorrect>").append(ch.getWpt().getLatDeg(TransformCoordinates.DD)).append("</gsak:LatBeforeCorrect>").append(newLine) //
+		    .append("      <gsak:LonBeforeCorrect>").append(ch.getWpt().getLonDeg(TransformCoordinates.DD)).append("</gsak:LonBeforeCorrect>").append(newLine); //
 	}
 	if (Preferences.itself().useGCFavoriteValue)
 	    ret_____.append("      <gsak:FavPoints>").append("" + ch.getNumRecommended()).append("</gsak:FavPoints>").append(newLine); //
@@ -791,8 +791,8 @@ public class GpxExportNg {
     private String formatTbs() {
 	StringBuffer ret = new StringBuffer();
 	Travelbug Tb;
-	for (int i = 0; i < ch.getCacheDetails(true).Travelbugs.size(); i++) {
-	    Tb = ch.getCacheDetails(true).Travelbugs.getTB(i);
+	for (int i = 0; i < ch.getDetails().Travelbugs.size(); i++) {
+	    Tb = ch.getDetails().Travelbugs.getTB(i);
 	    ret.append("        <groundspeak:travelbug id=\"").//
 		    append(Integer.toString(i)).//
 		    append("\" ref=\"TB\">").//
@@ -814,9 +814,9 @@ public class GpxExportNg {
     private String formatAttributes() {
 	StringBuffer ret = new StringBuffer();
 	Attribute attrib;
-	for (int i = 0; i < ch.getCacheDetails(true).attributes.count(); i++) {
+	for (int i = 0; i < ch.getDetails().attributes.count(); i++) {
 	    // <groundspeak:attribute id="X" inc="Y">text für X</groundspeak:attribute>
-	    attrib = ch.getCacheDetails(true).attributes.getAttribute(i);
+	    attrib = ch.getDetails().attributes.getAttribute(i);
 	    if (attrib.getGCId().length() > 0) {
 		ret.append("        <groundspeak:attribute id=\"").//
 			append(attrib.getGCId()).//
@@ -836,17 +836,17 @@ public class GpxExportNg {
 
 	if (exportStyle == MYFINDS) {
 	    if (ch.isFound()) {
-		CacheHolderDetail chD = ch.getCacheDetails(false);
+		CacheHolderDetail chD = ch.getDetails();
 		// perhaps there is no Ownlog yet
 		if (chD.OwnLog == null) {
-		    Preferences.itself().log(chD.getParent().getWayPoint() + " missing own Log", null);
+		    Preferences.itself().log(chD.getParent().getCode() + " missing own Log", null);
 		    return "";
 		} else {
 		    addLog(chD.OwnLog);
 		}
 	    }
 	} else { // it is PQ
-	    LogList logs = ch.getCacheDetails(false).CacheLogs;
+	    LogList logs = ch.getDetails().CacheLogs;
 
 	    int exportlogs;
 	    if (maxLogs < logs.size()) {
@@ -884,7 +884,7 @@ public class GpxExportNg {
 		if (theLog.isOwnLog()) {
 		    anzOwnLogs = anzOwnLogs + 1;
 		    if (anzOwnLogs > 1) {
-			Preferences.itself().log("doppelter eigener Fund" + ch.getWayPoint(), null);
+			Preferences.itself().log("doppelter eigener Fund" + ch.getCode(), null);
 		    }
 		}
 	    }
@@ -895,8 +895,8 @@ public class GpxExportNg {
     private Log createAttrLog(int exportlogs) {
 	StringBuffer logText = new StringBuffer();
 	if (attrib2Log) {
-	    for (int i = 0; i < ch.getCacheDetails(true).attributes.count(); i++) {
-		Attribute attrib = ch.getCacheDetails(true).attributes.getAttribute(i);
+	    for (int i = 0; i < ch.getDetails().attributes.count(); i++) {
+		Attribute attrib = ch.getDetails().attributes.getAttribute(i);
 		logText.append(attrib.getInc() == 1 ? "Yes: " : "No: ").append(attrib.getMsg()).append("<br />").append(newLine);
 	    }
 	}
@@ -906,7 +906,7 @@ public class GpxExportNg {
 	}
 
 	if (ch.hasNote()) {
-	    logText.append(SafeXML.cleanGPX(ch.getCacheDetails(false).getCacheNotes())).append("<br />").append(newLine);
+	    logText.append(SafeXML.cleanGPX(ch.getDetails().getCacheNotes())).append("<br />").append(newLine);
 	}
 
 	/*
@@ -1004,11 +1004,11 @@ public class GpxExportNg {
      */
     private String formatLongDescription() {
 	if (ch.isAddiWpt() || ch.isCustomWpt()) {
-	    return ch.getCacheDetails(false).LongDescription;
+	    return ch.getDetails().LongDescription;
 	} else {
 	    StringBuffer ret = new StringBuffer();
 	    String delim = "";
-	    ret.append(ch.getCacheDetails(true).LongDescription);
+	    ret.append(ch.getDetails().LongDescription);
 	    if (ch.isHTML()) {
 		delim = "<br />";
 	    } else {
@@ -1027,12 +1027,12 @@ public class GpxExportNg {
 		while (iter.hasNext()) {
 		    CacheHolder addi = (CacheHolder) iter.next();
 		    Transformer trans = new Transformer(true);
-		    trans.add(new Regex("@@ADDIID@@", addi.getWayPoint()));
-		    trans.add(new Regex("@@ADDISHORT@@", addi.getCacheName()));
+		    trans.add(new Regex("@@ADDIID@@", addi.getCode()));
+		    trans.add(new Regex("@@ADDISHORT@@", addi.getName()));
 		    trans.add(new Regex("@@ADDIDELIM@@", delim));
-		    trans.add(new Regex("@@ADDILAT@@", formatAddiLatLon(addi.getPos())));
+		    trans.add(new Regex("@@ADDILAT@@", formatAddiLatLon(addi.getWpt())));
 		    trans.add(new Regex("@@ADDILON@@", ""));
-		    trans.add(new Regex("@@ADDILONG@@", addi.getCacheDetails(true).LongDescription));
+		    trans.add(new Regex("@@ADDILONG@@", addi.getDetails().LongDescription));
 		    ret.append(trans.replaceAll(GPXADDIINMAIN));
 		}
 		ret.append(delim).append(newLine);

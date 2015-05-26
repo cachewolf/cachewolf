@@ -71,7 +71,7 @@ public class GCVoteImporter extends MinML {
 		CacheHolder ch = cacheDB.get(i);
 		if (ch.isVisible()) {
 		    if (ch.isCacheWpt()) {
-			GCVWaypoints += ch.getWayPoint() + ",";
+			GCVWaypoints += ch.getCode() + ",";
 		    }
 		    countWaypoints++;
 		    h.progress = (float) countWaypoints / (float) totalWaypoints;

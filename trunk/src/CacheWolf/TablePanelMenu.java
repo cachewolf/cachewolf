@@ -357,7 +357,7 @@ public class TablePanelMenu extends MenuBar {
 		    }
 		    if (!ch.isAddiWpt() && !alreadySaid) {
 			alreadySaid = true;
-			new InfoBox(MyLocale.getMsg(327, "Information"), ch.getWayPoint() + MyLocale.getMsg(5002, ": At the moment this function is only applicable for geocaching.com and opencaching.")).wait(FormBase.OKB);
+			new InfoBox(MyLocale.getMsg(327, "Information"), ch.getCode() + MyLocale.getMsg(5002, ": At the moment this function is only applicable for geocaching.com and opencaching.")).wait(FormBase.OKB);
 		    }
 		}
 
@@ -368,7 +368,7 @@ public class TablePanelMenu extends MenuBar {
 	for (int j = 0; j < cachesToUpdate.size(); j++) {
 	    int i = ((Integer) cachesToUpdate.get(j)).intValue();
 	    ch = cacheDB.get(i);
-	    infB.setInfo(MyLocale.getMsg(5513, "Loading: ") + ch.getWayPoint() + " (" + (j + 1) + " / " + cachesToUpdate.size() + ")");
+	    infB.setInfo(MyLocale.getMsg(5513, "Loading: ") + ch.getCode() + " (" + (j + 1) + " / " + cachesToUpdate.size() + ")");
 	    infB.redisplay();
 	    if (ch.isGC()) {
 		int test = gcImporter.spiderSingle(i, infB);
@@ -875,7 +875,7 @@ public class TablePanelMenu extends MenuBar {
 	    // /////////////////////////////////////////////////////////////////////
 	    if (mev.selectedItem == orgNewWP) {
 		if (MainTab.itself.tablePanel.getSelectedCache() >= 0)
-		    MainTab.itself.lastselected = cacheDB.get(MainTab.itself.tablePanel.getSelectedCache()).getWayPoint();
+		    MainTab.itself.lastselected = cacheDB.get(MainTab.itself.tablePanel.getSelectedCache()).getCode();
 		else
 		    MainTab.itself.lastselected = "";
 		MainTab.itself.newWaypoint(new CacheHolder());
@@ -916,8 +916,8 @@ public class TablePanelMenu extends MenuBar {
 		    cwp.setPosition(i);
 		    CacheHolder ch = cacheDB.get(i);
 		    if (ch.mainCache == null) {
-			ch.setHasNote(!ch.getCacheDetails(false).getCacheNotes().equals(""));
-			ch.setHasSolver(!ch.getCacheDetails(false).getSolver().equals(""));
+			ch.setHasNote(!ch.getDetails().getCacheNotes().equals(""));
+			ch.setHasSolver(!ch.getDetails().getSolver().equals(""));
 		    }
 		    if (cwp.isClosed())
 			break;

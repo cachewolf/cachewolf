@@ -117,7 +117,7 @@ public class GarminPicExporter {
 	    if (ch.isVisible()) {
 		if (ch.isIncomplete()) {
 		    exportErrors++;
-		    Preferences.itself().log("GarminPicExporter: skipping export of incomplete waypoint " + ch.getWayPoint());
+		    Preferences.itself().log("GarminPicExporter: skipping export of incomplete waypoint " + ch.getCode());
 		    continue;
 		}
 		exportErrors += copyImages(ch, targetDir);
@@ -136,7 +136,7 @@ public class GarminPicExporter {
 
     private int copyImages(CacheHolder ch, String targetDir) {
 	String dirName = "";
-	CacheHolderDetail det = ch.getCacheDetails(false);
+	CacheHolderDetail det = ch.getDetails();
 	if (det == null)
 	    return 1; // No details; increment export errors
 	int nImg = det.images.size();
@@ -174,7 +174,7 @@ public class GarminPicExporter {
 		    // Now we have a jpg and need to ensure that the directory structure
 		    // has been created before copying the picture
 		    if (need2CreateDir) {
-			dirName = createPicDir(targetDir, ch.getWayPoint());
+			dirName = createPicDir(targetDir, ch.getCode());
 			if (dirName == null)
 			    return 1; // Failed to create dir
 			need2CreateDir = false;

@@ -63,15 +63,15 @@ public class PDATravelbugMenuPanel extends PDAMenu {
 	    CacheDB cacheDB = MainForm.profile.cacheDB;
 	    if (curCacheNo >= 0 && curCacheNo < cacheDB.size()) {
 		CacheHolder ch = cacheDB.get(curCacheNo);
-		String waypoint = ch.getWayPoint();
-		TravelbugList tblSrcCache = ch.getCacheDetails(true).Travelbugs;
+		String waypoint = ch.getCode();
+		TravelbugList tblSrcCache = ch.getDetails().Travelbugs;
 
 		Travelbug tb = TravelbugPickup.pickupTravelbug(tblSrcCache);
 		if (tb != null) {
 		    view.model.allTravelbugJourneys.addTbPickup(tb, MainForm.profile.name, waypoint);
-		    CacheHolderDetail cacheDetails = ch.getCacheDetails(true);
+		    CacheHolderDetail cacheDetails = ch.getDetails();
 		    ch.hasBugs(cacheDetails.Travelbugs.size() > 0);
-		    ch.save();
+		    ch.saveCacheDetails();
 		    view.model.allTravelbugJourneys.saveTravelbugsFile();
 		}
 	    }
@@ -98,9 +98,9 @@ public class PDATravelbugMenuPanel extends PDAMenu {
 	    tbj.setFromWaypoint("");
 	    tbj.setFromLogged(true);
 	    view.model.allTravelbugJourneys.add(tbj);
-	    CacheHolderDetail cacheDetails = ch.getCacheDetails(true);
+	    CacheHolderDetail cacheDetails = ch.getDetails();
 	    ch.hasBugs(cacheDetails.Travelbugs.size() > 0);
-	    ch.save();
+	    ch.saveCacheDetails();
 	    view.model.allTravelbugJourneys.saveTravelbugsFile();
 	    view.createShowSet();
 	    view.setupTBButtons();

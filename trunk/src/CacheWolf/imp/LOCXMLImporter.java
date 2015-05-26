@@ -82,19 +82,19 @@ public class LOCXMLImporter extends MinML {
 	    return;
 	}
 	if (name.equals("coord")) {
-	    holder.setPos(new CoordinatePoint(Common.parseDouble(atts.getValue("lat")), Common.parseDouble(atts.getValue("lon"))));
+	    holder.setWpt(new CoordinatePoint(Common.parseDouble(atts.getValue("lat")), Common.parseDouble(atts.getValue("lon"))));
 	    return;
 	}
     }
 
     public void endElement(String name) {
 	if (name.equals("name")) {
-	    holder.setCacheName(strData.replace('\n', ' ').replace('\r', ' ').trim());
+	    holder.setName(strData.replace('\n', ' ').replace('\r', ' ').trim());
 	}
 
 	if (name.equals("waypoint")) {
 	    int index;
-	    index = cacheDB.getIndex(holder.getWayPoint());
+	    index = cacheDB.getIndex(holder.getCode());
 	    if (index == -1) {
 		holder.setNew(true);
 		cacheDB.add(holder);
@@ -104,13 +104,13 @@ public class LOCXMLImporter extends MinML {
 		holder.setNew(false);
 	    }
 	    // save all (after each cache???)
-	    holder.save();
+	    holder.saveCacheDetails();
 	    MainForm.profile.saveIndex(Profile.NO_SHOW_PROGRESS_BAR);
 	    return;
 	}
 
 	if (name.equals("link")) {
-	    holder.getCacheDetails(false).URL = strData;
+	    holder.getDetails().URL = strData;
 	    return;
 	}
     }
@@ -131,7 +131,7 @@ public class LOCXMLImporter extends MinML {
 	    ch.setType(CacheType.CW_TYPE_CUSTOM); // loc is always type "Geocache" but is incomplete D/T
 	    ch.setTerrain(CacheTerrDiff.CW_DT_UNSET);
 	    ch.setDifficulty(CacheTerrDiff.CW_DT_UNSET);
-	    ch.setCacheSize(CacheSize.CW_SIZE_NOTCHOSEN);
+	    ch.setSize(CacheSize.CW_SIZE_NOTCHOSEN);
 	}
 	return ch;
     }

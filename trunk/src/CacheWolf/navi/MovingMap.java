@@ -298,7 +298,7 @@ public final class MovingMap extends Form implements ICommandListener {
     }
 
     public void destChanged(CacheHolder ch) {
-	final CWPoint d = new CWPoint(ch.getPos()); // d is never null
+	final CWPoint d = new CWPoint(ch.getWpt()); // d is never null
 	if (!running || !d.isValid() || gotoPos != null && gotoPos.where.equals(d))
 	    return;
 	removeMapSymbol("goto");
@@ -1050,15 +1050,15 @@ public final class MovingMap extends Form implements ICommandListener {
 	final BoundingBox screenArea = new BoundingBox(ScreenXY2LatLon(0, 0), ScreenXY2LatLon(width, height));
 	for (int i = cacheDB.size() - 1; i >= 0; i--) {
 	    ch = cacheDB.get(i);
-	    if (screenArea.isInBound(ch.getPos())) {
+	    if (screenArea.isInBound(ch.getWpt())) {
 		// because visible and valid don't change while showing map
 		// -->need no remove
-		if (ch.isVisible() && ch.getPos().isValid()) {
+		if (ch.isVisible() && ch.getWpt().isValid()) {
 		    if (Preferences.itself().showCachesOnMap) {
-			addSymbolIfNecessary(ch.getWayPoint(), ch, CacheType.getBigCacheIcon(ch), ch.getPos());
+			addSymbolIfNecessary(ch.getCode(), ch, CacheType.getBigCacheIcon(ch), ch.getWpt());
 		    } else {
 			if (ch.isChecked || ch == cacheDB.get(MainTab.itself.tablePanel.getSelectedCache())) {
-			    addSymbolIfNecessary(ch.getWayPoint(), ch, CacheType.getBigCacheIcon(ch), ch.getPos());
+			    addSymbolIfNecessary(ch.getCode(), ch, CacheType.getBigCacheIcon(ch), ch.getWpt());
 			} else {
 			    removeMapSymbol(ch);
 			}
@@ -1077,9 +1077,9 @@ public final class MovingMap extends Form implements ICommandListener {
 		gotoPosCH = (CacheHolder) gotoPos.mapObject;
 	    }
 	    if (gotoPosCH != null) {
-		if (screenArea.isInBound(gotoPosCH.getPos())) {
+		if (screenArea.isInBound(gotoPosCH.getWpt())) {
 		    if (!Preferences.itself().showCachesOnMap) {
-			addSymbolIfNecessary(gotoPosCH.getWayPoint(), gotoPosCH, CacheType.getBigCacheIcon(gotoPosCH), gotoPosCH.getPos());
+			addSymbolIfNecessary(gotoPosCH.getCode(), gotoPosCH, CacheType.getBigCacheIcon(gotoPosCH), gotoPosCH.getWpt());
 		    }
 		    addSymbolIfNecessary("goto", gotoPosCH, imgGoto, gotoPos.where);
 		}
@@ -1089,8 +1089,8 @@ public final class MovingMap extends Form implements ICommandListener {
 	removeMapSymbol("selectedCache");
 	ch = cacheDB.get(MainTab.itself.tablePanel.getSelectedCache());
 	if (ch != null) {
-	    if (screenArea.isInBound(ch.getPos())) {
-		addSymbolIfNecessary("selectedCache", ch, imgSelectedCache, ch.getPos());
+	    if (screenArea.isInBound(ch.getWpt())) {
+		addSymbolIfNecessary("selectedCache", ch, imgSelectedCache, ch.getWpt());
 	    }
 	}
     }
@@ -2483,21 +2483,21 @@ class MovingMapPanel extends InteractivePanel implements EventListener {
 			    ch = clickedCache.mainCache;
 			}
 			if (ch != null) {
-			    kontextMenu.addItem(new MenuItem(ch.getWayPoint() + " '" + ch.getCacheName() + "'"));
+			    kontextMenu.addItem(new MenuItem(ch.getCode() + " '" + ch.getName() + "'"));
 			    if (!ch.isCustomWpt()) {
 				kontextMenu.addItem(new MenuItem( //
-					CacheSize.cw2ExportString(ch.getCacheSize()) + //
+					CacheSize.cw2ExportString(ch.getSize()) + //
 						" D: " + CacheTerrDiff.longDT(ch.getDifficulty()) + //
 						" T: " + CacheTerrDiff.longDT(ch.getTerrain()) + //
 						""));
 				kontextMenu.addItem(new MenuItem( //
-					"" + ch.getCacheOwner() + //
-						" " + ch.getDateHidden() + //
+					"" + ch.getOwner() + //
+						" " + ch.getHidden() + //
 						""));
 			    }
 			}
 			if (clickedCache.isAddiWpt()) {
-			    kontextMenu.addItem(new MenuItem(clickedCache.getWayPoint() + " '" + clickedCache.getCacheName() + "'"));
+			    kontextMenu.addItem(new MenuItem(clickedCache.getCode() + " '" + clickedCache.getName() + "'"));
 			}
 			kontextMenu.addItem(new MenuItem("-"));
 			openCacheDescMenuItem = new MenuItem(MyLocale.getMsg(201, "Open Desctiption") + "$o");
@@ -2507,7 +2507,7 @@ class MovingMapPanel extends InteractivePanel implements EventListener {
 			gotoCacheMenuItem = new MenuItem(MyLocale.getMsg(4279, "Goto") + "$g");
 			kontextMenu.addItem(gotoCacheMenuItem);
 			if (!clickedCache.isFound()) {
-			    int msgNr = clickedCache.getLogMsgNr();
+			    int msgNr = CacheType.getLogMsgNr(clickedCache.getType());
 			    markFoundMenuItem = new MenuItem(MyLocale.getMsg(msgNr, "Found") + "$m");
 			    kontextMenu.addItem(markFoundMenuItem);
 			}
@@ -2515,13 +2515,13 @@ class MovingMapPanel extends InteractivePanel implements EventListener {
 			    addCachetoListMenuItem = new MenuItem(MyLocale.getMsg(199, "Add to cachetour"));
 			    kontextMenu.addItem(addCachetoListMenuItem);
 			}
-			String stmp = clickedCache.getCacheDetails(false).Hints;
+			String stmp = clickedCache.getDetails().Hints;
 			stmp = stmp.substring(0, Math.min(10, stmp.length())).trim();
 			if (!stmp.equals("")) {
 			    kontextMenu.addItem(hintMenuItem = new MenuItem("Hint: " + stmp));
 			}
 			if (clickedCache.getType() == CacheType.CW_TYPE_QUESTION) {
-			    stmp = clickedCache.getCacheDetails(false).LongDescription;
+			    stmp = clickedCache.getDetails().LongDescription;
 			    if (!stmp.equals("")) {
 				kontextMenu.addItem(missionMenuItem = new MenuItem("?: "));
 			    }
@@ -2547,7 +2547,7 @@ class MovingMapPanel extends InteractivePanel implements EventListener {
 	if (which instanceof MapSymbol) {
 	    if (((MapSymbol) which).mapObject instanceof CacheHolder) {
 		final CacheHolder ch = (CacheHolder) ((MapSymbol) which).mapObject;
-		this.toolTip = ch.getWayPoint() + "\n" + ch.getCacheName();
+		this.toolTip = ch.getCode() + "\n" + ch.getName();
 	    }
 	}
 	return true;
@@ -2582,9 +2582,9 @@ class MovingMapPanel extends InteractivePanel implements EventListener {
 			leaveMovingMap();
 			final MainTab mainT = MainTab.itself;
 			if (action == openCacheDescMenuItem)
-			    mainT.openPanel(clickedCache.getWayPoint(), 2);
+			    mainT.openPanel(MainTab.MAP_CARD, clickedCache.getCode(), MainTab.DESCRIPTION_CARD);
 			else
-			    mainT.openPanel(clickedCache.getWayPoint(), 1);
+			    mainT.openPanel(MainTab.MAP_CARD, clickedCache.getCode(), MainTab.DETAILS_CARD);
 		    }
 		    if (action == gotoCacheMenuItem) {
 			closeKontextMenu();
@@ -2594,38 +2594,38 @@ class MovingMapPanel extends InteractivePanel implements EventListener {
 			closeKontextMenu();
 			final Time dtm = new Time();
 			dtm.setFormat("yyyy-MM-dd HH:mm");
-			clickedCache.setCacheStatus(dtm.toString());
+			clickedCache.setStatus(dtm.toString());
 			clickedCache.setFound(true);
-			clickedCache.save();
+			clickedCache.saveCacheDetails();
 			if (clickedCache.hasAddiWpt()) {
 			    CacheHolder addiWpt;
 			    for (int i = clickedCache.addiWpts.getCount() - 1; i >= 0; i--) {
 				addiWpt = (CacheHolder) clickedCache.addiWpts.get(i);
-				addiWpt.setCacheStatus(dtm.toString());
+				addiWpt.setStatus(dtm.toString());
 				addiWpt.setFound(true);
-				addiWpt.save();
-				mm.removeMapSymbol(addiWpt.getWayPoint());
+				addiWpt.saveCacheDetails();
+				mm.removeMapSymbol(addiWpt.getCode());
 			    }
 			}
-			mm.removeMapSymbol(clickedCache.getWayPoint());
+			mm.removeMapSymbol(clickedCache.getCode());
 			mm.updateSymbolPositions();
 			this.repaintNow();
 		    }
 		    if (action == newWayPointMenuItem) {
 			leaveMovingMap();
 			final CacheHolder newWP = new CacheHolder();
-			newWP.setPos(mm.ScreenXY2LatLon(saveMapLoc.x, saveMapLoc.y));
+			newWP.setWpt(mm.ScreenXY2LatLon(saveMapLoc.x, saveMapLoc.y));
 			MainTab.itself.newWaypoint(newWP);
 		    }
 		    if (action == addCachetoListMenuItem) {
 			closeKontextMenu();
-			MainForm.itself.addCache(clickedCache.getWayPoint());
+			MainForm.itself.addCache(clickedCache.getCode());
 		    }
 		    if (action == hintMenuItem) {
-			new InfoBox("Hint", STRreplace.replace(Common.rot13(clickedCache.getCacheDetails(false).Hints), "<br>", "\n")).wait(FormBase.OKB);
+			new InfoBox("Hint", STRreplace.replace(Common.rot13(clickedCache.getDetails().Hints), "<br>", "\n")).wait(FormBase.OKB);
 		    }
 		    if (action == missionMenuItem) {
-			new InfoBox("Mission", STRreplace.replace(clickedCache.getCacheDetails(false).LongDescription, "<br>", "\n")).wait(FormBase.OKB);
+			new InfoBox("Mission", STRreplace.replace(clickedCache.getDetails().LongDescription, "<br>", "\n")).wait(FormBase.OKB);
 		    }
 		    /*
 		     * for (int i=0; i<miLuminary.length; i++) { if (action == miLuminary[i]) { kontextMenu.close(); mm.MainTab.itself.navigate.setLuminary(i); mm.updateGps(mm.MainTab.itself.navigate.gpsPos.getFix()); miLuminary[i].modifiers |=

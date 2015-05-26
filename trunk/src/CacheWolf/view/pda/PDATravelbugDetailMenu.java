@@ -73,11 +73,11 @@ public class PDATravelbugDetailMenu extends PDAMenu {
 	    CacheDB cacheDB = MainForm.profile.cacheDB;
 	    if (curCacheNo >= 0 && curCacheNo < cacheDB.size()) {
 		CacheHolder ch = cacheDB.get(curCacheNo);
-		CacheHolderDetail cacheDetails = ch.getCacheDetails(true);
+		CacheHolderDetail cacheDetails = ch.getDetails();
 		cacheDetails.Travelbugs.add(tb);
-		journeyScreen.model.allTravelbugJourneys.addTbDrop(tb, MainForm.profile.name, ch.getWayPoint());
+		journeyScreen.model.allTravelbugJourneys.addTbDrop(tb, MainForm.profile.name, ch.getCode());
 		ch.hasBugs(true);
-		ch.save();
+		ch.saveCacheDetails();
 		// Set Input fields to the new Values:
 		view.getInpToWaypoint().setText(view.getTravelbug().getToWaypoint());
 		view.getInpToProfile().setText(view.getTravelbug().getToProfile());

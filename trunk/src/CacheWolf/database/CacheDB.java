@@ -38,13 +38,9 @@ import ewe.util.Vector;
  */
 public class CacheDB {
 
-    /**
-     * Stores the CacheHolder objects
-     */
+    /** Stores the CacheHolder objects */
     private Vector vectorDB = new Vector();
-    /**
-     * Stores the reference of waypoints to index positions (in vectorDB).
-     */
+    /** Stores the reference of waypoints to index positions (in vectorDB). */
     private Hashtable hashDB = new Hashtable();
 
     /**
@@ -81,18 +77,19 @@ public class CacheDB {
     }
 
     /**
-     * Gets the stored CacheHolder object by its waypoint. If no such Cache exists,
-     * null is returned.
+     * Gets the stored CacheHolder object by its waypoint.<br>
+     * If no such Cache exists, null is returned.<br>
      * 
      * @param waypoint
      *            Waypoint of cache we want
      * @return CacheHolder object with corresponding waypoint
      */
     public CacheHolder get(String waypoint) {
-	int idx = this.getIndex(waypoint);
-	if (idx < 0)
+	MutableInteger obj = (MutableInteger) hashDB.get(waypoint);
+	if (obj == null)
 	    return null;
-	return this.get(idx);
+	// if there is a hash, there is also a vector
+	return (CacheHolder) vectorDB.get(obj.getInt());
     }
 
     /**
@@ -103,12 +100,12 @@ public class CacheDB {
      * @return Index of CacheHolder object in cache list.
      */
     public int getIndex(String waypoint) {
-	Object obj = hashDB.get(waypoint);
+	MutableInteger obj = (MutableInteger) hashDB.get(waypoint);
 	int result;
 	if (obj == null) {
 	    result = -1;
 	} else {
-	    result = ((MutableInteger) obj).getInt();
+	    result = obj.getInt();
 	}
 	return result;
     }
@@ -121,7 +118,7 @@ public class CacheDB {
      * @return Index of CacheHolder object in cache list.
      */
     public int getIndex(CacheHolder ch) {
-	return getIndex(ch.getWayPoint());
+	return getIndex(ch.getCode());
     }
 
     /**
@@ -136,9 +133,9 @@ public class CacheDB {
     public void set(int index, CacheHolder ch) {
 	CacheHolder oldObj = (CacheHolder) vectorDB.get(index);
 	vectorDB.set(index, ch);
-	hashDB.put(ch.getWayPoint(), this.getIntObj(ch.getWayPoint(), index));
-	if (oldObj != null && !oldObj.getWayPoint().equals(oldObj.getWayPoint())) {
-	    hashDB.remove(oldObj.getWayPoint());
+	hashDB.put(ch.getCode(), this.getIntObj(ch.getCode(), index));
+	if (oldObj != null && !oldObj.getCode().equals(oldObj.getCode())) {
+	    hashDB.remove(oldObj.getCode());
 	}
     }
 
@@ -155,7 +152,7 @@ public class CacheDB {
 	    this.set(this.getIndex(ch), ch);
 	} else {
 	    vectorDB.add(ch);
-	    hashDB.put(ch.getWayPoint(), this.getIntObj(ch.getWayPoint(), vectorDB.size() - 1));
+	    hashDB.put(ch.getCode(), this.getIntObj(ch.getCode(), vectorDB.size() - 1));
 	}
     }
 
@@ -221,7 +218,7 @@ public class CacheDB {
 		} else {
 		    vectorDB.add(ch);
 		}
-		hashDB.put(ch.getWayPoint(), this.getIntObj(ch.getWayPoint(), i));
+		hashDB.put(ch.getCode(), this.getIntObj(ch.getCode(), i));
 	    }
 	}
 	// If there are more elements in vectorDB than in the sum of sizes of cachesA and cachesB
@@ -263,12 +260,12 @@ public class CacheDB {
 	CacheHolder ch = this.get(index);
 	ch.releaseCacheDetails();
 	vectorDB.removeElementAt(index);
-	hashDB.remove(ch.getWayPoint());
+	hashDB.remove(ch.getCode());
 	// When one element has been removed, we have to update the index
 	// references in the hashtable, as the indexes of waypoints changed.
 	for (int i = index; i < vectorDB.size(); i++) {
 	    CacheHolder ch2 = this.get(i);
-	    hashDB.put(ch2.getWayPoint(), this.getIntObj(ch2.getWayPoint(), i));
+	    hashDB.put(ch2.getCode(), this.getIntObj(ch2.getCode(), i));
 	}
     }
 
@@ -286,7 +283,7 @@ public class CacheDB {
 	// references in the hashtable, as the indexes of waypoints changed.
 	for (int i = 0; i < vectorDB.size(); i++) {
 	    CacheHolder ch = this.get(i);
-	    hashDB.put(ch.getWayPoint(), this.getIntObj(ch.getWayPoint(), i));
+	    hashDB.put(ch.getCode(), this.getIntObj(ch.getCode(), i));
 	}
     }
 
@@ -313,7 +310,7 @@ public class CacheDB {
 	    int pos;
 	    CacheHolder currCache = (CacheHolder) vectorDB.get(i + oldSize);
 	    pos = i + oldSize;
-	    hashDB.put(currCache.getWayPoint(), this.getIntObj(currCache.getWayPoint(), pos));
+	    hashDB.put(currCache.getCode(), this.getIntObj(currCache.getCode(), pos));
 	}
     }
 

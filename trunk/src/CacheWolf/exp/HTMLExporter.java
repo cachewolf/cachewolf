@@ -103,6 +103,7 @@ public class HTMLExporter {
 
 	    String decSep = "."; // myFilter.decSep
 	    Regex dec = new Regex("[,.]", decSep);
+	    TemplateTable tt = new TemplateTable();
 
 	    for (int i = 0; i < counter; i++) {
 		h.progress = (float) (i + 1) / (float) counter;
@@ -112,11 +113,12 @@ public class HTMLExporter {
 		if (ch.isVisible()) {
 		    if (ch.isIncomplete()) {
 			exportErrors++;
-			Preferences.itself().log("HTMLExport: skipping export of incomplete waypoint " + ch.getWayPoint());
+			Preferences.itself().log("HTMLExport: skipping export of incomplete waypoint " + ch.getCode());
 			continue;
 		    }
-		    det = ch.getCacheDetails(false);
-		    varParams = ch.toHashtable(dec, null, 0, 30, -1, new AsciiCodec(), null, false, 2, expName);
+		    det = ch.getDetails();
+		    tt.set(ch);
+		    varParams = tt.toHashtable(dec, null, 0, 30, -1, new AsciiCodec(), null, false, 2, expName);
 		    cache_index.add(varParams);
 		    //We can generate the individual page here!
 		    try {
@@ -143,7 +145,7 @@ public class HTMLExporter {
 				if (Files.copy(MainForm.profile.dataDir + logImgFile, targetDir + logImgFile))
 				    logImg.add(logImgParams);
 				else {
-				    Preferences.itself().log("[HTMLExporter:Files]" + logImgFile + " " + ch.getWayPoint());
+				    Preferences.itself().log("[HTMLExporter:Files]" + logImgFile + " " + ch.getCode());
 				    exportErrors++;
 				}
 			    }
@@ -159,7 +161,7 @@ public class HTMLExporter {
 				if (Files.copy(MainForm.profile.dataDir + usrImgFile, targetDir + usrImgFile))
 				    usrImg.add(usrImgParams);
 				else {
-				    Preferences.itself().log("[HTMLExporter:Files]" + usrImgFile + " " + ch.getWayPoint());
+				    Preferences.itself().log("[HTMLExporter:Files]" + usrImgFile + " " + ch.getCode());
 				    exportErrors++;
 				}
 			    }
@@ -169,7 +171,7 @@ public class HTMLExporter {
 			    mapImg.clear();
 			    mapImgParams = new Hashtable();
 
-			    String mapImgFile = new String(ch.getWayPoint() + "_map.gif");
+			    String mapImgFile = new String(ch.getCode() + "_map.gif");
 			    // check if map file exists
 			    File test = new File(MainForm.profile.dataDir + mapImgFile);
 
@@ -179,17 +181,17 @@ public class HTMLExporter {
 				if (Files.copy(MainForm.profile.dataDir + mapImgFile, targetDir + mapImgFile))
 				    mapImg.add(mapImgParams);
 				else {
-				    Preferences.itself().log("[HTMLExporter:Files]" + mapImgFile + " " + ch.getWayPoint());
+				    Preferences.itself().log("[HTMLExporter:Files]" + mapImgFile + " " + ch.getCode());
 				    exportErrors++;
 				}
 				mapImgParams = new Hashtable();
-				mapImgFile = ch.getWayPoint() + "_map_2.gif";
+				mapImgFile = ch.getCode() + "_map_2.gif";
 				mapImgParams.put("FILE", mapImgFile);
 				mapImgParams.put("TEXT", mapImgFile);
 				if (Files.copy(MainForm.profile.dataDir + mapImgFile, targetDir + mapImgFile))
 				    mapImg.add(mapImgParams);
 				else {
-				    Preferences.itself().log("[HTMLExporter:Files]" + mapImgFile + " " + ch.getWayPoint());
+				    Preferences.itself().log("[HTMLExporter:Files]" + mapImgFile + " " + ch.getCode());
 				    exportErrors++;
 				}
 				page_tpl.setParam("mapImg", mapImg);
@@ -202,20 +204,20 @@ public class HTMLExporter {
 			    page_tpl.setParam("logImg", ""); // ???
 			    page_tpl.setParam("userImg", ""); // ???
 			    page_tpl.setParam("mapImg", ""); // ???
-			    Preferences.itself().log("[HTMLExporter:DoIt]Error " + ch.getWayPoint());
+			    Preferences.itself().log("[HTMLExporter:DoIt]Error " + ch.getCode());
 			    exportErrors++;
 			}
 
-			PrintWriter pagefile = new PrintWriter(new BufferedWriter(new FileWriter(targetDir + ch.getWayPoint() + ".html")));
+			PrintWriter pagefile = new PrintWriter(new BufferedWriter(new FileWriter(targetDir + ch.getCode() + ".html")));
 			pagefile.print(page_tpl.output());
 			pagefile.close();
 		    } catch (IllegalArgumentException e) {
-			Preferences.itself().log("[HTMLExporter:DoIt]" + ch.getWayPoint() + " is incomplete reason: ", e, true);
+			Preferences.itself().log("[HTMLExporter:DoIt]" + ch.getCode() + " is incomplete reason: ", e, true);
 			exportErrors++;
 			ch.setIncomplete(true);
 		    } catch (Exception e) {
 			exportErrors++;
-			Preferences.itself().log("[HTMLExporter:DoIt]" + ch.getWayPoint(), e, true);
+			Preferences.itself().log("[HTMLExporter:DoIt]" + ch.getCode(), e, true);
 		    }
 		}//if is black, filtered
 	    }

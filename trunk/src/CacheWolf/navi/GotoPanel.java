@@ -399,7 +399,7 @@ public final class GotoPanel extends CellPanel {
 	    // create new waypoint with current GPS-position
 	    if (ev.target == btnNewWpt) {
 		CacheHolder ch = new CacheHolder();
-		ch.setPos(Navigate.gpsPos);
+		ch.setWpt(Navigate.gpsPos);
 		ch.setType(CacheType.CW_TYPE_STAGE); // see CacheType.GC_AW_STAGE_OF_MULTI // TODO unfertig
 		MainTab.itself.newWaypoint(ch);
 	    }

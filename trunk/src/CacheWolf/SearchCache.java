@@ -69,13 +69,13 @@ public class SearchCache {
 		if (!ch.isVisible())
 		    break; // Reached end of visible records
 		if (searchInDescriptionAndNotes || searchInLogs) {
-		    chD = ch.getCacheDetails(false);
+		    chD = ch.getDetails();
 		} else {
 		    chD = null;
 		}
-		if (ch.getWayPoint().toUpperCase().indexOf(searchStr) < 0 //
-			&& ch.getCacheName().toUpperCase().indexOf(searchStr) < 0 //
-			&& ch.cacheStatus().toUpperCase().indexOf(searchStr) < 0 //
+		if (ch.getCode().toUpperCase().indexOf(searchStr) < 0 //
+			&& ch.getName().toUpperCase().indexOf(searchStr) < 0 //
+			&& ch.getStatus().toUpperCase().indexOf(searchStr) < 0 //
 			&& (!searchInDescriptionAndNotes //
 			|| chD.LongDescription.toUpperCase().indexOf(searchStr) < 0 //
 				&& chD.getCacheNotes().toUpperCase().indexOf(searchStr) < 0) //

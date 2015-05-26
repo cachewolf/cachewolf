@@ -48,7 +48,7 @@ public class NewCSVExporter extends Exporter {
     }
 
     public String record(CacheHolder ch) {
-	CacheHolderDetail chD = ch.getCacheDetails(false);
+	CacheHolderDetail chD = ch.getDetails();
 	//if (chD.State.equals("Baden-Württemberg")) {
 	int anz = chD.CacheLogs.size();
 	for (int i = anz - 1; i >= 0; i--) {
@@ -64,7 +64,7 @@ public class NewCSVExporter extends Exporter {
 	    }
 	}
 	//}
-	return ch.getWayPoint() + "\r\n";
+	return ch.getCode() + "\r\n";
     }
 
     public String trailer() {

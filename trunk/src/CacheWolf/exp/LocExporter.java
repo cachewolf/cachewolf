@@ -54,11 +54,11 @@ public class LocExporter extends Exporter {
     public String record(CacheHolder ch) {
 
 	// filter out not valid coords
-	if (!ch.getPos().isValid())
+	if (!ch.getWpt().isValid())
 	    return null;
 	StringBuffer strBuf = new StringBuffer(200);
 	strBuf.append("<waypoint>\r\n   <name id=\"");
-	String wptName = simplifyString(ch.getWayPoint());
+	String wptName = simplifyString(ch.getCode());
 	if (Preferences.itself().addDetailsToWaypoint) {
 	    wptName += getShortDetails(ch);
 	}
@@ -72,21 +72,21 @@ public class LocExporter extends Exporter {
 	    }
 	}
 	strBuf.append("\"><![CDATA[");
-	strBuf.append(simplifyString(ch.getCacheName()));
+	strBuf.append(simplifyString(ch.getName()));
 	if (Preferences.itself().addDetailsToName) {
 	    if (!Preferences.itself().addDetailsToWaypoint) {
 		strBuf.append(getShortDetails(ch));
 	    }
-	    CacheHolderDetail det = ch.getCacheDetails(true);
+	    CacheHolderDetail det = ch.getDetails();
 	    if ((!det.Hints.equals("null")) && (det.Hints.length() > 0)) {
 		strBuf.append(":");
 		strBuf.append(simplifyString(Common.rot13(det.Hints)));
 	    }
 	}
 	strBuf.append("]]></name>\r\n   <coord lat=\"");
-	strBuf.append(ch.getPos().getLatDeg(TransformCoordinates.DD));
+	strBuf.append(ch.getWpt().getLatDeg(TransformCoordinates.DD));
 	strBuf.append("\" lon=\"");
-	strBuf.append(ch.getPos().getLonDeg(TransformCoordinates.DD));
+	strBuf.append(ch.getWpt().getLonDeg(TransformCoordinates.DD));
 	strBuf.append("\"/>\r\n   <type>");
 	strBuf.append(gm.getIcon(ch));
 	strBuf.append("</type>\r\n</waypoint>\r\n");

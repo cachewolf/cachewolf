@@ -163,7 +163,7 @@ public class TablePanel extends CellPanel {
 	Vector oldVisibleCaches = null;
 	int sel = getSelectedCache();
 	if ((sel >= 0) && (sel < cacheDB.size())) // sel > cacheDB.size() can happen if you load a new profile, which is smaller than the old profile and you selected one cache that exceeds the number of caches in the new profile  
-	    wayPoint = cacheDB.get(sel).getWayPoint();
+	    wayPoint = cacheDB.get(sel).getCode();
 	else
 	    wayPoint = null;
 	// Then: remember all caches that are visible before the refresh
@@ -187,7 +187,7 @@ public class TablePanel extends CellPanel {
 		    int i;
 		    for (i = sel - 1; i >= 0; i--) {
 			CacheHolder checkCache = (CacheHolder) oldVisibleCaches.get(i);
-			rownum = MainForm.profile.cacheDB.getIndex(checkCache.getWayPoint()); //profile.cacheDB.getIndex(checkCache.getWayPoint());
+			rownum = MainForm.profile.cacheDB.getIndex(checkCache.getCode()); //profile.cacheDB.getIndex(checkCache.getWayPoint());
 			if ((rownum >= 0) && (rownum < myTableModel.numRows))
 			    break;
 			rownum = 0;
