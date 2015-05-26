@@ -128,8 +128,8 @@ public class KMLExporter extends Exporter {
 			h.progress = (float) expCount / (float) counter;
 			h.changed();
 
-			if (ch.getPos().isValid()) {
-			    str = record(ch, ch.getPos().getLatDeg(TransformCoordinates.DD).replace('.', this.decimalSeparator), ch.getPos().getLonDeg(TransformCoordinates.DD).replace('.', this.decimalSeparator));
+			if (ch.getWpt().isValid()) {
+			    str = record(ch, ch.getWpt().getLatDeg(TransformCoordinates.DD).replace('.', this.decimalSeparator), ch.getWpt().getLonDeg(TransformCoordinates.DD).replace('.', this.decimalSeparator));
 			    if (str != null)
 				outp.print(str);
 			}
@@ -138,12 +138,12 @@ public class KMLExporter extends Exporter {
 			    for (int j = 0; j < ch.addiWpts.size(); j++) {
 				addiWpt = (CacheHolder) ch.addiWpts.get(j);
 				expCount++;
-				if (ch.getPos().isValid() && addiWpt.isVisible()) {
+				if (ch.getWpt().isValid() && addiWpt.isVisible()) {
 				    if (!createdAdditionalWaypointsFolder) {
 					outp.print(startFolder("Additional Waypoints", false));
 					createdAdditionalWaypointsFolder = true;
 				    }
-				    str = record(addiWpt, addiWpt.getPos().getLatDeg(TransformCoordinates.DD).replace('.', this.decimalSeparator), addiWpt.getPos().getLonDeg(TransformCoordinates.DD).replace('.', this.decimalSeparator));
+				    str = record(addiWpt, addiWpt.getWpt().getLatDeg(TransformCoordinates.DD).replace('.', this.decimalSeparator), addiWpt.getWpt().getLonDeg(TransformCoordinates.DD).replace('.', this.decimalSeparator));
 				    if (str != null)
 					outp.print(str);
 				}
@@ -297,13 +297,13 @@ public class KMLExporter extends Exporter {
 
     public String record(CacheHolder ch, String lat, String lon) {
 	strBuf.setLength(0);
-	CacheHolderDetail det = ch.getCacheDetails(true);
+	CacheHolderDetail det = ch.getDetails();
 
 	strBuf.append("   <Placemark>\r\n");
 	if (det.URL != null) {
 	    strBuf.append("      <description>" + SafeXML.string2Html(det.URL) + "</description>\r\n");
 	}
-	strBuf.append("      <name>" + ch.getWayPoint() + " - " + SafeXML.string2Html(ch.getCacheName()) + "</name>\r\n");
+	strBuf.append("      <name>" + ch.getCode() + " - " + SafeXML.string2Html(ch.getName()) + "</name>\r\n");
 	strBuf.append("      <LookAt>\r\n");
 	strBuf.append("         <latitude>" + lat + "</latitude>\r\n");
 	strBuf.append("         <longitude>" + lon + "</longitude>\r\n");

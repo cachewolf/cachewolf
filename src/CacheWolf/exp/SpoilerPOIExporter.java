@@ -85,13 +85,13 @@ public class SpoilerPOIExporter extends Exporter {
 	    return null;
 
 	// First check, if there a any pictures in the db for the wpt
-	ch.getCacheDetails(true);
+	ch.getDetails();
 	if (!ch.detailsLoaded())
 	    return null;
-	if (ch.getCacheDetails(true).images.size() == 0)
+	if (ch.getDetails().images.size() == 0)
 	    return null;
 
-	images = ch.getCacheDetails(true).images.getDisplayImages(ch.getWayPoint());
+	images = ch.getDetails().images.getDisplayImages(ch.getCode());
 	picCounter = 0;
 	for (int i = 0; i < images.size(); i++) {
 	    filename = images.get(i).getFilename();
@@ -110,16 +110,16 @@ public class SpoilerPOIExporter extends Exporter {
 
 	    picCounter++;
 	    strBuf.append("<wpt lat=\"" + lat + "\" lon=\"" + lon + "\">\r\n");
-	    strBuf.append("  <name>Sp " + picCounter + ": " + SafeXML.cleanGPX(ch.getCacheName()) + "</name>\r\n");
+	    strBuf.append("  <name>Sp " + picCounter + ": " + SafeXML.cleanGPX(ch.getName()) + "</name>\r\n");
 	    strBuf.append("  <cmt>\r\n");
-	    if (ch.getCacheDetails(true).Hints.length() > 0) {
-		strBuf.append("  Hint: " + SafeXML.cleanGPX(Common.rot13(ch.getCacheDetails(true).Hints)) + "\r\n");
+	    if (ch.getDetails().Hints.length() > 0) {
+		strBuf.append("  Hint: " + SafeXML.cleanGPX(Common.rot13(ch.getDetails().Hints)) + "\r\n");
 	    }
 	    if (comment != null) {
 		strBuf.append("  Comment: " + SafeXML.cleanGPX(SafeXML.html2iso8859s1(comment)) + "\r\n");
 	    }
 	    strBuf.append("  </cmt>\r\n");
-	    strBuf.append("  <desc>GCcode: " + ch.getWayPoint() + " </desc>\r\n");
+	    strBuf.append("  <desc>GCcode: " + ch.getCode() + " </desc>\r\n");
 	    strBuf.append("   <link href=\"" + URLUTF8Encoder.encode(url, false) + "\"/>\r\n");
 	    strBuf.append("  <sym>Scenic Area</sym>\r\n");
 	    strBuf.append("  <extensions>\r\n");

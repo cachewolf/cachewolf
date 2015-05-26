@@ -277,7 +277,7 @@ public class DataMover {
 
 	protected Vector getFileNames(CacheHolder ch) {
 	    Vector fileNames = new Vector();
-	    CacheHolderDetail chD = ch.getCacheDetails(false);
+	    CacheHolderDetail chD = ch.getDetails();
 	    //chD.images : Description Images,  Spoiler Images
 	    for (int i = 0; i < chD.images.size(); i++) {
 		fileNames.add(chD.images.get(i).getFilename());
@@ -291,7 +291,7 @@ public class DataMover {
 		fileNames.add(chD.userImages.get(i).getFilename());
 	    }
 	    // Cache XML
-	    fileNames.add(ch.getWayPoint() + ".xml");
+	    fileNames.add(ch.getCode().toLowerCase() + ".xml");
 	    return fileNames;
 	}
 
@@ -328,7 +328,7 @@ public class DataMover {
 	}
 
 	public void doIt(int i, CacheHolder srcHolder) {
-	    srcHolder.save();
+	    srcHolder.saveCacheDetails();
 	    Vector srcFiles = getFileNames(srcHolder);
 	    deleteCacheFiles(srcFiles, dstProfile.dataDir);
 	    copyCacheFiles(srcFiles, MainForm.profile.dataDir, dstProfile.dataDir);
@@ -345,7 +345,7 @@ public class DataMover {
 	    //				//ignore, CacheHolder implements Cloneable ensures this methods
 	    //			}
 	    //		}
-	    int dstPos = dstProfile.getCacheIndex(srcHolder.getWayPoint());
+	    int dstPos = dstProfile.getCacheIndex(srcHolder.getCode());
 	    if (dstPos >= 0) {
 		dstProfile.cacheDB.set(dstPos, srcHolder);
 	    } else {
@@ -364,7 +364,7 @@ public class DataMover {
 	    Vector srcFiles = getFileNames(srcHolder);
 	    deleteCacheFiles(srcFiles, dstProfile.dataDir);
 	    moveCacheFiles(srcFiles, MainForm.profile.dataDir, dstProfile.dataDir);
-	    int dstPos = dstProfile.getCacheIndex(srcHolder.getWayPoint());
+	    int dstPos = dstProfile.getCacheIndex(srcHolder.getCode());
 	    if (dstPos >= 0) {
 		dstProfile.cacheDB.set(dstPos, srcHolder);
 	    } else {

@@ -339,13 +339,13 @@ public class MapLoaderGui extends Form {
 		    ch = cacheDB.get(i);
 		    if (!this.onlySelected || ch.isChecked) {
 			// TODO != 0 sollte verschwinden, sobald das handling von nicht gesetzten Koos überall korrekt ist
-			if (ch.getPos().isValid() && ch.getPos().latDec != 0 && ch.getPos().lonDec != 0) {
+			if (ch.getWpt().isValid() && ch.getWpt().latDec != 0 && ch.getWpt().lonDec != 0) {
 			    numdownloaded++;
-			    progressBox.setInfo(MyLocale.getMsg(1820, "Downloading map '") + mapLoader.getCurrentOnlineMapService().getName() + "'\n" + numdownloaded + " / " + numCaches + MyLocale.getMsg(1821, "\n for cache:\n") + ch.getCacheName());
+			    progressBox.setInfo(MyLocale.getMsg(1820, "Downloading map '") + mapLoader.getCurrentOnlineMapService().getName() + "'\n" + numdownloaded + " / " + numCaches + MyLocale.getMsg(1821, "\n for cache:\n") + ch.getName());
 			    try {
-				mapLoader.downloadMap(ch.getPos(), scale, TileSizeInPixels, mapsDir);
+				mapLoader.downloadMap(ch.getWpt(), scale, TileSizeInPixels, mapsDir);
 			    } catch (Exception e) {
-				progressBox.addWarning(MyLocale.getMsg(1822, "Cache:") + " " + ch.getCacheName() + "(" + ch.getWayPoint() + ") " + MyLocale.getMsg(1823, "Ignoring error:") + " " + e.getMessage());
+				progressBox.addWarning(MyLocale.getMsg(1822, "Cache:") + " " + ch.getName() + "(" + ch.getCode() + ") " + MyLocale.getMsg(1823, "Ignoring error:") + " " + e.getMessage());
 			    }
 			}
 		    }

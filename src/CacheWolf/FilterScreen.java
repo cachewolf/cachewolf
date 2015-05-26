@@ -32,8 +32,6 @@ import CacheWolf.database.CacheType;
 import CacheWolf.utils.Metrics;
 import CacheWolf.utils.MyLocale;
 import CacheWolf.utils.STRreplace;
-import ewe.filechooser.FileChooser;
-import ewe.filechooser.FileChooserBase;
 import ewe.fx.Color;
 import ewe.fx.Dimension;
 import ewe.fx.Graphics;
@@ -45,7 +43,6 @@ import ewe.fx.Rect;
 import ewe.fx.mImage;
 import ewe.graphics.AniImage;
 import ewe.graphics.InteractivePanel;
-import ewe.io.File;
 import ewe.sys.Convert;
 import ewe.sys.Time;
 import ewe.sys.Vm;
@@ -79,7 +76,7 @@ public class FilterScreen extends Form {
     private static final Color COLOR_FILTERALL = new Color(255, 0, 0); // Red
 
     private final ExecutePanel executePanel;
-    private mButton btnRoute, btnSaveFlt, btnDelFlt, btnBearing, btnTypes, btnAttributes, btnRatings, btnContainer, btnSearch, btnAddi, btnCacheAttributes;
+    private mButton btnSaveFlt, btnDelFlt, btnBearing, btnTypes, btnAttributes, btnRatings, btnContainer, btnSearch, btnAddi, btnCacheAttributes;
 
     private mChoice chcDist, chcDiff, chcTerr, chcAttrib;
     // Rose
@@ -778,23 +775,6 @@ public class FilterScreen extends Form {
 		fltList.select(-1);
 		currentFilterID = "";
 		this.close(0);
-	    } else if (ev.target == btnRoute) {
-
-		File datei;
-		FileChooser fc = new FileChooser(FileChooserBase.OPEN, MainForm.profile.dataDir);
-		fc.setTitle(MyLocale.getMsg(712, "Select route file"));
-		if (fc.execute() != FormBase.IDCANCEL) {
-		    datei = fc.getChosenFile();
-		    InfoBox inf = new InfoBox("Distance?", "Dist:", InfoBox.INPUT);
-		    inf.execute();
-		    Vm.showWait(true);
-		    new Filter().doFilterRoute(datei, Convert.toDouble(inf.getInput()));
-		}
-		Vm.showWait(false);
-		fltList.select(-1);
-		currentFilterID = "";
-		this.close(0);
-
 	    } else if (ev.target == executePanel.applyButton) {
 		Vm.showWait(true);
 

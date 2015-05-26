@@ -242,9 +242,10 @@ public class TPLExporter {
 		imgExpName = expName;
 	    if (myFilter.copyCacheImages == 2)
 		imgExpName = expName + "*";
+	    TemplateTable tt = new TemplateTable();
 	    for (int i = 0; i < counter; i++) {
 		CacheHolder ch = cacheDB.get(i);
-		if (ch.isVisible() && (ch.getPos().isValid() || myFilter.formatModifier > 0)) {
+		if (ch.isVisible() && (ch.getWpt().isValid() || myFilter.formatModifier > 0)) {
 		    boolean get = true;
 		    if (myFilter.getAddiWp) {
 			get = ch.isAddiWpt();
@@ -258,7 +259,8 @@ public class TPLExporter {
 			h.progress = (float) i / (float) counter;
 			h.changed();
 			try {
-			    Hashtable varParams = ch.toHashtable(dec, rex, myFilter.shortWaypointLength, myFilter.shortNameLength, myFilter.noOfLogs, myFilter.codec, gm, false, myFilter.formatModifier, imgExpName);
+			    tt.set(ch);
+			    Hashtable varParams = tt.toHashtable(dec, rex, myFilter.shortWaypointLength, myFilter.shortNameLength, myFilter.noOfLogs, myFilter.codec, gm, false, myFilter.formatModifier, imgExpName);
 
 			    Enumeration e = myFilter.additionalVarParams.keys();
 			    while (e.hasMoreElements()) {
@@ -274,14 +276,14 @@ public class TPLExporter {
 			    else {
 				tpl.setParams(varParams);
 				String ext = (myFilter.out.substring(myFilter.out.lastIndexOf(".")).toLowerCase() + "    ").trim();
-				FileWriter fw = new FileWriter(saveTo.getPath() + ch.getWayPoint() + ext);
+				FileWriter fw = new FileWriter(saveTo.getPath() + ch.getCode() + ext);
 				fw.codec = myFilter.codec;
 				PrintWriter detfile = new PrintWriter(new BufferedWriter(fw));
 				tpl.printTo(detfile);
 				detfile.close();
 			    }
 			} catch (Exception e) {
-			    Preferences.itself().log("[TplExporter:doIt]" + ch.getWayPoint(), e, true);
+			    Preferences.itself().log("[TplExporter:doIt]" + ch.getCode(), e, true);
 			}
 		    }
 		}

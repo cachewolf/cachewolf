@@ -219,7 +219,7 @@ public class Parser {
 	    CacheHolder ch = MainForm.profile.cacheDB.get(varName.substring(1));
 	    if (ch != null) { // Found it!
 		// Check whether coordinates are valid
-		cwPt.set(ch.getPos());
+		cwPt.set(ch.getWpt());
 		if (cwPt.isValid())
 		    return cwPt.toString();
 		else
@@ -575,7 +575,7 @@ public class Parser {
 		err(MyLocale.getMsg(1714, "Goto: Waypoint does not exist: ") + waypointName);
 		return;
 	    }
-	    ch.setPos(cwPt);
+	    ch.setWpt(cwPt);
 	    ch.calcDistance(Preferences.itself().curCentrePt); // Update distance/bearing
 	    nav.setDestination(ch);
 	    MainForm.profile.selectionChanged = true; // Tell moving map to updated displayed waypoints
@@ -815,7 +815,7 @@ public class Parser {
 	    return;
 	// If it is an addi, find its main cache
 	if (c.isAddiWpt()) {
-	    waypointName = c.mainCache.getWayPoint();
+	    waypointName = c.mainCache.getCode();
 	}
 	int nStages = -1;
 	if (nargs == 1) {
@@ -868,21 +868,21 @@ public class Parser {
 		for (int j = 0; j < ch.addiWpts.getCount(); j++) {
 		    addiWpt = (CacheHolder) ch.addiWpts.get(j);
 		    op.append("IF $");
-		    op.append(addiWpt.getWayPoint());
+		    op.append(addiWpt.getCode());
 		    op.append("=\"\" THEN\n   $");
-		    op.append(addiWpt.getWayPoint());
+		    op.append(addiWpt.getCode());
 		    op.append("=\"\"");
 		    // op.append(addiWpt.pos.toString());
 		    op.append("\n   \"Punkt ");
-		    op.append(addiWpt.getWayPoint().substring(0, 2));
+		    op.append(addiWpt.getCode().substring(0, 2));
 		    op.append(" [");
-		    op.append(addiWpt.getCacheName());
+		    op.append(addiWpt.getName());
 		    op.append("] = \" $");
-		    op.append(addiWpt.getWayPoint());
-		    if (addiWpt.getCacheDetails(true).LongDescription.trim().length() > 0)
-			op.append("\n   \"" + STRreplace.replace(addiWpt.getCacheDetails(true).LongDescription, "\"", "\"\"") + "\"");
+		    op.append(addiWpt.getCode());
+		    if (addiWpt.getDetails().LongDescription.trim().length() > 0)
+			op.append("\n   \"" + STRreplace.replace(addiWpt.getDetails().LongDescription, "\"", "\"\"") + "\"");
 		    op.append("\n   goto($");
-		    op.append(addiWpt.getWayPoint());
+		    op.append(addiWpt.getCode());
 		    op.append("); STOP\nENDIF\n\n");
 		}
 		MainTab.itself.solverPanel.appendText(op.toString(), true);
@@ -1078,7 +1078,7 @@ public class Parser {
 		String coord = popCalcStackAsString();
 		cwPt.set(coord);
 		if (cwPt.isValid() || coord.equals("")) { // Can clear coord with empty string
-		    ch.setPos(cwPt);
+		    ch.setWpt(cwPt);
 		    ch.calcDistance(Preferences.itself().curCentrePt); // Update distance and bearing
 		    MainForm.profile.selectionChanged = true; // Tell moving map to updated displayed waypoints
 		    return;
@@ -1323,12 +1323,12 @@ public class Parser {
 	    return false;
 
 	CacheHolder ch = new CacheHolder();
-	ch.setWayPoint(wayPoint);
+	ch.setCode(wayPoint);
 	ch.setType(type);
-	ch.setCacheSize(CacheSize.CW_SIZE_NOTCHOSEN);
+	ch.setSize(CacheSize.CW_SIZE_NOTCHOSEN);
 	ch.setDifficulty(CacheTerrDiff.CW_DT_UNSET);
 	ch.setTerrain(CacheTerrDiff.CW_DT_UNSET);
-	ch.setCacheName(name);
+	ch.setName(name);
 
 	MainForm.profile.setAddiRef(ch);
 

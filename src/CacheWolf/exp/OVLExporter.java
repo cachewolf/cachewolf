@@ -67,7 +67,7 @@ public class OVLExporter extends Exporter {
 	tmp = Common.parseDouble(lat);
 	tmp += 0.002;
 	str.append("YKoord=" + Convert.toString(tmp).replace(',', '.') + "\r\n");
-	str.append("Text=" + ch.getWayPoint() + "\r\n");
+	str.append("Text=" + ch.getCode() + "\r\n");
 
 	return str.toString();
     }

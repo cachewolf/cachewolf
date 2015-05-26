@@ -137,12 +137,12 @@ public class TomTomExporter {
 			currExp++;
 			h.progress = (float) currExp / (float) counter;
 			h.changed();
-			if (holder.getPos().isValid() == false)
+			if (holder.getWpt().isValid() == false)
 			    continue;
 			if (format == TT_ASC) {
-			    writeRecordASCII(out, holder, holder.getPos().getLatDeg(TransformCoordinates.DD), holder.getPos().getLonDeg(TransformCoordinates.DD));
+			    writeRecordASCII(out, holder, holder.getWpt().getLatDeg(TransformCoordinates.DD), holder.getWpt().getLonDeg(TransformCoordinates.DD));
 			} else {
-			    writeRecordBinary(out, holder, holder.getPos().getLatDeg(TransformCoordinates.DD), holder.getPos().getLonDeg(TransformCoordinates.DD));
+			    writeRecordBinary(out, holder, holder.getWpt().getLatDeg(TransformCoordinates.DD), holder.getWpt().getLonDeg(TransformCoordinates.DD));
 			}
 		    }// if
 		}// for cacheDB
@@ -186,12 +186,12 @@ public class TomTomExporter {
 		    expCount++;
 		    h.progress = (float) expCount / (float) counter;
 		    h.changed();
-		    if (holder.getPos().isValid() == false)
+		    if (holder.getWpt().isValid() == false)
 			continue;
 		    if (format == TT_ASC) {
-			writeRecordASCII(out, holder, holder.getPos().getLatDeg(TransformCoordinates.DD), holder.getPos().getLonDeg(TransformCoordinates.DD));
+			writeRecordASCII(out, holder, holder.getWpt().getLatDeg(TransformCoordinates.DD), holder.getWpt().getLonDeg(TransformCoordinates.DD));
 		    } else {
-			writeRecordBinary(out, holder, holder.getPos().getLatDeg(TransformCoordinates.DD), holder.getPos().getLonDeg(TransformCoordinates.DD));
+			writeRecordBinary(out, holder, holder.getWpt().getLatDeg(TransformCoordinates.DD), holder.getWpt().getLonDeg(TransformCoordinates.DD));
 		    }
 		}// if
 	    }// for
@@ -211,17 +211,17 @@ public class TomTomExporter {
 	    outp.writeBytes(",");
 	    // outp.writeBytes("\"" + ch.CacheName.replace(',',' ') + "\"\r\n");
 	    outp.writeBytes("\"");
-	    outp.writeBytes(ch.getWayPoint());
+	    outp.writeBytes(ch.getCode());
 	    outp.writeBytes(" - ");
-	    outp.writeBytes(ch.getCacheName().replace(',', ' '));
+	    outp.writeBytes(ch.getName().replace(',', ' '));
 	    outp.writeBytes(" by ");
-	    outp.writeBytes(ch.getCacheOwner());
+	    outp.writeBytes(ch.getOwner());
 	    outp.writeBytes("- ");
 	    outp.writeBytes(String.valueOf(ch.getDifficulty()));
 	    outp.writeBytes("/");
 	    outp.writeBytes(String.valueOf(ch.getTerrain()));
 	    outp.writeBytes(" - ");
-	    outp.writeBytes(CacheSize.cw2ExportString(ch.getCacheSize()));
+	    outp.writeBytes(CacheSize.cw2ExportString(ch.getSize()));
 	    outp.writeBytes("\"\r\n");
 	} catch (IOException e) {
 	    Preferences.itself().log("Error writing to file", e, true);
@@ -236,7 +236,7 @@ public class TomTomExporter {
 	try {
 	    d = 2;
 	    outp.writeByte((byte) d);
-	    data = ch.getWayPoint().length() + ch.getCacheName().length() + ch.getCacheOwner().length() + String.valueOf(ch.getDifficulty()).length() + String.valueOf(ch.getTerrain()).length() + CacheSize.cw2ExportString(ch.getCacheSize()).length() + 27;
+	    data = ch.getCode().length() + ch.getName().length() + ch.getOwner().length() + String.valueOf(ch.getDifficulty()).length() + String.valueOf(ch.getTerrain()).length() + CacheSize.cw2ExportString(ch.getSize()).length() + 27;
 	    writeIntBinary(outp, data);
 	    latlon = Common.parseDouble(lon);
 	    latlon *= 100000;
@@ -245,11 +245,11 @@ public class TomTomExporter {
 	    ;
 	    latlon *= 100000;
 	    writeIntBinary(outp, (int) latlon);
-	    outp.writeBytes(ch.getWayPoint());
+	    outp.writeBytes(ch.getCode());
 	    outp.writeBytes(" - ");
-	    outp.writeBytes(ch.getCacheName());
+	    outp.writeBytes(ch.getName());
 	    outp.writeBytes(" by ");
-	    outp.writeBytes(ch.getCacheOwner());
+	    outp.writeBytes(ch.getOwner());
 	    // Wenn Leerzeichen am Ende von Cache.Owner entfernt:
 	    // Hier wieder einfügen
 	    // und data = holder.wayPoint.length()+holder.CacheName.length()+.....
@@ -259,7 +259,7 @@ public class TomTomExporter {
 	    outp.writeBytes("/");
 	    outp.writeBytes(String.valueOf(ch.getTerrain()));
 	    outp.writeBytes(" - ");
-	    outp.writeBytes(CacheSize.cw2ExportString(ch.getCacheSize()));
+	    outp.writeBytes(CacheSize.cw2ExportString(ch.getSize()));
 	    d = 0;
 	    outp.writeByte((byte) d);
 	} catch (IOException e) {

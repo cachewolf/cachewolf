@@ -21,27 +21,15 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 package CacheWolf;
 
-import CacheWolf.controls.InfoBox;
-import CacheWolf.database.CWPoint;
 import CacheWolf.database.CacheDB;
 import CacheWolf.database.CacheHolder;
 import CacheWolf.database.CacheSize;
 import CacheWolf.database.CacheType;
-import CacheWolf.imp.KMLImporter;
 import CacheWolf.utils.Common;
-import CacheWolf.utils.Matrix;
-import CacheWolf.utils.MyLocale;
 
 import com.stevesoft.ewe_pat.Regex;
 
-import ewe.io.File;
-import ewe.io.FileNotFoundException;
-import ewe.io.FileReader;
-import ewe.io.IOException;
-import ewe.sys.Convert;
-import ewe.ui.FormBase;
 import ewe.util.Hashtable;
-import ewe.util.Vector;
 
 /**
  * Class that actually filters the cache database.<br>
@@ -129,110 +117,6 @@ public class Filter {
     private String namePattern = "";
     private int nameCompare = 0;
     private boolean nameCaseSensitive = true;
-
-    /**
-     * Apply a route filter. Each waypoint is on a seperate line. We use a regex method to allow for different formats of waypoints: possible is currently: DD MM.mmm
-     */
-    public void doFilterRoute(File routeFile, double distance) {
-	MainForm.profile.selectionChanged = true;
-	CacheDB cacheDB = MainForm.profile.cacheDB;
-	// load file into a vector:
-	Vector wayPoints = new Vector();
-	Regex rex = new Regex("(N|S).*?([0-9]{1,2}).*?([0-9]{1,3})(,|.)([0-9]{1,3}).*?(E|W).*?([0-9]{1,2}).*?([0-9]{1,3})(,|.)([0-9]{1,3})");
-	CWPoint cwp, fromPoint, toPoint;
-	CacheHolder ch;
-	double lat, lon, calcDistance = 0;
-	try {
-	    if ((routeFile.getFullPath()).indexOf(".kml") > 0) {
-		KMLImporter kml = new KMLImporter(routeFile.getFullPath());
-		kml.importFile();
-		wayPoints = kml.getPoints();
-	    } else {
-		FileReader in = new FileReader(routeFile);
-		String line;
-		while ((line = in.readLine()) != null) {
-		    rex.search(line);
-		    // parse the route file
-		    if (rex.didMatch()) {
-			lat = Convert.toDouble(rex.stringMatched(2)) + Convert.toDouble(rex.stringMatched(3)) / 60 + Convert.toDouble(rex.stringMatched(5)) / 60000;
-			lon = Convert.toDouble(rex.stringMatched(7)) + Convert.toDouble(rex.stringMatched(8)) / 60 + Convert.toDouble(rex.stringMatched(10)) / 60000;
-
-			if (rex.stringMatched(1).equals("S") || rex.stringMatched(1).equals("s"))
-			    lat = -lat;
-			if (rex.stringMatched(6).equals("W") || rex.stringMatched(6).equals("w"))
-			    lon = -lon;
-
-			cwp = new CWPoint(lat, lon);
-
-			wayPoints.add(cwp);
-		    }
-		}
-	    }
-	    // initialise database
-	    for (int i = cacheDB.size() - 1; i >= 0; i--) {
-		ch = cacheDB.get(i);
-		ch.in_range = false;
-		// cacheDB.set(i, ch);
-	    }
-	    // for each segment of the route...
-	    for (int z = 0; z < wayPoints.size() - 1; z++) {
-		fromPoint = new CWPoint();
-		toPoint = new CWPoint();
-		fromPoint = (CWPoint) wayPoints.get(z);
-		toPoint = (CWPoint) wayPoints.get(z + 1);
-		// ... go through the current cache database
-		for (int i = cacheDB.size() - 1; i >= 0; i--) {
-		    ch = cacheDB.get(i);
-		    cwp = new CWPoint(ch.getPos());
-		    calcDistance = DistToSegment(fromPoint, toPoint, cwp);
-		    calcDistance = (calcDistance * 180 * 60) / java.lang.Math.PI;
-		    calcDistance = calcDistance * 1.852;
-		    if (calcDistance <= distance) {
-			ch.in_range = true;
-		    }
-		} // for database
-	    } // for segments
-	    for (int i = cacheDB.size() - 1; i >= 0; i--) {
-		ch = cacheDB.get(i);
-		if (ch.isFiltered() == false && ch.in_range == false)
-		    ch.setFiltered(true);
-	    }
-	} catch (FileNotFoundException fnex) {
-	    new InfoBox(MyLocale.getMsg(5500, "Error"), "File not found").wait(FormBase.OKB);
-	} catch (IOException ioex) {
-	    new InfoBox(MyLocale.getMsg(5500, "Error"), "Problem reading file!").wait(FormBase.OKB);
-	}
-    }
-
-    /**
-     * Method to calculate the distance of a point to a segment
-     */
-    private double DistToSegment(CWPoint fromPoint, CWPoint toPoint, CWPoint cwp) {
-	double dist = 0;
-	double px = cwp.lonDec * pi180;
-	double py = cwp.latDec * pi180;
-	double X1 = fromPoint.lonDec * pi180;
-	double Y1 = fromPoint.latDec * pi180;
-	double X2 = toPoint.lonDec * pi180;
-	double Y2 = toPoint.latDec * pi180;
-	double dx = X2 - X1;
-	double dy = Y2 - Y1;
-	if (dx == 0 && dy == 0) {
-	    // have a point and not a segment!
-	    dx = px - X1;
-	    dy = py - Y1;
-	    return java.lang.Math.sqrt(dx * dx + dy * dy);
-	}
-	dist = Matrix.cross(X1, Y1, X2, Y2, px, py) / Matrix.dist(X1, Y1, X2, Y2);
-	double dot1 = Matrix.dot(X1, Y1, X2, Y2, px, py);
-	if (dot1 > 0)
-	    return Matrix.dist(X2, Y2, px, py);
-	double dot2 = Matrix.dot(X2, Y2, X1, Y1, px, py);
-	if (dot2 > 0)
-	    return Matrix.dist(X1, Y1, px, py);
-	dist = java.lang.Math.abs(dist);
-	return dist;
-    }
 
     /**
      * Set the filter from the filter data stored in the MainForm.profile (the filterscreen also updates the MainForm.profile)
@@ -531,7 +415,7 @@ public class Filter {
 	    // Filter criterium 10: Size
 	    // /////////////////////////////
 	    if (hasSizeMatchPattern) {
-		cacheSizePattern = CacheSize.getFilterPattern(ch.getCacheSize());
+		cacheSizePattern = CacheSize.getFilterPattern(ch.getSize());
 		if ((cacheSizePattern & sizeMatchPattern) == 0) {
 		    cacheFiltered = true;
 		    break;
@@ -595,7 +479,7 @@ public class Filter {
 	    // /////////////////////////////
 	    // Filter criterium 13: NoCoord
 	    // /////////////////////////////
-	    if (!filterNoCoord && !ch.getPos().isValid()) {
+	    if (!filterNoCoord && !ch.getWpt().isValid()) {
 		cacheFiltered = true;
 		break;
 	    }
@@ -634,9 +518,9 @@ public class Filter {
 	    if (namePattern.length() > 0) {
 		String cacheName;
 		if (nameCaseSensitive)
-		    cacheName = ch.getCacheName();
+		    cacheName = ch.getName();
 		else
-		    cacheName = ch.getCacheName().toLowerCase();
+		    cacheName = ch.getName().toLowerCase();
 		if (nameCompare == 0) {
 		    if (!cacheName.startsWith(namePattern)) {
 			cacheFiltered = true;

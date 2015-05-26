@@ -40,7 +40,7 @@ public class ASCExporter extends Exporter {
 	public String record(CacheHolder holder, String lat, String lon) {
 		StringBuffer strBuf = new StringBuffer(100);
 		String dummy;
-		dummy = holder.getCacheName();
+		dummy = holder.getName();
 		dummy = dummy.replace(',', ' ');
 		strBuf.append(dummy);
 		strBuf.append(",");

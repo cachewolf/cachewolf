@@ -29,6 +29,7 @@ import CacheWolf.database.CacheHolder;
 import CacheWolf.database.CacheHolderDetail;
 import CacheWolf.database.CacheType;
 import CacheWolf.exp.OCLogExport;
+import CacheWolf.exp.ShowCacheInBrowser;
 import CacheWolf.navi.Navigate;
 import CacheWolf.navi.TransformCoordinates;
 import CacheWolf.utils.CWWrapper;
@@ -157,10 +158,10 @@ public class MyTableControl extends TableControl {
 		else if (ev.key == IKeys.UP)
 		    MainTab.itself.tablePanel.selectRow(java.lang.Math.max(cursor.y - 1, 0));
 		else if (ev.key == IKeys.LEFT && MainForm.itself.cacheTourVisible && cursor.y >= 0 && cursor.y < MainTab.itself.tablePanel.myTableModel.numRows)
-		    MainForm.itself.getCacheTour().addCache(cacheDB.get(cursor.y).getWayPoint());
+		    MainForm.itself.getCacheTour().addCache(cacheDB.get(cursor.y).getCode());
 		else if (ev.key == IKeys.RIGHT) {
 		    CacheHolder ch = cacheDB.get(MainTab.itself.tablePanel.getSelectedCache());
-		    if (ch.getPos().isValid()) {
+		    if (ch.getWpt().isValid()) {
 			Navigate.itself.setDestination(ch);
 			MainTab.itself.select(MainTab.GOTO_CARD);
 		    }
@@ -264,7 +265,7 @@ public class MyTableControl extends TableControl {
 			    // currCache.setBlack(!currCache.is_black());
 			} else {
 			    currCache.setBlack(!currCache.isBlack());
-			    currCache.save(); // to reflect it in xml and what takes time reading+writing
+			    currCache.saveCacheDetails(); // to reflect it in xml and what takes time reading+writing
 			}
 		    }
 		}
@@ -277,7 +278,7 @@ public class MyTableControl extends TableControl {
 	    ;
 	} else if (selectedItem == this.miSetDestination) {
 	    ch = cacheDB.get(MainTab.itself.tablePanel.getSelectedCache());
-	    if (ch.getPos().isValid()) {
+	    if (ch.getWpt().isValid()) {
 		Navigate.itself.setDestination(ch);
 		MainTab.itself.select(MainTab.GOTO_CARD);
 	    }
@@ -287,7 +288,7 @@ public class MyTableControl extends TableControl {
 		return;
 	    }
 	    CacheHolder thisCache = cacheDB.get(MainTab.itself.tablePanel.getSelectedCache());
-	    CWPoint cp = new CWPoint(thisCache.getPos());
+	    CWPoint cp = new CWPoint(thisCache.getWpt());
 	    if (!cp.isValid()) {
 		new InfoBox(MyLocale.getMsg(5500, "Error"), MyLocale.getMsg(4111, "Coordinates must be entered in the format N DD MM.MMM E DDD MM.MMM")).wait(FormBase.OKB);
 	    } else {
@@ -310,18 +311,18 @@ public class MyTableControl extends TableControl {
 	    if (ch.isAddiWpt() && (ch.mainCache != null)) {
 		mainCache = ch.mainCache;
 	    }
-	    chD = mainCache.getCacheDetails(true);
+	    chD = mainCache.getDetails();
 	    url = chD.URL;
-	    String wpName = mainCache.getOCWayPoint();
+	    String wpName = mainCache.getIdOC();
 	    if (clickedColumn == 14) {
 		if (mainCache.isOC()) {
-		    String s = OC.getGCWayPoint(ch.getCacheOwner());
+		    String s = OC.getGCWayPoint(ch.getOwner());
 		    if (s.length() > 0)
 			url = "http://www.geocaching.com/seek/cache_details.aspx?wp=" + s;
 		} else {
 		    if (wpName.length() > 0) {
 			if (wpName.charAt(0) < 65)
-			    wpName = mainCache.getOCWayPoint().substring(1);
+			    wpName = mainCache.getIdOC().substring(1);
 			url = "http://" + OC.getOCHostName(wpName) + "/viewcache.php?wp=" + wpName;
 		    }
 		}
@@ -331,10 +332,10 @@ public class MyTableControl extends TableControl {
 	    }
 	} else if (selectedItem == miOpenGmaps) {
 	    ch = cacheDB.get(MainTab.itself.tablePanel.getSelectedCache());
-	    if (ch.getPos().isValid()) {
-		String lat = "" + ch.getPos().getLatDeg(TransformCoordinates.DD);
-		String lon = "" + ch.getPos().getLonDeg(TransformCoordinates.DD);
-		String nameOfCache = UrlFetcher.encodeURL(ch.getCacheName(), false).replace('#', 'N').replace('@', '_');
+	    if (ch.getWpt().isValid()) {
+		String lat = "" + ch.getWpt().getLatDeg(TransformCoordinates.DD);
+		String lon = "" + ch.getWpt().getLonDeg(TransformCoordinates.DD);
+		String nameOfCache = UrlFetcher.encodeURL(ch.getName(), false).replace('#', 'N').replace('@', '_');
 		String language = Vm.getLocale().getString(Locale.LANGUAGE_SHORT, 0, 0);
 		if (!Preferences.itself().language.equalsIgnoreCase("auto")) {
 		    language = Preferences.itself().language;
@@ -355,7 +356,7 @@ public class MyTableControl extends TableControl {
 		mainCache = ch.mainCache;
 	    }
 	    if (mainCache.isCacheWpt()) {
-		chD = mainCache.getCacheDetails(false);
+		chD = mainCache.getDetails();
 
 		String ownLogMessage = "";
 		if (chD != null) {
@@ -363,7 +364,7 @@ public class MyTableControl extends TableControl {
 			// Cache schon im CW gelogged
 			ownLogMessage = chD.OwnLog.getMessage();
 			if (ownLogMessage.length() > 0) {
-			    Vm.setClipboardText(mainCache.cacheStatus() + '\n' + "<br>" + ownLogMessage);
+			    Vm.setClipboardText(mainCache.getStatus() + '\n' + "<br>" + ownLogMessage);
 			}
 		    }
 		}
@@ -376,14 +377,14 @@ public class MyTableControl extends TableControl {
 			}
 		    } else {
 			// OC Url aus Cachenamen http://www.opencaching.de/log.php?wp=OC11871
-			url = "http://" + OC.getOCHostName(mainCache.getWayPoint()) + "/log.php?wp=" + mainCache.getWayPoint();
+			url = "http://" + OC.getOCHostName(mainCache.getCode()) + "/log.php?wp=" + mainCache.getCode();
 		    }
 		} else {
 		    url = "http://www.geocaching.com/seek/log.aspx?ID=" + mainCache.getCacheID();
 		    if (chD.OwnLog != null) {
 			if (chD.OwnLog.getLogID().length() > 0) {
 			    // GC und schon gelogged --> log bei OC eintragen, wenn auf OC-Index-Spalte geklickt
-			    String ocWpName = mainCache.getOCWayPoint();
+			    String ocWpName = mainCache.getIdOC();
 			    if (ocWpName.length() > 0 && ocWpName.charAt(0) < 65) {
 				// OC log (already logged at GC but not at OC)
 				if (clickedColumn == 14) {
@@ -480,10 +481,10 @@ public class MyTableControl extends TableControl {
 	    }
 	    row = p.y;
 	    CacheHolder ch = cacheDB.get(p.y);
-	    wayPoint = ch.getWayPoint();
+	    wayPoint = ch.getCode();
 	    imgDrag = new IconAndText();
 	    imgDrag.addColumn(CacheType.getTypeImage(ch.getType()));
-	    imgDrag.addColumn(ch.getWayPoint());
+	    imgDrag.addColumn(ch.getCode());
 	    dc.dragData = dc.startImageDrag(imgDrag, new Point(8, 8), this);
 	} else
 	    super.startDragging(dc);

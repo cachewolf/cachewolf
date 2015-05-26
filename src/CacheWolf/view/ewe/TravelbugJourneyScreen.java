@@ -158,10 +158,10 @@ public class TravelbugJourneyScreen extends Form {
 	String cache = "";
 	if (curCacheNo >= 0 && curCacheNo < cacheDB.size()) {
 	    ch = cacheDB.get(curCacheNo);
-	    cache = MyLocale.getMsg(6022, ": Current cache: ") + ch.getWayPoint() + " - " + ch.getCacheName();
-	    waypoint = ch.getWayPoint();
-	    chD = ch.getCacheDetails(true);
-	    tblSrcCache = ch.getCacheDetails(true).Travelbugs;
+	    cache = MyLocale.getMsg(6022, ": Current cache: ") + ch.getCode() + " - " + ch.getName();
+	    waypoint = ch.getCode();
+	    chD = ch.getDetails();
+	    tblSrcCache = ch.getDetails().Travelbugs;
 	}
 	title = "Travelbugs" + cache;
 	tcTbJourneyList = new tbListControl(model);
@@ -366,7 +366,7 @@ public class TravelbugJourneyScreen extends Form {
 	    // save the cache too
 	    if (chDmodified) {
 		ch.hasBugs(chD.Travelbugs.size() > 0);
-		ch.save();
+		ch.saveCacheDetails();
 	    }
 	    Vm.showWait(false);
 	    chD = null;

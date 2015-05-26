@@ -147,21 +147,21 @@ public class FieldnotesImporter {
 		    }
 		    //}
 
-		    ch.setCacheStatus(logTimeString);
+		    ch.setStatus(logTimeString);
 		    ch.setFound(true);
 		    foundIcon = ch.getGCFoundIcon();
 		} else {
 		    String stmp = ch.getCWLogText(l1[LOGTYPPOS]);
 		    if (stmp.equals(""))
-			ch.setCacheStatus(l1[LOGTYPPOS]); // eingelesener
+			ch.setStatus(l1[LOGTYPPOS]); // eingelesener
 		    else
-			ch.setCacheStatus(stmp); // Statustext (ohne Datum/Uhrzeit)
+			ch.setStatus(stmp); // Statustext (ohne Datum/Uhrzeit)
 		    ch.setFound(false);
 		    foundIcon = "3.png";
 		}
 		if (logText.length() > 0) {
-		    ch.getCacheDetails(false).OwnLog = new Log("", Preferences.itself().gcMemberId, foundIcon, logTime.format("yyyy-MM-dd"), Preferences.itself().myAlias, STRreplace.replace(logText, "\n", "<br />"));
-		    ch.save();
+		    ch.getDetails().OwnLog = new Log("", Preferences.itself().gcMemberId, foundIcon, logTime.format("yyyy-MM-dd"), Preferences.itself().myAlias, STRreplace.replace(logText, "\n", "<br />"));
+		    ch.saveCacheDetails();
 		}
 	    }
 	}

@@ -101,13 +101,13 @@ public class DescriptionPanel extends CellPanel {
 	    isHtml = cache.isHTML();
 	    if (cache.isAddiWpt()) {
 		isHtml = cache.mainCache.isHTML();
-		if (cache.getCacheDetails(true).LongDescription != null && cache.getCacheDetails(true).LongDescription.length() > 0)
-		    desc = cache.getCacheDetails(true).LongDescription + (isHtml ? "<hr>\n" : "\n") + cache.mainCache.getCacheDetails(true).LongDescription;
+		if (cache.getDetails().LongDescription != null && cache.getDetails().LongDescription.length() > 0)
+		    desc = cache.getDetails().LongDescription + (isHtml ? "<hr>\n" : "\n") + cache.mainCache.getDetails().LongDescription;
 		else
-		    desc = cache.mainCache.getCacheDetails(true).LongDescription;
+		    desc = cache.mainCache.getDetails().LongDescription;
 	    } else
 		// not an addi-wpt
-		desc = cache.getCacheDetails(true).LongDescription;
+		desc = cache.getDetails().LongDescription;
 	}
 	// HtmlDisplay does not show the <sup> tag correctly, so we need to replace with ^
 	if (desc.indexOf("<sup>") >= 0) {
@@ -142,9 +142,9 @@ public class DescriptionPanel extends CellPanel {
 	    CacheImages Images;
 	    // cache which supplies the images (could be main cache)
 	    if (cache.isAddiWpt()) {
-		Images = cache.mainCache.getCacheDetails(true).images;
+		Images = cache.mainCache.getDetails().images;
 	    } else {
-		Images = cache.getCacheDetails(true).images;
+		Images = cache.getDetails().images;
 	    }
 	    StringBuffer s = new StringBuffer(desc.length() + Images.size() * 100);
 	    int start = 0;

@@ -311,17 +311,17 @@ public class CSVImporter {
 	}
 	// 3. OWNER
 	if (l[OWNER].length() > 0) {
-	    ch.setCacheOwner(l[OWNER]);
+	    ch.setOwner(l[OWNER]);
 	} else {
-	    ch.setCacheOwner("Unknown");
+	    ch.setOwner("Unknown");
 	}
 	// 4. CacheName - Titel
 	if (munzee) {
-	    ch.setCacheName("MZ - " + l[CACHENAME]);
+	    ch.setName("MZ - " + l[CACHENAME]);
 	} else if (hyper) {
 	    String s = extractFileName(file).substring(0, 2).toUpperCase();
 	    if (wayPoint.startsWith(s)) {
-		ch.setCacheName(wayPoint + " " + l[STATUS] + " " + l[HINT]);
+		ch.setName(wayPoint + " " + l[STATUS] + " " + l[HINT]);
 	    } else {
 		String st = STRreplace.replace(l[NOTES], "# ", "#");
 		int i1 = st.indexOf("#");
@@ -334,28 +334,28 @@ public class CSVImporter {
 			std = st.substring(i1, i2);
 		    }
 		    std = (std + "    ").substring(0, 4);
-		    ch.setCacheName(s + std + " " + l[STATUS] + " " + l[HINT]);
+		    ch.setName(s + std + " " + l[STATUS] + " " + l[HINT]);
 		} else {
-		    if (ch.getCacheName().length() == 0) {
+		    if (ch.getName().length() == 0) {
 
 		    }
 		}
 	    }
 	} else {
-	    ch.setCacheName(l[CACHENAME]);
+	    ch.setName(l[CACHENAME]);
 	}
 	// 5. Status gefunden
 	String statusText = "";
 	if (l[STATUS].length() > 0) {
 	    gefunden = true;
-	    statusText = ch.getFoundText();
+	    statusText = CacheType.getFoundText(ch.getType());
 	}
 	if (hyper) {
 	    boolean dnf = false;
 	    if (l[NOTES].toUpperCase().indexOf("DNF") >= 0) {
 		dnf = true;
 		statusText = MyLocale.getMsg(319, "Didn't find it");
-		ch.setCacheName(ch.getCacheName() + " DNF");
+		ch.setName(ch.getName() + " DNF");
 	    }
 	    if (wayPoint.startsWith("GC")) {
 		if (dnf) {
@@ -370,7 +370,7 @@ public class CSVImporter {
 	    }
 	}
 	ch.setFound(gefunden);
-	ch.setCacheStatus(statusText);
+	ch.setStatus(statusText);
 	// 6. Datum versteckt
 	if (l[DATEHIDDEN].length() > 0) {
 	    if (l[DATEHIDDEN].charAt(0) == '0') {
@@ -386,16 +386,16 @@ public class CSVImporter {
 	} catch (Exception e) {
 	    dateHidden = DateFormat.toYYMMDD(new Time());
 	}
-	ch.setDateHidden(dateHidden);
+	ch.setHidden(dateHidden);
 	// ... fixed to work
 	ch.setType(CacheType.CW_TYPE_TRADITIONAL);
-	ch.setCacheSize(CacheSize.CW_SIZE_OTHER);
+	ch.setSize(CacheSize.CW_SIZE_OTHER);
 	ch.setDifficulty(CacheTerrDiff.CW_DT_10);
 	ch.setTerrain(CacheTerrDiff.CW_DT_10);
 	// Koordinaten
-	ch.setPos(tmpPos);
+	ch.setWpt(tmpPos);
 	// Details
-	CacheHolderDetail chd = ch.getCacheDetails(false);
+	CacheHolderDetail chd = ch.getDetails();
 	// Description
 	if (munzee) {
 	    chd.setLongDescription(l[NOTES]);
@@ -419,10 +419,10 @@ public class CSVImporter {
 		chd.State = "";
 	    }
 	} else {
-	    ch.getCacheDetails(false).Country = "";
-	    ch.getCacheDetails(false).State = "";
+	    ch.getDetails().Country = "";
+	    ch.getDetails().State = "";
 	}
-	ch.save();
+	ch.saveCacheDetails();
 	return true;
     }
 
@@ -431,8 +431,8 @@ public class CSVImporter {
 	if (s > 0) {
 	    for (int i = 0; i < cacheDB.size(); i++) {
 		CacheHolder ch = cacheDB.get(i);
-		if (ch.getPos().equals(coords)) {
-		    return ch.getWayPoint();
+		if (ch.getWpt().equals(coords)) {
+		    return ch.getCode();
 		}
 	    }
 	}
