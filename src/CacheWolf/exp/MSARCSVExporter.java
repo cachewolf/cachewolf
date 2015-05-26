@@ -46,13 +46,13 @@ public class MSARCSVExporter extends Exporter {
 
     public String record(CacheHolder ch, String lat, String lon) {
 	StringBuffer str = new StringBuffer(200);
-	str.append("\"" + ch.getWayPoint() + " - " + ch.getCacheName() + "\";");
+	str.append("\"" + ch.getCode() + " - " + ch.getName() + "\";");
 	str.append(lat + ";" + lon + ";");
 	str.append("\"" + CacheType.type2SymTag(ch.getType()) + "\";");
-	str.append("\"" + CacheSize.cw2ExportString(ch.getCacheSize()) + "\";");
-	str.append("\"" + ch.getWayPoint() + "\";");
-	str.append("\"" + ch.getDateHidden() + "\";");
-	str.append("\"" + ch.getCacheDetails(true).URL + "\"\r\n");
+	str.append("\"" + CacheSize.cw2ExportString(ch.getSize()) + "\";");
+	str.append("\"" + ch.getCode() + "\";");
+	str.append("\"" + ch.getHidden() + "\";");
+	str.append("\"" + ch.getDetails().URL + "\"\r\n");
 
 	return str.toString();
     }

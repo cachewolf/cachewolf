@@ -154,7 +154,7 @@ public class SolverPanel extends CellPanel {
      */
     public void setInstructions(CacheHolder pCh) {
 	if (pCh != null) {
-	    this.setInstructions(pCh.getCacheDetails(false).getSolver());
+	    this.setInstructions(pCh.getDetails().getSolver());
 	    if (!pCh.hasSameMainCache(ch)) {
 		this.clearOutput();
 	    }
@@ -273,11 +273,11 @@ public class SolverPanel extends CellPanel {
 		cacheToUpdate = ch.mainCache;
 	    }
 	    boolean oldHasSolver = cacheToUpdate.hasSolver();
-	    cacheToUpdate.getCacheDetails(false).setSolver(getInstructions());
+	    cacheToUpdate.getDetails().setSolver(getInstructions());
 	    if (oldHasSolver != cacheToUpdate.hasSolver()) {
 		MainTab.itself.tablePanel.myTableControl.update(true);
 	    }
-	    cacheToUpdate.save();
+	    cacheToUpdate.saveCacheDetails();
 	    originalInstructions = getInstructions();
 	}
     }

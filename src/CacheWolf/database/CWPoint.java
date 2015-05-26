@@ -93,10 +93,6 @@ public class CWPoint extends CoordinatePoint {
 	set(coord);
     }
 
-    /*public boolean equals (CWPoint p) {
-    	return super.equals(p);
-    }*/
-
     /**
      * Set lat and lon
      * 

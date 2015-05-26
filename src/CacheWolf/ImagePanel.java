@@ -142,7 +142,7 @@ class ImagesPanel extends InteractivePanel {
     public ImagesPanel() { // Public constructor
     }
 
-    static CacheHolderDetail oldCache = null;
+    static CacheHolderDetail oldChD = null;
 
     /**
      * Method to set the individual cache images.
@@ -150,20 +150,20 @@ class ImagesPanel extends InteractivePanel {
      * 
      * @see MainTab#onEvent(Event ev)
      */
-    public void setImages(CacheHolderDetail cache) {
-	if (cache != oldCache) {
+    public void setImages(CacheHolderDetail chD) {
+	if (chD != oldChD) {
 	    Vm.showWait(true);
 	    clearImages();
 	    thumb_size = ((Preferences.itself().getScreenWidth() - 2 * padding) / 3);
 	    thumb_size = thumb_size - padding;
 	    double rowCounter1 = 0;
-	    if (cache.images.getDisplayImages(cache.getParent().getWayPoint()).size() > 0) {
-		rowCounter1 = cache.images.getDisplayImages(cache.getParent().getWayPoint()).size();
+	    if (chD.images.getDisplayImages(chD.getParent().getCode()).size() > 0) {
+		rowCounter1 = chD.images.getDisplayImages(chD.getParent().getCode()).size();
 		rowCounter1 = java.lang.Math.ceil(rowCounter1 / 3);
 	    }
 	    double rowCounter2 = 0;
-	    if (cache.userImages.size() > 0) {
-		rowCounter2 = cache.userImages.size();
+	    if (chD.userImages.size() > 0) {
+		rowCounter2 = chD.userImages.size();
 		rowCounter2 = java.lang.Math.ceil(rowCounter2 / 3);
 	    }
 	    int rowCounter = (int) (rowCounter1 + rowCounter2);
@@ -177,18 +177,18 @@ class ImagesPanel extends InteractivePanel {
 
 	    locY = 20;
 	    locX = padding;
-	    addImages(cache.images.getDisplayImages(cache.getParent().getWayPoint()));
+	    addImages(chD.images.getDisplayImages(chD.getParent().getCode()));
 	    // load user images
 	    if (locCounter == 1 || locCounter == 2)
 		locY = locY + thumb_size;
-	    if (cache.userImages.size() > 0) {
+	    if (chD.userImages.size() > 0) {
 		addTitle(MyLocale.getMsg(341, "User Images:"));
 		locY = locY + 20;
 		locX = padding;
 		locCounter = 0;
-		addImages(cache.userImages);
+		addImages(chD.userImages);
 	    }
-	    oldCache = cache;
+	    oldChD = chD;
 	} // cache!=oldCache
 	if (locY > this.height) {
 	    this.checkScrolls();
@@ -203,7 +203,7 @@ class ImagesPanel extends InteractivePanel {
      * 
      */
     public void clearImages() {
-	oldCache = null;
+	oldChD = null;
 	int lgr = images.size();
 	for (int i = 0; i < lgr; i++) {
 	    this.removeImage((AniImage) images.get(0));

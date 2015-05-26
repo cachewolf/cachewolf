@@ -69,9 +69,9 @@ public final class OCLinkImporter {
 	// todo other OC sites
 	Vm.showWait(true);
 	boolean save = false;
-	String wp = ch.getWayPoint();
+	String wp = ch.getCode();
 	if (ch.isGC()) {
-	    String wpName = ch.getOCWayPoint();
+	    String wpName = ch.getIdOC();
 	    if (wpName.length() > 0) {
 		if (wpName.charAt(0) < 65)
 		    wp = wpName.substring(1);
@@ -81,7 +81,7 @@ public final class OCLinkImporter {
 		}
 		if (!wp.startsWith("OC")) {
 		    // other OC sites
-		    ch.setOCWayPoint(""); // there may be a value from gpx - import
+		    ch.setIdOC(""); // there may be a value from gpx - import
 		    save = true;
 		}
 	    }
@@ -96,12 +96,12 @@ public final class OCLinkImporter {
 		else {
 		    // check over coordinates
 		    // getting a cache next to the coordinates
-		    String nLat = ch.getPos().getLatDeg(TransformCoordinates.DD);
-		    String nLon = ch.getPos().getLonDeg(TransformCoordinates.DD);
+		    String nLat = ch.getWpt().getLatDeg(TransformCoordinates.DD);
+		    String nLon = ch.getWpt().getLonDeg(TransformCoordinates.DD);
 		    url = baseurl + "mode=locate&lat=" + nLat + "&lon=" + nLon;
 		    result = SafeXML.html2iso8859s1(UrlFetcher.fetch(url));
 		    String ocCacheName = new Extractor(result, "name=\"", "\"", 0, true).findNext();
-		    if (ch.getCacheName().equals(ocCacheName)) {
+		    if (ch.getName().equals(ocCacheName)) {
 			hasOC = true;
 		    } else {
 			int start = result.indexOf("coords=\"") + 8;
@@ -109,11 +109,11 @@ public final class OCLinkImporter {
 			int latend = result.indexOf("\"", lonend);
 			double lon = Common.parseDouble(result.substring(start, lonend));
 			double lat = Common.parseDouble(result.substring(lonend + 1, latend));
-			boolean sameCoord = lon == ch.getPos().lonDec && lat == ch.getPos().latDec;
+			boolean sameCoord = lon == ch.getWpt().lonDec && lat == ch.getWpt().latDec;
 			if (sameCoord) {
 			    start = result.indexOf("username=\"") + 10;
 			    int end = result.indexOf("\"", start);
-			    if (ch.getCacheOwner().toLowerCase().equals(result.substring(start, end).toLowerCase()))
+			    if (ch.getOwner().toLowerCase().equals(result.substring(start, end).toLowerCase()))
 				hasOC = true;
 			}
 		    }
@@ -128,14 +128,14 @@ public final class OCLinkImporter {
 			String ocwp = result.substring(start, idend);
 			if (!found)
 			    ocwp = "-" + ocwp;
-			if (!ocwp.equals(ch.getOCWayPoint())) {
-			    ch.setOCWayPoint(ocwp);
+			if (!ocwp.equals(ch.getIdOC())) {
+			    ch.setIdOC(ocwp);
 			    save = true;
 			}
 		    }
 		}
 		if (save)
-		    ch.save();
+		    ch.saveCacheDetails();
 
 	    } catch (Exception e) {
 		// dann halt nicht

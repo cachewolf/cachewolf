@@ -58,7 +58,7 @@ public class NotesScreen extends Form {
 	setPreferredSize(Preferences.itself().getScreenWidth(), Preferences.itself().getScreenHeight());
 	this.resizeOnSIP = true;
 	ch = _ch;
-	chD = _ch.getCacheDetails(false);
+	chD = _ch.getDetails();
 	wayNotes.setText(chD.getCacheNotes());
 	addLast(sbp.setTag(CellConstants.SPAN, new Dimension(3, 1)), CellConstants.STRETCH, (CellConstants.FILL | CellConstants.WEST));
 	titleControls = new CellPanel();

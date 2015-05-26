@@ -382,7 +382,7 @@ class CacheTour extends CellPanel {
 		CacheHolder ch = cacheList.get(idx);
 		IconAndText imgDrag = new IconAndText();
 		imgDrag.addColumn(CacheType.getTypeImage(ch.getType()));
-		imgDrag.addColumn(ch.getWayPoint());
+		imgDrag.addColumn(ch.getCode());
 		dc.dragData = dc.startImageDrag(imgDrag, new Point(8, 8), this);
 	    }
 	}
@@ -562,7 +562,7 @@ class CacheTour extends CellPanel {
 	    cacheDB.get(i).sort = apply;
 	}
 	for (int i = cacheList.size() - 1; i >= 0; i--) {
-	    ch = cacheDB.get((cacheList.get(i)).getWayPoint());
+	    ch = cacheDB.get((cacheList.get(i)).getCode());
 	    if (ch == null)
 		continue; // Cache was deleted
 	    if (!ch.isVisible())
@@ -615,11 +615,11 @@ class CacheTour extends CellPanel {
 
     /** Add a cache to the visible and invisible list */
     private boolean addCache(CacheHolder ch) {
-	if (cacheList.getIndex(ch.getWayPoint()) < 0) {
+	if (cacheList.getIndex(ch.getCode()) < 0) {
 	    // Add cache reference to hidden list
 	    cacheList.add(ch);
 	    // Add Cache and cache icon to visible list
-	    lstCaches.addItem((new MenuItem()).iconize(ch.getWayPoint() + "   " + ch.getCacheName(), CacheType.getTypeImage(ch.getType()), true));
+	    lstCaches.addItem((new MenuItem()).iconize(ch.getCode() + "   " + ch.getName(), CacheType.getTypeImage(ch.getType()), true));
 	    dirty = true;
 	    return true;
 	} else
@@ -719,7 +719,7 @@ class CacheTour extends CellPanel {
 	    PrintWriter outp = new PrintWriter(new BufferedWriter(new FileWriter(fileName)));
 	    for (int i = 0; i < cacheList.size(); i++) {
 		// Put a > in front of the selected cache
-		outp.print((i == selectedIndex ? ">" : "") + (cacheList.get(i)).getWayPoint() + "\n");
+		outp.print((i == selectedIndex ? ">" : "") + (cacheList.get(i)).getCode() + "\n");
 	    }
 	    outp.close();
 	} catch (Exception e) {

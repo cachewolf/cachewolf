@@ -59,9 +59,9 @@ public class OziExporter extends Exporter {
 	strBuf.append("-1,");
 	// Field 2 : Name - the waypoint name, use the correct length name to suit the GPS type.
 	if (ch.isCustomWpt() || ch.isAddiWpt()) {
-	    strBuf.append(ch.getWayPoint() + ",");
+	    strBuf.append(ch.getCode() + ",");
 	} else {
-	    strBuf.append(ch.getWayPoint().concat(" ").concat(CacheType.getExportShortId(ch.getType())).concat(String.valueOf(ch.getDifficulty())).concat(String.valueOf(ch.getTerrain())).concat(CacheSize.getExportShortId(ch.getCacheSize())).concat(","));
+	    strBuf.append(ch.getCode().concat(" ").concat(CacheType.getExportShortId(ch.getType())).concat(String.valueOf(ch.getDifficulty())).concat(String.valueOf(ch.getTerrain())).concat(CacheSize.getExportShortId(ch.getSize())).concat(","));
 	}
 	// Field 3 : Latitude - decimal degrees.
 	strBuf.append(lat + ",");
@@ -80,7 +80,7 @@ public class OziExporter extends Exporter {
 	// Field 10 : Background Color (RGB value)
 	strBuf.append(oziColorMapper.ozicolor(ch) + ",");
 	// Field 11 : Description (max 40), no commas
-	tmpName = simplifyString(ch.getCacheName()).replace(',', ' ');
+	tmpName = simplifyString(ch.getName()).replace(',', ' ');
 	if (tmpName.length() <= 40) {
 	    strBuf.append(tmpName + ",");
 	} else {

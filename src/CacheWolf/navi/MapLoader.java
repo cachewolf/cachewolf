@@ -250,7 +250,7 @@ public class MapLoader {
 	CacheDB cacheDB = MainForm.profile.cacheDB;
 	for (int i = 0; i < cacheDB.size(); i++) {
 	    CacheHolder ch = cacheDB.get(i);
-	    if (maparea.isInBound(ch.getPos())) {
+	    if (maparea.isInBound(ch.getWpt())) {
 		return true;
 	    }
 	}

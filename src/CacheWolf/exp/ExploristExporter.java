@@ -212,7 +212,7 @@ public class ExploristExporter {
      * @return formated cache data
      */
     public String record(CacheHolder ch) {
-	CacheHolderDetail det = ch.getCacheDetails(true);
+	CacheHolderDetail det = ch.getDetails();
 	/*
 	 * static protected final int GC_AW_PARKING = 50;
 	 * static protected final int GC_AW_STAGE_OF_MULTI = 51;
@@ -223,17 +223,17 @@ public class ExploristExporter {
 	 */
 	StringBuffer sb = new StringBuffer();
 	sb.append("$PMGNGEO,");
-	sb.append(ch.getPos().getLatDeg(TransformCoordinates.DMM));
-	sb.append(ch.getPos().getLatMin(TransformCoordinates.DMM));
+	sb.append(ch.getWpt().getLatDeg(TransformCoordinates.DMM));
+	sb.append(ch.getWpt().getLatMin(TransformCoordinates.DMM));
 	sb.append(",");
 	sb.append("N,");
-	sb.append(ch.getPos().getLonDeg(TransformCoordinates.DMM));
-	sb.append(ch.getPos().getLonMin(TransformCoordinates.DMM));
+	sb.append(ch.getWpt().getLonDeg(TransformCoordinates.DMM));
+	sb.append(ch.getWpt().getLonMin(TransformCoordinates.DMM));
 	sb.append(",");
 	sb.append("E,");
 	sb.append("0000,"); // Height
 	sb.append("M,"); // in meter
-	sb.append(ch.getWayPoint());
+	sb.append(ch.getCode());
 	sb.append(",");
 	String add = "";
 	if (ch.isAddiWpt()) {
@@ -252,9 +252,9 @@ public class ExploristExporter {
 	    }
 	    sb.append(add);
 	}
-	sb.append(ch.getWayPoint() + " " + removeCommas(ch.getCacheName()));
+	sb.append(ch.getCode() + " " + removeCommas(ch.getName()));
 	sb.append(",");
-	sb.append(removeCommas(ch.getCacheOwner()));
+	sb.append(removeCommas(ch.getOwner()));
 	sb.append(",");
 	sb.append(removeCommas(Common.rot13(det.Hints)));
 	sb.append(",");
@@ -265,7 +265,7 @@ public class ExploristExporter {
 	    sb.append(CacheType.type2GSTypeTag(ch.getType()));
 	}
 	sb.append(",");
-	sb.append(toGsDateFormat(ch.getDateHidden())); // created - DDMMYYY, YYY = year - 1900
+	sb.append(toGsDateFormat(ch.getHidden())); // created - DDMMYYY, YYY = year - 1900
 	sb.append(",");
 	String lastFound = "0000";
 	for (int i = 0; i < det.CacheLogs.size(); i++) {

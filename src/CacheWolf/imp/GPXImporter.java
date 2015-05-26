@@ -192,12 +192,12 @@ public class GPXImporter extends MinML {
 
 	    if (holder == null) {
 		Preferences.itself().log("[GPXImporter:DoIt] no holder LogID=" + logId, e, true);
-	    } else if (holder.getWayPoint() == null) {
+	    } else if (holder.getCode() == null) {
 		Preferences.itself().log("[GPXImporter:DoIt] no waypoint LogID=" + logId, e, true);
-	    } else if (holder.getWayPoint().length() > 0) {
-		Preferences.itself().log("[GPXImporter:DoIt] " + holder.getWayPoint() + " LogID=" + logId, e, true);
+	    } else if (holder.getCode().length() > 0) {
+		Preferences.itself().log("[GPXImporter:DoIt] " + holder.getCode() + " LogID=" + logId, e, true);
 	    } else {
-		Preferences.itself().log("[GPXImporter:DoIt] " + holder.getPos().toString() + " LogID=" + logId, e, true);
+		Preferences.itself().log("[GPXImporter:DoIt] " + holder.getWpt().toString() + " LogID=" + logId, e, true);
 	    }
 	    infB.close(0);
 	    Vm.showWait(false);
@@ -237,7 +237,7 @@ public class GPXImporter extends MinML {
 	}
 	if (name.equals("wpt")) {
 	    holder = new CacheHolder();
-	    holder.setPos(new CoordinatePoint(Common.parseDouble(atts.getValue("lat")), Common.parseDouble(atts.getValue("lon"))));
+	    holder.setWpt(new CoordinatePoint(Common.parseDouble(atts.getValue("lat")), Common.parseDouble(atts.getValue("lon"))));
 	    inWpt = true;
 	    inLogs = false;
 	    inBug = false;
@@ -250,7 +250,7 @@ public class GPXImporter extends MinML {
 	}
 
 	if (name.equals("link") && inWpt) {
-	    holder.getCacheDetails(false).URL = atts.getValue("href");
+	    holder.getDetails().URL = atts.getValue("href");
 	    return;
 	}
 
@@ -265,7 +265,7 @@ public class GPXImporter extends MinML {
 	    if (holder.isOC()) {
 		for (int i = 0; i < atts.getLength(); i++) {
 		    if (atts.getName(i).equals("id")) {
-			holder.setOCWayPoint(atts.getValue("id"));
+			holder.setIdOC(atts.getValue("id"));
 			break;
 		    }
 		}
@@ -281,7 +281,7 @@ public class GPXImporter extends MinML {
 	    // get CacheID -- missing p.ex. on GcTour gpx
 	    for (int i = 0; i < atts.getLength(); i++) {
 		if (atts.getName(i).equals("id")) {
-		    holder.setOCWayPoint(atts.getValue("id"));
+		    holder.setIdOC(atts.getValue("id"));
 		    break;
 		}
 	    }
@@ -327,7 +327,7 @@ public class GPXImporter extends MinML {
 	}
 	if (name.equals("groundspeak:travelbugs")) {
 	    inBug = true;
-	    holder.getCacheDetails(false).Travelbugs.clear();
+	    holder.getDetails().Travelbugs.clear();
 	    return;
 	}
 	if (name.equals("groundspeak:attribute")) {
@@ -365,12 +365,12 @@ public class GPXImporter extends MinML {
 		return;
 	    }
 	    if (name.equals("groundspeak:log") || name.equals("log") || name.equals("terra:log")) {
-		holder.getCacheDetails(false).CacheLogs.add(new Log(logId, finderID, logIcon, logDate, logFinder, logData));
+		holder.getDetails().CacheLogs.add(new Log(logId, finderID, logIcon, logDate, logFinder, logData));
 		if ((logIcon.equals("icon_smile.gif") || logIcon.equals("icon_camera.gif") || logIcon.equals("icon_attended.gif"))
 			&& (SafeXML.html2iso8859s1(logFinder).equalsIgnoreCase(Preferences.itself().myAlias) || (SafeXML.html2iso8859s1(logFinder).equalsIgnoreCase(Preferences.itself().myAlias2)))) {
-		    holder.setCacheStatus(logDate);
+		    holder.setStatus(logDate);
 		    holder.setFound(true);
-		    holder.getCacheDetails(false).OwnLog = new Log(logId, finderID, logIcon, logDate, logFinder, logData);
+		    holder.getDetails().OwnLog = new Log(logId, finderID, logIcon, logDate, logFinder, logData);
 		}
 		return;
 	    }
@@ -378,9 +378,9 @@ public class GPXImporter extends MinML {
 
 	if (name.equals("wpt")) {
 
-	    int index = cacheDB.getIndex(holder.getWayPoint());
+	    int index = cacheDB.getIndex(holder.getCode());
 	    if (index == -1) {// Add cache Data only, if waypoint not already in database
-		holder.setNoFindLogs(holder.getCacheDetails(false).CacheLogs.countNotFoundLogs());
+		holder.setNoFindLogs(holder.getDetails().CacheLogs.countNotFoundLogs());
 		holder.setNew(true);
 		cacheDB.add(holder);
 		// don't spider additional waypoints, so check
@@ -393,20 +393,20 @@ public class GPXImporter extends MinML {
 			String text;
 			String orig;
 			String imgName;
-			orig = holder.getCacheDetails(false).LongDescription;
+			orig = holder.getDetails().LongDescription;
 
 			Extractor ex = new Extractor(orig, "<img src=\"", ">", 0, false);
 			int num = 0;
 			while ((text = ex.findNext()).length() > 0 && spiderOK) {
-			    if (num >= holder.getCacheDetails(false).images.size())
+			    if (num >= holder.getDetails().images.size())
 				break;
-			    imgName = holder.getCacheDetails(false).images.get(num).getTitle();
-			    holder.getCacheDetails(false).LongDescription = STRreplace.replace(holder.getCacheDetails(false).LongDescription, text, "[[Image: " + imgName + "]]");
+			    imgName = holder.getDetails().images.get(num).getTitle();
+			    holder.getDetails().LongDescription = STRreplace.replace(holder.getDetails().LongDescription, text, "[[Image: " + imgName + "]]");
 			    num++;
 			}
 		    }
 		}
-		holder.save();
+		holder.saveCacheDetails();
 		// crw.saveIndex(cacheDB,saveDir);
 	    }
 	    // Update cache data
@@ -417,7 +417,7 @@ public class GPXImporter extends MinML {
 		if (downloadPics && holder.isOC()) {
 		    getImages();
 		} else {
-		    holder.getCacheDetails(false).images = oldCh.getCacheDetails(true).images;
+		    holder.getDetails().images = oldCh.getDetails().images;
 		}
 		oldCh.initStates(false);
 		if (!oldCh.isOC()) {
@@ -429,7 +429,7 @@ public class GPXImporter extends MinML {
 		    }
 		}
 		oldCh.update(holder);
-		oldCh.save();
+		oldCh.saveCacheDetails();
 	    }
 
 	    inWpt = false;
@@ -437,7 +437,7 @@ public class GPXImporter extends MinML {
 	}
 	if (name.equals("sym") && strData.endsWith("Found")) {
 	    holder.setFound(true);
-	    holder.setCacheStatus(holder.getFoundText());
+	    holder.setStatus(CacheType.getFoundText(holder.getType()));
 	    return;
 	}
 	if (name.equals("groundspeak:travelbugs")) {
@@ -447,7 +447,7 @@ public class GPXImporter extends MinML {
 
 	if (name.equals("groundspeak:name") && inBug) {
 	    Travelbug tb = new Travelbug(strData);
-	    holder.getCacheDetails(false).Travelbugs.add(tb);
+	    holder.getDetails().Travelbugs.add(tb);
 	    holder.hasBugs(true);
 	    return;
 	}
@@ -463,7 +463,7 @@ public class GPXImporter extends MinML {
 	}
 
 	if (name.equals("time") && inWpt) {
-	    holder.setDateHidden(strData.substring(0, 10)); // Date;
+	    holder.setHidden(strData.substring(0, 10)); // Date;
 	    return;
 	}
 	// cache information
@@ -472,7 +472,7 @@ public class GPXImporter extends MinML {
 	}
 
 	if (name.equals("name") && inWpt && !inCache) {
-	    holder.setWayPoint(strData);
+	    holder.setCode(strData);
 	    if (gpxDate.getTime() != 0) {
 		holder.setLastSync(gpxDate.format("yyyyMMddHHmmss"));
 	    } else {
@@ -485,18 +485,18 @@ public class GPXImporter extends MinML {
 	// fill name with contents of <desc>, in case of gc.com the name is
 	// later replaced by the contents of <groundspeak:name> which is shorter
 	if (name.equals("desc") && inWpt) {
-	    holder.setCacheName(strData);
+	    holder.setName(strData);
 	    // msgA.setText("import " + strData);
 	    return;
 	}
 	if (name.equals("url") && inWpt) {
-	    holder.getCacheDetails(false).URL = strData;
+	    holder.getDetails().URL = strData;
 	    return;
 	}
 
 	// Text for additional waypoints, no HTML
 	if (name.equals("cmt") && inWpt) {
-	    holder.getCacheDetails(false).LongDescription = strData;
+	    holder.getDetails().LongDescription = strData;
 	    holder.isHTML(false);
 	    return;
 	}
@@ -504,25 +504,25 @@ public class GPXImporter extends MinML {
 	// aditional wapypoint
 	if (name.equals("type") && inWpt && !inCache && strData.startsWith("Waypoint")) {
 	    holder.setType(CacheType.gpxType2CwType(strData));
-	    holder.setCacheSize(CacheSize.CW_SIZE_NOTCHOSEN);
+	    holder.setSize(CacheSize.CW_SIZE_NOTCHOSEN);
 	    holder.setDifficulty(CacheTerrDiff.CW_DT_UNSET);
 	    holder.setTerrain(CacheTerrDiff.CW_DT_UNSET);
 	    holder.setLastSync("");
 	}
 
 	if (name.indexOf("name") > -1 && inCache) {
-	    holder.setCacheName(strData);
+	    holder.setName(strData);
 	    return;
 	}
 	if (name.equals("groundspeak:owner") || name.equals("owner") || name.equals("terra:owner")) {
-	    holder.setCacheOwner(strData);
+	    holder.setOwner(strData);
 	    if (Preferences.itself().myAlias.equals(SafeXML.html2iso8859s1(strData)) || (SafeXML.html2iso8859s1(strData).equalsIgnoreCase(Preferences.itself().myAlias2)))
 		holder.setOwned(true);
 	    return;
 	}
 	if (name.equals("groundspeak:placed_by")) {
-	    if (holder.getCacheOwner().equals("")) {
-		holder.setCacheOwner(strData);
+	    if (holder.getOwner().equals("")) {
+		holder.setOwner(strData);
 		if (Preferences.itself().myAlias.equals(SafeXML.html2iso8859s1(strData)) || (SafeXML.html2iso8859s1(strData).equalsIgnoreCase(Preferences.itself().myAlias2)))
 		    holder.setOwned(true);
 	    }
@@ -533,7 +533,7 @@ public class GPXImporter extends MinML {
 		holder.setDifficulty(CacheTerrDiff.v1Converter(strData));
 	    } catch (IllegalArgumentException e) {
 
-		Preferences.itself().log(holder.getCacheName() + ": illegal difficulty value: " + strData);
+		Preferences.itself().log(holder.getName() + ": illegal difficulty value: " + strData);
 	    }
 	    return;
 	}
@@ -542,52 +542,52 @@ public class GPXImporter extends MinML {
 		holder.setTerrain(CacheTerrDiff.v1Converter(strData));
 	    } catch (IllegalArgumentException e) {
 
-		Preferences.itself().log(holder.getCacheName() + ": illegal terrain value: " + strData);
+		Preferences.itself().log(holder.getName() + ": illegal terrain value: " + strData);
 	    }
 	    return;
 	}
 	if ((name.equals("groundspeak:type") || name.equals("type") || name.equals("terra:style")) && inCache) {
 	    holder.setType(CacheType.gpxType2CwType(strData));
 	    if (holder.isCustomWpt()) {
-		holder.setCacheSize(CacheSize.CW_SIZE_NOTCHOSEN);
+		holder.setSize(CacheSize.CW_SIZE_NOTCHOSEN);
 		holder.setDifficulty(CacheTerrDiff.CW_DT_UNSET);
 		holder.setTerrain(CacheTerrDiff.CW_DT_UNSET);
 	    }
 	    return;
 	}
 	if (name.equals("groundspeak:container") || name.equals("container")) {
-	    holder.setCacheSize(CacheSize.gcGpxString2Cw(strData));
+	    holder.setSize(CacheSize.gcGpxString2Cw(strData));
 	    return;
 	}
 	if (name.equals("groundspeak:country") || name.equals("country")) {
-	    holder.getCacheDetails(false).Country = strData;
+	    holder.getDetails().Country = strData;
 	    return;
 	}
 	if (name.equals("groundspeak:state") || name.equals("state")) {
-	    holder.getCacheDetails(false).State = strData;
+	    holder.getDetails().State = strData;
 	    return;
 	}
 	if (name.equals("terra:size")) {
-	    holder.setCacheSize(CacheSize.tcGpxString2Cw(strData));
+	    holder.setSize(CacheSize.tcGpxString2Cw(strData));
 	}
 
 	if (name.indexOf("short_description") > -1 || name.equals("summary")) {
 	    if (holder.isHTML())
-		holder.getCacheDetails(false).LongDescription = SafeXML.html2iso8859s1(strData) + "<br>"; // <br> needed because we also use a <br> in SpiderGC. Without it the comparison in ch.update fails
+		holder.getDetails().LongDescription = SafeXML.html2iso8859s1(strData) + "<br>"; // <br> needed because we also use a <br> in SpiderGC. Without it the comparison in ch.update fails
 	    else
-		holder.getCacheDetails(false).LongDescription = strData + "\n";
+		holder.getDetails().LongDescription = strData + "\n";
 	    return;
 	}
 
 	if (name.indexOf("long_description") > -1 || name.equals("description") || name.equals("terra:description")) {
 	    if (holder.isHTML())
-		holder.getCacheDetails(false).LongDescription += SafeXML.html2iso8859s1(strData);
+		holder.getDetails().LongDescription += SafeXML.html2iso8859s1(strData);
 	    else
-		holder.getCacheDetails(false).LongDescription += strData;
+		holder.getDetails().LongDescription += strData;
 	    return;
 	}
 	if (name.indexOf("encoded_hints") > -1 || name.equals("hints")) {
-	    holder.getCacheDetails(false).Hints = STRreplace.replace(STRreplace.replace(Common.rot13(strData), "\n", "<br>"), "\t", "");
+	    holder.getDetails().Hints = STRreplace.replace(STRreplace.replace(Common.rot13(strData), "\n", "<br>"), "\t", "");
 	    return;
 	}
 
@@ -595,7 +595,7 @@ public class GPXImporter extends MinML {
 	    // remove "&lt;br&gt;<br>" from the end
 	    int indexTrash = strData.indexOf("&lt;br&gt;<br>");
 	    if (indexTrash > 0)
-		holder.getCacheDetails(false).Hints = STRreplace.replace(STRreplace.replace(Common.rot13(strData.substring(0, indexTrash)), "\n", "<br>"), "\t", "");
+		holder.getDetails().Hints = STRreplace.replace(STRreplace.replace(Common.rot13(strData.substring(0, indexTrash)), "\n", "<br>"), "\t", "");
 	    return;
 	}
 
@@ -606,8 +606,8 @@ public class GPXImporter extends MinML {
 	    if (attInc == null)
 		attInc = "1";
 	    int id = Integer.parseInt(attID);
-	    holder.getCacheDetails(false).attributes.add(id, attInc);
-	    holder.setAttribsAsBits(holder.getCacheDetails(false).attributes.getAttribsAsBits());
+	    holder.getDetails().attributes.add(id, attInc);
+	    holder.setAttribsAsBits(holder.getDetails().attributes.getAttribsAsBits());
 	    return;
 	}
 
@@ -637,7 +637,7 @@ public class GPXImporter extends MinML {
     private void getImages() {
 	String addresse;
 	String cacheText;
-	CacheHolderDetail chD = holder.getCacheDetails(false);
+	CacheHolderDetail chD = holder.getDetails();
 
 	try {
 	    if (fromTC) {
@@ -655,7 +655,7 @@ public class GPXImporter extends MinML {
 		    String bilder = exBilder.findNext();
 		    getOCPictures(bilder);
 		} else {
-		    String wayPoint = holder.getWayPoint();
+		    String wayPoint = holder.getCode();
 		    if (wayPoint.startsWith("GC")) {
 			imgSpider.fetchWayPointPage(wayPoint);
 			chD.setLongDescription(imgSpider.getDescription());
@@ -694,7 +694,7 @@ public class GPXImporter extends MinML {
 	    try {
 		// TODO this is not quite correct: actually the "base" URL must be known...
 		// but anyway a different baseURL should not happen very often - it doesn't in my area
-		String hostname = OC.getOCHostName(holder.getWayPoint());
+		String hostname = OC.getOCHostName(holder.getCode());
 		if (!fetchUrl.startsWith("http://")) {
 		    fetchUrl = new URL(new URL("http://" + hostname + "/"), fetchUrl).toString();
 		}
@@ -749,7 +749,7 @@ public class GPXImporter extends MinML {
     }
 
     private void getOCPicture(CacheImage imageInfo) {
-	String fileName = holder.getWayPoint() + "_" + imageInfo.getURL().substring(imageInfo.getURL().lastIndexOf('/') + 1);
+	String fileName = holder.getCode() + "_" + imageInfo.getURL().substring(imageInfo.getURL().lastIndexOf('/') + 1);
 	fileName = Common.ClearForFileName(fileName).toLowerCase();
 	String target = MainForm.profile.dataDir + fileName;
 	imageInfo.setFilename(fileName);
@@ -759,14 +759,14 @@ public class GPXImporter extends MinML {
 		if (ftest.length() == 0) {
 		    ftest.delete();
 		} else {
-		    holder.getCacheDetails(false).images.add(imageInfo);
+		    holder.getDetails().images.add(imageInfo);
 		}
 	    } else {
 		UrlFetcher.fetchDataFile(imageInfo.getURL(), target);
 		ftest = new File(target);
 		if (ftest.exists()) {
 		    if (ftest.length() > 0) {
-			holder.getCacheDetails(false).images.add(imageInfo);
+			holder.getDetails().images.add(imageInfo);
 		    } else {
 			ftest.delete();
 		    }
@@ -775,12 +775,12 @@ public class GPXImporter extends MinML {
 	} catch (IOException e) {
 	    String ErrMessage;
 	    String wp, n;
-	    if (holder != null && holder.getWayPoint() != null)
-		wp = holder.getWayPoint();
+	    if (holder != null && holder.getCode() != null)
+		wp = holder.getCode();
 	    else
 		wp = "WP???";
-	    if (holder != null && holder.getCacheName() != null)
-		n = holder.getCacheName();
+	    if (holder != null && holder.getName() != null)
+		n = holder.getName();
 	    else
 		n = "name???";
 

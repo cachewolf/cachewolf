@@ -124,7 +124,7 @@ public class Exporter {
 		ch = cacheDB.get(i);
 		if (ch.isVisible()) {
 		    if (ch.isIncomplete()) {
-			Preferences.itself().log("skipping export of incomplete waypoint " + ch.getWayPoint());
+			Preferences.itself().log("skipping export of incomplete waypoint " + ch.getCode());
 			incompleteWaypoints++;
 			continue;
 		    }
@@ -136,14 +136,14 @@ public class Exporter {
 			str = record(ch);
 			break;
 		    case LAT_LON:
-			if (ch.getPos().isValid() == false)
+			if (ch.getWpt().isValid() == false)
 			    continue;
-			str = record(ch, ch.getPos().getLatDeg(TransformCoordinates.DD).replace('.', this.decimalSeparator), ch.getPos().getLonDeg(TransformCoordinates.DD).replace('.', this.decimalSeparator));
+			str = record(ch, ch.getWpt().getLatDeg(TransformCoordinates.DD).replace('.', this.decimalSeparator), ch.getWpt().getLonDeg(TransformCoordinates.DD).replace('.', this.decimalSeparator));
 			break;
 		    case LAT_LON | COUNT:
-			if (ch.getPos().isValid() == false)
+			if (ch.getWpt().isValid() == false)
 			    continue;
-			str = record(ch, ch.getPos().getLatDeg(TransformCoordinates.DD).replace('.', this.decimalSeparator), ch.getPos().getLonDeg(TransformCoordinates.DD).replace('.', this.decimalSeparator), i);
+			str = record(ch, ch.getWpt().getLatDeg(TransformCoordinates.DD).replace('.', this.decimalSeparator), ch.getWpt().getLonDeg(TransformCoordinates.DD).replace('.', this.decimalSeparator), i);
 			break;
 		    default:
 			str = null;
@@ -375,7 +375,7 @@ public class Exporter {
 	    strBuf.append(ch.getDifficulty());
 	    strBuf.append("/");
 	    strBuf.append(ch.getTerrain());
-	    strBuf.append(CacheSize.getExportShortId(ch.getCacheSize()));
+	    strBuf.append(CacheSize.getExportShortId(ch.getSize()));
 	}
 
 	return strBuf.toString();

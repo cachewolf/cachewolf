@@ -203,7 +203,7 @@ public class Navigate {
     }
 
     public void setDestination(CacheHolder ch) {
-	CWPoint d = ch.getPos();
+	CWPoint d = ch.getWpt();
 	if (d.isValid()) {
 	    destinationIsCache = true;
 	    destinationCache = ch;

@@ -105,7 +105,7 @@ public class Rebuild {
 			CacheHolder ch = new CacheHolder(details.substring(start, end + 2), cacheXmlVersion);
 			cacheDB.add(ch);
 			nAdded++;
-			Preferences.itself().log(ch.getWayPoint() + " added. (" + nAdded + ")");
+			Preferences.itself().log(ch.getCode() + " added. (" + nAdded + ")");
 			// CacheFiles[i] = null;
 		    } else
 			Preferences.itself().log("File " + CacheFiles[i] + " not entered to index.xml");

@@ -167,7 +167,7 @@ public class RadarPanel extends CellPanel {
 	final double pi180 = java.lang.Math.PI / 180.0;
 	for (int i = cacheDB.size() - 1; i >= 0; i--) {
 	    holder = cacheDB.get(i);
-	    if (holder.isVisible() && holder.getPos().isValid()) {
+	    if (holder.isVisible() && holder.getWpt().isValid()) {
 		degrees = holder.degrees * pi180;
 		drX = new Float(holder.kilom / scale * java.lang.Math.sin(degrees)).intValue();
 		drY = -new Float(holder.kilom / scale * java.lang.Math.cos(degrees)).intValue();
@@ -175,9 +175,9 @@ public class RadarPanel extends CellPanel {
 		    if (toggleMod > 0) {
 			String s;
 			if (toggleMod == 1)
-			    s = holder.getWayPoint();
+			    s = holder.getCode();
 			else
-			    s = holder.getCacheName();
+			    s = holder.getName();
 			if (s.length() > 0) {
 			    int tw;
 			    final Image img = new Image(tw = fm.getTextWidth(s), fm.getHeight());
@@ -196,7 +196,7 @@ public class RadarPanel extends CellPanel {
 		    }
 		    Image imgCache = CacheType.getBigCacheIcon(holder);
 		    rpi = new RadarPanelImage(imgCache);
-		    rpi.wayPoint = holder.getWayPoint();
+		    rpi.wayPoint = holder.getCode();
 		    rpi.rownum = i;
 		    final int dx = imgCache.getWidth();
 		    final int dy = imgCache.getHeight();
@@ -375,9 +375,9 @@ class MyInteractivePanel extends InteractivePanel {
 	RadarPanelImage imgRP = (RadarPanelImage) which;
 	CacheDB cacheDB = MainForm.profile.cacheDB;
 	CacheHolder ch = cacheDB.get(imgRP.rownum);
-	wayPoint = ch.getWayPoint();
-	String s = wayPoint + "  " + CacheSize.getExportShortId(ch.getCacheSize()) + " / " + strDifficulty + "=" + ch.getDifficulty() + "  " + strTerrain + "=" + ch.getTerrain();
-	String s1 = ch.getCacheName();
+	wayPoint = ch.getCode();
+	String s = wayPoint + "  " + CacheSize.getExportShortId(ch.getSize()) + " / " + strDifficulty + "=" + ch.getDifficulty() + "  " + strTerrain + "=" + ch.getTerrain();
+	String s1 = ch.getName();
 	if (s1.length() > 40)
 	    s1 = s1.substring(0, 40);
 	int tw = fm.getTextWidth(s) + 2;
@@ -431,7 +431,7 @@ class MyInteractivePanel extends InteractivePanel {
 	if (ch != null) {
 	    IconAndText icnDrag = new IconAndText();
 	    icnDrag.addColumn(CacheType.getTypeImage(ch.getType()));
-	    icnDrag.addColumn(ch.getWayPoint());
+	    icnDrag.addColumn(ch.getCode());
 	    dc.dragData = dc.startImageDrag(icnDrag, new Point(8, 8), this);
 	    canScroll = false;
 	}
@@ -452,7 +452,7 @@ class MyInteractivePanel extends InteractivePanel {
 	    RadarPanelImage imgRP = (RadarPanelImage) which;
 	    CacheDB cacheDB = MainForm.profile.cacheDB;
 	    CacheHolder ch = cacheDB.get(imgRP.rownum);
-	    wayPoint = ch.getWayPoint();
+	    wayPoint = ch.getCode();
 
 	    int tw, th;
 	    Image img = new Image(tw = fm.getTextWidth(wayPoint + 15), th = fm.getHeight() > 15 ? fm.getHeight() : 15);

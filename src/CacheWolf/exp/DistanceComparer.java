@@ -39,7 +39,7 @@ public class DistanceComparer implements Comparer {
 	} else {
 	    CacheHolder a = (CacheHolder) one;
 	    CacheHolder b = (CacheHolder) two;
-	    return (int) ((a.getPos().getDistance(centre) - b.getPos().getDistance(centre)) * 1000);
+	    return (int) ((a.getWpt().getDistance(centre) - b.getWpt().getDistance(centre)) * 1000);
 	}
     }
 

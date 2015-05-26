@@ -23,31 +23,33 @@ package CacheWolf.database;
 
 import CacheWolf.MainForm;
 import CacheWolf.Preferences;
+import CacheWolf.controls.InfoBox;
 import CacheWolf.utils.Extractor;
 import CacheWolf.utils.Files;
+import CacheWolf.utils.MyLocale;
 import CacheWolf.utils.STRreplace;
 import CacheWolf.utils.SafeXML;
 import ewe.filechooser.FileChooser;
 import ewe.filechooser.FileChooserBase;
 import ewe.io.BufferedWriter;
 import ewe.io.File;
-import ewe.io.FileNotFoundException;
 import ewe.io.FileReader;
 import ewe.io.FileWriter;
-import ewe.io.IOException;
 import ewe.io.PrintWriter;
 import ewe.ui.FormBase;
 import ewe.ui.InputBox;
 import ewe.util.Vector;
 
 public class CacheHolderDetail {
+    private static final String EMPTY = "";
+
     /** CacheHolder of the detail. <b>Only</b> set by CacheHolder when creating detail! **/
     private CacheHolder parent = null;
-    public String LongDescription = CacheHolder.EMPTY;
-    public String LastUpdate = CacheHolder.EMPTY;
-    public String Hints = CacheHolder.EMPTY;
+    public String LongDescription = EMPTY;
+    public String LastUpdate = EMPTY;
+    public String Hints = EMPTY;
     public LogList CacheLogs = new LogList();
-    private String CacheNotes = CacheHolder.EMPTY;
+    private String CacheNotes = EMPTY;
     public CacheImages images = new CacheImages();
     public CacheImages logImages = new CacheImages();
     public CacheImages userImages = new CacheImages();
@@ -55,12 +57,12 @@ public class CacheHolderDetail {
     public Vector CacheIcons = new Vector();
     public TravelbugList Travelbugs = new TravelbugList();
     // public String Bugs = EMPTY; Superceded by Travelbugs
-    public String URL = CacheHolder.EMPTY;
-    private String Solver = CacheHolder.EMPTY;
+    public String URL = EMPTY;
+    private String Solver = EMPTY;
     public Log OwnLog = null;
-    public String Country = CacheHolder.EMPTY;
+    public String Country = EMPTY;
     /** *<groundspeak:state> */
-    public String State = CacheHolder.EMPTY;
+    public String State = EMPTY;
     /**
      * For faster cache import (from opencaching) changes are only written when the details are freed from memory
      * If you want to save the changes automatically when the details are unloaded, set this to true
@@ -71,6 +73,16 @@ public class CacheHolderDetail {
 	parent = ch;
     }
 
+    // quick debug info
+    public String toString() {
+	if (this.parent == null)
+	    return "empty unassigned";
+	else if (parent.mainCache == null)
+	    return parent.toString();
+	else
+	    return parent + "(" + parent.mainCache + ")";
+    }
+
     public CacheHolder getParent() {
 	return parent;
     }
@@ -78,10 +90,10 @@ public class CacheHolderDetail {
     public void setLongDescription(String longDescription) {
 	String s = stripControlChars(longDescription);
 	if (LongDescription.equals(""))
-	    getParent().setNew(true);
+	    parent.setNew(true);
 	else {
 	    if (!s.equals(LongDescription)) {
-		getParent().setUpdated(true);
+		parent.setUpdated(true);
 	    }
 	}
 	LongDescription = s;
@@ -99,14 +111,14 @@ public class CacheHolderDetail {
 
     public void setHints(String hints) {
 	if (!Hints.equals(hints))
-	    getParent().setUpdated(true);
+	    parent.setUpdated(true);
 	Hints = hints;
     }
 
     public void setSolver(String solver) {
 	if (!Solver.equals(solver))
-	    getParent().setUpdated(true);
-	getParent().setHasSolver(!solver.trim().equals(""));
+	    parent.setUpdated(true);
+	parent.setHasSolver(!solver.trim().equals(""));
 	Solver = solver;
     }
 
@@ -127,9 +139,9 @@ public class CacheHolderDetail {
     public boolean setCacheNotes(String notes) {
 	boolean ret = !this.CacheNotes.equals(notes);
 	if (ret) {
-	    getParent().setUpdated(true);
+	    parent.setUpdated(true);
 	    this.CacheNotes = notes;
-	    getParent().setHasNote(!this.CacheNotes.trim().equals(""));
+	    parent.setHasNote(!this.CacheNotes.trim().equals(""));
 	}
 	return ret;
     }
@@ -141,18 +153,18 @@ public class CacheHolderDetail {
     public void setCacheLogs(LogList newLogs) {
 	if (Preferences.itself().overwriteLogs) {
 	    CacheLogs = newLogs;
-	    getParent().setLog_updated(true);
+	    parent.setLogUpdated(true);
 	    hasUnsavedChanges = true;
 	} else {
 	    int size = newLogs.size();
 	    for (int i = size - 1; i >= 0; i--) { // Loop over all new logs, must start with oldest log
 		if (CacheLogs.merge(newLogs.getLog(i)) >= 0)
-		    getParent().setLog_updated(true);
+		    parent.setLogUpdated(true);
 	    }
 	}
 	if (CacheLogs.purgeLogs() > 0)
 	    hasUnsavedChanges = true;
-	getParent().setNoFindLogs(CacheLogs.countNotFoundLogs());
+	parent.setNoFindLogs(CacheLogs.countNotFoundLogs());
     }
 
     /**
@@ -224,7 +236,7 @@ public class CacheHolderDetail {
 	    imgDesc = new InputBox("Description").input("", 10);
 	    // Create Destination Filename
 	    String ext = imgFile.getFileExt().substring(imgFile.getFileExt().lastIndexOf('.'));
-	    imgDestName = getParent().getWayPoint() + "_U_" + (this.userImages.size() + 1) + ext;
+	    imgDestName = parent.getCode() + "_U_" + (this.userImages.size() + 1) + ext;
 
 	    CacheImage userCacheImage = new CacheImage();
 	    userCacheImage.setFilename(imgDestName);
@@ -238,37 +250,53 @@ public class CacheHolderDetail {
     }
 
     /**
-     * Method to parse a specific cache.xml file.
-     * It fills information on cache details, hints, logs, notes and
-     * images.
+     * Method to parse a specific cache.xml file.<br>
+     * It fills information on cache details, hints, logs, notes and images.<br>
+     * 
+     * @param dir
      */
-    void readCache(String dir) throws IOException {
+    void readCache(String dir) {
 	FileReader in = null;
 	CacheImage imageInfo;
-	// If parent cache has empty waypoint then don't do anything. This might happen
-	// when a cache object is freshly created to serve as container for imported data
-	if (this.getParent().getWayPoint().equals(CacheHolder.EMPTY))
+	// If parent cache has empty waypoint then don't do anything.<br>
+	// This might happen when a cache object is freshly created to serve as container for imported data
+	if (this.parent.getCode().length() == 0)
 	    return;
-	File cacheFile = new File(dir + getParent().getWayPoint().toLowerCase() + ".xml");
+	File cacheFile = new File(dir + parent.getCode().toLowerCase() + ".xml"); // Kleinschreibung
 	if (cacheFile.exists()) {
 	    try {
 		in = new FileReader(cacheFile.getAbsolutePath());
-	    } catch (FileNotFoundException e) {
-		in = null; // exception is thrown again below, if file could not be found in upper case, too
+	    } catch (Exception e) {
+		in = null;
 	    }
 	}
 	if (in == null) {
-	    cacheFile = new File(dir + getParent().getWayPoint() + ".xml");
+	    cacheFile = new File(dir + parent.getCode() + ".xml"); // gespeicherte Schreibweise
 	    if (cacheFile.exists()) {
-		in = new FileReader(cacheFile.getAbsolutePath());
+		try {
+		    in = new FileReader(cacheFile.getAbsolutePath());
+		} catch (Exception e) {
+		}
+	    } else {
+		return; // leerer neuer Wegpunkt
 	    }
 	}
 
-	if (in == null)
-	    throw new FileNotFoundException(dir + getParent().getWayPoint().toLowerCase() + ".xml");
-	// Preferences.itself().log("Reading file " + getParent().getWayPoint() + ".xml");
-	String text = in.readAll();
-	in.close();
+	String text = "";
+	try {
+	    text = in.readAll();
+	} catch (Exception e) {
+	}
+
+	try {
+	    in.close();
+	} catch (Exception e) {
+	}
+
+	if (text.length() == 0) {
+	    new InfoBox(MyLocale.getMsg(5500, "Error"), MyLocale.getMsg(31415, "Could not read cache details for cache: ") + parent.getCode()).wait(FormBase.OKB);
+	    return;
+	}
 
 	Extractor ex = new Extractor(text, "<DETAILS><![CDATA[", "]]></DETAILS>", 0, true);
 	LongDescription = ex.findNext();
@@ -323,7 +351,7 @@ public class CacheHolderDetail {
 	while ((dummy = subex.findNext()).length() > 0) {
 	    if (imgNr >= this.images.size()) {
 		images.add(new CacheImage()); // this (more IMGTEXT than IMG in the <cache>.xml, but it happens. So avoid an ArrayIndexOutOfBoundException and add an CacheImage gracefully
-		Preferences.itself().log("Error reading " + this.getParent().getWayPoint() + "More IMGTEXT tags than IMG tags");
+		Preferences.itself().log("Error reading " + this.parent.getCode() + "More IMGTEXT tags than IMG tags");
 	    }
 	    imageInfo = this.images.get(imgNr);
 	    int pos = dummy.indexOf("<DESC>");
@@ -382,8 +410,8 @@ public class CacheHolderDetail {
 		URL = URL.substring(0, logpos);
 	} else {
 	    // if no URL is stored, set default URL (at this time only possible for gc.com)
-	    if (getParent().isGC()) {
-		URL = "http://www.geocaching.com/seek/cache_details.aspx?wp=" + getParent().getWayPoint();
+	    if (parent.isGC()) {
+		URL = "http://www.geocaching.com/seek/cache_details.aspx?wp=" + parent.getCode();
 	    }
 	}
 
@@ -413,15 +441,15 @@ public class CacheHolderDetail {
      */
     public void saveCacheDetails(String dir) {
 	PrintWriter detfile;
-	deleteFile(dir + getParent().getWayPoint() + ".xml");
+	deleteFile(dir + parent.getCode() + ".xml");
 	try {
-	    detfile = new PrintWriter(new BufferedWriter(new FileWriter(new File(dir + getParent().getWayPoint().toLowerCase() + ".xml").getAbsolutePath())));
+	    detfile = new PrintWriter(new BufferedWriter(new FileWriter(new File(dir + parent.getCode().toLowerCase() + ".xml").getAbsolutePath())));
 	} catch (Exception e) {
 	    Preferences.itself().log("Problem creating details file", e, true);
 	    return;
 	}
 	try {
-	    if (getParent().getWayPoint().length() > 0) {
+	    if (parent.getCode().length() > 0) {
 		detfile.print("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n");
 		detfile.print("<CACHEDETAILS>\r\n");
 		detfile.print("<VERSION value = \"3\"/>\n");
@@ -485,17 +513,17 @@ public class CacheHolderDetail {
 		detfile.print(Travelbugs.toXML());
 		detfile.print("<URL><![CDATA[" + URL + "]]></URL>\r\n");
 		detfile.print("<SOLVER><![CDATA[" + getSolver() + "]]></SOLVER>\r\n");
-		detfile.print(getParent().toXML()); // This will allow restoration of index.xml
+		detfile.print(parent.toXML()); // This will allow restoration of index.xml
 		detfile.print("</CACHEDETAILS>\n");
-		Preferences.itself().log("Writing file: " + getParent().getWayPoint().toLowerCase() + ".xml");
+		Preferences.itself().log("Writing file: " + parent.getCode().toLowerCase() + ".xml");
 	    } // if length
 	} catch (Exception e) {
-	    Preferences.itself().log("Problem waypoint " + getParent().getWayPoint() + " writing to a details file: ", e);
+	    Preferences.itself().log("Problem waypoint " + parent.getCode() + " writing to a details file: ", e);
 	}
 	try {
 	    detfile.close();
 	} catch (Exception e) {
-	    Preferences.itself().log("Problem waypoint " + getParent().getWayPoint() + " writing to a details file: ", e);
+	    Preferences.itself().log("Problem waypoint " + parent.getCode() + " writing to a details file: ", e);
 	}
 	hasUnsavedChanges = false;
     }
@@ -522,7 +550,7 @@ public class CacheHolderDetail {
     protected boolean rename(String newWptId) {
 	boolean success = false;
 	String profiledir = MainForm.profile.dataDir;
-	int oldWptLength = getParent().getWayPoint().length();
+	int oldWptLength = parent.getCode().length();
 
 	// just in case ... (got the pun? ;) )
 	newWptId = newWptId.toUpperCase();
@@ -532,15 +560,15 @@ public class CacheHolderDetail {
 	    String filename = images.get(i).getFilename();
 	    String comment = images.get(i).getComment();
 	    String title = images.get(i).getTitle();
-	    if (filename.indexOf(getParent().getWayPoint()) == 0) {
+	    if (filename.indexOf(parent.getCode()) == 0) {
 		filename = newWptId.concat(filename.substring(oldWptLength));
 		images.get(i).setFilename(filename);
 	    }
-	    if (comment.indexOf(getParent().getWayPoint()) == 0) {
+	    if (comment.indexOf(parent.getCode()) == 0) {
 		comment = newWptId.concat(comment.substring(oldWptLength));
 		images.get(i).setComment(comment);
 	    }
-	    if (title.indexOf(getParent().getWayPoint()) == 0) {
+	    if (title.indexOf(parent.getCode()) == 0) {
 		title = newWptId.concat(title.substring(oldWptLength));
 		images.get(i).setTitle(title);
 	    }
@@ -549,15 +577,15 @@ public class CacheHolderDetail {
 	    String filename = logImages.get(i).getFilename();
 	    String comment = logImages.get(i).getComment();
 	    String title = logImages.get(i).getTitle();
-	    if (filename.indexOf(getParent().getWayPoint()) == 0) {
+	    if (filename.indexOf(parent.getCode()) == 0) {
 		filename = newWptId.concat(filename.substring(oldWptLength));
 		logImages.get(i).setFilename(filename);
 	    }
-	    if (comment.indexOf(getParent().getWayPoint()) == 0) {
+	    if (comment.indexOf(parent.getCode()) == 0) {
 		comment = newWptId.concat(comment.substring(oldWptLength));
 		logImages.get(i).setComment(comment);
 	    }
-	    if (title.indexOf(getParent().getWayPoint()) == 0) {
+	    if (title.indexOf(parent.getCode()) == 0) {
 		title = newWptId.concat(title.substring(oldWptLength));
 		logImages.get(i).setTitle(title);
 	    }
@@ -566,15 +594,15 @@ public class CacheHolderDetail {
 	    String filename = userImages.get(i).getFilename();
 	    String comment = userImages.get(i).getComment();
 	    String title = userImages.get(i).getTitle();
-	    if (filename.indexOf(getParent().getWayPoint()) == 0) {
+	    if (filename.indexOf(parent.getCode()) == 0) {
 		filename = newWptId.concat(filename.substring(oldWptLength));
 		userImages.get(i).setFilename(filename);
 	    }
-	    if (comment.indexOf(getParent().getWayPoint()) == 0) {
+	    if (comment.indexOf(parent.getCode()) == 0) {
 		comment = newWptId.concat(comment.substring(oldWptLength));
 		userImages.get(i).setComment(comment);
 	    }
-	    if (title.indexOf(getParent().getWayPoint()) == 0) {
+	    if (title.indexOf(parent.getCode()) == 0) {
 		title = newWptId.concat(title.substring(oldWptLength));
 		userImages.get(i).setTitle(title);
 	    }
@@ -583,7 +611,7 @@ public class CacheHolderDetail {
 	// rename the files
 	try {
 	    // since we use *.* we do not need FileBugFix
-	    String srcFiles[] = new File(profiledir).list(getParent().getWayPoint().concat("*.*"), ewe.io.FileBase.LIST_FILES_ONLY);
+	    String srcFiles[] = new File(profiledir).list(parent.getCode().concat("*.*"), ewe.io.FileBase.LIST_FILES_ONLY);
 	    for (int i = 0; i < srcFiles.length; i++) {
 		String newfile = newWptId.concat(srcFiles[i].substring(oldWptLength));
 		File srcFile = new File(profiledir.concat(srcFiles[i]));

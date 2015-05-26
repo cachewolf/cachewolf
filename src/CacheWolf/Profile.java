@@ -56,6 +56,8 @@ public class Profile {
      * version number of current format for index.xml and waypoint.xml
      */
     public static int CURRENTFILEFORMAT = 3;
+    // Profile Settings
+    private int indexXmlVersion;
     /**
      * The list of caches (CacheHolder objects).<br>
      * A pointer to this object exists in many classes in parallel to this object,<br>
@@ -91,11 +93,6 @@ public class Profile {
      */
     private boolean hasUnsavedChanges = false;
     public boolean byPassIndexActive = false;
-
-    // TODO Add settings for the preferred mapper to allow for maps other than expedia and other resolutions
-
-    // Profile Settings
-    private int indexXmlVersion;
     /** Last sync date for opencaching caches */
     private String last_sync_opencaching = "";
     /** Distance for opencaching caches */
@@ -245,7 +242,7 @@ public class Profile {
 			h.changed();
 		}
 		ch = cacheDB.get(i);
-		if (ch.getWayPoint().length() > 0) {
+		if (ch.getCode().length() > 0) {
 		    cacheDBIndexFile.print(ch.toXML());
 		}
 	    }
@@ -554,7 +551,7 @@ public class Profile {
      * @param ch
      */
     public void setAddiRef(CacheHolder ch) {
-	String mainwpt = ch.getWayPoint().substring(2);
+	String mainwpt = ch.getCode().substring(2);
 	int mainindex = cacheDB.getIndex("GC" + mainwpt);
 	if (mainindex < 0 || !cacheDB.get(mainindex).isCacheWpt()) {
 	    for (int i = 0; i < OC.OCSites.length; i++) {
@@ -570,7 +567,7 @@ public class Profile {
 	    ch.setIncomplete(true);
 	} else {
 	    CacheHolder mainch = cacheDB.get(mainindex);
-	    if (mainch.getWayPoint().equals(ch.getWayPoint())) {
+	    if (mainch.getCode().equals(ch.getCode())) {
 		ch.setIncomplete(true);
 	    } else {
 		mainch.addiWpts.add(ch);
@@ -628,24 +625,24 @@ public class Profile {
 	for (int i = cacheDB.size() - 1; i >= 0; i--) {
 	    ch = cacheDB.get(i);
 	    if (!onlyOfSelected || ch.isChecked) {
-		if (ch.getPos().isValid()) { // done: && ch.pos.latDec != 0 && ch.pos.lonDec != 0 TO-DO != 0 sollte rausgenommen werden sobald in der Liste vernünftig mit nicht gesetzten pos umgegangen wird
+		if (ch.getWpt().isValid()) { // done: && ch.pos.latDec != 0 && ch.pos.lonDec != 0 TO-DO != 0 sollte rausgenommen werden sobald in der Liste vernünftig mit nicht gesetzten pos umgegangen wird
 		    isAddi = ch.isAddiWpt();
 		    // test for plausiblity of coordinates of Additional Waypoints: more then 1000 km away from main Waypoint is unplausible ->
 		    // ignore it //
 		    // && ch.mainCache != null is only necessary because the data base may be corrupted
-		    if (!isAddi || (isAddi && ch.mainCache != null && ch.getPos().getDistance(ch.mainCache.getPos()) < 1000)) {
+		    if (!isAddi || (isAddi && ch.mainCache != null && ch.getWpt().getDistance(ch.mainCache.getWpt()) < 1000)) {
 			if (topleft == null)
-			    topleft = new CWPoint(ch.getPos());
+			    topleft = new CWPoint(ch.getWpt());
 			if (bottomright == null)
-			    bottomright = new CWPoint(ch.getPos());
-			if (topleft.latDec < ch.getPos().latDec)
-			    topleft.latDec = ch.getPos().latDec;
-			if (topleft.lonDec > ch.getPos().lonDec)
-			    topleft.lonDec = ch.getPos().lonDec;
-			if (bottomright.latDec > ch.getPos().latDec)
-			    bottomright.latDec = ch.getPos().latDec;
-			if (bottomright.lonDec < ch.getPos().lonDec)
-			    bottomright.lonDec = ch.getPos().lonDec;
+			    bottomright = new CWPoint(ch.getWpt());
+			if (topleft.latDec < ch.getWpt().latDec)
+			    topleft.latDec = ch.getWpt().latDec;
+			if (topleft.lonDec > ch.getWpt().lonDec)
+			    topleft.lonDec = ch.getWpt().lonDec;
+			if (bottomright.latDec > ch.getWpt().latDec)
+			    bottomright.latDec = ch.getWpt().latDec;
+			if (bottomright.lonDec < ch.getWpt().lonDec)
+			    bottomright.lonDec = ch.getWpt().lonDec;
 			numCachesInArea++;
 		    }
 		}
@@ -1028,7 +1025,7 @@ public class Profile {
     private class MyComparer implements ewe.util.Comparer {
 
 	public int compare(Object o1, Object o2) {
-	    return ((CacheHolder) o1).getWayPoint().compareTo(((CacheHolder) o2).getWayPoint());
+	    return ((CacheHolder) o1).getCode().compareTo(((CacheHolder) o2).getCode());
 	}
 
     }
