@@ -102,7 +102,8 @@ public class Profile {
     /** Distance for geocaching caches */
     private String distGC = "";
     private String minDistGC = "";
-    private String lastUsedGpxStyle = "";
+    private int lastUsedGpxStyle = 0;
+    private int lastUsedOutputStyle = 0;
     private String gpxOutputTo = "";
 
     /**
@@ -231,7 +232,7 @@ public class Profile {
 	    cacheDBIndexFile.print(currentFilter.toXML(""));
 	    cacheDBIndexFile.print("    <SYNCOC date = \"" + last_sync_opencaching + "\" dist = \"" + distOC + "\"/>\n");
 	    cacheDBIndexFile.print("    <SPIDERGC dist = \"" + distGC + "\" mindist = \"" + minDistGC + "\"/>\n");
-	    cacheDBIndexFile.print("    <EXPORT style = \"" + lastUsedGpxStyle + "\" to = \"" + gpxOutputTo + "\"/>\n");
+	    cacheDBIndexFile.print("    <EXPORT style = \"" + lastUsedOutputStyle + lastUsedGpxStyle + "\" to = \"" + gpxOutputTo + "\"/>\n");
 	    cacheDBIndexFile.print("    <mapspath relativeDir = \"" + SafeXML.string2Html(relativeMapsDir) + "\"/>\n");
 	    cacheDBIndexFile.print("    <TIMEZONE timeZoneOffset = \"" + timeZoneOffset + "\" timeZoneAutoDST = \"" + timeZoneAutoDST + "\"/>\n");
 	    int size = cacheDB.size();
@@ -357,9 +358,42 @@ public class Profile {
 		} else if (text.indexOf("<EXPORT") >= 0) {
 		    int start = text.indexOf("style = \"") + 9;
 		    if (start == 8) {
-			lastUsedGpxStyle = "0";
-		    } else
-			lastUsedGpxStyle = text.substring(start, text.indexOf("\"", start));
+			lastUsedGpxStyle = 0;
+			lastUsedOutputStyle = 0;
+		    } else {
+			String tmp = text.substring(start, text.indexOf("\"", start));
+			if (tmp.length() == 1) {
+			    switch (Common.parseInt(tmp)) {
+			    case 0:
+				this.lastUsedGpxStyle = 0;
+				this.lastUsedOutputStyle = 0;
+				break;
+			    case 1:
+				this.lastUsedGpxStyle = 0;
+				this.lastUsedOutputStyle = 1;
+				break;
+			    case 2:
+				this.lastUsedGpxStyle = 0;
+				this.lastUsedOutputStyle = 2;
+				break;
+			    case 3:
+				this.lastUsedGpxStyle = 1;
+				this.lastUsedOutputStyle = 0;
+				break;
+			    case 4:
+				this.lastUsedGpxStyle = 2;
+				this.lastUsedOutputStyle = 0;
+				break;
+			    default:
+				this.lastUsedGpxStyle = 0;
+				this.lastUsedOutputStyle = 0;
+				break;
+			    }
+			} else {
+			    this.lastUsedOutputStyle = Common.parseInt(tmp.substring(0, 1));
+			    this.lastUsedGpxStyle = Common.parseInt(tmp.substring(1, 2));
+			}
+		    }
 		    start = text.indexOf("to = \"") + 6;
 		    if (start == 5) {
 			this.gpxOutputTo = "";
@@ -937,13 +971,21 @@ public class Profile {
     }
 
     public int getProfilesLastUsedGpxStyle() {
-	return Common.parseInt(lastUsedGpxStyle);
+	return lastUsedGpxStyle;
     }
 
     public void setLastUsedGpxStyle(int _style) {
-	String style = "" + _style;
-	this.notifyUnsavedChanges(!style.equals(this.lastUsedGpxStyle));
-	this.lastUsedGpxStyle = style;
+	this.notifyUnsavedChanges(_style != this.lastUsedGpxStyle);
+	this.lastUsedGpxStyle = _style;
+    }
+
+    public int getProfilesLastUsedOutputStyle() {
+	return lastUsedOutputStyle;
+    }
+
+    public void setLastUsedOutputStyle(int _style) {
+	this.notifyUnsavedChanges(_style != this.lastUsedOutputStyle);
+	this.lastUsedOutputStyle = _style;
     }
 
     public String getGpxOutputTo() {
