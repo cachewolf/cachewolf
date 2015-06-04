@@ -30,6 +30,7 @@ import CacheWolf.database.Attribute;
 import CacheWolf.database.CWPoint;
 import CacheWolf.database.CacheHolder;
 import CacheWolf.database.CacheHolderDetail;
+import CacheWolf.database.CacheImages;
 import CacheWolf.database.CacheSize;
 import CacheWolf.database.CacheTerrDiff;
 import CacheWolf.database.CacheType;
@@ -43,6 +44,7 @@ import CacheWolf.utils.FileBugfix;
 import CacheWolf.utils.MyLocale;
 import CacheWolf.utils.STRreplace;
 import CacheWolf.utils.SafeXML;
+import CacheWolf.utils.URLUTF8Encoder;
 
 import com.stevesoft.ewe_pat.Regex;
 import com.stevesoft.ewe_pat.Transformer;
@@ -93,6 +95,7 @@ public class GpxExportNg {
     final static String WPNAMESTYLE = "wpNameStyle";
     final static String GPXVERSION = "GPXVersion";
     final static String PQVERSION = "PQVersion";
+    final static String WITHGARMINEXTENSIONS = "withGarminExtensions";
     final static String WITHGSAKEXTENSIONS = "withGSAKExtensions";
     final static String SPLITSIZE = "splitSize";
     final static String EXPORTADDIWITHINVALIDCOORDS = "exportAddiWithInvalidCoords";
@@ -109,9 +112,10 @@ public class GpxExportNg {
     final static int OUTPUT_SEPARATE = 1;
     /** write one gpi file per "type" as determined by garminmap.xml */
     final static int OUTPUT_POI = 2;
-    /** export is without extensions */
+
+    /** export is without groundspeak extensions */
     final static int STYLE_COMPACT = 0;
-    /** export is PQ like */
+    /** export is like groundspeak pocket query (PQ) */
     final static int STYLE_PQEXTENSIONS = 1;
     /** export follows gc.com MyFinds format */
     final static int STYLE_MYFINDS = 2;
@@ -158,6 +162,7 @@ public class GpxExportNg {
 	    + "@@GPX@@"//
 	    + " @@PQEXTENSION@@" //
 	    + " @@GSAKEXTENSION@@" //
+	    + " @@GPXXEXTENSION@@" //
 	    + "\""//
 	    + " xmlns=\"http://www.topografix.com/GPX/1/0\""//
 	    + ">"//
@@ -179,6 +184,9 @@ public class GpxExportNg {
     private String xmlnsgsak;
     final static String XMLNSPQ = "http://www.groundspeak.com/cache/@";
     private String xmlnspq;
+    final static String XMLNSGPXX = "http://www.garmin.com/xmlschemas/GpxExtensionsv@";
+    // http://www.garmin.com/xmlschemas/GpxExtensionsv3.xsd
+    private String xmlnsgpxx;
     final static String GPXLOG = "\t\t\t\t<groundspeak:log id=\"@@LOGID@@\">" + newLine//
 	    + ("\t\t\t\t\t<groundspeak:date>@@LOGDATE@@T19:00:00Z</groundspeak:date>") + newLine//
 	    + ("\t\t\t\t\t<groundspeak:type>@@LOGTYPE@@</groundspeak:type>") + newLine//
@@ -583,16 +591,19 @@ public class GpxExportNg {
 	ch.getDetails();
 	try {
 	    ret.append(formatCompact());
+	    if (exportOptions.getGPXVersion() == 1)
+		ret.append("  <extensions>" + newLine);
 	    if (exportStyle == STYLE_PQEXTENSIONS || exportStyle == STYLE_MYFINDS) {
-		if (exportOptions.getGPXVersion() == 1)
-		    ret.append("  <extensions>" + newLine);
 		ret.append(formatPqExtensions());
-		if (exportOptions.getWithGSAKExtensions()) {
-		    ret.append(formatGSAKExtensions());
-		}
-		if (exportOptions.getGPXVersion() == 1)
-		    ret.append("  </extensions>" + newLine);
 	    }
+	    if (exportOptions.getWithGarminExtensions()) {
+		ret.append(formatGarminExtensions());
+	    }
+	    if (exportOptions.getWithGSAKExtensions()) {
+		ret.append(formatGSAKExtensions());
+	    }
+	    if (exportOptions.getGPXVersion() == 1)
+		ret.append("  </extensions>" + newLine);
 	    ret.append("  </wpt>").append(newLine);
 	} catch (IllegalArgumentException e) {
 	    exportErrors++;
@@ -611,8 +622,6 @@ public class GpxExportNg {
     private String formatCompact() {
 
 	StringBuffer ret = new StringBuffer();
-
-	// .append("\t\t<desc>@@WPDESC@@</desc>").append(newLine)
 
 	if (ch.getWpt().isValid())
 	    ret.append("  <wpt lat=\"" + ch.getWpt().getLatDeg(TransformCoordinates.DD) + "\" lon=\"" + ch.getWpt().getLonDeg(TransformCoordinates.DD) + "\">").append(newLine);
@@ -690,6 +699,29 @@ public class GpxExportNg {
 		if (!ch.isCustomWpt()) {
 		    ret.append("    <url>").append(ch.getDetails().URL).append("</url>").append(newLine);
 		    ret.append("    <urlname>").append(SafeXML.cleanGPX(ch.getName())).append("</urlname>").append(newLine);
+		}
+	    }
+	}
+
+	if (exportOptions.getGPXVersion() == 1) {
+	    // link - tag
+	    CacheImages images = ch.getDetails().images.getDisplayImages(ch.getCode());
+	    if (ch.isCacheWpt()) {
+		if (!ch.isCustomWpt()) {
+		    for (int i = 0; i < images.size(); i++) {
+			String filename = images.get(i).getFilename();
+			String url = MainForm.profile.dataDir + filename;
+			// POILoader can only work with JPG-Files
+			if (!filename.endsWith(".jpg"))
+			    continue;
+			// check if the file is not deleted
+			if (!(new File(url)).exists())
+			    continue;
+			ret.append("    <link ");
+			String comment = images.get(i).getTitle();
+			ret.append("text=\"" + SafeXML.cleanGPX(comment) + "\" ");
+			ret.append("href=\"" + URLUTF8Encoder.encode(url, false) + "\"").append("/>").append(newLine);
+		    }
 		}
 	    }
 	}
@@ -773,6 +805,14 @@ public class GpxExportNg {
 	ret_____.append("      <gsak:IsPremium>").append(SafeXML.strxmlencode(ch.isPMCache())).append("</gsak:IsPremium>").append(newLine); //
 	// ret_____.append("      <gsak:CacheImages>").append("").append("</gsak:CacheImages>").append(newLine) // replace "" by format spoilers
 	ret_____.append("    </gsak:wptExtension>").append(newLine);//
+	return ret_____.toString();
+    }
+
+    private String formatGarminExtensions() {
+	StringBuffer ret_____ = new StringBuffer();
+	ret_____.append("    <gpxx:wptExtension xmlns:gpxx=\"" + xmlnsgpxx + "\">").append(newLine); //
+	ret_____.append("      <gpxx:DisplayMode>").append("SymbolAndName").append("</gpxx:DisplayMode>").append(newLine); //
+	ret_____.append("    </gpxx:wptExtension>").append(newLine);//
 	return ret_____.toString();
     }
 
@@ -985,6 +1025,13 @@ public class GpxExportNg {
 	if (this.exportOptions.getWithGSAKExtensions()) {
 	    gsak = xmlnsgsak + " " + xmlnsgsak + "/gsak.xsd";
 	}
+	// Garmin gpxx
+	String gpxx = "";
+	String gpxxVersion = "3";
+	xmlnsgpxx = STRreplace.replace(XMLNSGPXX, "@", gpxxVersion);
+	if (this.exportOptions.getWithGarminExtensions()) {
+	    gpxx = xmlnsgpxx + " " + xmlnsgpxx + ".xsd"; //GpxExtensionsv3.xsd
+	}
 
 	Transformer trans = new Transformer(true);
 	if (exportStyle == STYLE_MYFINDS) {
@@ -996,6 +1043,7 @@ public class GpxExportNg {
 	trans.add(new Regex("@@GPX@@", gpx));
 	trans.add(new Regex("@@PQEXTENSION@@", pq));
 	trans.add(new Regex("@@GSAKEXTENSION@@", gsak));
+	trans.add(new Regex("@@GPXXEXTENSION@@", gpxx));
 	return trans.replaceFirst(GPXHEADER);
     }
 
@@ -1131,9 +1179,9 @@ public class GpxExportNg {
      */
     private class GpxExportNgForm extends Form {
 
-	private mLabel lblGPXVersion, lblWithGSAKExtensions, lblWpNameStyle, lblAddiWithInvalidCoords, lblSplitSize, lblUseCustomIcons, lblSendToGarmin, lblMaxLogs, lblExportLogsAsPlainText, lblAttrib2Log, lblPrefix;
+	private mLabel lblGPXVersion, lblWithGSAKExtensions, lblWithGarminExtensions, lblWpNameStyle, lblAddiWithInvalidCoords, lblSplitSize, lblUseCustomIcons, lblSendToGarmin, lblMaxLogs, lblExportLogsAsPlainText, lblAttrib2Log, lblPrefix;
 	private int gpxStyle, outputStyle, gpxVersion;
-	private mCheckBox cbWithGSAKExtensions, cbUseCustomIcons, cbSendToGarmin, cbAddiWithInvalidCoords, cbAttrib2Log, cbExportLogsAsPlainText;
+	private mCheckBox cbWithGSAKExtensions, cbWithGarminExtensions, cbUseCustomIcons, cbSendToGarmin, cbAddiWithInvalidCoords, cbAttrib2Log, cbExportLogsAsPlainText;
 	private mInput ibMaxLogs, ibSplitSize, ibPrefix, ibFilename;
 	private mChoice chStyle, chOutput, chGPXVersion, chWpNameStyle;
 	private mButton btnFilename;
@@ -1160,26 +1208,6 @@ public class GpxExportNg {
 	    hasGarminMap = _hasGarminMap;
 	    isGpsBabelInstalled = _hasGpsbabel;
 
-	    addNext(new mLabel(MyLocale.getMsg(2013, "GPX Style")));
-	    chStyle = new mChoice();
-	    chStyle.dontSearchForKeys = true;
-	    // if you change the order of strings make sure to fix the event handler as well
-	    chStyle.addItem(MyLocale.getMsg(2004, "Compact")); // index 0
-	    chStyle.addItem(MyLocale.getMsg(2005, "PQ like")); // index 1
-	    chStyle.addItem(MyLocale.getMsg(2006, "MyFinds")); // index 2
-	    chStyle.select(gpxStyle);
-	    addLast(chStyle);
-
-	    addNext(new mLabel(MyLocale.getMsg(2024, "Output Style")));
-	    chOutput = new mChoice();
-	    chOutput.dontSearchForKeys = true;
-	    // if you change the order of strings make sure to fix the event handler as well
-	    chOutput.addItem(MyLocale.getMsg(2007, "Single GPX")); // index 0
-	    chOutput.addItem(MyLocale.getMsg(2008, "Separate GPX")); // index 1
-	    chOutput.addItem(MyLocale.getMsg(2009, "POI")); // index 2
-	    chOutput.select(outputStyle);
-	    addLast(chOutput);
-
 	    lblGPXVersion = new mLabel(MyLocale.getMsg(2022, "GPX Version"));
 	    addNext(lblGPXVersion);
 	    chGPXVersion = new mChoice();
@@ -1188,6 +1216,20 @@ public class GpxExportNg {
 	    chGPXVersion.addItem("1.1"); // index 1
 	    chGPXVersion.select(gpxVersion);
 	    addLast(chGPXVersion);
+
+	    addNext(new mLabel(MyLocale.getMsg(2013, "With Groundspeak Extensions")));
+	    chStyle = new mChoice();
+	    chStyle.dontSearchForKeys = true;
+	    // if you change the order of strings make sure to fix the event handler as well
+	    chStyle.addItem(MyLocale.getMsg(2004, "No")); // index 0
+	    chStyle.addItem(MyLocale.getMsg(2005, "PQ like")); // index 1
+	    chStyle.addItem(MyLocale.getMsg(2006, "MyFinds")); // index 2
+	    chStyle.select(gpxStyle);
+	    addLast(chStyle);
+
+	    addNext(lblWithGarminExtensions = new mLabel(MyLocale.getMsg(2025, "With Garmin Extensions")));
+	    cbWithGarminExtensions = new mCheckBox(" ");
+	    addLast(cbWithGarminExtensions);
 
 	    addNext(lblWithGSAKExtensions = new mLabel(MyLocale.getMsg(2023, "With GSAK Extensions")));
 	    cbWithGSAKExtensions = new mCheckBox(" ");
@@ -1230,6 +1272,16 @@ public class GpxExportNg {
 	    ibMaxLogs = new mInput("");
 	    addLast(ibMaxLogs);
 
+	    addNext(new mLabel(MyLocale.getMsg(2024, "Output Style")));
+	    chOutput = new mChoice();
+	    chOutput.dontSearchForKeys = true;
+	    // if you change the order of strings make sure to fix the event handler as well
+	    chOutput.addItem(MyLocale.getMsg(2007, "Single GPX")); // index 0
+	    chOutput.addItem(MyLocale.getMsg(2008, "Separate GPX")); // index 1
+	    chOutput.addItem(MyLocale.getMsg(2009, "POI")); // index 2
+	    chOutput.select(outputStyle);
+	    addLast(chOutput);
+
 	    addNext(lblPrefix = new mLabel(MyLocale.getMsg(2016, "Prefix")));
 	    ibPrefix = new mInput("");
 	    addLast(ibPrefix);
@@ -1250,9 +1302,10 @@ public class GpxExportNg {
 	    exportValues = Preferences.itself().getGpxExportPreferences(Preferences.itself().gpxStyles[gpxStyle]);
 	    setFromPreferences();
 	    if (gpxStyle == STYLE_MYFINDS) {
+		disable(lblGPXVersion, chGPXVersion);
 		chWpNameStyle.select(0);
 		disable(lblWpNameStyle, chWpNameStyle);
-		disable(lblGPXVersion, chGPXVersion);
+		disable(lblWithGarminExtensions, cbWithGarminExtensions);
 		disable(lblWithGSAKExtensions, cbWithGSAKExtensions);
 		disable(lblAddiWithInvalidCoords, cbAddiWithInvalidCoords);
 		cbAddiWithInvalidCoords.setState(false);
@@ -1268,8 +1321,9 @@ public class GpxExportNg {
 		disable(lblPrefix, ibPrefix);
 		outputStyle = OUTPUT_SINGLE;
 	    } else if (gpxStyle == STYLE_PQEXTENSIONS) {
-		enable(lblWpNameStyle, chWpNameStyle);
 		enable(lblGPXVersion, chGPXVersion);
+		enable(lblWpNameStyle, chWpNameStyle);
+		enable(lblWithGarminExtensions, cbWithGarminExtensions);
 		enable(lblWithGSAKExtensions, cbWithGSAKExtensions);
 		enable(lblAddiWithInvalidCoords, cbAddiWithInvalidCoords);
 		enable(lblSplitSize, ibSplitSize);
@@ -1289,10 +1343,11 @@ public class GpxExportNg {
 		enable(lblMaxLogs, ibMaxLogs);
 		enable(lblAttrib2Log, cbAttrib2Log);
 		disable(lblPrefix, ibPrefix);
-	    } else { // compact export
+	    } else { // without Groundspeak extension
+		enable(lblGPXVersion, chGPXVersion);
 		enable(lblWpNameStyle, chWpNameStyle);
-		disable(lblGPXVersion, chGPXVersion);
-		disable(lblWithGSAKExtensions, cbWithGSAKExtensions);
+		enable(lblWithGarminExtensions, cbWithGarminExtensions);
+		enable(lblWithGSAKExtensions, cbWithGSAKExtensions);
 		disable(lblAddiWithInvalidCoords, cbAddiWithInvalidCoords);
 		cbAddiWithInvalidCoords.setState(false);
 		disable(lblSplitSize, ibSplitSize);
@@ -1352,6 +1407,7 @@ public class GpxExportNg {
 	private void setFromPreferences() {
 	    chWpNameStyle.select(Common.parseInt(getExportValue(WPNAMESTYLE)));
 	    chGPXVersion.select(Common.parseInt(getExportValue(GPXVERSION)));
+	    cbWithGarminExtensions.setState(Boolean.valueOf(getExportValue(WITHGARMINEXTENSIONS)).booleanValue());
 	    cbWithGSAKExtensions.setState(Boolean.valueOf(getExportValue(WITHGSAKEXTENSIONS)).booleanValue());
 	    int splitSize = Common.parseInt(getExportValue(SPLITSIZE));
 	    ibSplitSize.setText((splitSize < 1) ? "" : String.valueOf(splitSize));
@@ -1402,6 +1458,10 @@ public class GpxExportNg {
 
 	public int getGPXVersion() {
 	    return chGPXVersion.selectedIndex;
+	}
+
+	public boolean getWithGarminExtensions() {
+	    return this.cbWithGarminExtensions.getState();
 	}
 
 	public boolean getWithGSAKExtensions() {
@@ -1496,6 +1556,9 @@ public class GpxExportNg {
 	}
 
 	private void setPreferences() {
+	    exportValues.put(GPXVERSION, "" + chGPXVersion.selectedIndex);
+	    exportValues.put(WITHGARMINEXTENSIONS, SafeXML.strxmlencode(cbWithGarminExtensions.getState()));
+	    exportValues.put(WITHGSAKEXTENSIONS, SafeXML.strxmlencode(cbWithGSAKExtensions.getState()));
 	    switch (outputStyle) {
 	    case OUTPUT_SINGLE:
 		exportValues.put(SENDTOGARMIN, SafeXML.strxmlencode(cbSendToGarmin.getState()));
@@ -1512,8 +1575,6 @@ public class GpxExportNg {
 		exportValues.put(WPNAMESTYLE, "" + chWpNameStyle.selectedIndex);
 		exportValues.put(USECUSTOMICONS, SafeXML.strxmlencode(cbUseCustomIcons.getState()));
 	    case STYLE_PQEXTENSIONS:
-		exportValues.put(GPXVERSION, "" + chGPXVersion.selectedIndex);
-		exportValues.put(WITHGSAKEXTENSIONS, SafeXML.strxmlencode(cbWithGSAKExtensions.getState()));
 		exportValues.put(SPLITSIZE, ibSplitSize.text);
 		exportValues.put(ATTRIB2LOG, SafeXML.strxmlencode(cbAttrib2Log.getState()));
 		exportValues.put(EXPORTADDIWITHINVALIDCOORDS, SafeXML.strxmlencode(cbAddiWithInvalidCoords.getState()));
