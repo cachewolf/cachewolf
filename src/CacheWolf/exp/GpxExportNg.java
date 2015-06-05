@@ -42,7 +42,6 @@ import CacheWolf.utils.Common;
 import CacheWolf.utils.DateFormat;
 import CacheWolf.utils.FileBugfix;
 import CacheWolf.utils.MyLocale;
-import CacheWolf.utils.STRreplace;
 import CacheWolf.utils.SafeXML;
 import CacheWolf.utils.URLUTF8Encoder;
 
@@ -114,7 +113,7 @@ public class GpxExportNg {
     final static int OUTPUT_POI = 2;
 
     /** export is without groundspeak extensions */
-    final static int STYLE_COMPACT = 0;
+    final static int NOGSEXTENSION = 0;
     /** export is like groundspeak pocket query (PQ) */
     final static int STYLE_PQEXTENSIONS = 1;
     /** export follows gc.com MyFinds format */
@@ -140,53 +139,12 @@ public class GpxExportNg {
     private int exportErrors = 0;
     /**  */
     private String finderid;
-    /*
-     * groundspeak PQ Extensions
-     * 1.0 Basic Definition of PQ Extensions
-     * 1.0.1 Extensions
-     * added the inc for <groundspeak:attributes>: attributes like 'dog-friendly' or 'handicapped access' will be listed. ID corresponds to an enum in the Geocaching.com database
-     * <groundspeak:attribute id="1" inc="1">Dogs allowed</groundspeak:attribute>
-     * 1.1 Extensions
-     * Owner : Added GUID for transition to database redesign. Both GUID and ID are now optional  Owner ID corresponds to an account on Geocaching.com.
-     * Added <groundspeak:lastUpdated>:  "xs:dateTime" is the last time the cache has been edited by the user
-     * Added <groundspeak:exported>: ="xs:dateTime" for the benefit of splitting out caches -->
-    */
-    // we need to fake desc to make clients like GSAK accept additional waypoints together with caches
-    final static String GPXHEADER = "<?xml version=\"1.0\" encoding=\"utf-8\"?>" + newLine//
-	    + "<gpx"//
-	    + " xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\""//
-	    + " xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\""//
-	    + " version=\"1.0\""//
-	    + " creator=\"CacheWolf\""//
-	    + " xsi:schemaLocation=\""//
-	    + "@@GPX@@"//
-	    + " @@PQEXTENSION@@" //
-	    + " @@GSAKEXTENSION@@" //
-	    + " @@GPXXEXTENSION@@" //
-	    + "\""//
-	    + " xmlns=\"http://www.topografix.com/GPX/1/0\""//
-	    + ">"//
-	    + newLine//
-	    + "<name>@@NAME@@</name>" + newLine//
-	    + "<desc>This is an individual cache generated from Geocaching.com</desc>" + newLine//
-	    + "<author>Various users from geocaching.com and/or opencaching.de</author>" + newLine//
-	    + "<email>contact@cachewolf.de</email>" + newLine//
-	    + "<url>http://www.cachewolf.de/</url>" + newLine//
-	    + "<urlname>CacheWolf - Paperless Geocaching</urlname>" + newLine//
-	    + "<time>@@CREATEDATE@@T07:00:00Z</time>" + newLine//
-	    + "<keywords>cache, geocache, waypoints</keywords>" + newLine//
-    // TODO: is it worth a second loop?
-    // +("<bounds minlat=\"50.91695\" minlon=\"6.876383\" maxlat=\"50.935183\" maxlon=\"6.918817\" />")
-    ;
-    final static String XMLNSGPX = "http://www.topografix.com/GPX/@";
+
     private String xmlnsgpx;
-    final static String XMLNSGSAK = "http://www.gsak.net/xmlv1/@";
     private String xmlnsgsak;
-    final static String XMLNSPQ = "http://www.groundspeak.com/cache/@";
     private String xmlnspq;
-    final static String XMLNSGPXX = "http://www.garmin.com/xmlschemas/GpxExtensionsv@";
-    // http://www.garmin.com/xmlschemas/GpxExtensionsv3.xsd
     private String xmlnsgpxx;
+
     final static String GPXLOG = "\t\t\t\t<groundspeak:log id=\"@@LOGID@@\">" + newLine//
 	    + ("\t\t\t\t\t<groundspeak:date>@@LOGDATE@@T19:00:00Z</groundspeak:date>") + newLine//
 	    + ("\t\t\t\t\t<groundspeak:type>@@LOGTYPE@@</groundspeak:type>") + newLine//
@@ -260,7 +218,7 @@ public class GpxExportNg {
 	if (exportOptions.execute() == FormBase.IDCANCEL) {
 	    return;
 	}
-	this.exportStyle = this.exportOptions.getGpxStyle();
+	this.exportStyle = this.exportOptions.getGroundspeakExtension();
 	this.outputStyle = this.exportOptions.getOutputStyle();
 
 	if (exportStyle == STYLE_PQEXTENSIONS) {
@@ -667,7 +625,7 @@ public class GpxExportNg {
 	if (!ch.isCustomWpt()) {
 	    // no <cmt> in PQs / ?Myfinds
 	    if (ch.isCacheWpt()) {
-		if (exportStyle == STYLE_COMPACT) {
+		if (exportStyle == NOGSEXTENSION) {
 		    ret.append("    <cmt>").append(SafeXML.cleanGPX(ch.getName()));
 		    ret.append("&lt;br /&gt;" + SafeXML.cleanGPX(Common.rot13(ch.getDetails().Hints)));
 		    ret.append("&lt;br /&gt;" + SafeXML.cleanGPX(ch.getDetails().LongDescription));
@@ -717,10 +675,10 @@ public class GpxExportNg {
 			// check if the file is not deleted
 			if (!(new File(url)).exists())
 			    continue;
-			ret.append("    <link ");
 			String comment = images.get(i).getTitle();
-			ret.append("text=\"" + SafeXML.cleanGPX(comment) + "\" ");
-			ret.append("href=\"" + URLUTF8Encoder.encode(url, false) + "\"").append("/>").append(newLine);
+			ret.append("<link ").append("href=\"" + URLUTF8Encoder.encode(url, false) + "\">").append(newLine);
+			ret.append("<text>" + SafeXML.cleanGPX(comment) + "</text>").append(newLine);
+			ret.append("</link>").append(newLine);
 		    }
 		}
 	    }
@@ -985,22 +943,34 @@ public class GpxExportNg {
     }
 
     private String formatHeader() {
-	// FIXME: extend MainForm.profile to add <bounds minlat=\"50.91695\" minlon=\"6.876383\" maxlat=\"50.935183\" maxlon=\"6.918817\" />
-	// MainForm.profile.getSourroundingArea(false);
-	//http://www.topografix.com/GPX/1/0 http://www.topografix.com/GPX/1/0/gpx.xsd
 	// GPX
+	//http://www.topografix.com/GPX/1/0 http://www.topografix.com/GPX/1/0/gpx.xsd
 	String gpx = "";
+	String xmlnsGPXVersion;
 	String gpxVersion;
 	switch (exportOptions.getGPXVersion()) {
 	case 0:
-	    gpxVersion = "1/0"; //ohne das <extensions> tag
+	    gpxVersion = "1.0";
+	    xmlnsGPXVersion = "1/0"; //ohne das <extensions> tag
 	    break;
 	default:
-	    gpxVersion = "1/1"; //mit <extensions> tag
+	    gpxVersion = "1.1";
+	    xmlnsGPXVersion = "1/1"; //mit <extensions> tag
 	}
-	xmlnsgpx = STRreplace.replace(XMLNSGPX, "@", gpxVersion);
+	xmlnsgpx = "http://www.topografix.com/GPX/" + xmlnsGPXVersion;
 	gpx = xmlnsgpx + " " + xmlnsgpx + "/gpx.xsd";
 	// PQ Groundspeak
+	/*
+	  * groundspeak PQ Extensions
+	  * 1.0 Basic Definition of PQ Extensions
+	  * 1.0.1 Extensions
+	  * added the inc for <groundspeak:attributes>: attributes like 'dog-friendly' or 'handicapped access' will be listed. ID corresponds to an enum in the Geocaching.com database
+	  * <groundspeak:attribute id="1" inc="1">Dogs allowed</groundspeak:attribute>
+	  * 1.1 Extensions
+	  * Owner : Added GUID for transition to database redesign. Both GUID and ID are now optional  Owner ID corresponds to an account on Geocaching.com.
+	  * Added <groundspeak:lastUpdated>:  "xs:dateTime" is the last time the cache has been edited by the user
+	  * Added <groundspeak:exported>: ="xs:dateTime" for the benefit of splitting out caches -->
+	 */
 	String pq = "";
 	String pqVersion;
 	/*
@@ -1016,21 +986,24 @@ public class GpxExportNg {
 	}
 	*/
 	pqVersion = "1/0/1";
-	xmlnspq = STRreplace.replace(XMLNSPQ, "@", pqVersion);
-	pq = xmlnspq + " " + xmlnspq + "/cache.xsd";
+	xmlnspq = "http://www.groundspeak.com/cache/" + pqVersion;
+	if (this.exportOptions.getGroundspeakExtension() != NOGSEXTENSION) {
+	    pq = xmlnspq + " " + xmlnspq + "/cache.xsd";
+	}
 	// GSAK
 	String gsak = "";
 	String gsakVersion = "6";
-	xmlnsgsak = STRreplace.replace(XMLNSGSAK, "@", gsakVersion);
+	xmlnsgsak = "http://www.gsak.net/xmlv1/" + gsakVersion;
 	if (this.exportOptions.getWithGSAKExtensions()) {
 	    gsak = xmlnsgsak + " " + xmlnsgsak + "/gsak.xsd";
 	}
 	// Garmin gpxx
+	// http://www.garmin.com/xmlschemas/GpxExtensionsv3.xsd
 	String gpxx = "";
 	String gpxxVersion = "3";
-	xmlnsgpxx = STRreplace.replace(XMLNSGPXX, "@", gpxxVersion);
+	xmlnsgpxx = "http://www.garmin.com/xmlschemas/GpxExtensions/v" + gpxxVersion;
 	if (this.exportOptions.getWithGarminExtensions()) {
-	    gpxx = xmlnsgpxx + " " + xmlnsgpxx + ".xsd"; //GpxExtensionsv3.xsd
+	    gpxx = xmlnsgpxx + " " + "http://www.garmin.com/xmlschemas/GpxExtensionsv" + gpxxVersion + ".xsd"; //GpxExtensionsv3.xsd
 	}
 
 	Transformer trans = new Transformer(true);
@@ -1040,11 +1013,60 @@ public class GpxExportNg {
 	    trans.add(new Regex("@@NAME@@", "Waypoints for Cache Listings, Generated by CacheWolf"));
 	}
 	trans.add(new Regex("@@CREATEDATE@@", new Date().setToCurrentTime().setFormat("yyyy-MM-dd").toString()));
+	trans.add(new Regex("@@xmlnsGPXVersion@@", xmlnsGPXVersion));
+	trans.add(new Regex("@@GPXVERSION@@", gpxVersion));
 	trans.add(new Regex("@@GPX@@", gpx));
 	trans.add(new Regex("@@PQEXTENSION@@", pq));
 	trans.add(new Regex("@@GSAKEXTENSION@@", gsak));
 	trans.add(new Regex("@@GPXXEXTENSION@@", gpxx));
+	// we need to fake desc to make clients like GSAK accept additional waypoints together with caches
+	final String GPXHEADER = "<?xml version=\"1.0\" encoding=\"utf-8\"?>" + newLine//
+		+ "<gpx"//
+		+ " xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\""//
+		+ " xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\""//
+		+ " version=\"@@GPXVERSION@@\""//
+		+ " creator=\"CacheWolf\""//
+		+ " xsi:schemaLocation=\""//
+		+ "@@GPX@@"//
+		+ " @@PQEXTENSION@@" //
+		+ " @@GSAKEXTENSION@@" //
+		+ " @@GPXXEXTENSION@@" //
+		+ "\""//
+		+ " xmlns=\"http://www.topografix.com/GPX/@@xmlnsGPXVersion@@\""//
+		+ ">"//
+		+ newLine//
+		+ formatMetaData(exportOptions.getGPXVersion());
 	return trans.replaceFirst(GPXHEADER);
+    }
+
+    private String formatMetaData(int version) {
+	if (version == 0) {
+	    return "<name>@@NAME@@</name>" + newLine//
+		    + "<desc>This is an individual cache generated from Geocaching.com</desc>" + newLine//
+		    + "<author>Various users from geocaching.com and/or opencaching.de</author>" + newLine//
+		    + "<email>contact@cachewolf.de</email>" + newLine//
+		    + "<url>http://www.cachewolf.de/</url>" + newLine//
+		    + "<urlname>CacheWolf - Paperless Geocaching</urlname>" + newLine//
+		    + "<time>@@CREATEDATE@@T07:00:00Z</time>" + newLine//
+		    + "<keywords>cache, geocache, waypoints</keywords>" + newLine;//
+	    // FIXME: extend MainForm.profile to add <bounds minlat=\"50.91695\" minlon=\"6.876383\" maxlat=\"50.935183\" maxlon=\"6.918817\" />
+	    // is it worth a second loop?
+	    // MainForm.profile.getSourroundingArea(false);
+	    // +("<bounds minlat=\"50.91695\" minlon=\"6.876383\" maxlat=\"50.935183\" maxlon=\"6.918817\" />")
+	} else {
+	    return "<metadata>" + newLine //
+		    + "<desc>This is an individual cache generated from Geocaching.com</desc>" + newLine//
+		    + "<author>" + newLine //
+		    + "<name>" + "Various users from geocaching.com and/or opencaching.de" + "</name>" + newLine //
+		    + "<email domain=\"cachewolf.de\" id=\"contact\"/>" + newLine //
+		    + "<link href=\"http://www.cachewolf.de/\">" + newLine //
+		    + "<text>CacheWolf - Paperless Geocaching</text>" + newLine //
+		    + "</link>" + newLine //
+		    + "</author>" + newLine//
+		    + "<time>@@CREATEDATE@@T07:00:00Z</time>" + newLine//
+		    + "<keywords>cache, geocache, waypoints</keywords>" + newLine//
+		    + "</metadata>" + newLine; //
+	}
     }
 
     /**
@@ -1436,7 +1458,7 @@ public class GpxExportNg {
 	    }
 	}
 
-	public int getGpxStyle() {
+	public int getGroundspeakExtension() {
 	    return chStyle.selectedIndex;
 	}
 
@@ -1571,7 +1593,7 @@ public class GpxExportNg {
 		break;
 	    }
 	    switch (gpxStyle) {
-	    case STYLE_COMPACT:
+	    case NOGSEXTENSION:
 		exportValues.put(WPNAMESTYLE, "" + chWpNameStyle.selectedIndex);
 		exportValues.put(USECUSTOMICONS, SafeXML.strxmlencode(cbUseCustomIcons.getState()));
 	    case STYLE_PQEXTENSIONS:
