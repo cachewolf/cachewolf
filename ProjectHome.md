@@ -1,0 +1,1 @@
+An advanced Java-based paperless caching tool. Runs on Windows Mobile, Windows and all platforms with full Java Runtime Environment.
