@@ -539,6 +539,23 @@ final class CTyp {
     public Image _mapImage;
     public Image[] _modImage = { null, null, null, null, null, null, null };
 
+    /**
+     * 
+     * @param cwMappedCType CW Cache Typ intern
+     * @param cwCType CW Cache Typ intern
+     * @param cwCGroup Cache Typ Group intern
+     * @param cwCTypeV1 V1 Cache Typ
+     * @param gcCTypeSpider GC Type on Spider Import from GC.com
+     * @param ocCTypeXmlImport GC Type on Spider Import from GC.com
+     * @param cwCTypeV2 V2 Cache Typ
+     * @param gpxShortCType Short Typ (one char abbreviation)
+     * @param imageName name of imageName for Icon, "showCacheInBrowser" and "KML Export"
+     * @param gpx gpx wpt <type> tag,  gpx wpt <sym> tag, gpx cache extension <groundspeak:type> tag, alternative typ - names for gpx from other sources
+     * @param msgNrCTypeName message number for gui cache Typ name
+     * @param gUIOrder sort Order in GUI selection //TODO more intelligent implementation (now manually change each line on new one)
+     * @param filterStringPos BitNr in Filter String (profile)
+     * @param filterPattern 2**BitNr in Filter int (does not correspond with BitNr in String)
+     */
     public CTyp(byte cwMappedCType, byte cwCType, char cwCGroup, String cwCTypeV1, String gcCTypeSpider, String ocCTypeXmlImport, byte cwCTypeV2, char gpxShortCType, String imageName, String[] gpx, int msgNrCTypeName, int gUIOrder,
 	    int filterStringPos, int filterPattern) {
 
