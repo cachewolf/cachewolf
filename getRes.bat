@@ -1,5 +1,6 @@
 REM clean up
 cd %~d0%~p0
+mkdir work
 del .\work\*.png
 del .\work\*.gif
 del .\work\*.html

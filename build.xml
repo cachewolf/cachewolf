@@ -281,6 +281,7 @@
 	<target name="ewebuild" depends="compile" description="build platform files">
 		<echo
 			message="Operating System ${os.name} Version ${os.version} Arch ${os.arch}" />
+		<mkdir dir="work" /> <!-- in cw-pda.jnf, the destination path is configured to work/ -->
 		<exec executable="programs/ewecl" os="Linux">
 			<arg value="programs/Jewel.ewe" />
 			<arg value="-c cw-pda.jnf" />
