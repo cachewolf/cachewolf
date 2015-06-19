@@ -768,9 +768,9 @@ public class GpxExportNg {
 
     private String formatGarminExtensions() {
 	StringBuffer ret_____ = new StringBuffer();
-	ret_____.append("    <gpxx:wptExtension xmlns:gpxx=\"" + xmlnsgpxx + "\">").append(newLine); //
+	ret_____.append("    <gpxx:WaypointExtension xmlns:gpxx=\"" + xmlnsgpxx + "\">").append(newLine); //
 	ret_____.append("      <gpxx:DisplayMode>").append("SymbolAndName").append("</gpxx:DisplayMode>").append(newLine); //
-	ret_____.append("    </gpxx:wptExtension>").append(newLine);//
+	ret_____.append("    </gpxx:WaypointExtension>").append(newLine);//
 	return ret_____.toString();
     }
 
