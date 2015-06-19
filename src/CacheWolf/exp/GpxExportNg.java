@@ -383,7 +383,7 @@ public class GpxExportNg {
 		}
 	    }
 
-	    // temporï¿½res Verzeichnis lï¿½schen (wird bei gpi nicht mehr gebraucht)
+	    // temporäres Verzeichnis löschen (wird bei gpi nicht mehr gebraucht)
 	    if (outputStyle == OUTPUT_POI) {
 		File tmpdir = new File(tempDir);
 		String tmp[] = new FileBugfix(tempDir).list(prefix + "*.*", ewe.io.FileBase.LIST_FILES_ONLY);
@@ -754,7 +754,7 @@ public class GpxExportNg {
 	if (ch.hasNote()) // eigentlich  nur die von GC, aber
 	    ret_____.append("      <gsak:GcNote>").append(SafeXML.cleanGPX(ch.getDetails().getGCNotes())).append("</gsak:GcNote>").append(newLine); //
 	if (ch.isSolved()) {
-	    // wir kennen die OriginalKoordinaten nicht, aber es gibt wohl nichts fï¿½r nur corrected coordinates
+	    // wir kennen die OriginalKoordinaten nicht, aber es gibt wohl nichts für nur corrected coordinates
 	    ret_____.append("      <gsak:LatBeforeCorrect>").append(ch.getWpt().getLatDeg(TransformCoordinates.DD)).append("</gsak:LatBeforeCorrect>").append(newLine) //
 		    .append("      <gsak:LonBeforeCorrect>").append(ch.getWpt().getLonDeg(TransformCoordinates.DD)).append("</gsak:LonBeforeCorrect>").append(newLine); //
 	}
@@ -768,9 +768,9 @@ public class GpxExportNg {
 
     private String formatGarminExtensions() {
 	StringBuffer ret_____ = new StringBuffer();
-	ret_____.append("    <gpxx:WaypointExtension xmlns:gpxx=\"" + xmlnsgpxx + "\">").append(newLine); //
+	ret_____.append("    <gpxx:wptExtension xmlns:gpxx=\"" + xmlnsgpxx + "\">").append(newLine); //
 	ret_____.append("      <gpxx:DisplayMode>").append("SymbolAndName").append("</gpxx:DisplayMode>").append(newLine); //
-	ret_____.append("    </gpxx:WaypointExtension>").append(newLine);//
+	ret_____.append("    </gpxx:wptExtension>").append(newLine);//
 	return ret_____.toString();
     }
 
@@ -815,7 +815,7 @@ public class GpxExportNg {
 	StringBuffer ret = new StringBuffer();
 	Attribute attrib;
 	for (int i = 0; i < ch.getDetails().attributes.count(); i++) {
-	    // <groundspeak:attribute id="X" inc="Y">text fï¿½r X</groundspeak:attribute>
+	    // <groundspeak:attribute id="X" inc="Y">text für X</groundspeak:attribute>
 	    attrib = ch.getDetails().attributes.getAttribute(i);
 	    if (attrib.getGCId().length() > 0) {
 		ret.append("        <groundspeak:attribute id=\"").//
@@ -1124,7 +1124,7 @@ public class GpxExportNg {
 	if (pos.isValid()) {
 	    return pos.toString();
 	} else {
-	    return "N/S  __ ï¿½ __ . ___ W/E ___ ï¿½ __ . ___";
+	    return "N/S  __ ° __ . ___ W/E ___ ° __ . ___";
 	}
     }
 
@@ -1614,7 +1614,7 @@ public class GpxExportNg {
 	    FileChooser fc;
 	    fc = new FileChooser(what, ibFilename.getText());
 	    if (what == FileChooserBase.DIRECTORY_SELECT) {
-		fc.setTitle(MyLocale.getMsg(616, "Verzeichnis auswï¿½hlen"));
+		fc.setTitle(MyLocale.getMsg(616, "Verzeichnis auswählen"));
 	    } else {
 		fc.setTitle(MyLocale.getMsg(2021, "Ausgabedatei"));
 		fc.addMask("*.gpx");
