@@ -756,7 +756,7 @@ public class GpxExportNg {
 	if (ch.isSolved()) {
 	    // wir kennen die OriginalKoordinaten nicht, aber es gibt wohl nichts für nur corrected coordinates
 	    ret_____.append("      <gsak:LatBeforeCorrect>").append(ch.getWpt().getLatDeg(TransformCoordinates.DD)).append("</gsak:LatBeforeCorrect>").append(newLine) //
-		    .append("      <gsak:LonBeforeCorrect>").append(ch.getWpt().getLonDeg(TransformCoordinates.DD)).append("</gsak:LonBeforeCorrect>").append(newLine); //
+		        .append("      <gsak:LonBeforeCorrect>").append(ch.getWpt().getLonDeg(TransformCoordinates.DD)).append("</gsak:LonBeforeCorrect>").append(newLine); //
 	}
 	if (Preferences.itself().useGCFavoriteValue)
 	    ret_____.append("      <gsak:FavPoints>").append("" + ch.getNumRecommended()).append("</gsak:FavPoints>").append(newLine); //
