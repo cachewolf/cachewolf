@@ -160,7 +160,7 @@ public class FieldnotesImporter {
 		    foundIcon = "3.png";
 		}
 		if (logText.length() > 0) {
-		    ch.getDetails().OwnLog = new Log("", Preferences.itself().gcMemberId, foundIcon, logTime.format("yyyy-MM-dd"), Preferences.itself().myAlias, STRreplace.replace(logText, "\n", "<br />"));
+		    ch.getDetails().setOwnLog(new Log("", Preferences.itself().gcMemberId, foundIcon, logTime.format("yyyy-MM-dd"), Preferences.itself().myAlias, STRreplace.replace(logText, "\n", "<br />")));
 		    ch.saveCacheDetails();
 		}
 	    }

@@ -629,7 +629,7 @@ public class OCXMLImporter extends MinML {
 	    return;
 	}
 	if (name.equals("country")) {
-	    holder.getDetails().Country = strData;
+	    holder.getDetails().setCountry(strData);
 	    return;
 	}
     }
@@ -710,7 +710,7 @@ public class OCXMLImporter extends MinML {
 			}
 		    }
 		    holder.setFound(true);
-		    holder.getDetails().OwnLog = new Log(logId, finderID, logIcon, logDate, logFinder, logData, loggerRecommended);
+		    holder.getDetails().setOwnLog(new Log(logId, finderID, logIcon, logDate, logFinder, logData, loggerRecommended));
 		} else {
 		    // if (holder.is_new())
 		    cacheDB.removeElementAt(cacheDB.getIndex(holder));

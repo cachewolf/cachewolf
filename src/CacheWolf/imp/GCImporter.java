@@ -1827,10 +1827,10 @@ public class GCImporter {
 
 	if (ch.isFound()) {
 	    // check for missing ownLogID (and logtext)
-	    if (ch.getDetails().OwnLog == null) {
+	    if (ch.getDetails().getOwnLog() == null) {
 		ret = true;
 	    } else {
-		if (ch.getDetails().OwnLog.getLogID().length() == 0)
+		if (ch.getDetails().getOwnLog().getLogID().length() == 0)
 		    ret = true;
 	    }
 	}
@@ -2054,15 +2054,15 @@ public class GCImporter {
 			if (location.length() != 0) {
 			    final int countryStart = location.indexOf(",");
 			    if (countryStart > -1) {
-				chD.Country = SafeXML.html2iso8859s1(location.substring(countryStart + 1).trim());
-				chD.State = SafeXML.html2iso8859s1(location.substring(0, countryStart).trim());
+				chD.setCountry(SafeXML.html2iso8859s1(location.substring(countryStart + 1).trim()));
+				chD.setState(SafeXML.html2iso8859s1(location.substring(0, countryStart).trim()));
 			    } else {
-				chD.Country = location.trim();
-				chD.State = "";
+				chD.setCountry(location.trim());
+				chD.setState("");
 			    }
 			} else {
-			    chD.Country = "";
-			    chD.State = "";
+			    chD.setCountry("");
+			    chD.setState("");
 			}
 			chD.setLongDescription(wayPointPageGetDescription());
 			chD.setHints(wayPointPageGetHints());
@@ -2347,15 +2347,15 @@ public class GCImporter {
 			ch.setFound(true);
 			ch.setStatus(visitedDate);
 			// final String logId = entry.getString("LogID");
-			chD.OwnLog = new Log(logID, finderID, icon, visitedDate, name, logText);
+			chD.setOwnLog(new Log(logID, finderID, icon, visitedDate, name, logText));
 			foundown = true;
 			nrOfOwnFinds = nrOfOwnFinds + 1;
 		    } else {
 			// make it possible to edit a "write note"
 			if (!ch.isFound()) {
 			    // do not overwrite a find log 
-			    chD.OwnLog = new Log(logID, finderID, icon, visitedDate, name, logText);
-			    ch.setStatus(chD.OwnLog.icon2Message());
+			    chD.setOwnLog(new Log(logID, finderID, icon, visitedDate, name, logText));
+			    ch.setStatus(chD.getOwnLog().icon2Message());
 			}
 		    }
 		}

@@ -412,15 +412,15 @@ public class CSVImporter {
 	if (location.length() != 0) {
 	    final int countryStart = location.lastIndexOf(" ");
 	    if (countryStart > -1) {
-		chd.Country = SafeXML.html2iso8859s1(location.substring(countryStart + 1).trim());
-		chd.State = SafeXML.html2iso8859s1(location.substring(0, countryStart).trim());
+		chd.setCountry(SafeXML.html2iso8859s1(location.substring(countryStart + 1).trim()));
+		chd.setState(SafeXML.html2iso8859s1(location.substring(0, countryStart).trim()));
 	    } else {
-		chd.Country = location.trim();
-		chd.State = "";
+		chd.setCountry(location.trim());
+		chd.setState("");
 	    }
 	} else {
-	    ch.getDetails().Country = "";
-	    ch.getDetails().State = "";
+	    ch.getDetails().setCountry("");
+	    ch.getDetails().setState("");
 	}
 	ch.saveCacheDetails();
 	return true;

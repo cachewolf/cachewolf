@@ -121,8 +121,6 @@ public class DetailsPanel extends CellPanel {
     private CacheHolder mainCache;
 
     // ===== flags =====
-    /** notes have changes */
-    private boolean dirtyNotes = false;
     /** details have changed FIXME: make this obsolete */
     private boolean dirtyDetails = false;
     /** cache is blacklisted FIXME: make this obsolete */
@@ -308,7 +306,7 @@ public class DetailsPanel extends CellPanel {
     }
 
     public boolean isDirty() {
-	return dirtyNotes || dirtyDetails || needsTableUpdate;
+	return dirtyDetails || needsTableUpdate;
     }
 
     public boolean hasBlackStatusChanged() {
@@ -322,7 +320,6 @@ public class DetailsPanel extends CellPanel {
 	if (ch.isAddiWpt() && (ch.mainCache != null)) {
 	    mainCache = ch.mainCache;
 	}
-	dirtyNotes = false;
 	dirtyDetails = false;
 
 	GuiImageBroker.setButtonText(btnWaypoint.getBtn(), ch.getCode());
@@ -429,7 +426,7 @@ public class DetailsPanel extends CellPanel {
 	    disable(btnHint);
 	}
 
-	this.btnCountryState.setText(mainCacheDetails.Country + " / " + mainCacheDetails.State);
+	this.btnCountryState.setText(mainCacheDetails.getCountry() + " / " + mainCacheDetails.getState());
 
 	lastLogs.images.clear();
 	Dimension lastLogsDimension = lastLogs.getMySize(null);
@@ -452,9 +449,9 @@ public class DetailsPanel extends CellPanel {
 	    disable(btnLogToOC);
 	    disable(btnLog);
 	    //if (ch.isCacheWpt()) {
-	    if (mainCache.getDetails().OwnLog != null) {
-		logPanel.setText(MyLocale.getMsg(278, "Eigener Log: ") + mainCache.getDetails().OwnLog.getLogID());
-		if (mainCache.getDetails().OwnLog.getLogID().length() == 0) {
+	    if (mainCache.getDetails().getOwnLog() != null) {
+		logPanel.setText(MyLocale.getMsg(278, "Eigener Log: ") + mainCache.getDetails().getOwnLog().getLogID());
+		if (mainCache.getDetails().getOwnLog().getLogID().length() == 0) {
 		    enable(btnLog);
 		} else {
 		    enable(btnEditLog);
@@ -465,7 +462,7 @@ public class DetailsPanel extends CellPanel {
 			disable(btnLogToOC);
 		    }
 		}
-		ownLog.setText(mainCache.getDetails().OwnLog.getMessageWithoutHTML());
+		ownLog.setText(mainCache.getDetails().getOwnLog().getMessageWithoutHTML());
 	    } else {
 		logPanel.setText(" ");
 		enable(btnLog);
@@ -513,7 +510,7 @@ public class DetailsPanel extends CellPanel {
 	    } else if (ev.target == this.ownLog) {
 		dirtyDetails = true;
 	    } else if (ev.target == this.waypointNotes) {
-		ch.getDetails().setCacheNotes(waypointNotes.getText());
+		dirtyDetails = true;
 	    } else {
 		//Preferences.itself().log("DataChangeEvent at Details for " + ev.target.toString() + ". DirtyDetails not set.");
 		dirtyDetails = true;
@@ -763,9 +760,9 @@ public class DetailsPanel extends CellPanel {
 		    CacheHolderDetail chD = mainCache.getDetails();
 		    String ownLogMessage = STRreplace.replace(ownLog.getText(), "\n", "<br />");
 		    if (chD != null) {
-			if (chD.OwnLog != null) {
+			if (chD.getOwnLog() != null) {
 			    // Cache schon im CW gelogged
-			    ownLogMessage = chD.OwnLog.getMessage();
+			    ownLogMessage = chD.getOwnLog().getMessage();
 			}
 		    }
 		    if (ownLogMessage.length() > 0) {
@@ -803,9 +800,9 @@ public class DetailsPanel extends CellPanel {
 		if (mainCache.isCacheWpt()) {
 		    CacheHolderDetail chD = mainCache.getDetails();
 		    if (chD != null) {
-			if (chD.OwnLog != null) {
+			if (chD.getOwnLog() != null) {
 			    if (mainCache.isGC()) {
-				url = "http://www.geocaching.com/seek/log.aspx?LID=" + chD.OwnLog.getLogID();
+				url = "http://www.geocaching.com/seek/log.aspx?LID=" + chD.getOwnLog().getLogID();
 				callExternalProgram(Preferences.itself().browser, url);
 			    }
 			}
@@ -909,12 +906,12 @@ public class DetailsPanel extends CellPanel {
 	ch.setType(newCacheType);
 
 	String ownLogText = STRreplace.replace(ownLog.getText(), "\n", "<br />");
-	Log oldLog = ch.getDetails().OwnLog;
+	Log oldLog = ch.getDetails().getOwnLog();
 	if (oldLog == null) {
 	    if (ownLogText.length() > 0) {
 		// todo must get date from status
 		// todo must set icon to correct value
-		ch.getDetails().OwnLog = new Log("", Preferences.itself().gcMemberId, "2.png", "1900-01-01", Preferences.itself().myAlias, ownLogText);
+		ch.getDetails().setOwnLog(new Log("", Preferences.itself().gcMemberId, "2.png", "1900-01-01", Preferences.itself().myAlias, ownLogText));
 	    }
 	} else {
 	    if (ownLogText.length() > 0)
@@ -949,7 +946,9 @@ public class DetailsPanel extends CellPanel {
 	    ch.setDifficulty(this.newDifficulty);
 	    ch.setTerrain(this.newTerrain);
 	}
-	dirtyNotes = false;
+
+	ch.getDetails().setCacheNotes(waypointNotes.getText());
+
 	dirtyDetails = false;
 	needsTableUpdate = false;
 	ch.getDetails().hasUnsavedChanges = true;

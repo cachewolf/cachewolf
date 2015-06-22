@@ -370,7 +370,7 @@ public class GPXImporter extends MinML {
 			&& (SafeXML.html2iso8859s1(logFinder).equalsIgnoreCase(Preferences.itself().myAlias) || (SafeXML.html2iso8859s1(logFinder).equalsIgnoreCase(Preferences.itself().myAlias2)))) {
 		    holder.setStatus(logDate);
 		    holder.setFound(true);
-		    holder.getDetails().OwnLog = new Log(logId, finderID, logIcon, logDate, logFinder, logData);
+		    holder.getDetails().setOwnLog(new Log(logId, finderID, logIcon, logDate, logFinder, logData));
 		}
 		return;
 	    }
@@ -560,11 +560,11 @@ public class GPXImporter extends MinML {
 	    return;
 	}
 	if (name.equals("groundspeak:country") || name.equals("country")) {
-	    holder.getDetails().Country = strData;
+	    holder.getDetails().setCountry(strData);
 	    return;
 	}
 	if (name.equals("groundspeak:state") || name.equals("state")) {
-	    holder.getDetails().State = strData;
+	    holder.getDetails().setState(strData);
 	    return;
 	}
 	if (name.equals("terra:size")) {

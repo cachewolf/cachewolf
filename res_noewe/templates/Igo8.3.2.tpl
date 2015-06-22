@@ -27,17 +27,9 @@
 <#-- URL  -->
 
 <#-- -----------------------Template-------------------------------------- -->
-
-<#-- Codecs: ASCII, UTF8 -->
 <tmpl_par name="charset" value="UTF-16 LE">
-
-<#-- Das Zeichen "|" wird nicht aus dem Listing übernommen-->
 <tmpl_par name="badchars" value="|">
-
-<#-- neue Zeile: CR, LF, CRLF -->
 <tmpl_par name="newline" value="CRLF">
-
-<#-- Ausgabe als kml-Datei -->
 <tmpl_par name="Out" value="user.upoi">
 
 @My POI<br />

@@ -1,4 +1,4 @@
-<#-- Export-Template V0.9 for Export via .gpx to 'MapSource'-->
+﻿<#-- Export-Template V0.9 for Export via .gpx to 'MapSource'-->
 
 <tmpl_par name="charset" value="UTF8">
 <tmpl_par name="newline" value="CRLF">

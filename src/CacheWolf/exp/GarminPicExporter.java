@@ -62,7 +62,7 @@ public class GarminPicExporter {
     CacheDB cacheDB;
     Hashtable picsCopied = new Hashtable(40);
     /* This table is used by copyImages to check whether a picture has been copied already.
-     * Normally it should be created in copyImages (and destroyed upon reeturn). To avoid
+     * Normally it should be created in copyImages (and destroyed upon return). To avoid
      * unneeded object generation, it is created here and cleared in copyImages (which is a
      * much faster operation).
      */

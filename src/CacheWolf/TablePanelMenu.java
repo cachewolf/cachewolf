@@ -40,7 +40,7 @@ import CacheWolf.exp.MSARCSVExporter;
 import CacheWolf.exp.OCLogExport;
 import CacheWolf.exp.OVLExporter;
 import CacheWolf.exp.OziExporter;
-import CacheWolf.exp.SpoilerPOIExporter;
+import CacheWolf.exp.POIExporter;
 import CacheWolf.exp.TPLExporter;
 import CacheWolf.exp.TomTomExporter;
 import CacheWolf.imp.CSVImporter;
@@ -107,7 +107,7 @@ public class TablePanelMenu extends MenuBar {
     private MenuItem downloadmap, kalibmap, importmap, selectMapPath;
     private MenuItem spider, spiderRoute, spiderAllFinds, loadGCVotes, fetchOCLink, update, chkVersion;
     private MenuItem about, wolflang, sysinfo, legend;
-    private MenuItem exportGpxNg, exporthtml, exporttop50, exportASC, exportTomTom, exportMSARCSV, exportSpoilerPOI;
+    private MenuItem exportGpxNg, exporthtml, exporttop50, exportASC, exportTomTom, exportMSARCSV, exportPOI;
     private MenuItem exportOZI, exportKML, exportTPL, exportExplorist, exportOCLog;
     private MenuItem exportGarminPic;
     private MenuItem filtApply, filtCreate, filtInvert, filtSelected, filtNonSelected, filtBlack;
@@ -173,7 +173,7 @@ public class TablePanelMenu extends MenuBar {
 		exportOZI = new MenuItem(MyLocale.getMsg(124, "to OZI")), //
 		exportKML = new MenuItem(MyLocale.getMsg(125, "to Google Earth")), //
 		exportExplorist = new MenuItem(MyLocale.getMsg(132, "to Explorist")), //
-		exportSpoilerPOI = new MenuItem(MyLocale.getMsg(135, "to SpoilerPOI")), //
+		exportPOI = new MenuItem(MyLocale.getMsg(135, "to POI")), //
 		exportTPL = new MenuItem(MyLocale.getMsg(128, "via Template")), //
 		exportOCLog = new MenuItem(MyLocale.getMsg(1210, "logs to OC")), //
 		exportGarminPic = new MenuItem("Garmin pictures"), };
@@ -714,8 +714,8 @@ public class TablePanelMenu extends MenuBar {
 		ExploristExporter mag = new ExploristExporter();
 		mag.doIt();
 	    }
-	    if (mev.selectedItem == exportSpoilerPOI) {
-		SpoilerPOIExporter spoilerpoi = new SpoilerPOIExporter();
+	    if (mev.selectedItem == exportPOI) {
+		POIExporter spoilerpoi = new POIExporter();
 		spoilerpoi.doIt();
 	    }
 	    if (mev.selectedItem == exportGarminPic) {

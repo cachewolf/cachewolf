@@ -58,11 +58,10 @@ public class CacheHolderDetail {
     public TravelbugList Travelbugs = new TravelbugList();
     // public String Bugs = EMPTY; Superceded by Travelbugs
     public String URL = EMPTY;
-    private String Solver = EMPTY;
-    public Log OwnLog = null;
-    public String Country = EMPTY;
-    /** *<groundspeak:state> */
-    public String State = EMPTY;
+    private String solver;
+    private Log ownLog;
+    private String country;
+    private String state;
     /**
      * For faster cache import (from opencaching) changes are only written when the details are freed from memory
      * If you want to save the changes automatically when the details are unloaded, set this to true
@@ -71,6 +70,10 @@ public class CacheHolderDetail {
 
     public CacheHolderDetail(CacheHolder ch) {
 	parent = ch;
+	solver = EMPTY;
+	ownLog = null;
+	country = EMPTY;
+	state = EMPTY;
     }
 
     // quick debug info
@@ -85,6 +88,41 @@ public class CacheHolderDetail {
 
     public CacheHolder getParent() {
 	return parent;
+    }
+
+    public String getSolver() {
+	return this.solver;
+    }
+
+    public void setSolver(String solver) {
+	if (!this.solver.equals(solver))
+	    parent.setUpdated(true);
+	parent.setHasSolver(!solver.trim().equals(""));
+	this.solver = solver;
+    }
+
+    public Log getOwnLog() {
+	return this.ownLog;
+    }
+
+    public void setOwnLog(Log ownLog) {
+	this.ownLog = ownLog;
+    }
+
+    public String getCountry() {
+	return country;
+    }
+
+    public void setCountry(String country) {
+	this.country = country;
+    }
+
+    public String getState() {
+	return state;
+    }
+
+    public void setState(String state) {
+	this.state = state;
     }
 
     public void setLongDescription(String longDescription) {
@@ -113,17 +151,6 @@ public class CacheHolderDetail {
 	if (!Hints.equals(hints))
 	    parent.setUpdated(true);
 	Hints = hints;
-    }
-
-    public void setSolver(String solver) {
-	if (!Solver.equals(solver))
-	    parent.setUpdated(true);
-	parent.setHasSolver(!solver.trim().equals(""));
-	Solver = solver;
-    }
-
-    public String getSolver() {
-	return this.Solver;
     }
 
     private String gCNotes = "";
@@ -207,13 +234,13 @@ public class CacheHolderDetail {
 	setLongDescription(newChD.LongDescription);
 	setHints(newChD.Hints);
 	setCacheLogs(newChD.CacheLogs);
-	if (newChD.OwnLog != null) {
-	    this.OwnLog = newChD.OwnLog;
+	if (newChD.ownLog != null) {
+	    this.ownLog = newChD.ownLog;
 	}
-	if (newChD.Country.length() > 0)
-	    this.Country = newChD.Country;
-	if (newChD.State.length() > 0)
-	    this.State = newChD.State;
+	if (newChD.country.length() > 0)
+	    this.country = newChD.country;
+	if (newChD.state.length() > 0)
+	    this.state = newChD.state;
 	if (newChD.getSolver().length() > 0)
 	    this.setSolver(newChD.getSolver());
 	return this;
@@ -300,8 +327,8 @@ public class CacheHolderDetail {
 
 	Extractor ex = new Extractor(text, "<DETAILS><![CDATA[", "]]></DETAILS>", 0, true);
 	LongDescription = ex.findNext();
-	Country = ex.findNext("<COUNTRY><![CDATA[", "]]></COUNTRY>");
-	State = ex.findNext("<STATE><![CDATA[", "]]></STATE>");
+	country = ex.findNext("<COUNTRY><![CDATA[", "]]></COUNTRY>");
+	state = ex.findNext("<STATE><![CDATA[", "]]></STATE>");
 	attributes.XmlAttributesEnd(ex.findNext("<ATTRIBUTES>", "</ATTRIBUTES>"));
 	Hints = ex.findNext("<HINTS><![CDATA[", "]]></HINTS>");
 
@@ -310,14 +337,14 @@ public class CacheHolderDetail {
 	String ownLogText = subex.findNext("<OWNLOG><![CDATA[", "]]></OWNLOG>");
 	if (ownLogText.length() > 0) {
 	    if (ownLogText.indexOf("<img src='") >= 0) {
-		OwnLog = new Log(ownLogText + "]]>");
-		OwnLog.setLogID(OwnLogId);
-		OwnLog.setFinderID(Preferences.itself().gcMemberId);
+		ownLog = new Log(ownLogText + "]]>");
+		ownLog.setLogID(OwnLogId);
+		ownLog.setFinderID(Preferences.itself().gcMemberId);
 	    } else {
-		OwnLog = new Log(OwnLogId, Preferences.itself().gcMemberId, "2.png", "1900-02-02", Preferences.itself().myAlias, ownLogText);
+		ownLog = new Log(OwnLogId, Preferences.itself().gcMemberId, "2.png", "1900-02-02", Preferences.itself().myAlias, ownLogText);
 	    }
 	} else {
-	    OwnLog = null;
+	    ownLog = null;
 	}
 	CacheLogs.clear();
 	String dummy = subex.findNext("<LOG>", "</LOG>");
@@ -454,14 +481,14 @@ public class CacheHolderDetail {
 		detfile.print("<CACHEDETAILS>\r\n");
 		detfile.print("<VERSION value = \"3\"/>\n");
 		detfile.print("<DETAILS><![CDATA[" + LongDescription + "]]></DETAILS>\r\n");
-		detfile.print("<COUNTRY><![CDATA[" + Country + "]]></COUNTRY>\n");
-		detfile.print("<STATE><![CDATA[" + State + "]]></STATE>\n");
+		detfile.print("<COUNTRY><![CDATA[" + country + "]]></COUNTRY>\n");
+		detfile.print("<STATE><![CDATA[" + state + "]]></STATE>\n");
 		detfile.print(attributes.XmlAttributesWrite());
 		detfile.print("<HINTS><![CDATA[" + Hints + "]]></HINTS>\r\n");
 		detfile.print("<LOGS>\r\n");
-		if (OwnLog != null) {
-		    detfile.print("<OWNLOGID>" + OwnLog.getLogID() + "</OWNLOGID>\r\n");
-		    detfile.print("<OWNLOG><![CDATA[" + OwnLog.toHtml() + "]]></OWNLOG>\r\n");
+		if (ownLog != null) {
+		    detfile.print("<OWNLOGID>" + ownLog.getLogID() + "</OWNLOGID>\r\n");
+		    detfile.print("<OWNLOG><![CDATA[" + ownLog.toHtml() + "]]></OWNLOG>\r\n");
 		} else {
 		    detfile.print("<OWNLOGID></OWNLOGID>\r\n");
 		    detfile.print("<OWNLOG><![CDATA[]]></OWNLOG>\r\n");

@@ -205,8 +205,8 @@ public class TemplateTable {
 		varParams.put("BUGS", (ModTyp == 0) ? SafeXML.cleanGPX(chD.Travelbugs.toHtml()) : chD.Travelbugs.toHtml());
 	    if (chD.getSolver() != null && chD.getSolver().trim().length() > 0)
 		varParams.put("SOLVER", STRreplace.replace(chD.getSolver(), "\n", "<br/>\n"));
-	    varParams.put("COUNTRY", chD.Country);
-	    varParams.put("STATE", chD.State);
+	    varParams.put("COUNTRY", chD.getCountry());
+	    varParams.put("STATE", chD.getState());
 
 	    // attributes
 	    Vector attVect = new Vector(chD.attributes.count() + 1);
@@ -255,8 +255,8 @@ public class TemplateTable {
 	    }
 	    varParams.put("LOGS", logVect);
 
-	    if (chD.OwnLog != null) {
-		varParams.put("OWNLOG", (ModTyp == 0) ? SafeXML.cleanGPX(STRreplace.replace(chD.OwnLog.getMessage(), "<br />", "\n")) : chD.OwnLog.getMessage());
+	    if (chD.getOwnLog() != null) {
+		varParams.put("OWNLOG", (ModTyp == 0) ? SafeXML.cleanGPX(STRreplace.replace(chD.getOwnLog().getMessage(), "<br />", "\n")) : chD.getOwnLog().getMessage());
 	    } else {
 		varParams.put("OWNLOG", "");
 	    }

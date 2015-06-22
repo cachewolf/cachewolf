@@ -43,9 +43,8 @@ public class SearchCache {
 
     /**
      * Method to iterate through the cache database.
-     * Each cache where the search string is found (in waypoint
-     * and / or cache name) is flagged as matching. The search only
-     * acts on the filtered (=visible) set of caches
+     * Each cache, where the search string is found (in waypoint and / or cache name), is flagged as matching.
+     * The search only acts on the filtered (=visible) set of caches
      */
     public void search(String searchStr, boolean searchInDescriptionAndNotes, boolean searchInLogs) {
 	if (searchStr.length() > 0) {

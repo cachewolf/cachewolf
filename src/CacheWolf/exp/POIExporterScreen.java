@@ -22,6 +22,7 @@
 package CacheWolf.exp;
 
 import CacheWolf.controls.ExecutePanel;
+import CacheWolf.utils.MyLocale;
 import ewe.ui.CheckBoxGroup;
 import ewe.ui.ControlEvent;
 import ewe.ui.Event;
@@ -29,20 +30,20 @@ import ewe.ui.Form;
 import ewe.ui.FormBase;
 import ewe.ui.mCheckBox;
 
-public class SpoilerPOIExporterScreen extends Form {
+public class POIExporterScreen extends Form {
     private final ExecutePanel executePanel;
     mCheckBox chkAllPic, chkOnlySpoiler;
     CheckBoxGroup chkGroupFormat;
 
-    public SpoilerPOIExporterScreen(String title) {
+    public POIExporterScreen(String title) {
 	super();
 	this.title = title;
 
 	// checkboxgroup for all pictures or Spoiler only
 	chkGroupFormat = new CheckBoxGroup();
-	chkAllPic = new mCheckBox("all Pics");
+	chkAllPic = new mCheckBox(MyLocale.getMsg(2201, "all Pics"));
 	chkAllPic.setGroup(chkGroupFormat);
-	chkOnlySpoiler = new mCheckBox("only Spoiler");
+	chkOnlySpoiler = new mCheckBox(MyLocale.getMsg(2202, "only Spoiler"));
 	chkOnlySpoiler.setGroup(chkGroupFormat);
 	chkGroupFormat.selectIndex(1);
 

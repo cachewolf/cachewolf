@@ -198,7 +198,6 @@ public class GpxExportNg {
 	handleLinebreaks.add(new Regex("<p>", "\n"));
 	handleLinebreaks.add(new Regex("<hr>", "\n"));
 	handleLinebreaks.add(new Regex("<br />", "\n"));
-	// handleLinebreaks.add(new Regex("<(.*?)>", "")); // check if this is needed twice
 
 	removeHTMLTags = new Transformer(true);
 	removeHTMLTags.add(new Regex("<(.*?)>", ""));
@@ -623,16 +622,19 @@ public class GpxExportNg {
 
 	// no <cmt> for custom
 	if (!ch.isCustomWpt()) {
-	    // no <cmt> in PQs / ?Myfinds
 	    if (ch.isCacheWpt()) {
 		if (exportStyle == NOGSEXTENSION) {
+		    // no <cmt> in PQs / ?Myfinds
 		    ret.append("    <cmt>").append(SafeXML.cleanGPX(ch.getName()));
 		    ret.append("&lt;br /&gt;" + SafeXML.cleanGPX(Common.rot13(ch.getDetails().Hints)));
-		    ret.append("&lt;br /&gt;" + SafeXML.cleanGPX(ch.getDetails().LongDescription));
 		    ret.append("</cmt>").append(newLine);
 		}
 	    } else {
-		ret.append("    <cmt>").append(SafeXML.cleanGPX(ch.getDetails().LongDescription)).append("</cmt>").append(newLine);
+		// is ADDI
+		ret.append("    <cmt>").append(newLine);
+		// ev zus maincachedetails Hints
+		ret.append(SafeXML.cleanGPX(ch.getDetails().LongDescription)).append(newLine);
+		ret.append("</cmt>").append(newLine);
 	    }
 	}
 
@@ -731,8 +733,8 @@ public class GpxExportNg {
 		.append("      </groundspeak:attributes>").append(newLine)//
 		.append("      <groundspeak:difficulty>").append(CacheTerrDiff.shortDT(ch.getDifficulty())).append("</groundspeak:difficulty>").append(newLine)//
 		.append("      <groundspeak:terrain>").append(CacheTerrDiff.shortDT(ch.getTerrain())).append("</groundspeak:terrain>").append(newLine)//
-		.append("      <groundspeak:country>").append(SafeXML.cleanGPX(ch.getDetails().Country)).append("</groundspeak:country>").append(newLine)//
-		.append("      <groundspeak:state>").append(SafeXML.cleanGPX(ch.getDetails().State)).append("</groundspeak:state>").append(newLine)//
+		.append("      <groundspeak:country>").append(SafeXML.cleanGPX(ch.getDetails().getCountry())).append("</groundspeak:country>").append(newLine)//
+		.append("      <groundspeak:state>").append(SafeXML.cleanGPX(ch.getDetails().getState())).append("</groundspeak:state>").append(newLine)//
 		.append("      <groundspeak:short_description html=\"").append(ch.isHTML() ? TRUE : FALSE).append("\"></groundspeak:short_description>").append(newLine)//
 		.append("      <groundspeak:long_description html=\"").append(ch.isHTML() ? TRUE : FALSE).append("\">").append(SafeXML.cleanGPX(formatLongDescription())).append("</groundspeak:long_description>").append(newLine)//
 		.append("      <groundspeak:encoded_hints>").append(SafeXML.cleanGPX(Common.rot13(ch.getDetails().Hints))).append("</groundspeak:encoded_hints>").append(newLine)//
@@ -838,11 +840,11 @@ public class GpxExportNg {
 	    if (ch.isFound()) {
 		CacheHolderDetail chD = ch.getDetails();
 		// perhaps there is no Ownlog yet
-		if (chD.OwnLog == null) {
+		if (chD.getOwnLog() == null) {
 		    Preferences.itself().log(chD.getParent().getCode() + " missing own Log", null);
 		    return "";
 		} else {
-		    addLog(chD.OwnLog);
+		    addLog(chD.getOwnLog());
 		}
 	    }
 	} else { // it is PQ
@@ -1022,6 +1024,7 @@ public class GpxExportNg {
 	// we need to fake desc to make clients like GSAK accept additional waypoints together with caches
 	final String GPXHEADER = "<?xml version=\"1.0\" encoding=\"utf-8\"?>" + newLine//
 		+ "<gpx"//
+		+ " xmlns=\"http://www.topografix.com/GPX/@@xmlnsGPXVersion@@\""//
 		+ " xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\""//
 		+ " xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\""//
 		+ " version=\"@@GPXVERSION@@\""//
@@ -1032,15 +1035,14 @@ public class GpxExportNg {
 		+ " @@GSAKEXTENSION@@" //
 		+ " @@GPXXEXTENSION@@" //
 		+ "\""//
-		+ " xmlns=\"http://www.topografix.com/GPX/@@xmlnsGPXVersion@@\""//
 		+ ">"//
 		+ newLine//
-		+ formatMetaData(exportOptions.getGPXVersion());
+		+ formatMetaData();
 	return trans.replaceFirst(GPXHEADER);
     }
 
-    private String formatMetaData(int version) {
-	if (version == 0) {
+    private String formatMetaData() {
+	if (exportOptions.getGPXVersion() == 0) {
 	    return "<name>@@NAME@@</name>" + newLine//
 		    + "<desc>This is an individual cache generated from Geocaching.com</desc>" + newLine//
 		    + "<author>Various users from geocaching.com and/or opencaching.de</author>" + newLine//

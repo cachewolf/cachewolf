@@ -60,15 +60,15 @@ public class CacheHolder {
     private String hidden = EMPTY;
     /** The code of the waypoint, beginning with 2 chars like GC or OC or CW (or any for Addis ) */
     private String code = EMPTY;
-    /** The name of the cache (short description) */
+    /** The name of the cache */
     private String name = EMPTY;
     /** Byte 3: The cache type (@see CacheType for translation table) */
     private byte type;
     /** The alias of the owner */
     private String owner = EMPTY;
-    /** Byte 1: The difficulty of the cache from 1 to 5 in .5 incements */
+    /** Byte 1: The difficulty of the cache from 10 to 50 in 5 incements */
     private byte difficulty = CacheTerrDiff.CW_DT_UNSET;
-    /** Byte 2: The terrain rating of the cache from 1 to 5 in .5 incements */
+    /** Byte 2: The terrain rating of the cache from 10 to 50 in 5 incements */
     private byte terrain = CacheTerrDiff.CW_DT_UNSET;
     /** Byte 4: The size of the cache (as per GC cache sizes Micro, Small, ....) */
     private byte size = CacheSize.CW_SIZE_NOTCHOSEN;
@@ -319,13 +319,13 @@ public class CacheHolder {
 	return ret;
     }
 
-    /** The name of the cache (short description) */
+    /** The name of the cache */
     public String getName() {
 	return this.name;
     }
 
     /**
-     * The name of the cache (short description)
+     * The name of the cache
      * @param name
      * @return true if changed, false if equal 
      */
@@ -369,13 +369,13 @@ public class CacheHolder {
 	this.owner = owner;
     }
 
-    /**Byte 1: The difficulty of the cache from 1 to 5 in .5 incements */
+    /**Byte 1: The difficulty of the cache from 10 to 50 in 5 incements */
     public byte getDifficulty() {
 	return this.difficulty;
     }
 
     /**
-     *Byte 1: The difficulty of the cache from 1 to 5 in .5 incements
+     *Byte 1: The difficulty of the cache from 10 to 50 in 5 incements
      * @param difficulty
      */
     public void setDifficulty(byte difficulty) {
@@ -383,13 +383,13 @@ public class CacheHolder {
 	this.difficulty = difficulty;
     }
 
-    /**Byte 2: The terrain rating of the cache from 1 to 5 in .5 incements */
+    /**Byte 2: The terrain rating of the cache from 10 to 50 in 5 incements */
     public byte getTerrain() {
 	return terrain;
     }
 
     /**
-     *Byte 2: The terrain rating of the cache from 1 to 5 in .5 incements
+     *Byte 2: The terrain rating of the cache from 10 to 50 in 5 incements
      * @param terrain
      */
     public void setTerrain(byte terrain) {

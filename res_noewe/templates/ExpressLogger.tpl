@@ -1,4 +1,4 @@
-<#-- Express Logger GPX -->
+﻿<#-- Express Logger GPX -->
 <#-- Codecs: ASCII, UTF8 -->
 <tmpl_par name="charset" value="UTF8">
 <#-- newline: CR, LF, CRLF -->
