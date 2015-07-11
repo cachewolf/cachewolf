@@ -872,15 +872,24 @@ public class OCXMLImporter extends MinML {
 	    else
 		n = "name???";
 
-	    //if (e == null)
-	    //	ErrMessage = "Ignoring error: OCXMLImporter.getPic: IOExeption == null, while downloading picture: " + fileName + " from URL:" + imageInfo.getURL();
-	    //else {
-	    if (e.getMessage().equalsIgnoreCase("could not connect") || e.getMessage().equalsIgnoreCase("unkown host")) {
-		// is there a better way to find out what happened?
-		ErrMessage = MyLocale.getMsg(1618, "Ignoring error in cache: ") + n + " (" + wp + ")" + MyLocale.getMsg(1619, ": could not download image from URL: ") + imageInfo.getURL();
-	    } else
-		ErrMessage = MyLocale.getMsg(1618, "Ignoring error in cache: ") + n + " (" + wp + "): ignoring IOException: " + e.getMessage() + " while downloading picture:" + fileName + " from URL:" + imageInfo.getURL();
-	    //}
+	    String m;
+	    try {
+		m = e.getMessage();
+		if (m == null)
+		    m = "";
+	    } catch (Exception e2) {
+		m = "";
+	    }
+
+	    if (m.length() == 0)
+		ErrMessage = "Ignoring error: OCXMLImporter.getPic: IOExeption == null, while downloading picture: " + fileName + " from URL:" + imageInfo.getURL();
+	    else {
+		if (m.equalsIgnoreCase("could not connect") || m.equalsIgnoreCase("unkown host")) {
+		    // is there a better way to find out what happened?
+		    ErrMessage = MyLocale.getMsg(1618, "Ignoring error in cache: ") + n + " (" + wp + ")" + MyLocale.getMsg(1619, ": could not download image from URL: ") + imageInfo.getURL();
+		} else
+		    ErrMessage = MyLocale.getMsg(1618, "Ignoring error in cache: ") + n + " (" + wp + "): ignoring IOException: " + m + " while downloading picture:" + fileName + " from URL:" + imageInfo.getURL();
+	    }
 	    inf.addWarning(ErrMessage);
 	    Preferences.itself().log(ErrMessage, e, true);
 	}
