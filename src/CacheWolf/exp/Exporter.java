@@ -30,6 +30,10 @@ import CacheWolf.database.CacheSize;
 import CacheWolf.database.CacheType;
 import CacheWolf.navi.TransformCoordinates;
 import CacheWolf.utils.MyLocale;
+
+import com.stevesoft.ewe_pat.Regex;
+import com.stevesoft.ewe_pat.Transformer;
+
 import ewe.filechooser.FileChooser;
 import ewe.filechooser.FileChooserBase;
 import ewe.io.BufferedWriter;
@@ -53,30 +57,27 @@ public class Exporter {
     // brings up a screen to select a file
     final static int ASK_FILE = 1;
 
-    // selection, which method should be called
+    // export methods
     final static int NO_PARAMS = 0;
     final static int LAT_LON = 1;
     final static int COUNT = 2;
 
     CacheDB cacheDB;
     // mask in file chooser
-    String mask = "*.*";
+    String outputFileExtension = "*.*";
     // file name, if no file chooser is used
     String tmpFileName;
     // decimal separator for lat- and lon-String
     char decimalSeparator = '.';
-    // if true, the complete cache details are read
-    // before a call to the record method is made
-    // boolean needCacheDetails = false;
-    // selection, which method should be called
-    int howManyParams = 0;
+    // selection, which export method should be called
+    int exportMethod = 0;
 
     // name of exporter for saving pathname
-    String expName;
+    protected String expName;
 
     public Exporter() {
 	cacheDB = MainForm.profile.cacheDB;
-	howManyParams = LAT_LON;
+	exportMethod = LAT_LON;
 	expName = this.getClass().getName();
 	// remove package
 	expName = expName.substring(expName.indexOf(".") + 1);
@@ -131,17 +132,17 @@ public class Exporter {
 		    expCount++;
 		    h.progress = (float) expCount / (float) counter;
 		    h.changed();
-		    switch (this.howManyParams) {
+		    switch (this.exportMethod) {
 		    case NO_PARAMS:
 			str = record(ch);
 			break;
 		    case LAT_LON:
-			if (ch.getWpt().isValid() == false)
+			if (!ch.getWpt().isValid())
 			    continue;
 			str = record(ch, ch.getWpt().getLatDeg(TransformCoordinates.DD).replace('.', this.decimalSeparator), ch.getWpt().getLonDeg(TransformCoordinates.DD).replace('.', this.decimalSeparator));
 			break;
 		    case LAT_LON | COUNT:
-			if (ch.getWpt().isValid() == false)
+			if (!ch.getWpt().isValid())
 			    continue;
 			str = record(ch, ch.getWpt().getLatDeg(TransformCoordinates.DD).replace('.', this.decimalSeparator), ch.getWpt().getLonDeg(TransformCoordinates.DD).replace('.', this.decimalSeparator), i);
 			break;
@@ -153,7 +154,7 @@ public class Exporter {
 			outp.print(str);
 		}// if
 	    }// for
-	    switch (this.howManyParams & COUNT) {
+	    switch (this.exportMethod & COUNT) {
 	    case NO_PARAMS:
 		str = trailer();
 		break;
@@ -182,27 +183,9 @@ public class Exporter {
      * 
      * @param mask
      */
-    public void setMask(String mask) {
-	this.mask = mask;
+    public void setOutputFileExtension(String mask) {
+	this.outputFileExtension = mask;
     }
-
-    /**
-     * sets decimal separator for lat/lon-string
-     * 
-     * @param sep
-     */
-    public void setDecimalSeparator(char sep) {
-	this.decimalSeparator = sep;
-    }
-
-    /**
-     * sets needCacheDetails
-     * 
-     * @param how
-     */
-    //public void setNeedCacheDetails(boolean how) {
-    //this.needCacheDetails = how;
-    //}
 
     /**
      * sets howManyParams
@@ -210,7 +193,7 @@ public class Exporter {
      * @param paramBits
      */
     public void setHowManyParams(int paramBits) {
-	this.howManyParams = paramBits;
+	this.exportMethod = paramBits;
     }
 
     /**
@@ -231,10 +214,10 @@ public class Exporter {
 	File file;
 	FileChooser fc = new FileChooser(FileChooserBase.SAVE, Preferences.itself().getExportPath(expName));
 	fc.setTitle("Select target file:");
-	fc.addMask(mask);
+	fc.addMask(outputFileExtension);
 	if (fc.execute() != FormBase.IDCANCEL) {
 	    file = fc.getChosenFile();
-	    Preferences.itself().setExportPath(expName, file.getPath());
+	    Preferences.itself().setExportPref(expName, file.getPath());
 	    return file;
 	} else {
 	    return null;
@@ -315,12 +298,17 @@ public class Exporter {
 
     private static Hashtable iso2simpleMappings = new Hashtable(250);
     static {
-	String[] mappingArray = new String[] { "34", "'", "160", " ", "161", "i", "162", "c", "163", "$", "164", "o", "165", "$", "166", "!", "167", "$", "168", " ", "169", " ", "170", " ", "171", "<", "172", " ", "173", "-", "174", " ", "175", "-",
-		"176", " ", "177", "+/-", "178", "2", "179", "3", "180", "'", "181", " ", "182", " ", "183", " ", "184", ",", "185", "1", "186", " ", "187", ">", "188", "1/4", "189", "1/2", "190", "3/4", "191", "?", "192", "A", "193", "A", "194",
-		"A", "195", "A", "196", "Ae", "197", "A", "198", "AE", "199", "C", "200", "E", "201", "E", "202", "E", "203", "E", "204", "I", "205", "I", "206", "I", "207", "I", "208", "D", "209", "N", "210", "O", "211", "O", "212", "O", "213",
-		"O", "214", "Oe", "215", "x", "216", "O", "217", "U", "218", "U", "219", "U", "220", "Ue", "221", "Y", "222", " ", "223", "ss", "224", "a", "225", "a", "226", "a", "227", "a", "228", "ae", "229", "a", "230", "ae", "231", "c", "232",
-		"e", "233", "e", "234", "e", "235", "e", "236", "i", "237", "i", "238", "i", "239", "i", "240", "o", "241", "n", "242", "o", "243", "o", "244", "o", "245", "o", "246", "oe", "247", "/", "248", "o", "249", "u", "250", "u", "251", "u",
-		"252", "ue", "253", "y", "254", "p", "255", "y" };
+	String[] mappingArray = new String[] { "34", "'", //
+		"160", " ", "161", "i", "162", "c", "163", "$", "164", "o", "165", "$", "166", "!", "167", "$", "168", " ", "169", " ", //
+		"170", " ", "171", "<", "172", " ", "173", "-", "174", " ", "175", "-", "176", " ", "177", "+/-", "178", "2", "179", "3", //
+		"180", "'", "181", " ", "182", " ", "183", " ", "184", ",", "185", "1", "186", " ", "187", ">", "188", "1/4", "189", "1/2", //
+		"190", "3/4", "191", "?", "192", "A", "193", "A", "194", "A", "195", "A", "196", "Ae", "197", "A", "198", "AE", "199", "C", //
+		"200", "E", "201", "E", "202", "E", "203", "E", "204", "I", "205", "I", "206", "I", "207", "I", "208", "D", "209", "N", //
+		"210", "O", "211", "O", "212", "O", "213", "O", "214", "Oe", "215", "x", "216", "O", "217", "U", "218", "U", "219", "U", //
+		"220", "Ue", "221", "Y", "222", " ", "223", "ss", "224", "a", "225", "a", "226", "a", "227", "a", "228", "ae", "229", "a", //
+		"230", "ae", "231", "c", "232", "e", "233", "e", "234", "e", "235", "e", "236", "i", "237", "i", "238", "i", "239", "i", //
+		"240", "o", "241", "n", "242", "o", "243", "o", "244", "o", "245", "o", "246", "oe", "247", "/", "248", "o", "249", "u", //
+		"250", "u", "251", "u", "252", "ue", "253", "y", "254", "p", "255", "y" };
 	for (int i = 0; i < mappingArray.length; i = i + 2) {
 	    iso2simpleMappings.put(Integer.valueOf(mappingArray[i]), mappingArray[i + 1]);
 	}
@@ -332,7 +320,7 @@ public class Exporter {
 	    return null;
 	} else {
 	    String s = (String) iso2simpleMappings.get(new Integer(c));
-	    if (s == null) // not in table, replace with empty string just to be sure
+	    if (s == null) // 127..159 not in table, replace with empty string
 		return "";
 	    else
 		return s;
@@ -381,4 +369,23 @@ public class Exporter {
 	return strBuf.toString();
     }
 
+    protected static String removeHtmlTags(String inString) {
+
+	Transformer removeNumericEntities = new Transformer(true);
+	removeNumericEntities.add(new Regex("&#([xX]?)([a-fA-F0-9]*?);", ""));
+
+	Transformer handleLinebreaks = new Transformer(true);
+	handleLinebreaks.add(new Regex("\r", ""));
+	handleLinebreaks.add(new Regex("\n", " "));
+	handleLinebreaks.add(new Regex("<br>", "\n"));
+	handleLinebreaks.add(new Regex("<p>", "\n"));
+	handleLinebreaks.add(new Regex("<hr>", "\n"));
+	handleLinebreaks.add(new Regex("<br />", "\n"));
+
+	Transformer removeHTMLTags = new Transformer(true);
+	removeHTMLTags.add(new Regex("<(.*?)>", ""));
+
+	return removeHTMLTags.replaceAll(handleLinebreaks.replaceAll(removeNumericEntities.replaceAll(inString)));
+
+    }
 }

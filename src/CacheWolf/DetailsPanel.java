@@ -142,7 +142,6 @@ public class DetailsPanel extends CellPanel {
     private final int BUG = 0;
     private final int GOTO = 1;
     private final int NOTES = 2;
-    private final int NEWWPT = 3;
 
     /**
      * public constructor for detail panels. should only be called from main tab.

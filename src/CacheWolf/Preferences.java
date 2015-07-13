@@ -95,9 +95,9 @@ public class Preferences extends MinML {
     /** The own GC member ID (for gpx - export)*/
     public String gcMemberId = "";
     public final String[] gpxStyles = { //
-    "STYLE_COMPCAT_OUTPUT_SINGLE", //
-	    "STYLE_COMPCAT_OUTPUT_SEPARATE", //
-	    "STYLE_COMPCAT_OUTPUT_POI", //
+    "STYLE_COMPACT_OUTPUT_SINGLE", //
+	    "STYLE_COMPACT_OUTPUT_SEPARATE", //
+	    "STYLE_COMPACT_OUTPUT_POI", //
 	    "STYLE_GPX_PQLIKE", //
 	    "STYLE_GPX_MYFINDS" //
     };
@@ -659,9 +659,9 @@ public class Preferences extends MinML {
 	    for (int i = 0; i < atts.getLength(); i++) {
 		h.put(atts.getName(i), atts.getValue(i));
 	    }
-	} else if (name.equals("expPath")) {
+	} else if (name.equals("expPref")) {
 	    for (int i = 0; i < atts.getLength(); i++) {
-		exporterPaths.put(atts.getName(i), atts.getValue(i));
+		exporterPreferences.put(atts.getName(i), atts.getValue(i));
 	    }
 	} else if (name.equals("impPath")) {
 	    for (int i = 0; i < atts.getLength(); i++) {
@@ -992,12 +992,12 @@ public class Preferences extends MinML {
 		}
 		outp.print("/>\n");
 	    }
-	    // save last path of im and exporters
-	    exporterPaths.remove("key"); // relikt bereinigen
-	    exporterPaths.remove("value"); // relikt bereinigen
-	    Iterator itPath = exporterPaths.entries();
+	    // save last path of im- and ex-porters
+	    exporterPreferences.remove("key"); // relikt bereinigen
+	    exporterPreferences.remove("value"); // relikt bereinigen
+	    Iterator itPath = exporterPreferences.entries();
 	    if (itPath.hasNext()) {
-		outp.print("    <expPath ");
+		outp.print("    <expPref ");
 		while (itPath.hasNext()) {
 		    MapEntry entry = (MapEntry) itPath.next();
 		    outp.print(entry.getKey().toString() + "=\"" + (String) entry.getValue() + "\" ");
@@ -1193,24 +1193,31 @@ public class Preferences extends MinML {
     // ////////////////////////////////////////////////////////////////////////////////////
 
     /** Hashtable for storing the last export path */
-    private Hashtable exporterPaths = new Hashtable();
+    private Hashtable exporterPreferences = new Hashtable();
 
-    public void setExportPath(String exporter, String path) {
-	exporterPaths.put(exporter, path);
+    public void setExportPref(String exporter, String value) {
+	exporterPreferences.put(exporter, value);
 	savePreferences();
     }
 
     public void setExportPathFromFileName(String exporter, String filename) {
 	File tmpfile = new File(filename);
-	exporterPaths.put(exporter, tmpfile.getPath());
+	exporterPreferences.put(exporter, tmpfile.getPath());
 	savePreferences();
     }
 
     public String getExportPath(String exporter) {
-	String dir = (String) exporterPaths.get(exporter);
+	String dir = (String) exporterPreferences.get(exporter);
 	if (dir == null) {
 	    dir = Preferences.itself().absoluteBaseDir;
 	}
+	return dir;
+    }
+
+    public String getExportPref(String exporter) {
+	String dir = (String) exporterPreferences.get(exporter);
+	if (dir == null)
+	    dir = "";
 	return dir;
     }
 

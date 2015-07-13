@@ -69,7 +69,7 @@ public class KMLExporter extends Exporter {
 
     public KMLExporter() {
 	super();
-	this.setMask("*.kml");
+	this.setOutputFileExtension("*.kml");
     }
 
     public void doIt(int variant) {

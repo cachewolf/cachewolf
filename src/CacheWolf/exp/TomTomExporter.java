@@ -75,7 +75,7 @@ public class TomTomExporter {
 	    if (fc.execute() == FormBase.IDCANCEL)
 		return;
 	    dirName = fc.getChosen();
-	    Preferences.itself().setExportPath(expName, dirName);
+	    Preferences.itself().setExportPref(expName, dirName);
 	    prefix = infoScreen.getPrefix();
 	    writeOneFilePerType(fileFormat, dirName, prefix);
 	} else {

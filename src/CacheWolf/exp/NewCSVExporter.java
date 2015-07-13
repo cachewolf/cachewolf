@@ -36,8 +36,8 @@ public class NewCSVExporter extends Exporter {
 
     public NewCSVExporter() {
 	super();
-	this.setMask("*.cl");
-	this.setDecimalSeparator(',');
+	this.setOutputFileExtension("*.cl");
+	this.decimalSeparator = ',';
 	this.setHowManyParams(NO_PARAMS);
     }
 

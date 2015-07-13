@@ -24,6 +24,7 @@ import ewe.io.TextCodec;
 import ewe.sys.Time;
 import ewe.util.Hashtable;
 import ewe.util.Vector;
+import ewe.util.mString;
 
 public class TemplateTable {
     CacheHolder cache;
@@ -36,7 +37,21 @@ public class TemplateTable {
 	this.cache = cache;
     }
 
-    /** Return a Hashtable containing all the cache data for Templates */
+    /**
+     * 
+     * @param decSep
+     * @param badChars
+     * @param shortWaypointLength
+     * @param shortNameLength
+     * @param nrOfLogs
+     * @param codec
+     * @param gm
+     * @param withFoundText
+     * @param ModTyp
+     * @param expName
+     * @return
+     *     Return a Hashtable containing all the cache data for Templates
+     */
     public Hashtable toHashtable(Regex decSep, Regex badChars, int shortWaypointLength, int shortNameLength, int nrOfLogs, TextCodec codec, GarminMap gm, boolean withFoundText, int ModTyp, String expName) {
 	Hashtable varParams = new Hashtable();
 	byte type = cache.getType();
@@ -109,6 +124,7 @@ public class TemplateTable {
 	    varParams.put("DATE", cache.getHidden());
 	}
 	varParams.put("WAYPOINT", code); // <name>
+	varParams.put("PREFIX", code.substring(0, 2));
 	int wpl = code.length();
 	int wps = (wpl < shortWaypointLength) ? 0 : wpl - shortWaypointLength;
 	String s = "";
@@ -118,6 +134,7 @@ public class TemplateTable {
 	s = code.substring(code.length() - 2, code.length());
 	varParams.put("INVERS", s);
 	varParams.put("SHORTWAYPOINT", code.substring(wps, wpl));
+	varParams.put("SSHORTWAYPOINT", code.substring(2));
 	varParams.put("DISTANCE", decSep.replaceAll(cache.getDistance()));
 	varParams.put("BEARING", cache.getBearing());
 	if ((wpt != null && wpt.isValid())) {
@@ -158,9 +175,82 @@ public class TemplateTable {
 	varParams.put("AVAILABLE", cache.isAvailable() ? "TRUE" : "FALSE");
 	varParams.put("ARCHIVED", cache.isArchived() ? "TRUE" : "FALSE");
 	varParams.put("SOLVED", cache.isSolved() ? "TRUE" : "FALSE");
-	varParams.put("HTML", cache.isHTML() ? "TRUE" : "FALSE");
+	varParams.put("FOUND", cache.isFound() ? "TRUE" : "FALSE");
+	varParams.put("OWN", cache.isOwned() ? "TRUE" : "FALSE");
+	varParams.put("PM", cache.isPMCache() ? "TRUE" : "FALSE");
+	if (!cache.isAvailable()) {
+	    varParams.put("IFNOTAVAILABLE", "-");
+	}
+	if (cache.isArchived()) {
+	    varParams.put("IFARCHIVED", "-");
+	}
+	if (cache.isSolved()) {
+	    varParams.put("IFSOLVED", "*");
+	}
+	if (cache.isFound()) {
+	    varParams.put("IFFOUND", "+");
+	}
+	if (cache.isOwned()) {
+	    varParams.put("IFOWN", "~");
+	}
+	if (cache.isPMCache()) {
+	    varParams.put("IFPM", "?");
+	}
+	if (cache.getType() == CacheType.CW_TYPE_TRADITIONAL) {
+	    varParams.put("IFTRADITIONAL", "TR");
+	}
+	if (cache.getType() == CacheType.CW_TYPE_MULTI) {
+	    varParams.put("IFMULTI", "MU");
+	}
+	if (cache.getType() == CacheType.CW_TYPE_UNKNOWN) {
+	    varParams.put("IFMYSTERY", "UN");
+	}
+	if (cache.getType() == CacheType.CW_TYPE_EVENT) {
+	    varParams.put("IFEVENT", "EV");
+	}
+	if (cache.getType() == CacheType.CW_TYPE_CITO) {
+	    varParams.put("IFCITO", "CI");
+	}
+	if (cache.getType() == CacheType.CW_TYPE_EARTH) {
+	    varParams.put("IFEARTH", "EA");
+	}
+	if (cache.getType() == CacheType.CW_TYPE_MEGA_EVENT) {
+	    varParams.put("IFMEGA", "ME");
+	}
+	if (cache.getType() == CacheType.CW_TYPE_GIGA_EVENT) {
+	    varParams.put("IFGIGA", "GI");
+	}
+	if (cache.getType() == CacheType.CW_TYPE_LAB) {
+	    varParams.put("IFLAB", "LA");
+	}
+	if (cache.getType() == CacheType.CW_TYPE_LETTERBOX) {
+	    varParams.put("IFLETTERBOX", "LB");
+	}
+	if (cache.getType() == CacheType.CW_TYPE_WEBCAM) {
+	    varParams.put("IFWEBCAM", "WC");
+	}
+	if (cache.getType() == CacheType.CW_TYPE_WHEREIGO) {
+	    varParams.put("IFWHEREIGO", "WG");
+	}
+	if (cache.getType() == CacheType.CW_TYPE_PARKING) {
+	    varParams.put("IFPARKING", "PA");
+	}
+	if (cache.getType() == CacheType.CW_TYPE_STAGE) {
+	    varParams.put("IFSTAGE", "ST");
+	}
+	if (cache.getType() == CacheType.CW_TYPE_QUESTION) {
+	    varParams.put("IFQUESTION", "QU");
+	}
+	if (cache.getType() == CacheType.CW_TYPE_FINAL) {
+	    varParams.put("IFFINAL", "FI");
+	}
+	if (cache.getType() == CacheType.CW_TYPE_TRAILHEAD) {
+	    varParams.put("IFTRAILHEAD", "TH");
+	}
+	if (cache.getType() == CacheType.CW_TYPE_REFERENCE) {
+	    varParams.put("IFREFERENCE", "RE");
+	}
 	varParams.put("VOTE", cache.getRecommended());
-	// () ? TRUE : FALSE
 	if (chD == null) {
 	    varParams.put("URL", "");
 	    varParams.put("DESCRIPTION", "");
@@ -171,7 +261,6 @@ public class TemplateTable {
 	    varParams.put("STATE", "");
 	    varParams.put("OWNLOG", "");
 	} else {
-	    // todo &lt;br&gt;
 	    varParams.put("URL", chD.URL);
 	    if (cache.isHTML()) {
 		if (ModTyp == 0) {
@@ -290,21 +379,21 @@ public class TemplateTable {
 	    Vector imgVect = new Vector(chD.images.size());
 	    for (int i = 0; i < chD.images.size(); i++) {
 		Hashtable imgs = new Hashtable();
-		String imgFile = chD.images.get(i).getFilename();
+		String imgFile = chD.images.get(i).getURL();
 		boolean doit = true;
 		for (int j = i + 1; j < chD.images.size(); j++) {
-		    String jmgFile = chD.images.get(j).getFilename();
+		    String jmgFile = chD.images.get(j).getURL();
 		    if (imgFile.equals(jmgFile)) {
 			doit = false;
 			break;
 		    }
 		}
 		if (doit) {
-		    imgs.put("FILENAME", imgFile);
+		    imgs.put("PROFILDIR", MainForm.profile.dataDir);
+		    imgs.put("FILENAME", chD.images.get(i).getFilename());
 		    String title = chD.images.get(i).getTitle();
 		    imgs.put("TEXT", title);
-		    String comment = chD.images.get(i).getComment();
-		    imgs.put("COMMENT", comment);
+		    imgs.put("COMMENT", chD.images.get(i).getComment());
 		    imgs.put("URL", chD.images.get(i).getURL());
 		    if (!expName.equals("")) {
 			String src = MainForm.profile.dataDir + imgFile;
@@ -376,19 +465,21 @@ public class TemplateTable {
 	return s.toString();
     }
 
-    private final static Time nowdate() {
+    private final Time nowdate() {
 	Time nd = new Time();
 	return nd.setFormat("yyyy-MM-dd");
     }
 
-    private final static Time nowtime() {
+    private final Time nowtime() {
 	Time nt = new Time();
 	return nt.setFormat("HH:mm");
     }
 
-    private final static String selbstLaute = "aeiouAEIOU";
+    private final String selbstLauteKlein = "aeiou";
 
-    private final static String mitLauteKlein() {
+    //private final String selbstLauteGross = "AEIOU";
+
+    private final String mitLauteKlein() {
 	final StringBuffer lower = new StringBuffer(26);// region/language dependent ?
 	for (int i = 97; i <= 122; i++) {
 	    lower.append((char) i);
@@ -396,12 +487,52 @@ public class TemplateTable {
 	return lower.toString();
     }
 
-    private String shortenName(String Name, int maxLength) {
-	String shortName = removeCharsfromString(Name, maxLength, selbstLaute);
-	return removeCharsfromString(shortName, maxLength, mitLauteKlein());
+    private String shortenName(String name, int maxLength) {
+	if (name.length() > maxLength) {
+	    String[] ss = mString.split(name, ' ');
+	    int aktLen = 0;
+	    for (int i = 0; i < ss.length; i++) {
+		aktLen = aktLen + ss[i].length();
+	    }
+
+	    int anzToRemove = aktLen - maxLength;
+	    int toRemovePerWord = (int) Math.ceil(anzToRemove / ss.length);
+	    aktLen = 0;
+	    for (int i = 0; i < ss.length; i++) {
+		int len = ss[i].length();
+		if (len > toRemovePerWord) {
+		    ss[i] = removeCharsfromString(ss[i], len - toRemovePerWord, selbstLauteKlein);
+		}
+		aktLen = aktLen + ss[i].length();
+	    }
+
+	    anzToRemove = aktLen - maxLength;
+	    toRemovePerWord = (int) Math.ceil(anzToRemove / ss.length);
+	    aktLen = 0;
+	    for (int i = 0; i < ss.length; i++) {
+		int len = ss[i].length();
+		if (len > toRemovePerWord) {
+		    ss[i] = removeCharsfromString(ss[i], len - toRemovePerWord, mitLauteKlein());
+		}
+		aktLen = aktLen + ss[i].length();
+	    }
+	    String shortName = "";
+	    for (int i = 0; i < ss.length; i++) {
+		if (ss[i].length() == 1) {
+		    shortName = shortName + ss[i].toUpperCase();
+		} else {
+		    shortName = shortName + ss[i];
+		}
+	    }
+	    if (shortName.length() > maxLength) {
+		return shortName.substring(0, maxLength);
+	    }
+	    return shortName;
+	}
+	return name;
     }
 
-    private static String removeCharsfromString(String text, int MaxLength, String chars) {
+    private String removeCharsfromString(String text, int MaxLength, String chars) {
 	if (text == null)
 	    return null;
 	int originalTextLength = text.length();

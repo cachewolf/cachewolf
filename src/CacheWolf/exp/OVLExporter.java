@@ -35,7 +35,7 @@ public class OVLExporter extends Exporter {
 
     public OVLExporter() {
 	super();
-	this.setMask("*.ovl");
+	this.setOutputFileExtension("*.ovl");
 	this.setHowManyParams(LAT_LON | COUNT);
     }
 

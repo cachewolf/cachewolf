@@ -80,7 +80,7 @@ public class HTMLExporter {
 	String targetDir;
 	if (fc.execute() != FormBase.IDCANCEL) {
 	    targetDir = fc.getChosen() + "/";
-	    Preferences.itself().setExportPath(expName, targetDir);
+	    Preferences.itself().setExportPref(expName, targetDir);
 	    Vector cache_index = new Vector();
 	    Vector cacheImg = new Vector();
 	    Vector logImg = new Vector();

@@ -33,7 +33,7 @@ public class ASCExporter extends Exporter {
 
 	public ASCExporter() {
 		super();
-		this.setMask("*.csv");
+		this.setOutputFileExtension("*.csv");
 		this.setHowManyParams(LAT_LON);
 	}
 

@@ -218,7 +218,7 @@ public class MyTableControl extends TableControl {
 	    int mainNonVisibleCount = 0;
 	    int addiNonVisibleCount = 0;
 	    int shouldDeleteCount = 0;
-	    boolean deleteFiltered = true; // Bisheriges Verhalten
+	    //boolean deleteFiltered = true; // Bisheriges Verhalten
 	    for (int i = cacheDB.size() - 1; i >= 0; i--) {
 		CacheHolder currCache = cacheDB.get(i);
 		if (currCache.isChecked) {
@@ -237,9 +237,9 @@ public class MyTableControl extends TableControl {
 	    if (addiNonVisibleCount + mainNonVisibleCount > 0) {
 		if (new InfoBox(MyLocale.getMsg(144, "Warning"), MyLocale.getMsg(1029, "There are caches that are ticked but invisible.\n(Main caches: ") + mainNonVisibleCount + MyLocale.getMsg(1030, ", additional Waypoints: ") + addiNonVisibleCount
 			+ ")\n" + MyLocale.getMsg(1031, "Delete them, too?")).wait(FormBase.YESB | FormBase.NOB) == FormBase.IDYES) {
-		    deleteFiltered = true;
+		    //deleteFiltered = true;
 		} else {
-		    deleteFiltered = false;
+		    //deleteFiltered = false;
 		    shouldDeleteCount = allCount - mainNonVisibleCount - addiNonVisibleCount;
 		}
 	    }

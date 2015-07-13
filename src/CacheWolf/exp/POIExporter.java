@@ -24,16 +24,20 @@ package CacheWolf.exp;
 import CacheWolf.MainForm;
 import CacheWolf.database.CacheHolder;
 import CacheWolf.database.CacheImages;
-import CacheWolf.database.CacheSize;
-import CacheWolf.database.CacheTerrDiff;
-import CacheWolf.database.CacheType;
-import CacheWolf.utils.Common;
-import CacheWolf.utils.MyLocale;
+import CacheWolf.utils.STRreplace;
 import CacheWolf.utils.SafeXML;
 import CacheWolf.utils.URLUTF8Encoder;
+
+import com.stevesoft.ewe_pat.Regex;
+
+import ewe.io.AsciiCodec;
 import ewe.io.File;
 import ewe.sys.Time;
 import ewe.ui.FormBase;
+import ewe.util.Hashtable;
+import ewe.util.Iterator;
+import ewe.util.Vector;
+import ewe.util.mString;
 
 /**
  * 
@@ -43,94 +47,125 @@ import ewe.ui.FormBase;
  */
 
 public class POIExporter extends Exporter {
-    private POIExporterScreen infoScreen;
-    private boolean onlySpoiler;
-    StringBuffer strBuf;
+    private final String endLine = "\r\n"; //<br>
+    private final char splitter = ',';
+    private final String marker = "%";
+    private boolean onlySpoiler, noPictures;
+    private int anzLogs;
+    Hashtable ht;
+    String[] nameTagElements, cmtTagElements, descTagElements;
+    String[] addiNameTagElements, addiCmtTagElements, addiDescTagElements;
+    StringBuffer result;
+    int picsCounter;
+    TemplateTable tt;
 
     public POIExporter() {
 	super();
-	this.setMask("*.gpx");
-	this.setHowManyParams(LAT_LON);
-	strBuf = new StringBuffer(1000);
+	this.outputFileExtension = "*.gpx";
+	this.exportMethod = LAT_LON;
+	result = new StringBuffer(1000);
+	tt = new TemplateTable();
     }
 
     public void doIt() {
-	infoScreen = new POIExporterScreen(MyLocale.getMsg(2200, "POI Exporter"));
-	if (infoScreen.execute() == FormBase.IDCANCEL)
+	POIExporterScreen gui = new POIExporterScreen(expName);
+	if (gui.execute() == FormBase.IDCANCEL)
 	    return;
-	onlySpoiler = infoScreen.getOnlySpoiler();
+	this.onlySpoiler = gui.onlySpoiler();
+	this.noPictures = gui.noPictures();
+	this.anzLogs = gui.getAnzLogs();
+	this.nameTagElements = split(gui.getNameTagDefinitions());
+	this.cmtTagElements = split(gui.getCmtTagDefinitions());
+	this.descTagElements = split(gui.getDescTagDefinitions());
+	this.addiNameTagElements = split(gui.getAddiNameTagDefinitions());
+	this.addiCmtTagElements = split(gui.getAddiCmtTagDefinitions());
+	this.addiDescTagElements = split(gui.getAddiDescTagDefinitions());
 	super.doIt();
     }
 
+    private String[] split(String elements) {
+	return mString.split(STRreplace.replace(STRreplace.replace(elements, "\\r", "\r"), "\\n", "\n"), splitter);
+    }
+
     public String header() {
-	strBuf.setLength(0);
+	result.setLength(0);
 	Time tim = new Time();
 
-	strBuf.append("<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n"); // or ISO-8859-1
-	strBuf.append("<gpx xmlns=\"http://www.topografix.com/GPX/1/1\" creator=\"CacheWolf\" version=\"1.1\"" //
+	result.append("<?xml version=\"1.0\" encoding=\"Windows-1252\"?>" + endLine);
+	result.append("<gpx xmlns=\"http://www.topografix.com/GPX/1/1\" creator=\"CacheWolf\" version=\"1.1\"" //
 		+ " xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"" //
-		+ " xsi:schemaLocation=\"http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd\">\r\n");
-	strBuf.append("<metadata>\r\n");
-	strBuf.append("<link href=\"http://www.cachewolf.de\"><text>CacheWolf</text></link>\r\n");
+		+ " xsi:schemaLocation=\"http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd\">" + endLine);
+	result.append("<metadata>" + endLine);
+	result.append("<link href=\"http://www.cachewolf.de\"><text>CacheWolf</text></link>" + endLine);
 	tim = tim.setFormat("yyyy-MM-dd'T'HH:mm:dd'Z'");
 	tim = tim.setToCurrentTime();
-	strBuf.append("<time>" + tim.toString() + "</time>\r\n");
-	strBuf.append("</metadata>\r\n");
-	return strBuf.toString();
+	result.append("<time>" + tim.toString() + "</time>" + endLine);
+	result.append("</metadata>" + endLine);
+	return result.toString();
     }
 
     public String record(CacheHolder ch, String lat, String lon) {
-	strBuf.setLength(0);
-
+	tt.set(ch);
+	ht = tt.toHashtable(new Regex("[,.]", "."), null, 0, 20, this.anzLogs, new AsciiCodec(), null, true, 1, "");
+	result.setLength(0);
+	picsCounter = 0;
 	if (ch.isAddiWpt()) {
 	    formatAddi(ch, lat, lon);
-	    return strBuf.toString();
+	    return result.toString();
 	} else {
-	    // First check, if there a any pictures in the db for the wpt
+	    // First check, if there are any pictures in the db for the wpt
 	    ch.getDetails();
 	    if (!ch.detailsLoaded())
 		return null;
-	    if (ch.getDetails().images.size() == 0) {
+	    if (noPictures || ch.getDetails().images.size() == 0) {
 		formatMain(ch, lat, lon, "", "");
-		return strBuf.toString();
+		return result.toString();
 	    }
 	}
 
-	CacheImages images = ch.getDetails().images.getDisplayImages(ch.getCode());
-	for (int i = 0; i < images.size(); i++) {
-	    String filename = images.get(i).getFilename();
-	    String comment = images.get(i).getTitle();
-	    String url = MainForm.profile.dataDir + filename;
+	if (!noPictures) {
+	    CacheImages images = ch.getDetails().images.getDisplayImages(ch.getCode());
+	    String alreadyDone = "";
+	    for (int i = 0; i < images.size(); i++) {
+		String filename = images.get(i).getFilename();
+		String comment = images.get(i).getTitle();
+		String url = MainForm.profile.dataDir + filename;
 
-	    // POILoader can only work with JPG-Files ?convert to jpg?
-	    if (!filename.endsWith(".jpg"))
-		continue;
-	    // Try to export only Spoiler
-	    if (onlySpoiler && (comment.toLowerCase().indexOf("oiler") < 1))
-		continue;
-	    // check if the file is not deleted
-	    if (!(new File(url)).exists())
-		continue;
-	    formatMain(ch, lat, lon, url, comment);
+		// POILoader can only work with JPG-Files ?convert to jpg?
+		if (!filename.endsWith(".jpg"))
+		    continue;
+		// Try to export only Spoiler
+		if (onlySpoiler && (comment.toLowerCase().indexOf("oiler") < 1))
+		    continue;
+		// check if the file is not deleted
+		if (!(new File(url)).exists())
+		    continue;
+		if (alreadyDone.indexOf(url) == -1) {
+		    alreadyDone = alreadyDone + url;
+		    picsCounter++;
+		    formatMain(ch, lat, lon, url, comment);
+		}
+	    }
 	}
-
-	return strBuf.toString();
+	return result.toString();
     }
 
     private void formatAddi(CacheHolder ch, String lat, String lon) {
 
-	strBuf.append("<wpt lat=\"" + lat + "\" lon=\"" + lon + "\">\r\n");
-	strBuf.append("<name>");
-	strBuf.append(SafeXML.cleanGPX(ch.getName()) + "\r\n");
-	strBuf.append(CacheType.type2GSTypeTag(ch.getType()) + "\r\n"); //.getExportShortId
-	strBuf.append(ch.getCode() + "\r\n");
-	if (ch.getDetails().Hints.length() > 0) {
-	    strBuf.append("Hint: " + SafeXML.cleanGPX(Common.rot13(ch.getDetails().Hints)) + "\r\n");
-	}
-	strBuf.append("</name>\r\n");
+	result.append("<wpt lat=\"" + lat + "\" lon=\"" + lon + "\">").append(endLine);
 
-	strBuf.append("<cmt/>\r\n");
-	strBuf.append("<desc>GCcode: " + ch.getCode() + " </desc>\r\n");
+	result.append("<name>");
+	this.appendToResult(nameTagElements);
+	result.append("</name>").append(endLine);
+
+	result.append("<cmt>");
+	this.appendToResult(cmtTagElements);
+	result.append("</cmt>").append(endLine);
+
+	result.append("<desc>");
+	this.appendToResult(descTagElements);
+	result.append("</desc>").append(endLine);
+
 	appendLastPart();
 
 	return;
@@ -138,42 +173,85 @@ public class POIExporter extends Exporter {
 
     private void formatMain(CacheHolder ch, String lat, String lon, String url, String comment) {
 
-	strBuf.append("<wpt lat=\"" + lat + "\" lon=\"" + lon + "\">\r\n");
-	strBuf.append("<name>");
-	strBuf.append(SafeXML.cleanGPX(ch.getName()) + "\r\n");
-	strBuf.append(CacheType.type2GSTypeTag(ch.getType()) + "\r\n"); //.getExportShortId
-	strBuf.append("D:" + CacheTerrDiff.shortDT(ch.getDifficulty()) + " T:" + CacheTerrDiff.shortDT(ch.getTerrain()) + " S:" + CacheSize.cw2ExportString(ch.getSize()) + "\r\n");
-	strBuf.append(ch.getCode() + " von " + SafeXML.cleanGPX(ch.getOwner()) + "\r\n");
-	if (ch.getDetails().Hints.length() > 0) {
-	    strBuf.append("Hint: " + SafeXML.cleanGPX(Common.rot13(ch.getDetails().Hints)) + "\r\n");
-	}
-	strBuf.append("</name>\r\n");
-	strBuf.append("<cmt/>\r\n");
-	strBuf.append("<desc>");
-	strBuf.append("GCcode: " + ch.getCode() + "\r\n");
-	strBuf.append(SafeXML.cleanGPX(SafeXML.html2iso8859s1(ch.getDetails().LongDescription)) + "\r\n"); // remove html from String
-	strBuf.append("</desc>\r\n");
+	result.append("<wpt lat=\"" + lat + "\" lon=\"" + lon + "\">").append(endLine);
+
+	result.append("<name>");
+	this.appendToResult(nameTagElements);
+	result.append("</name>").append(endLine);
+
+	result.append("<cmt>");
+	this.appendToResult(cmtTagElements);
+	result.append("</cmt>").append(endLine);
+
+	result.append("<desc>");
+	this.appendToResult(descTagElements);
+	result.append("</desc>").append(endLine);
+
 	if (url.length() > 0) {
-	    strBuf.append("<link" + "href=\"" + URLUTF8Encoder.encode(url, false) + "\">");
-	    strBuf.append("<text>" + SafeXML.cleanGPX(SafeXML.html2iso8859s1(comment)) + "</text>");
-	    strBuf.append("</link>\r\n");
+	    result.append("<link href=\"" + URLUTF8Encoder.encode(url, false) + "\"/>").append(endLine);
 	}
 	appendLastPart();
 	return;
     }
 
     private void appendLastPart() {
-	strBuf.append("<sym>Scenic Area</sym>\r\n");
-	strBuf.append("<extensions>\r\n");
-	strBuf.append("   <gpxx:WaypointExtension xmlns:gpxx=\"http://www.garmin.com/xmlschemas/GpxExtensions/v3\">\r\n");
-	strBuf.append("      <gpxx:DisplayMode>SymbolAndName</gpxx:DisplayMode>\r\n");
-	strBuf.append("   </gpxx:WaypointExtension>\r\n");
-	strBuf.append("</extensions>\r\n");
-	strBuf.append("</wpt>\r\n");
-	strBuf.append("\r\n");
+	result.append("<sym>Scenic Area</sym>").append(endLine) //
+		.append("<extensions>").append(endLine) //
+		.append("   <gpxx:WaypointExtension xmlns:gpxx=\"http://www.garmin.com/xmlschemas/GpxExtensions/v3\">").append(endLine) //
+		.append("      <gpxx:DisplayMode>SymbolAndName</gpxx:DisplayMode>").append(endLine) //
+		.append("   </gpxx:WaypointExtension>").append(endLine) //
+		.append("</extensions>").append(endLine) //
+		.append("</wpt>").append(endLine) //
+		.append(endLine);
     }
 
     public String trailer() {
-	return "</gpx>\r\n";
+	return "</gpx>" + endLine;
+    }
+
+    private void appendToResult(String[] elements) {
+	for (int i = 0; i < elements.length; i++) {
+	    if (elements[i].startsWith(marker)) {
+		getElementValue(elements[i].substring(1));
+	    } else {
+		result.append(SafeXML.cleanGPX(elements[i]));
+	    }
+	}
+    }
+
+    private void getElementValue(String element) {
+	Object obj = ht.get(element);
+	if (obj != null) {
+	    if (obj instanceof String) {
+		result.append(SafeXML.cleanGPX((String) obj));
+	    } else {
+		if (element.equals("ATTRIBUTES")) {
+		    Vector attributes = (Vector) obj;
+		    int i = 0;
+		    for (Iterator ite = attributes.iterator(); ite.hasNext();) {
+			if (i != 0)
+			    result.append(",");
+			Hashtable attribute = (Hashtable) ite.next();
+			result.append(SafeXML.cleanGPX((String) attribute.get("INFO")));
+			i++;
+		    }
+		} else if (element.equals("LOGS")) {
+		    Vector logs = (Vector) obj;
+		    int i = 0;
+		    for (Iterator ite = logs.iterator(); ite.hasNext();) {
+			Hashtable log = (Hashtable) ite.next();
+			result.append(SafeXML.cleanGPX((String) log.get("LOGGER"))) //
+				.append(" ").append(SafeXML.cleanGPX((String) log.get("LOGTYPE"))) //
+				.append(" on ").append((String) log.get("DATE")) //
+				.append(": ").append(SafeXML.cleanGPX((String) log.get("MESSAGE"))) //
+				.append(this.endLine);
+			i++;
+		    }
+		}
+	    }
+	} else if (element.equals("PIC#")) {
+	    if (picsCounter > 0)
+		result.append("" + picsCounter);
+	}
     }
 }

@@ -93,10 +93,13 @@ public class MyTableModel extends TableModel {
     /** The max number of columns in the list view */
     public static final int N_COLUMNS = 22;
     /**
-     * How the columns are mapped onto the list view. If colMap[i]=j, it means that the element j (as per the list below) is visible in column i. [0]TickBox, [1]Type, [2]Distance, [3]Terrain, [4]waypoint, [5]name, [6]coordinates, [7]owner,
-     * [8]datehidden, [9]status, [10]distance, [11]bearing, [12] Size, [13] # of OC recommend. [14] OC index, [15] Solver exists, [16] Note exists, [17] # Additionals, [18] # DNF [19] Last Sync Date
+     * How the columns are mapped onto the list view.<br> 
+     * If colMap[i]=j, it means that the element j (as per the list below) is visible in column i.<br> 
+     * [0]TickBox, [1]Type, [2]Distance, [3]Terrain, [4]waypoint, [5]name, [6]coordinates, [7]owner,
+     * [8]datehidden, [9]status, [10]distance, [11]bearing, [12] Size, [13] # of OC recommend. [14] OC index, 
+     * [15] Solver exists, [16] Note exists, [17] # Additionals, [18] # DNF [19] Last Sync Date<br>
      * 
-      */
+     **/
     private int[] colMap;
     /** The column widths corresponding to the list of columns above */
     private int[] colWidth;
@@ -193,7 +196,7 @@ public class MyTableModel extends TableModel {
 	clearCellAdjustments();
 	// Convert to string
 	StringBuffer sb = new StringBuffer(100);
-	for (int i = 0; i < numCols; i++) { //N_COLUMNS
+	for (int i = 0; i < N_COLUMNS; i++) {
 	    if (sb.length() != 0)
 		sb.append(',');
 	    sb.append(colWidth[i]);

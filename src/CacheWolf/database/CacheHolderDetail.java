@@ -38,7 +38,6 @@ import ewe.io.FileWriter;
 import ewe.io.PrintWriter;
 import ewe.ui.FormBase;
 import ewe.ui.InputBox;
-import ewe.util.Vector;
 
 public class CacheHolderDetail {
     private static final String EMPTY = "";
@@ -54,7 +53,6 @@ public class CacheHolderDetail {
     public CacheImages logImages = new CacheImages();
     public CacheImages userImages = new CacheImages();
     public Attributes attributes = new Attributes();
-    public Vector CacheIcons = new Vector();
     public TravelbugList Travelbugs = new TravelbugList();
     // public String Bugs = EMPTY; Superceded by Travelbugs
     public String URL = EMPTY;

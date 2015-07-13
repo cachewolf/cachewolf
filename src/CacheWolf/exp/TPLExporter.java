@@ -87,6 +87,10 @@ class TplFilter implements HTML.Tmpl.Filter {
 	Regex rex, rex1;
 	String param, value;
 
+	// Filter comments <#-- and -->
+	rex = new Regex("<#--.*-->", "");
+	t = rex.replaceAll(t);
+
 	// search for parameters
 	rex = new Regex("(?i)<tmpl_par.*>");
 	rex.search(t);
@@ -147,7 +151,10 @@ class TplFilter implements HTML.Tmpl.Filter {
 		InfoBox inf = new InfoBox("Eingabe", par, InfoBox.INPUT);
 		inf.setInput(value);
 		if (inf.execute() == FormBase.IDOK) {
-		    additionalVarParams.put(par, inf.getInput());
+		    String input = inf.getInput();
+		    if (input.length() > 0 && !input.equalsIgnoreCase("no")) {
+			additionalVarParams.put(par, input);
+		    }
 		}
 	    } else if (param.startsWith("const")) {
 		additionalVarParams.put(param.substring(5), value);
@@ -159,10 +166,6 @@ class TplFilter implements HTML.Tmpl.Filter {
 	    // for gpx output
 	    // Filter newlines
 	    rex = new Regex("(?m)\n$", "");
-	    t = rex.replaceAll(t);
-
-	    // Filter comments <#-- and -->
-	    rex = new Regex("<#--.*-->", "");
 	    t = rex.replaceAll(t);
 
 	    // replace <br> or <br /> with newline
@@ -226,7 +229,7 @@ public class TPLExporter {
 		return;
 	    }
 	    File saveTo = fc.getChosenFile();
-	    Preferences.itself().setExportPath(expName, saveTo.getPath());
+	    Preferences.itself().setExportPref(expName, saveTo.getPath());
 
 	    if (myFilter.sortedBy != -1) {
 		MainTab.itself.tablePanel.myTableModel.sortTable(myFilter.sortedBy, true);
@@ -271,9 +274,7 @@ public class TPLExporter {
 
 			    if (myFilter.single) {
 				cache_index.add(varParams);
-			    }
-
-			    else {
+			    } else {
 				tpl.setParams(varParams);
 				String ext = (myFilter.out.substring(myFilter.out.lastIndexOf(".")).toLowerCase() + "    ").trim();
 				FileWriter fw = new FileWriter(saveTo.getPath() + ch.getCode() + ext);

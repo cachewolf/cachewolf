@@ -87,7 +87,7 @@ public class GarminPicExporter {
 	if (fc.execute() == FormBase.IDCANCEL)
 	    return;
 	targetDir = fc.getChosen() + "/";
-	Preferences.itself().setExportPath(expName, targetDir);
+	Preferences.itself().setExportPref(expName, targetDir);
 
 	// Select export options
 	OptionsForm options = new OptionsForm();

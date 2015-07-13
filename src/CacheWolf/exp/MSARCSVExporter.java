@@ -35,8 +35,8 @@ public class MSARCSVExporter extends Exporter {
 
     public MSARCSVExporter() {
 	super();
-	this.setMask("*.csv");
-	this.setDecimalSeparator(',');
+	this.setOutputFileExtension("*.csv");
+	this.decimalSeparator = ',';
 	this.setHowManyParams(LAT_LON);
     }
 
