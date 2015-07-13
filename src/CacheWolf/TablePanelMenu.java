@@ -671,7 +671,7 @@ public class TablePanelMenu extends MenuBar {
 		// Find another way, when CW can be started from outside the program directory.
 		String tmpFileName = "temp.loc";
 		loc.setTmpFileName(tmpFileName);
-		loc.doIt(LocExporter.MODE_AUTO);
+		loc.doIt(LocExporter.TMP_FILE);
 		ProgressBarForm.display(MyLocale.getMsg(950, "Transfer"), MyLocale.getMsg(951, "Sending to GPS"), null);
 		gpsBabelCommand = Preferences.itself().gpsbabel + " " + Preferences.itself().garminGPSBabelOptions + " -i geo -f " + tmpFileName + " -o garmin -F " + Preferences.itself().garminConn + ":";
 		Preferences.itself().log("[MainMenu:onEvent] " + gpsBabelCommand);

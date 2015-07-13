@@ -55,7 +55,8 @@ import ewe.util.Hashtable;
 
 public class GarminPicExporter {
     /************************************************************************************
-     * Exports pictures and spoiler pictures into a directory structure * See: http://garmin.blogs.com/softwareupdates/2012/01/geocaching-with-photos.html *
+     * Exports pictures and spoiler pictures into a directory structure 
+     * * See: http://garmin.blogs.com/softwareupdates/2012/01/geocaching-with-photos.html *
      ************************************************************************************/
     private static String SPOILERREGEX = "Spoiler|Hilfe|Help|Hinweis|Hint[^a-zA-Z]";
 

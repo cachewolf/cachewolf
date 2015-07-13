@@ -24,6 +24,7 @@ package CacheWolf.exp;
 import CacheWolf.Preferences;
 import CacheWolf.controls.ExecutePanel;
 import CacheWolf.utils.MyLocale;
+import CacheWolf.utils.SafeXML;
 import ewe.ui.CellPanel;
 import ewe.ui.CheckBoxGroup;
 import ewe.ui.ControlEvent;
@@ -42,6 +43,7 @@ public class POIExporterScreen extends Form {
     private mInput inpCmt, inpAddiCmt; // <cmt>
     private mInput inpDesc, inpAddiDesc; // <desc>
     private mInput inpAnzLogs;
+    private mCheckBox chkAutoSplitByType;
     private String expName;
     private int anzLogs;
 
@@ -59,6 +61,9 @@ public class POIExporterScreen extends Form {
 	this.expName = expName;
 	this.setPreferredSize((int) (0.75 * Preferences.itself().getScreenWidth()), (int) (0.5 * Preferences.itself().getScreenHeight()));
 
+	chkAutoSplitByType = new mCheckBox(MyLocale.getMsg(2210, "Split by cachetype?"));
+	chkAutoSplitByType.setState(Boolean.valueOf(Preferences.itself().getExportPref(expName + "-split")).booleanValue());
+	this.addLast(chkAutoSplitByType);
 	// checkboxgroup for all pictures or Spoiler only
 	chkGroupFormat = new CheckBoxGroup();
 	chkNoPic = new mCheckBox(MyLocale.getMsg(2203, "No pictures"));
@@ -140,6 +145,10 @@ public class POIExporterScreen extends Form {
 	executePanel = new ExecutePanel(this);
     }
 
+    public boolean getAutoSplitByType() {
+	return chkAutoSplitByType.getState();
+    }
+
     public boolean onlySpoiler() {
 	if (chkGroupFormat.getSelectedIndex() == 2)
 	    return true;
@@ -192,6 +201,7 @@ public class POIExporterScreen extends Form {
 		this.close(FormBase.IDCANCEL);
 	    }
 	    if (ev.target == executePanel.applyButton) {
+		Preferences.itself().setExportPref(expName + "-split", SafeXML.strxmlencode(chkAutoSplitByType.getState()));
 		Preferences.itself().setExportPref(expName + "-picIndex", "" + chkGroupFormat.getSelectedIndex());
 		Preferences.itself().setExportPref(expName + "-name", this.inpName.getText());
 		Preferences.itself().setExportPref(expName + "-cmt", this.inpCmt.getText());

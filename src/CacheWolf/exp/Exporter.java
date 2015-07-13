@@ -53,9 +53,10 @@ import ewe.util.Hashtable;
 
 public class Exporter {
     // starts with no ui for file selection
-    final static int TMP_FILE = 0;
+    public final static int TMP_FILE = 0;
     // brings up a screen to select a file
-    final static int ASK_FILE = 1;
+    public final static int ASK_FILE = 1;
+    public final static int ASK_PATH = 2;
 
     // export methods
     final static int NO_PARAMS = 0;
@@ -90,11 +91,26 @@ public class Exporter {
     /**
      * Does the most work for exporting data
      * 
-     * @param variant
-     *            0, if no filechooser 1, if filechooser
+     * @param variant<br>
+     *            0 = TMP_FILE: use temporary file<br>
+     *            1 = ASK_FILE: ask for filename (with filechooser)<br>
      */
     public void doIt(int variant) {
-	File outFile;
+	File outFile = null;
+	String outPath = "";
+	byte[] cacheTypes;
+	byte[] ct = { CacheType.CW_TYPE_CITO, CacheType.CW_TYPE_CUSTOM, CacheType.CW_TYPE_EARTH, CacheType.CW_TYPE_FINAL, CacheType.CW_TYPE_EVENT //
+		, CacheType.CW_TYPE_GIGA_EVENT, CacheType.CW_TYPE_LAB, CacheType.CW_TYPE_LETTERBOX, CacheType.CW_TYPE_MAZE //
+		, CacheType.CW_TYPE_MEGA_EVENT, CacheType.CW_TYPE_MULTI, CacheType.CW_TYPE_PARKING, CacheType.CW_TYPE_QUESTION //
+		, CacheType.CW_TYPE_REFERENCE, CacheType.CW_TYPE_STAGE, CacheType.CW_TYPE_TRADITIONAL, CacheType.CW_TYPE_TRAILHEAD //
+		, CacheType.CW_TYPE_UNKNOWN, CacheType.CW_TYPE_VIRTUAL, CacheType.CW_TYPE_WEBCAM, CacheType.CW_TYPE_WHEREIGO //
+	};
+	byte[] ca = { -1 };
+	String[] ctName = { "Cito", "Custom", "Earthcache", "Final", "Event" //
+		, "GigaEvent", "Lab", "Letterbox", "AdventureMaze" //
+		, "MegaEvent", "Multi", "Parking", "Question" //
+		, "Reference", "Stage", "Traditional", "Trailhead" //
+		, "Mystery", "Virtual", "Webcam", "WhereIGo" };
 	String str;
 	CacheHolder ch;
 	ProgressBarForm pbf = new ProgressBarForm();
@@ -104,8 +120,13 @@ public class Exporter {
 	    outFile = getOutputFile();
 	    if (outFile == null)
 		return;
+	    cacheTypes = ca;
+	} else if (variant == ASK_PATH) {
+	    outPath = this.getOutputPath();
+	    cacheTypes = ct;
 	} else {
 	    outFile = new File(tmpFileName);
+	    cacheTypes = ca;
 	}
 
 	pbf.showMainTask = false;
@@ -117,58 +138,72 @@ public class Exporter {
 
 	try {
 	    int incompleteWaypoints = 0;
-	    PrintWriter outp = new PrintWriter(new BufferedWriter(new FileWriter(outFile)));
-	    str = this.header();
-	    if (str != null)
-		outp.print(str);
-	    for (int i = 0; i < cacheDB.size(); i++) {
-		ch = cacheDB.get(i);
-		if (ch.isVisible()) {
-		    if (ch.isIncomplete()) {
-			Preferences.itself().log("skipping export of incomplete waypoint " + ch.getCode());
-			incompleteWaypoints++;
-			continue;
-		    }
-		    expCount++;
-		    h.progress = (float) expCount / (float) counter;
-		    h.changed();
-		    switch (this.exportMethod) {
-		    case NO_PARAMS:
-			str = record(ch);
-			break;
-		    case LAT_LON:
-			if (!ch.getWpt().isValid())
+	    for (int j = 0; j < cacheTypes.length; j++) {
+		byte forType = cacheTypes[j];
+		if (variant == ASK_PATH) {
+		    outFile = new File(outPath + ctName[j] + ".gpx");
+		}
+		PrintWriter outp = new PrintWriter(new BufferedWriter(new FileWriter(outFile)));
+		str = this.header();
+		if (str != null)
+		    outp.print(str);
+		for (int i = 0; i < cacheDB.size(); i++) {
+		    ch = cacheDB.get(i);
+		    if (ch.isVisible()) {
+			if (ch.isIncomplete()) {
+			    Preferences.itself().log("skipping export of incomplete waypoint " + ch.getCode());
+			    incompleteWaypoints++;
 			    continue;
-			str = record(ch, ch.getWpt().getLatDeg(TransformCoordinates.DD).replace('.', this.decimalSeparator), ch.getWpt().getLonDeg(TransformCoordinates.DD).replace('.', this.decimalSeparator));
-			break;
-		    case LAT_LON | COUNT:
-			if (!ch.getWpt().isValid())
-			    continue;
-			str = record(ch, ch.getWpt().getLatDeg(TransformCoordinates.DD).replace('.', this.decimalSeparator), ch.getWpt().getLonDeg(TransformCoordinates.DD).replace('.', this.decimalSeparator), i);
-			break;
-		    default:
-			str = null;
-			break;
-		    }
-		    if (str != null)
-			outp.print(str);
-		}// if
-	    }// for
-	    switch (this.exportMethod & COUNT) {
-	    case NO_PARAMS:
-		str = trailer();
-		break;
-	    case COUNT:
-		str = trailer(counter);
-		break;
-	    default:
-		str = null;
-		break;
-	    }
-	    if (str != null)
-		outp.print(str);
-	    outp.close();
+			}
+			if (forType != -1) {
+			    if (ch.getType() != forType) {
+				continue;
+			    }
+			}
+			expCount++;
+			h.progress = (float) expCount / (float) counter;
+			h.changed();
+			switch (this.exportMethod) {
+			case NO_PARAMS:
+			    str = record(ch);
+			    break;
+			case LAT_LON:
+			    if (!ch.getWpt().isValid())
+				continue;
+			    str = record(ch, ch.getWpt().getLatDeg(TransformCoordinates.DD).replace('.', this.decimalSeparator), ch.getWpt().getLonDeg(TransformCoordinates.DD).replace('.', this.decimalSeparator));
+			    break;
+			case LAT_LON | COUNT:
+			    if (!ch.getWpt().isValid())
+				continue;
+			    str = record(ch, ch.getWpt().getLatDeg(TransformCoordinates.DD).replace('.', this.decimalSeparator), ch.getWpt().getLonDeg(TransformCoordinates.DD).replace('.', this.decimalSeparator), i);
+			    break;
+			default:
+			    str = null;
+			    break;
+			}
+			if (str != null)
+			    outp.print(str);
+		    }// if
+		}// for
+		switch (this.exportMethod & COUNT) {
+		case NO_PARAMS:
+		    str = trailer();
+		    break;
+		case COUNT:
+		    str = trailer(counter);
+		    break;
+		default:
+		    str = null;
+		    break;
+		}
+		if (str != null)
+		    outp.print(str);
+		outp.close();
+
+	    } // for 
+
 	    pbf.exit(0);
+
 	    if (incompleteWaypoints > 0) {
 		new InfoBox(MyLocale.getMsg(5500, "Error"), incompleteWaypoints + " incomplete waypoints have not been exported. See log for details.").wait(FormBase.OKB);
 	    }
@@ -213,7 +248,7 @@ public class Exporter {
     public File getOutputFile() {
 	File file;
 	FileChooser fc = new FileChooser(FileChooserBase.SAVE, Preferences.itself().getExportPath(expName));
-	fc.setTitle("Select target file:");
+	fc.setTitle(MyLocale.getMsg(2102, "Choose target file"));
 	fc.addMask(outputFileExtension);
 	if (fc.execute() != FormBase.IDCANCEL) {
 	    file = fc.getChosenFile();
@@ -222,6 +257,17 @@ public class Exporter {
 	} else {
 	    return null;
 	}
+    }
+
+    public String getOutputPath() {
+	FileChooser fc = new FileChooser(FileChooserBase.DIRECTORY_SELECT, Preferences.itself().getExportPath(expName));
+	fc.setTitle(MyLocale.getMsg(148, "Select Target directory"));
+	String targetDir;
+	if (fc.execute() == FormBase.IDCANCEL)
+	    return "";
+	targetDir = fc.getChosen() + "/";
+	Preferences.itself().setExportPref(expName, targetDir);
+	return targetDir;
     }
 
     /**

@@ -34,7 +34,6 @@ import CacheWolf.utils.Common;
  * Now includes mapping of cachetypes to user defined icons (as defined in file garminmap.xml).
  */
 public class LocExporter extends Exporter {
-    public static int MODE_AUTO = TMP_FILE;
     /**
      * Defines how certain cachetypes are mapped to user icons
      */
