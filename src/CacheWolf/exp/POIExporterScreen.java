@@ -48,8 +48,9 @@ public class POIExporterScreen extends Form {
     private int anzLogs;
 
     // todo List or possible extensions:
-    // auto Split of output by CacheTypes (?garminmap?) + Unterverzeichnisse(POI Databases)
+    // Speed up splitting to CacheTypes
     // auto copying Icons (?garminmap?)
+    // auto Split Profiles to UnterVerzeichnisse(POI Databases)
     // auto Calling POILoader
     // Variable for LastFound (in TemplateTable.java)
     // Ask for ShortWaypoint length
