@@ -277,42 +277,44 @@ public class MyTableModel extends TableModel {
 		    // Now find out if the line should be painted in an other color.
 		    // Selected lines are not considered, so far
 		    CacheHolder ch = cacheDB.get(row);
-		    if (ch.isOwned())
-			lineColorBG.set(COLOR_OWNED);
-		    else if (ch.isFound())
-			lineColorBG.set(COLOR_FOUND);
-		    else if (ch.isFlagged)
-			lineColorBG.set(COLOR_FLAGED);
-		    else if (ch.getStatus().indexOf(MyLocale.getMsg(319, "not found")) > -1)
-			lineColorBG.set(COLOR_STATUS);
-		    else if (Preferences.itself().debug && ch.detailsLoaded()) {
-			lineColorBG.set(COLOR_DETAILS_LOADED);
-		    }
-
-		    if (ch.isArchived()) {
-			if (lineColorBG.equals(COLOR_WHITE)) {
-			    lineColorBG.set(COLOR_ARCHIVED);
-			    ta.foreground = COLOR_WHITE;
-			} else {
-			    ta.foreground = COLOR_ARCHIVED;
+		    if (ch != null) {
+			if (ch.isOwned())
+			    lineColorBG.set(COLOR_OWNED);
+			else if (ch.isFound())
+			    lineColorBG.set(COLOR_FOUND);
+			else if (ch.isFlagged)
+			    lineColorBG.set(COLOR_FLAGED);
+			else if (ch.getStatus().indexOf(MyLocale.getMsg(319, "not found")) > -1)
+			    lineColorBG.set(COLOR_STATUS);
+			else if (Preferences.itself().debug && ch.detailsLoaded()) {
+			    lineColorBG.set(COLOR_DETAILS_LOADED);
 			}
-		    } else if (!ch.isAvailable()) {
-			if (lineColorBG.equals(COLOR_WHITE)) {
-			    lineColorBG.set(COLOR_AVAILABLE);
-			} else {
-			    ta.foreground = COLOR_AVAILABLE;
-			}
-		    }
 
-		    // Now, if a line is selected, blend the determined color
-		    // with the selection color.
-		    if (isSelected) {
-			mergeColor(lineColorBG, lineColorBG, COLOR_SELECTED);
+			if (ch.isArchived()) {
+			    if (lineColorBG.equals(COLOR_WHITE)) {
+				lineColorBG.set(COLOR_ARCHIVED);
+				ta.foreground = COLOR_WHITE;
+			    } else {
+				ta.foreground = COLOR_ARCHIVED;
+			    }
+			} else if (!ch.isAvailable()) {
+			    if (lineColorBG.equals(COLOR_WHITE)) {
+				lineColorBG.set(COLOR_AVAILABLE);
+			    } else {
+				ta.foreground = COLOR_AVAILABLE;
+			    }
+			}
+
+			// Now, if a line is selected, blend the determined color
+			// with the selection color.
+			if (isSelected) {
+			    mergeColor(lineColorBG, lineColorBG, COLOR_SELECTED);
+			}
+			ta.fillColor = lineColorBG;
+			lastColorBG.set(ta.fillColor);
+			lastColorFG.set(ta.foreground);
+			lastRow = row;
 		    }
-		    ta.fillColor = lineColorBG;
-		    lastColorBG.set(ta.fillColor);
-		    lastColorFG.set(ta.foreground);
-		    lastRow = row;
 		} catch (Exception e) {
 		    Preferences.itself().log("[myTableModel:getCellAttributes]Ignored row=" + row + " lastRow=" + lastRow, e, true);
 		}

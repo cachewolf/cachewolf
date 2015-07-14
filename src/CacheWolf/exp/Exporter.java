@@ -38,13 +38,19 @@ import ewe.filechooser.FileChooser;
 import ewe.filechooser.FileChooserBase;
 import ewe.io.BufferedWriter;
 import ewe.io.File;
+import ewe.io.FileBase;
+import ewe.io.FileOutputStream;
 import ewe.io.FileWriter;
 import ewe.io.IOException;
+import ewe.io.InputStream;
 import ewe.io.PrintWriter;
 import ewe.sys.Handle;
 import ewe.ui.FormBase;
 import ewe.ui.ProgressBarForm;
 import ewe.util.Hashtable;
+import ewe.util.zip.ZipEntry;
+import ewe.util.zip.ZipException;
+import ewe.util.zip.ZipFile;
 
 /**
  * @author Kalle Base class for exporter, handles basic things like selecting outputfile, display a counter etc. A new Exporter must only override the header(), record() and trailer() methods. The member howManyParams must be set to identify which
@@ -106,12 +112,14 @@ public class Exporter {
 		, CacheType.CW_TYPE_UNKNOWN, CacheType.CW_TYPE_VIRTUAL, CacheType.CW_TYPE_WEBCAM, CacheType.CW_TYPE_WHEREIGO //
 	};
 	byte[] ca = { -1 };
-	String[] ctName = { "Cito", "Custom", "Earthcache", "Final", "Event" //
+	String[] ctName = { "CITO", "Custom", "Earthcache", "Final", "Event" //
 		, "GigaEvent", "Lab", "Letterbox", "AdventureMaze" //
 		, "MegaEvent", "Multi", "Parking", "Question" //
 		, "Reference", "Stage", "Traditional", "Trailhead" //
 		, "Mystery", "Virtual", "Webcam", "WhereIGo" };
 	String str;
+	boolean hasBitmaps = false;
+	ZipFile poiZip = null;
 	CacheHolder ch;
 	ProgressBarForm pbf = new ProgressBarForm();
 	Handle h = new Handle();
@@ -124,6 +132,19 @@ public class Exporter {
 	} else if (variant == ASK_PATH) {
 	    outPath = this.getOutputPath();
 	    cacheTypes = ct;
+	    try {
+		String bitmapFileName = FileBase.getProgramDirectory() + "/exporticons/GarminPOI.zip"; // own version
+		if (!(hasBitmaps = new File(bitmapFileName).exists())) {
+		    // cw default version
+		    bitmapFileName = FileBase.getProgramDirectory() + "/exporticons/exporticons/GarminPOI.zip";
+		    hasBitmaps = new File(bitmapFileName).exists();
+		}
+		if (hasBitmaps)
+		    poiZip = new ZipFile(bitmapFileName);
+	    } catch (IOException e) {
+		Preferences.itself().log("GPX Export: warning GarminPOI.zip not found", e, true);
+	    }
+
 	} else {
 	    outFile = new File(tmpFileName);
 	    cacheTypes = ca;
@@ -142,6 +163,8 @@ public class Exporter {
 		byte forType = cacheTypes[j];
 		if (variant == ASK_PATH) {
 		    outFile = new File(outPath + ctName[j] + ".gpx");
+		    if (hasBitmaps)
+			copyPoiIcon(outPath, ctName[j], "", poiZip);
 		}
 		PrintWriter outp = new PrintWriter(new BufferedWriter(new FileWriter(outFile)));
 		str = this.header();
@@ -203,7 +226,8 @@ public class Exporter {
 	    } // for 
 
 	    pbf.exit(0);
-
+	    if (hasBitmaps)
+		poiZip.close();
 	    if (incompleteWaypoints > 0) {
 		new InfoBox(MyLocale.getMsg(5500, "Error"), incompleteWaypoints + " incomplete waypoints have not been exported. See log for details.").wait(FormBase.OKB);
 	    }
@@ -268,6 +292,43 @@ public class Exporter {
 	targetDir = fc.getChosen() + "/";
 	Preferences.itself().setExportPref(expName, targetDir);
 	return targetDir;
+    }
+
+    /**
+     * copy the bitmap identified by <code>prefix</code> and <code>type</code> from <code>poiZip</code> to <code>outdir</code>
+     * 
+     * @param outdir
+     * @param type
+     * @param prefix
+     * @param poiZip
+     * @return true on success, false otherwise
+     */
+    private boolean copyPoiIcon(String outdir, String type, String prefix, ZipFile poiZip) {
+	ZipEntry icon;
+	byte[] buff;
+	int len;
+
+	try {
+	    icon = poiZip.getEntry(type + ".bmp");
+	    if (icon == null)
+		return false; // icon not found in archive
+
+	    buff = new byte[icon.getSize()];
+	    InputStream fis = poiZip.getInputStream(icon);
+	    FileOutputStream fos = new FileOutputStream(outdir + (FileBase.separator) + prefix + type + ".bmp");
+	    while (0 < (len = fis.read(buff)))
+		fos.write(buff, 0, len);
+	    fos.flush();
+	    fos.close();
+	    fis.close();
+	} catch (ZipException e) {
+	    Preferences.itself().log("failed to copy icon " + type + ".bmp", e, true);
+	    return false;
+	} catch (IOException e) {
+	    Preferences.itself().log("failed to copy icon " + type + ".bmp", e, true);
+	    return false;
+	}
+	return true;
     }
 
     /**

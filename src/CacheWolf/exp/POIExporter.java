@@ -22,7 +22,6 @@
 package CacheWolf.exp;
 
 import CacheWolf.MainForm;
-import CacheWolf.Preferences;
 import CacheWolf.database.CacheHolder;
 import CacheWolf.database.CacheImages;
 import CacheWolf.utils.STRreplace;
@@ -33,19 +32,12 @@ import com.stevesoft.ewe_pat.Regex;
 
 import ewe.io.AsciiCodec;
 import ewe.io.File;
-import ewe.io.FileBase;
-import ewe.io.FileOutputStream;
-import ewe.io.IOException;
-import ewe.io.InputStream;
 import ewe.sys.Time;
 import ewe.ui.FormBase;
 import ewe.util.Hashtable;
 import ewe.util.Iterator;
 import ewe.util.Vector;
 import ewe.util.mString;
-import ewe.util.zip.ZipEntry;
-import ewe.util.zip.ZipException;
-import ewe.util.zip.ZipFile;
 
 /**
  * 
@@ -92,43 +84,6 @@ public class POIExporter extends Exporter {
 	    super.doIt(POIExporter.ASK_PATH);
 	else
 	    super.doIt(POIExporter.ASK_FILE);
-    }
-
-    /**
-     * copy the bitmap identified by <code>prefix</code> and <code>type</code> from <code>poiZip</code> to <code>outdir</code>
-     * 
-     * @param outdir
-     * @param type
-     * @param prefix
-     * @param poiZip
-     * @return true on success, false otherwise
-     */
-    private boolean copyPoiIcon(String outdir, String type, String prefix, ZipFile poiZip) {
-	ZipEntry icon;
-	byte[] buff;
-	int len;
-
-	try {
-	    icon = poiZip.getEntry(type + ".bmp");
-	    if (icon == null)
-		return false; // icon not found in archive
-
-	    buff = new byte[icon.getSize()];
-	    InputStream fis = poiZip.getInputStream(icon);
-	    FileOutputStream fos = new FileOutputStream(outdir + (FileBase.separator) + prefix + type + ".bmp");
-	    while (0 < (len = fis.read(buff)))
-		fos.write(buff, 0, len);
-	    fos.flush();
-	    fos.close();
-	    fis.close();
-	} catch (ZipException e) {
-	    Preferences.itself().log("failed to copy icon " + type + ".bmp", e, true);
-	    return false;
-	} catch (IOException e) {
-	    Preferences.itself().log("failed to copy icon " + type + ".bmp", e, true);
-	    return false;
-	}
-	return true;
     }
 
     private String[] split(String elements) {

@@ -48,8 +48,9 @@ public class POIExporterScreen extends Form {
     private int anzLogs;
 
     // todo List or possible extensions:
-    // Speed up splitting to CacheTypes
-    // auto copying Icons (?garminmap?)
+    // Speed up splitting to CacheTypes (by Preselection) (or is it quick enough ~ a Minute for my 7500 Entries)
+    // adding Icons for Custom, Giga, Lab Caches
+    // Move Definition of Bitmap copying from Exporter.java to <Extension>Exporter.java)
     // auto Split Profiles to UnterVerzeichnisse(POI Databases)
     // auto Calling POILoader
     // Variable for LastFound (in TemplateTable.java)
