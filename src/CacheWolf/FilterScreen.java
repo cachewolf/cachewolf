@@ -287,7 +287,7 @@ public class FilterScreen extends Form {
 	pnlCacheTypes.addNext(addImg(CacheType.getTypeImage(CacheType.CW_TYPE_WEBCAM)), HSHRINK, HCONTRACT);
 	pnlCacheTypes.addLast(chkWebcam = new mCheckBox("Webcam"), DONTSTRETCH, FILL);
 
-	pnlCacheTypes.addNext(addImg(CacheType.getTypeImage(CacheType.CW_TYPE_UNKNOWN)), HSHRINK, HCONTRACT);
+	pnlCacheTypes.addNext(addImg(CacheType.getTypeImage(CacheType.CW_TYPE_MYSTERY)), HSHRINK, HCONTRACT);
 	pnlCacheTypes.addNext(chkMystery = new mCheckBox("Mystery"), DONTSTRETCH, FILL);
 	pnlCacheTypes.addNext(addImg(CacheType.getTypeImage(CacheType.CW_TYPE_EARTH)), HSHRINK, HCONTRACT);
 	pnlCacheTypes.addLast(chkEarth = new mCheckBox("Earth"), DONTSTRETCH, FILL);

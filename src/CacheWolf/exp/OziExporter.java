@@ -34,7 +34,7 @@ public class OziExporter extends Exporter {
 
     public OziExporter() {
 	super();
-	this.setHowManyParams(LAT_LON);
+	this.setRecordMethod(LAT_LON);
 	this.setOutputFileExtension("*.wpt");
 	oziColorMapper = new GarminMap();
     }

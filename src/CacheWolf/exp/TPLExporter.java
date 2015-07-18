@@ -58,6 +58,7 @@ class TplFilter implements HTML.Tmpl.Filter {
     private int type = SCALAR;
     private String newLine = "\n";
     TextCodec codec = new AsciiCodec(); // codec = new AsciiCodec(AsciiCodec.STRIP_CR);
+    boolean simplify = false;
     String badChars;
     String decSep = ".";
     int shortNameLength = 30;
@@ -104,6 +105,7 @@ class TplFilter implements HTML.Tmpl.Filter {
 	    if (param.equals("charset")) {
 		if (value.equals("ASCII")) {
 		    codec = new AsciiCodec();
+		    simplify = true;
 		} else if (value.equals("UTF8")) {
 		    codec = new JavaUtf8Codec();
 		} else {
@@ -263,7 +265,7 @@ public class TPLExporter {
 			h.changed();
 			try {
 			    tt.set(ch);
-			    Hashtable varParams = tt.toHashtable(dec, rex, myFilter.shortWaypointLength, myFilter.shortNameLength, myFilter.noOfLogs, myFilter.codec, gm, false, myFilter.formatModifier, imgExpName);
+			    Hashtable varParams = tt.toHashtable(dec, rex, myFilter.shortWaypointLength, myFilter.shortNameLength, myFilter.noOfLogs, myFilter.simplify, gm, false, myFilter.formatModifier, imgExpName);
 
 			    Enumeration e = myFilter.additionalVarParams.keys();
 			    while (e.hasMoreElements()) {

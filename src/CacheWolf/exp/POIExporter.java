@@ -22,8 +22,10 @@
 package CacheWolf.exp;
 
 import CacheWolf.MainForm;
+import CacheWolf.Preferences;
 import CacheWolf.database.CacheHolder;
 import CacheWolf.database.CacheImages;
+import CacheWolf.database.CacheType;
 import CacheWolf.utils.STRreplace;
 import CacheWolf.utils.SafeXML;
 import CacheWolf.utils.URLUTF8Encoder;
@@ -32,12 +34,20 @@ import com.stevesoft.ewe_pat.Regex;
 
 import ewe.io.AsciiCodec;
 import ewe.io.File;
+import ewe.io.FileBase;
+import ewe.io.FileOutputStream;
+import ewe.io.IOException;
+import ewe.io.InputStream;
 import ewe.sys.Time;
 import ewe.ui.FormBase;
 import ewe.util.Hashtable;
 import ewe.util.Iterator;
+import ewe.util.Map.MapEntry;
 import ewe.util.Vector;
 import ewe.util.mString;
+import ewe.util.zip.ZipEntry;
+import ewe.util.zip.ZipException;
+import ewe.util.zip.ZipFile;
 
 /**
  * 
@@ -58,17 +68,61 @@ public class POIExporter extends Exporter {
     StringBuffer result;
     int picsCounter;
     TemplateTable tt;
+    boolean hasBitmaps = false;
+    ZipFile poiZip = null;
+
+    String[] categoryNames = { "_AV-", "_TD-", "Available", "Found", "Owned", "UNKNOWN" };
+    Hashtable outDBs = new Hashtable();
 
     public POIExporter() {
 	super();
 	this.outputFileExtension = "*.gpx";
-	this.exportMethod = LAT_LON;
+	this.recordMethod = LAT_LON;
 	result = new StringBuffer(1000);
 	tt = new TemplateTable();
+	useCodec = new AsciiCodec();
+    }
+
+    private void buildOutDBs() {
+	CacheHolder ch;
+	Vector tmp;
+
+	// create the roots for the different categories
+	for (int i = 0; i < categoryNames.length; i++) {
+	    outDBs.put(categoryNames[i], new Hashtable());
+	}
+
+	// fill structure with data from cacheDB
+	Vector profileDB = MainForm.profile.cacheDB.getVectorDB();
+	for (int i = 0; i < profileDB.size(); i++) {
+	    Hashtable subDB;
+	    ch = (CacheHolder) profileDB.get(i);
+	    if (ch.isVisible()) {
+		if (ch.isFound()) {
+		    subDB = (Hashtable) outDBs.get("Found");
+		} else if (ch.isOwned()) {
+		    subDB = (Hashtable) outDBs.get("Owned");
+		} else if (ch.isArchived()) {
+		    subDB = (Hashtable) outDBs.get("_AV-");
+		} else if (!ch.isAvailable()) {
+		    subDB = (Hashtable) outDBs.get("_TD-");
+		} else if (ch.isAvailable()) {
+		    subDB = (Hashtable) outDBs.get("Available");
+		} else {
+		    subDB = (Hashtable) outDBs.get("UNKNOWN");
+		}
+		tmp = (Vector) subDB.get(new Byte(ch.getType()));
+		if (tmp == null) {
+		    tmp = new Vector();
+		    subDB.put(new Byte(ch.getType()), tmp);
+		}
+		tmp.add(ch);
+	    }
+	}
     }
 
     public void doIt() {
-	POIExporterScreen gui = new POIExporterScreen(expName);
+	POIExporterScreen gui = new POIExporterScreen(exporterName);
 	if (gui.execute() == FormBase.IDCANCEL)
 	    return;
 	this.onlySpoiler = gui.onlySpoiler();
@@ -80,10 +134,65 @@ public class POIExporter extends Exporter {
 	this.addiNameTagElements = split(gui.getAddiNameTagDefinitions());
 	this.addiCmtTagElements = split(gui.getAddiCmtTagDefinitions());
 	this.addiDescTagElements = split(gui.getAddiDescTagDefinitions());
-	if (gui.getAutoSplitByType())
-	    super.doIt(POIExporter.ASK_PATH);
-	else
-	    super.doIt(POIExporter.ASK_FILE);
+	if (gui.getAutoSplitByType()) {
+	    doItStart();
+	    String targetDir = this.getOutputPath();
+	    if (targetDir.length() > 0) {
+		buildOutDBs();
+
+		try {
+		    String bitmapFileName = FileBase.getProgramDirectory() + "/exporticons/GarminPOI.zip"; // own version
+		    if (!(hasBitmaps = new File(bitmapFileName).exists())) {
+			// cw default version
+			bitmapFileName = FileBase.getProgramDirectory() + "/exporticons/exporticons/GarminPOI.zip";
+			hasBitmaps = new File(bitmapFileName).exists();
+		    }
+		    if (hasBitmaps)
+			poiZip = new ZipFile(bitmapFileName);
+		} catch (IOException e) {
+		    Preferences.itself().log("GPX Export: warning GarminPOI.zip not found", e, true);
+		}
+
+		for (int i = 0; i < categoryNames.length; i++) {
+		    Hashtable subDBs = (Hashtable) outDBs.get(categoryNames[i]);
+		    if (subDBs.size() > 0) {
+			Iterator outLoop = subDBs.entries();
+			while (outLoop.hasNext()) {
+			    MapEntry mapEntry = (MapEntry) outLoop.next();
+			    DB = (Vector) mapEntry.getValue();
+			    byte cacheType = ((Byte) mapEntry.getKey()).byteValue();
+			    String name = (i < 2 ? categoryNames[i] : "") + CacheType.typeImageNameForId(cacheType) + (i > 2 ? categoryNames[i] : "");
+			    this.setOutputFile(targetDir + name + outputFileExtension.substring(1));
+			    if (hasBitmaps)
+				copyPoiIcon(targetDir, name, "", poiZip);
+			    // skip over empty cachetypes
+			    if (DB.size() > 0) {
+				export();
+			    }
+			}
+		    }
+		}
+		doItEnd();
+		if (hasBitmaps)
+		    try {
+			poiZip.close();
+		    } catch (IOException e) {
+		    }
+	    }
+	} else {
+	    DB = MainForm.profile.cacheDB.getVectorDB();
+	    askForOutputFile();
+	    if (outFile == null)
+		return;
+	    super.doIt();
+	}
+    }
+
+    //Overrides: export() in Exporter
+    public void export() {
+	exportHeader();
+	exportBody();
+	exportTrailer();
     }
 
     private String[] split(String elements) {
@@ -109,7 +218,7 @@ public class POIExporter extends Exporter {
 
     public String record(CacheHolder ch, String lat, String lon) {
 	tt.set(ch);
-	ht = tt.toHashtable(new Regex("[,.]", "."), null, 0, 20, this.anzLogs, new AsciiCodec(), null, true, 1, "");
+	ht = tt.toHashtable(new Regex("[,.]", "."), null, 0, 20, this.anzLogs, true, null, true, 1, "");
 	result.setLength(0);
 	picsCounter = 0;
 	if (ch.isAddiWpt()) {
@@ -158,15 +267,15 @@ public class POIExporter extends Exporter {
 	result.append("<wpt lat=\"" + lat + "\" lon=\"" + lon + "\">").append(endLine);
 
 	result.append("<name>");
-	this.appendToResult(nameTagElements);
+	this.appendToResult(addiNameTagElements);
 	result.append("</name>").append(endLine);
 
 	result.append("<cmt>");
-	this.appendToResult(cmtTagElements);
+	this.appendToResult(addiCmtTagElements);
 	result.append("</cmt>").append(endLine);
 
 	result.append("<desc>");
-	this.appendToResult(descTagElements);
+	this.appendToResult(addiDescTagElements);
 	result.append("</desc>").append(endLine);
 
 	appendLastPart();
@@ -208,8 +317,46 @@ public class POIExporter extends Exporter {
 		.append(endLine);
     }
 
+    // Overrides: trailer() in Exporter
     public String trailer() {
 	return "</gpx>" + endLine;
+    }
+
+    /**
+     * copy the bitmap identified by <code>prefix</code> and <code>type</code> from <code>poiZip</code> to <code>outdir</code>
+     * 
+     * @param outdir
+     * @param type
+     * @param prefix
+     * @param poiZip
+     * @return true on success, false otherwise
+     */
+    private boolean copyPoiIcon(String outdir, String type, String prefix, ZipFile poiZip) {
+	ZipEntry icon;
+	byte[] buff;
+	int len;
+
+	try {
+	    icon = poiZip.getEntry(type + ".bmp");
+	    if (icon == null)
+		return false; // icon not found in archive
+
+	    buff = new byte[icon.getSize()];
+	    InputStream fis = poiZip.getInputStream(icon);
+	    FileOutputStream fos = new FileOutputStream(outdir + (FileBase.separator) + prefix + type + ".bmp");
+	    while (0 < (len = fis.read(buff)))
+		fos.write(buff, 0, len);
+	    fos.flush();
+	    fos.close();
+	    fis.close();
+	} catch (ZipException e) {
+	    Preferences.itself().log("failed to copy icon " + type + ".bmp", e, true);
+	    return false;
+	} catch (IOException e) {
+	    Preferences.itself().log("failed to copy icon " + type + ".bmp", e, true);
+	    return false;
+	}
+	return true;
     }
 
     private void appendToResult(String[] elements) {
@@ -226,7 +373,7 @@ public class POIExporter extends Exporter {
 	Object obj = ht.get(element);
 	if (obj != null) {
 	    if (obj instanceof String) {
-		result.append(SafeXML.cleanGPX((String) obj));
+		result.append(SafeXML.cleanGPX(removeHtmlTags((String) obj)));
 	    } else {
 		if (element.equals("ATTRIBUTES")) {
 		    Vector attributes = (Vector) obj;
@@ -246,7 +393,7 @@ public class POIExporter extends Exporter {
 			result.append(SafeXML.cleanGPX((String) log.get("LOGGER"))) //
 				.append(" ").append(SafeXML.cleanGPX((String) log.get("LOGTYPE"))) //
 				.append(" on ").append((String) log.get("DATE")) //
-				.append(": ").append(SafeXML.cleanGPX((String) log.get("MESSAGE"))) //
+				.append(": ").append(SafeXML.cleanGPX(removeHtmlTags((String) log.get("MESSAGE")))) //
 				.append(this.endLine);
 			i++;
 		    }

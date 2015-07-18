@@ -274,7 +274,7 @@ public class ImportGui extends Form {
 		RestrictedType = CacheType.CW_TYPE_WEBCAM;
 		break;
 	    case 8:
-		RestrictedType = CacheType.CW_TYPE_UNKNOWN;
+		RestrictedType = CacheType.CW_TYPE_MYSTERY;
 		break;
 	    case 9:
 		RestrictedType = CacheType.CW_TYPE_CITO;

@@ -670,8 +670,8 @@ public class TablePanelMenu extends MenuBar {
 		// Must not contain special characters, because we don't quote below, because quoting causes problems on some platforms.
 		// Find another way, when CW can be started from outside the program directory.
 		String tmpFileName = "temp.loc";
-		loc.setTmpFileName(tmpFileName);
-		loc.doIt(LocExporter.TMP_FILE);
+		loc.setOutputFile(tmpFileName);
+		loc.doIt();
 		ProgressBarForm.display(MyLocale.getMsg(950, "Transfer"), MyLocale.getMsg(951, "Sending to GPS"), null);
 		gpsBabelCommand = Preferences.itself().gpsbabel + " " + Preferences.itself().garminGPSBabelOptions + " -i geo -f " + tmpFileName + " -o garmin -F " + Preferences.itself().garminConn + ":";
 		Preferences.itself().log("[MainMenu:onEvent] " + gpsBabelCommand);

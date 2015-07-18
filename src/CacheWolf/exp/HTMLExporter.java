@@ -36,7 +36,6 @@ import com.stevesoft.ewe_pat.Regex;
 
 import ewe.filechooser.FileChooser;
 import ewe.filechooser.FileChooserBase;
-import ewe.io.AsciiCodec;
 import ewe.io.BufferedWriter;
 import ewe.io.File;
 import ewe.io.FileBase;
@@ -118,7 +117,7 @@ public class HTMLExporter {
 		    }
 		    det = ch.getDetails();
 		    tt.set(ch);
-		    varParams = tt.toHashtable(dec, null, 0, 30, -1, new AsciiCodec(), null, false, 2, expName);
+		    varParams = tt.toHashtable(dec, null, 0, 30, -1, true, null, false, 2, expName);
 		    cache_index.add(varParams);
 		    //We can generate the individual page here!
 		    try {

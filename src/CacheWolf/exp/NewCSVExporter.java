@@ -38,7 +38,7 @@ public class NewCSVExporter extends Exporter {
 	super();
 	this.setOutputFileExtension("*.cl");
 	this.decimalSeparator = ',';
-	this.setHowManyParams(NO_PARAMS);
+	this.setRecordMethod(NO_PARAMS);
     }
 
     private Hashtable reviewers = new Hashtable(50);

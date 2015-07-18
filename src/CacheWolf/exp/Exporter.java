@@ -24,7 +24,6 @@ package CacheWolf.exp;
 import CacheWolf.MainForm;
 import CacheWolf.Preferences;
 import CacheWolf.controls.InfoBox;
-import CacheWolf.database.CacheDB;
 import CacheWolf.database.CacheHolder;
 import CacheWolf.database.CacheSize;
 import CacheWolf.database.CacheType;
@@ -38,19 +37,16 @@ import ewe.filechooser.FileChooser;
 import ewe.filechooser.FileChooserBase;
 import ewe.io.BufferedWriter;
 import ewe.io.File;
-import ewe.io.FileBase;
-import ewe.io.FileOutputStream;
 import ewe.io.FileWriter;
 import ewe.io.IOException;
-import ewe.io.InputStream;
+import ewe.io.JavaUtf8Codec;
 import ewe.io.PrintWriter;
+import ewe.io.TextCodec;
 import ewe.sys.Handle;
 import ewe.ui.FormBase;
 import ewe.ui.ProgressBarForm;
 import ewe.util.Hashtable;
-import ewe.util.zip.ZipEntry;
-import ewe.util.zip.ZipException;
-import ewe.util.zip.ZipFile;
+import ewe.util.Vector;
 
 /**
  * @author Kalle Base class for exporter, handles basic things like selecting outputfile, display a counter etc. A new Exporter must only override the header(), record() and trailer() methods. The member howManyParams must be set to identify which
@@ -58,183 +54,168 @@ import ewe.util.zip.ZipFile;
  */
 
 public class Exporter {
-    // starts with no ui for file selection
-    public final static int TMP_FILE = 0;
-    // brings up a screen to select a file
-    public final static int ASK_FILE = 1;
-    public final static int ASK_PATH = 2;
 
     // export methods
     final static int NO_PARAMS = 0;
     final static int LAT_LON = 1;
     final static int COUNT = 2;
 
-    CacheDB cacheDB;
+    Vector DB;
     // mask in file chooser
     String outputFileExtension = "*.*";
-    // file name, if no file chooser is used
-    String tmpFileName;
+    String outputFileName;
     // decimal separator for lat- and lon-String
     char decimalSeparator = '.';
     // selection, which export method should be called
-    int exportMethod = 0;
+    int recordMethod;
 
-    // name of exporter for saving pathname
-    protected String expName;
+    int incompleteWaypoints = 0;
+
+    // name of exporter for saving pathname and its preferences
+    protected String exporterName;
+    protected TextCodec useCodec;
+    protected int anzVisibleCaches;
+    int doneTillNow;
+    protected PrintWriter outWriter;
+
+    ProgressBarForm pbf = new ProgressBarForm();
+    Handle h = new Handle();
+
+    protected File outFile = null;
 
     public Exporter() {
-	cacheDB = MainForm.profile.cacheDB;
-	exportMethod = LAT_LON;
-	expName = this.getClass().getName();
+	recordMethod = LAT_LON;
+	exporterName = this.getClass().getName();
 	// remove package
-	expName = expName.substring(expName.indexOf(".") + 1);
-    }
-
-    public void doIt() {
-	this.doIt(ASK_FILE);
+	exporterName = exporterName.substring(exporterName.indexOf(".") + 1);
+	useCodec = new JavaUtf8Codec();
+	anzVisibleCaches = MainForm.profile.cacheDB.countVisible();
+	doneTillNow = 0;
     }
 
     /**
-     * Does the most work for exporting data
+     * Does the work for exporting data
      * 
-     * @param variant<br>
-     *            0 = TMP_FILE: use temporary file<br>
-     *            1 = ASK_FILE: ask for filename (with filechooser)<br>
      */
-    public void doIt(int variant) {
-	File outFile = null;
-	String outPath = "";
-	byte[] cacheTypes;
-	byte[] ct = { CacheType.CW_TYPE_CITO, CacheType.CW_TYPE_CUSTOM, CacheType.CW_TYPE_EARTH, CacheType.CW_TYPE_FINAL, CacheType.CW_TYPE_EVENT //
-		, CacheType.CW_TYPE_GIGA_EVENT, CacheType.CW_TYPE_LAB, CacheType.CW_TYPE_LETTERBOX, CacheType.CW_TYPE_MAZE //
-		, CacheType.CW_TYPE_MEGA_EVENT, CacheType.CW_TYPE_MULTI, CacheType.CW_TYPE_PARKING, CacheType.CW_TYPE_QUESTION //
-		, CacheType.CW_TYPE_REFERENCE, CacheType.CW_TYPE_STAGE, CacheType.CW_TYPE_TRADITIONAL, CacheType.CW_TYPE_TRAILHEAD //
-		, CacheType.CW_TYPE_UNKNOWN, CacheType.CW_TYPE_VIRTUAL, CacheType.CW_TYPE_WEBCAM, CacheType.CW_TYPE_WHEREIGO //
-	};
-	byte[] ca = { -1 };
-	String[] ctName = { "CITO", "Custom", "Earthcache", "Final", "Event" //
-		, "GigaEvent", "Lab", "Letterbox", "AdventureMaze" //
-		, "MegaEvent", "Multi", "Parking", "Question" //
-		, "Reference", "Stage", "Traditional", "Trailhead" //
-		, "Mystery", "Virtual", "Webcam", "WhereIGo" };
-	String str;
-	boolean hasBitmaps = false;
-	ZipFile poiZip = null;
-	CacheHolder ch;
-	ProgressBarForm pbf = new ProgressBarForm();
-	Handle h = new Handle();
+    public void doIt() {
+	doItStart();
+	export();
+	doItEnd();
+    }
 
-	if (variant == ASK_FILE) {
-	    outFile = getOutputFile();
-	    if (outFile == null)
-		return;
-	    cacheTypes = ca;
-	} else if (variant == ASK_PATH) {
-	    outPath = this.getOutputPath();
-	    cacheTypes = ct;
-	    try {
-		String bitmapFileName = FileBase.getProgramDirectory() + "/exporticons/GarminPOI.zip"; // own version
-		if (!(hasBitmaps = new File(bitmapFileName).exists())) {
-		    // cw default version
-		    bitmapFileName = FileBase.getProgramDirectory() + "/exporticons/exporticons/GarminPOI.zip";
-		    hasBitmaps = new File(bitmapFileName).exists();
-		}
-		if (hasBitmaps)
-		    poiZip = new ZipFile(bitmapFileName);
-	    } catch (IOException e) {
-		Preferences.itself().log("GPX Export: warning GarminPOI.zip not found", e, true);
-	    }
-
-	} else {
-	    outFile = new File(tmpFileName);
-	    cacheTypes = ca;
-	}
-
+    public void doItStart() {
 	pbf.showMainTask = false;
 	pbf.setTask(h, "Exporting ...");
 	pbf.exec();
+    }
 
-	int counter = cacheDB.countVisible();
-	int expCount = 0;
+    public void doItEnd() {
+	pbf.exit(0);
+	if (incompleteWaypoints > 0) {
+	    new InfoBox(MyLocale.getMsg(5500, "Error"), incompleteWaypoints + " incomplete waypoints have not been exported. See log for details.").wait(FormBase.OKB);
+	}
+    }
+
+    /**
+     * Do one File export, can be overwritten
+     * 
+     */
+    public void export() {
+	if (DB == null) {
+	    DB = MainForm.profile.cacheDB.getVectorDB();
+	}
+
+	if (outFile == null) {
+	    askForOutputFile();
+	    if (outFile == null)
+		return;
+	}
+	exportHeader();
+	exportBody();
+	exportTrailer();
+    }
+
+    public void exportHeader() {
 
 	try {
-	    int incompleteWaypoints = 0;
-	    for (int j = 0; j < cacheTypes.length; j++) {
-		byte forType = cacheTypes[j];
-		if (variant == ASK_PATH) {
-		    outFile = new File(outPath + ctName[j] + ".gpx");
-		    if (hasBitmaps)
-			copyPoiIcon(outPath, ctName[j], "", poiZip);
-		}
-		PrintWriter outp = new PrintWriter(new BufferedWriter(new FileWriter(outFile)));
-		str = this.header();
-		if (str != null)
-		    outp.print(str);
-		for (int i = 0; i < cacheDB.size(); i++) {
-		    ch = cacheDB.get(i);
-		    if (ch.isVisible()) {
-			if (ch.isIncomplete()) {
-			    Preferences.itself().log("skipping export of incomplete waypoint " + ch.getCode());
-			    incompleteWaypoints++;
-			    continue;
-			}
-			if (forType != -1) {
-			    if (ch.getType() != forType) {
-				continue;
-			    }
-			}
-			expCount++;
-			h.progress = (float) expCount / (float) counter;
-			h.changed();
-			switch (this.exportMethod) {
-			case NO_PARAMS:
-			    str = record(ch);
-			    break;
-			case LAT_LON:
-			    if (!ch.getWpt().isValid())
-				continue;
-			    str = record(ch, ch.getWpt().getLatDeg(TransformCoordinates.DD).replace('.', this.decimalSeparator), ch.getWpt().getLonDeg(TransformCoordinates.DD).replace('.', this.decimalSeparator));
-			    break;
-			case LAT_LON | COUNT:
-			    if (!ch.getWpt().isValid())
-				continue;
-			    str = record(ch, ch.getWpt().getLatDeg(TransformCoordinates.DD).replace('.', this.decimalSeparator), ch.getWpt().getLonDeg(TransformCoordinates.DD).replace('.', this.decimalSeparator), i);
-			    break;
-			default:
-			    str = null;
-			    break;
-			}
-			if (str != null)
-			    outp.print(str);
-		    }// if
-		}// for
-		switch (this.exportMethod & COUNT) {
+	    FileWriter fw = new FileWriter(outFile);
+	    fw.codec = this.useCodec;
+	    outWriter = new PrintWriter(new BufferedWriter(fw));
+	} catch (IOException ioE) {
+	    Preferences.itself().log("Error opening " + outputFileName, ioE);
+	}
+
+	String str = this.header();
+	if (str != null)
+	    outWriter.write(str);
+    }
+
+    public void exportBody() {
+	exportCaches();
+    }
+
+    public void exportTrailer() {
+	String str;
+	switch (this.recordMethod & COUNT) {
+	case NO_PARAMS:
+	    str = trailer();
+	    break;
+	case COUNT:
+	    str = trailer(anzVisibleCaches);
+	    break;
+	default:
+	    str = null;
+	    break;
+	}
+	if (str != null)
+	    outWriter.write(str);
+
+	outWriter.close();
+
+    }
+
+    private void exportCaches() {
+	String str;
+	for (int i = 0; i < DB.size(); i++) {
+	    doneTillNow++;
+	    h.progress = (float) doneTillNow / (float) anzVisibleCaches;
+	    h.changed();
+	    str = exportCache(i);
+	    if (str != null)
+		outWriter.write(str);
+	}
+    }
+
+    private String exportCache(int i) {
+	CacheHolder ch = (CacheHolder) DB.get(i);
+	String str = null;
+	if (ch.isVisible()) {
+	    if (ch.isIncomplete()) {
+		Preferences.itself().log("Incomplete waypoint " + ch.getCode(), null);
+		incompleteWaypoints++;
+		return null;
+	    } else {
+		switch (this.recordMethod) {
 		case NO_PARAMS:
-		    str = trailer();
+		    str = record(ch);
 		    break;
-		case COUNT:
-		    str = trailer(counter);
+		case LAT_LON:
+		    if (!ch.getWpt().isValid())
+			return null;
+		    str = record(ch, ch.getWpt().getLatDeg(TransformCoordinates.DD).replace('.', this.decimalSeparator), ch.getWpt().getLonDeg(TransformCoordinates.DD).replace('.', this.decimalSeparator));
+		    break;
+		case LAT_LON | COUNT:
+		    if (!ch.getWpt().isValid())
+			return null;
+		    str = record(ch, ch.getWpt().getLatDeg(TransformCoordinates.DD).replace('.', this.decimalSeparator), ch.getWpt().getLonDeg(TransformCoordinates.DD).replace('.', this.decimalSeparator), i);
 		    break;
 		default:
 		    str = null;
 		    break;
 		}
-		if (str != null)
-		    outp.print(str);
-		outp.close();
-
-	    } // for 
-
-	    pbf.exit(0);
-	    if (hasBitmaps)
-		poiZip.close();
-	    if (incompleteWaypoints > 0) {
-		new InfoBox(MyLocale.getMsg(5500, "Error"), incompleteWaypoints + " incomplete waypoints have not been exported. See log for details.").wait(FormBase.OKB);
-	    }
-	} catch (IOException ioE) {
-	    Preferences.itself().log("Error opening " + outFile.getName(), ioE);
-	}
-	// try
+	    }// else if incomplete
+	}// if visible 
+	return str;
     }
 
     /**
@@ -251,8 +232,8 @@ public class Exporter {
      * 
      * @param paramBits
      */
-    public void setHowManyParams(int paramBits) {
-	this.exportMethod = paramBits;
+    public void setRecordMethod(int paramBits) {
+	this.recordMethod = paramBits;
     }
 
     /**
@@ -260,8 +241,9 @@ public class Exporter {
      * 
      * @param fName
      */
-    public void setTmpFileName(String fName) {
-	this.tmpFileName = fName;
+    public void setOutputFile(String fName) {
+	this.outputFileName = fName;
+	outFile = new File(outputFileName);
     }
 
     /**
@@ -269,66 +251,30 @@ public class Exporter {
      * 
      * @return
      */
-    public File getOutputFile() {
+    public void askForOutputFile() {
 	File file;
-	FileChooser fc = new FileChooser(FileChooserBase.SAVE, Preferences.itself().getExportPath(expName));
+	FileChooser fc = new FileChooser(FileChooserBase.SAVE, Preferences.itself().getExportPath(exporterName));
 	fc.setTitle(MyLocale.getMsg(2102, "Choose target file"));
 	fc.addMask(outputFileExtension);
 	if (fc.execute() != FormBase.IDCANCEL) {
 	    file = fc.getChosenFile();
-	    Preferences.itself().setExportPref(expName, file.getPath());
-	    return file;
+	    this.outputFileName = fc.getChosen();
+	    Preferences.itself().setExportPref(exporterName, file.getPath());
+	    outFile = file;
 	} else {
-	    return null;
+	    outFile = null;
 	}
     }
 
     public String getOutputPath() {
-	FileChooser fc = new FileChooser(FileChooserBase.DIRECTORY_SELECT, Preferences.itself().getExportPath(expName));
+	FileChooser fc = new FileChooser(FileChooserBase.DIRECTORY_SELECT, Preferences.itself().getExportPath(exporterName));
 	fc.setTitle(MyLocale.getMsg(148, "Select Target directory"));
 	String targetDir;
 	if (fc.execute() == FormBase.IDCANCEL)
 	    return "";
 	targetDir = fc.getChosen() + "/";
-	Preferences.itself().setExportPref(expName, targetDir);
+	Preferences.itself().setExportPref(exporterName, targetDir);
 	return targetDir;
-    }
-
-    /**
-     * copy the bitmap identified by <code>prefix</code> and <code>type</code> from <code>poiZip</code> to <code>outdir</code>
-     * 
-     * @param outdir
-     * @param type
-     * @param prefix
-     * @param poiZip
-     * @return true on success, false otherwise
-     */
-    private boolean copyPoiIcon(String outdir, String type, String prefix, ZipFile poiZip) {
-	ZipEntry icon;
-	byte[] buff;
-	int len;
-
-	try {
-	    icon = poiZip.getEntry(type + ".bmp");
-	    if (icon == null)
-		return false; // icon not found in archive
-
-	    buff = new byte[icon.getSize()];
-	    InputStream fis = poiZip.getInputStream(icon);
-	    FileOutputStream fos = new FileOutputStream(outdir + (FileBase.separator) + prefix + type + ".bmp");
-	    while (0 < (len = fis.read(buff)))
-		fos.write(buff, 0, len);
-	    fos.flush();
-	    fos.close();
-	    fis.close();
-	} catch (ZipException e) {
-	    Preferences.itself().log("failed to copy icon " + type + ".bmp", e, true);
-	    return false;
-	} catch (IOException e) {
-	    Preferences.itself().log("failed to copy icon " + type + ".bmp", e, true);
-	    return false;
-	}
-	return true;
     }
 
     /**
@@ -476,7 +422,7 @@ public class Exporter {
 	return strBuf.toString();
     }
 
-    protected static String removeHtmlTags(String inString) {
+    protected String removeHtmlTags(String inString) {
 
 	Transformer removeNumericEntities = new Transformer(true);
 	removeNumericEntities.add(new Regex("&#([xX]?)([a-fA-F0-9]*?);", ""));

@@ -33,7 +33,6 @@ import HTML.Template;
 
 import com.stevesoft.ewe_pat.Regex;
 
-import ewe.io.AsciiCodec;
 import ewe.io.BufferedWriter;
 import ewe.io.FileBase;
 import ewe.io.FileWriter;
@@ -97,7 +96,7 @@ public class ShowCacheInBrowser {
 		try {
 		    TemplateTable tt = new TemplateTable();
 		    tt.set(ch);
-		    tpl.setParams(tt.toHashtable(new Regex("[,.]", "."), null, 0, 30, -1, new AsciiCodec(), null, true, 1, ""));
+		    tpl.setParams(tt.toHashtable(new Regex("[,.]", "."), null, 0, 30, -1, true, null, true, 1, ""));
 		    // Look for images
 		    // count only the images of main body
 		    int start = 0;

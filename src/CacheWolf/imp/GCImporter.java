@@ -842,7 +842,7 @@ public class GCImporter {
 	    return onlyMegaEvent;
 	else if (restrictedCacheType == CacheType.CW_TYPE_WEBCAM)
 	    return onlyWebcam;
-	else if (restrictedCacheType == CacheType.CW_TYPE_UNKNOWN)
+	else if (restrictedCacheType == CacheType.CW_TYPE_MYSTERY)
 	    return onlyUnknown;
 	else if (restrictedCacheType == CacheType.CW_TYPE_EARTH)
 	    return onlyEarth;

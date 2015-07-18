@@ -22,7 +22,6 @@
 package CacheWolf.navi;
 
 import CacheWolf.MainForm;
-import CacheWolf.utils.MyLocale;
 import CacheWolf.Preferences;
 import CacheWolf.controls.InfoBox;
 import CacheWolf.database.BoundingBox;
@@ -30,6 +29,7 @@ import CacheWolf.database.CWPoint;
 import CacheWolf.utils.BetterUTF8Codec;
 import CacheWolf.utils.Common;
 import CacheWolf.utils.FileBugfix;
+import CacheWolf.utils.MyLocale;
 import ewe.fx.Point;
 import ewe.fx.Rect;
 import ewe.io.DataInputStream;
@@ -283,6 +283,8 @@ public final class MapsList extends Vector {
 		// check first entry, directory could have been moved				
 		s = r.readLine();
 		S = ewe.util.mString.split(s, ';');
+		if (S.length == 0)
+		    return false;
 		if (S[3].equals("2")) {
 		    if (Common.getImageName(Preferences.itself().absoluteMapsBaseDir + S[0] + "/" + S[1]) == null) {
 			ret = false;

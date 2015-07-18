@@ -30,7 +30,6 @@ import CacheWolf.navi.TransformCoordinates;
 import CacheWolf.utils.STRreplace;
 import CacheWolf.utils.SafeXML;
 import ewe.io.BufferedWriter;
-import ewe.io.File;
 import ewe.io.FileBase;
 import ewe.io.FileOutputStream;
 import ewe.io.FileWriter;
@@ -65,34 +64,31 @@ public class KMLExporter extends Exporter {
     static final int UNKNOWN = 4;
 
     String[] categoryNames = { "Available", "Found", "Owned", "Not Available", "UNKNOWN" };
-    Hashtable[] outCacheDB = new Hashtable[categoryNames.length];
+    Hashtable[] outDB = new Hashtable[categoryNames.length];
 
     public KMLExporter() {
 	super();
 	this.setOutputFileExtension("*.kml");
     }
 
-    public void doIt(int variant) {
-	File outFile;
+    public void doIt() {
 	String str;
 	CacheHolder ch;
 	CacheHolder addiWpt;
 	ProgressBarForm pbf = new ProgressBarForm();
 	Handle h = new Handle();
 
-	if (variant == ASK_FILE) {
-	    outFile = getOutputFile();
+	if (outFile == null) {
+	    askForOutputFile();
 	    if (outFile == null)
 		return;
-	} else {
-	    outFile = new File(tmpFileName);
 	}
 
 	pbf.showMainTask = false;
 	pbf.setTask(h, "Exporting ...");
 	pbf.exec();
 
-	int counter = cacheDB.countVisible();
+	DB = MainForm.profile.cacheDB.getVectorDB();
 	int expCount = 0;
 	copyIcons(outFile.getParent());
 	buildOutDB();
@@ -104,10 +100,10 @@ public class KMLExporter extends Exporter {
 		outp.print(str);
 	    for (int cat = 0; cat < categoryNames.length; cat++) {
 		// skip over empty categories
-		if (outCacheDB[cat] == null)
+		if (outDB[cat].size() == 0)
 		    continue;
 
-		Iterator outLoop = outCacheDB[cat].entries();
+		Iterator outLoop = outDB[cat].entries();
 		outp.print(startFolder(categoryNames[cat]));
 
 		Vector tmp;
@@ -125,7 +121,7 @@ public class KMLExporter extends Exporter {
 			if (ch.isAddiWpt())
 			    continue;
 			expCount++;
-			h.progress = (float) expCount / (float) counter;
+			h.progress = (float) expCount / (float) anzVisibleCaches;
 			h.changed();
 
 			if (ch.getWpt().isValid()) {
@@ -174,57 +170,50 @@ public class KMLExporter extends Exporter {
     private void buildOutDB() {
 	CacheHolder ch;
 	Vector tmp;
-	Iterator categoryLoop;
-	MapEntry entry;
-	boolean foundOne;
 
 	// create the roots for the different categories
 	for (int i = 0; i < categoryNames.length; i++) {
-	    outCacheDB[i] = new Hashtable();
-	    // create the roots for the cachetypes
-	    for (int j = 0; j < CacheType.guiTypeStrings().length; j++) {
-		outCacheDB[i].put(String.valueOf(CacheType.guiSelect2Cw(j)), new Vector());
-	    }
+	    outDB[i] = new Hashtable();
 	}
 
 	// fill structure with data from cacheDB
-	for (int i = 0; i < cacheDB.size(); i++) {
-	    ch = cacheDB.get(i);
-	    // TODO Das Argument nach STring zu casten gef?llt mir nicht ganz...
+	for (int i = 0; i < DB.size(); i++) {
+	    ch = (CacheHolder) DB.get(i);
 	    if (ch.isVisible() && !ch.isAddiWpt()) {
 		if (ch.isFound()) {
-		    tmp = (Vector) outCacheDB[FOUND].get(String.valueOf(ch.getType()));
+		    tmp = (Vector) outDB[FOUND].get(new Byte(ch.getType()));
+		    if (tmp == null) {
+			tmp = new Vector();
+			outDB[FOUND].put(new Byte(ch.getType()), tmp);
+		    }
 		} else if (ch.isOwned()) {
-		    tmp = (Vector) outCacheDB[OWNED].get(String.valueOf(ch.getType()));
+		    tmp = (Vector) outDB[OWNED].get(new Byte(ch.getType()));
+		    if (tmp == null) {
+			tmp = new Vector();
+			outDB[OWNED].put(new Byte(ch.getType()), tmp);
+		    }
 		} else if (ch.isArchived() || !ch.isAvailable()) {
-		    tmp = (Vector) outCacheDB[NOT_AVAILABLE].get(String.valueOf(ch.getType()));
+		    tmp = (Vector) outDB[NOT_AVAILABLE].get(new Byte(ch.getType()));
+		    if (tmp == null) {
+			tmp = new Vector();
+			outDB[NOT_AVAILABLE].put(new Byte(ch.getType()), tmp);
+		    }
 		} else if (ch.isAvailable()) {
-		    tmp = (Vector) outCacheDB[AVAILABLE].get(String.valueOf(ch.getType()));
+		    tmp = (Vector) outDB[AVAILABLE].get(new Byte(ch.getType()));
+		    if (tmp == null) {
+			tmp = new Vector();
+			outDB[AVAILABLE].put(new Byte(ch.getType()), tmp);
+		    }
 		} else {
-		    tmp = (Vector) outCacheDB[UNKNOWN].get(String.valueOf(ch.getType()));
+		    tmp = (Vector) outDB[UNKNOWN].get(new Byte(ch.getType()));
+		    if (tmp == null) {
+			tmp = new Vector();
+			outDB[UNKNOWN].put(new Byte(ch.getType()), tmp);
+		    }
 		}
 		tmp.add(ch);
 	    }
 	}
-
-	// eleminate empty categories
-	for (int i = 0; i < categoryNames.length; i++) {
-	    categoryLoop = outCacheDB[i].entries();
-	    foundOne = false;
-	    // look if all vectors for cachetypes are filled
-	    while (categoryLoop.hasNext()) {
-		entry = (MapEntry) categoryLoop.next();
-		tmp = (Vector) entry.getValue();
-		if (tmp.size() > 0) {
-		    foundOne = true;
-		    break;
-		}
-	    }
-	    // set hashtable for that category to null
-	    if (!foundOne)
-		outCacheDB[i] = null;
-	}
-
     }
 
     private String startFolder(String name) {

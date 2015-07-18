@@ -18,9 +18,7 @@ import CacheWolf.utils.SafeXML;
 
 import com.stevesoft.ewe_pat.Regex;
 
-import ewe.io.AsciiCodec;
 import ewe.io.FileBase;
-import ewe.io.TextCodec;
 import ewe.sys.Time;
 import ewe.util.Hashtable;
 import ewe.util.Vector;
@@ -52,7 +50,7 @@ public class TemplateTable {
      * @return
      *     Return a Hashtable containing all the cache data for Templates
      */
-    public Hashtable toHashtable(Regex decSep, Regex badChars, int shortWaypointLength, int shortNameLength, int nrOfLogs, TextCodec codec, GarminMap gm, boolean withFoundText, int ModTyp, String expName) {
+    public Hashtable toHashtable(Regex decSep, Regex badChars, int shortWaypointLength, int shortNameLength, int nrOfLogs, boolean simplify, GarminMap gm, boolean withFoundText, int ModTyp, String expName) {
 	Hashtable varParams = new Hashtable();
 	byte type = cache.getType();
 	byte difficulty;
@@ -76,7 +74,7 @@ public class TemplateTable {
 	    size = ch.getSize();
 	    varParams.put("MAINWP", ch.getCode());
 	    String cn = ch.getName();
-	    if (codec instanceof AsciiCodec) {
+	    if (simplify) {
 		cn = Exporter.simplifyString(cn);
 	    } // use for "NAME"
 	    if (badChars != null) {
@@ -157,7 +155,7 @@ public class TemplateTable {
 	varParams.put("STATUS_UTC_TIME", cache.getStatusUtcTime());
 	String cn = cache.getName();
 	varParams.put("CACHE_NAME", cn);
-	if (codec instanceof AsciiCodec) {
+	if (simplify) {
 	    cn = Exporter.simplifyString(cn);
 	} // use for "NAME"
 	if (badChars != null) {
@@ -202,7 +200,7 @@ public class TemplateTable {
 	if (cache.getType() == CacheType.CW_TYPE_MULTI) {
 	    varParams.put("IFMULTI", "MU");
 	}
-	if (cache.getType() == CacheType.CW_TYPE_UNKNOWN) {
+	if (cache.getType() == CacheType.CW_TYPE_MYSTERY) {
 	    varParams.put("IFMYSTERY", "UN");
 	}
 	if (cache.getType() == CacheType.CW_TYPE_EVENT) {
