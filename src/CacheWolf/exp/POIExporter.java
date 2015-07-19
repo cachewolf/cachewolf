@@ -229,13 +229,12 @@ public class POIExporter extends Exporter {
 	    ch.getDetails();
 	    if (!ch.detailsLoaded())
 		return null;
-	    if (noPictures || ch.getDetails().images.size() == 0) {
-		formatMain(ch, lat, lon, "", "");
-		return result.toString();
-	    }
 	}
 
-	if (!noPictures) {
+	if (noPictures) {
+	    formatMain(ch, lat, lon, "", "");
+	    return result.toString();
+	} else {
 	    CacheImages images = ch.getDetails().images.getDisplayImages(ch.getCode());
 	    String alreadyDone = "";
 	    for (int i = 0; i < images.size(); i++) {
@@ -257,6 +256,9 @@ public class POIExporter extends Exporter {
 		    picsCounter++;
 		    formatMain(ch, lat, lon, url, comment);
 		}
+	    }
+	    if (this.picsCounter == 0) {
+		formatMain(ch, lat, lon, "", "");
 	    }
 	}
 	return result.toString();
