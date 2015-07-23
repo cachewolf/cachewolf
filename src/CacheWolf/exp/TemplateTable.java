@@ -42,7 +42,7 @@ public class TemplateTable {
      * @param shortWaypointLength
      * @param shortNameLength
      * @param nrOfLogs
-     * @param codec
+     * @param simplifyCacheName
      * @param gm
      * @param withFoundText
      * @param ModTyp
@@ -50,7 +50,7 @@ public class TemplateTable {
      * @return
      *     Return a Hashtable containing all the cache data for Templates
      */
-    public Hashtable toHashtable(Regex decSep, Regex badChars, int shortWaypointLength, int shortNameLength, int nrOfLogs, boolean simplify, GarminMap gm, boolean withFoundText, int ModTyp, String expName) {
+    public Hashtable toHashtable(Regex decSep, Regex badChars, int shortWaypointLength, int shortNameLength, int nrOfLogs, boolean simplifyCacheName, GarminMap gm, boolean withFoundText, int ModTyp, String expName) {
 	Hashtable varParams = new Hashtable();
 	byte type = cache.getType();
 	byte difficulty;
@@ -74,7 +74,7 @@ public class TemplateTable {
 	    size = ch.getSize();
 	    varParams.put("MAINWP", ch.getCode());
 	    String cn = ch.getName();
-	    if (simplify) {
+	    if (simplifyCacheName) {
 		cn = Exporter.simplifyString(cn);
 	    } // use for "NAME"
 	    if (badChars != null) {
@@ -155,14 +155,14 @@ public class TemplateTable {
 	varParams.put("STATUS_UTC_TIME", cache.getStatusUtcTime());
 	String cn = cache.getName();
 	varParams.put("CACHE_NAME", cn);
-	if (simplify) {
+	if (simplifyCacheName) {
 	    cn = Exporter.simplifyString(cn);
 	} // use for "NAME"
 	if (badChars != null) {
 	    cn = badChars.replaceAll(cn);
 	} // use for "NAME"
 	varParams.put("NAME", cn);
-	String shortName = shortenName(cn, shortNameLength);
+	String shortName = shortenName(cache.getName(), shortNameLength);
 	varParams.put("SHORTNAME", shortName);
 	varParams.put("TRAVELBUG", (cache.hasBugs() ? "Y" : "N"));
 	if (gm != null)

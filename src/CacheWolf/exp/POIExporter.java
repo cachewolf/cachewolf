@@ -26,10 +26,10 @@ import CacheWolf.Preferences;
 import CacheWolf.database.CacheHolder;
 import CacheWolf.database.CacheImages;
 import CacheWolf.database.CacheType;
-import CacheWolf.utils.W1252Codec;
 import CacheWolf.utils.STRreplace;
 import CacheWolf.utils.SafeXML;
 import CacheWolf.utils.URLUTF8Encoder;
+import CacheWolf.utils.W1252Codec;
 
 import com.stevesoft.ewe_pat.Regex;
 
@@ -71,8 +71,15 @@ public class POIExporter extends Exporter {
     boolean hasBitmaps = false;
     ZipFile poiZip = null;
 
-    String[] categoryNames = { "_AV-", "_TD-", "Available", "Found", "Owned", "UNKNOWN" };
-    Hashtable outDBs = new Hashtable();
+    final String[] categoryNames = { "_Archived", "_Disabled", "Available", "_Found", "_Owned", "_UNKNOWN" };
+    final int lastCacheTypeNr = 250;
+    final int indexOfArchived = 0;
+    final int indexOfDisabled = 1;
+    final int indexOfAvailable = 2;
+    final int indexOfFound = 3;
+    final int indexOfOwn = 4;
+    final int indexOfUnknown = 5;
+    Hashtable tableOfCategories = new Hashtable();
 
     public POIExporter() {
 	super();
@@ -84,39 +91,43 @@ public class POIExporter extends Exporter {
     }
 
     private void buildOutDBs() {
-	CacheHolder ch;
-	Vector tmp;
-
-	// create the roots for the different categories
+	// create the table for the different categories
 	for (int i = 0; i < categoryNames.length; i++) {
-	    outDBs.put(categoryNames[i], new Hashtable());
+	    tableOfCategories.put(categoryNames[i], new Hashtable());
 	}
-
-	// fill structure with data from cacheDB
+	// split profileDB by categories and CacheType
 	Vector profileDB = MainForm.profile.cacheDB.getVectorDB();
 	for (int i = 0; i < profileDB.size(); i++) {
-	    Hashtable subDB;
-	    ch = (CacheHolder) profileDB.get(i);
+	    Hashtable tableOfCategory;
+	    CacheHolder ch = (CacheHolder) profileDB.get(i);
 	    if (ch.isVisible()) {
+		Byte type = new Byte(ch.getType());
 		if (ch.isFound()) {
-		    subDB = (Hashtable) outDBs.get("Found");
-		} else if (ch.isOwned()) {
-		    subDB = (Hashtable) outDBs.get("Owned");
-		} else if (ch.isArchived()) {
-		    subDB = (Hashtable) outDBs.get("_AV-");
-		} else if (!ch.isAvailable()) {
-		    subDB = (Hashtable) outDBs.get("_TD-");
-		} else if (ch.isAvailable()) {
-		    subDB = (Hashtable) outDBs.get("Available");
+		    tableOfCategory = (Hashtable) tableOfCategories.get(categoryNames[indexOfFound]);
+		    type = new Byte((byte) (lastCacheTypeNr + indexOfFound));
 		} else {
-		    subDB = (Hashtable) outDBs.get("UNKNOWN");
+		    if (ch.isOwned()) {
+			tableOfCategory = (Hashtable) tableOfCategories.get(categoryNames[indexOfOwn]);
+			type = new Byte((byte) (lastCacheTypeNr + indexOfOwn));
+		    } else if (ch.isArchived()) {
+			tableOfCategory = (Hashtable) tableOfCategories.get(categoryNames[indexOfArchived]);
+			type = new Byte((byte) (lastCacheTypeNr + indexOfArchived));
+		    } else if (!ch.isAvailable()) {
+			tableOfCategory = (Hashtable) tableOfCategories.get(categoryNames[indexOfDisabled]);
+			type = new Byte((byte) (lastCacheTypeNr + indexOfDisabled));
+		    } else if (ch.isAvailable()) {
+			tableOfCategory = (Hashtable) tableOfCategories.get("Available");
+		    } else {
+			tableOfCategory = (Hashtable) tableOfCategories.get(categoryNames[indexOfUnknown]);
+			type = new Byte((byte) (lastCacheTypeNr + indexOfUnknown));
+		    }
 		}
-		tmp = (Vector) subDB.get(new Byte(ch.getType()));
-		if (tmp == null) {
-		    tmp = new Vector();
-		    subDB.put(new Byte(ch.getType()), tmp);
+		Vector dbOfCacheTypeforCategory = (Vector) tableOfCategory.get(type);
+		if (dbOfCacheTypeforCategory == null) {
+		    dbOfCacheTypeforCategory = new Vector();
+		    tableOfCategory.put(type, dbOfCacheTypeforCategory);
 		}
-		tmp.add(ch);
+		dbOfCacheTypeforCategory.add(ch);
 	    }
 	}
     }
@@ -154,19 +165,34 @@ public class POIExporter extends Exporter {
 		}
 
 		for (int i = 0; i < categoryNames.length; i++) {
-		    Hashtable subDBs = (Hashtable) outDBs.get(categoryNames[i]);
-		    if (subDBs.size() > 0) {
-			Iterator outLoop = subDBs.entries();
-			while (outLoop.hasNext()) {
-			    MapEntry mapEntry = (MapEntry) outLoop.next();
-			    DB = (Vector) mapEntry.getValue();
-			    byte cacheType = ((Byte) mapEntry.getKey()).byteValue();
-			    String name = (i < 2 ? categoryNames[i] : "") + CacheType.typeImageNameForId(cacheType) + (i > 2 ? categoryNames[i] : "");
-			    this.setOutputFile(targetDir + name + outputFileExtension.substring(1));
-			    if (hasBitmaps)
-				copyPoiIcon(targetDir, name, "", poiZip);
+		    Hashtable tableOfCategory = (Hashtable) tableOfCategories.get(categoryNames[i]);
+		    if (tableOfCategory.size() > 0) {
+			Iterator cacheTypesOfCategory = tableOfCategory.entries();
+			while (cacheTypesOfCategory.hasNext()) {
+			    MapEntry cacheTypeEntry = (MapEntry) cacheTypesOfCategory.next();
+			    DB = (Vector) cacheTypeEntry.getValue();
 			    // skip over empty cachetypes
 			    if (DB.size() > 0) {
+				// make the name  for the gpx and icon
+				byte cacheType = ((Byte) cacheTypeEntry.getKey()).byteValue();
+				String name = "";
+				if (cacheType < lastCacheTypeNr) {
+				    name = (i < indexOfAvailable ? categoryNames[i] : "") + CacheType.typeImageNameForId(cacheType) + (i > indexOfAvailable ? categoryNames[i] : "");
+				} else {
+				    if (cacheType == (lastCacheTypeNr + indexOfFound))
+					name = categoryNames[indexOfFound];
+				    else if (cacheType == (lastCacheTypeNr + indexOfOwn))
+					name = categoryNames[indexOfOwn];
+				    else if (cacheType == (lastCacheTypeNr + indexOfUnknown))
+					name = categoryNames[indexOfUnknown];
+				    else if (cacheType == (lastCacheTypeNr + indexOfArchived))
+					name = categoryNames[indexOfArchived];
+				    else if (cacheType == (lastCacheTypeNr + indexOfDisabled))
+					name = categoryNames[indexOfDisabled];
+				}
+				if (hasBitmaps)
+				    copyPoiIcon(targetDir, name, "", poiZip);
+				this.setOutputFile(targetDir + name + outputFileExtension.substring(1));
 				export();
 			    }
 			}
@@ -225,7 +251,6 @@ public class POIExporter extends Exporter {
 	    formatAddi(ch, lat, lon);
 	    return result.toString();
 	} else {
-	    // First check, if there are any pictures in the db for the wpt
 	    ch.getDetails();
 	    if (!ch.detailsLoaded())
 		return null;

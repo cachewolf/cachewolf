@@ -350,6 +350,8 @@ public class Exporter {
     // /////////////////////////////////////////////////
 
     private static Hashtable iso2simpleMappings = new Hashtable(250);
+    //  ISO-8859-1 is CP1252 without chars 80-9f (=128..159) which is = 00..1f
+    //  will be converted to  ISO-646 ( = ASCII, or US-ASCII)
     static {
 	String[] mappingArray = new String[] { "34", "'", //
 		"160", " ", "161", "i", "162", "c", "163", "$", "164", "o", "165", "$", "166", "!", "167", "$", "168", " ", "169", " ", //

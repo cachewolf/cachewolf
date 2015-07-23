@@ -48,15 +48,12 @@ public class POIExporterScreen extends Form {
     private int anzLogs;
 
     // todo List or possible extensions:
-    // Speed up splitting to CacheTypes (by Preselection)
-    // More splitting with found, available, archived, T5er, etc..?
-    // adding Icons for Custom, Giga, Lab Caches
-    // Move Definition of Bitmap copying from Exporter.java to <Extension>Exporter.java)
+    // deletion of old gpx and bmp
+    // adding Icons for Custom, Giga, Lab Caches respective the categories
     // auto Split Profiles to UnterVerzeichnisse(POI Databases)
     // auto Calling POILoader
     // Variable for LastFound , last5logs (in TemplateTable.java)
     // Ask for ShortWaypoint length, Description Length, ...
-    // remove html
 
     public POIExporterScreen(String expName) {
 	super();
