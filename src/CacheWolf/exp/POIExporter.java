@@ -26,13 +26,13 @@ import CacheWolf.Preferences;
 import CacheWolf.database.CacheHolder;
 import CacheWolf.database.CacheImages;
 import CacheWolf.database.CacheType;
+import CacheWolf.utils.W1252Codec;
 import CacheWolf.utils.STRreplace;
 import CacheWolf.utils.SafeXML;
 import CacheWolf.utils.URLUTF8Encoder;
 
 import com.stevesoft.ewe_pat.Regex;
 
-import ewe.io.AsciiCodec;
 import ewe.io.File;
 import ewe.io.FileBase;
 import ewe.io.FileOutputStream;
@@ -80,7 +80,7 @@ public class POIExporter extends Exporter {
 	this.recordMethod = LAT_LON;
 	result = new StringBuffer(1000);
 	tt = new TemplateTable();
-	useCodec = new AsciiCodec();
+	useCodec = new W1252Codec();
     }
 
     private void buildOutDBs() {
