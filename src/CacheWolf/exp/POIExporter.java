@@ -39,7 +39,9 @@ import ewe.io.FileBase;
 import ewe.io.FileOutputStream;
 import ewe.io.IOException;
 import ewe.io.InputStream;
+import ewe.sys.Process;
 import ewe.sys.Time;
+import ewe.sys.Vm;
 import ewe.ui.FormBase;
 import ewe.util.Enumeration;
 import ewe.util.Hashtable;
@@ -235,6 +237,42 @@ public class POIExporter extends Exporter {
 	    if (outFile == null)
 		return;
 	    super.doIt();
+	}
+
+	if (gui.doPOILoader()) {
+	    String[] cmd;
+	    if (gui.doPOILoaderSilent()) {
+		cmd = new String[2];
+		cmd[0] = gui.POILoaderExe();
+		cmd[1] = "/silent";
+	    } else {
+		cmd = new String[1];
+		cmd[0] = gui.POILoaderExe();
+	    }
+	    startProcess(cmd);
+	}
+    }
+
+    /**
+     * Execute the command defined by cmd
+     * 
+     * @param cmd
+     *            command and options to execute. if command or options include a space quatation marks are added. this will not wirk with the java version on unix systems
+     * @return a handle to the process on success or null otherwise
+     */
+    Process startProcess(String[] cmd) {
+	String command = "";
+	for (int i = 0; i < cmd.length; i++) {
+	    if (cmd[i].indexOf(" ") > -1) {
+		cmd[i] = "\"" + cmd[i] + "\"";
+	    }
+	    command = command + cmd[i] + " ";
+	}
+
+	try {
+	    return Vm.exec(command);
+	} catch (IOException e) {
+	    return null;
 	}
     }
 

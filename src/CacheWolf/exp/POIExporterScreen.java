@@ -25,12 +25,15 @@ import CacheWolf.Preferences;
 import CacheWolf.controls.ExecutePanel;
 import CacheWolf.utils.MyLocale;
 import CacheWolf.utils.SafeXML;
+import ewe.filechooser.FileChooser;
+import ewe.filechooser.FileChooserBase;
 import ewe.ui.CellPanel;
 import ewe.ui.CheckBoxGroup;
 import ewe.ui.ControlEvent;
 import ewe.ui.Event;
 import ewe.ui.Form;
 import ewe.ui.FormBase;
+import ewe.ui.mButton;
 import ewe.ui.mCheckBox;
 import ewe.ui.mInput;
 import ewe.ui.mLabel;
@@ -43,9 +46,10 @@ public class POIExporterScreen extends Form {
     private mInput inpCmt, inpAddiCmt; // <cmt>
     private mInput inpDesc, inpAddiDesc; // <desc>
     private mInput inpAnzLogs;
-    private mCheckBox chkCreateProfileDir;
-    private mCheckBox chkAutoSplitByType;
-    private mCheckBox chkClearOutput;
+    private mCheckBox chkCreateProfileDir, chkAutoSplitByType, chkClearOutput;
+    private CheckBoxGroup PoiLoaderGroup;
+    private mCheckBox chkNoPoiLoader, chkDefaultPoiLoader, chkSilentPoiLoader;
+    private mButton btnPOILoaderExe;
     private String expName;
     private int anzLogs;
 
@@ -147,6 +151,33 @@ public class POIExporterScreen extends Form {
 	inpAnzLogs.setText(sAnzLogs);
 	this.addLast(inpAnzLogs, HSTRETCH, HFILL);
 
+	CellPanel PoiLoaderGroupPanel = new CellPanel();
+	PoiLoaderGroup = new CheckBoxGroup();
+	PoiLoaderGroupPanel.setText(MyLocale.getMsg(2216, "POI-Loader"));
+	chkNoPoiLoader = new mCheckBox(MyLocale.getMsg(2213, "No start"));
+	chkDefaultPoiLoader = new mCheckBox(MyLocale.getMsg(2214, "Normal start"));
+	chkSilentPoiLoader = new mCheckBox(MyLocale.getMsg(2215, "Silent start"));
+	chkNoPoiLoader.setGroup(PoiLoaderGroup);
+	chkDefaultPoiLoader.setGroup(PoiLoaderGroup);
+	chkSilentPoiLoader.setGroup(PoiLoaderGroup);
+	String indexPoiLoader = Preferences.itself().getExportPref(expName + "-indexPoiLoader");
+	if (indexPoiLoader.length() == 0)
+	    indexPoiLoader = "0";
+	PoiLoaderGroup.selectIndex(Integer.parseInt(indexPoiLoader));
+	PoiLoaderGroupPanel.addNext(chkNoPoiLoader);
+	PoiLoaderGroupPanel.addNext(chkDefaultPoiLoader);
+	PoiLoaderGroupPanel.addLast(chkSilentPoiLoader);
+	btnPOILoaderExe = new mButton();
+	String pathPOILoaderExe = Preferences.itself().getExportPref(expName + "-POILoaderExe");
+	if (pathPOILoaderExe.length() == 0) {
+	    btnPOILoaderExe.setText("...");
+	    PoiLoaderGroup.selectIndex(0);
+	} else
+	    btnPOILoaderExe.setText(pathPOILoaderExe);
+
+	PoiLoaderGroupPanel.addLast(btnPOILoaderExe);
+	this.addLast(PoiLoaderGroupPanel);
+
 	executePanel = new ExecutePanel(this);
     }
 
@@ -160,6 +191,18 @@ public class POIExporterScreen extends Form {
 
     public boolean getAutoSplitByType() {
 	return chkAutoSplitByType.getState();
+    }
+
+    public boolean doPOILoader() {
+	return (this.PoiLoaderGroup.getSelectedIndex() > 0);
+    }
+
+    public boolean doPOILoaderSilent() {
+	return (this.PoiLoaderGroup.getSelectedIndex() > 1);
+    }
+
+    public String POILoaderExe() {
+	return this.btnPOILoaderExe.getText();
     }
 
     public boolean onlySpoiler() {
@@ -216,8 +259,7 @@ public class POIExporterScreen extends Form {
 	if (ev instanceof ControlEvent && ev.type == ControlEvent.PRESSED) {
 	    if (ev.target == executePanel.cancelButton) {
 		this.close(FormBase.IDCANCEL);
-	    }
-	    if (ev.target == executePanel.applyButton) {
+	    } else if (ev.target == executePanel.applyButton) {
 		Preferences.itself().setExportPref(expName + "-createProfileDir", SafeXML.strxmlencode(this.chkCreateProfileDir.getState()));
 		Preferences.itself().setExportPref(expName + "-split", SafeXML.strxmlencode(this.chkAutoSplitByType.getState()));
 		Preferences.itself().setExportPref(expName + "-clear", SafeXML.strxmlencode(this.chkClearOutput.getState()));
@@ -229,11 +271,34 @@ public class POIExporterScreen extends Form {
 		Preferences.itself().setExportPref(expName + "-AddiCmt", this.inpAddiCmt.getText());
 		Preferences.itself().setExportPref(expName + "-AddiDesc", this.inpAddiDesc.getText());
 		Preferences.itself().setExportPref(expName + "-anzLogs", this.inpAnzLogs.getText());
-
+		Preferences.itself().setExportPref(expName + "-indexPoiLoader", "" + this.PoiLoaderGroup.getSelectedIndex());
+		if (this.btnPOILoaderExe.getText().equals("..."))
+		    this.btnPOILoaderExe.setText("");
+		Preferences.itself().setExportPref(expName + "-POILoaderExe", this.btnPOILoaderExe.getText());
 		this.close(FormBase.IDOK);
+	    } else if (ev.target == this.btnPOILoaderExe) {
+		String tmp = askForPOILoaderExe();
+		if (tmp.length() == 0) {
+		    this.btnPOILoaderExe.setText("...");
+		    PoiLoaderGroup.selectIndex(0);
+		} else
+		    this.btnPOILoaderExe.setText(tmp);
 	    }
 	}
 	super.onEvent(ev);
     }
 
+    public String askForPOILoaderExe() {
+	String tmp = this.btnPOILoaderExe.getText();
+	if (tmp.equals("..."))
+	    tmp = "/";
+	FileChooser fc = new FileChooser(FileChooserBase.OPEN, tmp);
+	fc.setTitle(MyLocale.getMsg(2217, "Select POILoader.exe"));
+	fc.addMask("*.exe");
+	if (fc.execute() != FormBase.IDCANCEL) {
+	    return fc.getChosenFile().getFullPath();
+	} else {
+	    return "";
+	}
+    }
 }
