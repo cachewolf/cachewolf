@@ -317,6 +317,37 @@ public class TemplateTable {
 	    // logs
 	    Vector logVect = new Vector(chD.CacheLogs.size());
 	    int maxlogs = chD.CacheLogs.size();
+	    for (int i = 0; i < maxlogs; i++) {
+		if (chD.CacheLogs.getLog(i).isFoundLog()) {
+		    varParams.put("LASTFOUND", chD.CacheLogs.getLog(i).getDate());
+		    break;
+		}
+	    }
+
+	    String lastFive = "";
+	    for (int i = 0; i < maxlogs; i++) {
+		if (chD.CacheLogs.getLog(i).isFoundLog()) {
+		    lastFive = lastFive + "+";
+		} else if (chD.CacheLogs.getLog(i).isDNFLog()) {
+		    lastFive = lastFive + "-";
+		} else if (chD.CacheLogs.getLog(i).isArchivedLog()) {
+		    lastFive = lastFive + "!";
+		} else if (chD.CacheLogs.getLog(i).isPublishLog()) {
+		    lastFive = lastFive + "P";
+		} else if (chD.CacheLogs.getLog(i).isUnArchivedLog()) {
+		    lastFive = lastFive + "U";
+		} else if (chD.CacheLogs.getLog(i).isDisabledLog()) {
+		    lastFive = lastFive + "D";
+		} else if (chD.CacheLogs.getLog(i).isEnabledLog()) {
+		    lastFive = lastFive + "E";
+		} else {
+		    lastFive = lastFive + "o";
+		}
+		if (i == 4)
+		    break;
+	    }
+	    varParams.put("LASTFIVE", lastFive);
+
 	    if (nrOfLogs > -1 && nrOfLogs < maxlogs)
 		maxlogs = nrOfLogs;
 	    for (int i = 0; i < maxlogs; i++) {

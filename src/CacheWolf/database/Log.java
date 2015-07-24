@@ -190,6 +190,18 @@ public class Log {
 	return icon.toLowerCase().equals("12.png");
     }
 
+    public boolean isDNFLog() {
+	return icon.toLowerCase().equals("3.png");
+    }
+
+    public boolean isDisabledLog() {
+	return icon.toLowerCase().equals("22.png");
+    }
+
+    public boolean isEnabledLog() {
+	return icon.toLowerCase().equals("23.png");
+    }
+
     // if you change any of these make sure to check image2TypeText in the GPX exporters
     public static String typeText2Image(String typeText) {
 	if (typeText.equals("Found it") || typeText.equals("Found") || typeText.equals("find"))

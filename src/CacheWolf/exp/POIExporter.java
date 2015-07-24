@@ -72,13 +72,13 @@ public class POIExporter extends Exporter {
     ZipFile poiZip = null;
 
     final String[] categoryNames = { "_Archived", "_Disabled", "Available", "_Found", "_Owned", "_UNKNOWN" };
-    final int lastCacheTypeNr = 250;
-    final int indexOfArchived = 0;
-    final int indexOfDisabled = 1;
-    final int indexOfAvailable = 2;
-    final int indexOfFound = 3;
-    final int indexOfOwn = 4;
-    final int indexOfUnknown = 5;
+    final byte maxIndex = 6;
+    final byte indexOfArchived = -6;
+    final byte indexOfDisabled = -5;
+    final byte indexOfAvailable = -4;
+    final byte indexOfFound = -3;
+    final byte indexOfOwn = -2;
+    final byte indexOfUnknown = -1;
     Hashtable tableOfCategories = new Hashtable();
 
     public POIExporter() {
@@ -103,24 +103,23 @@ public class POIExporter extends Exporter {
 	    if (ch.isVisible()) {
 		Byte type = new Byte(ch.getType());
 		if (ch.isFound()) {
-		    tableOfCategory = (Hashtable) tableOfCategories.get(categoryNames[indexOfFound]);
-		    type = new Byte((byte) (lastCacheTypeNr + indexOfFound));
+		    tableOfCategory = (Hashtable) tableOfCategories.get(categoryNames[maxIndex + indexOfFound]);
+		    type = new Byte((byte) (indexOfFound));
+		} else if (ch.isOwned()) {
+		    tableOfCategory = (Hashtable) tableOfCategories.get(categoryNames[maxIndex + indexOfOwn]);
+		    type = new Byte((byte) (indexOfOwn));
+		} else if (ch.isArchived()) {
+		    tableOfCategory = (Hashtable) tableOfCategories.get(categoryNames[maxIndex + indexOfArchived]);
+		    type = new Byte((byte) (indexOfArchived));
+		} else if (!ch.isAvailable()) {
+		    tableOfCategory = (Hashtable) tableOfCategories.get(categoryNames[maxIndex + indexOfDisabled]);
+		    type = new Byte((byte) (indexOfDisabled));
+		} else if (ch.isAvailable()) {
+		    tableOfCategory = (Hashtable) tableOfCategories.get(categoryNames[maxIndex + indexOfDisabled]);
+		    // available Caches are split by type
 		} else {
-		    if (ch.isOwned()) {
-			tableOfCategory = (Hashtable) tableOfCategories.get(categoryNames[indexOfOwn]);
-			type = new Byte((byte) (lastCacheTypeNr + indexOfOwn));
-		    } else if (ch.isArchived()) {
-			tableOfCategory = (Hashtable) tableOfCategories.get(categoryNames[indexOfArchived]);
-			type = new Byte((byte) (lastCacheTypeNr + indexOfArchived));
-		    } else if (!ch.isAvailable()) {
-			tableOfCategory = (Hashtable) tableOfCategories.get(categoryNames[indexOfDisabled]);
-			type = new Byte((byte) (lastCacheTypeNr + indexOfDisabled));
-		    } else if (ch.isAvailable()) {
-			tableOfCategory = (Hashtable) tableOfCategories.get("Available");
-		    } else {
-			tableOfCategory = (Hashtable) tableOfCategories.get(categoryNames[indexOfUnknown]);
-			type = new Byte((byte) (lastCacheTypeNr + indexOfUnknown));
-		    }
+		    tableOfCategory = (Hashtable) tableOfCategories.get(categoryNames[maxIndex + indexOfUnknown]);
+		    type = new Byte((byte) (indexOfUnknown));
 		}
 		Vector dbOfCacheTypeforCategory = (Vector) tableOfCategory.get(type);
 		if (dbOfCacheTypeforCategory == null) {
@@ -176,19 +175,19 @@ public class POIExporter extends Exporter {
 				// make the name  for the gpx and icon
 				byte cacheType = ((Byte) cacheTypeEntry.getKey()).byteValue();
 				String name = "";
-				if (cacheType < lastCacheTypeNr) {
-				    name = (i < indexOfAvailable ? categoryNames[i] : "") + CacheType.typeImageNameForId(cacheType) + (i > indexOfAvailable ? categoryNames[i] : "");
+				if (cacheType >= 0) {
+				    name = CacheType.typeImageNameForId(cacheType);
 				} else {
-				    if (cacheType == (lastCacheTypeNr + indexOfFound))
-					name = categoryNames[indexOfFound];
-				    else if (cacheType == (lastCacheTypeNr + indexOfOwn))
-					name = categoryNames[indexOfOwn];
-				    else if (cacheType == (lastCacheTypeNr + indexOfUnknown))
-					name = categoryNames[indexOfUnknown];
-				    else if (cacheType == (lastCacheTypeNr + indexOfArchived))
-					name = categoryNames[indexOfArchived];
-				    else if (cacheType == (lastCacheTypeNr + indexOfDisabled))
-					name = categoryNames[indexOfDisabled];
+				    if (cacheType == (indexOfFound))
+					name = categoryNames[maxIndex + indexOfFound];
+				    else if (cacheType == (indexOfOwn))
+					name = categoryNames[maxIndex + indexOfOwn];
+				    else if (cacheType == (indexOfUnknown))
+					name = categoryNames[maxIndex + indexOfUnknown];
+				    else if (cacheType == (indexOfArchived))
+					name = categoryNames[maxIndex + indexOfArchived];
+				    else if (cacheType == (indexOfDisabled))
+					name = categoryNames[maxIndex + indexOfDisabled];
 				}
 				if (hasBitmaps)
 				    copyPoiIcon(targetDir, name, "", poiZip);

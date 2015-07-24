@@ -49,7 +49,6 @@ public class POIExporterScreen extends Form {
 
     // todo List or possible extensions:
     // deletion of old gpx and bmp
-    // adding Icons for Custom, Giga, Lab Caches respective the categories
     // auto Split Profiles to UnterVerzeichnisse(POI Databases)
     // auto Calling POILoader
     // Variable for LastFound , last5logs (in TemplateTable.java)
@@ -191,7 +190,11 @@ public class POIExporterScreen extends Form {
 	String sAnzLogs = this.inpAnzLogs.getText();
 	if (sAnzLogs.length() == 0)
 	    sAnzLogs = "-1";
-	anzLogs = Integer.parseInt(sAnzLogs);
+	try {
+	    anzLogs = Integer.parseInt(sAnzLogs);
+	} catch (Exception e) {
+	    anzLogs = 0;
+	}
 	return this.anzLogs;
     }
 
