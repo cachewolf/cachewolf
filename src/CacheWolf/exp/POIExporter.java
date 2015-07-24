@@ -26,6 +26,7 @@ import CacheWolf.Preferences;
 import CacheWolf.database.CacheHolder;
 import CacheWolf.database.CacheImages;
 import CacheWolf.database.CacheType;
+import CacheWolf.utils.FileBugfix;
 import CacheWolf.utils.STRreplace;
 import CacheWolf.utils.SafeXML;
 import CacheWolf.utils.URLUTF8Encoder;
@@ -40,6 +41,7 @@ import ewe.io.IOException;
 import ewe.io.InputStream;
 import ewe.sys.Time;
 import ewe.ui.FormBase;
+import ewe.util.Enumeration;
 import ewe.util.Hashtable;
 import ewe.util.Iterator;
 import ewe.util.Map.MapEntry;
@@ -161,6 +163,29 @@ public class POIExporter extends Exporter {
 			poiZip = new ZipFile(bitmapFileName);
 		} catch (IOException e) {
 		    Preferences.itself().log("GPX Export: warning GarminPOI.zip not found", e, true);
+		}
+
+		String profileName;
+		if (gui.getCreateProfileDir()) {
+		    profileName = MainForm.profile.name;
+		} else {
+		    profileName = "";
+		}
+		targetDir = targetDir + profileName + "/";
+		FileBugfix f = new FileBugfix(targetDir);
+		f.createDir();
+
+		if (gui.clearOutput()) {
+		    Enumeration ite = this.poiZip.entries();
+		    while (ite.hasMoreElements()) {
+			ZipEntry aZippedFile = (ZipEntry) ite.nextElement();
+			String fname = aZippedFile.getName();
+			FileBugfix fn = new FileBugfix(targetDir + fname);
+			fn.delete();
+			fname = STRreplace.replace(fname, ".bmp", ".gpx");
+			fn = new FileBugfix(targetDir + fname);
+			fn.delete();
+		    }
 		}
 
 		for (int i = 0; i < categoryNames.length; i++) {

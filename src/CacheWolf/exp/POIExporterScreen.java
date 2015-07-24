@@ -43,15 +43,15 @@ public class POIExporterScreen extends Form {
     private mInput inpCmt, inpAddiCmt; // <cmt>
     private mInput inpDesc, inpAddiDesc; // <desc>
     private mInput inpAnzLogs;
+    private mCheckBox chkCreateProfileDir;
     private mCheckBox chkAutoSplitByType;
+    private mCheckBox chkClearOutput;
     private String expName;
     private int anzLogs;
 
     // todo List or possible extensions:
-    // deletion of old gpx and bmp
-    // auto Split Profiles to UnterVerzeichnisse(POI Databases)
+    // auto Split into selected Profiles
     // auto Calling POILoader
-    // Variable for LastFound , last5logs (in TemplateTable.java)
     // Ask for ShortWaypoint length, Description Length, ...
 
     public POIExporterScreen(String expName) {
@@ -60,9 +60,15 @@ public class POIExporterScreen extends Form {
 	this.expName = expName;
 	this.setPreferredSize((int) (0.75 * Preferences.itself().getScreenWidth()), (int) (0.5 * Preferences.itself().getScreenHeight()));
 
+	chkCreateProfileDir = new mCheckBox(MyLocale.getMsg(2211, "Create subdirectory for the profile?"));
+	chkCreateProfileDir.setState(Boolean.valueOf(Preferences.itself().getExportPref(expName + "-createProfileDir")).booleanValue());
+	this.addLast(chkCreateProfileDir);
 	chkAutoSplitByType = new mCheckBox(MyLocale.getMsg(2210, "Split by cachetype?"));
 	chkAutoSplitByType.setState(Boolean.valueOf(Preferences.itself().getExportPref(expName + "-split")).booleanValue());
 	this.addLast(chkAutoSplitByType);
+	chkClearOutput = new mCheckBox(MyLocale.getMsg(2212, "Remove old output files?"));
+	chkClearOutput.setState(Boolean.valueOf(Preferences.itself().getExportPref(expName + "-clear")).booleanValue());
+	this.addLast(chkClearOutput);
 	// checkboxgroup for all pictures or Spoiler only
 	chkGroupFormat = new CheckBoxGroup();
 	chkNoPic = new mCheckBox(MyLocale.getMsg(2203, "No pictures"));
@@ -144,6 +150,14 @@ public class POIExporterScreen extends Form {
 	executePanel = new ExecutePanel(this);
     }
 
+    public boolean getCreateProfileDir() {
+	return this.chkCreateProfileDir.getState();
+    }
+
+    public boolean clearOutput() {
+	return this.chkClearOutput.getState();
+    }
+
     public boolean getAutoSplitByType() {
 	return chkAutoSplitByType.getState();
     }
@@ -204,8 +218,10 @@ public class POIExporterScreen extends Form {
 		this.close(FormBase.IDCANCEL);
 	    }
 	    if (ev.target == executePanel.applyButton) {
-		Preferences.itself().setExportPref(expName + "-split", SafeXML.strxmlencode(chkAutoSplitByType.getState()));
-		Preferences.itself().setExportPref(expName + "-picIndex", "" + chkGroupFormat.getSelectedIndex());
+		Preferences.itself().setExportPref(expName + "-createProfileDir", SafeXML.strxmlencode(this.chkCreateProfileDir.getState()));
+		Preferences.itself().setExportPref(expName + "-split", SafeXML.strxmlencode(this.chkAutoSplitByType.getState()));
+		Preferences.itself().setExportPref(expName + "-clear", SafeXML.strxmlencode(this.chkClearOutput.getState()));
+		Preferences.itself().setExportPref(expName + "-picIndex", "" + this.chkGroupFormat.getSelectedIndex());
 		Preferences.itself().setExportPref(expName + "-name", this.inpName.getText());
 		Preferences.itself().setExportPref(expName + "-cmt", this.inpCmt.getText());
 		Preferences.itself().setExportPref(expName + "-desc", this.inpDesc.getText());
@@ -213,6 +229,7 @@ public class POIExporterScreen extends Form {
 		Preferences.itself().setExportPref(expName + "-AddiCmt", this.inpAddiCmt.getText());
 		Preferences.itself().setExportPref(expName + "-AddiDesc", this.inpAddiDesc.getText());
 		Preferences.itself().setExportPref(expName + "-anzLogs", this.inpAnzLogs.getText());
+
 		this.close(FormBase.IDOK);
 	    }
 	}
