@@ -70,9 +70,9 @@ public class OCGPXfetch {
 	    if (ftmp.exists() && ftmp.length() > 0) {
 		GPXImporter gpx = new GPXImporter(tmpFile);
 		if (downloadPics)
-		    gpx.doIt(GPXImporter.DOIT_WITHSPOILER);
+		    gpx.doIt(GPXImporter.DOLOADPICTURES);
 		else
-		    gpx.doIt(GPXImporter.DOIT_NOSPOILER);
+		    gpx.doIt(GPXImporter.DONOTLOADPICTURES);
 	    }
 	    ftmp.delete();
 	} catch (IOException e) {

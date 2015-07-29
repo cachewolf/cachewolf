@@ -107,10 +107,10 @@ public class GpxExportNg {
 
     /** write single GPX file */
     final static int OUTPUT_SINGLE = 0;
-    /** write one gpx file per "type" as determined by garminmap.xml */
-    final static int OUTPUT_SEPARATE = 1;
-    /** write one gpi file per "type" as determined by garminmap.xml */
-    final static int OUTPUT_POI = 2;
+    /** write several gpx files (and bmp-files) corresponding to definition in garminmap.xml */
+    final static int OUTPUT_SEVERAL = 1;
+    /** write a gpi file (and bmp-files). Garmin-"database"-selection as defined by garminmap.xml */
+    final static int OUTPUT_GPI = 2;
 
     /** export is without groundspeak extensions */
     final static int NOGSEXTENSION = 0;
@@ -225,7 +225,7 @@ public class GpxExportNg {
 	    attrib2Log = exportOptions.getAttrib2Log();
 	}
 
-	if (this.outputStyle == OUTPUT_SEPARATE || this.outputStyle == OUTPUT_POI) {
+	if (this.outputStyle == OUTPUT_SEVERAL || this.outputStyle == OUTPUT_GPI) {
 	    outputToDir();
 	} else {
 	    outputToGPXFile();
@@ -250,7 +250,7 @@ public class GpxExportNg {
 	}
 
 	new File(outDir).mkdir();
-	if (outputStyle == OUTPUT_POI) {
+	if (outputStyle == OUTPUT_GPI) {
 	    // hier werden erstmal die gpx erzeugt
 	    tempDir = baseDir + FileBase.separator + "GPXExporterNG.tmp";
 	    new File(tempDir).mkdir();
@@ -321,7 +321,7 @@ public class GpxExportNg {
 		exportErrors++;
 	    }
 
-	    if (outputStyle == OUTPUT_POI) {
+	    if (outputStyle == OUTPUT_GPI) {
 		// only clean up output directory if user has chosen non empty prefix,
 		// since otherwise all present POI would be deleted
 		if (!prefix.equals("")) {
@@ -345,7 +345,7 @@ public class GpxExportNg {
 
 		writer.print("</gpx>" + newLine);
 		writer.close();
-		if (outputStyle == OUTPUT_POI) {
+		if (outputStyle == OUTPUT_GPI) {
 		    poiCounter++;
 		    h.progress = (float) poiCounter / (float) poiCategories;
 		    h.changed();
@@ -356,7 +356,7 @@ public class GpxExportNg {
 			continue;
 		    }
 
-		    if (outputStyle == OUTPUT_POI) {
+		    if (outputStyle == OUTPUT_GPI) {
 			String[] cmdStack = new String[9];
 			cmdStack[0] = Preferences.itself().gpsbabel;
 			cmdStack[1] = "-i";
@@ -383,7 +383,7 @@ public class GpxExportNg {
 	    }
 
 	    // temporäres Verzeichnis löschen (wird bei gpi nicht mehr gebraucht)
-	    if (outputStyle == OUTPUT_POI) {
+	    if (outputStyle == OUTPUT_GPI) {
 		File tmpdir = new File(tempDir);
 		String tmp[] = new FileBugfix(tempDir).list(prefix + "*.*", ewe.io.FileBase.LIST_FILES_ONLY);
 		for (int i = 0; i < tmp.length; i++) {
@@ -758,7 +758,7 @@ public class GpxExportNg {
 	if (ch.isSolved()) {
 	    // wir kennen die OriginalKoordinaten nicht, aber es gibt wohl nichts für nur corrected coordinates
 	    ret_____.append("      <gsak:LatBeforeCorrect>").append(ch.getWpt().getLatDeg(TransformCoordinates.DD)).append("</gsak:LatBeforeCorrect>").append(newLine) //
-		        .append("      <gsak:LonBeforeCorrect>").append(ch.getWpt().getLonDeg(TransformCoordinates.DD)).append("</gsak:LonBeforeCorrect>").append(newLine); //
+		    .append("      <gsak:LonBeforeCorrect>").append(ch.getWpt().getLonDeg(TransformCoordinates.DD)).append("</gsak:LonBeforeCorrect>").append(newLine); //
 	}
 	if (Preferences.itself().useGCFavoriteValue)
 	    ret_____.append("      <gsak:FavPoints>").append("" + ch.getNumRecommended()).append("</gsak:FavPoints>").append(newLine); //
@@ -1268,10 +1268,6 @@ public class GpxExportNg {
 	    // chIds.addItem(MyLocale.getMsg(31415,"Smart Names")); // index 2
 	    addLast(chWpNameStyle);
 
-	    addNext(lblSplitSize = new mLabel(MyLocale.getMsg(2019, "SplitSize")));
-	    ibSplitSize = new mInput("");
-	    addLast(ibSplitSize);
-
 	    addNext(lblAddiWithInvalidCoords = new mLabel(MyLocale.getMsg(2020, "Export Addis without coordinates?")));
 	    cbAddiWithInvalidCoords = new mCheckBox(" ");
 	    addLast(cbAddiWithInvalidCoords);
@@ -1305,6 +1301,10 @@ public class GpxExportNg {
 	    chOutput.addItem(MyLocale.getMsg(2009, "POI")); // index 2
 	    chOutput.select(outputStyle);
 	    addLast(chOutput);
+
+	    addNext(lblSplitSize = new mLabel(MyLocale.getMsg(2019, "SplitSize")));
+	    ibSplitSize = new mInput("");
+	    addLast(ibSplitSize);
 
 	    addNext(lblPrefix = new mLabel(MyLocale.getMsg(2016, "Prefix")));
 	    ibPrefix = new mInput("");
@@ -1388,6 +1388,7 @@ public class GpxExportNg {
 	    }
 
 	    if (outputStyle == OUTPUT_SINGLE) {
+		enable(lblSplitSize, ibSplitSize);
 		if (isGpsBabelInstalled)
 		    enable(lblSendToGarmin, cbSendToGarmin);
 		else {
@@ -1395,7 +1396,8 @@ public class GpxExportNg {
 		    cbSendToGarmin.setState(false);
 		}
 		disable(lblPrefix, ibPrefix);
-	    } else if (outputStyle == OUTPUT_SEPARATE) {
+	    } else if (outputStyle == OUTPUT_SEVERAL) {
+		disable(lblSplitSize, ibSplitSize);
 		disable(lblSendToGarmin, cbSendToGarmin);
 		cbSendToGarmin.setState(false);
 		if (hasIcons)
@@ -1405,7 +1407,8 @@ public class GpxExportNg {
 		    cbUseCustomIcons.setState(false);
 		}
 		enable(lblPrefix, ibPrefix);
-	    } else if (outputStyle == OUTPUT_POI) {
+	    } else if (outputStyle == OUTPUT_GPI) {
+		disable(lblSplitSize, ibSplitSize);
 		disable(lblUseCustomIcons, cbUseCustomIcons);
 		cbUseCustomIcons.setState(false);
 		disable(lblSendToGarmin, cbSendToGarmin);
@@ -1565,8 +1568,8 @@ public class GpxExportNg {
 		} else if (ev.target == this.btnFilename) {
 		    String tmp;
 		    switch (outputStyle) {
-		    case OUTPUT_SEPARATE:
-		    case OUTPUT_POI:
+		    case OUTPUT_SEVERAL:
+		    case OUTPUT_GPI:
 			tmp = this.getOutputTo(FileChooser.DIRECTORY_SELECT);
 			break;
 		    default:
@@ -1587,10 +1590,10 @@ public class GpxExportNg {
 	    case OUTPUT_SINGLE:
 		exportValues.put(SENDTOGARMIN, SafeXML.strxmlencode(cbSendToGarmin.getState()));
 		break;
-	    case OUTPUT_SEPARATE:
+	    case OUTPUT_SEVERAL:
 		exportValues.put(PREFIX, ibPrefix.text);
 		break;
-	    case OUTPUT_POI:
+	    case OUTPUT_GPI:
 		exportValues.put(PREFIX, ibPrefix.text);
 		break;
 	    }

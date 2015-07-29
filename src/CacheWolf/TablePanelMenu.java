@@ -103,7 +103,7 @@ public class TablePanelMenu extends MenuBar {
     private MenuItem mnuSeparator = new MenuItem("-");
     private MenuItem appMenuProfile, appMenuPreferences, appMenuContext, appMenuImport, appMenuExport, appMenuMaps, appMenuExit;
     private MenuItem searchMenuContinue, searchMenuStart, searchMenuClr;
-    private MenuItem loadcaches, loadOC, loadOCFinds;
+    private MenuItem importFromFiles, updateFindsFromFile, loadOC, loadOCFinds;
     private MenuItem downloadmap, kalibmap, importmap, selectMapPath;
     private MenuItem spider, spiderRoute, spiderAllFinds, loadGCVotes, fetchOCLink, update, chkVersion;
     private MenuItem about, wolflang, sysinfo, legend;
@@ -136,7 +136,8 @@ public class TablePanelMenu extends MenuBar {
     }
 
     private Menu makeImportSubMenu() {
-	MenuItem[] mnuImport = { loadcaches = new MenuItem(MyLocale.getMsg(129, "Import GPX")), //
+	MenuItem[] mnuImport = { importFromFiles = new MenuItem(MyLocale.getMsg(129, "from file")), //
+		updateFindsFromFile = new MenuItem(MyLocale.getMsg(321, "Finds from file")), // fieldnotes, ...
 		mnuSeparator, //
 		loadOC = new MenuItem(MyLocale.getMsg(130, "Download from opencaching")), //
 		loadOCFinds = new MenuItem(MyLocale.getMsg(163, "Finds from opencaching")), //
@@ -582,7 +583,7 @@ public class TablePanelMenu extends MenuBar {
 		OCLinkImporter.doIt();
 		tablePanel.resetModel();
 	    }
-	    if (mev.selectedItem == loadcaches) {
+	    if (mev.selectedItem == importFromFiles) {
 		String dir = Preferences.itself().getImporterPath("LocGpxImporter");
 		FileChooser fc = new FileChooser(FileChooserBase.OPEN | FileChooserBase.MULTI_SELECT, dir);
 		fc.addMask("*.gpx,*.zip,*.loc,*.txt,*.log,*.csv");
@@ -591,7 +592,7 @@ public class TablePanelMenu extends MenuBar {
 		    dir = fc.getChosenDirectory().toString();
 		    Preferences.itself().setImporterPath("LocGpxImporter", dir);
 		    String files[] = fc.getAllChosen();
-		    int how = GPXImporter.DOIT_ASK;
+		    int how = GPXImporter.ASKFORLOADINGPICTURES;
 		    for (int i = 0; i < files.length; i++) {
 			String file = dir + "/" + files[i];
 			if (file.endsWith("txt") || file.endsWith("log")) {
@@ -603,6 +604,32 @@ public class TablePanelMenu extends MenuBar {
 			} else if (file.endsWith("csv")) {
 			    CSVImporter mn = new CSVImporter(file);
 			    mn.doIt();
+			} else { // gpx + zip
+			    GPXImporter gpx = new GPXImporter(file);
+			    gpx.doIt(how);
+			    how = gpx.getHow();
+			}
+		    }
+		}
+		MainForm.profile.setShowBlacklisted(false);
+		setFiltBlackImage();
+		tablePanel.resetModel();
+	    }
+	    if (mev.selectedItem == updateFindsFromFile) {
+		String dir = Preferences.itself().getImporterPath("LocGpxImporter");
+		FileChooser fc = new FileChooser(FileChooserBase.OPEN | FileChooserBase.MULTI_SELECT, dir);
+		fc.addMask("*.gpx,*.zip,*.txt,*.log");
+		fc.setTitle(MyLocale.getMsg(909, "Select file(s)"));
+		if (fc.execute() != FormBase.IDCANCEL) {
+		    dir = fc.getChosenDirectory().toString();
+		    Preferences.itself().setImporterPath("LocGpxImporter", dir);
+		    String files[] = fc.getAllChosen();
+		    int how = GPXImporter.WRITEONLYOWNLOG;
+		    for (int i = 0; i < files.length; i++) {
+			String file = dir + "/" + files[i];
+			if (file.endsWith("txt") || file.endsWith("log")) {
+			    FieldnotesImporter fn = new FieldnotesImporter(file);
+			    fn.doIt();
 			} else { // gpx + zip
 			    GPXImporter gpx = new GPXImporter(file);
 			    gpx.doIt(how);

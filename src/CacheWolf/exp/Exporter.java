@@ -177,12 +177,12 @@ public class Exporter {
     private void exportCaches() {
 	String str;
 	for (int i = 0; i < DB.size(); i++) {
-	    doneTillNow++;
-	    h.progress = (float) doneTillNow / (float) anzVisibleCaches;
-	    h.changed();
 	    str = exportCache(i);
-	    if (str != null)
+	    if (str != null) {
+		h.progress = (float) doneTillNow / (float) anzVisibleCaches;
+		h.changed();
 		outWriter.write(str);
+	    }
 	}
     }
 
@@ -190,6 +190,7 @@ public class Exporter {
 	CacheHolder ch = (CacheHolder) DB.get(i);
 	String str = null;
 	if (ch.isVisible()) {
+	    doneTillNow++;
 	    if (ch.isIncomplete()) {
 		Preferences.itself().log("Incomplete waypoint " + ch.getCode(), null);
 		incompleteWaypoints++;

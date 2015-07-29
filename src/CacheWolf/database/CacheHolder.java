@@ -821,47 +821,10 @@ public class CacheHolder {
      *            If <code>true</code>, then <i>status</i>, <i>isFound</i> and <i>position</i> is updated, otherwise not.
      */
     public void update(CacheHolder ch) {
-
+	updateOwnLog(ch);
 	this.setNumFoundsSinceRecommendation(ch.getNumFoundsSinceRecommendation());
 	this.setNumRecommended(ch.getNumRecommended());
 	this.setIsPMCache(ch.isPMCache);
-	ch.setStatus(ch.status.trim());
-	if (ch.isFound()) {
-	    if (ch.status.length() == 0) {
-		// wenn kein Datum drin ist (also z.B. nicht von GC gespidert) 
-		ch.setStatus(CacheType.getFoundText(ch.type));
-	    }
-	}
-	/*
-	 * Here we have to distinguish several cases: 
-	 * this.isFound this.Status      ch.isFound   ch.Status    this.isFound this.Status 
-	 * --------------------------------------------------------------------------------
-	 *  true        Found            true         Date         =            ch.Status(if not empty ?== Date )
-	 *  true        yyyy-mm-dd       true         Date         =            ch.Status(if not empty ?== Date )
-	 *  true        yyyy-mm-dd hh:mm true         Date         =            ch.Status(Date)
-	 *  false       something        false        something    =            ch.Status(if not empty ?merge somehow ) 
-	 *  false       something        true         Date         true         ch.Status(if not empty ?== Date )
-	 */
-	if (this.isFound) {
-	    if (this.status.indexOf(":") < 0) {
-		if (ch.getStatus().length() > 0) {
-		    // ch.isFound
-		    this.setStatus(ch.getStatus());
-		}
-	    } else {
-		if (!Preferences.itself().keepTimeOnUpdate) {
-		    if (ch.getStatus().length() > 0) {
-			// ch.isFound
-			this.setStatus(ch.getStatus());
-		    }
-		}
-	    }
-	} else {
-	    if (ch.getStatus().length() > 0) {
-		this.setStatus(ch.getStatus());
-		this.setFound(ch.isFound());
-	    }
-	}
 
 	// Don't overwrite valid coordinates with invalid ones
 	if (ch.getWpt().isValid() || !this.wpt.isValid()) {
@@ -900,6 +863,51 @@ public class CacheHolder {
 
 	this.setAttribsAsBits(ch.getAttributesBits());
 	this.getDetails().update(ch.getDetails());
+    }
+
+    public void updateOwnLog(CacheHolder ch) {
+	ch.setStatus(ch.status.trim());
+	if (ch.isFound()) {
+	    if (ch.status.length() == 0) {
+		// wenn kein Datum drin ist (also z.B. nicht von GC gespidert) 
+		ch.setStatus(CacheType.getFoundText(ch.type));
+	    }
+	}
+	/*
+	 * Here we have to distinguish several cases: 
+	 * this.isFound this.Status      ch.isFound   ch.Status    this.isFound this.Status 
+	 * --------------------------------------------------------------------------------
+	 *  true        Found            true         Date         =            ch.Status(if not empty ?== Date )
+	 *  true        yyyy-mm-dd       true         Date         =            ch.Status(if not empty ?== Date )
+	 *  true        yyyy-mm-dd hh:mm true         Date         =            ch.Status(Date)
+	 *  false       something        false        something    =            ch.Status(if not empty ?merge somehow ) 
+	 *  false       something        true         Date         true         ch.Status(if not empty ?== Date )
+	 */
+	if (this.isFound) {
+	    if (this.status.indexOf(":") < 0) {
+		if (ch.getStatus().length() > 0) {
+		    // ch.isFound
+		    this.setStatus(ch.getStatus());
+		}
+	    } else {
+		if (!Preferences.itself().keepTimeOnUpdate) {
+		    if (ch.getStatus().length() > 0) {
+			// ch.isFound
+			this.setStatus(ch.getStatus());
+		    }
+		}
+	    }
+	} else {
+	    if (ch.getStatus().length() > 0) {
+		this.setStatus(ch.getStatus());
+		this.setFound(ch.isFound());
+	    }
+	}
+
+	if (ch.getDetails().getOwnLog() != null) {
+	    this.getDetails().setOwnLog(ch.getDetails().getOwnLog());
+	}
+
     }
 
     /**
