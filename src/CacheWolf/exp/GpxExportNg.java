@@ -622,14 +622,14 @@ public class GpxExportNg {
 		if (exportStyle == NOGSEXTENSION) {
 		    // no <cmt> in PQs / ?Myfinds (used for POI)
 		    ret.append("    <cmt>").append(SafeXML.cleanGPX(ch.getName()));
-		    ret.append("\n" + SafeXML.cleanGPX(Common.rot13(ch.getDetails().Hints)));
+		    ret.append("\n" + SafeXML.cleanGPX(Common.rot13(removeHTMLTags.replaceAll(handleLinebreaks.replaceAll(ch.getDetails().Hints)))));
 		    ret.append("</cmt>").append(newLine);
 		}
 	    } else {
 		// is ADDI
-		ret.append("    <cmt>").append(newLine);
+		ret.append("    <cmt>");
 		// ev zus maincachedetails Hints
-		ret.append(SafeXML.cleanGPX(ch.getDetails().LongDescription)).append(newLine);
+		ret.append(SafeXML.cleanGPX(ch.getDetails().LongDescription));
 		ret.append("</cmt>").append(newLine);
 	    }
 	}
