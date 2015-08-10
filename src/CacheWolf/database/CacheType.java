@@ -327,12 +327,19 @@ public final class CacheType {
      * 
      * @param typeId
      *            internal cache type id
-     * @return non qualified name of image
+     * @return name of image with extension
      */
     public static String typeImageForId(final byte typeId) {
 	return cTypRef[Ref_Index(typeId)]._imageName + ".png";
     }
 
+    /**
+     * map cache types to images
+     * 
+     * @param typeId
+     *            internal cache type id
+     * @return name of image without extension
+     */
     public static String typeImageNameForId(final byte typeId) {
 	return cTypRef[Ref_Index(typeId)]._imageName;
     }
@@ -573,8 +580,8 @@ final class CTyp {
 	_FilterStringPos = filterStringPos;
 	_FilterPattern = filterPattern;
 	if (!_imageName.equals("")) {
-	    _iconImage = GuiImageBroker.getCacheTypeImage("type/" + imageName);
-	    _mapImage = GuiImageBroker.getMapCacheTypeImage("type/" + imageName);
+	    _iconImage = GuiImageBroker.getCacheTypeImage(_imageName);
+	    _mapImage = GuiImageBroker.getMapCacheTypeImage(_imageName);
 	}
     }
 }
