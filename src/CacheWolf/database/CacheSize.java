@@ -65,6 +65,7 @@ public final class CacheSize {
     public static final String GC_SIZE_NOTCHOSEN = "Not chosen";
     public static final String GC_SIZE_OTHER = "Other";
     public static final String GC_SIZE_VIRTUAL = "Virtual";
+
     public static final String OCTC_SIZE_VERYLARGE = "Very large";
     public static final String OCTC_SIZE_NONE = "None";
 
@@ -102,26 +103,30 @@ public final class CacheSize {
     /** GUI image for large caches */
     public static final String CW_GUIIMG_LARGE = "sizeLarge";
     /** GUI image for non physical caches */
-    public static final String CW_GUIIMG_NONPHYSICAL = "sizeNonPhysical";
+    public static final String CW_GUIIMG_NOTCHOSEN = "sizeNotChosen";
+    public static final String CW_GUIIMG_OTHER = "sizeOther";
+    public static final String CW_GUIIMG_VIRTUAL = "sizeVirtual";
     /** GUI image for very large caches */
     public static final String CW_GUIIMG_VERYLARGE = "sizeVLarge";
 
     /*
-     * IDs for the sizePics[] array in TableModel therefore they must start with
+     * IDs for the mImage[] sizePics array in TableModel therefore they must start with
      * 0 and be consecutive
      */
     public static final byte CW_GUIIMGID_MICRO = 0;
     public static final byte CW_GUIIMGID_SMALL = 1;
     public static final byte CW_GUIIMGID_NORMAL = 2;
     public static final byte CW_GUIIMGID_LARGE = 3;
-    public static final byte CW_GUIIMGID_NONPHYSICAL = 4;
+    public static final byte CW_GUIIMGID_NOTCHOSEN = 4;
     public static final byte CW_GUIIMGID_VERYLARGE = 5;
+    public static final byte CW_GUIIMGID_OTHER = 6;
+    public static final byte CW_GUIIMGID_VIRTUAL = 7;
 
     /*
      * total number of different size images will be used to set the dimension
-     * of sizePics[] array in TableModel
+     * of mImage[] sizePics array in TableModel
      */
-    public static final byte CW_TOTAL_SIZE_IMAGES = 6;
+    public static final byte CW_TOTAL_SIZE_IMAGES = 8;
 
     /*
      * bit masks to be used with the filter function
@@ -131,8 +136,10 @@ public final class CacheSize {
     public static final byte CW_FILTER_NORMAL = 0x01 << 2;
     public static final byte CW_FILTER_LARGE = 0x01 << 3;
     public static final byte CW_FILTER_VERYLARGE = 0x01 << 4;
-    public static final byte CW_FILTER_NONPHYSICAL = 0x01 << 5;
-    public static final byte CW_FILTER_ALL = CW_FILTER_MICRO | CW_FILTER_SMALL | CW_FILTER_NORMAL | CW_FILTER_LARGE | CW_FILTER_NONPHYSICAL | CW_FILTER_VERYLARGE;
+    public static final byte CW_FILTER_NOTCHOSEN = 0x01 << 5;
+    public static final byte CW_FILTER_OTHER = 0x01 << 6;
+    public static final byte CW_FILTER_VIRTUAL = (byte) (0x01 << 7);
+    public static final byte CW_FILTER_ALL = CW_FILTER_MICRO | CW_FILTER_SMALL | CW_FILTER_NORMAL | CW_FILTER_LARGE | CW_FILTER_NOTCHOSEN | CW_FILTER_OTHER | CW_FILTER_VIRTUAL | CW_FILTER_VERYLARGE;
 
     /** thou shallst not instantiate this object */
     private CacheSize() { // Nothing to do
@@ -158,8 +165,12 @@ public final class CacheSize {
 	    return CW_GUIIMG_NORMAL + ".png";
 	case CW_GUIIMGID_LARGE:
 	    return CW_GUIIMG_LARGE + ".png";
-	case CW_GUIIMGID_NONPHYSICAL:
-	    return CW_GUIIMG_NONPHYSICAL + ".png";
+	case CW_GUIIMGID_NOTCHOSEN:
+	    return CW_GUIIMG_NOTCHOSEN + ".png";
+	case CW_GUIIMGID_OTHER:
+	    return CW_GUIIMG_OTHER + ".png";
+	case CW_GUIIMGID_VIRTUAL:
+	    return CW_GUIIMG_VIRTUAL + ".png";
 	case CW_GUIIMGID_VERYLARGE:
 	    return CW_GUIIMG_VERYLARGE + ".png";
 	default:
@@ -335,15 +346,15 @@ public final class CacheSize {
 	case CW_SIZE_LARGE:
 	    return CW_GUIIMGID_LARGE;
 	case CW_SIZE_NOTCHOSEN:
-	    return CW_GUIIMGID_NONPHYSICAL;
+	    return CW_GUIIMGID_NOTCHOSEN;
 	case CW_SIZE_OTHER:
-	    return CW_GUIIMGID_NONPHYSICAL;
+	    return CW_GUIIMGID_OTHER;
 	case CW_SIZE_VIRTUAL:
-	    return CW_GUIIMGID_NONPHYSICAL;
+	    return CW_GUIIMGID_VIRTUAL;
 	case CW_SIZE_VERYLARGE:
 	    return CW_GUIIMGID_VERYLARGE;
 	case CW_SIZE_NONE:
-	    return CW_GUIIMGID_NONPHYSICAL;
+	    return CW_GUIIMGID_NOTCHOSEN;
 	default:
 	    throw (new IllegalArgumentException("unmatched argument " + cacheSize + " in CacheSize guiSizeImage()"));
 	}
@@ -360,15 +371,15 @@ public final class CacheSize {
 	case CW_SIZE_LARGE:
 	    return CW_GUIIMG_LARGE;
 	case CW_SIZE_NOTCHOSEN:
-	    return CW_GUIIMG_NONPHYSICAL;
+	    return CW_GUIIMG_NOTCHOSEN;
 	case CW_SIZE_OTHER:
-	    return CW_GUIIMG_NONPHYSICAL;
+	    return CW_GUIIMG_OTHER;
 	case CW_SIZE_VIRTUAL:
-	    return CW_GUIIMG_NONPHYSICAL;
+	    return CW_GUIIMG_VIRTUAL;
 	case CW_SIZE_VERYLARGE:
 	    return CW_GUIIMG_VERYLARGE;
 	case CW_SIZE_NONE:
-	    return CW_GUIIMG_NONPHYSICAL;
+	    return CW_GUIIMG_NOTCHOSEN;
 	default:
 	    throw (new IllegalArgumentException("unmatched argument " + cacheSize + " in CacheSize guiSizeImage()"));
 	}
@@ -394,15 +405,15 @@ public final class CacheSize {
 	case CW_SIZE_LARGE:
 	    return CW_FILTER_LARGE;
 	case CW_SIZE_NOTCHOSEN:
-	    return CW_FILTER_NONPHYSICAL;
+	    return CW_FILTER_NOTCHOSEN;
 	case CW_SIZE_OTHER:
-	    return CW_FILTER_NONPHYSICAL;
+	    return CW_FILTER_OTHER;
 	case CW_SIZE_VIRTUAL:
-	    return CW_FILTER_NONPHYSICAL;
+	    return CW_FILTER_VIRTUAL;
 	case CW_SIZE_VERYLARGE:
 	    return CW_FILTER_VERYLARGE;
 	case CW_SIZE_NONE:
-	    return CW_FILTER_NONPHYSICAL;
+	    return CW_FILTER_NOTCHOSEN;
 	default:
 	    throw (new IllegalArgumentException("unmatched argument " + size + " in CacheSize getFilterPattern()"));
 	}
@@ -431,13 +442,13 @@ public final class CacheSize {
 	case CW_SIZE_NOTCHOSEN:
 	    return "n";
 	case CW_SIZE_OTHER:
-	    return "n";
+	    return "o";
 	case CW_SIZE_VIRTUAL:
-	    return "n";
-	case CW_SIZE_VERYLARGE:
 	    return "v";
+	case CW_SIZE_VERYLARGE:
+	    return "h";
 	case CW_SIZE_NONE:
-	    return "n";
+	    return "-";
 	default:
 	    throw (new IllegalArgumentException("unmatched argument " + size + " in CacheSize getExportShortId()"));
 	}

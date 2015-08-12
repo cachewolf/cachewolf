@@ -235,11 +235,11 @@ public class CSVImporter {
 		CWPoint coord = new CWPoint(s);
 		l[LAT] = "" + coord.latDec;
 		l[LON] = "" + coord.lonDec;
-	    } else if (header[i].equalsIgnoreCase("WAYPOINT") || header[i].equalsIgnoreCase("WP")) {
+	    } else if (header[i].equalsIgnoreCase("WAYPOINT") || header[i].equalsIgnoreCase("WP") || header[i].equalsIgnoreCase("Wegpunkt") || (header[i].toLowerCase().indexOf("gc") > -1 && header[i].toLowerCase().indexOf("code") > -1)) {
 		l[WAYPOINT] = ds[i]; // 2.
 	    } else if (header[i].equalsIgnoreCase("USERNAME") || header[i].equalsIgnoreCase("OWNER")) {
 		l[OWNER] = ds[i]; // 3.
-	    } else if (header[i].equalsIgnoreCase("CACHENAME")) {
+	    } else if (header[i].equalsIgnoreCase("CACHENAME") || header[i].equalsIgnoreCase("CACHE NAME")) {
 		l[CACHENAME] = ds[i]; // 4.
 	    } else if (header[i].equalsIgnoreCase("FRIENDLYNAME")) {
 		l[CACHENAME] = ds[i]; // 4.
@@ -261,7 +261,7 @@ public class CSVImporter {
 	    }
 	}
 	// 0. + 1. Koordinaten
-	CWPoint tmpPos = new CWPoint();
+	CWPoint tmpPos = new CWPoint(Preferences.itself().curCentrePt);
 	try {
 	    double lat = Common.parseDoubleException(l[LAT]);
 	    double lon = Common.parseDoubleException(l[LON]);
@@ -275,8 +275,9 @@ public class CSVImporter {
 		return false;
 	    }
 	} catch (Exception e) {
-	    Preferences.itself().log("Error CSVImporter at: " + l[CACHENAME] + "(" + l[LAT] + " " + l[LON] + ")", e);
-	    return false;
+	    // Use default coordinates (for only import GCCode)
+	    // Preferences.itself().log("Error CSVImporter at: " + l[CACHENAME] + "(" + l[LAT] + " " + l[LON] + ")", e);
+	    // return false;	    
 	}
 	// 2. Wegpunkt
 	String wayPoint;

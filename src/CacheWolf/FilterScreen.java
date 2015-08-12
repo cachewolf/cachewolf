@@ -87,7 +87,7 @@ public class FilterScreen extends Form {
     private myChkBox addiWptChk;
     //
     private mCheckBox chkParking, chkStage, chkQuestion, chkFinal, chkTrailhead, chkReference;
-    private mCheckBox chkMicro, chkSmall, chkRegular, chkLarge, chkVeryLarge, chkOther;
+    private mCheckBox chkMicro, chkSmall, chkRegular, chkLarge, chkVeryLarge, chkOther, chkNotChosen, chkSizeVirtual;
     private mCheckBox chkPremium, chkNoPremium, chkSolved, chkNotSolved, chkFound, chkNotFound, chkOwned, chkNotOwned, chkArchived, chkNotArchived, chkAvailable, chkNotAvailable;
     private mCheckBox chkNW, chkNNW, chkN, chkNNE, chkNE, chkENE, chkE, chkESE, chkSE, chkSSE, chkS, chkSSW, chkSW, chkWSW, chkW, chkWNW, chkNoCoord;
     private mComboBox chcStatus;
@@ -360,8 +360,12 @@ public class FilterScreen extends Form {
 	pnlContainerList.addLast(chkLarge = new mCheckBox("Large"), HGROW, FILL);
 	pnlContainerList.addNext(addImg(new Image(CacheSize.CW_GUIIMG_VERYLARGE + ".png")), HSHRINK, HCONTRACT);
 	pnlContainerList.addLast(chkVeryLarge = new mCheckBox("Very Large"), HGROW, FILL);
-	pnlContainerList.addNext(addImg(new Image(CacheSize.CW_GUIIMG_NONPHYSICAL + ".png")), HSHRINK, HCONTRACT);
+	pnlContainerList.addNext(addImg(new Image(CacheSize.CW_GUIIMG_OTHER + ".png")), HSHRINK, HCONTRACT);
 	pnlContainerList.addLast(chkOther = new mCheckBox("Other"), HGROW, FILL);
+	pnlContainerList.addNext(addImg(new Image(CacheSize.CW_GUIIMG_NOTCHOSEN + ".png")), HSHRINK, HCONTRACT);
+	pnlContainerList.addLast(chkNotChosen = new mCheckBox("Not chosen"), HGROW, FILL);
+	pnlContainerList.addNext(addImg(new Image(CacheSize.CW_GUIIMG_VIRTUAL + ".png")), HSHRINK, HCONTRACT);
+	pnlContainerList.addLast(chkSizeVirtual = new mCheckBox("Virtual"), HGROW, FILL);
 	pnlContainerList.addLast(new mLabel(""), VSTRETCH, HCONTRACT);
 
 	//////////////////////////
@@ -637,6 +641,8 @@ public class FilterScreen extends Form {
 	chkLarge.state = fltSize.charAt(3) == '1';
 	chkVeryLarge.state = fltSize.charAt(4) == '1';
 	chkOther.state = fltSize.charAt(5) == '1';
+	chkNotChosen.state = fltSize.charAt(6) == '1';
+	chkSizeVirtual.state = fltSize.charAt(7) == '1';
 
 	//////////////////////////
 	// Panel 7 - Search
@@ -736,11 +742,11 @@ public class FilterScreen extends Form {
 	btnTypes.repaint();
 
 	// Panel 6 - Cache container
-	if (!(chkMicro.state && chkSmall.state && chkRegular.state && chkLarge.state && chkVeryLarge.state && chkOther.state))
+	if (!(chkMicro.state && chkSmall.state && chkRegular.state && chkLarge.state && chkVeryLarge.state && chkOther.state && chkNotChosen.state && chkSizeVirtual.state))
 	    btnContainer.backGround = COLOR_FILTERACTIVE;
 	else
 	    btnContainer.backGround = COLOR_FILTERINACTIVE;
-	if (!(chkMicro.state || chkSmall.state || chkRegular.state || chkLarge.state || chkVeryLarge.state || chkOther.state))
+	if (!(chkMicro.state || chkSmall.state || chkRegular.state || chkLarge.state || chkVeryLarge.state || chkOther.state || chkNotChosen.state || chkSizeVirtual.state))
 	    btnContainer.backGround = COLOR_FILTERALL;
 	btnContainer.repaint();
 
@@ -970,7 +976,8 @@ public class FilterScreen extends Form {
 	data.setFilterRose((chkNW.state ? "1" : "0") + (chkNNW.state ? "1" : "0") + (chkN.state ? "1" : "0") + (chkNNE.state ? "1" : "0") + (chkNE.state ? "1" : "0") + (chkENE.state ? "1" : "0") + (chkE.state ? "1" : "0")
 		+ (chkESE.state ? "1" : "0") + (chkSE.state ? "1" : "0") + (chkSSE.state ? "1" : "0") + (chkS.state ? "1" : "0") + (chkSSW.state ? "1" : "0") + (chkSW.state ? "1" : "0") + (chkWSW.state ? "1" : "0") + (chkW.state ? "1" : "0")
 		+ (chkWNW.state ? "1" : "0"));
-	data.setFilterSize((chkMicro.state ? "1" : "0") + (chkSmall.state ? "1" : "0") + (chkRegular.state ? "1" : "0") + (chkLarge.state ? "1" : "0") + (chkVeryLarge.state ? "1" : "0") + (chkOther.state ? "1" : "0"));
+	data.setFilterSize((chkMicro.state ? "1" : "0") + (chkSmall.state ? "1" : "0") + (chkRegular.state ? "1" : "0") + (chkLarge.state ? "1" : "0") + (chkVeryLarge.state ? "1" : "0") + (chkOther.state ? "1" : "0")
+		+ (chkNotChosen.state ? "1" : "0") + (chkSizeVirtual.state ? "1" : "0"));
 
 	// Distance: If Metric system is set to imperial units,
 	//           then the entered value is meant to be miles,

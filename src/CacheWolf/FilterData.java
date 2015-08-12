@@ -35,7 +35,7 @@ public class FilterData {
     public final static String FILTERTYPE = "111111111111111111111";
     public final static String FILTERROSE = "1111111111111111";
     public final static String FILTERVAR = "111111111111";
-    public final static String FILTERSIZE = "111111";
+    public final static String FILTERSIZE = "11111111";
 
     private String filterType = new String(FILTERTYPE);
     private String filterRose = new String(FILTERROSE);
