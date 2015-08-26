@@ -154,7 +154,7 @@ public class HTMLExporter {
 			    usrImg.clear();
 			    for (int j = 0; j < det.userImages.size(); j++) {
 				usrImgParams = new Hashtable();
-				String usrImgFile = new String(det.userImages.get(j).getFilename());
+				String usrImgFile = det.userImages.get(j).getFilename();
 				usrImgParams.put("FILE", usrImgFile);
 				usrImgParams.put("TEXT", det.userImages.get(j).getTitle());
 				if (Files.copy(MainForm.profile.dataDir + usrImgFile, targetDir + usrImgFile))
@@ -170,7 +170,7 @@ public class HTMLExporter {
 			    mapImg.clear();
 			    mapImgParams = new Hashtable();
 
-			    String mapImgFile = new String(ch.getCode() + "_map.gif");
+			    String mapImgFile = ch.getCode() + "_map.gif";
 			    // check if map file exists
 			    File test = new File(MainForm.profile.dataDir + mapImgFile);
 

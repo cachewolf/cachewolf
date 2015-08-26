@@ -195,11 +195,11 @@ public class OCXMLImporter extends MinML {
 	    new InfoBox(MyLocale.getMsg(5500, "Error"), "Coordinates for centre must be set").wait(FormBase.OKB);
 	    return;
 	}
-	final ImportGui importGui = new ImportGui(MyLocale.getMsg(130, "Download from opencaching"), ImportGui.ALL | ImportGui.DIST | ImportGui.IMAGES | ImportGui.INCLUDEFOUND | ImportGui.HOST);
+	final ImportGui importGui = new ImportGui(MyLocale.getMsg(130, "Download from opencaching"), ImportGui.ALL | ImportGui.DIST | ImportGui.INCLUDEFOUND | ImportGui.HOST, ImportGui.DESCRIPTIONIMAGE | ImportGui.SPOILERIMAGE | ImportGui.LOGIMAGE);
 	if (importGui.execute() == FormBase.IDCANCEL) {
 	    return;
 	}
-	downloadPics = importGui.downloadPics;
+	downloadPics = importGui.downloadDescriptionImages;
 	Vm.showWait(true);
 	String dist = importGui.maxDistanceInput.getText();
 	incFinds = !importGui.foundCheckBox.getState();
@@ -602,8 +602,6 @@ public class OCXMLImporter extends MinML {
 	}
 	if (name.equals("userid")) {
 	    holder.setOwner(strData);
-	    if (holder.getOwner().equalsIgnoreCase(Preferences.itself().myAlias) || (holder.getOwner().equalsIgnoreCase(Preferences.itself().myAlias2)))
-		holder.setOwned(true);
 	    return;
 	}
 
@@ -758,8 +756,7 @@ public class OCXMLImporter extends MinML {
 	}
 	if (name.equals("picture")) {
 	    inf.setInfo(MyLocale.getMsg(1613, "Pictures:") + " " + ++picCnt);
-	    // String fileName = holder.wayPoint + "_" + picUrl.substring(picUrl.lastIndexOf("/")+1);
-	    final CacheImage ii = new CacheImage();
+	    final CacheImage ii = new CacheImage(CacheImage.FROMUNKNOWN);
 	    ii.setTitle(picTitle);
 	    ii.setURL(picUrl);
 	    getPic(ii);
@@ -827,7 +824,7 @@ public class OCXMLImporter extends MinML {
 		inf.addWarning("\n" + ErrMessage);
 		Preferences.itself().log(ErrMessage, e);
 	    }
-	    final CacheImage imageInfo = new CacheImage();
+	    final CacheImage imageInfo = new CacheImage(CacheImage.FROMDESCRIPTION);
 	    imageInfo.setURL(fetchUrl);
 	    imageInfo.setTitle(imgAltText);
 	    getPic(imageInfo);

@@ -325,13 +325,13 @@ public class TablePanelMenu extends MenuBar {
     public void updateSelectedCaches() {
 	CacheDB cacheDB = MainForm.profile.cacheDB;
 	CacheHolder ch;
-	ImportGui importGui = new ImportGui(MyLocale.getMsg(1014, "updateSelectedCaches"), ImportGui.IMAGES | ImportGui.TRAVELBUGS | ImportGui.ALL);
+	ImportGui importGui = new ImportGui(MyLocale.getMsg(1014, "updateSelectedCaches"), ImportGui.TRAVELBUGS | ImportGui.ALL, ImportGui.DESCRIPTIONIMAGE | ImportGui.SPOILERIMAGE | ImportGui.LOGIMAGE);
 	if (importGui.execute() == FormBase.IDCANCEL) {
 	    return;
 	}
 
 	GCImporter gcImporter = new GCImporter();
-	gcImporter.setDownloadPics(importGui.downloadPics);
+	gcImporter.setImportGui(importGui);
 	gcImporter.setMaxLogsToSpider(Preferences.itself().maxLogsToSpider);
 
 	OCXMLImporter ocSync = new OCXMLImporter();

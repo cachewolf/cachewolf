@@ -150,7 +150,7 @@ public class CWGPSPoint extends CWPoint implements TimerProc {
 	Time currTime = new Time();
 	currTime.getTime();
 	currTime.setFormat("yyyyMMdd'_'HHmm");
-	String logFileName = new String(logFileDir + currTime.toString() + ".log");
+	String logFileName = logFileDir + currTime.toString() + ".log";
 	// create Logfile
 	try {
 	    logFile = new FileWriter(logFileName);

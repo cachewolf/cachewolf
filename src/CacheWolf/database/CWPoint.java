@@ -665,7 +665,7 @@ public class CWPoint extends CoordinatePoint {
      */
     private static String getDirectionFromBearing(double wert) {
 	//System.out.println(wert);
-	String strBear = new String();
+	String strBear = "";
 	double stVal = -11.25;
 	if (wert >= stVal)
 	    strBear = "N";

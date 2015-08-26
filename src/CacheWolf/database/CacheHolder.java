@@ -173,7 +173,7 @@ public class CacheHolder {
     public CacheHolder(String cache, int version) {
 	int start, end;
 	try {
-	    if (version == 3) {
+	    if (version == 3 || version == 4) {
 		start = cache.indexOf('"') + 1;
 		end = cache.indexOf('"', start);
 		this.name = SafeXML.html2iso8859s1(cache.substring(start, end));
@@ -365,8 +365,11 @@ public class CacheHolder {
      * @param owner
      */
     public void setOwner(String owner) {
-	MainForm.profile.notifyUnsavedChanges(!owner.equals(this.owner));
-	this.owner = owner;
+	if (!this.owner.equals(owner)) {
+	    MainForm.profile.notifyUnsavedChanges(true);
+	    this.owner = owner;
+	    this.isOwned = (this.owner.length() > 0) && (this.owner.equalsIgnoreCase(Preferences.itself().myAlias) || this.owner.equalsIgnoreCase(Preferences.itself().myAlias2));
+	}
     }
 
     /**Byte 1: The difficulty of the cache from 10 to 50 in 5 incements */
@@ -567,8 +570,20 @@ public class CacheHolder {
      * @param isOwned
      */
     public void setOwned(boolean isOwned) {
-	MainForm.profile.notifyUnsavedChanges(isOwned != this.isOwned);
-	this.isOwned = isOwned;
+	if (this.isOwned != isOwned) {
+	    MainForm.profile.notifyUnsavedChanges(true);
+	    this.isOwned = isOwned;
+	    if (isOwned) {
+		if (this.owner.length() == 0) {
+		    this.isOwned = false;
+		} else {
+		    // owner ist nicht myAlias oder myAlias2
+		    if (!(this.owner.equalsIgnoreCase(Preferences.itself().myAlias) || this.owner.equalsIgnoreCase(Preferences.itself().myAlias2))) {
+			this.isOwned = false;
+		    }
+		}
+	    }
+	}
     }
 
     /** Bit 7: True if we have found this cache */
@@ -990,7 +1005,14 @@ public class CacheHolder {
 
     public void setAttributesFromMainCache() {
 	CacheHolder mainCh = this.mainCache;
-	this.setOwner(mainCh.getOwner());
+	if (!this.owner.equalsIgnoreCase(mainCh.getOwner())) {
+	    this.owner = mainCh.getOwner();
+	    MainForm.profile.notifyUnsavedChanges(true);
+	}
+	if (this.isOwned != mainCh.isOwned()) {
+	    this.isOwned = mainCh.isOwned();
+	    MainForm.profile.notifyUnsavedChanges(true);
+	}
 	if (mainCh.isFound()) {
 	    if (!this.isFound) {
 		this.setStatus(mainCh.getStatus());
@@ -1009,7 +1031,6 @@ public class CacheHolder {
 	this.setArchived(mainCh.isArchived());
 	this.setAvailable(mainCh.isAvailable());
 	this.setBlack(mainCh.isBlack());
-	this.setOwned(mainCh.isOwned());
 	this.setNew(mainCh.isNew());
     }
 

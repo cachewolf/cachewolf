@@ -62,7 +62,6 @@ import ewe.io.File;
 import ewe.io.FileBase;
 import ewe.io.FileInputStream;
 import ewe.net.URL;
-import ewe.sys.Convert;
 import ewe.sys.Time;
 import ewe.sys.Vm;
 import ewe.ui.FormBase;
@@ -130,6 +129,7 @@ public class GCImporter {
 
     private static Regex difficultyRex;
     private static Regex terrainRex;
+    private static Regex backgroundImageUrlRex;
     private static Regex cacheTypeRex;
     private static Regex cacheNameRex;
     private static Regex cacheOwnerRex;
@@ -189,7 +189,9 @@ public class GCImporter {
     private InfoBox infB;
 
     private ImportGui importGui;
-    private boolean downloadPics;
+    private boolean downloadDescriptionImages;
+    private boolean downloadSpoilerImages;
+    private boolean downloadLogImages;
     private byte restrictedCacheType = 0;
     private String cacheTypeRestriction;
     private static double minDistance = 0;
@@ -225,6 +227,10 @@ public class GCImporter {
 
     private static final String iconsRelativePath = "<img src=\"/images/icons/";
 
+    boolean shortDescRex_not_yet_found = true;
+    private char imageSource;
+    private String backgroudImageName;
+
     public GCImporter() {
 	initialiseProperties();
     }
@@ -252,6 +258,8 @@ public class GCImporter {
 
 	    difficultyRex = new Regex(p.getProp("difficultyRex"));
 	    terrainRex = new Regex(p.getProp("terrainRex"));
+	    // <body background="http://img.geocaching.com/cache/thumb/90bd7b72-98b3-40a1-824d-e9c3a8187ba4.jpg" class="CacheDetailsPage">
+	    backgroundImageUrlRex = new Regex("background=\"(.*?)\" class");
 	    cacheTypeRex = new Regex(p.getProp("cacheTypeRex"));
 	    cacheNameRex = new Regex(p.getProp("cacheNameRex"));
 	    cacheOwnerRex = new Regex(p.getProp("cacheOwnerRex"));
@@ -310,8 +318,15 @@ public class GCImporter {
 	}
     }
 
-    public void setDownloadPics(boolean downloadPics) {
-	this.downloadPics = downloadPics;
+    public void setImportGui(ImportGui importGui) {
+	this.importGui = importGui;
+	downloadDescriptionImages = importGui.downloadDescriptionImages;
+	downloadSpoilerImages = importGui.downloadSpoilerImages;
+	downloadLogImages = importGui.downloadLogImages;
+	// Einstellung bei Funden nicht speichern (sollte man extra speichern)
+	Preferences.itself().downloadDescriptionImages = downloadDescriptionImages;
+	Preferences.itself().downloadSpoilerImages = downloadSpoilerImages;
+	Preferences.itself().downloadLogImages = downloadLogImages;
     }
 
     public void setMaxLogsToSpider(int maxLogs) {
@@ -380,7 +395,9 @@ public class GCImporter {
 
 		Preferences.itself().log("Download properties : " + Preferences.NEWLINE //
 			+ "maxLogs: " + maxLogs + Preferences.NEWLINE //
-			+ "with pictures     : " + (!downloadPics ? "no" : "yes") + Preferences.NEWLINE //
+			+ "with Descr. images: " + (!downloadDescriptionImages ? "no" : "yes") + Preferences.NEWLINE //
+			+ "with Spoil. images: " + (!downloadSpoilerImages ? "no" : "yes") + Preferences.NEWLINE //
+			+ "with Log    images: " + (!downloadLogImages ? "no" : "yes") + Preferences.NEWLINE //
 			+ "with tb           : " + (!Preferences.itself().downloadTBs ? "no" : "yes") + Preferences.NEWLINE //
 		);
 
@@ -745,13 +762,13 @@ public class GCImporter {
     }
 
     private boolean doDownloadGui(int menu) {
-	int options = ImportGui.ISGC | ImportGui.IMAGES | ImportGui.TRAVELBUGS;
+	int options = ImportGui.ISGC | ImportGui.TRAVELBUGS;
 	if (spiderAllFinds) {
 	    options = options | ImportGui.MAXUPDATE | ImportGui.MAXLOGS;
 	    if (Preferences.itself().askForMaxNumbersOnImport) {
 		options = options | ImportGui.MAXNUMBER;
 	    }
-	    importGui = new ImportGui(MyLocale.getMsg(217, "Spider all finds from geocaching.com"), options);
+	    importGui = new ImportGui(MyLocale.getMsg(217, "Spider all finds from geocaching.com"), options, ImportGui.DESCRIPTIONIMAGE | ImportGui.SPOILERIMAGE | ImportGui.LOGIMAGE);
 	    // setting defaults for input
 	    importGui.maxNumberUpdates.setText("0");
 	} else if (menu == 0) {
@@ -759,10 +776,10 @@ public class GCImporter {
 	    if (Preferences.itself().askForMaxNumbersOnImport) {
 		options = options | ImportGui.MAXNUMBER | ImportGui.MAXUPDATE | ImportGui.MAXLOGS;
 	    }
-	    importGui = new ImportGui(MyLocale.getMsg(131, "Download from geocaching.com"), options);
+	    importGui = new ImportGui(MyLocale.getMsg(131, "Download from geocaching.com"), options, ImportGui.DESCRIPTIONIMAGE | ImportGui.SPOILERIMAGE | ImportGui.LOGIMAGE);
 	} else if (menu == 1) {
 	    options = options | ImportGui.TYPE | ImportGui.DIST | ImportGui.INCLUDEFOUND | ImportGui.FILENAME;
-	    importGui = new ImportGui(MyLocale.getMsg(137, "Download along a Route from geocaching.com"), options);
+	    importGui = new ImportGui(MyLocale.getMsg(137, "Download along a Route from geocaching.com"), options, ImportGui.DESCRIPTIONIMAGE | ImportGui.SPOILERIMAGE | ImportGui.LOGIMAGE);
 	    importGui.maxDistanceInput.setText("0.5");
 
 	} else {
@@ -774,9 +791,14 @@ public class GCImporter {
 	    return false;
 	}
 
-	downloadPics = importGui.downloadPics;
+	downloadDescriptionImages = importGui.downloadDescriptionImages;
+	downloadSpoilerImages = importGui.downloadSpoilerImages;
+	downloadLogImages = importGui.downloadLogImages;
 	if (!spiderAllFinds) {
-	    Preferences.itself().downloadPics = downloadPics;
+	    // Einstellung bei Funden nicht speichern (sollte man extra speichern)
+	    Preferences.itself().downloadDescriptionImages = downloadDescriptionImages;
+	    Preferences.itself().downloadSpoilerImages = downloadSpoilerImages;
+	    Preferences.itself().downloadLogImages = downloadLogImages;
 	}
 
 	//
@@ -1284,10 +1306,6 @@ public class GCImporter {
 		    cacheInDB.initStates(false);
 		    if (!Preferences.itself().useGCFavoriteValue)
 			ch.setNumRecommended(cacheInDB.getNumRecommended()); // gcvote Bewertung bleibt erhalten
-		    if (!downloadPics) {
-			// use existing images, if not downloaded
-			ch.getDetails().images = cacheInDB.getDetails().images;
-		    }
 		    cacheInDB.update(ch);
 		    cacheInDB.saveCacheDetails();
 		}
@@ -1989,6 +2007,7 @@ public class GCImporter {
     private int getCacheByWaypointName(CacheHolder ch, boolean fetchTBs) {
 	int ret = SPIDER_OK;
 	ch.setIncomplete(true);
+	// if ch is a new object, the <cache>.xml is read again as a new object
 	CacheHolderDetail chD = ch.getDetails();
 	while (true) { // retry even if failure
 	    // Preferences.itself().log(""); // new line for more overview
@@ -2017,7 +2036,6 @@ public class GCImporter {
 		    try {
 			ch.isHTML(true);
 			ch.addiWpts.clear();
-			chD.images.clear();
 
 			ch.setAvailable(!(wayPointPage.indexOf(unavailableGeocache) > -1));
 			ch.setArchived(wayPointPage.indexOf(archivedGeocache) > -1);
@@ -2029,14 +2047,15 @@ public class GCImporter {
 
 			// order of occurrence in wayPointPage 
 			wayPointPageIndex = 0;
+			// from <head
 			ch.setDifficulty(wayPointPageGetDiff());
 			ch.setTerrain(wayPointPageGetTerr());
+			// from <body
+			this.backgroudImageName = wayPointPageGetBackgroundImageUrl();
 			ch.setType(wayPointPageGetType());
 			ch.setName(wayPointPageGetName());
 			String owner = wayPointPageGetOwner();
 			ch.setOwner(owner);
-			if (owner.equalsIgnoreCase(Preferences.itself().myAlias) || owner.equalsIgnoreCase(Preferences.itself().myAlias2))
-			    ch.setOwned(true);
 			ch.setHidden(wayPointPageGetDateHidden());
 			ch.setSize(wayPointPageGetSize());
 			if (Preferences.itself().useGCFavoriteValue)
@@ -2070,9 +2089,7 @@ public class GCImporter {
 			if (fetchTBs)
 			    getBugs(chD);
 			ch.hasBugs(chD.Travelbugs.size() > 0);
-			if (downloadPics) {
-			    this.getImages(chD);
-			}
+			this.getImages(chD);
 
 			chD.setGCNotes(getNotes());
 			getAddWaypoints(wayPointPage, ch.getCode(), ch.isFound());
@@ -2127,6 +2144,24 @@ public class GCImporter {
 	    Preferences.itself().log("[SpiderGC.java:getTerr]check terrainRex!", null);
 	    return CacheTerrDiff.v1Converter("-1");
 	}
+    }
+
+    private String wayPointPageGetBackgroundImageUrl() {
+	backgroundImageUrlRex.searchFrom(wayPointPage, wayPointPageIndex);
+	if (backgroundImageUrlRex.didMatch()) {
+	    wayPointPageIndex = backgroundImageUrlRex.matchedTo();
+	    String ret = backgroundImageUrlRex.stringMatched(1);
+	    int fnStart = ret.lastIndexOf('/');
+	    if (fnStart > 0)
+		ret = ret.substring(fnStart).toLowerCase();
+	    fnStart = ret.lastIndexOf('?');
+	    if (fnStart > 0)
+		ret = ret.substring(0, fnStart);
+	    if (ret.length() > 36)
+		ret = ret.substring(0, 37);
+	    return ret;
+	}
+	return "";
     }
 
     private byte wayPointPageGetType() {
@@ -2214,8 +2249,6 @@ public class GCImporter {
 	    return "";
 	}
     }
-
-    boolean shortDescRex_not_yet_found = true;
 
     public String getDescription() {
 	wayPointPageIndex = 0;
@@ -2462,6 +2495,10 @@ public class GCImporter {
 	}
     }
 
+    Vector spideredUrls;
+    CacheImages oldImages;
+    int spiderCounter;
+
     /**
      * prerequisites:
      * chD.LongDescription must be filled
@@ -2470,8 +2507,24 @@ public class GCImporter {
      * @param chD
      */
     public void getImages(CacheHolderDetail chD) {
+	// an existing <cache>.xml has been read again (on getting chD)
+	// (and is an other object than that in the DB)
+	// So the already downloaded images are listed in chD.images
+	// But we will buils this list from clean
+	chD.images.clear();
+	spideredUrls = new Vector();
+	spiderCounter = 0; // the first file
+
+	// First: Get current image object of waypoint before spidering images.
+	String wayPoint = chD.getParent().getCode();
+	final CacheHolder oldCh = MainForm.profile.cacheDB.get(wayPoint);
+	if (oldCh != null)
+	    oldImages = oldCh.getDetails().images;
+	else
+	    oldImages = new CacheImages();
 	this.getDescriptionImages(chD);
 	this.getSpoilerImages(chD);
+	this.getLogImages(chD);
 	this.cleanupOldImages(chD);
     }
 
@@ -2482,6 +2535,8 @@ public class GCImporter {
      * @param chD
      */
     private void getDescriptionImages(CacheHolderDetail chD) {
+	imageSource = CacheImage.FROMDESCRIPTION;
+	String wayPoint = chD.getParent().getCode().toLowerCase();
 	// ==================================
 	// checking img - tags of description
 	// ==================================
@@ -2505,7 +2560,8 @@ public class GCImporter {
 		imgUrl = imgUrl.substring(0, imgUrl.lastIndexOf('.') + imgType.length());
 		if (imgType.startsWith(".jpg") || imgType.startsWith(".bmp") || imgType.startsWith(".png") || imgType.startsWith(".gif")) {
 		    try {
-			CacheImage imageInfo = spiderImage(chD, imgUrl, imgType);
+			CacheImage imageInfo = spiderImage(wayPoint, imgUrl, imgType);
+			imageInfo.setComment(""); // correct dirty hack
 			// title from title or alt
 			chD.images.add(imageInfo);
 		    } catch (Exception e) {
@@ -2532,7 +2588,8 @@ public class GCImporter {
 		imgUrl = imgUrl.substring(0, imgUrl.lastIndexOf('.') + imgType.length());
 		if (imgType.startsWith(".jpg") || imgType.startsWith(".bmp") || imgType.startsWith(".png") || imgType.startsWith(".gif")) {
 		    try {
-			CacheImage imageInfo = spiderImage(chD, imgUrl, imgType);
+			CacheImage imageInfo = spiderImage(wayPoint, imgUrl, imgType);
+			imageInfo.setComment(null); // correct dirty hack
 			imageInfo.setTitle(extractValue.findNext(">", "<"));
 			chD.images.add(imageInfo);
 		    } catch (Exception e) {
@@ -2549,6 +2606,8 @@ public class GCImporter {
      * @param chD
      */
     private void getSpoilerImages(CacheHolderDetail chD) {
+	imageSource = CacheImage.FROMSPOILER;
+	String wayPoint = chD.getParent().getCode().toLowerCase();
 	// ===================================
 	// checking li / a - tags of spoilerSection
 	// ===================================
@@ -2566,41 +2625,37 @@ public class GCImporter {
 		if (imgType.startsWith(".jpg") || imgType.startsWith(".bmp") || imgType.startsWith(".png") || imgType.startsWith(".gif")) {
 		    // Delete possible characters in URL after the image extension
 		    imgUrl = imgUrl.substring(0, imgUrl.lastIndexOf('.') + imgType.length());
-		    try {
-			CacheImage imageInfo = spiderImage(chD, imgUrl, imgType);
-			imageInfo.setTitle(extractValue.findNext(">", "<"));
-			String imgComment = extractValue.findNext(imgCommentExStart, imgCommentExEnd);
-			while (imgComment.startsWith("<br />"))
-			    imgComment = imgComment.substring(6);
-			while (imgComment.endsWith("<br />"))
-			    imgComment = imgComment.substring(0, imgComment.length() - 6);
-			imageInfo.setComment(imgComment);
-			chD.images.add(imageInfo);
-		    } catch (Exception e) {
-			Preferences.itself().log("Error loading image: " + imgUrl, e);
+		    if (imgUrl.indexOf(this.backgroudImageName) < 0) {
+			try {
+			    CacheImage cacheImage = spiderImage(wayPoint, imgUrl, imgType);
+			    if (cacheImage.getComment().length() == 0) { // dirty hack (using comment): 
+				// noch nicht in Description runtergeladen (comment = "") --> also ist es ein spoiler 
+				cacheImage.setTitle(extractValue.findNext(">", "<"));
+				String imgComment = extractValue.findNext(imgCommentExStart, imgCommentExEnd);
+				if (imgComment.length() > 0) {
+				    while (imgComment.startsWith("<br />"))
+					imgComment = imgComment.substring(6);
+				    while (imgComment.endsWith("<br />"))
+					imgComment = imgComment.substring(0, imgComment.length() - 6);
+				}
+				cacheImage.setComment(imgComment);
+				chD.images.add(cacheImage);
+			    }
+			} catch (Exception e) {
+			    Preferences.itself().log("Error loading image: " + imgUrl, e);
+			}
 		    }
 		}
 	    }
 	}
     }
 
-    Vector spideredUrls;
-    int spiderCounter = Integer.MAX_VALUE; // number of files (images)
+    private void getLogImages(CacheHolderDetail chD) {
+	// TODO
 
-    private CacheImage spiderImage(CacheHolderDetail chD, String originalUrl, String imgType) {
-	if (chD.images.size() == 0) {
-	    spideredUrls = new Vector();
-	    spiderCounter = 0; // the first file
-	}
-	String wayPoint = chD.getParent().getCode();
-	CacheImages lastImages = null;
-	// First: Get current image object of waypoint before spidering images.
-	final CacheHolder oldCh = MainForm.profile.cacheDB.get(wayPoint);
-	if (oldCh != null) {
-	    lastImages = oldCh.getDetails().images;
-	}
-	wayPoint = wayPoint.toLowerCase();
+    }
 
+    private CacheImage spiderImage(String wayPoint, String originalUrl, String imgType) {
 	String downloadUrl = originalUrl;
 	String spideredName = downloadUrl;
 	if (!downloadUrl.startsWith("http"))
@@ -2615,67 +2670,83 @@ public class GCImporter {
 	    // http://imgcdn.geocaching.com/cache/large/3f8dfccc-958a-4cb8-bfd3-be3ab7db276b.jpg
 	    // is same as http://img.geocaching.com/cache/3f8dfccc-958a-4cb8-bfd3-be3ab7db276b.jpg
 	    if (downloadUrl.indexOf("geocaching.com") > -1) {
-		spideredName = downloadUrl.substring(downloadUrl.lastIndexOf("/"), downloadUrl.lastIndexOf("."));
+		spideredName = downloadUrl.substring(downloadUrl.lastIndexOf('/'), downloadUrl.lastIndexOf('.'));
 		if (downloadUrl.indexOf("www.geocaching.com") == -1) {
 		    downloadUrl = "http://img.geocaching.com/cache" + spideredName + imgType;
 		}
 		// else gc smileys from www.geocaching.com
+	    } else if (downloadUrl.indexOf("cloudfront.net") > -1) {
+		spideredName = downloadUrl.substring(downloadUrl.lastIndexOf('/'), downloadUrl.lastIndexOf('.'));
+		if (spideredName.endsWith("_l")) {
+		    spideredName = spideredName.substring(0, spideredName.length() - 2);
+		}
+		downloadUrl = "http://img.geocaching.com/cache" + spideredName + imgType;
 	    }
 	}
 
-	CacheImage imageInfo = null;
+	CacheImage cacheImage = null;
 	// Index of already spidered Url in list of spideredUrls
 	int idxUrl = spideredUrls.find(spideredName);
 	if (idxUrl < 0) {
 	    // Not yet spidered 
 	    String fileName = wayPoint + "_" + spiderCounter + imgType;
-	    if (lastImages != null) {
-		if (downloadUrl.indexOf("geocaching.com") > -1) {
-		    // former download from gc
-		    imageInfo = needsSpidering(lastImages, originalUrl, fileName);
-		}
-	    }
-	    if (imageInfo == null) {
+	    cacheImage = needsSpidering(originalUrl, fileName);
+	    if (cacheImage == null) {
 		//needsSpidering
-		imageInfo = new CacheImage();
+		cacheImage = new CacheImage(imageSource);
 		try {
-		    UrlFetcher.fetchDataFile(downloadUrl, MainForm.profile.dataDir + fileName);
+		    if (imageSource == CacheImage.FROMDESCRIPTION && downloadDescriptionImages || imageSource == CacheImage.FROMSPOILER && downloadSpoilerImages) {
+			UrlFetcher.fetchDataFile(downloadUrl, MainForm.profile.dataDir + fileName);
+			Preferences.itself().log("[getImages] Loaded image: " + originalUrl + " as " + fileName);
+		    }
 		} catch (Exception ex) {
 		    Preferences.itself().log("[spiderImage] Problem while fetching image", ex);
 		}
-		imageInfo.setFilename(fileName);
-		imageInfo.setURL(originalUrl);
-		Preferences.itself().log("[getImages] Loaded image: " + originalUrl + " as " + fileName);
+		cacheImage.setFilename(fileName);
+		cacheImage.setURL(originalUrl);
 	    }
 	    spideredUrls.add(spideredName); // index spiderCounter
 	    spiderCounter++;
+	    cacheImage.setComment(""); // eigentlich überflüssig wegen constructor
 	} else {
 	    // Image already spidered as wayPoint_'idxUrl'
 	    String fileName = wayPoint + "_" + idxUrl + imgType;
-	    imageInfo = new CacheImage();
-	    imageInfo.setFilename(fileName);
-	    imageInfo.setURL(originalUrl);
-	    Preferences.itself().log("[getImages] Already loaded image: " + originalUrl + " as " + fileName);
+	    cacheImage = new CacheImage(imageSource);
+	    cacheImage.setFilename(fileName);
+	    cacheImage.setURL(originalUrl);
+	    // Preferences.itself().log("[getImages] Already loaded image: " + originalUrl + " as " + fileName);
+	    cacheImage.setComment("noSpoiler");
 	}
 
-	imageInfo.setTitle(wayPoint + "_" + chD.images.size());
-	imageInfo.setComment(null);
-	return imageInfo;
+	cacheImage.setTitle(""); // wayPoint + "_" + chD.images.size()
+	return cacheImage;
     }
 
-    // images of gc don't change, they get a new url
-    // the numbering of files (newFilename) must be the same (alternative of renaming not implemented)
-    // and they must exist in the filesystem
-    private CacheImage needsSpidering(CacheImages lastImages, String toCheckUrl, String newFilename) {
+    private CacheImage needsSpidering(String toCheckUrl, String newFilename) {
+	// images of gc don't change, they get a new url
+	// the numbering of files (newFilename) must be the same (alternative of renaming not implemented)
+	// and they must exist in the filesystem
+
 	CacheImage result = null;
-	for (int i = 0; i < lastImages.size(); i++) {
-	    CacheImage img = lastImages.get(i);
-	    if (img.getURL().equals(toCheckUrl) && img.getFilename().equals(newFilename)) {
-		String location = MainForm.profile.dataDir + newFilename;
-		if ((new File(location)).exists()) {
-		    result = img;
-		    Preferences.itself().log("[getImages] Already existing image: " + toCheckUrl + " as " + newFilename);
-		    break;
+	if (oldImages.size() > spiderCounter) {
+	    if (toCheckUrl.indexOf("geocaching.com") > -1) {
+		CacheImage img = oldImages.get(spiderCounter);
+		if (img.getURL().equals(toCheckUrl) && img.getFilename().equals(newFilename)) {
+
+		    String location = MainForm.profile.dataDir + newFilename;
+		    if ((new File(location)).exists()) {
+			result = img;
+			// Preferences.itself().log("[getImages] Already existing image: " + toCheckUrl + " as " + newFilename);
+		    } else {
+			if (imageSource == CacheImage.FROMDESCRIPTION) {
+			    if (this.downloadDescriptionImages) {
+				result = null;
+			    } else {
+				result = img;
+			    }
+			}
+		    }
+
 		}
 	    }
 	}
@@ -2692,24 +2763,12 @@ public class GCImporter {
      *            to get reference to oldimages
      */
     private void cleanupOldImages(CacheHolderDetail chD) {
-	String wayPoint = chD.getParent().getCode();
-	CacheImages oldImages = null;
-	// First: Get current image object of waypoint before spidering images.
-	final CacheHolder oldCh = MainForm.profile.cacheDB.get(wayPoint);
-	if (oldCh != null) {
-	    oldImages = oldCh.getDetails().images;
-	}
 	if (oldImages != null) {
-	    for (int i = 0; i < oldImages.size(); i++) {
-		String obsoleteFilename = oldImages.get(i).getFilename();
-		String[] parts = mString.split(obsoleteFilename, '_');
-		String[] counter = mString.split(parts[1], '.');
-		if (Convert.toInt(counter[0]) >= spiderCounter) {
-		    File tmpFile = new File(MainForm.profile.dataDir + obsoleteFilename);
-		    if (tmpFile.exists() && tmpFile.canWrite()) {
-			Preferences.itself().log("Image no longer needed. Deleting: " + obsoleteFilename);
-			tmpFile.delete();
-		    }
+	    for (int i = spiderCounter; i < oldImages.size(); i++) {
+		File tmpFile = new File(MainForm.profile.dataDir + oldImages.get(i).getFilename());
+		if (tmpFile.exists() && tmpFile.canWrite()) {
+		    // Preferences.itself().log("Image no longer needed. Deleting: " + oldImages.get(i).getFilename());
+		    tmpFile.delete();
 		}
 	    }
 	}

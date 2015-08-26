@@ -357,7 +357,6 @@ class MyInteractivePanel extends InteractivePanel {
 	long timePenOff = Vm.getTimeStampLong();
 	// If the pen rested more than 500 msec, we only display the info and don't treat it as a click
 	if (timePenOff - timePenOn < 500 || !Vm.isMobile()) {
-	    new String();
 	    if (which instanceof RadarPanelImage) {
 		RadarPanelImage ich = (RadarPanelImage) which;
 		MainTab.itself.clearDetails();
@@ -520,7 +519,7 @@ class MyInteractivePanel extends InteractivePanel {
 * thumbnail.
 */
 class RadarPanelImage extends AniImage {
-    public String wayPoint = new String();
+    public String wayPoint = "";
     public int rownum;
 
     public RadarPanelImage(mImage i) {

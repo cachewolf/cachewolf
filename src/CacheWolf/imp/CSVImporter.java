@@ -63,7 +63,7 @@ public class CSVImporter {
 	    return;
 	}
 	ImportGui importGui;
-	importGui = new ImportGui("CSV Import", ImportGui.ISGC | ImportGui.DIST);
+	importGui = new ImportGui("CSV Import", ImportGui.ISGC | ImportGui.DIST, 0);
 	// doing the input
 	if (importGui.execute() == FormBase.IDCANCEL) {
 	    return;

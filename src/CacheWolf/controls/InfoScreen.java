@@ -43,7 +43,7 @@ public class InfoScreen extends Form {
     ExecutePanel executePanel;
 
     public InfoScreen(String datei, String tit, boolean readFromFile) {
-	String myText = new String();
+	String myText = "";
 	this.setTitle(tit);
 	if (readFromFile == true) {
 	    try {

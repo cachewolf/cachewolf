@@ -270,7 +270,9 @@ public class Preferences extends MinML {
     public int deleteDetails = 5;
 
     /** Download images when loading cache data */
-    public boolean downloadPics = true;
+    public boolean downloadDescriptionImages = true;
+    public boolean downloadSpoilerImages = true;
+    public boolean downloadLogImages = false;
     /** Download TB information when loading cache data */
     public boolean downloadTBs = true;
 
@@ -694,9 +696,15 @@ public class Preferences extends MinML {
 	    tmp = atts.getValue("maxSpiderNumber");
 	    if (tmp != null)
 		maxSpiderNumber = Convert.parseInt(tmp);
-	    tmp = atts.getValue("downloadPics");
+	    tmp = atts.getValue("getDescPics");
 	    if (tmp != null)
-		downloadPics = Boolean.valueOf(tmp).booleanValue();
+		downloadDescriptionImages = Boolean.valueOf(tmp).booleanValue();
+	    tmp = atts.getValue("getSpoilerPics");
+	    if (tmp != null)
+		downloadSpoilerImages = Boolean.valueOf(tmp).booleanValue();
+	    tmp = atts.getValue("getLogPics");
+	    if (tmp != null)
+		downloadLogImages = Boolean.valueOf(tmp).booleanValue();
 	    tmp = atts.getValue("downloadTBs");
 	    if (tmp != null)
 		downloadTBs = Boolean.valueOf(tmp).booleanValue();
@@ -961,7 +969,9 @@ public class Preferences extends MinML {
 		    + " checkTBs=\"" + SafeXML.strxmlencode(checkTBs) + "\"" //
 		    + " checkDTS=\"" + SafeXML.strxmlencode(checkDTS) + "\"" //
 		    + " maxSpiderNumber=\"" + SafeXML.strxmlencode(maxSpiderNumber) + "\"" //
-		    + " downloadPics=\"" + SafeXML.strxmlencode(downloadPics) + "\"" //
+		    + " getDescPics=\"" + SafeXML.strxmlencode(downloadDescriptionImages) + "\"" //
+		    + " getSpoilerPics=\"" + SafeXML.strxmlencode(downloadSpoilerImages) + "\"" //
+		    + " getLogPics=\"" + SafeXML.strxmlencode(downloadLogImages) + "\"" //
 		    + " downloadTBs=\"" + SafeXML.strxmlencode(downloadTBs) + "\"" //
 		    + " UserID=\"" + SafeXML.string2Html(userID) + "\"" //
 		    + " getFinds=\"" + SafeXML.strxmlencode(!doNotGetFound) + "\"" //

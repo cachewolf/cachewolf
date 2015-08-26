@@ -307,7 +307,7 @@ public class UrlFetcher {
      * @return true, if the string seems to be already URL encoded (that is, it contains only url-allowd chars), false otherwise
      */
     private static boolean isUrlEncoded(String url) {
-	final String allowed = new String("-_.~!*'();:@&=+$,/?%#[]");
+	final String allowed = "-_.~!*'();:@&=+$,/?%#[]";
 	char[] src = ewe.sys.Vm.getStringChars(url);
 	char c;
 	for (int i = 0; i < src.length; i++) {

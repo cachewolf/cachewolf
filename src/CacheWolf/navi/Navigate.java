@@ -367,7 +367,7 @@ class OldGpsdThread extends mThread {
     CWGPSPoint myGPS;
     boolean run, tcpForward;
     Socket tcpConn;
-    String lastError = new String();
+    String lastError;
 
     public OldGpsdThread(CWGPSPoint GPSPoint) throws IOException {
 	try {
@@ -454,7 +454,7 @@ class SerialThread extends mThread {
     CWGPSPoint myGPS;
     boolean run, tcpForward;
     Socket tcpConn;
-    String lastError = new String();
+    String lastError = "";
 
     public SerialThread(SerialPortOptions spo, CWGPSPoint GPSPoint, String forwardIP) throws IOException {
 	try {

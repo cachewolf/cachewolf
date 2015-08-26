@@ -633,7 +633,7 @@ class mySerialThread extends mThread {
     }
 
     public String nonBlockingRead() {
-	String ret = new String(lastgot); //mString.fromAscii(gpsBuff,0,gpsLen);
+	String ret = lastgot; //mString.fromAscii(gpsBuff,0,gpsLen);
 	lastgot = null;
 	return ret;
 
@@ -747,7 +747,7 @@ class OldGpsdThread extends mThread {
     boolean run;
     TextDisplay out;
     Socket tcpConn;
-    String lastError = new String();
+    String lastError = "";
     public String lastgot;
 
     public OldGpsdThread(TextDisplay td) throws IOException {
@@ -806,7 +806,7 @@ class OldGpsdThread extends mThread {
     }
 
     public String nonBlockingRead() {
-	String ret = new String(lastgot); //mString.fromAscii(gpsBuff,0,gpsLen);
+	String ret = lastgot; //mString.fromAscii(gpsBuff,0,gpsLen);
 	lastgot = null;
 	return ret;
 

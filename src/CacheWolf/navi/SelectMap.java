@@ -22,11 +22,11 @@
 package CacheWolf.navi;
 
 import CacheWolf.MainForm;
-import CacheWolf.utils.MyLocale;
 import CacheWolf.Preferences;
 import CacheWolf.controls.ExecutePanel;
 import CacheWolf.controls.InfoBox;
 import CacheWolf.controls.MyScrollBarPanel;
+import CacheWolf.utils.MyLocale;
 import ewe.io.File;
 import ewe.io.FileBase;
 import ewe.ui.CellConstants;
@@ -51,7 +51,7 @@ public class SelectMap extends Form {
     mList nonCMaps = new mList(3, 1, false);
     mList CMaps = new mList(3, 1, false);
     String dateien[];
-    String selectedMap = new String();
+    String selectedMap = "";
     public boolean worldfileexists = false;
 
     public SelectMap() {
@@ -69,7 +69,7 @@ public class SelectMap extends Form {
 	try {
 	    File files = new File(mapsPath);
 	    File checkWFL;
-	    String rawFileName = new String();
+	    String rawFileName = "";
 	    dateien = files.listMultiple("*.png,*.jpg,*.gif,*.bmp", FileBase.LIST_FILES_ONLY); // use FileBugfix if FileBase.LIST_DIRECTORIES_ONLY
 	    for (int i = 0; i < dateien.length; i++) {
 		rawFileName = dateien[i].substring(0, dateien[i].lastIndexOf('.'));

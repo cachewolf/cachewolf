@@ -115,12 +115,13 @@ public class GPXImporter extends MinML {
 	try {
 	    String file;
 	    if (how == ASKFORLOADINGPICTURES) {
-		ImportGui importGui = new ImportGui(MyLocale.getMsg(5510, "Spider Options"), ImportGui.IMAGES | ImportGui.ISGC);
+		ImportGui importGui = new ImportGui(MyLocale.getMsg(5510, "Spider Options"), ImportGui.ISGC, ImportGui.DESCRIPTIONIMAGE | ImportGui.SPOILERIMAGE);
 		if (importGui.execute() == FormBase.IDCANCEL) {
 		    return;
 		}
-		downloadPics = importGui.downloadPics;
-		importGui.close(0);
+		imgSpider = new GCImporter();
+		imgSpider.setImportGui(importGui);
+		downloadPics = importGui.downloadDescriptionImages || importGui.downloadSpoilerImages || importGui.downloadLogImages;
 	    } else if (how == DONOTLOADPICTURES) {
 		downloadPics = false;
 	    } else {
@@ -128,8 +129,6 @@ public class GPXImporter extends MinML {
 	    }
 	    if (howToDoIt != WRITEONLYOWNLOG) {
 		if (downloadPics) {
-		    imgSpider = new GCImporter();
-		    imgSpider.setDownloadPics(downloadPics);
 		    howToDoIt = DOLOADPICTURES;
 		} else {
 		    howToDoIt = DONOTLOADPICTURES;
@@ -377,19 +376,19 @@ public class GPXImporter extends MinML {
 	if (inPQExtension) {
 	    if (inLogs) {
 		if (tag.equals("groundspeak:date") || tag.equals("time") || tag.equals("date") || tag.equals("terra:date")) {
-		    logDate = new String(tagValue.substring(0, 10));
+		    logDate = tagValue.substring(0, 10);
 		    return;
 		}
 		if (tag.equals("groundspeak:type") || tag.equals("type") || tag.equals("terra:type")) {
-		    logIcon = new String(Log.typeText2Image(tagValue));
+		    logIcon = Log.typeText2Image(tagValue);
 		    return;
 		}
 		if (tag.equals("groundspeak:finder") || tag.equals("geocacher") || tag.equals("finder") || tag.equals("terra:user")) {
-		    logFinder = new String(tagValue);
+		    logFinder = tagValue;
 		    return;
 		}
 		if (tag.equals("groundspeak:text") || tag.equals("text") || tag.equals("terra:entry")) {
-		    logData = new String(tagValue);
+		    logData = tagValue;
 		    return;
 		}
 		if (tag.equals("groundspeak:log") || tag.equals("log") || tag.equals("terra:log")) {
@@ -433,16 +432,12 @@ public class GPXImporter extends MinML {
 			return;
 		    }
 		    if (tag.equals("groundspeak:owner") || tag.equals("owner") || tag.equals("terra:owner")) {
-			holder.setOwner(tagValue);
-			if (Preferences.itself().myAlias.equals(SafeXML.html2iso8859s1(tagValue)) || (SafeXML.html2iso8859s1(tagValue).equalsIgnoreCase(Preferences.itself().myAlias2)))
-			    holder.setOwned(true);
+			holder.setOwner(SafeXML.html2iso8859s1(tagValue));
 			return;
 		    }
 		    if (tag.equals("groundspeak:placed_by")) {
 			if (holder.getOwner().equals("")) {
-			    holder.setOwner(tagValue);
-			    if (Preferences.itself().myAlias.equals(SafeXML.html2iso8859s1(tagValue)) || (SafeXML.html2iso8859s1(tagValue).equalsIgnoreCase(Preferences.itself().myAlias2)))
-				holder.setOwned(true);
+			    holder.setOwner(SafeXML.html2iso8859s1(tagValue));
 			}
 			return;
 		    }
@@ -593,11 +588,9 @@ public class GPXImporter extends MinML {
 				getImages();
 				// Rename image sources
 				String text;
-				String orig;
 				String imgName;
-				orig = holder.getDetails().LongDescription;
 
-				Extractor ex = new Extractor(orig, "<img src=\"", ">", 0, false);
+				Extractor ex = new Extractor(holder.getDetails().LongDescription, "<img src=\"", ">", 0, false);
 				int num = 0;
 				while ((text = ex.findNext()).length() > 0 && spiderOK) {
 				    if (num >= holder.getDetails().images.size())
@@ -749,7 +742,7 @@ public class GPXImporter extends MinML {
 		// auch egal
 		continue;
 	    }
-	    CacheImage imageInfo = new CacheImage();
+	    CacheImage imageInfo = new CacheImage(CacheImage.FROMUNKNOWN);
 	    imageInfo.setURL(fetchUrl);
 	    imageInfo.setTitle(makeImageTitle(imgRegexUrl.stringMatched(1), fetchUrl));
 	    getOCPicture(imageInfo);
@@ -766,7 +759,7 @@ public class GPXImporter extends MinML {
 		    String imgType = (fetchUrl.substring(fetchUrl.lastIndexOf('.')).toLowerCase() + "    ").substring(0, 4).trim();
 		    fetchUrl = "http://" + fetchUrl.substring(0, fetchUrl.lastIndexOf('.') + imgType.length());
 		    if (imgType.startsWith(".jpg") || imgType.startsWith(".bmp") || imgType.startsWith(".png") || imgType.startsWith(".gif")) {
-			CacheImage imageInfo = new CacheImage();
+			CacheImage imageInfo = new CacheImage(CacheImage.FROMUNKNOWN);
 			imageInfo.setURL(fetchUrl);
 			imageInfo.setTitle(makeImageTitle(href, fetchUrl));
 			getOCPicture(imageInfo);

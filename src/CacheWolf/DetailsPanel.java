@@ -611,6 +611,7 @@ public class DetailsPanel extends CellPanel {
 			ts.execute(this.getFrame(), Gui.CENTER_FRAME);
 			break;
 		    case NOTES:
+			ch.getDetails().setCacheNotes(waypointNotes.getText());
 			final NotesScreen nsc = new NotesScreen(ch);
 			nsc.execute(this.getFrame(), Gui.CENTER_FRAME);
 			if (isBigScreen) {
@@ -874,10 +875,9 @@ public class DetailsPanel extends CellPanel {
 	if (!ch.isAddiWpt()) {
 	    ch.setOwner(inpOwner.getText().trim());
 	}
-	ch.setOwned(ch.getStatus().equals(MyLocale.getMsg(320, "Owner")));
-	// Avoid setting is_owned if alias is empty and username is empty
-	if (!ch.isOwned()) {
-	    ch.setOwned((!Preferences.itself().myAlias.equals("") && Preferences.itself().myAlias.equalsIgnoreCase(ch.getOwner())) || (Preferences.itself().myAlias2.equalsIgnoreCase(ch.getOwner())));
+	// special
+	if (ch.getStatus().equals(MyLocale.getMsg(320, "Owner"))) {
+	    ch.setOwned(true);
 	}
 	ch.setBlack(blackStatus);
 

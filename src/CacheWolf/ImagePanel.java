@@ -25,9 +25,13 @@ import CacheWolf.controls.GuiImageBroker;
 import CacheWolf.controls.InfoBox;
 import CacheWolf.controls.MyScrollBarPanel;
 import CacheWolf.database.CacheHolderDetail;
+import CacheWolf.database.CacheImage;
 import CacheWolf.database.CacheImages;
+import CacheWolf.utils.Files;
 import CacheWolf.utils.MyLocale;
 import CacheWolf.utils.SafeXML;
+import ewe.filechooser.FileChooser;
+import ewe.filechooser.FileChooserBase;
 import ewe.fx.Color;
 import ewe.fx.Dimension;
 import ewe.fx.Font;
@@ -50,6 +54,7 @@ import ewe.ui.Event;
 import ewe.ui.Form;
 import ewe.ui.FormBase;
 import ewe.ui.Gui;
+import ewe.ui.InputBox;
 import ewe.ui.Menu;
 import ewe.ui.PenEvent;
 import ewe.ui.ScrollBarPanel;
@@ -106,9 +111,33 @@ public class ImagePanel extends CellPanel {
     public void onEvent(final Event ev) {
 	if (ev instanceof ControlEvent && ev.type == ControlEvent.PRESSED) {
 	    if (ev.target == btnAddPicture) {
-		cacheDetails.addUserImage();
+		addUserImage();
 	    }
 	    ev.consumed = true;
+	}
+    }
+
+    private void addUserImage() {
+	File imgFile;
+	String imgDesc, imgDestName;
+
+	FileChooser fc = new FileChooser(FileChooserBase.OPEN, MainForm.profile.dataDir);
+	fc.setTitle("Select image file:");
+	if (fc.execute() != FormBase.IDCANCEL) {
+	    imgFile = fc.getChosenFile();
+	    imgDesc = new InputBox("Description").input("", 10);
+	    // Create Destination Filename
+	    String ext = imgFile.getFileExt().substring(imgFile.getFileExt().lastIndexOf('.'));
+	    imgDestName = cacheDetails.getParent().getCode() + "_U_" + (cacheDetails.userImages.size() + 1) + ext;
+
+	    CacheImage userCacheImage = new CacheImage(CacheImage.FROMUSER);
+	    userCacheImage.setFilename(imgDestName);
+	    userCacheImage.setTitle(imgDesc);
+	    cacheDetails.userImages.add(userCacheImage);
+	    // Copy File
+	    Files.copy(imgFile.getFullPath(), MainForm.profile.dataDir + imgDestName);
+	    // Save Data
+	    cacheDetails.saveCacheDetails(MainForm.profile.dataDir);
 	}
     }
 
@@ -304,12 +333,14 @@ class ImagesPanel extends InteractivePanel {
 		    addImage(ipi);
 		    // Name of picture:
 		    if (pImages.size() > i) {
+			/*
 			if (location.equals(NO_IMAGE))
 			    imgText = MyLocale.getMsg(342, "Deleted");
 			else
-			    imgText = SafeXML.html2iso8859s1(pImages.get(i).getTitle());
+			*/
+			imgText = SafeXML.html2iso8859s1(pImages.get(i).getTitle());
 			if (imgText.length() == 0)
-			    imgText = "???";
+			    imgText = pImages.get(i).getFilename();
 			AimgText = new AniImage();
 			AimgText = getImageText(imgText);
 			AimgText.setLocation(locX, locY + scaleY);
@@ -317,6 +348,8 @@ class ImagesPanel extends InteractivePanel {
 			AimgText.refresh();
 			ipi.imageText = imgText;
 			ipi.imageComment = SafeXML.html2iso8859s1(pImages.get(i).getComment());
+			if (ipi.imageComment.length() == 0)
+			    ipi.imageComment = SafeXML.html2iso8859s1(pImages.get(i).getURL());
 		    }
 		    ipi.refresh();
 		    locX = locX + thumb_size + padding;
@@ -377,10 +410,9 @@ class ImagesPanel extends InteractivePanel {
 		}
 	    }
 	} else {
-	    String fn = new String();
 	    if (which instanceof ImagePanelImage) {
 		ImagePanelImage ich = (ImagePanelImage) which;
-		fn = ich.fileName;
+		String fn = ich.fileName;
 		try {
 		    ImageDetailForm iF = new ImageDetailForm(fn, ich.imageText, ich.imageComment);
 		    iF.execute(null, Gui.CENTER_FRAME);
@@ -416,9 +448,9 @@ class ImagesPanel extends InteractivePanel {
 * thumbnail.
 */
 class ImagePanelImage extends AniImage {
-    public String fileName = new String();
-    public String imageText = null;
-    public String imageComment = null;
+    public String fileName = "";
+    public String imageText = "";
+    public String imageComment = "";
 
     public ImagePanelImage(mImage i) {
 	super(i);
@@ -459,7 +491,7 @@ class ImageDetailForm extends Form {
 class ImageInteractivePanel extends InteractivePanel {
     int state = -1; // 0 = nothing, -1 = scaled to window, 1 = scaled to original size
     ScrollBarPanel scp;
-    String imgLoc = new String();
+    String imgLoc = "";
     AniImage pic = null;
     private Menu mClose = new Menu(new String[] { "Close" }, "");
 

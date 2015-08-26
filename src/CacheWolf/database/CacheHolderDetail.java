@@ -23,27 +23,29 @@ package CacheWolf.database;
 
 import CacheWolf.MainForm;
 import CacheWolf.Preferences;
+import CacheWolf.Profile;
 import CacheWolf.controls.InfoBox;
 import CacheWolf.utils.Extractor;
-import CacheWolf.utils.Files;
 import CacheWolf.utils.MyLocale;
 import CacheWolf.utils.STRreplace;
 import CacheWolf.utils.SafeXML;
-import ewe.filechooser.FileChooser;
-import ewe.filechooser.FileChooserBase;
+
+import com.stevesoft.ewe_pat.Regex;
+
 import ewe.io.BufferedWriter;
 import ewe.io.File;
 import ewe.io.FileReader;
 import ewe.io.FileWriter;
 import ewe.io.PrintWriter;
 import ewe.ui.FormBase;
-import ewe.ui.InputBox;
+import ewe.util.mString;
 
 public class CacheHolderDetail {
     private static final String EMPTY = "";
 
     /** CacheHolder of the detail. <b>Only</b> set by CacheHolder when creating detail! **/
     private CacheHolder parent = null;
+    private String version = "";
     public String LongDescription = EMPTY;
     public String LastUpdate = EMPTY;
     public String Hints = EMPTY;
@@ -245,36 +247,6 @@ public class CacheHolderDetail {
     }
 
     /**
-     * Adds a user image to the cache data
-     * 
-     * @param profile
-     */
-    public void addUserImage() {
-	File imgFile;
-	String imgDesc, imgDestName;
-
-	// Get Image and description
-	FileChooser fc = new FileChooser(FileChooserBase.OPEN, MainForm.profile.dataDir);
-	fc.setTitle("Select image file:");
-	if (fc.execute() != FormBase.IDCANCEL) {
-	    imgFile = fc.getChosenFile();
-	    imgDesc = new InputBox("Description").input("", 10);
-	    // Create Destination Filename
-	    String ext = imgFile.getFileExt().substring(imgFile.getFileExt().lastIndexOf('.'));
-	    imgDestName = parent.getCode() + "_U_" + (this.userImages.size() + 1) + ext;
-
-	    CacheImage userCacheImage = new CacheImage();
-	    userCacheImage.setFilename(imgDestName);
-	    userCacheImage.setTitle(imgDesc);
-	    this.userImages.add(userCacheImage);
-	    // Copy File
-	    Files.copy(imgFile.getFullPath(), MainForm.profile.dataDir + imgDestName);
-	    // Save Data
-	    saveCacheDetails(MainForm.profile.dataDir);
-	}
-    }
-
-    /**
      * Method to parse a specific cache.xml file.<br>
      * It fills information on cache details, hints, logs, notes and images.<br>
      * 
@@ -323,8 +295,9 @@ public class CacheHolderDetail {
 	    return;
 	}
 
-	Extractor ex = new Extractor(text, "<DETAILS><![CDATA[", "]]></DETAILS>", 0, true);
-	LongDescription = ex.findNext();
+	Extractor ex = new Extractor(text, "<VERSION value = \"", "\"/>", 0, true);
+	version = ex.findNext();
+	LongDescription = ex.findNext("<DETAILS><![CDATA[", "]]></DETAILS>");
 	country = ex.findNext("<COUNTRY><![CDATA[", "]]></COUNTRY>");
 	state = ex.findNext("<STATE><![CDATA[", "]]></STATE>");
 	attributes.XmlAttributesEnd(ex.findNext("<ATTRIBUTES>", "</ATTRIBUTES>"));
@@ -354,72 +327,108 @@ public class CacheHolderDetail {
 	CacheNotes = ex.findNext("<NOTES><![CDATA[", "]]></NOTES>");
 	gCNotes = new Extractor(CacheNotes, "<GC>", "</GC>", 0, false).findNext();
 
-	images.clear();
+	if (version.equals("3")) {
+	    images.clear();
 
-	int searchStart = 0;
-	subex.set(ex.findNext("<IMAGES>", "</IMAGES"), "<IMG>", "</IMG>", 0, true);
-	while ((dummy = subex.findNext()).length() > 0) {
-	    imageInfo = new CacheImage();
-	    int pos = dummy.indexOf("<URL>");
-	    if (pos > 0) {
-		imageInfo.setFilename(SafeXML.html2iso8859s1(dummy.substring(0, pos)));
-		imageInfo.setURL(SafeXML.html2iso8859s1((dummy.substring(pos + 5, dummy.indexOf("</URL>")))));
-	    } else {
-		imageInfo.setFilename(SafeXML.html2iso8859s1(dummy));
+	    int searchStart = 0;
+	    subex.set(ex.findNext("<IMAGES>", "</IMAGES"), "<IMG>", "</IMG>", 0, true);
+	    while ((dummy = subex.findNext()).length() > 0) {
+		int pos = dummy.indexOf("<URL>");
+		imageInfo = new CacheImage(CacheImage.FROMUNKNOWN);
+		if (pos > 0) {
+		    imageInfo.setFilename(SafeXML.html2iso8859s1(dummy.substring(0, pos)));
+		    imageInfo.setURL(SafeXML.html2iso8859s1((dummy.substring(pos + 5, dummy.indexOf("</URL>")))));
+		} else {
+		    imageInfo.setFilename(SafeXML.html2iso8859s1(dummy));
+		}
+		this.images.add(imageInfo);
+		searchStart = subex.searchedFrom();
 	    }
-	    this.images.add(imageInfo);
-	    searchStart = subex.searchedFrom();
-	}
 
-	subex.set("<IMGTEXT>", "</IMGTEXT>", searchStart);
-	int imgNr = 0;
-	while ((dummy = subex.findNext()).length() > 0) {
-	    if (imgNr >= this.images.size()) {
-		images.add(new CacheImage()); // this (more IMGTEXT than IMG in the <cache>.xml, but it happens. So avoid an ArrayIndexOutOfBoundException and add an CacheImage gracefully
-		Preferences.itself().log("Error reading " + this.parent.getCode() + "More IMGTEXT tags than IMG tags");
+	    subex.set("<IMGTEXT>", "</IMGTEXT>", searchStart);
+	    int imgNr = 0;
+	    while ((dummy = subex.findNext()).length() > 0) {
+		if (imgNr >= this.images.size()) {
+		    // this (more IMGTEXT than IMG in the <cache>.xml, but it happens. So avoid an ArrayIndexOutOfBoundException and add an CacheImage gracefully
+		    images.add(new CacheImage(CacheImage.FROMUNKNOWN));
+		    Preferences.itself().log("Error reading " + this.parent.getCode() + "More IMGTEXT tags than IMG tags");
+		}
+		imageInfo = this.images.get(imgNr);
+		int pos = dummy.indexOf("<DESC>");
+		if (pos > 0) {
+		    imageInfo.setTitle(dummy.substring(0, pos));
+		    imageInfo.setComment(dummy.substring(pos + 6, dummy.indexOf("</DESC>")));
+		} else {
+		    imageInfo.setTitle(dummy);
+		}
+		imgNr = imgNr + 1;
+		searchStart = subex.searchedFrom();
 	    }
-	    imageInfo = this.images.get(imgNr);
-	    int pos = dummy.indexOf("<DESC>");
-	    if (pos > 0) {
-		imageInfo.setTitle(dummy.substring(0, pos));
-		imageInfo.setComment(dummy.substring(pos + 6, dummy.indexOf("</DESC>")));
-	    } else {
+
+	    logImages.clear();
+	    subex.set("<LOGIMG>", "</LOGIMG>", searchStart);
+	    while ((dummy = subex.findNext()).length() > 0) {
+		imageInfo = new CacheImage(CacheImage.FROMLOG);
+		imageInfo.setFilename(dummy);
+		logImages.add(imageInfo);
+		searchStart = subex.searchedFrom();
+	    }
+	    subex.set("<LOGIMGTEXT>", "</LOGIMGTEXT>", searchStart);
+	    imgNr = 0;
+	    while ((dummy = subex.findNext()).length() > 0) {
+		imageInfo = logImages.get(imgNr++);
 		imageInfo.setTitle(dummy);
+		searchStart = subex.searchedFrom();
 	    }
-	    imgNr = imgNr + 1;
-	    searchStart = subex.searchedFrom();
-	}
 
-	logImages.clear();
-	subex.set("<LOGIMG>", "</LOGIMG>", searchStart);
-	while ((dummy = subex.findNext()).length() > 0) {
-	    imageInfo = new CacheImage();
-	    imageInfo.setFilename(dummy);
-	    logImages.add(imageInfo);
-	    searchStart = subex.searchedFrom();
-	}
-	subex.set("<LOGIMGTEXT>", "</LOGIMGTEXT>", searchStart);
-	imgNr = 0;
-	while ((dummy = subex.findNext()).length() > 0) {
-	    imageInfo = logImages.get(imgNr++);
-	    imageInfo.setTitle(dummy);
-	    searchStart = subex.searchedFrom();
-	}
-
-	userImages.clear();
-	subex.set("<USERIMG>", "</USERIMG>", searchStart);
-	while ((dummy = subex.findNext()).length() > 0) {
-	    imageInfo = new CacheImage();
-	    imageInfo.setFilename(dummy);
-	    userImages.add(imageInfo);
-	    searchStart = subex.searchedFrom();
-	}
-	subex.set("<USERIMGTEXT>", "</USERIMGTEXT>", searchStart);
-	imgNr = 0;
-	while ((dummy = subex.findNext()).length() > 0) {
-	    imageInfo = userImages.get(imgNr++);
-	    imageInfo.setTitle(dummy);
-	    searchStart = subex.searchedFrom();
+	    userImages.clear();
+	    subex.set("<USERIMG>", "</USERIMG>", searchStart);
+	    while ((dummy = subex.findNext()).length() > 0) {
+		imageInfo = new CacheImage(CacheImage.FROMUSER);
+		imageInfo.setFilename(dummy);
+		userImages.add(imageInfo);
+		searchStart = subex.searchedFrom();
+	    }
+	    subex.set("<USERIMGTEXT>", "</USERIMGTEXT>", searchStart);
+	    imgNr = 0;
+	    while ((dummy = subex.findNext()).length() > 0) {
+		imageInfo = userImages.get(imgNr++);
+		imageInfo.setTitle(dummy);
+		searchStart = subex.searchedFrom();
+	    }
+	} else if (version.equals("4")) {
+	    String tmp = ex.findNext("<IMAGES>", "</IMAGES");
+	    subex.set(tmp, "<IMG ", "</IMG>", 0, true);
+	    this.images.clear();
+	    this.logImages.clear();
+	    this.userImages.clear();
+	    Regex getImageInfos = new Regex("SRC=\"(.*?)\" URL=\"(.*?)\"( TITLE=\"(.*?)\")?( CMT=\"(.*?)\")?");
+	    while ((dummy = subex.findNext()).length() > 0) {
+		String[] parts = mString.split(dummy, '>');
+		getImageInfos.search(parts[0]);
+		char src = getImageInfos.stringMatched(1).charAt(0);
+		imageInfo = new CacheImage(src);
+		imageInfo.setFilename(SafeXML.html2iso8859s1(parts[1]));
+		imageInfo.setURL(SafeXML.html2iso8859s1(getImageInfos.stringMatched(2)));
+		imageInfo.setTitle(getImageInfos.stringMatched(4));
+		imageInfo.setComment(getImageInfos.stringMatched(6));
+		switch (src) {
+		case CacheImage.FROMDESCRIPTION:
+		    this.images.add(imageInfo);
+		    break;
+		case CacheImage.FROMLOG:
+		    this.logImages.add(imageInfo);
+		    break;
+		case CacheImage.FROMSPOILER:
+		    this.images.add(imageInfo);
+		    break;
+		case CacheImage.FROMUSER:
+		    this.userImages.add(imageInfo);
+		    break;
+		default:
+		    continue;
+		}
+	    }
 	}
 
 	dummy = ex.findNext("<TRAVELBUGS>", "</TRAVELBUGS>");
@@ -461,11 +470,12 @@ public class CacheHolderDetail {
 	}
     }
 
+    PrintWriter detfile;
+
     /**
      * Method to save a cache.xml file.
      */
     public void saveCacheDetails(String dir) {
-	PrintWriter detfile;
 	deleteFile(dir + parent.getCode() + ".xml");
 	try {
 	    detfile = new PrintWriter(new BufferedWriter(new FileWriter(new File(dir + parent.getCode().toLowerCase() + ".xml").getAbsolutePath())));
@@ -477,7 +487,7 @@ public class CacheHolderDetail {
 	    if (parent.getCode().length() > 0) {
 		detfile.print("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n");
 		detfile.print("<CACHEDETAILS>\r\n");
-		detfile.print("<VERSION value = \"3\"/>\n");
+		detfile.print("<VERSION value = \"" + Profile.CURRENTFILEFORMAT + "\"/>\n");
 		detfile.print("<DETAILS><![CDATA[" + LongDescription + "]]></DETAILS>\r\n");
 		detfile.print("<COUNTRY><![CDATA[" + country + "]]></COUNTRY>\n");
 		detfile.print("<STATE><![CDATA[" + state + "]]></STATE>\n");
@@ -498,43 +508,11 @@ public class CacheHolderDetail {
 
 		detfile.print("<NOTES><![CDATA[" + CacheNotes + "]]></NOTES>\n");
 		detfile.print("<IMAGES>\n");
-		String stbuf;
-		for (int i = 0; i < images.size(); i++) {
-		    stbuf = images.get(i).getFilename();
-		    String urlBuf = images.get(i).getURL();
-		    if (urlBuf != null && !urlBuf.equals("")) {
-			detfile.print("    <IMG>" + SafeXML.string2Html(stbuf) + "<URL>" + SafeXML.string2Html(urlBuf) + "</URL></IMG>\n");
-		    } else {
-			detfile.print("    <IMG>" + SafeXML.string2Html(stbuf) + "</IMG>\n");
-		    }
-		}
-		int iis = images.size();
-		for (int i = 0; i < iis; i++) {
-		    stbuf = images.get(i).getTitle();
-		    if (i < iis && !images.get(i).getComment().equals(""))
-			detfile.print("    <IMGTEXT>" + stbuf + "<DESC>" + images.get(i).getComment() + "</DESC></IMGTEXT>\n");
-		    else
-			detfile.print("    <IMGTEXT>" + stbuf + "</IMGTEXT>\n");
-		}
-
-		for (int i = 0; i < logImages.size(); i++) {
-		    stbuf = logImages.get(i).getFilename();
-		    detfile.print("    <LOGIMG>" + stbuf + "</LOGIMG>\n");
-		}
-		for (int i = 0; i < logImages.size(); i++) {
-		    stbuf = logImages.get(i).getTitle();
-		    detfile.print("    <LOGIMGTEXT>" + stbuf + "</LOGIMGTEXT>\n");
-		}
-		for (int i = 0; i < userImages.size(); i++) {
-		    stbuf = userImages.get(i).getFilename();
-		    detfile.print("    <USERIMG>" + stbuf + "</USERIMG>\n");
-		}
-		for (int i = 0; i < userImages.size(); i++) {
-		    stbuf = userImages.get(i).getTitle();
-		    detfile.print("    <USERIMGTEXT>" + stbuf + "</USERIMGTEXT>\n");
-		}
-
+		printImages(images);
+		printImages(logImages);
+		printImages(userImages);
 		detfile.print("</IMAGES>\n");
+
 		detfile.print(Travelbugs.toXML());
 		detfile.print("<URL><![CDATA[" + URL + "]]></URL>\r\n");
 		detfile.print("<SOLVER><![CDATA[" + getSolver() + "]]></SOLVER>\r\n");
@@ -551,6 +529,29 @@ public class CacheHolderDetail {
 	    Preferences.itself().log("Problem waypoint " + parent.getCode() + " writing to a details file: ", e);
 	}
 	hasUnsavedChanges = false;
+    }
+
+    private void printImages(CacheImages imgs) {
+	for (int i = 0; i < imgs.size(); i++) {
+	    CacheImage img = imgs.get(i);
+	    detfile.print("<IMG");
+	    detfile.print(addAttribute("SRC", String.valueOf(img.getSource())));
+	    detfile.print(addAttribute("URL", SafeXML.string2Html(img.getURL())));
+	    detfile.print(addAttribute("TITLE", img.getTitle()));
+	    detfile.print(addAttribute("CMT", img.getComment()));
+	    detfile.print(">");
+	    detfile.print(SafeXML.string2Html(img.getFilename()));
+	    detfile.print("</IMG>\n");
+	}
+    }
+
+    private String addAttribute(String att, String attValue) {
+	if (attValue.length() > 0) {
+	    return " " + att + "=\"" + attValue + "\"";
+	} else {
+	    return "";
+	}
+
     }
 
     /**

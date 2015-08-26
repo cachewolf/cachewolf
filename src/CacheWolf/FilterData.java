@@ -37,16 +37,16 @@ public class FilterData {
     public final static String FILTERVAR = "111111111111";
     public final static String FILTERSIZE = "11111111";
 
-    private String filterType = new String(FILTERTYPE);
-    private String filterRose = new String(FILTERROSE);
-    private String filterSize = new String(FILTERSIZE);
+    private String filterType = FILTERTYPE;
+    private String filterRose = FILTERROSE;
+    private String filterSize = FILTERSIZE;
     private boolean filterNoCoord = true;
 
     // filter settings for archived ... owner (section) in filterscreen
-    private String filterVar = new String(FILTERVAR);
-    private String filterDist = new String("L");
-    private String filterDiff = new String("L");
-    private String filterTerr = new String("L");
+    private String filterVar = FILTERVAR;
+    private String filterDist = "L";
+    private String filterDiff = "L";
+    private String filterTerr = "L";
 
     private long[] filterAttr = { 0l, 0l, 0l, 0l };
     private int filterAttrChoice = 0;

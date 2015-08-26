@@ -55,7 +55,7 @@ public class Profile {
     /**
      * version number of current format for index.xml and waypoint.xml
      */
-    public static int CURRENTFILEFORMAT = 3;
+    public static int CURRENTFILEFORMAT = 4;
     // Profile Settings
     private int indexXmlVersion;
     /**
@@ -203,7 +203,7 @@ public class Profile {
 	try {
 	    cacheDBIndexFile.print("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
 	    cacheDBIndexFile.print("<CACHELIST format=\"decimal\">\n");
-	    cacheDBIndexFile.print("    <VERSION value = \"3\"/>\n");
+	    cacheDBIndexFile.print("    <VERSION value = \"" + Profile.CURRENTFILEFORMAT + "\"/>\n");
 	    if (savedCentre.isValid())
 		cacheDBIndexFile.print("    <CENTRE lat=\"" + savedCentre.latDec + "\" lon=\"" + savedCentre.lonDec + "\"/>\n");
 	    if (last_sync_opencaching == null || last_sync_opencaching.endsWith("null") || last_sync_opencaching.equals("")) {
