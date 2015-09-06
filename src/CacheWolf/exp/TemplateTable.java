@@ -405,48 +405,50 @@ public class TemplateTable {
 	    }
 	    varParams.put("ADDIS", addiVect);
 
+	    String exportPath;
+	    if (expName.length() > 0) {
+		if (expName.endsWith("*")) {
+		    exportPath = Preferences.itself().getExportPath(expName.substring(0, expName.length() - 1));
+		} else {
+		    exportPath = Preferences.itself().getExportPath(expName);
+		}
+	    } else
+		exportPath = "";
 	    Vector imgVect = new Vector(chD.images.size());
 	    for (int i = 0; i < chD.images.size(); i++) {
 		Hashtable imgs = new Hashtable();
-		String imgFile = chD.images.get(i).getURL();
+		String imgUrl = chD.images.get(i).getURL();
 		boolean doit = true;
 		for (int j = i + 1; j < chD.images.size(); j++) {
-		    String jmgFile = chD.images.get(j).getURL();
-		    if (imgFile.equals(jmgFile)) {
+		    String jmgUrl = chD.images.get(j).getURL();
+		    if (imgUrl.equals(jmgUrl)) {
 			doit = false;
 			break;
 		    }
 		}
 		if (doit) {
 		    imgs.put("PROFILDIR", MainForm.profile.dataDir);
-		    imgs.put("FILENAME", chD.images.get(i).getFilename());
+		    String imgFilename = chD.images.get(i).getFilename();
+		    imgs.put("FILENAME", imgFilename);
 		    String title = chD.images.get(i).getTitle();
 		    imgs.put("TEXT", title);
 		    imgs.put("COMMENT", chD.images.get(i).getComment());
 		    imgs.put("URL", chD.images.get(i).getURL());
 		    if (!expName.equals("")) {
-			String src = MainForm.profile.dataDir + imgFile;
+			String src = MainForm.profile.dataDir + imgFilename;
 			String dest;
 			if (expName.endsWith("*")) {
-			    String d1 = Preferences.itself().getExportPath(expName.substring(0, expName.length() - 1));
-			    d1 = d1 + imgFile.substring(0, 4).toUpperCase() + "/";
-			    dest = d1 + imgFile.toUpperCase();
-			    if (imgFile.toUpperCase().startsWith(title.toUpperCase())) {
-				d1 = Common.getPathAndFilename(dest);
-			    } else {
-				d1 = Common.getPathAndFilename(dest) + " - " + Common.ClearForFileName(title);
-			    }
-			    dest = d1 + Common.getExtension(dest).toLowerCase();
+			    // CacheBox Export
+			    String path = exportPath + imgFilename.substring(0, 4).toUpperCase() + "/";
+			    dest = path + Common.getPathAndFilename(imgFilename.toUpperCase()) + (title.length() > 0 ? " - " + Common.ClearForFileName(title) : "") + Common.getExtension(imgFilename).toLowerCase();
 			} else {
-			    dest = Preferences.itself().getExportPath(expName) + imgFile;
+			    dest = exportPath + imgFilename;
 			}
 			if (!Files.copy(src, dest)) {
-			    Preferences.itself().log("[CacheHolder:toHashtable]error copying " + imgFile + " to " + Preferences.itself().getExportPath(expName));
+			    Preferences.itself().log("[CacheHolder:toHashtable]no copying of " + imgFilename + "(" + imgUrl + ") to " + exportPath);
 			}
 		    }
-		    if (!title.toLowerCase().startsWith(code.toLowerCase())) {
-			imgVect.add(imgs);
-		    }
+		    imgVect.add(imgs);
 		}
 	    }
 	    varParams.put("cacheImg", imgVect);
