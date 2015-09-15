@@ -95,6 +95,7 @@ public class GPXImporter extends MinML {
     private int howToDoIt;
     private String attID;
     private String attInc;
+    String shortDescription = "";
 
     public GPXImporter(String f) {
 	cacheDB = MainForm.profile.cacheDB;
@@ -393,7 +394,7 @@ public class GPXImporter extends MinML {
 		}
 		if (tag.equals("groundspeak:log") || tag.equals("log") || tag.equals("terra:log")) {
 		    Log log = new Log(logId, finderID, logIcon, logDate, logFinder, logData);
-		    holder.getDetails().CacheLogs.add(log);
+		    holder.getDetails().CacheLogs.merge(log);
 		    if ((SafeXML.html2iso8859s1(logFinder).equalsIgnoreCase(Preferences.itself().myAlias) || (SafeXML.html2iso8859s1(logFinder).equalsIgnoreCase(Preferences.itself().myAlias2)))) {
 			if ((logIcon.equals("icon_smile.gif") || logIcon.equals("icon_camera.gif") || logIcon.equals("icon_attended.gif"))) {
 			    holder.setStatus(logDate);
@@ -486,17 +487,17 @@ public class GPXImporter extends MinML {
 		    }
 		    if (tag.indexOf("short_description") > -1 || tag.equals("summary")) {
 			if (holder.isHTML())
-			    holder.getDetails().LongDescription = SafeXML.html2iso8859s1(tagValue) + "<br>"; // <br> needed because we also use a <br> in SpiderGC. Without it the comparison in ch.update fails
+			    shortDescription = SafeXML.html2iso8859s1(tagValue) + "<br>"; // <br> needed because we also use a <br> in SpiderGC. Without it the comparison in ch.update fails
 			else
-			    holder.getDetails().LongDescription = tagValue + "\n";
+			    shortDescription = tagValue + "\n";
 			return;
 		    }
 
 		    if (tag.indexOf("long_description") > -1 || tag.equals("description") || tag.equals("terra:description")) {
 			if (holder.isHTML())
-			    holder.getDetails().LongDescription += SafeXML.html2iso8859s1(tagValue);
+			    holder.getDetails().LongDescription = shortDescription + SafeXML.html2iso8859s1(tagValue);
 			else
-			    holder.getDetails().LongDescription += tagValue;
+			    holder.getDetails().LongDescription = shortDescription + tagValue;
 			return;
 		    }
 		    if (tag.indexOf("encoded_hints") > -1 || tag.equals("hints")) {
@@ -532,7 +533,7 @@ public class GPXImporter extends MinML {
 		}
 		if (tag.equals("name")) {
 		    holder.setCode(tagValue);
-
+		    shortDescription = "";
 		    if (gpxDate.getTime() != 0) {
 			holder.setLastSync(gpxDate.format("yyyyMMddHHmmss"));
 		    } else {

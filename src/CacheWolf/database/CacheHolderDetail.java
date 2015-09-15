@@ -41,23 +41,22 @@ import ewe.ui.FormBase;
 import ewe.util.mString;
 
 public class CacheHolderDetail {
-    private static final String EMPTY = "";
 
     /** CacheHolder of the detail. <b>Only</b> set by CacheHolder when creating detail! **/
     private CacheHolder parent = null;
     private String version = "";
-    public String LongDescription = EMPTY;
-    public String LastUpdate = EMPTY;
-    public String Hints = EMPTY;
+    public String LongDescription = "";
+    public String LastUpdate = "";
+    public String Hints = "";
     public LogList CacheLogs = new LogList();
-    private String CacheNotes = EMPTY;
+    private String CacheNotes = "";
     public CacheImages images = new CacheImages();
     public CacheImages logImages = new CacheImages();
     public CacheImages userImages = new CacheImages();
     public Attributes attributes = new Attributes();
     public TravelbugList Travelbugs = new TravelbugList();
-    // public String Bugs = EMPTY; Superceded by Travelbugs
-    public String URL = EMPTY;
+    // public String Bugs = ""; Superceded by Travelbugs
+    public String URL = "";
     private String solver;
     private Log ownLog;
     private String country;
@@ -70,10 +69,10 @@ public class CacheHolderDetail {
 
     public CacheHolderDetail(CacheHolder ch) {
 	parent = ch;
-	solver = EMPTY;
+	solver = "";
 	ownLog = null;
-	country = EMPTY;
-	state = EMPTY;
+	country = "";
+	state = "";
     }
 
     // quick debug info
