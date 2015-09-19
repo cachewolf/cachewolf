@@ -2625,7 +2625,7 @@ public class GCImporter {
 		if (imgType.startsWith(".jpg") || imgType.startsWith(".bmp") || imgType.startsWith(".png") || imgType.startsWith(".gif")) {
 		    // Delete possible characters in URL after the image extension
 		    imgUrl = imgUrl.substring(0, imgUrl.lastIndexOf('.') + imgType.length());
-		    if (imgUrl.indexOf(this.backgroudImageName) < 0) {
+		    if (this.backgroudImageName.length() == 0 || imgUrl.indexOf(this.backgroudImageName) < 0) {
 			try {
 			    CacheImage cacheImage = spiderImage(wayPoint, imgUrl, imgType);
 			    if (cacheImage.getComment().length() == 0) { // dirty hack (using comment): 
