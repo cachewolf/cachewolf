@@ -405,27 +405,30 @@ public class CacheHolderDetail {
 	    while ((dummy = subex.findNext()).length() > 0) {
 		String[] parts = mString.split(dummy, '>');
 		getImageInfos.search(parts[0]);
-		char src = getImageInfos.stringMatched(1).charAt(0);
-		imageInfo = new CacheImage(src);
-		imageInfo.setFilename(SafeXML.html2iso8859s1(parts[1]));
-		imageInfo.setURL(SafeXML.html2iso8859s1(getImageInfos.stringMatched(2)));
-		imageInfo.setTitle(getImageInfos.stringMatched(4));
-		imageInfo.setComment(getImageInfos.stringMatched(6));
-		switch (src) {
-		case CacheImage.FROMDESCRIPTION:
-		    this.images.add(imageInfo);
-		    break;
-		case CacheImage.FROMLOG:
-		    this.logImages.add(imageInfo);
-		    break;
-		case CacheImage.FROMSPOILER:
-		    this.images.add(imageInfo);
-		    break;
-		case CacheImage.FROMUSER:
-		    this.userImages.add(imageInfo);
-		    break;
-		default:
-		    continue;
+		String ssrc = getImageInfos.stringMatched(1);
+		if (ssrc != null) {
+		    char src = ssrc.charAt(0);
+		    imageInfo = new CacheImage(src);
+		    imageInfo.setFilename(SafeXML.html2iso8859s1(parts[1]));
+		    imageInfo.setURL(SafeXML.html2iso8859s1(getImageInfos.stringMatched(2)));
+		    imageInfo.setTitle(getImageInfos.stringMatched(4));
+		    imageInfo.setComment(getImageInfos.stringMatched(6));
+		    switch (src) {
+		    case CacheImage.FROMDESCRIPTION:
+			this.images.add(imageInfo);
+			break;
+		    case CacheImage.FROMLOG:
+			this.logImages.add(imageInfo);
+			break;
+		    case CacheImage.FROMSPOILER:
+			this.images.add(imageInfo);
+			break;
+		    case CacheImage.FROMUSER:
+			this.userImages.add(imageInfo);
+			break;
+		    default:
+			continue;
+		    }
 		}
 	    }
 	}
