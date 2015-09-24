@@ -611,7 +611,9 @@ public class DetailsPanel extends CellPanel {
 			ts.execute(this.getFrame(), Gui.CENTER_FRAME);
 			break;
 		    case NOTES:
-			ch.getDetails().setCacheNotes(waypointNotes.getText());
+			if (isBigScreen) {
+			    ch.getDetails().setCacheNotes(waypointNotes.getText());
+			}
 			final NotesScreen nsc = new NotesScreen(ch);
 			nsc.execute(this.getFrame(), Gui.CENTER_FRAME);
 			if (isBigScreen) {
