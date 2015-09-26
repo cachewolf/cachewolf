@@ -948,8 +948,9 @@ public class DetailsPanel extends CellPanel {
 	    ch.setTerrain(this.newTerrain);
 	}
 
-	ch.getDetails().setCacheNotes(waypointNotes.getText());
-
+	if (isBigScreen) {
+	    ch.getDetails().setCacheNotes(waypointNotes.getText());
+	}
 	dirtyDetails = false;
 	needsTableUpdate = false;
 	ch.getDetails().hasUnsavedChanges = true;
