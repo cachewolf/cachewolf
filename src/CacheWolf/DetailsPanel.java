@@ -199,8 +199,10 @@ public class DetailsPanel extends CellPanel {
 	CellPanel mainPanel = new CellPanel();
 	mainPanel.equalWidths = true;
 	Vector panelControls = new Vector();
-	panelControls.add(btnWaypoint.getBtn());
-	panelControls.add(btnType.getBtn());
+	CellPanel panelTypeWaypoint = new CellPanel();
+	panelTypeWaypoint.addNext(btnWaypoint.getBtn());
+	panelTypeWaypoint.addLast(btnType.getBtn());
+	panelControls.add(panelTypeWaypoint);
 	panelControls.add(btnHiddenDate);
 	panelControls.add(ownerPanel);
 	panelControls.add(btnDiff.getBtn());

@@ -716,7 +716,7 @@ public class CacheHolder {
     }
 
     /**  Bit 15:*/
-    public boolean isPMCache() {
+    public boolean isPremiumCache() {
 	return this.isPMCache;
     }
 
@@ -724,7 +724,7 @@ public class CacheHolder {
      * Bit 15:
      * @param b
      */
-    public void setIsPMCache(boolean b) {
+    public void setIsPremiumCache(boolean b) {
 	if (b != this.isPMCache) {
 	    MainForm.profile.notifyUnsavedChanges(true);
 	    this.isPMCache = b;
@@ -839,7 +839,7 @@ public class CacheHolder {
 	updateOwnLog(ch);
 	this.setNumFoundsSinceRecommendation(ch.getNumFoundsSinceRecommendation());
 	this.setNumRecommended(ch.getNumRecommended());
-	this.setIsPMCache(ch.isPMCache);
+	this.setIsPremiumCache(ch.isPMCache);
 
 	// Don't overwrite valid coordinates with invalid ones
 	if (ch.getWpt().isValid() || !this.wpt.isValid()) {

@@ -520,7 +520,7 @@ public class CacheHolderDetail {
 		detfile.print("<SOLVER><![CDATA[" + getSolver() + "]]></SOLVER>\r\n");
 		detfile.print(parent.toXML()); // This will allow restoration of index.xml
 		detfile.print("</CACHEDETAILS>\n");
-		Preferences.itself().log("Writing file: " + parent.getCode().toLowerCase() + ".xml");
+		// Preferences.itself().log("Writing file: " + parent.getCode().toLowerCase() + ".xml");
 	    } // if length
 	} catch (Exception e) {
 	    Preferences.itself().log("Problem waypoint " + parent.getCode() + " writing to a details file: ", e);

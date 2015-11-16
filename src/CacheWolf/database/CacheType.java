@@ -96,7 +96,7 @@ public final class CacheType {
     //
     private static final CTyp[] cTypRef = {
 	    // custom waypoints
-	    new CTyp(CW_TYPE_CUSTOM, (byte) 0, 'P', "0", "", "", (byte) -128, 'C', "Custom", new String[] { "Geocache|Custom", "Custom", "Custom", "" }, 1, 10, 0x000100),
+	    new CTyp(CW_TYPE_CUSTOM, (byte) 0, 'P', "0", "0", "0", (byte) -128, 'C', "Custom", new String[] { "Geocache|Custom", "Custom", "Custom", "" }, 1, 10, 0x000100),
 	    // Cache waypoints
 	    new CTyp(CW_TYPE_TRADITIONAL, (byte) 2, 'C', "2", "2", "2", (byte) -126, 'T', "Tradi", new String[] { "Geocache|Traditional Cache", "Geocache", "Traditional Cache", "Traditional|Classic" }, 2, 0, 0x000001),
 	    new CTyp(CW_TYPE_MULTI, (byte) 3, 'C', "3", "3", "3", (byte) -125, 'M', "Multi", new String[] { "Geocache|Multi-cache", "Geocache", "Multi-cache", "Multi|Offset" }, 3, 1, 0x000002),

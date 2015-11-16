@@ -407,7 +407,7 @@ public class Filter {
 		cacheFiltered = true;
 		break;
 	    }
-	    if ((ch.isPMCache() && !premium) || (!ch.isPMCache() && !noPremium)) {
+	    if ((ch.isPremiumCache() && !premium) || (!ch.isPremiumCache() && !noPremium)) {
 		cacheFiltered = true;
 		break;
 	    }

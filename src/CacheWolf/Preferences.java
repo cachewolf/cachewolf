@@ -89,7 +89,7 @@ public class Preferences extends MinML {
     /** This is the login alias for geocaching.com and opencaching.de */
     public String myAlias = "";
     /** Premium Member ? */
-    public boolean isPremium = true;
+    public boolean havePremiumMemberRights = true;
     /** The Cookie from GC */
     public String userID = "";
     /** The own GC member ID (for gpx - export)*/
@@ -551,7 +551,7 @@ public class Preferences extends MinML {
 	    gcMemberId = atts.getValue("name");
 	    tmp = atts.getValue("Premium");
 	    if (tmp != null)
-		isPremium = Boolean.valueOf(tmp).booleanValue();
+		havePremiumMemberRights = Boolean.valueOf(tmp).booleanValue();
 	} else if (name.equals("location")) {
 	    curCentrePt.set(atts.getValue("lat") + " " + atts.getValue("long"));
 	} else if (name.equals("port")) {
@@ -880,7 +880,7 @@ public class Preferences extends MinML {
 
 		    + "    <gcmemberid" //
 		    + " name=\"" + SafeXML.string2Html(gcMemberId) + "\"" //
-		    + " Premium=\"" + SafeXML.strxmlencode(isPremium) + "\"" //
+		    + " Premium=\"" + SafeXML.strxmlencode(havePremiumMemberRights) + "\"" //
 		    + " />\n" //
 
 		    + "    <browser name=\"" + SafeXML.string2Html(browser) + "\" />\n" //

@@ -480,7 +480,7 @@ public class MyTableModel extends TableModel {
 		case 19: // Last sync date
 		    return DateFormat.formatLastSyncDate(ch.getLastSync(), "yyyy-MM-dd HH:mm");
 		case 20: // PM
-		    if (ch.isPMCache())
+		    if (ch.isPremiumCache())
 			return picIsPM;
 		    else
 			return null;
@@ -801,7 +801,7 @@ class MyComparer implements Comparer {
 	} else if (colToCompare == 20) {
 	    for (int i = 0; i < visibleSize; i++) {
 		CacheHolder ch = cacheDB.get(i);
-		if (ch.isPMCache()) {
+		if (ch.isPremiumCache()) {
 		    ch.sort = "1";
 		} else {
 		    ch.sort = "2";

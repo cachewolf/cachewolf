@@ -209,7 +209,7 @@ public class GCImporter {
     private int numArchivedUpdates = 0;
     private int numAvailableUpdates = 0;
     private int numLogUpdates = 0;
-    private int numPrivate = 0;
+    private int numPremium = 0;
 
     private Vector downloadList = new Vector();
     private Hashtable possibleUpdateList, sureUpdateList;
@@ -386,7 +386,7 @@ public class GCImporter {
 		s = s + "maxNew               : " + maxNew + Preferences.NEWLINE;
 		s = s + "maxUpdate            : " + maxUpdate + Preferences.NEWLINE;
 		s = s + "with Founds          : " + (doNotgetFound ? "no" : "yes") + Preferences.NEWLINE;
-		s = s + "alias is premium memb: " + (!Preferences.itself().isPremium ? "no" : "yes") + Preferences.NEWLINE;
+		s = s + "alias is premium memb: " + (!Preferences.itself().havePremiumMemberRights ? "no" : "yes") + Preferences.NEWLINE;
 		s = s + "Update if new Log    : " + (Preferences.itself().checkLog ? "yes" : "no") + Preferences.NEWLINE;
 		s = s + "Update if TB changed : " + (Preferences.itself().checkTBs ? "yes" : "no") + Preferences.NEWLINE;
 		s = s + "Update if DTS changed: " + (Preferences.itself().checkDTS ? "yes" : "no") + Preferences.NEWLINE;
@@ -998,7 +998,7 @@ public class GCImporter {
 	s = s + "Found " + downloadList.size() + " new caches" + Preferences.NEWLINE;
 	s = s + "Found " + possibleUpdateList.size() + "/" + sureUpdateList.size() + " caches for update" + Preferences.NEWLINE;
 	s = s + "Found " + (possibleUpdateList.size() - sureUpdateList.size()) + " caches possibly archived." + Preferences.NEWLINE;
-	s = s + "Found " + numPrivate + " Premium Caches (for non Premium Member.)" + Preferences.NEWLINE;
+	s = s + "Found " + numPremium + " Premium Caches (for non Premium Member.)" + Preferences.NEWLINE;
 	s = s + "Found " + numAvailableUpdates + " caches with changed available status." + Preferences.NEWLINE;
 	s = s + "Found " + numLogUpdates + " caches with new found in log." + Preferences.NEWLINE;
 	s = s + "Found " + numFoundUpdates + " own Finds" + Preferences.NEWLINE; //caches with no found in DB
@@ -1174,13 +1174,13 @@ public class GCImporter {
 	    if (distance <= toDistance) {
 		final String chWaypoint = getWP();
 		CacheHolder ch = MainForm.profile.cacheDB.get(chWaypoint);
-		boolean isPM = isPM();
-		if (Preferences.itself().isPremium || !isPM) {
+		boolean isPremiumOnly = isPremiumOnly();
+		if (Preferences.itself().havePremiumMemberRights || !isPremiumOnly) {
 		    if (ch == null) { // not in DB
 			downloadList.add(chWaypoint);
 		    } else {
-			if (ch.isPMCache() != isPM) {
-			    ch.setIsPMCache(isPM);
+			if (ch.isPremiumCache() != isPremiumOnly) {
+			    ch.setIsPremiumCache(isPremiumOnly);
 			    ch.saveCacheDetails();
 			}
 			possibleUpdateList.remove(chWaypoint);
@@ -1189,11 +1189,12 @@ public class GCImporter {
 			}
 		    }
 		} else {
+		    // ein PremiumCache für ein BasicMember
 		    if (ch == null) {
 			if (Preferences.itself().addPremiumGC) {
 			    numPrivateNew = numPrivateNew + 1;
 			    ch = new CacheHolder(chWaypoint);
-			    ch.setIsPMCache(true);
+			    ch.setIsPremiumCache(true);
 			    // next 2 for to avoid warning triangle
 			    ch.setType(CacheType.CW_TYPE_CUSTOM);
 			    ch.setWpt(Preferences.itself().curCentrePt); // or MainForm.profile.centre
@@ -1202,11 +1203,18 @@ public class GCImporter {
 			    MainForm.profile.cacheDB.add(ch);
 			}
 		    } else {
+			boolean save = false;
 			possibleUpdateList.remove(chWaypoint);
-			if (!ch.isPMCache()) {
-			    ch.setIsPMCache(true);
-			    ch.saveCacheDetails();
+			if (updateExists(ch)) {
+			    ch.setLastSync(""); //
+			    save = true;
 			}
+			if (!ch.isPremiumCache()) {
+			    ch.setIsPremiumCache(true);
+			    save = true;
+			}
+			if (save)
+			    ch.saveCacheDetails();
 		    }
 		}
 
@@ -1241,12 +1249,6 @@ public class GCImporter {
 		    break;
 		} else if (test == SPIDER_ERROR) {
 		    spiderErrors++;
-		} else if (test == SPIDER_IGNORE_PREMIUM) {
-		    if (Preferences.itself().addPremiumGC) {
-			ch.setIsPMCache(true);
-			MainForm.profile.cacheDB.add(ch);
-			ch.saveCacheDetails();
-		    }
 		} else if (test == SPIDER_OK) {
 		    MainForm.profile.cacheDB.add(ch);
 		    ch.saveCacheDetails();
@@ -1308,12 +1310,6 @@ public class GCImporter {
 			ch.setNumRecommended(cacheInDB.getNumRecommended()); // gcvote Bewertung bleibt erhalten
 		    cacheInDB.update(ch);
 		    cacheInDB.saveCacheDetails();
-		}
-		if (ret == SPIDER_IGNORE_PREMIUM) {
-		    if (!cacheInDB.isPMCache()) {
-			cacheInDB.setIsPMCache(true);
-			cacheInDB.saveCacheDetails();
-		    }
 		}
 	    } catch (final Exception ex) {
 		Preferences.itself().log("[spiderSingle] Error spidering " + cacheInDB.getCode(), ex);
@@ -1511,7 +1507,7 @@ public class GCImporter {
 		Preferences.itself().gcMemberId = memberId;
 		String membership = extractValue.findNext();
 		membership = membership.trim();
-		Preferences.itself().isPremium = membership.indexOf("Basic") == -1;
+		Preferences.itself().havePremiumMemberRights = membership.indexOf("Basic") == -1;
 	    } catch (final Exception ex) {
 		Preferences.itself().log("[checkGCSettings] " + gcSettingsUrl + page, ex);
 	    }
@@ -1802,11 +1798,11 @@ public class GCImporter {
 	return "GC" + stmp;
     }
 
-    private boolean isPM() {
+    private boolean isPremiumOnly() {
 	if (aCacheDescriptionOfListPage.indexOf(propPM) <= 0) {
 	    return false;
 	} else {
-	    numPrivate = numPrivate + 1;
+	    numPremium = numPremium + 1;
 	    return true;
 	}
     }
@@ -2006,8 +2002,10 @@ public class GCImporter {
 
     private int getCacheByWaypointName(CacheHolder ch, boolean fetchTBs) {
 	int ret = SPIDER_OK;
+	CacheHolder chOld = MainForm.profile.cacheDB.get(ch.getCode());
+	boolean isInDB = chOld != null;
 	ch.setIncomplete(true);
-	// if ch is a new object, the <cache>.xml is read again as a new object
+	// if ch is a new object, the <cache>.xml is read again as a new object chD
 	CacheHolderDetail chD = ch.getDetails();
 	while (true) { // retry even if failure
 	    // Preferences.itself().log(""); // new line for more overview
@@ -2015,15 +2013,27 @@ public class GCImporter {
 	    final int MAX_SPIDER_TRYS = 3;
 	    while (spiderTrys++ < MAX_SPIDER_TRYS) {
 		ret = fetchWayPointPage(ch.getCode());
-		ch.setIsPMCache(wayPointPage.indexOf(premiumGeocache) > -1);
 		if (ret == SPIDER_OK) {
+		    ch.setIsPremiumCache(wayPointPage.indexOf(premiumGeocache) > -1);
 		    if (infB.isClosed())
 			ret = SPIDER_CANCEL;
-		    else if (ch.isPMCache()) {
-			if (wayPointPage.indexOf("PersonalCacheNote") == -1) {
-			    // Premium cache spidered by non premium member (nicht PM hat keine PersonalCacheNote)
-			    Preferences.itself().log("Ignoring premium member cache: " + ch.getCode(), null);
-			    spiderTrys = MAX_SPIDER_TRYS;
+		    else if (ch.isPremiumCache()) {
+			if (!Preferences.itself().havePremiumMemberRights) {
+			    // Premium cache spidered by non premium member
+			    // alternative Abfrage
+			    // wayPointPage.indexOf("PersonalCacheNote") == -1 // (BasicMember hat keine PersonalCacheNote)
+			    // Preferences.itself().log("Ignoring premium member cache: " + ch.getCode(), null);
+			    spiderTrys = MAX_SPIDER_TRYS; // retry zwecklos da BasicMember
+			    if (isInDB) {
+				chOld.setIsPremiumCache(true);
+				chOld.setLastSync(""); //
+				chOld.saveCacheDetails();
+			    } else {
+				if (Preferences.itself().addPremiumGC) {
+				    MainForm.profile.cacheDB.add(ch);
+				    ch.saveCacheDetails();
+				}
+			    }
 			    ret = SPIDER_IGNORE_PREMIUM;
 			}
 		    } else if (wayPointPage.indexOf(unpublishedGeocache) > -1) {
@@ -2294,7 +2304,7 @@ public class GCImporter {
     }
 
     private String getNotes() {
-	if (Preferences.itself().isPremium) {
+	if (Preferences.itself().havePremiumMemberRights) {
 	    notesRex.search(wayPointPage);
 	    if (notesRex.didMatch()) {
 		String tmp = notesRex.stringMatched(1);
@@ -2510,7 +2520,7 @@ public class GCImporter {
 	// an existing <cache>.xml has been read again (on getting chD)
 	// (and is an other object than that in the DB)
 	// So the already downloaded images are listed in chD.images
-	// But we will buils this list from clean
+	// But we will build this list from clean
 	chD.images.clear();
 	spideredUrls = new Vector();
 	spiderCounter = 0; // the first file

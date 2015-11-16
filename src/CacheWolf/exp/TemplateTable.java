@@ -175,7 +175,7 @@ public class TemplateTable {
 	varParams.put("SOLVED", cache.isSolved() ? "TRUE" : "FALSE");
 	varParams.put("FOUND", cache.isFound() ? "TRUE" : "FALSE");
 	varParams.put("OWN", cache.isOwned() ? "TRUE" : "FALSE");
-	varParams.put("PM", cache.isPMCache() ? "TRUE" : "FALSE");
+	varParams.put("PM", cache.isPremiumCache() ? "TRUE" : "FALSE");
 	if (!cache.isAvailable()) {
 	    varParams.put("IFNOTAVAILABLE", "-");
 	}
@@ -191,7 +191,7 @@ public class TemplateTable {
 	if (cache.isOwned()) {
 	    varParams.put("IFOWN", "~");
 	}
-	if (cache.isPMCache()) {
+	if (cache.isPremiumCache()) {
 	    varParams.put("IFPM", "?");
 	}
 	if (cache.getType() == CacheType.CW_TYPE_TRADITIONAL) {

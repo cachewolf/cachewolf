@@ -758,7 +758,7 @@ public class GpxExportNg {
 	}
 	if (Preferences.itself().useGCFavoriteValue)
 	    ret_____.append("      <gsak:FavPoints>").append("" + ch.getNumRecommended()).append("</gsak:FavPoints>").append(newLine); //
-	ret_____.append("      <gsak:IsPremium>").append(SafeXML.strxmlencode(ch.isPMCache())).append("</gsak:IsPremium>").append(newLine); //
+	ret_____.append("      <gsak:IsPremium>").append(SafeXML.strxmlencode(ch.isPremiumCache())).append("</gsak:IsPremium>").append(newLine); //
 	// ret_____.append("      <gsak:CacheImages>").append("").append("</gsak:CacheImages>").append(newLine) // replace "" by format spoilers
 	ret_____.append("    </gsak:wptExtension>").append(newLine);//
 	return ret_____.toString();

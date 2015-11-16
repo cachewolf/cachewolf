@@ -95,6 +95,7 @@ public class DescriptionPanel extends CellPanel {
 	if (cache == null) {
 	    desc = "";
 	    isHtml = false;
+	    return;
 	} else {
 	    if (cache.hasSameMainCache(currCache))
 		scrollto = disp.getTopLine();
@@ -137,7 +138,7 @@ public class DescriptionPanel extends CellPanel {
 	desc = buf.toString();
 
 	Vm.showWait(this, true);
-	if (cache != null && isHtml) {
+	if (isHtml) {
 	    int imageNo = 0;
 	    CacheImages Images;
 	    // cache which supplies the images (could be main cache)

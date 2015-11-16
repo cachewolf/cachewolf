@@ -161,7 +161,7 @@ public class PreferencesScreen extends Form {
 	UserDataPanel.addNext(new mLabel(MyLocale.getMsg(601, "Your alias:")), DONTSTRETCH, DONTFILL | LEFT);
 	UserDataPanel.addNext(Alias = new mInput(Preferences.itself().myAlias), STRETCH, HFILL);
 	UserDataPanel.addLast(chkPM = new mCheckBox("PM"), DONTSTRETCH, DONTFILL | LEFT);
-	if (Preferences.itself().isPremium)
+	if (Preferences.itself().havePremiumMemberRights)
 	    chkPM.setState(true);
 	UserDataPanel.addNext(new mLabel(MyLocale.getMsg(658, "User ID:")), DONTSTRETCH, DONTFILL | LEFT);
 	UserDataPanel.addLast(inpUserID = new mInput(Preferences.itself().userID), STRETCH, HFILL);
@@ -485,7 +485,7 @@ public class PreferencesScreen extends Form {
 		Preferences.itself().proxyActive = chkProxyActive.getState();
 		HttpConnection.setProxy(Preferences.itself().myproxy, Common.parseInt(Preferences.itself().myproxyport), Preferences.itself().proxyActive);
 		Preferences.itself().autoReloadLastProfile = chkAutoLoad.getState();
-		Preferences.itself().isPremium = chkPM.getState();
+		Preferences.itself().havePremiumMemberRights = chkPM.getState();
 		Preferences.itself().showDeletedImages = chkShowDeletedImg.getState();
 		Preferences.itself().garminConn = chcGarminPort.getSelectedItem().toString();
 		Preferences.itself().garminGPSBabelOptions = chkSynthShort.state ? "-s" : "";
