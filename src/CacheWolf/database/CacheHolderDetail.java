@@ -21,6 +21,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 package CacheWolf.database;
 
+import com.stevesoft.ewe_pat.Regex;
+
 import CacheWolf.MainForm;
 import CacheWolf.Preferences;
 import CacheWolf.Profile;
@@ -29,9 +31,6 @@ import CacheWolf.utils.Extractor;
 import CacheWolf.utils.MyLocale;
 import CacheWolf.utils.STRreplace;
 import CacheWolf.utils.SafeXML;
-
-import com.stevesoft.ewe_pat.Regex;
-
 import ewe.io.BufferedWriter;
 import ewe.io.File;
 import ewe.io.FileReader;
@@ -427,6 +426,8 @@ public class CacheHolderDetail {
 			this.userImages.add(imageInfo);
 			break;
 		    default:
+			// ist wohl 0 (als update Relikt von version 3) 
+			this.images.add(imageInfo);
 			continue;
 		    }
 		}

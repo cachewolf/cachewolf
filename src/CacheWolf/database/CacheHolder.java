@@ -21,6 +21,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 package CacheWolf.database;
 
+import com.stevesoft.ewe_pat.Regex;
+
 import CacheWolf.Filter;
 import CacheWolf.MainForm;
 import CacheWolf.MyTableModel;
@@ -31,9 +33,6 @@ import CacheWolf.utils.Common;
 import CacheWolf.utils.Metrics;
 import CacheWolf.utils.MyLocale;
 import CacheWolf.utils.SafeXML;
-
-import com.stevesoft.ewe_pat.Regex;
-
 import ewe.fx.FontMetrics;
 import ewe.fx.IconAndText;
 import ewe.sys.Convert;
@@ -965,7 +964,12 @@ public class CacheHolder {
 	sb.append("\" hidden=\"");
 	sb.append(this.hidden);
 	sb.append("\" wayp=\"");
-	sb.append(SafeXML.string2Html(code));
+	if (!(code.equals(code.toUpperCase()))) {
+	    code = code.toUpperCase();
+	    // status = "aufGross";
+	    this.saveCacheDetails();
+	}
+	sb.append(SafeXML.string2Html(code.toUpperCase()));
 	sb.append("\" status=\"");
 	sb.append(this.status);
 	sb.append("\" ocCacheID=\"");
@@ -1165,8 +1169,7 @@ public class CacheHolder {
     private final static int MSG_NR = 0;
     private final static int GC_MSG = 1;
     private final static int IDX_WRITENOTE = 5;
-    private final static String[][] _logType = { { "353", "" },
-	    { "319", "Didn't find it" }, //
+    private final static String[][] _logType = { { "353", "" }, { "319", "Didn't find it" }, //
 	    { "318", "Found it" }, //
 	    { "355", "Attended" }, //
 	    { "361", "Webcam Photo Taken" }, //
@@ -1460,7 +1463,7 @@ public class CacheHolder {
 		| bool2BitMask(this.hasSolver, 14) //
 		| bool2BitMask(this.isPMCache, 15) //
 		| bool2BitMask(this.isSolved, 16) //
-	;
+		;
 	return value;
     }
 
