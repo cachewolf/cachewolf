@@ -529,7 +529,7 @@ final class CTyp {
     public char _cwCGroup; // Cache Typ Group intern
     public String _cwCTypeV1; // V1 Cache Typ
     public String _gcCTypeSpider; // GC Type on Spider Import from GC.com
-    public String _ocCTypeXmlImport; // GC Type on Spider Import from GC.com
+    public String _ocCTypeXmlImport; // GC Type on XML Import from OC
     public byte _cwCTypeV2; // V2 Cache Typ
     public char _gpxShortCType; // Short Typ (one char abbreviation)
     public String _imageName; // name of imageName for Icon, "showCacheInBrowser" and "KML Export"

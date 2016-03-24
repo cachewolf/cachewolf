@@ -24,6 +24,8 @@ package CacheWolf.imp;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import com.stevesoft.ewe_pat.Regex;
+
 import CacheWolf.CoordsInput;
 import CacheWolf.MainForm;
 import CacheWolf.MainTab;
@@ -54,9 +56,6 @@ import CacheWolf.utils.MyLocale;
 import CacheWolf.utils.STRreplace;
 import CacheWolf.utils.SafeXML;
 import CacheWolf.utils.UrlFetcher;
-
-import com.stevesoft.ewe_pat.Regex;
-
 import ewe.io.AsciiCodec;
 import ewe.io.File;
 import ewe.io.FileBase;
@@ -393,12 +392,13 @@ public class GCImporter {
 		s = s + "maxPages for x Miles : " + maxPages + " for " + this.getDistanceInMiles(maxDistance) + Preferences.NEWLINE;
 		Preferences.itself().log(s);
 
-		Preferences.itself().log("Download properties : " + Preferences.NEWLINE //
-			+ "maxLogs: " + maxLogs + Preferences.NEWLINE //
-			+ "with Descr. images: " + (!downloadDescriptionImages ? "no" : "yes") + Preferences.NEWLINE //
-			+ "with Spoil. images: " + (!downloadSpoilerImages ? "no" : "yes") + Preferences.NEWLINE //
-			+ "with Log    images: " + (!downloadLogImages ? "no" : "yes") + Preferences.NEWLINE //
-			+ "with tb           : " + (!Preferences.itself().downloadTBs ? "no" : "yes") + Preferences.NEWLINE //
+		Preferences.itself()
+			.log("Download properties : " + Preferences.NEWLINE //
+				+ "maxLogs: " + maxLogs + Preferences.NEWLINE //
+				+ "with Descr. images: " + (!downloadDescriptionImages ? "no" : "yes") + Preferences.NEWLINE //
+				+ "with Spoil. images: " + (!downloadSpoilerImages ? "no" : "yes") + Preferences.NEWLINE //
+				+ "with Log    images: " + (!downloadLogImages ? "no" : "yes") + Preferences.NEWLINE //
+				+ "with tb           : " + (!Preferences.itself().downloadTBs ? "no" : "yes") + Preferences.NEWLINE //
 		);
 
 		newTillNow = 0;
@@ -943,7 +943,7 @@ public class GCImporter {
 			}
 		    }
 		    isThereOneMoreCacheOnTheListpage = lineRex.searchFrom(allCachesOfListPage, lineRex.matchedTo());
-		}// Loop caches on a ListPage (examine the rows of the SearchResultsTable up to MAXNROFCACHESPERLISTPAGE)
+		} // Loop caches on a ListPage (examine the rows of the SearchResultsTable up to MAXNROFCACHESPERLISTPAGE)
 		while (toDistance > 0 && withinMaxLimits && isThereOneMoreCacheOnTheListpage);
 		infB.setInfo(MyLocale.getMsg(5511, "Found ") + (newTillNow + downloadList.size()) + " / " + (updateTillNow + sureUpdateList.size()) + MyLocale.getMsg(5512, " caches"));
 
@@ -1150,8 +1150,8 @@ public class GCImporter {
 					&& ch.kilom >= fromDistanceInKm //
 					&& ch.kilom <= toDistanceInKm //
 					&& (!(doNotgetFound && (ch.isFound() || ch.isOwned()))) //
-				&& (restrictedCacheType == CacheType.CW_TYPE_ERROR || restrictedCacheType == ch.getType()) // all typs or chTyp=selected typ
-				) //
+					&& (restrictedCacheType == CacheType.CW_TYPE_ERROR || restrictedCacheType == ch.getType()) // all typs or chTyp=selected typ
+			) //
 			) //
 			{
 			    possibleUpdateList.put(ch.getCode(), ch);
@@ -1522,7 +1522,7 @@ public class GCImporter {
 	// (is permanent, must be reset)
 	// must do post (get no longer works)
 
-	String languages[] = { "en-US", "ca-ES", "cs-CZ", "da-DK", "de-DE", "el-GR", "et-EE", "es-ES", "fr-FR", "it-IT",//		
+	String languages[] = { "en-US", "ca-ES", "cs-CZ", "da-DK", "de-DE", "el-GR", "et-EE", "es-ES", "fr-FR", "it-IT", //		
 		"ja-JP", "ko-KR", "lv-LV", "hu-HU", "nl-NL", "nb-NO", "pl-PL", "pt-PT", "ro-RO", "ru-RU", "fi-FI", "sv-SE",//
 	};
 	String languageCode = "00"; // defaults to "en-US"
@@ -1539,11 +1539,11 @@ public class GCImporter {
 	    Preferences.itself().log("[recentlyviewedcaches]:Exception", ex, true);
 	    return false;
 	}
-	final String postData = "__EVENTTARGET=ctl00%24uxLocaleList%24uxLocaleList%24ctl" + languageCode + "%24uxLocaleItem" //
+	final String postData = "__EVENTTARGET=ctl00$ctl22$uxLocaleList$uxLocaleList$ctl" + languageCode + "$uxLocaleItem" //
 		+ "&" + "__EVENTARGUMENT="//
 		+ getViewState() //
 		+ "&" + "ctl00%24ContentBody%24wp=" //
-	;
+		;
 	try {
 	    UrlFetcher.setpostData(postData);
 	    WebPage = UrlFetcher.fetch(url);
@@ -1566,10 +1566,10 @@ public class GCImporter {
     // todo to work successfull with this perhaps set all values (did not test).
     String setLanguageEN = "ctl00$ContentBody$uxLanguagePreference=en-US";
     String commit = "ctl00$ContentBody$uxSave=Save Changes";
-
+    
     final String postData = "__EVENTTARGET=" //
     	+ "&" + "__EVENTARGUMENT="//
-
+    
     	+ "&" + UrlFetcher.encodeURL(setLanguageEN, false) //
     	+ "&" + UrlFetcher.encodeURL(commit, true) //
     ;
@@ -1625,7 +1625,7 @@ public class GCImporter {
 		+ "&" + "ctl00%24ContentBody%24tbPassword=" + encodeUTF8URL(Utils.encodeJavaUtf8String(passwort)) //
 		+ "&" + "ctl00%24ContentBody%24cbRememberMe=" + "true" //
 		+ "&" + "ctl00%24ContentBody%24btnSignIn=" + "Login" //
-	;
+		;
 	try {
 	    UrlFetcher.setpostData(postData);
 	    WebPage = UrlFetcher.fetch(loginPageUrl);
@@ -1638,7 +1638,9 @@ public class GCImporter {
 
     private static boolean stillLoggedIn(String page) {
 	if (!(page.indexOf("ctl00_hlSignOut") > -1)) {
-	    if (!(page.indexOf("ctl00_ContentLogin_uxLoginStatus_uxLoginURL") > -1)) {
+	    // "ctl00_uxLoginStatus_hlSignOut" is on webpage if logged in
+	    // did not check if no longer logged in
+	    if (!(page.indexOf("ctl00_uxLoginStatus_hlSignOut") > -1)) {
 		Preferences.itself().log(page, null);
 		return false;
 	    }
@@ -2128,7 +2130,7 @@ public class GCImporter {
 
 	    break;
 
-	}// while(true)
+	} // while(true)
 
 	return ret;
     } // getCacheByWaypointName
