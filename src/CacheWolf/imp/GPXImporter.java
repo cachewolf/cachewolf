@@ -22,6 +22,8 @@
 
 package CacheWolf.imp;
 
+import com.stevesoft.ewe_pat.Regex;
+
 import CacheWolf.Filter;
 import CacheWolf.MainForm;
 import CacheWolf.MainTab;
@@ -47,9 +49,6 @@ import CacheWolf.utils.MyLocale;
 import CacheWolf.utils.STRreplace;
 import CacheWolf.utils.SafeXML;
 import CacheWolf.utils.UrlFetcher;
-
-import com.stevesoft.ewe_pat.Regex;
-
 import ewe.io.AsciiCodec;
 import ewe.io.File;
 import ewe.io.IOException;
@@ -584,6 +583,7 @@ public class GPXImporter extends MinML {
 			holder.setNoFindLogs(holder.getDetails().CacheLogs.countNotFoundLogs());
 			holder.setNew(true);
 			cacheDB.add(holder);
+			// downloadPics = false;
 			if (downloadPics && !holder.isAddiWpt()) {
 			    if (spiderOK && !holder.isArchived()) {
 				getImages();

@@ -1350,21 +1350,29 @@ public class GCImporter {
 	int retrycount = -1;
 	int maxretries = 1;
 	boolean retry = false;
-
+	Preferences.itself().userID = ""; // gspkuserID is no longer sufficient for identification, need gspkauth too: so we do login with username+password again
 	do {
 	    retry = false;
 	    retrycount = retrycount + 1;
-	    // we try to get a userId by logging in with username and password
 	    if (Preferences.itself().userID.length() == 0) {
+		// we try to get a userId by logging in with username and password
 		if (gcLogin()) {
+		    retry = true;
 		    Preferences.itself().log("[gcLogin]");
 		    UrlFetcher.rememberCookies();
-		    Preferences.itself().userID = UrlFetcher.getCookie("userid;www.geocaching.com");
-		    Preferences.itself().userID = Preferences.itself().userID + "!" + UrlFetcher.getCookie("gspkuserid;www.geocaching.com");
-		    if (Preferences.itself().userID.equals("null!null")) {
+		    // cookies by now: 15.4.2016
+		    // ASP.NET_SessionId;www.geocaching.com=...
+		    // gspkuserid;www.geocaching.com=...
+		    // gspkauth;www.geocaching.com=...
+		    // Culture;www.geocaching.com=...
+		    // remember for next time, so you don't have to login
+		    String tmp = UrlFetcher.getCookie("gspkuserid;www.geocaching.com");
+		    if (tmp.equals("null")) {
 			Preferences.itself().userID = "";
-			new InfoBox(MyLocale.getMsg(5523, "Login error!"), MyLocale.getMsg(5524, "Please correct your account in preferences\n\n see http://cachewolf.aldos.de/userid.html !")).wait(FormBase.OKB);
+			new InfoBox(MyLocale.getMsg(5523, "Login error!"), MyLocale.getMsg(5524, "Bitte korrigieren Sie Ihr Benutzerkonto in den Einstellungen!\n\n")).wait(FormBase.OKB);
 			return false;
+		    } else {
+			Preferences.itself().userID = tmp;
 		    }
 		} else {
 		    new InfoBox(MyLocale.getMsg(5523, "Login error!"), MyLocale.getMsg(5525, "Perhaps GC is not available. This should not happen!")).wait(FormBase.OKB);
@@ -1377,8 +1385,10 @@ public class GCImporter {
 		switch (checkGCSettings()) {
 		case 0:
 		    loggedIn = true;
-		    Preferences.itself().userID = UrlFetcher.getCookie("userid;www.geocaching.com");
-		    Preferences.itself().userID = Preferences.itself().userID + "!" + UrlFetcher.getCookie("gspkuserid;www.geocaching.com");
+		    String tmp = UrlFetcher.getCookie("gspkuserid;www.geocaching.com");
+		    if (tmp.equals("null"))
+			tmp = "";
+		    Preferences.itself().userID = tmp;
 		    Preferences.itself().savePreferences();
 		    break;
 		case 1:
@@ -1402,7 +1412,7 @@ public class GCImporter {
 			retry = true;
 		    else {
 			retry = false;
-			new InfoBox(MyLocale.getMsg(5523, "Login error!"), MyLocale.getMsg(5524, "Please correct your account in preferences\n\n see http://cachewolf.aldos.de/userid.html !")).wait(FormBase.OKB);
+			new InfoBox(MyLocale.getMsg(5523, "Login error!"), MyLocale.getMsg(5524, "Please correct your account in preferences!\n\n")).wait(FormBase.OKB);
 		    }
 		    break;
 		default:
@@ -1416,12 +1426,16 @@ public class GCImporter {
     private int checkGCSettings() {
 	String page = "";
 	String gcSettingsUrl = "https://www.geocaching.com/account/settings/preferences";
-	UrlFetcher.clearCookies();
+	// we now always have to login
+	// so don't clear (cause coming from login.) 
+	// todo: or must remember gspkauth in adition to gspkuserid and set it here
+	// UrlFetcher.clearCookies();
 	String cookies[] = mString.split(Preferences.itself().userID, '!');
-	if (cookies.length > 1) {
-	    if (!(cookies[0].equals("null")))
-		UrlFetcher.setCookie("userid;www.geocaching.com", cookies[0]);
-	    if (!cookies[1].equals("null"))
+	if (cookies.length == 1) {
+	    UrlFetcher.setCookie("gspkuserid;www.geocaching.com", cookies[0]);
+	} else {
+	    // outdated version : two values saved, separated with '!'
+	    if (cookies.length > 1)
 		UrlFetcher.setCookie("gspkuserid;www.geocaching.com", cookies[1]);
 	}
 	try {
@@ -1443,8 +1457,10 @@ public class GCImporter {
 	extractor.set(page, "<a href=\"/my/default.aspx\"", ">", 0, true).findNext();
 	String loggedInAs = extractor.findNext("<span>", "</span>");
 	Preferences.itself().log("[checkGCSettings]:loggedInAs= " + loggedInAs, null);
-	if (loggedInAs.length() == 0)
+	if (loggedInAs.length() == 0) {
+	    //Preferences.itself().log(page);
 	    return 6;
+	}
 
 	//4.) distanceUnit
 	//<label><input checked="checked" id="DistanceUnits" name="DistanceUnits" type="radio" value="Metric" /> Metric</label>
@@ -3047,7 +3063,8 @@ public class GCImporter {
     }
 
     class SpiderProperties extends Properties {
-	SpiderProperties() {
+
+	public SpiderProperties() {
 	    super();
 	    try {
 		load(new FileInputStream(FileBase.getProgramDirectory() + "/spider.def"));

@@ -278,7 +278,7 @@ public class TablePanelMenu extends MenuBar {
 
     private PullDownMenu makeOrganizeMenu() {
 	MenuItem[] organizeMenuItems = { //
-	orgNewWP = GuiImageBroker.getMenuItem(MyLocale.getMsg(214, "New Waypoint"), "add"), //
+		orgNewWP = GuiImageBroker.getMenuItem(MyLocale.getMsg(214, "New Waypoint"), "add"), //
 		orgCopy = GuiImageBroker.getMenuItem(MyLocale.getMsg(141, "Copy Waypoints"), "copy"), //
 		orgMove = GuiImageBroker.getMenuItem(MyLocale.getMsg(142, "Move Waypoints"), "move"), //
 		orgDelete = GuiImageBroker.getMenuItem(MyLocale.getMsg(143, "Delete Waypoints"), "delete"), //
@@ -294,10 +294,10 @@ public class TablePanelMenu extends MenuBar {
 
     private Menu makeAboutMenu() {
 	MenuItem[] aboutMenuItems = { //
-	about = GuiImageBroker.getMenuItem(MyLocale.getMsg(117, "About"), "about"),//
-		legend = GuiImageBroker.getMenuItem(MyLocale.getMsg(155, "Legend"), "legend"),//
-		wolflang = GuiImageBroker.getMenuItem(MyLocale.getMsg(118, "WolfLanguage"), "wolflanguage"),//
-		sysinfo = GuiImageBroker.getMenuItem(MyLocale.getMsg(157, "System"), "system"),//
+		about = GuiImageBroker.getMenuItem(MyLocale.getMsg(117, "About"), "about"), //
+		legend = GuiImageBroker.getMenuItem(MyLocale.getMsg(155, "Legend"), "legend"), //
+		wolflang = GuiImageBroker.getMenuItem(MyLocale.getMsg(118, "WolfLanguage"), "wolflanguage"), //
+		sysinfo = GuiImageBroker.getMenuItem(MyLocale.getMsg(157, "System"), "system"), //
 		chkVersion = GuiImageBroker.getMenuItem(MyLocale.getMsg(158, "Version Check"), "version"),//
 	};
 	return new Menu(aboutMenuItems, MyLocale.getMsg(117, "About"));

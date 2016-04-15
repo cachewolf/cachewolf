@@ -21,51 +21,76 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 package CacheWolf.exp;
 
+import CacheWolf.Preferences;
 import CacheWolf.database.CacheHolder;
 import CacheWolf.database.CacheHolderDetail;
 import CacheWolf.database.Log;
-import ewe.util.Hashtable;
 
 /**
- * Class to export the cache database (index) to an CSV File which can bei easy
- * importet bei MS AutoRoute (testet with AR 2001 German) Format of the file:
- * Name;Breitengrad;Längengrad;Typ1;Typ2;Waypoint;Datum;Hyperlink
+ * Class to export the cache database
  * 
  */
 public class NewCSVExporter extends Exporter {
 
     public NewCSVExporter() {
 	super();
-	this.setOutputFileExtension("*.cl");
+	this.setOutputFileExtension("*.txt");
 	this.decimalSeparator = ',';
 	this.setRecordMethod(NO_PARAMS);
     }
 
-    private Hashtable reviewers = new Hashtable(50);
-
     public String header() {
-	return ">\r\n";
+	return "";
     }
 
+    // Prüfung ownlog
     public String record(CacheHolder ch) {
 	CacheHolderDetail chD = ch.getDetails();
-	//if (chD.State.equals("Baden-Württemberg")) {
-	int anz = chD.CacheLogs.size();
-	for (int i = anz - 1; i >= 0; i--) {
-	    Log log = chD.CacheLogs.getLog(i);
-	    if (log.isPublishLog()) {
-		if (reviewers.containsKey(log.getLogger())) {
-		    return null;
-		} else {
-		    reviewers.put(log.getLogger(), ch);
-		    //String ret = ch.getWayPoint() + " published by " + log.getLogger() + ".\r\n";
-		    return null;
+	if (chD != null) {
+	    Log ownLog = chD.getOwnLog();
+	    if (ownLog != null) {
+		String ownLogId = ownLog.getLogID();
+		int anz = chD.CacheLogs.size();
+		for (int i = anz - 1; i >= 0; i--) {
+		    Log log = chD.CacheLogs.getLog(i);
+		    if (log.getLogID().equals(ownLogId)) {
+			if (!(log.getFinderID().equals(Preferences.itself().gcMemberId))) {
+			    return "wrong own log" + ch.getCode() + "\r\n";
+			} else {
+			    return null;
+			}
+		    }
 		}
+	    } else {
+		return "no own log" + ch.getCode() + "\r\n";
 	    }
 	}
-	//}
-	return ch.getCode() + "\r\n";
+	return "own log not found" + ch.getCode() + "\r\n";
     }
+    // Ende Prüfung ownlog
+
+    /*
+    private Hashtable reviewers = new Hashtable(50);
+    public String record(CacheHolder ch) {
+    CacheHolderDetail chD = ch.getDetails();
+    //if (chD.State.equals("Baden-Württemberg")) {
+    int anz = chD.CacheLogs.size();
+    for (int i = anz - 1; i >= 0; i--) {
+        Log log = chD.CacheLogs.getLog(i);
+        if (log.isPublishLog()) {
+    	if (reviewers.containsKey(log.getLogger())) {
+    	    return null;
+    	} else {
+    	    reviewers.put(log.getLogger(), ch);
+    	    //String ret = ch.getWayPoint() + " published by " + log.getLogger() + ".\r\n";
+    	    return null;
+    	}
+        }
+    }
+    //}
+    return ch.getCode() + "\r\n";
+    }
+    */
 
     public String trailer() {
 	String ret = "\r\n";
@@ -74,7 +99,7 @@ public class NewCSVExporter extends Exporter {
 
     /*
     private Hashtable sumPerDay = new Hashtable(365);
-
+    
     public String record(CacheHolder ch) {
     String sdate = ch.getStatusDate();
     if (sumPerDay.containsKey(sdate)) {
@@ -86,7 +111,7 @@ public class NewCSVExporter extends Exporter {
     }
     return null;
     }
-
+    
     public String trailer() {
     String ret = "";
     for (final Enumeration e = sumPerDay.keys(); e.hasMoreElements();) {
@@ -157,13 +182,13 @@ public class NewCSVExporter extends Exporter {
         str.append("\"" + diffDays + "\";");
         str.append("\"" + sum + "\";");
         str.append("\"" + ch.getWayPoint() + "\"\r\n");
-
+    
         return str.toString();
     }
     return "";
     }
     static int dim[] = new int[] { 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 };
-
+    
     private static int getDays(int day, int month, int year)
     //-------------------------------------------------------------------
     {
@@ -183,7 +208,7 @@ public class NewCSVExporter extends Exporter {
     daysPast += (yearsPast + 1) * 365;
     return daysPast;
     }
-
+    
     private static int getDays(Time t) {
     return getDays(t.day, t.month, t.year);
     }

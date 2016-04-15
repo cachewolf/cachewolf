@@ -95,7 +95,7 @@ public class Preferences extends MinML {
     /** The own GC member ID (for gpx - export)*/
     public String gcMemberId = "";
     public final String[] gpxStyles = { //
-    "STYLE_COMPACT_OUTPUT_SINGLE", //
+	    "STYLE_COMPACT_OUTPUT_SINGLE", //
 	    "STYLE_COMPACT_OUTPUT_SEPARATE", //
 	    "STYLE_COMPACT_OUTPUT_POI", //
 	    "STYLE_GPX_PQLIKE", //
@@ -337,19 +337,19 @@ public class Preferences extends MinML {
 	    String test;
 	    test = Vm.getenv("APPDATA", "/");
 	    log("Vm.getenv(APPDATA: " + test);
-
+	    
 	    // this works also in win32.exe (ewe-vm on win xp) 
 	    // in MS-java-VM  env variable $HOME is ignored and always <windir>\java  returned, see http:support.microsoft.com/kb/177181/en-us/
 	    // This should return on *nix system the home dir
 	    test = Vm.getenv("HOME", "/");
 	    log("Vm.getenv(HOME: " + test);
-
+	    
 	    // "user.dir" User's current working directory 
 	    // return in java-vm on win  xp: <working dir> or maybe <program dir>
 	    // in win32.exe ->  null 
 	    test = System.getProperty("user.dir");
 	    log("System.getProperty(user.dir: " + test);
-
+	    
 	    // "user.home" User home directory (taken from http://scv.bu.edu/Doc/Java/tutorial/java/system/properties.html )
 	    // in win32.exe -> null 
 	    test = System.getProperty("user.home");
@@ -473,7 +473,7 @@ public class Preferences extends MinML {
 		testlist = test;
 	    } else {
 		String test[] = { // this part is not tested
-		"/opt/firefox/firefox", // default path in ubuntu
+			"/opt/firefox/firefox", // default path in ubuntu
 			"/usr/bin/firefox" };
 		testlist = test;
 	    }
