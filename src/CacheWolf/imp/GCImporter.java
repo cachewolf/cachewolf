@@ -1350,96 +1350,60 @@ public class GCImporter {
 	int retrycount = -1;
 	int maxretries = 1;
 	boolean retry = false;
-	Preferences.itself().userID = ""; // gspkuserID is no longer sufficient for identification, need gspkauth too: so we do login with username+password again
+	// Preferences.itself().userID = ""; // gspkauth is no longer sufficient for identification, need gspkauth too: so we do login with username+password again
 	do {
 	    retry = false;
 	    retrycount = retrycount + 1;
-	    if (Preferences.itself().userID.length() == 0) {
-		// we try to get a userId by logging in with username and password
-		if (gcLogin()) {
-		    retry = true;
-		    Preferences.itself().log("[gcLogin]");
-		    UrlFetcher.rememberCookies();
-		    // cookies by now: 15.4.2016
-		    // ASP.NET_SessionId;www.geocaching.com=...
-		    // gspkuserid;www.geocaching.com=...
-		    // gspkauth;www.geocaching.com=...
-		    // Culture;www.geocaching.com=...
-		    // remember for next time, so you don't have to login
-		    String tmp = UrlFetcher.getCookie("gspkuserid;www.geocaching.com");
-		    if (tmp.equals("null")) {
-			Preferences.itself().userID = "";
-			new InfoBox(MyLocale.getMsg(5523, "Login error!"), MyLocale.getMsg(5524, "Bitte korrigieren Sie Ihr Benutzerkonto in den Einstellungen!\n\n")).wait(FormBase.OKB);
-			return false;
-		    } else {
-			Preferences.itself().userID = tmp;
-		    }
-		} else {
-		    new InfoBox(MyLocale.getMsg(5523, "Login error!"), MyLocale.getMsg(5525, "Perhaps GC is not available. This should not happen!")).wait(FormBase.OKB);
+	    if (Preferences.itself().hasGCLogin()) {
+		Hashtable ht = Preferences.itself().getGCLogin(Preferences.itself().gcLogin);
+		UrlFetcher.setCookie("gspkuserid;www.geocaching.com", (String) ht.get("userid"));
+		UrlFetcher.setCookie("gspkauth;www.geocaching.com", (String) ht.get("auth"));
+	    } else {
+		byte ret = gcLogin();
+		if (ret > 0) {
+		    if (ret < 5)
+			new InfoBox(MyLocale.getMsg(5523, "Login error!"), MyLocale.getMsg(5525, "Perhaps GC is not available. This should not happen!")).wait(FormBase.OKB);
 		    return false;
 		}
 	    }
-
-	    if (Preferences.itself().userID.length() > 0) {
-		// we have a (saved) userID (perhaps invalid)
-		switch (checkGCSettings()) {
-		case 0:
-		    loggedIn = true;
-		    String tmp = UrlFetcher.getCookie("gspkuserid;www.geocaching.com");
-		    if (tmp.equals("null"))
-			tmp = "";
-		    Preferences.itself().userID = tmp;
-		    Preferences.itself().savePreferences();
-		    break;
-		case 1:
-		    // language not set to "en-US" , we couldn't change
-		    new InfoBox(MyLocale.getMsg(5523, "Login error!"), MyLocale.getMsg(5526, "Couldn't change language to EN.")).wait(FormBase.OKB);
-		    break;
-		case 2:
-		    // exception on http://www.geocaching.com/account/ManagePreferences.aspx
-		    new InfoBox(MyLocale.getMsg(5523, "Login error!"), MyLocale.getMsg(5527, "Exception on ManagePreferences.aspx")).wait(FormBase.OKB);
-		    break;
-		case 3:
-		    // "Metric" : "Imperial" don't correspond
-		    new InfoBox(MyLocale.getMsg(5523, "Login error!"), MyLocale.getMsg(5528, "Change Metric/Imperial (km / mi) manually. (GC or CW)")).wait(FormBase.OKB);
-		    break;
-		case 4:
-		    break;
-		case 6:
-		    // no correct login
-		    Preferences.itself().userID = "";
-		    if (retrycount < maxretries)
-			retry = true;
-		    else {
-			retry = false;
-			new InfoBox(MyLocale.getMsg(5523, "Login error!"), MyLocale.getMsg(5524, "Please correct your account in preferences!\n\n")).wait(FormBase.OKB);
-		    }
-		    break;
-		default:
+	    switch (checkGCSettings()) {
+	    case 0:
+		loggedIn = true;
+		break;
+	    case 1:
+		// language not set to "en-US" , we couldn't change
+		new InfoBox(MyLocale.getMsg(5523, "Login error!"), MyLocale.getMsg(5526, "Couldn't change language to EN.")).wait(FormBase.OKB);
+		break;
+	    case 2:
+		// exception on http://www.geocaching.com/account/ManagePreferences.aspx
+		new InfoBox(MyLocale.getMsg(5523, "Login error!"), MyLocale.getMsg(5527, "Exception on ManagePreferences.aspx")).wait(FormBase.OKB);
+		break;
+	    case 3:
+		// "Metric" : "Imperial" don't correspond
+		new InfoBox(MyLocale.getMsg(5523, "Login error!"), MyLocale.getMsg(5528, "Change Metric/Imperial (km / mi) manually. (GC or CW)")).wait(FormBase.OKB);
+		break;
+	    case 4:
+		break;
+	    case 6:
+		// no correct login (Passwort falsch eingegeben oder ähnliches)
+		if (retrycount < maxretries)
+		    retry = true;
+		else {
+		    new InfoBox(MyLocale.getMsg(5523, "Login error!"), MyLocale.getMsg(5524, "Please correct your account in preferences!\n\n")).wait(FormBase.OKB);
 		}
+		break;
+	    default:
 	    }
 
 	} while (retry);
 	return loggedIn;
     }
 
-    private int checkGCSettings() {
+    private byte checkGCSettings() {
 	String page = "";
 	String gcSettingsUrl = "https://www.geocaching.com/account/settings/preferences";
-	// we now always have to login
-	// so don't clear (cause coming from login.) 
-	// todo: or must remember gspkauth in adition to gspkuserid and set it here
-	// UrlFetcher.clearCookies();
-	String cookies[] = mString.split(Preferences.itself().userID, '!');
-	if (cookies.length == 1) {
-	    UrlFetcher.setCookie("gspkuserid;www.geocaching.com", cookies[0]);
-	} else {
-	    // outdated version : two values saved, separated with '!'
-	    if (cookies.length > 1)
-		UrlFetcher.setCookie("gspkuserid;www.geocaching.com", cookies[1]);
-	}
 	try {
-	    page = UrlFetcher.fetch(gcSettingsUrl); // getting the sessionid
+	    page = UrlFetcher.fetch(gcSettingsUrl); // getting the cookie sessionid
 	} catch (final Exception ex) {
 	    Preferences.itself().log("[checkGCSettings]:Exception calling " + gcSettingsUrl + " with userID ", ex);
 	    return 2;
@@ -1455,7 +1419,8 @@ public class GCImporter {
 	*/
 	// 1.) loggedInAs
 	extractor.set(page, "<a href=\"/my/default.aspx\"", ">", 0, true).findNext();
-	String loggedInAs = extractor.findNext("<span>", "</span>");
+	String loggedInAs;
+	loggedInAs = extractor.findNext("<span>", "</span>");
 	Preferences.itself().log("[checkGCSettings]:loggedInAs= " + loggedInAs, null);
 	if (loggedInAs.length() == 0) {
 	    //Preferences.itself().log(page);
@@ -1488,7 +1453,7 @@ public class GCImporter {
 
 	//7.) ctl00$ContentBody$ddlGPXVersion
 
-	int retCode = 0;
+	byte retCode = 0;
 	if (oldLanguage.equals("en-US")) {
 	    Preferences.itself().changedGCLanguageToEnglish = false;
 	} else {
@@ -1555,7 +1520,7 @@ public class GCImporter {
 	    Preferences.itself().log("[recentlyviewedcaches]:Exception", ex, true);
 	    return false;
 	}
-	final String postData = "__EVENTTARGET=ctl00$ctl22$uxLocaleList$uxLocaleList$ctl" + languageCode + "$uxLocaleItem" //
+	final String postData = "__EVENTTARGET=ctl00$ctl23$uxLocaleList$uxLocaleList$ctl" + languageCode + "$uxLocaleItem" //
 		+ "&" + "__EVENTARGUMENT="//
 		+ getViewState() //
 		+ "&" + "ctl00%24ContentBody%24wp=" //
@@ -1567,12 +1532,25 @@ public class GCImporter {
 	    Preferences.itself().log("[setGCLanguage] Exception", ex);
 	    return false;
 	}
+
+	Extractor e = new Extractor();
+	String languageBlock = e.set(WebPage, "<ul class=\"language-list\">", "</ul>", 0, true).findNext();
+	languageBlock = e.set(languageBlock, "class=\"selected\"", "</li>", 0, true).findNext();
+	String newLanguage = e.set(languageBlock, "$uxLocaleList$ctl", "$uxLocaleItem", 0, true).findNext();
+
+	if (newLanguage.equals(languageCode)) {
+	    return true;
+	} else
+	    return false;
+
+	/*
 	if (stillLoggedIn(WebPage)) {
 	    // check success
 	    return true;
 	} else {
 	    return false;
 	}
+	*/
     }
 
     /* 
@@ -1600,8 +1578,9 @@ public class GCImporter {
     }
     */
 
-    private boolean gcLogin() {
-	// get username
+    private byte gcLogin() {
+	Preferences.itself().log("[gcLogin]");
+	// get username	
 	String username = Preferences.itself().myAlias;
 	if (username.equals("")) {
 	    InfoBox usernameInput = new InfoBox(MyLocale.getMsg(601, "Your alias:"), MyLocale.getMsg(601, "Your alias:"), InfoBox.INPUT);
@@ -1611,7 +1590,7 @@ public class GCImporter {
 	    username = usernameInput.getInput();
 	    usernameInput.close(0);
 	    if (code != FormBase.IDOK)
-		return false;
+		return 1;
 	    Preferences.itself().myAlias = username;
 	}
 	// get password 
@@ -1624,7 +1603,7 @@ public class GCImporter {
 	    passwort = passwortInput.getInput();
 	    passwortInput.close(0);
 	    if (code != FormBase.IDOK)
-		return false;
+		return 2;
 	}
 	String loginPageUrl = "https://www.geocaching.com/login/default.aspx";
 	UrlFetcher.clearCookies();
@@ -1632,7 +1611,7 @@ public class GCImporter {
 	    WebPage = UrlFetcher.fetch(loginPageUrl); // 
 	} catch (final Exception ex) {
 	    Preferences.itself().log("[gcLogin]:Exception gc.com login page", ex, true);
-	    return false;
+	    return 3;
 	}
 	final String postData = "__EVENTTARGET=" //
 		+ "&" + "__EVENTARGUMENT="//
@@ -1647,15 +1626,29 @@ public class GCImporter {
 	    WebPage = UrlFetcher.fetch(loginPageUrl);
 	} catch (final Exception ex) {
 	    Preferences.itself().log("[gcLogin] Exception", ex);
-	    return false;
+	    return 4;
 	}
-	return true;
+
+	if (UrlFetcher.getCookie("gspkuserid;www.geocaching.com").equals("null")) {
+	    new InfoBox(MyLocale.getMsg(5523, "Login error!"), MyLocale.getMsg(5524, "Bitte korrigieren Sie Ihr Benutzerkonto in den Einstellungen!\n\n")).wait(FormBase.OKB);
+	    return 5;
+	} else {
+	    Preferences.itself().gcLogin = username;
+	    UrlFetcher.rememberCookies();
+	    // cookies by now: 15.4.2016
+	    // ASP.NET_SessionId;www.geocaching.com=...
+	    // gspkuserid;www.geocaching.com=...
+	    // gspkauth;www.geocaching.com=...
+	    // Culture;www.geocaching.com=...
+	    // remember for next time, so you don't have to login
+	    Preferences.itself().setGCLogin(username, UrlFetcher.getCookie("gspkuserid;www.geocaching.com"), UrlFetcher.getCookie("gspkauth;www.geocaching.com"));
+	    Preferences.itself().savePreferences();
+	    return 0;
+	}
     }
 
     private static boolean stillLoggedIn(String page) {
 	if (!(page.indexOf("ctl00_hlSignOut") > -1)) {
-	    // "ctl00_uxLoginStatus_hlSignOut" is on webpage if logged in
-	    // did not check if no longer logged in
 	    if (!(page.indexOf("ctl00_uxLoginStatus_hlSignOut") > -1)) {
 		Preferences.itself().log(page, null);
 		return false;
@@ -2861,7 +2854,8 @@ public class GCImporter {
 		    } else {
 			if (koords_not_yet_found) {
 			    koords_not_yet_found = false;
-			    Preferences.itself().log("check koordRex in spider.def" + Preferences.NEWLINE + rowBlock, null);
+			    if (rowBlock.indexOf("icon_nocoords.jpg") < 0)
+				Preferences.itself().log("check koordRex in spider.def" + Preferences.NEWLINE + rowBlock, null);
 			}
 		    }
 

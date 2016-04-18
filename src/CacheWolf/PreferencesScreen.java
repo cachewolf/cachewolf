@@ -112,6 +112,7 @@ public class PreferencesScreen extends Form {
     private mButton DataDirBrowseButton;
     // UserDataPanel
     private mInput Alias, inpGcMemberID, Alias2, inpPassword;
+    private mChoice inpGCUser;
     // private mInput inpUserID;
     mCheckBox chkPM;
     // Card Maps / GPS
@@ -173,6 +174,18 @@ public class PreferencesScreen extends Form {
 	UserDataPanel.addLast(inpPassword = new mInput(Preferences.itself().password), STRETCH, HFILL);
 	inpPassword.setToolTip(MyLocale.getMsg(593, "Password is optional here.\nEnter only if you want to store it in Preferences.itself().xml"));
 	inpPassword.isPassword = true;
+
+	String[] gcLogins = Preferences.itself().getGCLogins();
+	int selectedLogin = -1;
+	for (int i = 0; i < gcLogins.length; i++) {
+	    if (gcLogins[i].equals(Preferences.itself().gcLogin)) {
+		selectedLogin = i;
+		break;
+	    }
+	}
+	UserDataPanel.addNext(new mLabel(MyLocale.getMsg(658, "GC account:")), DONTSTRETCH, DONTFILL | LEFT);
+	UserDataPanel.addLast(this.inpGCUser = new mChoice(gcLogins, selectedLogin), STRETCH, HFILL);
+
 	pnlGeneral.addLast(UserDataPanel, HSTRETCH, HFILL);
 
 	mTab.addCard(pnlGeneral, MyLocale.getMsg(621, "General"), null).iconize(GuiImageBroker.getImage("person"), Preferences.itself().useIcons);
@@ -488,6 +501,7 @@ public class PreferencesScreen extends Form {
 		Preferences.itself().havePremiumMemberRights = chkPM.getState();
 		Preferences.itself().showDeletedImages = chkShowDeletedImg.getState();
 		Preferences.itself().garminConn = chcGarminPort.getSelectedItem().toString();
+		Preferences.itself().gcLogin = this.inpGCUser.getSelectedItem().toString();
 		Preferences.itself().garminGPSBabelOptions = chkSynthShort.state ? "-s" : "";
 		Preferences.itself().noTabs = chkNoTabs.getState();
 		Preferences.itself().tabsAtTop = chkTabsAtTop.getState();

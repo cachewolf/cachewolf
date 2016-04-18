@@ -88,10 +88,9 @@ public class Preferences extends MinML {
     // General / Account
     /** This is the login alias for geocaching.com and opencaching.de */
     public String myAlias = "";
+    public String gcLogin = "";
     /** Premium Member ? */
     public boolean havePremiumMemberRights = true;
-    /** The Cookie from GC */
-    public String userID = "";
     /** The own GC member ID (for gpx - export)*/
     public String gcMemberId = "";
     public final String[] gpxStyles = { //
@@ -708,9 +707,11 @@ public class Preferences extends MinML {
 	    tmp = atts.getValue("downloadTBs");
 	    if (tmp != null)
 		downloadTBs = Boolean.valueOf(tmp).booleanValue();
-	    userID = atts.getValue("UserID");
-	    if (userID == null)
-		userID = "";
+	    gcLogin = atts.getValue("gcLogin");
+	    if (gcLogin == null)
+		gcLogin = "";
+	    else
+		gcLogin = SafeXML.html2iso8859s1(gcLogin);
 	} else if (name.equals("details")) {
 	    maxDetails = Common.parseInt(atts.getValue("cacheSize"));
 	    deleteDetails = Common.parseInt(atts.getValue("delete"));
@@ -725,6 +726,16 @@ public class Preferences extends MinML {
 	    }
 	} else if (name.equals("locale")) {
 	    language = atts.getValue("language");
+	} else if (name.equals("GCLogins")) {
+	    Hashtable h = this.getGCLogin(SafeXML.html2iso8859s1(atts.getValue("id")));
+	    // name password cookies (gspkuserid, gspkauth, ...?)
+	    for (int i = 0; i < atts.getLength(); i++) {
+		String key = atts.getName(i);
+		String value = atts.getValue(i);
+		if (key.equals("id"))
+		    value = SafeXML.html2iso8859s1(value);
+		h.put(key, value);
+	    }
 	} else if (name.equals("FILTERDATA")) {
 	    // Creating a filter object and reading the saved data
 	    String id = SafeXML.html2iso8859s1(atts.getValue("id"));
@@ -973,9 +984,27 @@ public class Preferences extends MinML {
 		    + " getSpoilerPics=\"" + SafeXML.strxmlencode(downloadSpoilerImages) + "\"" //
 		    + " getLogPics=\"" + SafeXML.strxmlencode(downloadLogImages) + "\"" //
 		    + " downloadTBs=\"" + SafeXML.strxmlencode(downloadTBs) + "\"" //
-		    + " UserID=\"" + SafeXML.string2Html(userID) + "\"" //
+		    + " gcLogin=\"" + SafeXML.string2Html(gcLogin) + "\"" //
 		    + " getFinds=\"" + SafeXML.strxmlencode(!doNotGetFound) + "\"" //
 		    + " />\n");
+	    // save the gcLogins created by GCImporter
+	    Iterator it = this.gcLogins.entries();
+	    while (it.hasNext()) {
+		MapEntry gcLoginEntry = (MapEntry) it.next();
+		// String id = (String) gcLoginEntry.getKey(); // ist in  Hashtable gcLogin auch drin
+		Hashtable gcLogin = (Hashtable) gcLoginEntry.getValue();
+		Iterator itgcLogin = gcLogin.entries();
+		outp.print("    <" + "GCLogins" + " ");
+		while (itgcLogin.hasNext()) {
+		    MapEntry gcLoginentry = (MapEntry) itgcLogin.next();
+		    String key = (String) gcLoginentry.getKey();
+		    String value = (String) gcLoginentry.getValue();
+		    if (key.equals("id"))
+			value = SafeXML.html2iso8859s1(value);
+		    outp.print(key + "=\"" + value + "\" ");
+		}
+		outp.print("/>\n");
+	    }
 	    outp.print("    <gotopanel northcentered=\"" + SafeXML.strxmlencode(northCenteredGoto) + "\" />\n");
 	    outp.print("    <details cacheSize=\"" + SafeXML.strxmlencode(maxDetails) + "\" delete=\"" + SafeXML.strxmlencode(deleteDetails) + "\" />\n");
 	    outp.print("    <metric type=\"" + SafeXML.strxmlencode(metricSystem) + "\" />\n");
@@ -1245,7 +1274,7 @@ public class Preferences extends MinML {
 	return dir;
     }
 
-    private Hashtable gpxExportPreferences = new Hashtable(4);
+    private Hashtable gpxExportPreferences = new Hashtable(5);
 
     public Hashtable getGpxExportPreferences(String gpxStyle) {
 	Hashtable ret = (Hashtable) gpxExportPreferences.get(gpxStyle);
@@ -1254,6 +1283,41 @@ public class Preferences extends MinML {
 	    ret = (Hashtable) gpxExportPreferences.get(gpxStyle);
 	}
 	return ret;
+    }
+
+    private Hashtable gcLogins = new Hashtable(5);
+
+    public String[] getGCLogins() {
+	String[] loginNames = new String[gcLogins.size() + 1];
+	loginNames[0] = "";
+	int i = 1;
+	Iterator it = this.gcLogins.entries();
+	while (it.hasNext()) {
+	    MapEntry gcLoginEntry = (MapEntry) it.next();
+	    loginNames[i] = (String) gcLoginEntry.getKey();
+	    i = i + 1;
+	}
+	return loginNames;
+    }
+
+    public boolean hasGCLogin() {
+	return gcLogins.get(gcLogin) != null;
+    }
+
+    public Hashtable getGCLogin(String id) {
+	Hashtable ret = (Hashtable) gcLogins.get(id);
+	if (ret == null) {
+	    gcLogins.put(id, new Hashtable());
+	    ret = (Hashtable) gcLogins.get(id);
+	}
+	return ret;
+    }
+
+    public void setGCLogin(String id, String gspkuserid, String gspkauth) {
+	Hashtable h = getGCLogin(id);
+	h.put("id", id);
+	h.put("userid", gspkuserid);
+	h.put("auth", gspkauth);
     }
 
     /**
