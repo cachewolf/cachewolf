@@ -1504,7 +1504,7 @@ public class GCImporter {
 	// must do post (get no longer works)
 
 	String languages[] = { "en-US", "ca-ES", "cs-CZ", "da-DK", "de-DE", "el-GR", "et-EE", "es-ES", "fr-FR", "it-IT", //		
-		"ja-JP", "ko-KR", "lv-LV", "hu-HU", "nl-NL", "nb-NO", "pl-PL", "pt-PT", "ro-RO", "ru-RU", "fi-FI", "sv-SE",//
+		"ja-JP", "ko-KR", "lv-LV", "lb-LU", "hu-HU", "nl-NL", "nb-NO", "pl-PL", "pt-PT", "ro-RO", "ru-RU", "fi-FI", "sv-SE",//
 	};
 	String languageCode = "00"; // defaults to "en-US"
 	for (int i = 0; i < languages.length; i++) {
@@ -1629,7 +1629,8 @@ public class GCImporter {
 	    return 4;
 	}
 
-	if (UrlFetcher.getCookie("gspkuserid;www.geocaching.com").equals("null")) {
+	String checkedCookie = UrlFetcher.getCookie("gspkauth;www.geocaching.com");
+	if (checkedCookie == null) {
 	    new InfoBox(MyLocale.getMsg(5523, "Login error!"), MyLocale.getMsg(5524, "Bitte korrigieren Sie Ihr Benutzerkonto in den Einstellungen!\n\n")).wait(FormBase.OKB);
 	    return 5;
 	} else {
