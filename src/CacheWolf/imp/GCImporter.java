@@ -2691,13 +2691,18 @@ public class GCImporter {
 	    //
 	    // http://imgcdn.geocaching.com/cache/large/3f8dfccc-958a-4cb8-bfd3-be3ab7db276b.jpg
 	    // is same as http://img.geocaching.com/cache/3f8dfccc-958a-4cb8-bfd3-be3ab7db276b.jpg
+	    // 
+	    // nowerdays
+	    // http://img.geocaching.com/cache/6bcc126a-aa28-4f30-b501-f7ec60409218.jpg
+	    // is same as
+	    // https://s3.amazonaws.com/gs-geo-images/6bcc126a-aa28-4f30-b501-f7ec60409218.jpg
 	    if (downloadUrl.indexOf("geocaching.com") > -1) {
 		spideredName = downloadUrl.substring(downloadUrl.lastIndexOf('/'), downloadUrl.lastIndexOf('.'));
 		if (downloadUrl.indexOf("www.geocaching.com") == -1) {
 		    downloadUrl = "http://img.geocaching.com/cache" + spideredName + imgType;
 		}
 		// else gc smileys from www.geocaching.com
-	    } else if (downloadUrl.indexOf("cloudfront.net") > -1) {
+	    } else if ((downloadUrl.indexOf("cloudfront.net") > -1) || (downloadUrl.indexOf("amazonaws.com") > -1)) {
 		spideredName = downloadUrl.substring(downloadUrl.lastIndexOf('/'), downloadUrl.lastIndexOf('.'));
 		if (spideredName.endsWith("_l")) {
 		    spideredName = spideredName.substring(0, spideredName.length() - 2);

@@ -232,7 +232,7 @@ public class Preferences extends MinML {
     public boolean fixSIP = false;
 
     /** The widths for each column in list view */
-    public String listColWidth = "15,20,20,25,92,177,144,83,60,105,50,104,22,30,30,30,30,30,30,30";
+    public String listColWidth = "15,20,20,25,92,177,144,83,60,105,50,104,22,30,30,30,30,30,30,30,30,30,30";
     /** TRUE if we want automatic sorting (by distance) */
     public boolean sortAutomatic = true;
     public boolean hasTickColumn = true;
