@@ -400,29 +400,33 @@ public class CacheHolderDetail {
 	    this.images.clear();
 	    this.logImages.clear();
 	    this.userImages.clear();
-	    Regex getImageInfos = new Regex("SRC=\"(.*?)\" URL=\"(.*?)\"( TITLE=\"(.*?)\")?( CMT=\"(.*?)\")?");
+	    Regex getImageInfos = new Regex("SRC=\"(.*?)\"( URL=\"(.*?)\")?( TITLE=\"(.*?)\")?( CMT=\"(.*?)\")?");
 	    while ((dummy = subex.findNext()).length() > 0) {
 		String[] parts = mString.split(dummy, '>');
 		getImageInfos.search(parts[0]);
+		// if (parts[0].startsWith("SRC=\"4\"")) {
 		String ssrc = getImageInfos.stringMatched(1);
 		if (ssrc != null) {
 		    char src = ssrc.charAt(0);
 		    imageInfo = new CacheImage(src);
 		    imageInfo.setFilename(SafeXML.html2iso8859s1(parts[1]));
 		    imageInfo.setURL(SafeXML.html2iso8859s1(getImageInfos.stringMatched(2)));
-		    imageInfo.setTitle(getImageInfos.stringMatched(4));
 		    imageInfo.setComment(getImageInfos.stringMatched(6));
 		    switch (src) {
 		    case CacheImage.FROMDESCRIPTION:
+			imageInfo.setTitle(getImageInfos.stringMatched(4));
 			this.images.add(imageInfo);
 			break;
 		    case CacheImage.FROMLOG:
+			imageInfo.setTitle(getImageInfos.stringMatched(4));
 			this.logImages.add(imageInfo);
 			break;
 		    case CacheImage.FROMSPOILER:
+			imageInfo.setTitle(getImageInfos.stringMatched(4));
 			this.images.add(imageInfo);
 			break;
 		    case CacheImage.FROMUSER:
+			imageInfo.setTitle(getImageInfos.stringMatched(5));
 			this.userImages.add(imageInfo);
 			break;
 		    default:
