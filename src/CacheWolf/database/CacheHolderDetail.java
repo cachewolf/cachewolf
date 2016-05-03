@@ -410,23 +410,20 @@ public class CacheHolderDetail {
 		    char src = ssrc.charAt(0);
 		    imageInfo = new CacheImage(src);
 		    imageInfo.setFilename(SafeXML.html2iso8859s1(parts[1]));
-		    imageInfo.setURL(SafeXML.html2iso8859s1(getImageInfos.stringMatched(2)));
-		    imageInfo.setComment(getImageInfos.stringMatched(6));
+		    imageInfo.setURL(SafeXML.html2iso8859s1(getImageInfos.stringMatched(3)));
+		    imageInfo.setTitle(getImageInfos.stringMatched(5));
+		    imageInfo.setComment(getImageInfos.stringMatched(7));
 		    switch (src) {
 		    case CacheImage.FROMDESCRIPTION:
-			imageInfo.setTitle(getImageInfos.stringMatched(4));
 			this.images.add(imageInfo);
 			break;
 		    case CacheImage.FROMLOG:
-			imageInfo.setTitle(getImageInfos.stringMatched(4));
 			this.logImages.add(imageInfo);
 			break;
 		    case CacheImage.FROMSPOILER:
-			imageInfo.setTitle(getImageInfos.stringMatched(4));
 			this.images.add(imageInfo);
 			break;
 		    case CacheImage.FROMUSER:
-			imageInfo.setTitle(getImageInfos.stringMatched(5));
 			this.userImages.add(imageInfo);
 			break;
 		    default:

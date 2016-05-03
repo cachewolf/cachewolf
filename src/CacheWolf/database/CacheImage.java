@@ -105,7 +105,8 @@ public class CacheImage {
     }
 
     public void setURL(String url) {
-	this.url = url;
+	if (url != null)
+	    this.url = url;
     }
 
 }
