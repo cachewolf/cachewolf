@@ -2,6 +2,10 @@
 
 ENCODING=${ENCODING:-windows-1252}
 
+if [ ! -d bin ]; then
+  mkdir bin
+fi
+
 compile_cw() {
    javac \
       -source 1.3 \
