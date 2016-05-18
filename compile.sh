@@ -30,11 +30,12 @@ compile_json() {
 
 compile_cw \
    -d ./bin/ \
-   ./src/CacheWolf/*/*/*.java \
-   ./src/CacheWolf/*/*.java
    ./src/CacheWolf/*.java \
    ./src/CacheWolf/*/*/*.java \
    ./src/CacheWolf/*/*.java
+   ./src/CacheWolf/*/*/*.java \
+   ./src/CacheWolf/*/*.java
+
 compile_json \
    lib/net/*/*.java \
    lib/org/*/*.java
