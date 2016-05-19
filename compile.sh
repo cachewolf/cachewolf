@@ -33,8 +33,6 @@ compile_cw \
    ./src/CacheWolf/*.java \
    ./src/CacheWolf/*/*/*.java \
    ./src/CacheWolf/*/*.java
-   ./src/CacheWolf/*/*/*.java \
-   ./src/CacheWolf/*/*.java
 
 compile_json \
    lib/net/*/*.java \
