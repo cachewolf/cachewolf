@@ -29,18 +29,32 @@ package CacheWolf.database;
  */
 public class CacheImage {
 
-    private String filename = null;
-    private String title = null;
-    private String comment = null;
-    private String URL;
+    // possible sources
+    public static final char FROMUNKNOWN = '0'; //Unknown
+    public static final char FROMDESCRIPTION = '1'; //Description
+    public static final char FROMSPOILER = '2'; //Spoiler
+    public static final char FROMLOG = '3'; //Log
+    public static final char FROMUSER = '4'; //User
+
+    private String filename = "";
+    private String title = "";
+    private String comment = "";
+    private String url = "";
+    private char source = ' ';
+
+    public CacheImage(char source) {
+	this.source = source;
+    }
+
+    public char getSource() {
+	return source;
+    }
 
     /**
      * Gets the filename of the image (without path)
      * @return Filename
      */
     public String getFilename() {
-	if (filename == null)
-	    return "";
 	return filename;
     }
 
@@ -57,8 +71,6 @@ public class CacheImage {
      * @return Title
      */
     public String getTitle() {
-	if (title == null)
-	    return "";
 	return title;
     }
 
@@ -67,17 +79,15 @@ public class CacheImage {
      * @param text Image title
      */
     public void setTitle(String text) {
-	this.title = text;
+	if (text != null)
+	    this.title = text;
     }
 
     /**
-     * Gets an additional comment for the image, if there is any. If there is none, then <code>
-     * null</code> will be returned.
+     * Gets an additional comment for the image, if there is any.
      * @return Comment
      */
     public String getComment() {
-	if (comment == null)
-	    return "";
 	return comment;
     }
 
@@ -86,17 +96,17 @@ public class CacheImage {
      * @param comment Comment
      */
     public void setComment(String comment) {
-	this.comment = comment;
+	if (comment != null)
+	    this.comment = comment;
     }
 
     public String getURL() {
-	if (URL == null)
-	    return "";
-	return URL;
+	return url;
     }
 
     public void setURL(String url) {
-	URL = url;
+	if (url != null)
+	    this.url = url;
     }
 
 }

@@ -36,7 +36,6 @@ import com.stevesoft.ewe_pat.Regex;
 
 import ewe.filechooser.FileChooser;
 import ewe.filechooser.FileChooserBase;
-import ewe.io.AsciiCodec;
 import ewe.io.BufferedWriter;
 import ewe.io.File;
 import ewe.io.FileBase;
@@ -80,7 +79,7 @@ public class HTMLExporter {
 	String targetDir;
 	if (fc.execute() != FormBase.IDCANCEL) {
 	    targetDir = fc.getChosen() + "/";
-	    Preferences.itself().setExportPath(expName, targetDir);
+	    Preferences.itself().setExportPref(expName, targetDir);
 	    Vector cache_index = new Vector();
 	    Vector cacheImg = new Vector();
 	    Vector logImg = new Vector();
@@ -118,7 +117,7 @@ public class HTMLExporter {
 		    }
 		    det = ch.getDetails();
 		    tt.set(ch);
-		    varParams = tt.toHashtable(dec, null, 0, 30, -1, new AsciiCodec(), null, false, 2, expName);
+		    varParams = tt.toHashtable(dec, null, 0, 30, -1, true, null, false, 2, expName);
 		    cache_index.add(varParams);
 		    //We can generate the individual page here!
 		    try {
@@ -155,7 +154,7 @@ public class HTMLExporter {
 			    usrImg.clear();
 			    for (int j = 0; j < det.userImages.size(); j++) {
 				usrImgParams = new Hashtable();
-				String usrImgFile = new String(det.userImages.get(j).getFilename());
+				String usrImgFile = det.userImages.get(j).getFilename();
 				usrImgParams.put("FILE", usrImgFile);
 				usrImgParams.put("TEXT", det.userImages.get(j).getTitle());
 				if (Files.copy(MainForm.profile.dataDir + usrImgFile, targetDir + usrImgFile))
@@ -171,7 +170,7 @@ public class HTMLExporter {
 			    mapImg.clear();
 			    mapImgParams = new Hashtable();
 
-			    String mapImgFile = new String(ch.getCode() + "_map.gif");
+			    String mapImgFile = ch.getCode() + "_map.gif";
 			    // check if map file exists
 			    File test = new File(MainForm.profile.dataDir + mapImgFile);
 

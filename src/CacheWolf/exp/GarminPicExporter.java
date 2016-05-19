@@ -55,14 +55,15 @@ import ewe.util.Hashtable;
 
 public class GarminPicExporter {
     /************************************************************************************
-     * Exports pictures and spoiler pictures into a directory structure * See: http://garmin.blogs.com/softwareupdates/2012/01/geocaching-with-photos.html *
+     * Exports pictures and spoiler pictures into a directory structure 
+     * * See: http://garmin.blogs.com/softwareupdates/2012/01/geocaching-with-photos.html *
      ************************************************************************************/
     private static String SPOILERREGEX = "Spoiler|Hilfe|Help|Hinweis|Hint[^a-zA-Z]";
 
     CacheDB cacheDB;
     Hashtable picsCopied = new Hashtable(40);
     /* This table is used by copyImages to check whether a picture has been copied already.
-     * Normally it should be created in copyImages (and destroyed upon reeturn). To avoid
+     * Normally it should be created in copyImages (and destroyed upon return). To avoid
      * unneeded object generation, it is created here and cleared in copyImages (which is a
      * much faster operation).
      */
@@ -87,7 +88,7 @@ public class GarminPicExporter {
 	if (fc.execute() == FormBase.IDCANCEL)
 	    return;
 	targetDir = fc.getChosen() + "/";
-	Preferences.itself().setExportPath(expName, targetDir);
+	Preferences.itself().setExportPref(expName, targetDir);
 
 	// Select export options
 	OptionsForm options = new OptionsForm();

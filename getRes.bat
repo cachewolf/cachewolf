@@ -39,5 +39,11 @@ REM
 mkdir .\work\templates
 copy .\res_noewe\templates\*.* .\work\templates\*.*
 REM
+mkdir .\work\exporticons
+copy .\res_noewe\exporticons\*.* .\work\exporticons\*.*
+REM
+mkdir .\work\exporticons\exporticons
+copy .\res_noewe\exporticons\exporticons\*.* .\work\exporticons\exporticons\*.*
+REM
 
 copy .\lib\*.dll .\work\

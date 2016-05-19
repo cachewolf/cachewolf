@@ -34,8 +34,8 @@ public class OCGPXfetch {
 	String hostname = Preferences.itself().lastOCSite;
 	boolean oldDownloadAllOC = Preferences.itself().downloadAllOC;
 	boolean onlyListedAtOC = false;
-	ImportGui importGui = new ImportGui(MyLocale.getMsg(130, "Download from opencaching"), ImportGui.IMAGES | ImportGui.ALL | ImportGui.HOST);
-	boolean downloadPics = importGui.downloadPics;
+	ImportGui importGui = new ImportGui(MyLocale.getMsg(130, "Download from opencaching"), ImportGui.ALL | ImportGui.HOST, ImportGui.DESCRIPTIONIMAGE | ImportGui.SPOILERIMAGE | ImportGui.LOGIMAGE);
+	boolean downloadPics = importGui.downloadDescriptionImages;
 	importGui.missingCheckBox.setText(MyLocale.getMsg(164, "only listed at OC"));
 	importGui.missingCheckBox.setState(onlyListedAtOC);
 	if (importGui.execute() == FormBase.IDCANCEL) {
@@ -70,9 +70,9 @@ public class OCGPXfetch {
 	    if (ftmp.exists() && ftmp.length() > 0) {
 		GPXImporter gpx = new GPXImporter(tmpFile);
 		if (downloadPics)
-		    gpx.doIt(GPXImporter.DOIT_WITHSPOILER);
+		    gpx.doIt(GPXImporter.DOLOADPICTURES);
 		else
-		    gpx.doIt(GPXImporter.DOIT_NOSPOILER);
+		    gpx.doIt(GPXImporter.DONOTLOADPICTURES);
 	    }
 	    ftmp.delete();
 	} catch (IOException e) {

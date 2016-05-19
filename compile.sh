@@ -2,6 +2,10 @@
 
 ENCODING=${ENCODING:-windows-1252}
 
+if [ ! -d bin ]; then
+  mkdir bin
+fi
+
 compile_cw() {
    javac \
       -source 1.3 \
@@ -26,11 +30,10 @@ compile_json() {
 
 compile_cw \
    -d ./bin/ \
-   ./src/CacheWolf/*/*/*.java \
-   ./src/CacheWolf/*/*.java
    ./src/CacheWolf/*.java \
    ./src/CacheWolf/*/*/*.java \
    ./src/CacheWolf/*/*.java
+
 compile_json \
    lib/net/*/*.java \
    lib/org/*/*.java

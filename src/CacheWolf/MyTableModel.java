@@ -93,10 +93,13 @@ public class MyTableModel extends TableModel {
     /** The max number of columns in the list view */
     public static final int N_COLUMNS = 22;
     /**
-     * How the columns are mapped onto the list view. If colMap[i]=j, it means that the element j (as per the list below) is visible in column i. [0]TickBox, [1]Type, [2]Distance, [3]Terrain, [4]waypoint, [5]name, [6]coordinates, [7]owner,
-     * [8]datehidden, [9]status, [10]distance, [11]bearing, [12] Size, [13] # of OC recommend. [14] OC index, [15] Solver exists, [16] Note exists, [17] # Additionals, [18] # DNF [19] Last Sync Date
+     * How the columns are mapped onto the list view.<br> 
+     * If colMap[i]=j, it means that the element j (as per the list below) is visible in column i.<br> 
+     * [0]TickBox, [1]Type, [2]Distance, [3]Terrain, [4]waypoint, [5]name, [6]coordinates, [7]owner,
+     * [8]datehidden, [9]status, [10]distance, [11]bearing, [12] Size, [13] # of OC recommend. [14] OC index, 
+     * [15] Solver exists, [16] Note exists, [17] # Additionals, [18] # DNF [19] Last Sync Date<br>
      * 
-      */
+     **/
     private int[] colMap;
     /** The column widths corresponding to the list of columns above */
     private int[] colWidth;
@@ -193,7 +196,7 @@ public class MyTableModel extends TableModel {
 	clearCellAdjustments();
 	// Convert to string
 	StringBuffer sb = new StringBuffer(100);
-	for (int i = 0; i < numCols; i++) { //N_COLUMNS
+	for (int i = 0; i < N_COLUMNS; i++) {
 	    if (sb.length() != 0)
 		sb.append(',');
 	    sb.append(colWidth[i]);
@@ -274,42 +277,44 @@ public class MyTableModel extends TableModel {
 		    // Now find out if the line should be painted in an other color.
 		    // Selected lines are not considered, so far
 		    CacheHolder ch = cacheDB.get(row);
-		    if (ch.isOwned())
-			lineColorBG.set(COLOR_OWNED);
-		    else if (ch.isFound())
-			lineColorBG.set(COLOR_FOUND);
-		    else if (ch.isFlagged)
-			lineColorBG.set(COLOR_FLAGED);
-		    else if (ch.getStatus().indexOf(MyLocale.getMsg(319, "not found")) > -1)
-			lineColorBG.set(COLOR_STATUS);
-		    else if (Preferences.itself().debug && ch.detailsLoaded()) {
-			lineColorBG.set(COLOR_DETAILS_LOADED);
-		    }
-
-		    if (ch.isArchived()) {
-			if (lineColorBG.equals(COLOR_WHITE)) {
-			    lineColorBG.set(COLOR_ARCHIVED);
-			    ta.foreground = COLOR_WHITE;
-			} else {
-			    ta.foreground = COLOR_ARCHIVED;
+		    if (ch != null) {
+			if (ch.isOwned())
+			    lineColorBG.set(COLOR_OWNED);
+			else if (ch.isFound())
+			    lineColorBG.set(COLOR_FOUND);
+			else if (ch.isFlagged)
+			    lineColorBG.set(COLOR_FLAGED);
+			else if (ch.getStatus().indexOf(MyLocale.getMsg(319, "not found")) > -1)
+			    lineColorBG.set(COLOR_STATUS);
+			else if (Preferences.itself().debug && ch.detailsLoaded()) {
+			    lineColorBG.set(COLOR_DETAILS_LOADED);
 			}
-		    } else if (!ch.isAvailable()) {
-			if (lineColorBG.equals(COLOR_WHITE)) {
-			    lineColorBG.set(COLOR_AVAILABLE);
-			} else {
-			    ta.foreground = COLOR_AVAILABLE;
-			}
-		    }
 
-		    // Now, if a line is selected, blend the determined color
-		    // with the selection color.
-		    if (isSelected) {
-			mergeColor(lineColorBG, lineColorBG, COLOR_SELECTED);
+			if (ch.isArchived()) {
+			    if (lineColorBG.equals(COLOR_WHITE)) {
+				lineColorBG.set(COLOR_ARCHIVED);
+				ta.foreground = COLOR_WHITE;
+			    } else {
+				ta.foreground = COLOR_ARCHIVED;
+			    }
+			} else if (!ch.isAvailable()) {
+			    if (lineColorBG.equals(COLOR_WHITE)) {
+				lineColorBG.set(COLOR_AVAILABLE);
+			    } else {
+				ta.foreground = COLOR_AVAILABLE;
+			    }
+			}
+
+			// Now, if a line is selected, blend the determined color
+			// with the selection color.
+			if (isSelected) {
+			    mergeColor(lineColorBG, lineColorBG, COLOR_SELECTED);
+			}
+			ta.fillColor = lineColorBG;
+			lastColorBG.set(ta.fillColor);
+			lastColorFG.set(ta.foreground);
+			lastRow = row;
 		    }
-		    ta.fillColor = lineColorBG;
-		    lastColorBG.set(ta.fillColor);
-		    lastColorFG.set(ta.foreground);
-		    lastRow = row;
 		} catch (Exception e) {
 		    Preferences.itself().log("[myTableModel:getCellAttributes]Ignored row=" + row + " lastRow=" + lastRow, e, true);
 		}
@@ -475,7 +480,7 @@ public class MyTableModel extends TableModel {
 		case 19: // Last sync date
 		    return DateFormat.formatLastSyncDate(ch.getLastSync(), "yyyy-MM-dd HH:mm");
 		case 20: // PM
-		    if (ch.isPMCache())
+		    if (ch.isPremiumCache())
 			return picIsPM;
 		    else
 			return null;
@@ -796,7 +801,7 @@ class MyComparer implements Comparer {
 	} else if (colToCompare == 20) {
 	    for (int i = 0; i < visibleSize; i++) {
 		CacheHolder ch = cacheDB.get(i);
-		if (ch.isPMCache()) {
+		if (ch.isPremiumCache()) {
 		    ch.sort = "1";
 		} else {
 		    ch.sort = "2";

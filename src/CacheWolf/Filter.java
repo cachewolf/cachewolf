@@ -188,7 +188,11 @@ public class Filter {
 	if (filterSize.charAt(4) == '1')
 	    sizeMatchPattern |= CacheSize.CW_FILTER_VERYLARGE;
 	if (filterSize.charAt(5) == '1')
-	    sizeMatchPattern |= CacheSize.CW_FILTER_NONPHYSICAL;
+	    sizeMatchPattern |= CacheSize.CW_FILTER_OTHER;
+	if (filterSize.charAt(6) == '1')
+	    sizeMatchPattern |= CacheSize.CW_FILTER_NOTCHOSEN;
+	if (filterSize.charAt(7) == '1')
+	    sizeMatchPattern |= CacheSize.CW_FILTER_VIRTUAL;
 	hasSizeMatchPattern = sizeMatchPattern != CacheSize.CW_FILTER_ALL;
 	distdirec = MainForm.profile.getFilterDist().charAt(0) == 'L' ? SMALLER : GREATER;
 	fscDist = Common.parseDouble(MainForm.profile.getFilterDist().substring(1)); // Distance
@@ -403,7 +407,7 @@ public class Filter {
 		cacheFiltered = true;
 		break;
 	    }
-	    if ((ch.isPMCache() && !premium) || (!ch.isPMCache() && !noPremium)) {
+	    if ((ch.isPremiumCache() && !premium) || (!ch.isPremiumCache() && !noPremium)) {
 		cacheFiltered = true;
 		break;
 	    }

@@ -28,7 +28,6 @@ import CacheWolf.database.CWPoint;
 import CacheWolf.database.CacheDB;
 import CacheWolf.database.CacheHolder;
 import CacheWolf.database.CacheHolderDetail;
-import CacheWolf.database.CacheSize;
 import CacheWolf.database.CacheTerrDiff;
 import CacheWolf.database.CacheType;
 import CacheWolf.utils.Common;
@@ -63,7 +62,7 @@ public class CSVImporter {
 	    return;
 	}
 	ImportGui importGui;
-	importGui = new ImportGui("CSV Import", ImportGui.ISGC | ImportGui.DIST);
+	importGui = new ImportGui("CSV Import", ImportGui.ISGC | ImportGui.DIST, 0);
 	// doing the input
 	if (importGui.execute() == FormBase.IDCANCEL) {
 	    return;
@@ -205,24 +204,32 @@ public class CSVImporter {
     final byte CREATED = 9;
     final byte LOCATION = 10;
     final byte CODE = 11;
+    final byte SIZE = 12;
+    final byte DIFFICULTY = 13;
+    final byte TERRAIN = 14;
+    final byte TYPE = 15;
+    final byte LAST = 16;
 
-    String l[] = new String[11 + 1];
+    String l[] = new String[LAST];
 
     private boolean parse(String[] ds) {
 
 	for (int i = 0; i < l.length; i++) {
 	    l[i] = "";
 	}
+	l[SIZE] = "1";
+	l[DIFFICULTY] = "1";
+	l[TERRAIN] = "1";
 	boolean munzee = false;
 	boolean hyper = false;
 	boolean gefunden = false;
 
 	for (int i = 0; i < header.length; i++) {
-	    if (header[i].equalsIgnoreCase("LAT")) {
+	    if (header[i].equalsIgnoreCase("LAT") || header[i].toUpperCase().indexOf("NORD") > -1) {
 		l[LAT] = STRreplace.replace(ds[i], "\"", ""); // 0.
-	    } else if (header[i].equalsIgnoreCase("LON")) {
+	    } else if (header[i].equalsIgnoreCase("LON") || header[i].toUpperCase().indexOf("OST") > -1) {
 		l[LON] = STRreplace.replace(ds[i], "\"", ""); // 1.
-	    } else if (header[i].equalsIgnoreCase("LATLON")) {
+	    } else if (header[i].equalsIgnoreCase("LATLON") || header[i].toUpperCase().indexOf("OORD") > -1) {
 		CWPoint coord = new CWPoint(ds[i]); // 0. 1.
 		l[LAT] = "" + coord.latDec;
 		l[LON] = "" + coord.lonDec;
@@ -235,22 +242,22 @@ public class CSVImporter {
 		CWPoint coord = new CWPoint(s);
 		l[LAT] = "" + coord.latDec;
 		l[LON] = "" + coord.lonDec;
-	    } else if (header[i].equalsIgnoreCase("WAYPOINT") || header[i].equalsIgnoreCase("WP")) {
+	    } else if (header[i].equalsIgnoreCase("WAYPOINT") || header[i].equalsIgnoreCase("WP") || header[i].equalsIgnoreCase("WEGPUNKT") || (header[i].toUpperCase().indexOf("GC") > -1 && header[i].toUpperCase().indexOf("CODE") > -1)) {
 		l[WAYPOINT] = ds[i]; // 2.
-	    } else if (header[i].equalsIgnoreCase("USERNAME") || header[i].equalsIgnoreCase("OWNER")) {
+	    } else if (header[i].toUpperCase().indexOf("USER") > -1 || header[i].equalsIgnoreCase("OWNER") || header[i].equalsIgnoreCase("BESITZER")) {
 		l[OWNER] = ds[i]; // 3.
-	    } else if (header[i].equalsIgnoreCase("CACHENAME")) {
+	    } else if (header[i].toUpperCase().indexOf("TIT") > -1 || header[i].equalsIgnoreCase("CACHENAME") || header[i].equalsIgnoreCase("CACHE NAME")) {
 		l[CACHENAME] = ds[i]; // 4.
 	    } else if (header[i].equalsIgnoreCase("FRIENDLYNAME")) {
 		l[CACHENAME] = ds[i]; // 4.
 		munzee = true;
-	    } else if (header[i].equalsIgnoreCase("CODE gefunden") || header[i].equalsIgnoreCase("STATUS")) {
+	    } else if (header[i].toUpperCase().indexOf("FUND") > -1 || header[i].toUpperCase().indexOf("FOUND") > -1 || header[i].toUpperCase().indexOf("FIND") > -1 || header[i].equalsIgnoreCase("STATUS")) {
 		l[STATUS] = ds[i]; // 5.
 	    } else if (header[i].equalsIgnoreCase("DEPLOYED") || header[i].equalsIgnoreCase("DATEHIDDEN")) {
 		l[DATEHIDDEN] = ds[i]; // 6.
-	    } else if (header[i].equalsIgnoreCase("HINT")) {
+	    } else if (header[i].toUpperCase().indexOf("HINT") > -1 || header[i].toUpperCase().indexOf("HINW") > -1) {
 		l[HINT] = ds[i]; // 7.
-	    } else if (header[i].equalsIgnoreCase("KOMMENTAR") || header[i].equalsIgnoreCase("NOTES")) {
+	    } else if (header[i].toUpperCase().indexOf("OMMENT") > -1 || header[i].toUpperCase().indexOf("NOT") > -1) {
 		l[NOTES] = ds[i]; // 8.
 	    } else if (header[i].equalsIgnoreCase("CREATED")) {
 		l[CREATED] = ds[i]; // 9.
@@ -258,14 +265,44 @@ public class CSVImporter {
 		l[LOCATION] = ds[i]; // 10.
 	    } else if (header[i].equalsIgnoreCase("CODE")) {
 		l[CODE] = ds[i]; // 11.
+	    } else if (header[i].equalsIgnoreCase("SIZE") || header[i].toUpperCase().indexOf("GROE") > -1 || header[i].toUpperCase().indexOf("GRÖ") > -1) {
+		l[SIZE] = ds[i]; // 12.
+		if (l[SIZE].length() == 0)
+		    l[SIZE] = "1";
+	    } else if (header[i].equalsIgnoreCase("DIFFICULTY") || header[i].toUpperCase().indexOf("SCHWI") > -1) {
+		if (ds[i].startsWith("0"))
+		    l[DIFFICULTY] = ds[i].substring(1); // 13.
+		else
+		    l[DIFFICULTY] = ds[i]; // 13.
+		l[DIFFICULTY] = STRreplace.replace(l[DIFFICULTY], " Mai", "5");
+		if (l[DIFFICULTY].length() == 0)
+		    l[DIFFICULTY] = "1";
+	    } else if (header[i].equalsIgnoreCase("TERRAIN")) {
+		if (ds[i].startsWith("0"))
+		    l[TERRAIN] = ds[i].substring(1); // 14.
+		else
+		    l[TERRAIN] = ds[i]; // 14.
+		l[TERRAIN] = STRreplace.replace(l[TERRAIN], " Mai", "5");
+		if (l[TERRAIN].length() == 0)
+		    l[TERRAIN] = "1";
+	    } else if (header[i].toUpperCase().indexOf("TYP") > -1) {
+		l[TYPE] = ds[i]; // 15.
 	    }
 	}
 	// 0. + 1. Koordinaten
-	CWPoint tmpPos = new CWPoint();
+	CWPoint tmpPos = new CWPoint(Preferences.itself().curCentrePt);
 	try {
-	    double lat = Common.parseDoubleException(l[LAT]);
-	    double lon = Common.parseDoubleException(l[LON]);
-	    tmpPos.set(lat, lon);
+	    try {
+		double lat = Common.parseDoubleException(l[LAT]);
+		double lon = Common.parseDoubleException(l[LON]);
+		tmpPos.set(lat, lon);
+	    } catch (Exception e) {
+		if (!(l[LAT].startsWith("N") || l[LAT].startsWith("S")))
+		    l[LAT] = "N" + l[LAT];
+		if (!(l[LON].startsWith("E") || l[LON].startsWith("W")))
+		    l[LON] = "E" + l[LON];
+		tmpPos = new CWPoint(l[LAT] + "," + l[LON]); // 0. 1.
+	    }
 	    double tmpDistance = tmpPos.getDistance(startPos);
 	    if (tmpDistance > maxDistance) {
 		// Preferences.itself().log("CSVImporter: not imported " + l[CACHENAME] + ", Distance = "+ tmpDistance);
@@ -275,8 +312,9 @@ public class CSVImporter {
 		return false;
 	    }
 	} catch (Exception e) {
-	    Preferences.itself().log("Error CSVImporter at: " + l[CACHENAME] + "(" + l[LAT] + " " + l[LON] + ")", e);
-	    return false;
+	    // Use default coordinates (for only import GCCode)
+	    // Preferences.itself().log("Error CSVImporter at: " + l[CACHENAME] + "(" + l[LAT] + " " + l[LON] + ")", e);
+	    // return false;	    
 	}
 	// 2. Wegpunkt
 	String wayPoint;
@@ -309,6 +347,14 @@ public class CSVImporter {
 	    ch = new CacheHolder(wayPoint);
 	    cacheDB.add(ch);
 	}
+	if (l[TYPE].length() > 0) {
+	    try {
+		ch.setType(CacheType.gcSpider2CwType(l[TYPE]));
+	    } catch (Exception e) {
+		ch.setType(CacheType.CW_TYPE_TRADITIONAL);
+	    }
+	} else
+	    ch.setType(CacheType.CW_TYPE_TRADITIONAL);
 	// 3. OWNER
 	if (l[OWNER].length() > 0) {
 	    ch.setOwner(l[OWNER]);
@@ -344,6 +390,8 @@ public class CSVImporter {
 	} else {
 	    ch.setName(l[CACHENAME]);
 	}
+	if (ch.getName().length() == 0)
+	    ch.setName(ch.getCode());
 	// 5. Status gefunden
 	String statusText = "";
 	if (l[STATUS].length() > 0) {
@@ -387,11 +435,9 @@ public class CSVImporter {
 	    dateHidden = DateFormat.toYYMMDD(new Time());
 	}
 	ch.setHidden(dateHidden);
-	// ... fixed to work
-	ch.setType(CacheType.CW_TYPE_TRADITIONAL);
-	ch.setSize(CacheSize.CW_SIZE_OTHER);
-	ch.setDifficulty(CacheTerrDiff.CW_DT_10);
-	ch.setTerrain(CacheTerrDiff.CW_DT_10);
+	ch.setSize((byte) (Common.parseInt(l[SIZE]) + 1));
+	ch.setDifficulty(CacheTerrDiff.v1Converter(l[DIFFICULTY]));
+	ch.setTerrain(CacheTerrDiff.v1Converter(l[TERRAIN]));
 	// Koordinaten
 	ch.setWpt(tmpPos);
 	// Details
@@ -403,7 +449,7 @@ public class CSVImporter {
 	    if (hyper) {
 		chd.setLongDescription("gef:" + l[STATUS] + "<br>von: " + l[CODE] + "<br>" + l[NOTES] + "<br>" + l[HINT]);
 	    } else {
-		chd.setCacheNotes(l[NOTES]);
+		chd.setCacheNotes(l[HINT] + l[NOTES]);
 	    }
 	}
 	chd.setHints(l[HINT]);
@@ -412,15 +458,15 @@ public class CSVImporter {
 	if (location.length() != 0) {
 	    final int countryStart = location.lastIndexOf(" ");
 	    if (countryStart > -1) {
-		chd.Country = SafeXML.html2iso8859s1(location.substring(countryStart + 1).trim());
-		chd.State = SafeXML.html2iso8859s1(location.substring(0, countryStart).trim());
+		chd.setCountry(SafeXML.html2iso8859s1(location.substring(countryStart + 1).trim()));
+		chd.setState(SafeXML.html2iso8859s1(location.substring(0, countryStart).trim()));
 	    } else {
-		chd.Country = location.trim();
-		chd.State = "";
+		chd.setCountry(location.trim());
+		chd.setState("");
 	    }
 	} else {
-	    ch.getDetails().Country = "";
-	    ch.getDetails().State = "";
+	    ch.getDetails().setCountry("");
+	    ch.getDetails().setState("");
 	}
 	ch.saveCacheDetails();
 	return true;

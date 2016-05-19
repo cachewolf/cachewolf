@@ -92,7 +92,7 @@ public class ExploristExporter {
 	    String targetDir;
 	    if (fc.execute() != FormBase.IDCANCEL) {
 		targetDir = fc.getChosen() + "/";
-		Preferences.itself().setExportPath(expName + "Dir", targetDir);
+		Preferences.itself().setExportPref(expName + "Dir", targetDir);
 
 		CWPoint centre = MainForm.profile.center;
 		try {
@@ -197,7 +197,7 @@ public class ExploristExporter {
 	fc.addMask(mask);
 	if (fc.execute() != FormBase.IDCANCEL) {
 	    file = fc.getChosenFile();
-	    Preferences.itself().setExportPath(expName, file.getPath());
+	    Preferences.itself().setExportPref(expName, file.getPath());
 	    return file;
 	} else {
 	    return null;

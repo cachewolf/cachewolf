@@ -812,7 +812,7 @@ class WebMapService extends OnlineMapService {
 		throw new IllegalArgumentException(MyLocale.getMsg(4815, "Coordinate reference system not supported by CacheWolf:\n") + coordinateReferenceSystem[i]);
 	}
 	tmp = STRreplace.replace(wms.getProperty("CoordinateReferenceSystemUrlPart", "").trim(), ":", "%3A");
-	if (tmp == "")
+	if (tmp.length() == 0)
 	    throw new IllegalArgumentException(MyLocale.getMsg(4816, "WebMapService: property >CoordinateReferenceSystemUrlPart:< missing in file:\n") + filename);
 	tmp2 = mString.split(tmp, ' ');
 	if (tmp2.length != coordinateReferenceSystem.length)

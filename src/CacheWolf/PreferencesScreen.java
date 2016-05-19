@@ -21,9 +21,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 package CacheWolf;
 
-import net.ax86.GPS;
-import net.ax86.GPSException;
-
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -78,6 +75,8 @@ import ewe.ui.mLabel;
 import ewe.ui.mTabbedPanel;
 import ewe.ui.formatted.TextDisplay;
 import ewe.util.mString;
+import net.ax86.GPS;
+import net.ax86.GPSException;
 
 /**
  * This class displays a user interface allowing the user to change and set preferences. It also provides a method to save the changed preferences that are saved immediately when the user presses "Apply". Class ID=600
@@ -112,7 +111,9 @@ public class PreferencesScreen extends Form {
     private mCheckBox chkAutoLoad;
     private mButton DataDirBrowseButton;
     // UserDataPanel
-    private mInput Alias, inpUserID, inpGcMemberID, Alias2, inpPassword;
+    private mInput Alias, inpGcMemberID, Alias2, inpPassword;
+    private mChoice inpGCUser;
+    // private mInput inpUserID;
     mCheckBox chkPM;
     // Card Maps / GPS
     private mInput MapsDir;
@@ -161,10 +162,10 @@ public class PreferencesScreen extends Form {
 	UserDataPanel.addNext(new mLabel(MyLocale.getMsg(601, "Your alias:")), DONTSTRETCH, DONTFILL | LEFT);
 	UserDataPanel.addNext(Alias = new mInput(Preferences.itself().myAlias), STRETCH, HFILL);
 	UserDataPanel.addLast(chkPM = new mCheckBox("PM"), DONTSTRETCH, DONTFILL | LEFT);
-	if (Preferences.itself().isPremium)
+	if (Preferences.itself().havePremiumMemberRights)
 	    chkPM.setState(true);
-	UserDataPanel.addNext(new mLabel(MyLocale.getMsg(658, "User ID:")), DONTSTRETCH, DONTFILL | LEFT);
-	UserDataPanel.addLast(inpUserID = new mInput(Preferences.itself().userID), STRETCH, HFILL);
+	//UserDataPanel.addNext(new mLabel(MyLocale.getMsg(658, "User ID:")), DONTSTRETCH, DONTFILL | LEFT);
+	//UserDataPanel.addLast(inpUserID = new mInput(Preferences.itself().userID), STRETCH, HFILL);
 	UserDataPanel.addNext(new mLabel(MyLocale.getMsg(650, "GcMemberID:")), DONTSTRETCH, DONTFILL | LEFT);
 	UserDataPanel.addLast(inpGcMemberID = new mInput(Preferences.itself().gcMemberId), STRETCH, HFILL);
 	UserDataPanel.addNext(new mLabel(MyLocale.getMsg(657, "Second alias:")), DONTSTRETCH, DONTFILL | LEFT);
@@ -173,6 +174,18 @@ public class PreferencesScreen extends Form {
 	UserDataPanel.addLast(inpPassword = new mInput(Preferences.itself().password), STRETCH, HFILL);
 	inpPassword.setToolTip(MyLocale.getMsg(593, "Password is optional here.\nEnter only if you want to store it in Preferences.itself().xml"));
 	inpPassword.isPassword = true;
+
+	String[] gcLogins = Preferences.itself().getGCLogins();
+	int selectedLogin = -1;
+	for (int i = 0; i < gcLogins.length; i++) {
+	    if (gcLogins[i].equals(Preferences.itself().gcLogin)) {
+		selectedLogin = i;
+		break;
+	    }
+	}
+	UserDataPanel.addNext(new mLabel(MyLocale.getMsg(658, "GC account:")), DONTSTRETCH, DONTFILL | LEFT);
+	UserDataPanel.addLast(this.inpGCUser = new mChoice(gcLogins, selectedLogin), STRETCH, HFILL);
+
 	pnlGeneral.addLast(UserDataPanel, HSTRETCH, HFILL);
 
 	mTab.addCard(pnlGeneral, MyLocale.getMsg(621, "General"), null).iconize(GuiImageBroker.getImage("person"), Preferences.itself().useIcons);
@@ -422,17 +435,17 @@ public class PreferencesScreen extends Form {
 	mTab.addCard(tccBugs = new TableColumnChooser(//
 		new String[] { MyLocale.getMsg(6000, "Guid"), //
 			MyLocale.getMsg(6001, "Name"), //
-			MyLocale.getMsg(6002, "track#"),//
-			MyLocale.getMsg(6003, "Mission"),//
-			MyLocale.getMsg(6004, "From Prof"),//
-			MyLocale.getMsg(6005, "From Wpt"),//
-			MyLocale.getMsg(6006, "From Date"),//
-			MyLocale.getMsg(6007, "From Log"),//
+			MyLocale.getMsg(6002, "track#"), //
+			MyLocale.getMsg(6003, "Mission"), //
+			MyLocale.getMsg(6004, "From Prof"), //
+			MyLocale.getMsg(6005, "From Wpt"), //
+			MyLocale.getMsg(6006, "From Date"), //
+			MyLocale.getMsg(6007, "From Log"), //
 			MyLocale.getMsg(6008, "To Prof"), //
 			MyLocale.getMsg(6009, "To Wpt"), //
 			MyLocale.getMsg(6010, "To Date"), //
 			MyLocale.getMsg(6011, "To Log") //
-		}, Preferences.itself().travelbugColMap), "T-bugs", null).iconize(GuiImageBroker.getImage("bug"), Preferences.itself().useIcons);
+	}, Preferences.itself().travelbugColMap), "T-bugs", null).iconize(GuiImageBroker.getImage("bug"), Preferences.itself().useIcons);
 
 	// this PreferencesScreen
 	this.addLast(mTab);
@@ -477,7 +490,7 @@ public class PreferencesScreen extends Form {
 		Preferences.itself().myAlias2 = Alias2.getText().trim();
 		Preferences.itself().password = inpPassword.getText().trim();
 		Preferences.itself().gcMemberId = inpGcMemberID.getText().trim();
-		Preferences.itself().userID = inpUserID.getText().trim();
+		//Preferences.itself().userID = inpUserID.getText().trim();
 		Preferences.itself().language = inpLanguage.getText().toUpperCase().trim();
 		Preferences.itself().browser = Browser.getText();
 		Preferences.itself().myproxy = Proxy.getText();
@@ -485,9 +498,10 @@ public class PreferencesScreen extends Form {
 		Preferences.itself().proxyActive = chkProxyActive.getState();
 		HttpConnection.setProxy(Preferences.itself().myproxy, Common.parseInt(Preferences.itself().myproxyport), Preferences.itself().proxyActive);
 		Preferences.itself().autoReloadLastProfile = chkAutoLoad.getState();
-		Preferences.itself().isPremium = chkPM.getState();
+		Preferences.itself().havePremiumMemberRights = chkPM.getState();
 		Preferences.itself().showDeletedImages = chkShowDeletedImg.getState();
 		Preferences.itself().garminConn = chcGarminPort.getSelectedItem().toString();
+		Preferences.itself().gcLogin = this.inpGCUser.getSelectedItem().toString();
 		Preferences.itself().garminGPSBabelOptions = chkSynthShort.state ? "-s" : "";
 		Preferences.itself().noTabs = chkNoTabs.getState();
 		Preferences.itself().tabsAtTop = chkTabsAtTop.getState();
@@ -633,7 +647,7 @@ class mySerialThread extends mThread {
     }
 
     public String nonBlockingRead() {
-	String ret = new String(lastgot); //mString.fromAscii(gpsBuff,0,gpsLen);
+	String ret = lastgot; //mString.fromAscii(gpsBuff,0,gpsLen);
 	lastgot = null;
 	return ret;
 
@@ -747,7 +761,7 @@ class OldGpsdThread extends mThread {
     boolean run;
     TextDisplay out;
     Socket tcpConn;
-    String lastError = new String();
+    String lastError = "";
     public String lastgot;
 
     public OldGpsdThread(TextDisplay td) throws IOException {
@@ -806,7 +820,7 @@ class OldGpsdThread extends mThread {
     }
 
     public String nonBlockingRead() {
-	String ret = new String(lastgot); //mString.fromAscii(gpsBuff,0,gpsLen);
+	String ret = lastgot; //mString.fromAscii(gpsBuff,0,gpsLen);
 	lastgot = null;
 	return ret;
 

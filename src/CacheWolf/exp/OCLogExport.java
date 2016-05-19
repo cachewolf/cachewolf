@@ -87,7 +87,7 @@ public final class OCLogExport {
 		    String page = "";
 		    try {
 			CacheHolderDetail chD = ch.getDetails();
-			if (chD.OwnLog != null) {
+			if (chD.getOwnLog() != null) {
 			    page = UrlFetcher.fetch(url);
 			    loggedIn = page.indexOf("Eingeloggt als") > -1; // next time perhaps
 			    String ocCacheId = new Extractor(page, "viewcache.php?cacheid=", "\">", 0, true).findNext();
@@ -96,11 +96,11 @@ public final class OCLogExport {
 				postData = postData + "&logtype=7";
 			    else
 				postData = postData + "&logtype=1";
-			    Time logDate = DateFormat.toDate(chD.OwnLog.getDate());
+			    Time logDate = DateFormat.toDate(chD.getOwnLog().getDate());
 			    postData += "&logday=" + logDate.day;
 			    postData += "&logmonth=" + logDate.month;
 			    postData += "&logyear=" + logDate.year;
-			    postData += "&logtext=" + UrlFetcher.toUtf8Url(chD.OwnLog.getMessage());
+			    postData += "&logtext=" + UrlFetcher.toUtf8Url(chD.getOwnLog().getMessage());
 			    postData += "&submitform=Log+eintragen"; // todo for other opencaching sites
 			    UrlFetcher.setpostData(postData);
 			    page = UrlFetcher.fetch(url);

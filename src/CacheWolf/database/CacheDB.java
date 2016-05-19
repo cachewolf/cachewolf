@@ -62,6 +62,10 @@ public class CacheDB {
 	return obj;
     }
 
+    public Vector getVectorDB() {
+	return vectorDB;
+    }
+
     /**
      * Gets the stored CacheHolder object by its position in the Cache List.
      * 

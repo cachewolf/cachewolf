@@ -88,16 +88,15 @@ public class Preferences extends MinML {
     // General / Account
     /** This is the login alias for geocaching.com and opencaching.de */
     public String myAlias = "";
+    public String gcLogin = "";
     /** Premium Member ? */
-    public boolean isPremium = true;
-    /** The Cookie from GC */
-    public String userID = "";
+    public boolean havePremiumMemberRights = true;
     /** The own GC member ID (for gpx - export)*/
     public String gcMemberId = "";
     public final String[] gpxStyles = { //
-    "STYLE_COMPCAT_OUTPUT_SINGLE", //
-	    "STYLE_COMPCAT_OUTPUT_SEPARATE", //
-	    "STYLE_COMPCAT_OUTPUT_POI", //
+	    "STYLE_COMPACT_OUTPUT_SINGLE", //
+	    "STYLE_COMPACT_OUTPUT_SEPARATE", //
+	    "STYLE_COMPACT_OUTPUT_POI", //
 	    "STYLE_GPX_PQLIKE", //
 	    "STYLE_GPX_MYFINDS" //
     };
@@ -233,7 +232,7 @@ public class Preferences extends MinML {
     public boolean fixSIP = false;
 
     /** The widths for each column in list view */
-    public String listColWidth = "15,20,20,25,92,177,144,83,60,105,50,104,22,30,30,30,30,30,30,30";
+    public String listColWidth = "15,20,20,25,92,177,144,83,60,105,50,104,22,30,30,30,30,30,30,30,30,30,30";
     /** TRUE if we want automatic sorting (by distance) */
     public boolean sortAutomatic = true;
     public boolean hasTickColumn = true;
@@ -270,7 +269,9 @@ public class Preferences extends MinML {
     public int deleteDetails = 5;
 
     /** Download images when loading cache data */
-    public boolean downloadPics = true;
+    public boolean downloadDescriptionImages = true;
+    public boolean downloadSpoilerImages = true;
+    public boolean downloadLogImages = false;
     /** Download TB information when loading cache data */
     public boolean downloadTBs = true;
 
@@ -335,19 +336,19 @@ public class Preferences extends MinML {
 	    String test;
 	    test = Vm.getenv("APPDATA", "/");
 	    log("Vm.getenv(APPDATA: " + test);
-
+	    
 	    // this works also in win32.exe (ewe-vm on win xp) 
 	    // in MS-java-VM  env variable $HOME is ignored and always <windir>\java  returned, see http:support.microsoft.com/kb/177181/en-us/
 	    // This should return on *nix system the home dir
 	    test = Vm.getenv("HOME", "/");
 	    log("Vm.getenv(HOME: " + test);
-
+	    
 	    // "user.dir" User's current working directory 
 	    // return in java-vm on win  xp: <working dir> or maybe <program dir>
 	    // in win32.exe ->  null 
 	    test = System.getProperty("user.dir");
 	    log("System.getProperty(user.dir: " + test);
-
+	    
 	    // "user.home" User home directory (taken from http://scv.bu.edu/Doc/Java/tutorial/java/system/properties.html )
 	    // in win32.exe -> null 
 	    test = System.getProperty("user.home");
@@ -471,7 +472,7 @@ public class Preferences extends MinML {
 		testlist = test;
 	    } else {
 		String test[] = { // this part is not tested
-		"/opt/firefox/firefox", // default path in ubuntu
+			"/opt/firefox/firefox", // default path in ubuntu
 			"/usr/bin/firefox" };
 		testlist = test;
 	    }
@@ -549,7 +550,7 @@ public class Preferences extends MinML {
 	    gcMemberId = atts.getValue("name");
 	    tmp = atts.getValue("Premium");
 	    if (tmp != null)
-		isPremium = Boolean.valueOf(tmp).booleanValue();
+		havePremiumMemberRights = Boolean.valueOf(tmp).booleanValue();
 	} else if (name.equals("location")) {
 	    curCentrePt.set(atts.getValue("lat") + " " + atts.getValue("long"));
 	} else if (name.equals("port")) {
@@ -659,9 +660,9 @@ public class Preferences extends MinML {
 	    for (int i = 0; i < atts.getLength(); i++) {
 		h.put(atts.getName(i), atts.getValue(i));
 	    }
-	} else if (name.equals("expPath")) {
+	} else if (name.equals("expPref")) {
 	    for (int i = 0; i < atts.getLength(); i++) {
-		exporterPaths.put(atts.getName(i), atts.getValue(i));
+		exporterPreferences.put(atts.getName(i), atts.getValue(i));
 	    }
 	} else if (name.equals("impPath")) {
 	    for (int i = 0; i < atts.getLength(); i++) {
@@ -694,15 +695,23 @@ public class Preferences extends MinML {
 	    tmp = atts.getValue("maxSpiderNumber");
 	    if (tmp != null)
 		maxSpiderNumber = Convert.parseInt(tmp);
-	    tmp = atts.getValue("downloadPics");
+	    tmp = atts.getValue("getDescPics");
 	    if (tmp != null)
-		downloadPics = Boolean.valueOf(tmp).booleanValue();
+		downloadDescriptionImages = Boolean.valueOf(tmp).booleanValue();
+	    tmp = atts.getValue("getSpoilerPics");
+	    if (tmp != null)
+		downloadSpoilerImages = Boolean.valueOf(tmp).booleanValue();
+	    tmp = atts.getValue("getLogPics");
+	    if (tmp != null)
+		downloadLogImages = Boolean.valueOf(tmp).booleanValue();
 	    tmp = atts.getValue("downloadTBs");
 	    if (tmp != null)
 		downloadTBs = Boolean.valueOf(tmp).booleanValue();
-	    userID = atts.getValue("UserID");
-	    if (userID == null)
-		userID = "";
+	    gcLogin = atts.getValue("gcLogin");
+	    if (gcLogin == null)
+		gcLogin = "";
+	    else
+		gcLogin = SafeXML.html2iso8859s1(gcLogin);
 	} else if (name.equals("details")) {
 	    maxDetails = Common.parseInt(atts.getValue("cacheSize"));
 	    deleteDetails = Common.parseInt(atts.getValue("delete"));
@@ -717,6 +726,16 @@ public class Preferences extends MinML {
 	    }
 	} else if (name.equals("locale")) {
 	    language = atts.getValue("language");
+	} else if (name.equals("GCLogins")) {
+	    Hashtable h = this.getGCLogin(SafeXML.html2iso8859s1(atts.getValue("id")));
+	    // name password cookies (gspkuserid, gspkauth, ...?)
+	    for (int i = 0; i < atts.getLength(); i++) {
+		String key = atts.getName(i);
+		String value = atts.getValue(i);
+		if (key.equals("id"))
+		    value = SafeXML.html2iso8859s1(value);
+		h.put(key, value);
+	    }
 	} else if (name.equals("FILTERDATA")) {
 	    // Creating a filter object and reading the saved data
 	    String id = SafeXML.html2iso8859s1(atts.getValue("id"));
@@ -872,7 +891,7 @@ public class Preferences extends MinML {
 
 		    + "    <gcmemberid" //
 		    + " name=\"" + SafeXML.string2Html(gcMemberId) + "\"" //
-		    + " Premium=\"" + SafeXML.strxmlencode(isPremium) + "\"" //
+		    + " Premium=\"" + SafeXML.strxmlencode(havePremiumMemberRights) + "\"" //
 		    + " />\n" //
 
 		    + "    <browser name=\"" + SafeXML.string2Html(browser) + "\" />\n" //
@@ -961,11 +980,31 @@ public class Preferences extends MinML {
 		    + " checkTBs=\"" + SafeXML.strxmlencode(checkTBs) + "\"" //
 		    + " checkDTS=\"" + SafeXML.strxmlencode(checkDTS) + "\"" //
 		    + " maxSpiderNumber=\"" + SafeXML.strxmlencode(maxSpiderNumber) + "\"" //
-		    + " downloadPics=\"" + SafeXML.strxmlencode(downloadPics) + "\"" //
+		    + " getDescPics=\"" + SafeXML.strxmlencode(downloadDescriptionImages) + "\"" //
+		    + " getSpoilerPics=\"" + SafeXML.strxmlencode(downloadSpoilerImages) + "\"" //
+		    + " getLogPics=\"" + SafeXML.strxmlencode(downloadLogImages) + "\"" //
 		    + " downloadTBs=\"" + SafeXML.strxmlencode(downloadTBs) + "\"" //
-		    + " UserID=\"" + SafeXML.string2Html(userID) + "\"" //
+		    + " gcLogin=\"" + SafeXML.string2Html(gcLogin) + "\"" //
 		    + " getFinds=\"" + SafeXML.strxmlencode(!doNotGetFound) + "\"" //
 		    + " />\n");
+	    // save the gcLogins created by GCImporter
+	    Iterator it = this.gcLogins.entries();
+	    while (it.hasNext()) {
+		MapEntry gcLoginEntry = (MapEntry) it.next();
+		// String id = (String) gcLoginEntry.getKey(); // ist in  Hashtable gcLogin auch drin
+		Hashtable gcLogin = (Hashtable) gcLoginEntry.getValue();
+		Iterator itgcLogin = gcLogin.entries();
+		outp.print("    <" + "GCLogins" + " ");
+		while (itgcLogin.hasNext()) {
+		    MapEntry gcLoginentry = (MapEntry) itgcLogin.next();
+		    String key = (String) gcLoginentry.getKey();
+		    String value = (String) gcLoginentry.getValue();
+		    if (key.equals("id"))
+			value = SafeXML.html2iso8859s1(value);
+		    outp.print(key + "=\"" + value + "\" ");
+		}
+		outp.print("/>\n");
+	    }
 	    outp.print("    <gotopanel northcentered=\"" + SafeXML.strxmlencode(northCenteredGoto) + "\" />\n");
 	    outp.print("    <details cacheSize=\"" + SafeXML.strxmlencode(maxDetails) + "\" delete=\"" + SafeXML.strxmlencode(deleteDetails) + "\" />\n");
 	    outp.print("    <metric type=\"" + SafeXML.strxmlencode(metricSystem) + "\" />\n");
@@ -992,12 +1031,12 @@ public class Preferences extends MinML {
 		}
 		outp.print("/>\n");
 	    }
-	    // save last path of im and exporters
-	    exporterPaths.remove("key"); // relikt bereinigen
-	    exporterPaths.remove("value"); // relikt bereinigen
-	    Iterator itPath = exporterPaths.entries();
+	    // save last path of im- and ex-porters
+	    exporterPreferences.remove("key"); // relikt bereinigen
+	    exporterPreferences.remove("value"); // relikt bereinigen
+	    Iterator itPath = exporterPreferences.entries();
 	    if (itPath.hasNext()) {
-		outp.print("    <expPath ");
+		outp.print("    <expPref ");
 		while (itPath.hasNext()) {
 		    MapEntry entry = (MapEntry) itPath.next();
 		    outp.print(entry.getKey().toString() + "=\"" + (String) entry.getValue() + "\" ");
@@ -1193,24 +1232,31 @@ public class Preferences extends MinML {
     // ////////////////////////////////////////////////////////////////////////////////////
 
     /** Hashtable for storing the last export path */
-    private Hashtable exporterPaths = new Hashtable();
+    private Hashtable exporterPreferences = new Hashtable();
 
-    public void setExportPath(String exporter, String path) {
-	exporterPaths.put(exporter, path);
+    public void setExportPref(String exporter, String value) {
+	exporterPreferences.put(exporter, value);
 	savePreferences();
     }
 
     public void setExportPathFromFileName(String exporter, String filename) {
 	File tmpfile = new File(filename);
-	exporterPaths.put(exporter, tmpfile.getPath());
+	exporterPreferences.put(exporter, tmpfile.getPath());
 	savePreferences();
     }
 
     public String getExportPath(String exporter) {
-	String dir = (String) exporterPaths.get(exporter);
+	String dir = (String) exporterPreferences.get(exporter);
 	if (dir == null) {
 	    dir = Preferences.itself().absoluteBaseDir;
 	}
+	return dir;
+    }
+
+    public String getExportPref(String exporter) {
+	String dir = (String) exporterPreferences.get(exporter);
+	if (dir == null)
+	    dir = "";
 	return dir;
     }
 
@@ -1228,7 +1274,7 @@ public class Preferences extends MinML {
 	return dir;
     }
 
-    private Hashtable gpxExportPreferences = new Hashtable(4);
+    private Hashtable gpxExportPreferences = new Hashtable(5);
 
     public Hashtable getGpxExportPreferences(String gpxStyle) {
 	Hashtable ret = (Hashtable) gpxExportPreferences.get(gpxStyle);
@@ -1237,6 +1283,41 @@ public class Preferences extends MinML {
 	    ret = (Hashtable) gpxExportPreferences.get(gpxStyle);
 	}
 	return ret;
+    }
+
+    private Hashtable gcLogins = new Hashtable(5);
+
+    public String[] getGCLogins() {
+	String[] loginNames = new String[gcLogins.size() + 1];
+	loginNames[0] = "";
+	int i = 1;
+	Iterator it = this.gcLogins.entries();
+	while (it.hasNext()) {
+	    MapEntry gcLoginEntry = (MapEntry) it.next();
+	    loginNames[i] = (String) gcLoginEntry.getKey();
+	    i = i + 1;
+	}
+	return loginNames;
+    }
+
+    public boolean hasGCLogin() {
+	return gcLogins.get(gcLogin) != null;
+    }
+
+    public Hashtable getGCLogin(String id) {
+	Hashtable ret = (Hashtable) gcLogins.get(id);
+	if (ret == null) {
+	    gcLogins.put(id, new Hashtable());
+	    ret = (Hashtable) gcLogins.get(id);
+	}
+	return ret;
+    }
+
+    public void setGCLogin(String id, String gspkuserid, String gspkauth) {
+	Hashtable h = getGCLogin(id);
+	h.put("id", id);
+	h.put("userid", gspkuserid);
+	h.put("auth", gspkauth);
     }
 
     /**

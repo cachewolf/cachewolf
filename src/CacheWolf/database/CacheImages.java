@@ -138,18 +138,17 @@ public class CacheImages {
     }
 
     /**
-     * Returns a CacheImage collection of the images that should be displayed in the
-     * image panel. An image should <b>not</b> be present in this collection if its title is
-     * starting with the indicated prefix and if there is another image referring to the same file but
-     * with a different title.<br>
-     * Normally, the results are cached and don't need to be evaluated again. If they should
-     * be reevaluated for whatever reason, then pass <code>true</code> as parameter.
-     * 
+     * Returns a CacheImage collection of the images that should be displayed in the image panel.<br>
+     * An image should <b>not</b> be present in this collection if its title is starting with the indicated prefix<br>
+     * and if there is another image referring to the same file but with a different title.<br>
+     * <br>
+     * Normally, the results are cached and don't need to be evaluated again.<br>
+     * If they should be reevaluated for whatever reason, then pass <code>true</code> as parameter.
+     * <br>
      * @param prefix
      *            The prefix which is used to name default image titles
      * @param forceEvaluation
-     *            When <code>true</code> the images that should display are
-     *            reexamined.
+     *            When <code>true</code> the images that should display are reexamined.
      * @return The CacheImage collection of images.
      */
     public CacheImages getDisplayImages(String prefix, boolean forceEvaluation) {
@@ -163,11 +162,10 @@ public class CacheImages {
     }
 
     /**
-     * Returns a CacheImage collection of the images that should be displayed in the
-     * image panel. An image should <b>not</b> be present in this collection if its title is
-     * equivalent to its filename and if there is another image referring to the same file but
-     * with a different title.
-     * 
+     * Returns a CacheImage collection of the images that should be displayed in the image panel.<br> 
+     * An image should <b>not</b> be present in this collection if its title is equivalent to its filename<br>
+     * and if there is another image referring to the same file but with a different title.<br>
+     * <br>
      * @param prefix
      *            The prefix which is used to name default image titles
      * @return The CacheImage collection of images.

@@ -33,8 +33,8 @@ public class ASCExporter extends Exporter {
 
 	public ASCExporter() {
 		super();
-		this.setMask("*.csv");
-		this.setHowManyParams(LAT_LON);
+		this.setOutputFileExtension("*.csv");
+		this.setRecordMethod(LAT_LON);
 	}
 
 	public String record(CacheHolder holder, String lat, String lon) {

@@ -24,23 +24,29 @@ package CacheWolf.exp;
 import CacheWolf.MainForm;
 import CacheWolf.Preferences;
 import CacheWolf.controls.InfoBox;
-import CacheWolf.database.CacheDB;
 import CacheWolf.database.CacheHolder;
 import CacheWolf.database.CacheSize;
 import CacheWolf.database.CacheType;
 import CacheWolf.navi.TransformCoordinates;
 import CacheWolf.utils.MyLocale;
+
+import com.stevesoft.ewe_pat.Regex;
+import com.stevesoft.ewe_pat.Transformer;
+
 import ewe.filechooser.FileChooser;
 import ewe.filechooser.FileChooserBase;
 import ewe.io.BufferedWriter;
 import ewe.io.File;
 import ewe.io.FileWriter;
 import ewe.io.IOException;
+import ewe.io.JavaUtf8Codec;
 import ewe.io.PrintWriter;
+import ewe.io.TextCodec;
 import ewe.sys.Handle;
 import ewe.ui.FormBase;
 import ewe.ui.ProgressBarForm;
 import ewe.util.Hashtable;
+import ewe.util.Vector;
 
 /**
  * @author Kalle Base class for exporter, handles basic things like selecting outputfile, display a counter etc. A new Exporter must only override the header(), record() and trailer() methods. The member howManyParams must be set to identify which
@@ -48,133 +54,169 @@ import ewe.util.Hashtable;
  */
 
 public class Exporter {
-    // starts with no ui for file selection
-    final static int TMP_FILE = 0;
-    // brings up a screen to select a file
-    final static int ASK_FILE = 1;
 
-    // selection, which method should be called
+    // export methods
     final static int NO_PARAMS = 0;
     final static int LAT_LON = 1;
     final static int COUNT = 2;
 
-    CacheDB cacheDB;
+    Vector DB;
     // mask in file chooser
-    String mask = "*.*";
-    // file name, if no file chooser is used
-    String tmpFileName;
+    String outputFileExtension = "*.*";
+    String outputFileName;
     // decimal separator for lat- and lon-String
     char decimalSeparator = '.';
-    // if true, the complete cache details are read
-    // before a call to the record method is made
-    // boolean needCacheDetails = false;
-    // selection, which method should be called
-    int howManyParams = 0;
+    // selection, which export method should be called
+    int recordMethod;
 
-    // name of exporter for saving pathname
-    String expName;
+    int incompleteWaypoints = 0;
+
+    // name of exporter for saving pathname and its preferences
+    protected String exporterName;
+    protected TextCodec useCodec;
+    protected int anzVisibleCaches;
+    int doneTillNow;
+    protected PrintWriter outWriter;
+
+    ProgressBarForm pbf = new ProgressBarForm();
+    Handle h = new Handle();
+
+    protected File outFile = null;
 
     public Exporter() {
-	cacheDB = MainForm.profile.cacheDB;
-	howManyParams = LAT_LON;
-	expName = this.getClass().getName();
+	recordMethod = LAT_LON;
+	exporterName = this.getClass().getName();
 	// remove package
-	expName = expName.substring(expName.indexOf(".") + 1);
-    }
-
-    public void doIt() {
-	this.doIt(ASK_FILE);
+	exporterName = exporterName.substring(exporterName.indexOf(".") + 1);
+	useCodec = new JavaUtf8Codec();
+	anzVisibleCaches = MainForm.profile.cacheDB.countVisible();
+	doneTillNow = 0;
     }
 
     /**
-     * Does the most work for exporting data
+     * Does the work for exporting data
      * 
-     * @param variant
-     *            0, if no filechooser 1, if filechooser
      */
-    public void doIt(int variant) {
-	File outFile;
-	String str;
-	CacheHolder ch;
-	ProgressBarForm pbf = new ProgressBarForm();
-	Handle h = new Handle();
+    public void doIt() {
+	doItStart();
+	export();
+	doItEnd();
+    }
 
-	if (variant == ASK_FILE) {
-	    outFile = getOutputFile();
-	    if (outFile == null)
-		return;
-	} else {
-	    outFile = new File(tmpFileName);
-	}
-
+    public void doItStart() {
 	pbf.showMainTask = false;
 	pbf.setTask(h, "Exporting ...");
 	pbf.exec();
+    }
 
-	int counter = cacheDB.countVisible();
-	int expCount = 0;
+    public void doItEnd() {
+	pbf.exit(0);
+	if (incompleteWaypoints > 0) {
+	    new InfoBox(MyLocale.getMsg(5500, "Error"), incompleteWaypoints + " incomplete waypoints have not been exported. See log for details.").wait(FormBase.OKB);
+	}
+    }
+
+    /**
+     * Do one File export, can be overwritten
+     * 
+     */
+    public void export() {
+	if (DB == null) {
+	    DB = MainForm.profile.cacheDB.getVectorDB();
+	}
+
+	if (outFile == null) {
+	    askForOutputFile();
+	    if (outFile == null)
+		return;
+	}
+	exportHeader();
+	exportBody();
+	exportTrailer();
+    }
+
+    public void exportHeader() {
 
 	try {
-	    int incompleteWaypoints = 0;
-	    PrintWriter outp = new PrintWriter(new BufferedWriter(new FileWriter(outFile)));
-	    str = this.header();
-	    if (str != null)
-		outp.print(str);
-	    for (int i = 0; i < cacheDB.size(); i++) {
-		ch = cacheDB.get(i);
-		if (ch.isVisible()) {
-		    if (ch.isIncomplete()) {
-			Preferences.itself().log("skipping export of incomplete waypoint " + ch.getCode());
-			incompleteWaypoints++;
-			continue;
-		    }
-		    expCount++;
-		    h.progress = (float) expCount / (float) counter;
-		    h.changed();
-		    switch (this.howManyParams) {
-		    case NO_PARAMS:
-			str = record(ch);
-			break;
-		    case LAT_LON:
-			if (ch.getWpt().isValid() == false)
-			    continue;
-			str = record(ch, ch.getWpt().getLatDeg(TransformCoordinates.DD).replace('.', this.decimalSeparator), ch.getWpt().getLonDeg(TransformCoordinates.DD).replace('.', this.decimalSeparator));
-			break;
-		    case LAT_LON | COUNT:
-			if (ch.getWpt().isValid() == false)
-			    continue;
-			str = record(ch, ch.getWpt().getLatDeg(TransformCoordinates.DD).replace('.', this.decimalSeparator), ch.getWpt().getLonDeg(TransformCoordinates.DD).replace('.', this.decimalSeparator), i);
-			break;
-		    default:
-			str = null;
-			break;
-		    }
-		    if (str != null)
-			outp.print(str);
-		}// if
-	    }// for
-	    switch (this.howManyParams & COUNT) {
-	    case NO_PARAMS:
-		str = trailer();
-		break;
-	    case COUNT:
-		str = trailer(counter);
-		break;
-	    default:
-		str = null;
-		break;
-	    }
-	    if (str != null)
-		outp.print(str);
-	    outp.close();
-	    pbf.exit(0);
-	    if (incompleteWaypoints > 0) {
-		new InfoBox(MyLocale.getMsg(5500, "Error"), incompleteWaypoints + " incomplete waypoints have not been exported. See log for details.").wait(FormBase.OKB);
-	    }
+	    FileWriter fw = new FileWriter(outFile);
+	    fw.codec = this.useCodec;
+	    outWriter = new PrintWriter(new BufferedWriter(fw));
 	} catch (IOException ioE) {
-	    Preferences.itself().log("Error opening " + outFile.getName(), ioE);
+	    Preferences.itself().log("Error opening " + outputFileName, ioE);
 	}
-	// try
+
+	String str = this.header();
+	if (str != null)
+	    outWriter.write(str);
+    }
+
+    public void exportBody() {
+	exportCaches();
+    }
+
+    public void exportTrailer() {
+	String str;
+	switch (this.recordMethod & COUNT) {
+	case NO_PARAMS:
+	    str = trailer();
+	    break;
+	case COUNT:
+	    str = trailer(anzVisibleCaches);
+	    break;
+	default:
+	    str = null;
+	    break;
+	}
+	if (str != null)
+	    outWriter.write(str);
+
+	outWriter.close();
+
+    }
+
+    private void exportCaches() {
+	String str;
+	for (int i = 0; i < DB.size(); i++) {
+	    str = exportCache(i);
+	    if (str != null) {
+		h.progress = (float) doneTillNow / (float) anzVisibleCaches;
+		h.changed();
+		outWriter.write(str);
+	    }
+	}
+    }
+
+    private String exportCache(int i) {
+	CacheHolder ch = (CacheHolder) DB.get(i);
+	String str = null;
+	if (ch.isVisible()) {
+	    doneTillNow++;
+	    if (ch.isIncomplete()) {
+		Preferences.itself().log("Incomplete waypoint " + ch.getCode(), null);
+		incompleteWaypoints++;
+		return null;
+	    } else {
+		switch (this.recordMethod) {
+		case NO_PARAMS:
+		    str = record(ch);
+		    break;
+		case LAT_LON:
+		    if (!ch.getWpt().isValid())
+			return null;
+		    str = record(ch, ch.getWpt().getLatDeg(TransformCoordinates.DD).replace('.', this.decimalSeparator), ch.getWpt().getLonDeg(TransformCoordinates.DD).replace('.', this.decimalSeparator));
+		    break;
+		case LAT_LON | COUNT:
+		    if (!ch.getWpt().isValid())
+			return null;
+		    str = record(ch, ch.getWpt().getLatDeg(TransformCoordinates.DD).replace('.', this.decimalSeparator), ch.getWpt().getLonDeg(TransformCoordinates.DD).replace('.', this.decimalSeparator), i);
+		    break;
+		default:
+		    str = null;
+		    break;
+		}
+	    }// else if incomplete
+	}// if visible 
+	return str;
     }
 
     /**
@@ -182,35 +224,17 @@ public class Exporter {
      * 
      * @param mask
      */
-    public void setMask(String mask) {
-	this.mask = mask;
+    public void setOutputFileExtension(String mask) {
+	this.outputFileExtension = mask;
     }
-
-    /**
-     * sets decimal separator for lat/lon-string
-     * 
-     * @param sep
-     */
-    public void setDecimalSeparator(char sep) {
-	this.decimalSeparator = sep;
-    }
-
-    /**
-     * sets needCacheDetails
-     * 
-     * @param how
-     */
-    //public void setNeedCacheDetails(boolean how) {
-    //this.needCacheDetails = how;
-    //}
 
     /**
      * sets howManyParams
      * 
      * @param paramBits
      */
-    public void setHowManyParams(int paramBits) {
-	this.howManyParams = paramBits;
+    public void setRecordMethod(int paramBits) {
+	this.recordMethod = paramBits;
     }
 
     /**
@@ -218,8 +242,9 @@ public class Exporter {
      * 
      * @param fName
      */
-    public void setTmpFileName(String fName) {
-	this.tmpFileName = fName;
+    public void setOutputFile(String fName) {
+	this.outputFileName = fName;
+	outFile = new File(outputFileName);
     }
 
     /**
@@ -227,18 +252,30 @@ public class Exporter {
      * 
      * @return
      */
-    public File getOutputFile() {
+    public void askForOutputFile() {
 	File file;
-	FileChooser fc = new FileChooser(FileChooserBase.SAVE, Preferences.itself().getExportPath(expName));
-	fc.setTitle("Select target file:");
-	fc.addMask(mask);
+	FileChooser fc = new FileChooser(FileChooserBase.SAVE, Preferences.itself().getExportPath(exporterName));
+	fc.setTitle(MyLocale.getMsg(2102, "Choose target file"));
+	fc.addMask(outputFileExtension);
 	if (fc.execute() != FormBase.IDCANCEL) {
 	    file = fc.getChosenFile();
-	    Preferences.itself().setExportPath(expName, file.getPath());
-	    return file;
+	    this.outputFileName = fc.getChosen();
+	    Preferences.itself().setExportPref(exporterName, file.getPath());
+	    outFile = file;
 	} else {
-	    return null;
+	    outFile = null;
 	}
+    }
+
+    public String getOutputPath() {
+	FileChooser fc = new FileChooser(FileChooserBase.DIRECTORY_SELECT, Preferences.itself().getExportPath(exporterName));
+	fc.setTitle(MyLocale.getMsg(148, "Select Target directory"));
+	String targetDir;
+	if (fc.execute() == FormBase.IDCANCEL)
+	    return "";
+	targetDir = fc.getChosen() + "/";
+	Preferences.itself().setExportPref(exporterName, targetDir);
+	return targetDir;
     }
 
     /**
@@ -314,13 +351,20 @@ public class Exporter {
     // /////////////////////////////////////////////////
 
     private static Hashtable iso2simpleMappings = new Hashtable(250);
+    //  ISO-8859-1 is CP1252 without chars 80-9f (=128..159) which is = 00..1f
+    //  will be converted to  ISO-646 ( = ASCII, or US-ASCII)
     static {
-	String[] mappingArray = new String[] { "34", "'", "160", " ", "161", "i", "162", "c", "163", "$", "164", "o", "165", "$", "166", "!", "167", "$", "168", " ", "169", " ", "170", " ", "171", "<", "172", " ", "173", "-", "174", " ", "175", "-",
-		"176", " ", "177", "+/-", "178", "2", "179", "3", "180", "'", "181", " ", "182", " ", "183", " ", "184", ",", "185", "1", "186", " ", "187", ">", "188", "1/4", "189", "1/2", "190", "3/4", "191", "?", "192", "A", "193", "A", "194",
-		"A", "195", "A", "196", "Ae", "197", "A", "198", "AE", "199", "C", "200", "E", "201", "E", "202", "E", "203", "E", "204", "I", "205", "I", "206", "I", "207", "I", "208", "D", "209", "N", "210", "O", "211", "O", "212", "O", "213",
-		"O", "214", "Oe", "215", "x", "216", "O", "217", "U", "218", "U", "219", "U", "220", "Ue", "221", "Y", "222", " ", "223", "ss", "224", "a", "225", "a", "226", "a", "227", "a", "228", "ae", "229", "a", "230", "ae", "231", "c", "232",
-		"e", "233", "e", "234", "e", "235", "e", "236", "i", "237", "i", "238", "i", "239", "i", "240", "o", "241", "n", "242", "o", "243", "o", "244", "o", "245", "o", "246", "oe", "247", "/", "248", "o", "249", "u", "250", "u", "251", "u",
-		"252", "ue", "253", "y", "254", "p", "255", "y" };
+	String[] mappingArray = new String[] { "34", "'", //
+		"160", " ", "161", "i", "162", "c", "163", "$", "164", "o", "165", "$", "166", "!", "167", "$", "168", " ", "169", " ", //
+		"170", " ", "171", "<", "172", " ", "173", "-", "174", " ", "175", "-", "176", " ", "177", "+/-", "178", "2", "179", "3", //
+		"180", "'", "181", " ", "182", " ", "183", " ", "184", ",", "185", "1", "186", " ", "187", ">", "188", "1/4", "189", "1/2", //
+		"190", "3/4", "191", "?", "192", "A", "193", "A", "194", "A", "195", "A", "196", "Ae", "197", "A", "198", "AE", "199", "C", //
+		"200", "E", "201", "E", "202", "E", "203", "E", "204", "I", "205", "I", "206", "I", "207", "I", "208", "D", "209", "N", //
+		"210", "O", "211", "O", "212", "O", "213", "O", "214", "Oe", "215", "x", "216", "O", "217", "U", "218", "U", "219", "U", //
+		"220", "Ue", "221", "Y", "222", " ", "223", "ss", "224", "a", "225", "a", "226", "a", "227", "a", "228", "ae", "229", "a", //
+		"230", "ae", "231", "c", "232", "e", "233", "e", "234", "e", "235", "e", "236", "i", "237", "i", "238", "i", "239", "i", //
+		"240", "o", "241", "n", "242", "o", "243", "o", "244", "o", "245", "o", "246", "oe", "247", "/", "248", "o", "249", "u", //
+		"250", "u", "251", "u", "252", "ue", "253", "y", "254", "p", "255", "y" };
 	for (int i = 0; i < mappingArray.length; i = i + 2) {
 	    iso2simpleMappings.put(Integer.valueOf(mappingArray[i]), mappingArray[i + 1]);
 	}
@@ -332,7 +376,7 @@ public class Exporter {
 	    return null;
 	} else {
 	    String s = (String) iso2simpleMappings.get(new Integer(c));
-	    if (s == null) // not in table, replace with empty string just to be sure
+	    if (s == null) // 127..159 not in table, replace with empty string
 		return "";
 	    else
 		return s;
@@ -381,4 +425,23 @@ public class Exporter {
 	return strBuf.toString();
     }
 
+    protected String removeHtmlTags(String inString) {
+
+	Transformer removeNumericEntities = new Transformer(true);
+	removeNumericEntities.add(new Regex("&#([xX]?)([a-fA-F0-9]*?);", ""));
+
+	Transformer handleLinebreaks = new Transformer(true);
+	handleLinebreaks.add(new Regex("\r", ""));
+	handleLinebreaks.add(new Regex("\n", " "));
+	handleLinebreaks.add(new Regex("<br>", "\n"));
+	handleLinebreaks.add(new Regex("<p>", "\n"));
+	handleLinebreaks.add(new Regex("<hr>", "\n"));
+	handleLinebreaks.add(new Regex("<br />", "\n"));
+
+	Transformer removeHTMLTags = new Transformer(true);
+	removeHTMLTags.add(new Regex("<(.*?)>", ""));
+
+	return removeHTMLTags.replaceAll(handleLinebreaks.replaceAll(removeNumericEntities.replaceAll(inString)));
+
+    }
 }

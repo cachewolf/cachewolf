@@ -2774,8 +2774,7 @@ class ListBox extends Form {
 	try {
 	    selectedMap = null;
 	    int mapNum = 0;
-	    String it = new String();
-	    it = list.getText();
+	    String it = list.getText();
 	    if (it.length() > 0) {
 		it = it.substring(0, it.indexOf(':'));
 		mapNum = Convert.toInt(it);

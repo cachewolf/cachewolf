@@ -1,6 +1,6 @@
 ﻿Wie bekomme ich eine brandaktuelle Version des CacheWolf?
 
-Die Sourcen von CacheWolf sind in einem Subversion-Repository bei code.google.com (Details siehe https://cachewolf.googlecode.com/svn) vorhanden, hierauf kann jeder lesend zugreifen. Schreibrechte werden auf Anfrage erteilt. Nachfolgend ist beschrieben, wie man sich die aktuelle Entwicklerversion besorgen kann und zum Laufen benommt.
+Die Sourcen von CacheWolf sind in einem Subversion-Repository bei github.com (Details siehe https://github.com/cachewolf/cachewolf/) vorhanden, hierauf kann jeder lesend zugreifen. Schreibrechte werden auf Anfrage erteilt. Nachfolgend ist beschrieben, wie man sich die aktuelle Entwicklerversion besorgen kann und zum Laufen benommt.
 
 CacheWolf wurde für und mit Ewe (http://www.ewesoft.com/) in Java programmiert. Ewe bietet für viele Plattformen sogenannte virtuelle Maschienen an, außerdem können für Ewe geschriebene Programme auf allen Plattformen laufen, die eine Java-Laufzeitumgebung haben (nicht zu verwechseln mit dem "Handy-Java" J2ME).
 
@@ -10,7 +10,7 @@ Benötigte Programme
 - Das Ewe-Developer-SDK (z.B. http://www.ewesoft.com/Downloads/Ewe149-Developer-SDK.zip)
 
 Java-Version
-- Checkout der aktuellen Sourcen aus dem Repository (z.B. https://cachewolf.googlecode.com/svn)
+- Checkout der aktuellen Sourcen aus dem Repository (z.B. https://github.com/cachewolf/cachewolf/trunk)
 - Das Verzeichnis kann lokal umbenannt werden, z.B. in CacheWolf
 - Es sollte bereits ein Verzeichnis bin/CacheWolf geben, falls nicht, bitte anlegen
 - Script compile.bat (WinXP) bzw. ./compile.sh (Linux) ausführen. Es gibt etwa 10 Warnings.

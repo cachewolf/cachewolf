@@ -21,6 +21,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 package CacheWolf.database;
 
+import com.stevesoft.ewe_pat.Regex;
+
 import CacheWolf.Filter;
 import CacheWolf.MainForm;
 import CacheWolf.MyTableModel;
@@ -31,9 +33,6 @@ import CacheWolf.utils.Common;
 import CacheWolf.utils.Metrics;
 import CacheWolf.utils.MyLocale;
 import CacheWolf.utils.SafeXML;
-
-import com.stevesoft.ewe_pat.Regex;
-
 import ewe.fx.FontMetrics;
 import ewe.fx.IconAndText;
 import ewe.sys.Convert;
@@ -60,15 +59,15 @@ public class CacheHolder {
     private String hidden = EMPTY;
     /** The code of the waypoint, beginning with 2 chars like GC or OC or CW (or any for Addis ) */
     private String code = EMPTY;
-    /** The name of the cache (short description) */
+    /** The name of the cache */
     private String name = EMPTY;
     /** Byte 3: The cache type (@see CacheType for translation table) */
     private byte type;
     /** The alias of the owner */
     private String owner = EMPTY;
-    /** Byte 1: The difficulty of the cache from 1 to 5 in .5 incements */
+    /** Byte 1: The difficulty of the cache from 10 to 50 in 5 incements */
     private byte difficulty = CacheTerrDiff.CW_DT_UNSET;
-    /** Byte 2: The terrain rating of the cache from 1 to 5 in .5 incements */
+    /** Byte 2: The terrain rating of the cache from 10 to 50 in 5 incements */
     private byte terrain = CacheTerrDiff.CW_DT_UNSET;
     /** Byte 4: The size of the cache (as per GC cache sizes Micro, Small, ....) */
     private byte size = CacheSize.CW_SIZE_NOTCHOSEN;
@@ -173,7 +172,7 @@ public class CacheHolder {
     public CacheHolder(String cache, int version) {
 	int start, end;
 	try {
-	    if (version == 3) {
+	    if (version == 3 || version == 4) {
 		start = cache.indexOf('"') + 1;
 		end = cache.indexOf('"', start);
 		this.name = SafeXML.html2iso8859s1(cache.substring(start, end));
@@ -319,13 +318,13 @@ public class CacheHolder {
 	return ret;
     }
 
-    /** The name of the cache (short description) */
+    /** The name of the cache */
     public String getName() {
 	return this.name;
     }
 
     /**
-     * The name of the cache (short description)
+     * The name of the cache
      * @param name
      * @return true if changed, false if equal 
      */
@@ -365,17 +364,20 @@ public class CacheHolder {
      * @param owner
      */
     public void setOwner(String owner) {
-	MainForm.profile.notifyUnsavedChanges(!owner.equals(this.owner));
-	this.owner = owner;
+	if (!this.owner.equals(owner)) {
+	    MainForm.profile.notifyUnsavedChanges(true);
+	    this.owner = owner;
+	    this.isOwned = (this.owner.length() > 0) && (this.owner.equalsIgnoreCase(Preferences.itself().myAlias) || this.owner.equalsIgnoreCase(Preferences.itself().myAlias2));
+	}
     }
 
-    /**Byte 1: The difficulty of the cache from 1 to 5 in .5 incements */
+    /**Byte 1: The difficulty of the cache from 10 to 50 in 5 incements */
     public byte getDifficulty() {
 	return this.difficulty;
     }
 
     /**
-     *Byte 1: The difficulty of the cache from 1 to 5 in .5 incements
+     *Byte 1: The difficulty of the cache from 10 to 50 in 5 incements
      * @param difficulty
      */
     public void setDifficulty(byte difficulty) {
@@ -383,13 +385,13 @@ public class CacheHolder {
 	this.difficulty = difficulty;
     }
 
-    /**Byte 2: The terrain rating of the cache from 1 to 5 in .5 incements */
+    /**Byte 2: The terrain rating of the cache from 10 to 50 in 5 incements */
     public byte getTerrain() {
 	return terrain;
     }
 
     /**
-     *Byte 2: The terrain rating of the cache from 1 to 5 in .5 incements
+     *Byte 2: The terrain rating of the cache from 10 to 50 in 5 incements
      * @param terrain
      */
     public void setTerrain(byte terrain) {
@@ -567,8 +569,20 @@ public class CacheHolder {
      * @param isOwned
      */
     public void setOwned(boolean isOwned) {
-	MainForm.profile.notifyUnsavedChanges(isOwned != this.isOwned);
-	this.isOwned = isOwned;
+	if (this.isOwned != isOwned) {
+	    MainForm.profile.notifyUnsavedChanges(true);
+	    this.isOwned = isOwned;
+	    if (isOwned) {
+		if (this.owner.length() == 0) {
+		    this.isOwned = false;
+		} else {
+		    // owner ist nicht myAlias oder myAlias2
+		    if (!(this.owner.equalsIgnoreCase(Preferences.itself().myAlias) || this.owner.equalsIgnoreCase(Preferences.itself().myAlias2))) {
+			this.isOwned = false;
+		    }
+		}
+	    }
+	}
     }
 
     /** Bit 7: True if we have found this cache */
@@ -701,7 +715,7 @@ public class CacheHolder {
     }
 
     /**  Bit 15:*/
-    public boolean isPMCache() {
+    public boolean isPremiumCache() {
 	return this.isPMCache;
     }
 
@@ -709,7 +723,7 @@ public class CacheHolder {
      * Bit 15:
      * @param b
      */
-    public void setIsPMCache(boolean b) {
+    public void setIsPremiumCache(boolean b) {
 	if (b != this.isPMCache) {
 	    MainForm.profile.notifyUnsavedChanges(true);
 	    this.isPMCache = b;
@@ -821,47 +835,10 @@ public class CacheHolder {
      *            If <code>true</code>, then <i>status</i>, <i>isFound</i> and <i>position</i> is updated, otherwise not.
      */
     public void update(CacheHolder ch) {
-
+	updateOwnLog(ch);
 	this.setNumFoundsSinceRecommendation(ch.getNumFoundsSinceRecommendation());
 	this.setNumRecommended(ch.getNumRecommended());
-	this.setIsPMCache(ch.isPMCache);
-	ch.setStatus(ch.status.trim());
-	if (ch.isFound()) {
-	    if (ch.status.length() == 0) {
-		// wenn kein Datum drin ist (also z.B. nicht von GC gespidert) 
-		ch.setStatus(CacheType.getFoundText(ch.type));
-	    }
-	}
-	/*
-	 * Here we have to distinguish several cases: 
-	 * this.isFound this.Status      ch.isFound   ch.Status    this.isFound this.Status 
-	 * --------------------------------------------------------------------------------
-	 *  true        Found            true         Date         =            ch.Status(if not empty ?== Date )
-	 *  true        yyyy-mm-dd       true         Date         =            ch.Status(if not empty ?== Date )
-	 *  true        yyyy-mm-dd hh:mm true         Date         =            ch.Status(Date)
-	 *  false       something        false        something    =            ch.Status(if not empty ?merge somehow ) 
-	 *  false       something        true         Date         true         ch.Status(if not empty ?== Date )
-	 */
-	if (this.isFound) {
-	    if (this.status.indexOf(":") < 0) {
-		if (ch.getStatus().length() > 0) {
-		    // ch.isFound
-		    this.setStatus(ch.getStatus());
-		}
-	    } else {
-		if (!Preferences.itself().keepTimeOnUpdate) {
-		    if (ch.getStatus().length() > 0) {
-			// ch.isFound
-			this.setStatus(ch.getStatus());
-		    }
-		}
-	    }
-	} else {
-	    if (ch.getStatus().length() > 0) {
-		this.setStatus(ch.getStatus());
-		this.setFound(ch.isFound());
-	    }
-	}
+	this.setIsPremiumCache(ch.isPMCache);
 
 	// Don't overwrite valid coordinates with invalid ones
 	if (ch.getWpt().isValid() || !this.wpt.isValid()) {
@@ -900,6 +877,51 @@ public class CacheHolder {
 
 	this.setAttribsAsBits(ch.getAttributesBits());
 	this.getDetails().update(ch.getDetails());
+    }
+
+    public void updateOwnLog(CacheHolder ch) {
+	ch.setStatus(ch.status.trim());
+	if (ch.isFound()) {
+	    if (ch.status.length() == 0) {
+		// wenn kein Datum drin ist (also z.B. nicht von GC gespidert) 
+		ch.setStatus(CacheType.getFoundText(ch.type));
+	    }
+	}
+	/*
+	 * Here we have to distinguish several cases: 
+	 * this.isFound this.Status      ch.isFound   ch.Status    this.isFound this.Status 
+	 * --------------------------------------------------------------------------------
+	 *  true        Found            true         Date         =            ch.Status(if not empty ?== Date )
+	 *  true        yyyy-mm-dd       true         Date         =            ch.Status(if not empty ?== Date )
+	 *  true        yyyy-mm-dd hh:mm true         Date         =            ch.Status(Date)
+	 *  false       something        false        something    =            ch.Status(if not empty ?merge somehow ) 
+	 *  false       something        true         Date         true         ch.Status(if not empty ?== Date )
+	 */
+	if (this.isFound) {
+	    if (this.status.indexOf(":") < 0) {
+		if (ch.getStatus().length() > 0) {
+		    // ch.isFound
+		    this.setStatus(ch.getStatus());
+		}
+	    } else {
+		if (!Preferences.itself().keepTimeOnUpdate) {
+		    if (ch.getStatus().length() > 0) {
+			// ch.isFound
+			this.setStatus(ch.getStatus());
+		    }
+		}
+	    }
+	} else {
+	    if (ch.getStatus().length() > 0) {
+		this.setStatus(ch.getStatus());
+		this.setFound(ch.isFound());
+	    }
+	}
+
+	if (ch.getDetails().getOwnLog() != null) {
+	    this.getDetails().setOwnLog(ch.getDetails().getOwnLog());
+	}
+
     }
 
     /**
@@ -942,7 +964,12 @@ public class CacheHolder {
 	sb.append("\" hidden=\"");
 	sb.append(this.hidden);
 	sb.append("\" wayp=\"");
-	sb.append(SafeXML.string2Html(code));
+	if (!(code.equals(code.toUpperCase()))) {
+	    code = code.toUpperCase();
+	    // status = "aufGross";
+	    this.saveCacheDetails();
+	}
+	sb.append(SafeXML.string2Html(code.toUpperCase()));
 	sb.append("\" status=\"");
 	sb.append(this.status);
 	sb.append("\" ocCacheID=\"");
@@ -982,7 +1009,14 @@ public class CacheHolder {
 
     public void setAttributesFromMainCache() {
 	CacheHolder mainCh = this.mainCache;
-	this.setOwner(mainCh.getOwner());
+	if (!this.owner.equalsIgnoreCase(mainCh.getOwner())) {
+	    this.owner = mainCh.getOwner();
+	    MainForm.profile.notifyUnsavedChanges(true);
+	}
+	if (this.isOwned != mainCh.isOwned()) {
+	    this.isOwned = mainCh.isOwned();
+	    MainForm.profile.notifyUnsavedChanges(true);
+	}
 	if (mainCh.isFound()) {
 	    if (!this.isFound) {
 		this.setStatus(mainCh.getStatus());
@@ -1001,7 +1035,6 @@ public class CacheHolder {
 	this.setArchived(mainCh.isArchived());
 	this.setAvailable(mainCh.isAvailable());
 	this.setBlack(mainCh.isBlack());
-	this.setOwned(mainCh.isOwned());
 	this.setNew(mainCh.isNew());
     }
 
@@ -1136,8 +1169,7 @@ public class CacheHolder {
     private final static int MSG_NR = 0;
     private final static int GC_MSG = 1;
     private final static int IDX_WRITENOTE = 5;
-    private final static String[][] _logType = { { "353", "" },
-	    { "319", "Didn't find it" }, //
+    private final static String[][] _logType = { { "353", "" }, { "319", "Didn't find it" }, //
 	    { "318", "Found it" }, //
 	    { "355", "Attended" }, //
 	    { "361", "Webcam Photo Taken" }, //
@@ -1431,7 +1463,7 @@ public class CacheHolder {
 		| bool2BitMask(this.hasSolver, 14) //
 		| bool2BitMask(this.isPMCache, 15) //
 		| bool2BitMask(this.isSolved, 16) //
-	;
+		;
 	return value;
     }
 

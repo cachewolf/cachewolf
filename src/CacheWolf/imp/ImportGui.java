@@ -47,7 +47,9 @@ import ewe.ui.mLabel;
  *         20061209 Bugfix: Checking for uninitialised missingCheckBox
  */
 public class ImportGui extends Form {
-    public boolean downloadPics;
+    public boolean downloadDescriptionImages;
+    public boolean downloadSpoilerImages;
+    public boolean downloadLogImages;
     private final ExecutePanel executePanel;
     public mChoice chcType;
     public mInput maxDistanceInput;
@@ -55,7 +57,8 @@ public class ImportGui extends Form {
     public mInput maxNumberInput;
     public mInput maxNumberUpdates;
     public mInput maxLogsInput;
-    private mCheckBox imagesCheckBox, /* mapsCheckBox, */travelbugsCheckBox;
+    private mCheckBox descriptionImageCheckBox, /* mapsCheckBox, */travelbugsCheckBox;
+    private mCheckBox spoilerImageCheckBox, logImageCheckBox;
     public mCheckBox foundCheckBox, missingCheckBox;
     public mChoice domains;
 
@@ -63,7 +66,6 @@ public class ImportGui extends Form {
 
     boolean isGC = true;
     public static final int DIST = 1;
-    public static final int IMAGES = 2;
     public static final int ALL = 4;
     public static final int INCLUDEFOUND = 8;
     public static final int ISGC = 16;
@@ -77,11 +79,17 @@ public class ImportGui extends Form {
     public static final int MAXUPDATE = 4096;
     public static final int FILENAME = 8192; // track or route gpx
 
-    public ImportGui(String title, int options) {
+    public static final byte DESCRIPTIONIMAGE = 1;
+    public static final byte SPOILERIMAGE = 2;
+    public static final byte LOGIMAGE = 4;
+
+    public ImportGui(String title, int options, int imageOptions) {
 	super();
 
 	isGC = ((options & ISGC) > 0);
-	downloadPics = Preferences.itself().downloadPics;
+	downloadDescriptionImages = Preferences.itself().downloadDescriptionImages;
+	downloadSpoilerImages = Preferences.itself().downloadSpoilerImages;
+	downloadLogImages = Preferences.itself().downloadLogImages;
 
 	this.title = title;
 
@@ -155,11 +163,25 @@ public class ImportGui extends Form {
 	    this.addLast(maxLogsInput, DONTSTRETCH, (DONTFILL | WEST));
 	}
 
-	if ((options & IMAGES) > 0) {
-	    imagesCheckBox = new mCheckBox();
-	    imagesCheckBox.setText(MyLocale.getMsg(1602, "Download Images"));
-	    imagesCheckBox.setState(downloadPics);
-	    this.addLast(imagesCheckBox, DONTSTRETCH, DONTFILL | WEST);
+	if ((imageOptions & ImportGui.DESCRIPTIONIMAGE) > 0) {
+	    descriptionImageCheckBox = new mCheckBox();
+	    descriptionImageCheckBox.setText(MyLocale.getMsg(1602, "Download Description images"));
+	    descriptionImageCheckBox.setState(downloadDescriptionImages);
+	    this.addLast(descriptionImageCheckBox, DONTSTRETCH, DONTFILL | WEST);
+	}
+
+	if ((imageOptions & ImportGui.SPOILERIMAGE) > 0) {
+	    spoilerImageCheckBox = new mCheckBox();
+	    spoilerImageCheckBox.setText(MyLocale.getMsg(1632, "Download spoiler images"));
+	    spoilerImageCheckBox.setState(downloadSpoilerImages);
+	    this.addLast(spoilerImageCheckBox, DONTSTRETCH, DONTFILL | WEST);
+	}
+
+	if ((imageOptions & ImportGui.LOGIMAGE) > 0) {
+	    logImageCheckBox = new mCheckBox();
+	    logImageCheckBox.setText(MyLocale.getMsg(1633, "Download log images"));
+	    logImageCheckBox.setState(downloadLogImages);
+	    // this.addLast(logImageCheckBox, DONTSTRETCH, DONTFILL | WEST);
 	}
 
 	if ((options & TRAVELBUGS) > 0) {
@@ -212,8 +234,12 @@ public class ImportGui extends Form {
 	    if (ev.target == executePanel.applyButton) {
 		if (missingCheckBox != null)
 		    Preferences.itself().downloadAllOC = missingCheckBox.state;
-		if (imagesCheckBox != null)
-		    downloadPics = imagesCheckBox.state;
+		if (descriptionImageCheckBox != null)
+		    downloadDescriptionImages = descriptionImageCheckBox.state;
+		if (spoilerImageCheckBox != null)
+		    downloadSpoilerImages = spoilerImageCheckBox.state;
+		if (logImageCheckBox != null)
+		    downloadLogImages = logImageCheckBox.state;
 		if (travelbugsCheckBox != null)
 		    Preferences.itself().downloadTBs = travelbugsCheckBox.state;
 		Preferences.itself().savePreferences();
@@ -274,7 +300,7 @@ public class ImportGui extends Form {
 		RestrictedType = CacheType.CW_TYPE_WEBCAM;
 		break;
 	    case 8:
-		RestrictedType = CacheType.CW_TYPE_UNKNOWN;
+		RestrictedType = CacheType.CW_TYPE_MYSTERY;
 		break;
 	    case 9:
 		RestrictedType = CacheType.CW_TYPE_CITO;

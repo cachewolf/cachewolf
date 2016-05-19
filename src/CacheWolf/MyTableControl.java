@@ -218,7 +218,7 @@ public class MyTableControl extends TableControl {
 	    int mainNonVisibleCount = 0;
 	    int addiNonVisibleCount = 0;
 	    int shouldDeleteCount = 0;
-	    boolean deleteFiltered = true; // Bisheriges Verhalten
+	    //boolean deleteFiltered = true; // Bisheriges Verhalten
 	    for (int i = cacheDB.size() - 1; i >= 0; i--) {
 		CacheHolder currCache = cacheDB.get(i);
 		if (currCache.isChecked) {
@@ -237,9 +237,9 @@ public class MyTableControl extends TableControl {
 	    if (addiNonVisibleCount + mainNonVisibleCount > 0) {
 		if (new InfoBox(MyLocale.getMsg(144, "Warning"), MyLocale.getMsg(1029, "There are caches that are ticked but invisible.\n(Main caches: ") + mainNonVisibleCount + MyLocale.getMsg(1030, ", additional Waypoints: ") + addiNonVisibleCount
 			+ ")\n" + MyLocale.getMsg(1031, "Delete them, too?")).wait(FormBase.YESB | FormBase.NOB) == FormBase.IDYES) {
-		    deleteFiltered = true;
+		    //deleteFiltered = true;
 		} else {
-		    deleteFiltered = false;
+		    //deleteFiltered = false;
 		    shouldDeleteCount = allCount - mainNonVisibleCount - addiNonVisibleCount;
 		}
 	    }
@@ -360,9 +360,9 @@ public class MyTableControl extends TableControl {
 
 		String ownLogMessage = "";
 		if (chD != null) {
-		    if (chD.OwnLog != null) {
+		    if (chD.getOwnLog() != null) {
 			// Cache schon im CW gelogged
-			ownLogMessage = chD.OwnLog.getMessage();
+			ownLogMessage = chD.getOwnLog().getMessage();
 			if (ownLogMessage.length() > 0) {
 			    Vm.setClipboardText(mainCache.getStatus() + '\n' + "<br>" + ownLogMessage);
 			}
@@ -381,8 +381,8 @@ public class MyTableControl extends TableControl {
 		    }
 		} else {
 		    url = "http://www.geocaching.com/seek/log.aspx?ID=" + mainCache.getCacheID();
-		    if (chD.OwnLog != null) {
-			if (chD.OwnLog.getLogID().length() > 0) {
+		    if (chD.getOwnLog() != null) {
+			if (chD.getOwnLog().getLogID().length() > 0) {
 			    // GC und schon gelogged --> log bei OC eintragen, wenn auf OC-Index-Spalte geklickt
 			    String ocWpName = mainCache.getIdOC();
 			    if (ocWpName.length() > 0 && ocWpName.charAt(0) < 65) {
@@ -393,7 +393,7 @@ public class MyTableControl extends TableControl {
 				    url = "";
 				} else {
 				    // open OC logpage with Logtext in Clipboard
-				    Vm.setClipboardText(chD.OwnLog.getDate() + '\n' + "<br>" + ownLogMessage);
+				    Vm.setClipboardText(chD.getOwnLog().getDate() + '\n' + "<br>" + ownLogMessage);
 				    if (ocWpName.length() > 1) {
 					if (ocWpName.charAt(0) < 65) {
 					    ocWpName = ocWpName.substring(1);

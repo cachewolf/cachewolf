@@ -55,8 +55,7 @@ public final class SafeXML {
      * Converts a <code>String</code> containing HTML entities to
      * a <code>String</code> containing only ISO8859-1 characters.
      * 
-     * Uses <a href="http://www.ramsch.org/martin/uni/fmi-hp/iso8859-1.html">ISO
-     * 8859-1 table by Martin Ramsch</a>.
+     * Uses <a href="http://www.ramsch.org/martin/uni/fmi-hp/iso8859-1.html">ISO8859-1 table by Martin Ramsch</a>.
      * 
      * @author <a href="mailto:ey@inweb.de">Christian Ey</a>
      * 
@@ -166,16 +165,6 @@ public final class SafeXML {
 	    return "&apos;";
 	default:
 	    return null;
-	    /*
-	    if (c < 127) {
-	    // leave alone as equivalent string.
-	    return null;
-	    } else {
-	    // use the &#nnn; form
-	    // faster than String.valueOf( c ).intern();
-	    return "&#" + Integer.toString(c) + ";";
-	    }
-	    */
 	} // end switch
     } // end charToEntity
 
@@ -225,8 +214,7 @@ public final class SafeXML {
      * valid XML unless declared specially, so we must use the numerical
      * values here.
      * 
-     * @param src
-     *            (String) raw text to be processed
+     * @param str (String) raw text to be processed
      * 
      * @return (String) translated text, or null if input is null
      */

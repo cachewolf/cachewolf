@@ -1063,7 +1063,7 @@ public class Parser {
     }
 
     private void parseAssign() throws Exception {
-	String varName = new String(thisToken.token);
+	String varName = thisToken.token;
 	getToken(); // =
 	getToken();
 	// Assigns of the format A=; are ignored so that they can stay as placeholders and
@@ -1196,7 +1196,7 @@ public class Parser {
     }
 
     private void parseFunction(fnType funcDef) throws Exception {
-	String funcName = new String(thisToken.token);
+	String funcName = thisToken.token;
 	int nargs = 0;
 	getToken();
 	checkNextSymIs("(");

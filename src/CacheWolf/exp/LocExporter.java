@@ -34,7 +34,6 @@ import CacheWolf.utils.Common;
  * Now includes mapping of cachetypes to user defined icons (as defined in file garminmap.xml).
  */
 public class LocExporter extends Exporter {
-    public static int MODE_AUTO = TMP_FILE;
     /**
      * Defines how certain cachetypes are mapped to user icons
      */
@@ -42,8 +41,8 @@ public class LocExporter extends Exporter {
 
     public LocExporter() {
 	super();
-	this.setMask("*.loc");
-	this.setHowManyParams(NO_PARAMS);
+	this.setOutputFileExtension("*.loc");
+	this.setRecordMethod(NO_PARAMS);
 	gm = new GarminMap();
     }
 

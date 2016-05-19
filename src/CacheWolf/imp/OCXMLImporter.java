@@ -195,11 +195,11 @@ public class OCXMLImporter extends MinML {
 	    new InfoBox(MyLocale.getMsg(5500, "Error"), "Coordinates for centre must be set").wait(FormBase.OKB);
 	    return;
 	}
-	final ImportGui importGui = new ImportGui(MyLocale.getMsg(130, "Download from opencaching"), ImportGui.ALL | ImportGui.DIST | ImportGui.IMAGES | ImportGui.INCLUDEFOUND | ImportGui.HOST);
+	final ImportGui importGui = new ImportGui(MyLocale.getMsg(130, "Download from opencaching"), ImportGui.ALL | ImportGui.DIST | ImportGui.INCLUDEFOUND | ImportGui.HOST, ImportGui.DESCRIPTIONIMAGE | ImportGui.SPOILERIMAGE | ImportGui.LOGIMAGE);
 	if (importGui.execute() == FormBase.IDCANCEL) {
 	    return;
 	}
-	downloadPics = importGui.downloadPics;
+	downloadPics = importGui.downloadDescriptionImages;
 	Vm.showWait(true);
 	String dist = importGui.maxDistanceInput.getText();
 	incFinds = !importGui.foundCheckBox.getState();
@@ -602,8 +602,6 @@ public class OCXMLImporter extends MinML {
 	}
 	if (name.equals("userid")) {
 	    holder.setOwner(strData);
-	    if (holder.getOwner().equalsIgnoreCase(Preferences.itself().myAlias) || (holder.getOwner().equalsIgnoreCase(Preferences.itself().myAlias2)))
-		holder.setOwned(true);
 	    return;
 	}
 
@@ -629,7 +627,7 @@ public class OCXMLImporter extends MinML {
 	    return;
 	}
 	if (name.equals("country")) {
-	    holder.getDetails().Country = strData;
+	    holder.getDetails().setCountry(strData);
 	    return;
 	}
     }
@@ -710,7 +708,7 @@ public class OCXMLImporter extends MinML {
 			}
 		    }
 		    holder.setFound(true);
-		    holder.getDetails().OwnLog = new Log(logId, finderID, logIcon, logDate, logFinder, logData, loggerRecommended);
+		    holder.getDetails().setOwnLog(new Log(logId, finderID, logIcon, logDate, logFinder, logData, loggerRecommended));
 		} else {
 		    // if (holder.is_new())
 		    cacheDB.removeElementAt(cacheDB.getIndex(holder));
@@ -758,8 +756,7 @@ public class OCXMLImporter extends MinML {
 	}
 	if (name.equals("picture")) {
 	    inf.setInfo(MyLocale.getMsg(1613, "Pictures:") + " " + ++picCnt);
-	    // String fileName = holder.wayPoint + "_" + picUrl.substring(picUrl.lastIndexOf("/")+1);
-	    final CacheImage ii = new CacheImage();
+	    final CacheImage ii = new CacheImage(CacheImage.FROMUNKNOWN);
 	    ii.setTitle(picTitle);
 	    ii.setURL(picUrl);
 	    getPic(ii);
@@ -827,7 +824,7 @@ public class OCXMLImporter extends MinML {
 		inf.addWarning("\n" + ErrMessage);
 		Preferences.itself().log(ErrMessage, e);
 	    }
-	    final CacheImage imageInfo = new CacheImage();
+	    final CacheImage imageInfo = new CacheImage(CacheImage.FROMDESCRIPTION);
 	    imageInfo.setURL(fetchUrl);
 	    imageInfo.setTitle(imgAltText);
 	    getPic(imageInfo);
@@ -872,15 +869,24 @@ public class OCXMLImporter extends MinML {
 	    else
 		n = "name???";
 
-	    //if (e == null)
-	    //	ErrMessage = "Ignoring error: OCXMLImporter.getPic: IOExeption == null, while downloading picture: " + fileName + " from URL:" + imageInfo.getURL();
-	    //else {
-	    if (e.getMessage().equalsIgnoreCase("could not connect") || e.getMessage().equalsIgnoreCase("unkown host")) {
-		// is there a better way to find out what happened?
-		ErrMessage = MyLocale.getMsg(1618, "Ignoring error in cache: ") + n + " (" + wp + ")" + MyLocale.getMsg(1619, ": could not download image from URL: ") + imageInfo.getURL();
-	    } else
-		ErrMessage = MyLocale.getMsg(1618, "Ignoring error in cache: ") + n + " (" + wp + "): ignoring IOException: " + e.getMessage() + " while downloading picture:" + fileName + " from URL:" + imageInfo.getURL();
-	    //}
+	    String m;
+	    try {
+		m = e.getMessage();
+		if (m == null)
+		    m = "";
+	    } catch (Exception e2) {
+		m = "";
+	    }
+
+	    if (m.length() == 0)
+		ErrMessage = "Ignoring error: OCXMLImporter.getPic: IOExeption == null, while downloading picture: " + fileName + " from URL:" + imageInfo.getURL();
+	    else {
+		if (m.equalsIgnoreCase("could not connect") || m.equalsIgnoreCase("unkown host")) {
+		    // is there a better way to find out what happened?
+		    ErrMessage = MyLocale.getMsg(1618, "Ignoring error in cache: ") + n + " (" + wp + ")" + MyLocale.getMsg(1619, ": could not download image from URL: ") + imageInfo.getURL();
+		} else
+		    ErrMessage = MyLocale.getMsg(1618, "Ignoring error in cache: ") + n + " (" + wp + "): ignoring IOException: " + m + " while downloading picture:" + fileName + " from URL:" + imageInfo.getURL();
+	    }
 	    inf.addWarning(ErrMessage);
 	    Preferences.itself().log(ErrMessage, e, true);
 	}
