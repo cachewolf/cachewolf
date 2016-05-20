@@ -56,7 +56,7 @@ PDA die Daten einfach kopiert werden können.
 [![Issue Stats](http://issuestats.com/github/cachewolf/cachewolf/badge/issue)](http://issuestats.com/github/cachewolf/cachewolf)<br>
 
 ## Herunterladen des Sourcecodes
-TDB
+
 
 ## Branches
 TDB
@@ -65,6 +65,10 @@ TDB
 TDB
 
 ## Build von Cachewolf
+### Von der Command-Line:
+
+gehe in das Basisverzeichnis von Cachewolf. Hier findet sich das Bash-Skript `compile.sh`. Einfach starten und schon läuft der Compiler.
+
 TDB
 
 ## Lizenz
