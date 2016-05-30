@@ -106,12 +106,34 @@ public class UrlFetcher {
 	    }
     }
 
+    public static void delCookie(String name) {
+	if (cookies == null) {
+	    cookies = new PropertyList();
+	}
+	if (name != null) {
+	    int index = cookies.find(name);
+	    if (index >= 0)
+		cookies.del(index);
+	}
+    }
+
     public static String getCookie(String name) {
 	Property p = cookies.get(name);
 	if (p != null) {
 	    return (String) p.value;
 	} else
 	    return null;
+    }
+
+    public static String getCookieValue(String SetValue) {
+	String[] theCookie = mString.split((String) SetValue, ';');
+	if (theCookie.length > 1) {
+	    String[] rp = mString.split(theCookie[0], '=');
+	    if (rp.length == 2) {
+		return rp[1];
+	    }
+	}
+	return null;
     }
 
     private static void addCookies2RequestorProperties() {
@@ -121,9 +143,14 @@ public class UrlFetcher {
 	}
 	for (int i = 0; i < cookies.size(); i++) {
 	    final Property cookie = (Property) cookies.get(i);
-	    String cd[] = mString.split(cookie.name, ';');
-	    if (cd[1].equalsIgnoreCase(conn.getHost())) {
-		value = value + cd[0] + "=" + cookie.value + "; ";
+	    String cd[] = mString.split((String) cookie.value, ';');
+	    String domain[] = mString.split(cd[1], '=');
+	    if (domain[0].trim().equals("domain")) {
+		if (conn.getHost().toLowerCase().indexOf(domain[1].toLowerCase()) > -1) {
+		    value = value + cd[0] + "; ";
+		}
+	    } else {
+		value = value + cd[0] + "; ";
 	    }
 	}
 	if (value.length() > 0) {
@@ -281,21 +308,10 @@ public class UrlFetcher {
 	    final Property p = (Property) pl.get(j);
 	    if (p.name.equalsIgnoreCase("Set-Cookie")) {
 		String[] theCookie = mString.split((String) p.value, ';');
-		// adding the received cookies for later use
 		if (theCookie.length > 1) {
 		    String[] rp = mString.split(theCookie[0], '=');
-		    /*
-		    // expires, path, httponly
-		    for (int i = 1; i < theCookie.length; i++) {
-		    String[] dp = mString.split(theCookie[i], '=');
-		    if (dp.length == 2) {
-
-		    }
-		    }
-		    */
 		    if (rp.length == 2) {
-			setCookie(rp[0] + ";" + conn.getHost(), rp[1]);
-			// Preferences.itself().log("Remembered Cookie: " + rp[0] + " = " + rp[1]);
+			setCookie(rp[0] + ";" + conn.getHost(), (String) p.value);
 		    }
 		}
 	    }

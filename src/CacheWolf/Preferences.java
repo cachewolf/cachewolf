@@ -728,10 +728,12 @@ public class Preferences extends MinML {
 	    language = atts.getValue("language");
 	} else if (name.equals("GCLogins")) {
 	    Hashtable h = this.getGCLogin(SafeXML.html2iso8859s1(atts.getValue("id")));
-	    // name password cookies (gspkuserid, gspkauth, ...?)
+	    // name password cookies (gspkauth, ...?)
 	    for (int i = 0; i < atts.getLength(); i++) {
 		String key = atts.getName(i);
 		String value = atts.getValue(i);
+		if (value.equals("null"))
+		    continue;
 		if (key.equals("id"))
 		    value = SafeXML.html2iso8859s1(value);
 		h.put(key, value);
@@ -1313,11 +1315,11 @@ public class Preferences extends MinML {
 	return ret;
     }
 
-    public void setGCLogin(String id, String gspkuserid, String gspkauth) {
+    public void setGCLogin(String id, String gspkauth, String expires) {
 	Hashtable h = getGCLogin(id);
 	h.put("id", id);
-	h.put("userid", gspkuserid);
 	h.put("auth", gspkauth);
+	h.put("expires", expires);
     }
 
     /**
