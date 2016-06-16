@@ -1350,15 +1350,27 @@ public class GCImporter {
 	int retrycount = -1;
 	int maxretries = 1;
 	boolean retry = false;
-	// Preferences.itself().userID = ""; // gspkauth is no longer sufficient for identification, need gspkauth too: so we do login with username+password again
+
 	do {
 	    retry = false;
 	    retrycount = retrycount + 1;
+	    boolean isExpired = true;
 	    if (Preferences.itself().hasGCLogin()) {
 		Hashtable ht = Preferences.itself().getGCLogin(Preferences.itself().gcLogin);
-		UrlFetcher.setCookie("gspkuserid;www.geocaching.com", (String) ht.get("userid"));
-		UrlFetcher.setCookie("gspkauth;www.geocaching.com", (String) ht.get("auth"));
-	    } else {
+		String expires = (String) ht.get("expires");
+		if (expires != null) {
+		    // check expires
+		    String[] sExpires = mString.split(expires, ' ');
+		    Time tExpires = DateFormat.toDate(sExpires[1]);
+		    Time now = new Time();
+		    if (tExpires.after(now)) {
+			UrlFetcher.setCookie("gspkauth;www.geocaching.com", (String) ht.get("auth"));
+			isExpired = false;
+		    }
+		}
+	    }
+
+	    if (isExpired) {
 		byte ret = gcLogin();
 		if (ret > 0) {
 		    if (ret < 5)
@@ -1366,6 +1378,7 @@ public class GCImporter {
 		    return false;
 		}
 	    }
+
 	    switch (checkGCSettings()) {
 	    case 0:
 		loggedIn = true;
@@ -1383,6 +1396,8 @@ public class GCImporter {
 		new InfoBox(MyLocale.getMsg(5523, "Login error!"), MyLocale.getMsg(5528, "Change Metric/Imperial (km / mi) manually. (GC or CW)")).wait(FormBase.OKB);
 		break;
 	    case 4:
+		break;
+	    case 5:
 		break;
 	    case 6:
 		// no correct login (Passwort falsch eingegeben oder ähnliches)
@@ -1403,20 +1418,12 @@ public class GCImporter {
 	String page = "";
 	String gcSettingsUrl = "https://www.geocaching.com/account/settings/preferences";
 	try {
-	    page = UrlFetcher.fetch(gcSettingsUrl); // getting the cookie sessionid
+	    page = UrlFetcher.fetch(gcSettingsUrl); // getting cookies
 	} catch (final Exception ex) {
 	    Preferences.itself().log("[checkGCSettings]:Exception calling " + gcSettingsUrl + " with userID ", ex);
 	    return 2;
 	}
 	UrlFetcher.rememberCookies();
-	/*
-	no longer used	 
-	String SessionId = UrlFetcher.getCookie("ASP.NET_SessionId;www.geocaching.com");
-	if (SessionId == null) {
-	    Preferences.itself().log("[checkGCSettings]:got no SessionID." + page);
-	    return 5;
-	}
-	*/
 	// 1.) loggedInAs
 	extractor.set(page, "<a href=\"/my/default.aspx\"", ">", 0, true).findNext();
 	String loggedInAs;
@@ -1629,20 +1636,28 @@ public class GCImporter {
 	    return 4;
 	}
 
-	String checkedCookie = UrlFetcher.getCookie("gspkauth;www.geocaching.com");
-	if (checkedCookie == null) {
+	String theCookie[] = mString.split(UrlFetcher.getCookie("gspkauth;www.geocaching.com"), ';');
+	if (theCookie.length <= 1) {
 	    new InfoBox(MyLocale.getMsg(5523, "Login error!"), MyLocale.getMsg(5524, "Bitte korrigieren Sie Ihr Benutzerkonto in den Einstellungen!\n\n")).wait(FormBase.OKB);
 	    return 5;
 	} else {
 	    Preferences.itself().gcLogin = username;
 	    UrlFetcher.rememberCookies();
-	    // cookies by now: 15.4.2016
-	    // ASP.NET_SessionId;www.geocaching.com=...
-	    // gspkuserid;www.geocaching.com=...
-	    // gspkauth;www.geocaching.com=...
-	    // Culture;www.geocaching.com=...
 	    // remember for next time, so you don't have to login
-	    Preferences.itself().setGCLogin(username, UrlFetcher.getCookie("gspkuserid;www.geocaching.com"), UrlFetcher.getCookie("gspkauth;www.geocaching.com"));
+	    String gspkauth = "";
+	    String expires = "";
+	    for (int i = 0; i < theCookie.length; i++) {
+		String[] rp = mString.split(theCookie[i], '=');
+		if (rp.length == 2) {
+		    if (rp[0].equalsIgnoreCase("gspkauth")) {
+			gspkauth = rp[1];
+		    } else if (rp[0].trim().equalsIgnoreCase("expires")) {
+			expires = rp[1];
+			Preferences.itself().setGCLogin(username, gspkauth, expires);
+			break;
+		    }
+		}
+	    }
 	    Preferences.itself().savePreferences();
 	    return 0;
 	}
@@ -2005,6 +2020,7 @@ public class GCImporter {
 	try {
 	    wayPointPage = UrlFetcher.fetch("http://www.geocaching.com/seek/cache_details.aspx?wp=" + wayPoint);
 	    Preferences.itself().log("Fetched: " + wayPoint);
+	    //Preferences.itself().log("Fetched: " + wayPoint + "\r\n" + wayPointPage);
 	} catch (final Exception ex) {
 	    Preferences.itself().log("Could not fetch " + wayPoint, ex);
 	    ret = SPIDER_ERROR;
