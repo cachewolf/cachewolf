@@ -1364,7 +1364,7 @@ public class GCImporter {
 		    Time tExpires = DateFormat.toDate(sExpires[1]);
 		    Time now = new Time();
 		    if (tExpires.after(now)) {
-			UrlFetcher.setCookie("gspkauth;www.geocaching.com", (String) ht.get("auth"));
+			UrlFetcher.setCookie("gspkauth;www.geocaching.com", "gspkauth=" + (String) ht.get("auth") + ";");
 			isExpired = false;
 		    }
 		}

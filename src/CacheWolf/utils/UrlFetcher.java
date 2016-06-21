@@ -143,14 +143,11 @@ public class UrlFetcher {
 	}
 	for (int i = 0; i < cookies.size(); i++) {
 	    final Property cookie = (Property) cookies.get(i);
-	    String cd[] = mString.split((String) cookie.value, ';');
-	    String domain[] = mString.split(cd[1], '=');
-	    if (domain[0].trim().equals("domain")) {
-		if (conn.getHost().toLowerCase().indexOf(domain[1].toLowerCase()) > -1) {
-		    value = value + cd[0] + "; ";
-		}
-	    } else {
-		value = value + cd[0] + "; ";
+	    // so war es
+	    String cd[] = mString.split(cookie.name, ';');
+	    // ist das cookie für diesen host?
+	    if (cd[1].equalsIgnoreCase(conn.getHost())) {
+		value = value + cd[0] + "=" + getCookieValue((String) cookie.value) + "; ";
 	    }
 	}
 	if (value.length() > 0) {
@@ -311,7 +308,7 @@ public class UrlFetcher {
 		if (theCookie.length > 1) {
 		    String[] rp = mString.split(theCookie[0], '=');
 		    if (rp.length == 2) {
-			setCookie(rp[0] + ";" + conn.getHost(), (String) p.value);
+			setCookie(rp[0] + ";" + conn.getHost(), (String) p.value); // alles (wegen Ablaufdatum speichern)
 		    }
 		}
 	    }

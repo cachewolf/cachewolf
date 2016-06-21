@@ -309,7 +309,7 @@ public class CSVImporter {
 		return false;
 	    }
 	    if (!tmpPos.isValid()) {
-		return false;
+		//return false;
 	    }
 	} catch (Exception e) {
 	    // Use default coordinates (for only import GCCode)
