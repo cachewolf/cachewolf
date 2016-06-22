@@ -172,7 +172,13 @@ public class UrlFetcher {
     };
 
     public static String fetch(String address) throws IOException {
-	setRequestorProperty("Accept-Encoding", "gzip");
+	return fetch(address, true);
+    }
+
+    public static String fetch(String address, boolean useGZip) throws IOException {
+	if (useGZip) {
+	    setRequestorProperty("Accept-Encoding", "gzip");
+	}
 	ByteArray daten = fetchByteArray(address);
 	boolean gzip = false;
 	if (conn != null) {
