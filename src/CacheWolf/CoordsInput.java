@@ -519,7 +519,7 @@ class GeocoderOsm {
 	} else {
 	    searchFor = UrlFetcher.toUtf8Url(street) + "+" + UrlFetcher.toUtf8Url(city);
 	}
-	String answer = UrlFetcher.fetch(geocoderUrl + "q=" + searchFor + "&format=xml");
+	String answer = UrlFetcher.fetch(geocoderUrl + "q=" + searchFor + "&format=xml", false);
 	answer = STRreplace.replace(answer, "\'", "\' ");
 	answer = STRreplace.replace(answer, "  ", " ");
 	XMLDecoder xmldec = new XMLDecoder();
