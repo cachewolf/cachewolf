@@ -38,6 +38,7 @@ import ewe.fx.IconAndText;
 import ewe.sys.Convert;
 import ewe.sys.Time;
 import ewe.util.Vector;
+import ewe.util.Hashtable;
 
 /**
  * A class to hold information on a cache.<br>
@@ -168,100 +169,115 @@ public class CacheHolder {
 	type = CacheType.CW_TYPE_ERROR;
     }
 
+    final static int PARSE_START     = 0;
+    final static int PARSE_NAME      = 1;
+    final static int PARSE_PRE2      = 2;
+    final static int PARSE_2         = 3;
+    final static int PARSE_ATTRIBUTE = 4;
+
     /** only for reading from index.xml */
-    public CacheHolder(String cache, int version) {
+    public  static CacheHolder fromString (String cache, int version) {
+	CacheHolder result = new CacheHolder();
+	int index = cache.indexOf("<CACHE ");
+	Hashtable attributes = new Hashtable();
+	int state = PARSE_START;
+	StringBuffer attrName = new StringBuffer();
+	StringBuffer attrVal = new StringBuffer();
+	for (int i="<CACHE ".length(); i < cache.length();i++){
+	    char ch = cache.charAt(i);
+	    switch (state){
+	    case PARSE_START:
+		if (Character.isLetter(ch)){
+		    state = PARSE_NAME;
+		    attrName.append (ch);
+		}
+		break;
+	    case PARSE_NAME:
+		if (ch == '='){
+		    state = PARSE_2;
+		}
+		else if (!(Character.isLetterOrDigit(ch))){
+		    state = PARSE_PRE2;
+		}
+		else{
+		    attrName.append(ch);
+		}
+		break;
+	    case PARSE_PRE2:
+		if (ch == '='){
+		    state = PARSE_2;
+		}
+		break;
+	    case PARSE_2:
+		if (ch == '"'){
+		    state = PARSE_ATTRIBUTE;
+		}
+		break;
+	    case PARSE_ATTRIBUTE:
+		if (ch == '"'){
+		    attributes.put(attrName.toString(), attrVal.toString());
+		    attrName = new StringBuffer();
+		    attrVal = new StringBuffer();
+		    state = PARSE_START;
+		}
+		else{
+		    attrVal.append(ch);
+		}
+		break;
+	    default:
+		throw new IllegalStateException();
+	    }
+	}
+
+	//TODO
 	int start, end;
 	try {
 	    if (version == 3 || version == 4) {
+		String val="";
 		start = cache.indexOf('"') + 1;
 		end = cache.indexOf('"', start);
-		this.name = SafeXML.html2iso8859s1(cache.substring(start, end));
+		result.name = SafeXML.html2iso8859s1((String) attributes.get("name"));
+		result.owner = SafeXML.html2iso8859s1((String) attributes.get("owner"));
+		result.wpt.latDec = Common.parseDouble((String) attributes.get("lat"));
+		result.wpt.lonDec = Common.parseDouble((String) attributes.get("lon"));
+		result.hidden = (String) attributes.get("hidden");
+		result.code = SafeXML.html2iso8859s1((String) attributes.get("wayp"));
+		result.status = (String) attributes.get("status");
+		result.idOC = (String) attributes.get("ocCacheID");
+		result.lastSync = (String) attributes.get("lastSyncOC");
+		result.numRecommended = Convert.toInt((String) attributes.get("num_recommended"));
+		result.numFoundsSinceRecommendation = Convert.toInt((String) attributes.get("num_found"));
+		result.attributesBits[0] = Convert.parseLong((String) attributes.get("attributesYes"));
+		result.attributesBits[2] = Convert.parseLong((String) attributes.get("attributesNo"));
+		result.long2boolFields(Convert.parseLong((String) attributes.get("boolFields")));
+		result.long2byteFields(Convert.parseLong((String) attributes.get("byteFields")));
+		result.attributesBits[1] = Convert.parseLong((String) attributes.get("attributesYes1"));
+		result.attributesBits[3] = (Convert.parseLong((String) attributes.get("attributesNo1")));
 
-		start = cache.indexOf('"', end + 1) + 1;
-		end = cache.indexOf('"', start);
-		this.owner = SafeXML.html2iso8859s1(cache.substring(start, end));
-
-		start = cache.indexOf('"', end + 1) + 1;
-		end = cache.indexOf('"', start);
-		this.wpt.latDec = Common.parseDouble(cache.substring(start, end));
-
-		start = cache.indexOf('"', end + 1) + 1;
-		end = cache.indexOf('"', start);
-		this.wpt.lonDec = Common.parseDouble(cache.substring(start, end));
-
-		start = cache.indexOf('"', end + 1) + 1;
-		end = cache.indexOf('"', start);
-		this.hidden = cache.substring(start, end);
-
-		start = cache.indexOf('"', end + 1) + 1;
-		end = cache.indexOf('"', start);
-		this.code = SafeXML.html2iso8859s1(cache.substring(start, end));
-
-		start = cache.indexOf('"', end + 1) + 1;
-		end = cache.indexOf('"', start);
-		this.status = cache.substring(start, end);
-
-		start = cache.indexOf('"', end + 1) + 1;
-		end = cache.indexOf('"', start);
-		this.idOC = cache.substring(start, end);
-
-		start = cache.indexOf('"', end + 1) + 1;
-		end = cache.indexOf('"', start);
-		this.lastSync = cache.substring(start, end);
-
-		start = cache.indexOf('"', end + 1) + 1;
-		end = cache.indexOf('"', start);
-		this.numRecommended = Convert.toInt(cache.substring(start, end));
-
-		start = cache.indexOf('"', end + 1) + 1;
-		end = cache.indexOf('"', start);
-		this.numFoundsSinceRecommendation = Convert.toInt(cache.substring(start, end));
-
-		start = cache.indexOf('"', end + 1) + 1;
-		end = cache.indexOf('"', start);
-		this.attributesBits[0] = (Convert.parseLong(cache.substring(start, end)));
-
-		start = cache.indexOf('"', end + 1) + 1;
-		end = cache.indexOf('"', start);
-		this.attributesBits[2] = (Convert.parseLong(cache.substring(start, end)));
-
-		start = cache.indexOf('"', end + 1) + 1;
-		end = cache.indexOf('"', start);
-		this.long2boolFields(Convert.parseLong(cache.substring(start, end)));
-
-		start = cache.indexOf('"', end + 1) + 1;
-		end = cache.indexOf('"', start);
-		this.long2byteFields(Convert.parseLong(cache.substring(start, end)));
-
-		start = cache.indexOf('"', end + 1) + 1;
-		end = cache.indexOf('"', start);
-		this.attributesBits[1] = (Convert.parseLong(cache.substring(start, end)));
-
-		start = cache.indexOf('"', end + 1) + 1;
-		end = cache.indexOf('"', start);
-		this.attributesBits[3] = (Convert.parseLong(cache.substring(start, end)));
 		// move from Status to Bit
-		if (this.status.indexOf("PM") > -1) {
-		    this.isPMCache = true;
-		    this.status = new Regex(",?\\s*PM\\s*,?", "").replaceFirst(this.status);
+		if (result.status.indexOf("PM") > -1) {
+		    result.isPMCache = true;
+		    result.status = new Regex(",?\\s*PM\\s*,?", "").replaceFirst(result.status);
 		}
-		if (this.status.indexOf(SOLVED) > -1) {
-		    this.isSolved = true;
-		    this.status = new Regex(",?\\s*" + SOLVED + "\\s*,?", "").replaceFirst(this.status);
+		if (result.status.indexOf(SOLVED) > -1) {
+		    result.isSolved = true;
+		    result.status = new Regex(",?\\s*" + SOLVED + "\\s*,?", "").replaceFirst(result.status);
 		}
 	    }
 	    if (version < Profile.CURRENTFILEFORMAT) {
 		// forceload of details, creates waypoint.xml if missing
-		details = getDetails();
+		result.details = result.getDetails();
 		// make sure details get (re)written in new format
-		details.hasUnsavedChanges = true;
+		result.details.hasUnsavedChanges = true;
 		// update information on notes and solver info
-		setHasNote(!details.getCacheNotes().equals(""));
-		setHasSolver(!details.getSolver().equals(""));
+		result.setHasNote(!result.details.getCacheNotes().equals(""));
+		result.setHasSolver(!result.details.getSolver().equals(""));
 	    }
 	} catch (Exception ex) {
-	    // Preferences.itself().log("Ignored Exception in CacheHolder()", ex, true);
+	    Preferences.itself().log("Ignored Exception in CacheHolder()", ex, true);
 	}
+
+	return result;
     }
 
     // quick debug info

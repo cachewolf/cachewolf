@@ -315,7 +315,7 @@ public class Profile {
 			}
 			wptNo++;
 		    }
-		    CacheHolder ch = new CacheHolder(text, indexXmlVersion);
+		    CacheHolder ch = CacheHolder.fromString(text, indexXmlVersion);
 		    cacheDB.add(ch);
 		} else if (text.indexOf("<CENTRE") >= 0) { // lat= lon=
 		    if (fmtDec) {
