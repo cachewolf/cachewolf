@@ -230,12 +230,8 @@ public class CacheHolder {
 	}
 
 	//TODO
-	int start, end;
 	try {
 	    if (version == 3 || version == 4) {
-		String val="";
-		start = cache.indexOf('"') + 1;
-		end = cache.indexOf('"', start);
 		result.name = SafeXML.html2iso8859s1((String) attributes.get("name"));
 		result.owner = SafeXML.html2iso8859s1((String) attributes.get("owner"));
 		result.wpt.latDec = Common.parseDouble((String) attributes.get("lat"));
