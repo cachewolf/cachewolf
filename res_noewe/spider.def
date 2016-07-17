@@ -29,7 +29,7 @@ DTSRex             = small">(.*?)/(.*?)<(.*)\\s*(.*)container/(.*)\\.gif
 #                            GC34CQJ
 #                            |
 waypointRex        = \\|\\s+GC(.*?)\\s+\\|
-TypeRex            = www.geocaching.com/images/wpttypes/(.*?)\\.gif
+TypeRex            = /images/wpttypes/(.*?)\\.gif
 found              = class="Success"
 own                = /WptTypes/name_tag.gif
 TBRex              = /wpttypes/([0-9]+).gif" alt="(.*?)"
