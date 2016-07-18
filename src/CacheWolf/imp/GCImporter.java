@@ -169,7 +169,7 @@ public class GCImporter {
     private static String attBlockExStart, attBlockExEnd;
     private static String attExStart, attExEnd;
 
-    private static Regex RexPropType;
+    private static Regex listPageTypeRex;
     // Logs
     private static Regex RexUserToken;
     private static String icon_smile;
@@ -249,7 +249,7 @@ public class GCImporter {
 	    DistDirRex = new Regex(p.getProp("DistDirRex"));
 	    DTSRex = new Regex(p.getProp("DTSRex"));
 	    waypointRex = new Regex(p.getProp("waypointRex"));
-	    RexPropType = new Regex(p.getProp("TypeRex"));
+	    listPageTypeRex = new Regex(p.getProp("TypeRex"));
 	    RexUserToken = new Regex(p.getProp("UserTokenRex"));
 	    icon_smile = p.getProp("icon_smile");
 	    icon_camera = p.getProp("icon_camera");
@@ -1925,9 +1925,9 @@ public class GCImporter {
     }
 
     private boolean typeChanged(CacheHolder ch) {
-	RexPropType.search(aCacheDescriptionOfListPage);
-	if (RexPropType.didMatch()) {
-	    String stmp = RexPropType.stringMatched(1);
+	listPageTypeRex.search(aCacheDescriptionOfListPage);
+	if (listPageTypeRex.didMatch()) {
+	    String stmp = listPageTypeRex.stringMatched(1);
 	    if (Common.parseInt(stmp) == 0) {
 		if (stmp.equalsIgnoreCase("EarthCache"))
 		    stmp = "137";
