@@ -33,6 +33,7 @@ import CacheWolf.utils.Common;
 import CacheWolf.utils.Metrics;
 import CacheWolf.utils.MyLocale;
 import CacheWolf.utils.SafeXML;
+import CacheWolf.utils.XMLParser;
 import ewe.fx.FontMetrics;
 import ewe.fx.IconAndText;
 import ewe.sys.Convert;
@@ -178,58 +179,8 @@ public class CacheHolder {
     /** only for reading from index.xml */
     public  static CacheHolder fromString (String cache, int version) {
 	CacheHolder result = new CacheHolder();
-	int index = cache.indexOf("<CACHE ");
-	Hashtable attributes = new Hashtable();
-	int state = PARSE_START;
-	StringBuffer attrName = new StringBuffer();
-	StringBuffer attrVal = new StringBuffer();
-	for (int i="<CACHE ".length(); i < cache.length();i++){
-	    char ch = cache.charAt(i);
-	    switch (state){
-	    case PARSE_START:
-		if (Character.isLetter(ch)){
-		    state = PARSE_NAME;
-		    attrName.append (ch);
-		}
-		break;
-	    case PARSE_NAME:
-		if (ch == '='){
-		    state = PARSE_2;
-		}
-		else if (!(Character.isLetterOrDigit(ch))){
-		    state = PARSE_PRE2;
-		}
-		else{
-		    attrName.append(ch);
-		}
-		break;
-	    case PARSE_PRE2:
-		if (ch == '='){
-		    state = PARSE_2;
-		}
-		break;
-	    case PARSE_2:
-		if (ch == '"'){
-		    state = PARSE_ATTRIBUTE;
-		}
-		break;
-	    case PARSE_ATTRIBUTE:
-		if (ch == '"'){
-		    attributes.put(attrName.toString(), attrVal.toString());
-		    attrName = new StringBuffer();
-		    attrVal = new StringBuffer();
-		    state = PARSE_START;
-		}
-		else{
-		    attrVal.append(ch);
-		}
-		break;
-	    default:
-		throw new IllegalStateException();
-	    }
-	}
+	Hashtable attributes = XMLParser.getAttributes(cache, "CACHE");
 
-	//TODO
 	try {
 	    if (version == 3 || version == 4) {
 		result.name = SafeXML.html2iso8859s1((String) attributes.get("name"));
@@ -276,6 +227,9 @@ public class CacheHolder {
 	return result;
     }
 
+    //
+
+    //
     // quick debug info
     public String toString() {
 	return this.code;

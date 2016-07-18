@@ -1,14 +1,6 @@
-package CacheWolf.utils;
-
 import ewe.util.Hashtable;
 
 public final class XMLParser{
-
-    final static int PARSE_START     = 0;
-    final static int PARSE_NAME      = 1;
-    final static int PARSE_PRE2      = 2;
-    final static int PARSE_2         = 3;
-    final static int PARSE_ATTRIBUTE = 4;
 
     public static Hashtable getAttributes (String xmlText, String elementName){ 
 	String prefix = '<' + elementName+' ';
@@ -17,7 +9,7 @@ public final class XMLParser{
 	int state = PARSE_START;
 	StringBuffer attrName = new StringBuffer();
 	StringBuffer attrVal = new StringBuffer();
-	for (int i=index + prefix.length(); i < xmlText.length();i++){
+	for (int i=prefix.length(); i < xmlText.length();i++){
 	    char ch = xmlText.charAt(i);
 	    switch (state){
 	    case PARSE_START:

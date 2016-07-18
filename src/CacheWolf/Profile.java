@@ -32,6 +32,7 @@ import CacheWolf.utils.Extractor;
 import CacheWolf.utils.MyLocale;
 import CacheWolf.utils.STRreplace;
 import CacheWolf.utils.SafeXML;
+import CacheWolf.utils.XMLParser;
 import ewe.io.BufferedWriter;
 import ewe.io.File;
 import ewe.io.FileNotFoundException;
@@ -44,6 +45,7 @@ import ewe.sys.Handle;
 import ewe.sys.Vm;
 import ewe.ui.FormBase;
 import ewe.ui.ProgressBarForm;
+import ewe.util.Hashtable;
 
 /**
  * This class holds a profile, i.e. a group of caches with a centre location
@@ -318,11 +320,10 @@ public class Profile {
 		    CacheHolder ch = CacheHolder.fromString(text, indexXmlVersion);
 		    cacheDB.add(ch);
 		} else if (text.indexOf("<CENTRE") >= 0) { // lat= lon=
+		    Hashtable attributes = XMLParser.getAttributes(text, "CENTRE");
 		    if (fmtDec) {
-			int start = text.indexOf("lat=\"") + 5;
-			String lat = text.substring(start, text.indexOf("\"", start)).replace(notDecSep, decSep);
-			start = text.indexOf("lon=\"") + 5;
-			String lon = text.substring(start, text.indexOf("\"", start)).replace(notDecSep, decSep);
+			String lat = ((String) attributes.get("lat")).replace(notDecSep, decSep);
+			String lon = ((String) attributes.get("lon")).replace(notDecSep, decSep);
 			center.set(Convert.parseDouble(lat), Convert.parseDouble(lon));
 		    } else {
 			int start = text.indexOf("lat=\"") + 5;
@@ -332,38 +333,38 @@ public class Profile {
 			center.set(lat + " " + lon, TransformCoordinates.DMM); // Fast parse
 		    }
 		} else if (text.indexOf("<VERSION") >= 0) {
-		    int start = text.indexOf("value = \"") + 9;
-		    indexXmlVersion = Integer.valueOf(text.substring(start, text.indexOf("\"", start))).intValue();
+		    Hashtable attributes = XMLParser.getAttributes(text, "VERSION");
+		    indexXmlVersion = Integer.valueOf((String) attributes.get("value")).intValue();
 		    if (indexXmlVersion > CURRENTFILEFORMAT) {
 			Preferences.itself().log("[Profile:readIndex]unsupported file format");
 			clearProfile();
 			return;
 		    }
 		} else if (text.indexOf("<SYNCOC") >= 0) {
-		    int start = text.indexOf("date = \"") + 8;
-		    last_sync_opencaching = text.substring(start, text.indexOf("\"", start));
-		    start = text.indexOf("dist = \"") + 8;
-		    distOC = text.substring(start, text.indexOf("\"", start));
+		    Hashtable attributes = XMLParser.getAttributes(text, "SYNCOC");
+		    last_sync_opencaching = (String) attributes.get("date");
+		    distOC = (String) attributes.get("dist");
 		} else if (text.indexOf("mapspath") >= 0) {
-		    int start = text.indexOf("relativeDir = \"") + 15;
-		    this.relativeMapsDir = (SafeXML.html2iso8859s1(text.substring(start, text.indexOf("\"", start))).replace('\\', '/'));
+		    Hashtable attributes = XMLParser.getAttributes(text, "mapspath");
+		    String relativeDir = (String) attributes.get("relativeDir");
+		    this.relativeMapsDir = (SafeXML.html2iso8859s1(relativeMapsDir).replace('\\', '/'));
 		} else if (text.indexOf("<SPIDERGC") >= 0) {
-		    int start = text.indexOf("dist = \"") + 8;
-		    distGC = text.substring(start, text.indexOf("\"", start));
-		    start = text.indexOf("mindist = \"") + 11;
-		    if (start == 10) {
+		    Hashtable attributes = XMLParser.getAttributes(text, "SPIDERGC");
+		    distGC = (String) attributes.get("dist");
+		    minDistGC = (String) attributes.get("mindist");
+		    if (minDistGC == null){
 			minDistGC = "0";
-		    } else
-			minDistGC = text.substring(start, text.indexOf("\"", start));
+		    }
 		} else if (text.indexOf("<EXPORT") >= 0) {
-		    int start = text.indexOf("style = \"") + 9;
-		    if (start == 8) {
+		    Hashtable attributes = XMLParser.getAttributes(text, "EXPORT");
+		    String style = (String) attributes.get("style");
+		    String to = (String) attributes.get("to");
+		    if (style == null) {
 			lastUsedGpxStyle = 0;
 			lastUsedOutputStyle = 0;
 		    } else {
-			String tmp = text.substring(start, text.indexOf("\"", start));
-			if (tmp.length() == 1) {
-			    switch (Common.parseInt(tmp)) {
+			if (style.length() == 1) {
+			    switch (Common.parseInt(style)) {
 			    case 0:
 				this.lastUsedGpxStyle = 0;
 				this.lastUsedOutputStyle = 0;
@@ -390,27 +391,25 @@ public class Profile {
 				break;
 			    }
 			} else {
-			    this.lastUsedOutputStyle = Common.parseInt(tmp.substring(0, 1));
-			    this.lastUsedGpxStyle = Common.parseInt(tmp.substring(1, 2));
+			    this.lastUsedOutputStyle = Common.parseInt(style.substring(0, 1));
+			    this.lastUsedGpxStyle = Common.parseInt(style.substring(1, 2));
 			}
 		    }
-		    start = text.indexOf("to = \"") + 6;
-		    if (start == 5) {
+		    if (to == null) {
 			this.gpxOutputTo = "";
 		    } else
-			this.gpxOutputTo = text.substring(start, text.indexOf("\"", start));
+			this.gpxOutputTo = to;
 		} else if (text.indexOf("<TIMEZONE") >= 0) {
-		    int start = text.indexOf("timeZoneOffset = \"") + 18;
-		    if (start == 17) {
+		    Hashtable attributes = XMLParser.getAttributes(text, "TIMEZONE");
+		    timeZoneOffset = (String) attributes.get("timeZoneOffset");
+		    String tmp = (String) attributes.get("timeZoneAutoDST");
+		    if (timeZoneOffset == null) {
 			timeZoneOffset = "0";
-		    } else {
-			timeZoneOffset = text.substring(start, text.indexOf("\"", start));
 		    }
-		    start = text.indexOf("timeZoneAutoDST = \"") + 19;
-		    if (start == 18) {
+		    if (tmp == null) {
 			timeZoneAutoDST = false;
 		    } else {
-			timeZoneAutoDST = Boolean.valueOf(text.substring(start, text.indexOf("\"", start))).booleanValue();
+			timeZoneAutoDST = Boolean.valueOf(tmp).booleanValue();
 		    }
 		} else if (indexXmlVersion <= 2 && text.indexOf("<FILTER") >= 0) {
 		    // Read filter data of file versions 1 and 2. (Legacy code)
@@ -444,41 +443,60 @@ public class Profile {
 			setFilterAttrChoice(Convert.parseInt(attr));
 		    setShowBlacklisted(Boolean.valueOf(ex.findNext()).booleanValue());
 		} else if (text.indexOf("<FILTERDATA") >= 0) {
-		    setFilterRose(ex.findFirst(text.substring(text.indexOf("<FILTERDATA"))));
-		    setFilterType(ex.findNext());
-		    setFilterVar(ex.findNext());
-		    setFilterDist(ex.findNext());
-		    setFilterDiff(ex.findNext());
-		    setFilterTerr(ex.findNext());
-		    setFilterSize(ex.findNext());
-		    String attr = ex.findNext();
+		    Hashtable attributes = XMLParser.getAttributes (text, "FILTERDATA");
+		    String filterRose = (String) attributes.get("rose");
+		    String filterType = (String) attributes.get("type");
+		    String filterVar = (String) attributes.get("var");
+		    String filterDist = (String) attributes.get("dist");
+		    String filterDiff = (String) attributes.get("diff");
+		    String filterTerr = (String) attributes.get("terr");
+		    String filterSize = (String) attributes.get("size");
+		    String filterAttributesYes = (String) attributes.get("attributesYes");
+		    String filterAttributesNo = (String) attributes.get("attributesNo");
+		    String filterAttributesChoice = (String) attributes.get("attributesChoice");
+
+		    String filterStatus = (String) attributes.get("status");
+		    String filterUseRegexp = (String) attributes.get("useRegexp");
+		    String filterNoCoord = (String) attributes.get("noCoord");
+
+		    String filterAttributesYes1 = (String) attributes.get("attributeYes1");
+		    String filterAttributesNo1 = (String) attributes.get("attributesNo1");
+		    String filterSearch = (String) attributes.get("search");
+
+		    setFilterRose(filterRose);
+		    setFilterType(filterType);
+		    setFilterVar(filterVar);
+		    setFilterDist(filterDist);
+		    setFilterDiff(filterDiff);
+		    setFilterTerr(filterTerr);
+		    setFilterSize(filterSize);
+		    String attr = filterAttributesYes;
 		    long[] filterAttr = { 0l, 0l, 0l, 0l };
 		    if (attr != null && !attr.equals(""))
 			filterAttr[0] = Convert.parseLong(attr);
-		    attr = ex.findNext();
+		    attr = filterAttributesNo;
 		    if (attr != null && !attr.equals(""))
 			filterAttr[2] = Convert.parseLong(attr);
 		    setFilterAttr(filterAttr);
-		    attr = ex.findNext();
-		    setFilterAttrChoice(Convert.parseInt(attr));
-		    setFilterStatus(SafeXML.html2iso8859s1(ex.findNext()));
-		    setFilterUseRegexp(Boolean.valueOf(ex.findNext()).booleanValue());
-		    attr = ex.findNext();
+		    setFilterAttrChoice(Convert.parseInt(filterAttributesChoice));
+		    setFilterStatus(SafeXML.html2iso8859s1(filterStatus));
+		    setFilterUseRegexp(Boolean.valueOf(filterUseRegexp).booleanValue());
+		    attr = filterNoCoord;
 		    if (attr != null && !attr.equals("")) {
 			setFilterNoCoord(Boolean.valueOf(attr).booleanValue());
 		    } else {
 			setFilterNoCoord(true);
 		    }
-		    attr = ex.findNext();
+		    attr = filterAttributesYes1;
 		    if (attr != null && !attr.equals(""))
 			filterAttr[1] = Convert.parseLong(attr);
-		    attr = ex.findNext();
+		    attr = filterAttributesNo1;
 		    if (attr != null && !attr.equals(""))
 			filterAttr[3] = Convert.parseLong(attr);
 		    setFilterAttr(filterAttr);
 
 		    // Order within the search items must not be changed
-		    attr = SafeXML.html2iso8859s1(ex.findNext());
+		    attr = SafeXML.html2iso8859s1(filterSearch);
 		    String[] searchFilterList = ewe.util.mString.split(attr, '|'); //'\u0399');
 		    for (int i = 0; i < searchFilterList.length; i++) {
 			if (i == 0)
@@ -494,10 +512,12 @@ public class Profile {
 		    }
 
 		} else if (text.indexOf("<FILTERCONFIG") >= 0) {
-		    String temp = ex.findFirst(text.substring(text.indexOf("<FILTERCONFIG")));
+		    Hashtable attributes = XMLParser.getAttributes (text, "FILTERCONFIG");
+		    String temp = (String) attributes.get ("status");
 		    setFilterActive(Common.parseInt(temp.substring(0, 1)));
 		    setFilterInverted(temp.charAt(1) == 'T');
-		    setShowBlacklisted(Boolean.valueOf(ex.findNext()).booleanValue());
+		    String value = (String) attributes.get("showBlacklist");
+		    setShowBlacklisted(Boolean.valueOf(value).booleanValue ());
 		}
 	    }
 	    in.close();
