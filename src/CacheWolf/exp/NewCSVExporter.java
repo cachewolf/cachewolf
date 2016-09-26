@@ -36,7 +36,7 @@ public class NewCSVExporter extends Exporter {
 	super();
 	this.setOutputFileExtension("*.txt");
 	this.decimalSeparator = ',';
-	this.setRecordMethod(NO_PARAMS);
+	this.setExportMethod(EXPORT_METHOD_NO_PARAMS);
     }
 
     public String header() {

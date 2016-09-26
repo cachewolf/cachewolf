@@ -21,6 +21,9 @@
 */
 package CacheWolf.exp;
 
+import com.stevesoft.ewe_pat.Regex;
+import com.stevesoft.ewe_pat.Transformer;
+
 import CacheWolf.MainForm;
 import CacheWolf.Preferences;
 import CacheWolf.controls.InfoBox;
@@ -29,10 +32,6 @@ import CacheWolf.database.CacheSize;
 import CacheWolf.database.CacheType;
 import CacheWolf.navi.TransformCoordinates;
 import CacheWolf.utils.MyLocale;
-
-import com.stevesoft.ewe_pat.Regex;
-import com.stevesoft.ewe_pat.Transformer;
-
 import ewe.filechooser.FileChooser;
 import ewe.filechooser.FileChooserBase;
 import ewe.io.BufferedWriter;
@@ -49,16 +48,20 @@ import ewe.util.Hashtable;
 import ewe.util.Vector;
 
 /**
- * @author Kalle Base class for exporter, handles basic things like selecting outputfile, display a counter etc. A new Exporter must only override the header(), record() and trailer() methods. The member howManyParams must be set to identify which
- *         ethod should be called
+ * @author Kalle
+ * Base class for exporter, handles basic things like selecting outputfile, display a counter etc.
+ * 
+ * setExportMethod must be called with  to identify which method should be called.
+ * A new Exporter must only override the header(), record() and trailer() methods, corresponding to the setExportMethod. 
+ * 
  */
 
 public class Exporter {
 
     // export methods
-    final static int NO_PARAMS = 0;
-    final static int LAT_LON = 1;
-    final static int COUNT = 2;
+    final static int EXPORT_METHOD_NO_PARAMS = 0;
+    final static int EXPORT_METHOD_LAT_LON = 1;
+    final static int EXPORT_METHOD_COUNT = 2;
 
     Vector DB;
     // mask in file chooser
@@ -84,10 +87,11 @@ public class Exporter {
     protected File outFile = null;
 
     public Exporter() {
-	recordMethod = LAT_LON;
+	recordMethod = EXPORT_METHOD_LAT_LON;
 	exporterName = this.getClass().getName();
-	// remove package
-	exporterName = exporterName.substring(exporterName.indexOf(".") + 1);
+	// remove package and path from Classname
+	int ab = exporterName.lastIndexOf(".") + 1;
+	exporterName = exporterName.substring(ab);
 	useCodec = new JavaUtf8Codec();
 	anzVisibleCaches = MainForm.profile.cacheDB.countVisible();
 	doneTillNow = 0;
@@ -156,11 +160,11 @@ public class Exporter {
 
     public void exportTrailer() {
 	String str;
-	switch (this.recordMethod & COUNT) {
-	case NO_PARAMS:
+	switch (this.recordMethod & EXPORT_METHOD_COUNT) {
+	case EXPORT_METHOD_NO_PARAMS:
 	    str = trailer();
 	    break;
-	case COUNT:
+	case EXPORT_METHOD_COUNT:
 	    str = trailer(anzVisibleCaches);
 	    break;
 	default:
@@ -197,15 +201,15 @@ public class Exporter {
 		return null;
 	    } else {
 		switch (this.recordMethod) {
-		case NO_PARAMS:
+		case EXPORT_METHOD_NO_PARAMS:
 		    str = record(ch);
 		    break;
-		case LAT_LON:
+		case EXPORT_METHOD_LAT_LON:
 		    if (!ch.getWpt().isValid())
 			return null;
 		    str = record(ch, ch.getWpt().getLatDeg(TransformCoordinates.DD).replace('.', this.decimalSeparator), ch.getWpt().getLonDeg(TransformCoordinates.DD).replace('.', this.decimalSeparator));
 		    break;
-		case LAT_LON | COUNT:
+		case EXPORT_METHOD_LAT_LON | EXPORT_METHOD_COUNT:
 		    if (!ch.getWpt().isValid())
 			return null;
 		    str = record(ch, ch.getWpt().getLatDeg(TransformCoordinates.DD).replace('.', this.decimalSeparator), ch.getWpt().getLonDeg(TransformCoordinates.DD).replace('.', this.decimalSeparator), i);
@@ -214,8 +218,8 @@ public class Exporter {
 		    str = null;
 		    break;
 		}
-	    }// else if incomplete
-	}// if visible 
+	    } // else if incomplete
+	} // if visible 
 	return str;
     }
 
@@ -229,11 +233,11 @@ public class Exporter {
     }
 
     /**
-     * sets howManyParams
+     * sets ExportMethod
      * 
      * @param paramBits
      */
-    public void setRecordMethod(int paramBits) {
+    public void setExportMethod(int paramBits) {
 	this.recordMethod = paramBits;
     }
 
@@ -254,13 +258,13 @@ public class Exporter {
      */
     public void askForOutputFile() {
 	File file;
-	FileChooser fc = new FileChooser(FileChooserBase.SAVE, Preferences.itself().getExportPath(exporterName));
+	FileChooser fc = new FileChooser(FileChooserBase.SAVE, Preferences.itself().getExportPath(exporterName + "-path"));
 	fc.setTitle(MyLocale.getMsg(2102, "Choose target file"));
 	fc.addMask(outputFileExtension);
 	if (fc.execute() != FormBase.IDCANCEL) {
 	    file = fc.getChosenFile();
 	    this.outputFileName = fc.getChosen();
-	    Preferences.itself().setExportPref(exporterName, file.getPath());
+	    Preferences.itself().setExportPref(exporterName + "-path", file.getPath());
 	    outFile = file;
 	} else {
 	    outFile = null;
@@ -268,13 +272,13 @@ public class Exporter {
     }
 
     public String getOutputPath() {
-	FileChooser fc = new FileChooser(FileChooserBase.DIRECTORY_SELECT, Preferences.itself().getExportPath(exporterName));
+	FileChooser fc = new FileChooser(FileChooserBase.DIRECTORY_SELECT, Preferences.itself().getExportPath(exporterName + "-path"));
 	fc.setTitle(MyLocale.getMsg(148, "Select Target directory"));
 	String targetDir;
 	if (fc.execute() == FormBase.IDCANCEL)
 	    return "";
 	targetDir = fc.getChosen() + "/";
-	Preferences.itself().setExportPref(exporterName, targetDir);
+	Preferences.itself().setExportPref(exporterName + "-path", targetDir);
 	return targetDir;
     }
 
@@ -351,6 +355,7 @@ public class Exporter {
     // /////////////////////////////////////////////////
 
     private static Hashtable iso2simpleMappings = new Hashtable(250);
+
     //  ISO-8859-1 is CP1252 without chars 80-9f (=128..159) which is = 00..1f
     //  will be converted to  ISO-646 ( = ASCII, or US-ASCII)
     static {

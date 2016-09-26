@@ -88,7 +88,7 @@ public class POIExporter extends Exporter {
     public POIExporter() {
 	super();
 	this.outputFileExtension = "*.gpx";
-	this.recordMethod = LAT_LON;
+	this.recordMethod = EXPORT_METHOD_LAT_LON;
 	result = new StringBuffer(1000);
 	tt = new TemplateTable();
 	useCodec = new W1252Codec();

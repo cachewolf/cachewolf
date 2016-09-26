@@ -32,6 +32,7 @@ import ewe.io.FileOutputStream;
 import ewe.io.IOException;
 import ewe.io.JavaUtf8Codec;
 import ewe.io.TextReader;
+import ewe.sys.Time;
 import ewe.util.ByteArray;
 import ewe.util.CharArray;
 import ewe.util.mString;
@@ -44,6 +45,8 @@ public class UrlFetcher {
     static PropertyList cookies = null;
     static String postData = null;
     static boolean forceRedirect = false;
+    public static long usedTime = 0;
+    static Time webZeitStart;
 
     public static PropertyList getDocumentProperties() {
 	if (conn != null)
@@ -237,6 +240,7 @@ public class UrlFetcher {
      * @throws IOException
      */
     public static ByteArray fetchByteArray(String url) throws IOException {
+	webZeitStart = new Time();
 	conn = new HttpConnection(url);
 	String urltmp = url;
 
@@ -301,6 +305,7 @@ public class UrlFetcher {
 	requestorProperties = null;
 	postData = null;
 	forceRedirect = false;
+	usedTime = usedTime + ((new Time()).getTime() - webZeitStart.getTime()) / 1000; // sec
 	return daten;
     }
 

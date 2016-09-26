@@ -42,7 +42,7 @@ public class LocExporter extends Exporter {
     public LocExporter() {
 	super();
 	this.setOutputFileExtension("*.loc");
-	this.setRecordMethod(NO_PARAMS);
+	this.setExportMethod(EXPORT_METHOD_NO_PARAMS);
 	gm = new GarminMap();
     }
 

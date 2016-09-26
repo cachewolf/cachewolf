@@ -45,9 +45,6 @@ public class InfoBox extends Form {
     public final static int DISPLAY_ONLY = 3;
     public final static int PROGRESS_WITH_WARNINGS = 4;
 
-    private static int preferredWidth;
-    private static int preferredHeight;
-
     private TextMessage msgArea;
     private TextMessage warnings;
     private mCheckBox checkBox;
@@ -58,21 +55,6 @@ public class InfoBox extends Form {
 
     private boolean isClosed = false;
 
-    public static void init(int fontSize, boolean useBigIcons) {
-	// InfoBox Size
-	int psx = fontSize * 16;
-	int psy = fontSize * 12;
-	if (useBigIcons) {
-	    psx = Math.min(psx + 48, Preferences.itself().getScreenWidth());
-	    psy = Math.min(psy + 16, Preferences.itself().getScreenHeight());
-	} else {
-	    psx = Math.min(psx, Preferences.itself().getScreenWidth());
-	    psy = Math.min(psy, Preferences.itself().getScreenHeight());
-	}
-	preferredWidth = psx;
-	preferredHeight = psy;
-    }
-
     public InfoBox(String title, String info) {
 	this(title, info, DISPLAY_ONLY);
     }
@@ -82,10 +64,11 @@ public class InfoBox extends Form {
     }
 
     public InfoBox(String title, Control ctrl, int w, int h) {
-	preferredWidth = w;
-	preferredHeight = h;
-	if (preferredWidth > 0 && preferredHeight > 0)
-	    this.setPreferredSize(preferredWidth, preferredHeight);
+	int pWidth = Preferences.itself().preferredControlsWidth;
+	int pHeight = Preferences.itself().preferredControlsHeight;
+	if (pWidth > 0 && pHeight > 0)
+	    this.setPreferredSize(pWidth, pHeight);
+
 	this.addLast(new MyScrollBarPanel((ScrollClient) ctrl, ScrollablePanel.NeverShowHorizontalScrollers), STRETCH, FILL);
 	this.title = title;
 	this.type = DISPLAY_ONLY;
@@ -93,9 +76,10 @@ public class InfoBox extends Form {
     }
 
     public InfoBox(String title, String info, int type, boolean autoWrap) {
-
-	if (preferredWidth > 0 && preferredHeight > 0)
-	    this.setPreferredSize(preferredWidth, preferredHeight);
+	int pWidth = Preferences.itself().preferredControlsWidth;
+	int pHeight = Preferences.itself().preferredControlsHeight;
+	if (pWidth > 0 && pHeight > 0)
+	    this.setPreferredSize(pWidth, pHeight);
 
 	switch (type) {
 	case CHECKBOX:

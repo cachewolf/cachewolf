@@ -36,7 +36,7 @@ public class OVLExporter extends Exporter {
     public OVLExporter() {
 	super();
 	this.setOutputFileExtension("*.ovl");
-	this.setRecordMethod(LAT_LON | COUNT);
+	this.setExportMethod(EXPORT_METHOD_LAT_LON | EXPORT_METHOD_COUNT);
     }
 
     public String record(CacheHolder ch, String lat, String lon, int counter) {

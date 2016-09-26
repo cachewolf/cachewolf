@@ -366,6 +366,7 @@ public class GCImporter {
 
 	if (doDownloadGui(0)) {
 	    Time startZeit = new Time();
+	    UrlFetcher.usedTime = 0;
 	    Vm.showWait(true);
 	    infB = new InfoBox(MyLocale.getMsg(611, "Status"), MyLocale.getMsg(5502, "Fetching first page..."), InfoBox.PROGRESS_WITH_WARNINGS);
 	    infB.exec();
@@ -434,12 +435,12 @@ public class GCImporter {
 
 	    Vm.showWait(false);
 	    loggedIn = false; // check again login on next spider
-	    Time endZeit = new Time();
-	    long benoetigteZeit = (endZeit.getTime() - startZeit.getTime()) / 1000; // sec
+	    long benoetigteZeit = (new Time().getTime() - startZeit.getTime()) / 1000; // sec
 	    if (!infB.isClosed()) {
 		infB.setInfo(MyLocale.getMsg(5535, "Caches added:   ") + newTillNow + "\n" + //
 			MyLocale.getMsg(5536, "Caches updated: ") + updateTillNow + "\n" + //
-			MyLocale.getMsg(5534, "Time required: ") + (benoetigteZeit / 60) + " min " + (benoetigteZeit % 60) + " sec "//
+			MyLocale.getMsg(5534, "Time required: ") + (benoetigteZeit / 60) + " min " + (benoetigteZeit % 60) + " sec " + //
+			"(" + (UrlFetcher.usedTime / 60) + " min " + (UrlFetcher.usedTime % 60) + " sec " + ")"//
 		);
 		infB.setButtonText(MyLocale.getMsg(4107, "Done"), FormBase.CANCELB);
 	    }
