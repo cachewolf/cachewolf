@@ -230,6 +230,9 @@ public class GCImporter {
     private char imageSource;
     private String backgroudImageName;
 
+    private CacheHolder newCache;
+    private CacheHolderDetail newCacheDetails;
+
     public GCImporter() {
 	initialiseProperties();
     }
@@ -1242,17 +1245,20 @@ public class GCImporter {
 	    // Get only caches not already available in the DB
 	    if (MainForm.profile.cacheDB.getIndex(wpt) == -1) {
 		infB.setInfo(MyLocale.getMsg(5531, "New: ") + wpt + " (" + (i + 1) + " / " + downloadList.size() + ")");
-		final CacheHolder ch = new CacheHolder(wpt);
-		ch.initStates(true);
-		final int test = getCacheByWaypointName(ch, Preferences.itself().downloadTBs);
+		newCache = new CacheHolder(wpt);
+		newCacheDetails = newCache.getDetails();
+		newCache.initStates(true);
+		final int test = getCacheByWaypointName(Preferences.itself().downloadTBs);
+		if (newCache.details == null)
+		    newCache.details = newCacheDetails;
 		if (test == SPIDER_CANCEL) {
 		    infB.close(0);
 		    break;
 		} else if (test == SPIDER_ERROR) {
 		    spiderErrors++;
 		} else if (test == SPIDER_OK) {
-		    MainForm.profile.cacheDB.add(ch);
-		    ch.saveCacheDetails();
+		    MainForm.profile.cacheDB.add(newCache);
+		    newCache.saveCacheDetails();
 		} // For test == SPIDER_IGNORE_PREMIUM and SPIDER_IGNORE there is nothing to do
 	    }
 	}
@@ -1301,15 +1307,18 @@ public class GCImporter {
 	    if (cacheInDB.isAddiWpt())
 		return SPIDER_ERROR; // addi waypoint, comes with parent cache
 	    try {
-		final CacheHolder ch = new CacheHolder(cacheInDB.getCode());
-		ch.initStates(false);
-		ret = getCacheByWaypointName(ch, Preferences.itself().downloadTBs);
+		newCache = new CacheHolder(cacheInDB.getCode());
+		newCacheDetails = newCache.getDetails();
+		newCache.initStates(false);
+		ret = getCacheByWaypointName(Preferences.itself().downloadTBs);
+		if (newCache.details == null)
+		    newCache.details = newCacheDetails;
 		// Save the spidered data
 		if (ret == SPIDER_OK) {
 		    cacheInDB.initStates(false);
 		    if (!Preferences.itself().useGCFavoriteValue)
-			ch.setNumRecommended(cacheInDB.getNumRecommended()); // gcvote Bewertung bleibt erhalten
-		    cacheInDB.update(ch);
+			newCache.setNumRecommended(cacheInDB.getNumRecommended()); // gcvote Bewertung bleibt erhalten
+		    cacheInDB.update(newCache);
 		    cacheInDB.saveCacheDetails();
 		}
 	    } catch (final Exception ex) {
@@ -1372,7 +1381,7 @@ public class GCImporter {
 	    }
 
 	    if (isExpired) {
-		byte ret = gcLogin();
+		byte ret = gcLogin(); // todo ? get the cookie for gcLogin, not for myAlias  
 		if (ret > 0) {
 		    if (ret < 5)
 			new InfoBox(MyLocale.getMsg(5523, "Login error!"), MyLocale.getMsg(5525, "Perhaps GC is not available. This should not happen!")).wait(FormBase.OKB);
@@ -1617,6 +1626,7 @@ public class GCImporter {
 	UrlFetcher.clearCookies();
 	try {
 	    WebPage = UrlFetcher.fetch(loginPageUrl); // 
+	    // Preferences.itself().log(WebPage, null);
 	} catch (final Exception ex) {
 	    Preferences.itself().log("[gcLogin]:Exception gc.com login page", ex, true);
 	    return 3;
@@ -1632,6 +1642,7 @@ public class GCImporter {
 	try {
 	    UrlFetcher.setpostData(postData);
 	    WebPage = UrlFetcher.fetch(loginPageUrl);
+	    // Preferences.itself().log(WebPage, null);
 	} catch (final Exception ex) {
 	    Preferences.itself().log("[gcLogin] Exception", ex);
 	    return 4;
@@ -1759,7 +1770,7 @@ public class GCImporter {
     private String listPagesUrl;
 
     private void makelistPagesUrl(int distance) {
-	listPagesUrl = "http://www.geocaching.com/seek/nearest.aspx";
+	listPagesUrl = "https://www.geocaching.com/seek/nearest.aspx";
 	if (spiderAllFinds) {
 	    listPagesUrl = listPagesUrl + "?ul=" + encodeUTF8URL(Utils.encodeJavaUtf8String(Preferences.itself().myAlias));
 	} else {
@@ -2029,24 +2040,23 @@ public class GCImporter {
 	return ret;
     }
 
-    private int getCacheByWaypointName(CacheHolder ch, boolean fetchTBs) {
+    private int getCacheByWaypointName(boolean fetchTBs) {
 	int ret = SPIDER_OK;
-	CacheHolder chOld = MainForm.profile.cacheDB.get(ch.getCode());
+	CacheHolder chOld = MainForm.profile.cacheDB.get(newCache.getCode());
 	boolean isInDB = chOld != null;
-	ch.setIncomplete(true);
+	newCache.setIncomplete(true);
 	// if ch is a new object, the <cache>.xml is read again as a new object chD
-	CacheHolderDetail chD = ch.getDetails();
 	while (true) { // retry even if failure
 	    // Preferences.itself().log(""); // new line for more overview
 	    int spiderTrys = 0;
 	    final int MAX_SPIDER_TRYS = 3;
 	    while (spiderTrys++ < MAX_SPIDER_TRYS) {
-		ret = fetchWayPointPage(ch.getCode());
+		ret = fetchWayPointPage(newCache.getCode());
 		if (ret == SPIDER_OK) {
-		    ch.setIsPremiumCache(wayPointPage.indexOf(premiumGeocache) > -1);
+		    newCache.setIsPremiumCache(wayPointPage.indexOf(premiumGeocache) > -1);
 		    if (infB.isClosed())
 			ret = SPIDER_CANCEL;
-		    else if (ch.isPremiumCache()) {
+		    else if (newCache.isPremiumCache()) {
 			if (!Preferences.itself().havePremiumMemberRights) {
 			    // Premium cache spidered by non premium member
 			    // alternative Abfrage
@@ -2059,46 +2069,46 @@ public class GCImporter {
 				chOld.saveCacheDetails();
 			    } else {
 				if (Preferences.itself().addPremiumGC) {
-				    MainForm.profile.cacheDB.add(ch);
-				    ch.saveCacheDetails();
+				    MainForm.profile.cacheDB.add(newCache);
+				    newCache.saveCacheDetails();
 				}
 			    }
 			    ret = SPIDER_IGNORE_PREMIUM;
 			}
 		    } else if (wayPointPage.indexOf(unpublishedGeocache) > -1) {
-			Preferences.itself().log("unpublished Geocache: " + ch.getCode(), null);
+			Preferences.itself().log("unpublished Geocache: " + newCache.getCode(), null);
 			spiderTrys = MAX_SPIDER_TRYS;
 			ret = SPIDER_IGNORE;
 		    }
 		}
 		if (ret == SPIDER_OK) {
 		    try {
-			ch.isHTML(true);
-			ch.addiWpts.clear();
+			newCache.isHTML(true);
+			newCache.addiWpts.clear();
 
-			ch.setAvailable(!(wayPointPage.indexOf(unavailableGeocache) > -1));
-			ch.setArchived(wayPointPage.indexOf(archivedGeocache) > -1);
+			newCache.setAvailable(!(wayPointPage.indexOf(unavailableGeocache) > -1));
+			newCache.setArchived(wayPointPage.indexOf(archivedGeocache) > -1);
 			if (wayPointPage.indexOf(correctedCoordinate) > -1) {
-			    ch.setIsSolved(true);
+			    newCache.setIsSolved(true);
 			}
 			// Logs
-			getLogs(ch, wayPointPage.indexOf(foundByMe) > -1); // or get finds
+			getLogs((wayPointPage.indexOf(foundByMe) > -1) || (isInDB && chOld.isFound())); // or get finds
 
 			// order of occurrence in wayPointPage 
 			wayPointPageIndex = 0;
 			// from <head
-			ch.setDifficulty(wayPointPageGetDiff());
-			ch.setTerrain(wayPointPageGetTerr());
+			newCache.setDifficulty(wayPointPageGetDiff());
+			newCache.setTerrain(wayPointPageGetTerr());
 			// from <body
 			this.backgroudImageName = wayPointPageGetBackgroundImageUrl();
-			ch.setType(wayPointPageGetType());
-			ch.setName(wayPointPageGetName());
+			newCache.setType(wayPointPageGetType());
+			newCache.setName(wayPointPageGetName());
 			String owner = wayPointPageGetOwner();
-			ch.setOwner(owner);
-			ch.setHidden(wayPointPageGetDateHidden());
-			ch.setSize(wayPointPageGetSize());
+			newCache.setOwner(owner);
+			newCache.setHidden(wayPointPageGetDateHidden());
+			newCache.setSize(wayPointPageGetSize());
 			if (Preferences.itself().useGCFavoriteValue)
-			    ch.setNumRecommended(Common.parseInt(wayPointPageGetFavoriteValue()));
+			    newCache.setNumRecommended(Common.parseInt(wayPointPageGetFavoriteValue()));
 			final String latLon = wayPointPageGetLatLon();
 			if (latLon.equals("???")) {
 			    Preferences.itself().log("[SpiderGC.java:getLatLon]check latLonRex!", null);
@@ -2107,38 +2117,38 @@ public class GCImporter {
 			    ret = SPIDER_ERROR;
 			    continue;
 			}
-			ch.setWpt(new CWPoint(latLon));
+			newCache.setWpt(new CWPoint(latLon));
 			final String location = wayPointPageGetLocation();
 			if (location.length() != 0) {
 			    final int countryStart = location.indexOf(",");
 			    if (countryStart > -1) {
-				chD.setCountry(SafeXML.html2iso8859s1(location.substring(countryStart + 1).trim()));
-				chD.setState(SafeXML.html2iso8859s1(location.substring(0, countryStart).trim()));
+				newCacheDetails.setCountry(SafeXML.html2iso8859s1(location.substring(countryStart + 1).trim()));
+				newCacheDetails.setState(SafeXML.html2iso8859s1(location.substring(0, countryStart).trim()));
 			    } else {
-				chD.setCountry(location.trim());
-				chD.setState("");
+				newCacheDetails.setCountry(location.trim());
+				newCacheDetails.setState("");
 			    }
 			} else {
-			    chD.setCountry("");
-			    chD.setState("");
+			    newCacheDetails.setCountry("");
+			    newCacheDetails.setState("");
 			}
-			chD.setLongDescription(wayPointPageGetDescription());
-			chD.setHints(wayPointPageGetHints());
+			newCacheDetails.setLongDescription(wayPointPageGetDescription());
+			newCacheDetails.setHints(wayPointPageGetHints());
 
 			if (fetchTBs)
-			    getBugs(chD);
-			ch.hasBugs(chD.Travelbugs.size() > 0);
-			this.getImages(chD);
+			    getBugs(newCacheDetails);
+			newCache.hasBugs(newCacheDetails.Travelbugs.size() > 0);
+			this.getImages(newCacheDetails);
 
-			chD.setGCNotes(getNotes());
-			getAddWaypoints(wayPointPage, ch.getCode(), ch.isFound());
-			getAttributes(chD);
-			ch.setLastSync((new Time()).format("yyyyMMddHHmmss"));
-			ch.setIncomplete(false);
-			Preferences.itself().log("ready " + ch.getCode() + " : " + ch.getLastSync());
+			newCacheDetails.setGCNotes(getNotes());
+			getAddWaypoints(wayPointPage, newCache.getCode(), newCache.isFound());
+			getAttributes(newCacheDetails);
+			newCache.setLastSync((new Time()).format("yyyyMMddHHmmss"));
+			newCache.setIncomplete(false);
+			Preferences.itself().log("ready " + newCache.getCode() + " : " + newCache.getLastSync());
 			break;
 		    } catch (final Exception ex) {
-			Preferences.itself().log("[getCacheByWaypointName: ]Error reading cache: " + ch.getCode(), ex, true);
+			Preferences.itself().log("[getCacheByWaypointName: ]Error reading cache: " + newCache.getCode(), ex, true);
 		    }
 		}
 	    } // spiderTrys
@@ -2351,10 +2361,9 @@ public class GCImporter {
     /**
      * Get the logs
      */
-    private void getLogs(CacheHolder ch, boolean isFoundByMe) throws Exception {
+    private void getLogs(boolean isFoundByMe) throws Exception {
 	boolean fetchAllLogs = isFoundByMe;
-	final CacheHolderDetail chD = ch.getDetails();
-	final LogList reslts = chD.CacheLogs;
+	final LogList reslts = newCacheDetails.CacheLogs;
 	reslts.clear();
 
 	RexUserToken.search(wayPointPage);
@@ -2387,6 +2396,7 @@ public class GCImporter {
 	    String fetchResult = "";
 	    try {
 		fetchResult = UrlFetcher.fetch(url);
+		Preferences.itself().log("" + nLogs); // in 100er Schritten
 		resp = new JSONObject(fetchResult);
 	    } catch (Exception e) {
 		if (fetchResult == null)
@@ -2416,28 +2426,30 @@ public class GCImporter {
 		// if this log says this Cache is found by me or other logtype
 		if ((name.equalsIgnoreCase(Preferences.itself().myAlias)) || (name.equalsIgnoreCase(Preferences.itself().myAlias2))) {
 		    if ((icon.equals(icon_smile) || icon.equals(icon_camera) || icon.equals(icon_attended))) {
-			ch.setFound(true);
-			ch.setStatus(visitedDate);
+			newCache.setFound(true);
+			newCache.setStatus(visitedDate);
 			// final String logId = entry.getString("LogID");
-			chD.setOwnLog(new Log(logID, finderID, icon, visitedDate, name, logText));
+			newCacheDetails.setOwnLog(new Log(logID, finderID, icon, visitedDate, name, logText));
 			foundown = true;
 			nrOfOwnFinds = nrOfOwnFinds + 1;
+			fertig = true;
 		    } else {
 			// make it possible to edit a "write note"
-			if (!ch.isFound()) {
+			if (!newCache.isFound()) {
 			    // do not overwrite a find log 
-			    chD.setOwnLog(new Log(logID, finderID, icon, visitedDate, name, logText));
-			    ch.setStatus(chD.getOwnLog().icon2Message());
+			    newCacheDetails.setOwnLog(new Log(logID, finderID, icon, visitedDate, name, logText));
+			    newCache.setStatus(newCacheDetails.getOwnLog().icon2Message());
 			}
 		    }
 		}
 
 		if (nLogs <= maxLogs || fetchAllLogs) {
-		    reslts.add(new Log(logID, finderID, icon, visitedDate, name, logText));
+		    Log l = new Log(logID, finderID, icon, visitedDate, name, logText);
+		    reslts.add(l);
 		} else {
 		    // don't add more logs, but still searching own log
 		    if (foundown || !fetchAllLogs) {
-			// ownLog or the last one (perhaps maxLogs + 1, the ownLog is pssibly not found)
+			// ownLog or the last one (perhaps maxLogs + 1, the ownLog is possibly not found)
 			reslts.add(new Log(logID, finderID, icon, visitedDate, name, logText));
 			fertig = true;
 			break;
@@ -2447,7 +2459,7 @@ public class GCImporter {
 	} while (!fertig);
 
 	if (nrOfOwnFinds > 1) {
-	    Preferences.itself().log("doppelter Fund bei " + ch.getCode(), null);
+	    Preferences.itself().log("doppelter Fund bei " + newCache.getCode(), null);
 	}
 
 	if (nLogs > maxLogs) {
@@ -2457,7 +2469,7 @@ public class GCImporter {
 	    }
 	}
 	// Bei Update wird es doppelt berechnet
-	ch.setNoFindLogs(reslts.countNotFoundLogs());
+	newCache.setNoFindLogs(reslts.countNotFoundLogs());
     }
 
     /**
@@ -2851,6 +2863,7 @@ public class GCImporter {
 			adWayPoint = MyLocale.formatLong(counter, "00") + wayPoint.substring(2);
 		    counter++;
 		    final int idx = MainForm.profile.getCacheIndex(adWayPoint);
+
 		    if (idx >= 0) {
 			// Creating new CacheHolder, but accessing old cache.xml file
 			hd = new CacheHolder();

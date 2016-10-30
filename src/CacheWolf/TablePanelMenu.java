@@ -36,7 +36,7 @@ import CacheWolf.exp.GpxExportNg;
 import CacheWolf.exp.HTMLExporter;
 import CacheWolf.exp.KMLExporter;
 import CacheWolf.exp.LocExporter;
-import CacheWolf.exp.MSARCSVExporter;
+import CacheWolf.exp.NewCSVExporter;
 import CacheWolf.exp.OCLogExport;
 import CacheWolf.exp.OVLExporter;
 import CacheWolf.exp.OziExporter;
@@ -689,8 +689,8 @@ public class TablePanelMenu extends MenuBar {
 		tt.doIt();
 	    }
 	    if (mev.selectedItem == exportMSARCSV) {
-		MSARCSVExporter msar = new MSARCSVExporter();
-		//NewCSVExporter msar = new NewCSVExporter();
+		//MSARCSVExporter msar = new MSARCSVExporter();
+		NewCSVExporter msar = new NewCSVExporter(NewCSVExporter.PLACEDEQUALSFOUNDDAYMONTH);
 		msar.doIt();
 	    }
 	    if (mev.selectedItem == exportLOC) {

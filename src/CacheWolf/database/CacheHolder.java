@@ -133,7 +133,7 @@ public class CacheHolder {
     /** If this is an additional waypoint, this links back to the main waypoint */
     public CacheHolder mainCache;
 
-    private CacheHolderDetail details = null;
+    public CacheHolderDetail details = null;
     /** The date this cache was last synced with OC in format yyyyMMddHHmmss */
     private String lastSync = EMPTY;
 
@@ -1124,13 +1124,13 @@ public class CacheHolder {
     // final static int maxDetails = 50;
     public static Vector cachesWithLoadedDetails = new Vector(Preferences.itself().maxDetails);
 
-    public static void removeOldestDetails() {
+    private void removeOldestDetails() {
 	CacheHolder ch;
 	for (int i = 0; i < Preferences.itself().deleteDetails; i++) {
 	    // String wp = (String) cachesWithLoadedDetails.get(i);
 	    // CacheHolder ch = MainForm.profile.cacheDB.get(wp);
 	    ch = (CacheHolder) cachesWithLoadedDetails.get(i);
-	    if (ch != null)
+	    if (ch != null && ch.details.getParent() != this)
 		ch.releaseCacheDetails();
 	}
     }
