@@ -21,12 +21,11 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 package CacheWolf;
 
+import com.stevesoft.ewe_pat.Regex;
+
 import CacheWolf.utils.Common;
 import CacheWolf.utils.MyLocale;
 import CacheWolf.utils.UrlFetcher;
-
-import com.stevesoft.ewe_pat.Regex;
-
 import ewe.io.ByteArrayInputStream;
 import ewe.io.IOException;
 import ewe.sys.Convert;
@@ -76,7 +75,7 @@ public class Version {
      * @throws IOException
      */
     public static void checkForUpdates() throws IOException {
-	String currentVersionsUrl = "http://cachewolf.googlecode.com/svn/trunk/currentversions.txt";
+	String currentVersionsUrl = "https://github.com/cachewolf/cachewolf/blob/master/currentversions.txt";
 	Properties curvers = new Properties();
 	curvers.load(new ByteArrayInputStream(UrlFetcher.fetchByteArray(currentVersionsUrl)));
 	versionnumbers = new String[updateavailabe.length];
