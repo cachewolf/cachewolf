@@ -26,7 +26,8 @@ import com.stevesoft.ewe_pat.Regex;
 import CacheWolf.utils.Common;
 import CacheWolf.utils.MyLocale;
 import CacheWolf.utils.UrlFetcher;
-import ewe.io.ByteArrayInputStream;
+import ewe.io.FileBase;
+import ewe.io.FileInputStream;
 import ewe.io.IOException;
 import ewe.sys.Convert;
 import ewe.sys.Vm;
@@ -75,9 +76,12 @@ public class Version {
      * @throws IOException
      */
     public static void checkForUpdates() throws IOException {
-	String currentVersionsUrl = "https://github.com/cachewolf/cachewolf/blob/master/currentversions.txt";
+	//String currentVersionsUrl = "https://raw.githubusercontent.com/cachewolf/cachewolf/master/currentversions.txt";
+	//https://raw.githubusercontent.com/cachewolf/cachewolf/master/res_noewe/currentversions.txt
+	//https://github.com/cachewolf/cachewolf/raw/master/res_noewe/currentversions.txt
 	Properties curvers = new Properties();
-	curvers.load(new ByteArrayInputStream(UrlFetcher.fetchByteArray(currentVersionsUrl)));
+	//curvers.load(new ByteArrayInputStream(UrlFetcher.fetchByteArray(currentVersionsUrl)));
+	curvers.load(new FileInputStream(FileBase.getProgramDirectory() + "/currentversions.txt"));
 	versionnumbers = new String[updateavailabe.length];
 	for (int i = updateavailabe.length - 1; i >= 1; i--) {
 	    updateavailabe[i] = checkVersion(curvers, "T" + (i - 1), i); // this also sets versionnumber[i]
