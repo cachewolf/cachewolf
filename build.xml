@@ -50,7 +50,7 @@
 		TODO: find out how to get svn revision information platform
 		independent.
 		perhaps: 
-		svn info --show-item revision
+		svn info -show-item revision
 	-->
 	<!--
 		TODO: especially since svnversion would give better information if
