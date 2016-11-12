@@ -41,7 +41,7 @@ public class NewCSVExporter extends Exporter {
     public static final int DIFFERENTREVIEWERS = 1;
     public static final int SUMPERDAY = 2;
     public static final int NOFOUNDSFORXDAYS = 3;
-    public static final int POSSIBLEFTF = 4;
+    public static final int POSSIBLE_FTF = 4;
     public static final int PLACEDEQUALSFOUNDDAYMONTH = 5;
 
     private int what;
@@ -68,7 +68,7 @@ public class NewCSVExporter extends Exporter {
 	    return sumPerDay(ch);
 	case NOFOUNDSFORXDAYS:
 	    return noFoundsForXDays(ch);
-	case POSSIBLEFTF:
+	case POSSIBLE_FTF:
 	    return possibleFTF(ch);
 	case PLACEDEQUALSFOUNDDAYMONTH:
 	    return placedEqualsFoundDayMonth(ch);
