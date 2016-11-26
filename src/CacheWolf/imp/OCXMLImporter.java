@@ -21,6 +21,8 @@
  */
 package CacheWolf.imp;
 
+import com.stevesoft.ewe_pat.Regex;
+
 import CacheWolf.MainForm;
 import CacheWolf.OC;
 import CacheWolf.Preferences;
@@ -36,19 +38,16 @@ import CacheWolf.database.CacheType;
 import CacheWolf.database.CoordinatePoint;
 import CacheWolf.database.Log;
 import CacheWolf.navi.TransformCoordinates;
+import CacheWolf.utils.BetterUTF8Codec;
 import CacheWolf.utils.Common;
 import CacheWolf.utils.MyLocale;
 import CacheWolf.utils.STRreplace;
 import CacheWolf.utils.SafeXML;
 import CacheWolf.utils.UrlFetcher;
-
-import com.stevesoft.ewe_pat.Regex;
-
 import ewe.io.BufferedReader;
 import ewe.io.File;
-import ewe.io.IO;
 import ewe.io.IOException;
-import ewe.io.InputStreamReader;
+import ewe.io.TextReader;
 import ewe.net.MalformedURLException;
 import ewe.net.URL;
 import ewe.sys.Convert;
@@ -285,9 +284,18 @@ public class OCXMLImporter extends MinML {
 		zipEnt = (ZipEntry) zipEnum.nextElement();
 		// skip over PRC-files and empty files
 		if (zipEnt.getSize() > 0 && zipEnt.getName().endsWith("xml")) {
-		    r = new BufferedReader(new InputStreamReader(zif.getInputStream(zipEnt), IO.JAVA_UTF8_CODEC));
-		    parse(r);
-		    r.close();
+		    TextReader tr = new TextReader(zif.getInputStream(zipEnt));
+		    tr.codec = new BetterUTF8Codec();
+		    String lineRead = tr.readLine().toLowerCase();
+		    if (lineRead.startsWith("ï»¿")) {
+			// erste Zeile überlesen
+			// <?xml version="1.0" encoding="utf-8"?>
+			// weil der parser das erste Zeichen nicht mag und dann aussteigt 
+			tr.read();
+		    }
+		    //r = new BufferedReader(new InputStreamReader(zif.getInputStream(zipEnt), IO.JAVA_UTF8_CODEC));
+		    parse(tr);
+		    tr.close();
 		}
 	    }
 	    zif.close();

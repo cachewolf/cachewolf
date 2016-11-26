@@ -1,12 +1,12 @@
 # Release
 T0VersionMajor: 1
-T0VersionMinor: 2
-T0SvnRevision: http://cachewolf.aldos.de/rc/mostrecentbuild.txt [\\s]*[\\\\r]*[\\\\n]*[\\s]*([0-9]*)
+T0VersionMinor: 3
+T0SvnRevision: http://cachewolf.aldos.de/nb/stable.txt [\\s]*[\\\\r]*[\\\\n]*[\\s]*([0-9]*)
 
 # ReleaseCandidate
 T1VersionMajor: 1
-T1VersionMinor: 2
-T1SvnRevision: http://cachewolf.aldos.de/rc/mostrecentbuild.txt [\\s]*[\\\\r]*[\\\\n]*[\\s]*([0-9]*)
+T1VersionMinor: 3
+T1SvnRevision: http://cachewolf.aldos.de/nb/mostrecentbuild.txt [\\s]*[\\\\r]*[\\\\n]*[\\s]*([0-9]*)
 
 # InDevelopmentStable
 T2VersionMajor: 1

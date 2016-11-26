@@ -4,18 +4,23 @@
 	<!--
 		This is the ant (http://ant.apache.org/) build file for CacheWolf
 
-		Arguments: -Dbuild.version=integer source code version covered by the
-		build. of "official" builds this shoul be the svn revision number
-		Default: todays date (YYYYMMDD) -Dbuild.type=interger see
-		src/CacheWolf/Version.kava VERSION_TYPES for valid values Default: 3
-		(InDevelopmentNewest) -Dbuild.cab=true also build a cab version from
-		the PPC2003 zip file. Default: do not build it. To build it in linux
-		you need cablist - here is a skript from UncleOwen, that does all you
-		need: http://www.geoclub.de/viewtopic.php?f=40&t=32351&p=674236 to
-		install it in linux / ubuntu. For
-		windows make sure to check the prerequisites on
-		http://ant.apache.org/manual/OptionalTasks/cab.html
-		Further information about ant can be found at
+		Arguments: 
+		-Dbuild.version=integer
+			source code version covered by the build. of "official" builds this should be the svn revision number
+			Default: todays date (YYYYMMDD) 
+		-Dbuild.type=interger
+			see src/CacheWolf/Version.java VERSION_TYPES for valid values
+			Default: 3 (InDevelopmentNewest) 
+		-Dbuild.cab=true
+			also build a cab version from the PPC2003 zip file. 
+			Default: do not build it.
+			
+		To build it in linux you need cablist - here is a skript from UncleOwen, that does all you need:
+		http://www.geoclub.de/viewtopic.php?f=40&t=32351&p=674236 to install it in linux / ubuntu.
+
+		For windows make sure to check the prerequisites on	http://ant.apache.org/manual/OptionalTasks/cab.html
+			
+		Further information about ant can be found at 
 		http://ant.apache.org/manual/
 		http://help.eclipse.org/help33/topic/org.eclipse.platform.doc.user/gettingStarted/qs-81_basics.htm
 		or check one of the many ant tutorials on the web
@@ -44,13 +49,15 @@
 	<!--
 		TODO: find out how to get svn revision information platform
 		independent.
+		perhaps: 
+		svn info -show-item revision
 	-->
 	<!--
 		TODO: especially since svnversion would give better information if
-		current directory is up to date
+		current directory is up to date		
 	-->
 	<!--
-		set a default build.version as long as not defined otherwiese on
+		set a default build.version as long as not defined otherwise on
 		command line
 	-->
 	<tstamp>

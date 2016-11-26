@@ -23,10 +23,12 @@ package CacheWolf.exp;
 
 import CacheWolf.MainForm;
 import CacheWolf.Preferences;
+import CacheWolf.controls.InputPanel;
 import CacheWolf.database.CacheHolder;
 import CacheWolf.database.CacheHolderDetail;
 import CacheWolf.database.CacheType;
 import CacheWolf.navi.TransformCoordinates;
+import CacheWolf.utils.MyLocale;
 import CacheWolf.utils.STRreplace;
 import CacheWolf.utils.SafeXML;
 import ewe.io.BufferedWriter;
@@ -37,6 +39,7 @@ import ewe.io.IOException;
 import ewe.io.InputStream;
 import ewe.io.PrintWriter;
 import ewe.sys.Handle;
+import ewe.ui.FormBase;
 import ewe.ui.ProgressBarForm;
 import ewe.util.Hashtable;
 import ewe.util.Iterator;
@@ -65,6 +68,7 @@ public class KMLExporter extends Exporter {
 
     String[] categoryNames = { "Available", "Found", "Owned", "Not Available", "UNKNOWN" };
     Hashtable[] outDB = new Hashtable[categoryNames.length];
+    String scale = "";
 
     public KMLExporter() {
 	super();
@@ -72,6 +76,17 @@ public class KMLExporter extends Exporter {
     }
 
     public void doIt() {
+
+	scale = Preferences.itself().getExportPref(exporterName + "-scale");
+	if (scale.length() == 0) {
+	    scale = "0.7";
+	}
+	InputPanel inputScale = new InputPanel(MyLocale.getMsg(2301, "Input scale"), MyLocale.getMsg(2302, "Scale") + ": ", scale);
+	if (inputScale.execute() == FormBase.IDOK) {
+	    scale = inputScale.input();
+	}
+	Preferences.itself().setExportPref(exporterName + "-scale", scale);
+
 	String str;
 	CacheHolder ch;
 	CacheHolder addiWpt;
@@ -310,7 +325,7 @@ public class KMLExporter extends Exporter {
 	strBuf.append("      </IconStyle>\r\n");
 	strBuf.append("      <LabelStyle>\r\n");
 	strBuf.append("         <color>" + getColor(ch) + "</color>\r\n");
-	strBuf.append("         <scale>" + "0.7" + "</scale>\r\n");
+	strBuf.append("         <scale>" + scale + "</scale>\r\n");
 	strBuf.append("      </LabelStyle>\r\n");
 	strBuf.append("      </Style>\r\n");
 	strBuf.append("   </Placemark>\r\n");
@@ -318,6 +333,9 @@ public class KMLExporter extends Exporter {
 	return strBuf.toString();
     }
 
+    /**
+     * Overrides: trailer() in Exporter
+     */
     public String trailer() {
 	strBuf.setLength(0);
 

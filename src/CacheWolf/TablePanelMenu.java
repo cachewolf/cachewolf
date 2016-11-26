@@ -60,6 +60,7 @@ import CacheWolf.navi.TransformCoordinates;
 import CacheWolf.utils.Common;
 import CacheWolf.utils.MyLocale;
 import CacheWolf.utils.STRreplace;
+import CacheWolf.utils.UrlFetcher;
 import CacheWolf.view.TravelbugJourneyScreenFactory;
 import ewe.filechooser.FileChooser;
 import ewe.filechooser.FileChooserBase;
@@ -68,6 +69,7 @@ import ewe.fx.IconAndText;
 import ewe.io.File;
 import ewe.io.FileBase;
 import ewe.io.IOException;
+import ewe.sys.Time;
 import ewe.sys.Vm;
 import ewe.ui.CellConstants;
 import ewe.ui.CellPanel;
@@ -323,6 +325,8 @@ public class TablePanelMenu extends MenuBar {
     }
 
     public void updateSelectedCaches() {
+	Time startZeit = new Time();
+	UrlFetcher.usedTime = 0;
 	CacheDB cacheDB = MainForm.profile.cacheDB;
 	CacheHolder ch;
 	ImportGui importGui = new ImportGui(MyLocale.getMsg(1014, "updateSelectedCaches"), ImportGui.TRAVELBUGS | ImportGui.ALL, ImportGui.DESCRIPTIONIMAGE | ImportGui.SPOILERIMAGE | ImportGui.LOGIMAGE);
@@ -398,6 +402,10 @@ public class TablePanelMenu extends MenuBar {
 	MainForm.profile.updateBearingDistance();
 	tablePanel.refreshTable();
 	Vm.showWait(false);
+	long benoetigteZeit = (new Time().getTime() - startZeit.getTime()) / 1000; // sec
+	Preferences.itself().log(MyLocale.getMsg(5534, "Time required: ") + (benoetigteZeit / 60) + " min " + (benoetigteZeit % 60) + " sec ");
+	String message = "used Webtime:" + (UrlFetcher.usedTime / 60) + " min " + (UrlFetcher.usedTime % 60) + " sec ";
+	Preferences.itself().log(message, null);
 	if (spiderErrors > 0) {
 	    new InfoBox(MyLocale.getMsg(5500, "Error"), spiderErrors + MyLocale.getMsg(5516, " cache descriptions%0acould not be loaded.")).wait(FormBase.OKB);
 	}
@@ -682,7 +690,7 @@ public class TablePanelMenu extends MenuBar {
 	    }
 	    if (mev.selectedItem == exportMSARCSV) {
 		MSARCSVExporter msar = new MSARCSVExporter();
-		//NewCSVExporter msar = new NewCSVExporter();
+		//NewCSVExporter msar = new NewCSVExporter(NewCSVExporter.PLACEDEQUALSFOUNDDAYMONTH);
 		msar.doIt();
 	    }
 	    if (mev.selectedItem == exportLOC) {

@@ -178,6 +178,10 @@ public class Preferences extends MinML {
     public boolean showStatus = true;
     /** True if the application can be closed by clicking on the close button in the top line. This can be set to avoid accidental closing of the application */
     public boolean hasCloseButton = true;
+    /** set automatically */
+    public int preferredControlsWidth = 0;
+    public int preferredControlsHeight = 0;
+
     // Tabcards
     /** TablePanel: SortingGroupedByCache */
     public boolean SortingGroupedByCache = true;
@@ -436,7 +440,7 @@ public class Preferences extends MinML {
 	    savePreferences();
 
 	    GuiImageBroker.init(useText, useIcons, useBigIcons, leftIcons);
-	    InfoBox.init(fontSize, useBigIcons);
+	    initControlsSize(fontSize, useBigIcons);
 	    new InfoBox(MyLocale.getMsg(327, "Information"), MyLocale.getMsg(176, "First start - using default preferences \n For experts only: \n Could not read preferences file:\n") + pathToConfigFile).wait(FormBase.OKB);
 	} catch (Exception e) {
 	    if (e instanceof NullPointerException)
@@ -450,9 +454,23 @@ public class Preferences extends MinML {
 	FormBase.tick = new DrawnIcon(DrawnIcon.TICK, fontSize, fontSize, new Color(0, 128, 0));
 	FormBase.cross = new DrawnIcon(DrawnIcon.CROSS, fontSize, fontSize, new Color(128, 0, 0));
 	GuiImageBroker.init(useText, useIcons, useBigIcons, leftIcons);
-	InfoBox.init(fontSize, useBigIcons);
+	initControlsSize(fontSize, useBigIcons);
 	HttpConnection.setProxy(this.myproxy, Common.parseInt(this.myproxyport), this.proxyActive);
 	MyLocale.language = language;
+    }
+
+    private void initControlsSize(int fontSize, boolean useBigIcons) {
+	int psx = fontSize * 16;
+	int psy = fontSize * 12;
+	if (useBigIcons) {
+	    psx = Math.min(psx + 48, getScreenWidth());
+	    psy = Math.min(psy + 16, getScreenHeight());
+	} else {
+	    psx = Math.min(psx, getScreenWidth());
+	    psy = Math.min(psy, getScreenHeight());
+	}
+	preferredControlsWidth = psx;
+	preferredControlsHeight = psy;
     }
 
     /**
@@ -662,7 +680,13 @@ public class Preferences extends MinML {
 	    }
 	} else if (name.equals("expPref")) {
 	    for (int i = 0; i < atts.getLength(); i++) {
-		exporterPreferences.put(atts.getName(i), atts.getValue(i));
+		String n = atts.getName(i);
+		// we no longer use the path "exp." as part of the className used to identfy the exporter
+		// for convert and not to remain the old name-convention (new one reduces some output bytes) 
+		if (n.startsWith("exp.")) {
+		    n = n.substring(4);
+		}
+		exporterPreferences.put(n, atts.getValue(i));
 	    }
 	} else if (name.equals("impPath")) {
 	    for (int i = 0; i < atts.getLength(); i++) {

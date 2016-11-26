@@ -21,13 +21,13 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 package CacheWolf;
 
+import com.stevesoft.ewe_pat.Regex;
+
 import CacheWolf.utils.Common;
 import CacheWolf.utils.MyLocale;
 import CacheWolf.utils.UrlFetcher;
-
-import com.stevesoft.ewe_pat.Regex;
-
-import ewe.io.ByteArrayInputStream;
+import ewe.io.FileBase;
+import ewe.io.FileInputStream;
 import ewe.io.IOException;
 import ewe.sys.Convert;
 import ewe.sys.Vm;
@@ -40,7 +40,8 @@ import ewe.util.Properties;
 public class Version {
     static final int VER_MAJOR = 1;
     static final int VER_MINOR = 3;
-    static final String VER_SVN = "$LastChangedRevision: 3347 $"; // the number is automatically replaced by subversion to the latest versionnumer of this file (svn:keywords LastChangedRevision)
+    static final String VER_SVN = "$LastRevision: 19363 $";
+    // next line (don't modify) is replaced at ant build.xml (with date or svn revision or something else. see there) 
     static final int SVN_REVISION = Common.parseInt(VER_SVN.substring(VER_SVN.indexOf(" ") + 1, VER_SVN.lastIndexOf(" ")));
     static final int VERSION_TYPE = 3;
 
@@ -76,9 +77,12 @@ public class Version {
      * @throws IOException
      */
     public static void checkForUpdates() throws IOException {
-	String currentVersionsUrl = "http://cachewolf.googlecode.com/svn/trunk/currentversions.txt";
+	//String currentVersionsUrl = "https://raw.githubusercontent.com/cachewolf/cachewolf/master/currentversions.txt";
+	//https://raw.githubusercontent.com/cachewolf/cachewolf/master/res_noewe/currentversions.txt
+	//https://github.com/cachewolf/cachewolf/raw/master/res_noewe/currentversions.txt
 	Properties curvers = new Properties();
-	curvers.load(new ByteArrayInputStream(UrlFetcher.fetchByteArray(currentVersionsUrl)));
+	//curvers.load(new ByteArrayInputStream(UrlFetcher.fetchByteArray(currentVersionsUrl)));
+	curvers.load(new FileInputStream(FileBase.getProgramDirectory() + "/currentversions.txt"));
 	versionnumbers = new String[updateavailabe.length];
 	for (int i = updateavailabe.length - 1; i >= 1; i--) {
 	    updateavailabe[i] = checkVersion(curvers, "T" + (i - 1), i); // this also sets versionnumber[i]
