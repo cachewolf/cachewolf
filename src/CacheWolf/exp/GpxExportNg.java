@@ -21,6 +21,9 @@
 */
 package CacheWolf.exp;
 
+import com.stevesoft.ewe_pat.Regex;
+import com.stevesoft.ewe_pat.Transformer;
+
 import CacheWolf.MainForm;
 import CacheWolf.MainTab;
 import CacheWolf.Preferences;
@@ -44,10 +47,6 @@ import CacheWolf.utils.FileBugfix;
 import CacheWolf.utils.MyLocale;
 import CacheWolf.utils.SafeXML;
 import CacheWolf.utils.URLUTF8Encoder;
-
-import com.stevesoft.ewe_pat.Regex;
-import com.stevesoft.ewe_pat.Transformer;
-
 import ewe.filechooser.FileChooser;
 import ewe.filechooser.FileChooserBase;
 import ewe.fx.Sound;
@@ -575,9 +574,9 @@ public class GpxExportNg {
     private String formatCompact() {
 
 	StringBuffer ret = new StringBuffer();
-
-	if (ch.getWpt().isValid())
-	    ret.append("  <wpt lat=\"" + ch.getWpt().getLatDeg(TransformCoordinates.DD) + "\" lon=\"" + ch.getWpt().getLonDeg(TransformCoordinates.DD) + "\">").append(newLine);
+	CWPoint chWpt = ch.getWpt();
+	if (chWpt.isValid())
+	    ret.append("  <wpt lat=\"" + chWpt.getLatDeg(TransformCoordinates.DD) + "\" lon=\"" + chWpt.getLonDeg(TransformCoordinates.DD) + "\">").append(newLine);
 	else
 	    ret.append("  <wpt lat=\"" + "0" + "\" lon=\"" + "0" + "\">").append(newLine);
 
@@ -794,14 +793,14 @@ public class GpxExportNg {
 	    ret.append("        <groundspeak:travelbug id=\"").//
 		    append(Integer.toString(i)).//
 		    append("\" ref=\"TB\">").//
-		    // append(newLine).//
-		    // append(" <groundspeak:name>").//
-		    append("<groundspeak:name>").//
+	    // append(newLine).//
+	    // append(" <groundspeak:name>").//
+	    append("<groundspeak:name>").//
 		    append(SafeXML.cleanGPX(Tb.getName())).//
 		    append("</groundspeak:name>").//
-		    // append(newLine).//
-		    // append(" </groundspeak:travelbug>\r\n");//
-		    append("</groundspeak:travelbug>\r\n");//
+	    // append(newLine).//
+	    // append(" </groundspeak:travelbug>\r\n");//
+	    append("</groundspeak:travelbug>\r\n");//
 	}
 	return ret.toString();
     }

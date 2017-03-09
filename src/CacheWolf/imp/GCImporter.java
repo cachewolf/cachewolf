@@ -1155,7 +1155,7 @@ public class GCImporter {
 					&& ch.kilom <= toDistanceInKm //
 					&& (!(doNotgetFound && (ch.isFound() || ch.isOwned()))) //
 					&& (restrictedCacheType == CacheType.CW_TYPE_ERROR || restrictedCacheType == ch.getType()) // all typs or chTyp=selected typ
-			) //
+				) //
 			) //
 			{
 			    possibleUpdateList.put(ch.getCode(), ch);
@@ -1347,6 +1347,36 @@ public class GCImporter {
 	return wayPointPageGetLatLon();
     }
 
+    public boolean isFoundByMe(CacheHolder ch) {
+	String url;
+	if (!login())
+	    return false;
+	//final InfoBox localInfB = new InfoBox("Info", "Loading " + ch.getCode(), InfoBox.PROGRESS_WITH_WARNINGS);
+	//localInfB.exec();
+
+	try {
+	    url = "https://www.geocaching.com/seek/log.aspx?LID=" + ch.getDetails().getOwnLog().getLogID();
+	    wayPointPage = UrlFetcher.fetch(url);
+	} catch (final Exception ex) {
+	    Preferences.itself().log("Could not fetch " + ch.getCode(), ex);
+	    return false;
+	}
+
+	//localInfB.close(0);
+	//loggedIn = false; // check again login on next spider
+	wayPointPageIndex = 0;
+	boolean ret = this.wayPointPage.indexOf("images/logtypes/2.png") > -1;
+	if (!ret) {
+	    // event
+	    ret = this.wayPointPage.indexOf("images/logtypes/10.png") > -1;
+	    if (!ret) {
+		// webcam
+		ret = this.wayPointPage.indexOf("images/logtypes/11.png") > -1;
+	    }
+	}
+	return ret;
+    }
+
     /**
      * login to geocaching.com
      */
@@ -1368,14 +1398,19 @@ public class GCImporter {
 	    if (Preferences.itself().hasGCLogin()) {
 		Hashtable ht = Preferences.itself().getGCLogin(Preferences.itself().gcLogin);
 		String expires = (String) ht.get("expires");
-		if (expires != null) {
-		    // check expires
-		    String[] sExpires = mString.split(expires, ' ');
-		    Time tExpires = DateFormat.toDate(sExpires[1]);
-		    Time now = new Time();
-		    if (tExpires.after(now)) {
-			UrlFetcher.setCookie("gspkauth;www.geocaching.com", "gspkauth=" + (String) ht.get("auth") + ";");
-			isExpired = false;
+		String cookie = (String) ht.get("auth");
+		if (cookie != null) {
+		    if (cookie.length() > 0) {
+			if (expires != null) {
+			    // check expires
+			    String[] sExpires = mString.split(expires, ' ');
+			    Time tExpires = DateFormat.toDate(sExpires[1]);
+			    Time now = new Time();
+			    if (tExpires.after(now)) {
+				UrlFetcher.setCookie("gspkauth;www.geocaching.com", "gspkauth=" + cookie + ";");
+				isExpired = false;
+			    }
+			}
 		    }
 		}
 	    }
@@ -1530,7 +1565,7 @@ public class GCImporter {
 		break;
 	    }
 	}
-	String url = "http://www.geocaching.com/my/recentlyviewedcaches.aspx";
+	String url = "https://www.geocaching.com/my/recentlyviewedcaches.aspx";
 	try {
 	    WebPage = UrlFetcher.fetch(url);
 	} catch (final Exception ex) {
@@ -1541,7 +1576,7 @@ public class GCImporter {
 		+ "&" + "__EVENTARGUMENT="//
 		+ getViewState() //
 		+ "&" + "ctl00%24ContentBody%24wp=" //
-		;
+	;
 	try {
 	    UrlFetcher.setpostData(postData);
 	    WebPage = UrlFetcher.fetch(url);
@@ -1622,39 +1657,48 @@ public class GCImporter {
 	    if (code != FormBase.IDOK)
 		return 2;
 	}
-	String loginPageUrl = "https://www.geocaching.com/login/default.aspx";
+
+	String loginPageUrl = "https://www.geocaching.com/login/default.aspx?RESET=Y";
+	//String loginPageUrl = "https://www.geocaching.com/account/login";
 	UrlFetcher.clearCookies();
 	try {
 	    WebPage = UrlFetcher.fetch(loginPageUrl); // 
-	    // Preferences.itself().log(WebPage, null);
+	    //Preferences.itself().log(WebPage, null);
 	} catch (final Exception ex) {
 	    Preferences.itself().log("[gcLogin]:Exception gc.com login page", ex, true);
 	    return 3;
 	}
+	loginPageUrl = "https://www.geocaching.com/login/default.aspx";
+	/* */
 	final String postData = "__EVENTTARGET=" //
 		+ "&" + "__EVENTARGUMENT="//
 		+ getViewState() //
 		+ "&" + "ctl00%24ContentBody%24tbUsername=" + encodeUTF8URL(Utils.encodeJavaUtf8String(username)) //
 		+ "&" + "ctl00%24ContentBody%24tbPassword=" + encodeUTF8URL(Utils.encodeJavaUtf8String(passwort)) //
-		+ "&" + "ctl00%24ContentBody%24cbRememberMe=" + "true" //
-		+ "&" + "ctl00%24ContentBody%24btnSignIn=" + "Login" //
-		;
+		// + "&" + "ctl00%24ContentBody%24cbRememberMe=" + "true" //
+		+ "&" + "ctl00%24ContentBody%24btnSignIn=" + "Sign+In" //
+	;
+	/* */
+	/*
+	final String postData = "__EVENTTARGET="//
+	;
+	*/
 	try {
 	    UrlFetcher.setpostData(postData);
 	    WebPage = UrlFetcher.fetch(loginPageUrl);
-	    // Preferences.itself().log(WebPage, null);
+	    //Preferences.itself().log(WebPage, null);
 	} catch (final Exception ex) {
 	    Preferences.itself().log("[gcLogin] Exception", ex);
 	    return 4;
 	}
 
+	UrlFetcher.rememberCookies();
 	String theCookie[] = mString.split(UrlFetcher.getCookie("gspkauth;www.geocaching.com"), ';');
 	if (theCookie.length <= 1) {
 	    new InfoBox(MyLocale.getMsg(5523, "Login error!"), MyLocale.getMsg(5524, "Bitte korrigieren Sie Ihr Benutzerkonto in den Einstellungen!\n\n")).wait(FormBase.OKB);
 	    return 5;
 	} else {
 	    Preferences.itself().gcLogin = username;
-	    UrlFetcher.rememberCookies();
 	    // remember for next time, so you don't have to login
 	    String gspkauth = "";
 	    String expires = "";
@@ -1764,6 +1808,16 @@ public class GCImporter {
 		Result = Result + "&" + "__VIEWSTATE" + (i - 1) + "=" + URL.encodeURL(viewstate, false); //
 
 	}
+
+	final Regex rexViewstateGenerator = new Regex("id=\"__VIEWSTATEGENERATOR\" value=\"(.*?)\" />");
+	String sViewstateGeneratorValue;
+	rexViewstateGenerator.searchFrom(WebPage, searchPosition);
+	if (rexViewstateGenerator.didMatch()) {
+	    sViewstateGeneratorValue = rexViewstateGenerator.stringMatched(1);
+	    searchPosition = rexViewstateGenerator.matchedTo();
+	    Result = Result + "&" + "__VIEWSTATEGENERATOR=" + sViewstateGeneratorValue;
+	}
+
 	return Result;
     }
 
@@ -2030,7 +2084,7 @@ public class GCImporter {
     public int fetchWayPointPage(String wayPoint) {
 	int ret = SPIDER_OK; // initialize value;
 	try {
-	    wayPointPage = UrlFetcher.fetch("http://www.geocaching.com/seek/cache_details.aspx?wp=" + wayPoint);
+	    wayPointPage = UrlFetcher.fetch("https://www.geocaching.com/seek/cache_details.aspx?wp=" + wayPoint);
 	    Preferences.itself().log("Fetched: " + wayPoint);
 	    //Preferences.itself().log("Fetched: " + wayPoint + "\r\n" + wayPointPage);
 	} catch (final Exception ex) {
@@ -2390,7 +2444,7 @@ public class GCImporter {
 	int nrOfOwnFinds = 0;
 	do {
 	    idx++;
-	    String url = "http://www.geocaching.com/seek/geocache.logbook?tkn=" + userToken + "&idx=" + idx + "&num=" + num + "&decrypt=false";
+	    String url = "https://www.geocaching.com/seek/geocache.logbook?tkn=" + userToken + "&idx=" + idx + "&num=" + num + "&decrypt=false";
 	    UrlFetcher.setRequestorProperty("Content-Type", "application/json; charset=UTF-8");
 	    JSONObject resp = null;
 	    String fetchResult = "";
@@ -2711,7 +2765,7 @@ public class GCImporter {
 	String spideredName = downloadUrl;
 	if (!downloadUrl.startsWith("http"))
 	    // only clear if starts with / not ..
-	    downloadUrl = "http://www.geocaching.com" + downloadUrl;
+	    downloadUrl = "https://www.geocaching.com" + downloadUrl;
 	else {
 	    downloadUrl = STRreplace.replace(downloadUrl, "groundspeak", "geocaching");
 	    // links to images in the description directs to one which has reduced in their size.
@@ -2728,7 +2782,7 @@ public class GCImporter {
 	    if (downloadUrl.indexOf("geocaching.com") > -1) {
 		spideredName = downloadUrl.substring(downloadUrl.lastIndexOf('/'), downloadUrl.lastIndexOf('.'));
 		if (downloadUrl.indexOf("www.geocaching.com") == -1) {
-		    downloadUrl = "http://img.geocaching.com/cache" + spideredName + imgType;
+		    downloadUrl = "https://img.geocaching.com/cache" + spideredName + imgType;
 		}
 		// else gc smileys from www.geocaching.com
 	    } else if ((downloadUrl.indexOf("cloudfront.net") > -1) || (downloadUrl.indexOf("amazonaws.com") > -1)) {
@@ -2736,7 +2790,7 @@ public class GCImporter {
 		if (spideredName.endsWith("_l")) {
 		    spideredName = spideredName.substring(0, spideredName.length() - 2);
 		}
-		downloadUrl = "http://img.geocaching.com/cache" + spideredName + imgType;
+		downloadUrl = "https://img.geocaching.com/cache" + spideredName + imgType;
 	    }
 	}
 
