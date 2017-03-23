@@ -1555,8 +1555,30 @@ public class GCImporter {
 	// (is permanent, must be reset)
 	// must do post (get no longer works)
 
-	String languages[] = { "en-US", "ca-ES", "cs-CZ", "da-DK", "de-DE", "el-GR", "et-EE", "es-ES", "fr-FR", "it-IT", //		
-		"ja-JP", "ko-KR", "lv-LV", "lb-LU", "hu-HU", "nl-NL", "nb-NO", "pl-PL", "pt-PT", "ro-RO", "ru-RU", "fi-FI", "sv-SE",//
+	String languages[] = { "en-US", //00
+		"ca-ES", //01
+		"cs-CZ", //02
+		"da-DK", //03
+		"de-DE", //04
+		"el-GR", //05
+		"et-EE", //06
+		"es-ES", //07
+		"fr-FR", //08
+		"it-IT", //09		
+		"ja-JP", //10
+		"ko-KR", //11
+		"lv-LV", //12
+		"lb-LU", //13
+		"hu-HU", //14
+		"nl-NL", //15
+		"nb-NO", //16
+		"pl-PL", //17
+		"pt-PT", //18
+		"ro-RO", //19
+		"ru-RU", //20
+		"fi-FI", //21
+		"sl-SI", //22
+		"sv-SE",//23
 	};
 	String languageCode = "00"; // defaults to "en-US"
 	for (int i = 0; i < languages.length; i++) {
@@ -1572,7 +1594,7 @@ public class GCImporter {
 	    Preferences.itself().log("[recentlyviewedcaches]:Exception", ex, true);
 	    return false;
 	}
-	final String postData = "__EVENTTARGET=ctl00$ctl23$uxLocaleList$uxLocaleList$ctl" + languageCode + "$uxLocaleItem" //
+	final String postData = "__EVENTTARGET=ctl00$ctl24$uxLocaleList$uxLocaleList$ctl" + languageCode + "$uxLocaleItem" //
 		+ "&" + "__EVENTARGUMENT="//
 		+ getViewState() //
 		+ "&" + "ctl00%24ContentBody%24wp=" //
