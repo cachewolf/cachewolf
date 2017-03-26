@@ -1680,8 +1680,7 @@ public class GCImporter {
 		return 2;
 	}
 
-	String loginPageUrl = "https://www.geocaching.com/login/default.aspx?RESET=Y";
-	//String loginPageUrl = "https://www.geocaching.com/account/login";
+	String loginPageUrl = "https://www.geocaching.com/account/login?RESET=Y";
 	UrlFetcher.clearCookies();
 	try {
 	    WebPage = UrlFetcher.fetch(loginPageUrl); // 
@@ -1690,21 +1689,10 @@ public class GCImporter {
 	    Preferences.itself().log("[gcLogin]:Exception gc.com login page", ex, true);
 	    return 3;
 	}
-	loginPageUrl = "https://www.geocaching.com/login/default.aspx";
-	/* */
-	final String postData = "__EVENTTARGET=" //
-		+ "&" + "__EVENTARGUMENT="//
-		+ getViewState() //
-		+ "&" + "ctl00%24ContentBody%24tbUsername=" + encodeUTF8URL(Utils.encodeJavaUtf8String(username)) //
-		+ "&" + "ctl00%24ContentBody%24tbPassword=" + encodeUTF8URL(Utils.encodeJavaUtf8String(passwort)) //
-		// + "&" + "ctl00%24ContentBody%24cbRememberMe=" + "true" //
-		+ "&" + "ctl00%24ContentBody%24btnSignIn=" + "Sign+In" //
+	final String postData = getStringValueFromWebPageFor("__RequestVerificationToken") //
+		+ "&" + "Username=" + encodeUTF8URL(Utils.encodeJavaUtf8String(username)) //
+		+ "&" + "Password=" + encodeUTF8URL(Utils.encodeJavaUtf8String(passwort)) //
 	;
-	/* */
-	/*
-	final String postData = "__EVENTTARGET="//
-	;
-	*/
 	try {
 	    UrlFetcher.setpostData(postData);
 	    WebPage = UrlFetcher.fetch(loginPageUrl);
@@ -1789,6 +1777,19 @@ public class GCImporter {
 	    ret = false;
 	}
 	return ret;
+    }
+
+    /**
+     * from WebPage
+     * @return
+     */
+    private String getStringValueFromWebPageFor(String _Item) {
+	String Result = extractor.set(WebPage, _Item, ">", 0, Extractor.EXCLUDESTARTEND).findNext();
+	String sItem = extractor.set(Result, "value=\"", "\"", 0, Extractor.EXCLUDESTARTEND).findNext();
+	if (sItem.length() > 0) {
+	    Result = _Item + "=" + sItem;
+	}
+	return Result;
     }
 
     /**
