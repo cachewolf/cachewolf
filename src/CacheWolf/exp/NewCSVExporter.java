@@ -27,7 +27,10 @@ import CacheWolf.database.CacheHolderDetail;
 import CacheWolf.database.CacheType;
 import CacheWolf.database.Log;
 import CacheWolf.database.LogList;
+import CacheWolf.imp.GCImporter;
 import CacheWolf.utils.DateFormat;
+import CacheWolf.utils.Extractor;
+import CacheWolf.utils.STRreplace;
 import ewe.sys.Time;
 import ewe.util.Enumeration;
 import ewe.util.Hashtable;
@@ -43,6 +46,7 @@ public class NewCSVExporter extends Exporter {
     public static final int NOFOUNDSFORXDAYS = 3;
     public static final int POSSIBLE_FTF = 4;
     public static final int PLACEDEQUALSFOUNDDAYMONTH = 5;
+    public static final int GSAKLOG2NOTES = 6;
 
     private int what;
 
@@ -72,6 +76,8 @@ public class NewCSVExporter extends Exporter {
 	    return possibleFTF(ch);
 	case PLACEDEQUALSFOUNDDAYMONTH:
 	    return placedEqualsFoundDayMonth(ch);
+	case GSAKLOG2NOTES:
+	    return GsakLog2Notes(ch);
 	default:
 	    return null;
 	}
@@ -88,7 +94,27 @@ public class NewCSVExporter extends Exporter {
 
     /* */
     // Prüfung ownlog
+    private GCImporter spider = null;
+    private boolean doit = true;
+
     private String checkOwnLog(CacheHolder ch) {
+	if (spider == null)
+	    spider = new GCImporter();
+	if (doit) {
+	    Preferences.itself().log(ch.getCode(), null);
+	    if (spider.isFoundByMe(ch)) {
+		return " "; // for showing percent of task
+	    }
+	    return ch.getCode() + " not found";
+	} else {
+	    if (ch.getCode().equals("GC28RK8")) {
+		doit = true;
+	    }
+	}
+	return null;
+    }
+
+    private String checkOwn_Log(CacheHolder ch) {
 	CacheHolderDetail chD = ch.getDetails();
 	if (chD != null) {
 	    Log ownLog = chD.getOwnLog();
@@ -289,6 +315,31 @@ public class NewCSVExporter extends Exporter {
 	if (ownDate.month == placedDate.month && ownDate.day == placedDate.day) {
 	    if (ownDate.year != placedDate.year) {
 		return ch.getCode() + ";" + ch.getName() + ";" + sOwnDate + ";" + sPlacedDate + ";" + (ownDate.year - placedDate.year) + ";" + CacheType.type2Gui(ch.getType()) + "\r\n";
+	    }
+	}
+	return null;
+    }
+
+    private String GsakLog2Notes(CacheHolder ch) {
+	if (ch.isAddiWpt())
+	    return null;
+	CacheHolderDetail chD = ch.getDetails();
+	LogList logs = chD.CacheLogs;
+	for (int i = 0; i < logs.size(); i++) {
+	    Log theLog = logs.getLog(i);
+	    if (theLog.getLogger().toUpperCase().equals("GSAK")) {
+		String gsakNotes = new Extractor(chD.getCacheNotes(), "<GSAK>", "</GSAK>", 0, false).findNext();
+		String gsakLog = "<GSAK>" + theLog.getMessage() + "</GSAK>";
+		if (gsakNotes.length() > 0) {
+		    if (chD.setCacheNotes(STRreplace.replace(chD.getCacheNotes(), gsakNotes, gsakLog))) {
+			// only if changed
+			ch.saveCacheDetails();
+		    }
+		} else {
+		    chD.setCacheNotes(chD.getCacheNotes() + gsakLog);
+		    ch.saveCacheDetails();
+		}
+		return null;
 	    }
 	}
 	return null;

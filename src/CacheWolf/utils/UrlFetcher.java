@@ -175,6 +175,7 @@ public class UrlFetcher {
     };
 
     public static String fetch(String address) throws IOException {
+	// Preferences.itself().log("fetch: " + address);
 	return fetch(address, true);
     }
 
@@ -315,11 +316,13 @@ public class UrlFetcher {
 	for (int j = 0; j < pl.size(); j++) {
 	    final Property p = (Property) pl.get(j);
 	    if (p.name.equalsIgnoreCase("Set-Cookie")) {
-		String[] theCookie = mString.split((String) p.value, ';');
+		String completeCookieString = (String) p.value;
+		String[] theCookie = mString.split(completeCookieString, ';');
 		if (theCookie.length > 1) {
 		    String[] rp = mString.split(theCookie[0], '=');
 		    if (rp.length == 2) {
-			setCookie(rp[0] + ";" + conn.getHost(), (String) p.value); // alles (wegen Ablaufdatum speichern)
+			setCookie(rp[0] + ";" + conn.getHost(), completeCookieString); // alles (wegen Ablaufdatum speichern)
+			// Preferences.itself().log(rp[0] + ";" + conn.getHost() + ":" + completeCookieString);
 		    }
 		}
 	    }

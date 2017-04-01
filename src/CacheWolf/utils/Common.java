@@ -144,7 +144,7 @@ public final class Common {
 	    } else {
 		dummy[i] = c;
 	    }
-	}// for
+	} // for
 	return new String(dummy);
     }
 
@@ -211,6 +211,23 @@ public final class Common {
 	if (dot < 0)
 	    return "";
 	return fn.substring(dot, fn.length());
+    }
+
+    /**
+     * change the extension of a filename, including "."
+     * remark: ewe.io.File.getFileExtension return name + extension
+     * 
+     * @param fn
+     * @param newExtension
+     * @return
+     */
+    public static String changeExtension(String fn, String newExtension) {
+	if (fn == null || fn.length() == 0)
+	    return "";
+	int dot = fn.lastIndexOf('.');
+	if (dot < 0)
+	    return fn;
+	return fn.substring(0, dot) + newExtension;
     }
 
     /**

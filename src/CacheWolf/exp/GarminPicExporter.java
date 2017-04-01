@@ -21,6 +21,8 @@
 */
 package CacheWolf.exp;
 
+import com.stevesoft.ewe_pat.Regex;
+
 import CacheWolf.MainForm;
 import CacheWolf.Preferences;
 import CacheWolf.controls.ExecutePanel;
@@ -30,15 +32,14 @@ import CacheWolf.database.CacheHolder;
 import CacheWolf.database.CacheHolderDetail;
 import CacheWolf.database.CacheImage;
 import CacheWolf.database.CacheType;
+import CacheWolf.utils.Common;
 import CacheWolf.utils.Files;
 import CacheWolf.utils.MyLocale;
 import CacheWolf.utils.SafeXML;
-
-import com.stevesoft.ewe_pat.Regex;
-
 import ewe.filechooser.FileChooser;
 import ewe.filechooser.FileChooserBase;
 import ewe.io.File;
+import ewe.net.URL;
 import ewe.sys.Handle;
 import ewe.ui.CellConstants;
 import ewe.ui.CheckBoxGroup;
@@ -71,6 +72,7 @@ public class GarminPicExporter {
     int whichPics; // 0=ALL, 1=SPOILER ONLY, 2=OTHERS ONLY, 3=SPOILERS + ALL PICS for non TRADIS
     boolean removeGC;
     boolean resizeLongEdge;
+    boolean restrictToJpg;
     int maxLongEdge;
     Regex spoilerRex;
 
@@ -97,6 +99,7 @@ public class GarminPicExporter {
 	whichPics = options.getWhichPics();
 	resizeLongEdge = options.getResizeLongEdge();
 	maxLongEdge = options.getMaxLongEdge();
+	restrictToJpg = options.getRestrictToJpg();
 	spoilerRex = new Regex(options.getSplrRegex());
 	spoilerRex.setIgnoreCase(true);
 
@@ -122,7 +125,7 @@ public class GarminPicExporter {
 		    continue;
 		}
 		exportErrors += copyImages(ch, targetDir);
-	    }//if is black, filtered
+	    } //if is black, filtered
 	}
 	pbf.exit(0);
 
@@ -166,12 +169,15 @@ public class GarminPicExporter {
 			copyPic = true;
 		}
 		if (copyPic) { // We have to copy this picture
-		    if (!imgInfo.getFilename().endsWith("jpg")) { // relies on filename being lower case
-			// Garmin GPS can only handle jpg files
-			Preferences.itself().log("GarminPicExporter: Warning: Picture " + imgInfo.getFilename() + " not copied as Garmin GPS can only handle jpg files");
-			nonJPGimages++;
-			continue; // Move to next pic
+		    if (restrictToJpg) {
+			if (!imgInfo.getFilename().toLowerCase().endsWith("jpg")) { // relies on filename being lower case
+			    // Garmin GPS can only handle jpg files
+			    Preferences.itself().log("GarminPicExporter: Warning: Picture " + imgInfo.getFilename() + " not copied as Garmin GPS can only handle jpg files");
+			    nonJPGimages++;
+			    continue; // Move to next pic
+			}
 		    }
+		    String extension = Common.getExtension(imgInfo.getFilename()).toUpperCase(); // garmin loves uppercase?
 		    // Now we have a jpg and need to ensure that the directory structure
 		    // has been created before copying the picture
 		    if (need2CreateDir) {
@@ -181,12 +187,22 @@ public class GarminPicExporter {
 			need2CreateDir = false;
 		    }
 		    picsCopied.put(imgInfo.getFilename(), null); // Remember that we copied this picture
-		    if (isSpoiler) {
-			appendDir(dirName, "Spoilers/");
-			Files.copy(MainForm.profile.dataDir + imgInfo.getFilename(), dirName + "Spoilers/" + sanitizeFileName(imgInfo.getTitle()) + ".JPG");
+		    String dstFilename = getFilenameFromTitle(imgInfo.getTitle());
+		    if (dstFilename.length() == 0) {
+			dstFilename = getFileNameFromUrl(imgInfo.getURL());
+			if (dstFilename.length() == 0) {
+			    dstFilename = Common.changeExtension(imgInfo.getFilename(), extension);
+			} else {
+			    dstFilename = Common.changeExtension(dstFilename, extension);
+			}
 		    } else {
-			Files.copy(MainForm.profile.dataDir + imgInfo.getFilename(), dirName + sanitizeFileName(imgInfo.getTitle()) + ".JPG");
+			dstFilename = dstFilename + extension;
 		    }
+		    String dstPath = dirName;
+		    if (isSpoiler) {
+			dstPath = appendDir(dirName, "Spoilers/");
+		    }
+		    Files.copy(MainForm.profile.dataDir + imgInfo.getFilename(), dstPath + dstFilename);
 		}
 	    } catch (Exception ex) {
 		Preferences.itself().log("GarminPicExporter: Error copying file " + imgInfo.getFilename());
@@ -196,7 +212,17 @@ public class GarminPicExporter {
 	return retCode;
     }
 
-    private String sanitizeFileName(String fileName) {
+    private String getFileNameFromUrl(String url) {
+	if (url == null || url.length() == 0)
+	    return "";
+	int dot = url.lastIndexOf('/');
+	if (dot < 0)
+	    return "";
+	String ret = url.substring(dot + 1, url.length());
+	return URL.decodeURL(ret);
+    }
+
+    private String getFilenameFromTitle(String fileName) {
 	// The next line should not be necessary as picture titles should be correctly stored in UTF8 internally
 	// Unfortunately this is not the case, e.g. GC1ZHRK
 	if (fileName.indexOf("&") >= 0)
@@ -264,7 +290,7 @@ public class GarminPicExporter {
 
     private class OptionsForm extends Form {
 	Panel pnlWhichPics = new Panel();
-	mCheckBox chkAllPics, chkSplrOnly, chkPicsOnly, chkSplrPlusNonTradi;
+	mCheckBox chkAllPics, chkSplrOnly, chkPicsOnly, chkRestrictToJpg, chkSplrPlusNonTradi;
 	CheckBoxGroup chkPics2Copy = new CheckBoxGroup();
 	mInput inpSplrRegex;
 	mCheckBox chkResizeLongEdge;
@@ -286,6 +312,8 @@ public class GarminPicExporter {
 	    chkPicsOnly.setGroup(chkPics2Copy);
 	    chkSplrPlusNonTradi.setGroup(chkPics2Copy);
 	    chkPics2Copy.setInt(0);
+	    pnlWhichPics.addLast(chkRestrictToJpg = new mCheckBox("Only jpg"), CellConstants.DONTSTRETCH, CellConstants.WEST);
+	    chkRestrictToJpg.setState(true);
 	    addLast(new mLabel("Which pictures to export"), CellConstants.DONTSTRETCH, CellConstants.TOP | CellConstants.WEST);
 	    pnlWhichPics.setBorder(BDR_OUTLINE | BF_RECT, 3);
 
@@ -337,6 +365,10 @@ public class GarminPicExporter {
 	public int getMaxLongEdge() {
 	    return 100000;
 	    //TODO return Common.parseInt(inpMaxLongEdge.getText());
+	}
+
+	public boolean getRestrictToJpg() {
+	    return chkRestrictToJpg.getState();
 	}
     }
 

@@ -139,6 +139,7 @@ public final class CacheType {
     // public static final int anzCacheTyps=cTypRef.length;
     public static final byte maxCWCType = 110;
     static final byte[] Ref_Index = new byte[maxCWCType];
+
     static {
 	// +1 cause error is -1 and array starts at 0
 	for (byte i = (byte) (cTypRef.length - 1); i >= 0; i--) {
@@ -185,10 +186,10 @@ public final class CacheType {
     }
 
     public static byte[] guiOrder = { CacheType.CW_TYPE_CUSTOM, CacheType.CW_TYPE_TRADITIONAL, CacheType.CW_TYPE_MULTI, CacheType.CW_TYPE_VIRTUAL, CacheType.CW_TYPE_LETTERBOX //
-	    , CacheType.CW_TYPE_EVENT, CacheType.CW_TYPE_MEGA_EVENT, CacheType.CW_TYPE_WEBCAM, CacheType.CW_TYPE_MYSTERY, CacheType.CW_TYPE_LOCATIONLESS //
-	    , CacheType.CW_TYPE_CITO, CacheType.CW_TYPE_EARTH, CacheType.CW_TYPE_WHEREIGO, CacheType.CW_TYPE_APE, CacheType.CW_TYPE_MAZE //
-	    , CacheType.CW_TYPE_GIGA_EVENT, CacheType.CW_TYPE_LAB //
-	    , CacheType.CW_TYPE_PARKING, CacheType.CW_TYPE_STAGE, CacheType.CW_TYPE_QUESTION, CacheType.CW_TYPE_FINAL, CacheType.CW_TYPE_TRAILHEAD, CacheType.CW_TYPE_REFERENCE //
+    , CacheType.CW_TYPE_EVENT, CacheType.CW_TYPE_MEGA_EVENT, CacheType.CW_TYPE_WEBCAM, CacheType.CW_TYPE_MYSTERY, CacheType.CW_TYPE_LOCATIONLESS //
+    , CacheType.CW_TYPE_CITO, CacheType.CW_TYPE_EARTH, CacheType.CW_TYPE_WHEREIGO, CacheType.CW_TYPE_APE, CacheType.CW_TYPE_MAZE //
+    , CacheType.CW_TYPE_GIGA_EVENT, CacheType.CW_TYPE_LAB //
+    , CacheType.CW_TYPE_PARKING, CacheType.CW_TYPE_STAGE, CacheType.CW_TYPE_QUESTION, CacheType.CW_TYPE_FINAL, CacheType.CW_TYPE_TRAILHEAD, CacheType.CW_TYPE_REFERENCE //
     };
 
     //
@@ -551,7 +552,7 @@ final class CTyp {
      * @param cwCGroup Cache Typ Group intern
      * @param cwCTypeV1 V1 Cache Typ
      * @param gcCTypeSpider GC Type on Spider Import from GC.com
-     * @param ocCTypeXmlImport GC Type on Spider Import from GC.com
+     * @param ocCTypeXmlImport GC Type on XML Import from OC
      * @param cwCTypeV2 V2 Cache Typ
      * @param gpxShortCType Short Typ (one char abbreviation)
      * @param imageName name of imageName for Icon, "showCacheInBrowser" and "KML Export"
