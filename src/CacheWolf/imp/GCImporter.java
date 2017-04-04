@@ -1399,20 +1399,27 @@ public class GCImporter {
 		Hashtable ht = Preferences.itself().getGCLogin(Preferences.itself().gcLogin);
 		String expires = (String) ht.get("expires");
 		String cookie = (String) ht.get("auth");
+		UrlFetcher.setCookie("gspkauth;www.geocaching.com", "gspkauth=" + cookie + ";");
+		isExpired = false;
+		// expires gibts nicht mehr
+		/*
 		if (cookie != null) {
 		    if (cookie.length() > 0) {
 			if (expires != null) {
-			    // check expires
-			    String[] sExpires = mString.split(expires, ' ');
-			    Time tExpires = DateFormat.toDate(sExpires[1]);
-			    Time now = new Time();
-			    if (tExpires.after(now)) {
-				UrlFetcher.setCookie("gspkauth;www.geocaching.com", "gspkauth=" + cookie + ";");
-				isExpired = false;
+			    if (expires.length() > 0) {
+				// check expires
+				String[] sExpires = mString.split(expires, ' ');
+				Time tExpires = DateFormat.toDate(sExpires[1]);
+				Time now = new Time();
+				if (tExpires.after(now)) {
+				    UrlFetcher.setCookie("gspkauth;www.geocaching.com", "gspkauth=" + cookie + ";");
+				    isExpired = false;
+				}
 			    }
 			}
 		    }
 		}
+		*/
 	    }
 
 	    if (isExpired) {
@@ -1680,15 +1687,15 @@ public class GCImporter {
 		return 2;
 	}
 
-	String loginPageUrl = "https://www.geocaching.com/account/login?RESET=Y";
 	UrlFetcher.clearCookies();
+	String loginPageUrl = "https://www.geocaching.com/account/login?ReturnUrl=/play";
 	try {
 	    WebPage = UrlFetcher.fetch(loginPageUrl); // 
-	    //Preferences.itself().log(WebPage, null);
 	} catch (final Exception ex) {
 	    Preferences.itself().log("[gcLogin]:Exception gc.com login page", ex, true);
 	    return 3;
 	}
+	UrlFetcher.rememberCookies();
 	final String postData = getStringValueFromWebPageFor("__RequestVerificationToken") //
 		+ "&" + "Username=" + encodeUTF8URL(Utils.encodeJavaUtf8String(username)) //
 		+ "&" + "Password=" + encodeUTF8URL(Utils.encodeJavaUtf8String(passwort)) //
@@ -1696,7 +1703,6 @@ public class GCImporter {
 	try {
 	    UrlFetcher.setpostData(postData);
 	    WebPage = UrlFetcher.fetch(loginPageUrl);
-	    //Preferences.itself().log(WebPage, null);
 	} catch (final Exception ex) {
 	    Preferences.itself().log("[gcLogin] Exception", ex);
 	    return 4;
@@ -1717,6 +1723,9 @@ public class GCImporter {
 		if (rp.length == 2) {
 		    if (rp[0].equalsIgnoreCase("gspkauth")) {
 			gspkauth = rp[1];
+			// es gibt kein expires mehr, man muﬂ sich ev. jedesmal anmelden.
+			Preferences.itself().setGCLogin(username, gspkauth, expires);
+			break;
 		    } else if (rp[0].trim().equalsIgnoreCase("expires")) {
 			expires = rp[1];
 			Preferences.itself().setGCLogin(username, gspkauth, expires);
