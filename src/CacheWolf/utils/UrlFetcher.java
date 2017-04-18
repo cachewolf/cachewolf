@@ -75,7 +75,8 @@ public class UrlFetcher {
 
     private static void initPermanentRequestorProperty() {
 	permanentRequestorProperties = new PropertyList();
-	permanentRequestorProperties.set("User-Agent", "Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.7.5) Gecko/20041107 Firefox/1.0");
+	//permanentRequestorProperties.set("User-Agent", "Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.7.5) Gecko/20041107 Firefox/1.0");
+	permanentRequestorProperties.set("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/56.0.2924.87 Safari/537.36");
 	//permanentRequestorProperties.set("Connection", "close");
 	permanentRequestorProperties.set("Connection", "keep-alive");
     }

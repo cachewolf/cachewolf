@@ -1399,17 +1399,25 @@ public class GCImporter {
 		Hashtable ht = Preferences.itself().getGCLogin(Preferences.itself().gcLogin);
 		String expires = (String) ht.get("expires");
 		String cookie = (String) ht.get("auth");
+		boolean withoutExpiration = true;
 		if (cookie != null) {
 		    if (cookie.length() > 0) {
 			if (expires != null) {
-			    // check expires
-			    String[] sExpires = mString.split(expires, ' ');
-			    Time tExpires = DateFormat.toDate(sExpires[1]);
-			    Time now = new Time();
-			    if (tExpires.after(now)) {
-				UrlFetcher.setCookie("gspkauth;www.geocaching.com", "gspkauth=" + cookie + ";");
-				isExpired = false;
+			    if (expires.length() > 0) {
+				withoutExpiration = false;
+				// check expires
+				String[] sExpires = mString.split(expires, ' ');
+				Time tExpires = DateFormat.toDate(sExpires[1]);
+				Time now = new Time();
+				if (tExpires.after(now)) {
+				    UrlFetcher.setCookie("gspkauth;www.geocaching.com", "gspkauth=" + cookie + ";");
+				    isExpired = false;
+				}
 			    }
+			}
+			if (withoutExpiration) {
+			    UrlFetcher.setCookie("gspkauth;www.geocaching.com", "gspkauth=" + cookie + ";");
+			    isExpired = false;
 			}
 		    }
 		}
@@ -1534,6 +1542,33 @@ public class GCImporter {
 	    gcSettingsUrl = "https://www.geocaching.com/account/settings/membership";
 	    try {
 		page = UrlFetcher.fetch(gcSettingsUrl);
+		//save login Cookie
+		UrlFetcher.rememberCookies();
+		String theCookie[] = mString.split(UrlFetcher.getCookie("gspkauth;www.geocaching.com"), ';');
+		if (theCookie.length <= 1) {
+		    new InfoBox(MyLocale.getMsg(5523, "Login error!"), MyLocale.getMsg(5524, "Bitte korrigieren Sie Ihr Benutzerkonto in den Einstellungen!\n\n")).wait(FormBase.OKB);
+		    return 5;
+		} else {
+		    String username = Preferences.itself().gcLogin;
+		    // remember for next time, so you don't have to login
+		    String gspkauth = "";
+		    String expires = "";
+		    for (int i = 0; i < theCookie.length; i++) {
+			String[] rp = mString.split(theCookie[i], '=');
+			if (rp.length == 2) {
+			    if (rp[0].equalsIgnoreCase("gspkauth")) {
+				gspkauth = rp[1];
+			    } else if (rp[0].trim().equalsIgnoreCase("expires")) {
+				expires = rp[1];
+				break;
+			    }
+			}
+		    }
+		    if (gspkauth.length() > 0) {
+			Preferences.itself().setGCLogin(username, gspkauth, expires);
+		    }
+		    Preferences.itself().savePreferences();
+		}
 		//9.)    
 		String membershipBlock = extractor.set(page, "membership-details\">", "</dl>", 0, true).findNext();
 		String memberId = extractValue.set(membershipBlock, "<dd>", "</dd>", 0, true).findNext();
@@ -1680,15 +1715,15 @@ public class GCImporter {
 		return 2;
 	}
 
-	String loginPageUrl = "https://www.geocaching.com/account/login?RESET=Y";
 	UrlFetcher.clearCookies();
+	String loginPageUrl = "https://www.geocaching.com/account/login?ReturnUrl=/play";
 	try {
 	    WebPage = UrlFetcher.fetch(loginPageUrl); // 
-	    //Preferences.itself().log(WebPage, null);
 	} catch (final Exception ex) {
 	    Preferences.itself().log("[gcLogin]:Exception gc.com login page", ex, true);
 	    return 3;
 	}
+	UrlFetcher.rememberCookies();
 	final String postData = getStringValueFromWebPageFor("__RequestVerificationToken") //
 		+ "&" + "Username=" + encodeUTF8URL(Utils.encodeJavaUtf8String(username)) //
 		+ "&" + "Password=" + encodeUTF8URL(Utils.encodeJavaUtf8String(passwort)) //
@@ -1696,37 +1731,15 @@ public class GCImporter {
 	try {
 	    UrlFetcher.setpostData(postData);
 	    WebPage = UrlFetcher.fetch(loginPageUrl);
-	    //Preferences.itself().log(WebPage, null);
 	} catch (final Exception ex) {
 	    Preferences.itself().log("[gcLogin] Exception", ex);
 	    return 4;
 	}
-
 	UrlFetcher.rememberCookies();
-	String theCookie[] = mString.split(UrlFetcher.getCookie("gspkauth;www.geocaching.com"), ';');
-	if (theCookie.length <= 1) {
-	    new InfoBox(MyLocale.getMsg(5523, "Login error!"), MyLocale.getMsg(5524, "Bitte korrigieren Sie Ihr Benutzerkonto in den Einstellungen!\n\n")).wait(FormBase.OKB);
-	    return 5;
-	} else {
-	    Preferences.itself().gcLogin = username;
-	    // remember for next time, so you don't have to login
-	    String gspkauth = "";
-	    String expires = "";
-	    for (int i = 0; i < theCookie.length; i++) {
-		String[] rp = mString.split(theCookie[i], '=');
-		if (rp.length == 2) {
-		    if (rp[0].equalsIgnoreCase("gspkauth")) {
-			gspkauth = rp[1];
-		    } else if (rp[0].trim().equalsIgnoreCase("expires")) {
-			expires = rp[1];
-			Preferences.itself().setGCLogin(username, gspkauth, expires);
-			break;
-		    }
-		}
-	    }
-	    Preferences.itself().savePreferences();
-	    return 0;
-	}
+
+	Preferences.itself().gcLogin = username;
+	return 0;
+
     }
 
     private static boolean stillLoggedIn(String page) {
