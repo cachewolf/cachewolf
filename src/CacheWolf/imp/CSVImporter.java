@@ -178,13 +178,13 @@ public class CSVImporter {
 	    } catch (Exception e) {
 		Preferences.itself().log("Abort CSVImporter: ", e, true);
 		r.close();
-		MainForm.profile.saveIndex(Profile.NO_SHOW_PROGRESS_BAR);
+		MainForm.profile.saveIndex(Profile.NO_SHOW_PROGRESS_BAR, Profile.FORCESAVE);
 		Vm.showWait(false);
 		return;
 	    }
 	    r.close();
 	    // save Index
-	    MainForm.profile.saveIndex(Profile.NO_SHOW_PROGRESS_BAR);
+	    MainForm.profile.saveIndex(Profile.NO_SHOW_PROGRESS_BAR, Profile.FORCESAVE);
 	    Vm.showWait(false);
 	} catch (Exception e) {
 	} finally {

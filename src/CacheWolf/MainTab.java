@@ -502,8 +502,7 @@ public class MainTab extends mTabbedPanel {
 	    oldCard = LIST_CARD;
 	}
 	updatePendingChanges();
-	if (MainForm.profile.hasUnsavedChanges())
-	    MainForm.profile.saveIndex(true);
+	MainForm.profile.saveIndex(Profile.SHOW_PROGRESS_BAR, Profile.NOFORCESAVE);
 	this.tablePanel.saveColWidth();
 	Preferences.itself().savePreferences();
     }
@@ -545,4 +544,3 @@ public class MainTab extends mTabbedPanel {
 
 }
 //
-

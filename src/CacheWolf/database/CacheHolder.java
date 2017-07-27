@@ -1463,7 +1463,7 @@ public class CacheHolder {
 		| bool2BitMask(this.hasSolver, 14) //
 		| bool2BitMask(this.isPMCache, 15) //
 		| bool2BitMask(this.isSolved, 16) //
-		;
+	;
 	return value;
     }
 

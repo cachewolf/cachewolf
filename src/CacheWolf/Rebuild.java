@@ -115,7 +115,7 @@ public class Rebuild {
 		    break;
 	    }
 	    MainForm.profile.buildReferences();
-	    MainForm.profile.saveIndex(true);
+	    MainForm.profile.saveIndex(Profile.SHOW_PROGRESS_BAR, Profile.FORCESAVE);
 	}
 	pbf.exit(0);
     }

@@ -30,6 +30,7 @@ import CacheWolf.CoordsInput;
 import CacheWolf.MainForm;
 import CacheWolf.MainTab;
 import CacheWolf.Preferences;
+import CacheWolf.Profile;
 import CacheWolf.controls.InfoBox;
 import CacheWolf.database.CWPoint;
 import CacheWolf.database.CacheHolder;
@@ -431,7 +432,7 @@ public class GCImporter {
 		    new InfoBox(MyLocale.getMsg(5500, "Error"), infoString).wait(FormBase.OKB);
 		}
 		MainForm.profile.restoreFilter();
-		MainForm.profile.saveIndex(true);
+		MainForm.profile.saveIndex(Profile.SHOW_PROGRESS_BAR, Profile.FORCESAVE);
 		MainTab.itself.tablePanel.updateStatusBar();
 
 	    }
@@ -638,7 +639,7 @@ public class GCImporter {
 	    new InfoBox(MyLocale.getMsg(5500, "Error"), infoString).wait(FormBase.OKB);
 	}
 	MainForm.profile.restoreFilter();
-	MainForm.profile.saveIndex(true);
+	MainForm.profile.saveIndex(Profile.SHOW_PROGRESS_BAR, Profile.FORCESAVE);
 	Vm.showWait(false);
 
 	loggedIn = false; // check again login on next spider

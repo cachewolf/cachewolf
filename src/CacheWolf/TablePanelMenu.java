@@ -397,7 +397,7 @@ public class TablePanelMenu extends MenuBar {
 	gcImporter.setOldGCLanguage();
 
 	infB.close(0);
-	MainForm.profile.saveIndex(Profile.SHOW_PROGRESS_BAR);
+	MainForm.profile.saveIndex(Profile.SHOW_PROGRESS_BAR, Profile.NOFORCESAVE);
 	MainForm.profile.restoreFilter();
 	MainForm.profile.updateBearingDistance();
 	tablePanel.refreshTable();
@@ -804,7 +804,7 @@ public class TablePanelMenu extends MenuBar {
 		Preferences.itself().readPrefFile();
 	    }
 	    if (mev.selectedItem == savenoxit) {
-		MainForm.profile.saveIndex(Profile.SHOW_PROGRESS_BAR);
+		MainForm.profile.saveIndex(Profile.SHOW_PROGRESS_BAR, Profile.FORCESAVE);
 		tablePanel.saveColWidth();
 	    }
 	    /*
@@ -917,21 +917,21 @@ public class TablePanelMenu extends MenuBar {
 	    }
 
 	    if (mev.selectedItem == orgCopy) {
-		MainForm.profile.saveIndex(Profile.SHOW_PROGRESS_BAR);
+		MainForm.profile.saveIndex(Profile.SHOW_PROGRESS_BAR, Profile.NOFORCESAVE);
 		DataMover dm = new DataMover();
 		dm.copyCaches(Preferences.itself().absoluteBaseDir + MainForm.itself.selectProfileDir(Preferences.itself().absoluteBaseDir, Preferences.itself().lastProfile, 0) + "/");
 		tablePanel.refreshTable();
 	    }
 
 	    if (mev.selectedItem == orgMove) {
-		MainForm.profile.saveIndex(Profile.SHOW_PROGRESS_BAR);
+		MainForm.profile.saveIndex(Profile.SHOW_PROGRESS_BAR, Profile.NOFORCESAVE);
 		DataMover dm = new DataMover();
 		dm.moveCaches(Preferences.itself().absoluteBaseDir + MainForm.itself.selectProfileDir(Preferences.itself().absoluteBaseDir, Preferences.itself().lastProfile, 0) + "/");
 		tablePanel.refreshTable();
 	    }
 
 	    if (mev.selectedItem == orgDelete) {
-		MainForm.profile.saveIndex(Profile.SHOW_PROGRESS_BAR);
+		MainForm.profile.saveIndex(Profile.SHOW_PROGRESS_BAR, Profile.NOFORCESAVE);
 		DataMover dm = new DataMover();
 		dm.deleteCaches(true);
 		tablePanel.refreshTable();

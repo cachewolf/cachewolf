@@ -55,13 +55,15 @@ This a a modified version of XXX. This version automatically makes use of a prox
 To use this do the following:
 <ol>
 <li>Create an HttpConnection object with a URL or specify the host, port and document to get.
-<li>Change any of the HttpConnection parameters (including documentIsEncoded if your
-document is URL encoded - i.e. it has '?' type data within it) and set requestor properties as needed.
-<li>Call connectAsync() or connect() to make a Socket that is connected with the server. These
-methods will also send the Http request (e.g. GET or POST), send the requestor parameters and
-then read in and parse the server response and server parameters. When these methods are
-complete the next data to be read in from the Socket will be the actual data bytes for the
-http tranfer.
+<li>Change any of the HttpConnection parameters
+ (including documentIsEncoded if your document is URL encoded - i.e. it has '?' type data within it)
+ and set request properties as needed.
+<li>Call connectAsync() or connect() to make a Socket that is connected with the server.
+ These methods will also send the Http request (e.g. GET or POST),
+ send the request parameters
+ and then read in and parse the server response and server parameters.
+ When these methods are complete
+  the next data to be read in from the Socket will be the actual data bytes for the http tranfer.
 <li>Call redirectTo() to see if the request resulted in a redirection response from the server.
 If redirectTo() returns a new HttpConnection object, then close the open Socket and go back
 to step 2 using the new HttpConnection object instead.
@@ -99,19 +101,19 @@ public class HttpConnection {
      **/
     private String requestVersion = "HTTP/1.1";
     /**
-     * These are the properties that will be sent to the WebServer. These are sent after the
-     * initial GET/POST line. This is initially null, so you will have to create a new PropertyList
-     * for it, or use one of the setRequestorProperty() or addRequestorProperty() methods.
+     * These are the properties that will be sent to the WebServer.
+     * These are sent after the initial GET/POST line.
+     * This is initially null, so you will have to create a new PropertyList for it, or use one of the setRequestField() or addRequestField() methods.
      **/
-    private ewe.data.PropertyList requestorProperties;
+    private ewe.data.PropertyList requestFields;
     /**
-     * This is the list of properties for the server and document. It is only valid after a connection has
-     * been made since it is sent by the server to the requestor. One properties that will always be in
-     * this list will be "response" (the first line sent by the server in response to the request).
-     * All other properties will be as specified by the server, and <b>the property names will be
-     * converted to all lowercase letters</b>.
+     * This is the list of properties for the server and document.
+     * It is only valid after a connection has been made, since it is sent by the server to the requestor.
+     * One property that will always be in this list will be "response" (the first line sent by the server in response to the request).
+     * All other properties will be as specified by the server,
+     * and <b>the property names will be converted to all lowercase letters</b>.
      **/
-    public ewe.data.PropertyList documentProperties;
+    public ewe.data.PropertyList responseFields;
     /**
      * This is the response code from the server. It is only valid after a connection has
      * been made.
@@ -186,7 +188,7 @@ public class HttpConnection {
 	HttpConnection c = new HttpConnection(redirectTo);
 	c.keepAliveMode = keepAliveMode;
 	c.contentLength = contentLength;
-	c.getRequestorProperties().set(getRequestorProperties());
+	c.getRequestFields().set(getRequestFields());
 	c.command = command;
 	//if (command.equalsIgnoreCase("POST")) {
 	if (originalPostData != null) {
@@ -203,23 +205,23 @@ public class HttpConnection {
     }
 
     /**
-    Returns the requestor properties. These are the property commands sent to the server when the
-    connection is made. You can add directly to this OR you can call setRequestorProperty() or
-    addRequestorProperty();
+    Returns the request properties. These are the property commands sent to the server when the
+    connection is made. You can add directly to this OR you can call setRequestField() or
+    addRequestField();
      */
     //	===================================================================
-    private PropertyList getRequestorProperties()
+    private PropertyList getRequestFields()
     //	===================================================================
     {
-	if (requestorProperties == null)
-	    requestorProperties = new PropertyList();
-	return requestorProperties;
+	if (requestFields == null)
+	    requestFields = new PropertyList();
+	return requestFields;
     }
 
     /**
      * Set the data to post out as either a Stream, InputStream,byte[],ByteArray or String.
      * If the data is a Stream or InputStream then you must also call setPostDataLength()
-     * which in turn sets the "Content-Length" property of the requestor properties - otherwise
+     * which in turn sets the "Content-Length" property of the request properties - otherwise
      * if "Content-Length" is not already set it will be set to the length of the byte[] or ByteArray.
      * @param data the data to post either as a Stream, InputStream, byte[] or ByteArray
      */
@@ -232,11 +234,11 @@ public class HttpConnection {
 	else if (data instanceof ByteArray) {
 	    originalPostData = data;
 	    bytesToPost = new MemoryFile((ByteArray) data);
-	    getRequestorProperties().defaultTo("Content-Length", Convert.toString(((ByteArray) data).length));
+	    getRequestFields().defaultTo("Content-Length", Convert.toString(((ByteArray) data).length));
 	} else if (data instanceof byte[]) {
 	    originalPostData = data;
 	    bytesToPost = new MemoryFile(new ByteArray((byte[]) data));
-	    getRequestorProperties().defaultTo("Content-Length", Convert.toString(((byte[]) data).length));
+	    getRequestFields().defaultTo("Content-Length", Convert.toString(((byte[]) data).length));
 	} else if (data instanceof String) {
 	    String s = (String) data;
 	    TextCodec td = textCodec;
@@ -255,57 +257,23 @@ public class HttpConnection {
     }
 
     /**
-     * This sets the "Content-Length" requestor property to be the specified length.
-     * @param length the number of bytes to be posted.
-     * FIXME: not referenced
-     */
+    * Set an exclusive requestor property. These are sent to the web server after the initial request line.
+    * @param name The name of the property.
+    * @param property The value of the property.
+    */
     //	===================================================================
-    //	public void setPostDataLength(int length)
-    ////	===================================================================
-    //	{
-    //	getRequestorProperties().set("Content-Length",Convert.toString(length));
-    //	}
-    /**
-     * Set an exclusive requestor property. These are sent to the web server after the initial request line.
-     * @param name The name of the property.
-     * @param property The value of the property.
-     */
-    //	===================================================================
-    public void setRequestorProperty(String name, String property)
+    public void setRequestField(String name, String property)
     //	===================================================================
     {
-	getRequestorProperties().set(name, property);
+	getRequestFields().set(name, property);
     }
 
-    public void setRequestorProperty(PropertyList pl)
+    public void setRequestFields(PropertyList pl)
     //	===================================================================
     {
-	getRequestorProperties().set(pl);
+	getRequestFields().set(pl);
     }
 
-    /**
-     * Add a non-exclusive requestor property. These are sent to the web server after the initial request line.
-     * @param name The name of the property.
-     * @param property The value of the property.
-     * FIXME: not referenced
-     */
-    ////	===================================================================
-    //	public void addRequestorProperty(String name, String property)
-    ////	===================================================================
-    //	{
-    //	getRequestorProperties().add(name,property);
-    //	}
-    /**
-     * Set the default value of a requestor property. If the value is already set
-     * this will have no effect. Otherwise the value will be set to defaultValue.
-     * @param name the name of the property.
-     * @param defaultValue the value to default to.
-     * FIXME: not referenced
-     */
-    //	public void defaultRequestorProperty(String name, String defaultValue)
-    //	{
-    //	getRequestorProperties().defaultTo(name,defaultValue);
-    //	}
     protected TlsSocket openSocket;
     protected TlsSocket connectedSocket;
 
@@ -394,7 +362,7 @@ public class HttpConnection {
 
 	}
 
-	getRequestorProperties().clear();
+	getRequestFields().clear();
 	command = "GET";
     }
 
@@ -464,8 +432,8 @@ public class HttpConnection {
 	if (td == null)
 	    td = new AsciiCodec();
 	PropertyList pl = new PropertyList();
-	if (requestorProperties != null)
-	    pl.set(requestorProperties);
+	if (requestFields != null)
+	    pl.set(requestFields);
 	pl.defaultTo("Connection", "close");
 	pl.defaultTo("Host", host);
 	StringBuffer sb = new StringBuffer();
@@ -520,12 +488,12 @@ public class HttpConnection {
 	}
 	data.set(all.data, 0, all.length);
 	int got = data.split('\n', lines);
-	documentProperties = new ewe.data.PropertyList();
+	responseFields = new ewe.data.PropertyList();
 	if (got == 0)
 	    throw new IOException("No response");
 
 	String response = lines.get(0).toString();
-	documentProperties.set("response", response);
+	responseFields.set("response", response);
 	{
 	    int idx = response.indexOf(' ');
 	    if (idx != -1) {
@@ -542,9 +510,9 @@ public class HttpConnection {
 		continue;
 	    String name = s.substring(0, idx).trim().toLowerCase();
 	    String value = s.substring(idx + 1).trim();
-	    documentProperties.add(name, value);
+	    responseFields.add(name, value);
 	}
-	contentLength = documentProperties.getInt("content-length", -1);
+	contentLength = responseFields.getInt("content-length", -1);
 	return responseCode;
     }
 
@@ -586,26 +554,6 @@ public class HttpConnection {
     }
 
     /**
-     * Call this after a successful connection. If the server requested a redirect (a 3xx code) then
-     * this will return an HttpConnection to the new location which you can connect to again. You must
-     * setup any post data or requestor properties again before re-connecting.
-     * Alternatively you could also call getRedirectTo() and then if that returns a non-null
-     * String, you can call getRedirectedConnection() to get copies.
-     * If there is no redirection required or possible the method will return this same HttpConnection.
-     *
-     * FIXME: never referenced
-     */
-    ////	===================================================================
-    //	public HttpConnection redirectTo()
-    ////	===================================================================
-    //	{
-    //	if (responseCode < 300 || responseCode > 399) return this;
-    //	String newURL = documentProperties.getString("location",null);
-    //	if (newURL == null) return this;
-    //	return new HttpConnection(newURL);
-    //	}
-
-    /**
      * Call this after a success connection. If it returns a non-null String then
      * you need to redirect the connection to the new location. If this returns non-null
      * you can call getRedirectedConnection() to get a new HttpConnection that you can
@@ -616,7 +564,7 @@ public class HttpConnection {
     public String getRedirectTo() {
 	if (responseCode < 300 || responseCode > 399)
 	    return null;
-	return documentProperties.getString("location", null);
+	return responseFields.getString("location", null);
     }
 
     //	===================================================================
@@ -659,7 +607,7 @@ public class HttpConnection {
     private Handle readInData(final InputStream connection)
     //	===================================================================
     {
-	int length = documentProperties.getInt("content-length", -1);
+	int length = responseFields.getInt("content-length", -1);
 	if (length == 0)
 	    return new Handle(Handle.Succeeded, new ByteArray());
 	getInputStream();
@@ -671,7 +619,7 @@ public class HttpConnection {
      * @return A Handle with which you can monitor the connection. When the Handle
     reports Success, then the returnValue of the Handle will be a ewe.util.ByteArray
     object that holds the data read in.
-
+    
     FIXME: never referenced
      */
     //	===================================================================
@@ -689,8 +637,8 @@ public class HttpConnection {
     private InputStream getInputStream()
     //	===================================================================
     {
-	int length = documentProperties.getInt("content-length", -1);
-	if ("chunked".equals(documentProperties.getValue(encodings, null)))
+	int length = responseFields.getInt("content-length", -1);
+	if ("chunked".equals(responseFields.getValue(encodings, null)))
 	    return new MemoryStream(true) {
 		private byte[] buff = new byte[10240];
 		private int leftInBlock = 0;
@@ -792,6 +740,7 @@ public class HttpConnection {
      * this is null then a simple Ascii codec will be used.
      * @return A CharArray containing the text that was read in.
      */
+
     /*
     //===================================================================
     public CharArray readText(Socket connection,TextCodec documentTextDecoder) throws IOException
