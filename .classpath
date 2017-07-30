@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry excluding="build/" kind="src" path="src"/>
-	<classpathentry kind="lib" path="lib/GPS.jar"/>
-	<classpathentry kind="lib" path="lib/bouncycastle.jar"/>
-	<classpathentry kind="lib" path="lib/json.jar"/>
-	<classpathentry kind="lib" path="lib/jzlib.jar"/>
-	<classpathentry kind="lib" path="lib/stevesoft.jar"/>
-	<classpathentry kind="lib" path="lib/Template.jar"/>
-	<classpathentry kind="lib" path="lib/xml.jar"/>
-	<classpathentry kind="lib" path="lib/CompiledEwe.jar" sourcepath="lib/JavaEwe.jar"/>
-	<classpathentry kind="lib" path="lib/JavaEwe.jar"/>
+	<classpathentry kind="lib" path="Libraries/bouncycastle.jar"/>
+	<classpathentry kind="lib" path="Libraries/GPS.jar"/>
+	<classpathentry kind="lib" path="Libraries/json.jar"/>
+	<classpathentry kind="lib" path="Libraries/jzlib.jar"/>
+	<classpathentry kind="lib" path="Libraries/stevesoft.jar"/>
+	<classpathentry kind="lib" path="Libraries/Template.jar"/>
+	<classpathentry kind="lib" path="Libraries/xml.jar"/>
+	<classpathentry kind="lib" path="Libraries/CompiledEwe.jar"/>
+	<classpathentry kind="lib" path="Libraries/JavaEwe.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
