@@ -1,0 +1,18 @@
+<component name="libraryTable">
+  <library name="Libraries">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/Libraries/Template.jar!/" />
+      <root url="jar://$PROJECT_DIR$/Libraries/GPS.jar!/" />
+      <root url="jar://$PROJECT_DIR$/Libraries/bouncycastle.jar!/" />
+      <root url="jar://$PROJECT_DIR$/Libraries/xml.jar!/" />
+      <root url="jar://$PROJECT_DIR$/Libraries/json.jar!/" />
+      <root url="jar://$PROJECT_DIR$/Libraries/jzlib.jar!/" />
+      <root url="jar://$PROJECT_DIR$/Libraries/stevesoft.jar!/" />
+      <root url="jar://$PROJECT_DIR$/Libraries/JavaEwe.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$PROJECT_DIR$/Libraries/JavaEwe.jar!/" />
+    </SOURCES>
+  </library>
+</component>
