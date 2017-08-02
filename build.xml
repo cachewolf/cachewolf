@@ -342,9 +342,8 @@
 		<javac source="1.3" target="1.1" encoding="windows-1252"
 			classpath="./Libraries/CompiledEwe.jar:./lib/" destdir="${classes.dir}"
 			deprecation="off" nowarn="on" srcdir="src"
-			includes="CacheWolf/*.java,CacheWolf/*/*.java 
+			includes="CacheWolf/*.java,CacheWolf/*/*.java" 
 			includeantruntime="false"/>
-
 	</target>
 
 	<target name="copyppcdll" description="copy modified dll for PPC2003">
