@@ -9,6 +9,5 @@
 	<classpathentry kind="lib" path="Libraries/Template.jar"/>
 	<classpathentry kind="lib" path="Libraries/xml.jar"/>
 	<classpathentry kind="lib" path="Libraries/CompiledEwe.jar"/>
-	<classpathentry kind="lib" path="Libraries/JavaEwe.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
