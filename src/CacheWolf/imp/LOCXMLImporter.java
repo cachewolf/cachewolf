@@ -63,7 +63,7 @@ public class LOCXMLImporter extends MinML {
 	    parse(r);
 	    r.close();
 	    // save Index
-	    MainForm.profile.saveIndex(Profile.NO_SHOW_PROGRESS_BAR);
+	    MainForm.profile.saveIndex(Profile.NO_SHOW_PROGRESS_BAR, Profile.FORCESAVE);
 	    Vm.showWait(false);
 	} catch (Exception e) {
 	    Vm.showWait(false);
@@ -105,7 +105,7 @@ public class LOCXMLImporter extends MinML {
 	    }
 	    // save all (after each cache???)
 	    holder.saveCacheDetails();
-	    MainForm.profile.saveIndex(Profile.NO_SHOW_PROGRESS_BAR);
+	    MainForm.profile.saveIndex(Profile.NO_SHOW_PROGRESS_BAR, Profile.FORCESAVE);
 	    return;
 	}
 

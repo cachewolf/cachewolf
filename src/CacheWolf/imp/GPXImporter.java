@@ -198,7 +198,7 @@ public class GPXImporter extends MinML {
 		    tr.close();
 		}
 		// save Index
-		MainForm.profile.saveIndex(Profile.SHOW_PROGRESS_BAR);
+		MainForm.profile.saveIndex(Profile.SHOW_PROGRESS_BAR, Profile.FORCESAVE);
 	    }
 	} catch (Exception e) {
 	    if (holder == null) {
@@ -780,7 +780,7 @@ public class GPXImporter extends MinML {
 	    if (imgAltText == null)
 		imgAltText = imgRegexAlt.stringMatched(2);
 	} else { // no alternative text as image title -> use --- or filename
-		 // wenn von Opencaching oder geocaching ist Dateiname doch nicht so toll, weil nur aus Nummer bestehend
+		     // wenn von Opencaching oder geocaching ist Dateiname doch nicht so toll, weil nur aus Nummer bestehend
 	    if (fetchUrl.toLowerCase().indexOf("opencaching.") > 0 || fetchUrl.toLowerCase().indexOf("geocaching.com") > 0)
 		imgAltText = "---"; // no image title
 	    else

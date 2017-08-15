@@ -30,6 +30,7 @@ import CacheWolf.CoordsInput;
 import CacheWolf.MainForm;
 import CacheWolf.MainTab;
 import CacheWolf.Preferences;
+import CacheWolf.Profile;
 import CacheWolf.controls.InfoBox;
 import CacheWolf.database.CWPoint;
 import CacheWolf.database.CacheHolder;
@@ -431,7 +432,7 @@ public class GCImporter {
 		    new InfoBox(MyLocale.getMsg(5500, "Error"), infoString).wait(FormBase.OKB);
 		}
 		MainForm.profile.restoreFilter();
-		MainForm.profile.saveIndex(true);
+		MainForm.profile.saveIndex(Profile.SHOW_PROGRESS_BAR, Profile.FORCESAVE);
 		MainTab.itself.tablePanel.updateStatusBar();
 
 	    }
@@ -638,7 +639,7 @@ public class GCImporter {
 	    new InfoBox(MyLocale.getMsg(5500, "Error"), infoString).wait(FormBase.OKB);
 	}
 	MainForm.profile.restoreFilter();
-	MainForm.profile.saveIndex(true);
+	MainForm.profile.saveIndex(Profile.SHOW_PROGRESS_BAR, Profile.FORCESAVE);
 	Vm.showWait(false);
 
 	loggedIn = false; // check again login on next spider
@@ -1478,9 +1479,9 @@ public class GCImporter {
 	}
 	UrlFetcher.rememberCookies();
 	// 1.) loggedInAs
-	extractor.set(page, "<a href=\"/my/default.aspx\"", ">", 0, true).findNext();
 	String loggedInAs;
-	loggedInAs = extractor.findNext("<span>", "</span>");
+	extractor.set(page, "<span class=\"user-name\">", "</span>", 0, true);
+	loggedInAs = extractor.findNext();
 	Preferences.itself().log("[checkGCSettings]:loggedInAs= " + loggedInAs, null);
 	if (loggedInAs.length() == 0) {
 	    //Preferences.itself().log(page);
@@ -1716,7 +1717,8 @@ public class GCImporter {
 	}
 
 	UrlFetcher.clearCookies();
-	String loginPageUrl = "https://www.geocaching.com/account/login?ReturnUrl=/play";
+	String loginPageUrl = "https://www.geocaching.com/account/login?ReturnUrl=/play/search";
+	// String loginPageUrl = "https://www.geocaching.com/account/oauth/token";
 	try {
 	    WebPage = UrlFetcher.fetch(loginPageUrl); // 
 	} catch (final Exception ex) {
@@ -2582,7 +2584,7 @@ public class GCImporter {
     /**
      * Read the travelbug names from a previously fetched Cache page and then read the travelbug purpose for each travelbug
      * 
-     * @param doc
+     * @param chD
      *            The previously fetched wayPointPage
      * @return A HTML formatted string with bug names and there purpose
      */
@@ -2905,7 +2907,7 @@ public class GCImporter {
      * files of oldImages are already overwritten (by download)
      * or reused
      * 
-     * @param CacheHolderDetail chD
+     * @param chD
      *            to get reference to oldimages
      */
     private void cleanupOldImages(CacheHolderDetail chD) {

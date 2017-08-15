@@ -80,6 +80,8 @@ public class Profile {
 
     public final static boolean SHOW_PROGRESS_BAR = true;
     public final static boolean NO_SHOW_PROGRESS_BAR = false;
+    public final static boolean FORCESAVE = true;
+    public final static boolean NOFORCESAVE = false;
 
     private FilterData currentFilter = new FilterData();
     private int filterActive = Filter.FILTER_INACTIVE;
@@ -170,97 +172,99 @@ public class Profile {
     // saveIndex(pref,showprogress, Filter.filterActive,Filter.filterInverted);
     // }
     /** Save index with filter settings given */
-    public void saveIndex(boolean showprogress) {
-	ProgressBarForm pbf = new ProgressBarForm();
-	Handle h = new Handle();
-	int updFrequ = Vm.isMobile() ? 10 : 40; // Number of caches between screen updates
-	if (showprogress) {
-	    pbf.showMainTask = true;// false;
-	    pbf.setTask(h, "Saving Index");
-	    pbf.exec();
-	}
-	CacheHolder.saveAllModifiedDetails(); // this must be called first as it makes some calculations
-	PrintWriter cacheDBIndexFile;
-	CacheHolder ch;
-	try {
-	    File backup = new File(dataDir + "index.bak");
-	    if (backup.exists()) {
-		backup.delete();
+    public void saveIndex(boolean showprogress, boolean forceSave) {
+	if (hasUnsavedChanges || forceSave) {
+	    ProgressBarForm pbf = new ProgressBarForm();
+	    Handle h = new Handle();
+	    int updFrequ = Vm.isMobile() ? 10 : 40; // Number of caches between screen updates
+	    if (showprogress) {
+		pbf.showMainTask = true;// false;
+		pbf.setTask(h, "Saving Index");
+		pbf.exec();
 	    }
-	    File index = new File(dataDir + "index.xml");
-	    index.rename("index.bak");
-	} catch (Exception ex) {
-	    Preferences.itself().log("[Profile:saveIndex]Error deleting backup or renaming index.xml");
-	}
-	try {
-	    cacheDBIndexFile = new PrintWriter(new BufferedWriter(new FileWriter(new File(dataDir + "index.xml").getAbsolutePath())));
-	} catch (Exception e) {
-	    Preferences.itself().log("Problem creating index.xml " + dataDir, e);
-	    return;
-	}
-	CWPoint savedCentre = center;
-	if (center == null || !center.isValid() || (savedCentre.latDec == 0.0 && savedCentre.lonDec == 0.0))
-	    savedCentre = Preferences.itself().curCentrePt;
-
-	try {
-	    cacheDBIndexFile.print("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
-	    cacheDBIndexFile.print("<CACHELIST format=\"decimal\">\n");
-	    cacheDBIndexFile.print("    <VERSION value = \"" + Profile.CURRENTFILEFORMAT + "\"/>\n");
-	    if (savedCentre.isValid())
-		cacheDBIndexFile.print("    <CENTRE lat=\"" + savedCentre.latDec + "\" lon=\"" + savedCentre.lonDec + "\"/>\n");
-	    if (last_sync_opencaching == null || last_sync_opencaching.endsWith("null") || last_sync_opencaching.equals("")) {
-		last_sync_opencaching = "20050801000000";
-	    }
-	    if (distOC == null || distOC.endsWith("null") || distOC.equals("")) {
-		distOC = "0.0";
-	    }
-	    if (distGC == null || distGC.endsWith("null") || distGC.equals("")) {
-		distGC = "0.0";
-	    }
-	    if (minDistGC == null || minDistGC.endsWith("null") || minDistGC.equals("")) {
-		minDistGC = "0.0";
-	    }
-
-	    // If the current filter is a CacheTour filter, then save it as
-	    // normal filter, because after loading there is no cache tour defined
-	    // which could be used as filter criterium.
-	    int activeFilterForSave;
-	    if (filterActive == Filter.FILTER_CACHELIST) {
-		activeFilterForSave = Filter.FILTER_ACTIVE;
-	    } else {
-		activeFilterForSave = filterActive;
-	    }
-	    cacheDBIndexFile.print("    <FILTERCONFIG status = \"" + activeFilterForSave + (filterInverted ? "T" : "F") + "\" showBlacklist = \"" + showBlacklisted + "\" />\n");
-	    cacheDBIndexFile.print(currentFilter.toXML(""));
-	    cacheDBIndexFile.print("    <SYNCOC date = \"" + last_sync_opencaching + "\" dist = \"" + distOC + "\"/>\n");
-	    cacheDBIndexFile.print("    <SPIDERGC dist = \"" + distGC + "\" mindist = \"" + minDistGC + "\"/>\n");
-	    cacheDBIndexFile.print("    <EXPORT style = \"" + lastUsedOutputStyle + lastUsedGpxStyle + "\" to = \"" + gpxOutputTo + "\"/>\n");
-	    cacheDBIndexFile.print("    <mapspath relativeDir = \"" + SafeXML.string2Html(relativeMapsDir) + "\"/>\n");
-	    cacheDBIndexFile.print("    <TIMEZONE timeZoneOffset = \"" + timeZoneOffset + "\" timeZoneAutoDST = \"" + timeZoneAutoDST + "\"/>\n");
-	    int size = cacheDB.size();
-	    for (int i = 0; i < size; i++) {
-		if (showprogress) {
-		    h.progress = (float) i / (float) size;
-		    if ((i % updFrequ) == 0)
-			h.changed();
+	    CacheHolder.saveAllModifiedDetails(); // this must be called first as it makes some calculations
+	    PrintWriter cacheDBIndexFile;
+	    CacheHolder ch;
+	    try {
+		File backup = new File(dataDir + "index.bak");
+		if (backup.exists()) {
+		    backup.delete();
 		}
-		ch = cacheDB.get(i);
-		if (ch.getCode().length() > 0) {
-		    cacheDBIndexFile.print(ch.toXML());
-		}
+		File index = new File(dataDir + "index.xml");
+		index.rename("index.bak");
+	    } catch (Exception ex) {
+		Preferences.itself().log("[Profile:saveIndex]Error deleting backup or renaming index.xml");
 	    }
-	    cacheDBIndexFile.print("</CACHELIST>\n");
-	    cacheDBIndexFile.close();
-	    buildReferences(); // TODO Why is this needed here?
-	    if (showprogress)
-		pbf.exit(0);
-	} catch (Exception e) {
-	    Preferences.itself().log("Problem writing to index file ", e);
-	    cacheDBIndexFile.close();
-	    if (showprogress)
-		pbf.exit(0);
+	    try {
+		cacheDBIndexFile = new PrintWriter(new BufferedWriter(new FileWriter(new File(dataDir + "index.xml").getAbsolutePath())));
+	    } catch (Exception e) {
+		Preferences.itself().log("Problem creating index.xml " + dataDir, e);
+		return;
+	    }
+	    CWPoint savedCentre = center;
+	    if (center == null || !center.isValid() || (savedCentre.latDec == 0.0 && savedCentre.lonDec == 0.0))
+		savedCentre = Preferences.itself().curCentrePt;
+
+	    try {
+		cacheDBIndexFile.print("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
+		cacheDBIndexFile.print("<CACHELIST format=\"decimal\">\n");
+		cacheDBIndexFile.print("    <VERSION value = \"" + Profile.CURRENTFILEFORMAT + "\"/>\n");
+		if (savedCentre.isValid())
+		    cacheDBIndexFile.print("    <CENTRE lat=\"" + savedCentre.latDec + "\" lon=\"" + savedCentre.lonDec + "\"/>\n");
+		if (last_sync_opencaching == null || last_sync_opencaching.endsWith("null") || last_sync_opencaching.equals("")) {
+		    last_sync_opencaching = "20050801000000";
+		}
+		if (distOC == null || distOC.endsWith("null") || distOC.equals("")) {
+		    distOC = "0.0";
+		}
+		if (distGC == null || distGC.endsWith("null") || distGC.equals("")) {
+		    distGC = "0.0";
+		}
+		if (minDistGC == null || minDistGC.endsWith("null") || minDistGC.equals("")) {
+		    minDistGC = "0.0";
+		}
+
+		// If the current filter is a CacheTour filter, then save it as
+		// normal filter, because after loading there is no cache tour defined
+		// which could be used as filter criterium.
+		int activeFilterForSave;
+		if (filterActive == Filter.FILTER_CACHELIST) {
+		    activeFilterForSave = Filter.FILTER_ACTIVE;
+		} else {
+		    activeFilterForSave = filterActive;
+		}
+		cacheDBIndexFile.print("    <FILTERCONFIG status = \"" + activeFilterForSave + (filterInverted ? "T" : "F") + "\" showBlacklist = \"" + showBlacklisted + "\" />\n");
+		cacheDBIndexFile.print(currentFilter.toXML(""));
+		cacheDBIndexFile.print("    <SYNCOC date = \"" + last_sync_opencaching + "\" dist = \"" + distOC + "\"/>\n");
+		cacheDBIndexFile.print("    <SPIDERGC dist = \"" + distGC + "\" mindist = \"" + minDistGC + "\"/>\n");
+		cacheDBIndexFile.print("    <EXPORT style = \"" + lastUsedOutputStyle + lastUsedGpxStyle + "\" to = \"" + gpxOutputTo + "\"/>\n");
+		cacheDBIndexFile.print("    <mapspath relativeDir = \"" + SafeXML.string2Html(relativeMapsDir) + "\"/>\n");
+		cacheDBIndexFile.print("    <TIMEZONE timeZoneOffset = \"" + timeZoneOffset + "\" timeZoneAutoDST = \"" + timeZoneAutoDST + "\"/>\n");
+		int size = cacheDB.size();
+		for (int i = 0; i < size; i++) {
+		    if (showprogress) {
+			h.progress = (float) i / (float) size;
+			if ((i % updFrequ) == 0)
+			    h.changed();
+		    }
+		    ch = cacheDB.get(i);
+		    if (ch.getCode().length() > 0) {
+			cacheDBIndexFile.print(ch.toXML());
+		    }
+		}
+		cacheDBIndexFile.print("</CACHELIST>\n");
+		cacheDBIndexFile.close();
+		buildReferences(); // TODO Why is this needed here?
+		if (showprogress)
+		    pbf.exit(0);
+	    } catch (Exception e) {
+		Preferences.itself().log("Problem writing to index file ", e);
+		cacheDBIndexFile.close();
+		if (showprogress)
+		    pbf.exit(0);
+	    }
+	    hasUnsavedChanges = false;
 	}
-	resetUnsavedChanges();
     }
 
     /**
@@ -300,11 +304,10 @@ public class Profile {
 		    if (indexXmlVersion < CURRENTFILEFORMAT && !convertWarningAlreadyDisplayed) {
 			if (indexXmlVersion < CURRENTFILEFORMAT) {
 			    convertWarningAlreadyDisplayed = true;
-			    int res = new InfoBox(
-				    MyLocale.getMsg(144, "Warning"),
+			    int res = new InfoBox(MyLocale.getMsg(144, "Warning"),
 				    MyLocale.getMsg(4407,
 					    "The profile files are not in the current format.%0aTherefore they are now converted to the current format. Depending of the size of the profile and the computer involved this may take some minutes. Please bear with us until the conversion is done."))
-				    .wait(FormBase.YESB | FormBase.NOB);
+						    .wait(FormBase.YESB | FormBase.NOB);
 			    if (res == FormBase.IDNO) {
 				ewe.sys.Vm.exit(0);
 			    }
@@ -527,7 +530,7 @@ public class Profile {
 	    }
 	    buildReferences();
 	    if (indexXmlVersion < CURRENTFILEFORMAT) {
-		saveIndex(true);
+		saveIndex(Profile.SHOW_PROGRESS_BAR, Profile.FORCESAVE);
 	    }
 	} catch (FileNotFoundException e) {
 	    Preferences.itself().log("index.xml not found in directory " + this.dataDir, e);
@@ -660,7 +663,7 @@ public class Profile {
 			}
 		    }
 		}
-	    } else /* selectStatus==false */{
+	    } else /* selectStatus==false */ {
 		ch.isChecked = selectStatus;
 	    }
 	}

@@ -65,7 +65,7 @@ public class DataMover {
 	}
 
 	processCaches(new Deleter(MyLocale.getMsg(143, "Delete")), mode);
-	MainForm.profile.saveIndex(Profile.SHOW_PROGRESS_BAR);
+	MainForm.profile.saveIndex(Profile.SHOW_PROGRESS_BAR, Profile.FORCESAVE);
     }
 
     public void copyCaches(String targetDir) {
@@ -84,7 +84,7 @@ public class DataMover {
 	    dstProfile.readIndex(null, dstProfile.dataDir);
 	}
 	processCaches(new Copier(MyLocale.getMsg(141, "Copy"), dstProfile), mode);
-	dstProfile.saveIndex(Profile.SHOW_PROGRESS_BAR);
+	dstProfile.saveIndex(Profile.SHOW_PROGRESS_BAR, Profile.FORCESAVE);
     }
 
     public void moveCaches(String targetDir) {
@@ -103,8 +103,8 @@ public class DataMover {
 	    dstProfile.readIndex(null, dstProfile.dataDir);
 	}
 	processCaches(new Mover(MyLocale.getMsg(142, "Move"), dstProfile), mode);
-	dstProfile.saveIndex(Profile.SHOW_PROGRESS_BAR);
-	MainForm.profile.saveIndex(Profile.SHOW_PROGRESS_BAR);
+	dstProfile.saveIndex(Profile.SHOW_PROGRESS_BAR, Profile.FORCESAVE);
+	MainForm.profile.saveIndex(Profile.SHOW_PROGRESS_BAR, Profile.FORCESAVE);
     }
 
     /**

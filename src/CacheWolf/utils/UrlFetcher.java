@@ -50,7 +50,7 @@ public class UrlFetcher {
 
     public static PropertyList getDocumentProperties() {
 	if (conn != null)
-	    return conn.documentProperties;
+	    return conn.responseFields;
 	else
 	    return null;
     }
@@ -140,7 +140,7 @@ public class UrlFetcher {
 	return null;
     }
 
-    private static void addCookies2RequestorProperties() {
+    private static void addCookies2RequestFields() {
 	String value = "";
 	if (cookies == null) {
 	    cookies = new PropertyList();
@@ -155,20 +155,20 @@ public class UrlFetcher {
 	    }
 	}
 	if (value.length() > 0) {
-	    conn.setRequestorProperty("Cookie", value);
+	    conn.setRequestField("Cookie", value);
 	    //Preferences.itself().log("Cookies sent for " + conn.getHost() + " : " + value);
 	}
     }
 
-    private static void addPermanent2RequestorProperties() {
+    private static void addPermanent2RequestFields() {
 	if (permanentRequestorProperties == null)
 	    initPermanentRequestorProperty();
-	conn.setRequestorProperty(permanentRequestorProperties);
+	conn.setRequestFields(permanentRequestorProperties);
     }
 
-    private static void add2RequestorProperties() {
+    private static void add2RequestFields() {
 	if (requestorProperties != null)
-	    conn.setRequestorProperty(requestorProperties);
+	    conn.setRequestFields(requestorProperties);
     }
 
     public static void setpostData(String value) {
@@ -187,8 +187,8 @@ public class UrlFetcher {
 	ByteArray daten = fetchByteArray(address);
 	boolean gzip = false;
 	if (conn != null) {
-	    if (conn.documentProperties != null) {
-		Property p = conn.documentProperties.get("Content-Encoding");
+	    if (conn.responseFields != null) {
+		Property p = conn.responseFields.get("Content-Encoding");
 		if (p != null) {
 		    if (p.value.toString().equalsIgnoreCase("gzip")) {
 			gzip = true;
@@ -248,13 +248,13 @@ public class UrlFetcher {
 
 	conn.documentIsEncoded = isUrlEncoded(urltmp);
 
-	addPermanent2RequestorProperties();
-	addCookies2RequestorProperties();
-	add2RequestorProperties();
+	addPermanent2RequestFields();
+	addCookies2RequestFields();
+	add2RequestFields();
 
 	if (postData != null) {
 	    conn.setPostData(postData);
-	    conn.setRequestorProperty("Content-Type", "application/x-www-form-urlencoded");
+	    conn.setRequestField("Content-Type", "application/x-www-form-urlencoded");
 	}
 
 	int redirectionCounter = 0;
@@ -286,10 +286,10 @@ public class UrlFetcher {
 		}
 	    } else {
 		//  redirection
-		urltmp = conn.documentProperties.getString("location", null);
+		urltmp = conn.getRedirectTo();
 		// Preferences.itself().log("Url Redirected to " + urltmp);
 		rememberCookies();
-		addCookies2RequestorProperties();
+		addCookies2RequestFields();
 		conn.disconnect();
 		conn = conn.getRedirectedConnection(urltmp);
 		if (redirectionCounter > maxRedirections)

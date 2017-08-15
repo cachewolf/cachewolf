@@ -74,7 +74,7 @@ public class FieldnotesImporter {
 	    parse(r.readAll());
 	    r.close();
 	    // save Index
-	    MainForm.profile.saveIndex(Profile.NO_SHOW_PROGRESS_BAR);
+	    MainForm.profile.saveIndex(Profile.NO_SHOW_PROGRESS_BAR, Profile.FORCESAVE);
 	    Vm.showWait(false);
 	} catch (Exception e) {
 	    Vm.showWait(false);

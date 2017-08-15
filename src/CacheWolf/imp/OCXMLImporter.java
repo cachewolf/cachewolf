@@ -244,7 +244,7 @@ public class OCXMLImporter extends MinML {
 
 	isSyncSingle = false;
 	success = syncOC(url);
-	MainForm.profile.saveIndex(Profile.SHOW_PROGRESS_BAR);
+	MainForm.profile.saveIndex(Profile.SHOW_PROGRESS_BAR, Profile.FORCESAVE);
 	Vm.showWait(false);
 	if (success) {
 	    MainForm.profile.setLast_sync_opencaching(dateOfthisSync.format("yyyyMMddHHmmss"));

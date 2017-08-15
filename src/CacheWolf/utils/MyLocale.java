@@ -100,7 +100,7 @@ public class MyLocale {
 	if (tmp > -1)
 	    l = new Locale(tmp);
 	else
-	    l = Locale.createFor("EN", "", 0 /*Locale.FORCE_CREATION*/); // forcing the requiered language doesn't work, because Locale.numberformat and so on cannot determine the requested format then. BTW: if French is system language new Locale() works even in ewe-vm v1.49
+	    l = Locale.createFor("EN", "", 0 /*Locale.FORCE_CREATION*/); // forcing the required language doesn't work, because Locale.numberformat and so on cannot determine the requested format then. BTW: if French is system language new Locale() works even in ewe-vm v1.49
 	resourcelanguage = language_;
     }
 
