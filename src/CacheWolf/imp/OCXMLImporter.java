@@ -170,7 +170,7 @@ public class OCXMLImporter extends MinML {
 
 	picCnt = 0;
 	// Build url
-	String url = "http://" + hostname + "/xml/ocxml11.php?" + "modifiedsince=" + lastS + "&cache=1" + "&cachedesc=1";
+	String url = "https://" + hostname + "/xml/ocxml11.php?" + "modifiedsince=" + lastS + "&cache=1" + "&cachedesc=1";
 
 	if (downloadPics)
 	    url += "&picture=1";
@@ -231,7 +231,7 @@ public class OCXMLImporter extends MinML {
 	}
 	picCnt = 0;
 	// Build url
-	String url = "http://" + hostname + "/xml/ocxml11.php?" + "modifiedsince=" + lastS + "&cache=1" + "&cachedesc=1";
+	String url = "https://" + hostname + "/xml/ocxml11.php?" + "modifiedsince=" + lastS + "&cache=1" + "&cachedesc=1";
 	if (downloadPics)
 	    url += "&picture=1";
 	else
@@ -566,7 +566,7 @@ public class OCXMLImporter extends MinML {
 	    // the guid (=strData) is not part of gpx , so we use id of cacheID
 	    holder = getHolder(cacheID, true); // Allocate a new CacheHolder object
 	    holder.setIdOC(cacheID);
-	    holder.getDetails().URL = "http://" + hostname + "/viewcache.php?cacheid=" + cacheID;
+	    holder.getDetails().URL = "https://" + hostname + "/viewcache.php?cacheid=" + cacheID;
 	    return;
 	}
 	if (holder == null)
@@ -824,8 +824,8 @@ public class OCXMLImporter extends MinML {
 	    try {
 		// TODO this is not quite correct: actually the "base" URL must be known...
 		// but anyway a different baseURL should not happen very often - it doesn't in my area
-		if (!fetchUrl.startsWith("http://")) {
-		    fetchUrl = new URL(new URL("http://" + hostname + "/"), fetchUrl).toString();
+		if (!fetchUrl.startsWith("https://")) {
+		    fetchUrl = new URL(new URL("https://" + hostname + "/"), fetchUrl).toString();
 		}
 	    } catch (final MalformedURLException e) {
 		final String ErrMessage = MyLocale.getMsg(1618, "Ignoring error in cache: ") + holder.getCode() + ": ignoring MalformedUrlException: " + e.getMessage() + " while downloading from URL:" + fetchUrl;
