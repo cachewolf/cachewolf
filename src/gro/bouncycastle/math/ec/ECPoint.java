@@ -72,12 +72,12 @@ public abstract class ECPoint
 
     protected abstract boolean satisfiesCurveEquation();
 
-    /*
     public final ECPoint getDetachedPoint()
     {
+    	throw new UnsupportedClassVersionError();/*
         return normalize().detach();
-    }
-*/
+*/    }
+
     public ECCurve getCurve()
     {
         return curve;

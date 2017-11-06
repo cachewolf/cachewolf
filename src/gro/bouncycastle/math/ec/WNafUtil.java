@@ -121,7 +121,7 @@ public abstract class WNafUtil
 
         return wnaf;
     }
-/*
+
     public static byte[] generateJSF(BigInteger g, BigInteger h)
     {
         int digits = Math.max(g.bitLength(), h.bitLength()) + 1;
@@ -182,7 +182,7 @@ public abstract class WNafUtil
 
         return jsf;
     }
-*/
+
     public static byte[] generateNaf(BigInteger k)
     {
         if (k.signum() == 0)
@@ -297,12 +297,12 @@ public abstract class WNafUtil
 
         return diff.bitCount();
     }
-/*
+
     public static WNafPreCompInfo getWNafPreCompInfo(ECPoint p)
     {
         return getWNafPreCompInfo(p.getCurve().getPreCompInfo(p, PRECOMP_NAME));
     }
-*/
+
     public static WNafPreCompInfo getWNafPreCompInfo(PreCompInfo preCompInfo)
     {
         if ((preCompInfo != null) && (preCompInfo instanceof WNafPreCompInfo))
@@ -344,7 +344,7 @@ public abstract class WNafUtil
         }
         return w + 2;
     }
-/*
+
     public static ECPoint mapPointWithPrecomp(ECPoint p, int width, boolean includeNegated,
         ECPointMap pointMap)
     {
@@ -383,7 +383,7 @@ public abstract class WNafUtil
 
         return q;
     }
-*/
+
     public static WNafPreCompInfo precompute(ECPoint p, int width, boolean includeNegated)
     {
         ECCurve c = p.getCurve();

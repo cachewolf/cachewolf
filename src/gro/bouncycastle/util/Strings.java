@@ -23,7 +23,7 @@ public final class Strings
            LINE_SEPARATOR = "\n";   // we're desperate use this...
        }
     }
-/*
+
     public static String fromUTF8ByteArray(byte[] bytes)
     {
         int i = 0;
@@ -179,7 +179,7 @@ public final class Strings
      * 
      * @param string input to be converted
      * @return a US Ascii uppercase version
-     * /
+     */
     public static String toUpperCase(String string)
     {
         boolean changed = false;

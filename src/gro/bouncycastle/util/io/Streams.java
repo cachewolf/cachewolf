@@ -12,13 +12,12 @@ public final class Streams
 {
     private static int BUFFER_SIZE = 4096;
 
-    /*
     /**
      * Read stream till EOF is encountered.
      *
      * @param inStr stream to be emptied.
      * @throws IOException in case of underlying IOException.
-     * /
+     */
     public static void drain(InputStream inStr)
         throws IOException
     {
@@ -34,7 +33,7 @@ public final class Streams
      * @param inStr stream to be read.
      * @return a byte array representing the contents of inStr.
      * @throws IOException in case of underlying IOException.
-     * /
+     */
     public static byte[] readAll(InputStream inStr)
         throws IOException
     {
@@ -51,7 +50,7 @@ public final class Streams
      * @param limit maximum number of bytes that can be read.
      * @return a byte array representing the contents of inStr.
      * @throws IOException in case of underlying IOException, or if limit is reached on inStr still has data in it.
-     * /
+     */
     public static byte[] readAllLimited(InputStream inStr, int limit)
         throws IOException
     {
@@ -59,7 +58,7 @@ public final class Streams
         pipeAllLimited(inStr, limit, buf);
         return buf.toByteArray();
     }
-*/
+
     /**
      * Fully read in buf's length in data, or up to EOF, whichever occurs first,
      *
@@ -99,14 +98,14 @@ public final class Streams
         }
         return totalRead;
     }
-/*
+
     /**
      * Write the full contents of inStr to the destination stream outStr.
      *
      * @param inStr source input stream.
      * @param outStr destination output stream.
      * @throws IOException in case of underlying IOException.
-     * /
+     */
     public static void pipeAll(InputStream inStr, OutputStream outStr)
         throws IOException
     {
@@ -125,7 +124,7 @@ public final class Streams
      * @param limit the maximum number of bytes allowed to be read.
      * @param outStr destination output stream.
      * @throws IOException in case of underlying IOException, or if limit is reached on inStr still has data in it.
-     * /
+     */
     public static long pipeAllLimited(InputStream inStr, long limit, OutputStream outStr)
         throws IOException
     {
@@ -149,4 +148,4 @@ public final class Streams
     {
         buf.writeTo(output);
     }
-*/}
+}
