@@ -1,6 +1,6 @@
 package gro.bouncycastle.crypto.tls;
 
-//import gro.bouncycastle.crypto.AsymmetricBlockCipher;
+import gro.bouncycastle.crypto.AsymmetricBlockCipher;
 import gro.bouncycastle.crypto.CipherParameters;
 import gro.bouncycastle.crypto.CryptoException;
 import gro.bouncycastle.crypto.Digest;
@@ -106,7 +106,7 @@ public class TlsRSASigner
         s.init(forSigning, cp);
         return s;
     }
-/*
+
     protected AsymmetricBlockCipher createRSAImpl()
     {
         /*
@@ -114,7 +114,8 @@ public class TlsRSASigner
          * on TLS are possible, at least when the client and server are on the same LAN.
          * Accordingly, implementations that use static RSA keys MUST use RSA blinding or some other
          * anti-timing technique, as described in [TIMING].
-         * /
+         */
+    	throw new UnsupportedClassVersionError();/*
         return new PKCS1Encoding(new RSABlindedEngine());
-    }
-*/}
+*/    }
+}

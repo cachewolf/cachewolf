@@ -58,12 +58,11 @@ public class SecP256R1Point extends ECPoint.AbstractFp
         this.withCompression = withCompression;
     }
 
-    /*
     protected ECPoint detach()
     {
         return new SecP256R1Point(null, getAffineXCoord(), getAffineYCoord());
     }
-*/
+
     public ECPoint add(ECPoint b)
     {
         if (this.isInfinity())

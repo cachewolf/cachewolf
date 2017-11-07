@@ -82,9 +82,9 @@ public abstract class ECPoint
     {
         return curve;
     }
-/*
+
     protected abstract ECPoint detach();
-*/
+
     protected int getCurveCoordinateSystem()
     {
         // Cope with null curve, most commonly used by implicitlyCa

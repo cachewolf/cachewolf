@@ -333,7 +333,6 @@ public final class Strings
       {
           return LINE_SEPARATOR;
       }
-/*
     public static StringList newList()
     {
         return new StringListImpl();
@@ -342,6 +341,7 @@ public final class Strings
     private static class StringListImpl
         implements StringList
     {
+    	
         private List list = new ArrayList();
 
         public boolean add(String s)
@@ -398,4 +398,4 @@ public final class Strings
             return strs;
         }
     }
-*/}
+}

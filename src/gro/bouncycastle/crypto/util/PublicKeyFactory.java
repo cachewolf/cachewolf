@@ -47,7 +47,6 @@ import gro.bouncycastle.crypto.params.RSAKeyParameters;
  */
 public class PublicKeyFactory
 {
-    /*
 
     /**
      * Create a public key from a SubjectPublicKeyInfo encoding
@@ -55,7 +54,7 @@ public class PublicKeyFactory
      * @param keyInfoData the SubjectPublicKeyInfo encoding
      * @return the appropriate key parameter
      * @throws IOException on an error decoding the key
-     * /
+     */
     public static AsymmetricKeyParameter createKey(byte[] keyInfoData) throws IOException
     {
         return createKey(SubjectPublicKeyInfo.getInstance(ASN1Primitive.fromByteArray(keyInfoData)));
@@ -67,12 +66,12 @@ public class PublicKeyFactory
      * @param inStr the stream to read the SubjectPublicKeyInfo encoding from
      * @return the appropriate key parameter
      * @throws IOException on an error decoding the key
-     * /
+     */
     public static AsymmetricKeyParameter createKey(InputStream inStr) throws IOException
     {
         return createKey(SubjectPublicKeyInfo.getInstance(new ASN1InputStream(inStr).readObject()));
     }
-*/
+
     /**
      * Create a public key from the passed in SubjectPublicKeyInfo
      * 

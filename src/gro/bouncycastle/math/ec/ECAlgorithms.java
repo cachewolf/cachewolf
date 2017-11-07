@@ -28,9 +28,10 @@ public class ECAlgorithms
     {
         return field.getDimension() == 1;
     }
-/*
+
     public static ECPoint sumOfMultiplies(ECPoint[] ps, BigInteger[] ks)
     {
+    	throw new UnsupportedClassVersionError();/*
         if (ps == null || ks == null || ps.length != ks.length || ps.length < 1)
         {
             throw new IllegalArgumentException("point and scalar arrays should be non-null, and of equal, non-zero, length");
@@ -64,8 +65,8 @@ public class ECAlgorithms
         }
 
         return validatePoint(implSumOfMultiplies(imported, ks));
-    }
-*/
+*/    }
+
     public static ECPoint sumOfTwoMultiplies(ECPoint P, BigInteger a,
         ECPoint Q, BigInteger b)
     {
@@ -219,10 +220,11 @@ public class ECAlgorithms
         return p;
     }
 
-    /*
     static ECPoint implShamirsTrickJsf(ECPoint P, BigInteger k,
         ECPoint Q, BigInteger l)
     {
+    	throw new UnsupportedClassVersionError();/*
+    	/*
         ECCurve curve = P.getCurve();
         ECPoint infinity = curve.getInfinity();
 
@@ -255,8 +257,8 @@ public class ECAlgorithms
         }
 
         return R;
+    	 */
     }
-*/
     static ECPoint implShamirsTrickWNaf(ECPoint P, BigInteger k,
         ECPoint Q, BigInteger l)
     {
@@ -359,7 +361,6 @@ public class ECAlgorithms
 
         return R;
     }
-/*
     static ECPoint implSumOfMultiplies(ECPoint[] ps, BigInteger[] ks)
     {
         int count = ps.length;
@@ -491,4 +492,4 @@ public class ECAlgorithms
 
         return R;
     }
-*/}
+}

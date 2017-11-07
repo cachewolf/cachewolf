@@ -51,7 +51,6 @@ public class TlsUtils
     public static final long[] EMPTY_LONGS = new long[0];
 
     public static final Integer EXT_signature_algorithms = Integers.valueOf(ExtensionType.signature_algorithms);
-    /*
 
     public static void checkUint8(short i) throws IOException
     {
@@ -60,7 +59,7 @@ public class TlsUtils
             throw new TlsFatalAlert(AlertDescription.internal_error);
         }
     }
-*/
+
     public static void checkUint8(int i) throws IOException
     {
         if (!isValidUint8(i))
@@ -69,15 +68,15 @@ public class TlsUtils
             throw new TlsFatalAlert(AlertDescription.internal_error);
         */}
     }
-/*
     public static void checkUint8(long i) throws IOException
     {
+    	throw new UnsupportedClassVersionError();/*
         if (!isValidUint8(i))
         {
             throw new TlsFatalAlert(AlertDescription.internal_error);
         }
-    }
-*/
+*/    }
+
     public static void checkUint16(int i) throws IOException
     {
         if (!isValidUint16(i))
