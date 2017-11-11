@@ -164,7 +164,6 @@ public class TlsMac
         return (inputLength + digestOverhead) / digestBlockSize;
     }
 
-    /*
     protected byte[] truncate(byte[] bs)
     {
         if (bs.length <= macLength)
@@ -174,6 +173,5 @@ public class TlsMac
 
         return Arrays.copyOf(bs, macLength);
     }
-*/
 }
 

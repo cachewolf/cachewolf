@@ -51,13 +51,13 @@ public class TlsECCUtils
         extensions.put(EXT_ec_point_formats, createSupportedPointFormatsExtension(ecPointFormats));
     }
 
-    /*
     public static int[] getSupportedEllipticCurvesExtension(Hashtable extensions) throws IOException
     {
+    	throw new UnsupportedClassVersionError();/*
         byte[] extensionData = TlsUtils.getExtensionData(extensions, EXT_elliptic_curves);
         return extensionData == null ? null : readSupportedEllipticCurvesExtension(extensionData);
-    }
-*/
+*/    }
+
     public static short[] getSupportedPointFormatsExtension(Hashtable extensions) throws IOException
     {
         byte[] extensionData = TlsUtils.getExtensionData(extensions, EXT_ec_point_formats);

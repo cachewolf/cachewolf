@@ -4,7 +4,6 @@ import ewe.io.ByteArrayInputStream;
 import ewe.io.ByteArrayOutputStream;
 import ewe.io.IOException;
 import ewe.util.Hashtable;
-
 import gro.bouncycastle.util.Integers;
 
 public class TlsExtensionsUtils
@@ -23,12 +22,13 @@ public class TlsExtensionsUtils
         return extensions == null ? new Hashtable() : extensions;
     }
 
-    /*
     public static void addEncryptThenMACExtension(Hashtable extensions)
     {
+    	throw new UnsupportedClassVersionError();/*
         extensions.put(EXT_encrypt_then_mac, createEncryptThenMACExtension());
-    }
+*/    }
 
+    /*
     public static void addExtendedMasterSecretExtension(Hashtable extensions)
     {
         extensions.put(EXT_extended_master_secret, createExtendedMasterSecretExtension());
