@@ -58,13 +58,13 @@ public final class SessionParameters
         /*
         /**
          * @deprecated Use {@link #setPSKIdentity(byte[])}
-         * /
+         */
         public Builder setPskIdentity(byte[] pskIdentity)
         {
             this.pskIdentity = pskIdentity;
             return this;
         }
-*/
+
         public Builder setPSKIdentity(byte[] pskIdentity)
         {
             this.pskIdentity = pskIdentity;

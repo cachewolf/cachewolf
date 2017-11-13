@@ -342,7 +342,7 @@ public final class Strings
         implements StringList
     {
     	
-        private List list = new ArrayList();
+        private Vector list = new Vector();
 
         public boolean add(String s)
         {

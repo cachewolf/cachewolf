@@ -28,12 +28,13 @@ public class TlsExtensionsUtils
         extensions.put(EXT_encrypt_then_mac, createEncryptThenMACExtension());
 */    }
 
-    /*
     public static void addExtendedMasterSecretExtension(Hashtable extensions)
     {
+    	throw new UnsupportedClassVersionError();/*
         extensions.put(EXT_extended_master_secret, createExtendedMasterSecretExtension());
-    }
+*/    }
 
+    /*
     public static void addHeartbeatExtension(Hashtable extensions, HeartbeatExtension heartbeatExtension)
         throws IOException
     {

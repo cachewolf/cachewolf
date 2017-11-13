@@ -105,15 +105,16 @@ public class TlsUtils
         	 */    }
         }
 
-    /*
     public static void checkUint24(long i) throws IOException
     {
+    	throw new UnsupportedClassVersionError();/*
         if (!isValidUint24(i))
         {
             throw new TlsFatalAlert(AlertDescription.internal_error);
         }
-    }
+*/    }
 
+    /*
     public static void checkUint32(long i) throws IOException
     {
         if (!isValidUint32(i))

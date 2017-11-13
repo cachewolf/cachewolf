@@ -92,9 +92,9 @@ public class TlsECCUtils
         return TlsUtils.encodeUint8ArrayWithUint8Length(ecPointFormats);
     }
 
-        	/*
     public static int[] readSupportedEllipticCurvesExtension(byte[] extensionData) throws IOException
     {
+    	throw new UnsupportedClassVersionError();/*
         if (extensionData == null)
         {
             throw new IllegalArgumentException("'extensionData' cannot be null");
@@ -113,8 +113,8 @@ public class TlsECCUtils
         TlsProtocol.assertEmpty(buf);
 
         return namedCurves;
-    }
-*/
+*/    }
+
     public static short[] readSupportedPointFormatsExtension(byte[] extensionData) throws IOException
     {
         if (extensionData == null)
