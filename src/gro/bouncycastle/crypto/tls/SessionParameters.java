@@ -54,8 +54,7 @@ public final class SessionParameters
             this.peerCertificate = peerCertificate;
             return this;
         }
-
-        /*
+        
         /**
          * @deprecated Use {@link #setPSKIdentity(byte[])}
          */
@@ -129,13 +128,13 @@ public final class SessionParameters
         }
     }
 
-    /*
     public SessionParameters copy()
     {
         return new SessionParameters(cipherSuite, compressionAlgorithm, masterSecret, peerCertificate, pskIdentity,
             srpIdentity, encodedServerExtensions);
     }
 
+    /*
     public int getCipherSuite()
     {
         return cipherSuite;

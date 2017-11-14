@@ -47,12 +47,12 @@ public final class ProtocolVersion
         return this == SSLv3;
     }
 
-/*
+
     public boolean isTLS()
     {
         return getMajorVersion() == 0x03;
     }
-*/
+
     public ProtocolVersion getEquivalentTLSVersion()
     {
         if (!isDTLS())

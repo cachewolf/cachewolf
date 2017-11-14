@@ -346,7 +346,8 @@ public final class Strings
 
         public boolean add(String s)
         {
-            return list.add(s);
+            list.add(s);
+            return true;
         }
 
         public String get(int index)
@@ -356,7 +357,12 @@ public final class Strings
 
         public String set(int index, String element)
         {
-            return (String)list.set(index, element);
+        	String result = null;
+        	if (list.size () <=index){
+        		list.get(index);
+        	}
+            list.set(index, element);
+            return result;
         }
 
         public void add(int index, String element)

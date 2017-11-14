@@ -313,12 +313,12 @@ public class TlsECCUtils
             return false;
         }
     }
-/*
+
     public static boolean areOnSameCurve(ECDomainParameters a, ECDomainParameters b)
     {
         return a != null && a.equals(b);
     }
-*/
+
     public static boolean isSupportedNamedCurve(int namedCurve)
     {
         return (namedCurve > 0 && namedCurve <= CURVE_NAMES.length);
