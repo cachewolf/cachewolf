@@ -371,13 +371,13 @@ public class TlsECCUtils
         }
         return point.getEncoded(compressed);
     }
-/*
     public static byte[] serializeECPublicKey(short[] ecPointFormats, ECPublicKeyParameters keyParameters)
         throws IOException
     {
         return serializeECPoint(ecPointFormats, keyParameters.getQ());
     }
 
+    /*
     public static BigInteger deserializeECFieldElement(int fieldSize, byte[] encoding) throws IOException
     {
         int requiredLength = (fieldSize + 7) / 8;

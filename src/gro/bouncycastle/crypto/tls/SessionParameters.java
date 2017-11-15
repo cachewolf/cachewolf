@@ -134,12 +134,12 @@ public final class SessionParameters
             srpIdentity, encodedServerExtensions);
     }
 
-    /*
     public int getCipherSuite()
     {
         return cipherSuite;
     }
 
+    /*
     public short getCompressionAlgorithm()
     {
         return compressionAlgorithm;

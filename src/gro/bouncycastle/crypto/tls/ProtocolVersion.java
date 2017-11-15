@@ -75,7 +75,6 @@ public final class ProtocolVersion
         return isDTLS() ? diffMinorVersion <= 0 : diffMinorVersion >= 0;
     }
 
-    /*
     public boolean isLaterVersionOf(ProtocolVersion version)
     {
         if (getMajorVersion() != version.getMajorVersion())
@@ -85,7 +84,6 @@ public final class ProtocolVersion
         int diffMinorVersion = version.getMinorVersion() - getMinorVersion();
         return isDTLS() ? diffMinorVersion > 0 : diffMinorVersion < 0;
     }
-     */
 
     public boolean equals(Object other)
     {
