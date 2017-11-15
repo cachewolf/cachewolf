@@ -102,7 +102,7 @@ public class Rebuild {
 			    cacheXmlVersion = 1;
 			}
 			end = details.indexOf("/>", start);
-			CacheHolder ch = new CacheHolder(details.substring(start, end + 2), cacheXmlVersion);
+			CacheHolder ch = CacheHolder.fromString(details.substring(start, end + 2), cacheXmlVersion);
 			cacheDB.add(ch);
 			nAdded++;
 			Preferences.itself().log(ch.getCode() + " added. (" + nAdded + ")");

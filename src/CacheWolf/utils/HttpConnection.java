@@ -21,8 +21,7 @@ See http://www.cachewolf.de/ for more information.
  */
 package CacheWolf.utils;
 
-import org.bouncycastle.crypto.tls.AlwaysValidVerifyer;
-import org.bouncycastle.crypto.tls.TlsSocket;
+import gro.cachewolf.tls.TlsSocket;
 
 import ewe.data.Property;
 import ewe.data.PropertyList;
@@ -805,12 +804,13 @@ public class HttpConnection {
 			//
 			handle.setFlags(SocketConnected, 0);
 
-			TlsSocket tls = new TlsSocket((useSslTls ? new AlwaysValidVerifyer() : null), sock);
+			TlsSocket tls = new TlsSocket(useSslTls, sock);
 			makeRequest(tls.inputStream, tls.outputStream, serverTextDecoder);
 			handle.returnValue = connectedSocket = tls;
 			handle.setFlags(Handle.Success, 0);
 			return;
-		    } catch (Exception e) {
+		    } catch (Throwable e) {
+			e.printStackTrace();
 			if (openSocket == null) {
 			    handle.failed(e);
 			    return;

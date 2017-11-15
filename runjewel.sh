@@ -1,2 +1,2 @@
 #!/bin/sh
-java -cp lib/ewe.jar Ewe ../Ewe/programs/Jewel.ewe
+java -cp programs/ewe.jar Ewe programs/Jewel.ewe

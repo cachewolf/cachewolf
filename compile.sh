@@ -10,6 +10,7 @@ compile_cw() {
    javac \
       -source 1.3 \
       -target 1.1 \
+      -g \
       -encoding "${ENCODING}" \
       -cp ./Libraries/CompiledEwe.jar:./lib/ \
       -deprecation \
@@ -19,6 +20,11 @@ compile_cw() {
 
 compile_cw \
    -d ./bin/ \
+   ./src/gro/cachewolf/*/*.java \
+   ./src/gro/bouncycastle/*/*.java \
+   ./src/gro/bouncycastle/*/*/*.java \
+   ./src/gro/bouncycastle/*/*/*/*.java \
+   ./src/gro/bouncycastle/*/*/*/*/*.java \
    ./src/CacheWolf/*.java \
    ./src/CacheWolf/*/*/*.java \
    ./src/CacheWolf/*/*.java

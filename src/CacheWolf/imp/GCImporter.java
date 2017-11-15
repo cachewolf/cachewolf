@@ -924,7 +924,7 @@ public class GCImporter {
 		    MainTab.itself.tablePanel.updateStatusBar("working " + page_number + " / " + found_on_page);
 		    aCacheDescriptionOfListPage = lineRex.stringMatched(1);
 		    toDistance = examineCacheDescriptionOfListPage(fromDistance, toDistance);
-		    if (toDistance > 0) {
+		    if (toDistance >= 0) {
 			if (newTillNow + downloadList.size() >= maxNew - numPrivateNew) {
 			    if (updateTillNow + sureUpdateList.size() >= maxUpdate) {
 				withinMaxLimits = false;
@@ -949,7 +949,7 @@ public class GCImporter {
 		    }
 		    isThereOneMoreCacheOnTheListpage = lineRex.searchFrom(allCachesOfListPage, lineRex.matchedTo());
 		} // Loop caches on a ListPage (examine the rows of the SearchResultsTable up to MAXNROFCACHESPERLISTPAGE)
-		while (toDistance > 0 && withinMaxLimits && isThereOneMoreCacheOnTheListpage);
+		while (toDistance >= 0 && withinMaxLimits && isThereOneMoreCacheOnTheListpage);
 		infB.setInfo(MyLocale.getMsg(5511, "Found ") + (newTillNow + downloadList.size()) + " / " + (updateTillNow + sureUpdateList.size()) + MyLocale.getMsg(5512, " caches"));
 
 		if (withinMaxLimits) {
@@ -960,15 +960,15 @@ public class GCImporter {
 			// so: checking on numFinds
 			if (((page_number - 1) * MAXNROFCACHESPERLISTPAGE + found_on_page) >= numFinds) {
 			    // toDistance = 0; // last page (has less than MAXNROFCACHESPERLISTPAGE entries!?) to check reached
-			    toDistance = 0;
+			    toDistance = -1;
 			}
 		    }
 		} else {
-		    toDistance = 0;
+		    toDistance = -1;
 		    possibleUpdateList.clear();
 		}
 
-		if (toDistance > 0) {
+		if (toDistance >= 0) {
 		    // for not to do consecutive gotoNextPage for finds
 		    if (spiderAllFinds) {
 			if (page_number % pageLimit == 0) {
@@ -985,7 +985,7 @@ public class GCImporter {
 			// stop, but download new ones if possible
 			possibleUpdateList.clear();
 			found_on_page = 0;
-			toDistance = 0;
+			toDistance = -1;
 		    }
 		}
 
@@ -1170,20 +1170,25 @@ public class GCImporter {
 
     private double examineCacheDescriptionOfListPage(double fromDistance, double toDistance) {
 	double distance;
+	Preferences.itself().log ("[AP:] start examineCacheDescriptionOfListPage");
+
 	try {
 	    distance = getDistance();
+	    Preferences.itself().log ("[AP:] current distance: ["+distance+"] + toDistance: [" + toDistance + "]");
 	} catch (Exception e) {
-	    return 0;
+	    return -1;
 	}
 	if (distance >= fromDistance) { // finds have distance 0
 	    if (distance <= toDistance) {
 		final String chWaypoint = getWP();
+		Preferences.itself().log ("[AP:] examining waypoint: ["+chWaypoint+"]");
 		CacheHolder ch = MainForm.profile.cacheDB.get(chWaypoint);
 		boolean isPremiumOnly = isPremiumOnly();
 		if (Preferences.itself().havePremiumMemberRights || !isPremiumOnly) {
 		    if (ch == null) { // not in DB
 			downloadList.add(chWaypoint);
 		    } else {
+			Preferences.itself().log ("[AP:] Waypoint is in Database: ["+chWaypoint+"]");
 			if (ch.isPremiumCache() != isPremiumOnly) {
 			    ch.setIsPremiumCache(isPremiumOnly);
 			    ch.saveCacheDetails();
@@ -1193,7 +1198,9 @@ public class GCImporter {
 			    sureUpdateList.put(chWaypoint, ch);
 			}
 		    }
-		} else {
+		}
+		else {
+		    Preferences.itself().log ("[AP:] premium cache found: ["+chWaypoint+"]");
 		    // ein PremiumCache für ein BasicMember
 		    if (ch == null) {
 			if (Preferences.itself().addPremiumGC) {
@@ -1207,7 +1214,8 @@ public class GCImporter {
 			    ch.saveCacheDetails();
 			    MainForm.profile.cacheDB.add(ch);
 			}
-		    } else {
+		    }
+		    else {
 			boolean save = false;
 			possibleUpdateList.remove(chWaypoint);
 			if (updateExists(ch)) {
@@ -1225,7 +1233,7 @@ public class GCImporter {
 
 	    } else {
 		// more than toDistance away: we can stop
-		return 0;
+		return -1;
 	    }
 	} else {
 	    // less than fromDistance away: ignore the cache, but don't abort
