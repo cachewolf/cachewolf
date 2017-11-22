@@ -122,8 +122,6 @@ public abstract class TlsProtocol
     protected void handleAlertMessage(short alertLevel, short alertDescription)
         throws IOException
     {
-    	throw new UnsupportedClassVersionError();
-    	/*
         getPeer().notifyAlertReceived(alertLevel, alertDescription);
 
         if (alertLevel == AlertLevel.warning)
@@ -136,7 +134,6 @@ public abstract class TlsProtocol
 
             throw new TlsFatalAlertReceived(alertDescription);
         }
-        */
     }
 
     protected void handleAlertWarningMessage(short alertDescription)
@@ -350,11 +347,10 @@ public abstract class TlsProtocol
         {
         case ContentType.alert:
         {
-        	throw new UnsupportedClassVersionError();/*
             alertQueue.addData(buf, off, len);
             processAlertQueue();
             break;
-*/        }
+        }
         case ContentType.application_data:
         {
             if (!appDataReady)
@@ -480,19 +476,18 @@ public abstract class TlsProtocol
     private void processAlertQueue()
         throws IOException
     {
-    	throw new UnsupportedClassVersionError();/*
         while (alertQueue.available() >= 2)
         {
             /*
              * An alert is always 2 bytes. Read the alert.
-             * /
+             */
             byte[] alert = alertQueue.removeData(2, 0);
             short alertLevel = alert[0];
             short alertDescription = alert[1];
 
             handleAlertMessage(alertLevel, alertDescription);
         }
-*/    }
+    }
 
     /**
      * This method is called, when a change cipher spec message is received.

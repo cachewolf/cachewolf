@@ -53,9 +53,7 @@ public abstract class DefaultTlsClient
 */
         case KeyExchangeAlgorithm.DHE_DSS:
         case KeyExchangeAlgorithm.DHE_RSA:
-        	throw new UnsupportedClassVersionError();/*
-            return createDHEKeyExchange(keyExchangeAlgorithm);
-*/
+             return createDHEKeyExchange(keyExchangeAlgorithm);
         case KeyExchangeAlgorithm.ECDH_anon:
         case KeyExchangeAlgorithm.ECDH_ECDSA:
         case KeyExchangeAlgorithm.ECDH_RSA:
@@ -88,9 +86,8 @@ public abstract class DefaultTlsClient
 
     protected TlsKeyExchange createDHEKeyExchange(int keyExchange)
     {
-    	throw new UnsupportedClassVersionError();/*
         return new TlsDHEKeyExchange(keyExchange, supportedSignatureAlgorithms, null);
-*/    }
+    }
 
     protected TlsKeyExchange createECDHKeyExchange(int keyExchange)
     {

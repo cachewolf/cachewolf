@@ -313,6 +313,9 @@ public class HttpConnection {
     //	===================================================================
     {
 	setUrl(url);
+	//System.out.println (url);
+	//setUrl("http://de.academic.ru/pictures/dewiki/77/Museum_Beuren.jpg as gc2rydk_1.jpg");
+	//setUrl("https://s3.amazonaws.com/gs-geo-images/f1c64bba-fd44-4eeb-8d8b-bcb4ea127658.jpg");
     }
 
     public void setUrl(String url) {
