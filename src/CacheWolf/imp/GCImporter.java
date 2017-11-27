@@ -565,8 +565,7 @@ public class GCImporter {
 	if (Preferences.itself().metricSystem == Metrics.IMPERIAL) {
 	    lateralDistance = Metrics.convertUnit(maxDistance, Metrics.MILES, Metrics.KILOMETER);
 	}
-	// Load über die Kreise
-	// daher Faktor 1.2
+	// Load über die Kreise, daher Faktor 1.2
 	lateralDistance = 1.2 * lateralDistance;
 	downloadList.clear();
 

@@ -1389,7 +1389,7 @@ public class CacheHolder {
     /**
      * Initializes the caches states (and its addis) before updating, so that the "new", "updated", "log_updated" and "incomplete" properties are properly set.
      * 
-     * @param pNewCache
+     * @param isNewCache
      *            <code>true</code> if it is a new cache (i.e. a cache not existing in CacheDB), <code>false</code> otherwise.
      */
     public void initStates(boolean isNewCache) {
