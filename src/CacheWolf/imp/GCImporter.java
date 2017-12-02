@@ -203,7 +203,7 @@ public class GCImporter {
     private boolean spiderAllFinds;
 
     private static String WebPage;
-    private final static int pageLimit = 20; // immer maximal 20 Listpages prüfen, dann download bzw aktualisierung (GC meckerte sonst schon mal)
+    private final static int pageLimit = 20; // immer maximal 20 Listpages prÃ¼fen, dann download bzw aktualisierung (GC meckerte sonst schon mal)
     private int lastPageVisited;
     private int numFoundUpdates = 0;
     private int numArchivedUpdates = 0;
@@ -565,8 +565,7 @@ public class GCImporter {
 	if (Preferences.itself().metricSystem == Metrics.IMPERIAL) {
 	    lateralDistance = Metrics.convertUnit(maxDistance, Metrics.MILES, Metrics.KILOMETER);
 	}
-	// Load über die Kreise
-	// daher Faktor 1.2
+	// Load Ã¼ber die Kreise, daher Faktor 1.2
 	lateralDistance = 1.2 * lateralDistance;
 	downloadList.clear();
 
@@ -930,7 +929,7 @@ public class GCImporter {
 				withinMaxLimits = false;
 			    } else {
 				if (maxNew == 0) {
-				    // wir möchten noch updates
+				    // wir mÃ¶chten noch updates
 				} else {
 				    withinMaxLimits = false;
 				}
@@ -938,7 +937,7 @@ public class GCImporter {
 			} else {
 			    if (updateTillNow + sureUpdateList.size() >= maxUpdate) {
 				if (maxUpdate == 0) {
-				    // wir möchten noch Neue
+				    // wir mÃ¶chten noch Neue
 				} else {
 				    withinMaxLimits = false;
 				}
@@ -1012,7 +1011,7 @@ public class GCImporter {
 
 	// if (possibleUpdateList.size() == 0 // prima, alle tauchen in der sureUpdateList (Liste bei GC) auf
 	if (possibleUpdateList.size() == startSize //
-		|| possibleUpdateList.size() > maxUpdate // Restmenge zu gross, wir nehmen nur die sicher geänderten.
+		|| possibleUpdateList.size() > maxUpdate // Restmenge zu gross, wir nehmen nur die sicher geÃ¤nderten.
 	) {
 	    possibleUpdateList.clear();
 	}
@@ -1201,7 +1200,7 @@ public class GCImporter {
 		}
 		else {
 		    Preferences.itself().log ("[AP:] premium cache found: ["+chWaypoint+"]");
-		    // ein PremiumCache für ein BasicMember
+		    // ein PremiumCache fÃ¼r ein BasicMember
 		    if (ch == null) {
 			if (Preferences.itself().addPremiumGC) {
 			    numPrivateNew = numPrivateNew + 1;
@@ -1462,7 +1461,7 @@ public class GCImporter {
 	    case 5:
 		break;
 	    case 6:
-		// no correct login (Passwort falsch eingegeben oder ähnliches)
+		// no correct login (Passwort falsch eingegeben oder Ã¤hnliches)
 		if (retrycount < maxretries)
 		    retry = true;
 		else {
@@ -1638,7 +1637,7 @@ public class GCImporter {
 	    Preferences.itself().log("[recentlyviewedcaches]:Exception", ex, true);
 	    return false;
 	}
-	final String postData = "__EVENTTARGET=ctl00$ctl24$uxLocaleList$uxLocaleList$ctl" + languageCode + "$uxLocaleItem" //
+	final String postData = "__EVENTTARGET=ctl00$ctl31$uxLocaleList$uxLocaleList$ctl" + languageCode + "$uxLocaleItem" //
 		+ "&" + "__EVENTARGUMENT="//
 		+ getViewState() //
 		+ "&" + "ctl00%24ContentBody%24wp=" //
@@ -2863,7 +2862,7 @@ public class GCImporter {
 	    }
 	    spideredUrls.add(spideredName); // index spiderCounter
 	    spiderCounter++;
-	    cacheImage.setComment(""); // eigentlich überflüssig wegen constructor
+	    cacheImage.setComment(""); // eigentlich Ã¼berflÃ¼ssig wegen constructor
 	} else {
 	    // Image already spidered as wayPoint_'idxUrl'
 	    String fileName = wayPoint + "_" + idxUrl + imgType;
@@ -3242,7 +3241,7 @@ public class GCImporter {
 		r.codec = new AsciiCodec();
 		String s;
 		s = r.readLine();
-		if (s.startsWith("ï»¿")) {
+		if (s.startsWith("Ã¯Â»Â¿")) {
 		    r.close();
 		    r = new ewe.io.TextReader(_fileName);
 		    r.codec = new BetterUTF8Codec();

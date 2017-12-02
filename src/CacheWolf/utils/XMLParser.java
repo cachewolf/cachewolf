@@ -31,7 +31,12 @@ public final class XMLParser{
 		    state = PARSE_2;
 		}
 		else if (!(Character.isLetterOrDigit(ch))){
-		    state = PARSE_PRE2;
+			if (ch != '_') {
+				state = PARSE_PRE2;
+			}
+			else {
+				attrName.append(ch);
+			}
 		}
 		else{
 		    attrName.append(ch);

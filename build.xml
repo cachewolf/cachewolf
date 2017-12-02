@@ -444,7 +444,7 @@
 		if="build.cab">
 		<mkdir dir="${classes.dir}" />
 		<javac source="1.5" target="1.5" encoding="windows-1252"
-			destdir="${classes.dir}" srcdir="src" includes="build/*.java" 
+			destdir="${classes.dir}" srcdir="tools" includes="build/*.java" 
 			includeantruntime="false"/>
 	</target>
 </project>
