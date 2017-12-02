@@ -198,7 +198,7 @@ public abstract class ASN1BitString
     {
         return derForm(data, padBits);
     }
-/*
+
     public int getPadBits()
     {
         return padBits;
@@ -208,7 +208,6 @@ public abstract class ASN1BitString
     {
         return getString();
     }
-*/
     public int hashCode()
     {
     	throw new UnsupportedClassVersionError();/*
@@ -271,12 +270,11 @@ public abstract class ASN1BitString
 
         return new DERBitString(data, padBits);
     }
-/*
     public ASN1Primitive getLoadedObject()
     {
         return this.toASN1Primitive();
     }
-*/
+
     ASN1Primitive toDERObject()
     {
         return new DERBitString(data, padBits);
@@ -286,7 +284,7 @@ public abstract class ASN1BitString
     {
         return new DLBitString(data, padBits);
     }
-/*
+
     abstract void encode(ASN1OutputStream out)
         throws IOException;
-*/}
+}

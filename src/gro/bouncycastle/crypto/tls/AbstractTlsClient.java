@@ -256,7 +256,5 @@ public abstract class AbstractTlsClient
     public void notifyNewSessionTicket(NewSessionTicket newSessionTicket)
         throws IOException
     {
-    	throw new UnsupportedClassVersionError();/* 
-    	 */
     }
 }

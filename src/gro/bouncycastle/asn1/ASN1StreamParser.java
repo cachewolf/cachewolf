@@ -35,9 +35,9 @@ public class ASN1StreamParser
         this(new ByteArrayInputStream(encoding), encoding.length);
     }
 
-    /*
     ASN1Encodable readIndef(int tagValue) throws IOException
     {
+    	throw new UnsupportedClassVersionError();/*
         // Note: INDEF => CONSTRUCTED
 
         // TODO There are other tags that may be constructed (e.g. BIT_STRING)
@@ -54,10 +54,11 @@ public class ASN1StreamParser
             default:
                 throw new ASN1Exception("unknown BER object encountered: 0x" + Integer.toHexString(tagValue));
         }
-    }
+*/    }
 
     ASN1Encodable readImplicit(boolean constructed, int tag) throws IOException
     {
+    	throw new UnsupportedClassVersionError();/*
         if (_in instanceof IndefiniteLengthInputStream)
         {
             if (!constructed)
@@ -94,8 +95,8 @@ public class ASN1StreamParser
         }
 
         throw new ASN1Exception("implicit tagging not implemented");
-    }
-*/
+*/    }
+
     ASN1Primitive readTaggedObject(boolean constructed, int tag) throws IOException
     {
         if (!constructed)

@@ -44,8 +44,8 @@ import gro.bouncycastle.math.ec.custom.sec.SecP256R1Curve;
 //import gro.bouncycastle.math.ec.custom.sec.SecT409R1Curve;
 //import gro.bouncycastle.math.ec.custom.sec.SecT571K1Curve;
 //import gro.bouncycastle.math.ec.custom.sec.SecT571R1Curve;
-//import gro.bouncycastle.math.ec.endo.GLVTypeBEndomorphism;
-//import gro.bouncycastle.math.ec.endo.GLVTypeBParameters;
+import gro.bouncycastle.math.ec.endo.GLVTypeBEndomorphism;
+import gro.bouncycastle.math.ec.endo.GLVTypeBParameters;
 import gro.bouncycastle.util.Strings;
 import gro.bouncycastle.util.encoders.Hex;
 
@@ -55,14 +55,16 @@ public class CustomNamedCurves
     {
         return curve;
     }
-/*
+
     private static ECCurve configureCurveGLV(ECCurve c, GLVTypeBParameters p)
     {
         return c.configure().setEndomorphism(new GLVTypeBEndomorphism(c, p)).create();
     }
+
     /*
      * curve25519
      * /
+    /*
     static X9ECParametersHolder curve25519 = new X9ECParametersHolder()
     {
         protected X9ECParameters createParameters()
@@ -636,14 +638,14 @@ public class CustomNamedCurves
     static final Hashtable oidToCurve = new Hashtable();
     static final Hashtable oidToName = new Hashtable();
     static final Vector names = new Vector();
-/*
+
     static void defineCurve(String name, X9ECParametersHolder holder)
     {
         names.addElement(name);
         name = Strings.toLowerCase(name);
         nameToCurve.put(name, holder);
     }
-*/
+
     static void defineCurveWithOID(String name, ASN1ObjectIdentifier oid, X9ECParametersHolder holder)
     {
         names.addElement(name);
@@ -756,20 +758,21 @@ public class CustomNamedCurves
     {
         return (ASN1ObjectIdentifier)nameToOID.get(Strings.toLowerCase(name));
     }
-/*
+
     /**
      * return the named curve name represented by the given object identifier.
-     * /
+     */
     public static String getName(ASN1ObjectIdentifier oid)
     {
         return (String)oidToName.get(oid);
     }
 
+
     /**
      * returns an enumeration containing the name strings for curves contained in this structure.
-     * /
+     */
     public static Enumeration getNames()
     {
         return names.elements();
     }
-*/}
+}

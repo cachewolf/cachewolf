@@ -34,19 +34,21 @@ public class TlsExtensionsUtils
         extensions.put(EXT_extended_master_secret, createExtendedMasterSecretExtension());
 */    }
 
-    /*
     public static void addHeartbeatExtension(Hashtable extensions, HeartbeatExtension heartbeatExtension)
         throws IOException
     {
+    	throw new UnsupportedClassVersionError();/*
         extensions.put(EXT_heartbeat, createHeartbeatExtension(heartbeatExtension));
-    }
+*/    }
 
     public static void addMaxFragmentLengthExtension(Hashtable extensions, short maxFragmentLength)
         throws IOException
     {
+    	throw new UnsupportedClassVersionError();/*
         extensions.put(EXT_max_fragment_length, createMaxFragmentLengthExtension(maxFragmentLength));
-    }
+*/    }
 
+    /*
     public static void addPaddingExtension(Hashtable extensions, int dataLength)
         throws IOException
     {

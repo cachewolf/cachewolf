@@ -1062,10 +1062,9 @@ public class SECNamedCurves
     {
         return (ASN1ObjectIdentifier)objIds.get(Strings.toLowerCase(name));
     }
-/*
     /**
      * return the named curve name represented by the given object identifier.
-     * /
+     */
     public static String getName(
         ASN1ObjectIdentifier oid)
     {
@@ -1075,7 +1074,8 @@ public class SECNamedCurves
     /**
      * returns an enumeration containing the name strings for curves
      * contained in this structure.
-     * /
+     */
+/*
     public static Enumeration getNames()
     {
         return names.elements();

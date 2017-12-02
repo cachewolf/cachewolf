@@ -11,7 +11,6 @@ import ewe.util.Vector;
 
 //import org.bouncycastle.asn1.ASN1Encoding;
 import gro.bouncycastle.asn1.ASN1InputStream;
-import gro.bouncycastle.asn1.ASN1InputStreamXXX;
 import gro.bouncycastle.asn1.ASN1ObjectIdentifier;
 import gro.bouncycastle.asn1.ASN1Primitive;
 import gro.bouncycastle.asn1.nist.NISTObjectIdentifiers;
@@ -132,15 +131,15 @@ public class TlsUtils
         }
 */    }
 
-    /*
     public static void checkUint64(long i) throws IOException
     {
+    	throw new UnsupportedClassVersionError();/*
         if (!isValidUint64(i))
         {
             throw new TlsFatalAlert(AlertDescription.internal_error);
         }
-    }
-*/
+*/    }
+
     public static boolean isValidUint8(short i)
     {
         return (i & 0xFF) == i;

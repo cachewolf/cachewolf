@@ -838,18 +838,15 @@ public class TlsClientProtocol
         this.securityParameters.verifyDataLength = 12;        
     }
 
-    /*
     protected void sendCertificateVerifyMessage(DigitallySigned certificateVerify)
         throws IOException
     {
-    	throw new UnsupportedClassVersionError();
         HandshakeMessage message = new HandshakeMessage(HandshakeType.certificate_verify);
 
         certificateVerify.encode(message);
 
         message.writeToRecordStream();
     }
-     */
 
     protected void sendClientHelloMessage()
         throws IOException
