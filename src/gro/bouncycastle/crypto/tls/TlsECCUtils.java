@@ -570,13 +570,12 @@ public class TlsECCUtils
         return deserializeECFieldElement(fieldSize, TlsUtils.readOpaque8(input));
     }
 
-    /*
     public static BigInteger readECParameter(InputStream input) throws IOException
     {
         // TODO Are leading zeroes okay here?
         return new BigInteger(1, TlsUtils.readOpaque8(input));
     }
-*/
+
     public static ECDomainParameters readECParameters(int[] namedCurves, short[] ecPointFormats, InputStream input)
         throws IOException
     {

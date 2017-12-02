@@ -55,13 +55,14 @@ public class TlsExtensionsUtils
         extensions.put(EXT_padding, createPaddingExtension(dataLength));
 */    }
 
-    /*
     public static void addServerNameExtension(Hashtable extensions, ServerNameList serverNameList)
         throws IOException
     {
+    	throw new UnsupportedClassVersionError();/*
         extensions.put(EXT_server_name, createServerNameExtension(serverNameList));
-    }
+*/    }
 
+    /*
     public static void addStatusRequestExtension(Hashtable extensions, CertificateStatusRequest statusRequest)
         throws IOException
     {

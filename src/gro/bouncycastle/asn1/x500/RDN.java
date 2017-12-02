@@ -44,14 +44,13 @@ public class RDN
      */
     public RDN(ASN1ObjectIdentifier oid, ASN1Encodable value)
     {
-    	throw new UnsupportedClassVersionError();/*
         ASN1EncodableVector v = new ASN1EncodableVector();
 
         v.add(oid);
         v.add(value);
 
         this.values = new DERSet(new DERSequence(v));
-*/    }
+    }
 
     public RDN(AttributeTypeAndValue attrTAndV)
     {
