@@ -565,12 +565,12 @@ public class TlsECCUtils
         throw new TlsFatalAlert(AlertDescription.illegal_parameter);
 */    }
 
-    /*
     public static BigInteger readECFieldElement(int fieldSize, InputStream input) throws IOException
     {
         return deserializeECFieldElement(fieldSize, TlsUtils.readOpaque8(input));
     }
 
+    /*
     public static BigInteger readECParameter(InputStream input) throws IOException
     {
         // TODO Are leading zeroes okay here?

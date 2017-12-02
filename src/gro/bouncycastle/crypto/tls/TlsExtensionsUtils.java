@@ -48,13 +48,14 @@ public class TlsExtensionsUtils
         extensions.put(EXT_max_fragment_length, createMaxFragmentLengthExtension(maxFragmentLength));
 */    }
 
-    /*
     public static void addPaddingExtension(Hashtable extensions, int dataLength)
         throws IOException
     {
+    	throw new UnsupportedClassVersionError();/*
         extensions.put(EXT_padding, createPaddingExtension(dataLength));
-    }
+*/    }
 
+    /*
     public static void addServerNameExtension(Hashtable extensions, ServerNameList serverNameList)
         throws IOException
     {

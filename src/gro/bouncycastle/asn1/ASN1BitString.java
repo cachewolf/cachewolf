@@ -210,9 +210,8 @@ public abstract class ASN1BitString
     }
     public int hashCode()
     {
-    	throw new UnsupportedClassVersionError();/*
       return padBits ^ Arrays.hashCode(this.getBytes());
-*/    }
+    }
     
     protected boolean asn1Equals(        ASN1Primitive  o)
     {

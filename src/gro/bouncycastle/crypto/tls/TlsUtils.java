@@ -169,12 +169,13 @@ public class TlsUtils
     {
         return (i & 0xFFFFFF) == i;
     }
-/*
+
     public static boolean isValidUint24(long i)
     {
         return (i & 0xFFFFFFL) == i;
     }
 
+    /*
     public static boolean isValidUint32(long i)
     {
         return (i & 0xFFFFFFFFL) == i;
