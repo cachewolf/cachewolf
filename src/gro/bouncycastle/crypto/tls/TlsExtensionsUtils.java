@@ -62,13 +62,13 @@ public class TlsExtensionsUtils
         extensions.put(EXT_server_name, createServerNameExtension(serverNameList));
 */    }
 
-    /*
     public static void addStatusRequestExtension(Hashtable extensions, CertificateStatusRequest statusRequest)
         throws IOException
     {
         extensions.put(EXT_status_request, createStatusRequestExtension(statusRequest));
     }
 
+    /*
     public static void addTruncatedHMacExtension(Hashtable extensions)
     {
         extensions.put(EXT_truncated_hmac, createTruncatedHMacExtension());
