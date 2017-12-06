@@ -210,6 +210,7 @@ public class ECAlgorithms
         }
         return k.signum() < 0 ? q.negate() : q;
 */    }
+    
     public static ECPoint validatePoint(ECPoint p)
     {
         if (!p.isValid())

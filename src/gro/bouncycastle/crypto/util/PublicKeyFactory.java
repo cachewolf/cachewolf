@@ -176,6 +176,9 @@ public class PublicKeyFactory
                 {
                     x9 = ECNamedCurveTable.getByOID(oid);
                 }
+                if (x9 == null){
+                	new RuntimeException("No Curve-Algorithm for OID " + oid + " found");
+                }
                 dParams = new ECNamedDomainParameters(
                          oid, x9.getCurve(), x9.getG(), x9.getN(), x9.getH(), x9.getSeed());
             }
