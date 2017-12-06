@@ -64,6 +64,7 @@ public abstract class ECPoint
         this.y = y;
         this.zs = zs;
     }
+    
     protected boolean satisfiesCofactor()
     {
         BigInteger h = curve.getCofactor();
@@ -322,6 +323,7 @@ public abstract class ECPoint
 
         return true;
     }
+    
     public ECPoint scaleX(ECFieldElement scale)
     {
         return isInfinity()
