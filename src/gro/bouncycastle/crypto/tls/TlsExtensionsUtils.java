@@ -65,8 +65,9 @@ public class TlsExtensionsUtils
     public static void addStatusRequestExtension(Hashtable extensions, CertificateStatusRequest statusRequest)
         throws IOException
     {
+    	throw new UnsupportedClassVersionError();/*
         extensions.put(EXT_status_request, createStatusRequestExtension(statusRequest));
-    }
+*/    }
 
     /*
     public static void addTruncatedHMacExtension(Hashtable extensions)
