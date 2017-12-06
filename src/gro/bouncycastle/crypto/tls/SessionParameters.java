@@ -139,12 +139,11 @@ public final class SessionParameters
         return cipherSuite;
     }
 
-    /*
     public short getCompressionAlgorithm()
     {
         return compressionAlgorithm;
     }
-*/
+
     public byte[] getMasterSecret()
     {
         return masterSecret;

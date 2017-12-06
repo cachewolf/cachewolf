@@ -11,7 +11,6 @@ import ewe.util.Vector;
 
 //import org.bouncycastle.asn1.ASN1Encoding;
 import gro.bouncycastle.asn1.ASN1InputStream;
-import gro.bouncycastle.asn1.ASN1InputStreamXXX;
 import gro.bouncycastle.asn1.ASN1ObjectIdentifier;
 import gro.bouncycastle.asn1.ASN1Primitive;
 import gro.bouncycastle.asn1.nist.NISTObjectIdentifiers;
@@ -132,15 +131,15 @@ public class TlsUtils
         }
 */    }
 
-    /*
     public static void checkUint64(long i) throws IOException
     {
+    	throw new UnsupportedClassVersionError();/*
         if (!isValidUint64(i))
         {
             throw new TlsFatalAlert(AlertDescription.internal_error);
         }
-    }
-*/
+*/    }
+
     public static boolean isValidUint8(short i)
     {
         return (i & 0xFF) == i;
@@ -150,12 +149,11 @@ public class TlsUtils
         return (i & 0xFF) == i;
     }
 
-    /*
     public static boolean isValidUint8(long i)
     {
         return (i & 0xFFL) == i;
     }
-*/
+
     public static boolean isValidUint16(int i)
     {
         return (i & 0xFFFF) == i;
@@ -170,12 +168,13 @@ public class TlsUtils
     {
         return (i & 0xFFFFFF) == i;
     }
-/*
+
     public static boolean isValidUint24(long i)
     {
         return (i & 0xFFFFFFL) == i;
     }
 
+    /*
     public static boolean isValidUint32(long i)
     {
         return (i & 0xFFFFFFFFL) == i;
@@ -562,6 +561,7 @@ public class TlsUtils
         }
         return buf;
     }
+    
     public static byte[] readFully(int length, InputStream input)
         throws IOException
     {

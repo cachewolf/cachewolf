@@ -69,7 +69,7 @@ public class AESEngine
         (byte)140, (byte)161, (byte)137,  (byte)13, (byte)191, (byte)230,  (byte)66, (byte)104,
         (byte)65, (byte)153,  (byte)45,  (byte)15, (byte)176,  (byte)84, (byte)187,  (byte)22,
     };
-/*
+
     // The inverse S-box
     private static final byte[] Si = {
         (byte)82,   (byte)9, (byte)106, (byte)213,  (byte)48,  (byte)54, (byte)165,  (byte)56,
@@ -105,7 +105,7 @@ public class AESEngine
         (byte)23,  (byte)43,   (byte)4, (byte)126, (byte)186, (byte)119, (byte)214,  (byte)38,
         (byte)225, (byte)105,  (byte)20,  (byte)99,  (byte)85,  (byte)33,  (byte)12, (byte)125,
         };
-*/
+
     // vector used in calculating key schedule (powers of x in GF(256))
     private static final int[] rcon = {
          0x01, 0x02, 0x04, 0x08, 0x10, 0x20, 0x40, 0x80, 0x1b, 0x36, 0x6c, 0xd8, 0xab, 0x4d, 0x9a,
@@ -166,7 +166,7 @@ public class AESEngine
      0x31e6e6d7, 0xc6424284, 0xb86868d0, 0xc3414182, 0xb0999929, 
      0x772d2d5a, 0x110f0f1e, 0xcbb0b07b, 0xfc5454a8, 0xd6bbbb6d, 
      0x3a16162c};
-/*
+
 private static final int[] Tinv0 =
     {
      0x50a7f451, 0x5365417e, 0xc3a4171a, 0x965e273a, 0xcb6bab3b, 
@@ -221,7 +221,7 @@ private static final int[] Tinv0 =
      0x0c25e2bc, 0x8b493c28, 0x41950dff, 0x7101a839, 0xdeb30c08, 
      0x9ce4b4d8, 0x90c15664, 0x6184cb7b, 0x70b632d5, 0x745c6c48, 
      0x4257b8d0};
-*/
+
     private static int shift(int r, int shift)
     {
         return (r >>> shift) | (r << -shift);
@@ -598,7 +598,7 @@ private static final int[] Tinv0 =
         this.C2 = (s[r2&255]&255) ^ ((S[(r3>>8)&255]&255)<<8) ^ ((S[(r0>>16)&255]&255)<<16) ^ (S[(r1>>24)&255]<<24) ^ KW[r][2];
         this.C3 = (s[r3&255]&255) ^ ((s[(r0>>8)&255]&255)<<8) ^ ((s[(r1>>16)&255]&255)<<16) ^ (S[(r2>>24)&255]<<24) ^ KW[r][3];
     }
-/*
+
     private void decryptBlock(int[][] KW)
     {
         int t0 = this.C0 ^ KW[ROUNDS][0];
@@ -630,4 +630,4 @@ private static final int[] Tinv0 =
         this.C2 = (s[r2&255]&255) ^ ((Si[(r1>>8)&255]&255)<<8) ^ ((Si[(r0>>16)&255]&255)<<16) ^ (s[(r3>>24)&255]<<24) ^ KW[0][2];
         this.C3 = (Si[r3&255]&255) ^ ((s[(r2>>8)&255]&255)<<8) ^ ((s[(r1>>16)&255]&255)<<16) ^ (s[(r0>>24)&255]<<24) ^ KW[0][3];
     }
-*/}
+}

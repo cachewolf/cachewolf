@@ -377,7 +377,6 @@ public class TlsECCUtils
         return serializeECPoint(ecPointFormats, keyParameters.getQ());
     }
 
-    /*
     public static BigInteger deserializeECFieldElement(int fieldSize, byte[] encoding) throws IOException
     {
         int requiredLength = (fieldSize + 7) / 8;
@@ -387,7 +386,7 @@ public class TlsECCUtils
         }
         return new BigInteger(1, encoding);
     }
-*/
+
     public static ECPoint deserializeECPoint(short[] ecPointFormats, ECCurve curve, byte[] encoding) throws IOException
     {
         if (encoding == null || encoding.length < 1)
@@ -551,9 +550,9 @@ public class TlsECCUtils
         // TODO Check RFC 4492 for validation
         return key;
     }
-/*
     public static int readECExponent(int fieldSize, InputStream input) throws IOException
     {
+    	throw new UnsupportedClassVersionError();/* 
         BigInteger K = readECParameter(input);
         if (K.bitLength() < 32)
         {
@@ -564,7 +563,7 @@ public class TlsECCUtils
             }
         }
         throw new TlsFatalAlert(AlertDescription.illegal_parameter);
-    }
+*/    }
 
     public static BigInteger readECFieldElement(int fieldSize, InputStream input) throws IOException
     {
@@ -576,7 +575,7 @@ public class TlsECCUtils
         // TODO Are leading zeroes okay here?
         return new BigInteger(1, TlsUtils.readOpaque8(input));
     }
-*/
+
     public static ECDomainParameters readECParameters(int[] namedCurves, short[] ecPointFormats, InputStream input)
         throws IOException
     {

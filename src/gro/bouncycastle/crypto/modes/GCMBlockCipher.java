@@ -550,7 +550,6 @@ public class GCMBlockCipher
         totalLength += len;
     }
 
-    /*
     private void gHASH(byte[] Y, byte[] b, int len)
     {
         for (int pos = 0; pos < len; pos += BLOCK_SIZE)
@@ -559,7 +558,6 @@ public class GCMBlockCipher
             gHASHPartial(Y, b, pos, num);
         }
     }
- */
 
     private void gHASHBlock(byte[] Y, byte[] b)
     {

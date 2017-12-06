@@ -98,7 +98,7 @@ public abstract class ECPoint
      * of caller-controlled normalization.
      * 
      * @deprecated Use getAffineXCoord(), or normalize() and getXCoord(), instead
-     * /
+     */
     public ECFieldElement getX()
     {
         return normalize().getXCoord();
@@ -176,7 +176,7 @@ public abstract class ECPoint
     {
         return (index < 0 || index >= zs.length) ? null : zs[index];
     }
-/*
+
     public ECFieldElement[] getZCoords()
     {
         int zsLen = zs.length;
@@ -188,7 +188,7 @@ public abstract class ECPoint
         System.arraycopy(zs, 0, copy, 0, zsLen);
         return copy;
     }
-*/
+
     public final ECFieldElement getRawXCoord()
     {
         return x;
@@ -288,15 +288,15 @@ public abstract class ECPoint
     {
         return x == null || y == null || (zs.length > 0 && zs[0].isZero());
     }
-/*
+
     /**
      * @deprecated per-point compression property will be removed, refer {@link #getEncoded(boolean)}
-     * /
+     */
     public boolean isCompressed()
     {
         return this.withCompression;
     }
-*/
+
     public boolean isValid()
     {
         if (isInfinity())
@@ -336,7 +336,6 @@ public abstract class ECPoint
             :   getCurve().createRawPoint(getRawXCoord(), getRawYCoord().multiply(scale), getRawZCoords(), this.withCompression);
     }
 
-    /*
     public boolean equals(ECPoint other)
     {
         if (null == other)
@@ -442,12 +441,12 @@ public abstract class ECPoint
 
     /**
      * @deprecated per-point compression property will be removed, refer {@link #getEncoded(boolean)}
-     * /
+     */
     public byte[] getEncoded()
     {
         return getEncoded(this.withCompression);
     }
-*/
+
     /**
      * Get an encoding of the point value, optionally in compressed format.
      * 
@@ -482,9 +481,9 @@ public abstract class ECPoint
         System.arraycopy(Y, 0, PO, X.length + 1, Y.length);
         return PO;
     }
-/*
+
     protected abstract boolean getCompressionYTilde();
-*/
+
     public abstract ECPoint add(ECPoint b);
 
     public abstract ECPoint negate();
@@ -512,12 +511,12 @@ public abstract class ECPoint
         return twice().add(b);
     }
 
-    /*
+
     public ECPoint threeTimes()
     {
         return twicePlus(this);
     }
-*/
+
     /**
      * Multiplies this <code>ECPoint</code> by the given number.
      * @param k The multiplicator.

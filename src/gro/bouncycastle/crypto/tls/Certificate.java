@@ -64,16 +64,16 @@ public class Certificate
     {
         return certificateList.length == 0;
     }
-/*
     /**
      * Encode this {@link Certificate} to an {@link OutputStream}.
      *
      * @param output the {@link OutputStream} to encode to.
      * @throws IOException
-     * /
+     */
     public void encode(OutputStream output)
         throws IOException
     {
+    	throw new UnsupportedClassVersionError();/*
         Vector derEncodings = new Vector(this.certificateList.length);
 
         int totalLength = 0;
@@ -92,8 +92,8 @@ public class Certificate
             byte[] derEncoding = (byte[])derEncodings.elementAt(i);
             TlsUtils.writeOpaque24(derEncoding, output);
         }
-    }
-*/
+*/    }
+
     /**
      * Parse a {@link Certificate} from an {@link InputStream}.
      *
@@ -129,11 +129,11 @@ public class Certificate
         }
         return new Certificate(certificateList);
     }
-/*
-    protected org.bouncycastle.asn1.x509.Certificate[] cloneCertificateList()
+
+    protected gro.bouncycastle.asn1.x509.Certificate[] cloneCertificateList()
     {
-        org.bouncycastle.asn1.x509.Certificate[] result = new org.bouncycastle.asn1.x509.Certificate[certificateList.length];
+        gro.bouncycastle.asn1.x509.Certificate[] result = new gro.bouncycastle.asn1.x509.Certificate[certificateList.length];
         System.arraycopy(certificateList, 0, result, 0, result.length);
         return result;
     }
-*/}
+}

@@ -6,7 +6,7 @@ import ewe.util.Hashtable;
 import gro.bouncycastle.asn1.ASN1Encodable;
 import gro.bouncycastle.asn1.ASN1ObjectIdentifier;
 import gro.bouncycastle.asn1.ASN1ParsingException;
-//import gro.bouncycastle.asn1.DERUTF8String;
+import gro.bouncycastle.asn1.DERUTF8String;
 //import gro.bouncycastle.asn1.x500.AttributeTypeAndValue;
 import gro.bouncycastle.asn1.x500.RDN;
 import gro.bouncycastle.asn1.x500.X500Name;
@@ -40,14 +40,12 @@ public abstract class AbstractX500NameStyle
 
         return newTable;
     }
-/*
     private int calcHashCode(ASN1Encodable enc)
     {
         String value = IETFUtils.valueToString(enc);
         value = IETFUtils.canonicalize(value);
         return value.hashCode();
     }
-*/
     public int calculateHashCode(X500Name name)
     {
     	throw new UnsupportedClassVersionError();/*
@@ -127,12 +125,11 @@ public abstract class AbstractX500NameStyle
      * @param value the String representation of the value
      * @return a the value encoded into a ASN.1 object. Never returns <code>null</code>.
      */
-     /*
     protected ASN1Encodable encodeStringValue(ASN1ObjectIdentifier oid, String value)
     {
         return new DERUTF8String(value);
     }
-*/
+
     public boolean areEqual(X500Name name1, X500Name name2)
     {
     	throw new UnsupportedClassVersionError();/*
@@ -161,9 +158,9 @@ public abstract class AbstractX500NameStyle
 
         return true;
 */    }
-/*
     private boolean foundMatch(boolean reverse, RDN rdn, RDN[] possRDNs)
     {
+    	throw new UnsupportedClassVersionError();/*
         if (reverse)
         {
             for (int i = possRDNs.length - 1; i >= 0; i--)
@@ -188,10 +185,10 @@ public abstract class AbstractX500NameStyle
         }
 
         return false;
-    }
+*/    }
 
     protected boolean rdnAreEqual(RDN rdn1, RDN rdn2)
     {
         return IETFUtils.rDNAreEqual(rdn1, rdn2);
     }
-*/}
+}

@@ -149,7 +149,6 @@ public abstract class AbstractTlsKeyExchange
             throw new TlsFatalAlert(AlertDescription.unexpected_message);
         }
     }
-/*
     public void processServerKeyExchange(InputStream input)
         throws IOException
     {
@@ -158,12 +157,12 @@ public abstract class AbstractTlsKeyExchange
             throw new TlsFatalAlert(AlertDescription.unexpected_message);
         }
     }
-*/
+
     public void skipClientCredentials()
         throws IOException
     {
     }
-/*
+
     public void processClientCertificate(Certificate clientCertificate)
         throws IOException
     {
@@ -175,4 +174,4 @@ public abstract class AbstractTlsKeyExchange
         // Key exchange implementation MUST support client key exchange
         throw new TlsFatalAlert(AlertDescription.internal_error);
     }
-*/}
+}
