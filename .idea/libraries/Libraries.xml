@@ -3,7 +3,6 @@
     <CLASSES>
       <root url="jar://$PROJECT_DIR$/Libraries/Template.jar!/" />
       <root url="jar://$PROJECT_DIR$/Libraries/GPS.jar!/" />
-      <root url="jar://$PROJECT_DIR$/Libraries/bouncycastle.jar!/" />
       <root url="jar://$PROJECT_DIR$/Libraries/xml.jar!/" />
       <root url="jar://$PROJECT_DIR$/Libraries/json.jar!/" />
       <root url="jar://$PROJECT_DIR$/Libraries/jzlib.jar!/" />
