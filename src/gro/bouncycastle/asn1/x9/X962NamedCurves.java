@@ -1,6 +1,6 @@
 package gro.bouncycastle.asn1.x9;
 
-import ewe.math.BigInteger;
+import gro.math.BigInteger;
 import ewe.util.Enumeration;
 import ewe.util.Hashtable;
 import gro.bouncycastle.asn1.ASN1ObjectIdentifier;

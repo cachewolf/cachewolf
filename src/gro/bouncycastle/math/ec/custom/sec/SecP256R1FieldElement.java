@@ -1,6 +1,6 @@
 package gro.bouncycastle.math.ec.custom.sec;
 
-import ewe.math.BigInteger;
+import gro.math.BigInteger;
 
 import gro.bouncycastle.math.ec.ECFieldElement;
 import gro.bouncycastle.math.raw.Mod;

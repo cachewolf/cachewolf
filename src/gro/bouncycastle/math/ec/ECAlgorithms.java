@@ -1,6 +1,6 @@
 package gro.bouncycastle.math.ec;
 
-import ewe.math.BigInteger;
+import gro.math.BigInteger;
 import gro.bouncycastle.math.ec.endo.ECEndomorphism;
 import gro.bouncycastle.math.ec.endo.GLVEndomorphism;
 import gro.bouncycastle.math.field.FiniteField;

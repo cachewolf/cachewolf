@@ -1,6 +1,6 @@
 package gro.bouncycastle.crypto.generators;
 
-import ewe.math.BigInteger;
+import gro.math.BigInteger;
 import ewe.security.SecureRandom;
 
 import gro.bouncycastle.crypto.params.DHParameters;

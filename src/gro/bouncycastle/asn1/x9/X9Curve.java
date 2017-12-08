@@ -1,6 +1,6 @@
 package gro.bouncycastle.asn1.x9;
 
-import ewe.math.BigInteger;
+import gro.math.BigInteger;
 
 import gro.bouncycastle.asn1.ASN1EncodableVector;
 import gro.bouncycastle.asn1.ASN1Integer;

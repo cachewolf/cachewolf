@@ -1,6 +1,6 @@
 package gro.bouncycastle.crypto;
 
-import ewe.math.BigInteger;
+import gro.math.BigInteger;
 
 /**
  * The basic interface that basic Diffie-Hellman implementations

@@ -1,6 +1,6 @@
 package gro.bouncycastle.crypto.params;
 
-import ewe.math.BigInteger;
+import gro.math.BigInteger;
 
 import gro.bouncycastle.math.ec.ECConstants;
 import gro.bouncycastle.math.ec.ECCurve;

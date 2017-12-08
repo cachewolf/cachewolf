@@ -1,6 +1,6 @@
 package gro.bouncycastle.crypto.ec;
 
-import ewe.math.BigInteger;
+import gro.math.BigInteger;
 import ewe.util.Enumeration;
 import ewe.util.Hashtable;
 import ewe.util.Vector;

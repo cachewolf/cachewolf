@@ -4,7 +4,7 @@ import ewe.io.ByteArrayInputStream;
 import ewe.io.IOException;
 import ewe.io.InputStream;
 import ewe.io.OutputStream;
-import ewe.math.BigInteger;
+import gro.math.BigInteger;
 import ewe.security.SecureRandom;
 import ewe.util.Hashtable;
 import gro.bouncycastle.crypto.AsymmetricCipherKeyPair;
@@ -505,4 +505,5 @@ public class TlsDHUtils
     {
         TlsUtils.writeOpaque16(BigIntegers.asUnsignedByteArray(x), output);
     }
+
 }

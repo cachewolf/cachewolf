@@ -1,6 +1,6 @@
 package gro.bouncycastle.util;
 
-import ewe.math.BigInteger;
+import gro.math.BigInteger;
 import ewe.security.SecureRandom;
 
 /**

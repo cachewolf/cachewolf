@@ -1,6 +1,6 @@
 package gro.bouncycastle.crypto.engines;
 
-import ewe.math.BigInteger;
+import gro.math.BigInteger;
 import ewe.security.SecureRandom;
 import gro.bouncycastle.crypto.AsymmetricBlockCipher;
 import gro.bouncycastle.crypto.CipherParameters;

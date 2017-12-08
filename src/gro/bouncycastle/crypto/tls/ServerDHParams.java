@@ -3,7 +3,7 @@ package gro.bouncycastle.crypto.tls;
 import ewe.io.IOException;
 import ewe.io.InputStream;
 import ewe.io.OutputStream;
-import ewe.math.BigInteger;
+import gro.math.BigInteger;
 import gro.bouncycastle.crypto.params.DHParameters;
 import gro.bouncycastle.crypto.params.DHPublicKeyParameters;
 

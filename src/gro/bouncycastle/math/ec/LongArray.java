@@ -2,7 +2,7 @@ package gro.bouncycastle.math.ec;
 
 import gro.bouncycastle.util.Arrays;
 
-import ewe.math.BigInteger;
+import gro.math.BigInteger;
 
 class LongArray implements Cloneable
 {

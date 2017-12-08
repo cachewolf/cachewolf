@@ -1,6 +1,6 @@
 package gro.bouncycastle.math.ec;
 
-import ewe.math.BigInteger;
+import gro.math.BigInteger;
 
 /**
  * Class representing an element of <code><b>Z</b>[&tau;]</code>. Let

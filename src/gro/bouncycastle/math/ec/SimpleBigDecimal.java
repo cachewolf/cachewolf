@@ -1,6 +1,6 @@
 package gro.bouncycastle.math.ec;
 
-import ewe.math.BigInteger;
+import gro.math.BigInteger;
 
 /**
  * Class representing a simple version of a big decimal. A

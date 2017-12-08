@@ -1,6 +1,6 @@
 package gro.bouncycastle.math.ec.endo;
 
-import ewe.math.BigInteger;
+import gro.math.BigInteger;
 import gro.bouncycastle.math.ec.ECConstants;
 import gro.bouncycastle.math.ec.ECCurve;
 import gro.bouncycastle.math.ec.ECPointMap;

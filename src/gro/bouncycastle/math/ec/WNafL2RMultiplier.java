@@ -1,6 +1,6 @@
 package gro.bouncycastle.math.ec;
 
-import ewe.math.BigInteger;
+import gro.math.BigInteger;
 
 /**
  * Class implementing the WNAF (Window Non-Adjacent Form) multiplication

@@ -1,6 +1,6 @@
 package gro.bouncycastle.crypto.agreement;
 
-import ewe.math.BigInteger;
+import gro.math.BigInteger;
 
 import gro.bouncycastle.crypto.BasicAgreement;
 import gro.bouncycastle.crypto.CipherParameters;

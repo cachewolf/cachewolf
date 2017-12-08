@@ -1,6 +1,6 @@
 package gro.bouncycastle.math.raw;
 
-import ewe.math.BigInteger;
+import gro.math.BigInteger;
 
 import gro.bouncycastle.util.Pack;
 

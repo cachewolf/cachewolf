@@ -1,6 +1,6 @@
 package gro.bouncycastle.crypto.signers;
 
-import ewe.math.BigInteger;
+import gro.math.BigInteger;
 import ewe.security.SecureRandom;
 import gro.bouncycastle.crypto.Digest;
 import gro.bouncycastle.crypto.macs.HMac;

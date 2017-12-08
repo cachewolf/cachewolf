@@ -21,6 +21,7 @@ compile_cw() {
 compile_cw \
    -d ./bin/ \
    ./src/gro/cachewolf/*/*.java \
+   ./src/gro/math/*.java \
    ./src/gro/bouncycastle/*/*.java \
    ./src/gro/bouncycastle/*/*/*.java \
    ./src/gro/bouncycastle/*/*/*/*.java \

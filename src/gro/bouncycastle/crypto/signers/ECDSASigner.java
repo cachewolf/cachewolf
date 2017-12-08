@@ -1,6 +1,7 @@
 package gro.bouncycastle.crypto.signers;
 
-import ewe.math.BigInteger;
+//import CacheWolf.*;
+import gro.math.BigInteger;
 import ewe.security.SecureRandom;
 import gro.bouncycastle.crypto.CipherParameters;
 import gro.bouncycastle.crypto.DSA;
@@ -156,6 +157,8 @@ public class ECDSASigner
             return false;
         }
 
+    	//Preferences.itself().log("Calculating inverse mod for: " + n, null);
+        
         BigInteger c = s.modInverse(n);
 
         BigInteger u1 = e.multiply(c).mod(n);

@@ -1163,7 +1163,7 @@ public class Preferences extends MinML {
     }
 
     public void writeLogHeader() {
-	log("CW Version " + Version.getReleaseDetailed(), null, true);
+	log("CW Entwickler Version " + Version.getReleaseDetailed(), null, true);
 	if (System.getProperty("os.name") != null)
 	    log("Operating system: " + System.getProperty("os.name") + "/" + System.getProperty("os.arch"), null, true);
 	if (System.getProperty("java.vendor") != null)

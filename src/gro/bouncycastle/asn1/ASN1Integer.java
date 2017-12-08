@@ -1,9 +1,7 @@
 package gro.bouncycastle.asn1;
 
-import java.nio.channels.UnsupportedAddressTypeException;
-
 import ewe.io.IOException;
-import ewe.math.BigInteger;
+import gro.math.BigInteger;
 import gro.bouncycastle.util.Arrays;
 import gro.bouncycastle.util.Properties;
 

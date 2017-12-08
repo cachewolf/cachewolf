@@ -1,6 +1,6 @@
 package gro.bouncycastle.math.ec.endo;
 
-import ewe.math.BigInteger;
+import gro.math.BigInteger;
 
 public interface GLVEndomorphism extends ECEndomorphism
 {

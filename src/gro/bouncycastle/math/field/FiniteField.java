@@ -1,6 +1,6 @@
 package gro.bouncycastle.math.field;
 
-import ewe.math.BigInteger;
+import gro.math.BigInteger;
 
 public interface FiniteField
 {

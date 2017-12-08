@@ -1,6 +1,6 @@
 package gro.bouncycastle.math.ec;
 
-import ewe.math.BigInteger;
+import gro.math.BigInteger;
 import ewe.util.Random;
 import gro.bouncycastle.math.raw.Mod;
 import gro.bouncycastle.math.raw.Nat;

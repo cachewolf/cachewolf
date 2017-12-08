@@ -6,7 +6,7 @@ import gro.bouncycastle.crypto.params.ParametersWithRandom;
 import gro.bouncycastle.crypto.params.RSAKeyParameters;
 import gro.bouncycastle.crypto.params.RSAPrivateCrtKeyParameters;
 
-import ewe.math.BigInteger;
+import gro.math.BigInteger;
 
 /**
  * this does your basic RSA algorithm.

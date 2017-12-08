@@ -8,7 +8,7 @@ import gro.bouncycastle.crypto.params.DHParameters;
 import gro.bouncycastle.crypto.params.DHPrivateKeyParameters;
 import gro.bouncycastle.crypto.params.DHPublicKeyParameters;
 
-import ewe.math.BigInteger;
+import gro.math.BigInteger;
 
 /**
  * a basic Diffie-Hellman key pair generator.

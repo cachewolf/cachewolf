@@ -2,7 +2,7 @@ package gro.bouncycastle.asn1;
 
 import ewe.io.ByteArrayOutputStream;
 import ewe.io.IOException;
-import ewe.math.BigInteger;
+import gro.math.BigInteger;
 import ewe.util.Hashtable;
 //import ewe.util.HashMap;
 import ewe.util.Map;

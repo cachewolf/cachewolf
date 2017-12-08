@@ -1,6 +1,6 @@
 package gro.bouncycastle.crypto.params;
 
-import ewe.math.BigInteger;
+import gro.math.BigInteger;
 
 import gro.bouncycastle.asn1.ASN1ObjectIdentifier;
 import gro.bouncycastle.math.ec.ECCurve;

@@ -4,7 +4,7 @@ import ewe.io.ByteArrayOutputStream;
 import ewe.io.IOException;
 import ewe.io.InputStream;
 import ewe.io.OutputStream;
-import ewe.math.BigInteger;
+import gro.math.BigInteger;
 import ewe.util.Vector;
 import gro.bouncycastle.asn1.x509.KeyUsage;
 import gro.bouncycastle.asn1.x509.SubjectPublicKeyInfo;

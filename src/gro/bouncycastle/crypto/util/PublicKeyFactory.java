@@ -2,7 +2,7 @@ package gro.bouncycastle.crypto.util;
 
 import ewe.io.IOException;
 import ewe.io.InputStream;
-import ewe.math.BigInteger;
+import gro.math.BigInteger;
 import gro.bouncycastle.asn1.ASN1Encodable;
 import gro.bouncycastle.asn1.ASN1InputStream;
 import gro.bouncycastle.asn1.ASN1Integer;
