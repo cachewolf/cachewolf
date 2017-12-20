@@ -591,53 +591,57 @@ public abstract class Nat
     public static int shiftDownBits(int len, int[] z, int bits, int c)
     {
 //        assert bits > 0 && bits < 32;
+	int bitsToShift = -bits & 0x1f;
         int i = len;
         while (--i >= 0)
         {
             int next = z[i];
-            z[i] = (next >>> bits) | (c << -bits);
+            z[i] = (next >>> bits) | (c << bitsToShift);
             c = next;
         }
-        return c << -bits;
+        return c << bitsToShift;
     }
 
     public static int shiftDownBits(int len, int[] z, int zOff, int bits, int c)
     {
 //        assert bits > 0 && bits < 32;
+	int bitsToShift = -bits & 0x1f;
         int i = len;
         while (--i >= 0)
         {
             int next = z[zOff + i];
-            z[zOff + i] = (next >>> bits) | (c << -bits);
+            z[zOff + i] = (next >>> bits) | (c << bitsToShift);
             c = next;
         }
-        return c << -bits;
+        return c << bitsToShift;
     }
 
     public static int shiftDownBits(int len, int[] x, int bits, int c, int[] z)
     {
 //        assert bits > 0 && bits < 32;
+	int bitsToShift = -bits & 0x1f;
         int i = len;
         while (--i >= 0)
         {
             int next = x[i];
-            z[i] = (next >>> bits) | (c << -bits);
+            z[i] = (next >>> bits) | (c << bitsToShift);
             c = next;
         }
-        return c << -bits;
+        return c << bitsToShift;
     }
 
     public static int shiftDownBits(int len, int[] x, int xOff, int bits, int c, int[] z, int zOff)
     {
 //        assert bits > 0 && bits < 32;
+	int bitsToShift = -bits & 0x1f;
         int i = len;
         while (--i >= 0)
         {
             int next = x[xOff + i];
-            z[zOff + i] = (next >>> bits) | (c << -bits);
+            z[zOff + i] = (next >>> bits) | (c << bitsToShift);
             c = next;
         }
-        return c << -bits;
+        return c << bitsToShift;
     }
 
     public static int shiftDownWord(int len, int[] z, int c)
@@ -710,73 +714,79 @@ public abstract class Nat
     public static int shiftUpBits(int len, int[] z, int bits, int c)
     {
 //        assert bits > 0 && bits < 32;
+	int bitsToShift = -bits & 0x1f;
         for (int i = 0; i < len; ++i)
         {
             int next = z[i];
-            z[i] = (next << bits) | (c >>> -bits);
+            z[i] = (next << bits) | (c >>> bitsToShift);
             c = next;
         }
-        return c >>> -bits;
+        return c >>> bitsToShift;
     }
 
     public static int shiftUpBits(int len, int[] z, int zOff, int bits, int c)
     {
 //        assert bits > 0 && bits < 32;
+	int bitsToShift = -bits & 0x1f;
         for (int i = 0; i < len; ++i)
         {
             int next = z[zOff + i];
-            z[zOff + i] = (next << bits) | (c >>> -bits);
+            z[zOff + i] = (next << bits) | (c >>> bitsToShift);
             c = next;
         }
-        return c >>> -bits;
+        return c >>> bitsToShift;
     }
 
     public static long shiftUpBits64(int len, long[] z, int zOff, int bits, long c)
     {
 //        assert bits > 0 && bits < 64;
+	int bitsToShift = -bits & 0x3f;
         for (int i = 0; i < len; ++i)
         {
             long next = z[zOff + i];
-            z[zOff + i] = (next << bits) | (c >>> -bits);
+            z[zOff + i] = (next << bits) | (c >>> bitsToShift);
             c = next;
         }
-        return c >>> -bits;
+        return c >>> bitsToShift;
     }
 
     public static int shiftUpBits(int len, int[] x, int bits, int c, int[] z)
     {
 //        assert bits > 0 && bits < 32;
+	int bitsToShift = -bits & 0x1f;
         for (int i = 0; i < len; ++i)
         {
             int next = x[i];
-            z[i] = (next << bits) | (c >>> -bits);
+            z[i] = (next << bits) | (c >>> bitsToShift);
             c = next;
         }
-        return c >>> -bits;
+        return c >>> bitsToShift;
     }
 
     public static int shiftUpBits(int len, int[] x, int xOff, int bits, int c, int[] z, int zOff)
     {
 //        assert bits > 0 && bits < 32;
+	int bitsToShift = -bits & 0x1f;
         for (int i = 0; i < len; ++i)
         {
             int next = x[xOff + i];
-            z[zOff + i] = (next << bits) | (c >>> -bits);
+            z[zOff + i] = (next << bits) | (c >>> bitsToShift);
             c = next;
         }
-        return c >>> -bits;
+        return c >>> bitsToShift;
     }
 
     public static long shiftUpBits64(int len, long[] x, int xOff, int bits, long c, long[] z, int zOff)
     {
 //        assert bits > 0 && bits < 64;
+	int bitsToShift = -bits & 0x3f;
         for (int i = 0; i < len; ++i)
         {
             long next = x[xOff + i];
-            z[zOff + i] = (next << bits) | (c >>> -bits);
+            z[zOff + i] = (next << bits) | (c >>> bitsToShift);
             c = next;
         }
-        return c >>> -bits;
+        return c >>> bitsToShift;
     }
 
     public static void square(int len, int[] x, int[] zz)
