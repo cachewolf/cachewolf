@@ -1637,7 +1637,7 @@ public class GCImporter {
 	    Preferences.itself().log("[recentlyviewedcaches]:Exception", ex, true);
 	    return false;
 	}
-	final String postData = "__EVENTTARGET=ctl00$ctl31$uxLocaleList$uxLocaleList$ctl" + languageCode + "$uxLocaleItem" //
+	final String postData = "__EVENTTARGET=ctl00$ctl30$uxLocaleList$uxLocaleList$ctl" + languageCode + "$uxLocaleItem" //
 		+ "&" + "__EVENTARGUMENT="//
 		+ getViewState() //
 		+ "&" + "ctl00%24ContentBody%24wp=" //
