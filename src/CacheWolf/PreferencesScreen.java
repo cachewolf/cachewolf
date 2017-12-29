@@ -183,7 +183,7 @@ public class PreferencesScreen extends Form {
 		break;
 	    }
 	}
-	UserDataPanel.addNext(new mLabel(MyLocale.getMsg(658, "GC account:")), DONTSTRETCH, DONTFILL | LEFT);
+	UserDataPanel.addNext(new mLabel(MyLocale.getMsg(658, "Spider as:")), DONTSTRETCH, DONTFILL | LEFT);
 	UserDataPanel.addLast(this.inpGCUser = new mChoice(gcLogins, selectedLogin), STRETCH, HFILL);
 
 	pnlGeneral.addLast(UserDataPanel, HSTRETCH, HFILL);
