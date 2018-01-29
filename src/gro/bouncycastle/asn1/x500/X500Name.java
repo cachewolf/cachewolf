@@ -170,7 +170,6 @@ public class X500Name
      */
     public ASN1ObjectIdentifier[] getAttributeTypes()
     {
-throw new UnsupportedClassVersionError();/*
     	int   count = 0;
 
         for (int i = 0; i != rdns.length; i++)
@@ -203,7 +202,7 @@ throw new UnsupportedClassVersionError();/*
         }
 
         return res;
-*/    }
+    }
 
     /**
      * return an array of RDNs containing the attribute type given by OID in structure order.
@@ -213,7 +212,6 @@ throw new UnsupportedClassVersionError();/*
      */
     public RDN[] getRDNs(ASN1ObjectIdentifier attributeType)
     {
-    	throw new UnsupportedClassVersionError();/*
         RDN[] res = new RDN[rdns.length];
         int   count = 0;
 
@@ -235,13 +233,15 @@ throw new UnsupportedClassVersionError();/*
             }
             else
             {
-                if (rdn.getFirst().getType().equals(attributeType))
+              	throw new UnsupportedClassVersionError();/*
+                                if (rdn.getFirst().getType().equals(attributeType))
                 {
                     res[count++] = rdn;
                 }
-            }
+*/            }
         }
 
+        	throw new UnsupportedClassVersionError();/*
         RDN[] tmp = new RDN[count];
 
         System.arraycopy(res, 0, tmp, 0, tmp.length);

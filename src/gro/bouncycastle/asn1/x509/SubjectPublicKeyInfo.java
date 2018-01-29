@@ -51,10 +51,9 @@ public class SubjectPublicKeyInfo
         ASN1Encodable       publicKey)
         throws IOException
     {
-    	throw new UnsupportedClassVersionError();/*
         this.keyData = new DERBitString(publicKey);
         this.algId = algId;
-*/    }
+    }
 
     public SubjectPublicKeyInfo(
         AlgorithmIdentifier algId,

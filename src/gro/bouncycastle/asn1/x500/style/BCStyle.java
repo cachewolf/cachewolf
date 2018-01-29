@@ -2,9 +2,9 @@ package gro.bouncycastle.asn1.x500.style;
 
 import ewe.util.Hashtable;
 import gro.bouncycastle.asn1.ASN1Encodable;
-//import gro.bouncycastle.asn1.ASN1GeneralizedTime;
+import gro.bouncycastle.asn1.ASN1GeneralizedTime;
 import gro.bouncycastle.asn1.ASN1ObjectIdentifier;
-//import gro.bouncycastle.asn1.DERIA5String;
+import gro.bouncycastle.asn1.DERIA5String;
 import gro.bouncycastle.asn1.DERPrintableString;
 import gro.bouncycastle.asn1.pkcs.PKCSObjectIdentifiers;
 import gro.bouncycastle.asn1.x500.RDN;
@@ -282,7 +282,6 @@ public class BCStyle
 
     protected ASN1Encodable encodeStringValue(ASN1ObjectIdentifier oid,
     		String value) {
-    	throw new UnsupportedClassVersionError();/*
     	if (oid.equals(EmailAddress) || oid.equals(DC))
         {
             return new DERIA5String(value);
@@ -298,7 +297,7 @@ public class BCStyle
         }
     	
     	return super.encodeStringValue(oid, value);
-*/    }
+    }
 
     public String oidToDisplayName(ASN1ObjectIdentifier oid)
     {
@@ -307,25 +306,21 @@ public class BCStyle
 
     public String[] oidToAttrNames(ASN1ObjectIdentifier oid)
     {
-    	throw new UnsupportedClassVersionError();/*
         return IETFUtils.findAttrNamesForOID(oid, defaultLookUp);
-*/    }
+    }
 
     public ASN1ObjectIdentifier attrNameToOID(String attrName)
     {
-    	throw new UnsupportedClassVersionError();/*
         return IETFUtils.decodeAttrName(attrName, defaultLookUp);
-*/    }
+    }
 
     public RDN[] fromString(String dirName)
     {
-    	throw new UnsupportedClassVersionError();/*
         return IETFUtils.rDNsFromString(dirName, this);
-*/    }
+    }
 
     public String toString(X500Name name)
     {
-    	throw new UnsupportedClassVersionError();/*
         StringBuffer buf = new StringBuffer();
         boolean first = true;
 
@@ -346,5 +341,5 @@ public class BCStyle
         }
 
         return buf.toString();
-*/    }
+    }
 }

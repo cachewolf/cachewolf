@@ -31,9 +31,8 @@ public class Certificate
         ASN1TaggedObject obj,
         boolean          explicit)
     {
-throw new UnsupportedClassVersionError();/*
         return getInstance(ASN1Sequence.getInstance(obj, explicit));
-*/    }
+    }
 
     public static Certificate getInstance(
         Object  obj)
@@ -77,45 +76,38 @@ throw new UnsupportedClassVersionError();/*
 
     public ASN1Integer getVersion()
     {
-    	throw new UnsupportedClassVersionError();/*
         return tbsCert.getVersion();
-*/    }
+    }
 
     public int getVersionNumber()
     {
-    	throw new UnsupportedClassVersionError();/*
         return tbsCert.getVersionNumber();
-*/    }
+    }
 
     public ASN1Integer getSerialNumber()
     {
-    	throw new UnsupportedClassVersionError();/*
         return tbsCert.getSerialNumber();
-*/    }
+    }
 
     public X500Name getIssuer()
     {
-    	throw new UnsupportedClassVersionError();/*
         return tbsCert.getIssuer();
-*/    }
+    }
 
     public Time getStartDate()
     {
-    	throw new UnsupportedClassVersionError();/*
         return tbsCert.getStartDate();
-*/    }
+    }
 
     public Time getEndDate()
     {
-    	throw new UnsupportedClassVersionError();/*
         return tbsCert.getEndDate();
-*/    }
+    }
 
     public X500Name getSubject()
     {
-    	throw new UnsupportedClassVersionError();/*
         return tbsCert.getSubject();
-*/    }
+    }
 
     public SubjectPublicKeyInfo getSubjectPublicKeyInfo()
     {

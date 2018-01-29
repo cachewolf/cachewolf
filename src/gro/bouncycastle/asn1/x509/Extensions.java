@@ -22,9 +22,8 @@ public class Extensions
         ASN1TaggedObject obj,
         boolean explicit)
     {
-    	throw new UnsupportedClassVersionError();/*
         return getInstance(ASN1Sequence.getInstance(obj, explicit));
-*/    }
+    }
 
     public static Extensions getInstance(
         Object obj)

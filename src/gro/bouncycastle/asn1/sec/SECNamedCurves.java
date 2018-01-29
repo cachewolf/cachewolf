@@ -9,7 +9,7 @@ import gro.bouncycastle.asn1.x9.X9ECParametersHolder;
 import gro.bouncycastle.asn1.x9.X9ECPoint;
 import gro.bouncycastle.math.ec.ECConstants;
 import gro.bouncycastle.math.ec.ECCurve;
-//import gro.bouncycastle.math.ec.endo.GLVTypeBEndomorphism;
+import gro.bouncycastle.math.ec.endo.GLVTypeBEndomorphism;
 import gro.bouncycastle.math.ec.endo.GLVTypeBParameters;
 import gro.bouncycastle.util.Strings;
 import gro.bouncycastle.util.encoders.Hex;
@@ -24,9 +24,8 @@ public class SECNamedCurves
 
     private static ECCurve configureCurveGLV(ECCurve c, GLVTypeBParameters p)
     {
-    	throw new UnsupportedClassVersionError();/*
         return c.configure().setEndomorphism(new GLVTypeBEndomorphism(c, p)).create();
-*/    }
+    }
 
 
     private static BigInteger fromHex(

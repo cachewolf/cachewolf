@@ -264,19 +264,17 @@ public class Extension
 
     public int hashCode()
     {
-    	throw new UnsupportedClassVersionError();/*
         if (this.isCritical())
         {
             return this.getExtnValue().hashCode() ^ this.getExtnId().hashCode();
         }
 
         return ~(this.getExtnValue().hashCode() ^ this.getExtnId().hashCode());
-*/    }
+    }
 
     public boolean equals(
         Object  o)
     {
-    	throw new UnsupportedClassVersionError();/*
         if (!(o instanceof Extension))
         {
             return false;
@@ -287,7 +285,7 @@ public class Extension
         return other.getExtnId().equals(this.getExtnId())
             && other.getExtnValue().equals(this.getExtnValue())
             && (other.isCritical() == this.isCritical());
-*/    }
+    }
 
     public ASN1Primitive toASN1Primitive()
     {

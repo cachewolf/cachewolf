@@ -7,7 +7,7 @@ import gro.bouncycastle.asn1.ASN1Encodable;
 import gro.bouncycastle.asn1.ASN1ObjectIdentifier;
 import gro.bouncycastle.asn1.ASN1ParsingException;
 import gro.bouncycastle.asn1.DERUTF8String;
-//import gro.bouncycastle.asn1.x500.AttributeTypeAndValue;
+import gro.bouncycastle.asn1.x500.AttributeTypeAndValue;
 import gro.bouncycastle.asn1.x500.RDN;
 import gro.bouncycastle.asn1.x500.X500Name;
 import gro.bouncycastle.asn1.x500.X500NameStyle;
@@ -48,7 +48,6 @@ public abstract class AbstractX500NameStyle
     }
     public int calculateHashCode(X500Name name)
     {
-    	throw new UnsupportedClassVersionError();/*
         int hashCodeValue = 0;
         RDN[] rdns = name.getRDNs();
 
@@ -73,8 +72,7 @@ public abstract class AbstractX500NameStyle
         }
 
         return hashCodeValue;
-*/    }
-
+}
 
     /**
      * For all string values starting with '#' is assumed, that these are
@@ -93,7 +91,6 @@ public abstract class AbstractX500NameStyle
 
     public ASN1Encodable stringToValue(ASN1ObjectIdentifier oid, String value)
     {
-    	throw new UnsupportedClassVersionError();/*
         if (value.length() != 0 && value.charAt(0) == '#')
         {
             try
@@ -105,14 +102,14 @@ public abstract class AbstractX500NameStyle
                 throw new ASN1ParsingException("can't recode value for oid " + oid.getId());
             }
         }
-
+        
         if (value.length() != 0 && value.charAt(0) == '\\')
         {
             value = value.substring(1);
         }
 
         return encodeStringValue(oid, value);
-*/    }
+    }
 
     /**
      * Encoded every value into a UTF8String.
@@ -132,7 +129,6 @@ public abstract class AbstractX500NameStyle
 
     public boolean areEqual(X500Name name1, X500Name name2)
     {
-    	throw new UnsupportedClassVersionError();/*
         RDN[] rdns1 = name1.getRDNs();
         RDN[] rdns2 = name2.getRDNs();
 
@@ -141,6 +137,7 @@ public abstract class AbstractX500NameStyle
             return false;
         }
 
+    	throw new UnsupportedClassVersionError();/*
         boolean reverse = false;
 
         if (rdns1[0].getFirst() != null && rdns2[0].getFirst() != null)
@@ -158,6 +155,7 @@ public abstract class AbstractX500NameStyle
 
         return true;
 */    }
+
     private boolean foundMatch(boolean reverse, RDN rdn, RDN[] possRDNs)
     {
     	throw new UnsupportedClassVersionError();/*

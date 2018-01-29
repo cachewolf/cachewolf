@@ -12,7 +12,7 @@ import gro.bouncycastle.asn1.ASN1String;
 //import gro.bouncycastle.asn1.DERUniversalString;
 import gro.bouncycastle.asn1.x500.AttributeTypeAndValue;
 import gro.bouncycastle.asn1.x500.RDN;
-//import gro.bouncycastle.asn1.x500.X500NameBuilder;
+import gro.bouncycastle.asn1.x500.X500NameBuilder;
 import gro.bouncycastle.asn1.x500.X500NameStyle;
 import gro.bouncycastle.util.Strings;
 import gro.bouncycastle.util.encoders.Hex;
@@ -127,7 +127,6 @@ public class IETFUtils
 
     public static RDN[] rDNsFromString(String name, X500NameStyle x500Style)
     {
-    	throw new UnsupportedClassVersionError();/*
         X500NameTokenizer nTok = new X500NameTokenizer(name);
         X500NameBuilder builder = new X500NameBuilder(x500Style);
 
@@ -169,23 +168,26 @@ public class IETFUtils
                             throw new IllegalArgumentException("badly formatted directory string");
                         }
 
+                        throw new UnsupportedClassVersionError();/*
                         value = vTok.nextToken();
                         oid = x500Style.attrNameToOID(attr.trim());
 
 
                         oids.addElement(oid);
                         values.addElement(unescape(value));
-                    }
+*/                    }
 
                     builder.addMultiValuedRDN(toOIDArray(oids), toValueArray(values));
                 }
                 else
                 {
+                	throw new UnsupportedClassVersionError();/*
                     builder.addRDN(oid, unescape(value));
-                }
+*/                }
             }
             else
             {
+            	throw new UnsupportedClassVersionError();/*
                 X500NameTokenizer   vTok = new X500NameTokenizer(token, '=');
 
                 String              attr = vTok.nextToken();
@@ -199,11 +201,11 @@ public class IETFUtils
                 ASN1ObjectIdentifier oid = x500Style.attrNameToOID(attr.trim());
 
                 builder.addRDN(oid, unescape(value));
-            }
+*/            }
         }
 
         return builder.build().getRDNs();
-*/    }
+    }
 
     private static String[] toValueArray(Vector values)
     {

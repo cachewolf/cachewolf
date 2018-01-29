@@ -54,9 +54,8 @@ public class RDN
 
     public RDN(AttributeTypeAndValue attrTAndV)
     {
-    	throw new UnsupportedClassVersionError();/*
         this.values = new DERSet(attrTAndV);
-*/    }
+    }
 
     /**
      * Create a multi-valued RDN.
@@ -85,18 +84,16 @@ public class RDN
 
     public AttributeTypeAndValue getFirst()
     {
-    	throw new UnsupportedClassVersionError();/*
         if (this.values.size() == 0)
         {
             return null;
         }
 
         return AttributeTypeAndValue.getInstance(this.values.getObjectAt(0));
-*/    }
+    }
 
     public AttributeTypeAndValue[] getTypesAndValues()
     {
-    	throw new UnsupportedClassVersionError();/*
         AttributeTypeAndValue[] tmp = new AttributeTypeAndValue[values.size()];
 
         for (int i = 0; i != tmp.length; i++)
@@ -105,7 +102,7 @@ public class RDN
         }
 
         return tmp;
-*/    }    
+    }    
 
     /**
      * <pre>

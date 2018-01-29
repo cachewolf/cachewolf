@@ -65,9 +65,8 @@ public class KeyUsage
     public KeyUsage(
         int usage)
     {
-    	throw new UnsupportedClassVersionError();/*
         this.bitString = new DERBitString(usage);
-*/    }
+    }
 
     private KeyUsage(
         DERBitString bitString)
