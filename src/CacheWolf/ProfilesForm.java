@@ -29,16 +29,7 @@ import ewe.fx.Graphics;
 import ewe.fx.Insets;
 import ewe.fx.Rect;
 import ewe.io.FileBase;
-import ewe.ui.CellConstants;
-import ewe.ui.ControlConstants;
-import ewe.ui.ControlEvent;
-import ewe.ui.Event;
-import ewe.ui.Form;
-import ewe.ui.Gui;
-import ewe.ui.ScrollablePanel;
-import ewe.ui.mButton;
-import ewe.ui.mLabel;
-import ewe.ui.mList;
+import ewe.ui.*;
 
 /**
  * This form displays the list of profiles for a user to choose from,
@@ -47,92 +38,82 @@ import ewe.ui.mList;
  */
 public class ProfilesForm extends Form {
 
+    private final ExecutePanel executePanel;
+    public String newSelectedProfile; // This is only used if a new profile is being created
     private MyList choice;
     private ScrollablePanel spMList;
-    private final ExecutePanel executePanel;
     private mButton btnNew;
     private String baseDir;
-    public String newSelectedProfile; // This is only used if a new profile is being created
 
     /**
      * Constructor to create a form to select profiles. It requires that the preferences
      * have been loaded so that the calling parameters can be set.
-     * 
-     * @param baseDir
-     *            The base directory which holds one subdirectory per profile
-     * @param oldProfiles
-     *            List of names of old profiles
-     * @param selectedProfile
-     *            Name of the last used profile
+     *
+     * @param baseDir         The base directory which holds one subdirectory per profile
+     * @param selectedProfile Name of the last used profile
+     * @param outfit          for the different purposes
      */
     public ProfilesForm(String baseDir, String selectedProfile, int outfit) {
-	super();
-	resizable = false;
-	int w = Preferences.itself().getScreenWidth();
-	int h = Preferences.itself().getScreenHeight();
-	if (w > 240)
-	    w = 240;
-	if (h > 320)
-	    h = 320;
-	setPreferredSize(w, h);
-	defaultTags.set(CellConstants.INSETS, new Insets(2, 2, 2, 2));
-	title = MyLocale.getMsg(1301, "Select Profile:");
-	if (outfit == 0) {
-	    addNext(new mLabel(MyLocale.getMsg(1106, "Choose profile or New")), DONTSTRETCH, DONTSTRETCH | LEFT);
-	    addLast(btnNew = new mButton(MyLocale.getMsg(1107, "New")), HSTRETCH, HFILL | RIGHT);
-	} else {
-	    if (outfit == 1) {
-		addLast(new mLabel(MyLocale.getMsg(1108, "Choose profile")), DONTSTRETCH, DONTSTRETCH | LEFT);
-	    } else {
-		if (outfit == 2) {
-		    //delete
-		    String msg = MyLocale.getMsg(1118, "profile") + " " + MyLocale.getMsg(1125, "delete");
-		    addLast(new mLabel(msg), DONTSTRETCH, DONTSTRETCH | LEFT);
-		} else {
-		    if (outfit == 3) {
-			// rename
-			String msg = MyLocale.getMsg(1118, "profile") + " " + MyLocale.getMsg(1126, "rename");
-			addLast(new mLabel(msg), DONTSTRETCH, DONTSTRETCH | LEFT);
-		    }
-		}
-	    }
-	}
+        super();
+        Preferences.itself().setPreferredSize(this);
+        defaultTags.set(CellConstants.INSETS, new Insets(2, 2, 2, 2));
+        title = MyLocale.getMsg(1301, "Select Profile:");
+        if (outfit == 0) {
+            addNext(new mLabel(MyLocale.getMsg(1106, "Choose profile or New")), DONTSTRETCH, DONTSTRETCH | LEFT);
+            addLast(btnNew = new mButton(MyLocale.getMsg(1107, "New")), HSTRETCH, HFILL | RIGHT);
+        } else {
+            if (outfit == 1) {
+                addLast(new mLabel(MyLocale.getMsg(1108, "Choose profile")), DONTSTRETCH, DONTSTRETCH | LEFT);
+            } else {
+                if (outfit == 2) {
+                    //delete
+                    String msg = MyLocale.getMsg(1118, "profile") + " " + MyLocale.getMsg(1125, "delete");
+                    addLast(new mLabel(msg), DONTSTRETCH, DONTSTRETCH | LEFT);
+                } else {
+                    if (outfit == 3) {
+                        // rename
+                        String msg = MyLocale.getMsg(1118, "profile") + " " + MyLocale.getMsg(1126, "rename");
+                        addLast(new mLabel(msg), DONTSTRETCH, DONTSTRETCH | LEFT);
+                    }
+                }
+            }
+        }
 
-	choice = new MyList();
-	// Get all subdirectories in the base directory
-	FileBugfix fileBaseDir = new FileBugfix(baseDir);
-	String[] existingProfiles = fileBaseDir.list(null, FileBase.LIST_DIRECTORIES_ONLY);
-	// Now add these subdirectories to the list of profiles but
-	// exclude the "maps" directory which will contain the moving maps
-	for (int i = 0; i < existingProfiles.length; i++)
-	    if (!existingProfiles[i].equalsIgnoreCase("maps"))
-		choice.addItem(existingProfiles[i]);
-	// Highlight the profile that was used last
-	choice.selectLastProfile(selectedProfile);
-	// Add a scroll bar to the list of profiles
-	spMList = choice.getScrollablePanel();
-	spMList.setOptions(ScrollablePanel.NeverShowHorizontalScrollers);
-	choice.setServer(spMList);
-	addLast(spMList);
-	executePanel = new ExecutePanel(this);
-	if (choice.getListItems().length == 0)
-	    executePanel.applyButton.modify(Disabled, 0);
-	this.baseDir = baseDir;
-	choice.takeFocus(ControlConstants.ByKeyboard);
+        choice = new MyList();
+        // Get all subdirectories in the base directory
+        FileBugfix fileBaseDir = new FileBugfix(baseDir);
+        String[] existingProfiles = fileBaseDir.list(null, FileBase.LIST_DIRECTORIES_ONLY);
+        // Now add these subdirectories to the list of profiles but
+        // exclude the "maps" directory which will contain the moving maps
+        for (int i = 0; i < existingProfiles.length; i++)
+            if (!existingProfiles[i].equalsIgnoreCase("maps"))
+                choice.addItem(existingProfiles[i]);
+        // Highlight the profile that was used last
+        choice.selectLastProfile(selectedProfile);
+        // Add a scroll bar to the list of profiles
+        spMList = choice.getScrollablePanel();
+        spMList.setOptions(ScrollablePanel.NeverShowHorizontalScrollers);
+        choice.setServer(spMList);
+        addLast(spMList);
+        executePanel = new ExecutePanel(this);
+        if (choice.getListItems().length == 0)
+            executePanel.applyButton.modify(Disabled, 0);
+        this.baseDir = baseDir;
+        choice.takeFocus(ControlConstants.ByKeyboard);
     }
 
     /**
      * Ask for a new profile directory. If it exists, cancel. If it does not exist, create it
-     * 
+     *
      * @return Name of directory (just the part below baseDir)
      */
     public String createNewProfile() {
-	NewProfileForm f = new NewProfileForm(baseDir);
-	int code = f.execute(getFrame(), Gui.CENTER_FRAME);
-	if (code == 0) {
-	    return f.profileDir;
-	} else
-	    return "";
+        NewProfileForm f = new NewProfileForm(baseDir);
+        int code = f.execute(getFrame(), Gui.CENTER_FRAME);
+        if (code == 0) {
+            return f.profileDir;
+        } else
+            return "";
     }
 
     /**
@@ -141,58 +122,58 @@ public class ProfilesForm extends Form {
      * while it closes itself.
      */
     public void onEvent(Event ev) {
-	if (ev instanceof ControlEvent && ev.type == ControlEvent.PRESSED) {
-	    if (ev.target == executePanel.cancelButton) {
-		close(-1);
-	    }
-	    if (ev.target == executePanel.applyButton || ev.target == choice) {
-		if (choice.getSelectedItem() != null) {
-		    newSelectedProfile = choice.getSelectedItem().toString();
-		    close(1);
-		}
-	    }
-	    if (ev.target == btnNew) {
-		if (NewProfileWizard.startNewProfileWizard(getFrame())) {
-		    newSelectedProfile = MainForm.profile.name;
-		    close(1);
-		}
-	    }
-	}
-	super.onEvent(ev);
+        if (ev instanceof ControlEvent && ev.type == ControlEvent.PRESSED) {
+            if (ev.target == executePanel.cancelButton) {
+                close(-1);
+            }
+            if (ev.target == executePanel.applyButton || ev.target == choice) {
+                if (choice.getSelectedItem() != null) {
+                    newSelectedProfile = choice.getSelectedItem().toString();
+                    close(1);
+                }
+            }
+            if (ev.target == btnNew) {
+                if (NewProfileWizard.startNewProfileWizard(getFrame())) {
+                    newSelectedProfile = MainForm.profile.name;
+                    close(1);
+                }
+            }
+        }
+        super.onEvent(ev);
     }
 
     // A subclassed mList which allows the highlighting of an entry
     // Maybe there is an easier way of making this happen, but I could not find it.
     private class MyList extends mList {
-	private int first = 1;
-	private int select;
+        private int first = 1;
+        private int select;
 
-	public MyList() {
-	    super(1, 1, false);
-	}
+        public MyList() {
+            super(1, 1, false);
+        }
 
-	public void selectLastProfile(String selectedItem) {
-	    selectItem(selectedItem);
-	    select = getSelectedIndex(0);
-	}
+        public void selectLastProfile(String selectedItem) {
+            selectItem(selectedItem);
+            select = getSelectedIndex(0);
+        }
 
-	public void doPaint(Graphics gr, Rect area) {
-	    if (first == 1) {
-		first = 0;
-		selectAndView(select);
-		makeVisible(select);
-	    }
-	    super.doPaint(gr, area);
-	}
+        public void doPaint(Graphics gr, Rect area) {
+            if (first == 1) {
+                first = 0;
+                selectAndView(select);
+                makeVisible(select);
+            }
+            super.doPaint(gr, area);
+        }
 
-	// Copied from BasicList.getScrollablePanel(), but exchanging
-	// the standard scroll bar with the fontsize sensitive one.
-	public ScrollablePanel getScrollablePanel() {
-	    dontAutoScroll = amScrolling = true;
-	    ScrollablePanel sp = new MyScrollBarPanel(this);
-	    sp.modify(0, TakeControlEvents);
-	    return sp;
-	}
+        // Copied from BasicList.getScrollablePanel(), but exchanging
+        // the standard scroll bar with the fontsize sensitive one.
+        public ScrollablePanel getScrollablePanel() {
+            dontAutoScroll = amScrolling = true;
+            ScrollablePanel sp = new MyScrollBarPanel(this);
+            sp.modify(0, TakeControlEvents);
+            return sp;
+        }
 
     }
 

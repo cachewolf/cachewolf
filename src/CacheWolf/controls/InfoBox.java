@@ -56,144 +56,137 @@ public class InfoBox extends Form {
     private boolean isClosed = false;
 
     public InfoBox(String title, String info) {
-	this(title, info, DISPLAY_ONLY);
+        this(title, info, DISPLAY_ONLY);
     }
 
     public InfoBox(String title, String info, int type) {
-	this(title, info, type, true);
+        this(title, info, type, true);
     }
 
     public InfoBox(String title, Control ctrl, int w, int h) {
-	int pWidth = Preferences.itself().preferredControlsWidth;
-	int pHeight = Preferences.itself().preferredControlsHeight;
-	if (pWidth > 0 && pHeight > 0)
-	    this.setPreferredSize(pWidth, pHeight);
-
-	this.addLast(new MyScrollBarPanel((ScrollClient) ctrl, ScrollablePanel.NeverShowHorizontalScrollers), STRETCH, FILL);
-	this.title = title;
-	this.type = DISPLAY_ONLY;
-	relayout(false);
+        Preferences.itself().setPreferredSize(this);
+        this.addLast(new MyScrollBarPanel((ScrollClient) ctrl, ScrollablePanel.NeverShowHorizontalScrollers), STRETCH, FILL);
+        this.title = title;
+        this.type = DISPLAY_ONLY;
+        relayout(false);
     }
 
     public InfoBox(String title, String info, int type, boolean autoWrap) {
-	int pWidth = Preferences.itself().preferredControlsWidth;
-	int pHeight = Preferences.itself().preferredControlsHeight;
-	if (pWidth > 0 && pHeight > 0)
-	    this.setPreferredSize(pWidth, pHeight);
+        Preferences.itself().setPreferredSize(this);
 
-	switch (type) {
-	case CHECKBOX:
-	    checkBox = new mCheckBox(info);
-	    this.addLast(checkBox, STRETCH, FILL);
-	    executePanel = new ExecutePanel(this);
-	    break;
-	case INPUT:
-	    mLabel mL = new mLabel(info);
-	    this.addLast(mL, STRETCH, FILL);
-	    this.addLast(feedback, STRETCH, FILL);
-	    executePanel = new ExecutePanel(this);
-	    break;
-	case DISPLAY_ONLY:
-	    msgArea = new TextMessage(info);
-	    msgArea.autoWrap = autoWrap;
-	    msgArea.alignment = CENTER;
-	    msgArea.anchor = CENTER;
-	    this.addLast(msgArea.getScrollablePanel(), STRETCH, FILL);
-	    break;
-	case PROGRESS_WITH_WARNINGS:
-	    SplittablePanel splittablePanel = new SplittablePanel(PanelSplitter.VERTICAL);
-	    splittablePanel.theSplitter.thickness = 8;
-	    CellPanel upperPanel = splittablePanel.getNextPanel();
-	    CellPanel lowerPanel = splittablePanel.getNextPanel();
-	    splittablePanel.setSplitter(PanelSplitter.AFTER | PanelSplitter.MIN_SIZE, PanelSplitter.BEFORE | PanelSplitter.MIN_SIZE, PanelSplitter.OPENED);
-	    MyLocale.setSplitterSize(splittablePanel);
-	    msgArea = new TextMessage("");
-	    msgArea.autoWrap = autoWrap;
-	    msgArea.alignment = CENTER;
-	    msgArea.anchor = CENTER;
-	    upperPanel.addLast(msgArea.getScrollablePanel());
-	    warnings = new TextMessage("");
-	    warnings.autoWrap = autoWrap;
-	    lowerPanel.addLast(warnings.getScrollablePanel());
-	    this.addLast(splittablePanel);
-	    executePanel = new ExecutePanel(this, FormBase.CANCELB);
-	    upperPanel.setMinimumSize(preferredWidth, preferredHeight / 4);
-	    lowerPanel.setMinimumSize(preferredWidth, preferredHeight / 4);
-	    break;
-	}
-	this.title = title;
-	this.type = type;
-	relayout(false);
+        switch (type) {
+            case CHECKBOX:
+                checkBox = new mCheckBox(info);
+                this.addLast(checkBox, STRETCH, FILL);
+                executePanel = new ExecutePanel(this);
+                break;
+            case INPUT:
+                mLabel mL = new mLabel(info);
+                this.addLast(mL, STRETCH, FILL);
+                this.addLast(feedback, STRETCH, FILL);
+                executePanel = new ExecutePanel(this);
+                break;
+            case DISPLAY_ONLY:
+                msgArea = new TextMessage(info);
+                msgArea.autoWrap = autoWrap;
+                msgArea.alignment = CENTER;
+                msgArea.anchor = CENTER;
+                this.addLast(msgArea.getScrollablePanel(), STRETCH, FILL);
+                break;
+            case PROGRESS_WITH_WARNINGS:
+                SplittablePanel splittablePanel = new SplittablePanel(PanelSplitter.VERTICAL);
+                splittablePanel.theSplitter.thickness = 8;
+                CellPanel upperPanel = splittablePanel.getNextPanel();
+                CellPanel lowerPanel = splittablePanel.getNextPanel();
+                splittablePanel.setSplitter(PanelSplitter.AFTER | PanelSplitter.MIN_SIZE, PanelSplitter.BEFORE | PanelSplitter.MIN_SIZE, PanelSplitter.OPENED);
+                MyLocale.setSplitterSize(splittablePanel);
+                msgArea = new TextMessage("");
+                msgArea.autoWrap = autoWrap;
+                msgArea.alignment = CENTER;
+                msgArea.anchor = CENTER;
+                upperPanel.addLast(msgArea.getScrollablePanel());
+                warnings = new TextMessage("");
+                warnings.autoWrap = autoWrap;
+                lowerPanel.addLast(warnings.getScrollablePanel());
+                this.addLast(splittablePanel);
+                executePanel = new ExecutePanel(this, FormBase.CANCELB);
+                upperPanel.setMinimumSize(preferredWidth, preferredHeight / 4);
+                lowerPanel.setMinimumSize(preferredWidth, preferredHeight / 4);
+                break;
+        }
+        this.title = title;
+        this.type = type;
+        relayout(false);
     }
 
     public final int wait(int doButtons)
     //===================================================================
     {
-	if (type == DISPLAY_ONLY) {
-	    if (executePanel == null)
-		executePanel = new ExecutePanel(this, doButtons);
-	}
-	exec();
-	return waitUntilClosed();
+        if (type == DISPLAY_ONLY) {
+            if (executePanel == null)
+                executePanel = new ExecutePanel(this, doButtons);
+        }
+        exec();
+        return waitUntilClosed();
     }
 
     public String getInfo() {
-	return msgArea.getText();
+        return msgArea.getText();
     }
 
     public void setInfo(String info) {
-	msgArea.setText(info);
-	this.repaintNow();
+        msgArea.setText(info);
+        this.repaintNow();
     }
 
     public void addInfo(String t) {
-	msgArea.setText(t + "\n" + msgArea.text);
-	this.repaintNow();
+        msgArea.setText(t + "\n" + msgArea.text);
+        this.repaintNow();
     }
 
     public String getInput() {
-	return feedback.getText();
+        return feedback.getText();
     }
 
     public void setInput(String value) {
-	feedback.setText(value);
+        feedback.setText(value);
     }
 
     public void setInputPassword(String value) {
-	feedback.setText(value);
-	feedback.isPassword = true;
+        feedback.setText(value);
+        feedback.isPassword = true;
     }
 
     public void addWarning(String w) {
-	warnings.setText(w + "\n" + warnings.text);
+        warnings.setText(w + "\n" + warnings.text);
     }
 
     public boolean getCheckBoxState() {
-	return checkBox.getState();
+        return checkBox.getState();
     }
 
     public void setCheckBoxState(boolean to) {
-	checkBox.setState(to);
+        checkBox.setState(to);
     }
 
     public void showButton(int button) {
-	executePanel.show(button);
+        executePanel.show(button);
     }
 
     public void hideButton(int button) {
-	executePanel.hide(button);
+        executePanel.hide(button);
     }
 
     public void enableButton(int button) {
-	executePanel.enable(button);
+        executePanel.enable(button);
     }
 
     public void disableButton(int button) {
-	executePanel.disable(button);
+        executePanel.disable(button);
     }
 
     public void setButtonText(String text, int button) {
-	executePanel.setText(text, button);
+        executePanel.setText(text, button);
     }
 
     /**
@@ -201,29 +194,29 @@ public class InfoBox extends Form {
      * Use this to check.
      */
     public boolean isClosed() {
-	return isClosed;
+        return isClosed;
     }
 
     // Overrides
     protected boolean canExit(int exitCode) {
-	isClosed = true;
-	return true;
+        isClosed = true;
+        return true;
     }
 
     public void onEvent(Event ev) {
-	if (ev instanceof ControlEvent && ev.type == ControlEvent.PRESSED) {
-	    if (ev.target == executePanel.applyButton) {
-		isClosed = true;
-		this.close(FormBase.IDOK);
-	    } else if (ev.target == executePanel.cancelButton) {
-		isClosed = true;
-		this.close(FormBase.IDCANCEL);
-	    } else if (ev.target == executePanel.refuseButton) {
-		isClosed = true;
-		this.close(FormBase.IDNO);
-	    }
-	}
-	super.onEvent(ev);
+        if (ev instanceof ControlEvent && ev.type == ControlEvent.PRESSED) {
+            if (ev.target == executePanel.applyButton) {
+                isClosed = true;
+                this.close(FormBase.IDOK);
+            } else if (ev.target == executePanel.cancelButton) {
+                isClosed = true;
+                this.close(FormBase.IDCANCEL);
+            } else if (ev.target == executePanel.refuseButton) {
+                isClosed = true;
+                this.close(FormBase.IDNO);
+            }
+        }
+        super.onEvent(ev);
     }
 
 }

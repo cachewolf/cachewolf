@@ -122,9 +122,9 @@ public class CoordsPDAInput extends Form {
 	if ((sw > 300) && (sh > 300)) {
 	    // larger screens: size according to fontsize
 	    psx = 240;
+		psx = 300;
 	    psy = 260;
 	    if (fs > 12) {
-		psx = 300;
 		psy = 330;
 	    }
 	    if (fs > 17) {

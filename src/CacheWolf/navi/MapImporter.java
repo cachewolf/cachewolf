@@ -93,10 +93,6 @@ public class MapImporter extends Form {
      */
     public MapImporter(String mapToLoad, boolean worldfileexists) {
 	this.title = MyLocale.getMsg(4106, "Calibrate map:") + " " + mapToLoad;
-	this.resizable = true;
-	this.moveable = true;
-	//this.windowFlagsToSet = Window.FLAG_MAXIMIZE;
-	this.setPreferredSize(Preferences.itself().getScreenWidth(), Preferences.itself().getScreenHeight());
 	thisMap = mapToLoad;
 	mapsPath = MainForm.profile.getMapsDir(); // calibrate the actual profiles maps dir
 	try {
