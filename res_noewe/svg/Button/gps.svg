@@ -1,0 +1,25 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg x="0" y="0" width="32" height="40.49669" overflow="hidden" viewBox="0, 0, 132.72, 167.96" preserveAspectRatio="xMidYMid" font-size="0" xml:space="default" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xml="http://www.w3.org/XML/1998/namespace" version="1.1">
+  <defs xml:space="default">
+    <radialGradient cx="333.48" cy="369.58" r="199.64" fx="333.48" fy="369.58" gradientUnits="userSpaceOnUse" gradientTransform="matrix(-1.3773, -1.231, 0.81238, -0.90895, 457.34, 919.65)" id="a" xml:space="default">
+      <stop offset="0%" stop-color="#FFFFFF" stop-opacity="1" xml:space="default" />
+      <stop offset="100%" stop-color="#A9A9A9" stop-opacity="1" xml:space="default" />
+    </radialGradient>
+  </defs>
+  <g stroke="#000000" transform="matrix(-0.35187, 0, 0, 0.35187, 118.56, -0.026626)" xml:space="default">
+    <g stroke-width="10" xml:space="default">
+      <path d="M29.26 30.4 L57.36 296.72 L321.58 287.48" xml:space="default" style="fill:none;" />
+      <path d="M222.9 106.57 L57.36 296.72" xml:space="default" />
+      <path d="M158.67 253.22 L57.37 296.72 L84.2 187.77" xml:space="default" style="fill:none;" />
+      <path d="M80.94 296.34 A23.2 23.2 0 1 1 34.56 296.34 A23.2 23.2 0 1 1 80.94 296.34 z" xml:space="default" style="fill:none;" />
+    </g>
+    <path d="M87.66 469.8 L57.36 296.72" stroke-width="15" stroke-linecap="round" xml:space="default" />
+    <path d="M147.36 452.62 L57.36 296.72 L-32.67 452.62" stroke-width="15" stroke-linecap="round" stroke-linejoin="round" xml:space="default" style="fill:none;" />
+    <path d="M29.26 30.4 C-19.04 85.32 7.24 187.5 87.92 258.45 C168.6 329.41 273.27 342.41 321.57 287.49" stroke-width="10" xml:space="default" />
+    <path d="M321.58 287.48 C290.71 322.58 200.24 293.5 119.52 222.5 C38.79999 151.5 -1.600014 65.5 29.26999 30.39999 C60.12999 -4.730007 150.6 24.36999 231.33 95.35999 C312.05 166.36 352.46 252.36 321.58 287.46 z" stroke-width="10" xml:space="default" style="fill:url(#a);" />
+    <path d="M68.35 65.12 L288.97 33.72 L285.47 255.9" stroke-width="15" stroke-linecap="round" xml:space="default" style="fill:none;" />
+    <path d="M151.4 206.76 L288.97 33.73" stroke-width="15" stroke-linecap="round" xml:space="default" />
+    <path d="M288.97 33.73 C277.94 24.03 272.52 12.16 276.87 7.23 C281.21 2.289999 293.67 6.15 304.69 15.85 C315.71 25.55 321.13 37.41 316.79 42.35 C312.45 47.29 299.99 43.43 288.96 33.73 z" stroke-width="10" xml:space="default" />
+  </g>
+</svg>

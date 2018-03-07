@@ -55,7 +55,7 @@ public class ProfilesForm extends Form {
      */
     public ProfilesForm(String baseDir, String selectedProfile, int outfit) {
         super();
-        Preferences.itself().setPreferredSize(this);
+        Preferences.itself().setSubWindowSize(this);
         defaultTags.set(CellConstants.INSETS, new Insets(2, 2, 2, 2));
         title = MyLocale.getMsg(1301, "Select Profile:");
         if (outfit == 0) {

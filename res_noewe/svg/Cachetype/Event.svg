@@ -1,0 +1,12 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg x="0" y="0" width="64" height="64" overflow="hidden" viewBox="0, 0, 16, 16" preserveAspectRatio="xMidYMid" font-size="0" id="svg4099" xml:space="default" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xml="http://www.w3.org/XML/1998/namespace" version="1.1">
+  <defs id="defs4101" xml:space="default" />
+  <g display="inline" id="layer9" xml:space="default">
+    <g display="inline" id="g5117" xml:space="default">
+      <path d="M8 2 C3.86 2 0.5 4.24 0.5 7 C0.5 9.76 3.86 12 8 12 C8.697913 12 9.35878 11.93157 10 11.8125 L10 14 L11.46875 11.4375 C13.8572 10.60088 15.5 8.922453 15.5 7 C15.5 4.24 12.14 2 8 2 z" display="inline" stroke="#000000" stroke-width="0.5" stroke-linecap="round" stroke-linejoin="round" id="path5104" xml:space="default" style="fill:#FFFFFF;" />
+      <rect x="4.5" y="5" width="7.5" height="1.5" display="inline" stroke-width="0.5" stroke-linecap="round" stroke-linejoin="round" opacity="0.4" id="rect5106" xml:space="default" style="fill:#BE7474;" />
+      <rect x="7" y="7" width="4.5" height="1.5" display="inline" stroke-width="0.5" stroke-linecap="round" stroke-linejoin="round" opacity="0.4" id="rect5108" xml:space="default" style="fill:#BE7474;" />
+    </g>
+  </g>
+</svg>

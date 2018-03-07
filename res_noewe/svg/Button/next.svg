@@ -1,0 +1,11 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg x="0" y="0" width="32" height="32" overflow="hidden" viewBox="0, 0, 200, 200" preserveAspectRatio="xMidYMid" font-size="0" id="svg954" xml:space="default" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xml="http://www.w3.org/XML/1998/namespace" version="1.1">
+  <defs id="defs948" xml:space="default" />
+  <g transform="translate(0, -97)" id="layer1" xml:space="default">
+    <g transform="matrix(0.4773149, 0, 0, 0.4773149, -0.2775691, 135.9632)" id="g1323" xml:space="default">
+      <rect x="1.549" y="76.286" width="344.623" height="101.382" id="redshaft" xml:space="default" style="fill:#ED1C24;" />
+      <path d="M257.735 0.251 L422.478 126.977 L257.735 253.709 z" id="redhead" xml:space="default" connector-curvature="0" style="fill:#ED1C24;" />
+    </g>
+  </g>
+</svg>

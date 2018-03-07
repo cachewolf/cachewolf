@@ -1,0 +1,10 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg x="0px" y="0px" width="32" height="32" overflow="hidden" viewBox="0, 0, 70, 70" preserveAspectRatio="xMidYMid" font-size="0" id="Ebene_1" xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xml="http://www.w3.org/XML/1998/namespace" version="1.1">
+  <g xml:space="preserve">
+    <path d="M15 0 C15 0 0 0 0 15 L0 55 C0 55 0 70 15 70 L55 70 C55 70 70 70 70 55 L70 15 C70 15 70 0 55 0 L15 0 z" xml:space="preserve" class="st0" style="fill:#FFFFFF;" />
+  </g>
+  <g xml:space="preserve">
+    <path d="M25.6 35.6 L33.7 35.6 L29.7 24.4 L25.6 35.6 z M46.4 46.8 L47.2 46.8 L47.2 49.5 L34.8 49.5 L34.8 46.8 L35.9 46.8 C36.8 46.8 37.4 46 37.1 45.2 L35.5 41 L23.7 41 L22.1 45.2 C21.8 46 22.4 46.8 23.3 46.8 L24.4 46.8 L24.4 49.5 L12.1 49.5 L12.1 46.8 L12.9 46.8 C14 46.8 15 46.1 15.4 45.2 L25.9 17.6 L33.4 17.6 L43.9 45.2 C44.3 46.2 45.3 46.8 46.4 46.8 M57.8 48 L57.8 49.5 L51.2 49.5 L51.2 48 L51.8 48 C52.3 48 52.6 47.6 52.5 47.1 L51.5 44.5 L47.3 44.5 L46.2 41.7 L50.6 41.7 L48 34.5 L45.8 40.6 L44 36.2 L45.8 31.6 L50 31.6 L55.9 47.1 C56.1 47.7 56.7 48 57.3 48 L57.8 48 z" xml:space="preserve" class="st2" style="fill:#047DC1;" />
+  </g>
+</svg>

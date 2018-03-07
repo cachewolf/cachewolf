@@ -21,6 +21,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 package CacheWolf.controls;
 
+import CacheWolf.Preferences;
 import ewe.io.FileReader;
 import ewe.ui.ControlEvent;
 import ewe.ui.Event;
@@ -43,28 +44,29 @@ public class InfoScreen extends Form {
     ExecutePanel executePanel;
 
     public InfoScreen(String datei, String tit, boolean readFromFile) {
-	String myText = "";
-	this.setTitle(tit);
-	if (readFromFile == true) {
-	    try {
-		FileReader in = new FileReader(datei);
-		myText = in.readAll();
-		in.close();
-	    } catch (Exception ex) {
-	    }
-	} else
-	    myText = datei;
-	disp.setHtml(myText);
-	ScrollBarPanel sbp = new MyScrollBarPanel(disp, ScrollablePanel.NeverShowHorizontalScrollers);
-	this.addLast(sbp);
-	executePanel = new ExecutePanel(this, FormBase.OKB);
+        String myText = "";
+        this.setTitle(tit);
+        if (readFromFile == true) {
+            try {
+                FileReader in = new FileReader(datei);
+                myText = in.readAll();
+                in.close();
+            } catch (Exception ex) {
+            }
+        } else
+            myText = datei;
+        disp.setHtml(myText);
+        ScrollBarPanel sbp = new MyScrollBarPanel(disp, ScrollablePanel.NeverShowHorizontalScrollers);
+        this.addLast(sbp);
+        executePanel = new ExecutePanel(this, FormBase.OKB);
+        Preferences.itself().setBigWindowSize(this);
     }
 
     public void onEvent(Event ev) {
-	if (ev instanceof ControlEvent && ev.type == ControlEvent.PRESSED) {
-	    if (ev.target == executePanel.applyButton) {
-		this.close(0);
-	    }
-	}
+        if (ev instanceof ControlEvent && ev.type == ControlEvent.PRESSED) {
+            if (ev.target == executePanel.applyButton) {
+                this.close(0);
+            }
+        }
     }
 }

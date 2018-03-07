@@ -1,0 +1,73 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg x="0" y="0" width="32" height="32" viewBox="0, 0, 40, 40" preserveAspectRatio="xMidYMid" font-size="0" id="svg83" xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xml="http://www.w3.org/XML/1998/namespace" version="1.1">
+  <g transform="matrix(1.101695, 0, 0, 1.101695, 0, 0.3334734)" id="Open_Doc" xml:space="preserve">
+    <g id="Layer_16" xml:space="preserve">
+      <g id="ClipView_13" xml:space="preserve">
+        <path d="M0 0 L0 36.005 L35.999 36.005 L35.999 0 z" id="path2" xml:space="preserve" connector-curvature="0" style="fill:none;" />
+        <g id="g77" xml:space="preserve">
+          <defs id="defs5" xml:space="preserve">
+            <rect x="0" y="0" width="35.999" height="36.005" id="SVGID_1_" xml:space="preserve" />
+          </defs>
+          <clipPath id="SVGID_2_" xml:space="preserve">
+            <use xlink:href="#SVGID_1_" x="0" y="0" id="use7" xml:space="preserve" width="100%" height="100%" overflow="visible" />
+          </clipPath>
+          <g clip-path="url(#SVGID_2_)" id="g75" xml:space="preserve">
+            <g id="Group_30" xml:space="preserve">
+              <path d="M1.546 32.039 L1.501 10.499 C1.5 10.336 1.553 10.178 1.651 10.047 L3.901 7.047 C4.042 6.859 4.264 6.747 4.501 6.747 L12.001 6.747 C12.237 6.747 12.459 6.859 12.601 7.047 L14.626 9.747 L30.751 9.747 C31.164 9.747 31.501 10.084 31.5 10.498 L31.499 32.038 C31.499 32.451 31.163 32.787 30.75 32.787 L2.296 32.787 C1.882 32.787 1.546 32.452 1.546 32.039 z" id="path10" xml:space="preserve" connector-curvature="0" style="fill:#B2841E;" />
+              <g id="Group_31" xml:space="preserve">
+                <linearGradient x1="-88.704" y1="187" x2="-82.936" y2="187" gradientUnits="userSpaceOnUse" gradientTransform="rotate(90, 52.8115, 150.6895)" id="SVGID_3_" xml:space="preserve">
+                  <stop offset="0%" stop-color="#F1E994" stop-opacity="1" id="stop12" xml:space="preserve" />
+                  <stop offset="100%" stop-color="#FEDF17" stop-opacity="1" id="stop14" xml:space="preserve" />
+                </linearGradient>
+                <path d="M2.251 10.497 L2.296 32.037 L30.75 32.037 L30.751 10.497 L14.251 10.497 L12.001 7.497002 L4.500999 7.497002 z" id="path17" xml:space="preserve" connector-curvature="0" style="fill:url(#SVGID_3_);" />
+                <a id="a21" xml:space="preserve">
+                  <path d="M3.938 8.247 L4.501 7.497 L12.001 7.497 L12.563 8.247 z" id="path19" xml:space="preserve" connector-curvature="0" style="fill:#FFFDEA;" />
+                </a>
+              </g>
+            </g>
+            <g id="Group_32" xml:space="preserve">
+              <g id="Group_33" xml:space="preserve">
+                <path d="M1.679 32.106 L5.143 14.106 C5.211 13.753 5.52 13.497 5.88 13.497 L34.335 13.497 C34.805 13.497 35.16 13.927 35.071 14.389 L31.607 32.389 C31.539 32.742 31.23 32.997 30.871 32.997 L2.416 32.997 C1.945 32.997 1.59 32.568 1.679 32.106 z" id="path25" xml:space="preserve" connector-curvature="0" style="fill:#B2841E;" />
+                <linearGradient x1="-90.2405" y1="200.204" x2="-66.1845" y2="200.204" gradientUnits="userSpaceOnUse" gradientTransform="matrix(-0.1889, 0.982, -1.0183, 8.895993E-06, 208.2327, 96.1116)" id="SVGID_4_" xml:space="preserve">
+                  <stop offset="0%" stop-color="#F1E994" stop-opacity="1" id="stop27" xml:space="preserve" />
+                  <stop offset="100%" stop-color="#FEDF17" stop-opacity="1" id="stop29" xml:space="preserve" />
+                </linearGradient>
+                <path d="M5.88 14.247 L2.416 32.247 L30.871 32.247 L34.335 14.247 z" id="path32" xml:space="preserve" connector-curvature="0" style="fill:url(#SVGID_4_);" />
+              </g>
+              <path d="M2.682 30.747 L2.538 31.498 L30.991 31.498 L31.135 30.747 z" fill-opacity="0.4078" id="path35" xml:space="preserve" connector-curvature="0" style="fill:#D9A025;" />
+              <path d="M2.565 31.496 L2.421 32.245 L30.872 32.245 L31.016 31.496 z" fill-opacity="0.4078" id="path37" xml:space="preserve" connector-curvature="0" style="fill:#FFFDEA;" />
+              <path d="M3.021 29.247 L2.877 29.996 L31.328 29.996 L31.472 29.247 z" fill-opacity="0.4078" id="path39" xml:space="preserve" connector-curvature="0" style="fill:#D9A025;" />
+              <path d="M2.826 29.997 L2.682 30.746 L31.135 30.746 L31.279 29.997 z" fill-opacity="0.4078" id="path41" xml:space="preserve" connector-curvature="0" style="fill:#FFFDEA;" />
+              <defs id="defs46" xml:space="preserve">
+                <filter x="2.421" y="14.247" width="4.187" height="17.993" color-interpolation-filters="auto" id="Adobe_OpacityMaskFilter" xml:space="preserve" filterUnits="userSpaceOnUse">
+                  <feColorMatrix type="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 1 0" id="feColorMatrix43" xml:space="preserve" />
+                </filter>
+              </defs>
+              <mask id="TranspMask_15_1_" xml:space="preserve" height="17.993" maskUnits="userSpaceOnUse" width="4.187" x="2.421" y="14.247">
+                <linearGradient x1="-356.8563" y1="180.8551" x2="-338.7453" y2="180.8551" gradientUnits="userSpaceOnUse" gradientTransform="matrix(-0.1111, 0.9938, -1.0277, 0.1921, 192.9833, 93.7283)" id="SVGID_5_" xml:space="preserve">
+                  <stop offset="0%" stop-color="#FFFFFF" stop-opacity="1" id="stop48" xml:space="preserve" />
+                  <stop offset="100%" stop-color="#000000" stop-opacity="1" id="stop50" xml:space="preserve" />
+                </linearGradient>
+                <rect x="-269.075" y="-373.37" width="576.899" height="784.45" filter="url(#Adobe_OpacityMaskFilter)" id="rect53" xml:space="preserve" style="fill:url(#SVGID_5_);" />
+              </mask>
+              <path d="M5.883 14.247 L2.421 32.24 L3.146 32.24 L6.608 14.247 z" id="path56" xml:space="preserve" connector-curvature="0" mask="url(#TranspMask_15_1_)" style="fill:#FFFDEA;" />
+              <path d="M5.859 14.247 L5.715 14.996 L34.18 14.996 L34.324 14.247 z" fill-opacity="0.8549" id="path58" xml:space="preserve" connector-curvature="0" style="fill:#FFFDEA;" />
+              <path d="M3.116 28.497 L2.972 29.246 L31.425 29.246 L31.569 28.497 z" fill-opacity="0.4078" id="path60" xml:space="preserve" connector-curvature="0" style="fill:#FFFDEA;" />
+              <path d="M3.26 27.747 L3.116 28.496 L31.567 28.496 L31.711 27.747 z" fill-opacity="0.4078" id="path62" xml:space="preserve" connector-curvature="0" style="fill:#D9A025;" />
+            </g>
+            <g id="Group_34" xml:space="preserve">
+              <path d="M22.049 10.706 L24.946 7.925 L24.667 7.577 C24.241 7.094 23.736 6.657 23.16 6.29 C20.657 4.698 17.518 4.89 15.25 6.535 L14.354 7.313 L13.715 8.128 C13.147 8.853 12.017 8.095 12.473 7.295 L12.963 6.434 L12.981 6.402 C16.315 1.156 23.285 -0.394 28.53 2.945 L29.332 3.517 L31.717 1.11 C32.187 0.635 33 0.97 33 1.637 L33 11.247 C33 11.661 32.663 11.997 32.25 11.997 L22.569 11.997 C21.895 11.997 21.563 11.173 22.049 10.706 z" id="path65" xml:space="preserve" connector-curvature="0" style="fill:#208712;" />
+              <linearGradient x1="159.5654" y1="9.8345" x2="170.5874" y2="9.8345" gradientUnits="userSpaceOnUse" gradientTransform="matrix(-0.7592, -0.6508, 0.6508, -0.7592, 144.9261, 122.3903)" id="SVGID_6_" xml:space="preserve">
+                <stop offset="0%" stop-color="#84DF77" stop-opacity="1" id="stop67" xml:space="preserve" />
+                <stop offset="100%" stop-color="#3EBD29" stop-opacity="1" id="stop69" xml:space="preserve" />
+              </linearGradient>
+              <path d="M13.125 7.665 L13.615 6.804 C16.726 1.908 23.232 0.461 28.128 3.578 C28.431 3.77 28.725 3.978 29.002 4.199 L29.383 4.53 L32.25 1.637 L32.25 11.247 L22.569 11.247 L25.933 8.018 L25.681 7.643 C25.123 6.876 24.412 6.197 23.563 5.657 C20.397 3.642 16.312 4.208 13.798 6.806 z" id="path72" xml:space="preserve" connector-curvature="0" style="fill:url(#SVGID_6_);" />
+            </g>
+          </g>
+        </g>
+      </g>
+    </g>
+  </g>
+  <g transform="translate(0, 3.994999)" id="Layer_1" xml:space="preserve" />
+</svg>

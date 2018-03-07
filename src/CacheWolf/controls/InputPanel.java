@@ -1,7 +1,6 @@
 package CacheWolf.controls;
 
 import CacheWolf.Preferences;
-import ewe.fx.Dimension;
 import ewe.ui.ControlEvent;
 import ewe.ui.Event;
 import ewe.ui.Form;
@@ -14,7 +13,7 @@ public class InputPanel extends Form {
     mInput inputText;
 
     public InputPanel(String title, String label, String defaultValue) {
-        Preferences.itself().setPreferredSize(this);
+        Preferences.itself().setSubWindowSize(this);
         this.title = title;
         this.addNext(new mLabel(label), DONTSTRETCH, LEFT);
         this.addLast(inputText = new mInput(defaultValue));

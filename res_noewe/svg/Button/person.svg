@@ -1,0 +1,37 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg x="0" y="0" width="32" height="32" overflow="hidden" viewBox="-27, 24, 100, 100" preserveAspectRatio="xMidYMid" font-size="0" id="male3" xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xml="http://www.w3.org/XML/1998/namespace" version="1.1">
+  <defs id="defs51" xml:space="preserve" />
+  <g id="g46" xml:space="preserve">
+    <rect x="-27" y="24" width="100" height="100" id="rect2" xml:space="preserve" style="fill:#F5EEE5;" />
+    <path d="M38 99.9 L65.9 107.6 C69.1 108.7 71.6 111.1 73 114.2 L73 124 L-27 124 L-27 114.2 C-25.7 111.1 -23.1 108.7 -19.9 107.6 L8 99.9 L8 85 L38 85 L38 99.9 z" id="path4" xml:space="preserve" style="fill:#E6C19C;" />
+    <g id="g18" xml:space="preserve">
+      <defs id="defs7" xml:space="preserve">
+        <path d="M38 99.9 L65.9 107.6 C69.1 108.7 71.6 111.1 73 114.2 L73 124 L-27 124 L-27 114.2 C-25.7 111.1 -23.1 108.7 -19.9 107.6 L8 99.9 L8 85 L38 85 L38 99.9 z" id="SVGID_1_" xml:space="preserve" />
+      </defs>
+      <clipPath id="SVGID_2_" xml:space="preserve">
+        <use xlink:href="#SVGID_1_" x="0" y="0" id="use9" xml:space="preserve" overflow="visible" />
+      </clipPath>
+      <path d="M-27 82 L73 82 L73 124 L-27 124 L-27 82 z M23 112 C34 112 43 105.7 43 98 C43 90.3 34 84 23 84 C12 84 3 90.3 3 98 C3 105.7 12 112 23 112 z" clip-path="url(#SVGID_2_)" id="path12" xml:space="preserve" style="fill:#E6A422;" />
+      <path d="M23 102 C21.3 102 19.1 101.6 17.6 100.9 C15.9 100 9.6 94.8 7.400001 92.6 C4.6 89.6 3.200001 85.8 2.800001 79.3 C2.400001 72.8 0.7000008 49.59999 0.7000008 44.3 C0.7000008 36.8 6.400001 25.09999 22.8 25.09999 L22.9 25.09999 L22.9 25.09999 L22.9 25.09999 L23 25.09999 C39.5 25.2 45.1 36.8 45.1 44.3 C45.1 49.59999 43.4 72.8 43 79.3 C42.6 85.8 41.2 89.49999 38.40001 92.6 C36.30001 94.9 30.00001 100 28.2 100.9 C26.9 101.6 24.7 102 23 102 L23 102 z" clip-path="url(#SVGID_2_)" id="path14" xml:space="preserve" style="fill:#D4B08C;" />
+      <path d="M23 82 C10.3 82 0 89.4 0 98.5 C0 107.6 10.3 115 23 115 C35.7 115 46 107.6 46 98.5 C46 89.4 35.7 82 23 82 z M23 111 C12.5 111 4 105 4 97.5 C4 90 12.5 84 23 84 C33.5 84 42 90 42 97.5 C42 105 33.5 111 23 111 z" clip-path="url(#SVGID_2_)" id="path16" xml:space="preserve" style="fill:#D98C21;" />
+    </g>
+    <path d="M23 98 C21.5 98 19.5 97.7 18.2 97.1 C16.6 96.4 11 92.5 9.1 90.8 C6.6 88.49999 5.3 85.7 4.900001 80.8 C4.500001 75.89999 3 58.5 3 54.5 C3 48.8 8.1 40 23 40 L23 40 L23 40 L23 40 L23 40 C37.9 40 43 48.8 43 54.5 C43 58.5 41.5 76 41.1 80.9 C40.7 85.8 39.5 88.6 36.9 90.9 C35 92.6 29.3 96.5 27.8 97.2 C26.5 97.7 24.5 98 23 98 L23 98 z" id="path20" xml:space="preserve" style="fill:#F2CEA5;" />
+    <path d="M30 85.5 C28.1 87.5 24.8 88.5 21.9 87.9 C19.2 87.3 17.2 85.9 16.2 83.6 L30 85.5 z" id="path22" xml:space="preserve" style="fill:#A3705F;" />
+    <path d="M23.7 88.6 C23.1 88.6 22.4 88.5 21.8 88.4 C18.8 87.8 16.7 86.2 15.7 83.8 C15.6 83.60001 15.7 83.4 15.8 83.3 C15.9 83.2 16.1 83.10001 16.3 83.10001 L30.1 85.10001 C30.3 85.10001 30.4 85.3 30.5 85.40001 C30.6 85.60001 30.5 85.80001 30.4 85.90001 C28.9 87.5 26.3 88.6 23.7 88.6 z M17.1 84.2 C18.1 85.8 19.8 86.89999 22 87.39999 C22.5 87.49999 23.1 87.59999 23.7 87.59999 C25.6 87.59999 27.6 86.99999 28.9 85.89999 L17.1 84.2 z" id="path24" xml:space="preserve" style="fill:#A3705F;" />
+    <g id="g36" xml:space="preserve">
+      <defs id="defs27" xml:space="preserve">
+        <rect x="7" y="65" width="31" height="5" id="SVGID_3_" xml:space="preserve" />
+      </defs>
+      <clipPath id="SVGID_4_" xml:space="preserve">
+        <use xlink:href="#SVGID_3_" x="0" y="0" id="use29" xml:space="preserve" overflow="visible" />
+      </clipPath>
+      <circle cx="32" cy="69" r="2" clip-path="url(#SVGID_4_)" id="circle32" xml:space="preserve" style="fill:#291F21;" />
+      <circle cx="14" cy="69" r="2" clip-path="url(#SVGID_4_)" id="circle34" xml:space="preserve" style="fill:#291F21;" />
+    </g>
+    <path d="M19.6 66.5 C19.1 65.8 17.6 64 14 64 C9.9 64 8.9 66.3 8.9 66.4 L7 65.7 C7.099999 65.60001 8.4 62.10001 14 62.10001 C18.6 62.10001 20.6 64.50001 21.2 65.60001 L19.6 66.5 z" id="path38" xml:space="preserve" style="fill:#CC9872;" />
+    <path d="M24 77 C24 76.7 24 69.9 24 68 C24 65.5 26.5 62.1 32 62 C37.5 62 38.9 65.5 39 65.6 L37.1 66.3 C37.1 66.2 36.1 64 32 63.89999 C27.9 63.89999 26 66.3 26 67.89999 C26 69.8 26 76.8 26 76.89999 L24 77 z" id="path40" xml:space="preserve" style="fill:#BB8660;" />
+    <path d="M41.8 72.2 C41.8 72.2 42.6 65.89999 45.5 65 C45.9 63.2 47 58 47 55.1 C47 52.2 46.7 49.4 45.1 47 C43.3 44.4 39.5 42.9 37.5 42.9 C35.2 44.3 29.8 47.5 28.1 49.4 C27.2 50.4 28.5 51.2 28.5 51.2 C28.5 51.2 29.7 50.7 30.2 50.6 C32.7 49.9 38.2 49.4 39.9 51.9 C42 54.9 42 63.7 42 65 C42 66.2 41.8 72.2 41.8 72.2 z" id="path42" xml:space="preserve" style="fill:#452228;" />
+    <path d="M0.5 65 C3.4 66 4.2 72.2 4.2 72.2 C4.2 72.2 4 66.2 4 65 C4 63.4 4.2 55.9 7.4 52.3 C11 48.3 15.8 47 18.5 48.8 C19.9 49.7 24.6 54.3 29.6 50.5 C32.6 48.2 38.1 43 38.1 43 C38.1 43 35.2 34.1 22 35.1 C16.4 35.6 10.2 34.2 10.2 34.2 C10.2 34.2 10.1 36.7 11.1 38 C2.8 40.4 0.1 46.4 -0.7 51 C-0.9 51.9 -1 52.8 -1 53.7 C-1 54.2 -1 54.7 -1 55.1 C-1 58 0.1 63.1 0.5 65 z" id="path44" xml:space="preserve" style="fill:#6B363E;" />
+  </g>
+</svg>

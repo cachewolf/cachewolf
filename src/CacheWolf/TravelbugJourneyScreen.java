@@ -211,7 +211,6 @@ public class TravelbugJourneyScreen extends Form {
 
 	split.setSplitter(PanelSplitter.AFTER | PanelSplitter.HIDDEN, PanelSplitter.BEFORE | PanelSplitter.HIDDEN, 0);
 	addLast(split, STRETCH, FILL);
-	// setPreferredSize(Preferences.itself().getScreenWidth()<=240?240:Preferences.itself().getScreenWidth()*2/3,240);
 
 	tblMyTravelbugJourneys = new TravelbugJourneyList();
 	tblMyTravelbugJourneys.readTravelbugsFile();
@@ -279,8 +278,8 @@ public class TravelbugJourneyScreen extends Form {
 		mInput inpDate = ev.target == btnFromDate ? inpFromDate : inpToDate;
 		DateTimeChooser dc = new DateTimeChooser(Vm.getLocale());
 		dc.title = MyLocale.getMsg(328, "Date found");
-		dc.setPreferredSize(240, 240);
-		String foundDate = inpDate.getText();
+			Preferences.itself().setSubWindowSize(dc);
+			String foundDate = inpDate.getText();
 		Time t = new Time();
 		try {
 		    t.parse(foundDate, "y-M-d H:m");

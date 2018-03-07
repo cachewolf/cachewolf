@@ -21,6 +21,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 package CacheWolf;
 
+import CacheWolf.controls.GuiImageBroker;
 import CacheWolf.controls.InfoBox;
 import CacheWolf.controls.MyScrollBarPanel;
 import CacheWolf.database.CWPoint;
@@ -42,12 +43,11 @@ import ewe.util.Comparer;
  * Mainform is responsible for building the user interface. Class ID = 5000
  */
 public class MainForm extends Editor {
+    static final int PROFILE_SELECTOR_FORCED_ON = 0;
+    static final int PROFILE_SELECTOR_ONOROFF = 2;
     public static MainForm itself;
-
     public static Profile profile;
-
     public boolean cacheTourVisible = false;
-
     private SplittablePanel ScreenPanel;
     private MainTab mainTab;
     private CacheTour cacheTour;
@@ -80,7 +80,7 @@ public class MainForm extends Editor {
         } else {
             this.resizable = true;
             this.moveable = true;
-            Preferences.itself().setInitialPreferredSize(this);
+            Preferences.itself().setBigWindowSize(this);
         }
 
         Font defaultGuiFont = mApp.findFont("gui");
@@ -141,11 +141,12 @@ public class MainForm extends Editor {
         Vm.showWait(false);
 
     }
+
     //  Overrides ewe.ui.CellPanel
-    public void resizeTo(int width,int height){
+    public void resizeTo(int width, int height) {
         Preferences.itself().setScreenWidth(width);
         Preferences.itself().setScreenHeight(height);
-        super.resizeTo(width,height);
+        super.resizeTo(width, height);
     }
 
     // Overrides: checkButtons() in Form
@@ -159,9 +160,6 @@ public class MainForm extends Editor {
         mainTab.saveUnsavedChanges(true);
         return Preferences.itself().hasCloseButton;
     }
-
-    static final int PROFILE_SELECTOR_FORCED_ON = 0;
-    static final int PROFILE_SELECTOR_ONOROFF = 2;
 
     /**
      * Open Profile selector screen
@@ -255,15 +253,39 @@ public class MainForm extends Editor {
  * Created by skg, Februar 2007
  ********************************************************/
 class CacheTour extends CellPanel {
+    private static int applyCount = 0; // Counts the number of times we apply the list
     /**
      * The extension for cachelists (CL)
      */
     private final String EXTENSION = "CL";
     private final String TITLE = MyLocale.getMsg(188, "CACHETOUR: NEW");
-    private static int applyCount = 0; // Counts the number of times we apply the list
-
+    /**
+     * Flag to ensure the initial message "Caches hierher ziehen" is cleared when the first cache is dragged into the list
+     */
+    private boolean needsInit = true;
+    /**
+     * The actual list. This is mirrored by cacheList
+     */
+    private myList lstCaches;
+    /**
+     * True if there are unsaved changes
+     */
+    private boolean dirty = false;
+    // The UI elements
+    private mLabel lblTitle;
+    private mCheckBox chkAddAddis;
+    private mButton btnDown, btnUp, btnLoad, btnNew, btnSave, btnSaveAs, btnFilter;
+    private mImage imgOpen, imgNew, imgSave, imgSaveAs;
+    /**
+     * This list mirrors the items in the list of selected caches for faster access. When the list of selected caches is manipulated (btnUp, btnDown), this list is also kept up to date
+     */
+    private CacheDB cacheList = new CacheDB();
+    /**
+     * The full filename of the current file
+     */
+    private String currFile = null;
     CacheTour() {
-        this.setPreferredSize(100, -1);
+        this.setPreferredSize(Math.max(Preferences.itself().lastSavedWidth / 5, 100), -1);
         this.equalWidths = true;
         mImage imgDown = new mImage("ewe/downarrowsmall.bmp");
         imgDown.transparentColor = Color.White;
@@ -290,17 +312,13 @@ class CacheTour extends CellPanel {
         // Buttons to clear, load and save the list
         CellPanel cp = new CellPanel();
         cp.equalWidths = true;
-        cp.addNext(btnNew = new mButton(imgNew = new mImage("clnew.png")), HSTRETCH, HFILL);
-        imgNew.transparentColor = new Color(255, 0, 0);
+        cp.addNext(btnNew = GuiImageBroker.getButton("","clnew"), HSTRETCH, HFILL);
         btnNew.setToolTip(MyLocale.getMsg(182, "New list"));
-        cp.addNext(btnLoad = new mButton(imgOpen = new mImage("clopen.png")), HSTRETCH, HFILL);
-        imgOpen.transparentColor = new Color(255, 0, 0);
+        cp.addNext(btnLoad = GuiImageBroker.getButton("","clopen"), HSTRETCH, HFILL);
         btnLoad.setToolTip(MyLocale.getMsg(183, "Load list"));
-        cp.addNext(btnSaveAs = new mButton(imgSaveAs = new mImage("clsaveas.png")), HSTRETCH, HFILL);
-        imgSaveAs.transparentColor = new Color(0, 255, 0);
+        cp.addNext(btnSaveAs = GuiImageBroker.getButton("","clsaveas"), HSTRETCH, HFILL);
         btnSaveAs.setToolTip(MyLocale.getMsg(184, "Save as"));
-        cp.addLast(btnSave = new mButton(imgSave = new mImage("clsave.png")), HSTRETCH, HFILL);
-        imgSave.transparentColor = new Color(255, 0, 0);
+        cp.addLast(btnSave = GuiImageBroker.getButton("","clsave"), HSTRETCH, HFILL);
         btnSave.setToolTip(MyLocale.getMsg(185, "Save (without confirmation)"));
         addLast(cp, HSTRETCH, HFILL);
         // Button to toggle whether additional waypoints are automatically dragged
@@ -311,115 +329,6 @@ class CacheTour extends CellPanel {
         addLast(btnFilter = new mButton(MyLocale.getMsg(189, "Apply List")), HSTRETCH, HFILL);
         btnFilter.modify(Disabled, 0);
         btnFilter.setToolTip(MyLocale.getMsg(190, "Show only these waypoints"));
-    }
-
-    /**
-     * Flag to ensure the initial message "Caches hierher ziehen" is cleared when the first cache is dragged into the list
-     */
-    private boolean needsInit = true;
-    /**
-     * The actual list. This is mirrored by cacheList
-     */
-    private myList lstCaches;
-    /**
-     * True if there are unsaved changes
-     */
-    private boolean dirty = false;
-    // The UI elements
-    private mLabel lblTitle;
-    private mCheckBox chkAddAddis;
-    private mButton btnDown, btnUp, btnLoad, btnNew, btnSave, btnSaveAs, btnFilter;
-    private mImage imgOpen, imgNew, imgSave, imgSaveAs;
-    /**
-     * This list mirrors the items in the list of selected caches for faster access. When the list of selected caches is manipulated (btnUp, btnDown), this list is also kept up to date
-     */
-    private CacheDB cacheList = new CacheDB();
-    /**
-     * The full filename of the current file
-     */
-    private String currFile = null;
-
-    private class myList extends mList {
-        myList(int rows, int columns, boolean multi) {
-            super(rows, columns, multi);
-        }
-
-        //  Allow the caches to be dragged out of the cachelist
-        int idx;
-
-        public void startDragging(DragContext dc) {
-            idx = getSelectedIndex(0);
-            if (idx >= 0) {
-                CacheHolder ch = cacheList.get(idx);
-                IconAndText imgDrag = new IconAndText();
-                imgDrag.addColumn(CacheType.getTypeImage(ch.getType()));
-                imgDrag.addColumn(ch.getCode());
-                dc.dragData = dc.startImageDrag(imgDrag, new Point(8, 8), this);
-            }
-        }
-
-        public void dragged(DragContext dc) {
-            dc.imageDrag();
-        }
-
-        public void stopDragging(DragContext dc) {
-            dc.stopImageDrag(true);
-            Point p = Gui.getPosInParent(this, getWindow());
-            p.x += dc.curPoint.x;
-            p.y += dc.curPoint.y;
-            Control c = getWindow().findChild(p.x, p.y);
-            if (!(c instanceof myList)) {
-                // target is not myList => Remove dragged cache from list
-                cacheList.removeElementAt(idx);
-                lstCaches.deleteItem(idx);
-                repaint();
-                changeUpDownButtonStatus();
-            }
-        }
-
-        // Alternative method of deleting a cache from the list through
-        // Keyboard interface
-        public void onKeyEvent(KeyEvent ev) {
-        /* This is a bit of a hack. By default Ewe sends key events to
-	     * this panel. So if the list has not had anything dragged into it,
-	     * we redirect the focus to the list view, assuming that that is where
-	     * the key event needs to go.
-	     */
-            if (needsInit && ev.target == this) {
-                Gui.takeFocus(MainTab.itself.tablePanel.myTableControl, ControlConstants.ByKeyboard);
-                ev.target = MainTab.itself.tablePanel.myTableControl;
-                postEvent(ev);
-            }
-            if (ev.type == KeyEvent.KEY_PRESS && ev.target == this) {
-                if (ev.key == IKeys.DELETE && cacheList.size() > 0) {
-                    idx = getSelectedIndex(0);
-                    cacheList.removeElementAt(idx);
-                    lstCaches.deleteItem(idx);
-                    repaint();
-                    changeUpDownButtonStatus();
-                }
-            }
-            super.onKeyEvent(ev);
-        }
-
-        public ScrollablePanel getScrollablePanel() {
-            dontAutoScroll = amScrolling = true;
-            ScrollBarPanel sp = new MyScrollBarPanel(this);
-            sp.modify(0, TakeControlEvents);
-            return sp;
-        }
-
-    } //******************* myList
-
-    /**
-     * Simple sort to ensure that the main list keeps the order of this list
-     */
-    private class mySort implements Comparer {
-        public int compare(Object o1, Object o2) {
-            CacheHolder oo1 = (CacheHolder) o1;
-            CacheHolder oo2 = (CacheHolder) o2;
-            return oo1.sort.compareTo(oo2.sort);
-        }
     }
 
     /**
@@ -740,5 +649,88 @@ class CacheTour extends CellPanel {
      */
     public boolean contains(String waypoint) {
         return cacheList.getIndex(waypoint) >= 0;
+    }
+
+    private class myList extends mList {
+        //  Allow the caches to be dragged out of the cachelist
+        int idx;
+
+        myList(int rows, int columns, boolean multi) {
+            super(rows, columns, multi);
+        }
+
+        public void startDragging(DragContext dc) {
+            idx = getSelectedIndex(0);
+            if (idx >= 0) {
+                CacheHolder ch = cacheList.get(idx);
+                IconAndText imgDrag = new IconAndText();
+                imgDrag.addColumn(CacheType.getTypeImage(ch.getType()));
+                imgDrag.addColumn(ch.getCode());
+                dc.dragData = dc.startImageDrag(imgDrag, new Point(8, 8), this);
+            }
+        }
+
+        public void dragged(DragContext dc) {
+            dc.imageDrag();
+        }
+
+        public void stopDragging(DragContext dc) {
+            dc.stopImageDrag(true);
+            Point p = Gui.getPosInParent(this, getWindow());
+            p.x += dc.curPoint.x;
+            p.y += dc.curPoint.y;
+            Control c = getWindow().findChild(p.x, p.y);
+            if (!(c instanceof myList)) {
+                // target is not myList => Remove dragged cache from list
+                cacheList.removeElementAt(idx);
+                lstCaches.deleteItem(idx);
+                repaint();
+                changeUpDownButtonStatus();
+            }
+        }
+
+        // Alternative method of deleting a cache from the list through
+        // Keyboard interface
+        public void onKeyEvent(KeyEvent ev) {
+        /* This is a bit of a hack. By default Ewe sends key events to
+         * this panel. So if the list has not had anything dragged into it,
+	     * we redirect the focus to the list view, assuming that that is where
+	     * the key event needs to go.
+	     */
+            if (needsInit && ev.target == this) {
+                Gui.takeFocus(MainTab.itself.tablePanel.myTableControl, ControlConstants.ByKeyboard);
+                ev.target = MainTab.itself.tablePanel.myTableControl;
+                postEvent(ev);
+            }
+            if (ev.type == KeyEvent.KEY_PRESS && ev.target == this) {
+                if (ev.key == IKeys.DELETE && cacheList.size() > 0) {
+                    idx = getSelectedIndex(0);
+                    cacheList.removeElementAt(idx);
+                    lstCaches.deleteItem(idx);
+                    repaint();
+                    changeUpDownButtonStatus();
+                }
+            }
+            super.onKeyEvent(ev);
+        }
+
+        public ScrollablePanel getScrollablePanel() {
+            dontAutoScroll = amScrolling = true;
+            ScrollBarPanel sp = new MyScrollBarPanel(this);
+            sp.modify(0, TakeControlEvents);
+            return sp;
+        }
+
+    } //******************* myList
+
+    /**
+     * Simple sort to ensure that the main list keeps the order of this list
+     */
+    private class mySort implements Comparer {
+        public int compare(Object o1, Object o2) {
+            CacheHolder oo1 = (CacheHolder) o1;
+            CacheHolder oo2 = (CacheHolder) o2;
+            return oo1.sort.compareTo(oo2.sort);
+        }
     }
 }

@@ -178,13 +178,15 @@ public final class MovingMap extends Form implements ICommandListener {
 	if (Preferences.itself().getScreenHeight() <= 640 && Preferences.itself().getScreenWidth() <= 640) {
 	    this.windowFlagsToSet = WindowConstants.FLAG_FULL_SCREEN;
 	}
+	else {
+		Preferences.itself().setBigWindowSize(this);
+	}
 	// The following line is commented out,
 	// because this caused trouble under ewe-vm v1.49 on win-xp
 	// when MovingMap was started with maximized CacheWolf-Window
 	// this.windowFlagsToClear = WindowConstants.FLAG_HAS_TITLE | UIConstants.BDR_NOBORDER;
 	this.hasTopBar = false;
 	this.noBorder = true;
-	this.setPreferredSize(Preferences.itself().getScreenWidth(), Preferences.itself().getScreenHeight());
 	this.title = "Moving Map";
 	// background must not be black because black is interpreted as transparent
 	// and transparent images above (eg trackoverlay) want be drawn in windows-VM,
@@ -2669,10 +2671,6 @@ class ListBox extends Form {
 
     public ListBox(Vector maps, CWPoint Gps, CWPoint gotopos, MapInfoObject curMap) {
 	this.title = MyLocale.getMsg(4271, "Maps");
-	// if (Gui.screenIs(Gui.PDA_SCREEN)) this.setPreferredSize(200,100);
-	// else
-	// set width to screenwidth *3/4 but to at least 240 if the screen
-	// is big engough for 240px width
 	this.setPreferredSize(java.lang.Math.max(Preferences.itself().getScreenWidth() * 3 / 4, java.lang.Math.min(240, Preferences.itself().getScreenWidth())), Preferences.itself().getScreenHeight() * 3 / 4);
 	this.maps = maps;
 	MapInfoObject mio;

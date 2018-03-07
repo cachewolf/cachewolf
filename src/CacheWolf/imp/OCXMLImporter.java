@@ -146,8 +146,6 @@ public class OCXMLImporter extends MinML {
 	}
 
 	inf = new InfoBox("Opencaching download", MyLocale.getMsg(1608, "downloading data\n from " + hostname), InfoBox.PROGRESS_WITH_WARNINGS, false);
-	inf.setPreferredSize(220, 300);
-	inf.relayout(false);
 	inf.exec();
 
 	String lastS;
@@ -238,7 +236,6 @@ public class OCXMLImporter extends MinML {
 	    url += "&picture=0";
 	url += "&cachelog=1" + "&removedobject=0" + "&lat=" + centre.getLatDeg(TransformCoordinates.DD) + "&lon=" + centre.getLonDeg(TransformCoordinates.DD) + "&distance=" + dist + "&charset=utf-8" + "&cdata=0" + "&session=0";
 	inf = new InfoBox("Opencaching download", MyLocale.getMsg(1608, "downloading data\n from opencaching"), InfoBox.PROGRESS_WITH_WARNINGS, false);
-	inf.setPreferredSize(220, 300);
 	inf.relayout(false);
 	inf.exec();
 

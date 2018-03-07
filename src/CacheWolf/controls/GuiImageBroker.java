@@ -113,9 +113,10 @@ public final class GuiImageBroker {
         File f = new File(basedir + icon + extension);
         if (f.exists()) {
             in = f.getAbsolutePath();
-            log("using image " + in);
+            // log("using image " + in);
         } else {
             in = icon + extension;
+            log("rem svg2png.exe \"svg\\Button\\" + icon +".svg\" \"symbols\\" + icon + ".png\" %RESOLUTION%");
         }
         return in;
     }

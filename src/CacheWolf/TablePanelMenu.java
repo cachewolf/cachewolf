@@ -76,6 +76,7 @@ public class TablePanelMenu extends MenuBar {
     private MenuItem orgNewWP, orgCopy, orgMove, orgDelete, orgCheckNotesAndSolver;
     private MenuItem mnuNewProfile, mnuOpenProfile, mnuDeleteProfile, mnuRenameProfile, mnuEditCenter, orgRebuild, savenoxit;
     private TablePanel tablePanel;
+    private FilterScreen scnFilter;
 
     public TablePanelMenu() {
         Preferences.itself().setgpsbabel();
@@ -759,9 +760,9 @@ public class TablePanelMenu extends MenuBar {
                 MainForm.profile.saveIndex(Profile.SHOW_PROGRESS_BAR, Profile.FORCESAVE);
                 tablePanel.saveColWidth();
             }
-        /*
-	     * if(mev.selectedItem == savenexit){ MainForm.profile.saveIndex(pref,Profile.SHOW_PROGRESS_BAR); tablePanel.saveColWidth(pref); ewe.sys.Vm.exit(0); }
-	     */
+            /*
+             * if(mev.selectedItem == savenexit){ MainForm.profile.saveIndex(pref,Profile.SHOW_PROGRESS_BAR); tablePanel.saveColWidth(pref); ewe.sys.Vm.exit(0); }
+             */
             if (mev.selectedItem == appMenuExit) {
                 Preferences.itself().log("End CacheWolf");
                 MainTab.itself.saveUnsavedChanges(true);
@@ -801,11 +802,11 @@ public class TablePanelMenu extends MenuBar {
                 tablePanel.refreshTable();
             }
             if (mev.selectedItem == filtCreate) {
-                FilterScreen scnFilter = new FilterScreen();
+                if (scnFilter == null)
+                    scnFilter = new FilterScreen();
                 scnFilter.setData(MainForm.profile.getCurrentFilter());
                 if (Vm.isMobile())
-                   scnFilter.setPreferredSize(Preferences.itself().getScreenWidth(), Preferences.itself().getScreenHeight()); // Fullscreen
-                // scnFilter.execute(MainForm.itself.getFrame(), Gui.CENTER_FRAME);
+                    Preferences.itself().setBigWindowSize(scnFilter);
                 scnFilter.execute();
                 tablePanel.refreshTable();
             }
@@ -915,7 +916,7 @@ public class TablePanelMenu extends MenuBar {
             }
             if (mev.selectedItem == orgTravelbugs) {
                 Form tbs = TravelbugJourneyScreenFactory.createTravelbugJourneyScreen();
-                tbs.setPreferredSize(Preferences.itself().getScreenWidth(), Preferences.itself().getScreenHeight());
+                Preferences.itself().setBigWindowSize(this);
                 tbs.execute();
                 tbs.close(0);
             }
@@ -928,17 +929,14 @@ public class TablePanelMenu extends MenuBar {
             // /////////////////////////////////////////////////////////////////////
             if (mev.selectedItem == about) {
                 InfoScreen is = new InfoScreen(MyLocale.getLocalizedFile("info.html"), MyLocale.getMsg(117, "About"), true);
-                is.setPreferredSize(Preferences.itself().getScreenWidth(), Preferences.itself().getScreenHeight());
                 is.execute(MainForm.itself.getFrame(), Gui.CENTER_FRAME);
             }
             if (mev.selectedItem == legend) {
                 InfoScreen is = new InfoScreen(MyLocale.getLocalizedFile("legende.html"), MyLocale.getMsg(155, "Legend"), true);
-                is.setPreferredSize(Preferences.itself().getScreenWidth(), Preferences.itself().getScreenHeight());
                 is.execute(MainForm.itself.getFrame(), Gui.CENTER_FRAME);
             }
             if (mev.selectedItem == wolflang) {
                 InfoScreen is = new InfoScreen(MyLocale.getLocalizedFile("wolflang.html"), MyLocale.getMsg(118, "WolfLanguage"), true);
-                is.setPreferredSize(Preferences.itself().getScreenWidth(), Preferences.itself().getScreenHeight());
                 is.execute(MainForm.itself.getFrame(), Gui.CENTER_FRAME);
             }
             if (mev.selectedItem == sysinfo) {
@@ -1003,15 +1001,16 @@ public class TablePanelMenu extends MenuBar {
                 sb.append(Version.getReleaseDetailed());
                 sb.append("<br>");
                 InfoScreen is = new InfoScreen(sb.toString(), "System", false);
-                is.setPreferredSize(Preferences.itself().getScreenWidth(), Preferences.itself().getScreenHeight());
+                Preferences.itself().setBigWindowSize(is);
                 is.execute(MainForm.itself.getFrame(), Gui.CENTER_FRAME);
                 // Log for debug purposes
                 Preferences.itself().log(STRreplace.replace(sb.toString(), "<br>", Preferences.NEWLINE), null);
             }
             if (mev.selectedItem == chkVersion) {
-                new InfoBox(MyLocale.getMsg(178, "Version Checking"), Version.getUpdateMessage()).wait(FormBase.OKB);
+                InfoBox ib = new InfoBox(MyLocale.getMsg(178, "Version Checking"), Version.getUpdateMessage());
+                ib.wait(FormBase.OKB);
             }
-	    /*
+        /*
 	    			else if (mev.selectedItem == this.miDetails) {
 	    				MainTab.itself.select(MainTab.itself.detailsPanel);
 	    			}

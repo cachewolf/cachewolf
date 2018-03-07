@@ -278,7 +278,6 @@ public class PDATravelbugDetailPanel extends Form {
 		PDADateTimeChooser dc = new PDADateTimeChooser();
 		dc.setTitle(MyLocale.getMsg(328, "Date found"));
 		dc.setLocation(0, 0);
-		//				dc.setPreferredSize(240, 240);
 		String foundDate = inpDate.getText();
 		Time t = new Time();
 		try {

@@ -1,0 +1,32 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg x="0" y="0" width="64" height="64" overflow="hidden" viewBox="0, 0, 16, 16" preserveAspectRatio="xMidYMid" font-size="0" id="svg4099" xml:space="default" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xml="http://www.w3.org/XML/1998/namespace" version="1.1">
+  <defs id="defs4101" xml:space="default">
+    <linearGradient x1="0%" y1="0%" x2="100%" y2="0%" gradientUnits="objectBoundingBox" id="linearGradient3399" xml:space="default">
+      <stop offset="0%" stop-color="#000000" stop-opacity="1" id="stop3401" xml:space="default" />
+      <stop offset="15%" stop-color="#5C5C5C" stop-opacity="1" id="stop3407" xml:space="default" />
+      <stop offset="39%" stop-color="#787878" stop-opacity="1" id="stop3409" xml:space="default" />
+      <stop offset="100%" stop-color="#000000" stop-opacity="1" id="stop3403" xml:space="default" />
+    </linearGradient>
+    <linearGradient x1="0%" y1="0%" x2="100%" y2="0%" gradientUnits="objectBoundingBox" id="linearGradient3195" xml:space="default">
+      <stop offset="0%" stop-color="#666666" stop-opacity="1" id="stop3197" xml:space="default" />
+      <stop offset="100%" stop-color="#000000" stop-opacity="1" id="stop3199" xml:space="default" />
+    </linearGradient>
+    <linearGradient x1="4" y1="10" x2="12" y2="10" gradientUnits="userSpaceOnUse" xlink:href="#linearGradient3399" id="linearGradient3405" xml:space="default" />
+    <linearGradient x1="4" y1="10" x2="12" y2="10" gradientUnits="userSpaceOnUse" xlink:href="#linearGradient3399" id="linearGradient3417" xml:space="default" />
+    <linearGradient x1="4" y1="10" x2="12" y2="10" gradientUnits="userSpaceOnUse" xlink:href="#linearGradient3399" id="linearGradient3429" xml:space="default" />
+    <linearGradient x1="4" y1="10" x2="12" y2="10" gradientUnits="userSpaceOnUse" xlink:href="#linearGradient3399" gradientTransform="matrix(0.9956632, 0, 0, 1.130767, 0.03469412, -3.035695)" id="linearGradient3434" xml:space="default" />
+    <linearGradient x1="4" y1="10" x2="12" y2="10" gradientUnits="userSpaceOnUse" xlink:href="#linearGradient3399" gradientTransform="matrix(0.9956632, 0, 0, 1.130767, 0.03469412, -3.035695)" id="linearGradient3446" xml:space="default" />
+  </defs>
+  <g display="inline" id="layer6" xml:space="default">
+    <g display="inline" id="g3355" xml:space="default" style="fill:#909090;">
+      <g display="inline" transform="translate(0, 0.7120879)" id="g3440" xml:space="default">
+        <path d="M4 4.12014 L4.017347 12.22966 C4.017347 13.16593 5.801575 13.92581 8 13.92581 C10.19842 13.92581 11.98265 13.16593 11.98265 12.22966 L11.96531 4.12014 L4 4.12014 z" display="inline" enable-background="accumulate" stroke="#000000" stroke-width="0.3" id="path3392" xml:space="default" nodetypes="ccsccc" marker="none" overflow="visible" style="fill:url(#linearGradient3446);" />
+        <g display="inline" id="g3436" xml:space="default">
+          <path d="M8 0.6500151 C5.191175 0.6500151 2.911549 1.409891 2.911549 2.346165 L2.911549 3.476932 C2.911549 4.413208 5.191175 5.173083 8 5.173083 C10.80882 5.173083 13.08845 4.413208 13.08845 3.476932 L13.08845 2.346165 C13.08845 1.409891 10.80882 0.6500151 8 0.6500151 z M8 1.780782 C10.23011 1.780782 12.11893 2.245557 12.80576 2.911549 C12.11893 3.577541 10.23011 4.042316 8 4.042316 C5.76989 4.042316 3.881066 3.577541 3.194241 2.911549 C3.881066 2.245557 5.76989 1.780782 8 1.780782 z" display="inline" stroke="#000000" stroke-width="0.3" id="path3359" xml:space="default" nodetypes="cccscccccscc" marker="none" style="fill:#5D5A5A;" />
+          <path d="M13.08845 2.346165 C13.08845 3.28244 10.80882 4.042316 8 4.042316 C5.191175 4.042316 2.911549 3.28244 2.911549 2.346165 C2.911549 1.409891 5.191175 0.6500151 8 0.6500151 C10.80882 0.6500151 13.08845 1.409891 13.08845 2.346165 z" display="inline" enable-background="accumulate" stroke="#000000" stroke-width="0.3" id="path2533" xml:space="default" marker="none" overflow="visible" />
+        </g>
+      </g>
+    </g>
+  </g>
+</svg>

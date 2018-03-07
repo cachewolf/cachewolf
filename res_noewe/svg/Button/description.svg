@@ -1,0 +1,74 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg x="0" y="0" width="32" height="32" overflow="hidden" viewBox="0, 0, 170.6667, 170.6667" preserveAspectRatio="xMidYMid" font-size="0" id="svg1" xml:space="default" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xml="http://www.w3.org/XML/1998/namespace" version="1.1">
+  <defs id="defs3" xml:space="default">
+    <linearGradient x1="0.5617977" y1="-1.029412" x2="0.6348315" y2="0.5073529" gradientUnits="objectBoundingBox" xlink:href="#linearGradient841" id="linearGradient852" xml:space="default" />
+    <linearGradient x1="0%" y1="0%" x2="100%" y2="0%" gradientUnits="objectBoundingBox" xlink:href="#linearGradient841" id="linearGradient844" xml:space="default" />
+    <linearGradient x1="1.383333" y1="0.4901961" x2="0.1083333" y2="0.5049019" gradientUnits="objectBoundingBox" xlink:href="#linearGradient841" id="linearGradient845" xml:space="default" />
+    <linearGradient x1="-0.2234848" y1="0.3823529" x2="0.594697" y2="0.4656863" gradientUnits="objectBoundingBox" xlink:href="#linearGradient853" id="linearGradient840" xml:space="default" />
+    <linearGradient x1="0.01056338" y1="0.4322917" x2="1.228873" y2="0.4635417" gradientUnits="objectBoundingBox" xlink:href="#linearGradient846" id="linearGradient849" xml:space="default" />
+    <radialGradient cx="0.5" cy="0.5" r="0.5" fx="0.5" fy="0.1494253" gradientUnits="objectBoundingBox" xlink:href="#linearGradient853" id="radialGradient864" xml:space="default" />
+    <linearGradient x1="0%" y1="0%" x2="100%" y2="0%" gradientUnits="objectBoundingBox" id="linearGradient841" xml:space="default">
+      <stop offset="0%" stop-color="#FFFFFF" stop-opacity="1" id="stop842" xml:space="default" />
+      <stop offset="100%" stop-color="#FFFFFF" stop-opacity="0" id="stop843" xml:space="default" />
+    </linearGradient>
+    <linearGradient x1="0%" y1="0%" x2="100%" y2="0%" gradientUnits="objectBoundingBox" id="linearGradient1290" xml:space="default">
+      <stop offset="0%" stop-color="#B2A269" stop-opacity="1" id="stop1291" xml:space="default" />
+      <stop offset="100%" stop-color="#6D5B18" stop-opacity="1" id="stop1292" xml:space="default" />
+    </linearGradient>
+    <linearGradient x1="0.4753521" y1="0.8108108" x2="0.5" y2="-0.7432432" gradientUnits="objectBoundingBox" xlink:href="#linearGradient1290" id="linearGradient860" xml:space="default" />
+    <linearGradient x1="0.3978873" y1="0.3222222" x2="0.8098592" y2="0.3555556" gradientUnits="objectBoundingBox" xlink:href="#linearGradient846" id="linearGradient851" xml:space="default" />
+    <linearGradient x1="0.6428571" y1="1.264706" x2="0.5714286" y2="0.04901961" gradientUnits="objectBoundingBox" xlink:href="#linearGradient846" id="linearGradient858" xml:space="default" />
+    <linearGradient x1="0%" y1="0%" x2="100%" y2="0%" gradientUnits="objectBoundingBox" id="linearGradient846" xml:space="default">
+      <stop offset="0%" stop-color="#E7E7E7" stop-opacity="1" id="stop847" xml:space="default" />
+      <stop offset="100%" stop-color="#A5A5A5" stop-opacity="1" id="stop848" xml:space="default" />
+    </linearGradient>
+    <linearGradient x1="0%" y1="0%" x2="100%" y2="0%" gradientUnits="objectBoundingBox" xlink:href="#linearGradient846" id="linearGradient850" xml:space="default" />
+    <linearGradient x1="1.464789" y1="-1.148649" x2="0.2640845" y2="1.290541" gradientUnits="objectBoundingBox" xlink:href="#linearGradient853" id="linearGradient859" xml:space="default" />
+    <linearGradient x1="0%" y1="0%" x2="100%" y2="0%" gradientUnits="objectBoundingBox" id="linearGradient853" xml:space="default">
+      <stop offset="0%" stop-color="#000000" stop-opacity="0.2975207" id="stop854" xml:space="default" />
+      <stop offset="100%" stop-color="#000000" stop-opacity="0" id="stop855" xml:space="default" />
+    </linearGradient>
+    <radialGradient cx="0.5" cy="0.5" r="0.5" fx="0.5070422" fy="0.2988506" gradientUnits="objectBoundingBox" xlink:href="#linearGradient853" id="radialGradient861" xml:space="default" />
+    <linearGradient x1="0%" y1="0%" x2="100%" y2="0%" gradientUnits="objectBoundingBox" id="linearGradient1507" xml:space="default">
+      <stop offset="0%" stop-color="#000000" stop-opacity="0.09550562" id="stop1508" xml:space="default" />
+      <stop offset="100%" stop-color="#000000" stop-opacity="0" id="stop1510" xml:space="default" />
+    </linearGradient>
+    <linearGradient x1="0%" y1="0%" x2="100%" y2="0%" gradientUnits="objectBoundingBox" id="linearGradient1501" xml:space="default">
+      <stop offset="0%" stop-color="#FFFFFF" stop-opacity="1" id="stop1502" xml:space="default" />
+      <stop offset="100%" stop-color="#FFFFFF" stop-opacity="0" id="stop1504" xml:space="default" />
+    </linearGradient>
+    <linearGradient x1="0%" y1="0%" x2="100%" y2="0%" gradientUnits="objectBoundingBox" id="linearGradient1492" xml:space="default">
+      <stop offset="0%" stop-color="#DADADA" stop-opacity="1" id="stop1493" xml:space="default" />
+      <stop offset="34.92308%" stop-color="#F1F1F1" stop-opacity="1" id="stop1496" xml:space="default" />
+      <stop offset="100%" stop-color="#F0F0F0" stop-opacity="1" id="stop1494" xml:space="default" />
+    </linearGradient>
+    <linearGradient x1="0.8803419" y1="0.2109375" x2="0.08547009" y2="1.179688" gradientUnits="objectBoundingBox" xlink:href="#linearGradient1492" id="linearGradient1495" xml:space="default" />
+    <linearGradient x1="0.6324787" y1="0.328125" x2="-0.3760684" y2="1.328125" gradientUnits="objectBoundingBox" xlink:href="#linearGradient1492" id="linearGradient1497" xml:space="default" />
+    <linearGradient x1="0.8582677" y1="0.140625" x2="0.06299213" y2="0.546875" gradientUnits="objectBoundingBox" xlink:href="#linearGradient1501" id="linearGradient1499" xml:space="default" />
+    <linearGradient x1="0.05217391" y1="0.9765625" x2="0.7826087" y2="0.0078125" gradientUnits="objectBoundingBox" xlink:href="#linearGradient1507" id="linearGradient1506" xml:space="default" />
+    <linearGradient x1="0.3111111" y1="-0.5625" x2="0.6222222" y2="0.796875" gradientUnits="objectBoundingBox" xlink:href="#linearGradient1507" id="linearGradient1556" xml:space="default" />
+    <radialGradient cx="0.5" cy="0.8928571" r="0.5460667" fx="0.5411765" fy="3.52" gradientUnits="objectBoundingBox" xlink:href="#linearGradient841" id="radialGradient856" xml:space="default" />
+    <linearGradient x1="0%" y1="0%" x2="100%" y2="0%" gradientUnits="objectBoundingBox" xlink:href="#linearGradient841" id="linearGradient1944" xml:space="default" />
+  </defs>
+  <path d="M17.15938 6.329289 L17.15938 43.06853 L17.15938 79.80777 L17.15938 116.547 L17.15938 153.2862 L50.68702 153.2862 L84.21466 153.2862 L117.7423 153.2862 L151.2699 153.2862 L151.2699 116.547 L151.2699 79.80777 L151.2699 43.06853 L117.7423 6.329289 L84.21466 6.329289 L50.68702 6.329289 L17.15938 6.329289 z" fill-rule="evenOdd" stroke-width="0.4264904" stroke-opacity="0.3647799" id="path930" xml:space="default" style="fill:#FFFFFF;" />
+  <g transform="matrix(0.304171, 0, 0, 0.297572, -36.70399, -112.488)" id="g1552" xml:space="default" style="fill:url(#linearGradient1506);">
+    <path d="M173.3596 408.8126 L173.3596 531.0736 L173.3596 653.3346 L173.3596 775.5956 L173.3596 897.8566 L282.1219 897.8566 L390.8842 897.8566 L499.6465 897.8566 L608.4088 897.8566 L608.4088 775.5956 L608.4088 653.3346 L608.4088 531.0736 L499.6465 408.8126 L390.8842 408.8126 L282.1219 408.8126 L173.3596 408.8126 z" fill-rule="evenOdd" fill-opacity="0.75" stroke-width="0.954075pt" id="path1505" xml:space="default" nodetypes="cccccccccccccccc" />
+    <path d="M170.125 407.1875 C170.125 571.8229 170.125 736.4583 170.125 901.0938 C317.3021 901.0938 464.4792 901.0938 611.6563 901.0938 C611.6563 777.3333 611.6563 653.5729 611.6563 529.8125 C574.8092 488.3898 537.976 446.9533 501.0938 405.5625 C390.7708 405.5625 280.4479 405.5625 170.125 405.5625 C170.125 405.8958 170.125 406.9792 170.125 407.1875 z" fill-rule="evenOdd" fill-opacity="0.75" stroke-width="0.954075pt" id="path1538" xml:space="default" />
+    <path d="M166.875 403.9375 C166.875 570.7396 166.875 737.5417 166.875 904.3438 C316.2188 904.3438 465.5625 904.3438 614.9063 904.3438 C614.9063 779.0833 614.9063 653.8229 614.9063 528.5625 C577.4552 486.473 540.0175 444.3702 502.5313 402.3125 C390.6458 402.3125 278.7604 402.3125 166.875 402.3125 C166.875 402.6458 166.875 403.7292 166.875 403.9375 z" fill-rule="evenOdd" fill-opacity="0.75" stroke-width="0.954075pt" id="path1543" xml:space="default" />
+  </g>
+  <path d="M297.9903 136.7415 L297.9903 260.5723 L297.9903 384.4031 L297.9903 508.2339 L297.9903 632.0648 L410.9963 632.0648 L524.0024 632.0648 L637.0084 632.0648 L750.0143 632.0648 L750.0143 508.2339 L750.0143 384.4031 L750.0143 260.5723 L637.0084 136.7415 L524.0024 136.7415 L410.9963 136.7415 L297.9903 136.7415 z" stroke="#000000" fill-rule="evenOdd" stroke-width="1.4375" stroke-opacity="0.3647799" transform="matrix(0.296689, 0, 0, 0.296689, -71.19601, -34.05825)" id="rect900" xml:space="default" style="fill:url(#linearGradient1495);" />
+  <rect x="27.15877" y="16.71091" width="74.37736" height="20.95408" fill-rule="evenOdd" fill-opacity="0.09433962" stroke-width="1pt" id="rect1534" xml:space="default" style="fill:#000000;" />
+  <rect x="26.44884" y="48.97606" width="115.2834" height="2.44288" fill-rule="evenOdd" fill-opacity="0.4339623" stroke-width="1pt" id="rect1535" xml:space="default" />
+  <path d="M301.3065 174.9087 L299.2707 628.9044 L743.0871 628.9044 L743.3416 516.6779 C733.4167 520.4951 633.1509 378.4942 506.9279 384.6017 C380.5903 390.7148 413.2786 193.2314 301.3065 174.9087 z" fill-rule="evenOdd" stroke-width="1pt" transform="matrix(0.296689, 0, 0, 0.296689, -71.19601, -34.05825)" id="path1500" xml:space="default" style="fill:url(#linearGradient1499);" />
+  <rect x="26.44884" y="60.42627" width="115.2834" height="2.44288" fill-rule="evenOdd" fill-opacity="0.4339623" stroke-width="1pt" id="rect1536" xml:space="default" />
+  <rect x="26.44884" y="71.8765" width="110.9977" height="2.44288" fill-rule="evenOdd" fill-opacity="0.4339623" stroke-width="1pt" id="rect1537" xml:space="default" />
+  <rect x="26.44884" y="83.32671" width="63.77132" height="2.44288" fill-rule="evenOdd" fill-opacity="0.4339623" stroke-width="1pt" id="rect1538" xml:space="default" />
+  <rect x="26.44884" y="94.77694" width="63.0981" height="2.44288" fill-rule="evenOdd" fill-opacity="0.4339623" stroke-width="1pt" id="rect1539" xml:space="default" />
+  <path d="M750.0143 260.5723 C715.9446 250.486 671.7979 251.9162 638.4479 257.6652 C644.2062 220.7163 644.926 174.4102 637.0084 136.7415 L750.0143 260.5723 z" fill-rule="evenOdd" stroke-width="0.954075pt" transform="matrix(0.296689, 0, 0, 0.296689, -71.19601, -34.05825)" id="path906" xml:space="default" style="fill:url(#linearGradient1497);" />
+  <rect x="96.59936" y="82.36273" width="44.72193" height="42.93305" stroke="#000000" fill-rule="evenOdd" fill-opacity="0.2767296" stroke-width="1pt" stroke-opacity="0.163522" id="rect2441" xml:space="default" style="fill:#B9B9B9;" />
+  <rect x="26.50915" y="106.3173" width="63.0981" height="2.44288" fill-rule="evenOdd" fill-opacity="0.4339623" stroke-width="1pt" id="rect3029" xml:space="default" />
+  <rect x="26.55902" y="117.7675" width="63.77132" height="2.44288" fill-rule="evenOdd" fill-opacity="0.4339623" stroke-width="1pt" id="rect3030" xml:space="default" />
+  <rect x="26.55902" y="129.2177" width="83.09119" height="2.44288" fill-rule="evenOdd" fill-opacity="0.4339623" stroke-width="1pt" id="rect3031" xml:space="default" />
+  <rect x="26.55902" y="140.668" width="115.2834" height="2.44288" fill-rule="evenOdd" fill-opacity="0.4339623" stroke-width="1pt" id="rect3032" xml:space="default" />
+</svg>

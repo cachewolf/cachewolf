@@ -1,0 +1,16 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg x="0" y="0" width="32" height="32" overflow="hidden" viewBox="0, 0, 200, 200" preserveAspectRatio="xMidYMid" font-size="0" id="svg1316" xml:space="default" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xml="http://www.w3.org/XML/1998/namespace" version="1.1">
+  <defs id="defs1310" xml:space="default" />
+  <g transform="translate(0, -97)" id="layer1" xml:space="default">
+    <g transform="matrix(0.04978508, 0, 0, 0.04978508, 106.903, 111.8968)" id="g1333" xml:space="default">
+      <path d="M-615.3716 1821.487 L-915.2966 2121.412 L-1231.497 2437.612 C-1440.747 2374.837 -1675.572 2425.987 -1840.647 2591.062 C-2015.022 2765.437 -2061.522 3016.537 -1982.472 3235.087 L-1615.122 2867.737 L-1329.147 2944.462 L-1252.422 3230.437 L-1619.772 3597.787 C-1403.547 3676.837 -1150.122 3630.337 -978.0717 3455.962 C-812.9966 3290.887 -761.8467 3056.062 -824.6216 2846.812 L-508.4216 2532.937 L-180.5965 2205.112" stroke="#C92121" stroke-width="93.00001" id="path4" xml:space="default" connector-curvature="0" class="st0" style="fill:none;" />
+      <path d="M249.5283 1774.987 L688.9533 1335.562 L1005.153 1019.362 C1214.403 1082.136 1449.228 1030.987 1614.303 865.9116 C1788.678 691.5366 1835.178 440.4365 1756.128 221.8865 L1388.778 589.2366 L1102.803 512.5116 L1026.078 226.5366 L1393.428 -140.8134 C1177.203 -219.8635 923.7783 -173.3635 749.4033 1.011552 C584.3284 166.0866 533.1783 400.9116 595.9534 610.1616 L279.7534 928.6866 L-96.89655 1305.337" stroke="#C92121" stroke-width="93.00001" id="path6" xml:space="default" connector-curvature="0" class="st0" style="fill:none;" />
+      <path d="M419.2533 1747.087 C386.7033 1714.536 335.5533 1714.536 303.0033 1747.087 L254.1783 1795.911 C249.5283 1784.286 242.5534 1770.337 230.9284 1761.036 L47.25343 1577.361 L-350.3217 1974.937 L-166.6466 2158.612 C-155.0216 2170.237 -143.3966 2177.212 -131.7716 2181.862 L-180.5966 2230.687 C-213.1466 2263.237 -213.1466 2314.386 -180.5966 2346.937 L1035.378 3560.587 C1067.928 3593.137 1119.078 3593.137 1151.628 3560.587 L1637.553 3074.662 C1670.104 3042.112 1670.104 2990.962 1637.553 2958.412 z" stroke="#C92121" stroke-width="93.00001" id="path8" xml:space="default" connector-curvature="0" class="st0" style="fill:none;" />
+      <line x1="-150.3716" y1="1781.962" x2="-1594.197" y2="338.1366" stroke="#C92121" stroke-width="93.00001" id="line10" xml:space="default" class="st0" />
+      <polygon points="18,27.5 23.7,21.8 39.6,31.9 40.7,42.9 39.1,44.5 28.1,43.3" stroke="#C92121" stroke-width="4" transform="matrix(23.25, 0, 0, 23.25, -2440.497, -596.5135)" id="polygon12" xml:space="default" class="st0" style="fill:none;" />
+      <line x1="319.2784" y1="2251.612" x2="1128.379" y2="3060.712" stroke="#C92121" stroke-width="93.00001" stroke-linecap="round" stroke-linejoin="round" id="line14" xml:space="default" class="st2" />
+      <line x1="-236.3965" y1="2300.437" x2="368.1036" y2="1695.936" stroke="#C92121" stroke-width="93.00001" id="line16" xml:space="default" class="st0" />
+    </g>
+  </g>
+</svg>

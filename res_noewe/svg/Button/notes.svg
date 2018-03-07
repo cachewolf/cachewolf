@@ -1,0 +1,191 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg x="0" y="0" width="32" height="32" overflow="hidden" viewBox="0, 0, 257, 257" preserveAspectRatio="xMidYMid" font-size="0" xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xml="http://www.w3.org/XML/1998/namespace" version="1.1">
+  <g xml:space="preserve">
+    <radialGradient cx="125.168" cy="223.167" r="110.973" fx="125.168" fy="223.167" gradientUnits="userSpaceOnUse" id="SVGID_Fill1_" xml:space="preserve">
+      <stop offset="0%" stop-color="#545755" stop-opacity="0.552941" xml:space="preserve" />
+      <stop offset="97.8448%" stop-color="#000000" stop-opacity="0.313725" xml:space="preserve" />
+    </radialGradient>
+    <filter x="none" y="none" width="none" height="none" color-interpolation-filters="auto" id="Filter_GaussianBlur1_" xml:space="preserve" filterUnits="userSpaceOnUse">
+      <feGaussianBlur stdDeviation="4.53544" xml:space="preserve" />
+    </filter>
+    <path d="M198.386 239.842 L51.95 239.842 C36.3328 239.903 14.1951 232.357 14.1951 223.138 C14.1951 213.915 31.6223 206.435 51.95 206.435 L51.95 206.43 L198.386 206.43 L198.386 206.435 C218.714 206.435 236.141 213.915 236.141 223.138 C236.141 232.357 214.006 239.903 198.386 239.842 z" filter="url(#Filter_GaussianBlur1_)" stroke-width="0.2" stroke-linejoin="round" xml:space="preserve" style="fill:url(#SVGID_Fill1_);" />
+    <linearGradient x1="0.0817641" y1="0.106817" x2="1.05742" y2="0.106817" gradientUnits="objectBoundingBox" gradientTransform="rotate(46.10366, 0.081764, 0.106817)" id="SVGID_Fill2_" xml:space="preserve">
+      <stop offset="0%" stop-color="#719671" stop-opacity="1" xml:space="preserve" />
+      <stop offset="100%" stop-color="#394D39" stop-opacity="1" xml:space="preserve" />
+    </linearGradient>
+    <path d="M39.2664 35.6797 C35.6653 35.6797 32.7412 38.5994 32.7412 42.2051 L32.7412 222.114 C32.7412 225.719 35.6653 228.639 39.2664 228.639 L209.73 228.639 C213.336 228.639 216.256 225.719 216.256 222.114 L216.256 42.2051 C216.256 38.5994 213.336 35.6797 209.73 35.6797 L39.2664 35.6797 z" stroke-width="0.2" stroke-linejoin="round" xml:space="preserve" style="fill:url(#SVGID_Fill2_);" />
+    <linearGradient x1="0.391461" y1="0.368376" x2="1.12097" y2="0.368376" gradientUnits="objectBoundingBox" gradientTransform="rotate(58.60976, 0.391461, 0.368376)" id="SVGID_Fill3_" xml:space="preserve">
+      <stop offset="0%" stop-color="#EFEFEF" stop-opacity="1" xml:space="preserve" />
+      <stop offset="59.9287%" stop-color="#E8E8E8" stop-opacity="1" xml:space="preserve" />
+      <stop offset="82.7586%" stop-color="#FFFFFF" stop-opacity="1" xml:space="preserve" />
+      <stop offset="100%" stop-color="#D8D8D3" stop-opacity="1" xml:space="preserve" />
+    </linearGradient>
+    <path d="M54.531 45.2185 C53.0596 45.2185 51.8655 46.4175 51.8655 47.8843 L51.8655 211.686 C51.8655 213.158 53.0596 214.347 54.531 214.347 L194.715 214.347 C196.182 214.347 197.38 213.158 197.38 211.686 L197.38 47.8843 C197.38 46.4175 196.182 45.2185 194.715 45.2185 L54.531 45.2185 z" stroke-width="0.2" stroke-linejoin="round" xml:space="preserve" style="fill:url(#SVGID_Fill3_);" />
+    <path d="M54.5291 45.2197 L194.713 45.2197 C196.184 45.2197 197.379 46.4141 197.379 47.8855 L197.379 211.688 C197.379 213.159 196.184 214.353 194.713 214.353 L54.5291 214.353 C53.0623 214.353 51.8684 213.159 51.8684 211.688 L51.8684 47.8855 C51.8684 46.4141 53.0623 45.2197 54.5291 45.2197 z" stroke="#888A85" stroke-width="1.33333" stroke-linejoin="round" xml:space="preserve" style="fill:none;" />
+    <path d="M101.001 14.5244 L148.163 14.5244 C150.721 14.5244 152.789 16.5933 152.789 19.1504 L152.789 28.7031 C152.789 31.2607 150.721 33.3291 148.163 33.3291 L101.001 33.3291 C98.4487 33.3291 96.3755 31.2607 96.3755 28.7031 L96.3755 19.1504 C96.3755 16.5933 98.4487 14.5244 101.001 14.5244 z" stroke-width="0.2" stroke-linejoin="round" xml:space="preserve" style="fill:#5C5C5C;" />
+    <linearGradient x1="0.517212" y1="0.564229" x2="0.851099" y2="0.564229" gradientUnits="objectBoundingBox" gradientTransform="rotate(72.81483, 0.517212, 0.564229)" id="SVGID_Fill4_" xml:space="preserve">
+      <stop offset="0%" stop-color="#FFFFFF" stop-opacity="1" xml:space="preserve" />
+      <stop offset="37.931%" stop-color="#D5D7D6" stop-opacity="1" xml:space="preserve" />
+      <stop offset="100%" stop-color="#ABAFAD" stop-opacity="1" xml:space="preserve" />
+    </linearGradient>
+    <rect x="37.0908" y="39.8452" width="175.756" height="183.345" stroke="#4A634A" stroke-width="2" stroke-linejoin="round" xml:space="preserve" style="fill:url(#SVGID_Fill4_);" />
+    <path d="M39.5767 40.0552 L209.425 40.0552 C210.666 40.0552 211.672 41.0613 211.672 42.3071 L211.672 221.586 C211.672 222.832 210.666 223.837 209.425 223.837 L39.5767 223.837 C38.3357 223.837 37.325 222.832 37.325 221.586 L37.325 42.3071 C37.325 41.0613 38.3357 40.0552 39.5767 40.0552 z" stroke="#4A634A" stroke-width="1.33333" stroke-linejoin="round" xml:space="preserve" style="fill:#C1C9C1;" />
+    <path d="M87.8162 35.5493 L163.843 35.5493 C167.444 35.5493 170.364 38.4734 170.364 42.0742 L170.364 61.9321 C170.364 65.5378 167.444 68.457 163.843 68.457 L87.8162 68.457 C84.2151 68.457 81.2908 65.5378 81.2908 61.9321 L81.2908 42.0742 C81.2908 38.4734 84.2151 35.5493 87.8162 35.5493 z" stroke="#000000" fill-opacity="0.109804" stroke-width="1.33333" stroke-linejoin="round" stroke-opacity="0.109804" xml:space="preserve" style="fill:#000000;" />
+    <linearGradient x1="0.498092" y1="0.0468796" x2="1.28458" y2="0.0468796" gradientUnits="objectBoundingBox" gradientTransform="rotate(88.23174, 0.498092, 0.04688)" id="SVGID_Fill5_" xml:space="preserve">
+      <stop offset="0%" stop-color="#979789" stop-opacity="1" xml:space="preserve" />
+      <stop offset="50%" stop-color="#C1C1B8" stop-opacity="1" xml:space="preserve" />
+      <stop offset="100%" stop-color="#7C7C6E" stop-opacity="1" xml:space="preserve" />
+    </linearGradient>
+    <path d="M86.5693 30.9785 C82.9683 30.9785 80.0442 33.8982 80.0442 37.499 L80.0442 57.3618 C80.0442 60.9675 82.9683 63.8867 86.5693 63.8867 L162.596 63.8867 C166.198 63.8867 169.122 60.9675 169.122 57.3618 L169.122 37.499 C169.122 33.8982 166.198 30.9785 162.596 30.9785 L86.5693 30.9785 z" stroke-width="0.2" stroke-linejoin="round" xml:space="preserve" style="fill:url(#SVGID_Fill5_);" />
+    <linearGradient x1="0.500051" y1="0.0457885" x2="0.880342" y2="0.0457885" gradientUnits="objectBoundingBox" gradientTransform="rotate(90, 0.500051, 0.045788)" id="SVGID_Fill6_" xml:space="preserve">
+      <stop offset="0%" stop-color="#979789" stop-opacity="1" xml:space="preserve" />
+      <stop offset="50%" stop-color="#C1C1B8" stop-opacity="1" xml:space="preserve" />
+      <stop offset="100%" stop-color="#7C7C6E" stop-opacity="1" xml:space="preserve" />
+    </linearGradient>
+    <path d="M103.32 20.2036 C102.473 20.2036 101.787 20.8945 101.787 21.7361 L101.787 35.52 C101.787 36.3613 102.473 37.0525 103.32 37.0525 L145.853 37.0525 C146.692 37.0525 147.379 36.3613 147.379 35.52 L147.379 21.7361 C147.379 20.8945 146.692 20.2036 145.853 20.2036 L103.32 20.2036 z" stroke-width="0.2" stroke-linejoin="round" xml:space="preserve" style="fill:url(#SVGID_Fill6_);" />
+    <linearGradient x1="0.498081" y1="0.0468708" x2="1.28464" y2="0.0468708" gradientUnits="objectBoundingBox" gradientTransform="rotate(87.93925, 0.498081, 0.046871)" id="SVGID_Fill7_" xml:space="preserve">
+      <stop offset="0%" stop-color="#979789" stop-opacity="1" xml:space="preserve" />
+      <stop offset="50%" stop-color="#C1C1B8" stop-opacity="1" xml:space="preserve" />
+      <stop offset="100%" stop-color="#7C7C6E" stop-opacity="1" xml:space="preserve" />
+    </linearGradient>
+    <path d="M86.8137 33.0378 C84.1858 33.0378 82.0564 35.1675 82.0564 37.7954 L82.0564 57.3618 C82.0564 59.9941 84.1858 62.1238 86.8137 62.1238 L162.357 62.1238 C164.985 62.1238 167.114 59.9941 167.114 57.3618 L167.114 37.7954 C167.114 35.1675 164.985 33.0378 162.357 33.0378 L86.8137 33.0378 z" stroke-width="0.2" stroke-linejoin="round" xml:space="preserve" style="fill:url(#SVGID_Fill7_);" />
+    <linearGradient x1="0.499867" y1="0.25358" x2="0.757693" y2="0.25358" gradientUnits="objectBoundingBox" gradientTransform="rotate(-89.96043, 0.499867, 0.25358)" id="SVGID_Fill8_" xml:space="preserve">
+      <stop offset="0%" stop-color="#FFFFFF" stop-opacity="0.317647" xml:space="preserve" />
+      <stop offset="73.2759%" stop-color="#7F7F7F" stop-opacity="0.317647" xml:space="preserve" />
+      <stop offset="100%" stop-color="#000000" stop-opacity="0.317647" xml:space="preserve" />
+    </linearGradient>
+    <rect x="38.3164" y="39.8452" width="172.768" height="183.345" stroke-width="0.2" stroke-linejoin="round" xml:space="preserve" style="fill:url(#SVGID_Fill8_);" />
+    <rect x="77.5715" y="85.042" width="98.7241" height="9.40234" fill-opacity="0.333333" stroke-width="0.2" stroke-linejoin="round" xml:space="preserve" style="fill:#000000;" />
+    <rect x="77.5715" y="103.847" width="94.0229" height="9.4021" fill-opacity="0.333333" stroke-width="0.2" stroke-linejoin="round" xml:space="preserve" style="fill:#000000;" />
+    <rect x="77.5715" y="122.651" width="84.6206" height="9.40234" fill-opacity="0.333333" stroke-width="0.2" stroke-linejoin="round" xml:space="preserve" style="fill:#000000;" />
+    <rect x="77.5715" y="141.456" width="98.7241" height="9.40234" fill-opacity="0.333333" stroke-width="0.2" stroke-linejoin="round" xml:space="preserve" style="fill:#000000;" />
+    <rect x="77.5715" y="160.26" width="61.1147" height="9.40234" fill-opacity="0.333333" stroke-width="0.2" stroke-linejoin="round" xml:space="preserve" style="fill:#000000;" />
+  </g>
+  <g xml:space="preserve">
+    <linearGradient x1="0.927876" y1="0.665863" x2="1.88829" y2="0.665863" gradientUnits="objectBoundingBox" gradientTransform="rotate(211.4415, 0.927876, 0.665863)" id="SVGID_Stroke1_" xml:space="preserve">
+      <stop offset="21.1207%" stop-color="#C0AB95" stop-opacity="1" xml:space="preserve" />
+      <stop offset="57.3276%" stop-color="#F2D7BA" stop-opacity="1" xml:space="preserve" />
+      <stop offset="84.0517%" stop-color="#C0AB95" stop-opacity="1" xml:space="preserve" />
+    </linearGradient>
+    <linearGradient x1="0.955456" y1="0.674415" x2="1.97607" y2="0.674415" gradientUnits="objectBoundingBox" gradientTransform="rotate(211.7531, 0.955456, 0.674415)" id="SVGID_Fill9_" xml:space="preserve">
+      <stop offset="21.1207%" stop-color="#C0AB95" stop-opacity="1" xml:space="preserve" />
+      <stop offset="57.3276%" stop-color="#F2D7BA" stop-opacity="1" xml:space="preserve" />
+      <stop offset="84.0517%" stop-color="#C0AB95" stop-opacity="1" xml:space="preserve" />
+    </linearGradient>
+    <path d="M144.93 189.345 C146.932 191.456 149.329 194.261 151.102 196.663 C151.22 196.823 151.336 196.982 151.449 197.14 L172.778 186.617 C172.607 185.902 172.368 185.11 171.872 184.031 C171.198 182.564 170.049 180.565 168.276 178.164 C166.503 175.762 164.106 172.958 162.105 170.847 C160.103 168.736 158.496 167.319 156.47 165.704 C154.445 164.088 151.999 162.273 149.77 160.837 C148.282 159.879 146.891 159.089 145.532 158.354 L141.751 186.255 C142.782 187.17 143.792 188.146 144.93 189.345 z" stroke="url(#SVGID_Stroke1_)" stroke-width="2" stroke-linejoin="round" xml:space="preserve" style="fill:url(#SVGID_Fill9_);" />
+    <linearGradient x1="0.90891" y1="0.68178" x2="1.86425" y2="0.68178" gradientUnits="objectBoundingBox" gradientTransform="rotate(219.3132, 0.90891, 0.68178)" id="SVGID_Stroke2_" xml:space="preserve">
+      <stop offset="0%" stop-color="#39393B" stop-opacity="1" xml:space="preserve" />
+      <stop offset="52.5862%" stop-color="#AFABAB" stop-opacity="1" xml:space="preserve" />
+      <stop offset="100%" stop-color="#39393B" stop-opacity="1" xml:space="preserve" />
+    </linearGradient>
+    <linearGradient x1="0.977206" y1="0.703431" x2="2.08445" y2="0.703431" gradientUnits="objectBoundingBox" gradientTransform="rotate(220.4952, 0.977206, 0.703431)" id="SVGID_Fill10_" xml:space="preserve">
+      <stop offset="0%" stop-color="#39393B" stop-opacity="1" xml:space="preserve" />
+      <stop offset="53.4483%" stop-color="#AFABAB" stop-opacity="1" xml:space="preserve" />
+      <stop offset="100%" stop-color="#39393B" stop-opacity="1" xml:space="preserve" />
+    </linearGradient>
+    <path d="M141.751 186.255 L139.475 203.047 L151.449 197.14 C151.336 196.982 151.22 196.823 151.102 196.663 C149.329 194.261 146.932 191.456 144.93 189.345 C143.792 188.146 142.782 187.17 141.751 186.255 z" stroke="url(#SVGID_Stroke2_)" stroke-width="2" stroke-linejoin="round" xml:space="preserve" style="fill:url(#SVGID_Fill10_);" />
+    <linearGradient x1="0.0819595" y1="0.28182" x2="1.02449" y2="0.28182" gradientUnits="objectBoundingBox" gradientTransform="rotate(35.3273, 0.081959, 0.28182)" id="SVGID_Stroke3_" xml:space="preserve">
+      <stop offset="4.97804%" stop-color="#839597" stop-opacity="1" xml:space="preserve" />
+      <stop offset="8.345531%" stop-color="#DADCDC" stop-opacity="1" xml:space="preserve" />
+      <stop offset="10.5417%" stop-color="#C4CBCC" stop-opacity="1" xml:space="preserve" />
+      <stop offset="12.8843%" stop-color="#839597" stop-opacity="1" xml:space="preserve" />
+      <stop offset="15.9592%" stop-color="#475253" stop-opacity="1" xml:space="preserve" />
+      <stop offset="19.7657%" stop-color="#353E3F" stop-opacity="1" xml:space="preserve" />
+      <stop offset="20.6442%" stop-color="#FFFFFF" stop-opacity="1" xml:space="preserve" />
+      <stop offset="21.2299%" stop-color="#F1F1F1" stop-opacity="1" xml:space="preserve" />
+      <stop offset="39.0922%" stop-color="#DCE4E5" stop-opacity="1" xml:space="preserve" />
+      <stop offset="46.7057%" stop-color="#839597" stop-opacity="1" xml:space="preserve" />
+      <stop offset="48.6091%" stop-color="#676C6C" stop-opacity="1" xml:space="preserve" />
+      <stop offset="50.5124%" stop-color="#444949" stop-opacity="1" xml:space="preserve" />
+      <stop offset="52.8551%" stop-color="#323434" stop-opacity="1" xml:space="preserve" />
+      <stop offset="55.6369%" stop-color="#484D4D" stop-opacity="1" xml:space="preserve" />
+      <stop offset="60.6149%" stop-color="#839597" stop-opacity="1" xml:space="preserve" />
+      <stop offset="77.4524%" stop-color="#839597" stop-opacity="1" xml:space="preserve" />
+      <stop offset="78.6237%" stop-color="#FFFFFF" stop-opacity="1" xml:space="preserve" />
+      <stop offset="87.2621%" stop-color="#FFFFFF" stop-opacity="1" xml:space="preserve" />
+      <stop offset="98.5359%" stop-color="#839597" stop-opacity="1" xml:space="preserve" />
+    </linearGradient>
+    <linearGradient x1="0.0604427" y1="0.272241" x2="1.04996" y2="0.272241" gradientUnits="objectBoundingBox" gradientTransform="rotate(35.5227, 0.060443, 0.272241)" id="SVGID_Fill11_" xml:space="preserve">
+      <stop offset="4.97804%" stop-color="#839597" stop-opacity="1" xml:space="preserve" />
+      <stop offset="8.345531%" stop-color="#DADCDC" stop-opacity="1" xml:space="preserve" />
+      <stop offset="10.5417%" stop-color="#C4CBCC" stop-opacity="1" xml:space="preserve" />
+      <stop offset="12.8843%" stop-color="#839597" stop-opacity="1" xml:space="preserve" />
+      <stop offset="15.9592%" stop-color="#475253" stop-opacity="1" xml:space="preserve" />
+      <stop offset="19.7657%" stop-color="#353E3F" stop-opacity="1" xml:space="preserve" />
+      <stop offset="20.6442%" stop-color="#FFFFFF" stop-opacity="1" xml:space="preserve" />
+      <stop offset="21.2299%" stop-color="#F1F1F1" stop-opacity="1" xml:space="preserve" />
+      <stop offset="39.0922%" stop-color="#DCE4E5" stop-opacity="1" xml:space="preserve" />
+      <stop offset="46.7057%" stop-color="#839597" stop-opacity="1" xml:space="preserve" />
+      <stop offset="48.6091%" stop-color="#676C6C" stop-opacity="1" xml:space="preserve" />
+      <stop offset="50.5124%" stop-color="#444949" stop-opacity="1" xml:space="preserve" />
+      <stop offset="52.8551%" stop-color="#323434" stop-opacity="1" xml:space="preserve" />
+      <stop offset="55.6369%" stop-color="#484D4D" stop-opacity="1" xml:space="preserve" />
+      <stop offset="60.6149%" stop-color="#839597" stop-opacity="1" xml:space="preserve" />
+      <stop offset="77.4524%" stop-color="#839597" stop-opacity="1" xml:space="preserve" />
+      <stop offset="78.6237%" stop-color="#FFFFFF" stop-opacity="1" xml:space="preserve" />
+      <stop offset="87.2621%" stop-color="#FFFFFF" stop-opacity="1" xml:space="preserve" />
+      <stop offset="98.5359%" stop-color="#839597" stop-opacity="1" xml:space="preserve" />
+    </linearGradient>
+    <path d="M201.959 80.7456 C204.188 82.1821 206.634 83.9966 208.66 85.6123 C210.686 87.228 212.292 88.6445 214.294 90.7554 C216.296 92.866 218.692 95.6707 220.466 98.0723 C222.238 100.474 223.387 102.472 224.061 103.939 C224.422 104.724 224.647 105.357 224.809 105.919 L235.462 89.2573 C235.281 88.438 235.054 87.5652 234.469 86.2925 C233.794 84.8257 232.646 82.8271 230.873 80.4255 C229.1 78.0242 226.703 75.2195 224.701 73.1089 C222.699 70.998 221.093 69.5811 219.067 67.9656 C217.041 66.3501 214.596 64.5352 212.366 63.0986 C210.71 62.031 209.172 61.1724 207.665 60.3669 L196.604 77.6665 C198.322 78.5742 200.062 79.5232 201.959 80.7456 z" stroke="url(#SVGID_Stroke3_)" stroke-width="2" stroke-linejoin="round" xml:space="preserve" style="fill:url(#SVGID_Fill11_);" />
+    <linearGradient x1="0.0374601" y1="0.325493" x2="1.02719" y2="0.325493" gradientUnits="objectBoundingBox" gradientTransform="rotate(42.26041, 0.03746, 0.325493)" id="SVGID_Stroke4_" xml:space="preserve">
+      <stop offset="0%" stop-color="#F40000" stop-opacity="1" xml:space="preserve" />
+      <stop offset="46.9828%" stop-color="#E20001" stop-opacity="1" xml:space="preserve" />
+      <stop offset="65.9483%" stop-color="#570B0D" stop-opacity="1" xml:space="preserve" />
+    </linearGradient>
+    <linearGradient x1="0.0212957" y1="0.321613" x2="1.04406" y2="0.321613" gradientUnits="objectBoundingBox" gradientTransform="rotate(42.61308, 0.021296, 0.321613)" id="SVGID_Fill12_" xml:space="preserve">
+      <stop offset="0%" stop-color="#F40000" stop-opacity="1" xml:space="preserve" />
+      <stop offset="46.9828%" stop-color="#E20001" stop-opacity="1" xml:space="preserve" />
+      <stop offset="65.9483%" stop-color="#570B0D" stop-opacity="1" xml:space="preserve" />
+    </linearGradient>
+    <path d="M168.479 178.121 C170.252 180.522 171.401 182.521 172.075 183.987 C172.641 185.218 172.873 186.075 173.05 186.871 L224.809 105.919 C224.647 105.357 224.422 104.724 224.061 103.939 C223.387 102.472 222.238 100.474 220.466 98.0723 C220.187 97.6958 219.894 97.3093 219.589 96.917 L167.579 176.934 C167.892 177.337 168.194 177.734 168.479 178.121 z" stroke="url(#SVGID_Stroke4_)" stroke-width="2" stroke-linejoin="round" xml:space="preserve" style="fill:url(#SVGID_Fill12_);" />
+    <linearGradient x1="0.0535204" y1="0.297542" x2="1.03312" y2="0.297542" gradientUnits="objectBoundingBox" gradientTransform="rotate(41.50107, 0.05352, 0.297542)" id="SVGID_Stroke5_" xml:space="preserve">
+      <stop offset="0%" stop-color="#F40000" stop-opacity="1" xml:space="preserve" />
+      <stop offset="46.9828%" stop-color="#E20001" stop-opacity="1" xml:space="preserve" />
+      <stop offset="65.9483%" stop-color="#570B0D" stop-opacity="1" xml:space="preserve" />
+    </linearGradient>
+    <linearGradient x1="0.0403751" y1="0.293312" x2="1.04739" y2="0.293312" gradientUnits="objectBoundingBox" gradientTransform="rotate(41.73826, 0.040375, 0.293312)" id="SVGID_Fill13_" xml:space="preserve">
+      <stop offset="0%" stop-color="#F40000" stop-opacity="1" xml:space="preserve" />
+      <stop offset="46.9828%" stop-color="#E20001" stop-opacity="1" xml:space="preserve" />
+      <stop offset="65.9483%" stop-color="#570B0D" stop-opacity="1" xml:space="preserve" />
+    </linearGradient>
+    <path d="M156.674 165.661 C158.7 167.276 160.306 168.693 162.308 170.803 C163.987 172.574 165.945 174.834 167.579 176.934 L219.589 96.917 C217.95 94.8083 215.982 92.5352 214.294 90.7554 C212.292 88.6445 210.686 87.228 208.66 85.6123 C206.849 84.1685 204.703 82.5654 202.677 81.2156 L151.659 161.921 C153.388 163.117 155.15 164.445 156.674 165.661 z" stroke="url(#SVGID_Stroke5_)" stroke-width="2" stroke-linejoin="round" xml:space="preserve" style="fill:url(#SVGID_Fill13_);" />
+    <linearGradient x1="0.0443714" y1="0.301186" x2="1.03906" y2="0.301186" gradientUnits="objectBoundingBox" gradientTransform="rotate(42.56863, 0.044371, 0.301186)" id="SVGID_Stroke6_" xml:space="preserve">
+      <stop offset="0%" stop-color="#F40000" stop-opacity="1" xml:space="preserve" />
+      <stop offset="47.4138%" stop-color="#E20001" stop-opacity="1" xml:space="preserve" />
+      <stop offset="54.3103%" stop-color="#570B0D" stop-opacity="1" xml:space="preserve" />
+    </linearGradient>
+    <linearGradient x1="0.0285116" y1="0.296467" x2="1.05607" y2="0.296467" gradientUnits="objectBoundingBox" gradientTransform="rotate(42.87581, 0.028512, 0.296467)" id="SVGID_Fill14_" xml:space="preserve">
+      <stop offset="0%" stop-color="#F40000" stop-opacity="1" xml:space="preserve" />
+      <stop offset="47.4138%" stop-color="#E20001" stop-opacity="1" xml:space="preserve" />
+      <stop offset="54.3103%" stop-color="#570B0D" stop-opacity="1" xml:space="preserve" />
+    </linearGradient>
+    <path d="M202.677 81.2156 C202.436 81.0552 202.196 80.8982 201.959 80.7456 C200.062 79.5232 198.322 78.5742 196.604 77.6665 L145.22 158.034 C146.743 158.847 148.297 159.714 149.973 160.794 C150.525 161.149 151.091 161.528 151.659 161.921 L202.677 81.2156 z" stroke="url(#SVGID_Stroke6_)" stroke-width="2" stroke-linejoin="round" xml:space="preserve" style="fill:url(#SVGID_Fill14_);" />
+    <linearGradient x1="0.0484671" y1="0.272458" x2="1.05864" y2="0.272458" gradientUnits="objectBoundingBox" gradientTransform="rotate(34.22718, 0.048467, 0.272458)" id="SVGID_Fill15_" xml:space="preserve">
+      <stop offset="43.5345%" stop-color="#EEEBEB" stop-opacity="0.156863" xml:space="preserve" />
+      <stop offset="69.8276%" stop-color="#EEEEEE" stop-opacity="0.392157" xml:space="preserve" />
+    </linearGradient>
+    <path d="M196.147 76.9541 L144.355 158.207 L153.352 164.097 L170.933 137.591 L185.069 120.883 L198.435 107.098 L207.77 99.5566 L211.828 97.5015 L216.029 95.7959 L219.33 94.9863 L216.747 92.0388 L214.313 89.5603 L211.515 86.9858 L207.836 83.749 L204.188 80.9893 L199.585 78.2905 L196.147 76.9541 z" stroke-width="0.2" stroke-linejoin="round" xml:space="preserve" style="fill:url(#SVGID_Fill15_);" />
+    <path d="M197.821 73.4458 C199.834 74.5044 201.847 75.5625 204.076 76.999 C206.306 78.4355 208.751 80.2505 210.777 81.866 C212.803 83.4814 214.409 84.8984 216.411 87.0093 C218.413 89.1199 220.81 91.9246 222.583 94.3259 C224.355 96.7275 225.504 98.7261 226.178 100.193 C226.853 101.66 227.052 102.594 227.252 103.53" stroke="#000000" stroke-linejoin="round" xml:space="preserve" style="fill:none;" />
+    <path d="M198.749 72.9871 C200.762 74.0457 202.775 75.104 205.005 76.5405 C207.234 77.9771 209.679 79.7917 211.705 81.4072 C213.731 83.0229 215.338 84.4399 217.339 86.5505 C219.341 88.6611 221.738 91.4658 223.511 93.8672 C225.284 96.269 226.433 98.2673 227.107 99.7341 C227.781 101.201 227.98 102.136 228.18 103.071" stroke="#E8EDEE" stroke-linejoin="round" xml:space="preserve" style="fill:none;" />
+    <path d="M198.346 72.9333 C200.36 73.9919 202.373 75.0503 204.602 76.4868 C206.831 77.9233 209.277 79.738 211.303 81.3535 C213.329 82.9692 214.935 84.3862 216.937 86.4968 C218.938 88.6074 221.336 91.4121 223.108 93.8135 C224.881 96.2153 226.03 98.2136 226.704 99.6804 C227.378 101.147 227.578 102.082 227.777 103.017" stroke="#678185" stroke-linejoin="round" xml:space="preserve" style="fill:none;" />
+    <path d="M204.241 64.0151 C206.255 65.0737 208.268 66.1318 210.497 67.5684 C212.727 69.0049 215.172 70.8198 217.198 72.4353 C219.224 74.0508 220.83 75.4678 222.832 77.5786 C224.834 79.6892 227.23 82.4939 229.003 84.8953 C230.776 87.2969 231.925 89.2954 232.599 90.7622 C233.273 92.229 233.473 93.1638 233.672 94.0991" stroke="#000000" stroke-linejoin="round" xml:space="preserve" style="fill:none;" />
+    <path d="M205.17 63.5574 C207.183 64.616 209.196 65.6743 211.426 67.1108 C213.655 68.5474 216.1 70.3621 218.126 71.9775 C220.152 73.5933 221.759 75.0103 223.76 77.1208 C225.762 79.2314 228.159 82.0361 229.932 84.4375 C231.705 86.8394 232.854 88.8376 233.528 90.3044 C234.202 91.7712 234.401 92.7061 234.601 93.6414" stroke="#E8EDEE" stroke-linejoin="round" xml:space="preserve" style="fill:none;" />
+    <path d="M204.767 63.5034 C206.78 64.562 208.794 65.6201 211.023 67.0566 C213.252 68.4932 215.698 70.3081 217.724 71.9236 C219.749 73.5391 221.356 74.9561 223.357 77.0669 C225.359 79.1775 227.756 81.9822 229.529 84.3835 C231.302 86.7852 232.451 88.7837 233.125 90.2505 C233.799 91.7173 233.999 92.6521 234.198 93.5874" stroke="#678185" stroke-linejoin="round" xml:space="preserve" style="fill:none;" />
+    <linearGradient x1="0.0833217" y1="0.242562" x2="1.05231" y2="0.242562" gradientUnits="objectBoundingBox" gradientTransform="rotate(32.73805, 0.083322, 0.242562)" id="SVGID_Stroke7_" xml:space="preserve">
+      <stop offset="0%" stop-color="#BD0707" stop-opacity="1" xml:space="preserve" />
+      <stop offset="9.31373%" stop-color="#FC0909" stop-opacity="1" xml:space="preserve" />
+      <stop offset="20.5882%" stop-color="#FEAFAF" stop-opacity="1" xml:space="preserve" />
+      <stop offset="85.7843%" stop-color="#FF0606" stop-opacity="1" xml:space="preserve" />
+      <stop offset="100%" stop-color="#AF0F0F" stop-opacity="1" xml:space="preserve" />
+    </linearGradient>
+    <linearGradient x1="0.0600615" y1="0.229544" x2="1.08201" y2="0.229544" gradientUnits="objectBoundingBox" gradientTransform="rotate(32.86829, 0.060061, 0.229544)" id="SVGID_Fill16_" xml:space="preserve">
+      <stop offset="0%" stop-color="#BD0707" stop-opacity="1" xml:space="preserve" />
+      <stop offset="9.31373%" stop-color="#FC0909" stop-opacity="1" xml:space="preserve" />
+      <stop offset="20.5882%" stop-color="#FEAFAF" stop-opacity="1" xml:space="preserve" />
+      <stop offset="85.7843%" stop-color="#FF0606" stop-opacity="1" xml:space="preserve" />
+      <stop offset="100%" stop-color="#AF0F0F" stop-opacity="1" xml:space="preserve" />
+    </linearGradient>
+    <path d="M213.118 62.2241 C215.347 63.6606 217.792 65.4753 219.818 67.0908 C221.844 68.7065 223.451 70.1235 225.452 72.2341 C227.454 74.3447 229.851 77.1494 231.624 79.5508 C233.397 81.9526 234.546 83.9509 235.22 85.4177 C235.805 86.6904 236.032 87.5632 236.213 88.3826 L241.631 78.6558 C241.472 78.115 247.14 74.3123 242.253 69.0378 C241.579 67.571 242.481 69.2393 240.708 66.8379 C238.935 64.4363 236.538 61.6316 234.536 59.521 C232.535 57.4102 230.928 55.9937 228.902 54.3777 C226.877 52.7622 224.431 50.9478 222.202 49.5112 C217.302 47.6865 215.812 49.9771 213.054 51.1509 L208.416 59.4922 C209.924 60.2976 211.461 61.1563 213.118 62.2241 z" stroke="url(#SVGID_Stroke7_)" stroke-width="2" stroke-linejoin="round" xml:space="preserve" style="fill:url(#SVGID_Fill16_);" />
+  </g>
+</svg>

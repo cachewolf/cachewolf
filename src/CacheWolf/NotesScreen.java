@@ -55,7 +55,7 @@ public class NotesScreen extends Form {
     public NotesScreen(CacheHolder _ch) {
 	addDateTime = GuiImageBroker.getButton("", "date_time");
 	this.title = "Notes";
-	setPreferredSize(Preferences.itself().getScreenWidth(), Preferences.itself().getScreenHeight());
+	Preferences.itself().setBigWindowSize(this);
 	this.resizeOnSIP = true;
 	ch = _ch;
 	chD = _ch.getDetails();

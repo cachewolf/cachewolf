@@ -1,0 +1,26 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg x="0" y="0" width="32" height="32" overflow="hidden" viewBox="0, 0, 32, 32" preserveAspectRatio="xMidYMid" font-size="0" id="svg2" xml:space="default" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xml="http://www.w3.org/XML/1998/namespace" version="1.1">
+  <defs id="d1" xml:space="default">
+    <linearGradient x1="0%" y1="0%" x2="100%" y2="0%" gradientUnits="objectBoundingBox" id="linearGradient3289" xml:space="default">
+      <stop offset="0%" stop-color="#BE0000" stop-opacity="1" id="stop3291" xml:space="default" />
+      <stop offset="100%" stop-color="#E53700" stop-opacity="1" id="stop3293" xml:space="default" />
+    </linearGradient>
+    <linearGradient x1="0%" y1="0%" x2="100%" y2="0%" gradientUnits="objectBoundingBox" id="linearGradient3279" xml:space="default">
+      <stop offset="0%" stop-color="#FE0000" stop-opacity="1" id="stop3281" xml:space="default" />
+      <stop offset="100%" stop-color="#FEC7B5" stop-opacity="1" id="stop3283" xml:space="default" />
+    </linearGradient>
+    <linearGradient x1="25.60666" y1="28.44924" x2="3.586481" y2="6.429066" gradientUnits="userSpaceOnUse" xlink:href="#linearGradient3279" id="linearGradient3287" xml:space="default" />
+    <linearGradient x1="26.64575" y1="29.57386" x2="2.488663" y2="5.416767" gradientUnits="userSpaceOnUse" xlink:href="#linearGradient3289" id="linearGradient3295" xml:space="default" />
+    <linearGradient x1="25.60666" y1="28.44924" x2="3.586481" y2="6.429066" gradientUnits="userSpaceOnUse" xlink:href="#linearGradient3279" gradientTransform="translate(359.6512, 517.1219)" id="linearGradient3299" xml:space="default" />
+    <linearGradient x1="26.64575" y1="29.57386" x2="2.488663" y2="5.416767" gradientUnits="userSpaceOnUse" xlink:href="#linearGradient3289" gradientTransform="translate(359.6512, 517.1219)" id="linearGradient3301" xml:space="default" />
+    <linearGradient x1="26.64575" y1="29.57386" x2="2.488663" y2="5.416767" gradientUnits="userSpaceOnUse" xlink:href="#linearGradient3289" gradientTransform="translate(359.6512, 517.1219)" id="linearGradient3307" xml:space="default" />
+    <filter x="none" y="none" width="none" height="none" color-interpolation-filters="auto" id="filter3317" xml:space="default">
+      <feGaussianBlur stdDeviation="0.306875" id="feGaussianBlur3319" xml:space="default" collect="always" />
+    </filter>
+  </defs>
+  <g transform="translate(-359, -516.3622)" id="layer1" xml:space="default">
+    <path d="M366.1875 517.875 L365.8438 518.25 L360.7813 523.3125 L360.4063 523.6563 L360.7813 524 L370 533.25 L360.7813 542.4688 L360.4063 542.8125 L360.7813 543.1563 L365.8438 548.2188 L366.1875 548.5938 L366.5313 548.2188 L375.75 539 L384.9688 548.2188 L385.3125 548.5938 L385.6563 548.2188 L390.7188 543.1563 L391.0625 542.8125 L390.7188 542.4688 L381.5 533.25 L390.7188 524 L391.0625 523.6563 L390.7188 523.3125 L385.6563 518.25 L385.3125 517.875 L384.9688 518.25 L375.75 527.4688 L366.5313 518.25 L366.1875 517.875 z" filter="url(#filter3317)" fill-rule="evenOdd" fill-opacity="0.3607843" stroke-linecap="square" id="path3311" xml:space="default" style="fill:#000000;" />
+    <path d="M6.53125 1.46875 L1.46875 6.53125 L11.03125 16.125 L1.46875 25.6875 L6.53125 30.75 L16.09375 21.1875 L25.65625 30.75 L30.71875 25.6875 L21.15625 16.125 L30.71875 6.53125 L25.65625 1.46875 L16.09375 11.03125 L6.53125 1.46875 z" stroke="url(#linearGradient3295)" fill-rule="evenOdd" stroke-linecap="square" transform="translate(359, 516.3622)" id="rect2504" xml:space="default" style="fill:url(#linearGradient3287);" />
+  </g>
+</svg>

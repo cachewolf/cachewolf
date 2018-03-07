@@ -441,7 +441,6 @@ class GeoCodeGui extends Form {
     public GeoCodeGui() {
 	topLinePanel.addNext(new mLabel(MyLocale.getMsg(7300, "Street/POI")), CellConstants.DONTSTRETCH, CellConstants.WEST);
 	topLinePanel.addLast(streetInp = new mInput(MyLocale.getMsg(7305, "Hauptbahnhof")), CellConstants.STRETCH, CellConstants.FILL | CellConstants.WEST);
-	//streetInp.setPreferredSize(500, 20);
 	topLinePanel.addNext(new mLabel(MyLocale.getMsg(7301, "City")), CellConstants.DONTSTRETCH, CellConstants.WEST);
 	topLinePanel.addNext(cityInp = new mInput(MyLocale.getMsg(7304, "München, Deutschland")), CellConstants.HSTRETCH, CellConstants.HFILL | CellConstants.WEST);
 	topLinePanel.addNext(searchBtn = new mButton(MyLocale.getMsg(7302, "Search")), CellConstants.DONTSTRETCH, CellConstants.WEST);

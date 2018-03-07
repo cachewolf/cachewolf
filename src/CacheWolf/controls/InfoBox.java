@@ -64,7 +64,7 @@ public class InfoBox extends Form {
     }
 
     public InfoBox(String title, Control ctrl, int w, int h) {
-        Preferences.itself().setPreferredSize(this);
+        Preferences.itself().setSubWindowSize(this);
         this.addLast(new MyScrollBarPanel((ScrollClient) ctrl, ScrollablePanel.NeverShowHorizontalScrollers), STRETCH, FILL);
         this.title = title;
         this.type = DISPLAY_ONLY;
@@ -72,7 +72,8 @@ public class InfoBox extends Form {
     }
 
     public InfoBox(String title, String info, int type, boolean autoWrap) {
-        Preferences.itself().setPreferredSize(this);
+
+        Preferences.itself().setSubWindowSize(this);
 
         switch (type) {
             case CHECKBOX:

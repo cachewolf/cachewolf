@@ -1,0 +1,22 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg x="0" y="0" width="32" height="32" overflow="hidden" viewBox="0, 0, 500, 500" preserveAspectRatio="xMidYMid" font-size="0" fill-rule="evenOdd" shape-rendering="geometricPrecision" xml:space="default" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xml="http://www.w3.org/XML/1998/namespace" version="1.1">
+  <defs shape-rendering="geometricPrecision" xml:space="default">
+    <linearGradient x1="439.997" y1="214.987" x2="62.165" y2="214.987" gradientUnits="userSpaceOnUse" shape-rendering="geometricPrecision" id="a" xml:space="default">
+      <stop offset="0%" stop-color="#008BFF" stop-opacity="1" shape-rendering="geometricPrecision" xml:space="default" />
+      <stop offset="100%" stop-color="#00AAFF" stop-opacity="1" shape-rendering="geometricPrecision" xml:space="default" />
+    </linearGradient>
+    <linearGradient x1="112.972" y1="136.084" x2="262.47" y2="293.89" gradientUnits="userSpaceOnUse" shape-rendering="geometricPrecision" id="b" xml:space="default">
+      <stop offset="0%" stop-color="#008BFF" stop-opacity="1" shape-rendering="geometricPrecision" xml:space="default" />
+      <stop offset="100%" stop-color="#4EAFFF" stop-opacity="1" shape-rendering="geometricPrecision" xml:space="default" />
+    </linearGradient>
+  </defs>
+  <g shape-rendering="geometricPrecision" xml:space="default">
+    <path d="M72 100 L430 100 C436 100 440 104 440 110 L440 320 C440 325 436 330 430 330 L72 330 C67 330 62 325 62 320 L62 110 C62 104 67 100 72 100 z" shape-rendering="geometricPrecision" xml:space="default" style="fill:url(#a);" />
+    <path d="M72 100 L313 100 L313 104 C313 202 257 288 175 330 L72 330 C67 330 62 325 62 320 L62 110 C62 104 67 100 72 100 z" shape-rendering="geometricPrecision" xml:space="default" style="fill:url(#b);" />
+    <path d="M125 400 L200 400 L200 365 L300 365 L300 400 L375 400 C383 400 390 407 390 415 L390 420 L110 420 L110 415 C110 407 117 400 125 400 z" shape-rendering="geometricPrecision" xml:space="default" style="fill:#434242;" />
+    <path d="M72 100 L430 100 C436 100 440 104 440 110 L440 320 C440 325 436 330 430 330 L72 330 C67 330 62 325 62 320 L62 110 C62 104 67 100 72 100 z M60 80 L440 80 C451 80 460 89 460 100 L460 350 C460 361 451 370 440 370 L60 370 C49 370 40 361 40 350 L40 100 C40 89 49 80 60 80 z" shape-rendering="geometricPrecision" xml:space="default" style="fill:#434242;" />
+    <path d="M220 343 L280 343 C283 343 285 345 285 348 L285 353 C285 355 283 358 280 358 L220 358 C217 358 215 355 215 353 L215 348 C215 345 217 343 220 343 z" shape-rendering="geometricPrecision" xml:space="default" style="fill:#279DFF;" />
+    <circle cx="410" cy="350" r="10" shape-rendering="geometricPrecision" xml:space="default" style="fill:#279DFF;" />
+  </g>
+</svg>

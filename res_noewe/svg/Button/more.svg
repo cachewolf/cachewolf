@@ -1,0 +1,12 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg x="0" y="0" width="32" height="32" overflow="hidden" viewBox="0, 0, 36, 36" preserveAspectRatio="xMidYMid" font-size="0" xml:space="default" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xml="http://www.w3.org/XML/1998/namespace" version="1.1">
+  <path d="M36 4 C36 1.791 34.209 0 32 0 L4 0 C1.791 0 0 1.791 0 4 L0 29 L36 29 L36 4 z" xml:space="default" style="fill:#88C9F9;" />
+  <path d="M0 28 L0 32 C0 34.209 1.791 36 4 36 L32 36 C34.209 36 36 34.209 36 32 L36 28 L0 28 z" xml:space="default" style="fill:#3B88C3;" />
+  <path d="M7 29 C7 28 8 24 18 24 C30 24 33 28 33 29 C33 30 33 31 19 31 C7 31 7 30 7 29 z" xml:space="default" style="fill:#F4900C;" />
+  <path d="M27.308 1.43 C24.946 2.498 24.103 4.213 23.853 5.685 C23.218 4.614 22.092 3.635 20.093 3.279 C15.741 2.504 13.159 7.361 13.159 7.361 C13.159 7.361 15.206 5.883 18.688 6.503 C22.168 7.123 24.564 7.723001 24.564 7.723001 C24.564 7.723001 26.866 5.234 29.021 4.259001 C32.243 2.802001 34.407 3.798001 34.407 3.798001 C34.407 3.798001 31.335 -0.3919992 27.308 1.430001 z" xml:space="default" style="fill:#3E721D;" />
+  <path d="M21 24.556 C21 24.907 21.25 25.563 23 26 C25.736 26.684 26 25.556 26 25.556 C26 25.556 27 22.556 27 16.556 C27 11.139 24.75 7.139 24.75 7.139 L22.167 7.472 C22.167 7.472 23.5 10.222 23.583 15.639 C23.645 19.64 21 24.205 21 24.556 z" xml:space="default" style="fill:#662113;" />
+  <path d="M31.047 6.306 C27.889 4.638 25.46 5.575 24.083 6.511 C22.315 6.151 18.961 6.105 16.112 9.756001 C12.618 14.235 15.725 19.772 15.725 19.772 C15.725 19.772 16.8 15.807 19.602 12.436 C21.175 10.544 23.073 8.800999 24.238 7.788999 C25.503 7.992999 27.437 8.457999 29.344 9.523999 C33.012 11.575 34.645 15.015 34.645 15.015 C34.645 15.015 36.06499 8.955999 31.047 6.306 z" xml:space="default" style="fill:#5C913B;" />
+  <circle cx="7" cy="7" r="5" xml:space="default" style="fill:#FFCC4D;" />
+  <circle cx="7" cy="7" r="4" xml:space="default" style="fill:#FFAC33;" />
+</svg>

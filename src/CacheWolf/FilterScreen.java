@@ -54,7 +54,7 @@ public class FilterScreen extends Form {
     private mButton btnSaveFlt, btnDelFlt, btnBearing, btnTypes, btnStati, btnRatings, btnContainer, btnSearch, btnAddi, btnCacheAttributes;
     private mChoice chcDist, chcDiff, chcTerr, chcAttrib;
     private ExecutePanel selectRose, selectCacheTypes;
-    private CardPanel cp = new CardPanel();
+    private CardPanel cp;
     private mCheckBox chkTrad, chkMulti, chkMystery, chkWebcam, chkVirtual, chkEvent, chkEarth, chkMega, chkLetter, chkLocless, chkWherigo, chkCito, chkApe, chkMaze, chkCustom;
     private myChkBox addiWptChk;
     //
@@ -96,6 +96,7 @@ public class FilterScreen extends Form {
         // On small screens the buttons gets too wide, additional panel as workaround
         CellPanel middlePanel = new CellPanel();
         middlePanel.addNext(FilterButtons(), HSTRETCH, FILL);
+        cp = new CardPanel();
         cp.addItem(CacheTypes(), btnTypes.text, null);
         cp.select(btnTypes.text);
         cp.addItem(AdditionalWaypoints(), btnAddi.text, null);
@@ -108,22 +109,14 @@ public class FilterScreen extends Form {
         middlePanel.addLast(cp, STRETCH, FILL);
         this.addLast(middlePanel);
 
-        CellPanel savDelPanel = new CellPanel(); // Panel for "save" and "delete" button
-        savDelPanel.equalWidths = true;
-        mImage savImg = new mImage("clsave.png");
-        savImg.transparentColor = new Color(255, 0, 0);
-        savDelPanel.addNext(btnSaveFlt = new mButton(savImg), STRETCH, FILL);
-        savDelPanel.addLast(btnDelFlt = new mButton(new mImage("trash.png")), STRETCH, FILL);
+        CellPanel fltListPanel = new CellPanel();
+        fltListPanel.equalWidths = true;
+        fltListPanel.addNext(fltList = new mChoice());
+        fltListPanel.addNext(btnDelFlt = GuiImageBroker.getButton("","trash"));
+        fltListPanel.addLast(btnSaveFlt = GuiImageBroker.getButton("","clsave"));
+        this.addLast(fltListPanel);
 
-        Panel fltListPanel = new Panel();
-        fltListPanel.addLast(fltList = new mChoice());
-        fltListPanel.addLast(savDelPanel);
-
-        CellPanel lastPanel = new CellPanel();
-        lastPanel.equalWidths = true;
-        lastPanel.addNext(fltListPanel);
-        executePanel = new ExecutePanel(lastPanel);
-        this.addLast(lastPanel);
+        executePanel = new ExecutePanel(this);
 
         // Populating the comboBox of saved filters
         buildFilterList();
@@ -822,7 +815,7 @@ public class FilterScreen extends Form {
                 DateChooser.dayFirst = true;
                 final DateChooser dc = new DateChooser(Vm.getLocale());
                 dc.title = "Last Update Time";
-                dc.setPreferredSize(240, 240);
+                Preferences.itself().setSubWindowSize(dc);
                 if (syncDateInput.getText().length() == 10)
                     try {
                         dc.setDate(new Time(Convert.parseInt(syncDateInput.getText().substring(8)), Convert.parseInt(syncDateInput.getText().substring(5, 7)), Convert.parseInt(syncDateInput.getText().substring(0, 4))));

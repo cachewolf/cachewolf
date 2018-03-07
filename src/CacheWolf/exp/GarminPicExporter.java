@@ -300,7 +300,6 @@ public class GarminPicExporter {
 
 	public OptionsForm() {
 	    super();
-	    //this.setPreferredSize(400,300);
 	    this.setTitle("Export Options");
 	    // Which pictures to export (Radiobuttons)
 	    pnlWhichPics.addLast(chkAllPics = new mCheckBox("All"), CellConstants.DONTSTRETCH, CellConstants.WEST);

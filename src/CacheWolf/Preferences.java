@@ -443,12 +443,12 @@ public class Preferences extends MinML {
      * The width of the MainForm
      */
     private int screenWidth = screenSize.width;
-    private int lastSavedWidth = -1;
+    protected int lastSavedWidth = -1;
     /**
      * The height of the MainForm
      */
     private int screenHeight = screenSize.height;
-    private int lastSavedHeight = -1;
+    protected int lastSavedHeight = -1;
     /**
      * Helper variables for XML parser
      */
@@ -530,7 +530,7 @@ public class Preferences extends MinML {
             savePreferences();
 
             GuiImageBroker.init(useText, useIcons, useBigIcons, leftIcons);
-            initControlsSize(fontSize, useBigIcons);
+            initSubWindowSize(fontSize, useBigIcons);
             new InfoBox(MyLocale.getMsg(327, "Information"), MyLocale.getMsg(176, "First start - using default preferences \n For experts only: \n Could not read preferences file:\n") + pathToConfigFile).wait(FormBase.OKB);
         } catch (Exception e) {
             if (e instanceof NullPointerException)
@@ -544,59 +544,39 @@ public class Preferences extends MinML {
         FormBase.tick = new DrawnIcon(DrawnIcon.TICK, fontSize, fontSize, new Color(0, 128, 0));
         FormBase.cross = new DrawnIcon(DrawnIcon.CROSS, fontSize, fontSize, new Color(128, 0, 0));
         GuiImageBroker.init(useText, useIcons, useBigIcons, leftIcons);
-        initControlsSize(fontSize, useBigIcons);
+        initSubWindowSize(fontSize, useBigIcons);
         HttpConnection.setProxy(this.myproxy, Common.parseInt(this.myproxyport), this.proxyActive);
         MyLocale.language = language;
     }
 
-    private void initControlsSize(int fontSize, boolean useBigIcons) {
+    private void initSubWindowSize(int fontSize, boolean useBigIcons) {
         // Relation 4:3 (16:12), if landscape else the other way around
         int fWidth;
         int fHeight;
         if (screenSize.width > screenSize.height) {
-            fWidth = 16;
-            fHeight = 12;
+            fWidth = 32;
+            fHeight = 24;
         } else {
-            fWidth = 12;
-            fHeight = 16;
+            fWidth = 24;
+            fHeight = 32;
         }
         preferredControlsWidth = Math.min(fontSize * fWidth, screenSize.width);
         preferredControlsHeight = Math.min(fontSize * fHeight, screenSize.height);
+        if (preferredControlsWidth == 0)
+            preferredControlsWidth = -1;
+        if (preferredControlsHeight == 0)
+            preferredControlsHeight = -1;
     }
 
-    public void setInitialPreferredSize(ewe.ui.Control window) {
-        // from last start : use only for MainForm
+    public void setBigWindowSize(ewe.ui.Control bigWindow) {
         // first start seems to do a suitable size automatically
         if (lastSavedWidth > 0) {
-            window.setPreferredSize(lastSavedWidth, lastSavedHeight);
+            bigWindow.setPreferredSize(lastSavedWidth, lastSavedHeight);
         }
     }
 
-    public void setPreferredSize(ewe.ui.Control window) {
-        // for a Control
-        setPreferredSize(window, false);
-    }
-
-    public void setPreferredSize(ewe.ui.Control window, boolean aForm) {
-        if (aForm) {
-            // aForm depends on the size of the MainForm
-            window.setPreferredSize(screenWidth, screenHeight);
-        } else {
-            // a Controls depends on the Size of a character
-            if (preferredControlsWidth > 0 && preferredControlsHeight > 0)
-                window.setPreferredSize(preferredControlsWidth, preferredControlsHeight);
-            else {
-                if (preferredControlsWidth > 0) {
-                    window.setPreferredSize(preferredControlsWidth, -1);
-                } else {
-                    if (preferredControlsHeight > 0) {
-                        window.setPreferredSize(-1, preferredControlsHeight);
-                    } else {
-                        window.setPreferredSize(-1, -1);
-                    }
-                }
-            }
-        }
+    public void setSubWindowSize(ewe.ui.Control subWindow) {
+        subWindow.setPreferredSize(preferredControlsWidth, preferredControlsHeight);
     }
 
     /**
@@ -1342,8 +1322,8 @@ public class Preferences extends MinML {
      *                       BE versions or RC versions) by including the line
      *                       <p>
      *                       <pre>
-     *                                                                                                                                                           Preferences.itself().debug = true;
-     *                                                                                                                                                           </pre>
+     *                                                                                                                                                                                 Preferences.itself().debug = true;
+     *                                                                                                                                                                                 </pre>
      *                       <p>
      *                       in Version.getRelease()
      */

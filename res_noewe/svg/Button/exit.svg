@@ -1,0 +1,21 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg x="0" y="0" width="32" height="32" overflow="hidden" viewBox="0, 0, 50, 50" preserveAspectRatio="xMidYMid" font-size="0" xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xml="http://www.w3.org/XML/1998/namespace" version="1.1">
+  <radialGradient cx="25" cy="25" r="24" fx="25" fy="25" gradientUnits="userSpaceOnUse" id="SVGID_Fill1_" xml:space="preserve">
+    <stop offset="0%" stop-color="#FCD7D7" stop-opacity="1" xml:space="preserve" />
+    <stop offset="99.1379%" stop-color="#FF0000" stop-opacity="1" xml:space="preserve" />
+  </radialGradient>
+  <ellipse cx="25" cy="25" rx="22.5" ry="22.5" stroke="#000000" stroke-width="2" stroke-linejoin="round" xml:space="preserve" style="fill:url(#SVGID_Fill1_);" />
+  <radialGradient cx="25" cy="-6.03446" r="40" fx="25" fy="-6.03446" gradientUnits="userSpaceOnUse" id="SVGID_Fill2_" xml:space="preserve">
+    <stop offset="0%" stop-color="#FFFFFF" stop-opacity="0.486275" xml:space="preserve" />
+    <stop offset="27.1552%" stop-color="#FFF1F1" stop-opacity="0.486275" xml:space="preserve" />
+    <stop offset="100%" stop-color="#FF0000" stop-opacity="0.486275" xml:space="preserve" />
+  </radialGradient>
+  <ellipse cx="25" cy="25" rx="20" ry="20" stroke-width="0.2" stroke-linejoin="round" xml:space="preserve" style="fill:url(#SVGID_Fill2_);" />
+  <radialGradient cx="25" cy="12.5862" r="40" fx="25" fy="12.5862" gradientUnits="userSpaceOnUse" gradientTransform="rotate(180, 25, 12.58622)" id="SVGID_Fill3_" xml:space="preserve">
+    <stop offset="11.6379%" stop-color="#FFFFFF" stop-opacity="0" xml:space="preserve" />
+    <stop offset="100%" stop-color="#FFE700" stop-opacity="0.513725" xml:space="preserve" />
+  </radialGradient>
+  <ellipse cx="25" cy="25" rx="20" ry="20" stroke-width="0.2" stroke-linejoin="round" xml:space="preserve" style="fill:url(#SVGID_Fill3_);" />
+  <path d="M11.875 17.9896 L18 12.1146 L24.9375 19.2396 L31.75 11.9896 L37.9375 18.3646 L30.9375 25.1146 L37.6875 31.8021 L31.625 37.4896 L25.1875 31.4896 L18.625 37.9271 L12.3125 31.8021 L18.9375 25.6146 L11.875 17.9896 z" stroke-width="0.2" stroke-linejoin="round" xml:space="preserve" style="fill:#FFFFFF;" />
+</svg>

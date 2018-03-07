@@ -1,0 +1,25 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg x="0" y="0" width="64" height="64" overflow="hidden" viewBox="0, 0, 16, 16" preserveAspectRatio="xMidYMid" font-size="0" id="svg4099" xml:space="default" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xml="http://www.w3.org/XML/1998/namespace" version="1.1">
+  <defs id="defs4101" xml:space="default">
+    <linearGradient x1="0%" y1="0%" x2="100%" y2="0%" gradientUnits="objectBoundingBox" id="linearGradient3829" xml:space="default">
+      <stop offset="0%" stop-color="#FFFFFF" stop-opacity="1" id="stop3835" xml:space="default" />
+      <stop offset="52.34026%" stop-color="#FFB600" stop-opacity="1" id="stop3839" xml:space="default" />
+      <stop offset="100%" stop-color="#FFE45C" stop-opacity="1" id="stop3837" xml:space="default" />
+    </linearGradient>
+    <linearGradient x1="8" y1="8" x2="13" y2="13.5" gradientUnits="userSpaceOnUse" xlink:href="#linearGradient3829" id="linearGradient3843" xml:space="default" />
+    <linearGradient x1="8" y1="8" x2="4.21182" y2="3.5" gradientUnits="userSpaceOnUse" xlink:href="#linearGradient3829" id="linearGradient3845" xml:space="default" />
+    <linearGradient x1="8" y1="8" x2="9.742383" y2="10.63896" gradientUnits="userSpaceOnUse" xlink:href="#linearGradient3829" id="linearGradient3847" xml:space="default" />
+  </defs>
+  <g id="layer2" xml:space="default">
+    <g transform="matrix(0.6512007, 0, 0, 0.6512007, 2.790395, 5.152598)" id="g2743" xml:space="default">
+      <path d="M15.5 8 A7.5 7.5 0 0 1 8 15.5 A7.5 7.5 0 0 1 0.5 8 A7.5 7.5 0 0 1 8 0.5 A7.5 7.5 0 0 1 15.5 8 z" display="inline" enable-background="accumulate" stroke-width="0.5" stroke-linecap="round" id="path2722" xml:space="default" type="arc" cx="8" cy="8" rx="7.5" ry="7.5" marker="none" overflow="visible" style="fill:#A0D4E0;" />
+      <path d="M0.6524609 6.5 C0.9365143 5.219037 1.495119 4.191402 2.24685 3.321536 C2.998582 2.451671 3.94344 1.739574 5 1.089687 C6.329664 2.194491 8.324873 1.628214 8.5 2.5 C8.675127 3.371786 8.265454 5.270233 7.5 5.5 C6.489701 5.803262 4.675576 4.81036 4 5.5 C3.018415 6.502018 1.719331 7.003739 0.6524609 6.5 z" display="inline" enable-background="accumulate" stroke-width="0.5" stroke-linecap="round" stroke-linejoin="round" id="path2724" xml:space="default" nodetypes="cscccsc" marker="none" overflow="visible" style="fill:#205910;" />
+      <path d="M15.5 8 C15.5 12.14 12.14 15.5 8 15.5 C6 13 4.5 13 5.5 12 C9.5 8 7.545943 11.65811 9.006414 11.86217 C10.46689 12.06623 11.84189 12.31623 12 12 C12.5 11 10.5 6 11.5 5 C13.26777 3.232233 14.5 9.75 15.5 8 z" display="inline" enable-background="accumulate" stroke-width="0.5" stroke-linecap="round" id="path2726" xml:space="default" nodetypes="ccssssc" marker="none" overflow="visible" style="fill:#205910;" />
+      <path d="M15.5 8 A7.5 7.5 0 0 1 8 15.5 A7.5 7.5 0 0 1 0.5 8 A7.5 7.5 0 0 1 8 0.5 A7.5 7.5 0 0 1 15.5 8 z" display="inline" enable-background="accumulate" stroke="#000000" stroke-width="0.7678125" stroke-linecap="round" id="path2728" xml:space="default" ry="7.5" rx="7.5" cy="8" cx="8" type="arc" marker="none" overflow="visible" style="fill:none;" />
+    </g>
+    <path d="M7.5 1.642857 L8.5 1.642857 L8.5 6.5 C8.5 7 7.5 7 7.5 6.5 L7.5 1.642857 z" display="inline" enable-background="accumulate" stroke="#000000" stroke-width="0.5" stroke-linecap="round" id="rect2749" xml:space="default" nodetypes="ccccc" marker="none" overflow="visible" style="fill:#FFFFFF;" />
+    <path d="M4 2.75 A0.75 0.75 0 1 1 2.5 2.75 A0.75 0.75 0 1 1 4 2.75 z" display="inline" enable-background="accumulate" stroke="#000000" stroke-width="0.5" stroke-linecap="round" transform="translate(4.75, -1.5)" id="path3522" xml:space="default" type="arc" cx="3.25" cy="2.75" rx="0.75" ry="0.75" marker="none" overflow="visible" style="fill:#000000;" />
+    <path d="M8.5 1.5 L8.5 4.5 L11.5 3 L8.5 1.5 z" stroke="#000000" fill-rule="evenOdd" stroke-width="0.5" id="path3524" xml:space="default" style="fill:#F1A446;" />
+  </g>
+</svg>

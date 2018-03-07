@@ -1,0 +1,22 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg x="0" y="0" width="32" height="32" viewBox="0, 0, 230, 230" preserveAspectRatio="xMidYMid" font-size="0" id="svg" xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xml="http://www.w3.org/XML/1998/namespace" version="1.1">
+  <defs id="defs" xml:space="preserve">
+    <linearGradient x1="197.1888" y1="116.9741" x2="359.5282" y2="116.9741" gradientUnits="userSpaceOnUse" xlink:href="#lg1" gradientTransform="matrix(0.9955255, 0, 0, 1.004495, -0.8975825, -2.932063)" id="lg0" xml:space="preserve" />
+  </defs>
+  <linearGradient x1="239.9398" y1="115.4987" x2="488.8215" y2="115.4987" gradientUnits="userSpaceOnUse" gradientTransform="matrix(0.9792051, 0, 0, 0.9817358, 1.372898, 2.285734)" id="lg2" xml:space="preserve">
+    <stop offset="0%" stop-color="#052F73" stop-opacity="1" id="s1" xml:space="preserve" />
+    <stop offset="100%" stop-color="#3883FC" stop-opacity="1" id="s2" xml:space="preserve" />
+  </linearGradient>
+  <ellipse cx="114.47" cy="115.6752" rx="109.1633" ry="109.4794" stroke="#1A5EC7" stroke-width="7.843757" stroke-linecap="square" stroke-linejoin="bevel" id="e1" xml:space="preserve" style="fill:url(#lg2);" />
+  <linearGradient x1="197.1888" y1="116.9741" x2="359.5282" y2="116.9741" gradientUnits="userSpaceOnUse" gradientTransform="matrix(0.9955255, 0, 0, 1.004495, -364.7119, -138.6102)" id="lg1" xml:space="preserve">
+    <stop offset="0%" stop-color="#B4CAEE" stop-opacity="1" id="s3" xml:space="preserve" />
+    <stop offset="100%" stop-color="#FFFFFF" stop-opacity="1" id="s4" xml:space="preserve" />
+  </linearGradient>
+  <ellipse cx="114.6024" cy="114.5679" rx="75" ry="75.6757" stroke-width="8" stroke-linecap="square" stroke-linejoin="bevel" id="e3" xml:space="preserve" style="fill:url(#lg0);" />
+  <linearGradient x1="169.1276" y1="115.9787" x2="277.3539" y2="115.9787" gradientUnits="userSpaceOnUse" gradientTransform="matrix(0.9955262, 0, 0, 1.004494, 0.03418261, -1.897715)" id="lg3" xml:space="preserve">
+    <stop offset="0%" stop-color="#052F73" stop-opacity="1" id="s5" xml:space="preserve" />
+    <stop offset="100%" stop-color="#3883FC" stop-opacity="1" id="s6" xml:space="preserve" />
+  </linearGradient>
+  <ellipse cx="114.5342" cy="114.6023" rx="50" ry="50.4504" stroke-width="8" stroke-linecap="square" stroke-linejoin="bevel" id="e2" xml:space="preserve" style="fill:url(#lg3);" />
+</svg>
