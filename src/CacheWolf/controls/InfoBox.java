@@ -23,20 +23,7 @@ package CacheWolf.controls;
 
 import CacheWolf.Preferences;
 import CacheWolf.utils.MyLocale;
-import ewe.ui.CellPanel;
-import ewe.ui.Control;
-import ewe.ui.ControlEvent;
-import ewe.ui.Event;
-import ewe.ui.Form;
-import ewe.ui.FormBase;
-import ewe.ui.PanelSplitter;
-import ewe.ui.ScrollClient;
-import ewe.ui.ScrollablePanel;
-import ewe.ui.SplittablePanel;
-import ewe.ui.TextMessage;
-import ewe.ui.mCheckBox;
-import ewe.ui.mInput;
-import ewe.ui.mLabel;
+import ewe.ui.*;
 
 public class InfoBox extends Form {
 
@@ -64,11 +51,11 @@ public class InfoBox extends Form {
     }
 
     public InfoBox(String title, Control ctrl, int w, int h) {
-        Preferences.itself().setSubWindowSize(this);
+        this.setPreferredSize(w,h);
         this.addLast(new MyScrollBarPanel((ScrollClient) ctrl, ScrollablePanel.NeverShowHorizontalScrollers), STRETCH, FILL);
         this.title = title;
         this.type = DISPLAY_ONLY;
-        relayout(false);
+        // relayout(false);
     }
 
     public InfoBox(String title, String info, int type, boolean autoWrap) {
@@ -117,7 +104,7 @@ public class InfoBox extends Form {
         }
         this.title = title;
         this.type = type;
-        relayout(false);
+        //relayout(false);
     }
 
     public final int wait(int doButtons)

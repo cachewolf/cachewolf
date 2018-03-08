@@ -1,9 +1,6 @@
 set RESOLUTION=%1
-rem set RESOLUTION=24
 set /a STARSIZE=5*RESOLUTION
-goto start
 
-:start
 svg2png.exe "svg\Cachetype\Ape.svg" "symbols\Ape.png" %RESOLUTION%
 svg2png.exe "svg\Cachetype\Cito.svg" "symbols\Cito.png" %RESOLUTION%
 svg2png.exe "svg\Cachetype\Custom.svg" "symbols\Custom.png" %RESOLUTION%
@@ -28,7 +25,6 @@ svg2png.exe "svg\Waypoint\Final.svg" "symbols\Final.png" %RESOLUTION%
 svg2png.exe "svg\Waypoint\Trailhead.svg" "symbols\Trailhead.png" %RESOLUTION%
 svg2png.exe "svg\Waypoint\Reference.svg" "symbols\Reference.png" %RESOLUTION%
 
-:button
 svg2png.exe "svg\Button\about.svg" "symbols\about.png" %RESOLUTION%
 svg2png.exe "svg\Button\add.svg" "symbols\add.png" %RESOLUTION%
 svg2png.exe "svg\Button\admin.svg" "symbols\admin.png" %RESOLUTION%
@@ -121,7 +117,6 @@ svg2png.exe "svg\Button\position_red.svg" "symbols\position_red.png" %RESOLUTION
 svg2png.exe "svg\Button\position_green.svg" "symbols\position_green.png" %RESOLUTION%
 svg2png.exe "svg\Button\no.svg" "symbols\no.png" %RESOLUTION%
 
-:size
 svg2png.exe "svg\Size\sizeLarge.svg" "symbols\sizeLarge.png" %RESOLUTION%
 svg2png.exe "svg\Size\sizeMicro.svg" "symbols\sizeMicro.png" %RESOLUTION%
 svg2png.exe "svg\Size\sizeNotChosen.svg" "symbols\sizeNotChosen.png" %RESOLUTION%
@@ -131,7 +126,6 @@ svg2png.exe "svg\Size\sizeVirtual.svg" "symbols\sizeVirtual.png" %RESOLUTION%
 svg2png.exe "svg\Size\sizeVLarge.svg" "symbols\sizeVLarge.png" %RESOLUTION%
 svg2png.exe "svg\Size\sizeOther.svg" "symbols\sizeOther.png" %RESOLUTION%
 
-:star
 svg2png.exe "svg\Star\star0.svg" "symbols\star0.png" %STARSIZE%
 svg2png.exe "svg\Star\star10.svg" "symbols\star10.png" %STARSIZE%
 svg2png.exe "svg\Star\star15.svg" "symbols\star15.png" %STARSIZE%
@@ -143,8 +137,6 @@ svg2png.exe "svg\Star\star40.svg" "symbols\star40.png" %STARSIZE%
 svg2png.exe "svg\Star\star45.svg" "symbols\star45.png" %STARSIZE%
 svg2png.exe "svg\Star\star50.svg" "symbols\star50.png" %STARSIZE%
 
-pause
-goto exit
-exit
+echo fertig >ready.txt
 
 

@@ -672,7 +672,6 @@ public class TablePanelMenu extends MenuBar {
                     new InfoBox(MyLocale.getMsg(5500, "Error"), "Garmin export unsuccessful").wait(FormBase.OKB);
                     Preferences.itself().log("Error exporting to Garmin", ioex, true);
                 }
-                ;
                 ProgressBarForm.clear();
                 Vm.showWait(false);
             }
@@ -752,9 +751,40 @@ public class TablePanelMenu extends MenuBar {
             // /////////////////////////////////////////////////////////////////////
             if (mev.selectedItem == appMenuPreferences) {
                 tablePanel.saveColWidth();
+                int fontsize = Preferences.itself().fontSize;
+                boolean useBigIcons = Preferences.itself().useBigIcons;
                 PreferencesScreen preferencesScreen = new PreferencesScreen();
                 preferencesScreen.execute(MainForm.itself.getFrame(), Gui.CENTER_FRAME);
-                Preferences.itself().readPrefFile();
+                // überflüssig, wurde ja gerade gespeichert und auch bei Abbruch wurde keine Preferences Variable gesetzt ! Preferences.itself().readPrefFile();
+                if (Preferences.itself().fontSize != fontsize || Preferences.itself().useBigIcons != useBigIcons) {
+                    try {
+                        MainTab.itself.saveUnsavedChanges(true);
+                        File f = new File("./ready.txt");
+                        f.delete();
+                        InfoBox infB = new InfoBox("Icons werden erzeugt!", "Icons werden erzeugt!", InfoBox.DISPLAY_ONLY);
+                        if (Preferences.itself().useBigIcons) {
+                            ewe.sys.Process p = Vm.exec("./_createBigIcons.cmd " + Preferences.itself().fontSize + " >>./log.txt");
+                        } else {
+                            ewe.sys.Process p = Vm.exec("./_createIcons.cmd " + Preferences.itself().fontSize + " >>./log.txt");
+                        }
+                        infB.show();
+                        Vm.showWait(true);
+                        for (int i = 0; i < 60; i++) {
+                            Vm.sleep(1000 * 5);
+                            if (f.exists() || infB.isClosed()) {
+                                infB.close(0);
+                                break;
+                            }
+                        }
+                        f.delete();
+                        Vm.showWait(false);
+                        new InfoBox("Restart required!", "Neustart erforderlich!").wait(FormBase.OKB);
+                        ewe.sys.Vm.exit(0);
+                    } catch (IOException ioex) {
+                        Vm.showWait(false);
+                        new InfoBox("Error creating new Icons!", "Error creating new Icons!" + ioex.getLocalizedMessage()).wait(FormBase.OKB);
+                    }
+                }
             }
             if (mev.selectedItem == savenoxit) {
                 MainForm.profile.saveIndex(Profile.SHOW_PROGRESS_BAR, Profile.FORCESAVE);

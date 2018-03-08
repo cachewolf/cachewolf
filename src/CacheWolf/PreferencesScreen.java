@@ -464,6 +464,7 @@ public class PreferencesScreen extends Form {
                 this.close(0);
             }
             if (ev.target == executePanel.applyButton) {
+                int oldFontsize = Preferences.itself().fontSize;
                 Preferences.itself().setBaseDir(DataDir.getText());
                 Preferences.itself().setMapsBaseDir(MapsDir.getText());
                 Preferences.itself().fontSize = Convert.toInt(fontSize.getText());
@@ -515,6 +516,20 @@ public class PreferencesScreen extends Form {
                     MainTab.itself.tablePanel.refreshControl();
                 }
                 Preferences.itself().listColMap = tccList.getSelectedCols();
+                if (Preferences.itself().fontSize != oldFontsize) {
+                    float f = (float) Preferences.itself().fontSize / (float) oldFontsize;
+                    int[] colWidth = TableColumnChooser.str2Array(Preferences.itself().listColWidth, 10, 1024, 50, -1);
+                    for (int col = 0; col < colWidth.length; col++) {
+                        colWidth[col] = (int) (colWidth[col] * f);
+                    }
+                    StringBuffer sb = new StringBuffer(100);
+                    for (int i = 0; i < colWidth.length; i++) {
+                        if (sb.length() != 0)
+                            sb.append(',');
+                        sb.append(colWidth[i]);
+                    }
+                    Preferences.itself().listColWidth = sb.toString();
+                }
                 Preferences.itself().descShowImg = chkDescShowImg.getState();
                 MainTab.itself.tablePanel.myTableModel.setColumnNamesAndWidths();
                 Preferences.itself().metricSystem = inpMetric.getInt() == 0 ? Metrics.METRIC : Metrics.IMPERIAL;
