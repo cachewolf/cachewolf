@@ -1,92 +1,92 @@
 <h1>WolfLanguage Befehle:</h1>
 <p>Zeichen hinter dem # bis zum Zeilenende werden ignoriert.<br>
-Mehrere Befehle in einer Zeile werden durch einem Semikolon (;) getrennt.<br>
-Fortsetzungszeilen können durch _ oder \ erzwungen werden.<br>
-<i>Beispiel: A=0; stop <font color="green"># weist A null zu stoppt das Skript</font></i><br>
-cls() <i>alias</i> clearscreen()<br>
-<i>Beispiel: cls() <font color="green"># Ausgabefenster löschen</font></i></p>
+    Mehrere Befehle in einer Zeile werden durch einem Semikolon (;) getrennt.<br>
+    Fortsetzungszeilen können durch _ oder \ erzwungen werden.<br>
+    <i>Beispiel: A=0; stop <font color="green"># weist A null zu stoppt das Skript</font></i><br>
+    cls() <i>alias</i> clearscreen()<br>
+    <i>Beispiel: cls() <font color="green"># Ausgabefenster löschen</font></i></p>
 
 <p><b>Zuweisung:</b><br>variable = wert<br>
-<i> Beispiel: a = 2</i><br>
-<i> Beispiel: $a = 2; b="abc"</i><br>
-$a ist eine globale Variable.</p>
+    <i> Beispiel: a = 2</i><br>
+    <i> Beispiel: $a = 2; b="abc"</i><br>
+    $a ist eine globale Variable.</p>
 
 <p><b>Numerische Ausdrücke formatieren:</b><br>
-Formatierungszeichen: 0 . # wobei # für beliebige Ziffern steht<br>
-<i>Beispiel: 3.14159:000.00: <font color="green"># 003.14</font></i></p>
+    Formatierungszeichen: 0 . # wobei # für beliebige Ziffern steht<br>
+    <i>Beispiel: 3.14159:000.00: <font color="green"># 003.14</font></i></p>
 
 <p><b>Anzeige von Werten</b><br>
-"beliebiger Text" " weitere Text"<br>
-Operatoren: +, -, *, /, (, )<br>
-<i>Beispiel: a = 1 / 2 + 34 - 8 * 12<font color="green"> # a = -61.5</font></i><br>
-<i>Beispiel:  a = (1 / 2 + 34 - 8) * 12<font color="green"> # a = 318</font></i><br>
-<i>Beispiel: "N 34 12." a " :das " rot13("Mvry")<font color="green"> # N 34 12.318 :das Ziel</font><br></i>
-show()<br>
-<i>Beispiel:  show(a)<font color="green"> # veraltet, gibt a aus</font></i></p>
+    "beliebiger Text" " weitere Text"<br>
+    Operatoren: +, -, *, /, (, )<br>
+    <i>Beispiel: a = 1 / 2 + 34 - 8 * 12<font color="green"> # a = -61.5</font></i><br>
+    <i>Beispiel: a = (1 / 2 + 34 - 8) * 12<font color="green"> # a = 318</font></i><br>
+    <i>Beispiel: "N 34 12." a " :das " rot13("Mvry")<font color="green"> # N 34 12.318 :das Ziel</font><br></i>
+    show()<br>
+    <i>Beispiel: show(a)<font color="green"> # veraltet, gibt a aus</font></i></p>
 
 <p><b>Wurzel, Potenz</b><br>
- sqrt(), ^:<br>
-<i> Beispiel: a = sqrt(2) ^ 5</i><br></p>
+    sqrt(), ^:<br>
+    <i> Beispiel: a = sqrt(2) ^ 5</i><br></p>
 
 <p><b>Trigonometrische Funktionen</b><br>
- cos(Wert), sin(Wert), tan(Wert),<br>
- atan(Wert), asin(Wert), acos(Wert)<br>
-<i>Beispiel: a = cos(90)<br>
-Beispiel:  a = atan(b)</i><br>
-<b>Modus für trigonometrische Funktionen ändern</b><br>
- deg()<br>
- rad()<br>
-<b>Trigonometrische Konvertierungen</b><br>
- deg2rad(Wert)  <i>alias</i> d2r()<br>
- rad2deg(Wert)  <i>alias</i> r2d()<br>
-<b>Konstante Pi</b><br>
-Behelf durch 180 / r2d(1)<br>
-<i>Beispiel: A = r ^ 2 * 180 / r2d(1) <font color="green"># Flächeninhalt des Kreises</font></i></p>   
+    cos(Wert), sin(Wert), tan(Wert),<br>
+    atan(Wert), asin(Wert), acos(Wert)<br>
+    <i>Beispiel: a = cos(90)<br>
+        Beispiel: a = atan(b)</i><br>
+    <b>Modus für trigonometrische Funktionen ändern</b><br>
+    deg()<br>
+    rad()<br>
+    <b>Trigonometrische Konvertierungen</b><br>
+    deg2rad(Wert) <i>alias</i> d2r()<br>
+    rad2deg(Wert) <i>alias</i> r2d()<br>
+    <b>Konstante Pi</b><br>
+    Behelf durch 180 / r2d(1)<br>
+    <i>Beispiel: A = r ^ 2 * 180 / r2d(1) <font color="green"># Flächeninhalt des Kreises</font></i></p>
 
 <p><b>Numerische Functionen</b><br>
-ct(Wert) <i>alias</i> crosstotal(Wert), quersumme(Wert), q(Wert)<br>
-<i> Beispiel: q(123) <font color="green"># Quersumme 6</font></i><br>
-abs(Wert)<br>
-<i> Beispiel: abs(-2.7) <font color="green"># Betrag 2.7</font></i><br>
-mod(Wert,Div)<br>
-<i> Beispiel: mod(7,3) <font color="green"># Rest 1</font></i><br>
-int(Wert)<br>
-<i> Beispiel: int(-2.7) <font color="green"># Ganzzahl -2</font></i><br></p>
+    ct(Wert) <i>alias</i> crosstotal(Wert), quersumme(Wert), q(Wert)<br>
+    <i> Beispiel: q(123) <font color="green"># Quersumme 6</font></i><br>
+    abs(Wert)<br>
+    <i> Beispiel: abs(-2.7) <font color="green"># Betrag 2.7</font></i><br>
+    mod(Wert,Div)<br>
+    <i> Beispiel: mod(7,3) <font color="green"># Rest 1</font></i><br>
+    int(Wert)<br>
+    <i> Beispiel: int(-2.7) <font color="green"># Ganzzahl -2</font></i><br></p>
 
 <p><b>Text Funktionen</b> [s is eine Zeichenkette]<br>
-len(s) <i>alias</i> length(s)<br>
-mid(s,startpos,length)<br> 
-instr(s,searchStr)<br>
-instr(startpos,s,searchstr)<br>
-uc(s) <i>alias</i> ucase(s), touppercase(s)<br>
-lc(s) <i>alias</i> lcase(s), tolowercase(s)<br>
-replace(s,searchStr,ReplaceStr)<br>
-reverse(s)<br>
-encode(s,s1,s2)<br>
-count(s,whatStr)<br>
-val(s)<i> <font color="green"># A=1, B=2, ... Z=26;  Alle addieren</font></i><br>
-sval(s)<i> <font color="green"># A=1, B=2, ... Z=26</font></i><br>
-rot13(s)</p>
+    len(s) <i>alias</i> length(s)<br>
+    mid(s,startpos,length)<br>
+    instr(s,searchStr)<br>
+    instr(startpos,s,searchstr)<br>
+    uc(s) <i>alias</i> ucase(s), touppercase(s)<br>
+    lc(s) <i>alias</i> lcase(s), tolowercase(s)<br>
+    replace(s,searchStr,ReplaceStr)<br>
+    reverse(s)<br>
+    encode(s,s1,s2)<br>
+    count(s,whatStr)<br>
+    val(s)<i> <font color="green"># A=1, B=2, ... Z=26; Alle addieren</font></i><br>
+    sval(s)<i> <font color="green"># A=1, B=2, ... Z=26</font></i><br>
+    rot13(s)</p>
 
 <p><b>Koordinaten</b><br>
-bearing(coordinate1,coordinate2) <font color="green"># Peilung</font><br>
-center() <font color="green"># get current center</font><br>
-center(coordinate)<br>
-<i>alias</i> zentrum(coordinate)<br>
-cp() <i>alias</i> curpos() <font color="green"># get current GPS position</font><br>
-cb(coord1,angle1,coord2,angle2)<br>
-<i>alias</i> crossbearing(coord1,angle1,coord2,angle2) <font color="green"># Kreuzpeilung</font><br>
-distance(coordinate1,coordinate2) <font color="green"># Abstand zwischen zwei Punkten</font><br>  
-format(coordinate,fmt) <br>
-  <i>wobei fmt="CW" or "UTM" or "DMS" or "DD" or "DMM" or "GK"</i><br>
-goto(coordinate)<br>
-goto(coordinate,waypointname)<br>
-project(coordinate,angle,distance) <font color="green"># Projektion</font></p>
+    bearing(coordinate1,coordinate2) <font color="green"># Peilung</font><br>
+    center() <font color="green"># get current center</font><br>
+    center(coordinate)<br>
+    <i>alias</i> zentrum(coordinate)<br>
+    cp() <i>alias</i> curpos() <font color="green"># get current GPS position</font><br>
+    cb(coord1,angle1,coord2,angle2)<br>
+    <i>alias</i> crossbearing(coord1,angle1,coord2,angle2) <font color="green"># Kreuzpeilung</font><br>
+    distance(coordinate1,coordinate2) <font color="green"># Abstand zwischen zwei Punkten</font><br>
+    format(coordinate,fmt) <br>
+    <i>wobei fmt="CW" or "UTM" or "DMS" or "DD" or "DMM" or "GK"</i><br>
+    goto(coordinate)<br>
+    goto(coordinate,waypointname)<br>
+    project(coordinate,angle,distance) <font color="green"># Projektion</font></p>
 
 <p><b>Programme für Multicaches generieren (mit/ohne zusätzlichen Wegpunkten)</b><br>
-skeleton() <font color="green"># Skript-Gerüst für aktuellen Cache generieren</font><br>
-skeleton(AnzahlderStationen) <font color="green"># Gerüst mit Stationen generieren</font></p>
+    skeleton() <font color="green"># Skript-Gerüst für aktuellen Cache generieren</font><br>
+    skeleton(AnzahlderStationen) <font color="green"># Gerüst mit Stationen generieren</font></p>
 
 <p><b>IF THEN ENDIF</b><br>
-IF bedingung THEN Anweisung ; Anweisung .... ENDIF</p><br><br>
+    IF bedingung THEN Anweisung ; Anweisung .... ENDIF</p><br><br>
 

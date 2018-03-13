@@ -28,32 +28,32 @@ import ewe.ui.mButton;
 
 public class PDAListButton extends mButton {
 
-	public String fromText;
-	public String toText;
-	public boolean toLogged;
-	public boolean fromLogged;
-	
-	public PDAListButton(String newText, String newAction) {
-		super(newText);
-		action = newAction;
-		createButtonObject();
+    public String fromText;
+    public String toText;
+    public boolean toLogged;
+    public boolean fromLogged;
 
-		backGround = Color.White;
-		foreGround = Color.Black;
+    public PDAListButton(String newText, String newAction) {
+        super(newText);
+        action = newAction;
+        createButtonObject();
 
-		font = new Font(getFont().getName(), Font.BOLD, 40);
-		anchor = CellConstants.WEST;
-		textPosition=2;
-	}
+        backGround = Color.White;
+        foreGround = Color.Black;
 
-	protected void createButtonObject() {
-		buttonObject = new PDAListButtonObject(this);
-	}
+        font = new Font(getFont().getName(), Font.BOLD, 40);
+        anchor = CellConstants.WEST;
+        textPosition = 2;
+    }
 
-	public void make(boolean paramBoolean) {
-		if (this.buttonObject != null)
-			return;
-		createButtonObject();
-	}
-	
+    protected void createButtonObject() {
+        buttonObject = new PDAListButtonObject(this);
+    }
+
+    public void make(boolean paramBoolean) {
+        if (this.buttonObject != null)
+            return;
+        createButtonObject();
+    }
+
 }

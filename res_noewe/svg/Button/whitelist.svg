@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
-<svg x="0px" y="0px" width="32" height="45.22766" overflow="hidden" viewBox="0, 0, 433.8305, 613.1605" preserveAspectRatio="xMidYMid" font-size="0" id="Ebene_1" xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xml="http://www.w3.org/XML/1998/namespace" version="1.1">
-  <defs id="d1" xml:space="preserve">
+<svg xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xml="http://www.w3.org/XML/1998/namespace" x="0px" y="0px" width="32" height="45.22766" overflow="hidden" viewBox="0, 0, 433.8305, 613.1605" preserveAspectRatio="xMidYMid" font-size="0" id="svg" xml:space="preserve" xmlns="http://www.w3.org/2000/svg" version="1.1">
+  <defs id="def1" xml:space="preserve">
     <radialGradient cx="298.1253" cy="350.8242" r="340.9629" fx="298.1253" fy="350.8242" gradientUnits="userSpaceOnUse" xlink:href="#linearGradient3528" gradientTransform="matrix(1, 0, 0, 1.112913, 0, -39.61257)" id="radialGradient3526" xml:space="preserve" />
     <linearGradient x1="0%" y1="0%" x2="100%" y2="0%" gradientUnits="objectBoundingBox" id="linearGradient3528" xml:space="preserve">
       <stop offset="0%" stop-color="#05FF00" stop-opacity="1" id="stop3530" xml:space="preserve" />

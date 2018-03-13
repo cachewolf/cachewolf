@@ -23,12 +23,7 @@ package CacheWolf;
 
 import CacheWolf.controls.GuiImageBroker;
 import CacheWolf.controls.InfoBox;
-import CacheWolf.database.CWPoint;
-import CacheWolf.database.CacheDB;
-import CacheWolf.database.CacheHolder;
-import CacheWolf.database.CacheHolderDetail;
-import CacheWolf.database.CacheSize;
-import CacheWolf.database.CacheType;
+import CacheWolf.database.*;
 import CacheWolf.navi.GotoPanel;
 import CacheWolf.navi.MovingMap;
 import CacheWolf.navi.Navigate;
@@ -36,16 +31,7 @@ import CacheWolf.utils.MyLocale;
 import ewe.fx.Graphics;
 import ewe.fx.IconAndText;
 import ewe.sys.Vm;
-import ewe.ui.Card;
-import ewe.ui.CellPanel;
-import ewe.ui.Control;
-import ewe.ui.ControlEvent;
-import ewe.ui.Event;
-import ewe.ui.FormBase;
-import ewe.ui.MultiPanelEvent;
-import ewe.ui.TableEvent;
-import ewe.ui.mButton;
-import ewe.ui.mTabbedPanel;
+import ewe.ui.*;
 
 /**
  * This class creates the tabbed panel and sets the tabs to the respective other panels. Important is to have a look at the event handler!<br>
@@ -57,45 +43,38 @@ import ewe.ui.mTabbedPanel;
 public class MainTab extends mTabbedPanel {
 
     public static MainTab itself;
-
-    // following numbers depend on tabNames order (MENU_CARD must be the last tabName)
-    static int LIST_CARD = 0;
     public static int DETAILS_CARD = 1;
     public static int DESCRIPTION_CARD = 2;
+    public static int MAP_CARD = 9;
+    // following numbers depend on tabNames order (MENU_CARD must be the last tabName)
+    static int LIST_CARD = 0;
     static int IMAGES_CARD = 3;
     static int HINTSANDLOGS_CARD = 4;
     static int SOLVER_CARD = 5;
     static int CALC_CARD = 6;
     static int GOTO_CARD = 7;
     static int RADAR_CARD = 8;
-    public static int MAP_CARD = 9;
     static int MENU_CARD = 10;
 
     public TablePanel tablePanel;
     public DetailsPanel detailsPanel;
+    public GotoPanel gotoPanel;
+    public CacheHolder ch = null, chMain = null;
+    public MovingMap movingMap;
+    public Navigate navigate;
+    public String mainCache = "";
     DescriptionPanel descriptionPanel;
     HintLogPanel hintLogPanel;
     CalcPanel calcPanel;
-    public GotoPanel gotoPanel;
     ImagePanel imagePanel;
     SolverPanel solverPanel;
     CellPanel mapPanel;
     RadarPanel radarPanel;
-
     CellPanel homePanel;
     CellPanel selectPanels[];
-
     CacheDB cacheDB;
-
     String lastselected = "";
-    public CacheHolder ch = null, chMain = null;
     CacheHolderDetail chD = null;
-
-    public MovingMap movingMap;
-    public Navigate navigate;
-
-    public String mainCache = "";
-
     int oldCard;
     boolean cacheDirty = false;
 

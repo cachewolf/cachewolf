@@ -5,8 +5,7 @@ import ewe.io.IOException;
 /**
  * Base interface to provide TLS authentication credentials.
  */
-public interface TlsAuthentication
-{
+public interface TlsAuthentication {
     /**
      * Called by the protocol handler to report the server certificate
      * Note: this method is responsible for certificate verification and validation
@@ -15,7 +14,7 @@ public interface TlsAuthentication
      * @throws IOException
      */
     void notifyServerCertificate(Certificate serverCertificate)
-        throws IOException;
+            throws IOException;
 
     /**
      * Return client credentials in response to server's certificate request
@@ -25,5 +24,5 @@ public interface TlsAuthentication
      * @throws IOException
      */
     TlsCredentials getClientCredentials(CertificateRequest certificateRequest)
-        throws IOException;
+            throws IOException;
 }

@@ -8,8 +8,7 @@ import ewe.io.OutputStream;
 /**
  * Utility methods to assist with stream processing.
  */
-public final class Streams
-{
+public final class Streams {
     private static int BUFFER_SIZE = 4096;
 
     /**
@@ -19,11 +18,9 @@ public final class Streams
      * @throws IOException in case of underlying IOException.
      */
     public static void drain(InputStream inStr)
-        throws IOException
-    {
+            throws IOException {
         byte[] bs = new byte[BUFFER_SIZE];
-        while (inStr.read(bs, 0, bs.length) >= 0)
-        {
+        while (inStr.read(bs, 0, bs.length) >= 0) {
         }
     }
 
@@ -35,8 +32,7 @@ public final class Streams
      * @throws IOException in case of underlying IOException.
      */
     public static byte[] readAll(InputStream inStr)
-        throws IOException
-    {
+            throws IOException {
         ByteArrayOutputStream buf = new ByteArrayOutputStream();
         pipeAll(inStr, buf);
         return buf.toByteArray();
@@ -52,8 +48,7 @@ public final class Streams
      * @throws IOException in case of underlying IOException, or if limit is reached on inStr still has data in it.
      */
     public static byte[] readAllLimited(InputStream inStr, int limit)
-        throws IOException
-    {
+            throws IOException {
         ByteArrayOutputStream buf = new ByteArrayOutputStream();
         pipeAllLimited(inStr, limit, buf);
         return buf.toByteArray();
@@ -63,13 +58,12 @@ public final class Streams
      * Fully read in buf's length in data, or up to EOF, whichever occurs first,
      *
      * @param inStr the stream to be read.
-     * @param buf the buffer to be read into.
+     * @param buf   the buffer to be read into.
      * @return the number of bytes read into the buffer.
      * @throws IOException in case of underlying IOException.
      */
     public static int readFully(InputStream inStr, byte[] buf)
-        throws IOException
-    {
+            throws IOException {
         return readFully(inStr, buf, 0, buf.length);
     }
 
@@ -77,21 +71,18 @@ public final class Streams
      * Fully read in len's bytes of data into buf, or up to EOF, whichever occurs first,
      *
      * @param inStr the stream to be read.
-     * @param buf the buffer to be read into.
-     * @param off offset into buf to start putting bytes into.
-     * @param len  the number of bytes to be read.
+     * @param buf   the buffer to be read into.
+     * @param off   offset into buf to start putting bytes into.
+     * @param len   the number of bytes to be read.
      * @return the number of bytes read into the buffer.
      * @throws IOException in case of underlying IOException.
-     */    
+     */
     public static int readFully(InputStream inStr, byte[] buf, int off, int len)
-        throws IOException
-    {
+            throws IOException {
         int totalRead = 0;
-        while (totalRead < len)
-        {
+        while (totalRead < len) {
             int numRead = inStr.read(buf, off + totalRead, len - totalRead);
-            if (numRead < 0)
-            {
+            if (numRead < 0) {
                 break;
             }
             totalRead += numRead;
@@ -102,17 +93,15 @@ public final class Streams
     /**
      * Write the full contents of inStr to the destination stream outStr.
      *
-     * @param inStr source input stream.
+     * @param inStr  source input stream.
      * @param outStr destination output stream.
      * @throws IOException in case of underlying IOException.
      */
     public static void pipeAll(InputStream inStr, OutputStream outStr)
-        throws IOException
-    {
+            throws IOException {
         byte[] bs = new byte[BUFFER_SIZE];
         int numRead;
-        while ((numRead = inStr.read(bs, 0, bs.length)) >= 0)
-        {
+        while ((numRead = inStr.read(bs, 0, bs.length)) >= 0) {
             outStr.write(bs, 0, numRead);
         }
     }
@@ -120,21 +109,18 @@ public final class Streams
     /**
      * Write up to limit bytes of data from inStr to the destination stream outStr.
      *
-     * @param inStr source input stream.
-     * @param limit the maximum number of bytes allowed to be read.
+     * @param inStr  source input stream.
+     * @param limit  the maximum number of bytes allowed to be read.
      * @param outStr destination output stream.
      * @throws IOException in case of underlying IOException, or if limit is reached on inStr still has data in it.
      */
     public static long pipeAllLimited(InputStream inStr, long limit, OutputStream outStr)
-        throws IOException
-    {
+            throws IOException {
         long total = 0;
         byte[] bs = new byte[BUFFER_SIZE];
         int numRead;
-        while ((numRead = inStr.read(bs, 0, bs.length)) >= 0)
-        {
-            if ((limit - total) < numRead)
-            {
+        while ((numRead = inStr.read(bs, 0, bs.length)) >= 0) {
+            if ((limit - total) < numRead) {
                 throw new StreamOverflowException("Data Overflow");
             }
             total += numRead;
@@ -144,8 +130,7 @@ public final class Streams
     }
 
     public static void writeBufTo(ByteArrayOutputStream buf, OutputStream output)
-        throws IOException
-    {
+            throws IOException {
         buf.writeTo(output);
     }
 }

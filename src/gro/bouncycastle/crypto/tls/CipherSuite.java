@@ -3,8 +3,7 @@ package gro.bouncycastle.crypto.tls;
 /**
  * RFC 2246 A.5
  */
-public class CipherSuite
-{
+public class CipherSuite {
     public static final int TLS_NULL_WITH_NULL_NULL = 0x0000;
     public static final int TLS_RSA_WITH_NULL_MD5 = 0x0001;
     public static final int TLS_RSA_WITH_NULL_SHA = 0x0002;
@@ -362,15 +361,13 @@ public class CipherSuite
     public static final int DRAFT_TLS_ECDHE_PSK_WITH_AES_128_OCB = 0xFF14;
     public static final int DRAFT_TLS_ECDHE_PSK_WITH_AES_256_OCB = 0xFF15;
 
-    public static boolean isSCSV(int cipherSuite)
-    {
-        switch (cipherSuite)
-        {
-        case TLS_EMPTY_RENEGOTIATION_INFO_SCSV:
-        case TLS_FALLBACK_SCSV:
-            return true;
-        default:
-            return false;
+    public static boolean isSCSV(int cipherSuite) {
+        switch (cipherSuite) {
+            case TLS_EMPTY_RENEGOTIATION_INFO_SCSV:
+            case TLS_FALLBACK_SCSV:
+                return true;
+            default:
+                return false;
         }
     }
 }

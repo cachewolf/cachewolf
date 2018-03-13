@@ -7,59 +7,54 @@ import ewe.util.Enumeration;
  * The DLSequence encodes a SEQUENCE using definite length form.
  */
 public class DLSequence
-    extends ASN1Sequence
-{
+        extends ASN1Sequence {
     private int bodyLength = -1;
 
     /**
      * Create an empty sequence
      */
-    public DLSequence()
-    {
+    public DLSequence() {
     }
 
     /**
      * create a sequence containing one object
+     *
      * @param obj the object to go in the sequence.
      */
     public DLSequence(
-        ASN1Encodable obj)
-    {
+            ASN1Encodable obj) {
         super(obj);
     }
 
     /**
      * create a sequence containing a vector of objects.
+     *
      * @param v the vector of objects to make up the sequence.
      */
     public DLSequence(
-        ASN1EncodableVector v)
-    {
+            ASN1EncodableVector v) {
         super(v);
     }
 
     /**
      * create a sequence containing an array of objects.
+     *
      * @param array the array of objects to make up the sequence.
      */
     public DLSequence(
-        ASN1Encodable[] array)
-    {
+            ASN1Encodable[] array) {
         super(array);
     }
 
     private int getBodyLength()
-        throws IOException
-    {
-        if (bodyLength < 0)
-        {
+            throws IOException {
+        if (bodyLength < 0) {
             int length = 0;
 
-            for (Enumeration e = this.getObjects(); e.hasMoreElements();)
-            {
+            for (Enumeration e = this.getObjects(); e.hasMoreElements(); ) {
                 Object obj = e.nextElement();
 
-                length += ((ASN1Encodable)obj).toASN1Primitive().toDLObject().encodedLength();
+                length += ((ASN1Encodable) obj).toASN1Primitive().toDLObject().encodedLength();
             }
 
             bodyLength = length;
@@ -69,8 +64,7 @@ public class DLSequence
     }
 
     int encodedLength()
-        throws IOException
-    {
+            throws IOException {
         int length = getBodyLength();
 
         return 1 + StreamUtil.calculateBodyLength(length) + length;
@@ -85,9 +79,8 @@ public class DLSequence
      * we also have to specify CONSTRUCTED, and the objects length.
      */
     void encode(
-        ASN1OutputStream out)
-        throws IOException
-    {
+            ASN1OutputStream out)
+            throws IOException {
         ASN1OutputStream dOut = out.getDLSubStream();
         throw new UnsupportedClassVersionError();/*
         int length = getBodyLength();
@@ -101,5 +94,6 @@ public class DLSequence
 
             dOut.writeObject((ASN1Encodable)obj);
         }
-*/    }
+*/
+    }
 }

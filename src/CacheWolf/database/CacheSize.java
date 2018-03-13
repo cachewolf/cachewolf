@@ -32,29 +32,47 @@ public final class CacheSize {
      * internal representation of cache sizes in CacheHolder we just made them
      * up ;-)
      */
-    /** container size not chosen */
+    /**
+     * container size not chosen
+     */
     public static final byte CW_SIZE_NOTCHOSEN = 0;
-    /** container size other */
+    /**
+     * container size other
+     */
     public static final byte CW_SIZE_OTHER = 1;
-    /** container size micro */
+    /**
+     * container size micro
+     */
     public static final byte CW_SIZE_MICRO = 2;
     /* container size small */
     public static final byte CW_SIZE_SMALL = 3;
-    /** container size regular */
+    /**
+     * container size regular
+     */
     public static final byte CW_SIZE_REGULAR = 4;
-    /** container size large */
+    /**
+     * container size large
+     */
     public static final byte CW_SIZE_LARGE = 5;
-    /** container size very large */
+    /**
+     * container size very large
+     */
     public static final byte CW_SIZE_VERYLARGE = 6;
-    /** container size none */
+    /**
+     * container size none
+     */
     public static final byte CW_SIZE_NONE = 7;
-    /** container size virtual */
+    /**
+     * container size virtual
+     */
     public static final byte CW_SIZE_VIRTUAL = 8;
-    /** unparsable size or missing size information should throw IllegalArgumentExceptions when found */
+    /**
+     * unparsable size or missing size information should throw IllegalArgumentExceptions when found
+     */
     public static final byte CW_SIZE_ERROR = -1;
 
     /*
-     * geocaching.com size strings as found by analyzing GPX files 
+     * geocaching.com size strings as found by analyzing GPX files
      * plus opencaching & terracaching Very large + none
      */
     public static final String GC_SIZE_MICRO = "Micro";
@@ -94,19 +112,31 @@ public final class CacheSize {
      * images to show in CW index panel we use less images than sizes since all
      * non physical caches are represented by the same symbol
      */
-    /** GUI image for micro caches */
+    /**
+     * GUI image for micro caches
+     */
     public static final String CW_GUIIMG_MICRO = "sizeMicro";
-    /** GUI image for small caches */
+    /**
+     * GUI image for small caches
+     */
     public static final String CW_GUIIMG_SMALL = "sizeSmall";
-    /** GUI image for regular / normal caches */
+    /**
+     * GUI image for regular / normal caches
+     */
     public static final String CW_GUIIMG_NORMAL = "sizeReg";
-    /** GUI image for large caches */
+    /**
+     * GUI image for large caches
+     */
     public static final String CW_GUIIMG_LARGE = "sizeLarge";
-    /** GUI image for non physical caches */
+    /**
+     * GUI image for non physical caches
+     */
     public static final String CW_GUIIMG_NOTCHOSEN = "sizeNotChosen";
     public static final String CW_GUIIMG_OTHER = "sizeOther";
     public static final String CW_GUIIMG_VIRTUAL = "sizeVirtual";
-    /** GUI image for very large caches */
+    /**
+     * GUI image for very large caches
+     */
     public static final String CW_GUIIMG_VERYLARGE = "sizeVLarge";
 
     /*
@@ -141,403 +171,385 @@ public final class CacheSize {
     public static final byte CW_FILTER_VIRTUAL = (byte) (0x01 << 7);
     public static final byte CW_FILTER_ALL = CW_FILTER_MICRO | CW_FILTER_SMALL | CW_FILTER_NORMAL | CW_FILTER_LARGE | CW_FILTER_NOTCHOSEN | CW_FILTER_OTHER | CW_FILTER_VIRTUAL | CW_FILTER_VERYLARGE;
 
-    /** thou shallst not instantiate this object */
+    /**
+     * thou shallst not instantiate this object
+     */
     private CacheSize() { // Nothing to do
     }
 
     /**
      * map filenames of images for the different sizes to the ids used array
      * index for sizePics[] in TableModel
-     * 
-     * @param size
-     *            size identifier matching the CW_GUIIMGID_ constants
+     *
+     * @param size size identifier matching the CW_GUIIMGID_ constants
      * @return filename of image to be displayed for id
-     * @throws IllegalArgumentException
-     *             if there is no image associated to the <code>id</code>
+     * @throws IllegalArgumentException if there is no image associated to the <code>id</code>
      */
     public static String sizeImageForId(final byte size) throws IllegalArgumentException {
-	switch (size) {
-	case CW_GUIIMGID_MICRO:
-	    return CW_GUIIMG_MICRO + ".png";
-	case CW_GUIIMGID_SMALL:
-	    return CW_GUIIMG_SMALL + ".png";
-	case CW_GUIIMGID_NORMAL:
-	    return CW_GUIIMG_NORMAL + ".png";
-	case CW_GUIIMGID_LARGE:
-	    return CW_GUIIMG_LARGE + ".png";
-	case CW_GUIIMGID_NOTCHOSEN:
-	    return CW_GUIIMG_NOTCHOSEN + ".png";
-	case CW_GUIIMGID_OTHER:
-	    return CW_GUIIMG_OTHER + ".png";
-	case CW_GUIIMGID_VIRTUAL:
-	    return CW_GUIIMG_VIRTUAL + ".png";
-	case CW_GUIIMGID_VERYLARGE:
-	    return CW_GUIIMG_VERYLARGE + ".png";
-	default:
-	    throw (new IllegalArgumentException("unmatched argument " + size + " in CacheSize cw2ExportString()"));
-	}
+        switch (size) {
+            case CW_GUIIMGID_MICRO:
+                return CW_GUIIMG_MICRO + ".png";
+            case CW_GUIIMGID_SMALL:
+                return CW_GUIIMG_SMALL + ".png";
+            case CW_GUIIMGID_NORMAL:
+                return CW_GUIIMG_NORMAL + ".png";
+            case CW_GUIIMGID_LARGE:
+                return CW_GUIIMG_LARGE + ".png";
+            case CW_GUIIMGID_NOTCHOSEN:
+                return CW_GUIIMG_NOTCHOSEN + ".png";
+            case CW_GUIIMGID_OTHER:
+                return CW_GUIIMG_OTHER + ".png";
+            case CW_GUIIMGID_VIRTUAL:
+                return CW_GUIIMG_VIRTUAL + ".png";
+            case CW_GUIIMGID_VERYLARGE:
+                return CW_GUIIMG_VERYLARGE + ".png";
+            default:
+                throw (new IllegalArgumentException("unmatched argument " + size + " in CacheSize cw2ExportString()"));
+        }
     }
 
     /**
      * convert the size info from a CacheHolder to a string suitable for GPX
      * export
-     * 
-     * @param size
-     *            CW internal representation of cache size
+     *
+     * @param size CW internal representation of cache size
      * @return string representation of CacheWolf internal cache size
-     * @throws IllegalArgumentException
-     *             if <code>cwsize</code> can not be mapped to a CW_SIZE constant
+     * @throws IllegalArgumentException if <code>cwsize</code> can not be mapped to a CW_SIZE constant
      */
     public static String cw2ExportString(final byte size) throws IllegalArgumentException {
-	switch (size) {
-	case CW_SIZE_MICRO:
-	    return GC_SIZE_MICRO;
-	case CW_SIZE_SMALL:
-	    return GC_SIZE_SMALL;
-	case CW_SIZE_REGULAR:
-	    return GC_SIZE_REGULAR;
-	case CW_SIZE_LARGE:
-	    return GC_SIZE_LARGE;
-	case CW_SIZE_NOTCHOSEN:
-	    return GC_SIZE_NOTCHOSEN;
-	case CW_SIZE_OTHER:
-	    return GC_SIZE_OTHER;
-	case CW_SIZE_VIRTUAL:
-	    return GC_SIZE_VIRTUAL;
-	case CW_SIZE_VERYLARGE:
-	    return OCTC_SIZE_VERYLARGE;
-	case CW_SIZE_NONE:
-	    return OCTC_SIZE_NONE;
-	default:
-	    throw (new IllegalArgumentException("unmatched argument " + size + " in CacheSize cw2ExportString()"));
-	}
+        switch (size) {
+            case CW_SIZE_MICRO:
+                return GC_SIZE_MICRO;
+            case CW_SIZE_SMALL:
+                return GC_SIZE_SMALL;
+            case CW_SIZE_REGULAR:
+                return GC_SIZE_REGULAR;
+            case CW_SIZE_LARGE:
+                return GC_SIZE_LARGE;
+            case CW_SIZE_NOTCHOSEN:
+                return GC_SIZE_NOTCHOSEN;
+            case CW_SIZE_OTHER:
+                return GC_SIZE_OTHER;
+            case CW_SIZE_VIRTUAL:
+                return GC_SIZE_VIRTUAL;
+            case CW_SIZE_VERYLARGE:
+                return OCTC_SIZE_VERYLARGE;
+            case CW_SIZE_NONE:
+                return OCTC_SIZE_NONE;
+            default:
+                throw (new IllegalArgumentException("unmatched argument " + size + " in CacheSize cw2ExportString()"));
+        }
     }
 
     /**
      * convert the cache size information from a TerraCaching GPX import to
      * internal representation
-     * 
-     * @param tcstring
-     *            size information extracted from a TC GPX import
+     *
+     * @param tcstring size information extracted from a TC GPX import
      * @return CacheWolf internal representation of size information
-     * @throws IllegalArgumentException
-     *             if <code>tcstring</code> can not be mapped to internal representation
-     *             (CW_SIZE_*)
+     * @throws IllegalArgumentException if <code>tcstring</code> can not be mapped to internal representation
+     *                                  (CW_SIZE_*)
      */
 
     public static byte tcGpxString2Cw(final String tcstring) throws IllegalArgumentException {
-	if (tcstring.equals(TC_SIZE_MICRO)) {
-	    return CW_SIZE_MICRO;
-	} else if (tcstring.equals(TC_SIZE_MEDIUM)) {
-	    return CW_SIZE_SMALL;
-	} else if (tcstring.equals(TC_SIZE_REGULAR)) {
-	    return CW_SIZE_REGULAR;
-	} else if (tcstring.equals(TC_SIZE_LARGE)) {
-	    return CW_SIZE_LARGE;
-	} else if (tcstring.equals(TC_SIZE_VERYLARGE)) {
-	    return CW_SIZE_VERYLARGE;
-	} else {
-	    throw (new IllegalArgumentException("unmatched argument " + tcstring + " in CacheSize tcGpxString2Cw()"));
-	}
+        if (tcstring.equals(TC_SIZE_MICRO)) {
+            return CW_SIZE_MICRO;
+        } else if (tcstring.equals(TC_SIZE_MEDIUM)) {
+            return CW_SIZE_SMALL;
+        } else if (tcstring.equals(TC_SIZE_REGULAR)) {
+            return CW_SIZE_REGULAR;
+        } else if (tcstring.equals(TC_SIZE_LARGE)) {
+            return CW_SIZE_LARGE;
+        } else if (tcstring.equals(TC_SIZE_VERYLARGE)) {
+            return CW_SIZE_VERYLARGE;
+        } else {
+            throw (new IllegalArgumentException("unmatched argument " + tcstring + " in CacheSize tcGpxString2Cw()"));
+        }
     }
 
     /**
      * convert the cache size information from a GC GPX import to internal
      * representation
-     * 
-     * @param gcstring
-     *            size information extracted from a GPX import
+     *
+     * @param gcstring size information extracted from a GPX import
      * @return CacheWolf internal representation of size information
-     * @throws IllegalArgumentException
-     *             if <code>gcstring</code> can not be mapped to internal representation
-     *             (CW_SIZE_*)
+     * @throws IllegalArgumentException if <code>gcstring</code> can not be mapped to internal representation
+     *                                  (CW_SIZE_*)
      */
 
     public static byte gcGpxString2Cw(final String gcstring) throws IllegalArgumentException {
-	if (gcstring.equalsIgnoreCase(GC_SIZE_MICRO)) {
-	    return CW_SIZE_MICRO;
-	} else if (gcstring.equalsIgnoreCase(GC_SIZE_SMALL)) {
-	    return CW_SIZE_SMALL;
-	} else if (gcstring.equalsIgnoreCase(GC_SIZE_REGULAR)) {
-	    return CW_SIZE_REGULAR;
-	} else if (gcstring.equalsIgnoreCase(GC_SIZE_MEDIUM)) {
-	    return CW_SIZE_REGULAR;
-	} else if (gcstring.equalsIgnoreCase(GC_SIZE_LARGE)) {
-	    return CW_SIZE_LARGE;
-	} else if (gcstring.equalsIgnoreCase(GC_SIZE_NOTCHOSEN)) {
-	    return CW_SIZE_NOTCHOSEN;
-	} else if (gcstring.equalsIgnoreCase(GC_SIZE_OTHER)) {
-	    return CW_SIZE_OTHER;
-	} else if (gcstring.equalsIgnoreCase(GC_SIZE_VIRTUAL)) {
-	    return CW_SIZE_VIRTUAL;
-	    // GSAK exports wrong type information
-	} else if (gcstring.equalsIgnoreCase("Unknown")) {
-	    return CW_SIZE_NOTCHOSEN;
-	} else if (gcstring.equalsIgnoreCase("not_chosen")) {
-	    return CW_SIZE_NOTCHOSEN;
-	} else {
-	    throw (new IllegalArgumentException("unmatched argument " + gcstring + " in CacheSize gcGpxString2Cw()"));
-	}
+        if (gcstring.equalsIgnoreCase(GC_SIZE_MICRO)) {
+            return CW_SIZE_MICRO;
+        } else if (gcstring.equalsIgnoreCase(GC_SIZE_SMALL)) {
+            return CW_SIZE_SMALL;
+        } else if (gcstring.equalsIgnoreCase(GC_SIZE_REGULAR)) {
+            return CW_SIZE_REGULAR;
+        } else if (gcstring.equalsIgnoreCase(GC_SIZE_MEDIUM)) {
+            return CW_SIZE_REGULAR;
+        } else if (gcstring.equalsIgnoreCase(GC_SIZE_LARGE)) {
+            return CW_SIZE_LARGE;
+        } else if (gcstring.equalsIgnoreCase(GC_SIZE_NOTCHOSEN)) {
+            return CW_SIZE_NOTCHOSEN;
+        } else if (gcstring.equalsIgnoreCase(GC_SIZE_OTHER)) {
+            return CW_SIZE_OTHER;
+        } else if (gcstring.equalsIgnoreCase(GC_SIZE_VIRTUAL)) {
+            return CW_SIZE_VIRTUAL;
+            // GSAK exports wrong type information
+        } else if (gcstring.equalsIgnoreCase("Unknown")) {
+            return CW_SIZE_NOTCHOSEN;
+        } else if (gcstring.equalsIgnoreCase("not_chosen")) {
+            return CW_SIZE_NOTCHOSEN;
+        } else {
+            throw (new IllegalArgumentException("unmatched argument " + gcstring + " in CacheSize gcGpxString2Cw()"));
+        }
     }
 
     /**
      * convert the cache size information from GCSpider to internal
      * representation for CacheHolder
-     * 
-     * @param spiderstring
-     *            string identified by the spider as containing size information
+     *
+     * @param spiderstring string identified by the spider as containing size information
      * @return CacheWolf internal representation of size information
-     * @throws IllegalArgumentException
-     *             if <code>spiderstring</code> can not be mapped to internal representation
-     *             (CW_SIZE_*)
+     * @throws IllegalArgumentException if <code>spiderstring</code> can not be mapped to internal representation
+     *                                  (CW_SIZE_*)
      */
     public static byte gcSpiderString2Cw(final String spiderstring) throws IllegalArgumentException {
-	// at the moment both sources use the same strings
-	return gcGpxString2Cw(spiderstring);
+        // at the moment both sources use the same strings
+        return gcGpxString2Cw(spiderstring);
     }
 
     /**
      * map information from an Opencaching XML cache description suitable for
      * CacheHolder
-     * 
-     * @param ocxmlstring
-     *            string extracted from OC-XML attribute size
+     *
+     * @param ocxmlstring string extracted from OC-XML attribute size
      * @return CacheWolf internal representation of size information
      * @trows IllegalArgumentException if <code>ocxmlstring</code> can not be mapped to a
-     *        CW_SIZE_*
+     * CW_SIZE_*
      */
     public static byte ocXmlString2Cw(final String ocxmlstring) throws IllegalArgumentException {
-	if (ocxmlstring.equals(OC_SIZE_OTHER)) {
-	    return CW_SIZE_OTHER;
-	} else if (ocxmlstring.equals(OC_SIZE_MICRO)) {
-	    return CW_SIZE_MICRO;
-	} else if (ocxmlstring.equals(OC_SIZE_SMALL)) {
-	    return CW_SIZE_SMALL;
-	} else if (ocxmlstring.equals(OC_SIZE_NORMAL)) {
-	    return CW_SIZE_REGULAR;
-	} else if (ocxmlstring.equals(OC_SIZE_LARGE)) {
-	    return CW_SIZE_LARGE;
-	} else if (ocxmlstring.equals(OC_SIZE_VERYLARGE)) {
-	    return CW_SIZE_VERYLARGE;
-	} else if (ocxmlstring.equals(OC_SIZE_NONE)) {
-	    return CW_SIZE_NOTCHOSEN;
-	} else {
-	    throw (new IllegalArgumentException("unmatched argument " + ocxmlstring + " in CacheSize ocXmlString2Cw()"));
-	}
+        if (ocxmlstring.equals(OC_SIZE_OTHER)) {
+            return CW_SIZE_OTHER;
+        } else if (ocxmlstring.equals(OC_SIZE_MICRO)) {
+            return CW_SIZE_MICRO;
+        } else if (ocxmlstring.equals(OC_SIZE_SMALL)) {
+            return CW_SIZE_SMALL;
+        } else if (ocxmlstring.equals(OC_SIZE_NORMAL)) {
+            return CW_SIZE_REGULAR;
+        } else if (ocxmlstring.equals(OC_SIZE_LARGE)) {
+            return CW_SIZE_LARGE;
+        } else if (ocxmlstring.equals(OC_SIZE_VERYLARGE)) {
+            return CW_SIZE_VERYLARGE;
+        } else if (ocxmlstring.equals(OC_SIZE_NONE)) {
+            return CW_SIZE_NOTCHOSEN;
+        } else {
+            throw (new IllegalArgumentException("unmatched argument " + ocxmlstring + " in CacheSize ocXmlString2Cw()"));
+        }
     }
 
     /**
      * get name of the image to be displayed in CW index panel
-     * 
-     * @param cacheSize
-     *            CW internal representation of cache size
+     *
+     * @param cacheSize CW internal representation of cache size
      * @return filename of image to be displayed in main panel as size icon
-     * @throws IllegalArgumentException
-     *             if <code>size</code> can not be mapped
+     * @throws IllegalArgumentException if <code>size</code> can not be mapped
      */
     public static byte cacheSize2ImageId(final byte cacheSize) throws IllegalArgumentException {
-	switch (cacheSize) {
-	case CW_SIZE_MICRO:
-	    return CW_GUIIMGID_MICRO;
-	case CW_SIZE_SMALL:
-	    return CW_GUIIMGID_SMALL;
-	case CW_SIZE_REGULAR:
-	    return CW_GUIIMGID_NORMAL;
-	case CW_SIZE_LARGE:
-	    return CW_GUIIMGID_LARGE;
-	case CW_SIZE_NOTCHOSEN:
-	    return CW_GUIIMGID_NOTCHOSEN;
-	case CW_SIZE_OTHER:
-	    return CW_GUIIMGID_OTHER;
-	case CW_SIZE_VIRTUAL:
-	    return CW_GUIIMGID_VIRTUAL;
-	case CW_SIZE_VERYLARGE:
-	    return CW_GUIIMGID_VERYLARGE;
-	case CW_SIZE_NONE:
-	    return CW_GUIIMGID_NOTCHOSEN;
-	default:
-	    throw (new IllegalArgumentException("unmatched argument " + cacheSize + " in CacheSize guiSizeImage()"));
-	}
+        switch (cacheSize) {
+            case CW_SIZE_MICRO:
+                return CW_GUIIMGID_MICRO;
+            case CW_SIZE_SMALL:
+                return CW_GUIIMGID_SMALL;
+            case CW_SIZE_REGULAR:
+                return CW_GUIIMGID_NORMAL;
+            case CW_SIZE_LARGE:
+                return CW_GUIIMGID_LARGE;
+            case CW_SIZE_NOTCHOSEN:
+                return CW_GUIIMGID_NOTCHOSEN;
+            case CW_SIZE_OTHER:
+                return CW_GUIIMGID_OTHER;
+            case CW_SIZE_VIRTUAL:
+                return CW_GUIIMGID_VIRTUAL;
+            case CW_SIZE_VERYLARGE:
+                return CW_GUIIMGID_VERYLARGE;
+            case CW_SIZE_NONE:
+                return CW_GUIIMGID_NOTCHOSEN;
+            default:
+                throw (new IllegalArgumentException("unmatched argument " + cacheSize + " in CacheSize guiSizeImage()"));
+        }
     }
 
     public static String cacheSize2ImageName(final byte cacheSize) throws IllegalArgumentException {
-	switch (cacheSize) {
-	case CW_SIZE_MICRO:
-	    return CW_GUIIMG_MICRO;
-	case CW_SIZE_SMALL:
-	    return CW_GUIIMG_SMALL;
-	case CW_SIZE_REGULAR:
-	    return CW_GUIIMG_NORMAL;
-	case CW_SIZE_LARGE:
-	    return CW_GUIIMG_LARGE;
-	case CW_SIZE_NOTCHOSEN:
-	    return CW_GUIIMG_NOTCHOSEN;
-	case CW_SIZE_OTHER:
-	    return CW_GUIIMG_OTHER;
-	case CW_SIZE_VIRTUAL:
-	    return CW_GUIIMG_VIRTUAL;
-	case CW_SIZE_VERYLARGE:
-	    return CW_GUIIMG_VERYLARGE;
-	case CW_SIZE_NONE:
-	    return CW_GUIIMG_NOTCHOSEN;
-	default:
-	    throw (new IllegalArgumentException("unmatched argument " + cacheSize + " in CacheSize guiSizeImage()"));
-	}
+        switch (cacheSize) {
+            case CW_SIZE_MICRO:
+                return CW_GUIIMG_MICRO;
+            case CW_SIZE_SMALL:
+                return CW_GUIIMG_SMALL;
+            case CW_SIZE_REGULAR:
+                return CW_GUIIMG_NORMAL;
+            case CW_SIZE_LARGE:
+                return CW_GUIIMG_LARGE;
+            case CW_SIZE_NOTCHOSEN:
+                return CW_GUIIMG_NOTCHOSEN;
+            case CW_SIZE_OTHER:
+                return CW_GUIIMG_OTHER;
+            case CW_SIZE_VIRTUAL:
+                return CW_GUIIMG_VIRTUAL;
+            case CW_SIZE_VERYLARGE:
+                return CW_GUIIMG_VERYLARGE;
+            case CW_SIZE_NONE:
+                return CW_GUIIMG_NOTCHOSEN;
+            default:
+                throw (new IllegalArgumentException("unmatched argument " + cacheSize + " in CacheSize guiSizeImage()"));
+        }
     }
 
     /**
      * return a bit mask representing the caches size for use in the Filter
-     * 
-     * @param size
-     *            CW internal representation of cache size
+     *
+     * @param size CW internal representation of cache size
      * @return a bit mask for the filter function
-     * @throws IllegalArgumentException
-     *             if <code>size</code> can not be mapped to a bit mask
+     * @throws IllegalArgumentException if <code>size</code> can not be mapped to a bit mask
      */
     public static byte getFilterPattern(final byte size) throws IllegalArgumentException {
-	switch (size) {
-	case CW_SIZE_MICRO:
-	    return CW_FILTER_MICRO;
-	case CW_SIZE_SMALL:
-	    return CW_FILTER_SMALL;
-	case CW_SIZE_REGULAR:
-	    return CW_FILTER_NORMAL;
-	case CW_SIZE_LARGE:
-	    return CW_FILTER_LARGE;
-	case CW_SIZE_NOTCHOSEN:
-	    return CW_FILTER_NOTCHOSEN;
-	case CW_SIZE_OTHER:
-	    return CW_FILTER_OTHER;
-	case CW_SIZE_VIRTUAL:
-	    return CW_FILTER_VIRTUAL;
-	case CW_SIZE_VERYLARGE:
-	    return CW_FILTER_VERYLARGE;
-	case CW_SIZE_NONE:
-	    return CW_FILTER_NOTCHOSEN;
-	default:
-	    throw (new IllegalArgumentException("unmatched argument " + size + " in CacheSize getFilterPattern()"));
-	}
+        switch (size) {
+            case CW_SIZE_MICRO:
+                return CW_FILTER_MICRO;
+            case CW_SIZE_SMALL:
+                return CW_FILTER_SMALL;
+            case CW_SIZE_REGULAR:
+                return CW_FILTER_NORMAL;
+            case CW_SIZE_LARGE:
+                return CW_FILTER_LARGE;
+            case CW_SIZE_NOTCHOSEN:
+                return CW_FILTER_NOTCHOSEN;
+            case CW_SIZE_OTHER:
+                return CW_FILTER_OTHER;
+            case CW_SIZE_VIRTUAL:
+                return CW_FILTER_VIRTUAL;
+            case CW_SIZE_VERYLARGE:
+                return CW_FILTER_VERYLARGE;
+            case CW_SIZE_NONE:
+                return CW_FILTER_NOTCHOSEN;
+            default:
+                throw (new IllegalArgumentException("unmatched argument " + size + " in CacheSize getFilterPattern()"));
+        }
     }
 
     /**
      * provides abbreviated representations of CacheSize for compact exporters
-     * 
-     * @param size
-     *            CW internal representation of cache size
+     *
+     * @param size CW internal representation of cache size
      * @return a one letter String for cache size
-     * @throws IllegalArgumentException
-     *             if <code>size</code> can not be mapped
+     * @throws IllegalArgumentException if <code>size</code> can not be mapped
      */
 
     public static String getExportShortId(final byte size) throws IllegalArgumentException {
-	switch (size) {
-	case CW_SIZE_MICRO:
-	    return "m";
-	case CW_SIZE_SMALL:
-	    return "s";
-	case CW_SIZE_REGULAR:
-	    return "r";
-	case CW_SIZE_LARGE:
-	    return "l";
-	case CW_SIZE_NOTCHOSEN:
-	    return "n";
-	case CW_SIZE_OTHER:
-	    return "o";
-	case CW_SIZE_VIRTUAL:
-	    return "v";
-	case CW_SIZE_VERYLARGE:
-	    return "h";
-	case CW_SIZE_NONE:
-	    return "-";
-	default:
-	    throw (new IllegalArgumentException("unmatched argument " + size + " in CacheSize getExportShortId()"));
-	}
+        switch (size) {
+            case CW_SIZE_MICRO:
+                return "m";
+            case CW_SIZE_SMALL:
+                return "s";
+            case CW_SIZE_REGULAR:
+                return "r";
+            case CW_SIZE_LARGE:
+                return "l";
+            case CW_SIZE_NOTCHOSEN:
+                return "n";
+            case CW_SIZE_OTHER:
+                return "o";
+            case CW_SIZE_VIRTUAL:
+                return "v";
+            case CW_SIZE_VERYLARGE:
+                return "h";
+            case CW_SIZE_NONE:
+                return "-";
+            default:
+                throw (new IllegalArgumentException("unmatched argument " + size + " in CacheSize getExportShortId()"));
+        }
     }
 
     /**
      * generate a string array suitable to be used in DetalsPanel drop down list
-     * 
+     *
      * @return strings to be displayed in the DetailsPanel Size DropDown
      * @see guiSizeStrings2CwSize
      * @see cwSizeId2GuiSizeId
      */
     public static String[] guiSizeStrings() {
-	// make sure strings appear in ascending order for CW_SIZE_*
-	final String ret[] = new String[] { GC_SIZE_NOTCHOSEN, GC_SIZE_OTHER, GC_SIZE_MICRO, GC_SIZE_SMALL, GC_SIZE_REGULAR, GC_SIZE_LARGE, OCTC_SIZE_VERYLARGE, OCTC_SIZE_NONE, GC_SIZE_VIRTUAL };
-	return ret;
+        // make sure strings appear in ascending order for CW_SIZE_*
+        final String ret[] = new String[]{GC_SIZE_NOTCHOSEN, GC_SIZE_OTHER, GC_SIZE_MICRO, GC_SIZE_SMALL, GC_SIZE_REGULAR, GC_SIZE_LARGE, OCTC_SIZE_VERYLARGE, OCTC_SIZE_NONE, GC_SIZE_VIRTUAL};
+        return ret;
     }
 
     /**
      * map a string chosen from the DetailsPanel Size drop down list back to
      * internal representation
-     * 
+     *
      * @param size string selected in the list
      * @return cw type information
-     * @throws IllegalArgumentException
-     *             if <code>id</code> can not be mapped
+     * @throws IllegalArgumentException if <code>id</code> can not be mapped
      * @see cwSizeId2GuiSizeId
      * @see guiSizeStrings
      */
     public static byte guiSizeStrings2CwSize(final String size) throws IllegalArgumentException {
-	// map the strings in guiSizeStrings() back to cw byte types
-	if (size.equals(GC_SIZE_NOTCHOSEN)) {
-	    return CW_SIZE_NOTCHOSEN;
-	} else if (size.equals(GC_SIZE_OTHER)) {
-	    return CW_SIZE_OTHER;
-	} else if (size.equals(GC_SIZE_SMALL)) {
-	    return CW_SIZE_SMALL;
-	} else if (size.equals(GC_SIZE_REGULAR)) {
-	    return CW_SIZE_REGULAR;
-	} else if (size.equals(GC_SIZE_LARGE)) {
-	    return CW_SIZE_LARGE;
-	} else if (size.equals(OCTC_SIZE_VERYLARGE)) {
-	    return CW_SIZE_VERYLARGE;
-	} else if (size.equals(OCTC_SIZE_NONE)) {
-	    return CW_SIZE_NONE;
-	} else if (size.equals(GC_SIZE_MICRO)) {
-	    return CW_SIZE_MICRO;
-	} else if (size.equals(GC_SIZE_VIRTUAL)) {
-	    return CW_SIZE_VIRTUAL;
-	} else {
-	    throw (new IllegalArgumentException("unmatched argument " + size + " in guiSizeStrings2CwSize()"));
-	}
+        // map the strings in guiSizeStrings() back to cw byte types
+        if (size.equals(GC_SIZE_NOTCHOSEN)) {
+            return CW_SIZE_NOTCHOSEN;
+        } else if (size.equals(GC_SIZE_OTHER)) {
+            return CW_SIZE_OTHER;
+        } else if (size.equals(GC_SIZE_SMALL)) {
+            return CW_SIZE_SMALL;
+        } else if (size.equals(GC_SIZE_REGULAR)) {
+            return CW_SIZE_REGULAR;
+        } else if (size.equals(GC_SIZE_LARGE)) {
+            return CW_SIZE_LARGE;
+        } else if (size.equals(OCTC_SIZE_VERYLARGE)) {
+            return CW_SIZE_VERYLARGE;
+        } else if (size.equals(OCTC_SIZE_NONE)) {
+            return CW_SIZE_NONE;
+        } else if (size.equals(GC_SIZE_MICRO)) {
+            return CW_SIZE_MICRO;
+        } else if (size.equals(GC_SIZE_VIRTUAL)) {
+            return CW_SIZE_VIRTUAL;
+        } else {
+            throw (new IllegalArgumentException("unmatched argument " + size + " in guiSizeStrings2CwSize()"));
+        }
     }
 
     /**
      * map internal representation to index used in the the DetailsPanel Size
      * drop down list
-     * 
-     * @param size
-     *            internal id to be mapped
+     *
+     * @param size internal id to be mapped
      * @return index of internal size in array
-     * @throws IllegalArgumentException
-     *             if <code>id</code> can not be mapped
+     * @throws IllegalArgumentException if <code>id</code> can not be mapped
      * @see guiSizeStrings2CwSize
      * @see cwSizeId2GuiSizeId
      */
     public static int cwSizeId2GuiSizeId(final byte size) throws IllegalArgumentException {
-	switch (size) {
-	case CW_SIZE_NOTCHOSEN:
-	    return 0;
-	case CW_SIZE_OTHER:
-	    return 1;
-	case CW_SIZE_MICRO:
-	    return 2;
-	case CW_SIZE_SMALL:
-	    return 3;
-	case CW_SIZE_REGULAR:
-	    return 4;
-	case CW_SIZE_LARGE:
-	    return 5;
-	case CW_SIZE_VERYLARGE:
-	    return 6;
-	case CW_SIZE_NONE:
-	    return 7;
-	case CW_SIZE_VIRTUAL:
-	    return 8;
-	default:
-	    throw (new IllegalArgumentException("unmatched argument " + size + " in CacheSize ()"));
-	}
+        switch (size) {
+            case CW_SIZE_NOTCHOSEN:
+                return 0;
+            case CW_SIZE_OTHER:
+                return 1;
+            case CW_SIZE_MICRO:
+                return 2;
+            case CW_SIZE_SMALL:
+                return 3;
+            case CW_SIZE_REGULAR:
+                return 4;
+            case CW_SIZE_LARGE:
+                return 5;
+            case CW_SIZE_VERYLARGE:
+                return 6;
+            case CW_SIZE_NONE:
+                return 7;
+            case CW_SIZE_VIRTUAL:
+                return 8;
+            default:
+                throw (new IllegalArgumentException("unmatched argument " + size + " in CacheSize ()"));
+        }
 
     }
 
@@ -545,31 +557,32 @@ public final class CacheSize {
      * checks if a given size information would be valid for use with CacheWolf.
      * takes about 1/20th of the time a try {} catch {} block would need, so use this
      * function if you just want to check
+     *
      * @param size size information to check
      * @return true if size is valid, false otherwise
      */
     public static boolean isValidSize(final byte size) {
-	switch (size) {
-	case CW_SIZE_NOTCHOSEN:
-	    return true;
-	case CW_SIZE_OTHER:
-	    return true;
-	case CW_SIZE_MICRO:
-	    return true;
-	case CW_SIZE_SMALL:
-	    return true;
-	case CW_SIZE_REGULAR:
-	    return true;
-	case CW_SIZE_LARGE:
-	    return true;
-	case CW_SIZE_VERYLARGE:
-	    return true;
-	case CW_SIZE_NONE:
-	    return true;
-	case CW_SIZE_VIRTUAL:
-	    return true;
-	default:
-	    return false;
-	}
+        switch (size) {
+            case CW_SIZE_NOTCHOSEN:
+                return true;
+            case CW_SIZE_OTHER:
+                return true;
+            case CW_SIZE_MICRO:
+                return true;
+            case CW_SIZE_SMALL:
+                return true;
+            case CW_SIZE_REGULAR:
+                return true;
+            case CW_SIZE_LARGE:
+                return true;
+            case CW_SIZE_VERYLARGE:
+                return true;
+            case CW_SIZE_NONE:
+                return true;
+            case CW_SIZE_VIRTUAL:
+                return true;
+            default:
+                return false;
+        }
     }
 }

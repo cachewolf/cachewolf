@@ -3,54 +3,47 @@ package gro.bouncycastle.crypto.tls;
 import ewe.io.IOException;
 import ewe.io.InputStream;
 import ewe.util.Vector;
-
 import gro.bouncycastle.crypto.Digest;
 import gro.bouncycastle.crypto.Signer;
 import gro.bouncycastle.crypto.params.DHParameters;
 import gro.bouncycastle.util.io.TeeInputStream;
 
 public class TlsDHEKeyExchange
-    extends TlsDHKeyExchange
-{
+        extends TlsDHKeyExchange {
     protected TlsSignerCredentials serverCredentials = null;
 
-    public TlsDHEKeyExchange(int keyExchange, Vector supportedSignatureAlgorithms, DHParameters dhParameters)
-    {
+    public TlsDHEKeyExchange(int keyExchange, Vector supportedSignatureAlgorithms, DHParameters dhParameters) {
         super(keyExchange, supportedSignatureAlgorithms, dhParameters);
     }
 
-    
+
     public void processServerCredentials(TlsCredentials serverCredentials)
-        throws IOException
-    {
-        if (!(serverCredentials instanceof TlsSignerCredentials))
-        {
+            throws IOException {
+        if (!(serverCredentials instanceof TlsSignerCredentials)) {
             throw new TlsFatalAlert(AlertDescription.internal_error);
         }
 
         processServerCertificate(serverCredentials.getCertificate());
 
-        this.serverCredentials = (TlsSignerCredentials)serverCredentials;
+        this.serverCredentials = (TlsSignerCredentials) serverCredentials;
     }
 
     public byte[] generateServerKeyExchange()
-        throws IOException
-    {
-        if (this.dhParameters == null)
-        {
+            throws IOException {
+        if (this.dhParameters == null) {
             throw new TlsFatalAlert(AlertDescription.internal_error);
         }
 
         DigestInputBuffer buf = new DigestInputBuffer();
 
         this.dhAgreePrivateKey = TlsDHUtils.generateEphemeralServerKeyExchange(context.getSecureRandom(),
-            this.dhParameters, buf);
+                this.dhParameters, buf);
 
         /*
          * RFC 5246 4.7. digitally-signed element needs SignatureAndHashAlgorithm from TLS 1.2
          */
         SignatureAndHashAlgorithm signatureAndHashAlgorithm = TlsUtils.getSignatureAndHashAlgorithm(
-            context, serverCredentials);
+                context, serverCredentials);
 
         Digest d = TlsUtils.createHash(signatureAndHashAlgorithm);
 
@@ -71,8 +64,7 @@ public class TlsDHEKeyExchange
     }
 
     public void processServerKeyExchange(InputStream input)
-        throws IOException
-    {
+            throws IOException {
         SecurityParameters securityParameters = context.getSecurityParameters();
 
         SignerInputBuffer buf = new SignerInputBuffer();
@@ -84,8 +76,7 @@ public class TlsDHEKeyExchange
 
         Signer signer = initVerifyer(tlsSigner, signed_params.getAlgorithm(), securityParameters);
         buf.updateSigner(signer);
-        if (!signer.verifySignature(signed_params.getSignature()))
-        {
+        if (!signer.verifySignature(signed_params.getSignature())) {
             throw new TlsFatalAlert(AlertDescription.decrypt_error);
         }
 
@@ -93,8 +84,7 @@ public class TlsDHEKeyExchange
         this.dhParameters = validateDHParameters(dhAgreePublicKey.getParameters());
     }
 
-    protected Signer initVerifyer(TlsSigner tlsSigner, SignatureAndHashAlgorithm algorithm, SecurityParameters securityParameters)
-    {
+    protected Signer initVerifyer(TlsSigner tlsSigner, SignatureAndHashAlgorithm algorithm, SecurityParameters securityParameters) {
         Signer signer = tlsSigner.createVerifyer(algorithm, this.serverPublicKey);
         signer.update(securityParameters.clientRandom, 0, securityParameters.clientRandom.length);
         signer.update(securityParameters.serverRandom, 0, securityParameters.serverRandom.length);

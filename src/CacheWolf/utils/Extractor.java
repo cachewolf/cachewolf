@@ -27,13 +27,13 @@ package CacheWolf.utils;
  * parts of a string in a string.
  */
 public class Extractor {
+    public static boolean INCLUDESTARTEND = false;
+    public static boolean EXCLUDESTARTEND = true;
     int _startOffset;
     String _searchText;
     String leftDelimiter;
     String rightDelimiter;
     boolean _betweenonly;
-    public static boolean INCLUDESTARTEND = false;
-    public static boolean EXCLUDESTARTEND = true;
 
     /**
      * use set String searchText, String st, String e, int startOffset, boolean betweenonly afterwards
@@ -49,88 +49,86 @@ public class Extractor {
      * startOffset = The beginning offset from which to start the search in sTxt<br>
      * betweenonly = if false the string returned will inlcude st and e;
      * if true it will not include st and e.
-     *
      */
     public Extractor(String searchText, String st, String e, int startOffset, boolean betweenonly) {
-	_startOffset = startOffset;
-	_searchText = searchText;
-	rightDelimiter = e;
-	leftDelimiter = st;
-	_betweenonly = betweenonly;
+        _startOffset = startOffset;
+        _searchText = searchText;
+        rightDelimiter = e;
+        leftDelimiter = st;
+        _betweenonly = betweenonly;
     }
 
     /**
      * Mehtod to set the source text to be searched through
-     *
      */
     public Extractor set(String searchText, String st, String e, int startOffset, boolean betweenonly) {
-	_startOffset = startOffset;
-	_searchText = searchText;
-	rightDelimiter = e;
-	leftDelimiter = st;
-	_betweenonly = betweenonly;
-	return this;
+        _startOffset = startOffset;
+        _searchText = searchText;
+        rightDelimiter = e;
+        leftDelimiter = st;
+        _betweenonly = betweenonly;
+        return this;
     }
 
     public Extractor set(String st, String e, int startOffset) {
-	_startOffset = startOffset;
-	rightDelimiter = e;
-	leftDelimiter = st;
-	return this;
+        _startOffset = startOffset;
+        rightDelimiter = e;
+        leftDelimiter = st;
+        return this;
     }
 
     public Extractor set(String searchText) {
-	_searchText = searchText;
-	_startOffset = 0;
-	return this;
+        _searchText = searchText;
+        _startOffset = 0;
+        return this;
     }
 
     public String findFirst(String searchText) {
-	_searchText = searchText;
-	_startOffset = 0;
-	return findNext();
+        _searchText = searchText;
+        _startOffset = 0;
+        return findNext();
     }
 
     public String findNext(String startText) {
-	leftDelimiter = startText;
-	return findNext();
+        leftDelimiter = startText;
+        return findNext();
     }
 
     public String findNext(String startText, String endText) {
-	leftDelimiter = startText;
-	rightDelimiter = endText;
-	return findNext();
+        leftDelimiter = startText;
+        rightDelimiter = endText;
+        return findNext();
     }
 
     public int searchedFrom() {
-	return _startOffset;
+        return _startOffset;
     }
 
     /**
      * Method to find the next occurance of a string that is enclosed by
      * that start (st) and end string (e).
      * if end is not found empty string is returned.
-     * _startOffset for search is at end of extracted string (ret without rightDelimiter), 
+     * _startOffset for search is at end of extracted string (ret without rightDelimiter),
      * so a delimiter string(rightDelimiter) can be used twice: first for rightDelimiter and then for leftDelimiter
      */
     public String findNext() {
-	String ret = "";
-	if (_searchText != null && _searchText.length() > _startOffset + leftDelimiter.length() + rightDelimiter.length()) {
-	    int idxLeftDelimiter = _searchText.indexOf(leftDelimiter, _startOffset);
-	    int idxRightDelimiter = -1;
-	    if (idxLeftDelimiter > -1) {
-		idxRightDelimiter = _searchText.indexOf(rightDelimiter, idxLeftDelimiter + leftDelimiter.length());
-		if (idxRightDelimiter > -1) {
-		    _startOffset = idxRightDelimiter;
-		    ret = _searchText.substring(idxLeftDelimiter + leftDelimiter.length(), idxRightDelimiter);
-		    if (!this._betweenonly)
-			ret = leftDelimiter + ret + rightDelimiter;
-		}
-	    }
-	    if (idxRightDelimiter == -1) {
-		_startOffset = _searchText.length(); // Schluss
-	    }
-	}
-	return ret;
+        String ret = "";
+        if (_searchText != null && _searchText.length() > _startOffset + leftDelimiter.length() + rightDelimiter.length()) {
+            int idxLeftDelimiter = _searchText.indexOf(leftDelimiter, _startOffset);
+            int idxRightDelimiter = -1;
+            if (idxLeftDelimiter > -1) {
+                idxRightDelimiter = _searchText.indexOf(rightDelimiter, idxLeftDelimiter + leftDelimiter.length());
+                if (idxRightDelimiter > -1) {
+                    _startOffset = idxRightDelimiter;
+                    ret = _searchText.substring(idxLeftDelimiter + leftDelimiter.length(), idxRightDelimiter);
+                    if (!this._betweenonly)
+                        ret = leftDelimiter + ret + rightDelimiter;
+                }
+            }
+            if (idxRightDelimiter == -1) {
+                _startOffset = _searchText.length(); // Schluss
+            }
+        }
+        return ret;
     }
 }

@@ -1,13 +1,7 @@
 package gro.bouncycastle.asn1.x509;
 
 import ewe.math.BigInteger;
-import gro.bouncycastle.asn1.ASN1Integer;
-import gro.bouncycastle.asn1.ASN1Object;
-import gro.bouncycastle.asn1.ASN1Primitive;
-import gro.bouncycastle.asn1.ASN1Sequence;
-import gro.bouncycastle.asn1.ASN1TaggedObject;
-import gro.bouncycastle.asn1.DERBitString;
-import gro.bouncycastle.asn1.DERTaggedObject;
+import gro.bouncycastle.asn1.*;
 import gro.bouncycastle.asn1.x500.X500Name;
 
 /**
@@ -31,77 +25,46 @@ import gro.bouncycastle.asn1.x500.X500Name;
  * will parse them, but you really shouldn't be creating new ones.
  */
 public class TBSCertificate
-    extends ASN1Object
-{
-    ASN1Sequence            seq;
+        extends ASN1Object {
+    ASN1Sequence seq;
 
-    ASN1Integer             version;
-    ASN1Integer             serialNumber;
-    AlgorithmIdentifier     signature;
-    X500Name                issuer;
-    Time                    startDate, endDate;
-    X500Name                subject;
-    SubjectPublicKeyInfo    subjectPublicKeyInfo;
-    DERBitString            issuerUniqueId;
-    DERBitString            subjectUniqueId;
-    Extensions              extensions;
-
-    public static TBSCertificate getInstance(
-        ASN1TaggedObject obj,
-        boolean          explicit)
-    {
-        return getInstance(ASN1Sequence.getInstance(obj, explicit));
-    }
-
-    public static TBSCertificate getInstance(
-        Object  obj)
-    {
-        if (obj instanceof TBSCertificate)
-        {
-            return (TBSCertificate)obj;
-        }
-        else if (obj != null)
-        {
-            return new TBSCertificate(ASN1Sequence.getInstance(obj));
-        }
-
-        return null;
-    }
+    ASN1Integer version;
+    ASN1Integer serialNumber;
+    AlgorithmIdentifier signature;
+    X500Name issuer;
+    Time startDate, endDate;
+    X500Name subject;
+    SubjectPublicKeyInfo subjectPublicKeyInfo;
+    DERBitString issuerUniqueId;
+    DERBitString subjectUniqueId;
+    Extensions extensions;
 
     private TBSCertificate(
-        ASN1Sequence seq)
-    {
-        int         seqStart = 0;
+            ASN1Sequence seq) {
+        int seqStart = 0;
 
         this.seq = seq;
 
         //
         // some certficates don't include a version number - we assume v1
         //
-        if (seq.getObjectAt(0) instanceof ASN1TaggedObject)
-        {
-            version = ASN1Integer.getInstance((ASN1TaggedObject)seq.getObjectAt(0), true);
-        }
-        else
-        {
-        	throw new UnsupportedClassVersionError();/*
+        if (seq.getObjectAt(0) instanceof ASN1TaggedObject) {
+            version = ASN1Integer.getInstance((ASN1TaggedObject) seq.getObjectAt(0), true);
+        } else {
+            throw new UnsupportedClassVersionError();/*
             seqStart = -1;          // field 0 is missing!
             version = new ASN1Integer(0);
-*/        }
+*/
+        }
 
         boolean isV1 = false;
         boolean isV2 = false;
- 
-        if (version.getValue().equals(BigInteger.valueOf(0)))
-        {
+
+        if (version.getValue().equals(BigInteger.valueOf(0))) {
             isV1 = true;
-        }
-        else if (version.getValue().equals(BigInteger.valueOf(1)))
-        {
+        } else if (version.getValue().equals(BigInteger.valueOf(1))) {
             isV2 = true;
-        }
-        else if (!version.getValue().equals(BigInteger.valueOf(2)))
-        {
+        } else if (!version.getValue().equals(BigInteger.valueOf(2))) {
             throw new IllegalArgumentException("version number not recognised");
         }
 
@@ -113,7 +76,7 @@ public class TBSCertificate
         //
         // before and after dates
         //
-        ASN1Sequence  dates = (ASN1Sequence)seq.getObjectAt(seqStart + 4);
+        ASN1Sequence dates = (ASN1Sequence) seq.getObjectAt(seqStart + 4);
 
         startDate = Time.getInstance(dates.getObjectAt(0));
         endDate = Time.getInstance(dates.getObjectAt(1));
@@ -126,96 +89,96 @@ public class TBSCertificate
         subjectPublicKeyInfo = SubjectPublicKeyInfo.getInstance(seq.getObjectAt(seqStart + 6));
 
         int extras = seq.size() - (seqStart + 6) - 1;
-        if (extras != 0 && isV1)
-        {
+        if (extras != 0 && isV1) {
             throw new IllegalArgumentException("version 1 certificate contains extra data");
         }
-        
-        while (extras > 0)
-        {
-            ASN1TaggedObject extra = (ASN1TaggedObject)seq.getObjectAt(seqStart + 6 + extras);
 
-            switch (extra.getTagNo())
-            {
-            case 1:
-                issuerUniqueId = DERBitString.getInstance(extra, false);
-                break;
-            case 2:
-                subjectUniqueId = DERBitString.getInstance(extra, false);
-                break;
-            case 3:
-                if (isV2)
-                {
-                    throw new IllegalArgumentException("version 2 certificate cannot contain extensions");
-                }
-                extensions = Extensions.getInstance(ASN1Sequence.getInstance(extra, true));
+        while (extras > 0) {
+            ASN1TaggedObject extra = (ASN1TaggedObject) seq.getObjectAt(seqStart + 6 + extras);
+
+            switch (extra.getTagNo()) {
+                case 1:
+                    issuerUniqueId = DERBitString.getInstance(extra, false);
+                    break;
+                case 2:
+                    subjectUniqueId = DERBitString.getInstance(extra, false);
+                    break;
+                case 3:
+                    if (isV2) {
+                        throw new IllegalArgumentException("version 2 certificate cannot contain extensions");
+                    }
+                    extensions = Extensions.getInstance(ASN1Sequence.getInstance(extra, true));
             }
             extras--;
         }
     }
 
-    public int getVersionNumber()
-    {
+    public static TBSCertificate getInstance(
+            ASN1TaggedObject obj,
+            boolean explicit) {
+        return getInstance(ASN1Sequence.getInstance(obj, explicit));
+    }
+
+    public static TBSCertificate getInstance(
+            Object obj) {
+        if (obj instanceof TBSCertificate) {
+            return (TBSCertificate) obj;
+        } else if (obj != null) {
+            return new TBSCertificate(ASN1Sequence.getInstance(obj));
+        }
+
+        return null;
+    }
+
+    public int getVersionNumber() {
         return version.getValue().intValue() + 1;
     }
 
-    public ASN1Integer getVersion()
-    {
+    public ASN1Integer getVersion() {
         return version;
     }
 
-    public ASN1Integer getSerialNumber()
-    {
+    public ASN1Integer getSerialNumber() {
         return serialNumber;
     }
 
-    public AlgorithmIdentifier getSignature()
-    {
+    public AlgorithmIdentifier getSignature() {
         return signature;
     }
 
-    public X500Name getIssuer()
-    {
+    public X500Name getIssuer() {
         return issuer;
     }
 
-    public Time getStartDate()
-    {
+    public Time getStartDate() {
         return startDate;
     }
 
-    public Time getEndDate()
-    {
+    public Time getEndDate() {
         return endDate;
     }
 
-    public X500Name getSubject()
-    {
+    public X500Name getSubject() {
         return subject;
     }
 
-    public SubjectPublicKeyInfo getSubjectPublicKeyInfo()
-    {
+    public SubjectPublicKeyInfo getSubjectPublicKeyInfo() {
         return subjectPublicKeyInfo;
     }
 
-    public DERBitString getIssuerUniqueId()
-    {
+    public DERBitString getIssuerUniqueId() {
         return issuerUniqueId;
     }
 
-    public DERBitString getSubjectUniqueId()
-    {
+    public DERBitString getSubjectUniqueId() {
         return subjectUniqueId;
     }
 
-    public Extensions getExtensions()
-    {
+    public Extensions getExtensions() {
         return extensions;
     }
 
-    public ASN1Primitive toASN1Primitive()
-    {
+    public ASN1Primitive toASN1Primitive() {
         return seq;
     }
 }

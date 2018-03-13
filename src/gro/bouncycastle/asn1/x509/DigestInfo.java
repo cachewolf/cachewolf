@@ -1,15 +1,7 @@
 package gro.bouncycastle.asn1.x509;
 
 import ewe.util.Enumeration;
-
-import gro.bouncycastle.asn1.ASN1EncodableVector;
-import gro.bouncycastle.asn1.ASN1Object;
-import gro.bouncycastle.asn1.ASN1OctetString;
-import gro.bouncycastle.asn1.ASN1Primitive;
-import gro.bouncycastle.asn1.ASN1Sequence;
-import gro.bouncycastle.asn1.ASN1TaggedObject;
-import gro.bouncycastle.asn1.DEROctetString;
-import gro.bouncycastle.asn1.DERSequence;
+import gro.bouncycastle.asn1.*;
 
 /**
  * The DigestInfo object.
@@ -20,63 +12,52 @@ import gro.bouncycastle.asn1.DERSequence;
  * </pre>
  */
 public class DigestInfo
-    extends ASN1Object
-{
-    private byte[]                  digest;
-    private AlgorithmIdentifier     algId;
+        extends ASN1Object {
+    private byte[] digest;
+    private AlgorithmIdentifier algId;
+
+    public DigestInfo(
+            AlgorithmIdentifier algId,
+            byte[] digest) {
+        this.digest = digest;
+        this.algId = algId;
+    }
+
+    public DigestInfo(
+            ASN1Sequence obj) {
+        Enumeration e = obj.getObjects();
+
+        algId = AlgorithmIdentifier.getInstance(e.nextElement());
+        digest = ASN1OctetString.getInstance(e.nextElement()).getOctets();
+    }
 
     public static DigestInfo getInstance(
-        ASN1TaggedObject obj,
-        boolean          explicit)
-    {
+            ASN1TaggedObject obj,
+            boolean explicit) {
         return getInstance(ASN1Sequence.getInstance(obj, explicit));
     }
 
     public static DigestInfo getInstance(
-        Object  obj)
-    {
-        if (obj instanceof DigestInfo)
-        {
-            return (DigestInfo)obj;
-        }
-        else if (obj != null)
-        {
+            Object obj) {
+        if (obj instanceof DigestInfo) {
+            return (DigestInfo) obj;
+        } else if (obj != null) {
             return new DigestInfo(ASN1Sequence.getInstance(obj));
         }
 
         return null;
     }
 
-    public DigestInfo(
-        AlgorithmIdentifier  algId,
-        byte[]               digest)
-    {
-        this.digest = digest;
-        this.algId = algId;
-    }
-
-    public DigestInfo(
-        ASN1Sequence  obj)
-    {
-        Enumeration             e = obj.getObjects();
-
-        algId = AlgorithmIdentifier.getInstance(e.nextElement());
-        digest = ASN1OctetString.getInstance(e.nextElement()).getOctets();
-    }
-
-    public AlgorithmIdentifier getAlgorithmId()
-    {
+    public AlgorithmIdentifier getAlgorithmId() {
         return algId;
     }
 
-    public byte[] getDigest()
-    {
+    public byte[] getDigest() {
         return digest;
     }
 
-    public ASN1Primitive toASN1Primitive()
-    {
-        ASN1EncodableVector  v = new ASN1EncodableVector();
+    public ASN1Primitive toASN1Primitive() {
+        ASN1EncodableVector v = new ASN1EncodableVector();
 
         v.add(algId);
         v.add(new DEROctetString(digest));

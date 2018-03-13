@@ -1,48 +1,40 @@
 package gro.bouncycastle.crypto.digests;
 
 import ewe.io.ByteArrayOutputStream;
-
 import gro.bouncycastle.crypto.Digest;
 
 
 public class NullDigest
-    implements Digest
-{
+        implements Digest {
     private ByteArrayOutputStream bOut = new ByteArrayOutputStream();
 
-    public String getAlgorithmName()
-    {
+    public String getAlgorithmName() {
         return "NULL";
     }
 
-    public int getDigestSize()
-    {
+    public int getDigestSize() {
         return bOut.size();
     }
 
-    public void update(byte in)
-    {
+    public void update(byte in) {
         bOut.write(in);
     }
 
-    public void update(byte[] in, int inOff, int len)
-    {
+    public void update(byte[] in, int inOff, int len) {
         bOut.write(in, inOff, len);
     }
 
-    public int doFinal(byte[] out, int outOff)
-    {
+    public int doFinal(byte[] out, int outOff) {
         byte[] res = bOut.toByteArray();
 
         System.arraycopy(res, 0, out, outOff, res.length);
 
         reset();
-        
+
         return res.length;
     }
 
-    public void reset()
-    {
+    public void reset() {
         bOut.reset();
     }
 }

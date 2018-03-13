@@ -1,7 +1,6 @@
 package gro.bouncycastle.math.field;
 
-public interface Polynomial
-{
+public interface Polynomial {
     int getDegree();
 
 //    BigInteger[] getCoefficients();

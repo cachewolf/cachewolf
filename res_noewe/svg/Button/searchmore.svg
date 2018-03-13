@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
-<svg x="0px" y="0px" width="32" height="32" overflow="hidden" viewBox="0, 0, 512, 512" preserveAspectRatio="xMidYMid" font-size="0" id="Capa_1" xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xml="http://www.w3.org/XML/1998/namespace" version="1.1">
-  <defs id="defs30" xml:space="preserve">
+<svg xmlns:xml="http://www.w3.org/XML/1998/namespace" x="0px" y="0px" width="32" height="32" overflow="hidden" viewBox="0, 0, 512, 512" preserveAspectRatio="xMidYMid" font-size="0" id="svg" xml:space="preserve"  xmlns="http://www.w3.org/2000/svg" version="1.1">
+  <defs id="def1" xml:space="preserve">
     <linearGradient x1="125.151" y1="144.3532" x2="227.2302" y2="144.3532" gradientUnits="userSpaceOnUse" gradientTransform="scale(0.9364066, 1.067912)" id="SVGID_Fill4_" xml:space="preserve">
       <stop offset="1.86047%" stop-color="#7DE30F" stop-opacity="1" id="stop55" xml:space="preserve" />
       <stop offset="100%" stop-color="#235E03" stop-opacity="1" id="stop57" xml:space="preserve" />
@@ -73,8 +73,8 @@
       <rect x="192" y="188" width="128" height="16" id="rect46" xml:space="preserve" style="fill:#8B8996;" />
     </g>
   </g>
-  <g transform="matrix(0.7535549, 0, 0, 0.7535549, 360.6086, -64.9409)" id="layer1" xml:space="default">
-    <g transform="matrix(1.587405, 0, 0, 1.587405, -173.0606, -85.48632)" id="g104" xml:space="preserve">
+    <g transform="matrix(0.7535549, 0, 0, 0.7535549, 360.6086, -64.9409)" id="layer1" xml:space="default">
+        <g transform="matrix(1.587405, 0, 0, 1.587405, -173.0606, -85.48632)" id="g104" xml:space="preserve">
       <linearGradient x1="0.0713832" y1="0.283011" x2="1.03221" y2="0.283011" gradientUnits="objectBoundingBox" gradientTransform="rotate(33.36221, 0.071383, 0.283011)" id="linearGradient955" xml:space="preserve">
         <stop offset="1.86047%" stop-color="#58A406" stop-opacity="1" id="stop951" xml:space="preserve" />
         <stop offset="100%" stop-color="#163B02" stop-opacity="1" id="stop953" xml:space="preserve" />
@@ -115,5 +115,5 @@
       </linearGradient>
       <path d="M174.844 233.75 L198.511 227.417 L198.511 198.75 L174.511 194.417 z" stroke-width="0.2" stroke-linejoin="round" id="path102" xml:space="preserve" connector-curvature="0" style="fill:url(#SVGID_Fill10_);" />
     </g>
-  </g>
+    </g>
 </svg>

@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
-<svg x="0" y="0" width="160" height="32.0031" overflow="hidden" viewBox="0, 0, 159.9938, 32.00186" preserveAspectRatio="xMidYMid" font-size="0" id="svg17" xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xml="http://www.w3.org/XML/1998/namespace" version="1.1">
-  <defs id="defs21" xml:space="preserve">
+<svg xmlns:xml="http://www.w3.org/XML/1998/namespace" x="0" y="0" width="32" height="6.40062" overflow="hidden" viewBox="0, 0, 159.9938, 32.00186" preserveAspectRatio="xMidYMid" font-size="0" id="svg" xml:space="preserve"  xmlns="http://www.w3.org/2000/svg" version="1.1">
+  <defs id="def1" xml:space="preserve">
     <radialGradient cx="39.3898" cy="47.7161" r="49.801" fx="39.3898" fy="47.7161" gradientUnits="userSpaceOnUse" gradientTransform="matrix(0.5664512, 0.07679121, -0.07679121, 0.5664512, 36.57009, -1.635578)" id="SVGID_Fill1_-6" xml:space="preserve">
       <stop offset="0%" stop-color="#CCD3D3" stop-opacity="1" id="stop2-0" xml:space="preserve" />
       <stop offset="38.7213%" stop-color="#CAD1D1" stop-opacity="1" id="stop4-9" xml:space="preserve" />

@@ -23,13 +23,7 @@ package CacheWolf.controls;
 
 import CacheWolf.Preferences;
 import ewe.io.FileReader;
-import ewe.ui.ControlEvent;
-import ewe.ui.Event;
-import ewe.ui.Form;
-import ewe.ui.FormBase;
-import ewe.ui.HtmlDisplay;
-import ewe.ui.ScrollBarPanel;
-import ewe.ui.ScrollablePanel;
+import ewe.ui.*;
 
 /**
  * This class displays an information screen. It loads the html text to display

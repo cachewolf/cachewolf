@@ -1,11 +1,7 @@
 package gro.bouncycastle.asn1.x500.style;
 
 import ewe.util.Hashtable;
-import gro.bouncycastle.asn1.ASN1Encodable;
-import gro.bouncycastle.asn1.ASN1GeneralizedTime;
-import gro.bouncycastle.asn1.ASN1ObjectIdentifier;
-import gro.bouncycastle.asn1.DERIA5String;
-import gro.bouncycastle.asn1.DERPrintableString;
+import gro.bouncycastle.asn1.*;
 import gro.bouncycastle.asn1.pkcs.PKCSObjectIdentifiers;
 import gro.bouncycastle.asn1.x500.RDN;
 import gro.bouncycastle.asn1.x500.X500Name;
@@ -13,8 +9,7 @@ import gro.bouncycastle.asn1.x500.X500NameStyle;
 import gro.bouncycastle.asn1.x509.X509ObjectIdentifiers;
 
 public class BCStyle
-    extends AbstractX500NameStyle
-{	
+        extends AbstractX500NameStyle {
     /**
      * country code - StringType(SIZE(2))
      */
@@ -173,28 +168,29 @@ public class BCStyle
     public static final ASN1ObjectIdentifier E = EmailAddress;
 
     /*
-    * others...
-    */
+     * others...
+     */
     public static final ASN1ObjectIdentifier DC = new ASN1ObjectIdentifier("0.9.2342.19200300.100.1.25");
 
     /**
      * LDAP User id.
      */
     public static final ASN1ObjectIdentifier UID = new ASN1ObjectIdentifier("0.9.2342.19200300.100.1.1");
-
+    /**
+     * Singleton instance.
+     */
+    public static final X500NameStyle INSTANCE = new BCStyle();
     /**
      * default look up table translating OID values into their common symbols following
      * the convention in RFC 2253 with a few extras
      */
     private static final Hashtable DefaultSymbols = new Hashtable();
-
     /**
      * look up table translating common symbols into their OIDS.
      */
     private static final Hashtable DefaultLookUp = new Hashtable();
 
-    static
-    {
+    static {
         DefaultSymbols.put(C, "C");
         DefaultSymbols.put(O, "O");
         DefaultSymbols.put(T, "T");
@@ -266,74 +262,55 @@ public class BCStyle
         DefaultLookUp.put("organizationidentifier", ORGANIZATION_IDENTIFIER);
     }
 
-    /**
-     * Singleton instance.
-     */
-    public static final X500NameStyle INSTANCE = new BCStyle();
+    protected Hashtable defaultLookUp;
+    protected Hashtable defaultSymbols;
 
-    protected  Hashtable defaultLookUp;
-    protected  Hashtable defaultSymbols;
-
-    protected BCStyle()
-    {
+    protected BCStyle() {
         defaultSymbols = copyHashTable(DefaultSymbols);
         defaultLookUp = copyHashTable(DefaultLookUp);
     }
 
     protected ASN1Encodable encodeStringValue(ASN1ObjectIdentifier oid,
-    		String value) {
-    	if (oid.equals(EmailAddress) || oid.equals(DC))
-        {
+                                              String value) {
+        if (oid.equals(EmailAddress) || oid.equals(DC)) {
             return new DERIA5String(value);
-        }
-        else if (oid.equals(DATE_OF_BIRTH))  // accept time string as well as # (for compatibility)
+        } else if (oid.equals(DATE_OF_BIRTH))  // accept time string as well as # (for compatibility)
         {
             return new ASN1GeneralizedTime(value);
-        }
-        else if (oid.equals(C) || oid.equals(SN) || oid.equals(DN_QUALIFIER)
-            || oid.equals(TELEPHONE_NUMBER))
-        {
+        } else if (oid.equals(C) || oid.equals(SN) || oid.equals(DN_QUALIFIER)
+                || oid.equals(TELEPHONE_NUMBER)) {
             return new DERPrintableString(value);
         }
-    	
-    	return super.encodeStringValue(oid, value);
+
+        return super.encodeStringValue(oid, value);
     }
 
-    public String oidToDisplayName(ASN1ObjectIdentifier oid)
-    {
-        return (String)DefaultSymbols.get(oid);
+    public String oidToDisplayName(ASN1ObjectIdentifier oid) {
+        return (String) DefaultSymbols.get(oid);
     }
 
-    public String[] oidToAttrNames(ASN1ObjectIdentifier oid)
-    {
+    public String[] oidToAttrNames(ASN1ObjectIdentifier oid) {
         return IETFUtils.findAttrNamesForOID(oid, defaultLookUp);
     }
 
-    public ASN1ObjectIdentifier attrNameToOID(String attrName)
-    {
+    public ASN1ObjectIdentifier attrNameToOID(String attrName) {
         return IETFUtils.decodeAttrName(attrName, defaultLookUp);
     }
 
-    public RDN[] fromString(String dirName)
-    {
+    public RDN[] fromString(String dirName) {
         return IETFUtils.rDNsFromString(dirName, this);
     }
 
-    public String toString(X500Name name)
-    {
+    public String toString(X500Name name) {
         StringBuffer buf = new StringBuffer();
         boolean first = true;
 
         RDN[] rdns = name.getRDNs();
 
-        for (int i = 0; i < rdns.length; i++)
-        {
-            if (first)
-            {
+        for (int i = 0; i < rdns.length; i++) {
+            if (first) {
                 first = false;
-            }
-            else
-            {
+            } else {
                 buf.append(',');
             }
 

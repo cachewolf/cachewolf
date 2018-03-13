@@ -6,32 +6,26 @@ import gro.bouncycastle.math.ec.endo.GLVEndomorphism;
 import gro.bouncycastle.math.field.FiniteField;
 import gro.bouncycastle.math.field.PolynomialExtensionField;
 
-public class ECAlgorithms
-{
-    public static boolean isF2mCurve(ECCurve c)
-    {
+public class ECAlgorithms {
+    public static boolean isF2mCurve(ECCurve c) {
         return isF2mField(c.getField());
     }
 
-    public static boolean isF2mField(FiniteField field)
-    {
+    public static boolean isF2mField(FiniteField field) {
         return field.getDimension() > 1 && field.getCharacteristic().equals(ECConstants.TWO)
-            && field instanceof PolynomialExtensionField;
+                && field instanceof PolynomialExtensionField;
     }
 
-    public static boolean isFpCurve(ECCurve c)
-    {
+    public static boolean isFpCurve(ECCurve c) {
         return isFpField(c.getField());
     }
 
-    public static boolean isFpField(FiniteField field)
-    {
+    public static boolean isFpField(FiniteField field) {
         return field.getDimension() == 1;
     }
 
-    public static ECPoint sumOfMultiplies(ECPoint[] ps, BigInteger[] ks)
-    {
-    	throw new UnsupportedClassVersionError();/*
+    public static ECPoint sumOfMultiplies(ECPoint[] ps, BigInteger[] ks) {
+        throw new UnsupportedClassVersionError();/*
         if (ps == null || ks == null || ps.length != ks.length || ps.length < 1)
         {
             throw new IllegalArgumentException("point and scalar arrays should be non-null, and of equal, non-zero, length");
@@ -65,32 +59,32 @@ public class ECAlgorithms
         }
 
         return validatePoint(implSumOfMultiplies(imported, ks));
-*/    }
+*/
+    }
 
     public static ECPoint sumOfTwoMultiplies(ECPoint P, BigInteger a,
-        ECPoint Q, BigInteger b)
-    {
+                                             ECPoint Q, BigInteger b) {
         ECCurve cp = P.getCurve();
         Q = importPoint(cp, Q);
 
         // Point multiplication for Koblitz curves (using WTNAF) beats Shamir's trick
-        if (cp instanceof ECCurve.AbstractF2m)
-        {
-        	throw new UnsupportedClassVersionError();/*
+        if (cp instanceof ECCurve.AbstractF2m) {
+            throw new UnsupportedClassVersionError();/*
             ECCurve.AbstractF2m f2mCurve = (ECCurve.AbstractF2m)cp;
             if (f2mCurve.isKoblitz())
             {
                 return validatePoint(P.multiply(a).add(Q.multiply(b)));
             }
-*/        }
+*/
+        }
 
         ECEndomorphism endomorphism = cp.getEndomorphism();
-        if (endomorphism instanceof GLVEndomorphism)
-        {
-        	throw new UnsupportedClassVersionError();/*
+        if (endomorphism instanceof GLVEndomorphism) {
+            throw new UnsupportedClassVersionError();/*
             return validatePoint(
                 implSumOfMultipliesGLV(new ECPoint[]{ P, Q }, new BigInteger[]{ a, b }, (GLVEndomorphism)endomorphism));
-*/        }
+*/
+        }
 
         return validatePoint(implShamirsTrickWNaf(P, a, Q, b));
     }
@@ -115,32 +109,30 @@ public class ECAlgorithms
      * </pre>
      */
     public static ECPoint shamirsTrick(ECPoint P, BigInteger k,
-        ECPoint Q, BigInteger l)
-    {
-    	throw new UnsupportedClassVersionError();/*
+                                       ECPoint Q, BigInteger l) {
+        throw new UnsupportedClassVersionError();/*
         ECCurve cp = P.getCurve();
         Q = importPoint(cp, Q);
 
         return validatePoint(implShamirsTrickJsf(P, k, Q, l));
-*/    }
+*/
+    }
 
-    public static ECPoint importPoint(ECCurve c, ECPoint p)
-    {
+    public static ECPoint importPoint(ECCurve c, ECPoint p) {
         ECCurve cp = p.getCurve();
-        if (!c.equals(cp))
-        {
+        if (!c.equals(cp)) {
             throw new IllegalArgumentException("Point must be on the same curve");
         }
         return c.importPoint(p);
     }
-/*
-    public static void montgomeryTrick(ECFieldElement[] zs, int off, int len)
-    {
-        montgomeryTrick(zs, off, len, null);
-    }
-*/
-    public static void montgomeryTrick(ECFieldElement[] zs, int off, int len, ECFieldElement scale)
-    {
+
+    /*
+        public static void montgomeryTrick(ECFieldElement[] zs, int off, int len)
+        {
+            montgomeryTrick(zs, off, len, null);
+        }
+    */
+    public static void montgomeryTrick(ECFieldElement[] zs, int off, int len, ECFieldElement scale) {
         /*
          * Uses the "Montgomery Trick" to invert many field elements, with only a single actual
          * field inversion. See e.g. the paper:
@@ -152,22 +144,19 @@ public class ECAlgorithms
         c[0] = zs[off];
 
         int i = 0;
-        while (++i < len)
-        {
+        while (++i < len) {
             c[i] = c[i - 1].multiply(zs[off + i]);
         }
 
         --i;
 
-        if (scale != null)
-        {
+        if (scale != null) {
             c[i] = c[i].multiply(scale);
         }
 
         ECFieldElement u = c[i].invert();
 
-        while (i > 0)
-        {
+        while (i > 0) {
             int j = off + i--;
             ECFieldElement tmp = zs[j];
             zs[j] = c[i].multiply(u);
@@ -180,16 +169,13 @@ public class ECAlgorithms
     /**
      * Simple shift-and-add multiplication. Serves as reference implementation
      * to verify (possibly faster) implementations, and for very small scalars.
-     * 
-     * @param p
-     *            The point to multiply.
-     * @param k
-     *            The multiplier.
+     *
+     * @param p The point to multiply.
+     * @param k The multiplier.
      * @return The result of the point multiplication <code>kP</code>.
      */
-    public static ECPoint referenceMultiply(ECPoint p, BigInteger k)
-    {
-    	throw new UnsupportedClassVersionError();/*
+    public static ECPoint referenceMultiply(ECPoint p, BigInteger k) {
+        throw new UnsupportedClassVersionError();/*
         BigInteger x = k.abs();
         ECPoint q = p.getCurve().getInfinity();
         int t = x.bitLength();
@@ -209,12 +195,11 @@ public class ECAlgorithms
             }
         }
         return k.signum() < 0 ? q.negate() : q;
-*/    }
-    
-    public static ECPoint validatePoint(ECPoint p)
-    {
-        if (!p.isValid())
-        {
+*/
+    }
+
+    public static ECPoint validatePoint(ECPoint p) {
+        if (!p.isValid()) {
             throw new IllegalArgumentException("Invalid point");
         }
 
@@ -222,9 +207,8 @@ public class ECAlgorithms
     }
 
     static ECPoint implShamirsTrickJsf(ECPoint P, BigInteger k,
-        ECPoint Q, BigInteger l)
-    {
-    	throw new UnsupportedClassVersionError();/*
+                                       ECPoint Q, BigInteger l) {
+        throw new UnsupportedClassVersionError();/*
     	/*
         ECCurve curve = P.getCurve();
         ECPoint infinity = curve.getInfinity();
@@ -260,9 +244,9 @@ public class ECAlgorithms
         return R;
     	 */
     }
+
     static ECPoint implShamirsTrickWNaf(ECPoint P, BigInteger k,
-        ECPoint Q, BigInteger l)
-    {
+                                        ECPoint Q, BigInteger l) {
         boolean negK = k.signum() < 0, negL = l.signum() < 0;
 
         k = k.abs();
@@ -285,9 +269,8 @@ public class ECAlgorithms
         return implShamirsTrickWNaf(preCompP, preCompNegP, wnafP, preCompQ, preCompNegQ, wnafQ);
     }
 
-    static ECPoint implShamirsTrickWNaf(ECPoint P, BigInteger k, ECPointMap pointMapQ, BigInteger l)
-    {
-    	throw new UnsupportedClassVersionError();/*
+    static ECPoint implShamirsTrickWNaf(ECPoint P, BigInteger k, ECPointMap pointMapQ, BigInteger l) {
+        throw new UnsupportedClassVersionError();/*
         boolean negK = k.signum() < 0, negL = l.signum() < 0;
 
         k = k.abs();
@@ -308,11 +291,11 @@ public class ECAlgorithms
         byte[] wnafQ = WNafUtil.generateWindowNaf(width, l);
 
         return implShamirsTrickWNaf(preCompP, preCompNegP, wnafP, preCompQ, preCompNegQ, wnafQ);
-*/    }
+*/
+    }
 
     private static ECPoint implShamirsTrickWNaf(ECPoint[] preCompP, ECPoint[] preCompNegP, byte[] wnafP,
-        ECPoint[] preCompQ, ECPoint[] preCompNegQ, byte[] wnafQ)
-    {
+                                                ECPoint[] preCompQ, ECPoint[] preCompNegQ, byte[] wnafQ) {
         int len = Math.max(wnafP.length, wnafQ.length);
 
         ECCurve curve = preCompP[0].getCurve();
@@ -321,33 +304,28 @@ public class ECAlgorithms
         ECPoint R = infinity;
         int zeroes = 0;
 
-        for (int i = len - 1; i >= 0; --i)
-        {
+        for (int i = len - 1; i >= 0; --i) {
             int wiP = i < wnafP.length ? wnafP[i] : 0;
             int wiQ = i < wnafQ.length ? wnafQ[i] : 0;
 
-            if ((wiP | wiQ) == 0)
-            {
+            if ((wiP | wiQ) == 0) {
                 ++zeroes;
                 continue;
             }
 
             ECPoint r = infinity;
-            if (wiP != 0)
-            {
+            if (wiP != 0) {
                 int nP = Math.abs(wiP);
                 ECPoint[] tableP = wiP < 0 ? preCompNegP : preCompP;
                 r = r.add(tableP[nP >>> 1]);
             }
-            if (wiQ != 0)
-            {
+            if (wiQ != 0) {
                 int nQ = Math.abs(wiQ);
                 ECPoint[] tableQ = wiQ < 0 ? preCompNegQ : preCompQ;
                 r = r.add(tableQ[nQ >>> 1]);
             }
 
-            if (zeroes > 0)
-            {
+            if (zeroes > 0) {
                 R = R.timesPow2(zeroes);
                 zeroes = 0;
             }
@@ -355,23 +333,23 @@ public class ECAlgorithms
             R = R.twicePlus(r);
         }
 
-        if (zeroes > 0)
-        {
+        if (zeroes > 0) {
             R = R.timesPow2(zeroes);
         }
 
         return R;
     }
-    static ECPoint implSumOfMultiplies(ECPoint[] ps, BigInteger[] ks)
-    {
+
+    static ECPoint implSumOfMultiplies(ECPoint[] ps, BigInteger[] ks) {
         int count = ps.length;
         boolean[] negs = new boolean[count];
         WNafPreCompInfo[] infos = new WNafPreCompInfo[count];
         byte[][] wnafs = new byte[count][];
 
-        for (int i = 0; i < count; ++i)
-        {
-            BigInteger ki = ks[i]; negs[i] = ki.signum() < 0; ki = ki.abs();
+        for (int i = 0; i < count; ++i) {
+            BigInteger ki = ks[i];
+            negs[i] = ki.signum() < 0;
+            ki = ki.abs();
 
             int width = Math.max(2, Math.min(16, WNafUtil.getWindowSize(ki.bitLength())));
             infos[i] = WNafUtil.precompute(ps[i], width, true);
@@ -381,52 +359,50 @@ public class ECAlgorithms
         return implSumOfMultiplies(negs, infos, wnafs);
     }
 
-    static ECPoint implSumOfMultipliesGLV(ECPoint[] ps, BigInteger[] ks, GLVEndomorphism glvEndomorphism)
-    {
+    static ECPoint implSumOfMultipliesGLV(ECPoint[] ps, BigInteger[] ks, GLVEndomorphism glvEndomorphism) {
         BigInteger n = ps[0].getCurve().getOrder();
 
         int len = ps.length;
 
         BigInteger[] abs = new BigInteger[len << 1];
-        for (int i = 0, j = 0; i < len; ++i)
-        {
+        for (int i = 0, j = 0; i < len; ++i) {
             BigInteger[] ab = glvEndomorphism.decomposeScalar(ks[i].mod(n));
             abs[j++] = ab[0];
             abs[j++] = ab[1];
         }
 
         ECPointMap pointMap = glvEndomorphism.getPointMap();
-        if (glvEndomorphism.hasEfficientPointMap())
-        {
+        if (glvEndomorphism.hasEfficientPointMap()) {
             return ECAlgorithms.implSumOfMultiplies(ps, pointMap, abs);
         }
 
         ECPoint[] pqs = new ECPoint[len << 1];
-        for (int i = 0, j = 0; i < len; ++i)
-        {
+        for (int i = 0, j = 0; i < len; ++i) {
             ECPoint p = ps[i], q = pointMap.map(p);
             pqs[j++] = p;
             pqs[j++] = q;
         }
-        
+
         return ECAlgorithms.implSumOfMultiplies(pqs, abs);
 
     }
 
-    static ECPoint implSumOfMultiplies(ECPoint[] ps, ECPointMap pointMap, BigInteger[] ks)
-    {
+    static ECPoint implSumOfMultiplies(ECPoint[] ps, ECPointMap pointMap, BigInteger[] ks) {
         int halfCount = ps.length, fullCount = halfCount << 1;
 
         boolean[] negs = new boolean[fullCount];
         WNafPreCompInfo[] infos = new WNafPreCompInfo[fullCount];
         byte[][] wnafs = new byte[fullCount][];
 
-        for (int i = 0; i < halfCount; ++i)
-        {
+        for (int i = 0; i < halfCount; ++i) {
             int j0 = i << 1, j1 = j0 + 1;
 
-            BigInteger kj0 = ks[j0]; negs[j0] = kj0.signum() < 0; kj0 = kj0.abs();
-            BigInteger kj1 = ks[j1]; negs[j1] = kj1.signum() < 0; kj1 = kj1.abs();
+            BigInteger kj0 = ks[j0];
+            negs[j0] = kj0.signum() < 0;
+            kj0 = kj0.abs();
+            BigInteger kj1 = ks[j1];
+            negs[j1] = kj1.signum() < 0;
+            kj1 = kj1.abs();
 
             int width = Math.max(2, Math.min(16, WNafUtil.getWindowSize(Math.max(kj0.bitLength(), kj1.bitLength()))));
 
@@ -440,11 +416,9 @@ public class ECAlgorithms
         return implSumOfMultiplies(negs, infos, wnafs);
     }
 
-    private static ECPoint implSumOfMultiplies(boolean[] negs, WNafPreCompInfo[] infos, byte[][] wnafs)
-    {
+    private static ECPoint implSumOfMultiplies(boolean[] negs, WNafPreCompInfo[] infos, byte[][] wnafs) {
         int len = 0, count = wnafs.length;
-        for (int i = 0; i < count; ++i)
-        {
+        for (int i = 0; i < count; ++i) {
             len = Math.max(len, wnafs[i].length);
         }
 
@@ -454,16 +428,13 @@ public class ECAlgorithms
         ECPoint R = infinity;
         int zeroes = 0;
 
-        for (int i = len - 1; i >= 0; --i)
-        {
+        for (int i = len - 1; i >= 0; --i) {
             ECPoint r = infinity;
 
-            for (int j = 0; j < count; ++j)
-            {
+            for (int j = 0; j < count; ++j) {
                 byte[] wnaf = wnafs[j];
                 int wi = i < wnaf.length ? wnaf[i] : 0;
-                if (wi != 0)
-                {
+                if (wi != 0) {
                     int n = Math.abs(wi);
                     WNafPreCompInfo info = infos[j];
                     ECPoint[] table = (wi < 0 == negs[j]) ? info.getPreComp() : info.getPreCompNeg();
@@ -471,14 +442,12 @@ public class ECAlgorithms
                 }
             }
 
-            if (r == infinity)
-            {
+            if (r == infinity) {
                 ++zeroes;
                 continue;
             }
 
-            if (zeroes > 0)
-            {
+            if (zeroes > 0) {
                 R = R.timesPow2(zeroes);
                 zeroes = 0;
             }
@@ -486,8 +455,7 @@ public class ECAlgorithms
             R = R.twicePlus(r);
         }
 
-        if (zeroes > 0)
-        {
+        if (zeroes > 0) {
             R = R.timesPow2(zeroes);
         }
 

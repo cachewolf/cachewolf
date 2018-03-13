@@ -42,63 +42,58 @@
  *********************************************************************************/
 package CacheWolf.utils;
 
-import ewe.io.BufferedStream;
-import ewe.io.IOException;
-import ewe.io.InputStream;
-import ewe.io.RandomAccessStream;
-import ewe.io.StreamAdapter;
+import ewe.io.*;
 
 /**
-* This class is used to get a "sub-stream" of data from another Stream. The
-* partial stream can limit the amount of data which can be read from the original
-* Stream. Note the following:
-* <nl>
-* <li>Calling close() on a PartialInputStream does not close the original stream, unless closeUnderlying is true.
-* <li>Setting a limit of -1 will not impose any limit on the number of bytes which
-* can be read.
-* <li>Input begins at the current point in the source input stream.
-*</nl>
-
-**/
+ * This class is used to get a "sub-stream" of data from another Stream. The
+ * partial stream can limit the amount of data which can be read from the original
+ * Stream. Note the following:
+ * <nl>
+ * <li>Calling close() on a PartialInputStream does not close the original stream, unless closeUnderlying is true.
+ * <li>Setting a limit of -1 will not impose any limit on the number of bytes which
+ * can be read.
+ * <li>Input begins at the current point in the source input stream.
+ * </nl>
+ **/
 //##################################################################
 public class CWPartialInputStream extends StreamAdapter {
+    /**
+     * If this is true, then a call to close() will close the underlying stream
+     * as well.
+     **/
+    public boolean closeUnderlying = false;
     //##################################################################
     //
     // Do not move the next 2 variables.
     long limit;
     long filepos;
-    /**
-    * If this is true, then a call to close() will close the underlying stream
-    * as well.
-    **/
-    public boolean closeUnderlying = false;
 
     /**
-    * Creates a new PartialInputStream with the specified limit. If the limit
-    * is -1, then there will be no limit imposed
-    **/
+     * Creates a new PartialInputStream with the specified limit. If the limit
+     * is -1, then there will be no limit imposed
+     **/
     //===================================================================
     public CWPartialInputStream(InputStream input, int limit)
     //===================================================================
     {
-	super(input);
-	this.limit = limit;
-	filepos = -1;
+        super(input);
+        this.limit = limit;
+        filepos = -1;
     }
 
     //===================================================================
 
     /**
-    * Creates a new PartialInputStream with the specified limit. If the limit
-    * is -1, then there will be no limit imposed
-    **/
+     * Creates a new PartialInputStream with the specified limit. If the limit
+     * is -1, then there will be no limit imposed
+     **/
     //===================================================================
     public CWPartialInputStream(InputStream input, long limit)
     //===================================================================
     {
-	super(input);
-	this.limit = limit;
-	filepos = -1;
+        super(input);
+        this.limit = limit;
+        filepos = -1;
     }
 
     //===================================================================
@@ -107,14 +102,14 @@ public class CWPartialInputStream extends StreamAdapter {
     public boolean pushback(byte[] bytes, int start, int count)
     //===================================================================
     {
-	if (stream instanceof BufferedStream)
-	    return ((BufferedStream) stream).pushback(bytes, start, count);
-	return super.pushback(bytes, start, count);
+        if (stream instanceof BufferedStream)
+            return ((BufferedStream) stream).pushback(bytes, start, count);
+        return super.pushback(bytes, start, count);
     }
 
     //===================================================================
     public int nonBlockingWrite(byte[] buff, int start, int length) {
-	return READWRITE_ERROR;
+        return READWRITE_ERROR;
     }
 
     //===================================================================
@@ -123,59 +118,59 @@ public class CWPartialInputStream extends StreamAdapter {
     public int nonBlockingRead(byte[] buff, int offset, int count)
     //===================================================================
     {
-	if (limit == 0)
-	    return READWRITE_CLOSED;
-	if (limit < -1)
-	    return READWRITE_ERROR;
-	if (limit != -1)
-	    if ((long) count > limit)
-		count = (int) limit;
-	if (filepos >= 0) {
-	    try {
-		((RandomAccessStream) stream).seek(filepos);
-	    } catch (IOException e) {
-		error = e.getMessage();
-		return READWRITE_ERROR;
-	    }
-	}
-	int got = super.nonBlockingRead(buff, offset, count);
-	if (got == 0)
-	    return 0;
-	if (got == READWRITE_CLOSED) {
-	    limit = 0;
-	    return READWRITE_CLOSED;
-	}
-	if (got > 0) {
-	    if (limit > 0) {
-		limit -= got;
-		if (limit < 0)
-		    limit = 0;
-	    }
-	    if (filepos >= 0)
-		filepos += got;
-	    return got;
-	}
-	// An error occured.
-	limit = -2;
-	return READWRITE_ERROR;
+        if (limit == 0)
+            return READWRITE_CLOSED;
+        if (limit < -1)
+            return READWRITE_ERROR;
+        if (limit != -1)
+            if ((long) count > limit)
+                count = (int) limit;
+        if (filepos >= 0) {
+            try {
+                ((RandomAccessStream) stream).seek(filepos);
+            } catch (IOException e) {
+                error = e.getMessage();
+                return READWRITE_ERROR;
+            }
+        }
+        int got = super.nonBlockingRead(buff, offset, count);
+        if (got == 0)
+            return 0;
+        if (got == READWRITE_CLOSED) {
+            limit = 0;
+            return READWRITE_CLOSED;
+        }
+        if (got > 0) {
+            if (limit > 0) {
+                limit -= got;
+                if (limit < 0)
+                    limit = 0;
+            }
+            if (filepos >= 0)
+                filepos += got;
+            return got;
+        }
+        // An error occured.
+        limit = -2;
+        return READWRITE_ERROR;
     }
 
     /**
-    * This will not close the underlying stream unless closeUnderlying is true.
-    **/
+     * This will not close the underlying stream unless closeUnderlying is true.
+     **/
     //===================================================================
     public boolean closeStream() throws ewe.io.IOException
     //===================================================================
     {
-	closed = (closeUnderlying) ? stream.close() : true;
-	return closed;
+        closed = (closeUnderlying) ? stream.close() : true;
+        return closed;
     }
 
     //===================================================================
     public boolean isOpen()
     //===================================================================
     {
-	return !closed;
+        return !closed;
     }
     //##################################################################
 }

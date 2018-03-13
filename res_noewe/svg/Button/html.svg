@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
-<svg x="0px" y="0px" width="32" height="32" overflow="hidden" viewBox="0, 0, 512, 512" preserveAspectRatio="xMidYMid" font-size="0" id="Layer_1" xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xml="http://www.w3.org/XML/1998/namespace" version="1.1">
+<svg xmlns:xml="http://www.w3.org/XML/1998/namespace" x="0px" y="0px" width="32" height="32" overflow="hidden" viewBox="0, 0, 512, 512" preserveAspectRatio="xMidYMid" font-size="0" id="svg" xml:space="preserve"  xmlns="http://www.w3.org/2000/svg" version="1.1">
   <rect x="13.128" y="13.128" width="485.744" height="485.744" xml:space="preserve" style="fill:#EFEFEF;" />
   <rect x="13.128" y="13.128" width="485.744" height="78.769" xml:space="preserve" style="fill:#61ACD2;" />
   <rect x="13.128" y="13.128" width="78.769" height="78.769" xml:space="preserve" style="fill:#F4A026;" />

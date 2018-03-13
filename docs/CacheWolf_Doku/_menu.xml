@@ -1,642 +1,782 @@
-<?xml version='1.0' encoding='UTF-8'?><chapter>
-  <chapterinfo>
-    <title>Die Menüs</title>
-    <date>2.1.2008</date>
-    <releaseinfo>In Bearbeitung</releaseinfo>
-    <edition>CacheWolf 1.0</edition>
-    <author>
-      <surname>Marc Schnitzler</surname>
-    </author>
-    <revhistory>
-      <revision>
-        <revnumber>0.1</revnumber>
-        <date>2. Januar 2008</date>
+<?xml version='1.0' encoding='UTF-8'?>
+<chapter>
+    <chapterinfo>
+        <title>Die Menüs</title>
+        <date>2.1.2008</date>
+        <releaseinfo>In Bearbeitung</releaseinfo>
+        <edition>CacheWolf 1.0</edition>
         <author>
-          <surname>Marc Schnitzler</surname>
+            <surname>Marc Schnitzler</surname>
         </author>
-        <revdescription>
-          <para>Erster Entwurf</para>
-        </revdescription>
-      </revision>
-      <revision>
-        <revnumber>0.2</revnumber>
-        <date>16.3.2008</date>
-        <author>
-          <surname>Marc Schnitzler</surname>
-        </author>
-        <revdescription>
-          <para>Etwas mehr geschafft...</para>
-        </revdescription>
-      </revision>
-    </revhistory>
-  </chapterinfo>
-  <title id="menue">Die Menüs</title>
-  <section>
-    <title>Anwendung</title>
-    <para>Die in diesem Kapitel beschriebenen Menüs siehst Du nur dann, wenn
-    Du in die Listenansicht wechselst.</para>
+        <revhistory>
+            <revision>
+                <revnumber>0.1</revnumber>
+                <date>2. Januar 2008</date>
+                <author>
+                    <surname>Marc Schnitzler</surname>
+                </author>
+                <revdescription>
+                    <para>Erster Entwurf</para>
+                </revdescription>
+            </revision>
+            <revision>
+                <revnumber>0.2</revnumber>
+                <date>16.3.2008</date>
+                <author>
+                    <surname>Marc Schnitzler</surname>
+                </author>
+                <revdescription>
+                    <para>Etwas mehr geschafft...</para>
+                </revdescription>
+            </revision>
+        </revhistory>
+    </chapterinfo>
+    <title id="menue">Die Menüs</title>
     <section>
-      <title id="profil">Profil</title>
-      <para>Dieser Menüpunkt erlaubt das Anlegen eines neuen Profils sowie das
-      Wechseln des aktuellen Profils. Bei <literal>Profil -&gt; Laden</literal> wird dasselbe Auswahlfenster gezeigt, wie beim Start von
-      Cachewolf.</para>
-      <para>Profile sind im Prinzip nichts anderes wie ein Verzeichnis
-      unterhalb des Basisverzeichnisses, das Du beim ersten Start (siehe:
-      <xref linkend="start"/>) von Cachewolf angelegt hast. In dem
-      Profilverzeichnis befindet sich eine Datei mit Namen index.xml. Diese
-      Datei enthält, neben der Liste der Caches, die in diesem Verzeichnis
-      gespeichert sind, Angaben zum gesetzten Zentrum und die
-      Filtereinstellungen (für dieses Profil).</para>
+        <title>Anwendung</title>
+        <para>Die in diesem Kapitel beschriebenen Menüs siehst Du nur dann, wenn
+            Du in die Listenansicht wechselst.
+        </para>
+        <section>
+            <title id="profil">Profil</title>
+            <para>Dieser Menüpunkt erlaubt das Anlegen eines neuen Profils sowie das
+                Wechseln des aktuellen Profils. Bei <literal>Profil -&gt; Laden</literal> wird dasselbe Auswahlfenster
+                gezeigt, wie beim Start von
+                Cachewolf.
+            </para>
+            <para>Profile sind im Prinzip nichts anderes wie ein Verzeichnis
+                unterhalb des Basisverzeichnisses, das Du beim ersten Start (siehe:
+                <xref linkend="start"/>) von Cachewolf angelegt hast. In dem
+                Profilverzeichnis befindet sich eine Datei mit Namen index.xml. Diese
+                Datei enthält, neben der Liste der Caches, die in diesem Verzeichnis
+                gespeichert sind, Angaben zum gesetzten Zentrum und die
+                Filtereinstellungen (für dieses Profil).
+            </para>
+        </section>
+        <section>
+            <title>Einstellungen</title>
+            <para>Mit diesem Menüpunkt gelangt man zur Konfiguration von Cachewolf.
+                Diese wurde hier:
+                <xref linkend="editPrefs"/>
+                beschrieben.
+            </para>
+        </section>
+        <section>
+            <title id="zentrum">Zentrum</title>
+            <para>Unter diesem Menüpunkt kann das Zentrum gesetzt werden. Das
+                Zentrum wird in der Listenansicht (siehe:<xref linkend="liste"/>) und
+                im Radar (siehe:<xref linkend="radar"/>) genutzt, um Entfernungen zu
+                berechnen und anzuzeigen.
+            </para>
+            <para>Nach der Menüauswahl erscheint das nachfolgende Fenster:</para>
+            <para>
+                <inlinemediaobject>
+                    <imageobject>
+                        <imagedata fileref="pics/5_Menues_Zentrum.png"/>
+                    </imageobject>
+                </inlinemediaobject>
+            </para>
+            <para>Die Koordinaten, die neben <literal>Profil</literal> stehen, sind
+                permanent gespeichert, d.h. beim Start von Cachewolf mit einem
+                bestimmten Profil werden diese Koordinaten als Zentrumskoordinaten
+                gesetzt. Die Koordinaten, die neben <literal>Aktuell</literal> stehen,
+                sind die Koordinaten, die Cachewolf gerade als Zentrumskoordinaten
+                betrachtet (offensichtlich). Diese werden beispielsweise verändert, wenn
+                Du einen bestimmten Cache zum Zentrum machst, um die Entfernung aller
+                anderen zu diesem berechnen zu lassen. Durch einen Klick auf die Pfeile
+                nach Unten bzw. Oben kann man die Koordinaten hin und her
+                kopieren.
+            </para>
+            <para>Durch einen Klick auf die Koordinaten selbst gelangt man zu
+                nachfolgendem Fenster, in dem man die jeweiligen Zentrumskoordinaten
+                manuell ändern kann:
+            </para>
+            <para>
+                <inlinemediaobject>
+                    <imageobject>
+                        <imagedata fileref="pics/5_Menues_Zentrum_Koordinaten.png"/>
+                    </imageobject>
+                </inlinemediaobject>
+            </para>
+            <para>Das Format der eingegebenen Koordinaten kannst Du zwischen UTM und
+                verschiedenen Darstellungen von Grad, Minuten und Sekunden umstellen.
+                Falls Du die Koordinaten im Textfeld (unten) eingibst, musst du
+                vor<literal>Anwenden</literal> auf <literal>Parse</literal>klicken,
+                damit die eingegebenen Daten auch wirklich übernommen werden.
+            </para>
+        </section>
+        <section>
+            <title>Gewählter Cache</title>
+            <para>Unter diesem Menüpunkt findest Du das Kontextmenü der
+                Listenansicht nochmals. Die einzelnen Funktionen wurden bereits hier
+                <xref linkend="list_popup"/>
+                erklärt. Das Kontextmenü ist doppelt
+                vorhanden, da es auf diversen PDAs eher schwierig ist, das Kontextmenü
+                in der Listenansicht direkt aufzurufen. Daher ist auf PDAs dieses Menü
+                zu bevorzugen. Auf PCs dürfte es hingegen einfacher sein, das
+                Kontextmenü in der Listenansicht mit einem Rechtsklick
+                aufzurufen.
+            </para>
+        </section>
+        <section>
+            <title>Import</title>
+            <para>Wie Du Cachedaten bekommen kannst, wurde bereits hier
+                <xref linkend="DatenImport"/>
+                ausführlich erklärt. Es gibt mehrere
+                Möglichkeiten, an Cachedaten zu kommen:
+            </para>
+            <itemizedlist>
+                <listitem>
+                    <para>GPX-Dateien importieren (siehe
+                        <xref linkend="DatenImportGPX"/>
+                        und<xref linkend="DatenImportGPX2"/>)
+                    </para>
+                </listitem>
+                <listitem>
+                    <para>Download von Opencaching.de (siehe<xref linkend="DatenImportDownload"/>)
+                    </para>
+                </listitem>
+                <listitem>
+                    <para>Spidern von Geocaching.com (siehe<xref linkend="DatenImportSpider"/>)
+                    </para>
+                </listitem>
+            </itemizedlist>
+            <section>
+                <title id="markierte_akt">Markierte aktualisieren</title>
+                <para>Alle markierten Wegpunkte werden (wer hätte es gedacht)
+                    aktualisiert. Cachewolf holt sich dazu wie beim Spidern die aktuellen
+                    Daten, z.B. Status, Beschreibung, Koordinaten ode Logs, direkt von
+                    geocaching.com bzw. opencaching.de. Im Anschluss an die Aktualisierung
+                    werden die tatsächlich veränderten Wegpunkte mit farbigen Punkten vor
+                    den Wegpunktnamen gekennzeichnet. Die Bedeutung dieser Punkt ist
+                    <xref linkend="UpdateStatus"/>
+                    erklärt.
+                </para>
+            </section>
+            <section>
+                <title>Always login to gc.com</title>
+                <para>Ist diese Option gewählt, erfolgt vor der Abfrage jedes
+                    einzelnen Caches bei geocaching.com ein erneuter Login. Dies ist vor
+                    allem beim Spidern oder Aktualisieren vieler Caches recht hinderlich
+                    und sollte daher vor dem Spidern bzw. Aktualisieren auf jeden Fall
+                    deaktiviert werden.
+                </para>
+                <para>Benötigt wird diese Funktion aber dennoch: Nach einem einmal
+                    erfolgten Login (z.B. ausgelöst durch eine Aktualisierung) erfolgt
+                    nach einer bestimmten Zeit ein automatischer Logout durch
+                    geocaching.com. Willst Du nach dieser Zeit einen weiteren Cache
+                    aktualisieren, geht dies schief, weil Du ja nicht mehr eingeloggt
+                    bist. In diesem Fall muss also diese Option aktiviert sein, damit
+                    CacheWolf einen erneuten Login durchführt und die Aktualisierung
+                    problemlos verläuft.
+                </para>
+            </section>
+        </section>
+        <section>
+            <title>Export</title>
+            <para/>
+            <section>
+                <title id="zu_garmin" xreflabel="Export zu Garmin">Zu Garmin</title>
+                <para>Dieser Menüeintrag ist nur dann Aktiv, wenn GPSBabel in dem
+                    CacheWolf Verzeichnis gefunden wurde. Von GPSBabel müssen die beiden
+                    Dateien:
+                </para>
+                <orderedlist>
+                    <listitem>
+                        <para>gpsbabel.exe, und</para>
+                    </listitem>
+                    <listitem>
+                        <para>libexpat.dll</para>
+                    </listitem>
+                </orderedlist>
+                <para>vorhanden sein.</para>
+            </section>
+        </section>
+        <section>
+            <title id="karten">Karten</title>
+            <para>Mit CacheWolf ist es möglich, Karten zu importieren und zu
+                kalibrieren. Diese werden dann als Moving Map genutzt (siehe<xref lang="" linkend="goto"/>).
+            </para>
+            <sidebar>
+                <para>Eine Moving Map unterscheidet sich von den typischen mobilen
+                    Navigationssystemen (die heute häufig auf PDAs im Auto genutzt werden)
+                    dadurch, dass dem Computer keinerlei Information über Strassen und
+                    Wege vorliegen. Der Computer kann &quot;nur&quot; von einer GPS Koordinate auf
+                    die x/y Koordinaten der Karte umrechnen und kann dadurch auf der Karte
+                    darstellen, wo man sich befindet.
+                </para>
+            </sidebar>
+            <para>Die Karten müssen als Raster-Bilddatei vorliegen und es muss
+                Informationen darüber mitgeliefert werden, welchen Bereich der Erde das
+                Bild bzw. die Karte abdeckt. Diese Informationen werden
+                &quot;Kalibreiungsinformationen&quot; genannt. CacheWolf speichert sie in
+                world-files (*.wfl), die den gleichen Namen wie die jeweilige Bilddatei
+                tragen.
+            </para>
+            <para>CacheWolf kann gegenwärtig in der MovingMap nur ein Kartenbild
+                gleichzeitig anzeigen. Deswegen kann es vorkommen, dass ein Teil des
+                Bildschirms im Kartenmodus nicht mit einem Kartenbild hinterlegt wird,
+                obwohl es für den Bereich ein Kartenbild gibt. Deswegen hat CacheWolf a)
+                einen automatischen Mechanismus, der immer dasjenige Kartenbild läd, das
+                man braucht, und b) werden die Kartenbilder aus dem Internet
+                standardmäßig mit 100 Pixeln Überlappung heruntergeladen, um die Lücken,
+                die bei einem automatischen Kartenwechsel auftreten, möglichst gering zu
+                halten.
+            </para>
+            <section>
+                <title>Kalibrierte herunterladen</title>
+                <para>Über diese Funktion lassen sich georeferenzierte Karten direkt
+                    aus dem Internat laden. Hierbei können zwei grundsätzlich
+                    unterschiedliche Quellen genutzt werden. Expedia wurde schon in
+                    früheren Versionen angeboten. Mit der 1.0 werden nun zusätzlich
+                    WMS-Quellen angeboten.
+                </para>
+                <sidebar>
+                    <para>Ein Web Map Service (WMS) ist ein Web Service, der auf den
+                        OGC-WMS Implementation Specifications beruht, einer Schnittstelle,
+                        um Karten aus dem Internet zu laden. Expedia ist eine Webseite, die
+                        von Microsoft betrieben wird und Karten der USA und von Europa
+                        anbietet. CacheWolf kann diese Webseite aufrufen und die dort
+                        angebotenen Karten herunterladen und automatisch kalibrieren.
+                    </para>
+                </sidebar>
+                <para>Um eigene WMS-Quellen einzubinden, schau Dir die Datei
+                    <literal>readme_wms.txt</literal>
+                    im Verzeichnis
+                    <literal>webmapservices</literal>
+                    an.
+                </para>
+                <para>Mit der 1.0 werden WMS-Quellen für Karten folgender Bundesländer
+                    angeboten:
+                </para>
+                <itemizedlist>
+                    <listitem>
+                        <para>TOPO 1000 Deutschland</para>
+                    </listitem>
+                    <listitem>
+                        <para>TOPO 500 Deutschland</para>
+                    </listitem>
+                    <listitem>
+                        <para>TOPO 200 Deutschland</para>
+                    </listitem>
+                    <listitem>
+                        <para>TOPO 50 Bayern</para>
+                    </listitem>
+                    <listitem>
+                        <para>TOPO 50 Baden-Würtemberg</para>
+                    </listitem>
+                    <listitem>
+                        <para>TOPO 50 Rheinland Pfalz</para>
+                    </listitem>
+                    <listitem>
+                        <para>TOPO 50 Mecklenburg Vorpommern</para>
+                    </listitem>
+                    <listitem>
+                        <para>TOPO 25 Mecklenburg Vorpommern</para>
+                    </listitem>
+                    <listitem>
+                        <para>TOPO 10 Mecklenburg Vorpommern</para>
+                    </listitem>
+                    <listitem>
+                        <para>TOPO 50 Sachsen</para>
+                    </listitem>
+                    <listitem>
+                        <para>TOPO 25 Sachsen</para>
+                    </listitem>
+                    <listitem>
+                        <para>TOPO 10 Sachsen</para>
+                    </listitem>
+                    <listitem>
+                        <para>TOPO 50 Sachsen Anhalt</para>
+                    </listitem>
+                    <listitem>
+                        <para>TOPO 10 Sachsen Anhalt</para>
+                    </listitem>
+                    <listitem>
+                        <para>TOPO 50 Nordrhein Westfalen</para>
+                    </listitem>
+                    <listitem>
+                        <para>TOPO 25 Nordrhein Westfalen</para>
+                    </listitem>
+                    <listitem>
+                        <para>TOPO 10 Nordrhein Westfalen</para>
+                    </listitem>
+                    <listitem>
+                        <para>TOPO 100 Hessen</para>
+                    </listitem>
+                    <listitem>
+                        <para>TOPO 50 Hessen</para>
+                    </listitem>
+                    <listitem>
+                        <para>TOPO 100 Niedersachsen</para>
+                    </listitem>
+                </itemizedlist>
+                <para>Für einige Bundesländer sind auch Luftbildaufnahmen verfügbar
+                    (diese verbrauchen allerdings ziemlich viel Speicherplatz!).
+                </para>
+                <para>Nach einem Klick auf die Menüoption <literal>Kalibrierte herunterladen</literal> erscheint
+                    folgendes Fenster:
+                </para>
+                <para>
+                    <inlinemediaobject>
+                        <imageobject>
+                            <imagedata fileref="pics/5_Menues_Karten.png"/>
+                        </imageobject>
+                    </inlinemediaobject>
+                </para>
+                <para>Hier muss man nun unterscheiden, was genau man haben möchte. Mit
+                    dem Reiter &quot;Tiles&quot; werden aneinander hängende Kacheln geladen. Wie
+                    viele wird bestimmt durch die Auswahl &quot;all caches&quot; bzw. &quot;selected
+                    caches&quot; in Verbindung mit dem gesetzten Haken bei
+                    <literal>for</literal>. Wählt man &quot;all&quot; wird CacheWolf ein Rechteck
+                    berechnen, das alle Caches umfasst und dann Kacheln gemäß der
+                    eingestellten Genauigkeit (<literal>Approx. m per pixel</literal>)
+                    bilden und herunterladen. Die Angabe bei <literal>overlapping in pixel</literal>legt fest, wie viel
+                    die einzelnen Kacheln sich überlappen,
+                    d.h. bei 0 liegen die Kachelkanten genau aneinander, ansonsten
+                    überschneiden sie sich.
+                </para>
+                <para>Statt die Kacheln für alle Caches herunter zu laden, kann man
+                    auch sagen, dass ein Rechteck um eine gesetzte Mitte (<literal>around the center</literal>)
+                    heruntergeladen werden soll.
+                </para>
+                <para>Der Haken bei <literal>download an overview map</literal> wird
+                    CacheWolf veranlassen, eine Kachel zu ermitteln und herunterzuladen,
+                    die das gesamte Rechteck umschliesst.
+                </para>
+                <para>Die eben beschriebene Kachelmethode kann sehr viele Daten
+                    (Dateien) generieren. In Gebieten, in denen Caches weit auseinander
+                    liegen, erzeugt man hierdurch einen ziemlichen Überhang an Daten.
+                    Daher besteht auch die Möglichkeit, Karten je Cache zu laden:
+                </para>
+                <para>
+                    <inlinemediaobject>
+                        <imageobject>
+                            <imagedata fileref="pics/5_Menues_Karten_proCache.png"/>
+                        </imageobject>
+                    </inlinemediaobject>
+                </para>
+                <para>Auch hier besteht die Möglichkeit, eine Karte je Cache in der
+                    Datenbank oder nur für die, die in der Listenansicht (einen Häckchen
+                    wurde gesetzt) selektiert wurden, herunterzuladen.
+                </para>
+                <para>Durch einen Klick auf <literal>OK</literal> beginnt der
+                    Download. Je nach dem, wie die Parameter eingestellt wurden, kann der
+                    Download etwas Zeit in Anspruch nehmen.
+                </para>
+            </section>
+            <section>
+                <title>Importieren</title>
+                <para>Der Import von Karten erfolgt durch die Auswahl eines
+                    Verzeichnisses, in dem sich Karten im Format (PNG, JPG, GIF, BMP)
+                    befinden (Leider werden die Karten selbst in dem Verzeichnis nicht
+                    angezeigt). Wenn sich auch .map-Dateien in dem Verzeichjnis befinden,
+                    wird CacheWolf diese Dateien zum Kalibrieren der gleichnamigen
+                    Kartendatei verwenden.
+                </para>
+                <para>
+                    <example>
+                        <title>Kartendatei mit zugehörige .map Datei</title>
+                        <para>Kartendatei: 01x01.png .map Datei: 01x01.map</para>
+                    </example>
+                </para>
+                <para>Mit einer .map Datei meinen wir eine Datei im OziExplorer Format
+                    (siehe <ulink url="http://www.rus-roads.ru/gps/help_ozi/map_file_format.html">
+                        http://www.rus-roads.ru/gps/help_ozi/map_file_format.html</ulink>).
+                    CacheWolf nutzt die Zeilen mit den Präfixen MMPXY und MMPLL; also
+                    müssen insgesamt 8 Zeilen vorhanden sein: und zwar zuerst die MMPXY
+                    Zeilen und dann die MMPLL Zeilen.
+                </para>
+                <example>
+                    <title>Map Beispieldatei</title>
+                    <para>MMPNUM,4</para>
+                    <para>MMPXY,1,10,10</para>
+                    <para>MMPXY,2,982,815</para>
+                    <para>MMPXY,3,10,815</para>
+                    <para>MMPXY,4,982,10</para>
+                    <para>MMPLL,1, 12.966397, 50.827195</para>
+                    <para>MMPLL,2, 13.009637, 50.801890</para>
+                    <para>MMPLL,3, 12.964382, 50.803439</para>
+                    <para>MMPLL,4, 13.011675, 50.825644</para>
+                </example>
+                <para/>
+            </section>
+            <section>
+                <title>Kalibrieren</title>
+                <para>Zum Kalibrieren einer Karte muss man für mindestens drei Punkte
+                    auf der Karte die GPS Koordinaten (WGS84, DMM) kennen. CacheWolf kann
+                    aber auch mit mehr Koordinaten arbeiten; dadurch wird die Kalibrierung
+                    genauer. Durch einen Klick auf <literal>Anwendung -&gt; Karten -&gt; Kalibrieren</literal> erhält
+                    man folgendes Bild:
+                </para>
+                <para>
+                    <inlinemediaobject>
+                        <imageobject>
+                            <imagedata fileref="pics/5_Menues_Karten_kalibrieren.png"/>
+                        </imageobject>
+                    </inlinemediaobject>
+                </para>
+                <para>Zum Kalibrieren eine Karte aus der Liste <literal>Nicht kalibrierte Karten</literal> auswählen und
+                    auf
+                    <literal>Laden</literal>
+                    klicken. Danach erscheint die Karte in einem
+                    neuen Fenster. Ich empfehle, dieses Fenster auf die volle
+                    Bildschirmgröße zu vergrößern.
+                </para>
+                <para>
+                    <inlinemediaobject>
+                        <imageobject>
+                            <imagedata fileref="pics/karte.png"/>
+                        </imageobject>
+                    </inlinemediaobject>
+                </para>
+                <para>Jetzt musst Du für drei Punkte auf der Karte die GPS Koordinaten
+                    eingeben. Hierzu einen entsprechenden Referenzpunkt mit der Maus
+                    anklicken: an der Stelle wird ein rotes Kreuz auf der Karte gezeichnet
+                    und ein Eingabefenster erscheint, um die Koordinaten einzugeben (siehe
+                    <xref linkend="zentrum"/>).
+                </para>
+                <para>Nachdem Du drei Punkte angegeben hast, wird Cachewolf ab dem
+                    vierten Punkt die errechneten Koordinaten unterhalb der Karte
+                    anzeigen:
+                </para>
+                <para>
+                    <inlinemediaobject>
+                        <imageobject>
+                            <imagedata fileref="pics/die_vierte.png"/>
+                        </imageobject>
+                    </inlinemediaobject>
+                </para>
+                <para>Die Kalibrierung wird durch einen Klick auf den knopf
+                    <literal>Fertig!</literal>
+                    beendet.
+                </para>
+                <para>Du kannst die Kalibrierung jederzeit erneuern, indem Du im
+                    Kartenauswahlfenster einfach eine Karte aus der Liste
+                    <literal>Kalibrierte Karten</literal>
+                    lädst.
+                </para>
+                <para>Die kalibrierten Karten werden angezeigt, wenn man in der
+                    Ansicht <literal>Goto</literal> auf <literal>Karte</literal> klickt
+                    oder indem man in der Ansicht <literal>Details</literal> auf die grün
+                    angedeutete Weltkugel klickt.
+                </para>
+            </section>
+        </section>
+        <section>
+            <title>Speichern</title>
+            <para>Notizen werden durch den Wechsel aus der Detailansicht sofort
+                gespeichert. Alle anderen Änderungen, die man in der Detailansicht
+                (siehe<xref lang="" linkend="detailansicht"/>) zu einem Wegpunkt
+                macht, werden erst gespeichert, wenn man diese Menüoption wählt.
+            </para>
+        </section>
+        <section>
+            <title>Beenden</title>
+            <para>
+                <literal>Beenden</literal>
+                beendet CacheWolf. Bis zu diesem
+                Zeitpunkt noch nicht gespeicherte Änderungen werden vor dem Beenden
+                automatisch gespeichert!
+            </para>
+        </section>
     </section>
     <section>
-      <title>Einstellungen</title>
-      <para>Mit diesem Menüpunkt gelangt man zur Konfiguration von Cachewolf.
-      Diese wurde hier: <xref linkend="editPrefs"/> beschrieben.</para>
-    </section>
-    <section>
-      <title id="zentrum">Zentrum</title>
-      <para>Unter diesem Menüpunkt kann das Zentrum gesetzt werden. Das
-      Zentrum wird in der Listenansicht (siehe: <xref linkend="liste"/>) und
-      im Radar (siehe: <xref linkend="radar"/>) genutzt, um Entfernungen zu
-      berechnen und anzuzeigen.</para>
-      <para>Nach der Menüauswahl erscheint das nachfolgende Fenster:</para>
-      <para><inlinemediaobject>
-          <imageobject>
-            <imagedata fileref="pics/5_Menues_Zentrum.png"/>
-          </imageobject>
-        </inlinemediaobject></para>
-      <para>Die Koordinaten, die neben <literal>Profil</literal> stehen, sind
-      permanent gespeichert, d.h. beim Start von Cachewolf mit einem
-      bestimmten Profil werden diese Koordinaten als Zentrumskoordinaten
-      gesetzt. Die Koordinaten, die neben <literal>Aktuell</literal> stehen,
-      sind die Koordinaten, die Cachewolf gerade als Zentrumskoordinaten
-      betrachtet (offensichtlich). Diese werden beispielsweise verändert, wenn
-      Du einen bestimmten Cache zum Zentrum machst, um die Entfernung aller
-      anderen zu diesem berechnen zu lassen. Durch einen Klick auf die Pfeile
-      nach Unten bzw. Oben kann man die Koordinaten hin und her
-      kopieren.</para>
-      <para>Durch einen Klick auf die Koordinaten selbst gelangt man zu
-      nachfolgendem Fenster, in dem man die jeweiligen Zentrumskoordinaten
-      manuell ändern kann:</para>
-      <para><inlinemediaobject>
-          <imageobject>
-            <imagedata fileref="pics/5_Menues_Zentrum_Koordinaten.png"/>
-          </imageobject>
-        </inlinemediaobject></para>
-      <para>Das Format der eingegebenen Koordinaten kannst Du zwischen UTM und
-      verschiedenen Darstellungen von Grad, Minuten und Sekunden umstellen.
-      Falls Du die Koordinaten im Textfeld (unten) eingibst, musst du
-      vor<literal> Anwenden</literal> auf <literal>Parse </literal>klicken,
-      damit die eingegebenen Daten auch wirklich übernommen werden.</para>
-    </section>
-    <section>
-      <title>Gewählter Cache</title>
-      <para>Unter diesem Menüpunkt findest Du das Kontextmenü der
-      Listenansicht nochmals. Die einzelnen Funktionen wurden bereits hier
-      <xref linkend="list_popup"/> erklärt. Das Kontextmenü ist doppelt
-      vorhanden, da es auf diversen PDAs eher schwierig ist, das Kontextmenü
-      in der Listenansicht direkt aufzurufen. Daher ist auf PDAs dieses Menü
-      zu bevorzugen. Auf PCs dürfte es hingegen einfacher sein, das
-      Kontextmenü in der Listenansicht mit einem Rechtsklick
-      aufzurufen.</para>
-    </section>
-    <section>
-      <title>Import</title>
-      <para>Wie Du Cachedaten bekommen kannst, wurde bereits hier <xref linkend="DatenImport"/> ausführlich erklärt. Es gibt mehrere
-      Möglichkeiten, an Cachedaten zu kommen:</para>
-      <itemizedlist>
-        <listitem>
-          <para>GPX-Dateien importieren (siehe <xref linkend="DatenImportGPX"/> und <xref linkend="DatenImportGPX2"/>)</para>
-        </listitem>
-        <listitem>
-          <para>Download von Opencaching.de (siehe <xref linkend="DatenImportDownload"/>)</para>
-        </listitem>
-        <listitem>
-          <para>Spidern von Geocaching.com (siehe <xref linkend="DatenImportSpider"/>)</para>
-        </listitem>
-      </itemizedlist>
-      <section>
-        <title id="markierte_akt">Markierte aktualisieren</title>
-        <para>Alle markierten Wegpunkte werden (wer hätte es gedacht)
-        aktualisiert. Cachewolf holt sich dazu wie beim Spidern die aktuellen
-        Daten, z.B. Status, Beschreibung, Koordinaten ode Logs, direkt von
-        geocaching.com bzw. opencaching.de. Im Anschluss an die Aktualisierung
-        werden die tatsächlich veränderten Wegpunkte mit farbigen Punkten vor
-        den Wegpunktnamen gekennzeichnet. Die Bedeutung dieser Punkt ist <xref linkend="UpdateStatus"/> erklärt.</para>
-      </section>
-      <section>
-        <title>Always login to gc.com</title>
-        <para>Ist diese Option gewählt, erfolgt vor der Abfrage jedes
-        einzelnen Caches bei geocaching.com ein erneuter Login. Dies ist vor
-        allem beim Spidern oder Aktualisieren vieler Caches recht hinderlich
-        und sollte daher vor dem Spidern bzw. Aktualisieren auf jeden Fall
-        deaktiviert werden.</para>
-        <para>Benötigt wird diese Funktion aber dennoch: Nach einem einmal
-        erfolgten Login (z.B. ausgelöst durch eine Aktualisierung) erfolgt
-        nach einer bestimmten Zeit ein automatischer Logout durch
-        geocaching.com. Willst Du nach dieser Zeit einen weiteren Cache
-        aktualisieren, geht dies schief, weil Du ja nicht mehr eingeloggt
-        bist. In diesem Fall muss also diese Option aktiviert sein, damit
-        CacheWolf einen erneuten Login durchführt und die Aktualisierung
-        problemlos verläuft.</para>
-      </section>
-    </section>
-    <section>
-      <title>Export</title>
-      <para/>
-      <section>
-        <title id="zu_garmin" xreflabel="Export zu Garmin">Zu Garmin</title>
-        <para>Dieser Menüeintrag ist nur dann Aktiv, wenn GPSBabel in dem
-        CacheWolf Verzeichnis gefunden wurde. Von GPSBabel müssen die beiden
-        Dateien:</para>
-        <orderedlist>
-          <listitem>
-            <para>gpsbabel.exe, und</para>
-          </listitem>
-          <listitem>
-            <para>libexpat.dll</para>
-          </listitem>
-        </orderedlist>
-        <para>vorhanden sein.</para>
-      </section>
-    </section>
-    <section>
-      <title id="karten">Karten</title>
-      <para>Mit CacheWolf ist es möglich, Karten zu importieren und zu
-      kalibrieren. Diese werden dann als Moving Map genutzt (siehe <xref lang="" linkend="goto"/>).</para>
-      <sidebar>
-        <para>Eine Moving Map unterscheidet sich von den typischen mobilen
-        Navigationssystemen (die heute häufig auf PDAs im Auto genutzt werden)
-        dadurch, dass dem Computer keinerlei Information über Strassen und
-        Wege vorliegen. Der Computer kann &quot;nur&quot; von einer GPS Koordinate auf
-        die x/y Koordinaten der Karte umrechnen und kann dadurch auf der Karte
-        darstellen, wo man sich befindet.</para>
-      </sidebar>
-      <para>Die Karten müssen als Raster-Bilddatei vorliegen und es muss
-      Informationen darüber mitgeliefert werden, welchen Bereich der Erde das
-      Bild bzw. die Karte abdeckt. Diese Informationen werden
-      &quot;Kalibreiungsinformationen&quot; genannt. CacheWolf speichert sie in
-      world-files (*.wfl), die den gleichen Namen wie die jeweilige Bilddatei
-      tragen.</para>
-      <para>CacheWolf kann gegenwärtig in der MovingMap nur ein Kartenbild
-      gleichzeitig anzeigen. Deswegen kann es vorkommen, dass ein Teil des
-      Bildschirms im Kartenmodus nicht mit einem Kartenbild hinterlegt wird,
-      obwohl es für den Bereich ein Kartenbild gibt. Deswegen hat CacheWolf a)
-      einen automatischen Mechanismus, der immer dasjenige Kartenbild läd, das
-      man braucht, und b) werden die Kartenbilder aus dem Internet
-      standardmäßig mit 100 Pixeln Überlappung heruntergeladen, um die Lücken,
-      die bei einem automatischen Kartenwechsel auftreten, möglichst gering zu
-      halten.</para>
-      <section>
-        <title>Kalibrierte herunterladen</title>
-        <para>Über diese Funktion lassen sich georeferenzierte Karten direkt
-        aus dem Internat laden. Hierbei können zwei grundsätzlich
-        unterschiedliche Quellen genutzt werden. Expedia wurde schon in
-        früheren Versionen angeboten. Mit der 1.0 werden nun zusätzlich
-        WMS-Quellen angeboten.</para>
-        <sidebar>
-          <para>Ein Web Map Service (WMS) ist ein Web Service, der auf den
-          OGC-WMS Implementation Specifications beruht, einer Schnittstelle,
-          um Karten aus dem Internet zu laden. Expedia ist eine Webseite, die
-          von Microsoft betrieben wird und Karten der USA und von Europa
-          anbietet. CacheWolf kann diese Webseite aufrufen und die dort
-          angebotenen Karten herunterladen und automatisch kalibrieren.</para>
-        </sidebar>
-        <para>Um eigene WMS-Quellen einzubinden, schau Dir die Datei
-        <literal>readme_wms.txt</literal> im Verzeichnis
-        <literal>webmapservices</literal> an.</para>
-        <para>Mit der 1.0 werden WMS-Quellen für Karten folgender Bundesländer
-        angeboten:</para>
-        <itemizedlist>
-          <listitem>
-            <para>TOPO 1000 Deutschland</para>
-          </listitem>
-          <listitem>
-            <para>TOPO 500 Deutschland</para>
-          </listitem>
-          <listitem>
-            <para>TOPO 200 Deutschland</para>
-          </listitem>
-          <listitem>
-            <para>TOPO 50 Bayern</para>
-          </listitem>
-          <listitem>
-            <para>TOPO 50 Baden-Würtemberg</para>
-          </listitem>
-          <listitem>
-            <para>TOPO 50 Rheinland Pfalz</para>
-          </listitem>
-          <listitem>
-            <para>TOPO 50 Mecklenburg Vorpommern</para>
-          </listitem>
-          <listitem>
-            <para>TOPO 25 Mecklenburg Vorpommern</para>
-          </listitem>
-          <listitem>
-            <para>TOPO 10 Mecklenburg Vorpommern</para>
-          </listitem>
-          <listitem>
-            <para>TOPO 50 Sachsen</para>
-          </listitem>
-          <listitem>
-            <para>TOPO 25 Sachsen</para>
-          </listitem>
-          <listitem>
-            <para>TOPO 10 Sachsen</para>
-          </listitem>
-          <listitem>
-            <para>TOPO 50 Sachsen Anhalt</para>
-          </listitem>
-          <listitem>
-            <para>TOPO 10 Sachsen Anhalt</para>
-          </listitem>
-          <listitem>
-            <para>TOPO 50 Nordrhein Westfalen</para>
-          </listitem>
-          <listitem>
-            <para>TOPO 25 Nordrhein Westfalen</para>
-          </listitem>
-          <listitem>
-            <para>TOPO 10 Nordrhein Westfalen</para>
-          </listitem>
-          <listitem>
-            <para>TOPO 100 Hessen</para>
-          </listitem>
-          <listitem>
-            <para>TOPO 50 Hessen</para>
-          </listitem>
-          <listitem>
-            <para>TOPO 100 Niedersachsen</para>
-          </listitem>
-        </itemizedlist>
-        <para>Für einige Bundesländer sind auch Luftbildaufnahmen verfügbar
-        (diese verbrauchen allerdings ziemlich viel Speicherplatz!).</para>
-        <para>Nach einem Klick auf die Menüoption <literal>Kalibrierte herunterladen</literal> erscheint folgendes Fenster:</para>
-        <para><inlinemediaobject>
-            <imageobject>
-              <imagedata fileref="pics/5_Menues_Karten.png"/>
-            </imageobject>
-          </inlinemediaobject></para>
-        <para>Hier muss man nun unterscheiden, was genau man haben möchte. Mit
-        dem Reiter &quot;Tiles&quot; werden aneinander hängende Kacheln geladen. Wie
-        viele wird bestimmt durch die Auswahl &quot;all caches&quot; bzw. &quot;selected
-        caches&quot; in Verbindung mit dem gesetzten Haken bei
-        <literal>for</literal>. Wählt man &quot;all&quot; wird CacheWolf ein Rechteck
-        berechnen, das alle Caches umfasst und dann Kacheln gemäß der
-        eingestellten Genauigkeit (<literal>Approx. m per pixel</literal>)
-        bilden und herunterladen. Die Angabe bei <literal>overlapping in pixel </literal>legt fest, wie viel die einzelnen Kacheln sich überlappen,
-        d.h. bei 0 liegen die Kachelkanten genau aneinander, ansonsten
-        überschneiden sie sich.</para>
-        <para>Statt die Kacheln für alle Caches herunter zu laden, kann man
-        auch sagen, dass ein Rechteck um eine gesetzte Mitte (<literal>around the center</literal>) heruntergeladen werden soll.</para>
-        <para>Der Haken bei <literal>download an overview map</literal> wird
-        CacheWolf veranlassen, eine Kachel zu ermitteln und herunterzuladen,
-        die das gesamte Rechteck umschliesst.</para>
-        <para>Die eben beschriebene Kachelmethode kann sehr viele Daten
-        (Dateien) generieren. In Gebieten, in denen Caches weit auseinander
-        liegen, erzeugt man hierdurch einen ziemlichen Überhang an Daten.
-        Daher besteht auch die Möglichkeit, Karten je Cache zu laden:</para>
-        <para><inlinemediaobject>
-            <imageobject>
-              <imagedata fileref="pics/5_Menues_Karten_proCache.png"/>
-            </imageobject>
-          </inlinemediaobject></para>
-        <para>Auch hier besteht die Möglichkeit, eine Karte je Cache in der
-        Datenbank oder nur für die, die in der Listenansicht (einen Häckchen
-        wurde gesetzt) selektiert wurden, herunterzuladen.</para>
-        <para>Durch einen Klick auf <literal>OK</literal> beginnt der
-        Download. Je nach dem, wie die Parameter eingestellt wurden, kann der
-        Download etwas Zeit in Anspruch nehmen.</para>
-      </section>
-      <section>
-        <title>Importieren</title>
-        <para>Der Import von Karten erfolgt durch die Auswahl eines
-        Verzeichnisses, in dem sich Karten im Format (PNG, JPG, GIF, BMP)
-        befinden (Leider werden die Karten selbst in dem Verzeichnis nicht
-        angezeigt). Wenn sich auch .map-Dateien in dem Verzeichjnis befinden,
-        wird CacheWolf diese Dateien zum Kalibrieren der gleichnamigen
-        Kartendatei verwenden.</para>
-        <para><example>
-            <title>Kartendatei mit zugehörige .map Datei</title>
-            <para>Kartendatei: 01x01.png .map Datei: 01x01.map</para>
-          </example></para>
-        <para>Mit einer .map Datei meinen wir eine Datei im OziExplorer Format
-        (siehe <ulink url="http://www.rus-roads.ru/gps/help_ozi/map_file_format.html">http://www.rus-roads.ru/gps/help_ozi/map_file_format.html</ulink>).
-        CacheWolf nutzt die Zeilen mit den Präfixen MMPXY und MMPLL; also
-        müssen insgesamt 8 Zeilen vorhanden sein: und zwar zuerst die MMPXY
-        Zeilen und dann die MMPLL Zeilen.</para>
-        <example>
-          <title>Map Beispieldatei</title>
-          <para>MMPNUM,4</para>
-          <para>MMPXY,1,10,10</para>
-          <para>MMPXY,2,982,815</para>
-          <para>MMPXY,3,10,815</para>
-          <para>MMPXY,4,982,10</para>
-          <para>MMPLL,1, 12.966397, 50.827195</para>
-          <para>MMPLL,2, 13.009637, 50.801890</para>
-          <para>MMPLL,3, 12.964382, 50.803439</para>
-          <para>MMPLL,4, 13.011675, 50.825644</para>
-        </example>
+        <title>Suchen</title>
         <para/>
-      </section>
-      <section>
-        <title>Kalibrieren</title>
-        <para>Zum Kalibrieren einer Karte muss man für mindestens drei Punkte
-        auf der Karte die GPS Koordinaten (WGS84, DMM) kennen. CacheWolf kann
-        aber auch mit mehr Koordinaten arbeiten; dadurch wird die Kalibrierung
-        genauer. Durch einen Klick auf <literal>Anwendung -&gt; Karten -&gt; Kalibrieren</literal> erhält man folgendes Bild:</para>
-        <para><inlinemediaobject>
-            <imageobject>
-              <imagedata fileref="pics/5_Menues_Karten_kalibrieren.png"/>
-            </imageobject>
-          </inlinemediaobject></para>
-        <para>Zum Kalibrieren eine Karte aus der Liste <literal>Nicht kalibrierte Karten</literal> auswählen und auf
-        <literal>Laden</literal> klicken. Danach erscheint die Karte in einem
-        neuen Fenster. Ich empfehle, dieses Fenster auf die volle
-        Bildschirmgröße zu vergrößern.</para>
-        <para><inlinemediaobject>
-            <imageobject>
-              <imagedata fileref="pics/karte.png"/>
-            </imageobject>
-          </inlinemediaobject></para>
-        <para>Jetzt musst Du für drei Punkte auf der Karte die GPS Koordinaten
-        eingeben. Hierzu einen entsprechenden Referenzpunkt mit der Maus
-        anklicken: an der Stelle wird ein rotes Kreuz auf der Karte gezeichnet
-        und ein Eingabefenster erscheint, um die Koordinaten einzugeben (siehe
-        <xref linkend="zentrum"/>).</para>
-        <para>Nachdem Du drei Punkte angegeben hast, wird Cachewolf ab dem
-        vierten Punkt die errechneten Koordinaten unterhalb der Karte
-        anzeigen:</para>
-        <para><inlinemediaobject>
-            <imageobject>
-              <imagedata fileref="pics/die_vierte.png"/>
-            </imageobject>
-          </inlinemediaobject></para>
-        <para>Die Kalibrierung wird durch einen Klick auf den knopf
-        <literal>Fertig!</literal> beendet.</para>
-        <para>Du kannst die Kalibrierung jederzeit erneuern, indem Du im
-        Kartenauswahlfenster einfach eine Karte aus der Liste
-        <literal>Kalibrierte Karten</literal> lädst.</para>
-        <para>Die kalibrierten Karten werden angezeigt, wenn man in der
-        Ansicht <literal>Goto</literal> auf <literal>Karte</literal> klickt
-        oder indem man in der Ansicht <literal>Details</literal> auf die grün
-        angedeutete Weltkugel klickt.</para>
-      </section>
+        <section>
+            <title>Suchen</title>
+            <para>CacheWolf sucht im Namen und im Wegpunkt nach Übereinstimmung zum
+                eingegebenen Suchbegriff. Es wird nach Bestandteilen gesucht und nicht
+                nach einer genauen Übereinstimmung! Das Ergebnis der Suche wird in der
+                Listenansicht dargestellt, die auf die Suche passenden Wegpunkte werden
+                außerdem gelb hinterlegt (siehe auch<xref linkend="WegpunktStatus"/>).
+                Zusätzlich wird nach der Suche noch ein Filter angewendet, der alle
+                Wegpunkte, die nicht passen, ausblendet.
+            </para>
+            <para>Im Gegensatz zum folgenden Menüpunkt
+                <literal>Suche alle</literal>
+                wird bei dieser Suche nur in den aktuell dargestellten Wegpunkten
+                gesucht, d.h. falls vor der Suche bereits eine andere Suche durchgeführt
+                wurde oder falls ein Filter angewendet wurde, wird nicht in den
+                ausgefilterten Wegpunkten gesucht! Dadurch ist es möglich, eine bereits
+                durchgeführte Suche weiter zu verfeinern.
+            </para>
+        </section>
+        <section>
+            <title>Suche alle</title>
+            <para>Bei dieser Suche werden alle Wegpunkte des Profils nach einer
+                Übereinstimmung zum eingegebenen Suchbegriff durchsucht. War vor der
+                Suche noch ein Filter aktiv, wird dieser zuerst aufgehoben und dann erst
+                die Suche durchgeführt.
+            </para>
+            <para>Willst Du die von Dir gesuchten Caches farblich hervorheben, aber
+                dennoch eine Liste mit allen Caches im Profil sehen, musst Du erst die
+                entsprechende Suche durchführen und anschließend über <literal>Filter -&gt; Aufheben</literal> den nach
+                der Suche automatisch ausgeführten
+                Filter aufheben. Die gesuchten Caches stehen dann am Anfang der Liste
+                und sind gelb hervorgehoben.
+            </para>
+        </section>
+        <section>
+            <title>Suche aufheben</title>
+            <para>Dieser Menüpunkt hebt die farbliche Kennzeichnung der Wegpunkte,
+                die den Suchbegriff erfüllten, wieder auf. Gleichzeitig wird auch der
+                automatisch angewendete Filter aufgehoben, so dass wieder alle Caches
+                des Profils angezeigt werden.
+            </para>
+        </section>
     </section>
     <section>
-      <title>Speichern</title>
-      <para>Notizen werden durch den Wechsel aus der Detailansicht sofort
-      gespeichert. Alle anderen Änderungen, die man in der Detailansicht
-      (siehe <xref lang="" linkend="detailansicht"/>) zu einem Wegpunkt
-      macht, werden erst gespeichert, wenn man diese Menüoption wählt.</para>
+        <title id="filter">Filter</title>
+        <para/>
+        <section>
+            <title>Anwenden</title>
+            <para>Durch Auswahl diesen Menüpunktes wird der gesetzte Filter
+                aktiviert. Zum setzen des Filters siehe das nachfolgende Kapitel.
+            </para>
+        </section>
+        <section>
+            <title>Ändern &amp; Anwenden</title>
+            <para>In Cachewolf kann man nach Richtung, Status, Bewertung, Typen,
+                Zusätzlichen Wegpunkten, Behälter und Attributen filtern.
+            </para>
+            <para>Der Richtungsfilter:</para>
+            <para>
+                <inlinemediaobject>
+                    <imageobject>
+                        <imagedata fileref="pics/5_Menues_Filter.png"/>
+                    </imageobject>
+                </inlinemediaobject>
+            </para>
+            <para>erlaubt es all die Caches (und sonstigen Wegpunkte) auszufiltern
+                die mehr als xxx Kilometer entfernt sind (Option &lt;=); oder umgekehrt
+                weniger als (Option &gt;=) xxx Kilometer entfernt sind. Die
+                Himmelsrichtung kann durch setzen eines entsprechenden Häckchens
+                ebenfalls gefiltert werden. Häckchen gesetzt bedeutet NICHT filtern.
+                Kein Häkchen --&gt; Cache wird aus der Listenansicht verbannt.
+            </para>
+            <para>Der Statusfilter:</para>
+            <para>
+                <inlinemediaobject>
+                    <imageobject>
+                        <imagedata fileref="pics/5_Menues_Filter_Status.png"/>
+                    </imageobject>
+                </inlinemediaobject>
+            </para>
+            <para>erlaubt es, die Caches auszublenden, die einen Status haben, der
+                einem NICHT gesetzten Häkchen entsprechen. Die Spaltenanordnung ist hier
+                bewusst gewählt, da mindestens ein Häkchen auf der jeweiligen Seite
+                gesetzt sein muss. Ansonsten wird die Anzeige &quot;Rot&quot; weil die Auswahl
+                keinen Sinn ergeben würde.
+            </para>
+            <para>Der Bewertungsfilter erlaubt die Auswahl von Caches nach Terrain
+                und Difficulty:
+            </para>
+            <para>
+                <inlinemediaobject>
+                    <imageobject>
+                        <imagedata fileref="pics/5_Menues_Filter_Bewertung.png"/>
+                    </imageobject>
+                </inlinemediaobject>
+            </para>
+            <para>Das Prinzip ist wie beim Richtungsfilter: Z.B. bei der Wahl
+                Schwierigkeit &lt;= 3 werden alle Caches ausgeblendet mit einer
+                Schwierigkeit &gt; 3.
+            </para>
+            <para>Mit dem Typenfilter:</para>
+            <para>
+                <inlinemediaobject>
+                    <imageobject>
+                        <imagedata fileref="pics/5_Menues_Filter_Typen.png"/>
+                    </imageobject>
+                </inlinemediaobject>
+            </para>
+            <para>können je nach Type ausgeblendet werden. Einnicht gesetztes
+                Häkchen blendet den Cachetype aus der Listenansicht aus.
+            </para>
+            <para>Mit dem Addi Wpt filter:</para>
+            <para>
+                <inlinemediaobject>
+                    <imageobject>
+                        <imagedata fileref="pics/5_Menues_Filter_Addi.png"/>
+                    </imageobject>
+                </inlinemediaobject>
+            </para>
+            <para>können Additional Waypoints aus- oder eingeblendet werden. Häkchen
+                gesetzt bedeutet der Additional Waypoint wird angezeigt. Additional
+                Waypoints werden übrigens immer unterhalb des zugehörigen Caches in der
+                Listenansicht angezeigt.
+            </para>
+            <para>Nach dem inzwischen bekannten Prinzip können Behältertypen ein und
+                ausgeblendet werden:
+            </para>
+            <para>
+                <inlinemediaobject>
+                    <imageobject>
+                        <imagedata fileref="pics/5_Menues_Filter_Behaelter.png"/>
+                    </imageobject>
+                </inlinemediaobject>
+            </para>
+            <para>Der Attributenfilter erlaubt es gezielt Caches zu finden, die mit
+                einem speziellen Attribute versehen sind:
+            </para>
+            <para>
+                <inlinemediaobject>
+                    <imageobject>
+                        <imagedata fileref="pics/5_Menues_Filter_Attribute.png"/>
+                    </imageobject>
+                </inlinemediaobject>
+            </para>
+            <para>In der Normaleinstelung werden alle Caches angezeigt. In dem hier
+                gezeigten Schirm werden all die Caches ausgeblendet die in keinem
+                Jagdgebiet und wo Tauchausrüstung benötigt in der Listenansicht gezeigt.
+                Alle anderen werden ausgeblendet. Die Attributeauswahl erfolgt durch
+                mehrmaliges Klicken auf das Icon.
+            </para>
+        </section>
+        <section>
+            <title>Umkehren</title>
+            <para>Durch Auswahl diesen Menüpunktes, werden all die Caches
+                eingeblendet, die durch Anwenden des Filters ausgeblendet wurden.
+            </para>
+        </section>
+        <section>
+            <title>Aufheben</title>
+            <para>Durch Auswahl diesen Menüpunktes wird der Filter ausgeschaltet.
+                Dies geht auch durch einen Klick auf das Filtericon in der Statuszeile
+                (siehe<xref linkend="liste"/>).
+            </para>
+        </section>
+        <section>
+            <title>Markierte ausfiltern</title>
+            <para>In der Listenansicht können bei einzelnen Caches &quot;Häkchen&quot; gesetzt
+                werden. Durch Auswahl diesen Menüpunktes werden all die Caches
+                ausgeblendet, die mit einem Häkchen versehen sind.
+            </para>
+        </section>
+        <section>
+            <title>Nichtmarkierte ausfiltern</title>
+            <para>In der Listenansicht können bei einzelnen Caches &quot;Häkchen&quot; gesetzt
+                werden. Durch Auswahl diesen Menüpunktes werden all die Caches
+                ausgeblendet, die NICHT mit einem Häkchen versehen sind.
+            </para>
+        </section>
+        <section>
+            <title>Zeige Blacklist</title>
+            <para>In der Detailansicht (<xref linkend="detailansicht"/>) können
+                einzelne Caches zur &quot;Blacklist&quot; hinzugefügt werden. Diese Liste wird
+                durch Auswahl diesen Menüpunktes eingeblendet (und dafür alle anderen
+                ausgeblendet).
+            </para>
+        </section>
     </section>
     <section>
-      <title>Beenden</title>
-      <para><literal>Beenden</literal> beendet CacheWolf. Bis zu diesem
-      Zeitpunkt noch nicht gespeicherte Änderungen werden vor dem Beenden
-      automatisch gespeichert!</para>
-    </section>
-  </section>
-  <section>
-    <title>Suchen</title>
-    <para/>
-    <section>
-      <title>Suchen</title>
-      <para>CacheWolf sucht im Namen und im Wegpunkt nach Übereinstimmung zum
-      eingegebenen Suchbegriff. Es wird nach Bestandteilen gesucht und nicht
-      nach einer genauen Übereinstimmung! Das Ergebnis der Suche wird in der
-      Listenansicht dargestellt, die auf die Suche passenden Wegpunkte werden
-      außerdem gelb hinterlegt (siehe auch <xref linkend="WegpunktStatus"/>).
-      Zusätzlich wird nach der Suche noch ein Filter angewendet, der alle
-      Wegpunkte, die nicht passen, ausblendet.</para>
-      <para>Im Gegensatz zum folgenden Menüpunkt <literal>Suche alle</literal>
-      wird bei dieser Suche nur in den aktuell dargestellten Wegpunkten
-      gesucht, d.h. falls vor der Suche bereits eine andere Suche durchgeführt
-      wurde oder falls ein Filter angewendet wurde, wird nicht in den
-      ausgefilterten Wegpunkten gesucht! Dadurch ist es möglich, eine bereits
-      durchgeführte Suche weiter zu verfeinern.</para>
-    </section>
-    <section>
-      <title>Suche alle</title>
-      <para>Bei dieser Suche werden alle Wegpunkte des Profils nach einer
-      Übereinstimmung zum eingegebenen Suchbegriff durchsucht. War vor der
-      Suche noch ein Filter aktiv, wird dieser zuerst aufgehoben und dann erst
-      die Suche durchgeführt.</para>
-      <para>Willst Du die von Dir gesuchten Caches farblich hervorheben, aber
-      dennoch eine Liste mit allen Caches im Profil sehen, musst Du erst die
-      entsprechende Suche durchführen und anschließend über <literal>Filter -&gt; Aufheben</literal> den nach der Suche automatisch ausgeführten
-      Filter aufheben. Die gesuchten Caches stehen dann am Anfang der Liste
-      und sind gelb hervorgehoben.</para>
-    </section>
-    <section>
-      <title>Suche aufheben</title>
-      <para>Dieser Menüpunkt hebt die farbliche Kennzeichnung der Wegpunkte,
-      die den Suchbegriff erfüllten, wieder auf. Gleichzeitig wird auch der
-      automatisch angewendete Filter aufgehoben, so dass wieder alle Caches
-      des Profils angezeigt werden.</para>
-    </section>
-  </section>
-  <section>
-    <title id="filter">Filter</title>
-    <para/>
-    <section>
-      <title>Anwenden</title>
-      <para>Durch Auswahl diesen Menüpunktes wird der gesetzte Filter
-      aktiviert. Zum setzen des Filters siehe das nachfolgende Kapitel.</para>
-    </section>
-    <section>
-      <title>Ändern &amp; Anwenden</title>
-      <para>In Cachewolf kann man nach Richtung, Status, Bewertung, Typen,
-      Zusätzlichen Wegpunkten, Behälter und Attributen filtern.</para>
-      <para>Der Richtungsfilter:</para>
-      <para> <inlinemediaobject>
-          <imageobject>
-            <imagedata fileref="pics/5_Menues_Filter.png"/>
-          </imageobject>
-        </inlinemediaobject></para>
-      <para>erlaubt es all die Caches (und sonstigen Wegpunkte) auszufiltern
-      die mehr als xxx Kilometer entfernt sind (Option &lt;=); oder umgekehrt
-      weniger als (Option &gt;=) xxx Kilometer entfernt sind. Die
-      Himmelsrichtung kann durch setzen eines entsprechenden Häckchens
-      ebenfalls gefiltert werden. Häckchen gesetzt bedeutet NICHT filtern.
-      Kein Häkchen --&gt; Cache wird aus der Listenansicht verbannt.</para>
-      <para>Der Statusfilter:</para>
-      <para><inlinemediaobject>
-          <imageobject>
-            <imagedata fileref="pics/5_Menues_Filter_Status.png"/>
-          </imageobject>
-        </inlinemediaobject></para>
-      <para>erlaubt es, die Caches auszublenden, die einen Status haben, der
-      einem NICHT gesetzten Häkchen entsprechen. Die Spaltenanordnung ist hier
-      bewusst gewählt, da mindestens ein Häkchen auf der jeweiligen Seite
-      gesetzt sein muss. Ansonsten wird die Anzeige &quot;Rot&quot; weil die Auswahl
-      keinen Sinn ergeben würde.</para>
-      <para>Der Bewertungsfilter erlaubt die Auswahl von Caches nach Terrain
-      und Difficulty:</para>
-      <para><inlinemediaobject>
-          <imageobject>
-            <imagedata fileref="pics/5_Menues_Filter_Bewertung.png"/>
-          </imageobject>
-        </inlinemediaobject></para>
-      <para>Das Prinzip ist wie beim Richtungsfilter: Z.B. bei der Wahl
-      Schwierigkeit &lt;= 3 werden alle Caches ausgeblendet mit einer
-      Schwierigkeit &gt; 3.</para>
-      <para>Mit dem Typenfilter:</para>
-      <para><inlinemediaobject>
-          <imageobject>
-            <imagedata fileref="pics/5_Menues_Filter_Typen.png"/>
-          </imageobject>
-        </inlinemediaobject></para>
-      <para>können je nach Type ausgeblendet werden. Einnicht gesetztes
-      Häkchen blendet den Cachetype aus der Listenansicht aus.</para>
-      <para>Mit dem Addi Wpt filter:</para>
-      <para><inlinemediaobject>
-          <imageobject>
-            <imagedata fileref="pics/5_Menues_Filter_Addi.png"/>
-          </imageobject>
-        </inlinemediaobject></para>
-      <para>können Additional Waypoints aus- oder eingeblendet werden. Häkchen
-      gesetzt bedeutet der Additional Waypoint wird angezeigt. Additional
-      Waypoints werden übrigens immer unterhalb des zugehörigen Caches in der
-      Listenansicht angezeigt.</para>
-      <para>Nach dem inzwischen bekannten Prinzip können Behältertypen ein und
-      ausgeblendet werden:</para>
-      <para><inlinemediaobject>
-          <imageobject>
-            <imagedata fileref="pics/5_Menues_Filter_Behaelter.png"/>
-          </imageobject>
-        </inlinemediaobject></para>
-      <para>Der Attributenfilter erlaubt es gezielt Caches zu finden, die mit
-      einem speziellen Attribute versehen sind:</para>
-      <para><inlinemediaobject>
-          <imageobject>
-            <imagedata fileref="pics/5_Menues_Filter_Attribute.png"/>
-          </imageobject>
-        </inlinemediaobject></para>
-      <para>In der Normaleinstelung werden alle Caches angezeigt. In dem hier
-      gezeigten Schirm werden all die Caches ausgeblendet die in keinem
-      Jagdgebiet und wo Tauchausrüstung benötigt in der Listenansicht gezeigt.
-      Alle anderen werden ausgeblendet. Die Attributeauswahl erfolgt durch
-      mehrmaliges Klicken auf das Icon.</para>
+        <title id="verwalten">Verwalten</title>
+        <para>Diese Menügruppe stellt einige nützliche Funktionen zur
+            Massenverwaltung der „Datenbank“, dem Profil, zur Verfügung. Es ist
+            wichtig zu wissen, dass diese Funktionen auf alle sichtbaren Caches in der
+            Listenansicht angewendet werden. Man muss also vorher mit dem Filter
+            arbeiten, um die Caches zu identifizieren, die man kopieren, löschen oder
+            verschieben möchte.N
+        </para>
+        <section>
+            <title>Neuer Wegpunkt</title>
+            <para>Dieser Menüpunkt erzeugt einen neuen Wegpunkt, der nicht
+                automatisch dem aktiven Hauptwegpunkt zugeordnet wird. Nach dem Erzeugen
+                des neuen Wegpunkts wird die Ansicht
+                <literal>Details</literal>
+                geöffnet, in der Du die passenden Daten, wie z.B. Name oder Koordinaten,
+                eintragen kannst.
+            </para>
+        </section>
+        <section>
+            <title>Kopieren</title>
+            <para>Mit dieser Funktion werden die Caches in der Listenansicht in ein
+                Zielverzeichnis kopiert. Die Caches bleiben allerdings in der Datenbank
+                (Profil) erhalten. Im Zielverzeichnis befinden sich nach dem Kopieren
+                alle Cachebeschreibungen (\*.xml), Bilder zu den Caches und die
+                index.xml. Man hat also eine neue Datenbank erzeugt! Diese lässt sich
+                über
+                <literal>Anwendung -&gt; Profil -&gt; laden</literal>
+                öffnen.
+            </para>
+        </section>
+        <section>
+            <title>Verschieben</title>
+            <para>Mit dieser Funktion werden die Caches in der Listenansicht in ein
+                Zielverzeichnis verschoben. Die Caches werden aus der aktuellen
+                Datenbank (Profil) gelöscht. In dem Zielverzeichnis befinden sich nach
+                dem Verschieben alle Cachebeschreibungen (\*.xml), Bilder zu den Caches
+                und die index.xml. Man hat also einen neue Datenbank erzeugt! Diese
+                lässt sich über
+                <literal>Anwendung -&gt; Profil -&gt; laden</literal>
+                öffnen.
+            </para>
+        </section>
+        <section>
+            <title>Löschen</title>
+            <para>Mit dieser Funktion werden die Caches in der aktuellen Datenbank
+                unwiderruflich gelöscht. Man kann also mit dieser Funktion Speicherplatz
+                frei machen.
+            </para>
+        </section>
+        <section>
+            <title>Index neu erstellen</title>
+            <para>Erstellt die Datei index.xml des aktuell geladenen Profils
+                neu.
+            </para>
+        </section>
+        <section>
+            <title id="tbugs_verwalten">Travelbugs verwalten</title>
+            <para>Dieser Menüpunkt öffnet die Travelbug-Verwaltung. Hier werden alle
+                Travelbugs gezeigt, die Du einem Cache entnommen oder in einem Cache
+                abgelegt hast. Entnommene bzw. abgelegte Travelbugs (siehe<xref linkend="detailansicht"/>) werden
+                automatisch der Cacheverwaltung
+                hinzugefügt. Zusätzlich werden automatisch die Daten des Caches sowie
+                das aktuelle Datum hinzugefügt. In der Travelbug-Verwaltung kannst du
+                all diese Daten einsehen oder auch nachträglich ändern.
+            </para>
+        </section>
+        <section>
+            <title>Cachetour</title>
+            <para>Über diesen Menüpunkt wird der Tourenplaner (siehe
+                <xref linkend="tourenplaner"/>
+                ) gestartet.
+            </para>
+        </section>
     </section>
     <section>
-      <title>Umkehren</title>
-      <para>Durch Auswahl diesen Menüpunktes, werden all die Caches
-      eingeblendet, die durch Anwenden des Filters ausgeblendet wurden.</para>
+        <title>Über</title>
+        <section>
+            <title>Über</title>
+            <para>Eine kleine Einführung in CacheWolf. Außerdem werden die Autoren
+                der Software sowie der Link zu wichtigen Webseiten angezeigt.
+            </para>
+        </section>
+        <section>
+            <title>Legende</title>
+            <para>Zeigt die Legende der Farben und Symbole an.</para>
+        </section>
+        <section>
+            <title>WolfLanguage</title>
+            <para>Dieser Menüpunkt öffnet eine Hilfeseite für die im Löser
+                verfügbaren Kommandos (bekommt man übrigens auch direkt in der Ansicht
+                <literal>Löser,</literal>
+                siehe<xref linkend="loeser"/>).
+            </para>
+        </section>
+        <section>
+            <title>System</title>
+            <para>Dieser Menüpunkt zeigt eine Auswahl von Systeminformationen. Diese
+                sind für den Support wichtig.
+            </para>
+        </section>
+        <section>
+            <title>Version Prüfen</title>
+            <para>Prüft auf neue Versionen von CacheWolf (Internetverbindung
+                notwendig!)
+            </para>
+        </section>
     </section>
-    <section>
-      <title>Aufheben</title>
-      <para>Durch Auswahl diesen Menüpunktes wird der Filter ausgeschaltet.
-      Dies geht auch durch einen Klick auf das Filtericon in der Statuszeile
-      (siehe <xref linkend="liste"/>).</para>
-    </section>
-    <section>
-      <title>Markierte ausfiltern</title>
-      <para>In der Listenansicht können bei einzelnen Caches &quot;Häkchen&quot; gesetzt
-      werden. Durch Auswahl diesen Menüpunktes werden all die Caches
-      ausgeblendet, die mit einem Häkchen versehen sind.</para>
-    </section>
-    <section>
-      <title>Nichtmarkierte ausfiltern</title>
-      <para>In der Listenansicht können bei einzelnen Caches &quot;Häkchen&quot; gesetzt
-      werden. Durch Auswahl diesen Menüpunktes werden all die Caches
-      ausgeblendet, die NICHT mit einem Häkchen versehen sind.</para>
-    </section>
-    <section>
-      <title>Zeige Blacklist</title>
-      <para>In der Detailansicht (<xref linkend="detailansicht"/>) können
-      einzelne Caches zur &quot;Blacklist&quot; hinzugefügt werden. Diese Liste wird
-      durch Auswahl diesen Menüpunktes eingeblendet (und dafür alle anderen
-      ausgeblendet).</para>
-    </section>
-  </section>
-  <section>
-    <title id="verwalten">Verwalten</title>
-    <para>Diese Menügruppe stellt einige nützliche Funktionen zur
-    Massenverwaltung der „Datenbank“, dem Profil, zur Verfügung. Es ist
-    wichtig zu wissen, dass diese Funktionen auf alle sichtbaren Caches in der
-    Listenansicht angewendet werden. Man muss also vorher mit dem Filter
-    arbeiten, um die Caches zu identifizieren, die man kopieren, löschen oder
-    verschieben möchte.N</para>
-    <section>
-      <title>Neuer Wegpunkt</title>
-      <para>Dieser Menüpunkt erzeugt einen neuen Wegpunkt, der nicht
-      automatisch dem aktiven Hauptwegpunkt zugeordnet wird. Nach dem Erzeugen
-      des neuen Wegpunkts wird die Ansicht <literal>Details</literal>
-      geöffnet, in der Du die passenden Daten, wie z.B. Name oder Koordinaten,
-      eintragen kannst.</para>
-    </section>
-    <section>
-      <title>Kopieren</title>
-      <para>Mit dieser Funktion werden die Caches in der Listenansicht in ein
-      Zielverzeichnis kopiert. Die Caches bleiben allerdings in der Datenbank
-      (Profil) erhalten. Im Zielverzeichnis befinden sich nach dem Kopieren
-      alle Cachebeschreibungen (\*.xml), Bilder zu den Caches und die
-      index.xml. Man hat also eine neue Datenbank erzeugt! Diese lässt sich
-      über <literal>Anwendung -&gt; Profil -&gt; laden</literal>
-      öffnen.</para>
-    </section>
-    <section>
-      <title>Verschieben</title>
-      <para>Mit dieser Funktion werden die Caches in der Listenansicht in ein
-      Zielverzeichnis verschoben. Die Caches werden aus der aktuellen
-      Datenbank (Profil) gelöscht. In dem Zielverzeichnis befinden sich nach
-      dem Verschieben alle Cachebeschreibungen (\*.xml), Bilder zu den Caches
-      und die index.xml. Man hat also einen neue Datenbank erzeugt! Diese
-      lässt sich über <literal>Anwendung -&gt; Profil -&gt; laden</literal>
-      öffnen.</para>
-    </section>
-    <section>
-      <title>Löschen</title>
-      <para>Mit dieser Funktion werden die Caches in der aktuellen Datenbank
-      unwiderruflich gelöscht. Man kann also mit dieser Funktion Speicherplatz
-      frei machen.</para>
-    </section>
-    <section>
-      <title>Index neu erstellen</title>
-      <para>Erstellt die Datei index.xml des aktuell geladenen Profils
-      neu.</para>
-    </section>
-    <section>
-      <title id="tbugs_verwalten">Travelbugs verwalten</title>
-      <para>Dieser Menüpunkt öffnet die Travelbug-Verwaltung. Hier werden alle
-      Travelbugs gezeigt, die Du einem Cache entnommen oder in einem Cache
-      abgelegt hast. Entnommene bzw. abgelegte Travelbugs (siehe <xref linkend="detailansicht"/>) werden automatisch der Cacheverwaltung
-      hinzugefügt. Zusätzlich werden automatisch die Daten des Caches sowie
-      das aktuelle Datum hinzugefügt. In der Travelbug-Verwaltung kannst du
-      all diese Daten einsehen oder auch nachträglich ändern.</para>
-    </section>
-    <section>
-      <title>Cachetour</title>
-      <para>Über diesen Menüpunkt wird der Tourenplaner (siehe <xref linkend="tourenplaner"/> ) gestartet.</para>
-    </section>
-  </section>
-  <section>
-    <title>Über</title>
-    <section>
-      <title>Über</title>
-      <para>Eine kleine Einführung in CacheWolf. Außerdem werden die Autoren
-      der Software sowie der Link zu wichtigen Webseiten angezeigt.</para>
-    </section>
-    <section>
-      <title>Legende</title>
-      <para>Zeigt die Legende der Farben und Symbole an.</para>
-    </section>
-    <section>
-      <title>WolfLanguage</title>
-      <para>Dieser Menüpunkt öffnet eine Hilfeseite für die im Löser
-      verfügbaren Kommandos (bekommt man übrigens auch direkt in der Ansicht
-      <literal>Löser,</literal> siehe <xref linkend="loeser"/>).</para>
-    </section>
-    <section>
-      <title>System</title>
-      <para>Dieser Menüpunkt zeigt eine Auswahl von Systeminformationen. Diese
-      sind für den Support wichtig.</para>
-    </section>
-    <section>
-      <title>Version Prüfen</title>
-      <para>Prüft auf neue Versionen von CacheWolf (Internetverbindung
-      notwendig!)</para>
-    </section>
-  </section>
 </chapter>

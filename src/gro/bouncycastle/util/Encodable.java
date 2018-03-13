@@ -5,8 +5,7 @@ import ewe.io.IOException;
 /**
  * Interface implemented by objects that can be converted into byte arrays.
  */
-public interface Encodable
-{
+public interface Encodable {
     /**
      * Return a byte array representing the implementing object.
      *
@@ -14,5 +13,5 @@ public interface Encodable
      * @throws java.io.IOException if an issue arises generation the encoding.
      */
     byte[] getEncoded()
-        throws IOException;
+            throws IOException;
 }

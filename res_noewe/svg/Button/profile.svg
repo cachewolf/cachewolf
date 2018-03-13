@@ -1,8 +1,10 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
-<svg x="0" y="0" width="32" height="32.001" overflow="hidden" viewBox="0, 0, 141.73, 141.7344" preserveAspectRatio="xMidYMid" font-size="0" id="black" xml:space="default" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xml="http://www.w3.org/XML/1998/namespace" version="1.1">
-  <defs id="defs19" xml:space="default">
-    <linearGradient x1="82.4466" y1="-42.6168" x2="357.3083" y2="-42.6168" gradientUnits="userSpaceOnUse" gradientTransform="scale(1.125397, 0.8885756)" id="SVGID_Fill1_" xml:space="preserve">
+<svg xmlns:xml="http://www.w3.org/XML/1998/namespace" x="0" y="0" width="32" height="32.001" overflow="hidden"
+     viewBox="0, 0, 141.73, 141.7344" preserveAspectRatio="xMidYMid" font-size="0" id="svg" xml:space="default"
+     xmlns="http://www.w3.org/2000/svg" version="1.1">
+    <defs id="def1" xml:space="default">
+        <linearGradient x1="82.4466" y1="-42.6168" x2="357.3083" y2="-42.6168" gradientUnits="userSpaceOnUse" gradientTransform="scale(1.125397, 0.8885756)" id="SVGID_Fill1_" xml:space="preserve">
       <stop offset="45.1163%" stop-color="#231F1F" stop-opacity="0.690196" id="stop2" xml:space="preserve" />
       <stop offset="86.5116%" stop-color="#6C6464" stop-opacity="0.0980392" id="stop4" xml:space="preserve" />
     </linearGradient>
@@ -94,10 +96,9 @@
       <stop offset="22.7907%" stop-color="#000000" stop-opacity="1" id="stop24-00" xml:space="preserve" />
       <stop offset="100%" stop-color="#FFFFFF" stop-opacity="1" id="stop26-4" xml:space="preserve" />
     </linearGradient>
-  </defs>
-  <title id="title2" xml:space="default">feature-icon-mdWaypoint</title>
-  <g transform="matrix(0.1184266, 0, 0, 0.2015225, 112.4652, 57.87095)" id="g954" xml:space="default">
-    <path d="M121.285 244.291 L223.644 128.809 L157.295 72.7297 L6.35861 184.587 z" filter="url(#Filter_GaussianBlur1_)" stroke-width="0.2" stroke-linejoin="round" id="path10" xml:space="preserve" connector-curvature="0" style="fill:url(#SVGID_Fill1_);" />
+    </defs>
+    <g transform="matrix(0.1184266, 0, 0, 0.2015225, 112.4652, 57.87095)" id="g954" xml:space="default">
+        <path d="M121.285 244.291 L223.644 128.809 L157.295 72.7297 L6.35861 184.587 z" filter="url(#Filter_GaussianBlur1_)" stroke-width="0.2" stroke-linejoin="round" id="path10" xml:space="preserve" connector-curvature="0" style="fill:url(#SVGID_Fill1_);" />
     <path d="M157.688 122.016 L232.358 54.3405 C232.098 49.1064 232.983 51.3923 232.983 62.3854 L233.233 70.2226 C234.233 85.8976 219.607 96.5964 226.108 89.7541 L141.686 187.369 C138.019 194.005 139.686 183.719 142.353 166.801 L142.019 153.2 C142.019 142.207 137.339 121.175 157.688 122.016 z" stroke="url(#SVGID_Stroke1_)" stroke-width="3" stroke-linejoin="round" id="path22" xml:space="preserve" connector-curvature="0" style="fill:url(#SVGID_Fill2_);" />
     <path d="M45.9463 96.5907 L129.696 117.803 C140.579 117.803 141.519 122.941 141.519 133.839 L141.519 180.209 C141.519 191.107 134.065 196.426 115.344 189.52 L32.8912 161.953 C15.4835 156.014 19.3422 121.897 19.3435 117.556 L19.3435 96.5907 C19.3435 85.693 35.0631 96.5907 45.9463 96.5907 z" stroke="url(#SVGID_Stroke2_)" stroke-width="3" stroke-linejoin="round" id="path34" xml:space="preserve" connector-curvature="0" style="fill:url(#SVGID_Fill3_);" />
     <path d="M143.248 92.8417 L198.05 49.8005 L134.521 40.8586 L76.7685 77.717 z" stroke-width="0.2" stroke-linejoin="round" id="path36" xml:space="preserve" connector-curvature="0" style="fill:#F9CC3E;" />
@@ -106,9 +107,9 @@
     <path d="M196.623 48.8007 L135.477 40.2624 L76.85181 76.29021 L78.53941 76.63401 L135.727 41.25751 L195.623 50.05071 z" stroke="#B29331" stroke-width="3" stroke-linejoin="round" id="path42" xml:space="preserve" connector-curvature="0" style="fill:#967D2D;" />
     <line x1="38.4713" y1="105.905" x2="99.35" y2="122.949" stroke="#6C5B24" stroke-width="3" stroke-linejoin="round" id="line44" xml:space="preserve" />
     <line x1="38.0963" y1="107.336" x2="98.975" y2="124.38" stroke="#B29331" stroke-linejoin="round" id="line46" xml:space="preserve" />
-  </g>
-  <g transform="matrix(0.07442645, 0, 0, 0.1266489, 70.88961, 1.401309)" id="g954-4" xml:space="default">
-    <path d="M121.285 244.291 L223.644 128.809 L157.295 72.7297 L6.35861 184.587 z" filter="url(#Filter_GaussianBlur1_-7)" stroke-width="0.2" stroke-linejoin="round" id="path10-5" xml:space="preserve" connector-curvature="0" style="fill:url(#SVGID_Fill1_-5);" />
+    </g>
+    <g transform="matrix(0.07442645, 0, 0, 0.1266489, 70.88961, 1.401309)" id="g954-4" xml:space="default">
+        <path d="M121.285 244.291 L223.644 128.809 L157.295 72.7297 L6.35861 184.587 z" filter="url(#Filter_GaussianBlur1_-7)" stroke-width="0.2" stroke-linejoin="round" id="path10-5" xml:space="preserve" connector-curvature="0" style="fill:url(#SVGID_Fill1_-5);" />
     <path d="M157.688 122.016 L232.358 54.3405 C232.098 49.1064 232.983 51.3923 232.983 62.3854 L233.233 70.2226 C234.233 85.8976 219.607 96.5964 226.108 89.7541 L141.686 187.369 C138.019 194.005 139.686 183.719 142.353 166.801 L142.019 153.2 C142.019 142.207 137.339 121.175 157.688 122.016 z" stroke="url(#SVGID_Stroke1_-7)" stroke-width="3" stroke-linejoin="round" id="path22-1" xml:space="preserve" connector-curvature="0" style="fill:url(#SVGID_Fill2_-5);" />
     <path d="M45.9463 96.5907 L129.696 117.803 C140.579 117.803 141.519 122.941 141.519 133.839 L141.519 180.209 C141.519 191.107 134.065 196.426 115.344 189.52 L32.8912 161.953 C15.4835 156.014 19.3422 121.897 19.3435 117.556 L19.3435 96.5907 C19.3435 85.693 35.0631 96.5907 45.9463 96.5907 z" stroke="url(#SVGID_Stroke2_-6)" stroke-width="3" stroke-linejoin="round" id="path34-2" xml:space="preserve" connector-curvature="0" style="fill:url(#SVGID_Fill3_-8);" />
     <path d="M143.248 92.8417 L198.05 49.8005 L134.521 40.8586 L76.7685 77.717 z" stroke-width="0.2" stroke-linejoin="round" id="path36-1" xml:space="preserve" connector-curvature="0" style="fill:#F9CC3E;" />
@@ -117,9 +118,9 @@
     <path d="M196.623 48.8007 L135.477 40.2624 L76.85181 76.29021 L78.53941 76.63401 L135.727 41.25751 L195.623 50.05071 z" stroke="#B29331" stroke-width="3" stroke-linejoin="round" id="path42-4" xml:space="preserve" connector-curvature="0" style="fill:#967D2D;" />
     <line x1="38.4713" y1="105.905" x2="99.35" y2="122.949" stroke="#6C5B24" stroke-width="3" stroke-linejoin="round" id="line44-7" xml:space="preserve" />
     <line x1="38.0963" y1="107.336" x2="98.975" y2="124.38" stroke="#B29331" stroke-linejoin="round" id="line46-9" xml:space="preserve" />
-  </g>
-  <g transform="matrix(0.1153549, 0, 0, 0.1962955, 2.527439, 2.489985)" id="g954-6" xml:space="default">
-    <path d="M121.285 244.291 L223.644 128.809 L157.295 72.7297 L6.35861 184.587 z" filter="url(#Filter_GaussianBlur1_-72)" stroke-width="0.2" stroke-linejoin="round" id="path10-6" xml:space="preserve" connector-curvature="0" style="fill:url(#SVGID_Fill1_-1);" />
+    </g>
+    <g transform="matrix(0.1153549, 0, 0, 0.1962955, 2.527439, 2.489985)" id="g954-6" xml:space="default">
+        <path d="M121.285 244.291 L223.644 128.809 L157.295 72.7297 L6.35861 184.587 z" filter="url(#Filter_GaussianBlur1_-72)" stroke-width="0.2" stroke-linejoin="round" id="path10-6" xml:space="preserve" connector-curvature="0" style="fill:url(#SVGID_Fill1_-1);" />
     <path d="M157.688 122.016 L232.358 54.3405 C232.098 49.1064 232.983 51.3923 232.983 62.3854 L233.233 70.2226 C234.233 85.8976 219.607 96.5964 226.108 89.7541 L141.686 187.369 C138.019 194.005 139.686 183.719 142.353 166.801 L142.019 153.2 C142.019 142.207 137.339 121.175 157.688 122.016 z" stroke="url(#SVGID_Stroke1_-2)" stroke-width="3" stroke-linejoin="round" id="path22-9" xml:space="preserve" connector-curvature="0" style="fill:url(#SVGID_Fill2_-3);" />
     <path d="M45.9463 96.5907 L129.696 117.803 C140.579 117.803 141.519 122.941 141.519 133.839 L141.519 180.209 C141.519 191.107 134.065 196.426 115.344 189.52 L32.8912 161.953 C15.4835 156.014 19.3422 121.897 19.3435 117.556 L19.3435 96.5907 C19.3435 85.693 35.0631 96.5907 45.9463 96.5907 z" stroke="url(#SVGID_Stroke2_-8)" stroke-width="3" stroke-linejoin="round" id="path34-4" xml:space="preserve" connector-curvature="0" style="fill:url(#SVGID_Fill3_-5);" />
     <path d="M143.248 92.8417 L198.05 49.8005 L134.521 40.8586 L76.7685 77.717 z" stroke-width="0.2" stroke-linejoin="round" id="path36-8" xml:space="preserve" connector-curvature="0" style="fill:#F9CC3E;" />
@@ -128,9 +129,9 @@
     <path d="M196.623 48.8007 L135.477 40.2624 L76.85181 76.29021 L78.53941 76.63401 L135.727 41.25751 L195.623 50.05071 z" stroke="#B29331" stroke-width="3" stroke-linejoin="round" id="path42-2" xml:space="preserve" connector-curvature="0" style="fill:#967D2D;" />
     <line x1="38.4713" y1="105.905" x2="99.35" y2="122.949" stroke="#6C5B24" stroke-width="3" stroke-linejoin="round" id="line44-6" xml:space="preserve" />
     <line x1="38.0963" y1="107.336" x2="98.975" y2="124.38" stroke="#B29331" stroke-linejoin="round" id="line46-2" xml:space="preserve" />
-  </g>
-  <g transform="matrix(0.3134801, 0, 0, 0.5334381, 9.500794, 22.54048)" id="g954-3" xml:space="default">
-    <path d="M121.285 244.291 L223.644 128.809 L157.295 72.7297 L6.35861 184.587 z" filter="url(#Filter_GaussianBlur1_-8)" stroke-width="0.2" stroke-linejoin="round" id="path10-51" xml:space="preserve" connector-curvature="0" style="fill:url(#SVGID_Fill1_-2);" />
+    </g>
+    <g transform="matrix(0.3134801, 0, 0, 0.5334381, 9.500794, 22.54048)" id="g954-3" xml:space="default">
+        <path d="M121.285 244.291 L223.644 128.809 L157.295 72.7297 L6.35861 184.587 z" filter="url(#Filter_GaussianBlur1_-8)" stroke-width="0.2" stroke-linejoin="round" id="path10-51" xml:space="preserve" connector-curvature="0" style="fill:url(#SVGID_Fill1_-2);" />
     <path d="M157.688 122.016 L232.358 54.3405 C232.098 49.1064 232.983 51.3923 232.983 62.3854 L233.233 70.2226 C234.233 85.8976 219.607 96.5964 226.108 89.7541 L141.686 187.369 C138.019 194.005 139.686 183.719 142.353 166.801 L142.019 153.2 C142.019 142.207 137.339 121.175 157.688 122.016 z" stroke="url(#SVGID_Stroke1_-3)" stroke-width="3" stroke-linejoin="round" id="path22-8" xml:space="preserve" connector-curvature="0" style="fill:url(#SVGID_Fill2_-7);" />
     <path d="M45.9463 96.5907 L129.696 117.803 C140.579 117.803 141.519 122.941 141.519 133.839 L141.519 180.209 C141.519 191.107 134.065 196.426 115.344 189.52 L32.8912 161.953 C15.4835 156.014 19.3422 121.897 19.3435 117.556 L19.3435 96.5907 C19.3435 85.693 35.0631 96.5907 45.9463 96.5907 z" stroke="url(#SVGID_Stroke2_-0)" stroke-width="3" stroke-linejoin="round" id="path34-49" xml:space="preserve" connector-curvature="0" style="fill:url(#SVGID_Fill3_-6);" />
     <path d="M143.248 92.8417 L198.05 49.8005 L134.521 40.8586 L76.7685 77.717 z" stroke-width="0.2" stroke-linejoin="round" id="path36-4" xml:space="preserve" connector-curvature="0" style="fill:#F9CC3E;" />
@@ -139,5 +140,5 @@
     <path d="M196.623 48.8007 L135.477 40.2624 L76.85181 76.29021 L78.53941 76.63401 L135.727 41.25751 L195.623 50.05071 z" stroke="#B29331" stroke-width="3" stroke-linejoin="round" id="path42-5" xml:space="preserve" connector-curvature="0" style="fill:#967D2D;" />
     <line x1="38.4713" y1="105.905" x2="99.35" y2="122.949" stroke="#6C5B24" stroke-width="3" stroke-linejoin="round" id="line44-4" xml:space="preserve" />
     <line x1="38.0963" y1="107.336" x2="98.975" y2="124.38" stroke="#B29331" stroke-linejoin="round" id="line46-28" xml:space="preserve" />
-  </g>
+    </g>
 </svg>

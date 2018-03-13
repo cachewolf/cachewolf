@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
-<svg x="0" y="0" width="32" height="32" viewBox="0, 0, 220, 220" preserveAspectRatio="xMidYMid" font-size="0" xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xml="http://www.w3.org/XML/1998/namespace" version="1.1">
+<svg xmlns:xml="http://www.w3.org/XML/1998/namespace" x="0" y="0" width="32" height="32" overflow="hidden" viewBox="0, 0, 220, 220" preserveAspectRatio="xMidYMid" font-size="0" id="svg" xml:space="preserve"  xmlns="http://www.w3.org/2000/svg" version="1.1">
   <g xml:space="preserve">
     <path d="M115.231 29.471 C132.717 30.8078 145.809 36.2447 158.156 44.4051 L169.34 29.7503 C154.521 18.5664 136.447 11.5288 116.81 10.3429 L115.231 29.471 z" stroke-width="0.2" stroke-linejoin="round" xml:space="preserve" style="fill:#808080;" />
     <path d="M27.6381 91.0484 C28.4751 87.9108 29.4973 84.8589 30.6928 81.9012 L17.5663 77.385 C16.3788 80.9126 15.3864 84.5291 14.6018 88.2218 L27.6381 91.0484 z" stroke-width="0.2" stroke-linejoin="round" xml:space="preserve" style="fill:#808080;" />

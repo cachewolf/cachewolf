@@ -21,42 +21,15 @@
  */
 package CacheWolf.imp;
 
-import org.json.JSONArray;
-import org.json.JSONObject;
-
-import com.stevesoft.ewe_pat.Regex;
-
-import CacheWolf.CoordsInput;
-import CacheWolf.MainForm;
-import CacheWolf.MainTab;
-import CacheWolf.Preferences;
-import CacheWolf.Profile;
+import CacheWolf.*;
 import CacheWolf.controls.InfoBox;
-import CacheWolf.database.CWPoint;
-import CacheWolf.database.CacheHolder;
-import CacheWolf.database.CacheHolderDetail;
-import CacheWolf.database.CacheImage;
-import CacheWolf.database.CacheImages;
-import CacheWolf.database.CacheSize;
-import CacheWolf.database.CacheTerrDiff;
-import CacheWolf.database.CacheType;
-import CacheWolf.database.CoordinatePoint;
-import CacheWolf.database.Log;
-import CacheWolf.database.LogList;
-import CacheWolf.database.Travelbug;
+import CacheWolf.database.*;
 import CacheWolf.navi.MovingMap;
 import CacheWolf.navi.Navigate;
 import CacheWolf.navi.Track;
 import CacheWolf.navi.TransformCoordinates;
-import CacheWolf.utils.BetterUTF8Codec;
-import CacheWolf.utils.Common;
-import CacheWolf.utils.DateFormat;
-import CacheWolf.utils.Extractor;
-import CacheWolf.utils.Metrics;
-import CacheWolf.utils.MyLocale;
-import CacheWolf.utils.STRreplace;
-import CacheWolf.utils.SafeXML;
-import CacheWolf.utils.UrlFetcher;
+import CacheWolf.utils.*;
+import com.stevesoft.ewe_pat.Regex;
 import ewe.io.AsciiCodec;
 import ewe.io.File;
 import ewe.io.FileBase;
@@ -65,14 +38,11 @@ import ewe.net.URL;
 import ewe.sys.Time;
 import ewe.sys.Vm;
 import ewe.ui.FormBase;
-import ewe.util.Enumeration;
-import ewe.util.Hashtable;
-import ewe.util.Properties;
-import ewe.util.Utils;
-import ewe.util.Vector;
-import ewe.util.mString;
+import ewe.util.*;
 import ewesoft.xml.MinML;
 import ewesoft.xml.sax.AttributeList;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 /**
  * Class to spider caches from gc.com
@@ -95,11 +65,7 @@ public class GCImporter {
      * Cache was spidered without problems
      */
     public final static int SPIDER_OK = 1;
-    /**
-     * no probs, but exmpl found und not want this
-     */
-    public static int SPIDER_IGNORE = 2;
-
+    final static String hex = ewe.util.TextEncoder.hex;
     private final static String distanceUnit = (Preferences.itself().metricSystem == Metrics.IMPERIAL ? " " + Metrics.getUnit(Metrics.MILES) + " " : " " + Metrics.getUnit(Metrics.KILOMETER) + " ");
     private final static double MAXNROFCACHESPERLISTPAGE = 20.0;
     //# CachTypRestrictions
@@ -124,7 +90,12 @@ public class GCImporter {
     // change to the block (10pages) of the wanted page
     // private final static String gotoPreviousBlock = "ctl00$ContentBody$pgrTop$ctl05";
     private final static String gotoNextBlock = "ctl00$ContentBody$pgrTop$ctl06";
-
+    private final static int pageLimit = 20; // immer maximal 20 Listpages prüfen, dann download bzw aktualisierung (GC meckerte sonst schon mal)
+    private static final String iconsRelativePath = "<img src=\"/images/icons/";
+    /**
+     * no probs, but exmpl found und not want this
+     */
+    public static int SPIDER_IGNORE = 2;
     private static Regex listBlockRex;
     private static Regex lineRex;
     private static Regex numFindsRex;
@@ -136,7 +107,6 @@ public class GCImporter {
     private static Regex waypointRex;
     private static Regex DistDirRex;
     private static Regex DTSRex;
-
     private static Regex difficultyRex;
     private static Regex terrainRex;
     private static Regex backgroundImageUrlRex;
@@ -179,14 +149,12 @@ public class GCImporter {
     // attributes
     private static String attBlockExStart, attBlockExEnd;
     private static String attExStart, attExEnd;
-
     private static Regex listPageTypeRex;
     // Logs
     private static Regex RexUserToken;
     private static String icon_smile;
     private static String icon_camera;
     private static String icon_attended;
-
     private static String getBugByNameUrl = "http://www.geocaching.com/track/search.aspx?k=";
     private static String getBugByGuidUrl = "http://www.geocaching.com/track/details.aspx?guid=";
     private static String getBugByIdUrl = "http://www.geocaching.com/track/details.aspx?id=";
@@ -195,57 +163,191 @@ public class GCImporter {
     private static String bugNotFound;
     private static String bugTotalRecords;
     private static String bugNameStart, bugNameEnd;
-
+    private static double minDistance = 0;
+    private static double maxDistance = 0;
+    private static String WebPage;
+    private static Extractor extractor = new Extractor();
+    private static Extractor extractValue = new Extractor();
+    boolean shortDescRex_not_yet_found = true;
+    Vector spideredUrls;
+    CacheImages oldImages;
+    int spiderCounter;
+    boolean koords_not_yet_found = true;
     private InfoBox infB;
-
     private ImportGui importGui;
     private boolean downloadDescriptionImages;
     private boolean downloadSpoilerImages;
     private boolean downloadLogImages;
     private byte restrictedCacheType = 0;
     private String cacheTypeRestriction;
-    private static double minDistance = 0;
-    private static double maxDistance = 0;
     private int maxNew, newTillNow, numPrivateNew;
     private int maxUpdate, updateTillNow;
     private int maxLogs;
     private boolean doNotgetFound;
     private boolean spiderAllFinds;
-
-    private static String WebPage;
-    private final static int pageLimit = 20; // immer maximal 20 Listpages prüfen, dann download bzw aktualisierung (GC meckerte sonst schon mal)
     private int lastPageVisited;
     private int numFoundUpdates = 0;
     private int numArchivedUpdates = 0;
     private int numAvailableUpdates = 0;
     private int numLogUpdates = 0;
     private int numPremium = 0;
-
     private Vector downloadList = new Vector();
     private Hashtable possibleUpdateList, sureUpdateList;
-
     private String wayPointPage;
     private int wayPointPageIndex = 0;
-
     private CWPoint origin;
     private boolean loggedIn = false;
     private int spiderErrors;
     private int spiderIgnorePremium;
-
-    private static Extractor extractor = new Extractor();
-    private static Extractor extractValue = new Extractor();
-
-    private static final String iconsRelativePath = "<img src=\"/images/icons/";
-
-    boolean shortDescRex_not_yet_found = true;
     private char imageSource;
     private String backgroudImageName;
-
     private CacheHolder newCache;
     private CacheHolderDetail newCacheDetails;
+    private String aCacheDescriptionOfListPage;
+    private String listPagesUrl;
 
     public GCImporter() {
         initialiseProperties();
+    }
+
+    public static boolean setGCLanguage(String toLanguage) {
+        // language now goes into gc account Display Preferences
+        // (is permanent, must be reset)
+        // must do post (get no longer works)
+
+        String languages[] = {"en-US", //00
+                "ca-ES", //01
+                "cs-CZ", //02
+                "da-DK", //03
+                "de-DE", //04
+                "el-GR", //05
+                "et-EE", //06
+                "es-ES", //07
+                "fr-FR", //08
+                "it-IT", //09
+                "ja-JP", //10
+                "ko-KR", //11
+                "lv-LV", //12
+                "lb-LU", //13
+                "hu-HU", //14
+                "nl-NL", //15
+                "nb-NO", //16
+                "pl-PL", //17
+                "pt-PT", //18
+                "ro-RO", //19
+                "ru-RU", //20
+                "fi-FI", //21
+                "sl-SI", //22
+                "sv-SE",//23
+        };
+        String languageCode = "00"; // defaults to "en-US"
+        for (int i = 0; i < languages.length; i++) {
+            if (toLanguage.equals(languages[i])) {
+                languageCode = MyLocale.formatLong(i, "00");
+                break;
+            }
+        }
+        String url = "https://www.geocaching.com/my/recentlyviewedcaches.aspx";
+        try {
+            WebPage = UrlFetcher.fetch(url);
+        } catch (final Exception ex) {
+            Preferences.itself().log("[recentlyviewedcaches]:Exception", ex, true);
+            return false;
+        }
+        final String postData = "__EVENTTARGET=ctl00$ctl30$uxLocaleList$uxLocaleList$ctl" + languageCode + "$uxLocaleItem" //
+                + "&" + "__EVENTARGUMENT="//
+                + getViewState() //
+                + "&" + "ctl00%24ContentBody%24wp=" //
+                ;
+        try {
+            UrlFetcher.setpostData(postData);
+            WebPage = UrlFetcher.fetch(url);
+        } catch (final Exception ex) {
+            Preferences.itself().log("[setGCLanguage] Exception", ex);
+            return false;
+        }
+
+        Extractor e = new Extractor();
+        String languageBlock = e.set(WebPage, "<ul class=\"language-list\">", "</ul>", 0, true).findNext();
+        languageBlock = e.set(languageBlock, "class=\"selected\"", "</li>", 0, true).findNext();
+        String newLanguage = e.set(languageBlock, "$uxLocaleList$ctl", "$uxLocaleItem", 0, true).findNext();
+
+        if (newLanguage.equals(languageCode)) {
+            return true;
+        } else
+            return false;
+
+	/*
+	if (stillLoggedIn(WebPage)) {
+	    // check success
+	    return true;
+	} else {
+	    return false;
+	}
+	*/
+    }
+
+    private static boolean stillLoggedIn(String page) {
+        if (!(page.indexOf("ctl00_hlSignOut") > -1)) {
+            if (!(page.indexOf("ctl00_uxLoginStatus_hlSignOut") > -1)) {
+                Preferences.itself().log(page, null);
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
+     * from WebPage
+     *
+     * @return
+     */
+    private static String getViewState() {
+        String Result = "";
+        int searchPosition = 0;
+        final Regex rexViewstateFieldCount = new Regex("id=\"__VIEWSTATEFIELDCOUNT\" value=\"(.*?)\" />");
+        String sfieldcount;
+        rexViewstateFieldCount.search(WebPage);
+        if (rexViewstateFieldCount.didMatch()) {
+            sfieldcount = rexViewstateFieldCount.stringMatched(1);
+            searchPosition = rexViewstateFieldCount.matchedTo();
+        } else {
+            sfieldcount = "";
+        }
+        int fieldcount = 1;
+        if (sfieldcount.length() > 0) {
+            fieldcount = Common.parseInt(sfieldcount);
+            Result = "&" + "__VIEWSTATEFIELDCOUNT=" + sfieldcount;
+        }
+
+        final Regex rexViewstate = new Regex("id=\"__VIEWSTATE[0-9]?\" value=\"(.*?)\" />");
+        for (int i = 1; i <= fieldcount; i++) {
+            rexViewstate.searchFrom(WebPage, searchPosition);
+            String viewstate;
+            if (rexViewstate.didMatch()) {
+                viewstate = rexViewstate.stringMatched(1);
+                searchPosition = rexViewstate.matchedTo();
+            } else {
+                viewstate = "";
+                Preferences.itself().log("[GCImporter] Viewstate " + i + " not found." + WebPage, null);
+            }
+            if (i == 1)
+                Result = Result + "&" + "__VIEWSTATE=" + URL.encodeURL(viewstate, false); //
+            else
+                Result = Result + "&" + "__VIEWSTATE" + (i - 1) + "=" + URL.encodeURL(viewstate, false); //
+
+        }
+
+        final Regex rexViewstateGenerator = new Regex("id=\"__VIEWSTATEGENERATOR\" value=\"(.*?)\" />");
+        String sViewstateGeneratorValue;
+        rexViewstateGenerator.searchFrom(WebPage, searchPosition);
+        if (rexViewstateGenerator.didMatch()) {
+            sViewstateGeneratorValue = rexViewstateGenerator.stringMatched(1);
+            searchPosition = rexViewstateGenerator.matchedTo();
+            Result = Result + "&" + "__VIEWSTATEGENERATOR=" + sViewstateGeneratorValue;
+        }
+
+        return Result;
     }
 
     private void initialiseProperties() {
@@ -890,8 +992,6 @@ public class GCImporter {
             return "";
     }
 
-    private String aCacheDescriptionOfListPage;
-
     private boolean fillDownloadAndUpdateList(double fromDistance, double toDistance) {
         boolean withinMaxLimits = true;
         int numFinds = getFirstListPage(fromDistance, toDistance);
@@ -1050,7 +1150,7 @@ public class GCImporter {
         return withinMaxLimits;
     }
 
-    // using either the page last visited or calc it  
+    // using either the page last visited or calc it
     private int getFirstListPage(double fromDistance, double toDistance) {
         int numFinds;
         int startPage = 1;
@@ -1176,6 +1276,31 @@ public class GCImporter {
 
         }
     }
+
+    /* 
+    private boolean setGCLanguage(String toLanguage) {
+    // switch to English with
+    // url = "http://www.geocaching.com/account/ManagePreferences.aspx";
+    // todo to work successfull with this perhaps set all values (did not test).
+    String setLanguageEN = "ctl00$ContentBody$uxLanguagePreference=en-US";
+    String commit = "ctl00$ContentBody$uxSave=Save Changes";
+    
+    final String postData = "__EVENTTARGET=" //
+    	+ "&" + "__EVENTARGUMENT="//
+    
+    	+ "&" + UrlFetcher.encodeURL(setLanguageEN, false) //
+    	+ "&" + UrlFetcher.encodeURL(commit, true) //
+    ;
+    try {
+        UrlFetcher.setpostData(postData);
+        page = UrlFetcher.fetch(url);
+        Preferences.itself().log(page, null);
+    } catch (final Exception ex) {
+        Preferences.itself().log("[checkGCSettings] Error at post checkGCSettings", ex);
+        return 1;
+    }	
+    }
+    */
 
     private double examineCacheDescriptionOfListPage(double fromDistance, double toDistance) {
         double distance;
@@ -1600,108 +1725,6 @@ public class GCImporter {
 
     }
 
-    public static boolean setGCLanguage(String toLanguage) {
-        // language now goes into gc account Display Preferences
-        // (is permanent, must be reset)
-        // must do post (get no longer works)
-
-        String languages[] = {"en-US", //00
-                "ca-ES", //01
-                "cs-CZ", //02
-                "da-DK", //03
-                "de-DE", //04
-                "el-GR", //05
-                "et-EE", //06
-                "es-ES", //07
-                "fr-FR", //08
-                "it-IT", //09
-                "ja-JP", //10
-                "ko-KR", //11
-                "lv-LV", //12
-                "lb-LU", //13
-                "hu-HU", //14
-                "nl-NL", //15
-                "nb-NO", //16
-                "pl-PL", //17
-                "pt-PT", //18
-                "ro-RO", //19
-                "ru-RU", //20
-                "fi-FI", //21
-                "sl-SI", //22
-                "sv-SE",//23
-        };
-        String languageCode = "00"; // defaults to "en-US"
-        for (int i = 0; i < languages.length; i++) {
-            if (toLanguage.equals(languages[i])) {
-                languageCode = MyLocale.formatLong(i, "00");
-                break;
-            }
-        }
-        String url = "https://www.geocaching.com/my/recentlyviewedcaches.aspx";
-        try {
-            WebPage = UrlFetcher.fetch(url);
-        } catch (final Exception ex) {
-            Preferences.itself().log("[recentlyviewedcaches]:Exception", ex, true);
-            return false;
-        }
-        final String postData = "__EVENTTARGET=ctl00$ctl30$uxLocaleList$uxLocaleList$ctl" + languageCode + "$uxLocaleItem" //
-                + "&" + "__EVENTARGUMENT="//
-                + getViewState() //
-                + "&" + "ctl00%24ContentBody%24wp=" //
-                ;
-        try {
-            UrlFetcher.setpostData(postData);
-            WebPage = UrlFetcher.fetch(url);
-        } catch (final Exception ex) {
-            Preferences.itself().log("[setGCLanguage] Exception", ex);
-            return false;
-        }
-
-        Extractor e = new Extractor();
-        String languageBlock = e.set(WebPage, "<ul class=\"language-list\">", "</ul>", 0, true).findNext();
-        languageBlock = e.set(languageBlock, "class=\"selected\"", "</li>", 0, true).findNext();
-        String newLanguage = e.set(languageBlock, "$uxLocaleList$ctl", "$uxLocaleItem", 0, true).findNext();
-
-        if (newLanguage.equals(languageCode)) {
-            return true;
-        } else
-            return false;
-
-	/*
-	if (stillLoggedIn(WebPage)) {
-	    // check success
-	    return true;
-	} else {
-	    return false;
-	}
-	*/
-    }
-
-    /* 
-    private boolean setGCLanguage(String toLanguage) {
-    // switch to English with
-    // url = "http://www.geocaching.com/account/ManagePreferences.aspx";
-    // todo to work successfull with this perhaps set all values (did not test).
-    String setLanguageEN = "ctl00$ContentBody$uxLanguagePreference=en-US";
-    String commit = "ctl00$ContentBody$uxSave=Save Changes";
-    
-    final String postData = "__EVENTTARGET=" //
-    	+ "&" + "__EVENTARGUMENT="//
-    
-    	+ "&" + UrlFetcher.encodeURL(setLanguageEN, false) //
-    	+ "&" + UrlFetcher.encodeURL(commit, true) //
-    ;
-    try {
-        UrlFetcher.setpostData(postData);
-        page = UrlFetcher.fetch(url);
-        Preferences.itself().log(page, null);
-    } catch (final Exception ex) {
-        Preferences.itself().log("[checkGCSettings] Error at post checkGCSettings", ex);
-        return 1;
-    }	
-    }
-    */
-
     private byte gcLogin() {
         Preferences.itself().log("[gcLogin]");
         // get username
@@ -1758,16 +1781,6 @@ public class GCImporter {
 
     }
 
-    private static boolean stillLoggedIn(String page) {
-        if (!(page.indexOf("ctl00_hlSignOut") > -1)) {
-            if (!(page.indexOf("ctl00_uxLoginStatus_hlSignOut") > -1)) {
-                Preferences.itself().log(page, null);
-                return false;
-            }
-        }
-        return true;
-    }
-
     private void fetchFirstListPage(int distance) {
         makelistPagesUrl(distance);
         int retrycount = 0;
@@ -1821,61 +1834,6 @@ public class GCImporter {
         }
         return Result;
     }
-
-    /**
-     * from WebPage
-     *
-     * @return
-     */
-    private static String getViewState() {
-        String Result = "";
-        int searchPosition = 0;
-        final Regex rexViewstateFieldCount = new Regex("id=\"__VIEWSTATEFIELDCOUNT\" value=\"(.*?)\" />");
-        String sfieldcount;
-        rexViewstateFieldCount.search(WebPage);
-        if (rexViewstateFieldCount.didMatch()) {
-            sfieldcount = rexViewstateFieldCount.stringMatched(1);
-            searchPosition = rexViewstateFieldCount.matchedTo();
-        } else {
-            sfieldcount = "";
-        }
-        int fieldcount = 1;
-        if (sfieldcount.length() > 0) {
-            fieldcount = Common.parseInt(sfieldcount);
-            Result = "&" + "__VIEWSTATEFIELDCOUNT=" + sfieldcount;
-        }
-
-        final Regex rexViewstate = new Regex("id=\"__VIEWSTATE[0-9]?\" value=\"(.*?)\" />");
-        for (int i = 1; i <= fieldcount; i++) {
-            rexViewstate.searchFrom(WebPage, searchPosition);
-            String viewstate;
-            if (rexViewstate.didMatch()) {
-                viewstate = rexViewstate.stringMatched(1);
-                searchPosition = rexViewstate.matchedTo();
-            } else {
-                viewstate = "";
-                Preferences.itself().log("[GCImporter] Viewstate " + i + " not found." + WebPage, null);
-            }
-            if (i == 1)
-                Result = Result + "&" + "__VIEWSTATE=" + URL.encodeURL(viewstate, false); //
-            else
-                Result = Result + "&" + "__VIEWSTATE" + (i - 1) + "=" + URL.encodeURL(viewstate, false); //
-
-        }
-
-        final Regex rexViewstateGenerator = new Regex("id=\"__VIEWSTATEGENERATOR\" value=\"(.*?)\" />");
-        String sViewstateGeneratorValue;
-        rexViewstateGenerator.searchFrom(WebPage, searchPosition);
-        if (rexViewstateGenerator.didMatch()) {
-            sViewstateGeneratorValue = rexViewstateGenerator.stringMatched(1);
-            searchPosition = rexViewstateGenerator.matchedTo();
-            Result = Result + "&" + "__VIEWSTATEGENERATOR=" + sViewstateGeneratorValue;
-        }
-
-        return Result;
-    }
-
-    private String listPagesUrl;
 
     private void makelistPagesUrl(int distance) {
         listPagesUrl = "https://www.geocaching.com/seek/nearest.aspx";
@@ -2653,10 +2611,6 @@ public class GCImporter {
         }
     }
 
-    Vector spideredUrls;
-    CacheImages oldImages;
-    int spiderCounter;
-
     /**
      * prerequisites:
      * chD.LongDescription must be filled
@@ -2936,8 +2890,6 @@ public class GCImporter {
         }
     }
 
-    boolean koords_not_yet_found = true;
-
     /**
      * Read all additional waypoints from a previously fetched cachepage.
      *
@@ -3045,8 +2997,6 @@ public class GCImporter {
         }
         chD.getParent().setAttribsAsBits(chD.attributes.getAttribsAsBits());
     }
-
-    final static String hex = ewe.util.TextEncoder.hex;
 
     public String encodeUTF8URL(byte[] what) {
         final int max = what.length;

@@ -4,16 +4,14 @@ import ewe.math.BigInteger;
 import ewe.security.SecureRandom;
 import gro.bouncycastle.crypto.Digest;
 import gro.bouncycastle.crypto.macs.HMac;
+
 //import gro.bouncycastle.crypto.params.KeyParameter;
-import gro.bouncycastle.util.Arrays;
-import gro.bouncycastle.util.BigIntegers;
 
 /**
  * A deterministic K calculator based on the algorithm in section 3.2 of RFC 6979.
  */
 public class HMacDSAKCalculator
-    implements DSAKCalculator
-{
+        implements DSAKCalculator {
     private static final BigInteger ZERO = BigInteger.valueOf(0);
 
     private final HMac hMac;
@@ -27,26 +25,22 @@ public class HMacDSAKCalculator
      *
      * @param digest digest to build the HMAC on.
      */
-    public HMacDSAKCalculator(Digest digest)
-    {
+    public HMacDSAKCalculator(Digest digest) {
         this.hMac = new HMac(digest);
         this.V = new byte[hMac.getMacSize()];
         this.K = new byte[hMac.getMacSize()];
     }
 
-    public boolean isDeterministic()
-    {
+    public boolean isDeterministic() {
         return true;
     }
 
-    public void init(BigInteger n, SecureRandom random)
-    {
+    public void init(BigInteger n, SecureRandom random) {
         throw new IllegalStateException("Operation not supported");
     }
 
-    public void init(BigInteger n, BigInteger d, byte[] message)
-    {
-    	throw new UnsupportedClassVersionError();/*
+    public void init(BigInteger n, BigInteger d, byte[] message) {
+        throw new UnsupportedClassVersionError();/*
 
         this.n = n;
 
@@ -98,11 +92,11 @@ public class HMacDSAKCalculator
         hMac.update(V, 0, V.length);
 
         hMac.doFinal(V, 0);
-*/    }
+*/
+    }
 
-    public BigInteger nextK()
-    {
-    	throw new UnsupportedClassVersionError();/*
+    public BigInteger nextK() {
+        throw new UnsupportedClassVersionError();/*
         byte[] t = new byte[((n.bitLength() + 7) / 8)];
 
         for (;;)
@@ -138,14 +132,13 @@ public class HMacDSAKCalculator
 
             hMac.doFinal(V, 0);
         }
-*/    }
+*/
+    }
 
-    private BigInteger bitsToInt(byte[] t)
-    {
+    private BigInteger bitsToInt(byte[] t) {
         BigInteger v = new BigInteger(1, t);
 
-        if (t.length * 8 > n.bitLength())
-        {
+        if (t.length * 8 > n.bitLength()) {
             v = v.shiftRight(t.length * 8 - n.bitLength());
         }
 

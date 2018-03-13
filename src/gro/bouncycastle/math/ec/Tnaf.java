@@ -9,12 +9,7 @@ import ewe.math.BigInteger;
  * by Jerome A. Solinas. The paper first appeared in the Proceedings of
  * Crypto 1997.
  */
-class Tnaf
-{
-    private static final BigInteger MINUS_ONE = ECConstants.ONE.negate();
-    private static final BigInteger MINUS_TWO = ECConstants.TWO.negate();
-    private static final BigInteger MINUS_THREE = ECConstants.THREE.negate();
-
+class Tnaf {
     /**
      * The window width of WTNAF. The standard value of 4 is slightly less
      * than optimal for running time, but keeps space requirements for
@@ -26,61 +21,59 @@ class Tnaf
      * p. 121-122
      */
     public static final byte WIDTH = 4;
-
     /**
      * 2<sup>4</sup>
      */
     public static final byte POW_2_WIDTH = 16;
-
-    /**
-     * The <code>&alpha;<sub>u</sub></code>'s for <code>a=0</code> as an array
-     * of <code>ZTauElement</code>s.
-     */
-    public static final ZTauElement[] alpha0 = {
-        null,
-        new ZTauElement(ECConstants.ONE, ECConstants.ZERO), null,
-        new ZTauElement(MINUS_THREE, MINUS_ONE), null,
-        new ZTauElement(MINUS_ONE, MINUS_ONE), null,
-        new ZTauElement(ECConstants.ONE, MINUS_ONE), null
-    };
-
     /**
      * The <code>&alpha;<sub>u</sub></code>'s for <code>a=0</code> as an array
      * of TNAFs.
      */
     public static final byte[][] alpha0Tnaf = {
-        null, {1}, null, {-1, 0, 1}, null, {1, 0, 1}, null, {-1, 0, 0, 1}
+            null, {1}, null, {-1, 0, 1}, null, {1, 0, 1}, null, {-1, 0, 0, 1}
     };
-
-    /**
-     * The <code>&alpha;<sub>u</sub></code>'s for <code>a=1</code> as an array
-     * of <code>ZTauElement</code>s.
-     */
-    public static final ZTauElement[] alpha1 = {null,
-        new ZTauElement(ECConstants.ONE, ECConstants.ZERO), null,
-        new ZTauElement(MINUS_THREE, ECConstants.ONE), null,
-        new ZTauElement(MINUS_ONE, ECConstants.ONE), null,
-        new ZTauElement(ECConstants.ONE, ECConstants.ONE), null
-    };
-
     /**
      * The <code>&alpha;<sub>u</sub></code>'s for <code>a=1</code> as an array
      * of TNAFs.
      */
     public static final byte[][] alpha1Tnaf = {
-        null, {1}, null, {-1, 0, 1}, null, {1, 0, 1}, null, {-1, 0, 0, -1}
+            null, {1}, null, {-1, 0, 1}, null, {1, 0, 1}, null, {-1, 0, 0, -1}
+    };
+    private static final BigInteger MINUS_ONE = ECConstants.ONE.negate();
+    private static final BigInteger MINUS_TWO = ECConstants.TWO.negate();
+    private static final BigInteger MINUS_THREE = ECConstants.THREE.negate();
+    /**
+     * The <code>&alpha;<sub>u</sub></code>'s for <code>a=0</code> as an array
+     * of <code>ZTauElement</code>s.
+     */
+    public static final ZTauElement[] alpha0 = {
+            null,
+            new ZTauElement(ECConstants.ONE, ECConstants.ZERO), null,
+            new ZTauElement(MINUS_THREE, MINUS_ONE), null,
+            new ZTauElement(MINUS_ONE, MINUS_ONE), null,
+            new ZTauElement(ECConstants.ONE, MINUS_ONE), null
+    };
+    /**
+     * The <code>&alpha;<sub>u</sub></code>'s for <code>a=1</code> as an array
+     * of <code>ZTauElement</code>s.
+     */
+    public static final ZTauElement[] alpha1 = {null,
+            new ZTauElement(ECConstants.ONE, ECConstants.ZERO), null,
+            new ZTauElement(MINUS_THREE, ECConstants.ONE), null,
+            new ZTauElement(MINUS_ONE, ECConstants.ONE), null,
+            new ZTauElement(ECConstants.ONE, ECConstants.ONE), null
     };
 
     /**
      * Computes the norm of an element <code>&lambda;</code> of
      * <code><b>Z</b>[&tau;]</code>.
-     * @param mu The parameter <code>&mu;</code> of the elliptic curve.
+     *
+     * @param mu     The parameter <code>&mu;</code> of the elliptic curve.
      * @param lambda The element <code>&lambda;</code> of
-     * <code><b>Z</b>[&tau;]</code>.
+     *               <code><b>Z</b>[&tau;]</code>.
      * @return The norm of <code>&lambda;</code>.
      */
-    public static BigInteger norm(final byte mu, ZTauElement lambda)
-    {
+    public static BigInteger norm(final byte mu, ZTauElement lambda) {
         BigInteger norm;
 
         // s1 = u^2
@@ -92,16 +85,11 @@ class Tnaf
         // s3 = 2 * v^2
         BigInteger s3 = lambda.v.multiply(lambda.v).shiftLeft(1);
 
-        if (mu == 1)
-        {
+        if (mu == 1) {
             norm = s1.add(s2).add(s3);
-        }
-        else if (mu == -1)
-        {
+        } else if (mu == -1) {
             norm = s1.subtract(s2).add(s3);
-        }
-        else
-        {
+        } else {
             throw new IllegalArgumentException("mu must be 1 or -1");
         }
 
@@ -112,17 +100,17 @@ class Tnaf
      * Computes the norm of an element <code>&lambda;</code> of
      * <code><b>R</b>[&tau;]</code>, where <code>&lambda; = u + v&tau;</code>
      * and <code>u</code> and <code>u</code> are real numbers (elements of
-     * <code><b>R</b></code>). 
+     * <code><b>R</b></code>).
+     *
      * @param mu The parameter <code>&mu;</code> of the elliptic curve.
-     * @param u The real part of the element <code>&lambda;</code> of
-     * <code><b>R</b>[&tau;]</code>.
-     * @param v The <code>&tau;</code>-adic part of the element
-     * <code>&lambda;</code> of <code><b>R</b>[&tau;]</code>.
+     * @param u  The real part of the element <code>&lambda;</code> of
+     *           <code><b>R</b>[&tau;]</code>.
+     * @param v  The <code>&tau;</code>-adic part of the element
+     *           <code>&lambda;</code> of <code><b>R</b>[&tau;]</code>.
      * @return The norm of <code>&lambda;</code>.
      */
     public static SimpleBigDecimal norm(final byte mu, SimpleBigDecimal u,
-            SimpleBigDecimal v)
-    {
+                                        SimpleBigDecimal v) {
         SimpleBigDecimal norm;
 
         // s1 = u^2
@@ -134,16 +122,11 @@ class Tnaf
         // s3 = 2 * v^2
         SimpleBigDecimal s3 = v.multiply(v).shiftLeft(1);
 
-        if (mu == 1)
-        {
+        if (mu == 1) {
             norm = s1.add(s2).add(s3);
-        }
-        else if (mu == -1)
-        {
+        } else if (mu == -1) {
             norm = s1.subtract(s2).add(s3);
-        }
-        else
-        {
+        } else {
             throw new IllegalArgumentException("mu must be 1 or -1");
         }
 
@@ -155,26 +138,24 @@ class Tnaf
      * to an element of <code><b>Z</b>[&tau;]</code>, such that their difference
      * has minimal norm. <code>&lambda;</code> is given as
      * <code>&lambda; = &lambda;<sub>0</sub> + &lambda;<sub>1</sub>&tau;</code>.
+     *
      * @param lambda0 The component <code>&lambda;<sub>0</sub></code>.
      * @param lambda1 The component <code>&lambda;<sub>1</sub></code>.
-     * @param mu The parameter <code>&mu;</code> of the elliptic curve. Must
-     * equal 1 or -1.
+     * @param mu      The parameter <code>&mu;</code> of the elliptic curve. Must
+     *                equal 1 or -1.
      * @return The rounded element of <code><b>Z</b>[&tau;]</code>.
      * @throws IllegalArgumentException if <code>lambda0</code> and
-     * <code>lambda1</code> do not have same scale.
+     *                                  <code>lambda1</code> do not have same scale.
      */
     public static ZTauElement round(SimpleBigDecimal lambda0,
-            SimpleBigDecimal lambda1, byte mu)
-    {
+                                    SimpleBigDecimal lambda1, byte mu) {
         int scale = lambda0.getScale();
-        if (lambda1.getScale() != scale)
-        {
+        if (lambda1.getScale() != scale) {
             throw new IllegalArgumentException("lambda0 and lambda1 do not " +
                     "have same scale");
         }
 
-        if (!((mu == 1) || (mu == -1)))
-        {
+        if (!((mu == 1) || (mu == -1))) {
             throw new IllegalArgumentException("mu must be 1 or -1");
         }
 
@@ -186,12 +167,9 @@ class Tnaf
 
         // eta = 2*eta0 + mu*eta1
         SimpleBigDecimal eta = eta0.add(eta0);
-        if (mu == 1)
-        {
+        if (mu == 1) {
             eta = eta.add(eta1);
-        }
-        else
-        {
+        } else {
             // mu == -1
             eta = eta.subtract(eta1);
         }
@@ -202,13 +180,10 @@ class Tnaf
         SimpleBigDecimal fourEta1 = threeEta1.add(eta1);
         SimpleBigDecimal check1;
         SimpleBigDecimal check2;
-        if (mu == 1)
-        {
+        if (mu == 1) {
             check1 = eta0.subtract(threeEta1);
             check2 = eta0.add(fourEta1);
-        }
-        else
-        {
+        } else {
             // mu == -1
             check1 = eta0.add(threeEta1);
             check2 = eta0.subtract(fourEta1);
@@ -218,44 +193,30 @@ class Tnaf
         byte h1 = 0;
 
         // if eta >= 1
-        if (eta.compareTo(ECConstants.ONE) >= 0)
-        {
-            if (check1.compareTo(MINUS_ONE) < 0)
-            {
+        if (eta.compareTo(ECConstants.ONE) >= 0) {
+            if (check1.compareTo(MINUS_ONE) < 0) {
                 h1 = mu;
-            }
-            else
-            {
+            } else {
                 h0 = 1;
             }
-        }
-        else
-        {
+        } else {
             // eta < 1
-            if (check2.compareTo(ECConstants.TWO) >= 0)
-            {
+            if (check2.compareTo(ECConstants.TWO) >= 0) {
                 h1 = mu;
             }
         }
 
         // if eta < -1
-        if (eta.compareTo(MINUS_ONE) < 0)
-        {
-            if (check1.compareTo(ECConstants.ONE) >= 0)
-            {
-                h1 = (byte)-mu;
-            }
-            else
-            {
+        if (eta.compareTo(MINUS_ONE) < 0) {
+            if (check1.compareTo(ECConstants.ONE) >= 0) {
+                h1 = (byte) -mu;
+            } else {
                 h0 = -1;
             }
-        }
-        else
-        {
+        } else {
             // eta >= -1
-            if (check2.compareTo(MINUS_TWO) < 0)
-            {
-                h1 = (byte)-mu;
+            if (check2.compareTo(MINUS_TWO) < 0) {
+                h1 = (byte) -mu;
             }
         }
 
@@ -268,22 +229,22 @@ class Tnaf
      * Approximate division by <code>n</code>. For an integer
      * <code>k</code>, the value <code>&lambda; = s k / n</code> is
      * computed to <code>c</code> bits of accuracy.
-     * @param k The parameter <code>k</code>.
-     * @param s The curve parameter <code>s<sub>0</sub></code> or
-     * <code>s<sub>1</sub></code>.
+     *
+     * @param k  The parameter <code>k</code>.
+     * @param s  The curve parameter <code>s<sub>0</sub></code> or
+     *           <code>s<sub>1</sub></code>.
      * @param vm The Lucas Sequence element <code>V<sub>m</sub></code>.
-     * @param a The parameter <code>a</code> of the elliptic curve.
-     * @param m The bit length of the finite field
-     * <code><b>F</b><sub>m</sub></code>.
-     * @param c The number of bits of accuracy, i.e. the scale of the returned
-     * <code>SimpleBigDecimal</code>.
+     * @param a  The parameter <code>a</code> of the elliptic curve.
+     * @param m  The bit length of the finite field
+     *           <code><b>F</b><sub>m</sub></code>.
+     * @param c  The number of bits of accuracy, i.e. the scale of the returned
+     *           <code>SimpleBigDecimal</code>.
      * @return The value <code>&lambda; = s k / n</code> computed to
      * <code>c</code> bits of accuracy.
      */
     public static SimpleBigDecimal approximateDivisionByN(BigInteger k,
-            BigInteger s, BigInteger vm, byte a, int m, int c)
-    {
-        int _k = (m + 5)/2 + c;
+                                                          BigInteger s, BigInteger vm, byte a, int m, int c) {
+        int _k = (m + 5) / 2 + c;
         BigInteger ns = k.shiftRight(m - _k - 2 + a);
 
         BigInteger gs = s.multiply(ns);
@@ -293,9 +254,8 @@ class Tnaf
         BigInteger js = vm.multiply(hs);
 
         BigInteger gsPlusJs = gs.add(js);
-        BigInteger ls = gsPlusJs.shiftRight(_k-c);
-        if (gsPlusJs.testBit(_k-c-1))
-        {
+        BigInteger ls = gsPlusJs.shiftRight(_k - c);
+        if (gsPlusJs.testBit(_k - c - 1)) {
             // round up
             ls = ls.add(ECConstants.ONE);
         }
@@ -306,18 +266,17 @@ class Tnaf
     /**
      * Computes the <code>&tau;</code>-adic NAF (non-adjacent form) of an
      * element <code>&lambda;</code> of <code><b>Z</b>[&tau;]</code>.
-     * @param mu The parameter <code>&mu;</code> of the elliptic curve.
+     *
+     * @param mu     The parameter <code>&mu;</code> of the elliptic curve.
      * @param lambda The element <code>&lambda;</code> of
-     * <code><b>Z</b>[&tau;]</code>.
+     *               <code><b>Z</b>[&tau;]</code>.
      * @return The <code>&tau;</code>-adic NAF of <code>&lambda;</code>.
      */
-    public static byte[] tauAdicNaf(byte mu, ZTauElement lambda)
-    {
-        if (!((mu == 1) || (mu == -1)))
-        {
+    public static byte[] tauAdicNaf(byte mu, ZTauElement lambda) {
+        if (!((mu == 1) || (mu == -1))) {
             throw new IllegalArgumentException("mu must be 1 or -1");
         }
-        
+
         BigInteger norm = norm(mu, lambda);
 
         // Ceiling of log2 of the norm 
@@ -336,38 +295,28 @@ class Tnaf
         BigInteger r0 = lambda.u;
         BigInteger r1 = lambda.v;
 
-        while(!((r0.equals(ECConstants.ZERO)) && (r1.equals(ECConstants.ZERO))))
-        {
+        while (!((r0.equals(ECConstants.ZERO)) && (r1.equals(ECConstants.ZERO)))) {
             // If r0 is odd
-            if (r0.testBit(0))
-            {
+            if (r0.testBit(0)) {
                 u[i] = (byte) ECConstants.TWO.subtract((r0.subtract(r1.shiftLeft(1))).mod(ECConstants.FOUR)).intValue();
 
                 // r0 = r0 - u[i]
-                if (u[i] == 1)
-                {
+                if (u[i] == 1) {
                     r0 = r0.clearBit(0);
-                }
-                else
-                {
+                } else {
                     // u[i] == -1
                     r0 = r0.add(ECConstants.ONE);
                 }
                 length = i;
-            }
-            else
-            {
+            } else {
                 u[i] = 0;
             }
 
             BigInteger t = r0;
             BigInteger s = r0.shiftRight(1);
-            if (mu == 1)
-            {
+            if (mu == 1) {
                 r0 = r1.add(s);
-            }
-            else
-            {
+            } else {
                 // mu == -1
                 r0 = r1.subtract(s);
             }
@@ -386,68 +335,63 @@ class Tnaf
 
     /**
      * Applies the operation <code>&tau;()</code> to an
-     * <code>ECPoint.AbstractF2m</code>. 
+     * <code>ECPoint.AbstractF2m</code>.
+     *
      * @param p The ECPoint.AbstractF2m to which <code>&tau;()</code> is applied.
      * @return <code>&tau;(p)</code>
      */
-    public static ECPoint.AbstractF2m tau(ECPoint.AbstractF2m p)
-    {
+    public static ECPoint.AbstractF2m tau(ECPoint.AbstractF2m p) {
         return p.tau();
     }
 
     /**
      * Returns the parameter <code>&mu;</code> of the elliptic curve.
+     *
      * @param curve The elliptic curve from which to obtain <code>&mu;</code>.
-     * The curve must be a Koblitz curve, i.e. <code>a</code> equals
-     * <code>0</code> or <code>1</code> and <code>b</code> equals
-     * <code>1</code>. 
+     *              The curve must be a Koblitz curve, i.e. <code>a</code> equals
+     *              <code>0</code> or <code>1</code> and <code>b</code> equals
+     *              <code>1</code>.
      * @return <code>&mu;</code> of the elliptic curve.
      * @throws IllegalArgumentException if the given ECCurve is not a Koblitz
-     * curve.
+     *                                  curve.
      */
-    public static byte getMu(ECCurve.AbstractF2m curve)
-    {
-        if (!curve.isKoblitz())
-        {
+    public static byte getMu(ECCurve.AbstractF2m curve) {
+        if (!curve.isKoblitz()) {
             throw new IllegalArgumentException("No Koblitz curve (ABC), TNAF multiplication not possible");
         }
 
-        if (curve.getA().isZero())
-        {
+        if (curve.getA().isZero()) {
             return -1;
         }
 
         return 1;
     }
 
-    public static byte getMu(ECFieldElement curveA)
-    {
-        return (byte)(curveA.isZero() ? -1 : 1);
+    public static byte getMu(ECFieldElement curveA) {
+        return (byte) (curveA.isZero() ? -1 : 1);
     }
 
-    public static byte getMu(int curveA)
-    {
-        return (byte)(curveA == 0 ? -1 : 1);
+    public static byte getMu(int curveA) {
+        return (byte) (curveA == 0 ? -1 : 1);
     }
 
     /**
      * Calculates the Lucas Sequence elements <code>U<sub>k-1</sub></code> and
      * <code>U<sub>k</sub></code> or <code>V<sub>k-1</sub></code> and
      * <code>V<sub>k</sub></code>.
-     * @param mu The parameter <code>&mu;</code> of the elliptic curve.
-     * @param k The index of the second element of the Lucas Sequence to be
-     * returned.
+     *
+     * @param mu  The parameter <code>&mu;</code> of the elliptic curve.
+     * @param k   The index of the second element of the Lucas Sequence to be
+     *            returned.
      * @param doV If set to true, computes <code>V<sub>k-1</sub></code> and
-     * <code>V<sub>k</sub></code>, otherwise <code>U<sub>k-1</sub></code> and
-     * <code>U<sub>k</sub></code>.
+     *            <code>V<sub>k</sub></code>, otherwise <code>U<sub>k-1</sub></code> and
+     *            <code>U<sub>k</sub></code>.
      * @return An array with 2 elements, containing <code>U<sub>k-1</sub></code>
      * and <code>U<sub>k</sub></code> or <code>V<sub>k-1</sub></code>
      * and <code>V<sub>k</sub></code>.
      */
-    public static BigInteger[] getLucas(byte mu, int k, boolean doV)
-    {
-        if (!((mu == 1) || (mu == -1)))
-        {
+    public static BigInteger[] getLucas(byte mu, int k, boolean doV) {
+        if (!((mu == 1) || (mu == -1))) {
             throw new IllegalArgumentException("mu must be 1 or -1");
         }
 
@@ -455,31 +399,24 @@ class Tnaf
         BigInteger u1;
         BigInteger u2;
 
-        if (doV)
-        {
+        if (doV) {
             u0 = ECConstants.TWO;
             u1 = BigInteger.valueOf(mu);
-        }
-        else
-        {
+        } else {
             u0 = ECConstants.ZERO;
             u1 = ECConstants.ONE;
         }
 
-        for (int i = 1; i < k; i++)
-        {
+        for (int i = 1; i < k; i++) {
             // u2 = mu*u1 - 2*u0;
             BigInteger s = null;
-            if (mu == 1)
-            {
+            if (mu == 1) {
                 s = u1;
-            }
-            else
-            {
+            } else {
                 // mu == -1
                 s = u1.negate();
             }
-            
+
             u2 = s.subtract(u0.shiftLeft(1));
             u0 = u1;
             u1 = u2;
@@ -494,27 +431,21 @@ class Tnaf
     /**
      * Computes the auxiliary value <code>t<sub>w</sub></code>. If the width is
      * 4, then for <code>mu = 1</code>, <code>t<sub>w</sub> = 6</code> and for
-     * <code>mu = -1</code>, <code>t<sub>w</sub> = 10</code> 
+     * <code>mu = -1</code>, <code>t<sub>w</sub> = 10</code>
+     *
      * @param mu The parameter <code>&mu;</code> of the elliptic curve.
-     * @param w The window width of the WTNAF.
+     * @param w  The window width of the WTNAF.
      * @return the auxiliary value <code>t<sub>w</sub></code>
      */
-    public static BigInteger getTw(byte mu, int w)
-    {
-        if (w == 4)
-        {
-            if (mu == 1)
-            {
+    public static BigInteger getTw(byte mu, int w) {
+        if (w == 4) {
+            if (mu == 1) {
                 return BigInteger.valueOf(6);
-            }
-            else
-            {
+            } else {
                 // mu == -1
                 return BigInteger.valueOf(10);
             }
-        }
-        else
-        {
+        } else {
             // For w <> 4, the values must be computed
             BigInteger[] us = getLucas(mu, w, false);
             BigInteger twoToW = ECConstants.ZERO.setBit(w);
@@ -529,16 +460,15 @@ class Tnaf
 
     /**
      * Computes the auxiliary values <code>s<sub>0</sub></code> and
-     * <code>s<sub>1</sub></code> used for partial modular reduction. 
+     * <code>s<sub>1</sub></code> used for partial modular reduction.
+     *
      * @param curve The elliptic curve for which to compute
-     * <code>s<sub>0</sub></code> and <code>s<sub>1</sub></code>.
+     *              <code>s<sub>0</sub></code> and <code>s<sub>1</sub></code>.
      * @throws IllegalArgumentException if <code>curve</code> is not a
-     * Koblitz curve (Anomalous Binary Curve, ABC).
+     *                                  Koblitz curve (Anomalous Binary Curve, ABC).
      */
-    public static BigInteger[] getSi(ECCurve.AbstractF2m curve)
-    {
-        if (!curve.isKoblitz())
-        {
+    public static BigInteger[] getSi(ECCurve.AbstractF2m curve) {
+        if (!curve.isKoblitz()) {
             throw new IllegalArgumentException("si is defined for Koblitz curves only");
         }
 
@@ -548,8 +478,7 @@ class Tnaf
         int shifts = getShiftsForCofactor(curve.getCofactor());
         int index = m + 3 - a;
         BigInteger[] ui = getLucas(mu, index, false);
-        if (mu == 1)
-        {
+        if (mu == 1) {
             ui[0] = ui[0].negate();
             ui[1] = ui[1].negate();
         }
@@ -557,17 +486,15 @@ class Tnaf
         BigInteger dividend0 = ECConstants.ONE.add(ui[1]).shiftRight(shifts);
         BigInteger dividend1 = ECConstants.ONE.add(ui[0]).shiftRight(shifts).negate();
 
-        return new BigInteger[] { dividend0, dividend1 };
+        return new BigInteger[]{dividend0, dividend1};
     }
 
-    public static BigInteger[] getSi(int fieldSize, int curveA, BigInteger cofactor)
-    {
+    public static BigInteger[] getSi(int fieldSize, int curveA, BigInteger cofactor) {
         byte mu = getMu(curveA);
         int shifts = getShiftsForCofactor(cofactor);
         int index = fieldSize + 3 - curveA;
         BigInteger[] ui = getLucas(mu, index, false);
-        if (mu == 1)
-        {
+        if (mu == 1) {
             ui[0] = ui[0].negate();
             ui[1] = ui[1].negate();
         }
@@ -575,19 +502,15 @@ class Tnaf
         BigInteger dividend0 = ECConstants.ONE.add(ui[1]).shiftRight(shifts);
         BigInteger dividend1 = ECConstants.ONE.add(ui[0]).shiftRight(shifts).negate();
 
-        return new BigInteger[] { dividend0, dividend1 };
+        return new BigInteger[]{dividend0, dividend1};
     }
 
-    protected static int getShiftsForCofactor(BigInteger h)
-    {
-        if (h != null)
-        {
-            if (h.equals(ECConstants.TWO))
-            {
+    protected static int getShiftsForCofactor(BigInteger h) {
+        if (h != null) {
+            if (h.equals(ECConstants.TWO)) {
                 return 1;
             }
-            if (h.equals(ECConstants.FOUR))
-            {
+            if (h.equals(ECConstants.FOUR)) {
                 return 2;
             }
         }
@@ -598,27 +521,24 @@ class Tnaf
     /**
      * Partial modular reduction modulo
      * <code>(&tau;<sup>m</sup> - 1)/(&tau; - 1)</code>.
-     * @param k The integer to be reduced.
-     * @param m The bitlength of the underlying finite field.
-     * @param a The parameter <code>a</code> of the elliptic curve.
-     * @param s The auxiliary values <code>s<sub>0</sub></code> and
-     * <code>s<sub>1</sub></code>.
+     *
+     * @param k  The integer to be reduced.
+     * @param m  The bitlength of the underlying finite field.
+     * @param a  The parameter <code>a</code> of the elliptic curve.
+     * @param s  The auxiliary values <code>s<sub>0</sub></code> and
+     *           <code>s<sub>1</sub></code>.
      * @param mu The parameter &mu; of the elliptic curve.
-     * @param c The precision (number of bits of accuracy) of the partial
-     * modular reduction.
+     * @param c  The precision (number of bits of accuracy) of the partial
+     *           modular reduction.
      * @return <code>&rho; := k partmod (&tau;<sup>m</sup> - 1)/(&tau; - 1)</code>
      */
     public static ZTauElement partModReduction(BigInteger k, int m, byte a,
-            BigInteger[] s, byte mu, byte c)
-    {
+                                               BigInteger[] s, byte mu, byte c) {
         // d0 = s[0] + mu*s[1]; mu is either 1 or -1
         BigInteger d0;
-        if (mu == 1)
-        {
+        if (mu == 1) {
             d0 = s[0].add(s[1]);
-        }
-        else
-        {
+        } else {
             d0 = s[0].subtract(s[1]);
         }
 
@@ -627,7 +547,7 @@ class Tnaf
 
         SimpleBigDecimal lambda0 = approximateDivisionByN(
                 k, s[0], vm, a, m, c);
-        
+
         SimpleBigDecimal lambda1 = approximateDivisionByN(
                 k, s[1], vm, a, m, c);
 
@@ -639,7 +559,7 @@ class Tnaf
 
         // r1 = s1*q0 - s0*q1
         BigInteger r1 = s[1].multiply(q.u).subtract(s[0].multiply(q.v));
-        
+
         return new ZTauElement(r0, r1);
     }
 
@@ -647,18 +567,18 @@ class Tnaf
      * Multiplies a {@link org.bouncycastle.math.ec.ECPoint.AbstractF2m ECPoint.AbstractF2m}
      * by a <code>BigInteger</code> using the reduced <code>&tau;</code>-adic
      * NAF (RTNAF) method.
+     *
      * @param p The ECPoint.AbstractF2m to multiply.
      * @param k The <code>BigInteger</code> by which to multiply <code>p</code>.
      * @return <code>k * p</code>
      */
-    public static ECPoint.AbstractF2m multiplyRTnaf(ECPoint.AbstractF2m p, BigInteger k)
-    {
+    public static ECPoint.AbstractF2m multiplyRTnaf(ECPoint.AbstractF2m p, BigInteger k) {
         ECCurve.AbstractF2m curve = (ECCurve.AbstractF2m) p.getCurve();
         int m = curve.getFieldSize();
         int a = curve.getA().toBigInteger().intValue();
         byte mu = getMu(a);
         BigInteger[] s = curve.getSi();
-        ZTauElement rho = partModReduction(k, m, (byte)a, s, mu, (byte)10);
+        ZTauElement rho = partModReduction(k, m, (byte) a, s, mu, (byte) 10);
 
         return multiplyTnaf(p, rho);
     }
@@ -667,14 +587,14 @@ class Tnaf
      * Multiplies a {@link org.bouncycastle.math.ec.ECPoint.AbstractF2m ECPoint.AbstractF2m}
      * by an element <code>&lambda;</code> of <code><b>Z</b>[&tau;]</code>
      * using the <code>&tau;</code>-adic NAF (TNAF) method.
-     * @param p The ECPoint.AbstractF2m to multiply.
+     *
+     * @param p      The ECPoint.AbstractF2m to multiply.
      * @param lambda The element <code>&lambda;</code> of
-     * <code><b>Z</b>[&tau;]</code>.
+     *               <code><b>Z</b>[&tau;]</code>.
      * @return <code>&lambda; * p</code>
      */
-    public static ECPoint.AbstractF2m multiplyTnaf(ECPoint.AbstractF2m p, ZTauElement lambda)
-    {
-        ECCurve.AbstractF2m curve = (ECCurve.AbstractF2m)p.getCurve();
+    public static ECPoint.AbstractF2m multiplyTnaf(ECPoint.AbstractF2m p, ZTauElement lambda) {
+        ECCurve.AbstractF2m curve = (ECCurve.AbstractF2m) p.getCurve();
         byte mu = getMu(curve.getA());
         byte[] u = tauAdicNaf(mu, lambda);
 
@@ -684,35 +604,32 @@ class Tnaf
     }
 
     /**
-    * Multiplies a {@link org.bouncycastle.math.ec.ECPoint.AbstractF2m ECPoint.AbstractF2m}
-    * by an element <code>&lambda;</code> of <code><b>Z</b>[&tau;]</code>
-    * using the <code>&tau;</code>-adic NAF (TNAF) method, given the TNAF
-    * of <code>&lambda;</code>.
-    * @param p The ECPoint.AbstractF2m to multiply.
-    * @param u The the TNAF of <code>&lambda;</code>..
-    * @return <code>&lambda; * p</code>
-    */
-    public static ECPoint.AbstractF2m multiplyFromTnaf(ECPoint.AbstractF2m p, byte[] u)
-    {
+     * Multiplies a {@link org.bouncycastle.math.ec.ECPoint.AbstractF2m ECPoint.AbstractF2m}
+     * by an element <code>&lambda;</code> of <code><b>Z</b>[&tau;]</code>
+     * using the <code>&tau;</code>-adic NAF (TNAF) method, given the TNAF
+     * of <code>&lambda;</code>.
+     *
+     * @param p The ECPoint.AbstractF2m to multiply.
+     * @param u The the TNAF of <code>&lambda;</code>..
+     * @return <code>&lambda; * p</code>
+     */
+    public static ECPoint.AbstractF2m multiplyFromTnaf(ECPoint.AbstractF2m p, byte[] u) {
         ECCurve curve = p.getCurve();
-        ECPoint.AbstractF2m q = (ECPoint.AbstractF2m)curve.getInfinity();
-        ECPoint.AbstractF2m pNeg = (ECPoint.AbstractF2m)p.negate();
+        ECPoint.AbstractF2m q = (ECPoint.AbstractF2m) curve.getInfinity();
+        ECPoint.AbstractF2m pNeg = (ECPoint.AbstractF2m) p.negate();
         int tauCount = 0;
-        for (int i = u.length - 1; i >= 0; i--)
-        {
+        for (int i = u.length - 1; i >= 0; i--) {
             ++tauCount;
             byte ui = u[i];
-            if (ui != 0)
-            {
+            if (ui != 0) {
                 q = q.tauPow(tauCount);
                 tauCount = 0;
 
                 ECPoint x = ui > 0 ? p : pNeg;
-                q = (ECPoint.AbstractF2m)q.add(x);
+                q = (ECPoint.AbstractF2m) q.add(x);
             }
         }
-        if (tauCount > 0)
-        {
+        if (tauCount > 0) {
             q = q.tauPow(tauCount);
         }
         return q;
@@ -721,22 +638,21 @@ class Tnaf
     /**
      * Computes the <code>[&tau;]</code>-adic window NAF of an element
      * <code>&lambda;</code> of <code><b>Z</b>[&tau;]</code>.
-     * @param mu The parameter &mu; of the elliptic curve.
+     *
+     * @param mu     The parameter &mu; of the elliptic curve.
      * @param lambda The element <code>&lambda;</code> of
-     * <code><b>Z</b>[&tau;]</code> of which to compute the
-     * <code>[&tau;]</code>-adic NAF.
-     * @param width The window width of the resulting WNAF.
-     * @param pow2w 2<sup>width</sup>.
-     * @param tw The auxiliary value <code>t<sub>w</sub></code>.
-     * @param alpha The <code>&alpha;<sub>u</sub></code>'s for the window width.
+     *               <code><b>Z</b>[&tau;]</code> of which to compute the
+     *               <code>[&tau;]</code>-adic NAF.
+     * @param width  The window width of the resulting WNAF.
+     * @param pow2w  2<sup>width</sup>.
+     * @param tw     The auxiliary value <code>t<sub>w</sub></code>.
+     * @param alpha  The <code>&alpha;<sub>u</sub></code>'s for the window width.
      * @return The <code>[&tau;]</code>-adic window NAF of
      * <code>&lambda;</code>.
      */
     public static byte[] tauAdicWNaf(byte mu, ZTauElement lambda,
-            byte width, BigInteger pow2w, BigInteger tw, ZTauElement[] alpha)
-    {
-        if (!((mu == 1) || (mu == -1)))
-        {
+                                     byte width, BigInteger pow2w, BigInteger tw, ZTauElement[] alpha) {
+        if (!((mu == 1) || (mu == -1))) {
             throw new IllegalArgumentException("mu must be 1 or -1");
         }
 
@@ -760,60 +676,46 @@ class Tnaf
         int i = 0;
 
         // while lambda <> (0, 0)
-        while (!((r0.equals(ECConstants.ZERO))&&(r1.equals(ECConstants.ZERO))))
-        {
+        while (!((r0.equals(ECConstants.ZERO)) && (r1.equals(ECConstants.ZERO)))) {
             // if r0 is odd
-            if (r0.testBit(0))
-            {
+            if (r0.testBit(0)) {
                 // uUnMod = r0 + r1*tw mod 2^width
                 BigInteger uUnMod
-                    = r0.add(r1.multiply(tw)).mod(pow2w);
-                
+                        = r0.add(r1.multiply(tw)).mod(pow2w);
+
                 byte uLocal;
                 // if uUnMod >= 2^(width - 1)
-                if (uUnMod.compareTo(pow2wMin1) >= 0)
-                {
+                if (uUnMod.compareTo(pow2wMin1) >= 0) {
                     uLocal = (byte) uUnMod.subtract(pow2w).intValue();
-                }
-                else
-                {
+                } else {
                     uLocal = (byte) uUnMod.intValue();
                 }
                 // uLocal is now in [-2^(width-1), 2^(width-1)-1]
 
                 u[i] = uLocal;
                 boolean s = true;
-                if (uLocal < 0)
-                {
+                if (uLocal < 0) {
                     s = false;
-                    uLocal = (byte)-uLocal;
+                    uLocal = (byte) -uLocal;
                 }
                 // uLocal is now >= 0
 
-                if (s)
-                {
+                if (s) {
                     r0 = r0.subtract(alpha[uLocal].u);
                     r1 = r1.subtract(alpha[uLocal].v);
-                }
-                else
-                {
+                } else {
                     r0 = r0.add(alpha[uLocal].u);
                     r1 = r1.add(alpha[uLocal].v);
                 }
-            }
-            else
-            {
+            } else {
                 u[i] = 0;
             }
 
             BigInteger t = r0;
 
-            if (mu == 1)
-            {
+            if (mu == 1) {
                 r0 = r1.add(r0.shiftRight(1));
-            }
-            else
-            {
+            } else {
                 // mu == -1
                 r0 = r1.subtract(r0.shiftRight(1));
             }
@@ -825,20 +727,19 @@ class Tnaf
 
     /**
      * Does the precomputation for WTNAF multiplication.
+     *
      * @param p The <code>ECPoint</code> for which to do the precomputation.
      * @param a The parameter <code>a</code> of the elliptic curve.
-     * @return The precomputation array for <code>p</code>. 
+     * @return The precomputation array for <code>p</code>.
      */
-    public static ECPoint.AbstractF2m[] getPreComp(ECPoint.AbstractF2m p, byte a)
-    {
+    public static ECPoint.AbstractF2m[] getPreComp(ECPoint.AbstractF2m p, byte a) {
         byte[][] alphaTnaf = (a == 0) ? Tnaf.alpha0Tnaf : Tnaf.alpha1Tnaf;
 
         ECPoint.AbstractF2m[] pu = new ECPoint.AbstractF2m[(alphaTnaf.length + 1) >>> 1];
         pu[0] = p;
 
         int precompLen = alphaTnaf.length;
-        for (int i = 3; i < precompLen; i += 2)
-        {
+        for (int i = 3; i < precompLen; i += 2) {
             pu[i >>> 1] = Tnaf.multiplyFromTnaf(p, alphaTnaf[i]);
         }
 

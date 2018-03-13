@@ -8,80 +8,62 @@ import ewe.io.IOException;
  * rules (as with sequences).
  */
 public class DERTaggedObject
-    extends ASN1TaggedObject
-{
+        extends ASN1TaggedObject {
     private static final byte[] ZERO_BYTES = new byte[0];
 
     /**
      * @param explicit true if an explicitly tagged object.
-     * @param tagNo the tag number for this object.
-     * @param obj the tagged object.
+     * @param tagNo    the tag number for this object.
+     * @param obj      the tagged object.
      */
     public DERTaggedObject(
-        boolean       explicit,
-        int           tagNo,
-        ASN1Encodable obj)
-    {
+            boolean explicit,
+            int tagNo,
+            ASN1Encodable obj) {
         super(explicit, tagNo, obj);
     }
 
-    public DERTaggedObject(int tagNo, ASN1Encodable encodable)
-    {
+    public DERTaggedObject(int tagNo, ASN1Encodable encodable) {
         super(true, tagNo, encodable);
     }
-    
-    boolean isConstructed()
-    {
-        if (!empty)
-        {
-            if (explicit)
-            {
+
+    boolean isConstructed() {
+        if (!empty) {
+            if (explicit) {
                 return true;
-            }
-            else
-            {
+            } else {
                 ASN1Primitive primitive = obj.toASN1Primitive().toDERObject();
 
                 return primitive.isConstructed();
             }
-        }
-        else
-        {
+        } else {
             return true;
         }
     }
 
     int encodedLength()
-        throws IOException
-    {
-        if (!empty)
-        {
+            throws IOException {
+        if (!empty) {
             ASN1Primitive primitive = obj.toASN1Primitive().toDERObject();
             int length = primitive.encodedLength();
 
-            if (explicit)
-            {
+            if (explicit) {
                 return StreamUtil.calculateTagLength(tagNo) + StreamUtil.calculateBodyLength(length) + length;
-            }
-            else
-            {
+            } else {
                 // header length already in calculation
                 length = length - 1;
 
                 return StreamUtil.calculateTagLength(tagNo) + length;
             }
-        }
-        else
-        {
+        } else {
             return StreamUtil.calculateTagLength(tagNo) + 1;
         }
     }
 
     void encode(
-        ASN1OutputStream out)
-        throws IOException
-    {
-    	throw new UnsupportedClassVersionError();/*
+            ASN1OutputStream out)
+            throws IOException {
+        throw new UnsupportedClassVersionError();/*
         if (!empty)
         {
             ASN1Primitive primitive = obj.toASN1Primitive().toDERObject();
@@ -115,5 +97,6 @@ public class DERTaggedObject
         {
             out.writeEncoded(BERTags.CONSTRUCTED | BERTags.TAGGED, tagNo, ZERO_BYTES);
         }
-*/    }
+*/
+    }
 }

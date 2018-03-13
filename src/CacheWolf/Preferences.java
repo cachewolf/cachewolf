@@ -429,6 +429,8 @@ public class Preferences extends MinML {
     // ////////////////////////////////////////////////////////////////////////////////////
     // Constructor
     // ////////////////////////////////////////////////////////////////////////////////////
+    protected int lastSavedWidth = -1;
+    protected int lastSavedHeight = -1;
     /**
      * Maps
      */
@@ -437,18 +439,15 @@ public class Preferences extends MinML {
     // Hashtable is saving filter data objects the user wants to save
     private Hashtable filterList = new Hashtable(15);
     private String pathToConfigFile;
-
     private Rect screenSize = (Rect) Window.getGuiInfo(WindowConstants.INFO_SCREEN_RECT, null, new Rect(), 0);
     /**
      * The width of the MainForm
      */
     private int screenWidth = screenSize.width;
-    protected int lastSavedWidth = -1;
     /**
      * The height of the MainForm
      */
     private int screenHeight = screenSize.height;
-    protected int lastSavedHeight = -1;
     /**
      * Helper variables for XML parser
      */
@@ -1322,8 +1321,8 @@ public class Preferences extends MinML {
      *                       BE versions or RC versions) by including the line
      *                       <p>
      *                       <pre>
-     *                                                                                                                                                                                 Preferences.itself().debug = true;
-     *                                                                                                                                                                                 </pre>
+     *                                                                                                                                                                                                                             Preferences.itself().debug = true;
+     *                                                                                                                                                                                                                             </pre>
      *                       <p>
      *                       in Version.getRelease()
      */

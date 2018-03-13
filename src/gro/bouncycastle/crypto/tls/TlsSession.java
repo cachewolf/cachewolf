@@ -1,7 +1,6 @@
 package gro.bouncycastle.crypto.tls;
 
-public interface TlsSession
-{
+public interface TlsSession {
     SessionParameters exportSessionParameters();
 
     byte[] getSessionID();

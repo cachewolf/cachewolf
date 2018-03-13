@@ -3,8 +3,7 @@ package gro.bouncycastle.math.ec;
 /**
  * Class holding precomputation data for fixed-point multiplications.
  */
-public class FixedPointPreCompInfo implements PreCompInfo
-{
+public class FixedPointPreCompInfo implements PreCompInfo {
     protected ECPoint offset = null;
 
     /**
@@ -20,33 +19,27 @@ public class FixedPointPreCompInfo implements PreCompInfo
      */
     protected int width = -1;
 
-    public ECPoint getOffset()
-    {
+    public ECPoint getOffset() {
         return offset;
     }
 
-    public void setOffset(ECPoint offset)
-    {
+    public void setOffset(ECPoint offset) {
         this.offset = offset;
     }
 
-    public ECPoint[] getPreComp()
-    {
+    public ECPoint[] getPreComp() {
         return preComp;
     }
 
-    public void setPreComp(ECPoint[] preComp)
-    {
+    public void setPreComp(ECPoint[] preComp) {
         this.preComp = preComp;
     }
 
-    public int getWidth()
-    {
+    public int getWidth() {
         return width;
     }
 
-    public void setWidth(int width)
-    {
+    public void setWidth(int width) {
         this.width = width;
     }
 }

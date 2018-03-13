@@ -32,40 +32,19 @@ import CacheWolf.utils.MyLocale;
 import CacheWolf.utils.SafeXML;
 import ewe.filechooser.FileChooser;
 import ewe.filechooser.FileChooserBase;
-import ewe.fx.Color;
-import ewe.fx.Dimension;
-import ewe.fx.Font;
-import ewe.fx.FontMetrics;
-import ewe.fx.Graphics;
-import ewe.fx.Image;
-import ewe.fx.Point;
-import ewe.fx.Rect;
-import ewe.fx.mImage;
+import ewe.fx.*;
 import ewe.graphics.AniImage;
 import ewe.graphics.InteractivePanel;
 import ewe.io.File;
 import ewe.sys.SystemResourceException;
 import ewe.sys.Vm;
-import ewe.ui.CellConstants;
-import ewe.ui.CellPanel;
-import ewe.ui.ControlBase;
-import ewe.ui.ControlEvent;
-import ewe.ui.Event;
-import ewe.ui.Form;
-import ewe.ui.FormBase;
-import ewe.ui.Gui;
-import ewe.ui.InputBox;
-import ewe.ui.Menu;
-import ewe.ui.PenEvent;
-import ewe.ui.ScrollBarPanel;
-import ewe.ui.mButton;
-import ewe.ui.mLabel;
+import ewe.ui.*;
 
 public class ImagePanel extends CellPanel {
+    final CellPanel pnlTools;
     ImagesPanel images;
     mButton btnAddPicture;
     MyScrollBarPanel imagesPanel;
-    final CellPanel pnlTools;
     private CacheHolderDetail cacheDetails;
 
     public ImagePanel() { // Public constructor
@@ -151,6 +130,7 @@ public class ImagePanel extends CellPanel {
  * A right mouseclick on an image will open a dialogue to delete the file.
  */
 class ImagesPanel extends InteractivePanel {
+    static CacheHolderDetail oldChD = null;
     /**
      * Picture to replace deleted pictures
      */
@@ -159,7 +139,6 @@ class ImagesPanel extends InteractivePanel {
      * Minimum time (msec) to recognise a long pen down event (=right mouse key)
      */
     private final int LONG_PEN_DOWN_DURATION = 500;
-
     // private final int thumb_max_size = 300;
     // private final int thumb_min_size = 100;
     private final int padding = 20;
@@ -176,8 +155,6 @@ class ImagesPanel extends InteractivePanel {
      */
     public ImagesPanel() { // Public constructor
     }
-
-    static CacheHolderDetail oldChD = null;
 
     /**
      * Method to set the individual cache images.

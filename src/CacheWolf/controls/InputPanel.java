@@ -1,11 +1,7 @@
 package CacheWolf.controls;
 
 import CacheWolf.Preferences;
-import ewe.ui.ControlEvent;
-import ewe.ui.Event;
-import ewe.ui.Form;
-import ewe.ui.mInput;
-import ewe.ui.mLabel;
+import ewe.ui.*;
 
 public class InputPanel extends Form {
 

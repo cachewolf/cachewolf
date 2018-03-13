@@ -6,56 +6,49 @@ import gro.bouncycastle.crypto.CipherParameters;
 import gro.bouncycastle.crypto.DSA;
 import gro.bouncycastle.crypto.params.ECDomainParameters;
 import gro.bouncycastle.crypto.params.ECKeyParameters;
-//import gro.bouncycastle.crypto.params.ECPrivateKeyParameters;
 import gro.bouncycastle.crypto.params.ECPublicKeyParameters;
+import gro.bouncycastle.math.ec.*;
+
+//import gro.bouncycastle.crypto.params.ECPrivateKeyParameters;
 //import gro.bouncycastle.crypto.params.ParametersWithRandom;
-import gro.bouncycastle.math.ec.ECAlgorithms;
-import gro.bouncycastle.math.ec.ECConstants;
-import gro.bouncycastle.math.ec.ECCurve;
-import gro.bouncycastle.math.ec.ECFieldElement;
 //import gro.bouncycastle.math.ec.ECMultiplier;
-import gro.bouncycastle.math.ec.ECPoint;
 //import gro.bouncycastle.math.ec.FixedPointCombMultiplier;
 
 /**
  * EC-DSA as described in X9.62
  */
 public class ECDSASigner
-    implements ECConstants, DSA
-{
+        implements ECConstants, DSA {
     private final DSAKCalculator kCalculator;
 
     private ECKeyParameters key;
-    private SecureRandom    random;
+    private SecureRandom random;
 
     /**
      * Default configuration, random K values.
      */
-    public ECDSASigner()
-    {
-    	throw new UnsupportedClassVersionError();/*
+    public ECDSASigner() {
+        throw new UnsupportedClassVersionError();/*
         this.kCalculator = new RandomDSAKCalculator();
-*/    }
+*/
+    }
 
     /**
      * Configuration with an alternate, possibly deterministic calculator of K.
      *
      * @param kCalculator a K value calculator.
      */
-    public ECDSASigner(DSAKCalculator kCalculator)
-    {
+    public ECDSASigner(DSAKCalculator kCalculator) {
         this.kCalculator = kCalculator;
     }
 
     public void init(
-        boolean                 forSigning,
-        CipherParameters        param)
-    {
+            boolean forSigning,
+            CipherParameters param) {
         SecureRandom providedRandom = null;
 
-        if (forSigning)
-        {
-        	throw new UnsupportedClassVersionError();/*
+        if (forSigning) {
+            throw new UnsupportedClassVersionError();/*
             if (param instanceof ParametersWithRandom)
             {
                 ParametersWithRandom rParam = (ParametersWithRandom)param;
@@ -67,16 +60,16 @@ public class ECDSASigner
             {
                 this.key = (ECPrivateKeyParameters)param;
             }
-*/        }
-        else
-        {
-          this.key = (ECPublicKeyParameters)param;
+*/
+        } else {
+            this.key = (ECPublicKeyParameters) param;
         }
 
         this.random = initSecureRandom(forSigning && !kCalculator.isDeterministic(), providedRandom);
     }
 
     // 5.3 pg 28
+
     /**
      * generate a signature for the given message using the key we were
      * initialised with. For conventional DSA the message should be a SHA-1
@@ -85,9 +78,8 @@ public class ECDSASigner
      * @param message the message that will be verified later.
      */
     public BigInteger[] generateSignature(
-        byte[] message)
-    {
-    	throw new UnsupportedClassVersionError();/*
+            byte[] message) {
+        throw new UnsupportedClassVersionError();/*
 
         ECDomainParameters ec = key.getParameters();
         BigInteger n = ec.getN();
@@ -127,32 +119,31 @@ public class ECDSASigner
         while (s.equals(ZERO));
 
         return new BigInteger[]{ r, s };
-*/    }
+*/
+    }
 
     // 5.4 pg 29
+
     /**
      * return true if the value r and s represent a DSA signature for
      * the passed in message (for standard DSA the message should be
      * a SHA-1 hash of the real message to be verified).
      */
     public boolean verifySignature(
-        byte[]      message,
-        BigInteger  r,
-        BigInteger  s)
-    {
+            byte[] message,
+            BigInteger r,
+            BigInteger s) {
         ECDomainParameters ec = key.getParameters();
         BigInteger n = ec.getN();
         BigInteger e = calculateE(n, message);
 
         // r in the range [1,n-1]
-        if (r.compareTo(ONE) < 0 || r.compareTo(n) >= 0)
-        {
+        if (r.compareTo(ONE) < 0 || r.compareTo(n) >= 0) {
             return false;
         }
 
         // s in the range [1,n-1]
-        if (s.compareTo(ONE) < 0 || s.compareTo(n) >= 0)
-        {
+        if (s.compareTo(ONE) < 0 || s.compareTo(n) >= 0) {
             return false;
         }
 
@@ -162,44 +153,38 @@ public class ECDSASigner
         BigInteger u2 = r.multiply(c).mod(n);
 
         ECPoint G = ec.getG();
-        ECPoint Q = ((ECPublicKeyParameters)key).getQ();
+        ECPoint Q = ((ECPublicKeyParameters) key).getQ();
 
         ECPoint point = ECAlgorithms.sumOfTwoMultiplies(G, u1, Q, u2);
 
         // components must be bogus.
-        if (point.isInfinity())
-        {
+        if (point.isInfinity()) {
             return false;
         }
 
         /*
          * If possible, avoid normalizing the point (to save a modular inversion in the curve field).
-         * 
+         *
          * There are ~cofactor elements of the curve field that reduce (modulo the group order) to 'r'.
          * If the cofactor is known and small, we generate those possible field values and project each
          * of them to the same "denominator" (depending on the particular projective coordinates in use)
          * as the calculated point.X. If any of the projected values matches point.X, then we have:
          *     (point.X / Denominator mod p) mod n == r
          * as required, and verification succeeds.
-         * 
+         *
          * Based on an original idea by Gregory Maxwell (https://github.com/gmaxwell), as implemented in
          * the libsecp256k1 project (https://github.com/bitcoin/secp256k1).
          */
         ECCurve curve = point.getCurve();
-        if (curve != null)
-        {
+        if (curve != null) {
             BigInteger cofactor = curve.getCofactor();
-            if (cofactor != null && cofactor.compareTo(EIGHT) <= 0)
-            {
+            if (cofactor != null && cofactor.compareTo(EIGHT) <= 0) {
                 ECFieldElement D = getDenominator(curve.getCoordinateSystem(), point);
-                if (D != null && !D.isZero())
-                {
+                if (D != null && !D.isZero()) {
                     ECFieldElement X = point.getXCoord();
-                    while (curve.isValidFieldElement(r))
-                    {
+                    while (curve.isValidFieldElement(r)) {
                         ECFieldElement R = curve.fromBigInteger(r).multiply(D);
-                        if (R.equals(X))
-                        {
+                        if (R.equals(X)) {
                             return true;
                         }
                         r = r.add(n);
@@ -212,15 +197,15 @@ public class ECDSASigner
         throw new UnsupportedClassVersionError();/*
         BigInteger v = point.normalize().getAffineXCoord().toBigInteger().mod(n);
         return v.equals(r);
-*/    }
-    protected BigInteger calculateE(BigInteger n, byte[] message)
-    {
+*/
+    }
+
+    protected BigInteger calculateE(BigInteger n, byte[] message) {
         int log2n = n.bitLength();
         int messageBitLength = message.length * 8;
 
         BigInteger e = new BigInteger(1, message);
-        if (log2n < messageBitLength)
-        {
+        if (log2n < messageBitLength) {
             e = e.shiftRight(messageBitLength - log2n);
         }
         return e;
@@ -232,25 +217,22 @@ public class ECDSASigner
         return new FixedPointCombMultiplier();
     }
 */
-    protected ECFieldElement getDenominator(int coordinateSystem, ECPoint p)
-    {
-        switch (coordinateSystem)
-        {
-        case ECCurve.COORD_HOMOGENEOUS:
-        case ECCurve.COORD_LAMBDA_PROJECTIVE:
-        case ECCurve.COORD_SKEWED:
-            return p.getZCoord(0);
-        case ECCurve.COORD_JACOBIAN:
-        case ECCurve.COORD_JACOBIAN_CHUDNOVSKY:
-        case ECCurve.COORD_JACOBIAN_MODIFIED:
-            return p.getZCoord(0).square();
-        default:
-            return null;
+    protected ECFieldElement getDenominator(int coordinateSystem, ECPoint p) {
+        switch (coordinateSystem) {
+            case ECCurve.COORD_HOMOGENEOUS:
+            case ECCurve.COORD_LAMBDA_PROJECTIVE:
+            case ECCurve.COORD_SKEWED:
+                return p.getZCoord(0);
+            case ECCurve.COORD_JACOBIAN:
+            case ECCurve.COORD_JACOBIAN_CHUDNOVSKY:
+            case ECCurve.COORD_JACOBIAN_MODIFIED:
+                return p.getZCoord(0).square();
+            default:
+                return null;
         }
     }
 
-    protected SecureRandom initSecureRandom(boolean needed, SecureRandom provided)
-    {
+    protected SecureRandom initSecureRandom(boolean needed, SecureRandom provided) {
         return !needed ? null : (provided != null) ? provided : new SecureRandom();
     }
 }

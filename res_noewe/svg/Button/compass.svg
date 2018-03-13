@@ -1,29 +1,55 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
-<svg x="0" y="0" width="64" height="64" viewBox="0, 0, 500, 500" preserveAspectRatio="xMidYMid" font-size="0" fill-rule="evenOdd" shape-rendering="geometricPrecision" id="svg33" xml:space="default" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xml="http://www.w3.org/XML/1998/namespace" version="1.1">
-  <defs shape-rendering="geometricPrecision" id="defs9" xml:space="default">
-    <radialGradient cx="250" cy="250" r="207" fx="250" fy="250" gradientUnits="userSpaceOnUse" shape-rendering="geometricPrecision" id="a" xml:space="default">
-      <stop offset="0%" stop-color="#FFFFFF" stop-opacity="1" shape-rendering="geometricPrecision" id="stop2" xml:space="default" />
-      <stop offset="58.8%" stop-color="#F5F5F5" stop-opacity="1" shape-rendering="geometricPrecision" id="stop4" xml:space="default" />
-      <stop offset="100%" stop-color="#979798" stop-opacity="1" shape-rendering="geometricPrecision" id="stop6" xml:space="default" />
-    </radialGradient>
-    <radialGradient cx="250" cy="250" r="207" fx="250" fy="250" gradientUnits="userSpaceOnUse" shape-rendering="geometricPrecision" id="a-3" xml:space="default">
-      <stop offset="0%" stop-color="#FFFFFF" stop-opacity="1" shape-rendering="geometricPrecision" id="stop2-6" xml:space="default" />
-      <stop offset="58.8%" stop-color="#F5F5F5" stop-opacity="1" shape-rendering="geometricPrecision" id="stop4-9" xml:space="default" />
-      <stop offset="100%" stop-color="#979798" stop-opacity="1" shape-rendering="geometricPrecision" id="stop6-9" xml:space="default" />
-    </radialGradient>
-  </defs>
-  <circle cx="247.8813" cy="250" r="220" stroke="#008BFF" stroke-width="37.5" shape-rendering="geometricPrecision" id="circle2" xml:space="default" style="fill:#008BFF;" />
-  <g shape-rendering="geometricPrecision" transform="translate(-2.118644, 3.898305E-06)" id="g875" xml:space="default">
-    <circle cx="250" cy="250" r="185" stroke="#434242" stroke-width="10" shape-rendering="geometricPrecision" id="circle13" xml:space="default" style="fill:url(#a-3);" />
-    <path d="M407 247 L391 247 L391 248 C391 250 392 252 393 253 C395 255 397 255 400 256 L400 257 L379 257 L379 256 L385 254 C386 253 387 253 388 251 L388 247 L373 247 L372 248 C371 249 371 250 371 251 L371 253 C371 257 372 260 374 262 C376 265 378 266 382 267 L382 268 L369 267 L369 232 L370 232 L370 233 C370 234 370 235 371 236 C371 236 371 237 372 237 L406 237 C407 237 407 237 408 236 L408 232 L410 232 L410 266 L398 266 L398 264 C400 264 403 263 404 262 L407 258 z M261 364 L262 377 L260 377 C260 374 258 371 256 369 C254 367 251 366 249 366 C247 366 245 367 244 368 C243 369 242 370 242 371 C242 372 242 373 243 374 C243 375 244 376 246 377 C246 377 249 378 252 380 C257 382 260 385 262 387 C263 389 264 391 264 394 C264 397 263 400 260 402 C257 405 254 406 250 406 L246 406 C245 405 244 405 242 404 L238 404 L237 406 L236 406 L236 391 L237 391 C238 395 239 398 242 401 C244 403 247 404 250 404 C252 404 254 403 255 402 C257 401 257 400 257 398 C257 397 257 396 256 395 C256 394 255 393 254 393 C253 392 251 391 249 390 C245 388 242 386 241 385 C239 384 238 382 237 381 C236 379 236 377 236 375 C236 372 237 370 239 367 C242 365 245 364 248 364 L252 364 L255 366 C257 366 258 367 258 367 C259 367 259 366 259 366 C260 366 260 365 260 364 z M126 280 L125 280 L125 278 L123 277 C123 277 121 276 118 275 L85 262 L85 261 L111 251 L85 240 L85 239 L118 226 C121 224 123 223 124 223 C125 222 125 221 125 220 L126 220 L126 238 L125 238 L125 235 C124 234 124 234 123 234 L118 236 L99 243 L114 250 L118 248 C121 247 122 247 123 246 C124 246 125 245 125 244 L125 242 L126 242 L126 261 L125 261 L125 258 C125 258 125 257 124 257 L123 257 C123 257 121 257 119 258 L100 265 L117 272 C119 273 120 273 121 273 C121 273 122 274 123 274 C123 274 124 273 125 273 L125 270 L126 270 z M243 92 L263 117 L263 100 C263 97 263 96 262 95 C261 94 260 93 257 93 L257 92 L271 92 L271 93 C269 93 268 94 267 94 C267 94 266 95 266 96 C266 96 265 98 265 100 L265 133 L264 133 L237 100 L237 125 C237 128 238 129 239 130 C240 131 241 131 242 131 L243 131 L243 132 L229 132 L229 131 C231 131 233 131 234 130 C235 129 235 128 235 125 L235 97 L234 96 C233 95 233 94 232 94 C231 93 230 93 229 93 L229 92 z" shape-rendering="geometricPrecision" id="path15" xml:space="default" connector-curvature="0" style="fill:#434242;" />
-    <path d="M430 250 L415 250 M85 250 L70 250 M250 70 L250 85 M250 415 L250 430 M424 297 L409 293 M91 207 L76 203 M297 76 L293 91 M207 409 L203 424 M406 340 L393 333 M107 167 L94 160 M340 94 L332 107 M167 393 L160 406 M377 377 L367 367 M133 133 L123 123 M377 123 L367 133 M133 367 L123 377 M340 406 L332 393 M167 107 L160 94 M406 160 L393 168 M107 333 L94 340 M297 424 L293 409 M207 91 L203 76 M424 203 L409 207 M91 293 L76 297" stroke="#434242" stroke-width="7.5" stroke-linecap="round" shape-rendering="geometricPrecision" id="path17" xml:space="default" connector-curvature="0" style="fill:none;" />
-    <polygon points="233,267 250,345 267,267 345,250 267,233 250,155 233,233 155,250" shape-rendering="geometricPrecision" id="polygon19" xml:space="default" style="fill:#CDCDCE;" />
-    <polygon points="265,265 356,144 235,235 144,356" stroke="#434242" stroke-width="10" stroke-linejoin="round" shape-rendering="geometricPrecision" id="polygon21" xml:space="default" style="fill:none;" />
-    <polygon points="265,265 250,250 353,147" shape-rendering="geometricPrecision" id="polygon23" xml:space="default" style="fill:#279DFF;" />
-    <polygon points="235,235 250,250 147,353" shape-rendering="geometricPrecision" id="polygon25" xml:space="default" style="fill:#474747;" />
-    <polygon points="265,265 250,250 147,353" shape-rendering="geometricPrecision" id="polygon27" xml:space="default" style="fill:#6D6D6D;" />
-    <polygon points="235,235 250,250 353,147" shape-rendering="geometricPrecision" id="polygon29" xml:space="default" style="fill:#0076D8;" />
-    <circle r="20" stroke="#434242" stroke-width="5" shape-rendering="geometricPrecision" transform="matrix(0.455, 0.455, -0.455, 0.455, 249.998, 250)" id="circle31" xml:space="default" style="fill:#FFFFFF;" />
-  </g>
+<svg xmlns:xml="http://www.w3.org/XML/1998/namespace" x="0" y="0" width="32" height="32" overflow="hidden" viewBox="0, 0, 500, 500"
+     preserveAspectRatio="xMidYMid" font-size="0" fill-rule="evenOdd" shape-rendering="geometricPrecision" id="svg"
+     xml:space="default"
+     xmlns="http://www.w3.org/2000/svg" version="1.1">
+    <defs shape-rendering="geometricPrecision" id="def1" xml:space="default">
+        <radialGradient cx="250" cy="250" r="207" fx="250" fy="250" gradientUnits="userSpaceOnUse"
+                        shape-rendering="geometricPrecision" id="a" xml:space="default">
+            <stop offset="0%" stop-color="#FFFFFF" stop-opacity="1" shape-rendering="geometricPrecision" id="stop2"
+                  xml:space="default"/>
+            <stop offset="58.8%" stop-color="#F5F5F5" stop-opacity="1" shape-rendering="geometricPrecision" id="stop4"
+                  xml:space="default"/>
+            <stop offset="100%" stop-color="#979798" stop-opacity="1" shape-rendering="geometricPrecision" id="stop6"
+                  xml:space="default"/>
+        </radialGradient>
+        <radialGradient cx="250" cy="250" r="207" fx="250" fy="250" gradientUnits="userSpaceOnUse"
+                        shape-rendering="geometricPrecision" id="a-3" xml:space="default">
+            <stop offset="0%" stop-color="#FFFFFF" stop-opacity="1" shape-rendering="geometricPrecision" id="stop2-6"
+                  xml:space="default"/>
+            <stop offset="58.8%" stop-color="#F5F5F5" stop-opacity="1" shape-rendering="geometricPrecision" id="stop4-9"
+                  xml:space="default"/>
+            <stop offset="100%" stop-color="#979798" stop-opacity="1" shape-rendering="geometricPrecision" id="stop6-9"
+                  xml:space="default"/>
+        </radialGradient>
+    </defs>
+    <circle cx="247.8813" cy="250" r="220" stroke="#008BFF" stroke-width="37.5" shape-rendering="geometricPrecision"
+            id="circle2" xml:space="default" style="fill:#008BFF;"/>
+    <g shape-rendering="geometricPrecision" transform="translate(-2.118644, 3.898305E-06)" id="g875"
+       xml:space="default">
+        <circle cx="250" cy="250" r="185" stroke="#434242" stroke-width="10" shape-rendering="geometricPrecision"
+                id="circle13" xml:space="default" style="fill:url(#a-3);"/>
+        <path d="M407 247 L391 247 L391 248 C391 250 392 252 393 253 C395 255 397 255 400 256 L400 257 L379 257 L379 256 L385 254 C386 253 387 253 388 251 L388 247 L373 247 L372 248 C371 249 371 250 371 251 L371 253 C371 257 372 260 374 262 C376 265 378 266 382 267 L382 268 L369 267 L369 232 L370 232 L370 233 C370 234 370 235 371 236 C371 236 371 237 372 237 L406 237 C407 237 407 237 408 236 L408 232 L410 232 L410 266 L398 266 L398 264 C400 264 403 263 404 262 L407 258 z M261 364 L262 377 L260 377 C260 374 258 371 256 369 C254 367 251 366 249 366 C247 366 245 367 244 368 C243 369 242 370 242 371 C242 372 242 373 243 374 C243 375 244 376 246 377 C246 377 249 378 252 380 C257 382 260 385 262 387 C263 389 264 391 264 394 C264 397 263 400 260 402 C257 405 254 406 250 406 L246 406 C245 405 244 405 242 404 L238 404 L237 406 L236 406 L236 391 L237 391 C238 395 239 398 242 401 C244 403 247 404 250 404 C252 404 254 403 255 402 C257 401 257 400 257 398 C257 397 257 396 256 395 C256 394 255 393 254 393 C253 392 251 391 249 390 C245 388 242 386 241 385 C239 384 238 382 237 381 C236 379 236 377 236 375 C236 372 237 370 239 367 C242 365 245 364 248 364 L252 364 L255 366 C257 366 258 367 258 367 C259 367 259 366 259 366 C260 366 260 365 260 364 z M126 280 L125 280 L125 278 L123 277 C123 277 121 276 118 275 L85 262 L85 261 L111 251 L85 240 L85 239 L118 226 C121 224 123 223 124 223 C125 222 125 221 125 220 L126 220 L126 238 L125 238 L125 235 C124 234 124 234 123 234 L118 236 L99 243 L114 250 L118 248 C121 247 122 247 123 246 C124 246 125 245 125 244 L125 242 L126 242 L126 261 L125 261 L125 258 C125 258 125 257 124 257 L123 257 C123 257 121 257 119 258 L100 265 L117 272 C119 273 120 273 121 273 C121 273 122 274 123 274 C123 274 124 273 125 273 L125 270 L126 270 z M243 92 L263 117 L263 100 C263 97 263 96 262 95 C261 94 260 93 257 93 L257 92 L271 92 L271 93 C269 93 268 94 267 94 C267 94 266 95 266 96 C266 96 265 98 265 100 L265 133 L264 133 L237 100 L237 125 C237 128 238 129 239 130 C240 131 241 131 242 131 L243 131 L243 132 L229 132 L229 131 C231 131 233 131 234 130 C235 129 235 128 235 125 L235 97 L234 96 C233 95 233 94 232 94 C231 93 230 93 229 93 L229 92 z"
+              shape-rendering="geometricPrecision" id="path15" xml:space="default" connector-curvature="0"
+              style="fill:#434242;"/>
+        <path d="M430 250 L415 250 M85 250 L70 250 M250 70 L250 85 M250 415 L250 430 M424 297 L409 293 M91 207 L76 203 M297 76 L293 91 M207 409 L203 424 M406 340 L393 333 M107 167 L94 160 M340 94 L332 107 M167 393 L160 406 M377 377 L367 367 M133 133 L123 123 M377 123 L367 133 M133 367 L123 377 M340 406 L332 393 M167 107 L160 94 M406 160 L393 168 M107 333 L94 340 M297 424 L293 409 M207 91 L203 76 M424 203 L409 207 M91 293 L76 297"
+              stroke="#434242" stroke-width="7.5" stroke-linecap="round" shape-rendering="geometricPrecision"
+              id="path17" xml:space="default" connector-curvature="0" style="fill:none;"/>
+        <polygon points="233,267 250,345 267,267 345,250 267,233 250,155 233,233 155,250"
+                 shape-rendering="geometricPrecision" id="polygon19" xml:space="default" style="fill:#CDCDCE;"/>
+        <polygon points="265,265 356,144 235,235 144,356" stroke="#434242" stroke-width="10" stroke-linejoin="round"
+                 shape-rendering="geometricPrecision" id="polygon21" xml:space="default" style="fill:none;"/>
+        <polygon points="265,265 250,250 353,147" shape-rendering="geometricPrecision" id="polygon23"
+                 xml:space="default" style="fill:#279DFF;"/>
+        <polygon points="235,235 250,250 147,353" shape-rendering="geometricPrecision" id="polygon25"
+                 xml:space="default" style="fill:#474747;"/>
+        <polygon points="265,265 250,250 147,353" shape-rendering="geometricPrecision" id="polygon27"
+                 xml:space="default" style="fill:#6D6D6D;"/>
+        <polygon points="235,235 250,250 353,147" shape-rendering="geometricPrecision" id="polygon29"
+                 xml:space="default" style="fill:#0076D8;"/>
+        <circle r="20" stroke="#434242" stroke-width="5" shape-rendering="geometricPrecision"
+                transform="matrix(0.455, 0.455, -0.455, 0.455, 249.998, 250)" id="circle31" xml:space="default"
+                style="fill:#FFFFFF;"/>
+    </g>
 </svg>

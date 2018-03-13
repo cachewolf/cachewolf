@@ -2,15 +2,12 @@ package gro.bouncycastle.math.ec;
 
 import ewe.math.BigInteger;
 
-public class FixedPointCombMultiplier extends AbstractECMultiplier
-{
-    protected ECPoint multiplyPositive(ECPoint p, BigInteger k)
-    {
+public class FixedPointCombMultiplier extends AbstractECMultiplier {
+    protected ECPoint multiplyPositive(ECPoint p, BigInteger k) {
         ECCurve c = p.getCurve();
         int size = FixedPointUtil.getCombSize(c);
 
-        if (k.bitLength() > size)
-        {
+        if (k.bitLength() > size) {
             /*
              * TODO The comb works best when the scalars are less than the (possibly unknown) order.
              * Still, if we want to handle larger scalars, we could allow customization of the comb
@@ -30,16 +27,13 @@ public class FixedPointCombMultiplier extends AbstractECMultiplier
 
         ECPoint R = c.getInfinity();
 
-        int top = d * width - 1; 
-        for (int i = 0; i < d; ++i)
-        {
+        int top = d * width - 1;
+        for (int i = 0; i < d; ++i) {
             int index = 0;
 
-            for (int j = top - i; j >= 0; j -= d)
-            {
+            for (int j = top - i; j >= 0; j -= d) {
                 index <<= 1;
-                if (k.testBit(j))
-                {
+                if (k.testBit(j)) {
                     index |= 1;
                 }
             }
@@ -50,8 +44,7 @@ public class FixedPointCombMultiplier extends AbstractECMultiplier
         return R.add(info.getOffset());
     }
 
-    protected int getWidthForCombSize(int combSize)
-    {
+    protected int getWidthForCombSize(int combSize) {
         return combSize > 257 ? 6 : 5;
     }
 }

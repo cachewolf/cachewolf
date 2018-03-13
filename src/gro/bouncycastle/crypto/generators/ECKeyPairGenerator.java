@@ -9,28 +9,21 @@ import gro.bouncycastle.crypto.params.ECDomainParameters;
 import gro.bouncycastle.crypto.params.ECKeyGenerationParameters;
 import gro.bouncycastle.crypto.params.ECPrivateKeyParameters;
 import gro.bouncycastle.crypto.params.ECPublicKeyParameters;
-import gro.bouncycastle.math.ec.ECConstants;
-import gro.bouncycastle.math.ec.ECMultiplier;
-import gro.bouncycastle.math.ec.ECPoint;
-import gro.bouncycastle.math.ec.FixedPointCombMultiplier;
-import gro.bouncycastle.math.ec.WNafUtil;
+import gro.bouncycastle.math.ec.*;
 
 public class ECKeyPairGenerator
-    implements AsymmetricCipherKeyPairGenerator, ECConstants
-{
-    ECDomainParameters  params;
-    SecureRandom        random;
+        implements AsymmetricCipherKeyPairGenerator, ECConstants {
+    ECDomainParameters params;
+    SecureRandom random;
 
     public void init(
-        KeyGenerationParameters param)
-    {
-        ECKeyGenerationParameters  ecP = (ECKeyGenerationParameters)param;
+            KeyGenerationParameters param) {
+        ECKeyGenerationParameters ecP = (ECKeyGenerationParameters) param;
 
         this.random = ecP.getRandom();
         this.params = ecP.getDomainParameters();
 
-        if (this.random == null)
-        {
+        if (this.random == null) {
             this.random = new SecureRandom();
         }
     }
@@ -40,24 +33,20 @@ public class ECKeyPairGenerator
      * pair in accordance with X9.62 section 5.2.1 pages 26, 27.
      */
 
-     public AsymmetricCipherKeyPair generateKeyPair()
-    {
+    public AsymmetricCipherKeyPair generateKeyPair() {
         BigInteger n = params.getN();
         int nBitLength = n.bitLength();
         int minWeight = nBitLength >>> 2;
 
         BigInteger d;
-        for (;;)
-        {
+        for (; ; ) {
             d = new BigInteger(nBitLength, random);
 
-            if (d.compareTo(TWO) < 0  || (d.compareTo(n) >= 0))
-            {
+            if (d.compareTo(TWO) < 0 || (d.compareTo(n) >= 0)) {
                 continue;
             }
 
-            if (WNafUtil.getNafWeight(d) < minWeight)
-            {
+            if (WNafUtil.getNafWeight(d) < minWeight) {
                 continue;
             }
 
@@ -67,12 +56,11 @@ public class ECKeyPairGenerator
         ECPoint Q = createBasePointMultiplier().multiply(params.getG(), d);
 
         return new AsymmetricCipherKeyPair(
-            new ECPublicKeyParameters(Q, params),
-            new ECPrivateKeyParameters(d, params));
+                new ECPublicKeyParameters(Q, params),
+                new ECPrivateKeyParameters(d, params));
     }
 
-    protected ECMultiplier createBasePointMultiplier()
-    {
+    protected ECMultiplier createBasePointMultiplier() {
         return new FixedPointCombMultiplier();
     }
 }

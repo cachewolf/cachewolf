@@ -12,21 +12,18 @@ import ewe.util.Enumeration;
  * </p>
  */
 public class BERSequence
-    extends ASN1Sequence
-{
+        extends ASN1Sequence {
     /**
      * Create an empty sequence
      */
-    public BERSequence()
-    {
+    public BERSequence() {
     }
 
     /**
      * Create a sequence containing one object
      */
     public BERSequence(
-        ASN1Encodable obj)
-    {
+            ASN1Encodable obj) {
         super(obj);
     }
 
@@ -34,8 +31,7 @@ public class BERSequence
      * Create a sequence containing a vector of objects.
      */
     public BERSequence(
-        ASN1EncodableVector v)
-    {
+            ASN1EncodableVector v) {
         super(v);
     }
 
@@ -43,34 +39,29 @@ public class BERSequence
      * Create a sequence containing an array of objects.
      */
     public BERSequence(
-        ASN1Encodable[]   array)
-    {
+            ASN1Encodable[] array) {
         super(array);
     }
 
     int encodedLength()
-        throws IOException
-    {
+            throws IOException {
         int length = 0;
-        for (Enumeration e = getObjects(); e.hasMoreElements();)
-        {
-            length += ((ASN1Encodable)e.nextElement()).toASN1Primitive().encodedLength();
+        for (Enumeration e = getObjects(); e.hasMoreElements(); ) {
+            length += ((ASN1Encodable) e.nextElement()).toASN1Primitive().encodedLength();
         }
 
         return 2 + length + 2;
     }
 
     void encode(
-        ASN1OutputStream out)
-        throws IOException
-    {
+            ASN1OutputStream out)
+            throws IOException {
         out.write(BERTags.SEQUENCE | BERTags.CONSTRUCTED);
         out.write(0x80);
 
         Enumeration e = getObjects();
-        while (e.hasMoreElements())
-        {
-            out.writeObject((ASN1Encodable)e.nextElement());
+        while (e.hasMoreElements()) {
+            out.writeObject((ASN1Encodable) e.nextElement());
         }
 
         out.write(0x00);

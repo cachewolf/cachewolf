@@ -38,95 +38,95 @@ public class Rebuild {
     }
 
     public void rebuild() {
-	int i;
-	CacheDB cacheDB = MainForm.profile.cacheDB;
+        int i;
+        CacheDB cacheDB = MainForm.profile.cacheDB;
 
-	myProgressBarForm pbf = new myProgressBarForm();
-	Handle h = new Handle();
+        myProgressBarForm pbf = new myProgressBarForm();
+        Handle h = new Handle();
 
-	int count = 0;
-	int nAdded = 0;
-	pbf.setTask(h, "Reading Directory, be patient");
-	pbf.exec();
-	h.progress = (float) 0.5;
-	h.changed();
-	String[] CacheFiles = new FileBugfix(MainForm.profile.dataDir).list("*.xml", FileBase.LIST_FILES_ONLY | FileBase.LIST_DONT_SORT);
-	pbf.setTask(h, "preparing XML-files");
-	for (i = 0; i < CacheFiles.length; i++) {
-	    int pos = CacheFiles[i].lastIndexOf('.');
-	    if (pos < 0)
-		continue;
-	    String wayPoint = CacheFiles[i].substring(0, pos).toUpperCase();
-	    if (wayPoint.equalsIgnoreCase("index"))
-		CacheFiles[i] = null;
-	    else {
-		count++;
-	    }
-	}
-	cacheDB.clear();
-	pbf.setTask(h, MyLocale.getMsg(209, "Rebuilding index"));
-	if (count > 0) {
-	    int nProcessed = 0;
-	    // Now do the actual work
-	    String details = "";
-	    for (i = 0; i < CacheFiles.length; i++) {
-		if (CacheFiles[i] != null) {
+        int count = 0;
+        int nAdded = 0;
+        pbf.setTask(h, "Reading Directory, be patient");
+        pbf.exec();
+        h.progress = (float) 0.5;
+        h.changed();
+        String[] CacheFiles = new FileBugfix(MainForm.profile.dataDir).list("*.xml", FileBase.LIST_FILES_ONLY | FileBase.LIST_DONT_SORT);
+        pbf.setTask(h, "preparing XML-files");
+        for (i = 0; i < CacheFiles.length; i++) {
+            int pos = CacheFiles[i].lastIndexOf('.');
+            if (pos < 0)
+                continue;
+            String wayPoint = CacheFiles[i].substring(0, pos).toUpperCase();
+            if (wayPoint.equalsIgnoreCase("index"))
+                CacheFiles[i] = null;
+            else {
+                count++;
+            }
+        }
+        cacheDB.clear();
+        pbf.setTask(h, MyLocale.getMsg(209, "Rebuilding index"));
+        if (count > 0) {
+            int nProcessed = 0;
+            // Now do the actual work
+            String details = "";
+            for (i = 0; i < CacheFiles.length; i++) {
+                if (CacheFiles[i] != null) {
 
-		    nProcessed++;
-		    if (nProcessed % 100 == 0) {
-			h.progress = ((float) nProcessed) / (float) (count);
-			h.changed();
-		    }
-		    int start = 0;
-		    boolean doit = true;
-		    try {
-			FileReader in = new FileReader(MainForm.profile.dataDir + CacheFiles[i]);
-			details = in.readAll();
-			in.close();
-			start = details.indexOf("<CACHE ");
-			if (start < 0)
-			    doit = false;
-			else if (details.indexOf("<CACHEDETAILS>") < 0)
-			    doit = false;
-		    } catch (IOException e) {
-			doit = false;
-		    }
-		    ;
+                    nProcessed++;
+                    if (nProcessed % 100 == 0) {
+                        h.progress = ((float) nProcessed) / (float) (count);
+                        h.changed();
+                    }
+                    int start = 0;
+                    boolean doit = true;
+                    try {
+                        FileReader in = new FileReader(MainForm.profile.dataDir + CacheFiles[i]);
+                        details = in.readAll();
+                        in.close();
+                        start = details.indexOf("<CACHE ");
+                        if (start < 0)
+                            doit = false;
+                        else if (details.indexOf("<CACHEDETAILS>") < 0)
+                            doit = false;
+                    } catch (IOException e) {
+                        doit = false;
+                    }
+                    ;
 
-		    if (doit) {
-			int end;
-			int vstart = details.indexOf("<VERSION value = \"");
-			if (vstart >= 0) {
-			    cacheXmlVersion = Integer.valueOf(details.substring(vstart + 18, details.indexOf("\"", vstart + 18))).intValue();
-			} else {
-			    cacheXmlVersion = 1;
-			}
-			end = details.indexOf("/>", start);
-			CacheHolder ch = CacheHolder.fromString(details.substring(start, end + 2), cacheXmlVersion);
-			cacheDB.add(ch);
-			nAdded++;
-			Preferences.itself().log(ch.getCode() + " added. (" + nAdded + ")");
-			// CacheFiles[i] = null;
-		    } else
-			Preferences.itself().log("File " + CacheFiles[i] + " not entered to index.xml");
-		    ;
-		}
-		if (pbf.isClosed)
-		    break;
-	    }
-	    MainForm.profile.buildReferences();
-	    MainForm.profile.saveIndex(Profile.SHOW_PROGRESS_BAR, Profile.FORCESAVE);
-	}
-	pbf.exit(0);
+                    if (doit) {
+                        int end;
+                        int vstart = details.indexOf("<VERSION value = \"");
+                        if (vstart >= 0) {
+                            cacheXmlVersion = Integer.valueOf(details.substring(vstart + 18, details.indexOf("\"", vstart + 18))).intValue();
+                        } else {
+                            cacheXmlVersion = 1;
+                        }
+                        end = details.indexOf("/>", start);
+                        CacheHolder ch = CacheHolder.fromString(details.substring(start, end + 2), cacheXmlVersion);
+                        cacheDB.add(ch);
+                        nAdded++;
+                        Preferences.itself().log(ch.getCode() + " added. (" + nAdded + ")");
+                        // CacheFiles[i] = null;
+                    } else
+                        Preferences.itself().log("File " + CacheFiles[i] + " not entered to index.xml");
+                    ;
+                }
+                if (pbf.isClosed)
+                    break;
+            }
+            MainForm.profile.buildReferences();
+            MainForm.profile.saveIndex(Profile.SHOW_PROGRESS_BAR, Profile.FORCESAVE);
+        }
+        pbf.exit(0);
     }
 
     class myProgressBarForm extends ProgressBarForm {
-	boolean isClosed = false;
+        boolean isClosed = false;
 
-	protected boolean canExit(int exitCode) {
-	    isClosed = true;
-	    return true;
-	}
+        protected boolean canExit(int exitCode) {
+            isClosed = true;
+            return true;
+        }
     }
 
 }

@@ -3,8 +3,7 @@ package gro.bouncycastle.crypto.tls;
 /**
  * RFC 4492 5.4
  */
-public class ECCurveType
-{
+public class ECCurveType {
     /**
      * Indicates the elliptic curve domain parameters are conveyed verbosely, and the
      * underlying finite field is a prime field.

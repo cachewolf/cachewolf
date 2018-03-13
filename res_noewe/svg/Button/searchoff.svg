@@ -1,8 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
-<svg x="0px" y="0px" width="32" height="32" viewBox="0, 0, 512, 512" preserveAspectRatio="xMidYMid" font-size="0" id="Capa_1" xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xml="http://www.w3.org/XML/1998/namespace" version="1.1">
-  <namedview id="namedview66" xml:space="preserve" />
-  <defs id="defs30" xml:space="preserve">
+<svg xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xml="http://www.w3.org/XML/1998/namespace" x="0px" y="0px" width="32" height="32" overflow="hidden" viewBox="0, 0, 512, 512" preserveAspectRatio="xMidYMid" font-size="0" id="svg" xml:space="preserve" xmlns="http://www.w3.org/2000/svg" version="1.1">
+  <defs id="def1" xml:space="preserve">
     <linearGradient x1="125.151" y1="144.3532" x2="227.2302" y2="144.3532" gradientUnits="userSpaceOnUse" gradientTransform="scale(0.9364066, 1.067912)" id="SVGID_Fill4_" xml:space="preserve">
       <stop offset="1.86047%" stop-color="#7DE30F" stop-opacity="1" id="stop55" xml:space="preserve" />
       <stop offset="100%" stop-color="#235E03" stop-opacity="1" id="stop57" xml:space="preserve" />
@@ -35,21 +34,32 @@
       <stop offset="1.86047%" stop-color="#3C8406" stop-opacity="1" id="stop97" xml:space="preserve" />
       <stop offset="100%" stop-color="#153801" stop-opacity="1" id="stop99" xml:space="preserve" />
     </linearGradient>
-    <filter x="none" y="none" width="none" height="none" color-interpolation-filters="auto" id="filter3317" xml:space="default">
-      <feGaussianBlur stdDeviation="0.306875" id="feGaussianBlur3319" xml:space="default" collect="always" />
-    </filter>
-    <linearGradient x1="25.60666" y1="28.44924" x2="3.586481" y2="6.429066" gradientUnits="userSpaceOnUse" xlink:href="#linearGradient3279" id="linearGradient3287" xml:space="default" />
-    <linearGradient x1="0" y1="0" x2="1" y2="0" gradientUnits="objectBoundingBox" id="linearGradient3279" xml:space="default">
-      <stop offset="0%" stop-color="#FE0000" stop-opacity="1" id="stop3281" xml:space="default" />
-      <stop offset="100%" stop-color="#FEC7B5" stop-opacity="1" id="stop3283" xml:space="default" />
-    </linearGradient>
-    <linearGradient x1="26.64575" y1="29.57386" x2="2.488663" y2="5.416767" gradientUnits="userSpaceOnUse" xlink:href="#linearGradient3289" id="linearGradient3295" xml:space="default" />
-    <linearGradient x1="0" y1="0" x2="1" y2="0" gradientUnits="objectBoundingBox" id="linearGradient3289" xml:space="default">
-      <stop offset="0%" stop-color="#BE0000" stop-opacity="1" id="stop3291" xml:space="default" />
-      <stop offset="100%" stop-color="#E53700" stop-opacity="1" id="stop3293" xml:space="default" />
-    </linearGradient>
-    <linearGradient x1="25.60666" y1="28.44924" x2="3.586481" y2="6.429066" gradientUnits="userSpaceOnUse" xlink:href="#linearGradient3279" gradientTransform="matrix(16.83531, 0, 0, 16.83531, -16.027, -9.782855)" id="linearGradient3287-9" xml:space="default" />
-    <linearGradient x1="26.64575" y1="29.57386" x2="2.488663" y2="5.416767" gradientUnits="userSpaceOnUse" xlink:href="#linearGradient3289" gradientTransform="matrix(16.83531, 0, 0, 16.83531, -16.027, -9.782855)" id="linearGradient3295-3" xml:space="default" />
+      <filter x="none" y="none" width="none" height="none" color-interpolation-filters="auto" id="filter3317"
+              xml:space="default">
+          <feGaussianBlur stdDeviation="0.306875" id="feGaussianBlur3319" xml:space="default" collect="always"/>
+      </filter>
+      <linearGradient x1="25.60666" y1="28.44924" x2="3.586481" y2="6.429066" gradientUnits="userSpaceOnUse"
+                      xlink:href="#linearGradient3279" id="linearGradient3287" xml:space="default"/>
+      <linearGradient x1="0" y1="0" x2="1" y2="0" gradientUnits="objectBoundingBox" id="linearGradient3279"
+                      xml:space="default">
+          <stop offset="0%" stop-color="#FE0000" stop-opacity="1" id="stop3281" xml:space="default"/>
+          <stop offset="100%" stop-color="#FEC7B5" stop-opacity="1" id="stop3283" xml:space="default"/>
+      </linearGradient>
+      <linearGradient x1="26.64575" y1="29.57386" x2="2.488663" y2="5.416767" gradientUnits="userSpaceOnUse"
+                      xlink:href="#linearGradient3289" id="linearGradient3295" xml:space="default"/>
+      <linearGradient x1="0" y1="0" x2="1" y2="0" gradientUnits="objectBoundingBox" id="linearGradient3289"
+                      xml:space="default">
+          <stop offset="0%" stop-color="#BE0000" stop-opacity="1" id="stop3291" xml:space="default"/>
+          <stop offset="100%" stop-color="#E53700" stop-opacity="1" id="stop3293" xml:space="default"/>
+      </linearGradient>
+      <linearGradient x1="25.60666" y1="28.44924" x2="3.586481" y2="6.429066" gradientUnits="userSpaceOnUse"
+                      xlink:href="#linearGradient3279"
+                      gradientTransform="matrix(16.83531, 0, 0, 16.83531, -16.027, -9.782855)" id="linearGradient3287-9"
+                      xml:space="default"/>
+      <linearGradient x1="26.64575" y1="29.57386" x2="2.488663" y2="5.416767" gradientUnits="userSpaceOnUse"
+                      xlink:href="#linearGradient3289"
+                      gradientTransform="matrix(16.83531, 0, 0, 16.83531, -16.027, -9.782855)" id="linearGradient3295-3"
+                      xml:space="default"/>
   </defs>
   <g transform="matrix(0.9957627, 0, 0, 1.522665, 2.169492, -133.8022)" id="g50" xml:space="preserve">
     <g id="g4" xml:space="preserve">
@@ -89,5 +99,7 @@
       <rect x="192" y="188" width="128" height="16" id="rect46" xml:space="preserve" style="fill:#8B8996;" />
     </g>
   </g>
-  <path d="M93.92863 14.94416 L8.699821 100.1729 L169.6876 261.6867 L8.699821 422.6743 L93.92863 507.9033 L254.9163 346.9154 L415.9042 507.9033 L501.1329 422.6743 L340.1453 261.6867 L501.1329 100.1729 L415.9042 14.94416 L254.9163 175.9318 z" stroke="url(#linearGradient3295-3)" fill-rule="evenOdd" stroke-width="16.83531" stroke-linecap="square" opacity="0.7" id="rect2504" xml:space="default" style="fill:url(#linearGradient3287-9);" />
+    <path d="M93.92863 14.94416 L8.699821 100.1729 L169.6876 261.6867 L8.699821 422.6743 L93.92863 507.9033 L254.9163 346.9154 L415.9042 507.9033 L501.1329 422.6743 L340.1453 261.6867 L501.1329 100.1729 L415.9042 14.94416 L254.9163 175.9318 z"
+          stroke="url(#linearGradient3295-3)" fill-rule="evenOdd" stroke-width="16.83531" stroke-linecap="square"
+          opacity="0.7" id="rect2504" xml:space="default" style="fill:url(#linearGradient3287-9);"/>
 </svg>

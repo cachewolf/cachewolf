@@ -2,13 +2,10 @@ package gro.bouncycastle.math.ec;
 
 import ewe.math.BigInteger;
 
-public abstract class AbstractECMultiplier implements ECMultiplier
-{
-    public ECPoint multiply(ECPoint p, BigInteger k)
-    {
+public abstract class AbstractECMultiplier implements ECMultiplier {
+    public ECPoint multiply(ECPoint p, BigInteger k) {
         int sign = k.signum();
-        if (sign == 0 || p.isInfinity())
-        {
+        if (sign == 0 || p.isInfinity()) {
             return p.getCurve().getInfinity();
         }
 

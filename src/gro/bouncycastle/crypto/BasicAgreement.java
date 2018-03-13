@@ -6,8 +6,7 @@ import ewe.math.BigInteger;
  * The basic interface that basic Diffie-Hellman implementations
  * conforms to.
  */
-public interface BasicAgreement
-{
+public interface BasicAgreement {
     /**
      * initialise the agreement engine.
      */
@@ -20,7 +19,7 @@ public interface BasicAgreement
 
     /**
      * given a public key from a given party calculate the next
-     * message in the agreement sequence. 
+     * message in the agreement sequence.
      */
     BigInteger calculateAgreement(CipherParameters pubKey);
 }

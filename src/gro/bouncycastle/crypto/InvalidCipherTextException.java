@@ -4,14 +4,12 @@ package gro.bouncycastle.crypto;
  * this exception is thrown whenever we find something we don't expect in a
  * message.
  */
-public class InvalidCipherTextException 
-    extends CryptoException
-{
+public class InvalidCipherTextException
+        extends CryptoException {
     /**
      * base constructor.
      */
-    public InvalidCipherTextException()
-    {
+    public InvalidCipherTextException() {
     }
 
     /**
@@ -20,8 +18,7 @@ public class InvalidCipherTextException
      * @param message the message to be carried with the exception.
      */
     public InvalidCipherTextException(
-        String  message)
-    {
+            String message) {
         super(message);
     }
 
@@ -29,12 +26,11 @@ public class InvalidCipherTextException
      * create a InvalidCipherTextException with the given message.
      *
      * @param message the message to be carried with the exception.
-     * @param cause the root cause of the exception.
+     * @param cause   the root cause of the exception.
      */
     public InvalidCipherTextException(
-        String  message,
-        Throwable cause)
-    {
+            String message,
+            Throwable cause) {
         super(message, cause);
     }
 }

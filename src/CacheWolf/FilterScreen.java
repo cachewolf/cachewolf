@@ -112,8 +112,8 @@ public class FilterScreen extends Form {
         CellPanel fltListPanel = new CellPanel();
         fltListPanel.equalWidths = true;
         fltListPanel.addNext(fltList = new mChoice());
-        fltListPanel.addNext(btnDelFlt = GuiImageBroker.getButton("","trash"));
-        fltListPanel.addLast(btnSaveFlt = GuiImageBroker.getButton("","clsave"));
+        fltListPanel.addNext(btnDelFlt = GuiImageBroker.getButton("", "trash"));
+        fltListPanel.addLast(btnSaveFlt = GuiImageBroker.getButton("", "clsave"));
         this.addLast(fltListPanel);
 
         executePanel = new ExecutePanel(this);

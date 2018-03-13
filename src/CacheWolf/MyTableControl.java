@@ -50,13 +50,14 @@ public class MyTableControl extends TableControl {
     public CacheDB cacheDB;
 
     public int clickedColumn = 0;
-
+    IconAndText imgDrag;
+    String wayPoint;
+    int row;
     private MenuItem miSetDestination, miCenter, miUnhideAddis;
     private MenuItem miOpenOnline, miOpenOffline, miLogOnline, miOpenGmaps;
     private MenuItem miDelete, miUpdate, miChangeBlacklisted, miChangeSolved;
     private MenuItem miTickAll, miUntickAll;
     private MenuItem miSeparator;
-
     private Menu theMenu;
     private MenuItem[] menuItems;
 
@@ -79,7 +80,7 @@ public class MyTableControl extends TableControl {
         miDelete = new MenuItem(MyLocale.getMsg(1012, "Delete selected")); //
         miUpdate = new MenuItem(MyLocale.getMsg(1014, "Update")); //
         miChangeBlacklisted = new MenuItem(MyLocale.getMsg(1054, "Change Blacklist")); //
-        miChangeSolved =  new MenuItem(MyLocale.getMsg(1056, "Ticked change solved")); //
+        miChangeSolved = new MenuItem(MyLocale.getMsg(1056, "Ticked change solved")); //
 
         miTickAll = new MenuItem(MyLocale.getMsg(1015, "Select all")); //
         miUntickAll = new MenuItem(MyLocale.getMsg(1016, "De-select all")); //
@@ -398,8 +399,7 @@ public class MyTableControl extends TableControl {
                     } else {
                         if (status == BLACKLISTED) {
                             currCache.setBlack(!currCache.isBlack());
-                        }
-                        else if (status == SOLVED) {
+                        } else if (status == SOLVED) {
                             currCache.setIsSolved(!currCache.isSolved());
                         }
                         currCache.saveCacheDetails(); // to reflect it in xml and what takes time reading+writing
@@ -413,6 +413,11 @@ public class MyTableControl extends TableControl {
             Vm.showWait(false);
         }
     }
+
+    // /////////////////////////////////////////////////
+    // Allow the caches to be dragged into a cachelist
+    // /////////////////////////////////////////////////
+
     // Overrides
     public void penDoubleClicked(Point where) {
         MainTab.itself.select(MainTab.DESCRIPTION_CARD);
@@ -451,14 +456,6 @@ public class MyTableControl extends TableControl {
             }
         }
     }
-
-    // /////////////////////////////////////////////////
-    // Allow the caches to be dragged into a cachelist
-    // /////////////////////////////////////////////////
-
-    IconAndText imgDrag;
-    String wayPoint;
-    int row;
 
     public void startDragging(DragContext dc) {
         Point p = cellAtPoint(dc.start.x, dc.start.y, null);

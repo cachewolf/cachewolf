@@ -8,36 +8,31 @@ import ewe.io.OutputStream;
  * An input stream which copies anything read through it to another stream.
  */
 public class TeeInputStream
-    extends InputStream
-{
+        extends InputStream {
     private final InputStream input;
     private final OutputStream output;
 
     /**
      * Base constructor.
      *
-     * @param input input stream to be wrapped.
+     * @param input  input stream to be wrapped.
      * @param output output stream to copy any input read to.
      */
-    public TeeInputStream(InputStream input, OutputStream output)
-    {
+    public TeeInputStream(InputStream input, OutputStream output) {
         this.input = input;
         this.output = output;
     }
 
     public int read(byte[] buf)
-        throws IOException
-    {
+            throws IOException {
         return read(buf, 0, buf.length);
     }
 
     public int read(byte[] buf, int off, int len)
-        throws IOException
-    {
+            throws IOException {
         int i = input.read(buf, off, len);
 
-        if (i > 0)
-        {
+        if (i > 0) {
             output.write(buf, off, i);
         }
 
@@ -45,12 +40,10 @@ public class TeeInputStream
     }
 
     public int read()
-        throws IOException
-    {
+            throws IOException {
         int i = input.read();
 
-        if (i >= 0)
-        {
+        if (i >= 0) {
             output.write(i);
         }
 
@@ -58,14 +51,12 @@ public class TeeInputStream
     }
 
     public void close()
-        throws IOException
-    {
+            throws IOException {
         this.input.close();
         this.output.close();
     }
 
-    public OutputStream getOutputStream()
-    {
+    public OutputStream getOutputStream() {
         return output;
     }
 }

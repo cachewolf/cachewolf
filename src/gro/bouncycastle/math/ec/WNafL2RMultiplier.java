@@ -6,17 +6,16 @@ import ewe.math.BigInteger;
  * Class implementing the WNAF (Window Non-Adjacent Form) multiplication
  * algorithm.
  */
-public class WNafL2RMultiplier extends AbstractECMultiplier
-{
+public class WNafL2RMultiplier extends AbstractECMultiplier {
     /**
      * Multiplies <code>this</code> by an integer <code>k</code> using the
      * Window NAF method.
+     *
      * @param k The integer by which <code>this</code> is multiplied.
      * @return A new <code>ECPoint</code> which equals <code>this</code>
      * multiplied by <code>k</code>.
      */
-    protected ECPoint multiplyPositive(ECPoint p, BigInteger k)
-    {
+    protected ECPoint multiplyPositive(ECPoint p, BigInteger k) {
         // Clamp the window width in the range [2, 16]
         int width = Math.max(2, Math.min(16, getWindowSize(k.bitLength())));
 
@@ -34,8 +33,7 @@ public class WNafL2RMultiplier extends AbstractECMultiplier
          * NOTE: We try to optimize the first window using the precomputed points to substitute an
          * addition for 2 or more doublings.
          */
-        if (i > 1)
-        {
+        if (i > 1) {
             int wi = wnaf[--i];
             int digit = wi >> 16, zeroes = wi & 0xFFFF;
 
@@ -43,13 +41,12 @@ public class WNafL2RMultiplier extends AbstractECMultiplier
             ECPoint[] table = digit < 0 ? preCompNeg : preComp;
 
             // Optimization can only be used for values in the lower half of the table
-            if ((n << 2) < (1 << width))
-            {
+            if ((n << 2) < (1 << width)) {
                 int highest = LongArray.bitLengths[n];
 
                 // TODO Get addition/doubling cost ratio from curve and compare to 'scale' to see if worth substituting?
                 int scale = width - highest;
-                int lowBits =  n ^ (1 << (highest - 1));
+                int lowBits = n ^ (1 << (highest - 1));
 
                 int i1 = ((1 << (width - 1)) - 1);
                 int i2 = (lowBits << scale) + 1;
@@ -58,17 +55,14 @@ public class WNafL2RMultiplier extends AbstractECMultiplier
                 zeroes -= scale;
 
 //              System.out.println("Optimized: 2^" + scale + " * " + n + " = " + i1 + " + " + i2);
-            }
-            else
-            {
+            } else {
                 R = table[n >>> 1];
             }
 
             R = R.timesPow2(zeroes);
         }
 
-        while (i > 0)
-        {
+        while (i > 0) {
             int wi = wnaf[--i];
             int digit = wi >> 16, zeroes = wi & 0xFFFF;
 
@@ -85,12 +79,11 @@ public class WNafL2RMultiplier extends AbstractECMultiplier
 
     /**
      * Determine window width to use for a scalar multiplication of the given size.
-     * 
+     *
      * @param bits the bit-length of the scalar to multiply by
      * @return the window size to use
      */
-    protected int getWindowSize(int bits)
-    {
+    protected int getWindowSize(int bits) {
         return WNafUtil.getWindowSize(bits);
     }
 }

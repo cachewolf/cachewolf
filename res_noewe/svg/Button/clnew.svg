@@ -1,224 +1,81 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<!--part of the matt icon theme by sixsixfive released under CC0 (https://creativecommons.org/publicdomain/zero/1.0/) on openclipart-->
-
-<svg
-   xmlns:dc="http://purl.org/dc/elements/1.1/"
-   xmlns:cc="http://creativecommons.org/ns#"
-   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-   xmlns:svg="http://www.w3.org/2000/svg"
-   xmlns="http://www.w3.org/2000/svg"
-   xmlns:xlink="http://www.w3.org/1999/xlink"
-   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
-   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   viewBox="0 0 128 128"
-   version="1.1"
-   id="svg"
-   sodipodi:docname="64068-new-document-vector.svg"
-   inkscape:version="0.92.2 (5c3e80d, 2017-08-06)">
-  <metadata
-     id="metadata51">
-    <rdf:RDF>
-      <cc:Work
-         rdf:about="">
-        <dc:format>image/svg+xml</dc:format>
-        <dc:type
-           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
-      </cc:Work>
-    </rdf:RDF>
-  </metadata>
-  <sodipodi:namedview
-     pagecolor="#ffffff"
-     bordercolor="#666666"
-     borderopacity="1"
-     objecttolerance="10"
-     gridtolerance="10"
-     guidetolerance="10"
-     inkscape:pageopacity="0"
-     inkscape:pageshadow="2"
-     inkscape:window-width="731"
-     inkscape:window-height="480"
-     id="namedview49"
-     showgrid="false"
-     inkscape:zoom="1.84375"
-     inkscape:cx="64"
-     inkscape:cy="64"
-     inkscape:window-x="0"
-     inkscape:window-y="0"
-     inkscape:window-maximized="0"
-     inkscape:current-layer="svg47" />
-  <defs
-     id="id0">
-    <linearGradient
-       id="id3">
-      <stop
-         id="T"
-         stop-color="#eee" />
-      <stop
-         id="U"
-         offset="1"
-         stop-color="#d2d2d2" />
-    </linearGradient>
-    <linearGradient
-       id="id4">
-      <stop
-         id="V" />
-      <stop
-         id="W"
-         offset="1"
-         stop-opacity="0.536" />
-    </linearGradient>
-    <linearGradient
-       id="id5">
-      <stop
-         id="X" />
-      <stop
-         id="Y"
-         offset="1"
-         stop-color="#ddd"
-         stop-opacity="0" />
-    </linearGradient>
-    <filter
-       x="-0.147"
-       y="-0.145"
-       width="1.294"
-       height="1.29"
-       color-interpolation-filters="sRGB"
-       id="id6">
-      <feGaussianBlur
-         stdDeviation="1.81881"
-         id="Z" />
-    </filter>
-    <filter
-       color-interpolation-filters="sRGB"
-       id="id7">
-      <feGaussianBlur
-         stdDeviation="2.58594"
-         id="a" />
-    </filter>
-    <radialGradient
-       cx="81.79"
-       cy="100.32"
-       r="44.42"
-       id="id8"
-       xlink:href="#id3"
-       gradientUnits="userSpaceOnUse"
-       gradientTransform="matrix(2.0026052,-1.5970314,1.7773333,2.2286954,-279.23554,23.703826)" />
-    <radialGradient
-       cx="89.51"
-       cy="22.254"
-       r="18.279"
-       id="id9"
-       xlink:href="#id4"
-       gradientUnits="userSpaceOnUse"
-       gradientTransform="matrix(1,0,0,0.97467889,0,0.43910718)" />
-    <linearGradient
-       x1="98.33"
-       y1="14.793"
-       x2="86.82"
-       y2="25.1"
-       id="A"
-       xlink:href="#id5"
-       gradientUnits="userSpaceOnUse"
-       gradientTransform="matrix(0.96714879,0,0,0.96714879,0.45622123,-0.08680339)" />
-    <linearGradient
-       y1="22.88"
-       x2="0"
-       y2="101.01"
-       id="B"
-       xlink:href="#C"
-       gradientUnits="userSpaceOnUse" />
-    <linearGradient
-       id="C">
-      <stop
-         id="b"
-         stop-color="#f0ff80" />
-      <stop
-         id="c"
-         offset="1"
-         stop-color="#e3ad00" />
-    </linearGradient>
-    <linearGradient
-       y1="8.211"
-       x2="0"
-       y2="121.04"
-       id="D"
-       xlink:href="#H"
-       gradientUnits="userSpaceOnUse" />
-    <radialGradient
-       cx="63.21"
-       cy="-8.84"
-       r="54.27"
-       id="E"
-       xlink:href="#I"
-       gradientUnits="userSpaceOnUse"
-       gradientTransform="matrix(1.2606553,0,0,0.9847417,-16.476307,0.9860661)" />
-    <radialGradient
-       cx="63.894"
-       cy="117.35"
-       r="53.91"
-       id="F"
-       xlink:href="#G"
-       gradientUnits="userSpaceOnUse"
-       gradientTransform="matrix(1,0,0,0.08641975,0,107.20963)" />
-    <linearGradient
-       id="G">
-      <stop
-         id="d" />
-      <stop
-         id="e"
-         offset="1"
-         stop-opacity="0" />
-    </linearGradient>
-    <linearGradient
-       id="H">
-      <stop
-         id="f"
-         stop-color="#888" />
-      <stop
-         id="g"
-         offset="1"
-         stop-color="#494949" />
-    </linearGradient>
-    <linearGradient
-       id="I">
-      <stop
-         id="h"
-         stop-color="#eee" />
-      <stop
-         id="i"
-         offset="1"
-         stop-color="#eee"
-         stop-opacity="0" />
-    </linearGradient>
-  </defs>
-  <g
-     transform="translate(1.1324584,3.3099998)"
-     id="id1">
-    <path
-       d="m 20.09375,4.1185004 0,117.9999996 88.84375,0 0,-86.15625 -0.59375,-0.625 c 0.21045,0.144391 0.41688,0.302162 0.625,0.4375 L 78.09375,4.1497504 c 0.05654,0.079597 0.09993,0.1703021 0.15625,0.25 l -0.25,-0.28125 -57.90625,0 z"
-       transform="matrix(0.96714879,0,0,0.97126149,0.45622123,-0.61456831)"
-       id="J"
-       opacity="0.809"
-       filter="url(#id7)" />
-    <path
-       d="m 19.889867,2.5426324 0,114.1235576 85.925123,0 0,-83.325913 -29.921163,-30.7976446 -56.00396,0 z"
-       id="K"
-       fill="url(#id8)" />
-    <path
-       d="m 81.698039,28.309502 0.135161,-8.351 C 81.901124,13.359407 80.956142,8.4107397 77.785779,3.9471419 L 80.362343,3.9159389 107.86271,29.53084 c -4.06802,-2.645393 -9.621189,-0.791242 -16.861906,-1.025606 l -9.302765,-0.195732 z"
-       transform="matrix(1.016085,0,0,1.112241,-4.9246966,-0.34524137)"
-       id="L"
-       opacity="0.505"
-       fill="url(#id9)"
-       filter="url(#id6)" />
-    <path
-       d="m 81.615861,25.811681 0.130721,-8.07666 C 81.812274,11.352715 79.055005,6.8989516 75.988792,2.5819884 L 105.85553,33.170155 c -3.93438,-2.558489 -8.239658,-6.942507 -15.242511,-7.169171 l -8.997158,-0.189303 z"
-       id="M"
-       fill="#eee" />
-    <path
-       d="m 81.615861,25.811681 0.130721,-8.07666 C 81.812274,11.352715 79.055005,6.8989516 75.988792,2.5819884 L 105.85553,33.170155 c -3.93438,-2.558489 -8.239658,-6.942507 -15.242511,-7.169171 l -8.997158,-0.189303 z"
-       id="N"
-       fill="url(#idA)" />
-  </g>
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xml="http://www.w3.org/XML/1998/namespace" x="0" y="0" width="32" height="32" overflow="hidden"
+     viewBox="0, 0, 128, 128" preserveAspectRatio="xMidYMid" font-size="0" id="svg"
+     xml:space="default" xmlns="http://www.w3.org/2000/svg" version="1.1">
+    <defs id="def1" xml:space="default">
+        <linearGradient x1="0%" y1="0%" x2="100%" y2="0%" gradientUnits="objectBoundingBox" id="id3"
+                        xml:space="default">
+            <stop offset="0%" stop-color="#EEEEEE" stop-opacity="1" id="T" xml:space="default"/>
+            <stop offset="100%" stop-color="#D2D2D2" stop-opacity="1" id="U" xml:space="default"/>
+        </linearGradient>
+        <linearGradient x1="0%" y1="0%" x2="100%" y2="0%" gradientUnits="objectBoundingBox" id="id4"
+                        xml:space="default">
+            <stop offset="0%" stop-opacity="1" id="V" xml:space="default"/>
+            <stop offset="100%" stop-opacity="0.536" id="W" xml:space="default"/>
+        </linearGradient>
+        <linearGradient x1="0%" y1="0%" x2="100%" y2="0%" gradientUnits="objectBoundingBox" id="id5"
+                        xml:space="default">
+            <stop offset="0%" stop-opacity="1" id="X" xml:space="default"/>
+            <stop offset="100%" stop-color="#DDDDDD" stop-opacity="0" id="Y" xml:space="default"/>
+        </linearGradient>
+        <filter x="-0.147" y="-0.145" width="1.294" height="1.29" color-interpolation-filters="auto" id="id6"
+                xml:space="default">
+            <feGaussianBlur stdDeviation="1.81881" id="Z" xml:space="default"/>
+        </filter>
+        <filter x="none" y="none" width="none" height="none" color-interpolation-filters="auto" id="id7"
+                xml:space="default">
+            <feGaussianBlur stdDeviation="2.58594" id="a" xml:space="default"/>
+        </filter>
+        <radialGradient cx="81.79" cy="100.32" r="44.42" fx="81.79" fy="100.32" gradientUnits="userSpaceOnUse"
+                        xlink:href="#id3"
+                        gradientTransform="matrix(2.002605, -1.597031, 1.777333, 2.228695, -279.2355, 23.70383)"
+                        id="id8" xml:space="default"/>
+        <radialGradient cx="89.51" cy="22.254" r="18.279" fx="89.51" fy="22.254" gradientUnits="userSpaceOnUse"
+                        xlink:href="#id4" gradientTransform="matrix(1, 0, 0, 0.9746789, 0, 0.4391072)" id="id9"
+                        xml:space="default"/>
+        <linearGradient x1="98.33" y1="14.793" x2="86.82" y2="25.1" gradientUnits="userSpaceOnUse" xlink:href="#id5"
+                        gradientTransform="matrix(0.9671488, 0, 0, 0.9671488, 0.4562212, -0.08680339)" id="A"
+                        xml:space="default"/>
+        <linearGradient x1="0%" y1="22.88" x2="0" y2="101.01" gradientUnits="userSpaceOnUse" xlink:href="#C" id="B"
+                        xml:space="default"/>
+        <linearGradient x1="0%" y1="0%" x2="100%" y2="0%" gradientUnits="objectBoundingBox" id="C" xml:space="default">
+            <stop offset="0%" stop-color="#F0FF80" stop-opacity="1" id="b" xml:space="default"/>
+            <stop offset="100%" stop-color="#E3AD00" stop-opacity="1" id="c" xml:space="default"/>
+        </linearGradient>
+        <linearGradient x1="0%" y1="8.211" x2="0" y2="121.04" gradientUnits="userSpaceOnUse" xlink:href="#H" id="D"
+                        xml:space="default"/>
+        <radialGradient cx="63.21" cy="-8.84" r="54.27" fx="63.21" fy="-8.84" gradientUnits="userSpaceOnUse"
+                        xlink:href="#I" gradientTransform="matrix(1.260655, 0, 0, 0.9847417, -16.47631, 0.9860661)"
+                        id="E" xml:space="default"/>
+        <radialGradient cx="63.894" cy="117.35" r="53.91" fx="63.894" fy="117.35" gradientUnits="userSpaceOnUse"
+                        xlink:href="#G" gradientTransform="matrix(1, 0, 0, 0.08641975, 0, 107.2096)" id="F"
+                        xml:space="default"/>
+        <linearGradient x1="0%" y1="0%" x2="100%" y2="0%" gradientUnits="objectBoundingBox" id="G" xml:space="default">
+            <stop offset="0%" stop-opacity="1" id="d" xml:space="default"/>
+            <stop offset="100%" stop-opacity="0" id="e" xml:space="default"/>
+        </linearGradient>
+        <linearGradient x1="0%" y1="0%" x2="100%" y2="0%" gradientUnits="objectBoundingBox" id="H" xml:space="default">
+            <stop offset="0%" stop-color="#888888" stop-opacity="1" id="f" xml:space="default"/>
+            <stop offset="100%" stop-color="#494949" stop-opacity="1" id="g" xml:space="default"/>
+        </linearGradient>
+        <linearGradient x1="0%" y1="0%" x2="100%" y2="0%" gradientUnits="objectBoundingBox" id="I" xml:space="default">
+            <stop offset="0%" stop-color="#EEEEEE" stop-opacity="1" id="h" xml:space="default"/>
+            <stop offset="100%" stop-color="#EEEEEE" stop-opacity="0" id="i" xml:space="default"/>
+        </linearGradient>
+    </defs>
+    <g transform="translate(1.132458, 3.31)" id="id1" xml:space="default">
+        <path d="M20.09375 4.1185 L20.09375 122.1185 L108.9375 122.1185 L108.9375 35.96225 L108.3438 35.33725 C108.5542 35.48164 108.7606 35.63941 108.9688 35.77475 L78.09375 4.14975 C78.15029 4.229347 78.19368 4.320052 78.25 4.39975 L78 4.1185 L20.09375 4.1185 z"
+              filter="url(#id7)" opacity="0.809" transform="matrix(0.9671488, 0, 0, 0.9712615, 0.4562212, -0.6145683)"
+              id="J" xml:space="default"/>
+        <path d="M19.88987 2.542632 L19.88987 116.6662 L105.815 116.6662 L105.815 33.34028 L75.89383 2.542635 L19.88987 2.542635 z"
+              id="K" xml:space="default" style="fill:url(#id8);"/>
+        <path d="M81.69804 28.3095 L81.8332 19.9585 C81.90112 13.35941 80.95614 8.41074 77.78578 3.947142 L80.36234 3.915939 L107.8627 29.53084 C103.7947 26.88545 98.24152 28.7396 91.0008 28.50523 L81.69804 28.3095 z"
+              filter="url(#id6)" opacity="0.505" transform="matrix(1.016085, 0, 0, 1.112241, -4.924696, -0.3452414)"
+              id="L" xml:space="default" style="fill:url(#id9);"/>
+        <path d="M81.61586 25.81168 L81.74658 17.73502 C81.81227 11.35271 79.05501 6.898952 75.98879 2.581988 L105.8555 33.17015 C101.9212 30.61167 97.61588 26.22765 90.61302 26.00098 L81.61586 25.81168 z"
+              id="M" xml:space="default" style="fill:#EEEEEE;"/>
+        <path d="M81.61586 25.81168 L81.74658 17.73502 C81.81227 11.35271 79.05501 6.898952 75.98879 2.581988 L105.8555 33.17015 C101.9212 30.61167 97.61588 26.22765 90.61302 26.00098 L81.61586 25.81168 z"
+              id="N" xml:space="default"/>
+    </g>
 </svg>

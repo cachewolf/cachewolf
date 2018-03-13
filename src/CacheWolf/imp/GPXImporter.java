@@ -22,33 +22,11 @@
 
 package CacheWolf.imp;
 
-import com.stevesoft.ewe_pat.Regex;
-
-import CacheWolf.Filter;
-import CacheWolf.MainForm;
-import CacheWolf.MainTab;
-import CacheWolf.OC;
-import CacheWolf.Preferences;
-import CacheWolf.Profile;
+import CacheWolf.*;
 import CacheWolf.controls.InfoBox;
-import CacheWolf.database.Attribute;
-import CacheWolf.database.CacheDB;
-import CacheWolf.database.CacheHolder;
-import CacheWolf.database.CacheHolderDetail;
-import CacheWolf.database.CacheImage;
-import CacheWolf.database.CacheSize;
-import CacheWolf.database.CacheTerrDiff;
-import CacheWolf.database.CacheType;
-import CacheWolf.database.CoordinatePoint;
-import CacheWolf.database.Log;
-import CacheWolf.database.Travelbug;
-import CacheWolf.utils.BetterUTF8Codec;
-import CacheWolf.utils.Common;
-import CacheWolf.utils.Extractor;
-import CacheWolf.utils.MyLocale;
-import CacheWolf.utils.STRreplace;
-import CacheWolf.utils.SafeXML;
-import CacheWolf.utils.UrlFetcher;
+import CacheWolf.database.*;
+import CacheWolf.utils.*;
+import com.stevesoft.ewe_pat.Regex;
 import ewe.io.AsciiCodec;
 import ewe.io.File;
 import ewe.io.IOException;
@@ -293,7 +271,7 @@ public class GPXImporter extends MinML {
                     holder.setAvailable(strAvailable != null && strAvailable.equalsIgnoreCase("True"));
                     holder.setArchived(strArchived != null && strArchived.equalsIgnoreCase("True"));
                     // OC now has GC - Format, get CacheID -- missing p.ex. on GcTour gpx
-            /* */
+                    /* */
                     if (holder.isOC()) {
                         for (int i = 0; i < atts.getLength(); i++) {
                             if (atts.getName(i).equals("id")) {
@@ -302,7 +280,7 @@ public class GPXImporter extends MinML {
                             }
                         }
                     }
-		    /* */
+                    /* */
                     return;
                 }
 
@@ -542,43 +520,36 @@ public class GPXImporter extends MinML {
                     }
                 }
             }
-        }
-        else if (inGsakExtensions) {
-          if (tag.equals("gsak:LatBeforeCorrect")) {
-              if (tagValue.length()>0) {
-                  if ( holder.getWpt().latDec != Common.parseDouble(tagValue) ) {
-                      holder.setIsSolved(true);
-                  }
-              }
-          }
-          else if (tag.equals("gsak:LonBeforeCorrect")) {
-              if (tagValue.length()>0)
-                  if (!holder.isSolved()) {
-                      if ( holder.getWpt().lonDec != Common.parseDouble(tagValue) ) {
-                          holder.setIsSolved(true);
-                      }
-                  }
-          }
-          else if (tag.equals("gsak:IsPremium")) {
-              if (tagValue.toLowerCase().equals("true")) {
-                  holder.setIsPremiumCache(true);
-              }
-          }
-          else if(tag.equals("gsak:FavPoints")) {
-              if (Preferences.itself().useGCFavoriteValue) {
-                  holder.setNumRecommended(Common.parseInt(tagValue));
-              }
-          }
-          else if(tag.equals(("gsak:GcNote"))) {
-              if (tagValue.length()>0) {
-                  holder.getDetails().setCacheNotes("<GC>" + tagValue + "</GC>");
-              }
-          }
-          else if (tag.equals(("gsak:wptExtension"))) {
-              inGsakExtensions=false;
-          }
-        }
-        else { // not inPQExtension
+        } else if (inGsakExtensions) {
+            if (tag.equals("gsak:LatBeforeCorrect")) {
+                if (tagValue.length() > 0) {
+                    if (holder.getWpt().latDec != Common.parseDouble(tagValue)) {
+                        holder.setIsSolved(true);
+                    }
+                }
+            } else if (tag.equals("gsak:LonBeforeCorrect")) {
+                if (tagValue.length() > 0)
+                    if (!holder.isSolved()) {
+                        if (holder.getWpt().lonDec != Common.parseDouble(tagValue)) {
+                            holder.setIsSolved(true);
+                        }
+                    }
+            } else if (tag.equals("gsak:IsPremium")) {
+                if (tagValue.toLowerCase().equals("true")) {
+                    holder.setIsPremiumCache(true);
+                }
+            } else if (tag.equals("gsak:FavPoints")) {
+                if (Preferences.itself().useGCFavoriteValue) {
+                    holder.setNumRecommended(Common.parseInt(tagValue));
+                }
+            } else if (tag.equals(("gsak:GcNote"))) {
+                if (tagValue.length() > 0) {
+                    holder.getDetails().setCacheNotes("<GC>" + tagValue + "</GC>");
+                }
+            } else if (tag.equals(("gsak:wptExtension"))) {
+                inGsakExtensions = false;
+            }
+        } else { // not inPQExtension
             if (inWpt) {
                 if (tag.equals("time")) {
                     holder.setHidden(tagValue.substring(0, 10)); // Date;

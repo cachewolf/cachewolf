@@ -3,8 +3,7 @@ package gro.bouncycastle.crypto.prng;
 /**
  * Generic interface for objects generating random bytes.
  */
-public interface RandomGenerator
-{
+public interface RandomGenerator {
     /**
      * Add more seed material to the generator.
      *
@@ -31,7 +30,7 @@ public interface RandomGenerator
      *
      * @param bytes byte array to be filled.
      * @param start index to start filling at.
-     * @param len length of segment to fill.
+     * @param len   length of segment to fill.
      */
     void nextBytes(byte[] bytes, int start, int len);
 

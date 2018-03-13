@@ -4,8 +4,7 @@ package gro.bouncycastle.asn1;
  * Exception thrown when correctly encoded, but unexpected data is found in a stream while building an object.
  */
 public class ASN1ParsingException
-    extends IllegalStateException
-{
+        extends IllegalStateException {
     private Throwable cause;
 
     /**
@@ -13,8 +12,7 @@ public class ASN1ParsingException
      *
      * @param message a message concerning the exception.
      */
-    public ASN1ParsingException(String message)
-    {
+    public ASN1ParsingException(String message) {
         super(message);
     }
 
@@ -22,10 +20,9 @@ public class ASN1ParsingException
      * Constructor when this exception is due to another one.
      *
      * @param message a message concerning the exception.
-     * @param cause the exception that caused this exception to be thrown.
+     * @param cause   the exception that caused this exception to be thrown.
      */
-    public ASN1ParsingException(String message, Throwable cause)
-    {
+    public ASN1ParsingException(String message, Throwable cause) {
         super(message);
         this.cause = cause;
     }
@@ -35,8 +32,7 @@ public class ASN1ParsingException
      *
      * @return the exception causing this one, null if there isn't one.
      */
-    public Throwable getCause()
-    {
+    public Throwable getCause() {
         return cause;
     }
 }

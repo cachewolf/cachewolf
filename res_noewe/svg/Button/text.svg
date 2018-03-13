@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
-<svg x="0px" y="0px" width="32" height="32" overflow="hidden" viewBox="0, 0, 70, 70" preserveAspectRatio="xMidYMid" font-size="0" id="Ebene_1" xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xml="http://www.w3.org/XML/1998/namespace" version="1.1">
+<svg xmlns:xml="http://www.w3.org/XML/1998/namespace" x="0px" y="0px" width="32" height="32" overflow="hidden" viewBox="0, 0, 70, 70" preserveAspectRatio="xMidYMid" font-size="0" id="svg" xml:space="preserve"  xmlns="http://www.w3.org/2000/svg" version="1.1">
   <g xml:space="preserve">
     <path d="M15 0 C15 0 0 0 0 15 L0 55 C0 55 0 70 15 70 L55 70 C55 70 70 70 70 55 L70 15 C70 15 70 0 55 0 L15 0 z" xml:space="preserve" class="st0" style="fill:#FFFFFF;" />
   </g>

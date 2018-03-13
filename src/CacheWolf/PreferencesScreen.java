@@ -21,19 +21,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 package CacheWolf;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import CacheWolf.controls.ExecutePanel;
-import CacheWolf.controls.GuiImageBroker;
-import CacheWolf.controls.InfoBox;
-import CacheWolf.controls.MyScrollBarPanel;
-import CacheWolf.controls.TableColumnChooser;
-import CacheWolf.utils.Common;
-import CacheWolf.utils.FileBugfix;
-import CacheWolf.utils.HttpConnection;
-import CacheWolf.utils.Metrics;
-import CacheWolf.utils.MyLocale;
+import CacheWolf.controls.*;
+import CacheWolf.utils.*;
 import ewe.filechooser.FileChooser;
 import ewe.filechooser.FileChooserBase;
 import ewe.fx.Color;
@@ -50,33 +39,13 @@ import ewe.reflect.Reflect;
 import ewe.sys.Convert;
 import ewe.sys.Time;
 import ewe.sys.mThread;
-import ewe.ui.CellConstants;
-import ewe.ui.CellPanel;
-import ewe.ui.Control;
-import ewe.ui.ControlConstants;
-import ewe.ui.ControlEvent;
-import ewe.ui.Editor;
-import ewe.ui.EditorEvent;
-import ewe.ui.Event;
-import ewe.ui.Form;
-import ewe.ui.FormBase;
-import ewe.ui.Gui;
-import ewe.ui.InputStack;
-import ewe.ui.ScrollBarPanel;
-import ewe.ui.ScrollablePanel;
-import ewe.ui.SoftKeyBar;
-import ewe.ui.mApp;
-import ewe.ui.mButton;
-import ewe.ui.mCheckBox;
-import ewe.ui.mChoice;
-import ewe.ui.mComboBox;
-import ewe.ui.mInput;
-import ewe.ui.mLabel;
-import ewe.ui.mTabbedPanel;
+import ewe.ui.*;
 import ewe.ui.formatted.TextDisplay;
 import ewe.util.mString;
 import net.ax86.GPS;
 import net.ax86.GPSException;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 /**
  * This class displays a user interface allowing the user to change and set preferences. It also provides a method to save the changed preferences that are saved immediately when the user presses "Apply". Class ID=600
@@ -106,6 +75,14 @@ public class PreferencesScreen extends Form {
             MyLocale.getMsg(362, "solved"), //
     };
     private final ExecutePanel executePanel;
+    // private mInput inpUserID;
+    mCheckBox chkPM;
+    mChoice inpLanguage, inpMetric, inpSpiderUpdates, chcGarminPort;
+    mInput Proxy, ProxyPort, Browser, fontName, fontSize, inpLogsPerPage;
+    mCheckBox chkShowDeletedImg;
+    mCheckBox chkNoTabs, chkTabsAtTop, chkMenuAtTab, chkShowStatus, chkHasCloseButton, chkUseRadar, chkUseText, chkUseIcons, chkUseBigIcons;
+    mCheckBox chkSynthShort, chkProxyActive, chkDescShowImg, chkAddDetailsToWaypoint, chkAddDetailsToName, chkSortingGroupedByCache, chkDebug;
+    TableColumnChooser tccList, tccBugs;
     // cpDataDir
     private mInput DataDir;
     private mCheckBox chkAutoLoad;
@@ -113,21 +90,12 @@ public class PreferencesScreen extends Form {
     // UserDataPanel
     private mInput Alias, inpGcMemberID, Alias2, inpPassword;
     private mChoice inpGCUser;
-    // private mInput inpUserID;
-    mCheckBox chkPM;
     // Card Maps / GPS
     private mInput MapsDir;
     private mButton MapsDirBrowseButton, gpsButton;
     // importPanel
     private mCheckBox chkCheckLog, chkCheckDTS, chkCheckTBs, alwaysKeepOwnLogs, chkOverwriteLogs, chkKeepTimeOnUpdate, chkAskForMaxValues, chkAddPremiumGC, chkUseGCFavoriteValue;
     private mInput maxLogsToKeep, maxLogsToSpider;
-
-    mChoice inpLanguage, inpMetric, inpSpiderUpdates, chcGarminPort;
-    mInput Proxy, ProxyPort, Browser, fontName, fontSize, inpLogsPerPage;
-    mCheckBox chkShowDeletedImg;
-    mCheckBox chkNoTabs, chkTabsAtTop, chkMenuAtTab, chkShowStatus, chkHasCloseButton, chkUseRadar, chkUseText, chkUseIcons, chkUseBigIcons;
-    mCheckBox chkSynthShort, chkProxyActive, chkDescShowImg, chkAddDetailsToWaypoint, chkAddDetailsToName, chkSortingGroupedByCache, chkDebug;
-    TableColumnChooser tccList, tccBugs;
 
     public PreferencesScreen() {
 
@@ -621,12 +589,12 @@ public class PreferencesScreen extends Form {
  * Thread for reading data from COM-port
  */
 class mySerialThread extends mThread {
+    public String lastgot;
     SerialPort comSp;
     byte[] comBuff = new byte[1024];
     int comLength = 0;
     TextDisplay out;
     boolean run;
-    public String lastgot;
 
     public mySerialThread(SerialPortOptions spo, TextDisplay td) throws IOException {
         comSp = new SerialPort(spo);
@@ -766,12 +734,12 @@ class GpsdThread extends mThread {
 }
 
 class OldGpsdThread extends mThread {
+    public String lastgot;
     Socket gpsdSocket;
     boolean run;
     TextDisplay out;
     Socket tcpConn;
     String lastError = "";
-    public String lastgot;
 
     public OldGpsdThread(TextDisplay td) throws IOException {
         try {
@@ -843,24 +811,25 @@ class OldGpsdThread extends mThread {
 }
 
 class GPSPortOptions extends SerialPortOptions {
-    TextDisplay txtOutput;
-    mButton btnTest, btnUpdatePortList, btnScan;
     public mInput inputBoxForwardHost;
-    mLabel labelForwardHost;
     public mCheckBox forwardGpsChkB;
     public mInput inputBoxGpsdHost;
-    mLabel labelUseGpsd;
     public mChoice chcUseGpsd;
-    mLabel labelGpsdHost;
     public mInput inputBoxLogTimer;
-    mLabel labelLogTimer;
     public mCheckBox logGpsChkB;
+    TextDisplay txtOutput;
+    mButton btnTest, btnUpdatePortList, btnScan;
+    mLabel labelForwardHost;
+    mLabel labelUseGpsd;
+    mLabel labelGpsdHost;
+    mLabel labelLogTimer;
     mySerialThread serThread;
     GpsdThread gpsdThread = null;
     OldGpsdThread oldGpsdThread = null;
     boolean gpsRunning = false;
     MyEditor ed = new MyEditor();
-
+    boolean interruptScan = false;
+    boolean scanRunning = false;
     private String[] useGpsdChoices = new String[]{MyLocale.getMsg(641, "No"), MyLocale.getMsg(99999, "Yes (< v2.91)"), MyLocale.getMsg(99999, "Yes (>= v2.91)"),};
 
     public Editor getEditor() {
@@ -931,9 +900,6 @@ class GPSPortOptions extends SerialPortOptions {
         gpsRunning = false;
         return ed;
     }
-
-    boolean interruptScan = false;
-    boolean scanRunning = false;
 
     public void action(String field, Editor ed_) {
         if (field.equals("scan")) {

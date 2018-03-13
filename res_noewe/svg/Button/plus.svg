@@ -1,8 +1,10 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
-<svg x="0" y="0" width="32" height="32" overflow="hidden" viewBox="0, 0, 200, 200" preserveAspectRatio="xMidYMid" font-size="0" id="svg1013" xml:space="default" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xml="http://www.w3.org/XML/1998/namespace" version="1.1">
-  <defs id="defs1007" xml:space="default">
-    <linearGradient x1="125.151" y1="144.3532" x2="227.2302" y2="144.3532" gradientUnits="userSpaceOnUse" gradientTransform="scale(0.9364066, 1.067912)" id="SVGID_Fill4_" xml:space="preserve">
+<svg xmlns:xml="http://www.w3.org/XML/1998/namespace" x="0" y="0" width="32" height="32" overflow="hidden" viewBox="0, 0, 200, 200"
+     preserveAspectRatio="xMidYMid" font-size="0" id="svg" xml:space="default"
+     xmlns="http://www.w3.org/2000/svg" version="1.1">
+    <defs id="def1" xml:space="default">
+        <linearGradient x1="125.151" y1="144.3532" x2="227.2302" y2="144.3532" gradientUnits="userSpaceOnUse" gradientTransform="scale(0.9364066, 1.067912)" id="SVGID_Fill4_" xml:space="preserve">
       <stop offset="1.86047%" stop-color="#7DE30F" stop-opacity="1" id="stop55" xml:space="preserve" />
       <stop offset="100%" stop-color="#235E03" stop-opacity="1" id="stop57" xml:space="preserve" />
     </linearGradient>
@@ -34,9 +36,9 @@
       <stop offset="1.86047%" stop-color="#3C8406" stop-opacity="1" id="stop97" xml:space="preserve" />
       <stop offset="100%" stop-color="#153801" stop-opacity="1" id="stop99" xml:space="preserve" />
     </linearGradient>
-  </defs>
-  <g transform="translate(0, -97)" id="layer1" xml:space="default">
-    <g transform="matrix(1.587405, 0, 0, 1.587405, -173.0606, -85.48632)" id="g104" xml:space="preserve">
+    </defs>
+    <g transform="translate(0, -97)" id="layer1" xml:space="default">
+        <g transform="matrix(1.587405, 0, 0, 1.587405, -173.0606, -85.48632)" id="g104" xml:space="preserve">
       <linearGradient x1="0.0713832" y1="0.283011" x2="1.03221" y2="0.283011" gradientUnits="objectBoundingBox" gradientTransform="rotate(33.36221, 0.071383, 0.283011)" id="linearGradient955" xml:space="preserve">
         <stop offset="1.86047%" stop-color="#58A406" stop-opacity="1" id="stop951" xml:space="preserve" />
         <stop offset="100%" stop-color="#163B02" stop-opacity="1" id="stop953" xml:space="preserve" />
@@ -77,5 +79,5 @@
       </linearGradient>
       <path d="M174.844 233.75 L198.511 227.417 L198.511 198.75 L174.511 194.417 z" stroke-width="0.2" stroke-linejoin="round" id="path102" xml:space="preserve" connector-curvature="0" style="fill:url(#SVGID_Fill10_);" />
     </g>
-  </g>
+    </g>
 </svg>

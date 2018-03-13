@@ -2,8 +2,7 @@ package gro.bouncycastle.crypto.tls;
 
 import gro.bouncycastle.util.Arrays;
 
-public class SecurityParameters
-{
+public class SecurityParameters {
     int entity = -1;
     int cipherSuite = -1;
     short compressionAlgorithm = CompressionMethod._null;
@@ -22,11 +21,9 @@ public class SecurityParameters
     boolean encryptThenMAC = false;
     boolean extendedMasterSecret = false;
 
-    void clear()
-    {
-        if (this.masterSecret != null)
-        {
-            Arrays.fill(this.masterSecret, (byte)0);
+    void clear() {
+        if (this.masterSecret != null) {
+            Arrays.fill(this.masterSecret, (byte) 0);
             this.masterSecret = null;
         }
     }
@@ -34,75 +31,63 @@ public class SecurityParameters
     /**
      * @return {@link ConnectionEnd}
      */
-    public int getEntity()
-    {
+    public int getEntity() {
         return entity;
     }
 
     /**
      * @return {@link CipherSuite}
      */
-    public int getCipherSuite()
-    {
+    public int getCipherSuite() {
         return cipherSuite;
     }
 
     /**
      * @return {@link CompressionMethod}
      */
-    public short getCompressionAlgorithm()
-    {
+    public short getCompressionAlgorithm() {
         return compressionAlgorithm;
     }
 
     /**
      * @return {@link PRFAlgorithm}
      */
-    public int getPrfAlgorithm()
-    {
+    public int getPrfAlgorithm() {
         return prfAlgorithm;
     }
 
-    public int getVerifyDataLength()
-    {
+    public int getVerifyDataLength() {
         return verifyDataLength;
     }
 
-    public byte[] getMasterSecret()
-    {
+    public byte[] getMasterSecret() {
         return masterSecret;
     }
 
-    public byte[] getClientRandom()
-    {
+    public byte[] getClientRandom() {
         return clientRandom;
     }
 
-    public byte[] getServerRandom()
-    {
+    public byte[] getServerRandom() {
         return serverRandom;
     }
 
-    public byte[] getSessionHash()
-    {
+    public byte[] getSessionHash() {
         return sessionHash;
     }
 
     /**
      * @deprecated Use {@link SecurityParameters#getPSKIdentity()}
      */
-    public byte[] getPskIdentity()
-    {
+    public byte[] getPskIdentity() {
         return pskIdentity;
     }
 
-    public byte[] getPSKIdentity()
-    {
+    public byte[] getPSKIdentity() {
         return pskIdentity;
     }
 
-    public byte[] getSRPIdentity()
-    {
+    public byte[] getSRPIdentity() {
         return srpIdentity;
     }
 }

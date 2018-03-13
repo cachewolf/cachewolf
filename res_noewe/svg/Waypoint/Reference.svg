@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
-<svg x="0" y="0" width="32" height="32" viewBox="0, 0, 230, 230" preserveAspectRatio="xMidYMid" font-size="0" id="svg" xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xml="http://www.w3.org/XML/1998/namespace" version="1.1">
-  <defs id="defs" xml:space="preserve">
+<svg xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xml="http://www.w3.org/XML/1998/namespace" x="0" y="0" width="32" height="32" overflow="hidden" viewBox="0, 0, 230, 230" preserveAspectRatio="xMidYMid" font-size="0" id="svg" xml:space="preserve" xmlns="http://www.w3.org/2000/svg" version="1.1">
+  <defs id="def1" xml:space="preserve">
     <linearGradient x1="197.1888" y1="116.9741" x2="359.5282" y2="116.9741" gradientUnits="userSpaceOnUse" xlink:href="#lg1" gradientTransform="matrix(0.9955255, 0, 0, 1.004495, -0.8975825, -2.932063)" id="lg0" xml:space="preserve" />
   </defs>
   <linearGradient x1="239.9398" y1="115.4987" x2="488.8215" y2="115.4987" gradientUnits="userSpaceOnUse" gradientTransform="matrix(0.9792051, 0, 0, 0.9817358, 1.372898, 2.285734)" id="lg2" xml:space="preserve">

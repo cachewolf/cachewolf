@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
-<svg x="0px" y="0px" width="32" height="32" overflow="hidden" viewBox="0, 0, 512, 512" preserveAspectRatio="xMidYMid" font-size="0" id="Capa_1" xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xml="http://www.w3.org/XML/1998/namespace" version="1.1">
+<svg xmlns:xml="http://www.w3.org/XML/1998/namespace" x="0px" y="0px" width="32" height="32" overflow="hidden" viewBox="0, 0, 512, 512" preserveAspectRatio="xMidYMid" font-size="0" id="svg" xml:space="preserve"  xmlns="http://www.w3.org/2000/svg" version="1.1">
   <g transform="matrix(1, 0, 0, 1.529144, 0, -135.4609)" id="g50" xml:space="preserve">
     <g id="g4" xml:space="preserve">
       <path d="M192 92 C178.469 92 166.336 100.574 161.828 113.332 C160.351 117.496 162.531 122.07 166.703 123.543 C169.436 124.525 172.297 123.784 174.398 122.042 L208 162.393 L208 172 C208 176.418 211.578 180 216 180 C220.422 180 224 176.418 224 172 L224 124 C224 106.355 209.648 92 192 92 z" id="path2" xml:space="preserve" connector-curvature="0" style="fill:#B9BBC1;" />

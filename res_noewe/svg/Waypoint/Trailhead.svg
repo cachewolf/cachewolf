@@ -1,7 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
-<svg x="0" y="0" width="64" height="56.41644" overflow="hidden" viewBox="0, 0, 73, 64.35" preserveAspectRatio="xMidYMid" font-size="0" id="svg81" xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xml="http://www.w3.org/XML/1998/namespace" version="1.1">
-  <defs id="defs85" xml:space="preserve" />
+<svg xmlns:xml="http://www.w3.org/XML/1998/namespace" x="0" y="0" width="32" height="28.20822" overflow="hidden" viewBox="0, 0, 73, 64.35" preserveAspectRatio="xMidYMid" font-size="0" id="svg" xml:space="preserve"  xmlns="http://www.w3.org/2000/svg" version="1.1">
   <g id="g79" xml:space="preserve">
     <linearGradient x1="0" y1="0.500005" x2="1" y2="0.500005" gradientUnits="objectBoundingBox" id="SVGID_Fill1_" xml:space="preserve">
       <stop offset="1.86047%" stop-color="#E3D191" stop-opacity="1" id="stop2" xml:space="preserve" />

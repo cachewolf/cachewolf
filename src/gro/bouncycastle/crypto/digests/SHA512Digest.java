@@ -6,7 +6,7 @@ import gro.bouncycastle.util.Pack;
 
 /**
  * FIPS 180-2 implementation of SHA-512.
- *
+ * <p>
  * <pre>
  *         block  word  digest
  * SHA-1   512    32    160
@@ -16,23 +16,20 @@ import gro.bouncycastle.util.Pack;
  * </pre>
  */
 public class SHA512Digest
-    extends LongDigest
-{
-    private static final int    DIGEST_LENGTH = 64;
+        extends LongDigest {
+    private static final int DIGEST_LENGTH = 64;
 
     /**
      * Standard constructor
      */
-    public SHA512Digest()
-    {
+    public SHA512Digest() {
     }
 
     /**
      * Copy constructor.  This will copy the state of the provided
      * message digest.
      */
-    public SHA512Digest(SHA512Digest t)
-    {
+    public SHA512Digest(SHA512Digest t) {
         super(t);
     }
 
@@ -41,25 +38,21 @@ public class SHA512Digest
      *
      * @param encodedState the encoded state from the originating digest.
      */
-    public SHA512Digest(byte[] encodedState)
-    {
+    public SHA512Digest(byte[] encodedState) {
         restoreState(encodedState);
     }
 
-    public String getAlgorithmName()
-    {
+    public String getAlgorithmName() {
         return "SHA-512";
     }
 
-    public int getDigestSize()
-    {
+    public int getDigestSize() {
         return DIGEST_LENGTH;
     }
 
     public int doFinal(
-        byte[]  out,
-        int     outOff)
-    {
+            byte[] out,
+            int outOff) {
         finish();
 
         Pack.longToBigEndian(H1, out, outOff);
@@ -79,8 +72,7 @@ public class SHA512Digest
     /**
      * reset the chaining variables
      */
-    public void reset()
-    {
+    public void reset() {
         super.reset();
 
         /* SHA-512 initial hash value
@@ -97,20 +89,17 @@ public class SHA512Digest
         H8 = 0x5be0cd19137e2179L;
     }
 
-    public Memoable copy()
-    {
+    public Memoable copy() {
         return new SHA512Digest(this);
     }
 
-    public void reset(Memoable other)
-    {
-        SHA512Digest d = (SHA512Digest)other;
+    public void reset(Memoable other) {
+        SHA512Digest d = (SHA512Digest) other;
 
         copyIn(d);
     }
 
-    public byte[] getEncodedState()
-    {
+    public byte[] getEncodedState() {
         byte[] encoded = new byte[getEncodedStateSize()];
         super.populateState(encoded);
         return encoded;

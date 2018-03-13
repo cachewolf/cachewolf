@@ -1,10 +1,8 @@
 package gro.bouncycastle.crypto;
 
 public class OutputLengthException
-    extends DataLengthException
-{
-    public OutputLengthException(String msg)
-    {
+        extends DataLengthException {
+    public OutputLengthException(String msg) {
         super(msg);
     }
 }

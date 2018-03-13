@@ -1,21 +1,18 @@
 package gro.bouncycastle.crypto.params;
 
 public class ECKeyParameters
-    extends AsymmetricKeyParameter
-{
+        extends AsymmetricKeyParameter {
     ECDomainParameters params;
 
     protected ECKeyParameters(
-        boolean             isPrivate,
-        ECDomainParameters  params)
-    {
+            boolean isPrivate,
+            ECDomainParameters params) {
         super(isPrivate);
 
         this.params = params;
     }
 
-    public ECDomainParameters getParameters()
-    {
+    public ECDomainParameters getParameters() {
         return params;
     }
 }

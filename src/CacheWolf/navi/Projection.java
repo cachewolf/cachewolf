@@ -24,9 +24,10 @@ package CacheWolf.navi;
 import CacheWolf.database.CWPoint;
 
 abstract class Projection {
-    /** in Implementation: <br>
+    /**
+     * in Implementation: <br>
      * a) if the projection covers only one epsgCode (== one zone)<br>
-     * b) if the projection covers different epsgCodes (== different zones)<br> 
+     * b) if the projection covers different epsgCodes (== different zones)<br>
      * put here the calculation from zone number to the epsgCode(s) (method getEpsgcode)
      */
     public int epsgCode;
@@ -34,7 +35,8 @@ abstract class Projection {
 
     /**
      * The zone is automatically determined
-     * rember to set the zone in pp when you implement this method 
+     * rember to set the zone in pp when you implement this method
+     *
      * @param ll
      * @param pp: pp will be filled with the projected ll. If null, a new ProjectedPoint will be created
      * @return
@@ -43,6 +45,7 @@ abstract class Projection {
 
     /**
      * Zone is fixed by epsg-code
+     *
      * @param ll
      * @param pp
      * @param epsg
@@ -52,6 +55,7 @@ abstract class Projection {
 
     /**
      * unproject
+     *
      * @param pp
      * @return
      */
@@ -59,6 +63,7 @@ abstract class Projection {
 
     /**
      * Returns the projected Northing in local notation
+     *
      * @param pp
      * @return
      */
@@ -66,6 +71,7 @@ abstract class Projection {
 
     /**
      * Returns the projected Easting in local notation
+     *
      * @param pp
      * @return
      */
@@ -73,17 +79,19 @@ abstract class Projection {
 
     /**
      * set by
+     *
      * @param northing
      * @param easting
      * @param pp
      * @return
      */
     public ProjectedPoint set(double northing, double easting, ProjectedPoint pp) {
-	throw new UnsupportedOperationException("Projection.set: set() requires zone, use set with 1 more parameter");
+        throw new UnsupportedOperationException("Projection.set: set() requires zone, use set with 1 more parameter");
     }
 
     /**
      * set by
+     *
      * @param northing
      * @param easting
      * @param zone
@@ -91,39 +99,42 @@ abstract class Projection {
      * @return
      */
     public ProjectedPoint set(double northing, double easting, String zone, ProjectedPoint pp) {
-	throw new UnsupportedOperationException("Projection.set (double, double String, ProjectedPoint): This projection uses no seperate zones");
+        throw new UnsupportedOperationException("Projection.set (double, double String, ProjectedPoint): This projection uses no seperate zones");
     }
 
     /**
      * Returns Zone
+     *
      * @param pp
      * @return
      */
     public String getZone(ProjectedPoint pp) {
-	throw new UnsupportedOperationException("Projection.getZone (double, double String, ProjectedPoint): This projection uses no seperate zones");
+        throw new UnsupportedOperationException("Projection.getZone (double, double String, ProjectedPoint): This projection uses no seperate zones");
     }
 
     /**
      * Returns EPSGCode
+     *
      * @param pp
      * @return
      */
     public int getEpsgcode(ProjectedPoint pp) {
-	return epsgCode + pp.zone;
+        return epsgCode + pp.zone;
     }
 
     /**
      * In case the same Projection-class is used for several epsg codes,<br>
      * this method translates the localsystem to the corresponding epsg code.<br>
-     *   
+     * <p>
      * It is used by UTMProjectionFixZone<br>
-     * which can be used to project all epsg codes which represent just one UTM stripe, like Sweden.<br> 
+     * which can be used to project all epsg codes which represent just one UTM stripe, like Sweden.<br>
      * ProjectedPoint sets projection.epsgCode, if it is zero.<br>
+     *
      * @param localsystem
      * @return
      */
     public int getEpsgcode(int localsystem) {
-	throw new UnsupportedOperationException("Projection.getEpsg(localsystem): This projection has getEpsg not implemented.");
+        throw new UnsupportedOperationException("Projection.getEpsg(localsystem): This projection has getEpsg not implemented.");
     }
 
 }

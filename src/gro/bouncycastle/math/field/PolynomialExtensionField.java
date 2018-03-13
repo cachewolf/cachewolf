@@ -1,6 +1,5 @@
 package gro.bouncycastle.math.field;
 
-public interface PolynomialExtensionField extends ExtensionField
-{
+public interface PolynomialExtensionField extends ExtensionField {
     Polynomial getMinimalPolynomial();
 }

@@ -21,8 +21,8 @@
 */
 package CacheWolf.exp;
 
-import CacheWolf.database.CacheHolder;
 import CacheWolf.database.CWPoint;
+import CacheWolf.database.CacheHolder;
 import ewe.util.Comparer;
 
 public class DistanceComparer implements Comparer {
@@ -30,17 +30,17 @@ public class DistanceComparer implements Comparer {
     CWPoint centre;
 
     public DistanceComparer(CWPoint centre) {
-	this.centre = centre;
+        this.centre = centre;
     }
 
     public int compare(Object one, Object two) {
-	if ((!(one instanceof CacheHolder)) && (!(two instanceof CacheHolder))) {
-	    return 0;
-	} else {
-	    CacheHolder a = (CacheHolder) one;
-	    CacheHolder b = (CacheHolder) two;
-	    return (int) ((a.getWpt().getDistance(centre) - b.getWpt().getDistance(centre)) * 1000);
-	}
+        if ((!(one instanceof CacheHolder)) && (!(two instanceof CacheHolder))) {
+            return 0;
+        } else {
+            CacheHolder a = (CacheHolder) one;
+            CacheHolder b = (CacheHolder) two;
+            return (int) ((a.getWpt().getDistance(centre) - b.getWpt().getDistance(centre)) * 1000);
+        }
     }
 
 }

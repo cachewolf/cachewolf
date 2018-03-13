@@ -51,7 +51,7 @@ public class InfoBox extends Form {
     }
 
     public InfoBox(String title, Control ctrl, int w, int h) {
-        this.setPreferredSize(w,h);
+        this.setPreferredSize(w, h);
         this.addLast(new MyScrollBarPanel((ScrollClient) ctrl, ScrollablePanel.NeverShowHorizontalScrollers), STRETCH, FILL);
         this.title = title;
         this.type = DISPLAY_ONLY;

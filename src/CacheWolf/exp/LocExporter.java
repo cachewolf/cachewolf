@@ -30,7 +30,7 @@ import CacheWolf.utils.Common;
 /**
  * Class to export the cache database into an geocaching .loc file that may be exported
  * by GPSBabel to a Garmin GPS.
- * 
+ * <p>
  * Now includes mapping of cachetypes to user defined icons (as defined in file garminmap.xml).
  */
 public class LocExporter extends Exporter {
@@ -40,59 +40,59 @@ public class LocExporter extends Exporter {
     private static GarminMap gm = null;
 
     public LocExporter() {
-	super();
-	this.setOutputFileExtension("*.loc");
-	this.setExportMethod(EXPORT_METHOD_NO_PARAMS);
-	gm = new GarminMap();
+        super();
+        this.setOutputFileExtension("*.loc");
+        this.setExportMethod(EXPORT_METHOD_NO_PARAMS);
+        gm = new GarminMap();
     }
 
     public String header() {
-	return "<?xml version=\"1.0\"?><loc version=\"1.0\" src=\"EasyGPS\">\r\n";
+        return "<?xml version=\"1.0\"?><loc version=\"1.0\" src=\"EasyGPS\">\r\n";
     }
 
     public String record(CacheHolder ch) {
 
-	// filter out not valid coords
-	if (!ch.getWpt().isValid())
-	    return null;
-	StringBuffer strBuf = new StringBuffer(200);
-	strBuf.append("<waypoint>\r\n   <name id=\"");
-	String wptName = simplifyString(ch.getCode());
-	if (Preferences.itself().addDetailsToWaypoint) {
-	    wptName += getShortDetails(ch);
-	}
-	if (Preferences.itself().garminMaxLen == 0)
-	    strBuf.append(wptName);
-	else {
-	    try {
-		strBuf.append(wptName.substring(wptName.length() - Preferences.itself().garminMaxLen));
-	    } catch (Exception ex) {
-		Preferences.itself().log("[LocExporter:record]Invalid value for garmin.MaxWaypointLength", ex);
-	    }
-	}
-	strBuf.append("\"><![CDATA[");
-	strBuf.append(simplifyString(ch.getName()));
-	if (Preferences.itself().addDetailsToName) {
-	    if (!Preferences.itself().addDetailsToWaypoint) {
-		strBuf.append(getShortDetails(ch));
-	    }
-	    CacheHolderDetail det = ch.getDetails();
-	    if ((!det.Hints.equals("null")) && (det.Hints.length() > 0)) {
-		strBuf.append(":");
-		strBuf.append(simplifyString(Common.rot13(det.Hints)));
-	    }
-	}
-	strBuf.append("]]></name>\r\n   <coord lat=\"");
-	strBuf.append(ch.getWpt().getLatDeg(TransformCoordinates.DD));
-	strBuf.append("\" lon=\"");
-	strBuf.append(ch.getWpt().getLonDeg(TransformCoordinates.DD));
-	strBuf.append("\"/>\r\n   <type>");
-	strBuf.append(gm.getIcon(ch));
-	strBuf.append("</type>\r\n</waypoint>\r\n");
-	return strBuf.toString();
+        // filter out not valid coords
+        if (!ch.getWpt().isValid())
+            return null;
+        StringBuffer strBuf = new StringBuffer(200);
+        strBuf.append("<waypoint>\r\n   <name id=\"");
+        String wptName = simplifyString(ch.getCode());
+        if (Preferences.itself().addDetailsToWaypoint) {
+            wptName += getShortDetails(ch);
+        }
+        if (Preferences.itself().garminMaxLen == 0)
+            strBuf.append(wptName);
+        else {
+            try {
+                strBuf.append(wptName.substring(wptName.length() - Preferences.itself().garminMaxLen));
+            } catch (Exception ex) {
+                Preferences.itself().log("[LocExporter:record]Invalid value for garmin.MaxWaypointLength", ex);
+            }
+        }
+        strBuf.append("\"><![CDATA[");
+        strBuf.append(simplifyString(ch.getName()));
+        if (Preferences.itself().addDetailsToName) {
+            if (!Preferences.itself().addDetailsToWaypoint) {
+                strBuf.append(getShortDetails(ch));
+            }
+            CacheHolderDetail det = ch.getDetails();
+            if ((!det.Hints.equals("null")) && (det.Hints.length() > 0)) {
+                strBuf.append(":");
+                strBuf.append(simplifyString(Common.rot13(det.Hints)));
+            }
+        }
+        strBuf.append("]]></name>\r\n   <coord lat=\"");
+        strBuf.append(ch.getWpt().getLatDeg(TransformCoordinates.DD));
+        strBuf.append("\" lon=\"");
+        strBuf.append(ch.getWpt().getLonDeg(TransformCoordinates.DD));
+        strBuf.append("\"/>\r\n   <type>");
+        strBuf.append(gm.getIcon(ch));
+        strBuf.append("</type>\r\n</waypoint>\r\n");
+        return strBuf.toString();
     }
 
     public String trailer() {
-	return "</loc>\r\n";
+        return "</loc>\r\n";
     }
 }

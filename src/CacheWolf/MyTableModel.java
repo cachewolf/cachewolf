@@ -22,20 +22,11 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 package CacheWolf;
 
 import CacheWolf.controls.TableColumnChooser;
-import CacheWolf.database.CacheDB;
-import CacheWolf.database.CacheHolder;
-import CacheWolf.database.CacheSize;
-import CacheWolf.database.CacheTerrDiff;
-import CacheWolf.database.CacheType;
-import CacheWolf.database.LogList;
+import CacheWolf.database.*;
+import CacheWolf.utils.Common;
 import CacheWolf.utils.DateFormat;
 import CacheWolf.utils.MyLocale;
-import ewe.fx.Color;
-import ewe.fx.FontMetrics;
-import ewe.fx.IconAndText;
-import ewe.fx.Image;
-import ewe.fx.Point;
-import ewe.fx.mImage;
+import ewe.fx.*;
 import ewe.sys.Vm;
 import ewe.ui.CellConstants;
 import ewe.ui.IKeys;
@@ -51,6 +42,23 @@ import ewe.util.Vector;
  * Used MyLocale
  */
 public class MyTableModel extends TableModel {
+    /**
+     * The max number of columns in the list view
+     */
+    public static final int N_COLUMNS = 22;
+    // Colors for Cache status (BG unless otherwise stated)
+    private static final Color COLOR_STATUS = new Color(206, 152, 255);
+    private static final Color COLOR_FLAGED = new Color(255, 255, 0);
+    private static final Color COLOR_FOUND = new Color(152, 251, 152);
+    private static final Color COLOR_OWNED = new Color(135, 206, 235);
+    private static final Color COLOR_AVAILABLE = new Color(255, 128, 0);
+    private static final Color COLOR_ARCHIVED = new Color(200, 0, 0);
+    private static final Color COLOR_SELECTED = new Color(141, 141, 141);
+    private static final Color COLOR_DETAILS_LOADED = new Color(229, 206, 235);
+    private static final Color COLOR_WHITE = new Color(255, 255, 255);
+    public static mImage red, blue, yellow; // skull, green
+    private static Image noFindLogs[] = new Image[4];
+    private static mImage imgSortUp, imgSortDown;
     public final String[] colHeaderNames = {" ", //
             "?", //
             MyLocale.getMsg(1000, "D"), //
@@ -74,26 +82,20 @@ public class MyTableModel extends TableModel {
             MyLocale.getMsg(677, "PM"), //
             MyLocale.getMsg(362, "solved"), //
     };
-
-    // Colors for Cache status (BG unless otherwise stated)
-    private static final Color COLOR_STATUS = new Color(206, 152, 255);
-    private static final Color COLOR_FLAGED = new Color(255, 255, 0);
-    private static final Color COLOR_FOUND = new Color(152, 251, 152);
-    private static final Color COLOR_OWNED = new Color(135, 206, 235);
-    private static final Color COLOR_AVAILABLE = new Color(255, 128, 0);
-    private static final Color COLOR_ARCHIVED = new Color(200, 0, 0);
-    private static final Color COLOR_SELECTED = new Color(141, 141, 141);
-    private static final Color COLOR_DETAILS_LOADED = new Color(229, 206, 235);
-    private static final Color COLOR_WHITE = new Color(255, 255, 255);
+    public boolean sortAscending = false;
+    public int sortedBy = -1; // -1 don't sort
+    public boolean isSorted = false; // true if "sort order indicators" should
+    /**
+     * This is the modifier (Shift & Control key status) for Pen Events it is set in myTableControl.onEvent
+     */
+    public int penEventModifiers;
+    public MyTableControl myTableControl;
+    public boolean showExtraWptInfo = true;
     private Color lineColorBG = new Color(255, 255, 255);
     private Color lastColorBG = new Color(255, 255, 255);
     private Color lastColorFG = new Color(0, 0, 0);
     private int lastRow = -2;
     private CacheDB cacheDB;
-    /**
-     * The max number of columns in the list view
-     */
-    public static final int N_COLUMNS = 22;
     /**
      * How the columns are mapped onto the list view.<br>
      * If colMap[i]=j, it means that the element j (as per the list below) is visible in column i.<br>
@@ -106,15 +108,8 @@ public class MyTableModel extends TableModel {
      * The column widths corresponding to the list of columns above
      */
     private int[] colWidth;
-
-    private static Image noFindLogs[] = new Image[4];
-    public static mImage red, blue, yellow; // skull, green
     private Image checkboxTicked, checkboxUnticked;
     private mImage bug;
-    private static mImage imgSortUp, imgSortDown;
-    public boolean sortAscending = false;
-    public int sortedBy = -1; // -1 don't sort
-    public boolean isSorted = false; // true if "sort order indicators" should
     // be displayed
     private FontMetrics fm;
     // private mImage
@@ -123,12 +118,6 @@ public class MyTableModel extends TableModel {
     private mImage[] sizePics = new mImage[CacheSize.CW_TOTAL_SIZE_IMAGES];
     private mImage picIsPM;
     private mImage picIsSolved;
-    /**
-     * This is the modifier (Shift & Control key status) for Pen Events it is set in myTableControl.onEvent
-     */
-    public int penEventModifiers;
-    public MyTableControl myTableControl;
-    public boolean showExtraWptInfo = true;
 
     public MyTableModel(MyTableControl myTableControl) {
         super();
@@ -709,13 +698,14 @@ class MyComparer implements Comparer {
                 if (ch.kilom == -1.0) {
                     ch.sort = "\uFFFF";
                 } else {
-                    ch.sort = MyLocale.formatDouble(ch.kilom * 1000, "000000000000");
+                    ch.sort = Common.formatDouble(ch.kilom * 1000, "000000000000");
                 }
             }
         } else if (colToCompare == 11) {
             for (int i = 0; i < visibleSize; i++) {
                 CacheHolder ch = cacheDB.get(i);
                 if (ch.getBearing().equals("?")) {
+
                     ch.sort = "\uFFFF";
                 } else {
                     ch.sort = ch.getBearing();

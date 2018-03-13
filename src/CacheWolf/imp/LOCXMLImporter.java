@@ -24,12 +24,7 @@ package CacheWolf.imp;
 import CacheWolf.MainForm;
 import CacheWolf.Preferences;
 import CacheWolf.Profile;
-import CacheWolf.database.CacheDB;
-import CacheWolf.database.CacheHolder;
-import CacheWolf.database.CacheSize;
-import CacheWolf.database.CacheTerrDiff;
-import CacheWolf.database.CacheType;
-import CacheWolf.database.CoordinatePoint;
+import CacheWolf.database.*;
 import CacheWolf.utils.Common;
 import ewe.io.FileReader;
 import ewe.io.Reader;
@@ -39,7 +34,6 @@ import ewesoft.xml.sax.AttributeList;
 
 /**
  * @author Kalle
- * 
  */
 public class LOCXMLImporter extends MinML {
     boolean debugXML = false;
@@ -50,90 +44,90 @@ public class LOCXMLImporter extends MinML {
     String strData = "";
 
     public LOCXMLImporter(String f) {
-	cacheDB = MainForm.profile.cacheDB;
-	file = f;
+        cacheDB = MainForm.profile.cacheDB;
+        file = f;
     }
 
     public void doIt() {
-	try {
-	    Reader r;
-	    Vm.showWait(true);
-	    // Test for zip.file
-	    r = new FileReader(file);
-	    parse(r);
-	    r.close();
-	    // save Index
-	    MainForm.profile.saveIndex(Profile.NO_SHOW_PROGRESS_BAR, Profile.FORCESAVE);
-	    Vm.showWait(false);
-	} catch (Exception e) {
-	    Vm.showWait(false);
-	}
+        try {
+            Reader r;
+            Vm.showWait(true);
+            // Test for zip.file
+            r = new FileReader(file);
+            parse(r);
+            r.close();
+            // save Index
+            MainForm.profile.saveIndex(Profile.NO_SHOW_PROGRESS_BAR, Profile.FORCESAVE);
+            Vm.showWait(false);
+        } catch (Exception e) {
+            Vm.showWait(false);
+        }
     }
 
     public void startElement(String name, AttributeList atts) {
-	if (debugXML) {
-	    for (int i = 0; i < atts.getLength(); i++) {
-		Preferences.itself().log(" Name: " + atts.getName(i) + " Value: " + atts.getValue(i), null);
-	    }
-	}
-	strData = "";
-	if (name.equals("name")) {
-	    holder = getHolder(atts.getValue("id"));
-	    return;
-	}
-	if (name.equals("coord")) {
-	    holder.setWpt(new CoordinatePoint(Common.parseDouble(atts.getValue("lat")), Common.parseDouble(atts.getValue("lon"))));
-	    return;
-	}
+        if (debugXML) {
+            for (int i = 0; i < atts.getLength(); i++) {
+                Preferences.itself().log(" Name: " + atts.getName(i) + " Value: " + atts.getValue(i), null);
+            }
+        }
+        strData = "";
+        if (name.equals("name")) {
+            holder = getHolder(atts.getValue("id"));
+            return;
+        }
+        if (name.equals("coord")) {
+            holder.setWpt(new CoordinatePoint(Common.parseDouble(atts.getValue("lat")), Common.parseDouble(atts.getValue("lon"))));
+            return;
+        }
     }
 
     public void endElement(String name) {
-	if (name.equals("name")) {
-	    holder.setName(strData.replace('\n', ' ').replace('\r', ' ').trim());
-	}
+        if (name.equals("name")) {
+            holder.setName(strData.replace('\n', ' ').replace('\r', ' ').trim());
+        }
 
-	if (name.equals("waypoint")) {
-	    int index;
-	    index = cacheDB.getIndex(holder.getCode());
-	    if (index == -1) {
-		holder.setNew(true);
-		cacheDB.add(holder);
-	    }
-	    // update (overwrite) data
-	    else {
-		holder.setNew(false);
-	    }
-	    // save all (after each cache???)
-	    holder.saveCacheDetails();
-	    MainForm.profile.saveIndex(Profile.NO_SHOW_PROGRESS_BAR, Profile.FORCESAVE);
-	    return;
-	}
+        if (name.equals("waypoint")) {
+            int index;
+            index = cacheDB.getIndex(holder.getCode());
+            if (index == -1) {
+                holder.setNew(true);
+                cacheDB.add(holder);
+            }
+            // update (overwrite) data
+            else {
+                holder.setNew(false);
+            }
+            // save all (after each cache???)
+            holder.saveCacheDetails();
+            MainForm.profile.saveIndex(Profile.NO_SHOW_PROGRESS_BAR, Profile.FORCESAVE);
+            return;
+        }
 
-	if (name.equals("link")) {
-	    holder.getDetails().URL = strData;
-	    return;
-	}
+        if (name.equals("link")) {
+            holder.getDetails().URL = strData;
+            return;
+        }
     }
 
     public void characters(char[] ch, int start, int length) {
-	String chars = new String(ch, start, length);
-	strData += chars;
-	if (debugXML)
-	    Preferences.itself().log(strData, null);
+        String chars = new String(ch, start, length);
+        strData += chars;
+        if (debugXML)
+            Preferences.itself().log(strData, null);
     }
 
     private CacheHolder getHolder(String wpt) {
-	CacheHolder ch;
+        CacheHolder ch;
 
-	ch = cacheDB.get(wpt);
-	if (ch == null) {
-	    ch = new CacheHolder(wpt);
-	    ch.setType(CacheType.CW_TYPE_CUSTOM); // loc is always type "Geocache" but is incomplete D/T
-	    ch.setTerrain(CacheTerrDiff.CW_DT_UNSET);
-	    ch.setDifficulty(CacheTerrDiff.CW_DT_UNSET);
-	    ch.setSize(CacheSize.CW_SIZE_NOTCHOSEN);
-	}
-	return ch;
+        ch = cacheDB.get(wpt);
+        if (ch == null) {
+            ch = new CacheHolder(wpt);
+            ch.setType(CacheType.CW_TYPE_CUSTOM); // loc is always type "Geocache" but is incomplete D/T
+            ch.setTerrain(CacheTerrDiff.CW_DT_UNSET);
+            ch.setDifficulty(CacheTerrDiff.CW_DT_UNSET);
+            ch.setSize(CacheSize.CW_SIZE_NOTCHOSEN);
+        }
+        return ch;
     }
 
 }

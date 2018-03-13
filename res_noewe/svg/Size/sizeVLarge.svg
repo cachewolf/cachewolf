@@ -1,91 +1,14 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<svg
-   xmlns:dc="http://purl.org/dc/elements/1.1/"
-   xmlns:cc="http://creativecommons.org/ns#"
-   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-   xmlns:svg="http://www.w3.org/2000/svg"
-   xmlns="http://www.w3.org/2000/svg"
-   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
-   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   x="0"
-   y="0"
-   width="64"
-   height="48"
-   overflow="hidden"
-   viewBox="0 0 257 192.75003"
-   preserveAspectRatio="xMidYMid"
-   font-size="0"
-   xml:space="preserve"
-   version="1.1"
-   id="svg1171"
-   sodipodi:docname="sizeVLarge.svg"
-   style="font-size:0px;overflow:hidden"
-   inkscape:version="0.92.2 (5c3e80d, 2017-08-06)"><metadata
-     id="metadata1177"><rdf:RDF><cc:Work
-         rdf:about=""><dc:format>image/svg+xml</dc:format><dc:type
-           rdf:resource="http://purl.org/dc/dcmitype/StillImage" /><dc:title></dc:title></cc:Work></rdf:RDF></metadata><defs
-     id="defs1175" /><sodipodi:namedview
-     pagecolor="#ffffff"
-     bordercolor="#666666"
-     borderopacity="1"
-     objecttolerance="10"
-     gridtolerance="10"
-     guidetolerance="10"
-     inkscape:pageopacity="0"
-     inkscape:pageshadow="2"
-     inkscape:window-width="1920"
-     inkscape:window-height="1017"
-     id="namedview1173"
-     showgrid="false"
-     inkscape:zoom="10.39"
-     inkscape:cx="32"
-     inkscape:cy="9.3385201"
-     inkscape:window-x="-8"
-     inkscape:window-y="-8"
-     inkscape:window-maximized="1"
-     inkscape:current-layer="svg1171" /><g
-     id="g1205"
-     transform="matrix(1,0,0,1.0385076,0,-3.7253734)"><rect
-       id="rect1157"
-       style="fill:#dadada;stroke-width:0.33571666"
-       xml:space="preserve"
-       height="47.447128"
-       width="16.99435"
-       y="112.63767"
-       x="10.784001" /><rect
-       id="rect1159"
-       style="fill:#dadada;stroke-width:0.33571666"
-       xml:space="preserve"
-       height="108.4511"
-       width="38.844181"
-       y="50.932789"
-       x="80.686691" /><rect
-       id="rect1161"
-       style="fill:#dadada;stroke-width:0.33571666"
-       xml:space="preserve"
-       height="126.21454"
-       width="45.206554"
-       y="33.075977"
-       x="131.25134" /><rect
-       id="rect1163"
-       style="fill:#861d23;fill-opacity:1;stroke-width:0.33520111"
-       xml:space="preserve"
-       height="166.79124"
-       width="59.661613"
-       y="13.177053"
-       x="189.51756" /><rect
-       id="rect1165"
-       style="fill:#ced0d3;stroke-width:0.33571666"
-       xml:space="preserve"
-       height="79.748795"
-       width="28.563812"
-       y="80.757027"
-       x="39.431595" /><g
-       id="g1196"><rect
-         x="3.3643799"
-         y="8.8612547"
-         width="250.78186"
-         height="175.76552"
-         xml:space="preserve"
-         style="fill:none;stroke:#ababab;stroke-width:10.07149982"
-         id="rect1167" /></g></g></svg>
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg xmlns:xml="http://www.w3.org/XML/1998/namespace" x="0" y="0" width="32" height="24" overflow="hidden" viewBox="0, 0, 257, 192.75" preserveAspectRatio="xMidYMid" font-size="0px" id="svg" xml:space="preserve"  xmlns="http://www.w3.org/2000/svg" version="1.1">
+  <g transform="matrix(1, 0, 0, 1.038508, 0, -3.725374)" id="g1205" xml:space="preserve">
+    <rect x="10.784" y="112.6377" width="16.99435" height="47.44713" stroke-width="0.3357167" id="rect1157" xml:space="preserve" style="fill:#DADADA;" />
+    <rect x="80.68669" y="50.93279" width="38.84418" height="108.4511" stroke-width="0.3357167" id="rect1159" xml:space="preserve" style="fill:#DADADA;" />
+    <rect x="131.2513" y="33.07598" width="45.20655" height="126.2145" stroke-width="0.3357167" id="rect1161" xml:space="preserve" style="fill:#DADADA;" />
+    <rect x="189.5176" y="13.17705" width="59.66161" height="166.7912" stroke-width="0.3352011" id="rect1163" xml:space="preserve" style="fill:#861D23;" />
+    <rect x="39.43159" y="80.75703" width="28.56381" height="79.74879" stroke-width="0.3357167" id="rect1165" xml:space="preserve" style="fill:#CED0D3;" />
+    <g id="g1196" xml:space="preserve">
+      <rect x="3.36438" y="8.861255" width="250.7819" height="175.7655" stroke="#ABABAB" stroke-width="10.0715" id="rect1167" xml:space="preserve" style="fill:none;" />
+    </g>
+  </g>
+</svg>

@@ -920,11 +920,11 @@ public class DetailsPanel extends CellPanel {
         }
         ch.checkIncomplete();
 
-	/*
-     * The references have to be rebuilt if:
-	 *  the cachetype changed from addi->normal or from normal->addi
-	 *  or the old or new cachetype is 'addi' and the waypointname has changed
-	 */
+        /*
+         * The references have to be rebuilt if:
+         *  the cachetype changed from addi->normal or from normal->addi
+         *  or the old or new cachetype is 'addi' and the waypointname has changed
+         */
         if (CacheType.isAddiWpt(newCacheType) != CacheType.isAddiWpt(oldType) //
                 || ((CacheType.isAddiWpt(ch.getType()) || CacheType.isAddiWpt(oldType)) && !ch.getCode().equals(oldWaypoint)) //
                 ) {

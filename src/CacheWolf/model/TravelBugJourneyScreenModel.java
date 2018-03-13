@@ -36,19 +36,19 @@ public class TravelBugJourneyScreenModel {
     public int sortCriteria;
 
     public void toggleOnlyLogged() {
-	onlyLogged = !onlyLogged;
-	createShowSet();
-	Preferences.itself().travelbugShowOnlyNonLogged = onlyLogged;
-	Preferences.itself().savePreferences();
+        onlyLogged = !onlyLogged;
+        createShowSet();
+        Preferences.itself().travelbugShowOnlyNonLogged = onlyLogged;
+        Preferences.itself().savePreferences();
     }
 
     public void createShowSet() {
-	shownTravelbugJourneys.clear();
-	for (int i = 0; i < allTravelbugJourneys.size(); i++) {
-	    TravelbugJourney tbJourney = allTravelbugJourneys.getTBJourney(i);
-	    if (!onlyLogged || (onlyLogged && (!tbJourney.getFromLogged() || !tbJourney.getToLogged()))) {
-		shownTravelbugJourneys.add(tbJourney);
-	    }
-	}
+        shownTravelbugJourneys.clear();
+        for (int i = 0; i < allTravelbugJourneys.size(); i++) {
+            TravelbugJourney tbJourney = allTravelbugJourneys.getTBJourney(i);
+            if (!onlyLogged || (onlyLogged && (!tbJourney.getFromLogged() || !tbJourney.getToLogged()))) {
+                shownTravelbugJourneys.add(tbJourney);
+            }
+        }
     }
 }

@@ -116,7 +116,7 @@ public final class GuiImageBroker {
             // log("using image " + in);
         } else {
             in = icon + extension;
-            log("rem svg2png.exe \"svg\\Button\\" + icon +".svg\" \"symbols\\" + icon + ".png\" %RESOLUTION%");
+            log("rem svg2png.exe \"svg\\Button\\" + icon + ".svg\" \"symbols\\" + icon + ".png\" %RESOLUTION%");
         }
         return in;
     }

@@ -1,8 +1,10 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
-<svg x="0" y="0" width="32" height="32" viewBox="0, 0, 755.9055, 755.9055" preserveAspectRatio="xMidYMid" font-size="0" id="svg848" xml:space="default" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xml="http://www.w3.org/XML/1998/namespace" version="1.1">
-  <defs id="defs842" xml:space="default">
-    <linearGradient x1="191.4799" y1="166.3504" x2="228.9385" y2="166.3504" gradientUnits="userSpaceOnUse" gradientTransform="scale(0.899869, 1.111273)" id="SVGID_Fill9_" xml:space="preserve">
+<svg xmlns:xml="http://www.w3.org/XML/1998/namespace" x="0" y="0" width="32" height="32" overflow="hidden"
+     viewBox="0, 0, 755.9055, 755.9055" preserveAspectRatio="xMidYMid" font-size="0" id="svg" xml:space="default"
+     xmlns="http://www.w3.org/2000/svg" version="1.1">
+    <defs id="def1" xml:space="default">
+        <linearGradient x1="191.4799" y1="166.3504" x2="228.9385" y2="166.3504" gradientUnits="userSpaceOnUse" gradientTransform="scale(0.899869, 1.111273)" id="SVGID_Fill9_" xml:space="preserve">
       <stop offset="21.1207%" stop-color="#C0AB95" stop-opacity="1" id="stop102" xml:space="preserve" />
       <stop offset="57.3276%" stop-color="#F2D7BA" stop-opacity="1" id="stop104" xml:space="preserve" />
       <stop offset="84.0517%" stop-color="#C0AB95" stop-opacity="1" id="stop106" xml:space="preserve" />
@@ -222,15 +224,14 @@
       <stop offset="85.7843%" stop-color="#FF0606" stop-opacity="1" id="stop280-4" xml:space="preserve" />
       <stop offset="100%" stop-color="#AF0F0F" stop-opacity="1" id="stop282-7" xml:space="preserve" />
     </linearGradient>
-  </defs>
-  <namedview id="base" xml:space="default" />
-  <g transform="translate(0, -97)" id="layer1" xml:space="default">
-    <g transform="matrix(2.685446, 0, 0, 2.685446, 6.85714, 102.6198)" id="g12" xml:space="preserve">
+    </defs>
+    <g transform="translate(0, -97)" id="layer1" xml:space="default">
+        <g transform="matrix(2.685446, 0, 0, 2.685446, 6.85714, 102.6198)" id="g12" xml:space="preserve">
       <path d="M17.502 0 L262.526 0 C272.187 0 280.028 7.832 280.028 17.502 L280.028 262.526 C280.028 272.196 272.187 280.028 262.526 280.028 L17.502 280.028 C7.841 280.027 0 272.195 0 262.526 L0 17.502 C0 7.841 7.841 0 17.502 0 z" id="path2" xml:space="preserve" connector-curvature="0" style="fill:#324D5B;" />
       <path d="M52.505 175.017 L227.522 175.017 C237.183 175.017 245.024 182.858 245.024 192.519 L245.024 280.028 L35.003 280.028 L35.003 192.519 C35.003 182.858 42.844 175.017 52.505 175.017 z" id="path4" xml:space="preserve" connector-curvature="0" style="fill:#CCD0D2;" />
       <path d="M52.505 157.515 L227.522 157.515 C237.183 157.515 245.024 165.356 245.024 175.017 L245.024 201.27 L35.003 201.27 L35.003 175.017 C35.003 165.356 42.844 157.515 52.505 157.515 z" id="path6" xml:space="preserve" connector-curvature="0" style="fill:#E4E7E7;" />
       <path d="M245.024 0 L245.024 105.01 C245.024 114.68 237.183 122.512 227.522 122.512 L52.505 122.512 C42.844 122.512 35.003 114.68 35.003 105.01 L35.003 0 z" id="path8" xml:space="preserve" connector-curvature="0" style="fill:#2B414D;" />
       <path d="M122.512 0 L122.512 96.259 C122.512 101.089 126.432 105.01 131.263 105.01 L218.772 105.01 C223.611 105.01 227.523 101.09 227.523 96.259 L227.523 0 z M210.021 78.758 C210.021 83.58801 206.109 87.509 201.27 87.509 L192.519 87.509 C187.68 87.509 183.768 83.589 183.768 78.758 L183.768 26.253 C183.768 21.423 187.68 17.502 192.519 17.502 L201.27 17.502 C206.109 17.502 210.021 21.422 210.021 26.253 z" id="path10" xml:space="preserve" connector-curvature="0" style="fill:#CCD0D2;" />
     </g>
-  </g>
+    </g>
 </svg>

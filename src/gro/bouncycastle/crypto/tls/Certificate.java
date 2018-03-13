@@ -5,9 +5,9 @@ import ewe.io.IOException;
 import ewe.io.InputStream;
 import ewe.io.OutputStream;
 import ewe.util.Vector;
+import gro.bouncycastle.asn1.ASN1Primitive;
 
 //import org.bouncycastle.asn1.ASN1Encoding;
-import gro.bouncycastle.asn1.ASN1Primitive;
 
 /**
  * Parsing and encoding of a <i>Certificate</i> struct from RFC 4346.
@@ -21,16 +21,13 @@ import gro.bouncycastle.asn1.ASN1Primitive;
  *
  * @see org.bouncycastle.asn1.x509.Certificate
  */
-public class Certificate
-{
+public class Certificate {
     public static final Certificate EMPTY_CHAIN = new Certificate(new gro.bouncycastle.asn1.x509.Certificate[0]);
 
     protected gro.bouncycastle.asn1.x509.Certificate[] certificateList;
 
-    public Certificate(gro.bouncycastle.asn1.x509.Certificate[] certificateList)
-    {
-        if (certificateList == null)
-        {
+    public Certificate(gro.bouncycastle.asn1.x509.Certificate[] certificateList) {
+        if (certificateList == null) {
             throw new IllegalArgumentException("'certificateList' cannot be null");
         }
 
@@ -38,17 +35,35 @@ public class Certificate
     }
 
     /**
-     * @return an array of {@link org.bouncycastle.asn1.x509.Certificate} representing a certificate
-     *         chain.
-     * /
-    public org.bouncycastle.asn1.x509.Certificate[] getCertificateList()
-    {
-        return cloneCertificateList();
-    }
-*/
-    public gro.bouncycastle.asn1.x509.Certificate getCertificateAt(int index)
-    {
-        return certificateList[index];
+     * Parse a {@link Certificate} from an {@link InputStream}.
+     *
+     * @param input the {@link InputStream} to parse from.
+     * @return a {@link Certificate} object.
+     * @throws IOException
+     */
+    public static Certificate parse(InputStream input)
+            throws IOException {
+        int totalLength = TlsUtils.readUint24(input);
+        if (totalLength == 0) {
+            return EMPTY_CHAIN;
+        }
+
+        byte[] certListData = TlsUtils.readFully(totalLength, input);
+
+        ByteArrayInputStream buf = new ByteArrayInputStream(certListData);
+
+        Vector certificate_list = new Vector();
+        while (buf.available() > 0) {
+            byte[] berEncoding = TlsUtils.readOpaque24(buf);
+            ASN1Primitive asn1Cert = TlsUtils.readASN1Object(berEncoding);
+            certificate_list.addElement(gro.bouncycastle.asn1.x509.Certificate.getInstance(asn1Cert));
+        }
+
+        gro.bouncycastle.asn1.x509.Certificate[] certificateList = new gro.bouncycastle.asn1.x509.Certificate[certificate_list.size()];
+        for (int i = 0; i < certificate_list.size(); i++) {
+            certificateList[i] = (gro.bouncycastle.asn1.x509.Certificate) certificate_list.elementAt(i);
+        }
+        return new Certificate(certificateList);
     }
 /*
     public int getLength()
@@ -56,14 +71,28 @@ public class Certificate
         return certificateList.length;
     }
 */
+
+    /**
+     * @return an array of {@link org.bouncycastle.asn1.x509.Certificate} representing a certificate
+     * chain.
+     * /
+     * public org.bouncycastle.asn1.x509.Certificate[] getCertificateList()
+     * {
+     * return cloneCertificateList();
+     * }
+     */
+    public gro.bouncycastle.asn1.x509.Certificate getCertificateAt(int index) {
+        return certificateList[index];
+    }
+
     /**
      * @return <code>true</code> if this certificate chain contains no certificates, or
-     *         <code>false</code> otherwise.
+     * <code>false</code> otherwise.
      */
-    public boolean isEmpty()
-    {
+    public boolean isEmpty() {
         return certificateList.length == 0;
     }
+
     /**
      * Encode this {@link Certificate} to an {@link OutputStream}.
      *
@@ -71,9 +100,8 @@ public class Certificate
      * @throws IOException
      */
     public void encode(OutputStream output)
-        throws IOException
-    {
-    	throw new UnsupportedClassVersionError();/*
+            throws IOException {
+        throw new UnsupportedClassVersionError();/*
         Vector derEncodings = new Vector(this.certificateList.length);
 
         int totalLength = 0;
@@ -92,46 +120,10 @@ public class Certificate
             byte[] derEncoding = (byte[])derEncodings.elementAt(i);
             TlsUtils.writeOpaque24(derEncoding, output);
         }
-*/    }
-
-    /**
-     * Parse a {@link Certificate} from an {@link InputStream}.
-     *
-     * @param input the {@link InputStream} to parse from.
-     * @return a {@link Certificate} object.
-     * @throws IOException
-     */
-    public static Certificate parse(InputStream input)
-        throws IOException
-    {
-        int totalLength = TlsUtils.readUint24(input);
-        if (totalLength == 0)
-        {
-            return EMPTY_CHAIN;
-        }
-
-        byte[] certListData = TlsUtils.readFully(totalLength, input);
-
-        ByteArrayInputStream buf = new ByteArrayInputStream(certListData);
-
-        Vector certificate_list = new Vector();
-        while (buf.available() > 0)
-        {
-            byte[] berEncoding = TlsUtils.readOpaque24(buf);
-            ASN1Primitive asn1Cert = TlsUtils.readASN1Object(berEncoding);
-            certificate_list.addElement(gro.bouncycastle.asn1.x509.Certificate.getInstance(asn1Cert));
-        }
-
-        gro.bouncycastle.asn1.x509.Certificate[] certificateList = new gro.bouncycastle.asn1.x509.Certificate[certificate_list.size()];
-        for (int i = 0; i < certificate_list.size(); i++)
-        {
-            certificateList[i] = (gro.bouncycastle.asn1.x509.Certificate)certificate_list.elementAt(i);
-        }
-        return new Certificate(certificateList);
+*/
     }
 
-    protected gro.bouncycastle.asn1.x509.Certificate[] cloneCertificateList()
-    {
+    protected gro.bouncycastle.asn1.x509.Certificate[] cloneCertificateList() {
         gro.bouncycastle.asn1.x509.Certificate[] result = new gro.bouncycastle.asn1.x509.Certificate[certificateList.length];
         System.arraycopy(certificateList, 0, result, 0, result.length);
         return result;

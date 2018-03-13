@@ -1,14 +1,7 @@
 package gro.bouncycastle.asn1.x500;
 
 import ewe.util.Enumeration;
-import gro.bouncycastle.asn1.ASN1Choice;
-import gro.bouncycastle.asn1.ASN1Encodable;
-import gro.bouncycastle.asn1.ASN1Object;
-import gro.bouncycastle.asn1.ASN1ObjectIdentifier;
-import gro.bouncycastle.asn1.ASN1Primitive;
-import gro.bouncycastle.asn1.ASN1Sequence;
-import gro.bouncycastle.asn1.ASN1TaggedObject;
-import gro.bouncycastle.asn1.DERSequence;
+import gro.bouncycastle.asn1.*;
 import gro.bouncycastle.asn1.x500.style.BCStyle;
 
 /**
@@ -27,13 +20,12 @@ import gro.bouncycastle.asn1.x500.style.BCStyle;
  * </pre>
  */
 public class X500Name
-    extends ASN1Object
-    implements ASN1Choice
-{
-    private static X500NameStyle    defaultStyle = BCStyle.INSTANCE;
+        extends ASN1Object
+        implements ASN1Choice {
+    private static X500NameStyle defaultStyle = BCStyle.INSTANCE;
 
-    private boolean                 isHashCodeCalculated;
-    private int                     hashCodeValue;
+    private boolean isHashCodeCalculated;
+    private int hashCodeValue;
 
     private X500NameStyle style;
     private RDN[] rdns;
@@ -42,36 +34,79 @@ public class X500Name
      * @deprecated use the getInstance() method that takes a style.
      */
 
-    public X500Name(X500NameStyle style, X500Name name)
-    {
+    public X500Name(X500NameStyle style, X500Name name) {
         this.rdns = name.rdns;
         this.style = style;
     }
 
     /**
+     * Constructor from ASN1Sequence
+     * <p>
+     * the principal will be a list of constructed sets, each containing an (OID, String) pair.
+     */
+    private X500Name(
+            ASN1Sequence seq) {
+        this(defaultStyle, seq);
+    }
+
+    private X500Name(
+            X500NameStyle style,
+            ASN1Sequence seq) {
+        this.style = style;
+        this.rdns = new RDN[seq.size()];
+
+        int index = 0;
+
+        for (Enumeration e = seq.getObjects(); e.hasMoreElements(); ) {
+            rdns[index++] = RDN.getInstance(e.nextElement());
+        }
+    }
+
+    public X500Name(
+            RDN[] rDNs) {
+        this(defaultStyle, rDNs);
+    }
+
+    public X500Name(
+            X500NameStyle style,
+            RDN[] rDNs) {
+        this.rdns = rDNs;
+        this.style = style;
+    }
+
+    public X500Name(
+            String dirName) {
+        this(defaultStyle, dirName);
+    }
+
+
+    public X500Name(
+            X500NameStyle style,
+            String dirName) {
+        this(style.fromString(dirName));
+
+        this.style = style;
+    }
+
+    /**
      * Return a X500Name based on the passed in tagged object.
-     * 
-     * @param obj tag object holding name.
+     *
+     * @param obj      tag object holding name.
      * @param explicit true if explicitly tagged false otherwise.
      * @return the X500Name
      */
     public static X500Name getInstance(
-        ASN1TaggedObject obj,
-        boolean          explicit)
-    {
+            ASN1TaggedObject obj,
+            boolean explicit) {
         // must be true as choice item
         return getInstance(ASN1Sequence.getInstance(obj, true));
     }
 
     public static X500Name getInstance(
-        Object  obj)
-    {
-        if (obj instanceof X500Name)
-        {
-            return (X500Name)obj;
-        }
-        else if (obj != null)
-        {
+            Object obj) {
+        if (obj instanceof X500Name) {
+            return (X500Name) obj;
+        } else if (obj != null) {
             return new X500Name(ASN1Sequence.getInstance(obj));
         }
 
@@ -79,15 +114,11 @@ public class X500Name
     }
 
     public static X500Name getInstance(
-        X500NameStyle style,
-        Object        obj)
-    {
-        if (obj instanceof X500Name)
-        {
-            return new X500Name(style, (X500Name)obj);
-        }
-        else if (obj != null)
-        {
+            X500NameStyle style,
+            Object obj) {
+        if (obj instanceof X500Name) {
+            return new X500Name(style, (X500Name) obj);
+        } else if (obj != null) {
             return new X500Name(style, ASN1Sequence.getInstance(obj));
         }
 
@@ -95,58 +126,25 @@ public class X500Name
     }
 
     /**
-     * Constructor from ASN1Sequence
+     * Return the current default style.
      *
-     * the principal will be a list of constructed sets, each containing an (OID, String) pair.
+     * @return default style for X500Name construction.
      */
-    private X500Name(
-        ASN1Sequence  seq)
-    {
-        this(defaultStyle, seq);
+    public static X500NameStyle getDefaultStyle() {
+        return defaultStyle;
     }
-    private X500Name(
-        X500NameStyle style,
-        ASN1Sequence  seq)
-    {
-        this.style = style;
-        this.rdns = new RDN[seq.size()];
 
-        int index = 0;
-
-        for (Enumeration e = seq.getObjects(); e.hasMoreElements();)
-        {
-            rdns[index++] = RDN.getInstance(e.nextElement());
+    /**
+     * Set the default style for X500Name construction.
+     *
+     * @param style an X500NameStyle
+     */
+    public static void setDefaultStyle(X500NameStyle style) {
+        if (style == null) {
+            throw new NullPointerException("cannot set style to null");
         }
-    }
 
-    
-    public X500Name(
-        RDN[] rDNs)
-    {
-        this(defaultStyle, rDNs);
-    }
-
-    public X500Name(
-        X500NameStyle style,
-        RDN[]         rDNs)
-    {
-        this.rdns = rDNs;
-        this.style = style;
-    }
-
-    public X500Name(
-        String dirName)
-    {
-        this(defaultStyle, dirName);
-    }
-
-    public X500Name(
-        X500NameStyle style,
-        String        dirName)
-    {
-        this(style.fromString(dirName));
-
-        this.style = style;
+        defaultStyle = style;
     }
 
     /**
@@ -154,8 +152,7 @@ public class X500Name
      *
      * @return an array of RDN objects.
      */
-    public RDN[] getRDNs()
-    {
+    public RDN[] getRDNs() {
         RDN[] tmp = new RDN[this.rdns.length];
 
         System.arraycopy(rdns, 0, tmp, 0, tmp.length);
@@ -168,12 +165,10 @@ public class X500Name
      *
      * @return an array, possibly zero length, of ASN1ObjectIdentifiers objects.
      */
-    public ASN1ObjectIdentifier[] getAttributeTypes()
-    {
-    	int   count = 0;
+    public ASN1ObjectIdentifier[] getAttributeTypes() {
+        int count = 0;
 
-        for (int i = 0; i != rdns.length; i++)
-        {
+        for (int i = 0; i != rdns.length; i++) {
             RDN rdn = rdns[i];
 
             count += rdn.size();
@@ -183,20 +178,15 @@ public class X500Name
 
         count = 0;
 
-        for (int i = 0; i != rdns.length; i++)
-        {
+        for (int i = 0; i != rdns.length; i++) {
             RDN rdn = rdns[i];
 
-            if (rdn.isMultiValued())
-            {
+            if (rdn.isMultiValued()) {
                 AttributeTypeAndValue[] attr = rdn.getTypesAndValues();
-                for (int j = 0; j != attr.length; j++)
-                {
+                for (int j = 0; j != attr.length; j++) {
                     res[count++] = attr[j].getType();
                 }
-            }
-            else if (rdn.size() != 0)
-            {
+            } else if (rdn.size() != 0) {
                 res[count++] = rdn.getFirst().getType();
             }
         }
@@ -210,54 +200,46 @@ public class X500Name
      * @param attributeType the type OID we are looking for.
      * @return an array, possibly zero length, of RDN objects.
      */
-    public RDN[] getRDNs(ASN1ObjectIdentifier attributeType)
-    {
+    public RDN[] getRDNs(ASN1ObjectIdentifier attributeType) {
         RDN[] res = new RDN[rdns.length];
-        int   count = 0;
+        int count = 0;
 
-        for (int i = 0; i != rdns.length; i++)
-        {
+        for (int i = 0; i != rdns.length; i++) {
             RDN rdn = rdns[i];
 
-            if (rdn.isMultiValued())
-            {
+            if (rdn.isMultiValued()) {
                 AttributeTypeAndValue[] attr = rdn.getTypesAndValues();
-                for (int j = 0; j != attr.length; j++)
-                {
-                    if (attr[j].getType().equals(attributeType))
-                    {
+                for (int j = 0; j != attr.length; j++) {
+                    if (attr[j].getType().equals(attributeType)) {
                         res[count++] = rdn;
                         break;
                     }
                 }
-            }
-            else
-            {
-              	throw new UnsupportedClassVersionError();/*
+            } else {
+                throw new UnsupportedClassVersionError();/*
                                 if (rdn.getFirst().getType().equals(attributeType))
                 {
                     res[count++] = rdn;
                 }
-*/            }
+*/
+            }
         }
 
-        	throw new UnsupportedClassVersionError();/*
+        throw new UnsupportedClassVersionError();/*
         RDN[] tmp = new RDN[count];
 
         System.arraycopy(res, 0, tmp, 0, tmp.length);
 
         return tmp;
-*/    }
+*/
+    }
 
-    public ASN1Primitive toASN1Primitive()
-    {
+    public ASN1Primitive toASN1Primitive() {
         return new DERSequence(rdns);
     }
 
-    public int hashCode()
-    {
-        if (isHashCodeCalculated)
-        {
+    public int hashCode() {
+        if (isHashCodeCalculated) {
             return hashCodeValue;
         }
 
@@ -271,62 +253,29 @@ public class X500Name
     /**
      * test for equality - note: case is ignored.
      */
-    public boolean equals(Object obj)
-    {
-        if (obj == this)
-        {
+    public boolean equals(Object obj) {
+        if (obj == this) {
             return true;
         }
 
-        if (!(obj instanceof X500Name || obj instanceof ASN1Sequence))
-        {
+        if (!(obj instanceof X500Name || obj instanceof ASN1Sequence)) {
             return false;
         }
-        
-        ASN1Primitive derO = ((ASN1Encodable)obj).toASN1Primitive();
 
-        if (this.toASN1Primitive().equals(derO))
-        {
+        ASN1Primitive derO = ((ASN1Encodable) obj).toASN1Primitive();
+
+        if (this.toASN1Primitive().equals(derO)) {
             return true;
         }
 
-        try
-        {
-            return style.areEqual(this, new X500Name(ASN1Sequence.getInstance(((ASN1Encodable)obj).toASN1Primitive())));
-        }
-        catch (Exception e)
-        {
+        try {
+            return style.areEqual(this, new X500Name(ASN1Sequence.getInstance(((ASN1Encodable) obj).toASN1Primitive())));
+        } catch (Exception e) {
             return false;
         }
     }
-    
-    public String toString()
-    {
+
+    public String toString() {
         return style.toString(this);
-    }
-
-    /**
-     * Set the default style for X500Name construction.
-     *
-     * @param style  an X500NameStyle
-     */
-    public static void setDefaultStyle(X500NameStyle style)
-    {
-        if (style == null)
-        {
-            throw new NullPointerException("cannot set style to null");
-        }
-
-        defaultStyle = style;
-    }
-
-    /**
-     * Return the current default style.
-     *
-     * @return default style for X500Name construction.
-     */
-    public static X500NameStyle getDefaultStyle()
-    {
-        return defaultStyle;
     }
 }

@@ -3,13 +3,12 @@ package gro.bouncycastle.crypto;
 /**
  * Generic signer interface for hash based and message recovery signers.
  */
-public interface Signer 
-{
+public interface Signer {
     /**
      * Initialise the signer for signing or verification.
-     * 
+     *
      * @param forSigning true if for signing, false otherwise
-     * @param param necessary parameters.
+     * @param param      necessary parameters.
      */
     public void init(boolean forSigning, CipherParameters param);
 
@@ -28,14 +27,14 @@ public interface Signer
      * the key we were initialised with.
      */
     public byte[] generateSignature();
-        //throws CryptoException, DataLengthException;
+    //throws CryptoException, DataLengthException;
 
     /**
      * return true if the internal state represents the signature described
      * in the passed in array.
      */
     public boolean verifySignature(byte[] signature);
-    
+
     /**
      * reset the internal state
      */

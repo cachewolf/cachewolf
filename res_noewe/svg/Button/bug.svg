@@ -1,9 +1,10 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
-<svg x="0" y="0" width="32" height="32" overflow="hidden" viewBox="0, 0, 200, 200" preserveAspectRatio="xMidYMid" font-size="0" id="svg950" xml:space="default" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xml="http://www.w3.org/XML/1998/namespace" version="1.1">
-  <defs id="defs944" xml:space="default" />
-  <g transform="translate(0, -97)" id="layer1" xml:space="default">
-    <g transform="matrix(0.1357508, 0, 0, 0.06126005, 31.48516, 172.9844)" id="XMLID_2_" xml:space="preserve">
+<svg xmlns:xml="http://www.w3.org/XML/1998/namespace" x="0" y="0" width="32" height="32" overflow="hidden" viewBox="0, 0, 200, 200"
+     preserveAspectRatio="xMidYMid" font-size="0" id="svg" xml:space="default"
+     xmlns="http://www.w3.org/2000/svg" version="1.1">
+    <g transform="translate(0, -97)" id="layer1" xml:space="default">
+        <g transform="matrix(0.1357508, 0, 0, 0.06126005, 31.48516, 172.9844)" id="XMLID_2_" xml:space="preserve">
       <g id="g2815" xml:space="preserve">
         <path d="M1239 1257 C1237.99 1296.33 1234.51 1333.18 1231 1370 C1186 1370 1141 1370 1096 1370 C1099.95 1334.62 1103.41 1298.75 1103 1259 C1102.96 1257.29 1103.74 1256.41 1105 1256 C1149.48 1256.52 1196.12 1254.88 1239 1257 z" id="path2817" xml:space="preserve" connector-curvature="0" />
         <path d="M1236 1170 C753.97 1170 272.05 1170 -210 1170 C-210.07 1154.93 -207.05 1142.95 -206 1129 C-205.14 1128.19 -205.41 1126.26 -204 1126 C274.62 1127.73 752.27 1127.68 1231 1126 C1232.94 1140.39 1234.81 1154.85 1236 1170 z" id="path2819" xml:space="preserve" connector-curvature="0" />
@@ -66,5 +67,5 @@
       </g>
       <g id="g2933" xml:space="preserve" />
     </g>
-  </g>
+    </g>
 </svg>

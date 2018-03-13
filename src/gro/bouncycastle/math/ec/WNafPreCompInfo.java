@@ -4,8 +4,7 @@ package gro.bouncycastle.math.ec;
  * Class holding precomputation data for the WNAF (Window Non-Adjacent Form)
  * algorithm.
  */
-public class WNafPreCompInfo implements PreCompInfo
-{
+public class WNafPreCompInfo implements PreCompInfo {
     /**
      * Array holding the precomputed <code>ECPoint</code>s used for a Window
      * NAF multiplication.
@@ -24,33 +23,27 @@ public class WNafPreCompInfo implements PreCompInfo
      */
     protected ECPoint twice = null;
 
-    public ECPoint[] getPreComp()
-    {
+    public ECPoint[] getPreComp() {
         return preComp;
     }
 
-    public void setPreComp(ECPoint[] preComp)
-    {
+    public void setPreComp(ECPoint[] preComp) {
         this.preComp = preComp;
     }
 
-    public ECPoint[] getPreCompNeg()
-    {
+    public ECPoint[] getPreCompNeg() {
         return preCompNeg;
     }
 
-    public void setPreCompNeg(ECPoint[] preCompNeg)
-    {
+    public void setPreCompNeg(ECPoint[] preCompNeg) {
         this.preCompNeg = preCompNeg;
     }
 
-    public ECPoint getTwice()
-    {
+    public ECPoint getTwice() {
         return twice;
     }
 
-    public void setTwice(ECPoint twice)
-    {
+    public void setTwice(ECPoint twice) {
         this.twice = twice;
     }
 }

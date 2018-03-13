@@ -284,6 +284,7 @@ class CacheTour extends CellPanel {
      * The full filename of the current file
      */
     private String currFile = null;
+
     CacheTour() {
         this.setPreferredSize(Math.max(Preferences.itself().lastSavedWidth / 5, 100), -1);
         this.equalWidths = true;
@@ -312,13 +313,13 @@ class CacheTour extends CellPanel {
         // Buttons to clear, load and save the list
         CellPanel cp = new CellPanel();
         cp.equalWidths = true;
-        cp.addNext(btnNew = GuiImageBroker.getButton("","clnew"), HSTRETCH, HFILL);
+        cp.addNext(btnNew = GuiImageBroker.getButton("", "clnew"), HSTRETCH, HFILL);
         btnNew.setToolTip(MyLocale.getMsg(182, "New list"));
-        cp.addNext(btnLoad = GuiImageBroker.getButton("","clopen"), HSTRETCH, HFILL);
+        cp.addNext(btnLoad = GuiImageBroker.getButton("", "clopen"), HSTRETCH, HFILL);
         btnLoad.setToolTip(MyLocale.getMsg(183, "Load list"));
-        cp.addNext(btnSaveAs = GuiImageBroker.getButton("","clsaveas"), HSTRETCH, HFILL);
+        cp.addNext(btnSaveAs = GuiImageBroker.getButton("", "clsaveas"), HSTRETCH, HFILL);
         btnSaveAs.setToolTip(MyLocale.getMsg(184, "Save as"));
-        cp.addLast(btnSave = GuiImageBroker.getButton("","clsave"), HSTRETCH, HFILL);
+        cp.addLast(btnSave = GuiImageBroker.getButton("", "clsave"), HSTRETCH, HFILL);
         btnSave.setToolTip(MyLocale.getMsg(185, "Save (without confirmation)"));
         addLast(cp, HSTRETCH, HFILL);
         // Button to toggle whether additional waypoints are automatically dragged
@@ -692,11 +693,11 @@ class CacheTour extends CellPanel {
         // Alternative method of deleting a cache from the list through
         // Keyboard interface
         public void onKeyEvent(KeyEvent ev) {
-        /* This is a bit of a hack. By default Ewe sends key events to
-         * this panel. So if the list has not had anything dragged into it,
-	     * we redirect the focus to the list view, assuming that that is where
-	     * the key event needs to go.
-	     */
+            /* This is a bit of a hack. By default Ewe sends key events to
+             * this panel. So if the list has not had anything dragged into it,
+             * we redirect the focus to the list view, assuming that that is where
+             * the key event needs to go.
+             */
             if (needsInit && ev.target == this) {
                 Gui.takeFocus(MainTab.itself.tablePanel.myTableControl, ControlConstants.ByKeyboard);
                 ev.target = MainTab.itself.tablePanel.myTableControl;

@@ -1,11 +1,9 @@
 package gro.bouncycastle.crypto.tls;
 
 import ewe.security.SecureRandom;
-
 import gro.bouncycastle.crypto.prng.RandomGenerator;
 
-public interface TlsContext
-{
+public interface TlsContext {
     RandomGenerator getNonceRandomGenerator();
 
     SecureRandom getSecureRandom();
@@ -21,9 +19,9 @@ public interface TlsContext
     /**
      * Used to get the resumable session, if any, used by this connection. Only available after the
      * handshake has successfully completed.
-     * 
+     *
      * @return A {@link TlsSession} representing the resumable session used by this connection, or
-     *         null if no resumable session available.
+     * null if no resumable session available.
      * @see TlsPeer#notifyHandshakeComplete()
      */
     TlsSession getResumableSession();

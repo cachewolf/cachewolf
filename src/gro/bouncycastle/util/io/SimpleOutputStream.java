@@ -3,19 +3,15 @@ package gro.bouncycastle.util.io;
 import ewe.io.IOException;
 import ewe.io.OutputStream;
 
-public abstract class SimpleOutputStream extends OutputStream
-{
-    public void close()
-    {
+public abstract class SimpleOutputStream extends OutputStream {
+    public void close() {
     }
 
-    public void flush()
-    {
+    public void flush() {
     }
 
-    public void write(int b) throws IOException
-    {
-        byte[] buf = new byte[]{ (byte)b };
+    public void write(int b) throws IOException {
+        byte[] buf = new byte[]{(byte) b};
         write(buf, 0, 1);
     }
 }

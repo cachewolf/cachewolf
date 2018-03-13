@@ -2,41 +2,28 @@ package gro.bouncycastle.asn1.x509;
 
 //import ewe.text.ParseException;
 //import ewe.text.SimpleDateFormat;
+
 import ewe.sys.Date;
 import ewe.sys.Locale;
-//import ewe.util.SimpleTimeZone;
+import gro.bouncycastle.asn1.*;
 
-import gro.bouncycastle.asn1.ASN1Choice;
-import gro.bouncycastle.asn1.ASN1GeneralizedTime;
-import gro.bouncycastle.asn1.ASN1Object;
-import gro.bouncycastle.asn1.ASN1Primitive;
-import gro.bouncycastle.asn1.ASN1TaggedObject;
-import gro.bouncycastle.asn1.ASN1UTCTime;
+//import ewe.util.SimpleTimeZone;
 //import gro.bouncycastle.asn1.DERGeneralizedTime;
 //import gro.bouncycastle.asn1.DERUTCTime;
 
 public class Time
-    extends ASN1Object
-    implements ASN1Choice
-{
+        extends ASN1Object
+        implements ASN1Choice {
     ASN1Primitive time;
-    public static Time getInstance(
-        ASN1TaggedObject obj,
-        boolean          explicit)
-    {
-        return getInstance(obj.getObject()); // must be explicitly tagged
-    }
 
     public Time(
-        ASN1Primitive   time)
-    {
+            ASN1Primitive time) {
         if (!(time instanceof ASN1UTCTime)
-            && !(time instanceof ASN1GeneralizedTime))
-        {
+                && !(time instanceof ASN1GeneralizedTime)) {
             throw new IllegalArgumentException("unknown object passed to Time");
         }
 
-        this.time = time; 
+        this.time = time;
     }
 
     /**
@@ -47,9 +34,8 @@ public class Time
      * @param time a date object representing the time of interest.
      */
     public Time(
-        Date    time)
-    {
-    	throw new UnsupportedClassVersionError();/*
+            Date time) {
+        throw new UnsupportedClassVersionError();/*
         SimpleTimeZone      tz = new SimpleTimeZone(0, "Z");
         SimpleDateFormat    dateF = new SimpleDateFormat("yyyyMMddHHmmss");
 
@@ -66,7 +52,8 @@ public class Time
         {
             this.time = new DERUTCTime(d.substring(2));
         }
-*/    }
+*/
+    }
 
     /**
      * Creates a time object from a given date and locale - if the date is between 1950
@@ -74,14 +61,13 @@ public class Time
      * is used. You may need to use this constructor if the default locale
      * doesn't use a Gregorian calender so that the GeneralizedTime produced is compatible with other ASN.1 implementations.
      *
-     * @param time a date object representing the time of interest.
+     * @param time   a date object representing the time of interest.
      * @param locale an appropriate Locale for producing an ASN.1 GeneralizedTime value.
      */
     public Time(
-        Date    time,
-        Locale locale)
-    {
-    	throw new UnsupportedClassVersionError();/*
+            Date time,
+            Locale locale) {
+        throw new UnsupportedClassVersionError();/*
         SimpleTimeZone      tz = new SimpleTimeZone(0, "Z");
         SimpleDateFormat    dateF = new SimpleDateFormat("yyyyMMddHHmmss", locale);
 
@@ -98,30 +84,30 @@ public class Time
         {
             this.time = new DERUTCTime(d.substring(2));
         }
-*/    }
+*/
+    }
 
     public static Time getInstance(
-        Object  obj)
-    {
-        if (obj == null || obj instanceof Time)
-        {
-            return (Time)obj;
-        }
-        else if (obj instanceof ASN1UTCTime)
-        {
-            return new Time((ASN1UTCTime)obj);
-        }
-        else if (obj instanceof ASN1GeneralizedTime)
-        {
-            return new Time((ASN1GeneralizedTime)obj);
+            ASN1TaggedObject obj,
+            boolean explicit) {
+        return getInstance(obj.getObject()); // must be explicitly tagged
+    }
+
+    public static Time getInstance(
+            Object obj) {
+        if (obj == null || obj instanceof Time) {
+            return (Time) obj;
+        } else if (obj instanceof ASN1UTCTime) {
+            return new Time((ASN1UTCTime) obj);
+        } else if (obj instanceof ASN1GeneralizedTime) {
+            return new Time((ASN1GeneralizedTime) obj);
         }
 
         throw new IllegalArgumentException("unknown object in factory: " + obj.getClass().getName());
     }
 
-    public String getTime()
-    {
-    	throw new UnsupportedClassVersionError();/*
+    public String getTime() {
+        throw new UnsupportedClassVersionError();/*
         if (time instanceof ASN1UTCTime)
         {
             return ((ASN1UTCTime)time).getAdjustedTime();
@@ -130,11 +116,11 @@ public class Time
         {
             return ((ASN1GeneralizedTime)time).getTime();
         }
-*/    }
+*/
+    }
 
-    public Date getDate()
-    {
-    	throw new UnsupportedClassVersionError();/*
+    public Date getDate() {
+        throw new UnsupportedClassVersionError();/*
         try
         {
             if (time instanceof ASN1UTCTime)
@@ -150,7 +136,8 @@ public class Time
         {         // this should never happen
             throw new IllegalStateException("invalid date string: " + e.getMessage());
         }
-*/    }
+*/
+    }
 
     /**
      * Produce an object suitable for an ASN1OutputStream.
@@ -160,13 +147,11 @@ public class Time
      *             generalTime    GeneralizedTime }
      * </pre>
      */
-    public ASN1Primitive toASN1Primitive()
-    {
+    public ASN1Primitive toASN1Primitive() {
         return time;
     }
 
-    public String toString()
-    {
+    public String toString() {
         return getTime();
     }
 }

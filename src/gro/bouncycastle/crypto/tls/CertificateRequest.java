@@ -1,8 +1,6 @@
 package gro.bouncycastle.crypto.tls;
 
-import ewe.io.ByteArrayInputStream;
 import ewe.io.IOException;
-import ewe.io.InputStream;
 import ewe.io.OutputStream;
 import ewe.util.Vector;
 
@@ -22,8 +20,7 @@ import ewe.util.Vector;
  * @see ClientCertificateType
  * @see X500Name
  */
-public class CertificateRequest
-{
+public class CertificateRequest {
     protected short[] certificateTypes;
     protected Vector supportedSignatureAlgorithms;
     protected Vector certificateAuthorities;
@@ -32,8 +29,7 @@ public class CertificateRequest
      * @param certificateTypes       see {@link ClientCertificateType} for valid constants.
      * @param certificateAuthorities a {@link Vector} of {@link X500Name}.
      */
-    public CertificateRequest(short[] certificateTypes, Vector supportedSignatureAlgorithms, Vector certificateAuthorities)
-    {
+    public CertificateRequest(short[] certificateTypes, Vector supportedSignatureAlgorithms, Vector certificateAuthorities) {
         this.certificateTypes = certificateTypes;
         this.supportedSignatureAlgorithms = supportedSignatureAlgorithms;
         this.certificateAuthorities = certificateAuthorities;
@@ -43,24 +39,21 @@ public class CertificateRequest
      * @return an array of certificate types
      * @see ClientCertificateType
      */
-    public short[] getCertificateTypes()
-    {
+    public short[] getCertificateTypes() {
         return certificateTypes;
     }
 
     /**
      * @return a {@link Vector} of {@link SignatureAndHashAlgorithm} (or null before TLS 1.2).
      */
-    public Vector getSupportedSignatureAlgorithms()
-    {
+    public Vector getSupportedSignatureAlgorithms() {
         return supportedSignatureAlgorithms;
     }
 
     /**
      * @return a {@link Vector} of {@link X500Name}
      */
-    public Vector getCertificateAuthorities()
-    {
+    public Vector getCertificateAuthorities() {
         return certificateAuthorities;
     }
 
@@ -156,4 +149,5 @@ public class CertificateRequest
 
         return new CertificateRequest(certificateTypes, supportedSignatureAlgorithms, certificateAuthorities);
     }
-*/}
+*/
+}

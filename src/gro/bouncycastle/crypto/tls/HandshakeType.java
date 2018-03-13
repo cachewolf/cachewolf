@@ -1,7 +1,6 @@
 package gro.bouncycastle.crypto.tls;
 
-public class HandshakeType
-{
+public class HandshakeType {
     /*
      * RFC 2246 7.4
      */
@@ -28,12 +27,12 @@ public class HandshakeType
     public static final short hello_verify_request = 3;
 
     /*
-     * RFC 4680 
+     * RFC 4680
      */
     public static final short supplemental_data = 23;
 
     /*
-     * RFC 5077 
+     * RFC 5077
      */
     public static final short session_ticket = 4;
 }

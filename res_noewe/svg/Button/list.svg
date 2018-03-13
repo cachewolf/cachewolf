@@ -1,25 +1,41 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
-<svg x="0" y="0" width="32" height="32" overflow="hidden" viewBox="0, 0, 128, 128" preserveAspectRatio="xMidYMid" font-size="0px" id="svg37" xml:space="default" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xml="http://www.w3.org/XML/1998/namespace" version="1.1">
-  <defs id="defs7" xml:space="default">
-    <linearGradient x1="55.22827" y1="1.545117" x2="55.22827" y2="109.7026" gradientUnits="userSpaceOnUse" gradientTransform="scale(1.158818, 0.8629479)" id="def0" xml:space="default">
-      <stop offset="0%" stop-color="#B3E2FF" stop-opacity="1" id="stop2" xml:space="default" />
-      <stop offset="100%" stop-color="#99CCFF" stop-opacity="1" id="stop4" xml:space="default" />
-    </linearGradient>
-  </defs>
-  <g transform="translate(0, 15.72881)" id="g35" xml:space="default">
-    <path d="M128 96 L0 96 L0 0 L128 0 z" id="path9" xml:space="default" connector-curvature="0" style="fill:#0099FF;" />
-    <path d="M1.33333 1.33334 L126.667 1.33334 L126.667 94.6667 L1.33333 94.6667 z" id="path11" xml:space="default" connector-curvature="0" style="fill:url(#def0);" />
-    <path d="M2.66667 2.66666 L125.333 2.66666 L125.333 93.3333 L2.66667 93.3333 z" id="path13" xml:space="default" connector-curvature="0" style="fill:#FFFFFF;" />
-    <path d="M125.333 14.6667 L2.66667 14.6667 L2.66667 2.66666 L125.333 2.66666 z" id="path15" xml:space="default" connector-curvature="0" style="fill:#DEFFFF;" />
-    <path d="M2.66667 14.6667 L125.333 14.6667 L125.333 13.3333 L2.66667 13.3333 z" id="path17" xml:space="default" connector-curvature="0" style="fill:#B4E2FF;" />
-    <path d="M40 93.3333 L41.3333 93.3333 L41.3333 2.66666 L40 2.66666 z" id="path19" xml:space="default" connector-curvature="0" style="fill:#B4E2FF;" />
-    <path d="M86.6667 93.3333 L88 93.3333 L88 2.66666 L86.6667 2.66666 z" id="path21" xml:space="default" connector-curvature="0" style="fill:#B4E2FF;" />
-    <path d="M2.66667 28 L125.333 28 L125.333 26.6667 L2.66667 26.6667 z" id="path23" xml:space="default" connector-curvature="0" style="fill:#B4E2FF;" />
-    <path d="M2.66667 41.3333 L125.333 41.3333 L125.333 40 L2.66667 40 z" id="path25" xml:space="default" connector-curvature="0" style="fill:#B4E2FF;" />
-    <path d="M2.66667 54.6667 L125.333 54.6667 L125.333 53.3333 L2.66667 53.3333 z" id="path27" xml:space="default" connector-curvature="0" style="fill:#B4E2FF;" />
-    <path d="M2.66667 68 L125.333 68 L125.333 66.6653 L2.66667 66.6653 z" id="path29" xml:space="default" connector-curvature="0" style="fill:#B4E2FF;" />
-    <path d="M2.66667 81.3333 L125.333 81.3333 L125.333 80 L2.66667 80 z" id="path31" xml:space="default" connector-curvature="0" style="fill:#B4E2FF;" />
-    <path d="M128 40 L0 40 L0 56 L128 56 M124 52 L4 52 L4 44 L124 44 z" id="path33" xml:space="default" connector-curvature="0" style="fill:#FFCC00;" />
-  </g>
+<svg xmlns:xml="http://www.w3.org/XML/1998/namespace" x="0" y="0" width="32" height="32" overflow="hidden" viewBox="0, 0, 128, 128"
+     preserveAspectRatio="xMidYMid" font-size="0px" id="svg" xml:space="default"
+     xmlns="http://www.w3.org/2000/svg" version="1.1">
+    <defs id="def1" xml:space="default">
+        <linearGradient x1="55.22827" y1="1.545117" x2="55.22827" y2="109.7026" gradientUnits="userSpaceOnUse"
+                        gradientTransform="scale(1.158818, 0.8629479)" id="def0" xml:space="default">
+            <stop offset="0%" stop-color="#B3E2FF" stop-opacity="1" id="stop2" xml:space="default"/>
+            <stop offset="100%" stop-color="#99CCFF" stop-opacity="1" id="stop4" xml:space="default"/>
+        </linearGradient>
+    </defs>
+    <g transform="translate(0, 15.72881)" id="g35" xml:space="default">
+        <path d="M128 96 L0 96 L0 0 L128 0 z" id="path9" xml:space="default" connector-curvature="0"
+              style="fill:#0099FF;"/>
+        <path d="M1.33333 1.33334 L126.667 1.33334 L126.667 94.6667 L1.33333 94.6667 z" id="path11" xml:space="default"
+              connector-curvature="0" style="fill:url(#def0);"/>
+        <path d="M2.66667 2.66666 L125.333 2.66666 L125.333 93.3333 L2.66667 93.3333 z" id="path13" xml:space="default"
+              connector-curvature="0" style="fill:#FFFFFF;"/>
+        <path d="M125.333 14.6667 L2.66667 14.6667 L2.66667 2.66666 L125.333 2.66666 z" id="path15" xml:space="default"
+              connector-curvature="0" style="fill:#DEFFFF;"/>
+        <path d="M2.66667 14.6667 L125.333 14.6667 L125.333 13.3333 L2.66667 13.3333 z" id="path17" xml:space="default"
+              connector-curvature="0" style="fill:#B4E2FF;"/>
+        <path d="M40 93.3333 L41.3333 93.3333 L41.3333 2.66666 L40 2.66666 z" id="path19" xml:space="default"
+              connector-curvature="0" style="fill:#B4E2FF;"/>
+        <path d="M86.6667 93.3333 L88 93.3333 L88 2.66666 L86.6667 2.66666 z" id="path21" xml:space="default"
+              connector-curvature="0" style="fill:#B4E2FF;"/>
+        <path d="M2.66667 28 L125.333 28 L125.333 26.6667 L2.66667 26.6667 z" id="path23" xml:space="default"
+              connector-curvature="0" style="fill:#B4E2FF;"/>
+        <path d="M2.66667 41.3333 L125.333 41.3333 L125.333 40 L2.66667 40 z" id="path25" xml:space="default"
+              connector-curvature="0" style="fill:#B4E2FF;"/>
+        <path d="M2.66667 54.6667 L125.333 54.6667 L125.333 53.3333 L2.66667 53.3333 z" id="path27" xml:space="default"
+              connector-curvature="0" style="fill:#B4E2FF;"/>
+        <path d="M2.66667 68 L125.333 68 L125.333 66.6653 L2.66667 66.6653 z" id="path29" xml:space="default"
+              connector-curvature="0" style="fill:#B4E2FF;"/>
+        <path d="M2.66667 81.3333 L125.333 81.3333 L125.333 80 L2.66667 80 z" id="path31" xml:space="default"
+              connector-curvature="0" style="fill:#B4E2FF;"/>
+        <path d="M128 40 L0 40 L0 56 L128 56 M124 52 L4 52 L4 44 L124 44 z" id="path33" xml:space="default"
+              connector-curvature="0" style="fill:#FFCC00;"/>
+    </g>
 </svg>

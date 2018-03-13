@@ -34,8 +34,8 @@ import ewe.util.Vector;
  */
 public class TablePanel extends CellPanel {
 
-    MyTableControl myTableControl;
     public MyTableModel myTableModel;
+    MyTableControl myTableControl;
     CacheDB cacheDB;
     TablePanelStatusBar statusBar;
     TablePanelMenu mainMenu;
