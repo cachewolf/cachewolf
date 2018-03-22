@@ -3,9 +3,10 @@ package gro.bouncycastle.crypto.tls;
 import ewe.io.IOException;
 
 public interface TlsSignerCredentials
-        extends TlsCredentials {
+    extends TlsCredentials
+{
     byte[] generateCertificateSignature(byte[] hash)
-            throws IOException;
+        throws IOException;
 
     SignatureAndHashAlgorithm getSignatureAndHashAlgorithm();
 }

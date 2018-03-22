@@ -3,12 +3,14 @@ package gro.bouncycastle.crypto;
 /**
  * the foundation class for the exceptions thrown by the crypto packages.
  */
-public class RuntimeCryptoException
-        extends RuntimeException {
+public class RuntimeCryptoException 
+    extends RuntimeException
+{
     /**
      * base constructor.
      */
-    public RuntimeCryptoException() {
+    public RuntimeCryptoException()
+    {
     }
 
     /**
@@ -17,7 +19,8 @@ public class RuntimeCryptoException
      * @param message the message to be carried with the exception.
      */
     public RuntimeCryptoException(
-            String message) {
+        String  message)
+    {
         super(message);
     }
 }

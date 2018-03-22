@@ -7,27 +7,35 @@ import ewe.io.OutputStream;
  * Stream that outputs encoding based on distinguished encoding rules.
  */
 public class DEROutputStream
-        extends ASN1OutputStream {
+    extends ASN1OutputStream
+{
     public DEROutputStream(
-            OutputStream os) {
+        OutputStream    os)
+    {
         super(os);
     }
 
     public void writeObject(
-            ASN1Encodable obj)
-            throws IOException {
-        if (obj != null) {
+        ASN1Encodable obj)
+        throws IOException
+    {
+        if (obj != null)
+        {
             obj.toASN1Primitive().toDERObject().encode(this);
-        } else {
+        }
+        else
+        {
             throw new IOException("null object detected");
         }
     }
 
-    ASN1OutputStream getDERSubStream() {
+    ASN1OutputStream getDERSubStream()
+    {
         return this;
     }
 
-    ASN1OutputStream getDLSubStream() {
+    ASN1OutputStream getDLSubStream()
+    {
         return this;
     }
 }

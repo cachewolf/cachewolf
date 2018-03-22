@@ -1,6 +1,7 @@
 package gro.bouncycastle.crypto.tls;
 
 import ewe.io.IOException;
+
 import gro.bouncycastle.crypto.Digest;
 import gro.bouncycastle.util.Arrays;
 
@@ -8,21 +9,24 @@ import gro.bouncycastle.util.Arrays;
  * A NULL CipherSuite with optional MAC
  */
 public class TlsNullCipher
-        implements TlsCipher {
+    implements TlsCipher
+{
     protected TlsContext context;
 
     protected TlsMac writeMac;
     protected TlsMac readMac;
 
-    public TlsNullCipher(TlsContext context) {
+    public TlsNullCipher(TlsContext context)
+    {
         this.context = context;
         this.writeMac = null;
         this.readMac = null;
     }
 
     public TlsNullCipher(TlsContext context, Digest clientWriteDigest, Digest serverWriteDigest)
-            throws IOException {
-        throw new UnsupportedClassVersionError();/*
+        throws IOException
+    {
+    	throw new UnsupportedClassVersionError();/*
         if ((clientWriteDigest == null) != (serverWriteDigest == null))
         {
             throw new TlsFatalAlert(AlertDescription.internal_error);
@@ -64,23 +68,24 @@ public class TlsNullCipher
             writeMac = clientWriteMac;
             readMac = serverWriteMac;
         }
-*/
-    }
+*/    }
 
-    public int getPlaintextLimit(int ciphertextLimit) {
-        throw new UnsupportedClassVersionError();/*
+    public int getPlaintextLimit(int ciphertextLimit)
+    {
+    	throw new UnsupportedClassVersionError();/*
         int result = ciphertextLimit;
         if (writeMac != null)
         {
             result -= writeMac.getSize();
         }
         return result;
-*/
-    }
-
+*/    }
+    
     public byte[] encodePlaintext(long seqNo, short type, byte[] plaintext, int offset, int len)
-            throws IOException {
-        if (writeMac == null) {
+        throws IOException
+    {
+        if (writeMac == null)
+        {
             return Arrays.copyOfRange(plaintext, offset, offset + len);
         }
 
@@ -93,9 +98,11 @@ public class TlsNullCipher
      */
     }
 
-    public byte[] decodeCiphertext(long seqNo, short type, byte[] ciphertext, int offset, int len)
-            throws IOException {
-        if (readMac == null) {
+	public byte[] decodeCiphertext(long seqNo, short type, byte[] ciphertext, int offset, int len)
+        throws IOException
+    {
+        if (readMac == null)
+        {
             return Arrays.copyOfRange(ciphertext, offset, offset + len);
         }
 

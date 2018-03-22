@@ -10,12 +10,13 @@ import gro.bouncycastle.asn1.ASN1ObjectIdentifier;
  * encoded into their ASN.1 counterparts - a number that is rapidly approaching the
  * number of machines on the internet.
  */
-public interface X500NameStyle {
+public interface X500NameStyle
+{
     /**
      * Convert the passed in String value into the appropriate ASN.1
      * encoded object.
-     *
-     * @param oid   the OID associated with the value in the DN.
+     * 
+     * @param oid the OID associated with the value in the DN.
      * @param value the value of the particular DN component.
      * @return the ASN.1 equivalent for the value.
      */
@@ -31,9 +32,8 @@ public interface X500NameStyle {
 
     /**
      * Return an array of RDN generated from the passed in String.
-     *
-     * @param dirName the String representation.
-     * @return an array of corresponding RDNs.
+     * @param dirName  the String representation.
+     * @return  an array of corresponding RDNs.
      */
     RDN[] fromString(String dirName);
 
@@ -56,7 +56,6 @@ public interface X500NameStyle {
 
     /**
      * Convert the passed in X500Name to a String.
-     *
      * @param name the name to convert.
      * @return a String representation.
      */
@@ -65,7 +64,7 @@ public interface X500NameStyle {
     /**
      * Return the display name for toString() associated with the OID.
      *
-     * @param oid the OID of interest.
+     * @param oid  the OID of interest.
      * @return the name displayed in toString(), null if no mapping provided.
      */
     String oidToDisplayName(ASN1ObjectIdentifier oid);
@@ -73,7 +72,7 @@ public interface X500NameStyle {
     /**
      * Return the acceptable names in a String DN that map to OID.
      *
-     * @param oid the OID of interest.
+     * @param oid  the OID of interest.
      * @return an array of String aliases for the OID, zero length if there are none.
      */
     String[] oidToAttrNames(ASN1ObjectIdentifier oid);

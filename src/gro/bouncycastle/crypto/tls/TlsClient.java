@@ -8,15 +8,16 @@ import ewe.util.Vector;
  * Interface describing a TLS client endpoint.
  */
 public interface TlsClient
-        extends TlsPeer {
+    extends TlsPeer
+{
     void init(TlsClientContext context);
 
     /**
      * Return the session this client wants to resume, if any. Note that the peer's certificate
      * chain for the session (if any) may need to be periodically revalidated.
-     *
+     * 
      * @return A {@link TlsSession} representing the resumable session to be used for this
-     * connection, or null to use a new session.
+     *         connection, or null to use a new session.
      * @see SessionParameters#getPeerCertificate()
      */
     TlsSession getSessionToResume();
@@ -24,7 +25,7 @@ public interface TlsClient
     /**
      * Return the {@link ProtocolVersion} to use for the <c>TLSPlaintext.version</c> field prior to
      * receiving the server version. NOTE: This method is <b>not</b> called for DTLS.
-     * <p>
+     *
      * <p>
      * See RFC 5246 E.1.: "TLS clients that wish to negotiate with older servers MAY send any value
      * {03,XX} as the record layer version number. Typical values would be {03,00}, the lowest
@@ -47,10 +48,10 @@ public interface TlsClient
 
     // Hashtable is (Integer -> byte[])
     Hashtable getClientExtensions()
-            throws IOException;
+        throws IOException;
 
     void notifyServerVersion(ProtocolVersion selectedVersion)
-            throws IOException;
+        throws IOException;
 
     /**
      * Notifies the client of the session_id sent in the ServerHello.
@@ -66,21 +67,21 @@ public interface TlsClient
 
     // Hashtable is (Integer -> byte[])
     void processServerExtensions(Hashtable serverExtensions)
-            throws IOException;
+        throws IOException;
 
     // Vector is (SupplementalDataEntry)
     void processServerSupplementalData(Vector serverSupplementalData)
-            throws IOException;
+        throws IOException;
 
     TlsKeyExchange getKeyExchange()
-            throws IOException;
+        throws IOException;
 
     TlsAuthentication getAuthentication()
-            throws IOException;
+        throws IOException;
 
     // Vector is (SupplementalDataEntry)
     Vector getClientSupplementalData()
-            throws IOException;
+        throws IOException;
 
     /**
      * RFC 5077 3.3. NewSessionTicket Handshake Message
@@ -93,5 +94,5 @@ public interface TlsClient
      * @throws IOException
      */
     void notifyNewSessionTicket(NewSessionTicket newSessionTicket)
-            throws IOException;
+        throws IOException;
 }

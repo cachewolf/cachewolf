@@ -1,6 +1,11 @@
 package gro.bouncycastle.asn1;
 
-import ewe.io.*;
+import ewe.io.ByteArrayInputStream;
+import ewe.io.EOFException;
+import ewe.io.FilterInputStream;
+import ewe.io.IOException;
+import ewe.io.InputStream;
+
 import gro.bouncycastle.util.io.Streams;
 
 /**
@@ -10,27 +15,30 @@ import gro.bouncycastle.util.io.Streams;
  * returned.
  */
 public class ASN1InputStream
-        extends FilterInputStream
-        implements BERTags {
-    private int limit;
-    private boolean lazyEvaluate;
+    extends FilterInputStream
+    implements BERTags
+{
+    private  int limit;
+    private  boolean lazyEvaluate;
 
-    private byte[][] tmpBuffers;
+    private  byte[][] tmpBuffers;
 
 
     public ASN1InputStream(
-            InputStream is) {
+        InputStream is)
+    {
         this(is, StreamUtil.findLimit(is));
     }
 
     /**
      * Create an ASN1InputStream based on the input byte array. The length of DER objects in
      * the stream is automatically limited to the length of the input array.
-     *
+     * 
      * @param input array containing ASN.1 encoded data.
      */
     public ASN1InputStream(
-            byte[] input) {
+        byte[] input)
+    {
         this(new ByteArrayInputStream(input), input.length);
     }
 
@@ -38,262 +46,79 @@ public class ASN1InputStream
      * Create an ASN1InputStream based on the input byte array. The length of DER objects in
      * the stream is automatically limited to the length of the input array.
      *
-     * @param input        array containing ASN.1 encoded data.
+     * @param input array containing ASN.1 encoded data.
      * @param lazyEvaluate true if parsing inside constructed objects can be delayed.
      */
     public ASN1InputStream(
-            byte[] input,
-            boolean lazyEvaluate) {
-        this(new ByteArrayInputStream(input), input.length, lazyEvaluate);
+        byte[] input,
+        boolean lazyEvaluate)
+    {
+      this(new ByteArrayInputStream(input), input.length, lazyEvaluate);
     }
-
+    
     /**
      * Create an ASN1InputStream where no DER object will be longer than limit.
-     *
+     * 
      * @param input stream containing ASN.1 encoded data.
      * @param limit maximum size of a DER encoded object.
      */
     public ASN1InputStream(
-            InputStream input,
-            int limit) {
-        this(input, limit, false);
+        InputStream input,
+        int         limit)
+    {
+      this(input, limit, false);
     }
 
     /**
      * Create an ASN1InputStream where no DER object will be longer than limit, and constructed
      * objects such as sequences will be parsed lazily.
      *
-     * @param input        stream containing ASN.1 encoded data.
+     * @param input stream containing ASN.1 encoded data.
      * @param lazyEvaluate true if parsing inside constructed objects can be delayed.
      */
     public ASN1InputStream(
-            InputStream input,
-            boolean lazyEvaluate) {
-        this(input, StreamUtil.findLimit(input), lazyEvaluate);
+        InputStream input,
+        boolean     lazyEvaluate)
+    {
+      this(input, StreamUtil.findLimit(input), lazyEvaluate);
     }
 
     /**
      * Create an ASN1InputStream where no DER object will be longer than limit, and constructed
      * objects such as sequences will be parsed lazily.
      *
-     * @param input        stream containing ASN.1 encoded data.
-     * @param limit        maximum size of a DER encoded object.
+     * @param input stream containing ASN.1 encoded data.
+     * @param limit maximum size of a DER encoded object.
      * @param lazyEvaluate true if parsing inside constructed objects can be delayed.
      */
     public ASN1InputStream(
-            InputStream input,
-            int limit,
-            boolean lazyEvaluate) {
-        super(input);
-        this.limit = limit;
-        this.lazyEvaluate = lazyEvaluate;
-        this.tmpBuffers = new byte[11][];
+        InputStream input,
+        int         limit,
+        boolean     lazyEvaluate)
+    {
+      super(input);
+      this.limit = limit;
+      this.lazyEvaluate = lazyEvaluate;
+      this.tmpBuffers = new byte[11][];
     }
 
-    static int readTagNumber(InputStream s, int tag)
-            throws IOException {
-        int tagNo = tag & 0x1f;
-
-        //
-        // with tagged object tag number is bottom 5 bits, or stored at the start of the content
-        //
-        if (tagNo == 0x1f) {
-            tagNo = 0;
-
-            int b = s.read();
-
-            // X.690-0207 8.1.2.4.2
-            // "c) bits 7 to 1 of the first subsequent octet shall not all be zero."
-            if ((b & 0x7f) == 0) // Note: -1 will pass
-            {
-                throw new IOException("corrupted stream - invalid high tag number found");
-            }
-
-            while ((b >= 0) && ((b & 0x80) != 0)) {
-                tagNo |= (b & 0x7f);
-                tagNo <<= 7;
-                b = s.read();
-            }
-
-            if (b < 0) {
-                throw new EOFException("EOF found inside tag value.");
-            }
-
-            tagNo |= (b & 0x7f);
-        }
-
-        return tagNo;
-    }
-
-    static int readLength(InputStream s, int limit)
-            throws IOException {
-        int length = s.read();
-        if (length < 0) {
-            throw new EOFException("EOF found when length expected");
-        }
-
-        if (length == 0x80) {
-            return -1;      // indefinite-length encoding
-        }
-
-        if (length > 127) {
-            int size = length & 0x7f;
-
-            // Note: The invalid long form "0xff" (see X.690 8.1.3.5c) will be caught here
-            if (size > 4) {
-                throw new IOException("DER length more than 4 bytes: " + size);
-            }
-
-            length = 0;
-            for (int i = 0; i < size; i++) {
-                int next = s.read();
-
-                if (next < 0) {
-                    throw new EOFException("EOF found reading length");
-                }
-
-                length = (length << 8) + next;
-            }
-
-            if (length < 0) {
-                throw new IOException("corrupted stream - negative length found");
-            }
-
-            if (length >= limit)   // after all we must have read at least 1 byte
-            {
-                throw new IOException("corrupted stream - out of bounds length found");
-            }
-        }
-
-        return length;
-    }
-
-    private static byte[] getBuffer(DefiniteLengthInputStream defIn, byte[][] tmpBuffers)
-            throws IOException {
-        int len = defIn.getRemaining();
-        if (defIn.getRemaining() < tmpBuffers.length) {
-            byte[] buf = tmpBuffers[len];
-
-            if (buf == null) {
-                buf = tmpBuffers[len] = new byte[len];
-            }
-
-            Streams.readFully(defIn, buf);
-
-            return buf;
-        } else {
-            return defIn.toByteArray();
-        }
-    }
-
-    private static char[] getBMPCharBuffer(DefiniteLengthInputStream defIn)
-            throws IOException {
-        int len = defIn.getRemaining() / 2;
-        char[] buf = new char[len];
-        int totalRead = 0;
-        while (totalRead < len) {
-            int ch1 = defIn.read();
-            if (ch1 < 0) {
-                break;
-            }
-            int ch2 = defIn.read();
-            if (ch2 < 0) {
-                break;
-            }
-            buf[totalRead++] = (char) ((ch1 << 8) | (ch2 & 0xff));
-        }
-
-        return buf;
-    }
-
-    static ASN1Primitive createPrimitiveDERObject(
-            int tagNo,
-            DefiniteLengthInputStream defIn,
-            byte[][] tmpBuffers)
-            throws IOException {
-        switch (tagNo) {
-            case BIT_STRING:
-                return ASN1BitString.fromInputStream(defIn.getRemaining(), defIn);
-            case BMP_STRING:
-                throw new UnsupportedClassVersionError();/*
-                return new DERBMPString(getBMPCharBuffer(defIn));
-*/
-            case BOOLEAN:
-                return ASN1Boolean.fromOctetString(getBuffer(defIn, tmpBuffers));
-            case ENUMERATED:
-                throw new UnsupportedClassVersionError();/*
-                return ASN1Enumerated.fromOctetString(getBuffer(defIn, tmpBuffers));
-*/
-            case GENERALIZED_TIME:
-                throw new UnsupportedClassVersionError();/*
-                return new ASN1GeneralizedTime(defIn.toByteArray());
-*/
-            case GENERAL_STRING:
-                throw new UnsupportedClassVersionError();/*
-                return new DERGeneralString(defIn.toByteArray());
-*/
-            case IA5_STRING:
-                throw new UnsupportedClassVersionError();/*
-                return new DERIA5String(defIn.toByteArray());
-*/
-            case INTEGER:
-                return new ASN1Integer(defIn.toByteArray(), false);
-            case NULL:
-                return DERNull.INSTANCE;   // actual content is ignored (enforce 0 length?)
-            case NUMERIC_STRING:
-                throw new UnsupportedClassVersionError();/*
-                return new DERNumericString(defIn.toByteArray());
-*/
-            case OBJECT_IDENTIFIER:
-                return ASN1ObjectIdentifier.fromOctetString(getBuffer(defIn, tmpBuffers));
-            case OCTET_STRING:
-                throw new UnsupportedClassVersionError();/*
-                return new DEROctetString(defIn.toByteArray());
-*/
-            case PRINTABLE_STRING:
-                return new DERPrintableString(defIn.toByteArray());
-            case T61_STRING:
-                throw new UnsupportedClassVersionError();/*
-                return new DERT61String(defIn.toByteArray());
-*/
-            case UNIVERSAL_STRING:
-                throw new UnsupportedClassVersionError();/*
-                return new DERUniversalString(defIn.toByteArray());
-*/
-            case UTC_TIME:
-                return new ASN1UTCTime(defIn.toByteArray());
-            case UTF8_STRING:
-                return new DERUTF8String(defIn.toByteArray());
-            case VISIBLE_STRING:
-                throw new UnsupportedClassVersionError();/*
-                return new DERVisibleString(defIn.toByteArray());
-*/
-            case GRAPHIC_STRING:
-                throw new UnsupportedClassVersionError();/*
-                return new DERGraphicString(defIn.toByteArray());
-*/
-            case VIDEOTEX_STRING:
-                throw new UnsupportedClassVersionError();/*
-                return new DERVideotexString(defIn.toByteArray());
-*/
-            default:
-                throw new IOException("unknown tag " + tagNo + " encountered");
-        }
-    }
-
-    int getLimit() {
+    int getLimit()
+    {
         return limit;
     }
 
     protected int readLength()
-            throws IOException {
+        throws IOException
+    {
         return readLength(this, limit);
     }
 
     protected void readFully(
-            byte[] bytes)
-            throws IOException {
-        if (Streams.readFully(this, bytes) != bytes.length) {
+        byte[]  bytes)
+        throws IOException
+    {
+        if (Streams.readFully(this, bytes) != bytes.length)
+        {
             throw new EOFException("EOF encountered in middle of object");
         }
     }
@@ -301,35 +126,39 @@ public class ASN1InputStream
     /**
      * build an object given its tag and the number of bytes to construct it from.
      *
-     * @param tag    the full tag details.
-     * @param tagNo  the tagNo defined.
+     * @param tag the full tag details.
+     * @param tagNo the tagNo defined.
      * @param length the length of the object.
      * @return the resulting primitive.
      * @throws java.io.IOException on processing exception.
      */
     protected ASN1Primitive buildObject(
-            int tag,
-            int tagNo,
-            int length)
-            throws IOException {
+        int       tag,
+        int       tagNo,
+        int       length)
+        throws IOException
+    {
         boolean isConstructed = (tag & CONSTRUCTED) != 0;
 
         DefiniteLengthInputStream defIn = new DefiniteLengthInputStream(this, length);
 
-        if ((tag & APPLICATION) != 0) {
-            throw new UnsupportedClassVersionError();/*
+        if ((tag & APPLICATION) != 0)
+        {
+        	throw new UnsupportedClassVersionError();/*
             return new DERApplicationSpecific(isConstructed, tagNo, defIn.toByteArray());
-*/
-        }
+*/        }
 
-        if ((tag & TAGGED) != 0) {
+        if ((tag & TAGGED) != 0)
+        {
             return new ASN1StreamParser(defIn).readTaggedObject(isConstructed, tagNo);
         }
-        if (isConstructed) {
+        if (isConstructed)
+        {
             // TODO There are other tags that may be constructed (e.g. BIT_STRING)
-            switch (tagNo) {
+            switch (tagNo)
+            {
                 case OCTET_STRING:
-                    throw new UnsupportedClassVersionError();/*
+                	throw new UnsupportedClassVersionError();/*
                     //
                     // yes, people actually do this...
                     //
@@ -342,22 +171,22 @@ public class ASN1InputStream
                     }
 
                     return new BEROctetString(strings);
-*/
-                case SEQUENCE:
-                    if (lazyEvaluate) {
-                        throw new UnsupportedClassVersionError();/*
+*/                case SEQUENCE:
+                    if (lazyEvaluate)
+                    {
+                    	throw new UnsupportedClassVersionError();/*
                         return new LazyEncodedSequence(defIn.toByteArray());
-*/
-                    } else {
-                        return DERFactory.createSequence(buildDEREncodableVector(defIn));
+*/                    }
+                    else
+                    {
+                        return DERFactory.createSequence(buildDEREncodableVector(defIn));   
                     }
                 case SET:
                     return DERFactory.createSet(buildDEREncodableVector(defIn));
                 case EXTERNAL:
-                    throw new UnsupportedClassVersionError();/*
-                    return new DERExternal(buildDEREncodableVector(defIn));
-*/
-                default:
+	throw new UnsupportedClassVersionError();/*
+                    return new DERExternal(buildDEREncodableVector(defIn));                
+*/                default:
                     throw new IOException("unknown tag " + tagNo + " encountered");
             }
         }
@@ -365,11 +194,13 @@ public class ASN1InputStream
     }
 
     ASN1EncodableVector buildEncodableVector()
-            throws IOException {
+        throws IOException
+    {
         ASN1EncodableVector v = new ASN1EncodableVector();
         ASN1Primitive o;
 
-        while ((o = readObject()) != null) {
+        while ((o = readObject()) != null)
+        {
             v.add(o);
         }
 
@@ -377,15 +208,19 @@ public class ASN1InputStream
     }
 
     ASN1EncodableVector buildDEREncodableVector(
-            DefiniteLengthInputStream dIn) throws IOException {
+        DefiniteLengthInputStream dIn) throws IOException
+    {
         return new ASN1InputStream(dIn).buildEncodableVector();
     }
 
     public ASN1Primitive readObject()
-            throws IOException {
+        throws IOException
+    {
         int tag = read();
-        if (tag <= 0) {
-            if (tag == 0) {
+        if (tag <= 0)
+        {
+            if (tag == 0)
+            {
                 throw new IOException("unexpected end-of-contents marker");
             }
 
@@ -406,7 +241,8 @@ public class ASN1InputStream
 
         if (length < 0) // indefinite-length method
         {
-            if (!isConstructed) {
+            if (!isConstructed)
+            {
                 throw new IOException("indefinite-length primitive encoding encountered");
             }
             throw new UnsupportedClassVersionError();/*
@@ -438,13 +274,218 @@ public class ASN1InputStream
                 default:
                     throw new IOException("unknown BER object encountered");
             }
-*/
-        } else {
-            try {
+*/        }
+        else
+        {
+            try
+            {
                 return buildObject(tag, tagNo, length);
-            } catch (IllegalArgumentException e) {
+            }
+            catch (IllegalArgumentException e)
+            {
                 throw new ASN1Exception("corrupted stream detected", e);
             }
+        }
+    }
+
+    static int readTagNumber(InputStream s, int tag) 
+        throws IOException
+    {
+        int tagNo = tag & 0x1f;
+
+        //
+        // with tagged object tag number is bottom 5 bits, or stored at the start of the content
+        //
+        if (tagNo == 0x1f)
+        {
+            tagNo = 0;
+
+            int b = s.read();
+
+            // X.690-0207 8.1.2.4.2
+            // "c) bits 7 to 1 of the first subsequent octet shall not all be zero."
+            if ((b & 0x7f) == 0) // Note: -1 will pass
+            {
+                throw new IOException("corrupted stream - invalid high tag number found");
+            }
+
+            while ((b >= 0) && ((b & 0x80) != 0))
+            {
+                tagNo |= (b & 0x7f);
+                tagNo <<= 7;
+                b = s.read();
+            }
+
+            if (b < 0)
+            {
+                throw new EOFException("EOF found inside tag value.");
+            }
+            
+            tagNo |= (b & 0x7f);
+        }
+        
+        return tagNo;
+    }
+    static int readLength(InputStream s, int limit)
+        throws IOException
+    {
+        int length = s.read();
+        if (length < 0)
+        {
+            throw new EOFException("EOF found when length expected");
+        }
+
+        if (length == 0x80)
+        {
+            return -1;      // indefinite-length encoding
+        }
+
+        if (length > 127)
+        {
+            int size = length & 0x7f;
+
+            // Note: The invalid long form "0xff" (see X.690 8.1.3.5c) will be caught here
+            if (size > 4)
+            {
+                throw new IOException("DER length more than 4 bytes: " + size);
+            }
+
+            length = 0;
+            for (int i = 0; i < size; i++)
+            {
+                int next = s.read();
+
+                if (next < 0)
+                {
+                    throw new EOFException("EOF found reading length");
+                }
+
+                length = (length << 8) + next;
+            }
+
+            if (length < 0)
+            {
+                throw new IOException("corrupted stream - negative length found");
+            }
+
+            if (length >= limit)   // after all we must have read at least 1 byte
+            {
+                throw new IOException("corrupted stream - out of bounds length found");
+            }
+        }
+
+        return length;
+    }
+    
+    private static byte[] getBuffer(DefiniteLengthInputStream defIn, byte[][] tmpBuffers)
+        throws IOException
+    {
+        int len = defIn.getRemaining();
+        if (defIn.getRemaining() < tmpBuffers.length)
+        {
+            byte[] buf = tmpBuffers[len];
+
+            if (buf == null)
+            {
+                buf = tmpBuffers[len] = new byte[len];
+            }
+
+            Streams.readFully(defIn, buf);
+
+            return buf;
+        }
+        else
+        {
+            return defIn.toByteArray();
+        }
+    }
+
+    private static char[] getBMPCharBuffer(DefiniteLengthInputStream defIn)
+        throws IOException
+    {
+        int len = defIn.getRemaining() / 2;
+        char[] buf = new char[len];
+        int totalRead = 0;
+        while (totalRead < len)
+        {
+            int ch1 = defIn.read();
+            if (ch1 < 0)
+            {
+                break;
+            }
+            int ch2 = defIn.read();
+            if (ch2 < 0)
+            {
+                break;
+            }
+            buf[totalRead++] = (char)((ch1 << 8) | (ch2 & 0xff));
+        }
+
+        return buf;
+    }
+
+    static ASN1Primitive createPrimitiveDERObject(
+        int     tagNo,
+        DefiniteLengthInputStream defIn,
+        byte[][] tmpBuffers)
+        throws IOException
+    {
+        switch (tagNo)
+        {
+            case BIT_STRING:
+                return ASN1BitString.fromInputStream(defIn.getRemaining(), defIn);
+            case BMP_STRING:
+                	throw new UnsupportedClassVersionError();/*
+                return new DERBMPString(getBMPCharBuffer(defIn));
+*/            case BOOLEAN:
+                return ASN1Boolean.fromOctetString(getBuffer(defIn, tmpBuffers));
+            case ENUMERATED:
+	throw new UnsupportedClassVersionError();/*
+                return ASN1Enumerated.fromOctetString(getBuffer(defIn, tmpBuffers));
+*/            case GENERALIZED_TIME:
+	throw new UnsupportedClassVersionError();/*
+                return new ASN1GeneralizedTime(defIn.toByteArray());
+*/            case GENERAL_STRING:
+	throw new UnsupportedClassVersionError();/*
+                return new DERGeneralString(defIn.toByteArray());
+*/            case IA5_STRING:
+	throw new UnsupportedClassVersionError();/*
+                return new DERIA5String(defIn.toByteArray());
+*/            case INTEGER:
+                return new ASN1Integer(defIn.toByteArray(), false);
+            case NULL:
+                return DERNull.INSTANCE;   // actual content is ignored (enforce 0 length?)
+            case NUMERIC_STRING:
+	throw new UnsupportedClassVersionError();/*
+                return new DERNumericString(defIn.toByteArray());
+*/            case OBJECT_IDENTIFIER:
+                return ASN1ObjectIdentifier.fromOctetString(getBuffer(defIn, tmpBuffers));
+            case OCTET_STRING:
+	throw new UnsupportedClassVersionError();/*
+                return new DEROctetString(defIn.toByteArray());
+*/            case PRINTABLE_STRING:
+                return new DERPrintableString(defIn.toByteArray());
+            case T61_STRING:
+	throw new UnsupportedClassVersionError();/*
+                return new DERT61String(defIn.toByteArray());
+*/            case UNIVERSAL_STRING:
+	throw new UnsupportedClassVersionError();/*
+                return new DERUniversalString(defIn.toByteArray());
+*/            case UTC_TIME:
+                return new ASN1UTCTime(defIn.toByteArray());
+            case UTF8_STRING:
+                return new DERUTF8String(defIn.toByteArray());
+            case VISIBLE_STRING:
+	throw new UnsupportedClassVersionError();/*
+                return new DERVisibleString(defIn.toByteArray());
+*/            case GRAPHIC_STRING:
+	throw new UnsupportedClassVersionError();/*
+                return new DERGraphicString(defIn.toByteArray());
+*/            case VIDEOTEX_STRING:
+	throw new UnsupportedClassVersionError();/*
+                return new DERVideotexString(defIn.toByteArray());
+*/            default:
+                throw new IOException("unknown tag " + tagNo + " encountered");
         }
     }
 }

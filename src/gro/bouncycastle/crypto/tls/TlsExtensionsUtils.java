@@ -1,10 +1,13 @@
 package gro.bouncycastle.crypto.tls;
 
+import ewe.io.ByteArrayInputStream;
+import ewe.io.ByteArrayOutputStream;
 import ewe.io.IOException;
 import ewe.util.Hashtable;
 import gro.bouncycastle.util.Integers;
 
-public class TlsExtensionsUtils {
+public class TlsExtensionsUtils
+{
     public static final Integer EXT_encrypt_then_mac = Integers.valueOf(ExtensionType.encrypt_then_mac);
     public static final Integer EXT_extended_master_secret = Integers.valueOf(ExtensionType.extended_master_secret);
     public static final Integer EXT_heartbeat = Integers.valueOf(ExtensionType.heartbeat);
@@ -14,56 +17,57 @@ public class TlsExtensionsUtils {
     public static final Integer EXT_status_request = Integers.valueOf(ExtensionType.status_request);
     public static final Integer EXT_truncated_hmac = Integers.valueOf(ExtensionType.truncated_hmac);
 
-    public static Hashtable ensureExtensionsInitialised(Hashtable extensions) {
+    public static Hashtable ensureExtensionsInitialised(Hashtable extensions)
+    {
         return extensions == null ? new Hashtable() : extensions;
     }
 
-    public static void addEncryptThenMACExtension(Hashtable extensions) {
-        throw new UnsupportedClassVersionError();/*
+    public static void addEncryptThenMACExtension(Hashtable extensions)
+    {
+    	throw new UnsupportedClassVersionError();/*
         extensions.put(EXT_encrypt_then_mac, createEncryptThenMACExtension());
-*/
-    }
+*/    }
 
-    public static void addExtendedMasterSecretExtension(Hashtable extensions) {
-        throw new UnsupportedClassVersionError();/*
+    public static void addExtendedMasterSecretExtension(Hashtable extensions)
+    {
+    	throw new UnsupportedClassVersionError();/*
         extensions.put(EXT_extended_master_secret, createExtendedMasterSecretExtension());
-*/
-    }
+*/    }
 
     public static void addHeartbeatExtension(Hashtable extensions, HeartbeatExtension heartbeatExtension)
-            throws IOException {
-        throw new UnsupportedClassVersionError();/*
+        throws IOException
+    {
+    	throw new UnsupportedClassVersionError();/*
         extensions.put(EXT_heartbeat, createHeartbeatExtension(heartbeatExtension));
-*/
-    }
+*/    }
 
     public static void addMaxFragmentLengthExtension(Hashtable extensions, short maxFragmentLength)
-            throws IOException {
-        throw new UnsupportedClassVersionError();/*
+        throws IOException
+    {
+    	throw new UnsupportedClassVersionError();/*
         extensions.put(EXT_max_fragment_length, createMaxFragmentLengthExtension(maxFragmentLength));
-*/
-    }
+*/    }
 
     public static void addPaddingExtension(Hashtable extensions, int dataLength)
-            throws IOException {
-        throw new UnsupportedClassVersionError();/*
+        throws IOException
+    {
+    	throw new UnsupportedClassVersionError();/*
         extensions.put(EXT_padding, createPaddingExtension(dataLength));
-*/
-    }
+*/    }
 
     public static void addServerNameExtension(Hashtable extensions, ServerNameList serverNameList)
-            throws IOException {
-        throw new UnsupportedClassVersionError();/*
+        throws IOException
+    {
+    	throw new UnsupportedClassVersionError();/*
         extensions.put(EXT_server_name, createServerNameExtension(serverNameList));
-*/
-    }
+*/    }
 
     public static void addStatusRequestExtension(Hashtable extensions, CertificateStatusRequest statusRequest)
-            throws IOException {
-        throw new UnsupportedClassVersionError();/*
+        throws IOException
+    {
+    	throw new UnsupportedClassVersionError();/*
         extensions.put(EXT_status_request, createStatusRequestExtension(statusRequest));
-*/
-    }
+*/    }
 
     /*
     public static void addTruncatedHMacExtension(Hashtable extensions)
@@ -79,44 +83,46 @@ public class TlsExtensionsUtils {
     }
 */
     public static short getMaxFragmentLengthExtension(Hashtable extensions)
-            throws IOException {
+        throws IOException
+    {
         byte[] extensionData = TlsUtils.getExtensionData(extensions, EXT_max_fragment_length);
         return extensionData == null ? -1 : readMaxFragmentLengthExtension(extensionData);
     }
+/*
+    public static int getPaddingExtension(Hashtable extensions)
+        throws IOException
+    {
+        byte[] extensionData = TlsUtils.getExtensionData(extensions, EXT_padding);
+        return extensionData == null ? -1 : readPaddingExtension(extensionData);
+    }
 
-    /*
-        public static int getPaddingExtension(Hashtable extensions)
-            throws IOException
-        {
-            byte[] extensionData = TlsUtils.getExtensionData(extensions, EXT_padding);
-            return extensionData == null ? -1 : readPaddingExtension(extensionData);
-        }
+    public static ServerNameList getServerNameExtension(Hashtable extensions)
+        throws IOException
+    {
+        byte[] extensionData = TlsUtils.getExtensionData(extensions, EXT_server_name);
+        return extensionData == null ? null : readServerNameExtension(extensionData);
+    }
 
-        public static ServerNameList getServerNameExtension(Hashtable extensions)
-            throws IOException
-        {
-            byte[] extensionData = TlsUtils.getExtensionData(extensions, EXT_server_name);
-            return extensionData == null ? null : readServerNameExtension(extensionData);
-        }
-
-        public static CertificateStatusRequest getStatusRequestExtension(Hashtable extensions)
-            throws IOException
-        {
-            byte[] extensionData = TlsUtils.getExtensionData(extensions, EXT_status_request);
-            return extensionData == null ? null : readStatusRequestExtension(extensionData);
-        }
-    */
-    public static boolean hasEncryptThenMACExtension(Hashtable extensions) throws IOException {
+    public static CertificateStatusRequest getStatusRequestExtension(Hashtable extensions)
+        throws IOException
+    {
+        byte[] extensionData = TlsUtils.getExtensionData(extensions, EXT_status_request);
+        return extensionData == null ? null : readStatusRequestExtension(extensionData);
+    }
+*/
+    public static boolean hasEncryptThenMACExtension(Hashtable extensions) throws IOException
+    {
         byte[] extensionData = TlsUtils.getExtensionData(extensions, EXT_encrypt_then_mac);
         return extensionData == null ? false : readEncryptThenMACExtension(extensionData);
     }
-
-    public static boolean hasExtendedMasterSecretExtension(Hashtable extensions) throws IOException {
+    public static boolean hasExtendedMasterSecretExtension(Hashtable extensions) throws IOException
+    {
         byte[] extensionData = TlsUtils.getExtensionData(extensions, EXT_extended_master_secret);
         return extensionData == null ? false : readExtendedMasterSecretExtension(extensionData);
     }
 
-    public static boolean hasTruncatedHMacExtension(Hashtable extensions) throws IOException {
+    public static boolean hasTruncatedHMacExtension(Hashtable extensions) throws IOException
+    {
         byte[] extensionData = TlsUtils.getExtensionData(extensions, EXT_truncated_hmac);
         return extensionData == null ? false : readTruncatedHMacExtension(extensionData);
     }
@@ -204,23 +210,27 @@ public class TlsExtensionsUtils {
         return createEmptyExtensionData();
     }
 */
-    private static boolean readEmptyExtensionData(byte[] extensionData) throws IOException {
-        if (extensionData == null) {
+    private static boolean readEmptyExtensionData(byte[] extensionData) throws IOException
+    {
+        if (extensionData == null)
+        {
             throw new IllegalArgumentException("'extensionData' cannot be null");
         }
 
-        if (extensionData.length != 0) {
+        if (extensionData.length != 0)
+        {
             throw new TlsFatalAlert(AlertDescription.illegal_parameter);
         }
 
         return true;
     }
 
-    public static boolean readEncryptThenMACExtension(byte[] extensionData) throws IOException {
+    public static boolean readEncryptThenMACExtension(byte[] extensionData) throws IOException
+    {
         return readEmptyExtensionData(extensionData);
     }
-
-    public static boolean readExtendedMasterSecretExtension(byte[] extensionData) throws IOException {
+    public static boolean readExtendedMasterSecretExtension(byte[] extensionData) throws IOException
+    {
         return readEmptyExtensionData(extensionData);
     }
 
@@ -243,71 +253,74 @@ public class TlsExtensionsUtils {
     }
 */
     public static short readMaxFragmentLengthExtension(byte[] extensionData)
-            throws IOException {
-        if (extensionData == null) {
+        throws IOException
+    {
+        if (extensionData == null)
+        {
             throw new IllegalArgumentException("'extensionData' cannot be null");
         }
 
-        if (extensionData.length != 1) {
+        if (extensionData.length != 1)
+        {
             throw new TlsFatalAlert(AlertDescription.decode_error);
         }
 
         return TlsUtils.readUint8(extensionData, 0);
     }
-
-    /*
-        public static int readPaddingExtension(byte[] extensionData)
-            throws IOException
+/*
+    public static int readPaddingExtension(byte[] extensionData)
+        throws IOException
+    {
+        if (extensionData == null)
         {
-            if (extensionData == null)
+            throw new IllegalArgumentException("'extensionData' cannot be null");
+        }
+        for (int i = 0; i < extensionData.length; ++i)
+        {
+            if (extensionData[i] != 0)
             {
-                throw new IllegalArgumentException("'extensionData' cannot be null");
+                throw new TlsFatalAlert(AlertDescription.illegal_parameter);
             }
-            for (int i = 0; i < extensionData.length; ++i)
-            {
-                if (extensionData[i] != 0)
-                {
-                    throw new TlsFatalAlert(AlertDescription.illegal_parameter);
-                }
-            }
-            return extensionData.length;
+        }
+        return extensionData.length;
+    }
+
+    public static ServerNameList readServerNameExtension(byte[] extensionData)
+        throws IOException
+    {
+        if (extensionData == null)
+        {
+            throw new IllegalArgumentException("'extensionData' cannot be null");
         }
 
-        public static ServerNameList readServerNameExtension(byte[] extensionData)
-            throws IOException
+        ByteArrayInputStream buf = new ByteArrayInputStream(extensionData);
+
+        ServerNameList serverNameList = ServerNameList.parse(buf);
+
+        TlsProtocol.assertEmpty(buf);
+
+        return serverNameList;
+    }
+
+    public static CertificateStatusRequest readStatusRequestExtension(byte[] extensionData)
+        throws IOException
+    {
+        if (extensionData == null)
         {
-            if (extensionData == null)
-            {
-                throw new IllegalArgumentException("'extensionData' cannot be null");
-            }
-
-            ByteArrayInputStream buf = new ByteArrayInputStream(extensionData);
-
-            ServerNameList serverNameList = ServerNameList.parse(buf);
-
-            TlsProtocol.assertEmpty(buf);
-
-            return serverNameList;
+            throw new IllegalArgumentException("'extensionData' cannot be null");
         }
 
-        public static CertificateStatusRequest readStatusRequestExtension(byte[] extensionData)
-            throws IOException
-        {
-            if (extensionData == null)
-            {
-                throw new IllegalArgumentException("'extensionData' cannot be null");
-            }
+        ByteArrayInputStream buf = new ByteArrayInputStream(extensionData);
 
-            ByteArrayInputStream buf = new ByteArrayInputStream(extensionData);
+        CertificateStatusRequest statusRequest = CertificateStatusRequest.parse(buf);
 
-            CertificateStatusRequest statusRequest = CertificateStatusRequest.parse(buf);
+        TlsProtocol.assertEmpty(buf);
 
-            TlsProtocol.assertEmpty(buf);
-
-            return statusRequest;
-        }
-    */
-    public static boolean readTruncatedHMacExtension(byte[] extensionData) throws IOException {
+        return statusRequest;
+    }
+*/
+    public static boolean readTruncatedHMacExtension(byte[] extensionData) throws IOException
+    {
         return readEmptyExtensionData(extensionData);
     }
 

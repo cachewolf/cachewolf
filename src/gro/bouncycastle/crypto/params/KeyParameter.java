@@ -3,24 +3,28 @@ package gro.bouncycastle.crypto.params;
 import gro.bouncycastle.crypto.CipherParameters;
 
 public class KeyParameter
-        implements CipherParameters {
-    private byte[] key;
+    implements CipherParameters
+{
+    private byte[]  key;
 
     public KeyParameter(
-            byte[] key) {
+        byte[]  key)
+    {
         this(key, 0, key.length);
     }
 
     public KeyParameter(
-            byte[] key,
-            int keyOff,
-            int keyLen) {
+        byte[]  key,
+        int     keyOff,
+        int     keyLen)
+    {
         this.key = new byte[keyLen];
 
         System.arraycopy(key, keyOff, this.key, 0, keyLen);
     }
 
-    public byte[] getKey() {
+    public byte[] getKey()
+    {
         return key;
     }
 }

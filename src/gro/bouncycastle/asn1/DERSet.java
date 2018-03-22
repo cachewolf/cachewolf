@@ -14,60 +14,66 @@ import ewe.util.Enumeration;
  * </p>
  */
 public class DERSet
-        extends ASN1Set {
+    extends ASN1Set
+{
     private int bodyLength = -1;
 
     /**
      * create an empty set
      */
-    public DERSet() {
+    public DERSet()
+    {
     }
 
     /**
      * create a set containing one object
-     *
      * @param obj the object to go in the set
      */
     public DERSet(
-            ASN1Encodable obj) {
+        ASN1Encodable obj)
+    {
         super(obj);
     }
 
     /**
      * create a set containing a vector of objects.
-     *
      * @param v the vector of objects to make up the set.
      */
     public DERSet(
-            ASN1EncodableVector v) {
+        ASN1EncodableVector v)
+    {
         super(v, true);
     }
-
+    
     /**
      * create a set containing an array of objects.
-     *
      * @param a the array of objects to make up the set.
      */
     public DERSet(
-            ASN1Encodable[] a) {
+        ASN1Encodable[]   a)
+    {
         super(a, true);
     }
 
     DERSet(
-            ASN1EncodableVector v,
-            boolean doSort) {
+        ASN1EncodableVector v,
+        boolean                  doSort)
+    {
         super(v, doSort);
     }
 
     private int getBodyLength()
-            throws IOException {
-        if (bodyLength < 0) {
+        throws IOException
+    {
+        if (bodyLength < 0)
+        {
             int length = 0;
 
-            for (Enumeration e = this.getObjects(); e.hasMoreElements(); ) {
-                Object obj = e.nextElement();
+            for (Enumeration e = this.getObjects(); e.hasMoreElements();)
+            {
+                Object    obj = e.nextElement();
 
-                length += ((ASN1Encodable) obj).toASN1Primitive().toDERObject().encodedLength();
+                length += ((ASN1Encodable)obj).toASN1Primitive().toDERObject().encodedLength();
             }
 
             bodyLength = length;
@@ -77,7 +83,8 @@ public class DERSet
     }
 
     int encodedLength()
-            throws IOException {
+        throws IOException
+    {
         int length = getBodyLength();
 
         return 1 + StreamUtil.calculateBodyLength(length) + length;
@@ -92,9 +99,10 @@ public class DERSet
      * we also have to specify CONSTRUCTED, and the objects length.
      */
     void encode(
-            ASN1OutputStream out)
-            throws IOException {
-        throw new UnsupportedClassVersionError();/*
+        ASN1OutputStream out)
+        throws IOException
+    {
+    	throw new UnsupportedClassVersionError();/*
         ASN1OutputStream        dOut = out.getDERSubStream();
         int                     length = getBodyLength();
 
@@ -107,6 +115,5 @@ public class DERSet
 
             dOut.writeObject((ASN1Encodable)obj);
         }
-*/
-    }
+*/    }
 }

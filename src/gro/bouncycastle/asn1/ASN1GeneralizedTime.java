@@ -1,15 +1,15 @@
 package gro.bouncycastle.asn1;
 
 import ewe.io.IOException;
-import ewe.sys.Date;
-import ewe.sys.Locale;
-import gro.bouncycastle.util.Arrays;
-import gro.bouncycastle.util.Strings;
-
 //import ewe.text.ParseException;
 //import ewe.text.SimpleDateFormat;
+import ewe.sys.Date;
+import ewe.sys.Locale;
 //import ewe.util.SimpleTimeZone;
 //import ewe.util.TimeZone;
+
+import gro.bouncycastle.util.Arrays;
+import gro.bouncycastle.util.Strings;
 
 /**
  * Base class representing the ASN.1 GeneralizedTime type.
@@ -25,7 +25,7 @@ import gro.bouncycastle.util.Strings;
  * <h2>X.690</h2>
  * This is what is called "restricted string",
  * and it uses ASCII characters to encode digits and supplemental data.
- * <p>
+ *
  * <h3>11: Restrictions on BER employed by both CER and DER</h3>
  * <h4>11.7 GeneralizedTime </h4>
  * <b>11.7.1</b> The encoding shall terminate with a "Z",
@@ -42,67 +42,13 @@ import gro.bouncycastle.util.Strings;
  * </p>
  */
 public class ASN1GeneralizedTime
-        extends ASN1Primitive {
+    extends ASN1Primitive
+{
+	private class ParseException extends Exception{
+		
+	}
+	
     private byte[] time;
-
-    /**
-     * The correct format for this is YYYYMMDDHHMMSS[.f]Z, or without the Z
-     * for local time, or Z+-HHMM on the end, for difference between local
-     * time and UTC time. The fractional second amount f must consist of at
-     * least one number with trailing zeroes removed.
-     *
-     * @param time the time string.
-     * @throws IllegalArgumentException if String is an illegal format.
-     */
-    public ASN1GeneralizedTime(
-            String time) {
-        this.time = Strings.toByteArray(time);
-        try {
-            this.getDate();
-        } catch (ParseException e) {
-            throw new IllegalArgumentException("invalid date string: " + e.getMessage());
-        }
-    }
-
-    /**
-     * Base constructor from a java.util.date object
-     *
-     * @param time a date object representing the time of interest.
-     */
-    public ASN1GeneralizedTime(
-            Date time) {
-        throw new UnsupportedClassVersionError();/*
-        SimpleDateFormat dateF = new SimpleDateFormat("yyyyMMddHHmmss'Z'");
-
-        dateF.setTimeZone(new SimpleTimeZone(0, "Z"));
-
-        this.time = Strings.toByteArray(dateF.format(time));
-        */
-    }
-
-    /**
-     * Base constructor from a java.util.date and Locale - you may need to use this if the default locale
-     * doesn't use a Gregorian calender so that the GeneralizedTime produced is compatible with other ASN.1 implementations.
-     *
-     * @param time   a date object representing the time of interest.
-     * @param locale an appropriate Locale for producing an ASN.1 GeneralizedTime value.
-     */
-    public ASN1GeneralizedTime(
-            Date time,
-            Locale locale) {
-        throw new UnsupportedClassVersionError();/*
-        SimpleDateFormat dateF = new SimpleDateFormat("yyyyMMddHHmmss'Z'", locale);
-
-        dateF.setTimeZone(new SimpleTimeZone(0, "Z"));
-
-        this.time = Strings.toByteArray(dateF.format(time));
-*/
-    }
-
-    ASN1GeneralizedTime(
-            byte[] bytes) {
-        this.time = bytes;
-    }
 
     /**
      * return a generalized time from the passed in object
@@ -112,15 +58,21 @@ public class ASN1GeneralizedTime
      * @throws IllegalArgumentException if the object cannot be converted.
      */
     public static ASN1GeneralizedTime getInstance(
-            Object obj) {
-        if (obj == null || obj instanceof ASN1GeneralizedTime) {
-            return (ASN1GeneralizedTime) obj;
+        Object obj)
+    {
+        if (obj == null || obj instanceof ASN1GeneralizedTime)
+        {
+            return (ASN1GeneralizedTime)obj;
         }
 
-        if (obj instanceof byte[]) {
-            try {
-                return (ASN1GeneralizedTime) fromByteArray((byte[]) obj);
-            } catch (Exception e) {
+        if (obj instanceof byte[])
+        {
+            try
+            {
+                return (ASN1GeneralizedTime)fromByteArray((byte[])obj);
+            }
+            catch (Exception e)
+            {
                 throw new IllegalArgumentException("encoding error in getInstance: " + e.toString());
             }
         }
@@ -136,18 +88,87 @@ public class ASN1GeneralizedTime
      *                 tagged false otherwise.
      * @return an ASN1GeneralizedTime instance.
      * @throws IllegalArgumentException if the tagged object cannot
-     *                                  be converted.
+     * be converted.
      */
     public static ASN1GeneralizedTime getInstance(
-            ASN1TaggedObject obj,
-            boolean explicit) {
+        ASN1TaggedObject obj,
+        boolean explicit)
+    {
         ASN1Primitive o = obj.getObject();
 
-        if (explicit || o instanceof ASN1GeneralizedTime) {
+        if (explicit || o instanceof ASN1GeneralizedTime)
+        {
             return getInstance(o);
-        } else {
-            return new ASN1GeneralizedTime(((ASN1OctetString) o).getOctets());
         }
+        else
+        {
+            return new ASN1GeneralizedTime(((ASN1OctetString)o).getOctets());
+        }
+    }
+
+    /**
+     * The correct format for this is YYYYMMDDHHMMSS[.f]Z, or without the Z
+     * for local time, or Z+-HHMM on the end, for difference between local
+     * time and UTC time. The fractional second amount f must consist of at
+     * least one number with trailing zeroes removed.
+     *
+     * @param time the time string.
+     * @throws IllegalArgumentException if String is an illegal format.
+     */
+    public ASN1GeneralizedTime(
+        String time)
+    {
+        this.time = Strings.toByteArray(time);
+        try
+        {
+            this.getDate();
+        }
+        catch (ParseException e)
+        {
+            throw new IllegalArgumentException("invalid date string: " + e.getMessage());
+        }
+    }
+
+    /**
+     * Base constructor from a java.util.date object
+     *
+     * @param time a date object representing the time of interest.
+     */
+    public ASN1GeneralizedTime(
+        Date time)
+    {
+    	throw new UnsupportedClassVersionError();/*
+        SimpleDateFormat dateF = new SimpleDateFormat("yyyyMMddHHmmss'Z'");
+
+        dateF.setTimeZone(new SimpleTimeZone(0, "Z"));
+
+        this.time = Strings.toByteArray(dateF.format(time));
+        */
+    }
+
+    /**
+     * Base constructor from a java.util.date and Locale - you may need to use this if the default locale
+     * doesn't use a Gregorian calender so that the GeneralizedTime produced is compatible with other ASN.1 implementations.
+     *
+     * @param time a date object representing the time of interest.
+     * @param locale an appropriate Locale for producing an ASN.1 GeneralizedTime value.
+     */
+    public ASN1GeneralizedTime(
+        Date time,
+        Locale locale)
+    {
+    	throw new UnsupportedClassVersionError();/*
+        SimpleDateFormat dateF = new SimpleDateFormat("yyyyMMddHHmmss'Z'", locale);
+
+        dateF.setTimeZone(new SimpleTimeZone(0, "Z"));
+
+        this.time = Strings.toByteArray(dateF.format(time));
+*/    }
+
+    ASN1GeneralizedTime(
+        byte[] bytes)
+    {
+        this.time = bytes;
     }
 
     /**
@@ -155,7 +176,8 @@ public class ASN1GeneralizedTime
      *
      * @return The time string as it appeared in the encoded object.
      */
-    public String getTimeString() {
+    public String getTimeString()
+    {
         return Strings.fromByteArray(time);
     }
 
@@ -171,42 +193,50 @@ public class ASN1GeneralizedTime
      * To read in the time and get a date which is compatible with our local
      * time zone.
      * </p>
-     *
      * @return a String representation of the time.
      */
-    public String getTime() {
+    public String getTime()
+    {
         String stime = Strings.fromByteArray(time);
 
         //
         // standardise the format.
         //
-        if (stime.charAt(stime.length() - 1) == 'Z') {
+        if (stime.charAt(stime.length() - 1) == 'Z')
+        {
             return stime.substring(0, stime.length() - 1) + "GMT+00:00";
-        } else {
+        }
+        else
+        {
             int signPos = stime.length() - 5;
             char sign = stime.charAt(signPos);
-            if (sign == '-' || sign == '+') {
+            if (sign == '-' || sign == '+')
+            {
                 return stime.substring(0, signPos)
-                        + "GMT"
-                        + stime.substring(signPos, signPos + 3)
-                        + ":"
-                        + stime.substring(signPos + 3);
-            } else {
+                    + "GMT"
+                    + stime.substring(signPos, signPos + 3)
+                    + ":"
+                    + stime.substring(signPos + 3);
+            }
+            else
+            {
                 signPos = stime.length() - 3;
                 sign = stime.charAt(signPos);
-                if (sign == '-' || sign == '+') {
+                if (sign == '-' || sign == '+')
+                {
                     return stime.substring(0, signPos)
-                            + "GMT"
-                            + stime.substring(signPos)
-                            + ":00";
+                        + "GMT"
+                        + stime.substring(signPos)
+                        + ":00";
                 }
             }
         }
         return stime + calculateGMTOffset();
     }
 
-    private String calculateGMTOffset() {
-        throw new UnsupportedClassVersionError();/*
+    private String calculateGMTOffset()
+    {
+    	throw new UnsupportedClassVersionError();/*
         String sign = "+";
         TimeZone timeZone = TimeZone.getDefault();
         int offset = timeZone.getRawOffset();
@@ -231,11 +261,12 @@ public class ASN1GeneralizedTime
         }
 
         return "GMT" + sign + convert(hours) + ":" + convert(minutes);
-*/
-    }
+*/    }
 
-    private String convert(int time) {
-        if (time < 10) {
+    private String convert(int time)
+    {
+        if (time < 10)
+        {
             return "0" + time;
         }
 
@@ -243,8 +274,9 @@ public class ASN1GeneralizedTime
     }
 
     public Date getDate()
-            throws ParseException {
-        throw new UnsupportedClassVersionError();/*
+        throws ParseException
+    {
+    	throw new UnsupportedClassVersionError();/*
         SimpleDateFormat dateF;
         String stime = Strings.fromByteArray(time);
         String d = stime;
@@ -322,13 +354,16 @@ public class ASN1GeneralizedTime
         }
 
         return dateF.parse(d);
-*/
-    }
+*/    }
 
-    private boolean hasFractionalSeconds() {
-        for (int i = 0; i != time.length; i++) {
-            if (time[i] == '.') {
-                if (i == 14) {
+    private boolean hasFractionalSeconds()
+    {
+        for (int i = 0; i != time.length; i++)
+        {
+            if (time[i] == '.')
+            {
+                if (i == 14)
+                {
                     return true;
                 }
             }
@@ -336,36 +371,38 @@ public class ASN1GeneralizedTime
         return false;
     }
 
-    boolean isConstructed() {
+    boolean isConstructed()
+    {
         return false;
     }
 
-    int encodedLength() {
+    int encodedLength()
+    {
         int length = time.length;
 
         return 1 + StreamUtil.calculateBodyLength(length) + length;
     }
 
     void encode(
-            ASN1OutputStream out)
-            throws IOException {
+        ASN1OutputStream out)
+        throws IOException
+    {
         out.writeEncoded(BERTags.GENERALIZED_TIME, time);
     }
 
     boolean asn1Equals(
-            ASN1Primitive o) {
-        if (!(o instanceof ASN1GeneralizedTime)) {
+        ASN1Primitive o)
+    {
+        if (!(o instanceof ASN1GeneralizedTime))
+        {
             return false;
         }
 
-        return Arrays.areEqual(time, ((ASN1GeneralizedTime) o).time);
+        return Arrays.areEqual(time, ((ASN1GeneralizedTime)o).time);
     }
 
-    public int hashCode() {
+    public int hashCode()
+    {
         return Arrays.hashCode(time);
-    }
-
-    private class ParseException extends Exception {
-
     }
 }

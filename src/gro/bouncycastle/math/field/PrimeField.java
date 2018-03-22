@@ -2,33 +2,41 @@ package gro.bouncycastle.math.field;
 
 import ewe.math.BigInteger;
 
-class PrimeField implements FiniteField {
+class PrimeField implements FiniteField
+{
     protected final BigInteger characteristic;
 
-    PrimeField(BigInteger characteristic) {
+    PrimeField(BigInteger characteristic)
+    {
         this.characteristic = characteristic;
     }
 
-    public BigInteger getCharacteristic() {
+    public BigInteger getCharacteristic()
+    {
         return characteristic;
     }
 
-    public int getDimension() {
+    public int getDimension()
+    {
         return 1;
     }
 
-    public boolean equals(Object obj) {
-        if (this == obj) {
+    public boolean equals(Object obj)
+    {
+        if (this == obj)
+        {
             return true;
         }
-        if (!(obj instanceof PrimeField)) {
+        if (!(obj instanceof PrimeField))
+        {
             return false;
         }
-        PrimeField other = (PrimeField) obj;
+        PrimeField other = (PrimeField)obj;
         return characteristic.equals(other.characteristic);
     }
 
-    public int hashCode() {
+    public int hashCode()
+    {
         return characteristic.hashCode();
     }
 }

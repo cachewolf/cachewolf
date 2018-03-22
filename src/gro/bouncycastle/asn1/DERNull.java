@@ -8,28 +8,33 @@ import ewe.io.IOException;
  * Preferably use the constant:  DERNull.INSTANCE.
  */
 public class DERNull
-        extends ASN1Null {
+    extends ASN1Null
+{
     public static final DERNull INSTANCE = new DERNull();
 
-    private static final byte[] zeroBytes = new byte[0];
+    private static final byte[]  zeroBytes = new byte[0];
 
     /**
      * @deprecated use DERNull.INSTANCE
      */
-    public DERNull() {
+    public DERNull()
+    {
     }
 
-    boolean isConstructed() {
+    boolean isConstructed()
+    {
         return false;
     }
 
-    int encodedLength() {
+    int encodedLength()
+    {
         return 2;
     }
 
     void encode(
-            ASN1OutputStream out)
-            throws IOException {
+        ASN1OutputStream out)
+        throws IOException
+    {
         out.writeEncoded(BERTags.NULL, zeroBytes);
     }
 }

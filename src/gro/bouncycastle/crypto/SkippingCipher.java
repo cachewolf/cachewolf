@@ -3,7 +3,8 @@ package gro.bouncycastle.crypto;
 /**
  * Ciphers producing a key stream which can be reset to particular points in the stream implement this.
  */
-public interface SkippingCipher {
+public interface SkippingCipher
+{
     /**
      * Skip numberOfBytes forwards, or backwards.
      *

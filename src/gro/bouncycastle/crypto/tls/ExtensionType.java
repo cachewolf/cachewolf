@@ -1,6 +1,7 @@
 package gro.bouncycastle.crypto.tls;
 
-public class ExtensionType {
+public class ExtensionType
+{
     /*
      * RFC 2546 2.3.
      */
@@ -35,9 +36,7 @@ public class ExtensionType {
     /*
      * RFC 4492 5.1.
      */
-    /**
-     * @deprecated Use {@link #supported_groups} instead
-     */
+    /** @deprecated Use {@link #supported_groups} instead */
     public static final int elliptic_curves = supported_groups;
     public static final int ec_point_formats = 11;
 
@@ -114,7 +113,7 @@ public class ExtensionType {
 
     /*
      * draft-ietf-tls-negotiated-ff-dhe-01
-     *
+     * 
      * WARNING: Placeholder value; the real value is TBA
      */
     public static final int negotiated_ff_dhe_groups = 101;

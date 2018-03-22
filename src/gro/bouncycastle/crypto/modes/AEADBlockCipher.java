@@ -8,32 +8,32 @@ import gro.bouncycastle.crypto.InvalidCipherTextException;
 /**
  * A block cipher mode that includes authenticated encryption with a streaming mode and optional associated data.
  * <p>
- * Implementations of this interface may operate in a packet mode (where all input data is buffered and
+ * Implementations of this interface may operate in a packet mode (where all input data is buffered and 
  * processed dugin the call to {@link #doFinal(byte[], int)}), or in a streaming mode (where output data is
- * incrementally produced with each call to {@link #processByte(byte, byte[], int)} or
+ * incrementally produced with each call to {@link #processByte(byte, byte[], int)} or 
  * {@link #processBytes(byte[], int, int, byte[], int)}.
  * </p>
  * This is important to consider during decryption: in a streaming mode, unauthenticated plaintext data
  * may be output prior to the call to {@link #doFinal(byte[], int)} that results in an authentication
- * failure. The higher level protocol utilising this cipher must ensure the plaintext data is handled
+ * failure. The higher level protocol utilising this cipher must ensure the plaintext data is handled 
  * appropriately until the end of data is reached and the entire ciphertext is authenticated.
- *
  * @see org.bouncycastle.crypto.params.AEADParameters
  */
-public interface AEADBlockCipher {
+public interface AEADBlockCipher
+{
     /**
      * initialise the underlying cipher. Parameter can either be an AEADParameters or a ParametersWithIV object.
      *
      * @param forEncryption true if we are setting up for encryption, false otherwise.
-     * @param params        the necessary parameters for the underlying cipher to be initialised.
-     * @throws IllegalArgumentException if the params argument is inappropriate.
+     * @param params the necessary parameters for the underlying cipher to be initialised.
+     * @exception IllegalArgumentException if the params argument is inappropriate.
      */
     public void init(boolean forEncryption, CipherParameters params)
-            throws IllegalArgumentException;
+        throws IllegalArgumentException;
 
     /**
      * Return the name of the algorithm.
-     *
+     * 
      * @return the algorithm name.
      */
     public String getAlgorithmName();
@@ -57,49 +57,49 @@ public interface AEADBlockCipher {
      * Add a sequence of bytes to the associated data check.
      * <br>If the implementation supports it, this will be an online operation and will not retain the associated data.
      *
-     * @param in    the input byte array.
+     * @param in the input byte array.
      * @param inOff the offset into the in array where the data to be processed starts.
-     * @param len   the number of bytes to be processed.
+     * @param len the number of bytes to be processed.
      */
     public void processAADBytes(byte[] in, int inOff, int len);
 
     /**
      * encrypt/decrypt a single byte.
      *
-     * @param in     the byte to be processed.
-     * @param out    the output buffer the processed byte goes into.
+     * @param in the byte to be processed.
+     * @param out the output buffer the processed byte goes into.
      * @param outOff the offset into the output byte array the processed data starts at.
      * @return the number of bytes written to out.
-     * @throws DataLengthException if the output buffer is too small.
+     * @exception DataLengthException if the output buffer is too small.
      */
     public int processByte(byte in, byte[] out, int outOff)
-            throws DataLengthException;
+        throws DataLengthException;
 
     /**
      * process a block of bytes from in putting the result into out.
      *
-     * @param in     the input byte array.
-     * @param inOff  the offset into the in array where the data to be processed starts.
-     * @param len    the number of bytes to be processed.
-     * @param out    the output buffer the processed bytes go into.
+     * @param in the input byte array.
+     * @param inOff the offset into the in array where the data to be processed starts.
+     * @param len the number of bytes to be processed.
+     * @param out the output buffer the processed bytes go into.
      * @param outOff the offset into the output byte array the processed data starts at.
      * @return the number of bytes written to out.
-     * @throws DataLengthException if the output buffer is too small.
+     * @exception DataLengthException if the output buffer is too small.
      */
     public int processBytes(byte[] in, int inOff, int len, byte[] out, int outOff)
-            throws DataLengthException;
+        throws DataLengthException;
 
     /**
      * Finish the operation either appending or verifying the MAC at the end of the data.
      *
-     * @param out    space for any resulting output data.
+     * @param out space for any resulting output data.
      * @param outOff offset into out to start copying the data at.
      * @return number of bytes written into out.
-     * @throws IllegalStateException                              if the cipher is in an inappropriate state.
+     * @throws IllegalStateException if the cipher is in an inappropriate state.
      * @throws org.bouncycastle.crypto.InvalidCipherTextException if the MAC fails to match.
      */
     public int doFinal(byte[] out, int outOff)
-            throws IllegalStateException, InvalidCipherTextException;
+        throws IllegalStateException, InvalidCipherTextException;
 
     /**
      * Return the value of the MAC associated with the last stream processed.
@@ -132,7 +132,6 @@ public interface AEADBlockCipher {
      * should be invoked immediately prior to a call to final processing of input data
      * and a call to {@link #doFinal(byte[], int)}.
      * </p>
-     *
      * @param len the length of the input.
      * @return the space required to accommodate a call to processBytes and doFinal
      * with len bytes of input.

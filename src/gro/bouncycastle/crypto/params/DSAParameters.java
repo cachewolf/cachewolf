@@ -1,63 +1,74 @@
 package gro.bouncycastle.crypto.params;
 
 import ewe.math.BigInteger;
+
 import gro.bouncycastle.crypto.CipherParameters;
 
 public class DSAParameters
-        implements CipherParameters {
-    private BigInteger g;
-    private BigInteger q;
-    private BigInteger p;
+    implements CipherParameters
+{
+    private BigInteger              g;
+    private BigInteger              q;
+    private BigInteger              p;
     private DSAValidationParameters validation;
 
     public DSAParameters(
-            BigInteger p,
-            BigInteger q,
-            BigInteger g) {
+        BigInteger  p,
+        BigInteger  q,
+        BigInteger  g)
+    {
         this.g = g;
         this.p = p;
         this.q = q;
-    }
+    }   
 
     public DSAParameters(
-            BigInteger p,
-            BigInteger q,
-            BigInteger g,
-            DSAValidationParameters params) {
+        BigInteger              p,
+        BigInteger              q,
+        BigInteger              g,
+        DSAValidationParameters params)
+    {
         this.g = g;
         this.p = p;
         this.q = q;
         this.validation = params;
-    }
+    }   
 
-    public BigInteger getP() {
+    public BigInteger getP()
+    {
         return p;
     }
 
-    public BigInteger getQ() {
+    public BigInteger getQ()
+    {
         return q;
     }
 
-    public BigInteger getG() {
+    public BigInteger getG()
+    {
         return g;
     }
 
-    public DSAValidationParameters getValidationParameters() {
+    public DSAValidationParameters getValidationParameters()
+    {
         return validation;
     }
 
     public boolean equals(
-            Object obj) {
-        if (!(obj instanceof DSAParameters)) {
+        Object  obj)
+    {
+        if (!(obj instanceof DSAParameters))
+        {
             return false;
         }
 
-        DSAParameters pm = (DSAParameters) obj;
+        DSAParameters    pm = (DSAParameters)obj;
 
         return (pm.getP().equals(p) && pm.getQ().equals(q) && pm.getG().equals(g));
     }
-
-    public int hashCode() {
+    
+    public int hashCode()
+    {
         return getP().hashCode() ^ getQ().hashCode() ^ getG().hashCode();
     }
 }

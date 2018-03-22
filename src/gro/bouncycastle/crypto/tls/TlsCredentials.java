@@ -1,5 +1,6 @@
 package gro.bouncycastle.crypto.tls;
 
-public interface TlsCredentials {
+public interface TlsCredentials
+{
     Certificate getCertificate();
 }

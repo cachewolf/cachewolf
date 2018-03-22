@@ -3,7 +3,8 @@ package gro.bouncycastle.asn1;
 /**
  * Supported encoding formats.
  */
-public interface ASN1Encoding {
+public interface ASN1Encoding
+{
     /**
      * DER - distinguished encoding rules.
      */

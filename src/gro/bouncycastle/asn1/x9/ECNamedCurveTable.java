@@ -1,18 +1,20 @@
 package gro.bouncycastle.asn1.x9;
 
+import ewe.util.Enumeration;
+import ewe.util.Vector;
 import gro.bouncycastle.asn1.ASN1ObjectIdentifier;
-import gro.bouncycastle.asn1.sec.SECNamedCurves;
-
 //import gro.bouncycastle.asn1.anssi.ANSSINamedCurves;
 //import gro.bouncycastle.asn1.cryptopro.ECGOST3410NamedCurves;
 //import gro.bouncycastle.asn1.gm.GMNamedCurves;
 //import gro.bouncycastle.asn1.nist.NISTNamedCurves;
+import gro.bouncycastle.asn1.sec.SECNamedCurves;
 //import gro.bouncycastle.asn1.teletrust.TeleTrusTNamedCurves;
 
 /**
  * A general class that reads all X9.62 style EC curve tables.
  */
-public class ECNamedCurveTable {
+public class ECNamedCurveTable
+{
     /**
      * return a X9ECParameters object representing the passed in named
      * curve. The routine returns null if the curve is not present.
@@ -20,42 +22,43 @@ public class ECNamedCurveTable {
      * @param name the name of the curve requested
      * @return an X9ECParameters object or null if the curve is not available.
      */
-
+	
     public static X9ECParameters getByName(
-            String name) {
+        String name)
+    {
         X9ECParameters ecP = X962NamedCurves.getByName(name);
 
-        if (ecP == null) {
+        if (ecP == null)
+        {
             ecP = SECNamedCurves.getByName(name);
         }
 
-        if (ecP == null) {
-            throw new UnsupportedClassVersionError();/*
+        if (ecP == null)
+        {
+        	throw new UnsupportedClassVersionError();/*
             ecP = NISTNamedCurves.getByName(name);
-*/
-        }
+*/        }
 
-        if (ecP == null) {
-            throw new UnsupportedClassVersionError();/*
+        if (ecP == null)
+        {
+        	throw new UnsupportedClassVersionError();/*
             ecP = TeleTrusTNamedCurves.getByName(name);
-*/
-        }
+*/        }
 
-        if (ecP == null) {
-            throw new UnsupportedClassVersionError();/*
+        if (ecP == null)
+        {
+        	throw new UnsupportedClassVersionError();/*
             ecP = ANSSINamedCurves.getByName(name);
-*/
-        }
+*/        }
 
-        if (ecP == null) {
-            throw new UnsupportedClassVersionError();/*
+        if (ecP == null)
+        {
+        	throw new UnsupportedClassVersionError();/*
             ecP = GMNamedCurves.getByName(name);
-*/
-        }
+*/        }
 
         return ecP;
     }
-
     /**
      * return the object identifier signified by the passed in name. Null
      * if there is no object identifier associated with name.
@@ -63,8 +66,9 @@ public class ECNamedCurveTable {
      * @return the object identifier associated with name, if present.
      */
     public static ASN1ObjectIdentifier getOID(
-            String name) {
-        throw new UnsupportedClassVersionError();/*
+        String name)
+    {
+    	throw new UnsupportedClassVersionError();/*
         ASN1ObjectIdentifier oid = X962NamedCurves.getOID(name);
 
         if (oid == null)
@@ -93,8 +97,7 @@ public class ECNamedCurveTable {
         }
 
         return oid;
-*/
-    }
+*/    }
 
 /*
     /**
@@ -137,7 +140,6 @@ public class ECNamedCurveTable {
         return name;
     }
 */
-
     /**
      * return a X9ECParameters object representing the passed in named
      * curve.
@@ -146,34 +148,35 @@ public class ECNamedCurveTable {
      * @return an X9ECParameters object or null if the curve is not available.
      */
     public static X9ECParameters getByOID(
-            ASN1ObjectIdentifier oid) {
+        ASN1ObjectIdentifier oid)
+    {
         X9ECParameters ecP = X962NamedCurves.getByOID(oid);
 
-        if (ecP == null) {
-            throw new UnsupportedClassVersionError();/*
+        if (ecP == null)
+        {
+        	throw new UnsupportedClassVersionError();/*
             ecP = SECNamedCurves.getByOID(oid);
-*/
-        }
+*/        }
 
         // NOTE: All the NIST curves are currently from SEC, so no point in redundant OID lookup
 
-        if (ecP == null) {
-            throw new UnsupportedClassVersionError();/*
+        if (ecP == null)
+        {
+        	throw new UnsupportedClassVersionError();/*
             ecP = TeleTrusTNamedCurves.getByOID(oid);
-*/
-        }
+*/        }
 
-        if (ecP == null) {
-            throw new UnsupportedClassVersionError();/*
+        if (ecP == null)
+        {
+        	throw new UnsupportedClassVersionError();/*
             ecP = ANSSINamedCurves.getByOID(oid);
-*/
-        }
+*/        }
 
-        if (ecP == null) {
-            throw new UnsupportedClassVersionError();/*
+        if (ecP == null)
+        {
+        	throw new UnsupportedClassVersionError();/*
             ecP = GMNamedCurves.getByOID(oid);
-*/
-        }
+*/        }
 
         return ecP;
     }
@@ -206,5 +209,4 @@ public class ECNamedCurveTable {
             v.addElement(e.nextElement());
         }
     }
-*/
-}
+*/}

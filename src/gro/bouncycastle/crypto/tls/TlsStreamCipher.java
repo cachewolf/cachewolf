@@ -1,6 +1,7 @@
 package gro.bouncycastle.crypto.tls;
 
 import ewe.io.IOException;
+
 import gro.bouncycastle.crypto.CipherParameters;
 import gro.bouncycastle.crypto.Digest;
 import gro.bouncycastle.crypto.StreamCipher;
@@ -9,7 +10,8 @@ import gro.bouncycastle.crypto.params.ParametersWithIV;
 import gro.bouncycastle.util.Arrays;
 
 public class TlsStreamCipher
-        implements TlsCipher {
+    implements TlsCipher
+{
     protected TlsContext context;
 
     protected StreamCipher encryptCipher;
@@ -21,8 +23,9 @@ public class TlsStreamCipher
     protected boolean usesNonce;
 
     public TlsStreamCipher(TlsContext context, StreamCipher clientWriteCipher,
-                           StreamCipher serverWriteCipher, Digest clientWriteDigest, Digest serverWriteDigest,
-                           int cipherKeySize, boolean usesNonce) throws IOException {
+        StreamCipher serverWriteCipher, Digest clientWriteDigest, Digest serverWriteDigest,
+        int cipherKeySize, boolean usesNonce) throws IOException
+    {
         boolean isServer = context.isServer();
 
         this.context = context;
@@ -32,7 +35,7 @@ public class TlsStreamCipher
         this.decryptCipher = serverWriteCipher;
 
         int key_block_size = (2 * cipherKeySize) + clientWriteDigest.getDigestSize()
-                + serverWriteDigest.getDigestSize();
+            + serverWriteDigest.getDigestSize();
 
         byte[] key_block = TlsUtils.calculateKeyBlock(context, key_block_size);
 
@@ -40,10 +43,10 @@ public class TlsStreamCipher
 
         // Init MACs
         TlsMac clientWriteMac = new TlsMac(context, clientWriteDigest, key_block, offset,
-                clientWriteDigest.getDigestSize());
+            clientWriteDigest.getDigestSize());
         offset += clientWriteDigest.getDigestSize();
         TlsMac serverWriteMac = new TlsMac(context, serverWriteDigest, key_block, offset,
-                serverWriteDigest.getDigestSize());
+            serverWriteDigest.getDigestSize());
         offset += serverWriteDigest.getDigestSize();
 
         // Build keys
@@ -52,19 +55,23 @@ public class TlsStreamCipher
         KeyParameter serverWriteKey = new KeyParameter(key_block, offset, cipherKeySize);
         offset += cipherKeySize;
 
-        if (offset != key_block_size) {
+        if (offset != key_block_size)
+        {
             throw new TlsFatalAlert(AlertDescription.internal_error);
         }
 
         CipherParameters encryptParams, decryptParams;
-        if (isServer) {
+        if (isServer)
+        {
             this.writeMac = serverWriteMac;
             this.readMac = clientWriteMac;
             this.encryptCipher = serverWriteCipher;
             this.decryptCipher = clientWriteCipher;
             encryptParams = serverWriteKey;
             decryptParams = clientWriteKey;
-        } else {
+        }
+        else
+        {
             this.writeMac = clientWriteMac;
             this.readMac = serverWriteMac;
             this.encryptCipher = clientWriteCipher;
@@ -73,7 +80,8 @@ public class TlsStreamCipher
             decryptParams = serverWriteKey;
         }
 
-        if (usesNonce) {
+        if (usesNonce)
+        {
             byte[] dummyNonce = new byte[8];
             encryptParams = new ParametersWithIV(encryptParams, dummyNonce);
             decryptParams = new ParametersWithIV(decryptParams, dummyNonce);
@@ -83,12 +91,15 @@ public class TlsStreamCipher
         this.decryptCipher.init(false, decryptParams);
     }
 
-    public int getPlaintextLimit(int ciphertextLimit) {
+    public int getPlaintextLimit(int ciphertextLimit)
+    {
         return ciphertextLimit - writeMac.getSize();
     }
 
-    public byte[] encodePlaintext(long seqNo, short type, byte[] plaintext, int offset, int len) {
-        if (usesNonce) {
+    public byte[] encodePlaintext(long seqNo, short type, byte[] plaintext, int offset, int len)
+    {
+        if (usesNonce)
+        {
             updateIV(encryptCipher, true, seqNo);
         }
 
@@ -103,13 +114,16 @@ public class TlsStreamCipher
     }
 
     public byte[] decodeCiphertext(long seqNo, short type, byte[] ciphertext, int offset, int len)
-            throws IOException {
-        if (usesNonce) {
+        throws IOException
+    {
+        if (usesNonce)
+        {
             updateIV(decryptCipher, false, seqNo);
         }
 
         int macSize = readMac.getSize();
-        if (len < macSize) {
+        if (len < macSize)
+        {
             throw new TlsFatalAlert(AlertDescription.decode_error);
         }
 
@@ -122,16 +136,19 @@ public class TlsStreamCipher
     }
 
     protected void checkMAC(long seqNo, short type, byte[] recBuf, int recStart, int recEnd, byte[] calcBuf, int calcOff, int calcLen)
-            throws IOException {
+        throws IOException
+    {
         byte[] receivedMac = Arrays.copyOfRange(recBuf, recStart, recEnd);
         byte[] computedMac = readMac.calculateMac(seqNo, type, calcBuf, calcOff, calcLen);
 
-        if (!Arrays.constantTimeAreEqual(receivedMac, computedMac)) {
+        if (!Arrays.constantTimeAreEqual(receivedMac, computedMac))
+        {
             throw new TlsFatalAlert(AlertDescription.bad_record_mac);
         }
     }
 
-    protected void updateIV(StreamCipher cipher, boolean forEncryption, long seqNo) {
+    protected void updateIV(StreamCipher cipher, boolean forEncryption, long seqNo)
+    {
         byte[] nonce = new byte[8];
         TlsUtils.writeUint64(seqNo, nonce, 0);
         cipher.init(forEncryption, new ParametersWithIV(null, nonce));

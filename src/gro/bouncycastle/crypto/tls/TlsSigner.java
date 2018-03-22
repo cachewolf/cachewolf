@@ -4,22 +4,23 @@ import gro.bouncycastle.crypto.CryptoException;
 import gro.bouncycastle.crypto.Signer;
 import gro.bouncycastle.crypto.params.AsymmetricKeyParameter;
 
-public interface TlsSigner {
+public interface TlsSigner
+{
     void init(TlsContext context);
 
     byte[] generateRawSignature(AsymmetricKeyParameter privateKey, byte[] md5AndSha1)
-            throws CryptoException;
+        throws CryptoException;
 
     byte[] generateRawSignature(SignatureAndHashAlgorithm algorithm,
-                                AsymmetricKeyParameter privateKey, byte[] hash)
-            throws CryptoException;
+        AsymmetricKeyParameter privateKey, byte[] hash)
+        throws CryptoException;
 
     boolean verifyRawSignature(byte[] sigBytes, AsymmetricKeyParameter publicKey, byte[] md5AndSha1)
-            throws CryptoException;
+        throws CryptoException;
 
     boolean verifyRawSignature(SignatureAndHashAlgorithm algorithm, byte[] sigBytes,
-                               AsymmetricKeyParameter publicKey, byte[] hash)
-            throws CryptoException;
+        AsymmetricKeyParameter publicKey, byte[] hash)
+        throws CryptoException;
 
     Signer createSigner(AsymmetricKeyParameter privateKey);
 

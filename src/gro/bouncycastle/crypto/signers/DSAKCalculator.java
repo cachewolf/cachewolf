@@ -6,7 +6,8 @@ import ewe.security.SecureRandom;
 /**
  * Interface define calculators of K values for DSA/ECDSA.
  */
-public interface DSAKCalculator {
+public interface DSAKCalculator
+{
     /**
      * Return true if this calculator is deterministic, false otherwise.
      *
@@ -17,7 +18,7 @@ public interface DSAKCalculator {
     /**
      * Non-deterministic initialiser.
      *
-     * @param n      the order of the DSA group.
+     * @param n the order of the DSA group.
      * @param random a source of randomness.
      */
     void init(BigInteger n, SecureRandom random);
@@ -25,8 +26,8 @@ public interface DSAKCalculator {
     /**
      * Deterministic initialiser.
      *
-     * @param n       the order of the DSA group.
-     * @param d       the DSA private value.
+     * @param n the order of the DSA group.
+     * @param d the DSA private value.
      * @param message the message being signed.
      */
     void init(BigInteger n, BigInteger d, byte[] message);

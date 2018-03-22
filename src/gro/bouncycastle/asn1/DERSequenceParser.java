@@ -6,10 +6,12 @@ import ewe.io.IOException;
  * Parser class for DER SEQUENCEs.
  */
 public class DERSequenceParser
-        implements ASN1SequenceParser {
+    implements ASN1SequenceParser
+{
     private ASN1StreamParser _parser;
 
-    DERSequenceParser(ASN1StreamParser parser) {
+    DERSequenceParser(ASN1StreamParser parser)
+    {
         this._parser = parser;
     }
 
@@ -18,9 +20,10 @@ public class DERSequenceParser
      *
      * @return next object in SEQUENCE.
      * @throws IOException if there is an issue loading the object.
-     */
+     */    
     public ASN1Encodable readObject()
-            throws IOException {
+        throws IOException
+    {
         return _parser.readObject();
     }
 
@@ -31,8 +34,9 @@ public class DERSequenceParser
      * @throws IOException if there is an issue loading the data.
      */
     public ASN1Primitive getLoadedObject()
-            throws IOException {
-        return new DERSequence(_parser.readVector());
+        throws IOException
+    {
+         return new DERSequence(_parser.readVector());
     }
 
     /**
@@ -40,10 +44,14 @@ public class DERSequenceParser
      *
      * @return a DERSequence.
      */
-    public ASN1Primitive toASN1Primitive() {
-        try {
+    public ASN1Primitive toASN1Primitive()
+    {
+        try
+        {
             return getLoadedObject();
-        } catch (IOException e) {
+        }
+        catch (IOException e)
+        {
             throw new IllegalStateException(e.getMessage());
         }
     }

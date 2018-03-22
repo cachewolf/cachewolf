@@ -6,13 +6,15 @@ import ewe.util.Vector;
 /**
  * Mutable class for building ASN.1 constructed objects such as SETs or SEQUENCEs.
  */
-public class ASN1EncodableVector {
+public class ASN1EncodableVector
+{
     private final Vector v = new Vector();
 
     /**
      * Base constructor.
      */
-    public ASN1EncodableVector() {
+    public ASN1EncodableVector()
+    {
     }
 
     /**
@@ -20,7 +22,8 @@ public class ASN1EncodableVector {
      *
      * @param obj the encodable to add.
      */
-    public void add(ASN1Encodable obj) {
+    public void add(ASN1Encodable obj)
+    {
         v.addElement(obj);
     }
 
@@ -29,8 +32,10 @@ public class ASN1EncodableVector {
      *
      * @param other the vector to add.
      */
-    public void addAll(ASN1EncodableVector other) {
-        for (Enumeration en = other.v.elements(); en.hasMoreElements(); ) {
+    public void addAll(ASN1EncodableVector other)
+    {
+        for (Enumeration en = other.v.elements(); en.hasMoreElements();)
+        {
             v.addElement(en.nextElement());
         }
     }
@@ -41,8 +46,9 @@ public class ASN1EncodableVector {
      * @param i the index of the object of interest.
      * @return the object at position i.
      */
-    public ASN1Encodable get(int i) {
-        return (ASN1Encodable) v.elementAt(i);
+    public ASN1Encodable get(int i)
+    {
+        return (ASN1Encodable)v.elementAt(i);
     }
 
     /**
@@ -50,7 +56,8 @@ public class ASN1EncodableVector {
      *
      * @return the object count in the vector.
      */
-    public int size() {
+    public int size()
+    {
         return v.size();
     }
 }

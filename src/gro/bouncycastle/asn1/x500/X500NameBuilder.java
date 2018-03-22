@@ -1,6 +1,7 @@
 package gro.bouncycastle.asn1.x500;
 
 import ewe.util.Vector;
+
 import gro.bouncycastle.asn1.ASN1Encodable;
 import gro.bouncycastle.asn1.ASN1ObjectIdentifier;
 import gro.bouncycastle.asn1.x500.style.BCStyle;
@@ -8,14 +9,16 @@ import gro.bouncycastle.asn1.x500.style.BCStyle;
 /**
  * A builder class for making X.500 Name objects.
  */
-public class X500NameBuilder {
+public class X500NameBuilder
+{
     private X500NameStyle template;
     private Vector rdns = new Vector();
 
     /**
      * Constructor using the default style (BCStyle).
      */
-    public X500NameBuilder() {
+    public X500NameBuilder()
+    {
         this(BCStyle.INSTANCE);
     }
 
@@ -24,18 +27,20 @@ public class X500NameBuilder {
      *
      * @param template the style template for string to DN conversion.
      */
-    public X500NameBuilder(X500NameStyle template) {
+    public X500NameBuilder(X500NameStyle template)
+    {
         this.template = template;
     }
 
     /**
      * Add an RDN based on a single OID and a string representation of its value.
      *
-     * @param oid   the OID for this RDN.
+     * @param oid the OID for this RDN.
      * @param value the string representation of the value the OID refers to.
      * @return the current builder instance.
      */
-    public X500NameBuilder addRDN(ASN1ObjectIdentifier oid, String value) {
+    public X500NameBuilder addRDN(ASN1ObjectIdentifier oid, String value)
+    {
         this.addRDN(oid, template.stringToValue(oid, value));
 
         return this;
@@ -44,11 +49,12 @@ public class X500NameBuilder {
     /**
      * Add an RDN based on a single OID and an ASN.1 value.
      *
-     * @param oid   the OID for this RDN.
+     * @param oid the OID for this RDN.
      * @param value the ASN.1 value the OID refers to.
      * @return the current builder instance.
      */
-    public X500NameBuilder addRDN(ASN1ObjectIdentifier oid, ASN1Encodable value) {
+    public X500NameBuilder addRDN(ASN1ObjectIdentifier oid, ASN1Encodable value)
+    {
         rdns.addElement(new RDN(oid, value));
 
         return this;
@@ -60,7 +66,8 @@ public class X500NameBuilder {
      * @param attrTAndV the AttributeTypeAndValue to build the RDN from.
      * @return the current builder instance.
      */
-    public X500NameBuilder addRDN(AttributeTypeAndValue attrTAndV) {
+    public X500NameBuilder addRDN(AttributeTypeAndValue attrTAndV)
+    {
         rdns.addElement(new RDN(attrTAndV));
 
         return this;
@@ -69,14 +76,16 @@ public class X500NameBuilder {
     /**
      * Add a multi-valued RDN made up of the passed in OIDs and associated string values.
      *
-     * @param oids   the OIDs making up the RDN.
+     * @param oids the OIDs making up the RDN.
      * @param values the string representation of the values the OIDs refer to.
      * @return the current builder instance.
      */
-    public X500NameBuilder addMultiValuedRDN(ASN1ObjectIdentifier[] oids, String[] values) {
+    public X500NameBuilder addMultiValuedRDN(ASN1ObjectIdentifier[] oids, String[] values)
+    {
         ASN1Encodable[] vals = new ASN1Encodable[values.length];
 
-        for (int i = 0; i != vals.length; i++) {
+        for (int i = 0; i != vals.length; i++)
+        {
             vals[i] = template.stringToValue(oids[i], values[i]);
         }
 
@@ -86,14 +95,16 @@ public class X500NameBuilder {
     /**
      * Add a multi-valued RDN made up of the passed in OIDs and associated ASN.1 values.
      *
-     * @param oids   the OIDs making up the RDN.
+     * @param oids the OIDs making up the RDN.
      * @param values the ASN.1 values the OIDs refer to.
      * @return the current builder instance.
      */
-    public X500NameBuilder addMultiValuedRDN(ASN1ObjectIdentifier[] oids, ASN1Encodable[] values) {
+    public X500NameBuilder addMultiValuedRDN(ASN1ObjectIdentifier[] oids, ASN1Encodable[] values)
+    {
         AttributeTypeAndValue[] avs = new AttributeTypeAndValue[oids.length];
 
-        for (int i = 0; i != oids.length; i++) {
+        for (int i = 0; i != oids.length; i++)
+        {
             avs[i] = new AttributeTypeAndValue(oids[i], values[i]);
         }
 
@@ -106,7 +117,8 @@ public class X500NameBuilder {
      * @param attrTAndVs the AttributeTypeAndValues to build the RDN from.
      * @return the current builder instance.
      */
-    public X500NameBuilder addMultiValuedRDN(AttributeTypeAndValue[] attrTAndVs) {
+    public X500NameBuilder addMultiValuedRDN(AttributeTypeAndValue[] attrTAndVs)
+    {
         rdns.addElement(new RDN(attrTAndVs));
 
         return this;
@@ -117,11 +129,13 @@ public class X500NameBuilder {
      *
      * @return a new X.500 name.
      */
-    public X500Name build() {
+    public X500Name build()
+    {
         RDN[] vals = new RDN[rdns.size()];
 
-        for (int i = 0; i != vals.length; i++) {
-            vals[i] = (RDN) rdns.elementAt(i);
+        for (int i = 0; i != vals.length; i++)
+        {
+            vals[i] = (RDN)rdns.elementAt(i);
         }
 
         return new X500Name(template, vals);

@@ -3,7 +3,8 @@ package gro.bouncycastle.crypto;
 /**
  * interface that a public/private key pair generator should conform to.
  */
-public interface AsymmetricCipherKeyPairGenerator {
+public interface AsymmetricCipherKeyPairGenerator
+{
     /**
      * intialise the key pair generator.
      *

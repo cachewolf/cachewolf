@@ -4,6 +4,7 @@ import ewe.io.ByteArrayOutputStream;
 import ewe.io.IOException;
 import ewe.io.InputStream;
 import ewe.io.OutputStream;
+import ewe.math.BigInteger;
 import ewe.util.Vector;
 import gro.bouncycastle.asn1.x509.KeyUsage;
 import gro.bouncycastle.asn1.x509.SubjectPublicKeyInfo;
@@ -17,7 +18,8 @@ import gro.bouncycastle.crypto.util.PublicKeyFactory;
  * (D)TLS DH key exchange.
  */
 public class TlsDHKeyExchange
-        extends AbstractTlsKeyExchange {
+    extends AbstractTlsKeyExchange
+{
     protected TlsSigner tlsSigner;
     protected DHParameters dhParameters;
 
@@ -27,74 +29,91 @@ public class TlsDHKeyExchange
     protected DHPrivateKeyParameters dhAgreePrivateKey;
     protected DHPublicKeyParameters dhAgreePublicKey;
 
-    public TlsDHKeyExchange(int keyExchange, Vector supportedSignatureAlgorithms, DHParameters dhParameters) {
+    public TlsDHKeyExchange(int keyExchange, Vector supportedSignatureAlgorithms, DHParameters dhParameters)
+    {
         super(keyExchange, supportedSignatureAlgorithms);
 
-        switch (keyExchange) {
-            case KeyExchangeAlgorithm.DH_anon:
-            case KeyExchangeAlgorithm.DH_RSA:
-            case KeyExchangeAlgorithm.DH_DSS:
-                this.tlsSigner = null;
-                break;
-            case KeyExchangeAlgorithm.DHE_RSA:
-                this.tlsSigner = new TlsRSASigner();
-                break;
-            case KeyExchangeAlgorithm.DHE_DSS:
-                throw new UnsupportedClassVersionError();/*
+        switch (keyExchange)
+        {
+        case KeyExchangeAlgorithm.DH_anon:
+        case KeyExchangeAlgorithm.DH_RSA:
+        case KeyExchangeAlgorithm.DH_DSS:
+            this.tlsSigner = null;
+            break;
+        case KeyExchangeAlgorithm.DHE_RSA:
+            this.tlsSigner = new TlsRSASigner();
+            break;
+        case KeyExchangeAlgorithm.DHE_DSS:
+        	throw new UnsupportedClassVersionError();/*
             this.tlsSigner = new TlsDSSSigner();
             break;
-*/
-            default:
-                throw new IllegalArgumentException("unsupported key exchange algorithm");
+*/        default:
+            throw new IllegalArgumentException("unsupported key exchange algorithm");
         }
 
         this.dhParameters = dhParameters;
     }
 
-    public void init(TlsContext context) {
+    public void init(TlsContext context)
+    {
         super.init(context);
 
-        if (this.tlsSigner != null) {
+        if (this.tlsSigner != null)
+        {
             this.tlsSigner.init(context);
         }
     }
 
     public void skipServerCredentials()
-            throws IOException {
-        if (keyExchange != KeyExchangeAlgorithm.DH_anon) {
+        throws IOException
+    {
+        if (keyExchange != KeyExchangeAlgorithm.DH_anon)
+        {
             throw new TlsFatalAlert(AlertDescription.unexpected_message);
         }
     }
-
     public void processServerCertificate(Certificate serverCertificate)
-            throws IOException {
-        if (keyExchange == KeyExchangeAlgorithm.DH_anon) {
+        throws IOException
+    {
+        if (keyExchange == KeyExchangeAlgorithm.DH_anon)
+        {
             throw new TlsFatalAlert(AlertDescription.unexpected_message);
         }
-        if (serverCertificate.isEmpty()) {
+        if (serverCertificate.isEmpty())
+        {
             throw new TlsFatalAlert(AlertDescription.bad_certificate);
         }
 
         gro.bouncycastle.asn1.x509.Certificate x509Cert = serverCertificate.getCertificateAt(0);
 
         SubjectPublicKeyInfo keyInfo = x509Cert.getSubjectPublicKeyInfo();
-        try {
+        try
+        {
             this.serverPublicKey = PublicKeyFactory.createKey(keyInfo);
-        } catch (RuntimeException e) {
+        }
+        catch (RuntimeException e)
+        {
             throw new TlsFatalAlert(AlertDescription.unsupported_certificate, e);
         }
 
-        if (tlsSigner == null) {
-            try {
-                this.dhAgreePublicKey = TlsDHUtils.validateDHPublicKey((DHPublicKeyParameters) this.serverPublicKey);
+        if (tlsSigner == null)
+        {
+            try
+            {
+                this.dhAgreePublicKey = TlsDHUtils.validateDHPublicKey((DHPublicKeyParameters)this.serverPublicKey);
                 this.dhParameters = validateDHParameters(dhAgreePublicKey.getParameters());
-            } catch (ClassCastException e) {
+            }
+            catch (ClassCastException e)
+            {
                 throw new TlsFatalAlert(AlertDescription.certificate_unknown, e);
             }
 
             TlsUtils.validateKeyUsage(x509Cert, KeyUsage.keyAgreement);
-        } else {
-            if (!tlsSigner.isValidPublicKey(this.serverPublicKey)) {
+        }
+        else
+        {
+            if (!tlsSigner.isValidPublicKey(this.serverPublicKey))
+            {
                 throw new TlsFatalAlert(AlertDescription.certificate_unknown);
             }
 
@@ -104,19 +123,23 @@ public class TlsDHKeyExchange
         super.processServerCertificate(serverCertificate);
     }
 
-    public boolean requiresServerKeyExchange() {
-        switch (keyExchange) {
-            case KeyExchangeAlgorithm.DH_anon:
-            case KeyExchangeAlgorithm.DHE_DSS:
-            case KeyExchangeAlgorithm.DHE_RSA:
-                return true;
-            default:
-                return false;
+    public boolean requiresServerKeyExchange()
+    {
+        switch (keyExchange)
+        {
+        case KeyExchangeAlgorithm.DH_anon:
+        case KeyExchangeAlgorithm.DHE_DSS:
+        case KeyExchangeAlgorithm.DHE_RSA:
+            return true;
+        default:
+            return false;
         }
     }
 
-    public byte[] generateServerKeyExchange() throws IOException {
-        if (!requiresServerKeyExchange()) {
+    public byte[] generateServerKeyExchange() throws IOException
+    {
+        if (!requiresServerKeyExchange())
+        {
             return null;
         }
 
@@ -124,12 +147,14 @@ public class TlsDHKeyExchange
 
         ByteArrayOutputStream buf = new ByteArrayOutputStream();
         this.dhAgreePrivateKey = TlsDHUtils.generateEphemeralServerKeyExchange(context.getSecureRandom(),
-                this.dhParameters, buf);
+            this.dhParameters, buf);
         return buf.toByteArray();
     }
 
-    public void processServerKeyExchange(InputStream input) throws IOException {
-        if (!requiresServerKeyExchange()) {
+    public void processServerKeyExchange(InputStream input) throws IOException
+    {
+        if (!requiresServerKeyExchange())
+        {
             throw new TlsFatalAlert(AlertDescription.unexpected_message);
         }
 
@@ -142,58 +167,72 @@ public class TlsDHKeyExchange
     }
 
     public void validateCertificateRequest(CertificateRequest certificateRequest)
-            throws IOException {
-        if (keyExchange == KeyExchangeAlgorithm.DH_anon) {
+        throws IOException
+    {
+        if (keyExchange == KeyExchangeAlgorithm.DH_anon)
+        {
             throw new TlsFatalAlert(AlertDescription.handshake_failure);
         }
 
         short[] types = certificateRequest.getCertificateTypes();
-        for (int i = 0; i < types.length; ++i) {
-            switch (types[i]) {
-                case ClientCertificateType.rsa_sign:
-                case ClientCertificateType.dss_sign:
-                case ClientCertificateType.rsa_fixed_dh:
-                case ClientCertificateType.dss_fixed_dh:
-                case ClientCertificateType.ecdsa_sign:
-                    break;
-                default:
-                    throw new TlsFatalAlert(AlertDescription.illegal_parameter);
+        for (int i = 0; i < types.length; ++i)
+        {
+            switch (types[i])
+            {
+            case ClientCertificateType.rsa_sign:
+            case ClientCertificateType.dss_sign:
+            case ClientCertificateType.rsa_fixed_dh:
+            case ClientCertificateType.dss_fixed_dh:
+            case ClientCertificateType.ecdsa_sign:
+                break;
+            default:
+                throw new TlsFatalAlert(AlertDescription.illegal_parameter);
             }
         }
     }
 
     public void processClientCredentials(TlsCredentials clientCredentials)
-            throws IOException {
-        if (keyExchange == KeyExchangeAlgorithm.DH_anon) {
+        throws IOException
+    {
+        if (keyExchange == KeyExchangeAlgorithm.DH_anon)
+        {
             throw new TlsFatalAlert(AlertDescription.internal_error);
         }
 
-        if (clientCredentials instanceof TlsAgreementCredentials) {
+        if (clientCredentials instanceof TlsAgreementCredentials)
+        {
             // TODO Validate client cert has matching parameters (see 'areCompatibleParameters')?
 
-            this.agreementCredentials = (TlsAgreementCredentials) clientCredentials;
-        } else if (clientCredentials instanceof TlsSignerCredentials) {
+            this.agreementCredentials = (TlsAgreementCredentials)clientCredentials;
+        }
+        else if (clientCredentials instanceof TlsSignerCredentials)
+        {
             // OK
-        } else {
+        }
+        else
+        {
             throw new TlsFatalAlert(AlertDescription.internal_error);
         }
     }
-
     public void generateClientKeyExchange(OutputStream output)
-            throws IOException {
+        throws IOException
+    {
         /*
          * RFC 2246 7.4.7.2 If the client certificate already contains a suitable Diffie-Hellman
          * key, then Yc is implicit and does not need to be sent again. In this case, the Client Key
          * Exchange message will be sent, but will be empty.
          */
-        if (agreementCredentials == null) {
+        if (agreementCredentials == null)
+        {
             this.dhAgreePrivateKey = TlsDHUtils.generateEphemeralClientKeyExchange(context.getSecureRandom(),
-                    dhParameters, output);
+                dhParameters, output);
         }
     }
 
-    public void processClientCertificate(Certificate clientCertificate) throws IOException {
-        if (keyExchange == KeyExchangeAlgorithm.DH_anon) {
+    public void processClientCertificate(Certificate clientCertificate) throws IOException
+    {
+        if (keyExchange == KeyExchangeAlgorithm.DH_anon)
+        {
             throw new TlsFatalAlert(AlertDescription.unexpected_message);
         }
 
@@ -201,8 +240,9 @@ public class TlsDHKeyExchange
         // TODO If the certificate is 'fixed', take the public key as dhAgreePublicKey
     }
 
-    public void processClientKeyExchange(InputStream input) throws IOException {
-        throw new UnsupportedClassVersionError();/*
+    public void processClientKeyExchange(InputStream input) throws IOException
+    {
+    	throw new UnsupportedClassVersionError();/*
         if (dhAgreePublicKey != null)
         {
             // For dss_fixed_dh and rsa_fixed_dh, the key arrived in the client certificate
@@ -212,28 +252,33 @@ public class TlsDHKeyExchange
         BigInteger Yc = TlsDHUtils.readDHParameter(input);
         
         this.dhAgreePublicKey = TlsDHUtils.validateDHPublicKey(new DHPublicKeyParameters(Yc, dhParameters));
-*/
-    }
+*/    }
 
     public byte[] generatePremasterSecret()
-            throws IOException {
-        if (agreementCredentials != null) {
+        throws IOException
+    {
+        if (agreementCredentials != null)
+        {
             return agreementCredentials.generateAgreement(dhAgreePublicKey);
         }
 
-        if (dhAgreePrivateKey != null) {
+        if (dhAgreePrivateKey != null)
+        {
             return TlsDHUtils.calculateDHBasicAgreement(dhAgreePublicKey, dhAgreePrivateKey);
         }
 
         throw new TlsFatalAlert(AlertDescription.internal_error);
     }
 
-    protected int getMinimumPrimeBits() {
+    protected int getMinimumPrimeBits()
+    {
         return 1024;
     }
 
-    protected DHParameters validateDHParameters(DHParameters params) throws IOException {
-        if (params.getP().bitLength() < getMinimumPrimeBits()) {
+    protected DHParameters validateDHParameters(DHParameters params) throws IOException
+    {
+        if (params.getP().bitLength() < getMinimumPrimeBits())
+        {
             throw new TlsFatalAlert(AlertDescription.insufficient_security);
         }
 

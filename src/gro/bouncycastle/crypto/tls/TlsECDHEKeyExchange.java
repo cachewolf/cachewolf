@@ -3,6 +3,7 @@ package gro.bouncycastle.crypto.tls;
 import ewe.io.IOException;
 import ewe.io.InputStream;
 import ewe.util.Vector;
+
 import gro.bouncycastle.crypto.Digest;
 import gro.bouncycastle.crypto.Signer;
 import gro.bouncycastle.crypto.params.ECDomainParameters;
@@ -12,37 +13,42 @@ import gro.bouncycastle.util.io.TeeInputStream;
  * (D)TLS ECDHE key exchange (see RFC 4492).
  */
 public class TlsECDHEKeyExchange
-        extends TlsECDHKeyExchange {
+    extends TlsECDHKeyExchange
+{
     protected TlsSignerCredentials serverCredentials = null;
 
     public TlsECDHEKeyExchange(int keyExchange, Vector supportedSignatureAlgorithms, int[] namedCurves,
-                               short[] clientECPointFormats, short[] serverECPointFormats) {
+        short[] clientECPointFormats, short[] serverECPointFormats)
+    {
         super(keyExchange, supportedSignatureAlgorithms, namedCurves, clientECPointFormats, serverECPointFormats);
     }
 
     public void processServerCredentials(TlsCredentials serverCredentials)
-            throws IOException {
-        if (!(serverCredentials instanceof TlsSignerCredentials)) {
+        throws IOException
+    {
+        if (!(serverCredentials instanceof TlsSignerCredentials))
+        {
             throw new TlsFatalAlert(AlertDescription.internal_error);
         }
 
         processServerCertificate(serverCredentials.getCertificate());
 
-        this.serverCredentials = (TlsSignerCredentials) serverCredentials;
+        this.serverCredentials = (TlsSignerCredentials)serverCredentials;
     }
 
     public byte[] generateServerKeyExchange()
-            throws IOException {
+        throws IOException
+    {
         DigestInputBuffer buf = new DigestInputBuffer();
 
         this.ecAgreePrivateKey = TlsECCUtils.generateEphemeralServerKeyExchange(context.getSecureRandom(), namedCurves,
-                clientECPointFormats, buf);
+            clientECPointFormats, buf);
 
         /*
          * RFC 5246 4.7. digitally-signed element needs SignatureAndHashAlgorithm from TLS 1.2
          */
         SignatureAndHashAlgorithm signatureAndHashAlgorithm = TlsUtils.getSignatureAndHashAlgorithm(
-                context, serverCredentials);
+            context, serverCredentials);
 
         Digest d = TlsUtils.createHash(signatureAndHashAlgorithm);
 
@@ -63,7 +69,8 @@ public class TlsECDHEKeyExchange
     }
 
     public void processServerKeyExchange(InputStream input)
-            throws IOException {
+        throws IOException
+    {
         SecurityParameters securityParameters = context.getSecurityParameters();
 
         SignerInputBuffer buf = new SignerInputBuffer();
@@ -77,16 +84,18 @@ public class TlsECDHEKeyExchange
 
         Signer signer = initVerifyer(tlsSigner, signed_params.getAlgorithm(), securityParameters);
         buf.updateSigner(signer);
-        if (!signer.verifySignature(signed_params.getSignature())) {
+        if (!signer.verifySignature(signed_params.getSignature()))
+        {
             throw new TlsFatalAlert(AlertDescription.decrypt_error);
         }
 
         this.ecAgreePublicKey = TlsECCUtils.validateECPublicKey(TlsECCUtils.deserializeECPublicKey(
-                clientECPointFormats, curve_params, point));
+            clientECPointFormats, curve_params, point));
     }
 
     public void validateCertificateRequest(CertificateRequest certificateRequest)
-            throws IOException {
+        throws IOException
+    {
         /*
          * RFC 4492 3. [...] The ECDSA_fixed_ECDH and RSA_fixed_ECDH mechanisms are usable with
          * ECDH_ECDSA and ECDH_RSA. Their use with ECDHE_ECDSA and ECDHE_RSA is prohibited because
@@ -94,32 +103,39 @@ public class TlsECDHEKeyExchange
          * these algorithms.
          */
         short[] types = certificateRequest.getCertificateTypes();
-        for (int i = 0; i < types.length; ++i) {
-            switch (types[i]) {
-                case ClientCertificateType.rsa_sign:
-                case ClientCertificateType.dss_sign:
-                case ClientCertificateType.ecdsa_sign:
-                    break;
-                default:
-                    throw new TlsFatalAlert(AlertDescription.illegal_parameter);
+        for (int i = 0; i < types.length; ++i)
+        {
+            switch (types[i])
+            {
+            case ClientCertificateType.rsa_sign:
+            case ClientCertificateType.dss_sign:
+            case ClientCertificateType.ecdsa_sign:
+                break;
+            default:
+                throw new TlsFatalAlert(AlertDescription.illegal_parameter);
             }
         }
     }
 
     public void processClientCredentials(TlsCredentials clientCredentials)
-            throws IOException {
-        if (clientCredentials instanceof TlsSignerCredentials) {
+        throws IOException
+    {
+        if (clientCredentials instanceof TlsSignerCredentials)
+        {
             // OK
-        } else {
+        }
+        else
+        {
             throw new TlsFatalAlert(AlertDescription.internal_error);
         }
     }
 
-    protected Signer initVerifyer(TlsSigner tlsSigner, SignatureAndHashAlgorithm algorithm, SecurityParameters securityParameters) {
+    protected Signer initVerifyer(TlsSigner tlsSigner, SignatureAndHashAlgorithm algorithm, SecurityParameters securityParameters)
+    {
         Signer signer = tlsSigner.createVerifyer(algorithm, this.serverPublicKey);
         signer.update(securityParameters.clientRandom, 0, securityParameters.clientRandom.length);
         signer.update(securityParameters.serverRandom, 0, securityParameters.serverRandom.length);
         return signer;
     }
-
+    
 }

@@ -6,7 +6,8 @@ package gro.bouncycastle.crypto.tls;
  * Note that the values here are implementation-specific and arbitrary. It is recommended not to
  * depend on the particular values (e.g. serialization).
  */
-public class KeyExchangeAlgorithm {
+public class KeyExchangeAlgorithm
+{
     public static final int NULL = 0;
     public static final int RSA = 1;
     public static final int RSA_EXPORT = 2;
@@ -43,7 +44,7 @@ public class KeyExchangeAlgorithm {
     public static final int SRP = 21;
     public static final int SRP_DSS = 22;
     public static final int SRP_RSA = 23;
-
+    
     /*
      * RFC 5489
      */

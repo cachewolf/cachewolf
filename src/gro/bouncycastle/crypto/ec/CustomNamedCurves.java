@@ -1,21 +1,17 @@
 package gro.bouncycastle.crypto.ec;
 
+import ewe.math.BigInteger;
 import ewe.util.Enumeration;
 import ewe.util.Hashtable;
 import ewe.util.Vector;
+
 import gro.bouncycastle.asn1.ASN1ObjectIdentifier;
+//import gro.bouncycastle.asn1.gm.GMObjectIdentifiers;
 import gro.bouncycastle.asn1.sec.SECObjectIdentifiers;
 import gro.bouncycastle.asn1.x9.X9ECParameters;
 import gro.bouncycastle.asn1.x9.X9ECParametersHolder;
 import gro.bouncycastle.asn1.x9.X9ECPoint;
 import gro.bouncycastle.math.ec.ECCurve;
-import gro.bouncycastle.math.ec.custom.sec.SecP256R1Curve;
-import gro.bouncycastle.math.ec.endo.GLVTypeBEndomorphism;
-import gro.bouncycastle.math.ec.endo.GLVTypeBParameters;
-import gro.bouncycastle.util.Strings;
-import gro.bouncycastle.util.encoders.Hex;
-
-//import gro.bouncycastle.asn1.gm.GMObjectIdentifiers;
 //import gro.bouncycastle.math.ec.custom.djb.Curve25519;
 //import gro.bouncycastle.math.ec.custom.gm.SM2P256V1Curve;
 //import gro.bouncycastle.math.ec.custom.sec.SecP128R1Curve;
@@ -27,6 +23,7 @@ import gro.bouncycastle.util.encoders.Hex;
 //import gro.bouncycastle.math.ec.custom.sec.SecP224K1Curve;
 //import gro.bouncycastle.math.ec.custom.sec.SecP224R1Curve;
 //import gro.bouncycastle.math.ec.custom.sec.SecP256K1Curve;
+import gro.bouncycastle.math.ec.custom.sec.SecP256R1Curve;
 //import gro.bouncycastle.math.ec.custom.sec.SecP384R1Curve;
 //import gro.bouncycastle.math.ec.custom.sec.SecP521R1Curve;
 //import gro.bouncycastle.math.ec.custom.sec.SecT113R1Curve;
@@ -47,350 +44,23 @@ import gro.bouncycastle.util.encoders.Hex;
 //import gro.bouncycastle.math.ec.custom.sec.SecT409R1Curve;
 //import gro.bouncycastle.math.ec.custom.sec.SecT571K1Curve;
 //import gro.bouncycastle.math.ec.custom.sec.SecT571R1Curve;
+import gro.bouncycastle.math.ec.endo.GLVTypeBEndomorphism;
+import gro.bouncycastle.math.ec.endo.GLVTypeBParameters;
+import gro.bouncycastle.util.Strings;
+import gro.bouncycastle.util.encoders.Hex;
 
-public class CustomNamedCurves {
-    /*
-        /*
-         * secp384r1
-         * /
-        static X9ECParametersHolder secp384r1 = new X9ECParametersHolder()
-        {
-            protected X9ECParameters createParameters()
-            {
-                byte[] S = Hex.decode("A335926AA319A27A1D00896A6773A4827ACDAC73");
-                ECCurve curve = configureCurve(new SecP384R1Curve());
-                X9ECPoint G = new X9ECPoint(curve, Hex.decode("04"
-                    + "AA87CA22BE8B05378EB1C71EF320AD746E1D3B628BA79B9859F741E082542A385502F25DBF55296C3A545E3872760AB7"
-                    + "3617DE4A96262C6F5D9E98BF9292DC29F8F41DBD289A147CE9DA3113B5F0B8C00A60B1CE1D7E819D7A431D7C90EA0E5F"));
-                return new X9ECParameters(curve, G, curve.getOrder(), curve.getCofactor(), S);
-            }
-        };
+public class CustomNamedCurves
+{	
+    private static ECCurve configureCurve(ECCurve curve)
+    {
+        return curve;
+    }
 
-        /*
-         * secp521r1
-         * /
-        static X9ECParametersHolder secp521r1 = new X9ECParametersHolder()
-        {
-            protected X9ECParameters createParameters()
-            {
-                byte[] S = Hex.decode("D09E8800291CB85396CC6717393284AAA0DA64BA");
-                ECCurve curve = configureCurve(new SecP521R1Curve());
-                X9ECPoint G = new X9ECPoint(curve, Hex.decode("04"
-                    + "00C6858E06B70404E9CD9E3ECB662395B4429C648139053FB521F828AF606B4D3DBAA14B5E77EFE75928FE1DC127A2FFA8DE3348B3C1856A429BF97E7E31C2E5BD66"
-                    + "011839296A789A3BC0045C8A5FB42C7D1BD998F54449579B446817AFBD17273E662C97EE72995EF42640C550B9013FAD0761353C7086A272C24088BE94769FD16650"));
-                return new X9ECParameters(curve, G, curve.getOrder(), curve.getCofactor(), S);
-            }
-        };
+    private static ECCurve configureCurveGLV(ECCurve c, GLVTypeBParameters p)
+    {
+        return c.configure().setEndomorphism(new GLVTypeBEndomorphism(c, p)).create();
+    }
 
-        /*
-         * sect113r1
-         * /
-        static X9ECParametersHolder sect113r1 = new X9ECParametersHolder()
-        {
-            protected X9ECParameters createParameters()
-            {
-                byte[] S = Hex.decode("10E723AB14D696E6768756151756FEBF8FCB49A9");
-                ECCurve curve = configureCurve(new SecT113R1Curve());
-                X9ECPoint G = new X9ECPoint(curve, Hex.decode("04"
-                    + "009D73616F35F4AB1407D73562C10F"
-                    + "00A52830277958EE84D1315ED31886"));
-                return new X9ECParameters(curve, G, curve.getOrder(), curve.getCofactor(), S);
-            }
-        };
-
-        /*
-         * sect113r2
-         * /
-        static X9ECParametersHolder sect113r2 = new X9ECParametersHolder()
-        {
-            protected X9ECParameters createParameters()
-            {
-                byte[] S = Hex.decode("10C0FB15760860DEF1EEF4D696E676875615175D");
-                ECCurve curve = configureCurve(new SecT113R2Curve());
-                X9ECPoint G = new X9ECPoint(curve, Hex.decode("04"
-                    + "01A57A6A7B26CA5EF52FCDB8164797"
-                    + "00B3ADC94ED1FE674C06E695BABA1D"));
-                return new X9ECParameters(curve, G, curve.getOrder(), curve.getCofactor(), S);
-            }
-        };
-
-        /*
-         * sect131r1
-         * /
-        static X9ECParametersHolder sect131r1 = new X9ECParametersHolder()
-        {
-            protected X9ECParameters createParameters()
-            {
-                byte[] S = Hex.decode("4D696E676875615175985BD3ADBADA21B43A97E2");
-                ECCurve curve = configureCurve(new SecT131R1Curve());
-                X9ECPoint G = new X9ECPoint(curve, Hex.decode("04"
-                    + "0081BAF91FDF9833C40F9C181343638399"
-                    + "078C6E7EA38C001F73C8134B1B4EF9E150"));
-                return new X9ECParameters(curve, G, curve.getOrder(), curve.getCofactor(), S);
-            }
-        };
-
-        /*
-         * sect131r2
-         * /
-        static X9ECParametersHolder sect131r2 = new X9ECParametersHolder()
-        {
-            protected X9ECParameters createParameters()
-            {
-                byte[] S = Hex.decode("985BD3ADBAD4D696E676875615175A21B43A97E3");
-                ECCurve curve = configureCurve(new SecT131R2Curve());
-                X9ECPoint G = new X9ECPoint(curve, Hex.decode("04"
-                    + "0356DCD8F2F95031AD652D23951BB366A8"
-                    + "0648F06D867940A5366D9E265DE9EB240F"));
-                return new X9ECParameters(curve, G, curve.getOrder(), curve.getCofactor(), S);
-            }
-        };
-
-        /*
-         * sect163k1
-         * /
-        static X9ECParametersHolder sect163k1 = new X9ECParametersHolder()
-        {
-            protected X9ECParameters createParameters()
-            {
-                byte[] S = null;
-                ECCurve curve = configureCurve(new SecT163K1Curve());
-                X9ECPoint G = new X9ECPoint(curve, Hex.decode("04"
-                    + "02FE13C0537BBC11ACAA07D793DE4E6D5E5C94EEE8"
-                    + "0289070FB05D38FF58321F2E800536D538CCDAA3D9"));
-                return new X9ECParameters(curve, G, curve.getOrder(), curve.getCofactor(), S);
-            }
-        };
-
-        /*
-         * sect163r1
-         * /
-        static X9ECParametersHolder sect163r1 = new X9ECParametersHolder()
-        {
-            protected X9ECParameters createParameters()
-            {
-                byte[] S = Hex.decode("24B7B137C8A14D696E6768756151756FD0DA2E5C");
-                ECCurve curve = configureCurve(new SecT163R1Curve());
-                X9ECPoint G = new X9ECPoint(curve, Hex.decode("04"
-                    + "0369979697AB43897789566789567F787A7876A654"
-                    + "00435EDB42EFAFB2989D51FEFCE3C80988F41FF883"));
-                return new X9ECParameters(curve, G, curve.getOrder(), curve.getCofactor(), S);
-            }
-        };
-
-        /*
-         * sect163r2
-         * /
-        static X9ECParametersHolder sect163r2 = new X9ECParametersHolder()
-        {
-            protected X9ECParameters createParameters()
-            {
-                byte[] S = Hex.decode("85E25BFE5C86226CDB12016F7553F9D0E693A268");
-                ECCurve curve = configureCurve(new SecT163R2Curve());
-                X9ECPoint G = new X9ECPoint(curve, Hex.decode("04"
-                    + "03F0EBA16286A2D57EA0991168D4994637E8343E36"
-                    + "00D51FBC6C71A0094FA2CDD545B11C5C0C797324F1"));
-                return new X9ECParameters(curve, G, curve.getOrder(), curve.getCofactor(), S);
-            }
-        };
-
-        /*
-         * sect193r1
-         * /
-        static X9ECParametersHolder sect193r1 = new X9ECParametersHolder()
-        {
-            protected X9ECParameters createParameters()
-            {
-                byte[] S = Hex.decode("103FAEC74D696E676875615175777FC5B191EF30");
-                ECCurve curve = configureCurve(new SecT193R1Curve());
-                X9ECPoint G = new X9ECPoint(curve, Hex.decode("04"
-                    + "01F481BC5F0FF84A74AD6CDF6FDEF4BF6179625372D8C0C5E1"
-                    + "0025E399F2903712CCF3EA9E3A1AD17FB0B3201B6AF7CE1B05"));
-                return new X9ECParameters(curve, G, curve.getOrder(), curve.getCofactor(), S);
-            }
-        };
-
-        /*
-         * sect193r2
-         * /
-        static X9ECParametersHolder sect193r2 = new X9ECParametersHolder()
-        {
-            protected X9ECParameters createParameters()
-            {
-                byte[] S = Hex.decode("10B7B4D696E676875615175137C8A16FD0DA2211");
-                ECCurve curve = configureCurve(new SecT193R2Curve());
-                X9ECPoint G = new X9ECPoint(curve, Hex.decode("04"
-                    + "00D9B67D192E0367C803F39E1A7E82CA14A651350AAE617E8F"
-                    + "01CE94335607C304AC29E7DEFBD9CA01F596F927224CDECF6C"));
-                return new X9ECParameters(curve, G, curve.getOrder(), curve.getCofactor(), S);
-            }
-        };
-
-        /*
-         * sect233k1
-         * /
-        static X9ECParametersHolder sect233k1 = new X9ECParametersHolder()
-        {
-            protected X9ECParameters createParameters()
-            {
-                byte[] S = null;
-                ECCurve curve = configureCurve(new SecT233K1Curve());
-                X9ECPoint G = new X9ECPoint(curve, Hex.decode("04"
-                    + "017232BA853A7E731AF129F22FF4149563A419C26BF50A4C9D6EEFAD6126"
-                    + "01DB537DECE819B7F70F555A67C427A8CD9BF18AEB9B56E0C11056FAE6A3"));
-                return new X9ECParameters(curve, G, curve.getOrder(), curve.getCofactor(), S);
-            }
-        };
-
-        /*
-         * sect233r1
-         * /
-        static X9ECParametersHolder sect233r1 = new X9ECParametersHolder()
-        {
-            protected X9ECParameters createParameters()
-            {
-                byte[] S = Hex.decode("74D59FF07F6B413D0EA14B344B20A2DB049B50C3");
-                ECCurve curve = configureCurve(new SecT233R1Curve());
-                X9ECPoint G = new X9ECPoint(curve, Hex.decode("04"
-                    + "00FAC9DFCBAC8313BB2139F1BB755FEF65BC391F8B36F8F8EB7371FD558B"
-                    + "01006A08A41903350678E58528BEBF8A0BEFF867A7CA36716F7E01F81052"));
-                return new X9ECParameters(curve, G, curve.getOrder(), curve.getCofactor(), S);
-            }
-        };
-
-        /*
-         * sect239k1
-         * /
-        static X9ECParametersHolder sect239k1 = new X9ECParametersHolder()
-        {
-            protected X9ECParameters createParameters()
-            {
-                byte[] S = null;
-                ECCurve curve = configureCurve(new SecT239K1Curve());
-                X9ECPoint G = new X9ECPoint(curve, Hex.decode("04"
-                    + "29A0B6A887A983E9730988A68727A8B2D126C44CC2CC7B2A6555193035DC"
-                    + "76310804F12E549BDB011C103089E73510ACB275FC312A5DC6B76553F0CA"));
-                return new X9ECParameters(curve, G, curve.getOrder(), curve.getCofactor(), S);
-            }
-        };
-
-        /*
-         * sect283k1
-         * /
-        static X9ECParametersHolder sect283k1 = new X9ECParametersHolder()
-        {
-            protected X9ECParameters createParameters()
-            {
-                byte[] S = null;
-                ECCurve curve = configureCurve(new SecT283K1Curve());
-                X9ECPoint G = new X9ECPoint(curve, Hex.decode("04"
-                    + "0503213F78CA44883F1A3B8162F188E553CD265F23C1567A16876913B0C2AC2458492836"
-                    + "01CCDA380F1C9E318D90F95D07E5426FE87E45C0E8184698E45962364E34116177DD2259"));
-                return new X9ECParameters(curve, G, curve.getOrder(), curve.getCofactor(), S);
-            }
-        };
-
-        /*
-         * sect283r1
-         * /
-        static X9ECParametersHolder sect283r1 = new X9ECParametersHolder()
-        {
-            protected X9ECParameters createParameters()
-            {
-                byte[] S = Hex.decode("77E2B07370EB0F832A6DD5B62DFC88CD06BB84BE");
-                ECCurve curve = configureCurve(new SecT283R1Curve());
-                X9ECPoint G = new X9ECPoint(curve, Hex.decode("04"
-                    + "05F939258DB7DD90E1934F8C70B0DFEC2EED25B8557EAC9C80E2E198F8CDBECD86B12053"
-                    + "03676854FE24141CB98FE6D4B20D02B4516FF702350EDDB0826779C813F0DF45BE8112F4"));
-                return new X9ECParameters(curve, G, curve.getOrder(), curve.getCofactor(), S);
-            }
-        };
-
-        /*
-         * sect409k1
-         * /
-        static X9ECParametersHolder sect409k1 = new X9ECParametersHolder()
-        {
-            protected X9ECParameters createParameters()
-            {
-                byte[] S = null;
-                ECCurve curve = configureCurve(new SecT409K1Curve());
-                X9ECPoint G = new X9ECPoint(curve, Hex.decode("04"
-                    + "0060F05F658F49C1AD3AB1890F7184210EFD0987E307C84C27ACCFB8F9F67CC2C460189EB5AAAA62EE222EB1B35540CFE9023746"
-                    + "01E369050B7C4E42ACBA1DACBF04299C3460782F918EA427E6325165E9EA10E3DA5F6C42E9C55215AA9CA27A5863EC48D8E0286B"));
-                return new X9ECParameters(curve, G, curve.getOrder(), curve.getCofactor(), S);
-            }
-        };
-
-        /*
-         * sect409r1
-         * /
-        static X9ECParametersHolder sect409r1 = new X9ECParametersHolder()
-        {
-            protected X9ECParameters createParameters()
-            {
-                byte[] S = Hex.decode("4099B5A457F9D69F79213D094C4BCD4D4262210B");
-                ECCurve curve = configureCurve(new SecT409R1Curve());
-                X9ECPoint G = new X9ECPoint(curve, Hex.decode("04"
-                    + "015D4860D088DDB3496B0C6064756260441CDE4AF1771D4DB01FFE5B34E59703DC255A868A1180515603AEAB60794E54BB7996A7"
-                    + "0061B1CFAB6BE5F32BBFA78324ED106A7636B9C5A7BD198D0158AA4F5488D08F38514F1FDF4B4F40D2181B3681C364BA0273C706"));
-                return new X9ECParameters(curve, G, curve.getOrder(), curve.getCofactor(), S);
-            }
-        };
-
-        /*
-         * sect571k1
-         * /
-        static X9ECParametersHolder sect571k1 = new X9ECParametersHolder()
-        {
-            protected X9ECParameters createParameters()
-            {
-                byte[] S = null;
-                ECCurve curve = configureCurve(new SecT571K1Curve());
-                X9ECPoint G = new X9ECPoint(curve, Hex.decode("04"
-                    + "026EB7A859923FBC82189631F8103FE4AC9CA2970012D5D46024804801841CA44370958493B205E647DA304DB4CEB08CBBD1BA39494776FB988B47174DCA88C7E2945283A01C8972"
-                    + "0349DC807F4FBF374F4AEADE3BCA95314DD58CEC9F307A54FFC61EFC006D8A2C9D4979C0AC44AEA74FBEBBB9F772AEDCB620B01A7BA7AF1B320430C8591984F601CD4C143EF1C7A3"));
-                return new X9ECParameters(curve, G, curve.getOrder(), curve.getCofactor(), S);
-            }
-        };
-
-        /*
-         * sect571r1
-         * /
-        static X9ECParametersHolder sect571r1 = new X9ECParametersHolder()
-        {
-            protected X9ECParameters createParameters()
-            {
-                byte[] S = Hex.decode("2AA058F73A0E33AB486B0F610410C53A7F132310");
-                ECCurve curve = configureCurve(new SecT571R1Curve());
-                X9ECPoint G = new X9ECPoint(curve, Hex.decode("04"
-                    + "0303001D34B856296C16C0D40D3CD7750A93D1D2955FA80AA5F40FC8DB7B2ABDBDE53950F4C0D293CDD711A35B67FB1499AE60038614F1394ABFA3B4C850D927E1E7769C8EEC2D19"
-                    + "037BF27342DA639B6DCCFFFEB73D69D78C6C27A6009CBBCA1980F8533921E8A684423E43BAB08A576291AF8F461BB2A8B3531D2F0485C19B16E2F1516E23DD3C1A4827AF1B8AC15B"));
-                return new X9ECParameters(curve, G, curve.getOrder(), curve.getCofactor(), S);
-            }
-        };
-
-        /*
-         * sm2p256v1
-         * /
-        static X9ECParametersHolder sm2p256v1 = new X9ECParametersHolder()
-        {
-            protected X9ECParameters createParameters()
-            {
-                byte[] S = null;
-                ECCurve curve = configureCurve(new SM2P256V1Curve());
-                X9ECPoint G = new X9ECPoint(curve, Hex.decode("04"
-                    + "32C4AE2C1F1981195F9904466A39C9948FE30BBFF2660BE1715A4589334C74C7"
-                    + "BC3736A2F4F6779C59BDCEE36B692153D0A9877CC62A474002DF32E52139F0A0"));
-                return new X9ECParameters(curve, G, curve.getOrder(), curve.getCofactor(), S);
-            }
-        };
-    */
-    static final Hashtable nameToCurve = new Hashtable();
-    static final Hashtable nameToOID = new Hashtable();
-    static final Hashtable oidToCurve = new Hashtable();
-    static final Hashtable oidToName = new Hashtable();
-    static final Vector names = new Vector();
     /*
      * curve25519
      * /
@@ -405,11 +75,11 @@ public class CustomNamedCurves {
             /*
              * NOTE: Curve25519 was specified in Montgomery form. Rewriting in Weierstrass form
              * involves substitution of variables, so the base-point x coordinate is 9 + (486662 / 3).
-             *
+             * 
              * The Curve25519 paper doesn't say which of the two possible y values the base
              * point has. The choice here is guided by language in the Ed25519 paper.
-             *
-             * (The other possible y value is 5F51E65E475F794B1FE122D388B72EB36DC2B28192839E4DD6163A5D81312C14)
+             * 
+             * (The other possible y value is 5F51E65E475F794B1FE122D388B72EB36DC2B28192839E4DD6163A5D81312C14) 
              * /
             X9ECPoint G = new X9ECPoint(curve, Hex.decode("04"
                 + "2AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD245A"
@@ -614,32 +284,393 @@ public class CustomNamedCurves {
     /*
      * secp256r1
      */
-    static X9ECParametersHolder secp256r1 = new X9ECParametersHolder() {
-        protected X9ECParameters createParameters() {
+    static X9ECParametersHolder secp256r1 = new X9ECParametersHolder()
+    {
+        protected X9ECParameters createParameters()
+        {
             byte[] S = Hex.decode("C49D360886E704936A6678E1139D26B7819F7E90");
             ECCurve curve = configureCurve(new SecP256R1Curve());
             X9ECPoint G = new X9ECPoint(curve, Hex.decode("04"
-                    + "6B17D1F2E12C4247F8BCE6E563A440F277037D812DEB33A0F4A13945D898C296"
-                    + "4FE342E2FE1A7F9B8EE7EB4A7C0F9E162BCE33576B315ECECBB6406837BF51F5"));
+                + "6B17D1F2E12C4247F8BCE6E563A440F277037D812DEB33A0F4A13945D898C296"
+                + "4FE342E2FE1A7F9B8EE7EB4A7C0F9E162BCE33576B315ECECBB6406837BF51F5"));
+            return new X9ECParameters(curve, G, curve.getOrder(), curve.getCofactor(), S);
+        }
+    };
+/*
+    /*
+     * secp384r1
+     * /
+    static X9ECParametersHolder secp384r1 = new X9ECParametersHolder()
+    {
+        protected X9ECParameters createParameters()
+        {
+            byte[] S = Hex.decode("A335926AA319A27A1D00896A6773A4827ACDAC73");
+            ECCurve curve = configureCurve(new SecP384R1Curve());
+            X9ECPoint G = new X9ECPoint(curve, Hex.decode("04"
+                + "AA87CA22BE8B05378EB1C71EF320AD746E1D3B628BA79B9859F741E082542A385502F25DBF55296C3A545E3872760AB7"
+                + "3617DE4A96262C6F5D9E98BF9292DC29F8F41DBD289A147CE9DA3113B5F0B8C00A60B1CE1D7E819D7A431D7C90EA0E5F"));
             return new X9ECParameters(curve, G, curve.getOrder(), curve.getCofactor(), S);
         }
     };
 
     /*
-        static void defineCurveAlias(String name, ASN1ObjectIdentifier oid)
+     * secp521r1
+     * /
+    static X9ECParametersHolder secp521r1 = new X9ECParametersHolder()
+    {
+        protected X9ECParameters createParameters()
         {
-            Object curve = oidToCurve.get(oid);
-            if (curve == null)
-            {
-                throw new IllegalStateException();
-            }
-
-            name = Strings.toLowerCase(name);
-            nameToOID.put(name, oid);
-            nameToCurve.put(name, curve);
+            byte[] S = Hex.decode("D09E8800291CB85396CC6717393284AAA0DA64BA");
+            ECCurve curve = configureCurve(new SecP521R1Curve());
+            X9ECPoint G = new X9ECPoint(curve, Hex.decode("04"
+                + "00C6858E06B70404E9CD9E3ECB662395B4429C648139053FB521F828AF606B4D3DBAA14B5E77EFE75928FE1DC127A2FFA8DE3348B3C1856A429BF97E7E31C2E5BD66"
+                + "011839296A789A3BC0045C8A5FB42C7D1BD998F54449579B446817AFBD17273E662C97EE72995EF42640C550B9013FAD0761353C7086A272C24088BE94769FD16650"));
+            return new X9ECParameters(curve, G, curve.getOrder(), curve.getCofactor(), S);
         }
-    */
-    static {
+    };
+
+    /*
+     * sect113r1
+     * /
+    static X9ECParametersHolder sect113r1 = new X9ECParametersHolder()
+    {
+        protected X9ECParameters createParameters()
+        {
+            byte[] S = Hex.decode("10E723AB14D696E6768756151756FEBF8FCB49A9");
+            ECCurve curve = configureCurve(new SecT113R1Curve());
+            X9ECPoint G = new X9ECPoint(curve, Hex.decode("04"
+                + "009D73616F35F4AB1407D73562C10F"
+                + "00A52830277958EE84D1315ED31886"));
+            return new X9ECParameters(curve, G, curve.getOrder(), curve.getCofactor(), S);
+        }
+    };
+
+    /*
+     * sect113r2
+     * /
+    static X9ECParametersHolder sect113r2 = new X9ECParametersHolder()
+    {
+        protected X9ECParameters createParameters()
+        {
+            byte[] S = Hex.decode("10C0FB15760860DEF1EEF4D696E676875615175D");
+            ECCurve curve = configureCurve(new SecT113R2Curve());
+            X9ECPoint G = new X9ECPoint(curve, Hex.decode("04"
+                + "01A57A6A7B26CA5EF52FCDB8164797"
+                + "00B3ADC94ED1FE674C06E695BABA1D"));
+            return new X9ECParameters(curve, G, curve.getOrder(), curve.getCofactor(), S);
+        }
+    };
+
+    /*
+     * sect131r1
+     * /
+    static X9ECParametersHolder sect131r1 = new X9ECParametersHolder()
+    {
+        protected X9ECParameters createParameters()
+        {
+            byte[] S = Hex.decode("4D696E676875615175985BD3ADBADA21B43A97E2");
+            ECCurve curve = configureCurve(new SecT131R1Curve());
+            X9ECPoint G = new X9ECPoint(curve, Hex.decode("04"
+                + "0081BAF91FDF9833C40F9C181343638399"
+                + "078C6E7EA38C001F73C8134B1B4EF9E150"));
+            return new X9ECParameters(curve, G, curve.getOrder(), curve.getCofactor(), S);
+        }
+    };
+
+    /*
+     * sect131r2
+     * /
+    static X9ECParametersHolder sect131r2 = new X9ECParametersHolder()
+    {
+        protected X9ECParameters createParameters()
+        {
+            byte[] S = Hex.decode("985BD3ADBAD4D696E676875615175A21B43A97E3");
+            ECCurve curve = configureCurve(new SecT131R2Curve());
+            X9ECPoint G = new X9ECPoint(curve, Hex.decode("04"
+                + "0356DCD8F2F95031AD652D23951BB366A8"
+                + "0648F06D867940A5366D9E265DE9EB240F"));
+            return new X9ECParameters(curve, G, curve.getOrder(), curve.getCofactor(), S);
+        }
+    };
+
+    /*
+     * sect163k1
+     * /
+    static X9ECParametersHolder sect163k1 = new X9ECParametersHolder()
+    {
+        protected X9ECParameters createParameters()
+        {
+            byte[] S = null;
+            ECCurve curve = configureCurve(new SecT163K1Curve());
+            X9ECPoint G = new X9ECPoint(curve, Hex.decode("04"
+                + "02FE13C0537BBC11ACAA07D793DE4E6D5E5C94EEE8"
+                + "0289070FB05D38FF58321F2E800536D538CCDAA3D9"));
+            return new X9ECParameters(curve, G, curve.getOrder(), curve.getCofactor(), S);
+        }
+    };
+
+    /*
+     * sect163r1
+     * /
+    static X9ECParametersHolder sect163r1 = new X9ECParametersHolder()
+    {
+        protected X9ECParameters createParameters()
+        {
+            byte[] S = Hex.decode("24B7B137C8A14D696E6768756151756FD0DA2E5C");
+            ECCurve curve = configureCurve(new SecT163R1Curve());
+            X9ECPoint G = new X9ECPoint(curve, Hex.decode("04"
+                + "0369979697AB43897789566789567F787A7876A654"
+                + "00435EDB42EFAFB2989D51FEFCE3C80988F41FF883"));
+            return new X9ECParameters(curve, G, curve.getOrder(), curve.getCofactor(), S);
+        }
+    };
+
+    /*
+     * sect163r2
+     * /
+    static X9ECParametersHolder sect163r2 = new X9ECParametersHolder()
+    {
+        protected X9ECParameters createParameters()
+        {
+            byte[] S = Hex.decode("85E25BFE5C86226CDB12016F7553F9D0E693A268");
+            ECCurve curve = configureCurve(new SecT163R2Curve());
+            X9ECPoint G = new X9ECPoint(curve, Hex.decode("04"
+                + "03F0EBA16286A2D57EA0991168D4994637E8343E36"
+                + "00D51FBC6C71A0094FA2CDD545B11C5C0C797324F1"));
+            return new X9ECParameters(curve, G, curve.getOrder(), curve.getCofactor(), S);
+        }
+    };
+
+    /*
+     * sect193r1
+     * /
+    static X9ECParametersHolder sect193r1 = new X9ECParametersHolder()
+    {
+        protected X9ECParameters createParameters()
+        {
+            byte[] S = Hex.decode("103FAEC74D696E676875615175777FC5B191EF30");
+            ECCurve curve = configureCurve(new SecT193R1Curve());
+            X9ECPoint G = new X9ECPoint(curve, Hex.decode("04"
+                + "01F481BC5F0FF84A74AD6CDF6FDEF4BF6179625372D8C0C5E1"
+                + "0025E399F2903712CCF3EA9E3A1AD17FB0B3201B6AF7CE1B05"));
+            return new X9ECParameters(curve, G, curve.getOrder(), curve.getCofactor(), S);
+        }
+    };
+
+    /*
+     * sect193r2
+     * /
+    static X9ECParametersHolder sect193r2 = new X9ECParametersHolder()
+    {
+        protected X9ECParameters createParameters()
+        {
+            byte[] S = Hex.decode("10B7B4D696E676875615175137C8A16FD0DA2211");
+            ECCurve curve = configureCurve(new SecT193R2Curve());
+            X9ECPoint G = new X9ECPoint(curve, Hex.decode("04"
+                + "00D9B67D192E0367C803F39E1A7E82CA14A651350AAE617E8F"
+                + "01CE94335607C304AC29E7DEFBD9CA01F596F927224CDECF6C"));
+            return new X9ECParameters(curve, G, curve.getOrder(), curve.getCofactor(), S);
+        }
+    };
+
+    /*
+     * sect233k1
+     * /
+    static X9ECParametersHolder sect233k1 = new X9ECParametersHolder()
+    {
+        protected X9ECParameters createParameters()
+        {
+            byte[] S = null;
+            ECCurve curve = configureCurve(new SecT233K1Curve());
+            X9ECPoint G = new X9ECPoint(curve, Hex.decode("04"
+                + "017232BA853A7E731AF129F22FF4149563A419C26BF50A4C9D6EEFAD6126"
+                + "01DB537DECE819B7F70F555A67C427A8CD9BF18AEB9B56E0C11056FAE6A3"));
+            return new X9ECParameters(curve, G, curve.getOrder(), curve.getCofactor(), S);
+        }
+    };
+
+    /*
+     * sect233r1
+     * /
+    static X9ECParametersHolder sect233r1 = new X9ECParametersHolder()
+    {
+        protected X9ECParameters createParameters()
+        {
+            byte[] S = Hex.decode("74D59FF07F6B413D0EA14B344B20A2DB049B50C3");
+            ECCurve curve = configureCurve(new SecT233R1Curve());
+            X9ECPoint G = new X9ECPoint(curve, Hex.decode("04"
+                + "00FAC9DFCBAC8313BB2139F1BB755FEF65BC391F8B36F8F8EB7371FD558B"
+                + "01006A08A41903350678E58528BEBF8A0BEFF867A7CA36716F7E01F81052"));
+            return new X9ECParameters(curve, G, curve.getOrder(), curve.getCofactor(), S);
+        }
+    };
+
+    /*
+     * sect239k1
+     * /
+    static X9ECParametersHolder sect239k1 = new X9ECParametersHolder()
+    {
+        protected X9ECParameters createParameters()
+        {
+            byte[] S = null;
+            ECCurve curve = configureCurve(new SecT239K1Curve());
+            X9ECPoint G = new X9ECPoint(curve, Hex.decode("04"
+                + "29A0B6A887A983E9730988A68727A8B2D126C44CC2CC7B2A6555193035DC"
+                + "76310804F12E549BDB011C103089E73510ACB275FC312A5DC6B76553F0CA"));
+            return new X9ECParameters(curve, G, curve.getOrder(), curve.getCofactor(), S);
+        }
+    };
+
+    /*
+     * sect283k1
+     * /
+    static X9ECParametersHolder sect283k1 = new X9ECParametersHolder()
+    {
+        protected X9ECParameters createParameters()
+        {
+            byte[] S = null;
+            ECCurve curve = configureCurve(new SecT283K1Curve());
+            X9ECPoint G = new X9ECPoint(curve, Hex.decode("04"
+                + "0503213F78CA44883F1A3B8162F188E553CD265F23C1567A16876913B0C2AC2458492836"
+                + "01CCDA380F1C9E318D90F95D07E5426FE87E45C0E8184698E45962364E34116177DD2259"));
+            return new X9ECParameters(curve, G, curve.getOrder(), curve.getCofactor(), S);
+        }
+    };
+
+    /*
+     * sect283r1
+     * /
+    static X9ECParametersHolder sect283r1 = new X9ECParametersHolder()
+    {
+        protected X9ECParameters createParameters()
+        {
+            byte[] S = Hex.decode("77E2B07370EB0F832A6DD5B62DFC88CD06BB84BE");
+            ECCurve curve = configureCurve(new SecT283R1Curve());
+            X9ECPoint G = new X9ECPoint(curve, Hex.decode("04"
+                + "05F939258DB7DD90E1934F8C70B0DFEC2EED25B8557EAC9C80E2E198F8CDBECD86B12053"
+                + "03676854FE24141CB98FE6D4B20D02B4516FF702350EDDB0826779C813F0DF45BE8112F4"));
+            return new X9ECParameters(curve, G, curve.getOrder(), curve.getCofactor(), S);
+        }
+    };
+
+    /*
+     * sect409k1
+     * /
+    static X9ECParametersHolder sect409k1 = new X9ECParametersHolder()
+    {
+        protected X9ECParameters createParameters()
+        {
+            byte[] S = null;
+            ECCurve curve = configureCurve(new SecT409K1Curve());
+            X9ECPoint G = new X9ECPoint(curve, Hex.decode("04"
+                + "0060F05F658F49C1AD3AB1890F7184210EFD0987E307C84C27ACCFB8F9F67CC2C460189EB5AAAA62EE222EB1B35540CFE9023746"
+                + "01E369050B7C4E42ACBA1DACBF04299C3460782F918EA427E6325165E9EA10E3DA5F6C42E9C55215AA9CA27A5863EC48D8E0286B"));
+            return new X9ECParameters(curve, G, curve.getOrder(), curve.getCofactor(), S);
+        }
+    };
+
+    /*
+     * sect409r1
+     * /
+    static X9ECParametersHolder sect409r1 = new X9ECParametersHolder()
+    {
+        protected X9ECParameters createParameters()
+        {
+            byte[] S = Hex.decode("4099B5A457F9D69F79213D094C4BCD4D4262210B");
+            ECCurve curve = configureCurve(new SecT409R1Curve());
+            X9ECPoint G = new X9ECPoint(curve, Hex.decode("04"
+                + "015D4860D088DDB3496B0C6064756260441CDE4AF1771D4DB01FFE5B34E59703DC255A868A1180515603AEAB60794E54BB7996A7"
+                + "0061B1CFAB6BE5F32BBFA78324ED106A7636B9C5A7BD198D0158AA4F5488D08F38514F1FDF4B4F40D2181B3681C364BA0273C706"));
+            return new X9ECParameters(curve, G, curve.getOrder(), curve.getCofactor(), S);
+        }
+    };
+
+    /*
+     * sect571k1
+     * /
+    static X9ECParametersHolder sect571k1 = new X9ECParametersHolder()
+    {
+        protected X9ECParameters createParameters()
+        {
+            byte[] S = null;
+            ECCurve curve = configureCurve(new SecT571K1Curve());
+            X9ECPoint G = new X9ECPoint(curve, Hex.decode("04"
+                + "026EB7A859923FBC82189631F8103FE4AC9CA2970012D5D46024804801841CA44370958493B205E647DA304DB4CEB08CBBD1BA39494776FB988B47174DCA88C7E2945283A01C8972"
+                + "0349DC807F4FBF374F4AEADE3BCA95314DD58CEC9F307A54FFC61EFC006D8A2C9D4979C0AC44AEA74FBEBBB9F772AEDCB620B01A7BA7AF1B320430C8591984F601CD4C143EF1C7A3"));
+            return new X9ECParameters(curve, G, curve.getOrder(), curve.getCofactor(), S);
+        }
+    };
+
+    /*
+     * sect571r1
+     * /
+    static X9ECParametersHolder sect571r1 = new X9ECParametersHolder()
+    {
+        protected X9ECParameters createParameters()
+        {
+            byte[] S = Hex.decode("2AA058F73A0E33AB486B0F610410C53A7F132310");
+            ECCurve curve = configureCurve(new SecT571R1Curve());
+            X9ECPoint G = new X9ECPoint(curve, Hex.decode("04"
+                + "0303001D34B856296C16C0D40D3CD7750A93D1D2955FA80AA5F40FC8DB7B2ABDBDE53950F4C0D293CDD711A35B67FB1499AE60038614F1394ABFA3B4C850D927E1E7769C8EEC2D19"
+                + "037BF27342DA639B6DCCFFFEB73D69D78C6C27A6009CBBCA1980F8533921E8A684423E43BAB08A576291AF8F461BB2A8B3531D2F0485C19B16E2F1516E23DD3C1A4827AF1B8AC15B"));
+            return new X9ECParameters(curve, G, curve.getOrder(), curve.getCofactor(), S);
+        }
+    };
+
+    /*
+     * sm2p256v1
+     * /
+    static X9ECParametersHolder sm2p256v1 = new X9ECParametersHolder()
+    {
+        protected X9ECParameters createParameters()
+        {
+            byte[] S = null;
+            ECCurve curve = configureCurve(new SM2P256V1Curve());
+            X9ECPoint G = new X9ECPoint(curve, Hex.decode("04"
+                + "32C4AE2C1F1981195F9904466A39C9948FE30BBFF2660BE1715A4589334C74C7"
+                + "BC3736A2F4F6779C59BDCEE36B692153D0A9877CC62A474002DF32E52139F0A0"));
+            return new X9ECParameters(curve, G, curve.getOrder(), curve.getCofactor(), S);
+        }
+    };
+*/
+    static final Hashtable nameToCurve = new Hashtable();
+    static final Hashtable nameToOID = new Hashtable();
+    static final Hashtable oidToCurve = new Hashtable();
+    static final Hashtable oidToName = new Hashtable();
+    static final Vector names = new Vector();
+
+    static void defineCurve(String name, X9ECParametersHolder holder)
+    {
+        names.addElement(name);
+        name = Strings.toLowerCase(name);
+        nameToCurve.put(name, holder);
+    }
+
+    static void defineCurveWithOID(String name, ASN1ObjectIdentifier oid, X9ECParametersHolder holder)
+    {
+        names.addElement(name);
+        oidToName.put(oid, name);
+        oidToCurve.put(oid, holder);
+        name = Strings.toLowerCase(name);
+        nameToOID.put(name, oid);
+        nameToCurve.put(name, holder);
+    }
+/*
+    static void defineCurveAlias(String name, ASN1ObjectIdentifier oid)
+    {
+        Object curve = oidToCurve.get(oid);
+        if (curve == null)
+        {
+            throw new IllegalStateException();
+        }
+
+        name = Strings.toLowerCase(name);
+        nameToOID.put(name, oid);
+        nameToCurve.put(name, curve);
+    }
+*/
+    static
+    {
 //        defineCurve("curve25519", curve25519);
 
 //Original auskommentiert:        defineCurveWithOID("secp112r1", SECObjectIdentifiers.secp112r1, secp112r1);
@@ -697,68 +728,51 @@ public class CustomNamedCurves {
 //        defineCurveAlias("P-384", SECObjectIdentifiers.secp384r1);
 //        defineCurveAlias("P-521", SECObjectIdentifiers.secp521r1);
     }
+ 
 
-    private static ECCurve configureCurve(ECCurve curve) {
-        return curve;
-    }
-
-    private static ECCurve configureCurveGLV(ECCurve c, GLVTypeBParameters p) {
-        return c.configure().setEndomorphism(new GLVTypeBEndomorphism(c, p)).create();
-    }
-
-    static void defineCurve(String name, X9ECParametersHolder holder) {
-        names.addElement(name);
-        name = Strings.toLowerCase(name);
-        nameToCurve.put(name, holder);
-    }
-
-    static void defineCurveWithOID(String name, ASN1ObjectIdentifier oid, X9ECParametersHolder holder) {
-        names.addElement(name);
-        oidToName.put(oid, name);
-        oidToCurve.put(oid, holder);
-        name = Strings.toLowerCase(name);
-        nameToOID.put(name, oid);
-        nameToCurve.put(name, holder);
-    }
-
-    public static X9ECParameters getByName(String name) {
-        X9ECParametersHolder holder = (X9ECParametersHolder) nameToCurve.get(Strings.toLowerCase(name));
+    public static X9ECParameters getByName(String name)
+    {
+        X9ECParametersHolder holder = (X9ECParametersHolder)nameToCurve.get(Strings.toLowerCase(name));
         return holder == null ? null : holder.getParameters();
     }
-
     /**
      * return the X9ECParameters object for the named curve represented by the passed in object
      * identifier. Null if the curve isn't present.
-     *
-     * @param oid an object identifier representing a named curve, if present.
+     * 
+     * @param oid
+     *            an object identifier representing a named curve, if present.
      */
-    public static X9ECParameters getByOID(ASN1ObjectIdentifier oid) {
-        X9ECParametersHolder holder = (X9ECParametersHolder) oidToCurve.get(oid);
+    public static X9ECParameters getByOID(ASN1ObjectIdentifier oid)
+    {
+        X9ECParametersHolder holder = (X9ECParametersHolder)oidToCurve.get(oid);
         return holder == null ? null : holder.getParameters();
     }
 
     /**
      * return the object identifier signified by the passed in name. Null if there is no object
      * identifier associated with name.
-     *
+     * 
      * @return the object identifier associated with name, if present.
      */
-    public static ASN1ObjectIdentifier getOID(String name) {
-        return (ASN1ObjectIdentifier) nameToOID.get(Strings.toLowerCase(name));
+    public static ASN1ObjectIdentifier getOID(String name)
+    {
+        return (ASN1ObjectIdentifier)nameToOID.get(Strings.toLowerCase(name));
     }
 
     /**
      * return the named curve name represented by the given object identifier.
      */
-    public static String getName(ASN1ObjectIdentifier oid) {
-        return (String) oidToName.get(oid);
+    public static String getName(ASN1ObjectIdentifier oid)
+    {
+        return (String)oidToName.get(oid);
     }
 
 
     /**
      * returns an enumeration containing the name strings for curves contained in this structure.
      */
-    public static Enumeration getNames() {
+    public static Enumeration getNames()
+    {
         return names.elements();
     }
 }

@@ -13,7 +13,8 @@ import gro.bouncycastle.util.Arrays;
  * depends on your application - see PKCS1 Version 2 for details.
  */
 public class PKCS1Encoding
-        implements AsymmetricBlockCipher {
+    implements AsymmetricBlockCipher
+{
     /**
      * @deprecated use NOT_STRICT_LENGTH_ENABLED_PROPERTY
      */
@@ -46,7 +47,8 @@ public class PKCS1Encoding
      * @param cipher
      */
     public PKCS1Encoding(
-            AsymmetricBlockCipher cipher) {
+        AsymmetricBlockCipher cipher)
+    {
         this.engine = cipher;
         this.useStrictLength = useStrict();
     }
@@ -58,8 +60,9 @@ public class PKCS1Encoding
      * @param pLen   Length of the expected plaintext.
      */
     public PKCS1Encoding(
-            AsymmetricBlockCipher cipher,
-            int pLen) {
+        AsymmetricBlockCipher cipher,
+        int pLen)
+    {
         this.engine = cipher;
         this.useStrictLength = useStrict();
         this.pLen = pLen;
@@ -73,93 +76,57 @@ public class PKCS1Encoding
      * @param fallback The fallback value, we don't do an arraycopy here.
      */
     public PKCS1Encoding(
-            AsymmetricBlockCipher cipher,
-            byte[] fallback) {
+        AsymmetricBlockCipher cipher,
+        byte[] fallback)
+    {
         this.engine = cipher;
         this.useStrictLength = useStrict();
         this.fallback = fallback;
         this.pLen = fallback.length;
     }
 
-    /**
-     * Checks if the argument is a correctly PKCS#1.5 encoded Plaintext
-     * for encryption.
-     *
-     * @param encoded The Plaintext.
-     * @param pLen    Expected length of the plaintext.
-     * @return Either 0, if the encoding is correct, or -1, if it is incorrect.
-     */
-    private static int checkPkcs1Encoding(byte[] encoded, int pLen) {
-        int correct = 0;
-        /*
-         * Check if the first two bytes are 0 2
-         */
-        correct |= (encoded[0] ^ 2);
-
-        /*
-         * Now the padding check, check for no 0 byte in the padding
-         */
-        int plen = encoded.length - (
-                pLen /* Lenght of the PMS */
-                        + 1 /* Final 0-byte before PMS */
-        );
-
-        for (int i = 1; i < plen; i++) {
-            int tmp = encoded[i];
-            tmp |= tmp >> 1;
-            tmp |= tmp >> 2;
-            tmp |= tmp >> 4;
-            correct |= (tmp & 1) - 1;
-        }
-
-        /*
-         * Make sure the padding ends with a 0 byte.
-         */
-        correct |= encoded[encoded.length - (pLen + 1)];
-
-        /*
-         * Return 0 or 1, depending on the result.
-         */
-        correct |= correct >> 1;
-        correct |= correct >> 2;
-        correct |= correct >> 4;
-        return ~((correct & 1) - 1);
-    }
 
     //
     // for J2ME compatibility
     //
-    private boolean useStrict() {
+    private boolean useStrict()
+    {
         // required if security manager has been installed.
         String strict = System.getProperty(STRICT_LENGTH_ENABLED_PROPERTY);
         String notStrict = System.getProperty(NOT_STRICT_LENGTH_ENABLED_PROPERTY);
 
-        if (notStrict != null) {
+        if (notStrict != null)
+        {
             return !notStrict.equals("true");
         }
 
         return strict == null || strict.equals("true");
     }
 
-    public AsymmetricBlockCipher getUnderlyingCipher() {
+    public AsymmetricBlockCipher getUnderlyingCipher()
+    {
         return engine;
     }
 
     public void init(
-            boolean forEncryption,
-            CipherParameters param) {
+        boolean forEncryption,
+        CipherParameters param)
+    {
         AsymmetricKeyParameter kParam;
 
-        if (param instanceof ParametersWithRandom) {
-            throw new UnsupportedClassVersionError();/*
+        if (param instanceof ParametersWithRandom)
+        {
+        	throw new UnsupportedClassVersionError();/*
             ParametersWithRandom rParam = (ParametersWithRandom)param;
 
             this.random = rParam.getRandom();
             kParam = (AsymmetricKeyParameter)rParam.getParameters();
-*/
-        } else {
-            kParam = (AsymmetricKeyParameter) param;
-            if (!kParam.isPrivate() && forEncryption) {
+*/        }
+        else
+        {
+            kParam = (AsymmetricKeyParameter)param;
+            if (!kParam.isPrivate() && forEncryption)
+            {
                 this.random = new SecureRandom();
             }
         }
@@ -170,61 +137,80 @@ public class PKCS1Encoding
         this.forEncryption = forEncryption;
         this.blockBuffer = new byte[engine.getOutputBlockSize()];
 
-        if (pLen > 0 && fallback == null && random == null) {
-            throw new IllegalArgumentException("encoder requires random");
+        if (pLen > 0 && fallback == null && random == null)
+        {
+           throw new IllegalArgumentException("encoder requires random");
         }
     }
 
-    public int getInputBlockSize() {
+    public int getInputBlockSize()
+    {
         int baseBlockSize = engine.getInputBlockSize();
 
-        if (forEncryption) {
+        if (forEncryption)
+        {
             return baseBlockSize - HEADER_LENGTH;
-        } else {
+        }
+        else
+        {
             return baseBlockSize;
         }
     }
 
-    public int getOutputBlockSize() {
+    public int getOutputBlockSize()
+    {
         int baseBlockSize = engine.getOutputBlockSize();
 
-        if (forEncryption) {
+        if (forEncryption)
+        {
             return baseBlockSize;
-        } else {
+        }
+        else
+        {
             return baseBlockSize - HEADER_LENGTH;
         }
     }
 
     public byte[] processBlock(
-            byte[] in,
-            int inOff,
-            int inLen)
-            throws InvalidCipherTextException {
-        if (forEncryption) {
+        byte[] in,
+        int inOff,
+        int inLen)
+        throws InvalidCipherTextException
+    {
+        if (forEncryption)
+        {
             return encodeBlock(in, inOff, inLen);
-        } else {
+        }
+        else
+        {
             return decodeBlock(in, inOff, inLen);
         }
     }
 
     private byte[] encodeBlock(
-            byte[] in,
-            int inOff,
-            int inLen)
-            throws InvalidCipherTextException {
-        if (inLen > getInputBlockSize()) {
+        byte[] in,
+        int inOff,
+        int inLen)
+        throws InvalidCipherTextException
+    {
+        if (inLen > getInputBlockSize())
+        {
             throw new IllegalArgumentException("input data too large");
         }
 
         byte[] block = new byte[engine.getInputBlockSize()];
 
-        if (forPrivateKey) {
+        if (forPrivateKey)
+        {
             block[0] = 0x01;                        // type code 1
 
-            for (int i = 1; i != block.length - inLen - 1; i++) {
-                block[i] = (byte) 0xFF;
+            for (int i = 1; i != block.length - inLen - 1; i++)
+            {
+                block[i] = (byte)0xFF;
             }
-        } else {
+        }
+        else
+        {
             random.nextBytes(block);                // random fill
 
             block[0] = 0x02;                        // type code 2
@@ -233,9 +219,11 @@ public class PKCS1Encoding
             // a zero byte marks the end of the padding, so all
             // the pad bytes must be non-zero.
             //
-            for (int i = 1; i != block.length - inLen - 1; i++) {
-                while (block[i] == 0) {
-                    block[i] = (byte) random.nextInt();
+            for (int i = 1; i != block.length - inLen - 1; i++)
+            {
+                while (block[i] == 0)
+                {
+                    block[i] = (byte)random.nextInt();
                 }
             }
         }
@@ -245,6 +233,54 @@ public class PKCS1Encoding
 
         return engine.processBlock(block, 0, block.length);
     }
+
+    /**
+     * Checks if the argument is a correctly PKCS#1.5 encoded Plaintext
+     * for encryption.
+     *
+     * @param encoded The Plaintext.
+     * @param pLen    Expected length of the plaintext.
+     * @return Either 0, if the encoding is correct, or -1, if it is incorrect.
+     */
+    private static int checkPkcs1Encoding(byte[] encoded, int pLen)
+    {
+        int correct = 0;
+        /*
+		 * Check if the first two bytes are 0 2
+		 */
+        correct |= (encoded[0] ^ 2);
+
+		/*
+		 * Now the padding check, check for no 0 byte in the padding
+		 */
+        int plen = encoded.length - (
+            pLen /* Lenght of the PMS */
+                + 1 /* Final 0-byte before PMS */
+        );
+
+        for (int i = 1; i < plen; i++)
+        {
+            int tmp = encoded[i];
+            tmp |= tmp >> 1;
+            tmp |= tmp >> 2;
+            tmp |= tmp >> 4;
+            correct |= (tmp & 1) - 1;
+        }
+
+		/*
+		 * Make sure the padding ends with a 0 byte.
+		 */
+        correct |= encoded[encoded.length - (pLen + 1)];
+
+		/*
+		 * Return 0 or 1, depending on the result.
+		 */
+        correct |= correct >> 1;
+        correct |= correct >> 2;
+        correct |= correct >> 4;
+        return ~((correct & 1) - 1);
+    }
+
 
     /**
      * Decode PKCS#1.5 encoding, and return a random value if the padding is not correct.
@@ -257,37 +293,43 @@ public class PKCS1Encoding
      * @throws InvalidCipherTextException
      */
     private byte[] decodeBlockOrRandom(byte[] in, int inOff, int inLen)
-            throws InvalidCipherTextException {
-        if (!forPrivateKey) {
+        throws InvalidCipherTextException
+    {
+        if (!forPrivateKey)
+        {
             throw new InvalidCipherTextException("sorry, this method is only for decryption, not for signing");
         }
 
         byte[] block = engine.processBlock(in, inOff, inLen);
         byte[] random;
-        if (this.fallback == null) {
+        if (this.fallback == null)
+        {
             random = new byte[this.pLen];
             this.random.nextBytes(random);
-        } else {
+        }
+        else
+        {
             random = fallback;
         }
 
         byte[] data = (useStrictLength & (block.length != engine.getOutputBlockSize())) ? blockBuffer : block;
 
-        /*
-         * Check the padding.
-         */
+		/*
+		 * Check the padding.
+		 */
         int correct = PKCS1Encoding.checkPkcs1Encoding(data, this.pLen);
-
-        /*
-         * Now, to a constant time constant memory copy of the decrypted value
-         * or the random value, depending on the validity of the padding.
-         */
+		
+		/*
+		 * Now, to a constant time constant memory copy of the decrypted value
+		 * or the random value, depending on the validity of the padding.
+		 */
         byte[] result = new byte[this.pLen];
-        for (int i = 0; i < this.pLen; i++) {
-            result[i] = (byte) ((data[i + (data.length - pLen)] & (~correct)) | (random[i] & correct));
+        for (int i = 0; i < this.pLen; i++)
+        {
+            result[i] = (byte)((data[i + (data.length - pLen)] & (~correct)) | (random[i] & correct));
         }
 
-        Arrays.fill(data, (byte) 0);
+        Arrays.fill(data, (byte)0);
 
         return result;
     }
@@ -296,15 +338,17 @@ public class PKCS1Encoding
      * @throws InvalidCipherTextException if the decrypted block is not in PKCS1 format.
      */
     private byte[] decodeBlock(
-            byte[] in,
-            int inOff,
-            int inLen)
-            throws InvalidCipherTextException {
+        byte[] in,
+        int inOff,
+        int inLen)
+        throws InvalidCipherTextException
+    {
         /*
          * If the length of the expected plaintext is known, we use a constant-time decryption.
          * If the decryption fails, we return a random value.
          */
-        if (this.pLen != -1) {
+        if (this.pLen != -1)
+        {
             return this.decodeBlockOrRandom(in, inOff, inLen);
         }
 
@@ -312,18 +356,24 @@ public class PKCS1Encoding
         boolean incorrectLength = (useStrictLength & (block.length != engine.getOutputBlockSize()));
 
         byte[] data;
-        if (block.length < getOutputBlockSize()) {
+        if (block.length < getOutputBlockSize())
+        {
             data = blockBuffer;
-        } else {
+        }
+        else
+        {
             data = block;
         }
 
         byte type = data[0];
 
         boolean badType;
-        if (forPrivateKey) {
+        if (forPrivateKey)
+        {
             badType = (type != 2);
-        } else {
+        }
+        else
+        {
             badType = (type != 1);
         }
 
@@ -334,14 +384,16 @@ public class PKCS1Encoding
 
         start++;           // data should start at the next byte
 
-        if (badType | start < HEADER_LENGTH) {
-            Arrays.fill(data, (byte) 0);
+        if (badType | start < HEADER_LENGTH)
+        {
+            Arrays.fill(data, (byte)0);
             throw new InvalidCipherTextException("block incorrect");
         }
 
         // if we get this far, it's likely to be a genuine encoding error
-        if (incorrectLength) {
-            Arrays.fill(data, (byte) 0);
+        if (incorrectLength)
+        {
+            Arrays.fill(data, (byte)0);
             throw new InvalidCipherTextException("block incorrect size");
         }
 
@@ -353,20 +405,24 @@ public class PKCS1Encoding
     }
 
     private int findStart(byte type, byte[] block)
-            throws InvalidCipherTextException {
+        throws InvalidCipherTextException
+    {
         int start = -1;
         boolean padErr = false;
 
-        for (int i = 1; i != block.length; i++) {
+        for (int i = 1; i != block.length; i++)
+        {
             byte pad = block[i];
 
-            if (pad == 0 & start < 0) {
+            if (pad == 0 & start < 0)
+            {
                 start = i;
             }
-            padErr |= (type == 1 & start < 0 & pad != (byte) 0xff);
+            padErr |= (type == 1 & start < 0 & pad != (byte)0xff);
         }
 
-        if (padErr) {
+        if (padErr)
+        {
             return -1;
         }
 

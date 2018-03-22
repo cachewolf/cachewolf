@@ -5,11 +5,13 @@ package gro.bouncycastle.crypto;
  * or similar after x amount of bytes enciphered
  */
 public class MaxBytesExceededException
-        extends RuntimeCryptoException {
+    extends RuntimeCryptoException
+{
     /**
      * base constructor.
      */
-    public MaxBytesExceededException() {
+    public MaxBytesExceededException()
+    {
     }
 
     /**
@@ -18,7 +20,8 @@ public class MaxBytesExceededException
      * @param message the message to be carried with the exception.
      */
     public MaxBytesExceededException(
-            String message) {
+        String  message)
+    {
         super(message);
     }
 }

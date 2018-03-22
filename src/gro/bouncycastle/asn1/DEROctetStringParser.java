@@ -7,11 +7,13 @@ import ewe.io.InputStream;
  * Parser for DER encoded OCTET STRINGS
  */
 public class DEROctetStringParser
-        implements ASN1OctetStringParser {
+    implements ASN1OctetStringParser
+{
     private DefiniteLengthInputStream stream;
 
     DEROctetStringParser(
-            DefiniteLengthInputStream stream) {
+        DefiniteLengthInputStream stream)
+    {
         this.stream = stream;
     }
 
@@ -20,7 +22,8 @@ public class DEROctetStringParser
      *
      * @return an InputStream with its source as the OCTET STRING content.
      */
-    public InputStream getOctetStream() {
+    public InputStream getOctetStream()
+    {
         return stream;
     }
 
@@ -31,7 +34,8 @@ public class DEROctetStringParser
      * @throws IOException if there is an issue loading the data.
      */
     public ASN1Primitive getLoadedObject()
-            throws IOException {
+        throws IOException
+    {
         return new DEROctetString(stream.toByteArray());
     }
 
@@ -40,10 +44,14 @@ public class DEROctetStringParser
      *
      * @return an DEROctetString
      */
-    public ASN1Primitive toASN1Primitive() {
-        try {
+    public ASN1Primitive toASN1Primitive()
+    {
+        try
+        {
             return getLoadedObject();
-        } catch (IOException e) {
+        }
+        catch (IOException e)
+        {
             throw new ASN1ParsingException("IOException converting stream to byte array: " + e.getMessage(), e);
         }
     }

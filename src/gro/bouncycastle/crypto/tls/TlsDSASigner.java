@@ -1,18 +1,23 @@
 package gro.bouncycastle.crypto.tls;
 
-import gro.bouncycastle.crypto.*;
+import gro.bouncycastle.crypto.CipherParameters;
+import gro.bouncycastle.crypto.CryptoException;
+import gro.bouncycastle.crypto.DSA;
+import gro.bouncycastle.crypto.Digest;
+import gro.bouncycastle.crypto.Signer;
 import gro.bouncycastle.crypto.digests.NullDigest;
 import gro.bouncycastle.crypto.params.AsymmetricKeyParameter;
+//import org.bouncycastle.crypto.params.ParametersWithRandom;
 import gro.bouncycastle.crypto.signers.DSADigestSigner;
 
-//import org.bouncycastle.crypto.params.ParametersWithRandom;
-
 public abstract class TlsDSASigner
-        extends AbstractTlsSigner {
+    extends AbstractTlsSigner
+{
     public byte[] generateRawSignature(SignatureAndHashAlgorithm algorithm,
-                                       AsymmetricKeyParameter privateKey, byte[] hash)
-            throws CryptoException {
-        throw new UnsupportedClassVersionError();/*
+        AsymmetricKeyParameter privateKey, byte[] hash)
+        throws CryptoException
+    {
+    	throw new UnsupportedClassVersionError();/*
         Signer signer = makeSigner(algorithm, true, true,
             new ParametersWithRandom(privateKey, this.context.getSecureRandom()));
         if (algorithm == null)
@@ -25,13 +30,13 @@ public abstract class TlsDSASigner
             signer.update(hash, 0, hash.length);
         }
         return signer.generateSignature();
-*/
-    }
+*/    }
 
     public boolean verifyRawSignature(SignatureAndHashAlgorithm algorithm, byte[] sigBytes,
-                                      AsymmetricKeyParameter publicKey, byte[] hash)
-            throws CryptoException {
-        throw new UnsupportedClassVersionError();/*
+        AsymmetricKeyParameter publicKey, byte[] hash)
+        throws CryptoException
+    {
+    	throw new UnsupportedClassVersionError();/*
         Signer signer = makeSigner(algorithm, true, false, publicKey);
         if (algorithm == null)
         {
@@ -43,30 +48,34 @@ public abstract class TlsDSASigner
             signer.update(hash, 0, hash.length);
         }
         return signer.verifySignature(sigBytes);
-*/
-    }
+*/    }
 
-    public Signer createSigner(SignatureAndHashAlgorithm algorithm, AsymmetricKeyParameter privateKey) {
-        throw new UnsupportedClassVersionError();/*
+    public Signer createSigner(SignatureAndHashAlgorithm algorithm, AsymmetricKeyParameter privateKey)
+    {
+    	throw new UnsupportedClassVersionError();/*
         return makeSigner(algorithm, false, true, privateKey);
-*/
-    }
+*/    }
 
-    public Signer createVerifyer(SignatureAndHashAlgorithm algorithm, AsymmetricKeyParameter publicKey) {
+    public Signer createVerifyer(SignatureAndHashAlgorithm algorithm, AsymmetricKeyParameter publicKey)
+    {
         return makeSigner(algorithm, false, false, publicKey);
     }
 
-    protected CipherParameters makeInitParameters(boolean forSigning, CipherParameters cp) {
+    protected CipherParameters makeInitParameters(boolean forSigning, CipherParameters cp)
+    {
         return cp;
     }
 
     protected Signer makeSigner(SignatureAndHashAlgorithm algorithm, boolean raw, boolean forSigning,
-                                CipherParameters cp) {
-        if ((algorithm != null) != TlsUtils.isTLSv12(context)) {
+        CipherParameters cp)
+    {
+        if ((algorithm != null) != TlsUtils.isTLSv12(context))
+        {
             throw new IllegalStateException();
         }
 
-        if (algorithm != null && algorithm.getSignature() != getSignatureAlgorithm()) {
+        if (algorithm != null && algorithm.getSignature() != getSignatureAlgorithm())
+        {
             throw new IllegalStateException();
         }
 

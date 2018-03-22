@@ -3,6 +3,7 @@ package gro.bouncycastle.asn1;
 import ewe.io.ByteArrayInputStream;
 import ewe.io.IOException;
 import ewe.io.InputStream;
+
 import gro.bouncycastle.util.Arrays;
 import gro.bouncycastle.util.Strings;
 import gro.bouncycastle.util.encoders.Hex;
@@ -88,7 +89,7 @@ import gro.bouncycastle.util.encoders.Hex;
  * <b>10.1 Length forms</b>
  * The definite form of length encoding shall be used,
  * encoded in the minimum number of octets.
- * [Contrast with 8.1.3.2 b).]
+ * [Contrast with 8.1.3.2 b).] 
  * </p><p>
  * <b>10.2 String encoding forms</b>
  * For BIT STRING, OCTET STRING and restricted character string types,
@@ -97,40 +98,32 @@ import gro.bouncycastle.util.encoders.Hex;
  * </p>
  */
 public abstract class ASN1OctetString
-        extends ASN1Primitive
-        implements ASN1OctetStringParser {
-    byte[] string;
-
-    /**
-     * Base constructor.
-     *
-     * @param string the octets making up the octet string.
-     */
-    public ASN1OctetString(
-            byte[] string) {
-        if (string == null) {
-            throw new NullPointerException("string cannot be null");
-        }
-        this.string = string;
-    }
+    extends ASN1Primitive
+    implements ASN1OctetStringParser
+{
+    byte[]  string;
 
     /**
      * return an Octet String from a tagged object.
      *
-     * @param obj      the tagged object holding the object we want.
+     * @param obj the tagged object holding the object we want.
      * @param explicit true if the object is meant to be explicitly
-     *                 tagged false otherwise.
-     * @throws IllegalArgumentException if the tagged object cannot
-     *                                  be converted.
+     *              tagged false otherwise.
+     * @exception IllegalArgumentException if the tagged object cannot
+     *              be converted.
      */
     public static ASN1OctetString getInstance(
-            ASN1TaggedObject obj,
-            boolean explicit) {
+        ASN1TaggedObject    obj,
+        boolean             explicit)
+    {
         ASN1Primitive o = obj.getObject();
 
-        if (explicit || o instanceof ASN1OctetString) {
+        if (explicit || o instanceof ASN1OctetString)
+        {
             return getInstance(o);
-        } else {
+        }
+        else
+        {
             return BEROctetString.fromSequence(ASN1Sequence.getInstance(o));
         }
     }
@@ -139,23 +132,33 @@ public abstract class ASN1OctetString
      * return an Octet String from the given object.
      *
      * @param obj the object we want converted.
-     * @throws IllegalArgumentException if the object cannot be converted.
+     * @exception IllegalArgumentException if the object cannot be converted.
      */
     public static ASN1OctetString getInstance(
-            Object obj) {
-        if (obj == null || obj instanceof ASN1OctetString) {
-            return (ASN1OctetString) obj;
-        } else if (obj instanceof byte[]) {
-            try {
-                return ASN1OctetString.getInstance(ASN1Primitive.fromByteArray((byte[]) obj));
-            } catch (IOException e) {
+        Object  obj)
+    {
+        if (obj == null || obj instanceof ASN1OctetString)
+        {
+            return (ASN1OctetString)obj;
+        }
+        else if (obj instanceof byte[])
+        {
+            try
+            {
+                return ASN1OctetString.getInstance(ASN1Primitive.fromByteArray((byte[])obj));
+            }
+            catch (IOException e)
+            {
                 throw new IllegalArgumentException("failed to construct OCTET STRING from byte[]: " + e.getMessage());
             }
-        } else if (obj instanceof ASN1Encodable) {
-            ASN1Primitive primitive = ((ASN1Encodable) obj).toASN1Primitive();
+        }
+        else if (obj instanceof ASN1Encodable)
+        {
+            ASN1Primitive primitive = ((ASN1Encodable)obj).toASN1Primitive();
 
-            if (primitive instanceof ASN1OctetString) {
-                return (ASN1OctetString) primitive;
+            if (primitive instanceof ASN1OctetString)
+            {
+                return (ASN1OctetString)primitive;
             }
         }
 
@@ -163,20 +166,36 @@ public abstract class ASN1OctetString
     }
 
     /**
+     * Base constructor.
+     *
+     * @param string the octets making up the octet string.
+     */
+    public ASN1OctetString(
+        byte[]  string)
+    {
+        if (string == null)
+        {
+            throw new NullPointerException("string cannot be null");
+        }
+        this.string = string;
+    }
+
+    /**
      * Return the content of the OCTET STRING as an InputStream.
      *
      * @return an InputStream representing the OCTET STRING's content.
      */
-    public InputStream getOctetStream() {
+    public InputStream getOctetStream()
+    {
         return new ByteArrayInputStream(string);
     }
-
     /**
      * Return the parser associated with this object.
      *
      * @return a parser based on this OCTET STRING
      */
-    public ASN1OctetStringParser parser() {
+    public ASN1OctetStringParser parser()
+    {
         return this;
     }
 
@@ -185,41 +204,49 @@ public abstract class ASN1OctetString
      *
      * @return the byte[] representing the OCTET STRING's content.
      */
-    public byte[] getOctets() {
+    public byte[] getOctets()
+    {
         return string;
     }
 
-    public int hashCode() {
+    public int hashCode()
+    {
         return Arrays.hashCode(this.getOctets());
     }
 
     boolean asn1Equals(
-            ASN1Primitive o) {
-        if (!(o instanceof ASN1OctetString)) {
+        ASN1Primitive o)
+    {
+        if (!(o instanceof ASN1OctetString))
+        {
             return false;
         }
 
-        ASN1OctetString other = (ASN1OctetString) o;
+        ASN1OctetString  other = (ASN1OctetString)o;
 
         return Arrays.areEqual(string, other.string);
     }
 
-    public ASN1Primitive getLoadedObject() {
+    public ASN1Primitive getLoadedObject()
+    {
         return this.toASN1Primitive();
     }
 
-    ASN1Primitive toDERObject() {
+    ASN1Primitive toDERObject()
+    {
         return new DEROctetString(string);
     }
 
-    ASN1Primitive toDLObject() {
+    ASN1Primitive toDLObject()
+    {
         return new DEROctetString(string);
     }
 
     abstract void encode(ASN1OutputStream out)
-            throws IOException;
+        throws IOException;
 
-    public String toString() {
-        return "#" + Strings.fromByteArray(Hex.encode(string));
+    public String toString()
+    {
+      return "#"+ Strings.fromByteArray(Hex.encode(string));
     }
 }

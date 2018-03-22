@@ -5,8 +5,9 @@ import ewe.util.Hashtable;
 import ewe.util.Vector;
 
 public abstract class AbstractTlsClient
-        extends AbstractTlsPeer
-        implements TlsClient {
+    extends AbstractTlsPeer
+    implements TlsClient
+{
     protected TlsCipherFactory cipherFactory;
 
     protected TlsClientContext context;
@@ -18,17 +19,20 @@ public abstract class AbstractTlsClient
     protected int selectedCipherSuite;
     protected short selectedCompressionMethod;
 
-    public AbstractTlsClient() {
+    public AbstractTlsClient()
+    {
         this(new DefaultTlsCipherFactory());
     }
 
-    public AbstractTlsClient(TlsCipherFactory cipherFactory) {
+    public AbstractTlsClient(TlsCipherFactory cipherFactory)
+    {
         this.cipherFactory = cipherFactory;
     }
 
     protected boolean allowUnexpectedServerExtension(Integer extensionType, byte[] extensionData)
-            throws IOException {
-        throw new UnsupportedClassVersionError();/*
+        throws IOException
+    {
+    	throw new UnsupportedClassVersionError();/* 
         switch (extensionType.intValue())
         {
         case ExtensionType.elliptic_curves:
@@ -42,26 +46,30 @@ public abstract class AbstractTlsClient
         default:
             return false;
         }
-   */
-    }
+   */ }
 
     protected void checkForUnexpectedServerExtension(Hashtable serverExtensions, Integer extensionType)
-            throws IOException {
-        byte[] extensionData = TlsUtils.getExtensionData(serverExtensions, extensionType);
-        if (extensionData != null && !allowUnexpectedServerExtension(extensionType, extensionData)) {
+        throws IOException
+    {
+      byte[] extensionData = TlsUtils.getExtensionData(serverExtensions, extensionType);
+        if (extensionData != null && !allowUnexpectedServerExtension(extensionType, extensionData))
+        {
             throw new TlsFatalAlert(AlertDescription.illegal_parameter);
         }
     }
 
-    public void init(TlsClientContext context) {
+    public void init(TlsClientContext context)
+    {
         this.context = context;
     }
 
-    public TlsSession getSessionToResume() {
-        return null;
+    public TlsSession getSessionToResume()
+    {
+      return null;
     }
 
-    public ProtocolVersion getClientHelloRecordLayerVersion() {
+    public ProtocolVersion getClientHelloRecordLayerVersion()
+    {
 // "{03,00}"
 //         return ProtocolVersion.SSLv3;
 
@@ -72,11 +80,13 @@ public abstract class AbstractTlsClient
         return getClientVersion();
     }
 
-    public ProtocolVersion getClientVersion() {
-        return ProtocolVersion.TLSv12;
-    }
-
-    public boolean isFallback() {
+    public ProtocolVersion getClientVersion()
+    {
+      return ProtocolVersion.TLSv12;
+     }
+    
+    public boolean isFallback()
+    {
         /*
          * RFC 7507 4. The TLS_FALLBACK_SCSV cipher suite value is meant for use by clients that
          * repeat a connection attempt with a downgraded protocol (perform a "fallback retry") in
@@ -86,8 +96,9 @@ public abstract class AbstractTlsClient
     }
 
     public Hashtable getClientExtensions()
-            throws IOException {
-        Hashtable clientExtensions = null;
+        throws IOException
+    {
+      Hashtable clientExtensions = null;
 
         ProtocolVersion clientVersion = context.getClientVersion();
 
@@ -95,7 +106,8 @@ public abstract class AbstractTlsClient
          * RFC 5246 7.4.1.4.1. Note: this extension is not meaningful for TLS versions prior to 1.2.
          * Clients MUST NOT offer it if they are offering prior versions.
          */
-        if (TlsUtils.isSignatureAlgorithmsExtensionAllowed(clientVersion)) {
+        if (TlsUtils.isSignatureAlgorithmsExtensionAllowed(clientVersion))
+        {
             // TODO Provide a way for the user to specify the acceptable hash/signature algorithms.
 
             this.supportedSignatureAlgorithms = TlsUtils.getDefaultSupportedSignatureAlgorithms();
@@ -104,9 +116,10 @@ public abstract class AbstractTlsClient
 
             TlsUtils.addSignatureAlgorithmsExtension(clientExtensions, supportedSignatureAlgorithms);
 
-        }
+            }
 
-        if (TlsECCUtils.containsECCCipherSuites(getCipherSuites())) {
+        if (TlsECCUtils.containsECCCipherSuites(getCipherSuites()))
+        {
             /*
              * RFC 4492 5.1. A client that proposes ECC cipher suites in its ClientHello message
              * appends these extensions (along with any others), enumerating the curves it supports
@@ -117,9 +130,9 @@ public abstract class AbstractTlsClient
              * TODO Could just add all the curves since we support them all, but users may not want
              * to use unnecessarily large fields. Need configuration options.
              */
-            this.namedCurves = new int[]{NamedCurve.secp256r1, NamedCurve.secp384r1};
-            this.clientECPointFormats = new short[]{ECPointFormat.uncompressed,
-                    ECPointFormat.ansiX962_compressed_prime, ECPointFormat.ansiX962_compressed_char2,};
+            this.namedCurves = new int[]{ NamedCurve.secp256r1, NamedCurve.secp384r1 };
+            this.clientECPointFormats = new short[]{ ECPointFormat.uncompressed,
+                ECPointFormat.ansiX962_compressed_prime, ECPointFormat.ansiX962_compressed_char2, };
 
             clientExtensions = TlsExtensionsUtils.ensureExtensionsInitialised(clientExtensions);
 
@@ -129,42 +142,51 @@ public abstract class AbstractTlsClient
 
         return clientExtensions;
     }
+    
 
-
-    public ProtocolVersion getMinimumVersion() {
+    public ProtocolVersion getMinimumVersion()
+    {
         return ProtocolVersion.TLSv10;
     }
 
     public void notifyServerVersion(ProtocolVersion serverVersion)
-            throws IOException {
-        if (!getMinimumVersion().isEqualOrEarlierVersionOf(serverVersion)) {
+        throws IOException
+    {
+      if (!getMinimumVersion().isEqualOrEarlierVersionOf(serverVersion))
+        {
             throw new TlsFatalAlert(AlertDescription.protocol_version);
         }
     }
 
-    public short[] getCompressionMethods() {
-        return new short[]{CompressionMethod._null};
+    public short[] getCompressionMethods()
+    {
+      return new short[]{CompressionMethod._null};
     }
 
-    public void notifySessionID(byte[] sessionID) {
+    public void notifySessionID(byte[] sessionID)
+    {
         // Currently ignored
     }
 
-    public void notifySelectedCipherSuite(int selectedCipherSuite) {
-        this.selectedCipherSuite = selectedCipherSuite;
+    public void notifySelectedCipherSuite(int selectedCipherSuite)
+    {
+      this.selectedCipherSuite = selectedCipherSuite;
     }
 
-    public void notifySelectedCompressionMethod(short selectedCompressionMethod) {
-        this.selectedCompressionMethod = selectedCompressionMethod;
+    public void notifySelectedCompressionMethod(short selectedCompressionMethod)
+    {
+      this.selectedCompressionMethod = selectedCompressionMethod;
     }
 
     public void processServerExtensions(Hashtable serverExtensions)
-            throws IOException {
+        throws IOException
+    {
         /*
          * TlsProtocol implementation validates that any server extensions received correspond to
          * client extensions sent. By default, we don't send any, and this method is not called.
          */
-        if (serverExtensions != null) {
+        if (serverExtensions != null)
+        {
             /*
              * RFC 5246 7.4.1.4.1. Servers MUST NOT send this extension.
              */
@@ -172,9 +194,12 @@ public abstract class AbstractTlsClient
 
             checkForUnexpectedServerExtension(serverExtensions, TlsECCUtils.EXT_elliptic_curves);
 
-            if (TlsECCUtils.isECCCipherSuite(this.selectedCipherSuite)) {
+            if (TlsECCUtils.isECCCipherSuite(this.selectedCipherSuite))
+            {
                 this.serverECPointFormats = TlsECCUtils.getSupportedPointFormatsExtension(serverExtensions);
-            } else {
+            }
+            else
+            {
                 checkForUnexpectedServerExtension(serverExtensions, TlsECCUtils.EXT_ec_point_formats);
             }
 
@@ -186,43 +211,50 @@ public abstract class AbstractTlsClient
     }
 
     public void processServerSupplementalData(Vector serverSupplementalData)
-            throws IOException {
-        if (serverSupplementalData != null) {
+        throws IOException
+    {
+        if (serverSupplementalData != null)
+        {
             throw new TlsFatalAlert(AlertDescription.unexpected_message);
         }
     }
 
     public Vector getClientSupplementalData()
-            throws IOException {
-        return null;
+        throws IOException
+    {
+      return null;
     }
 
     public TlsCompression getCompression()
-            throws IOException {
-        switch (selectedCompressionMethod) {
-            case CompressionMethod._null:
-                return new TlsNullCompression();
+        throws IOException
+    {
+      switch (selectedCompressionMethod)
+        {
+        case CompressionMethod._null:
+            return new TlsNullCompression();
 
-            default:
-                /*
-                 * Note: internal error here; the TlsProtocol implementation verifies that the
-                 * server-selected compression method was in the list of client-offered compression
-                 * methods, so if we now can't produce an implementation, we shouldn't have offered it!
-                 */
-                throw new TlsFatalAlert(AlertDescription.internal_error);
+        default:
+            /*
+             * Note: internal error here; the TlsProtocol implementation verifies that the
+             * server-selected compression method was in the list of client-offered compression
+             * methods, so if we now can't produce an implementation, we shouldn't have offered it!
+             */
+            throw new TlsFatalAlert(AlertDescription.internal_error);
         }
     }
-
+    
 
     public TlsCipher getCipher()
-            throws IOException {
-        int encryptionAlgorithm = TlsUtils.getEncryptionAlgorithm(selectedCipherSuite);
+        throws IOException
+    {
+      int encryptionAlgorithm = TlsUtils.getEncryptionAlgorithm(selectedCipherSuite);
         int macAlgorithm = TlsUtils.getMACAlgorithm(selectedCipherSuite);
 
         return cipherFactory.createCipher(context, encryptionAlgorithm, macAlgorithm);
     }
 
     public void notifyNewSessionTicket(NewSessionTicket newSessionTicket)
-            throws IOException {
+        throws IOException
+    {
     }
 }

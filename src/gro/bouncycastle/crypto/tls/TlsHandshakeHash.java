@@ -3,7 +3,8 @@ package gro.bouncycastle.crypto.tls;
 import gro.bouncycastle.crypto.Digest;
 
 public interface TlsHandshakeHash
-        extends Digest {
+    extends Digest
+{
     void init(TlsContext context);
 
     TlsHandshakeHash notifyPRFDetermined();

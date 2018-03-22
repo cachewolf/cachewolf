@@ -6,7 +6,8 @@ import ewe.io.InputStream;
  * A basic parser for an OCTET STRING object
  */
 public interface ASN1OctetStringParser
-        extends ASN1Encodable, InMemoryRepresentable {
+    extends ASN1Encodable, InMemoryRepresentable
+{
     /**
      * Return the content of the OCTET STRING as an InputStream.
      *

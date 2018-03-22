@@ -1,5 +1,7 @@
 package gro.bouncycastle.asn1;
 
+import java.nio.channels.UnsupportedAddressTypeException;
+
 import ewe.io.IOException;
 import ewe.math.BigInteger;
 import gro.bouncycastle.util.Arrays;
@@ -9,64 +11,9 @@ import gro.bouncycastle.util.Properties;
  * Class representing the ASN.1 INTEGER type.
  */
 public class ASN1Integer
-        extends ASN1Primitive {
-    private byte[] bytes;
-
-    /**
-     * Construct an INTEGER from the passed in long value.
-     *
-     * @param value the long representing the value desired.
-     */
-    public ASN1Integer(
-            long value) {
-        bytes = BigInteger.valueOf(value).toByteArray();
-    }
-
-    /**
-     * Construct an INTEGER from the passed in BigInteger value.
-     *
-     * @param value the BigInteger representing the value desired.
-     */
-    public ASN1Integer(
-            BigInteger value) {
-        bytes = value.toByteArray();
-    }
-
-    /**
-     * Construct an INTEGER from the passed in byte array.
-     * <p>
-     * <p>
-     * <b>NB: Strict Validation applied by default.</b>
-     * </p>
-     * <p>
-     * It has turned out that there are still a few applications that struggle with
-     * the ASN.1 BER encoding rules for an INTEGER as described in:
-     *
-     * @param bytes the byte array representing a 2's complement encoding of a BigInteger.
-     * @link https://www.itu.int/ITU-T/studygroups/com17/languages/X.690-0207.pdf
-     * Section 8.3.2.
-     * </p>
-     * <p>
-     * Users can set the 'org.bouncycastle.asn1.allow_unsafe_integer' to 'true'
-     * and a looser validation will be applied. Users must recognise that this is
-     * not ideal and may pave the way for an exploit based around a faulty encoding
-     * in the future.
-     * </p>
-     */
-    public ASN1Integer(
-            byte[] bytes) {
-        this(bytes, true);
-    }
-
-    ASN1Integer(byte[] bytes, boolean clone) {
-        // Apply loose validation, see note in public constructor ANS1Integer(byte[])
-        if (!Properties.isOverrideSet("org.bouncycastle.asn1.allow_unsafe_integer")) {
-            if (isMalformed(bytes)) {
-                throw new IllegalArgumentException("malformed integer");
-            }
-        }
-        this.bytes = (clone) ? Arrays.clone(bytes) : bytes;
-    }
+    extends ASN1Primitive
+{
+    private  byte[] bytes;
 
     /**
      * Return an integer from the passed in object.
@@ -76,15 +23,21 @@ public class ASN1Integer
      * @throws IllegalArgumentException if the object cannot be converted.
      */
     public static ASN1Integer getInstance(
-            Object obj) {
-        if (obj == null || obj instanceof ASN1Integer) {
-            return (ASN1Integer) obj;
+        Object obj)
+    {
+        if (obj == null || obj instanceof ASN1Integer)
+        {
+            return (ASN1Integer)obj;
         }
 
-        if (obj instanceof byte[]) {
-            try {
-                return (ASN1Integer) fromByteArray((byte[]) obj);
-            } catch (Exception e) {
+        if (obj instanceof byte[])
+        {
+            try
+            {
+                return (ASN1Integer)fromByteArray((byte[])obj);
+            }
+            catch (Exception e)
+            {
                 throw new IllegalArgumentException("encoding error in getInstance: " + e.toString());
             }
         }
@@ -100,18 +53,85 @@ public class ASN1Integer
      *                 tagged false otherwise.
      * @return an ASN1Integer instance.
      * @throws IllegalArgumentException if the tagged object cannot
-     *                                  be converted.
+     * be converted.
      */
-    public static ASN1Integer getInstance(
-            ASN1TaggedObject obj,
-            boolean explicit) {
+    public static ASN1Integer getInstance(    		
+        ASN1TaggedObject obj,
+        boolean explicit)
+    {
         ASN1Primitive o = obj.getObject();
 
-        if (explicit || o instanceof ASN1Integer) {
+        if (explicit || o instanceof ASN1Integer)
+        {
             return getInstance(o);
-        } else {
+        }
+        else
+        {
             return new ASN1Integer(ASN1OctetString.getInstance(obj.getObject()).getOctets());
         }
+    }
+
+    /**
+     * Construct an INTEGER from the passed in long value.
+     *
+     * @param value the long representing the value desired.
+     */
+    public ASN1Integer(
+        long value)
+    {
+        bytes = BigInteger.valueOf(value).toByteArray();
+    }
+
+    /**
+     * Construct an INTEGER from the passed in BigInteger value.
+     *
+     * @param value the BigInteger representing the value desired.
+     */
+    public ASN1Integer(
+        BigInteger value)
+    {
+        bytes = value.toByteArray();
+    }
+
+    /**
+     * Construct an INTEGER from the passed in byte array.
+     *
+     * <p>
+     * <b>NB: Strict Validation applied by default.</b>
+     * </p>
+     * <p>
+     * It has turned out that there are still a few applications that struggle with
+     * the ASN.1 BER encoding rules for an INTEGER as described in:
+     *
+     * @link https://www.itu.int/ITU-T/studygroups/com17/languages/X.690-0207.pdf
+     * Section 8.3.2.
+     * </p>
+     * <p>
+     * Users can set the 'org.bouncycastle.asn1.allow_unsafe_integer' to 'true'
+     * and a looser validation will be applied. Users must recognise that this is
+     * not ideal and may pave the way for an exploit based around a faulty encoding
+     * in the future.
+     * </p>
+     *
+     * @param bytes the byte array representing a 2's complement encoding of a BigInteger.
+     */
+    public ASN1Integer(
+        byte[] bytes)
+    {
+        this(bytes, true);
+    }
+
+    ASN1Integer(byte[] bytes, boolean clone)
+    {
+        // Apply loose validation, see note in public constructor ANS1Integer(byte[])
+        if (!Properties.isOverrideSet("org.bouncycastle.asn1.allow_unsafe_integer"))
+        {
+            if (isMalformed(bytes))
+            {                           
+                throw new IllegalArgumentException("malformed integer");
+            }
+        }
+        this.bytes = (clone) ? Arrays.clone(bytes) : bytes;
     }
 
     /**
@@ -120,12 +140,16 @@ public class ASN1Integer
      * @param bytes The raw encoding of the integer.
      * @return true if the (in)put fails this validation.
      */
-    static boolean isMalformed(byte[] bytes) {
-        if (bytes.length > 1) {
-            if (bytes[0] == 0 && (bytes[1] & 0x80) == 0) {
+    static boolean isMalformed(byte[] bytes)
+    {
+        if (bytes.length > 1)
+        {
+            if (bytes[0] == 0 && (bytes[1] & 0x80) == 0)
+            {
                 return true;
             }
-            if (bytes[0] == (byte) 0xff && (bytes[1] & 0x80) != 0) {
+            if (bytes[0] == (byte)0xff && (bytes[1] & 0x80) != 0)
+            {
                 return true;
             }
         }
@@ -133,7 +157,8 @@ public class ASN1Integer
         return false;
     }
 
-    public BigInteger getValue() {
+    public BigInteger getValue()
+    {
         return new BigInteger(bytes);
     }
 
@@ -143,28 +168,34 @@ public class ASN1Integer
      *
      * @return the BigInteger that results from treating this ASN.1 INTEGER as unsigned.
      */
-    public BigInteger getPositiveValue() {
+    public BigInteger getPositiveValue()
+    {
         return new BigInteger(1, bytes);
     }
 
-    boolean isConstructed() {
+    boolean isConstructed()
+    {
         return false;
     }
 
-    int encodedLength() {
+    int encodedLength()
+    {
         return 1 + StreamUtil.calculateBodyLength(bytes.length) + bytes.length;
     }
 
     void encode(
-            ASN1OutputStream out)
-            throws IOException {
+        ASN1OutputStream out)
+        throws IOException
+    {
         out.writeEncoded(BERTags.INTEGER, bytes);
     }
 
-    public int hashCode() {
+    public int hashCode()
+    {
         int value = 0;
 
-        for (int i = 0; i != bytes.length; i++) {
+        for (int i = 0; i != bytes.length; i++)
+        {
             value ^= (bytes[i] & 0xff) << (i % 4);
         }
 
@@ -172,17 +203,20 @@ public class ASN1Integer
     }
 
     boolean asn1Equals(
-            ASN1Primitive o) {
-        if (!(o instanceof ASN1Integer)) {
+        ASN1Primitive o)
+    {
+        if (!(o instanceof ASN1Integer))
+        {
             return false;
         }
 
-        ASN1Integer other = (ASN1Integer) o;
+        ASN1Integer other = (ASN1Integer)o;
 
         return Arrays.areEqual(bytes, other.bytes);
     }
 
-    public String toString() {
+    public String toString()
+    {
         return getValue().toString();
     }
 

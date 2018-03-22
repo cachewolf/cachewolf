@@ -1,9 +1,13 @@
 package gro.bouncycastle.asn1.x509;
 
-import gro.bouncycastle.asn1.*;
-import gro.bouncycastle.asn1.x500.X500Name;
-
+import gro.bouncycastle.asn1.ASN1Integer;
+import gro.bouncycastle.asn1.ASN1Object;
+import gro.bouncycastle.asn1.ASN1Primitive;
+import gro.bouncycastle.asn1.ASN1Sequence;
+import gro.bouncycastle.asn1.ASN1TaggedObject;
 //import org.bouncycastle.asn1.ASN1TaggedObject;
+import gro.bouncycastle.asn1.DERBitString;
+import gro.bouncycastle.asn1.x500.X500Name;
 
 /**
  * an X509Certificate structure.
@@ -16,91 +20,112 @@ import gro.bouncycastle.asn1.x500.X500Name;
  * </pre>
  */
 public class Certificate
-        extends ASN1Object {
-    ASN1Sequence seq;
+    extends ASN1Object
+{
+    ASN1Sequence  seq;
     TBSCertificate tbsCert;
-    AlgorithmIdentifier sigAlgId;
-    DERBitString sig;
-
-    private Certificate(
-            ASN1Sequence seq) {
-        this.seq = seq;
-
-        //
-        // correct x509 certficate
-        //
-        if (seq.size() == 3) {
-            tbsCert = TBSCertificate.getInstance(seq.getObjectAt(0));
-            sigAlgId = AlgorithmIdentifier.getInstance(seq.getObjectAt(1));
-
-            sig = DERBitString.getInstance(seq.getObjectAt(2));
-        } else {
-            throw new IllegalArgumentException("sequence wrong size for a certificate");
-        }
-    }
+    AlgorithmIdentifier     sigAlgId;
+    DERBitString            sig;
 
     public static Certificate getInstance(
-            ASN1TaggedObject obj,
-            boolean explicit) {
+        ASN1TaggedObject obj,
+        boolean          explicit)
+    {
         return getInstance(ASN1Sequence.getInstance(obj, explicit));
     }
 
     public static Certificate getInstance(
-            Object obj) {
-        if (obj instanceof Certificate) {
-            return (Certificate) obj;
-        } else if (obj != null) {
+        Object  obj)
+    {
+        if (obj instanceof Certificate)
+        {
+            return (Certificate)obj;
+        }
+        else if (obj != null)
+        {
             return new Certificate(ASN1Sequence.getInstance(obj));
         }
 
         return null;
     }
+    private Certificate(
+        ASN1Sequence seq)
+    {
+        this.seq = seq;
 
-    public TBSCertificate getTBSCertificate() {
+        //
+        // correct x509 certficate
+        //
+        if (seq.size() == 3)
+        {
+            tbsCert = TBSCertificate.getInstance(seq.getObjectAt(0));
+            sigAlgId = AlgorithmIdentifier.getInstance(seq.getObjectAt(1));
+
+            sig = DERBitString.getInstance(seq.getObjectAt(2));
+        }
+        else
+        {
+            throw new IllegalArgumentException("sequence wrong size for a certificate");
+        }
+    }
+
+    public TBSCertificate getTBSCertificate()
+    {
         return tbsCert;
     }
 
-    public ASN1Integer getVersion() {
+    public ASN1Integer getVersion()
+    {
         return tbsCert.getVersion();
     }
 
-    public int getVersionNumber() {
+    public int getVersionNumber()
+    {
         return tbsCert.getVersionNumber();
     }
 
-    public ASN1Integer getSerialNumber() {
+    public ASN1Integer getSerialNumber()
+    {
         return tbsCert.getSerialNumber();
     }
 
-    public X500Name getIssuer() {
+    public X500Name getIssuer()
+    {
         return tbsCert.getIssuer();
     }
 
-    public Time getStartDate() {
+    public Time getStartDate()
+    {
         return tbsCert.getStartDate();
     }
 
-    public Time getEndDate() {
+    public Time getEndDate()
+    {
         return tbsCert.getEndDate();
     }
 
-    public X500Name getSubject() {
+    public X500Name getSubject()
+    {
         return tbsCert.getSubject();
     }
 
-    public SubjectPublicKeyInfo getSubjectPublicKeyInfo() {
+    public SubjectPublicKeyInfo getSubjectPublicKeyInfo()
+    {
         return tbsCert.getSubjectPublicKeyInfo();
     }
 
-    public AlgorithmIdentifier getSignatureAlgorithm() {
+    public AlgorithmIdentifier getSignatureAlgorithm()
+    {
         return sigAlgId;
     }
 
-    public DERBitString getSignature() {
+    public DERBitString getSignature()
+    {
         return sig;
     }
 
-    public ASN1Primitive toASN1Primitive() {
+    public ASN1Primitive toASN1Primitive()
+    {
         return seq;
     }
 

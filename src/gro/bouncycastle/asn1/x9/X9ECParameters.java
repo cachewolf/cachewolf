@@ -1,9 +1,13 @@
 package gro.bouncycastle.asn1.x9;
 
 import ewe.math.BigInteger;
+import gro.bouncycastle.asn1.ASN1EncodableVector;
+import gro.bouncycastle.asn1.ASN1Integer;
 import gro.bouncycastle.asn1.ASN1Object;
+import gro.bouncycastle.asn1.ASN1OctetString;
 import gro.bouncycastle.asn1.ASN1Primitive;
 import gro.bouncycastle.asn1.ASN1Sequence;
+import gro.bouncycastle.asn1.DERSequence;
 import gro.bouncycastle.math.ec.ECAlgorithms;
 import gro.bouncycastle.math.ec.ECCurve;
 import gro.bouncycastle.math.ec.ECPoint;
@@ -14,20 +18,22 @@ import gro.bouncycastle.math.ec.ECPoint;
  * X9.62, for further details.
  */
 public class X9ECParameters
-        extends ASN1Object
-        implements X9ObjectIdentifiers {
-    private static final BigInteger ONE = BigInteger.valueOf(1);
+    extends ASN1Object
+    implements X9ObjectIdentifiers
+{
+    private static final BigInteger   ONE = BigInteger.valueOf(1);
 
-    private X9FieldID fieldID;
-    private ECCurve curve;
-    private X9ECPoint g;
-    private BigInteger n;
-    private BigInteger h;
-    private byte[] seed;
+    private X9FieldID           fieldID;
+    private ECCurve             curve;
+    private X9ECPoint           g;
+    private BigInteger          n;
+    private BigInteger          h;
+    private byte[]              seed;
 
     private X9ECParameters(
-            ASN1Sequence seq) {
-        throw new UnsupportedClassVersionError();/*
+        ASN1Sequence  seq)
+    {
+    	throw new UnsupportedClassVersionError();/*
         if (!(seq.getObjectAt(0) instanceof ASN1Integer)
            || !((ASN1Integer)seq.getObjectAt(0)).getValue().equals(ONE))
         {
@@ -57,57 +63,80 @@ public class X9ECParameters
         {
             this.h = ((ASN1Integer)seq.getObjectAt(5)).getValue();
         }
-*/
-    }
+*/    }
+
+    public static X9ECParameters getInstance(Object obj)
+    {
+    	throw new UnsupportedClassVersionError();/*
+        if (obj instanceof X9ECParameters)
+        {
+            return (X9ECParameters)obj;
+        }
+
+        if (obj != null)
+        {
+            return new X9ECParameters(ASN1Sequence.getInstance(obj));
+        }
+
+        return null;
+*/    }
 
     public X9ECParameters(
-            ECCurve curve,
-            ECPoint g,
-            BigInteger n) {
+        ECCurve     curve,
+        ECPoint     g,
+        BigInteger  n)
+    {
         this(curve, g, n, null, null);
     }
 
     public X9ECParameters(
-            ECCurve curve,
-            X9ECPoint g,
-            BigInteger n,
-            BigInteger h) {
+        ECCurve     curve,
+        X9ECPoint     g,
+        BigInteger  n,
+        BigInteger  h)
+    {
         this(curve, g, n, h, null);
     }
 
     public X9ECParameters(
-            ECCurve curve,
-            ECPoint g,
-            BigInteger n,
-            BigInteger h) {
+        ECCurve     curve,
+        ECPoint     g,
+        BigInteger  n,
+        BigInteger  h)
+    {
         this(curve, g, n, h, null);
     }
-
     public X9ECParameters(
-            ECCurve curve,
-            ECPoint g,
-            BigInteger n,
-            BigInteger h,
-            byte[] seed) {
+        ECCurve     curve,
+        ECPoint     g,
+        BigInteger  n,
+        BigInteger  h,
+        byte[]      seed)
+    {
         this(curve, new X9ECPoint(g), n, h, seed);
     }
 
+ 
     public X9ECParameters(
-            ECCurve curve,
-            X9ECPoint g,
-            BigInteger n,
-            BigInteger h,
-            byte[] seed) {
+        ECCurve     curve,
+        X9ECPoint   g,
+        BigInteger  n,
+        BigInteger  h,
+        byte[]      seed)
+    {
         this.curve = curve;
         this.g = g;
         this.n = n;
         this.h = h;
         this.seed = seed;
 
-        if (ECAlgorithms.isFpCurve(curve)) {
+        if (ECAlgorithms.isFpCurve(curve))
+        {
             this.fieldID = new X9FieldID(curve.getField().getCharacteristic());
-        } else if (ECAlgorithms.isF2mCurve(curve)) {
-            throw new UnsupportedClassVersionError();/*
+        }
+        else if (ECAlgorithms.isF2mCurve(curve))
+        {
+        	throw new UnsupportedClassVersionError();/*
             PolynomialExtensionField field = (PolynomialExtensionField)curve.getField();
             int[] exponents = field.getMinimalPolynomial().getExponentsPresent();
             if (exponents.length == 3)
@@ -122,45 +151,35 @@ public class X9ECParameters
             {
                 throw new IllegalArgumentException("Only trinomial and pentomial curves are supported");
             }
-*/
-        } else {
+*/        }
+        else
+        {
             throw new IllegalArgumentException("'curve' is of an unsupported type");
         }
     }
 
-    public static X9ECParameters getInstance(Object obj) {
-        throw new UnsupportedClassVersionError();/*
-        if (obj instanceof X9ECParameters)
-        {
-            return (X9ECParameters)obj;
-        }
-
-        if (obj != null)
-        {
-            return new X9ECParameters(ASN1Sequence.getInstance(obj));
-        }
-
-        return null;
-*/
-    }
-
-    public ECCurve getCurve() {
+    public ECCurve getCurve()
+    {
         return curve;
     }
 
-    public ECPoint getG() {
+    public ECPoint getG()
+    {
         return g.getPoint();
     }
 
-    public BigInteger getN() {
+    public BigInteger getN()
+    {
         return n;
     }
 
-    public BigInteger getH() {
+    public BigInteger getH()
+    {
         return h;
     }
 
-    public byte[] getSeed() {
+    public byte[] getSeed()
+    {
         return seed;
     }
 
@@ -169,18 +188,19 @@ public class X9ECParameters
      *
      * @return the X9Curve for the curve in these parameters.
      */
-    public X9Curve getCurveEntry() {
-        throw new UnsupportedClassVersionError();/*
+    public X9Curve getCurveEntry()
+    {
+    	throw new UnsupportedClassVersionError();/*
         return new X9Curve(curve, seed);
-*/
-    }
+*/    }
 
     /**
      * Return the ASN.1 entry representing the FieldID.
      *
      * @return the X9FieldID for the FieldID in these parameters.
      */
-    public X9FieldID getFieldIDEntry() {
+    public X9FieldID getFieldIDEntry()
+    {
         return fieldID;
     }
 
@@ -189,7 +209,8 @@ public class X9ECParameters
      *
      * @return the X9ECPoint for the base point in these parameters.
      */
-    public X9ECPoint getBaseEntry() {
+    public X9ECPoint getBaseEntry()
+    {
         return g;
     }
 
@@ -206,8 +227,9 @@ public class X9ECParameters
      *  }
      * </pre>
      */
-    public ASN1Primitive toASN1Primitive() {
-        throw new UnsupportedClassVersionError();/*
+    public ASN1Primitive toASN1Primitive()
+    {
+    	throw new UnsupportedClassVersionError();/*
         ASN1EncodableVector v = new ASN1EncodableVector();
 
         v.add(new ASN1Integer(ONE));
@@ -222,6 +244,5 @@ public class X9ECParameters
         }
 
         return new DERSequence(v);
-*/
-    }
+*/    }
 }

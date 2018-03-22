@@ -2,6 +2,7 @@ package gro.bouncycastle.crypto.tls;
 
 import ewe.util.Enumeration;
 import ewe.util.Hashtable;
+
 import gro.bouncycastle.crypto.Digest;
 import gro.bouncycastle.util.Shorts;
 
@@ -9,7 +10,8 @@ import gro.bouncycastle.util.Shorts;
  * Buffers input until the hash algorithm is determined.
  */
 class DeferredHash
-        implements TlsHandshakeHash {
+    implements TlsHandshakeHash
+{
     protected static final int BUFFERING_HASH_LIMIT = 4;
 
     protected TlsContext context;
@@ -18,62 +20,69 @@ class DeferredHash
     private Hashtable hashes;
     private Short prfHashAlgorithm;
 
-    DeferredHash() {
+    DeferredHash()
+    {
         this.buf = new DigestInputBuffer();
         this.hashes = new Hashtable();
         this.prfHashAlgorithm = null;
     }
 
-    private DeferredHash(Short prfHashAlgorithm, Digest prfHash) {
+    private DeferredHash(Short prfHashAlgorithm, Digest prfHash)
+    {
         this.buf = null;
         this.hashes = new Hashtable();
         this.prfHashAlgorithm = prfHashAlgorithm;
         hashes.put(prfHashAlgorithm, prfHash);
 
-    }
+    	}
 
-    public void init(TlsContext context) {
+    public void init(TlsContext context)
+    {
         this.context = context;
     }
 
-    public TlsHandshakeHash notifyPRFDetermined() {
+    public TlsHandshakeHash notifyPRFDetermined()
+    {
         int prfAlgorithm = context.getSecurityParameters().getPrfAlgorithm();
-        if (prfAlgorithm == PRFAlgorithm.tls_prf_legacy) {
-            throw new UnsupportedClassVersionError();/*
+        if (prfAlgorithm == PRFAlgorithm.tls_prf_legacy)
+        {
+        	throw new UnsupportedClassVersionError();/*
             CombinedHash legacyHash = new CombinedHash();
             legacyHash.init(context);
             buf.updateDigest(legacyHash);
             return legacyHash.notifyPRFDetermined();
-*/
-        }
+*/        }
 
         this.prfHashAlgorithm = Shorts.valueOf(TlsUtils.getHashAlgorithmForPRFAlgorithm(prfAlgorithm));
 
         checkTrackingHash(prfHashAlgorithm);
 
         return this;
-    }
+    	}
 
-
-    public void trackHashAlgorithm(short hashAlgorithm) {
-        throw new UnsupportedClassVersionError();/*
+    
+    public void trackHashAlgorithm(short hashAlgorithm)
+    {
+    	throw new UnsupportedClassVersionError();/*
         if (buf == null)
         {
             throw new IllegalStateException("Too late to track more hash algorithms");
         }
 
         checkTrackingHash(Shorts.valueOf(hashAlgorithm));
-*/
-    }
+*/    }
+    
 
-
-    public void sealHashAlgorithms() {
+    public void sealHashAlgorithms()
+    {
         checkStopBuffering();
     }
 
-    public TlsHandshakeHash stopTracking() {
-        Digest prfHash = TlsUtils.cloneHash(prfHashAlgorithm.shortValue(), (Digest) hashes.get(prfHashAlgorithm));
-        if (buf != null) {
+    public TlsHandshakeHash stopTracking()
+    {
+        Digest prfHash = TlsUtils.cloneHash(prfHashAlgorithm.shortValue(), (Digest)hashes.get(prfHashAlgorithm));
+        if (buf != null)
+        {
             buf.updateDigest(prfHash);
         }
         DeferredHash result = new DeferredHash(prfHashAlgorithm, prfHash);
@@ -82,20 +91,23 @@ class DeferredHash
     }
 
 
-    public Digest forkPRFHash() {
+    public Digest forkPRFHash()
+    {
         checkStopBuffering();
 
-        if (buf != null) {
+        if (buf != null)
+        {
             Digest prfHash = TlsUtils.createHash(prfHashAlgorithm.shortValue());
             buf.updateDigest(prfHash);
             return prfHash;
         }
 
-        return TlsUtils.cloneHash(prfHashAlgorithm.shortValue(), (Digest) hashes.get(prfHashAlgorithm));
+        return TlsUtils.cloneHash(prfHashAlgorithm.shortValue(), (Digest)hashes.get(prfHashAlgorithm));
     }
-
-    public byte[] getFinalHash(short hashAlgorithm) {
-        throw new UnsupportedClassVersionError();/*
+    
+    public byte[] getFinalHash(short hashAlgorithm)
+    {
+    	throw new UnsupportedClassVersionError();/*
         Digest d = (Digest)hashes.get(Shorts.valueOf(hashAlgorithm));
         if (d == null)
         {
@@ -111,20 +123,22 @@ class DeferredHash
         byte[] bs = new byte[d.getDigestSize()];
         d.doFinal(bs, 0);
         return bs;
-*/
-    }
+*/    }
+  
 
-
-    public String getAlgorithmName() {
+    public String getAlgorithmName()
+    {
         throw new IllegalStateException("Use fork() to get a definite Digest");
     }
 
-    public int getDigestSize() {
+    public int getDigestSize()
+    {
         throw new IllegalStateException("Use fork() to get a definite Digest");
     }
 
-    public void update(byte input) {
-        throw new UnsupportedClassVersionError();/*
+    public void update(byte input)
+    {
+    	throw new UnsupportedClassVersionError();/*
         if (buf != null)
         {
             buf.write(input);
@@ -137,28 +151,32 @@ class DeferredHash
             Digest hash = (Digest)e.nextElement();
             hash.update(input);
         }
-*/
-    }
+*/    }
 
-    public void update(byte[] input, int inOff, int len) {
-        if (buf != null) {
+    public void update(byte[] input, int inOff, int len)
+    {
+        if (buf != null)
+        {
             buf.write(input, inOff, len);
             return;
         }
 
         Enumeration e = hashes.elements();
-        while (e.hasMoreElements()) {
-            Digest hash = (Digest) e.nextElement();
+        while (e.hasMoreElements())
+        {
+            Digest hash = (Digest)e.nextElement();
             hash.update(input, inOff, len);
         }
     }
 
-    public int doFinal(byte[] output, int outOff) {
+    public int doFinal(byte[] output, int outOff)
+    {
         throw new IllegalStateException("Use fork() to get a definite Digest");
     }
 
-    public void reset() {
-        throw new UnsupportedClassVersionError();/*
+    public void reset()
+    {
+    	throw new UnsupportedClassVersionError();/*
         if (buf != null)
         {
             buf.reset();
@@ -171,15 +189,17 @@ class DeferredHash
             Digest hash = (Digest)e.nextElement();
             hash.reset();
         }
-*/
-    }
+*/    }
+    
 
-
-    protected void checkStopBuffering() {
-        if (buf != null && hashes.size() <= BUFFERING_HASH_LIMIT) {
+    protected void checkStopBuffering()
+    {
+        if (buf != null && hashes.size() <= BUFFERING_HASH_LIMIT)
+        {
             Enumeration e = hashes.elements();
-            while (e.hasMoreElements()) {
-                Digest hash = (Digest) e.nextElement();
+            while (e.hasMoreElements())
+            {
+                Digest hash = (Digest)e.nextElement();
                 buf.updateDigest(hash);
             }
 
@@ -187,8 +207,10 @@ class DeferredHash
         }
     }
 
-    protected void checkTrackingHash(Short hashAlgorithm) {
-        if (!hashes.containsKey(hashAlgorithm)) {
+    protected void checkTrackingHash(Short hashAlgorithm)
+    {
+        if (!hashes.containsKey(hashAlgorithm))
+        {
             Digest hash = TlsUtils.createHash(hashAlgorithm.shortValue());
             hashes.put(hashAlgorithm, hash);
         }

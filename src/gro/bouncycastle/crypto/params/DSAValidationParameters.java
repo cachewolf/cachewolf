@@ -2,51 +2,61 @@ package gro.bouncycastle.crypto.params;
 
 import gro.bouncycastle.util.Arrays;
 
-public class DSAValidationParameters {
+public class DSAValidationParameters
+{
     private int usageIndex;
-    private byte[] seed;
-    private int counter;
+    private byte[]  seed;
+    private int     counter;
 
     public DSAValidationParameters(
-            byte[] seed,
-            int counter) {
+        byte[]  seed,
+        int     counter)
+    {
         this(seed, counter, -1);
     }
 
     public DSAValidationParameters(
-            byte[] seed,
-            int counter,
-            int usageIndex) {
+        byte[]  seed,
+        int     counter,
+        int     usageIndex)
+    {
         this.seed = seed;
         this.counter = counter;
         this.usageIndex = usageIndex;
     }
 
-    public int getCounter() {
+    public int getCounter()
+    {
         return counter;
     }
 
-    public byte[] getSeed() {
+    public byte[] getSeed()
+    {
         return seed;
     }
 
-    public int getUsageIndex() {
+    public int getUsageIndex()
+    {
         return usageIndex;
     }
 
-    public int hashCode() {
+    public int hashCode()
+    {
         return counter ^ Arrays.hashCode(seed);
     }
-
+    
     public boolean equals(
-            Object o) {
-        if (!(o instanceof DSAValidationParameters)) {
+        Object o)
+    {
+        if (!(o instanceof DSAValidationParameters))
+        {
             return false;
         }
 
-        DSAValidationParameters other = (DSAValidationParameters) o;
+        DSAValidationParameters  other = (DSAValidationParameters)o;
 
-        if (other.counter != this.counter) {
+        if (other.counter != this.counter)
+        {
             return false;
         }
 

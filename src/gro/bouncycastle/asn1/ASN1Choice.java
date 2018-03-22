@@ -21,6 +21,7 @@ package gro.bouncycastle.asn1;
  * </blockquote>
  * </p>
  */
-public interface ASN1Choice {
+public interface ASN1Choice
+{
     // marker interface
 }

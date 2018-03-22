@@ -1,16 +1,19 @@
 package gro.bouncycastle.crypto.tls;
 
 public class TlsFatalAlertReceived
-        extends TlsException {
+    extends TlsException
+{
     protected short alertDescription;
 
-    public TlsFatalAlertReceived(short alertDescription) {
+    public TlsFatalAlertReceived(short alertDescription)
+    {
         super(AlertDescription.getText(alertDescription), null);
 
         this.alertDescription = alertDescription;
     }
 
-    public short getAlertDescription() {
+    public short getAlertDescription()
+    {
         return alertDescription;
     }
 }

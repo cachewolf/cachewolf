@@ -1,6 +1,7 @@
 package gro.bouncycastle.asn1;
 
 import ewe.io.IOException;
+
 import gro.bouncycastle.util.Arrays;
 import gro.bouncycastle.util.Strings;
 
@@ -31,64 +32,34 @@ import gro.bouncycastle.util.Strings;
  * </p>
  */
 public class DERPrintableString
-        extends ASN1Primitive
-        implements ASN1String {
-    private byte[] string;
-
-    /**
-     * Basic constructor - byte encoded string.
-     */
-    DERPrintableString(
-            byte[] string) {
-        this.string = string;
-    }
-
-    /**
-     * Basic constructor - this does not validate the string
-     */
-    public DERPrintableString(
-            String string) {
-        this(string, false);
-    }
-
-    /**
-     * Constructor with optional validation.
-     *
-     * @param string   the base string to wrap.
-     * @param validate whether or not to check the string.
-     * @throws IllegalArgumentException if validate is true and the string
-     *                                  contains characters that should not be in a PrintableString.
-     */
-    public DERPrintableString(
-            String string,
-            boolean validate) {
-        throw new UnsupportedClassVersionError();/*
-        if (validate && !isPrintableString(string))
-        {
-            throw new IllegalArgumentException("string contains illegal characters");
-        }
-
-        this.string = Strings.toByteArray(string);
-*/
-    }
+    extends ASN1Primitive
+    implements ASN1String
+{
+    private  byte[]  string;
 
     /**
      * Return a printable string from the passed in object.
      *
      * @param obj a DERPrintableString or an object that can be converted into one.
+     * @exception IllegalArgumentException if the object cannot be converted.
      * @return a DERPrintableString instance, or null.
-     * @throws IllegalArgumentException if the object cannot be converted.
      */
     public static DERPrintableString getInstance(
-            Object obj) {
-        if (obj == null || obj instanceof DERPrintableString) {
-            return (DERPrintableString) obj;
+        Object  obj)
+    {
+        if (obj == null || obj instanceof DERPrintableString)
+        {
+            return (DERPrintableString)obj;
         }
 
-        if (obj instanceof byte[]) {
-            try {
-                return (DERPrintableString) fromByteArray((byte[]) obj);
-            } catch (Exception e) {
+        if (obj instanceof byte[])
+        {
+            try
+            {
+                return (DERPrintableString)fromByteArray((byte[])obj);
+            }
+            catch (Exception e)
+            {
                 throw new IllegalArgumentException("encoding error in getInstance: " + e.toString());
             }
         }
@@ -99,23 +70,114 @@ public class DERPrintableString
     /**
      * Return a Printable String from a tagged object.
      *
-     * @param obj      the tagged object holding the object we want
+     * @param obj the tagged object holding the object we want
      * @param explicit true if the object is meant to be explicitly
-     *                 tagged false otherwise.
+     *              tagged false otherwise.
+     * @exception IllegalArgumentException if the tagged object cannot
+     *               be converted.
      * @return a DERPrintableString instance, or null.
-     * @throws IllegalArgumentException if the tagged object cannot
-     *                                  be converted.
      */
     public static DERPrintableString getInstance(
-            ASN1TaggedObject obj,
-            boolean explicit) {
+        ASN1TaggedObject obj,
+        boolean          explicit)
+    {
         ASN1Primitive o = obj.getObject();
 
-        if (explicit || o instanceof DERPrintableString) {
+        if (explicit || o instanceof DERPrintableString)
+        {
             return getInstance(o);
-        } else {
+        }
+        else
+        {
             return new DERPrintableString(ASN1OctetString.getInstance(o).getOctets());
         }
+    }
+
+    /**
+     * Basic constructor - byte encoded string.
+     */
+    DERPrintableString(
+        byte[]   string)
+    {
+        this.string = string;
+    }
+
+    /**
+     * Basic constructor - this does not validate the string
+     */
+    public DERPrintableString(
+        String   string)
+    {
+        this(string, false);
+    }
+
+    /**
+     * Constructor with optional validation.
+     *
+     * @param string the base string to wrap.
+     * @param validate whether or not to check the string.
+     * @throws IllegalArgumentException if validate is true and the string
+     * contains characters that should not be in a PrintableString.
+     */
+    public DERPrintableString(
+        String   string,
+        boolean  validate)
+    {
+    	throw new UnsupportedClassVersionError();/*
+        if (validate && !isPrintableString(string))
+        {
+            throw new IllegalArgumentException("string contains illegal characters");
+        }
+
+        this.string = Strings.toByteArray(string);
+*/    }
+    public String getString()
+    {
+        return Strings.fromByteArray(string);
+    }
+
+    public byte[] getOctets()
+    {
+        return Arrays.clone(string);
+    }
+
+    boolean isConstructed()
+    {
+        return false;
+    }
+
+    int encodedLength()
+    {
+        return 1 + StreamUtil.calculateBodyLength(string.length) + string.length;
+    }
+
+    void encode(
+        ASN1OutputStream out)
+        throws IOException
+    {
+        out.writeEncoded(BERTags.PRINTABLE_STRING, string);
+    }
+    public int hashCode()
+    {
+        return Arrays.hashCode(string);
+    }
+
+    boolean asn1Equals(
+        ASN1Primitive o)
+    {
+        if (!(o instanceof DERPrintableString))
+        {
+            return false;
+        }
+
+        DERPrintableString  s = (DERPrintableString)o;
+
+        return Arrays.areEqual(string, s.string);
+    }
+
+    public String toString()
+    {
+        return getString();
     }
 
     /**
@@ -124,88 +186,54 @@ public class DERPrintableString
      *
      * @return true if in printable set, false otherwise.
      */
-    public static boolean isPrintableString(
+     public static boolean isPrintableString(
+ 
+        String  str)
+    {
+        for (int i = str.length() - 1; i >= 0; i--)
+        {
+            char    ch = str.charAt(i);
 
-            String str) {
-        for (int i = str.length() - 1; i >= 0; i--) {
-            char ch = str.charAt(i);
-
-            if (ch > 0x007f) {
+            if (ch > 0x007f)
+            {
                 return false;
             }
 
-            if ('a' <= ch && ch <= 'z') {
+            if ('a' <= ch && ch <= 'z')
+            {
                 continue;
             }
 
-            if ('A' <= ch && ch <= 'Z') {
+            if ('A' <= ch && ch <= 'Z')
+            {
                 continue;
             }
 
-            if ('0' <= ch && ch <= '9') {
+            if ('0' <= ch && ch <= '9')
+            {
                 continue;
             }
 
-            switch (ch) {
-                case ' ':
-                case '\'':
-                case '(':
-                case ')':
-                case '+':
-                case '-':
-                case '.':
-                case ':':
-                case '=':
-                case '?':
-                case '/':
-                case ',':
-                    continue;
+            switch (ch)
+            {
+            case ' ':
+            case '\'':
+            case '(':
+            case ')':
+            case '+':
+            case '-':
+            case '.':
+            case ':':
+            case '=':
+            case '?':
+            case '/':
+            case ',':
+                continue;
             }
 
             return false;
         }
 
         return true;
-    }
-
-    public String getString() {
-        return Strings.fromByteArray(string);
-    }
-
-    public byte[] getOctets() {
-        return Arrays.clone(string);
-    }
-
-    boolean isConstructed() {
-        return false;
-    }
-
-    int encodedLength() {
-        return 1 + StreamUtil.calculateBodyLength(string.length) + string.length;
-    }
-
-    void encode(
-            ASN1OutputStream out)
-            throws IOException {
-        out.writeEncoded(BERTags.PRINTABLE_STRING, string);
-    }
-
-    public int hashCode() {
-        return Arrays.hashCode(string);
-    }
-
-    boolean asn1Equals(
-            ASN1Primitive o) {
-        if (!(o instanceof DERPrintableString)) {
-            return false;
-        }
-
-        DERPrintableString s = (DERPrintableString) o;
-
-        return Arrays.areEqual(string, s.string);
-    }
-
-    public String toString() {
-        return getString();
     }
 }

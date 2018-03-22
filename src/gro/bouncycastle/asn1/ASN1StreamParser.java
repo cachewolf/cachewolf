@@ -7,19 +7,22 @@ import ewe.io.InputStream;
 /**
  * A parser for ASN.1 streams which also returns, where possible, parsers for the objects it encounters.
  */
-public class ASN1StreamParser {
-    private InputStream _in;
-    private int _limit;
-    private byte[][] tmpBuffers;
+public class ASN1StreamParser
+{
+    private  InputStream _in;
+    private  int         _limit;
+    private  byte[][] tmpBuffers;
 
     public ASN1StreamParser(
-            InputStream in) {
+        InputStream in)
+    {
         this(in, StreamUtil.findLimit(in));
     }
 
     public ASN1StreamParser(
-            InputStream in,
-            int limit) {
+        InputStream in,
+        int         limit)
+    {
         this._in = in;
         this._limit = limit;
 
@@ -27,12 +30,14 @@ public class ASN1StreamParser {
     }
 
     public ASN1StreamParser(
-            byte[] encoding) {
+        byte[] encoding)
+    {
         this(new ByteArrayInputStream(encoding), encoding.length);
     }
 
-    ASN1Encodable readIndef(int tagValue) throws IOException {
-        throw new UnsupportedClassVersionError();/*
+    ASN1Encodable readIndef(int tagValue) throws IOException
+    {
+    	throw new UnsupportedClassVersionError();/*
         // Note: INDEF => CONSTRUCTED
 
         // TODO There are other tags that may be constructed (e.g. BIT_STRING)
@@ -49,11 +54,11 @@ public class ASN1StreamParser {
             default:
                 throw new ASN1Exception("unknown BER object encountered: 0x" + Integer.toHexString(tagValue));
         }
-*/
-    }
+*/    }
 
-    ASN1Encodable readImplicit(boolean constructed, int tag) throws IOException {
-        throw new UnsupportedClassVersionError();/*
+    ASN1Encodable readImplicit(boolean constructed, int tag) throws IOException
+    {
+    	throw new UnsupportedClassVersionError();/*
         if (_in instanceof IndefiniteLengthInputStream)
         {
             if (!constructed)
@@ -90,37 +95,39 @@ public class ASN1StreamParser {
         }
 
         throw new ASN1Exception("implicit tagging not implemented");
-*/
-    }
+*/    }
 
-    ASN1Primitive readTaggedObject(boolean constructed, int tag) throws IOException {
-        if (!constructed) {
-            throw new UnsupportedClassVersionError();/*
+    ASN1Primitive readTaggedObject(boolean constructed, int tag) throws IOException
+    {
+        if (!constructed)
+        {
+        	throw new UnsupportedClassVersionError();/*
             // Note: !CONSTRUCTED => IMPLICIT
             DefiniteLengthInputStream defIn = (DefiniteLengthInputStream)_in;
             return new DERTaggedObject(false, tag, new DEROctetString(defIn.toByteArray()));
-        */
-        }
+        */}
 
         ASN1EncodableVector v = readVector();
 
-        if (_in instanceof IndefiniteLengthInputStream) {
-            throw new UnsupportedClassVersionError();/*
+        if (_in instanceof IndefiniteLengthInputStream)
+        {
+        	throw new UnsupportedClassVersionError();/*
             return v.size() == 1
                 ?   new BERTaggedObject(true, tag, v.get(0))
                 :   new BERTaggedObject(false, tag, BERFactory.createSequence(v));
-*/
-        }
+*/        }
 
         return v.size() == 1
-                ? new DERTaggedObject(true, tag, v.get(0))
-                : new DERTaggedObject(false, tag, DERFactory.createSequence(v));
+            ?   new DERTaggedObject(true, tag, v.get(0))
+            :   new DERTaggedObject(false, tag, DERFactory.createSequence(v));
     }
 
     public ASN1Encodable readObject()
-            throws IOException {
+        throws IOException
+    {
         int tag = _in.read();
-        if (tag == -1) {
+        if (tag == -1)
+        {
             return null;
         }
 
@@ -143,7 +150,7 @@ public class ASN1StreamParser {
 
         if (length < 0) // indefinite-length method
         {
-            throw new UnsupportedClassVersionError();/*
+        	throw new UnsupportedClassVersionError();/*
             if (!isConstructed)
             {
                 throw new IOException("indefinite-length primitive encoding encountered");
@@ -163,76 +170,87 @@ public class ASN1StreamParser {
             }
 
             return sp.readIndef(tagNo);
-*/
-        } else {
+*/        }
+        else
+        {
             DefiniteLengthInputStream defIn = new DefiniteLengthInputStream(_in, length);
 
-            if ((tag & BERTags.APPLICATION) != 0) {
-                throw new UnsupportedClassVersionError();/*
+            if ((tag & BERTags.APPLICATION) != 0)
+            {
+            	throw new UnsupportedClassVersionError();/*
                 return new DERApplicationSpecific(isConstructed, tagNo, defIn.toByteArray());
-*/
-            }
+*/            }
 
-            if ((tag & BERTags.TAGGED) != 0) {
-                throw new UnsupportedClassVersionError();/*
+            if ((tag & BERTags.TAGGED) != 0)
+            {
+            	throw new UnsupportedClassVersionError();/*
                 return new BERTaggedObjectParser(isConstructed, tagNo, new ASN1StreamParser(defIn));
-*/
-            }
+*/            }
 
-            if (isConstructed) {
+            if (isConstructed)
+            {
                 // TODO There are other tags that may be constructed (e.g. BIT_STRING)
-                switch (tagNo) {
+                switch (tagNo)
+                {
                     case BERTags.OCTET_STRING:
                         //
                         // yes, people actually do this...
                         //
-                        throw new UnsupportedClassVersionError();/*
+                    	throw new UnsupportedClassVersionError();/*
                         return new BEROctetStringParser(new ASN1StreamParser(defIn));
-*/
-                    case BERTags.SEQUENCE:
+*/                    case BERTags.SEQUENCE:
                         return new DERSequenceParser(new ASN1StreamParser(defIn));
                     case BERTags.SET:
-                        throw new UnsupportedClassVersionError();/*
+                    	throw new UnsupportedClassVersionError();/*
                         return new DERSetParser(new ASN1StreamParser(defIn));
-*/
-                    case BERTags.EXTERNAL:
-                        throw new UnsupportedClassVersionError();/*
+*/                    case BERTags.EXTERNAL:
+                    	throw new UnsupportedClassVersionError();/*
                         return new DERExternalParser(new ASN1StreamParser(defIn));
-*/
-                    default:
+*/                    default:
                         throw new IOException("unknown tag " + tagNo + " encountered");
                 }
             }
 
             // Some primitive encodings can be handled by parsers too...
-            switch (tagNo) {
+            switch (tagNo)
+            {
                 case BERTags.OCTET_STRING:
                     return new DEROctetStringParser(defIn);
             }
 
-            try {
+            try
+            {
                 return ASN1InputStream.createPrimitiveDERObject(tagNo, defIn, tmpBuffers);
-            } catch (IllegalArgumentException e) {
+            }
+            catch (IllegalArgumentException e)
+            {
                 throw new ASN1Exception("corrupted stream detected", e);
             }
         }
     }
 
 
-    private void set00Check(boolean enabled) {
-        if (_in instanceof IndefiniteLengthInputStream) {
-            ((IndefiniteLengthInputStream) _in).setEofOn00(enabled);
+    private void set00Check(boolean enabled)
+    {
+        if (_in instanceof IndefiniteLengthInputStream)
+        {
+            ((IndefiniteLengthInputStream)_in).setEofOn00(enabled);
         }
     }
 
-    ASN1EncodableVector readVector() throws IOException {
+    ASN1EncodableVector readVector() throws IOException
+    {
         ASN1EncodableVector v = new ASN1EncodableVector();
 
         ASN1Encodable obj;
-        while ((obj = readObject()) != null) {
-            if (obj instanceof InMemoryRepresentable) {
-                v.add(((InMemoryRepresentable) obj).getLoadedObject());
-            } else {
+        while ((obj = readObject()) != null)
+        {
+            if (obj instanceof InMemoryRepresentable)
+            {
+                v.add(((InMemoryRepresentable)obj).getLoadedObject());
+            }
+            else
+            {
                 v.add(obj.toASN1Primitive());
             }
         }

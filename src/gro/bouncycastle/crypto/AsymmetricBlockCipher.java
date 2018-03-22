@@ -5,13 +5,14 @@ package gro.bouncycastle.crypto;
  * base interface that a public/private key block cipher needs
  * to conform to.
  */
-public interface AsymmetricBlockCipher {
+public interface AsymmetricBlockCipher
+{
     /**
      * initialise the cipher.
      *
-     * @param forEncryption if true the cipher is initialised for
-     *                      encryption, if false for decryption.
-     * @param param         the key and other data required by the cipher.
+     * @param forEncryption if true the cipher is initialised for 
+     *  encryption, if false for decryption.
+     * @param param the key and other data required by the cipher.
      */
     public void init(boolean forEncryption, CipherParameters param);
 
@@ -32,13 +33,13 @@ public interface AsymmetricBlockCipher {
     /**
      * process the block of len bytes stored in in from offset inOff.
      *
-     * @param in    the input data
+     * @param in the input data
      * @param inOff offset into the in array where the data starts
-     * @param len   the length of the block to be processed.
+     * @param len the length of the block to be processed.
      * @return the resulting byte array of the encryption/decryption process.
-     * @throws InvalidCipherTextException data decrypts improperly.
-     * @throws DataLengthException        the input data is too large for the cipher.
+     * @exception InvalidCipherTextException data decrypts improperly.
+     * @exception DataLengthException the input data is too large for the cipher.
      */
     public byte[] processBlock(byte[] in, int inOff, int len)
-            throws InvalidCipherTextException;
+        throws InvalidCipherTextException;
 }

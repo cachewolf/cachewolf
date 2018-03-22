@@ -9,7 +9,8 @@ package gro.bouncycastle.crypto.tls;
  * prime and characteristic-2 curves, respectively (the curve parameters must be encoded explicitly
  * in ECParameters).
  */
-public class NamedCurve {
+public class NamedCurve
+{
     public static final int sect163k1 = 1;
     public static final int sect163r1 = 2;
     public static final int sect163r2 = 3;
@@ -35,7 +36,7 @@ public class NamedCurve {
     public static final int secp256r1 = 23;
     public static final int secp384r1 = 24;
     public static final int secp521r1 = 25;
-
+    
     /*
      * RFC 7027
      */
@@ -50,18 +51,21 @@ public class NamedCurve {
     public static final int arbitrary_explicit_prime_curves = 0xFF01;
     public static final int arbitrary_explicit_char2_curves = 0xFF02;
 
-    public static boolean isValid(int namedCurve) {
+    public static boolean isValid(int namedCurve)
+    {
         return (namedCurve >= sect163k1 && namedCurve <= brainpoolP512r1)
-                || (namedCurve >= arbitrary_explicit_prime_curves && namedCurve <= arbitrary_explicit_char2_curves);
+            || (namedCurve >= arbitrary_explicit_prime_curves && namedCurve <= arbitrary_explicit_char2_curves);
     }
 
-    public static boolean refersToASpecificNamedCurve(int namedCurve) {
-        switch (namedCurve) {
-            case arbitrary_explicit_prime_curves:
-            case arbitrary_explicit_char2_curves:
-                return false;
-            default:
-                return true;
+    public static boolean refersToASpecificNamedCurve(int namedCurve)
+    {
+        switch (namedCurve)
+        {
+        case arbitrary_explicit_prime_curves:
+        case arbitrary_explicit_char2_curves:
+            return false;
+        default:
+            return true;
         }
     }
 }

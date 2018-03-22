@@ -1,8 +1,6 @@
 package gro.bouncycastle.asn1;
 
 import ewe.io.IOException;
-import gro.bouncycastle.util.Arrays;
-import gro.bouncycastle.util.Strings;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -10,8 +8,11 @@ import java.util.Date;
 import java.util.Locale;
 import java.util.SimpleTimeZone;
 
+import gro.bouncycastle.util.Arrays;
+import gro.bouncycastle.util.Strings;
+
 /**
- * - * UTC time object.
+- * UTC time object.
  * Internal facade of {@link ASN1UTCTime}.
  * <p>
  * This datatype is valid only from 1950-01-01 00:00:00 UTC until 2049-12-31 23:59:59 UTC.
@@ -32,8 +33,65 @@ import java.util.SimpleTimeZone;
  * where "YYMMDD" represents the day following the midnight in question.
  */
 public class ASN1UTCTime
-        extends ASN1Primitive {
-    private byte[] time;
+    extends ASN1Primitive
+{
+    private byte[]      time;
+
+    /**
+     * Return an UTC Time from the passed in object.
+     *
+     * @param obj an ASN1UTCTime or an object that can be converted into one.
+     * @exception IllegalArgumentException if the object cannot be converted.
+     * @return an ASN1UTCTime instance, or null.
+     */
+    public static ASN1UTCTime getInstance(
+        Object  obj)
+    {
+        if (obj == null || obj instanceof ASN1UTCTime)
+        {
+            return (ASN1UTCTime)obj;
+        }
+
+        if (obj instanceof byte[])
+        {
+            try
+            {
+                return (ASN1UTCTime)fromByteArray((byte[])obj);
+            }
+            catch (Exception e)
+            {
+                throw new IllegalArgumentException("encoding error in getInstance: " + e.toString());
+            }
+        }
+
+        throw new IllegalArgumentException("illegal object in getInstance: " + obj.getClass().getName());
+    }
+
+    /**
+     * Return an UTC Time from a tagged object.
+     *
+     * @param obj the tagged object holding the object we want
+     * @param explicit true if the object is meant to be explicitly
+     *              tagged false otherwise.
+     * @exception IllegalArgumentException if the tagged object cannot
+     *               be converted.
+     * @return an ASN1UTCTime instance, or null.
+     */
+    public static ASN1UTCTime getInstance(
+        ASN1TaggedObject obj,
+        boolean          explicit)
+    {
+        ASN1Object o = obj.getObject();
+
+        if (explicit || o instanceof ASN1UTCTime)
+        {
+            return getInstance(o);
+        }
+        else
+        {
+            return new ASN1UTCTime(((ASN1OctetString)o).getOctets());
+        }
+    }
 
     /**
      * The correct format for this is YYMMDDHHMMSSZ (it used to be that seconds were
@@ -46,25 +104,29 @@ public class ASN1UTCTime
      * @param time the time string.
      */
     public ASN1UTCTime(
-            String time) {
+        String time)
+    {
         this.time = Strings.toByteArray(time);
-        try {
+        try
+        {
             this.getDate();
-        } catch (ParseException e) {
+        }
+        catch (ParseException e)
+        {
             throw new IllegalArgumentException("invalid date string: " + e.getMessage());
         }
     }
 
     /**
      * Base constructor from a java.util.date object
-     *
      * @param time the Date to build the time from.
      */
     public ASN1UTCTime(
-            Date time) {
+        Date time)
+    {
         SimpleDateFormat dateF = new SimpleDateFormat("yyMMddHHmmss'Z'");
 
-        dateF.setTimeZone(new SimpleTimeZone(0, "Z"));
+        dateF.setTimeZone(new SimpleTimeZone(0,"Z"));
 
         this.time = Strings.toByteArray(dateF.format(time));
     }
@@ -73,68 +135,24 @@ public class ASN1UTCTime
      * Base constructor from a java.util.date and Locale - you may need to use this if the default locale
      * doesn't use a Gregorian calender so that the GeneralizedTime produced is compatible with other ASN.1 implementations.
      *
-     * @param time   a date object representing the time of interest.
+     * @param time a date object representing the time of interest.
      * @param locale an appropriate Locale for producing an ASN.1 UTCTime value.
      */
     public ASN1UTCTime(
-            Date time,
-            Locale locale) {
+        Date time,
+        Locale locale)
+    {
         SimpleDateFormat dateF = new SimpleDateFormat("yyMMddHHmmss'Z'", locale);
 
-        dateF.setTimeZone(new SimpleTimeZone(0, "Z"));
+        dateF.setTimeZone(new SimpleTimeZone(0,"Z"));
 
         this.time = Strings.toByteArray(dateF.format(time));
     }
 
     ASN1UTCTime(
-            byte[] time) {
+        byte[] time)
+    {
         this.time = time;
-    }
-
-    /**
-     * Return an UTC Time from the passed in object.
-     *
-     * @param obj an ASN1UTCTime or an object that can be converted into one.
-     * @return an ASN1UTCTime instance, or null.
-     * @throws IllegalArgumentException if the object cannot be converted.
-     */
-    public static ASN1UTCTime getInstance(
-            Object obj) {
-        if (obj == null || obj instanceof ASN1UTCTime) {
-            return (ASN1UTCTime) obj;
-        }
-
-        if (obj instanceof byte[]) {
-            try {
-                return (ASN1UTCTime) fromByteArray((byte[]) obj);
-            } catch (Exception e) {
-                throw new IllegalArgumentException("encoding error in getInstance: " + e.toString());
-            }
-        }
-
-        throw new IllegalArgumentException("illegal object in getInstance: " + obj.getClass().getName());
-    }
-
-    /**
-     * Return an UTC Time from a tagged object.
-     *
-     * @param obj      the tagged object holding the object we want
-     * @param explicit true if the object is meant to be explicitly
-     *                 tagged false otherwise.
-     * @return an ASN1UTCTime instance, or null.
-     * @throws IllegalArgumentException if the tagged object cannot
-     *                                  be converted.
-     */
-    public static ASN1UTCTime getInstance(
-            ASN1TaggedObject obj,
-            boolean explicit) {
-        ASN1Object o = obj.getObject();
-
-        if (explicit || o instanceof ASN1UTCTime) {
-            return getInstance(o);
-        } else {
-            return new ASN1UTCTime(((ASN1OctetString) o).getOctets());
-        }
     }
 
     /**
@@ -142,10 +160,11 @@ public class ASN1UTCTime
      * standardised processing use getAdjustedDate().
      *
      * @return the resulting date
-     * @throws ParseException if the date string cannot be parsed.
+     * @exception ParseException if the date string cannot be parsed.
      */
     public Date getDate()
-            throws ParseException {
+        throws ParseException
+    {
         SimpleDateFormat dateF = new SimpleDateFormat("yyMMddHHmmssz");
 
         return dateF.parse(getTime());
@@ -156,10 +175,11 @@ public class ASN1UTCTime
      * in the range of 1950 - 2049.
      *
      * @return a date in the range of 1950 to 2049.
-     * @throws ParseException if the date string cannot be parsed.
+     * @exception ParseException if the date string cannot be parsed.
      */
     public Date getAdjustedDate()
-            throws ParseException {
+        throws ParseException
+    {
         SimpleDateFormat dateF = new SimpleDateFormat("yyyyMMddHHmmssz");
 
         dateF.setTimeZone(new SimpleTimeZone(0, "Z"));
@@ -169,7 +189,7 @@ public class ASN1UTCTime
 
     /**
      * Return the time - always in the form of
-     * YYMMDDhhmmssGMT(+hh:mm|-hh:mm).
+     *  YYMMDDhhmmssGMT(+hh:mm|-hh:mm).
      * <p>
      * Normally in a certificate we would expect "Z" rather than "GMT",
      * however adding the "GMT" means we can just use:
@@ -183,33 +203,45 @@ public class ASN1UTCTime
      * may lead to unexpected results. If you want to stick the normal
      * convention of 1950 to 2049 use the getAdjustedTime() method.
      */
-    public String getTime() {
+    public String getTime()
+    {
         String stime = Strings.fromByteArray(time);
 
         //
         // standardise the format.
         //
-        if (stime.indexOf('-') < 0 && stime.indexOf('+') < 0) {
-            if (stime.length() == 11) {
+        if (stime.indexOf('-') < 0 && stime.indexOf('+') < 0)
+        {
+            if (stime.length() == 11)
+            {
                 return stime.substring(0, 10) + "00GMT+00:00";
-            } else {
+            }
+            else
+            {
                 return stime.substring(0, 12) + "GMT+00:00";
             }
-        } else {
+        }
+        else
+        {
             int index = stime.indexOf('-');
-            if (index < 0) {
+            if (index < 0)
+            {
                 index = stime.indexOf('+');
             }
             String d = stime;
 
-            if (index == stime.length() - 3) {
+            if (index == stime.length() - 3)
+            {
                 d += "00";
             }
 
-            if (index == 10) {
+            if (index == 10)
+            {
                 return d.substring(0, 10) + "00GMT" + d.substring(10, 13) + ":" + d.substring(13, 15);
-            } else {
-                return d.substring(0, 12) + "GMT" + d.substring(12, 15) + ":" + d.substring(15, 17);
+            }
+            else
+            {
+                return d.substring(0, 12) + "GMT" + d.substring(12, 15) + ":" +  d.substring(15, 17);
             }
         }
     }
@@ -218,30 +250,37 @@ public class ASN1UTCTime
      * Return a time string as an adjusted date with a 4 digit year. This goes
      * in the range of 1950 - 2049.
      */
-    public String getAdjustedTime() {
-        String d = this.getTime();
+    public String getAdjustedTime()
+    {
+        String   d = this.getTime();
 
-        if (d.charAt(0) < '5') {
+        if (d.charAt(0) < '5')
+        {
             return "20" + d;
-        } else {
+        }
+        else
+        {
             return "19" + d;
         }
     }
 
-    boolean isConstructed() {
+    boolean isConstructed()
+    {
         return false;
     }
 
-    int encodedLength() {
+    int encodedLength()
+    {
         int length = time.length;
 
         return 1 + StreamUtil.calculateBodyLength(length) + length;
     }
 
     void encode(
-            ASN1OutputStream out)
-            throws IOException {
-        throw new UnsupportedClassVersionError();/*
+        ASN1OutputStream  out)
+        throws IOException
+    {
+    	throw new UnsupportedClassVersionError();/*
         out.write(BERTags.UTC_TIME);
 
         int length = time.length;
@@ -252,23 +291,26 @@ public class ASN1UTCTime
         {
             out.write((byte)time[i]);
         }
-*/
-    }
+*/    }
 
     boolean asn1Equals(
-            ASN1Primitive o) {
-        if (!(o instanceof ASN1UTCTime)) {
+        ASN1Primitive o)
+    {
+        if (!(o instanceof ASN1UTCTime))
+        {
             return false;
         }
 
-        return Arrays.areEqual(time, ((ASN1UTCTime) o).time);
+        return Arrays.areEqual(time, ((ASN1UTCTime)o).time);
     }
 
-    public int hashCode() {
+    public int hashCode()
+    {
         return Arrays.hashCode(time);
     }
 
-    public String toString() {
-        return Strings.fromByteArray(time);
+    public String toString()
+    {
+      return Strings.fromByteArray(time);
     }
 }

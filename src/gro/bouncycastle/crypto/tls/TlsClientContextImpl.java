@@ -3,13 +3,16 @@ package gro.bouncycastle.crypto.tls;
 import ewe.security.SecureRandom;
 
 class TlsClientContextImpl
-        extends AbstractTlsContext
-        implements TlsClientContext {
-    TlsClientContextImpl(SecureRandom secureRandom, SecurityParameters securityParameters) {
+    extends AbstractTlsContext
+    implements TlsClientContext
+{
+    TlsClientContextImpl(SecureRandom secureRandom, SecurityParameters securityParameters)
+    {
         super(secureRandom, securityParameters);
     }
 
-    public boolean isServer() {
+    public boolean isServer()
+    {
         return false;
     }
 }

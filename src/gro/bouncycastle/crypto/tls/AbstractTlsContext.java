@@ -1,23 +1,33 @@
 package gro.bouncycastle.crypto.tls;
 
 import ewe.security.SecureRandom;
+
 import gro.bouncycastle.crypto.Digest;
 import gro.bouncycastle.crypto.prng.DigestRandomGenerator;
 import gro.bouncycastle.crypto.prng.RandomGenerator;
 import gro.bouncycastle.util.Times;
 
 abstract class AbstractTlsContext
-        implements TlsContext {
+    implements TlsContext
+{
     private static long counter = Times.nanoTime();
+
+    private synchronized static long nextCounterValue()
+    {
+        return ++counter;
+    }
+
     private RandomGenerator nonceRandom;
     private SecureRandom secureRandom;
     private SecurityParameters securityParameters;
+
     private ProtocolVersion clientVersion = null;
     private ProtocolVersion serverVersion = null;
     private TlsSession session = null;
     private Object userObject = null;
 
-    AbstractTlsContext(SecureRandom secureRandom, SecurityParameters securityParameters) {
+    AbstractTlsContext(SecureRandom secureRandom, SecurityParameters securityParameters)
+    {
         Digest d = TlsUtils.createHash(HashAlgorithm.sha256);
         byte[] seed = new byte[d.getDigestSize()];
         secureRandom.nextBytes(seed);
@@ -31,64 +41,72 @@ abstract class AbstractTlsContext
         this.securityParameters = securityParameters;
     }
 
-    private synchronized static long nextCounterValue() {
-        return ++counter;
-    }
-
-    public RandomGenerator getNonceRandomGenerator() {
+    public RandomGenerator getNonceRandomGenerator()
+    {
         return nonceRandom;
     }
 
-    public SecureRandom getSecureRandom() {
+    public SecureRandom getSecureRandom()
+    {
         return secureRandom;
     }
 
-    public SecurityParameters getSecurityParameters() {
+    public SecurityParameters getSecurityParameters()
+    {
         return securityParameters;
     }
 
-    public ProtocolVersion getClientVersion() {
+    public ProtocolVersion getClientVersion()
+    {
         return clientVersion;
     }
 
-    void setClientVersion(ProtocolVersion clientVersion) {
+    void setClientVersion(ProtocolVersion clientVersion)
+    {
         this.clientVersion = clientVersion;
     }
 
-    public ProtocolVersion getServerVersion() {
+    public ProtocolVersion getServerVersion()
+    {
         return serverVersion;
     }
 
-    void setServerVersion(ProtocolVersion serverVersion) {
+    void setServerVersion(ProtocolVersion serverVersion)
+    {
         this.serverVersion = serverVersion;
     }
 
-    public TlsSession getResumableSession() {
+    public TlsSession getResumableSession()
+    {
         return session;
     }
 
-    void setResumableSession(TlsSession session) {
+    void setResumableSession(TlsSession session)
+    {
         this.session = session;
     }
 
-    public Object getUserObject() {
+    public Object getUserObject()
+    {
         return userObject;
     }
 
-    public void setUserObject(Object userObject) {
+    public void setUserObject(Object userObject)
+    {
         this.userObject = userObject;
     }
 
-    public byte[] exportKeyingMaterial(String asciiLabel, byte[] context_value, int length) {
+    public byte[] exportKeyingMaterial(String asciiLabel, byte[] context_value, int length)
+    {
         /*
          * TODO[session-hash]
-         *
+         * 
          * draft-ietf-tls-session-hash-04 5.4. If a client or server chooses to continue with a full
          * handshake without the extended master secret extension, [..] the client or server MUST
          * NOT export any key material based on the new master secret for any subsequent
          * application-level authentication. In particular, it MUST disable [RFC5705] [..].
          */
-        throw new UnsupportedClassVersionError();/*
+    	throw new UnsupportedClassVersionError();/*
         if (context_value != null && !TlsUtils.isValidUint16(context_value.length))
         {
             throw new IllegalArgumentException("'context_value' must have length less than 2^16 (or be null)");
@@ -124,6 +142,5 @@ abstract class AbstractTlsContext
         }
 
         return TlsUtils.PRF(this, sp.getMasterSecret(), asciiLabel, seed, length);
-*/
-    }
+*/    }
 }

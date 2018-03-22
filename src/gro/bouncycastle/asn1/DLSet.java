@@ -52,28 +52,32 @@ import ewe.util.Enumeration;
  * its default value.
  */
 public class DLSet
-        extends ASN1Set {
+    extends ASN1Set
+{
     private int bodyLength = -1;
 
     /**
      * create an empty set
      */
-    public DLSet() {
+    public DLSet()
+    {
     }
 
     /**
      * @param obj - a single object that makes up the set.
      */
     public DLSet(
-            ASN1Encodable obj) {
+        ASN1Encodable obj)
+    {
         super(obj);
     }
-
+    
     /**
      * @param v - a vector of objects making up the set.
      */
     public DLSet(
-            ASN1EncodableVector v) {
+        ASN1EncodableVector v)
+    {
         super(v, false);
     }
 
@@ -81,19 +85,23 @@ public class DLSet
      * create a set from an array of objects.
      */
     public DLSet(
-            ASN1Encodable[] a) {
+        ASN1Encodable[] a)
+    {
         super(a, false);
     }
 
     private int getBodyLength()
-            throws IOException {
-        if (bodyLength < 0) {
+        throws IOException
+    {
+        if (bodyLength < 0)
+        {
             int length = 0;
 
-            for (Enumeration e = this.getObjects(); e.hasMoreElements(); ) {
+            for (Enumeration e = this.getObjects(); e.hasMoreElements();)
+            {
                 Object obj = e.nextElement();
 
-                length += ((ASN1Encodable) obj).toASN1Primitive().toDLObject().encodedLength();
+                length += ((ASN1Encodable)obj).toASN1Primitive().toDLObject().encodedLength();
             }
 
             bodyLength = length;
@@ -103,7 +111,8 @@ public class DLSet
     }
 
     int encodedLength()
-            throws IOException {
+        throws IOException
+    {
         int length = getBodyLength();
 
         return 1 + StreamUtil.calculateBodyLength(length) + length;
@@ -118,9 +127,10 @@ public class DLSet
      * we also have to specify CONSTRUCTED, and the objects length.
      */
     void encode(
-            ASN1OutputStream out)
-            throws IOException {
-        throw new UnsupportedClassVersionError();/*
+        ASN1OutputStream out)
+        throws IOException
+    {
+    	throw new UnsupportedClassVersionError();/*
         ASN1OutputStream dOut = out.getDLSubStream();
         int length = getBodyLength();
 
@@ -133,6 +143,5 @@ public class DLSet
 
             dOut.writeObject((ASN1Encodable)obj);
         }
-*/
-    }
+*/    }
 }

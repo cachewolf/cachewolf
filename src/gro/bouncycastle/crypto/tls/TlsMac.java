@@ -2,16 +2,16 @@ package gro.bouncycastle.crypto.tls;
 
 import gro.bouncycastle.crypto.Digest;
 import gro.bouncycastle.crypto.Mac;
-import gro.bouncycastle.util.Arrays;
-
 //import gro.bouncycastle.crypto.digests.LongDigest;
 //import gro.bouncycastle.crypto.macs.HMac;
 //import gro.bouncycastle.crypto.params.KeyParameter;
+import gro.bouncycastle.util.Arrays;
 
 /**
  * A generic TLS MAC implementation, acting as an HMAC based on some underlying Digest.
  */
-public class TlsMac {
+public class TlsMac
+{
     protected TlsContext context;
     protected byte[] secret;
     protected Mac mac;
@@ -28,8 +28,9 @@ public class TlsMac {
      * @param keyOff  The number of bytes to skip, before the key starts in the buffer.
      * @param keyLen  The length of the key.
      */
-    public TlsMac(TlsContext context, Digest digest, byte[] key, int keyOff, int keyLen) {
-        throw new UnsupportedClassVersionError();/*
+    public TlsMac(TlsContext context, Digest digest, byte[] key, int keyOff, int keyLen)
+    {
+    	throw new UnsupportedClassVersionError();/*
         this.context = context;
 
         KeyParameter keyParameter = new KeyParameter(key, keyOff, keyLen);
@@ -92,10 +93,10 @@ public class TlsMac {
     /**
      * @return The output length of this MAC.
      */
-    public int getSize() {
+    public int getSize()
+    {
         return macLength;
     }
-
     /**
      * Calculate the MAC for some given data.
      *
@@ -105,8 +106,9 @@ public class TlsMac {
      * @param length  The length of the message.
      * @return A new byte-buffer containing the MAC value.
      */
-    public byte[] calculateMac(long seqNo, short type, byte[] message, int offset, int length) {
-        throw new UnsupportedClassVersionError();/*
+    public byte[] calculateMac(long seqNo, short type, byte[] message, int offset, int length)
+    {
+    	throw new UnsupportedClassVersionError();/*
         ProtocolVersion serverVersion = context.getServerVersion();
         boolean isSSL = serverVersion.isSSL();
 
@@ -125,12 +127,12 @@ public class TlsMac {
         byte[] result = new byte[mac.getMacSize()];
         mac.doFinal(result, 0);
         return truncate(result);
-*/
-    }
-
+*/    }
+    
 
     public byte[] calculateMacConstantTime(long seqNo, short type, byte[] message, int offset, int length,
-                                           int fullLength, byte[] dummyData) {
+        int fullLength, byte[] dummyData)
+    {
         /*
          * Actual MAC only calculated on 'length' bytes...
          */
@@ -145,7 +147,8 @@ public class TlsMac {
         // How many extra full blocks do we need to calculate?
         int extra = getDigestBlockCount(headerLength + fullLength) - getDigestBlockCount(headerLength + length);
 
-        while (--extra >= 0) {
+        while (--extra >= 0)
+        {
             mac.update(dummyData, 0, digestBlockSize);
         }
 
@@ -155,14 +158,16 @@ public class TlsMac {
 
         return result;
     }
-
-    protected int getDigestBlockCount(int inputLength) {
+    protected int getDigestBlockCount(int inputLength)
+    {
         // NOTE: This calculation assumes a minimum of 1 pad byte
         return (inputLength + digestOverhead) / digestBlockSize;
     }
 
-    protected byte[] truncate(byte[] bs) {
-        if (bs.length <= macLength) {
+    protected byte[] truncate(byte[] bs)
+    {
+        if (bs.length <= macLength)
+        {
             return bs;
         }
 

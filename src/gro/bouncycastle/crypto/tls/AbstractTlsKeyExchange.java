@@ -5,48 +5,55 @@ import ewe.io.InputStream;
 import ewe.util.Vector;
 
 public abstract class AbstractTlsKeyExchange
-        implements TlsKeyExchange {
+    implements TlsKeyExchange
+{
     protected int keyExchange;
     protected Vector supportedSignatureAlgorithms;
 
     protected TlsContext context;
 
-    protected AbstractTlsKeyExchange(int keyExchange, Vector supportedSignatureAlgorithms) {
+    protected AbstractTlsKeyExchange(int keyExchange, Vector supportedSignatureAlgorithms)
+    {
         this.keyExchange = keyExchange;
         this.supportedSignatureAlgorithms = supportedSignatureAlgorithms;
     }
 
-    protected DigitallySigned parseSignature(InputStream input) throws IOException {
+    protected DigitallySigned parseSignature(InputStream input) throws IOException
+    {
         DigitallySigned signature = DigitallySigned.parse(context, input);
         SignatureAndHashAlgorithm signatureAlgorithm = signature.getAlgorithm();
-        if (signatureAlgorithm != null) {
+        if (signatureAlgorithm != null)
+        {
             TlsUtils.verifySupportedSignatureAlgorithm(supportedSignatureAlgorithms, signatureAlgorithm);
         }
         return signature;
     }
 
-    public void init(TlsContext context) {
-
+    public void init(TlsContext context)
+    {
+    
         this.context = context;
 
         ProtocolVersion clientVersion = context.getClientVersion();
 
-        if (TlsUtils.isSignatureAlgorithmsExtensionAllowed(clientVersion)) {
+        if (TlsUtils.isSignatureAlgorithmsExtensionAllowed(clientVersion))
+        {
             /*
              * RFC 5246 7.4.1.4.1. If the client does not send the signature_algorithms extension,
              * the server MUST do the following:
-             *
+             * 
              * - If the negotiated key exchange algorithm is one of (RSA, DHE_RSA, DH_RSA, RSA_PSK,
              * ECDH_RSA, ECDHE_RSA), behave as if client had sent the value {sha1,rsa}.
-             *
+             * 
              * - If the negotiated key exchange algorithm is one of (DHE_DSS, DH_DSS), behave as if
              * the client had sent the value {sha1,dsa}.
-             *
+             * 
              * - If the negotiated key exchange algorithm is one of (ECDH_ECDSA, ECDHE_ECDSA),
              * behave as if the client had sent value {sha1,ecdsa}.
              */
-            if (this.supportedSignatureAlgorithms == null) {
-                throw new UnsupportedClassVersionError();/*
+            if (this.supportedSignatureAlgorithms == null)
+            {
+        	throw new UnsupportedClassVersionError();/*
                 switch (keyExchange)
                 {
                 case KeyExchangeAlgorithm.DH_DSS:
@@ -85,21 +92,26 @@ public abstract class AbstractTlsKeyExchange
                 default:
                     throw new IllegalStateException("unsupported key exchange algorithm");
                 }
-*/
-            }
-        } else if (this.supportedSignatureAlgorithms != null) {
+*/            }
+        }
+        else if (this.supportedSignatureAlgorithms != null)
+        {
             throw new IllegalStateException("supported_signature_algorithms not allowed for " + clientVersion);
         }
     }
 
     public void processServerCertificate(Certificate serverCertificate)
-            throws IOException {
-        if (supportedSignatureAlgorithms == null) {
+        throws IOException
+    {
+        if (supportedSignatureAlgorithms == null)
+        {
             /*
              * TODO RFC 2246 7.4.2. Unless otherwise specified, the signing algorithm for the
              * certificate must be the same as the algorithm for the certificate key.
              */
-        } else {
+        }
+        else
+        {
             /*
              * TODO RFC 5246 7.4.2. If the client provided a "signature_algorithms" extension, then
              * all certificates provided by the server MUST be signed by a hash/signature algorithm
@@ -109,46 +121,56 @@ public abstract class AbstractTlsKeyExchange
     }
 
     public void processServerCredentials(TlsCredentials serverCredentials)
-            throws IOException {
+        throws IOException
+    {
         processServerCertificate(serverCredentials.getCertificate());
     }
 
-    public boolean requiresServerKeyExchange() {
+    public boolean requiresServerKeyExchange()
+    {
         return false;
     }
 
     public byte[] generateServerKeyExchange()
-            throws IOException {
-        if (requiresServerKeyExchange()) {
+        throws IOException
+    {
+        if (requiresServerKeyExchange())
+        {
             throw new TlsFatalAlert(AlertDescription.internal_error);
         }
         return null;
     }
 
     public void skipServerKeyExchange()
-            throws IOException {
-        if (requiresServerKeyExchange()) {
+        throws IOException
+    {
+        if (requiresServerKeyExchange())
+        {
             throw new TlsFatalAlert(AlertDescription.unexpected_message);
         }
     }
-
     public void processServerKeyExchange(InputStream input)
-            throws IOException {
-        if (!requiresServerKeyExchange()) {
+        throws IOException
+    {
+        if (!requiresServerKeyExchange())
+        {
             throw new TlsFatalAlert(AlertDescription.unexpected_message);
         }
     }
 
     public void skipClientCredentials()
-            throws IOException {
+        throws IOException
+    {
     }
 
     public void processClientCertificate(Certificate clientCertificate)
-            throws IOException {
+        throws IOException
+    {
     }
 
     public void processClientKeyExchange(InputStream input)
-            throws IOException {
+        throws IOException
+    {
         // Key exchange implementation MUST support client key exchange
         throw new TlsFatalAlert(AlertDescription.internal_error);
     }

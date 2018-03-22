@@ -1,14 +1,20 @@
 package gro.bouncycastle.crypto.tls;
 
+import ewe.io.IOException;
+import ewe.io.InputStream;
+import ewe.io.OutputStream;
+
 //import org.bouncycastle.asn1.ASN1Encoding;
 //import org.bouncycastle.asn1.ocsp.OCSPResponse;
 
-public class CertificateStatus {
+public class CertificateStatus
+{
     protected short statusType;
     protected Object response;
 
-    public CertificateStatus(short statusType, Object response) {
-        throw new UnsupportedClassVersionError();/*
+    public CertificateStatus(short statusType, Object response)
+    {
+    	throw new UnsupportedClassVersionError();/*
         if (!isCorrectType(statusType, response))
         {
             throw new IllegalArgumentException("'response' is not an instance of the correct type");
@@ -16,8 +22,7 @@ public class CertificateStatus {
         
         this.statusType = statusType;
         this.response = response;
-*/
-    }
+*/    }
 
     /*
     public short getStatusType()
@@ -99,5 +104,4 @@ public class CertificateStatus {
             throw new IllegalArgumentException("'statusType' is an unsupported CertificateStatusType");
         }
     }
-*/
-}
+*/}

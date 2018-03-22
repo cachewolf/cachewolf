@@ -7,47 +7,48 @@ import ewe.io.OutputStream;
 /**
  * A generic interface for key exchange implementations in (D)TLS.
  */
-public interface TlsKeyExchange {
+public interface TlsKeyExchange
+{
     void init(TlsContext context);
 
     void skipServerCredentials()
-            throws IOException;
+        throws IOException;
 
     void processServerCredentials(TlsCredentials serverCredentials)
-            throws IOException;
+        throws IOException;
 
     void processServerCertificate(Certificate serverCertificate)
-            throws IOException;
+        throws IOException;
 
     boolean requiresServerKeyExchange();
 
     byte[] generateServerKeyExchange()
-            throws IOException;
+        throws IOException;
 
     void skipServerKeyExchange()
-            throws IOException;
+        throws IOException;
 
     void processServerKeyExchange(InputStream input)
-            throws IOException;
+        throws IOException;
 
     void validateCertificateRequest(CertificateRequest certificateRequest)
-            throws IOException;
+        throws IOException;
 
     void skipClientCredentials()
-            throws IOException;
+        throws IOException;
 
     void processClientCredentials(TlsCredentials clientCredentials)
-            throws IOException;
+        throws IOException;
 
     void processClientCertificate(Certificate clientCertificate)
-            throws IOException;
+        throws IOException;
 
     void generateClientKeyExchange(OutputStream output)
-            throws IOException;
+        throws IOException;
 
     void processClientKeyExchange(InputStream input)
-            throws IOException;
+        throws IOException;
 
     byte[] generatePremasterSecret()
-            throws IOException;
+        throws IOException;
 }

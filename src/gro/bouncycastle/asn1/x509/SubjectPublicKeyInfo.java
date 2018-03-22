@@ -2,7 +2,15 @@ package gro.bouncycastle.asn1.x509;
 
 import ewe.io.IOException;
 import ewe.util.Enumeration;
-import gro.bouncycastle.asn1.*;
+import gro.bouncycastle.asn1.ASN1Encodable;
+import gro.bouncycastle.asn1.ASN1EncodableVector;
+import gro.bouncycastle.asn1.ASN1InputStream;
+import gro.bouncycastle.asn1.ASN1Object;
+import gro.bouncycastle.asn1.ASN1Primitive;
+import gro.bouncycastle.asn1.ASN1Sequence;
+import gro.bouncycastle.asn1.ASN1TaggedObject;
+import gro.bouncycastle.asn1.DERBitString;
+import gro.bouncycastle.asn1.DERSequence;
 
 /**
  * The object that contains the public key stored in a certficate.
@@ -11,69 +19,80 @@ import gro.bouncycastle.asn1.*;
  * encoded one of these.
  */
 public class SubjectPublicKeyInfo
-        extends ASN1Object {
-    private AlgorithmIdentifier algId;
-    private DERBitString keyData;
-
-    public SubjectPublicKeyInfo(
-            AlgorithmIdentifier algId,
-            ASN1Encodable publicKey)
-            throws IOException {
-        this.keyData = new DERBitString(publicKey);
-        this.algId = algId;
-    }
-
-    public SubjectPublicKeyInfo(
-            AlgorithmIdentifier algId,
-            byte[] publicKey) {
-        throw new UnsupportedClassVersionError();/*
-        this.keyData = new DERBitString(publicKey);
-        this.algId = algId;
-*/
-    }
-
-    /**
-     * @deprecated use SubjectPublicKeyInfo.getInstance()
-     */
-    public SubjectPublicKeyInfo(
-            ASN1Sequence seq) {
-        if (seq.size() != 2) {
-            throw new IllegalArgumentException("Bad sequence size: "
-                    + seq.size());
-        }
-
-        Enumeration e = seq.getObjects();
-
-        this.algId = AlgorithmIdentifier.getInstance(e.nextElement());
-        this.keyData = DERBitString.getInstance(e.nextElement());
-    }
+    extends ASN1Object
+{
+    private AlgorithmIdentifier     algId;
+    private DERBitString            keyData;
 
     public static SubjectPublicKeyInfo getInstance(
-            ASN1TaggedObject obj,
-            boolean explicit) {
+        ASN1TaggedObject obj,
+        boolean          explicit)
+    {
         return getInstance(ASN1Sequence.getInstance(obj, explicit));
     }
 
     public static SubjectPublicKeyInfo getInstance(
-            Object obj) {
-        if (obj instanceof SubjectPublicKeyInfo) {
-            return (SubjectPublicKeyInfo) obj;
-        } else if (obj != null) {
+        Object  obj)
+    {
+        if (obj instanceof SubjectPublicKeyInfo)
+        {
+            return (SubjectPublicKeyInfo)obj;
+        }
+        else if (obj != null)
+        {
             return new SubjectPublicKeyInfo(ASN1Sequence.getInstance(obj));
         }
 
         return null;
     }
 
-    public AlgorithmIdentifier getAlgorithm() {
+    public SubjectPublicKeyInfo(
+        AlgorithmIdentifier algId,
+        ASN1Encodable       publicKey)
+        throws IOException
+    {
+        this.keyData = new DERBitString(publicKey);
+        this.algId = algId;
+    }
+
+    public SubjectPublicKeyInfo(
+        AlgorithmIdentifier algId,
+        byte[]              publicKey)
+    {
+    	throw new UnsupportedClassVersionError();/*
+        this.keyData = new DERBitString(publicKey);
+        this.algId = algId;
+*/    }
+
+    /**
+     @deprecated use SubjectPublicKeyInfo.getInstance()
+     */
+    public SubjectPublicKeyInfo(
+        ASN1Sequence  seq)
+    {
+        if (seq.size() != 2)
+        {
+            throw new IllegalArgumentException("Bad sequence size: "
+                    + seq.size());
+        }
+
+        Enumeration         e = seq.getObjects();
+
+        this.algId = AlgorithmIdentifier.getInstance(e.nextElement());
+        this.keyData = DERBitString.getInstance(e.nextElement());
+    }
+
+    public AlgorithmIdentifier getAlgorithm()
+    {
         return algId;
     }
 
     /**
-     * @return alg ID.
      * @deprecated use getAlgorithm()
+     * @return    alg ID.
      */
-    public AlgorithmIdentifier getAlgorithmId() {
+    public AlgorithmIdentifier getAlgorithmId()
+    {
         return algId;
     }
 
@@ -81,13 +100,14 @@ public class SubjectPublicKeyInfo
      * for when the public key is an encoded object - if the bitstring
      * can't be decoded this routine throws an IOException.
      *
+     * @exception IOException - if the bit string doesn't represent a DER
+     * encoded object.
      * @return the public key as an ASN.1 primitive.
-     * @throws IOException - if the bit string doesn't represent a DER
-     *                     encoded object.
      */
     public ASN1Primitive parsePublicKey()
-            throws IOException {
-        ASN1InputStream aIn = new ASN1InputStream(keyData.getOctets());
+        throws IOException
+    {
+        ASN1InputStream         aIn = new ASN1InputStream(keyData.getOctets());
 
         return aIn.readObject();
     }
@@ -96,14 +116,15 @@ public class SubjectPublicKeyInfo
      * for when the public key is an encoded object - if the bitstring
      * can't be decoded this routine throws an IOException.
      *
-     * @return the public key as an ASN.1 primitive.
-     * @throws IOException - if the bit string doesn't represent a DER
-     *                     encoded object.
+     * @exception IOException - if the bit string doesn't represent a DER
+     * encoded object.
      * @deprecated use parsePublicKey
+     * @return the public key as an ASN.1 primitive.
      */
     public ASN1Primitive getPublicKey()
-            throws IOException {
-        ASN1InputStream aIn = new ASN1InputStream(keyData.getOctets());
+        throws IOException
+    {
+        ASN1InputStream         aIn = new ASN1InputStream(keyData.getOctets());
 
         return aIn.readObject();
     }
@@ -113,7 +134,8 @@ public class SubjectPublicKeyInfo
      *
      * @return the public key as the raw bit string...
      */
-    public DERBitString getPublicKeyData() {
+    public DERBitString getPublicKeyData()
+    {
         return keyData;
     }
 
@@ -125,8 +147,9 @@ public class SubjectPublicKeyInfo
      *                          publicKey BIT STRING }
      * </pre>
      */
-    public ASN1Primitive toASN1Primitive() {
-        ASN1EncodableVector v = new ASN1EncodableVector();
+    public ASN1Primitive toASN1Primitive()
+    {
+        ASN1EncodableVector  v = new ASN1EncodableVector();
 
         v.add(algId);
         v.add(keyData);

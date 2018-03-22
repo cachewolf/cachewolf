@@ -10,8 +10,10 @@ import ewe.io.EOFException;
  * e.g. the Content-Length header for HTTPS.
  */
 public class TlsNoCloseNotifyException
-        extends EOFException {
-    public TlsNoCloseNotifyException() {
+    extends EOFException
+{
+    public TlsNoCloseNotifyException()
+    {
         super("No close_notify alert received before connection closed");
     }
 }

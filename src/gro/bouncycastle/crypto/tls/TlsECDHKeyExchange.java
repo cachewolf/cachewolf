@@ -1,9 +1,11 @@
 package gro.bouncycastle.crypto.tls;
 
+import ewe.io.ByteArrayOutputStream;
 import ewe.io.IOException;
 import ewe.io.InputStream;
 import ewe.io.OutputStream;
 import ewe.util.Vector;
+
 import gro.bouncycastle.asn1.x509.KeyUsage;
 import gro.bouncycastle.asn1.x509.SubjectPublicKeyInfo;
 import gro.bouncycastle.crypto.params.AsymmetricKeyParameter;
@@ -15,7 +17,8 @@ import gro.bouncycastle.crypto.util.PublicKeyFactory;
 /**
  * (D)TLS ECDH key exchange (see RFC 4492).
  */
-public class TlsECDHKeyExchange extends AbstractTlsKeyExchange {
+public class TlsECDHKeyExchange extends AbstractTlsKeyExchange
+{
     protected TlsSigner tlsSigner;
     protected int[] namedCurves;
     protected short[] clientECPointFormats, serverECPointFormats;
@@ -27,25 +30,27 @@ public class TlsECDHKeyExchange extends AbstractTlsKeyExchange {
     protected ECPublicKeyParameters ecAgreePublicKey;
 
     public TlsECDHKeyExchange(int keyExchange, Vector supportedSignatureAlgorithms, int[] namedCurves,
-                              short[] clientECPointFormats, short[] serverECPointFormats) {
+        short[] clientECPointFormats, short[] serverECPointFormats)
+    {
         super(keyExchange, supportedSignatureAlgorithms);
 
-        switch (keyExchange) {
-            case KeyExchangeAlgorithm.ECDHE_RSA:
-                this.tlsSigner = new TlsRSASigner();
-                break;
-            case KeyExchangeAlgorithm.ECDHE_ECDSA:
-                this.tlsSigner = new TlsECDSASigner();
-                break;
-            case KeyExchangeAlgorithm.ECDH_anon:
-            case KeyExchangeAlgorithm.ECDH_RSA:
-            case KeyExchangeAlgorithm.ECDH_ECDSA:
-                throw new UnsupportedClassVersionError();/*
+        switch (keyExchange)
+        {
+        case KeyExchangeAlgorithm.ECDHE_RSA:
+            this.tlsSigner = new TlsRSASigner();
+             break;
+        case KeyExchangeAlgorithm.ECDHE_ECDSA:
+            this.tlsSigner = new TlsECDSASigner();
+            break;
+        case KeyExchangeAlgorithm.ECDH_anon:
+        case KeyExchangeAlgorithm.ECDH_RSA:
+        case KeyExchangeAlgorithm.ECDH_ECDSA:
+        	throw new UnsupportedClassVersionError();/*
             this.tlsSigner = null;
             break;
             */
-            default:
-                throw new IllegalArgumentException("unsupported key exchange algorithm");
+        default:
+            throw new IllegalArgumentException("unsupported key exchange algorithm");
         }
 
         this.namedCurves = namedCurves;
@@ -53,40 +58,50 @@ public class TlsECDHKeyExchange extends AbstractTlsKeyExchange {
         this.serverECPointFormats = serverECPointFormats;
     }
 
-    public void init(TlsContext context) {
+    public void init(TlsContext context)
+    {
         super.init(context);
 
-        if (this.tlsSigner != null) {
+        if (this.tlsSigner != null)
+        {
             this.tlsSigner.init(context);
         }
     }
-
-    public void skipServerCredentials() throws IOException {
-        if (keyExchange != KeyExchangeAlgorithm.ECDH_anon) {
+    public void skipServerCredentials() throws IOException
+    {
+        if (keyExchange != KeyExchangeAlgorithm.ECDH_anon)
+        {
             throw new TlsFatalAlert(AlertDescription.unexpected_message);
         }
     }
 
-
-    public void processServerCertificate(Certificate serverCertificate) throws IOException {
-        if (keyExchange == KeyExchangeAlgorithm.ECDH_anon) {
+    
+    public void processServerCertificate(Certificate serverCertificate) throws IOException
+    {
+        if (keyExchange == KeyExchangeAlgorithm.ECDH_anon)
+        {
             throw new TlsFatalAlert(AlertDescription.unexpected_message);
         }
-        if (serverCertificate.isEmpty()) {
+        if (serverCertificate.isEmpty())
+        {
             throw new TlsFatalAlert(AlertDescription.bad_certificate);
         }
 
         gro.bouncycastle.asn1.x509.Certificate x509Cert = serverCertificate.getCertificateAt(0);
 
         SubjectPublicKeyInfo keyInfo = x509Cert.getSubjectPublicKeyInfo();
-        try {
+        try
+        {
             this.serverPublicKey = PublicKeyFactory.createKey(keyInfo);
-        } catch (RuntimeException e) {
+        }
+        catch (RuntimeException e)
+        {
             throw new TlsFatalAlert(AlertDescription.unsupported_certificate, e);
         }
 
-        if (tlsSigner == null) {
-            throw new UnsupportedClassVersionError();/*
+        if (tlsSigner == null)
+        {
+        	throw new UnsupportedClassVersionError();/*
             try
             {
                 this.ecAgreePublicKey = TlsECCUtils.validateECPublicKey((ECPublicKeyParameters) this.serverPublicKey);
@@ -97,9 +112,11 @@ public class TlsECDHKeyExchange extends AbstractTlsKeyExchange {
             }
 
             TlsUtils.validateKeyUsage(x509Cert, KeyUsage.keyAgreement);
-*/
-        } else {
-            if (!tlsSigner.isValidPublicKey(this.serverPublicKey)) {
+*/        }
+        else
+        {
+                        if (!tlsSigner.isValidPublicKey(this.serverPublicKey))
+            {
                 throw new TlsFatalAlert(AlertDescription.certificate_unknown);
             }
 
@@ -109,20 +126,23 @@ public class TlsECDHKeyExchange extends AbstractTlsKeyExchange {
         super.processServerCertificate(serverCertificate);
     }
 
-    public boolean requiresServerKeyExchange() {
-        switch (keyExchange) {
-            case KeyExchangeAlgorithm.ECDH_anon:
-            case KeyExchangeAlgorithm.ECDHE_ECDSA:
-            case KeyExchangeAlgorithm.ECDHE_RSA:
-                return true;
-            default:
-                return false;
+    public boolean requiresServerKeyExchange()
+    {
+        switch (keyExchange)
+        {
+        case KeyExchangeAlgorithm.ECDH_anon:
+        case KeyExchangeAlgorithm.ECDHE_ECDSA:
+        case KeyExchangeAlgorithm.ECDHE_RSA:
+            return true;
+        default:
+            return false;
         }
     }
 
     public byte[] generateServerKeyExchange()
-            throws IOException {
-        throw new UnsupportedClassVersionError();/*
+        throws IOException
+    {
+    	throw new UnsupportedClassVersionError();/*
         if (!requiresServerKeyExchange())
         {
             return null;
@@ -134,12 +154,13 @@ public class TlsECDHKeyExchange extends AbstractTlsKeyExchange {
         this.ecAgreePrivateKey = TlsECCUtils.generateEphemeralServerKeyExchange(context.getSecureRandom(), namedCurves,
             clientECPointFormats, buf);
         return buf.toByteArray();
-*/
-    }
+*/    }
 
     public void processServerKeyExchange(InputStream input)
-            throws IOException {
-        if (!requiresServerKeyExchange()) {
+        throws IOException
+    {
+        if (!requiresServerKeyExchange())
+        {
             throw new TlsFatalAlert(AlertDescription.unexpected_message);
         }
 
@@ -150,11 +171,12 @@ public class TlsECDHKeyExchange extends AbstractTlsKeyExchange {
         byte[] point = TlsUtils.readOpaque8(input);
 
         this.ecAgreePublicKey = TlsECCUtils.validateECPublicKey(TlsECCUtils.deserializeECPublicKey(
-                clientECPointFormats, curve_params, point));
+            clientECPointFormats, curve_params, point));
     }
 
-    public void validateCertificateRequest(CertificateRequest certificateRequest) throws IOException {
-        throw new UnsupportedClassVersionError();/*
+    public void validateCertificateRequest(CertificateRequest certificateRequest) throws IOException
+    {
+    	throw new UnsupportedClassVersionError();/*
     
         if (keyExchange == KeyExchangeAlgorithm.ECDH_anon)
         {
@@ -184,9 +206,9 @@ public class TlsECDHKeyExchange extends AbstractTlsKeyExchange {
         }
     	 */
     }
-
-    public void processClientCredentials(TlsCredentials clientCredentials) throws IOException {
-        throw new UnsupportedClassVersionError();/*
+    public void processClientCredentials(TlsCredentials clientCredentials) throws IOException
+    {
+    throw new UnsupportedClassVersionError();/* 
         if (keyExchange == KeyExchangeAlgorithm.ECDH_anon)
         {
             throw new TlsFatalAlert(AlertDescription.internal_error);
@@ -206,18 +228,19 @@ public class TlsECDHKeyExchange extends AbstractTlsKeyExchange {
         {
             throw new TlsFatalAlert(AlertDescription.internal_error);
         }
-*/
-    }
-
-    public void generateClientKeyExchange(OutputStream output) throws IOException {
-        if (agreementCredentials == null) {
+*/    }
+    public void generateClientKeyExchange(OutputStream output) throws IOException
+    {
+        if (agreementCredentials == null)
+        {
             this.ecAgreePrivateKey = TlsECCUtils.generateEphemeralClientKeyExchange(context.getSecureRandom(),
-                    serverECPointFormats, ecAgreePublicKey.getParameters(), output);
+                serverECPointFormats, ecAgreePublicKey.getParameters(), output);
         }
     }
 
-    public void processClientCertificate(Certificate clientCertificate) throws IOException {
-        throw new UnsupportedClassVersionError();/*
+    public void processClientCertificate(Certificate clientCertificate) throws IOException
+    {
+    	throw new UnsupportedClassVersionError();/*
         if (keyExchange == KeyExchangeAlgorithm.ECDH_anon)
         {
             throw new TlsFatalAlert(AlertDescription.unexpected_message);
@@ -225,11 +248,11 @@ public class TlsECDHKeyExchange extends AbstractTlsKeyExchange {
 
         // TODO Extract the public key
         // TODO If the certificate is 'fixed', take the public key as ecAgreeClientPublicKey
-*/
-    }
+*/    }
 
-    public void processClientKeyExchange(InputStream input) throws IOException {
-        throw new UnsupportedClassVersionError();/*
+    public void processClientKeyExchange(InputStream input) throws IOException
+    {
+    	throw new UnsupportedClassVersionError();/*
         if (ecAgreePublicKey != null)
         {
             // For ecdsa_fixed_ecdh and rsa_fixed_ecdh, the key arrived in the client certificate
@@ -242,15 +265,17 @@ public class TlsECDHKeyExchange extends AbstractTlsKeyExchange {
 
         this.ecAgreePublicKey = TlsECCUtils.validateECPublicKey(TlsECCUtils.deserializeECPublicKey(
             serverECPointFormats, curve_params, point));
-*/
-    }
+*/    }
 
-    public byte[] generatePremasterSecret() throws IOException {
-        if (agreementCredentials != null) {
+    public byte[] generatePremasterSecret() throws IOException
+    {
+        if (agreementCredentials != null)
+        {
             return agreementCredentials.generateAgreement(ecAgreePublicKey);
         }
 
-        if (ecAgreePrivateKey != null) {
+        if (ecAgreePrivateKey != null)
+        {
             return TlsECCUtils.calculateECDHBasicAgreement(ecAgreePublicKey, ecAgreePrivateKey);
         }
 
