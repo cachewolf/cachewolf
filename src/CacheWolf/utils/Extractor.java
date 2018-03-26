@@ -30,29 +30,30 @@ public class Extractor {
     public static boolean INCLUDESTARTEND = false;
     public static boolean EXCLUDESTARTEND = true;
     int _startOffset;
-    String _searchText;
+    int idxLeftDelimiter;
+    String _SearchInThisText;
     String leftDelimiter;
     String rightDelimiter;
     boolean _betweenonly;
 
     /**
-     * use set String searchText, String st, String e, int startOffset, boolean betweenonly afterwards
+     * use set String searchInThisText, String st, String e, int startOffset, boolean betweenonly afterwards
      */
     public Extractor() {
     }
 
     /**
      * Create an extractor.
-     * searchText = The string to search through.<br>
+     * searchInThisText = The string to search through.<br>
      * st = The string that denotes the start of the string to extract<br>
      * e = The string that denotes the end of the string to extract<br>
      * startOffset = The beginning offset from which to start the search in sTxt<br>
      * betweenonly = if false the string returned will inlcude st and e;
      * if true it will not include st and e.
      */
-    public Extractor(String searchText, String st, String e, int startOffset, boolean betweenonly) {
+    public Extractor(String searchInThisText, String st, String e, int startOffset, boolean betweenonly) {
         _startOffset = startOffset;
-        _searchText = searchText;
+        _SearchInThisText = searchInThisText;
         rightDelimiter = e;
         leftDelimiter = st;
         _betweenonly = betweenonly;
@@ -61,9 +62,9 @@ public class Extractor {
     /**
      * Mehtod to set the source text to be searched through
      */
-    public Extractor set(String searchText, String st, String e, int startOffset, boolean betweenonly) {
+    public Extractor set(String searchInThisText, String st, String e, int startOffset, boolean betweenonly) {
         _startOffset = startOffset;
-        _searchText = searchText;
+        _SearchInThisText = searchInThisText;
         rightDelimiter = e;
         leftDelimiter = st;
         _betweenonly = betweenonly;
@@ -77,14 +78,14 @@ public class Extractor {
         return this;
     }
 
-    public Extractor set(String searchText) {
-        _searchText = searchText;
+    public Extractor set(String searchInThisText) {
+        _SearchInThisText = searchInThisText;
         _startOffset = 0;
         return this;
     }
 
-    public String findFirst(String searchText) {
-        _searchText = searchText;
+    public String findFirst(String searchInThisText) {
+        _SearchInThisText = searchInThisText;
         _startOffset = 0;
         return findNext();
     }
@@ -113,20 +114,20 @@ public class Extractor {
      */
     public String findNext() {
         String ret = "";
-        if (_searchText != null && _searchText.length() > _startOffset + leftDelimiter.length() + rightDelimiter.length()) {
-            int idxLeftDelimiter = _searchText.indexOf(leftDelimiter, _startOffset);
+        if (_SearchInThisText != null && _SearchInThisText.length() > _startOffset + leftDelimiter.length() + rightDelimiter.length()) {
+            idxLeftDelimiter = _SearchInThisText.indexOf(leftDelimiter, _startOffset);
             int idxRightDelimiter = -1;
             if (idxLeftDelimiter > -1) {
-                idxRightDelimiter = _searchText.indexOf(rightDelimiter, idxLeftDelimiter + leftDelimiter.length());
+                idxRightDelimiter = _SearchInThisText.indexOf(rightDelimiter, idxLeftDelimiter + leftDelimiter.length());
                 if (idxRightDelimiter > -1) {
                     _startOffset = idxRightDelimiter;
-                    ret = _searchText.substring(idxLeftDelimiter + leftDelimiter.length(), idxRightDelimiter);
+                    ret = _SearchInThisText.substring(idxLeftDelimiter + leftDelimiter.length(), idxRightDelimiter);
                     if (!this._betweenonly)
                         ret = leftDelimiter + ret + rightDelimiter;
                 }
             }
             if (idxRightDelimiter == -1) {
-                _startOffset = _searchText.length(); // Schluss
+                _startOffset = _SearchInThisText.length(); // Schluss
             }
         }
         return ret;

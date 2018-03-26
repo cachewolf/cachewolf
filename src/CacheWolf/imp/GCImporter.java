@@ -2154,8 +2154,16 @@ public class GCImporter {
 
                         newCache.setAvailable(!(wayPointPage.indexOf(unavailableGeocache) > -1));
                         newCache.setArchived(wayPointPage.indexOf(archivedGeocache) > -1);
-                        if (wayPointPage.indexOf(correctedCoordinate) > -1) {
-                            newCache.setIsSolved(true);
+                        Extractor e = new Extractor(wayPointPage, correctedCoordinate, ";", 0, Extractor.EXCLUDESTARTEND);
+                        String extracted = e.findNext();
+                        if (extracted.length() > 0) {
+                            e.set(extracted);
+                            String newLatLng = e.findNext("newLatLng\":[", "]");
+                            String oldLatLng = e.findNext("oldLatLng\":[");
+                            newCache.setIsSolved(!newLatLng.equals(oldLatLng));
+                            if (!newCache.isSolved()) {
+                                Preferences.itself().log(newCache.getCode() + " coords equal original.",null);
+                            }
                         }
                         // Logs
                         getLogs((wayPointPage.indexOf(foundByMe) > -1) || (isInDB && chOld.isFound())); // or get finds
@@ -2993,7 +3001,8 @@ public class GCImporter {
         String attribute;
         chD.attributes.clear();
         while ((attribute = attEx.findNext()).length() > 0) {
-            chD.attributes.add(attribute);
+            if (!attribute.startsWith("attribute-blank"))
+                chD.attributes.add(attribute);
         }
         chD.getParent().setAttribsAsBits(chD.attributes.getAttribsAsBits());
     }

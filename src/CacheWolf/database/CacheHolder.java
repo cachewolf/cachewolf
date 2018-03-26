@@ -1004,24 +1004,19 @@ public class CacheHolder {
      * Updates Cache information with information provided by cache given as argument. This is used to update the cache with the information retrieved from files or web: The argument cache is the one that is filled with the read information,
      * <code>this</code> is the cache that is already in the database and subject to update.
      *
-     * @param ch        The cache who's information is updating the current one
-     * @param overwrite If <code>true</code>, then <i>status</i>, <i>isFound</i> and <i>position</i> is updated, otherwise not.
+     * @param ch The cache who's information is updating the current one
      */
     public void update(CacheHolder ch) {
         updateOwnLog(ch);
         this.setNumFoundsSinceRecommendation(ch.getNumFoundsSinceRecommendation());
         this.setNumRecommended(ch.getNumRecommended());
         this.setIsPremiumCache(ch.isPMCache);
-
-        // Don't overwrite valid coordinates with invalid ones
-        if (ch.getWpt().isValid() || !this.wpt.isValid()) {
-            if (!this.isSolved) {
-                this.wpt = ch.getWpt();
+        // Don't overwrite local solved coords
+        if (!isSolved) {
+            if (ch.getWpt().isValid()) {
+                wpt = ch.getWpt();
+                setIsSolved(ch.isSolved);
             }
-        }
-        // the new from GC if coords are changed there
-        if (ch.isSolved) {
-            this.setIsSolved(ch.isSolved);
         }
         this.setCode(ch.getCode());
         this.setName(ch.getName());
