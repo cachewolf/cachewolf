@@ -38,15 +38,14 @@ import ewe.ui.*;
  * Class ID = 1200
  *
  * @see MainForm
- * @see MainMenu
  */
 public class MainTab extends mTabbedPanel {
 
     public static MainTab itself;
+    // following numbers depend on tabNames order (MENU_CARD must be the last tabName)
     public static int DETAILS_CARD = 1;
     public static int DESCRIPTION_CARD = 2;
     public static int MAP_CARD = 9;
-    // following numbers depend on tabNames order (MENU_CARD must be the last tabName)
     static int LIST_CARD = 0;
     static int IMAGES_CARD = 3;
     static int HINTSANDLOGS_CARD = 4;
@@ -121,8 +120,7 @@ public class MainTab extends mTabbedPanel {
                 mapPanel, //
         };
 
-        String[] tabNames;
-        tabNames = new String[]{MyLocale.getMsg(1200, "List"), //
+        String[] tabNames = {MyLocale.getMsg(1200, "List"), //
                 MyLocale.getMsg(1201, "Details"), //
                 MyLocale.getMsg(1202, "Description"), //
                 MyLocale.getMsg(1203, "Images"), //

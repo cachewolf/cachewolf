@@ -96,7 +96,7 @@ public class Attributes {
      */
     public void add(String attributeName) {
         if (_count < attribs.length) {
-            if (!attributeName.equalsIgnoreCase("attribute-blank.gif")) {
+            if (!attributeName.startsWith("attribute-blank")) {
                 Attribute attr = new Attribute(attributeName);
                 attribs[_count++] = attr;
                 attrYes = attr.getYesBit(attrYes);
@@ -108,8 +108,8 @@ public class Attributes {
     /**
      * Add a new attribute to the array by ID and Inc as you get it from GC gpx-File
      *
-     * @param GC attribute ID
-     * @param GC attribute Inc (attribute set = 0 ,attribute not set = 1)
+     * @param attIdGC GC attribute ID
+     * @param Yes1No0 GC attribute Inc (attribute set = 0 ,attribute not set = 1)
      */
     public void add(int attIdGC, String Yes1No0) {
         if (_count < attribs.length) {

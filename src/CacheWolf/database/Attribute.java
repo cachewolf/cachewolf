@@ -114,7 +114,9 @@ public class Attribute {
             {"69", "2642", "tools", "46", "0", "Special Tool required"},//
             {"70", "2648", "wiki", "54", "154", "Investigation"}, // OC special
             {"71", "2650", "wwwlink", "7", "107", "Hyperlink to another caching portal only"}, // OC special
-            {"72", "2652", "landf", "0", "45", "Lost And Found Tour"}, {"73", "2654", "rv", "0", "46", "Truck Driver/RV"}, {"74", "2656", "field_puzzle", "0", "47", "Field Puzzle"},//
+            {"72", "2652", "landf", "0", "45", "Lost And Found Tour"}, //
+            {"73", "2654", "rv", "0", "46", "Truck Driver/RV"}, //
+            {"74", "2656", "field_puzzle", "0", "47", "Field Puzzle"},//
             {"75", "2658", "uv", "0", "48", "UV Light required"}, //
             {"76", "2660", "snowshoes", "0", "49", "Snowshoes"}, //
             {"77", "2662", "skiis", "0", "50", "Cross Country Skis"}, //
@@ -232,10 +234,11 @@ public class Attribute {
 
     // for GC Constructor Spider
     private void attName2attNo(String attributeName) {
+        String an = attributeName.toLowerCase().substring(0, attributeName.length() - 4);
         for (int i = 0; i < maxAttRef; i++) {
-            if (attributeName.toLowerCase().startsWith(attRef[i][PIC_NAME].toLowerCase() + "-")) {
+            if (an.startsWith(attRef[i][PIC_NAME] + "-")) {
                 _Id = i;
-                _Inc = attributeName.toLowerCase().endsWith("-no.gif") ? 0 : 1;
+                _Inc = an.endsWith("-no") ? 0 : 1;
                 _ImageName = attRef[i][PIC_NAME] + (_Inc == 0 ? "-no.gif" : "-yes.gif");
                 return;
             }

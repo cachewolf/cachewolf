@@ -267,10 +267,9 @@ public class GCImporter {
             return false;
         }
 
-        Extractor e = new Extractor();
-        String languageBlock = e.set(WebPage, "<ul class=\"language-list\">", "</ul>", 0, true).findNext();
-        languageBlock = e.set(languageBlock, "class=\"selected\"", "</li>", 0, true).findNext();
-        String newLanguage = e.set(languageBlock, "$uxLocaleList$ctl", "$uxLocaleItem", 0, true).findNext();
+        String languageBlock = extractor.set(WebPage, "<ul class=\"language-list\">", "</ul>", 0, true).findNext();
+        languageBlock = extractor.set(languageBlock, "class=\"selected\"", "</li>", 0, true).findNext();
+        String newLanguage = extractor.set(languageBlock, "$uxLocaleList$ctl", "$uxLocaleItem", 0, true).findNext();
 
         if (newLanguage.equals(languageCode)) {
             return true;
@@ -2154,19 +2153,29 @@ public class GCImporter {
 
                         newCache.setAvailable(!(wayPointPage.indexOf(unavailableGeocache) > -1));
                         newCache.setArchived(wayPointPage.indexOf(archivedGeocache) > -1);
-                        Extractor e = new Extractor(wayPointPage, correctedCoordinate, ";", 0, Extractor.EXCLUDESTARTEND);
-                        String extracted = e.findNext();
+                        extractor.set(wayPointPage, correctedCoordinate, ";", 0, Extractor.EXCLUDESTARTEND);
+                        String extracted = extractor.findNext();
                         if (extracted.length() > 0) {
-                            e.set(extracted);
-                            String newLatLng = e.findNext("newLatLng\":[", "]");
-                            String oldLatLng = e.findNext("oldLatLng\":[");
-                            newCache.setIsSolved(!newLatLng.equals(oldLatLng));
-                            if (!newCache.isSolved()) {
+                            String newLatLng = extractValue.set(extracted,"newLatLng\":[", "]",0,Extractor.EXCLUDESTARTEND).findNext();
+                            String oldLatLng = extractValue.findNext("oldLatLng\":[");
+                            newCache.setIsSolved(true);
+                            if (newLatLng.equals(oldLatLng)) {
                                 Preferences.itself().log(newCache.getCode() + " coords equal original.",null);
                             }
                         }
-                        // Logs
-                        getLogs((wayPointPage.indexOf(foundByMe) > -1) || (isInDB && chOld.isFound())); // or get finds
+                        /*
+                        JSONObject initialLogs = new JSONObject(extractor.findNext("initalLogs = ", "};") + "}");
+                        JSONObject pageInfo = initialLogs.getJSONObject("pageInfo");
+                        int got = pageInfo.getInt("size"); //<=25
+                        int max = pageInfo.getInt("totalRows");
+                        if (max<=got) {
+
+                        }
+                        else {
+                        }
+                        */
+                        // Logs: getAllLogs = isFoundByMe = (logged at gc (by spidering account) || marked as found in this profile)
+                        getLogs((wayPointPage.indexOf(foundByMe) > -1) || (isInDB && chOld.isFound()));
 
                         // order of occurrence in wayPointPage
                         wayPointPageIndex = 0;
@@ -3001,7 +3010,6 @@ public class GCImporter {
         String attribute;
         chD.attributes.clear();
         while ((attribute = attEx.findNext()).length() > 0) {
-            if (!attribute.startsWith("attribute-blank"))
                 chD.attributes.add(attribute);
         }
         chD.getParent().setAttribsAsBits(chD.attributes.getAttribsAsBits());
