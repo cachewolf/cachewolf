@@ -21,10 +21,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 package CacheWolf;
 
-import CacheWolf.controls.ExecutePanel;
-import CacheWolf.controls.GuiImageBroker;
-import CacheWolf.controls.InfoBox;
-import CacheWolf.controls.MyScrollBarPanel;
+import CacheWolf.controls.*;
 import CacheWolf.database.Attribute;
 import CacheWolf.database.CacheHolder;
 import CacheWolf.database.CacheSize;
@@ -812,8 +809,7 @@ public class FilterScreen extends Form {
                 //addiWptChk.state = false; do more
                 repaint();
             } else if (ev.target == btnSrchSyncDate) {
-                DateChooser.dayFirst = true;
-                final DateChooser dc = new DateChooser(Vm.getLocale());
+                final DateTimeChooser dc = new DateTimeChooser(Vm.getLocale(), false);
                 dc.title = "Last Update Time";
                 Preferences.itself().setSubWindowSize(dc);
                 if (syncDateInput.getText().length() == 10)
@@ -822,7 +818,7 @@ public class FilterScreen extends Form {
                     } catch (NumberFormatException e) {
                         dc.reset(new Time());
                     }
-                if (dc.execute() == ewe.ui.FormBase.IDOK) {
+                if (dc.run() == ewe.ui.FormBase.IDOK) {
                     syncDateInput.setText(Convert.toString(dc.year) + "-" + MyLocale.formatLong(dc.month, "00") + "-" + MyLocale.formatLong(dc.day, "00"));
                 }
                 setColors();

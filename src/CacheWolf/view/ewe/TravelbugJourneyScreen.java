@@ -306,7 +306,7 @@ public class TravelbugJourneyScreen extends Form {
                 }
                 ;
                 dc.reset(t);
-                if (dc.execute() == ewe.ui.FormBase.IDOK) {
+                if (dc.run() == ewe.ui.FormBase.IDOK) {
                     inpDate.setText(Convert.toString(dc.year) + "-" + MyLocale.formatLong(dc.month, "00") + "-" + MyLocale.formatLong(dc.day, "00") + " " + dc.time);
                     if (ev.target == btnFromDate) {
                         model.allTravelbugJourneys.getTBJourney(selectedRow).setFromDate(inpDate.getText());

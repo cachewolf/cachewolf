@@ -21,6 +21,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 package CacheWolf.database;
 
+import CacheWolf.Preferences;
 import CacheWolf.utils.Common;
 import CacheWolf.utils.MyLocale;
 import CacheWolf.utils.STRreplace;
@@ -234,7 +235,7 @@ public class Attribute {
 
     // for GC Constructor Spider
     private void attName2attNo(String attributeName) {
-        String an = attributeName.toLowerCase().substring(0, attributeName.length() - 4);
+        String an = attributeName.substring(0, attributeName.length() - 4);
         for (int i = 0; i < maxAttRef; i++) {
             if (an.startsWith(attRef[i][PIC_NAME] + "-")) {
                 _Id = i;
@@ -245,6 +246,7 @@ public class Attribute {
         }
         _Id = -1; // Error
         _ImageName = "error.gif";
+        Preferences.itself().log("Error converting Attribute " + attributeName);
     }
 
     // for OC Constructor

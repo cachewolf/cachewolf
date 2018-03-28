@@ -74,7 +74,7 @@ public class CoordsInput extends Form {
     boolean bEWs = false;
     boolean bUTMNorthing = false;
     boolean bUTMEasting = false;
-    private ExecutePanel executePanel = null;
+    private ExecutePanel executePanel;
     private boolean allowInvalid = false;
 
     public CoordsInput(boolean allowInvalidCoords) {

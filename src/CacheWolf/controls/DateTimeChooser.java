@@ -21,11 +21,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 package CacheWolf.controls;
 
-import CacheWolf.Preferences;
 import CacheWolf.utils.MyLocale;
 import ewe.fx.Color;
-import ewe.fx.DrawnIcon;
-import ewe.fx.Insets;
 import ewe.fx.Point;
 import ewe.reflect.FieldTransfer;
 import ewe.sys.*;
@@ -46,58 +43,76 @@ public class DateTimeChooser extends Editor {
     public boolean didAll = false;
     public Locale locale = Vm.getLocale();
     public String firstPanel = "monthName";
-    MultiPanel panels = new CardPanel();
     Time dateSet;
     TableControl dayChooser, monthChooser, yearChooser, timeChooser;
     Control dayDisplay;
     Control monthDisplay;
     Control yearDisplay;
-
-    //Control minuteDisplay;
     Control timeDisplay;
     boolean added = false;
-    CardPanel cards = new CardPanel();
+    boolean withTime;
+    MultiPanel panels;
+    CardPanel cards;
+    CellPanel addTo;
+    private ExecutePanel executePanel;
 
     public DateTimeChooser(Locale l) {
         if (l != null)
             locale = l;
+        withTime = true;
+        initDateTimeLayout();
+    }
+
+    public DateTimeChooser(Locale l, boolean withTime) {
+        if (l != null)
+            locale = l;
+        this.withTime = withTime;
+        initDateTimeLayout();
+    }
+
+    private void initDateTimeLayout() {
         setDate(new Time());
+        cards = new CardPanel();
         addLast(cards);
-        CellPanel addTo = new CellPanel();
+        addTo = new CellPanel();
         cards.addItem(addTo, "full", null);
 
         CellPanel cp = new CellPanel();
-        CellPanel top = new CellPanel();
         cp.equalWidths = true;
         firstPanel = "day";
         dayDisplay = addTopData(cp, "day");
         monthDisplay = addTopData(cp, "monthName");
         yearDisplay = addTopData(cp, "year");
-        timeDisplay = addTopData(cp, "time");
-        cp.endRow();
+        if (withTime)
+            timeDisplay = addTopData(cp, "time");
+        addTo.addLast(cp).setCell(HSTRETCH);
 
-        addTopSection(top, cp);
-        addTo.addLast(top).setCell(HSTRETCH);
-        addTo.addLast((Control) panels);
-
+        panels = new CardPanel();
         addTable(dayChooser = new TableControl(), new dayChooserTableModel(locale), "day");
         addTable(monthChooser = new TableControl(), new monthChooserTableModel(locale), "monthName");
         addTable(yearChooser = new TableControl(), new yearChooserTableModel(), "year");
-        addTable(timeChooser = new TableControl(), new timeChooserTableModel(), "time");
-
-        // the following is already done in addTopSection?
-	/*
-			mButton b = new mButton();
-			//b.borderStyle = BDR_OUTLINE|BF_LEFT|BF_TOP|BF_RIGHT|BF_SQUARE;
-			b.image = new DrawnIcon(DrawnIcon.CROSS,10,10,new Color(0x80,0,0));
-			addField(b,"reject");
-			b.image = new DrawnIcon(DrawnIcon.CROSS,10,10,new Color(0x80,0,0));
-			b = new mButton();
-			b.image = new DrawnIcon(DrawnIcon.TICK,10,10,new Color(0,0x80,0));
-			addField(b,"accept");
-	*/
+        timeChooser = new TableControl();
+        timeChooser.setTableModel(new timeChooserTableModel());
+        timeChooser.setClickMode(true);
+        if (withTime) {
+            panels.addItem(timeChooser, "time", null);
+        }
+        addTo.addLast((Control) panels);
         newDate();
+    }
 
+    public void setYesNoCancelButtonTexts(String yesButton, String noButton, String cancelButton) {
+        executePanel = new ExecutePanel(addTo, FormBase.MBYESNOCANCEL);
+        executePanel.setText(yesButton, FormBase.YESB);
+        executePanel.setText(noButton, FormBase.NOB);
+        executePanel.setText(cancelButton, FormBase.DEFCANCELB);
+    }
+
+    public int run() {
+        if (executePanel == null) {
+            executePanel = new ExecutePanel(addTo);
+        }
+        return this.execute();
     }
 
     Time getDate() {
@@ -111,7 +126,7 @@ public class DateTimeChooser extends Editor {
         return t;
     }
 
-    private void setDate(Time t) {
+    public void setDate(Time t) {
         dateSet = t;
         if (!t.isValid())
             t = new Time();
@@ -151,26 +166,6 @@ public class DateTimeChooser extends Editor {
         didAll = false;
         newDate();
         panels.select(firstPanel);
-    }
-
-    public CellPanel addTopSection(CellPanel addTo, Control cp) {
-        int IconSize;
-        if (Vm.isMobile() && Preferences.itself().getScreenWidth() >= 400)
-            IconSize = 30;
-        else
-            IconSize = 30;
-        addTo.modify(DrawFlat, 0);
-        addTo.defaultTags.set(INSETS, new Insets(0, 0, 0, 0));
-        mButton b = new mButton();
-        b.borderStyle = BDR_OUTLINE | BF_LEFT | BF_TOP | BF_RIGHT | BF_SQUARE;
-        b.image = new DrawnIcon(DrawnIcon.CROSS, IconSize, IconSize, new Color(0x80, 0, 0));
-        addTo.addNext(addField(b, "reject")).setCell(DONTSTRETCH);
-        addTo.addNext(cp, HSTRETCH, HFILL);
-        b = new mButton();
-        b.borderStyle = BDR_OUTLINE | BF_TOP | BF_RIGHT | BF_SQUARE;
-        b.image = new DrawnIcon(DrawnIcon.TICK, IconSize, IconSize, new Color(0, 0x80, 0));
-        addTo.addNext(addField(b, "accept")).setCell(DONTSTRETCH);
-        return addTo;
     }
 
     public void fieldChanged(FieldTransfer ft, Editor ed) {
@@ -238,6 +233,17 @@ public class DateTimeChooser extends Editor {
                 timeChooser.repaintNow();
                 newDate();
                 toControls("time");
+            }
+        }
+        if (ev.type == ControlEvent.PRESSED) {
+            if (ev.target == executePanel.refuseButton) {
+                exit(IDNO);
+            }
+            if (ev.target == executePanel.cancelButton) {
+                exit(IDCANCEL);
+            }
+            if (ev.target == executePanel.applyButton) {
+                exit(IDOK);
             }
         }
         if (ev.type == ControlEvent.CANCELLED)

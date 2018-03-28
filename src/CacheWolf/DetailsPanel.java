@@ -137,7 +137,7 @@ public class DetailsPanel extends CellPanel {
 
         alias = new mInput();
         waypoint = new MyChoice("blabla", new String[]{"blabla"});
-        hiddenDate = GuiImageBroker.getButton(MyLocale.getMsg(305, "Hidden on:") + MyLocale.getMsg(31415, "Set hidden date"), "calendar");
+        hiddenDate = GuiImageBroker.getButton(MyLocale.getMsg(305, "Hidden on:") + "YYYY-MM-DD", "calendar");
         hiddenDate.setToolTip(MyLocale.getMsg(31415, "Set hidden date"));
         final String[] tdSelectionList = new String[]{"1.0", "1.5", "2.0", "2.5", "3.0", "3.5", "4.0", "4.5", "5.0"};
         difficulty = new MyChoice(MyLocale.getMsg(1000, "D"), "star0", tdSelectionList);
@@ -691,8 +691,8 @@ public class DetailsPanel extends CellPanel {
                 }
             } else if (ev.target == btnFoundDate) {
                 int msgNr = CacheType.getLogMsgNr(ch.getType());
-                // DateChooser.dayFirst=true;
                 final DateTimeChooser dc = new DateTimeChooser(Vm.getLocale());
+                dc.setYesNoCancelButtonTexts(MyLocale.getMsg(msgNr, "Found"), MyLocale.getMsg(319, "not Found"), "Cancel");
                 dc.title = MyLocale.getMsg(328, "Date found");
                 Preferences.itself().setSubWindowSize(dc);
                 String foundDate = chcStatus.getText();
@@ -717,24 +717,21 @@ public class DetailsPanel extends CellPanel {
 
                     dc.reset(t);
                 }
-                // We can create a not found log with date in two ways:
-                // 1) Exiting the date-time dialog by clicking the x if the status is empty (somewhat
-                // non-standard but quick and dirty)
-                // 2) Exiting the date-time dialog by clicking the tick. Then we check whether
-                // the status field was preset with the not-found text. If yes it stays a not found
-                // but the date is prepended
-                // TODO: The functions for extracting the date and the found/not-found text should not be in the GUI
-                int retCode = dc.execute();
-                if (retCode == ewe.ui.FormBase.IDOK && !chcStatus.getText().endsWith(MyLocale.getMsg(319, "not Found"))) {
-                    chcStatus.setText(MyLocale.getMsg(msgNr, "Found") + " " + Convert.toString(dc.year) + "-" + MyLocale.formatLong(dc.month, "00") + "-" + MyLocale.formatLong(dc.day, "00") + " " + dc.time);
-                    dirtyDetails = true;
-                } else if (chcStatus.getText().length() == 0 || (retCode == ewe.ui.FormBase.IDOK && chcStatus.getText().endsWith(MyLocale.getMsg(319, "not Found")))) {
-                    chcStatus.setText(dc.year + "-" + MyLocale.formatLong(dc.month, "00") + "-" + MyLocale.formatLong(dc.day, "00") + " " + dc.time + " " + MyLocale.getMsg(319, "not Found"));
-                    dirtyDetails = true;
+                switch (dc.run()) {
+                    case FormBase.IDYES:
+                        chcStatus.setText(MyLocale.getMsg(msgNr, "Found") + " " + Convert.toString(dc.year) + "-" + MyLocale.formatLong(dc.month, "00") + "-" + MyLocale.formatLong(dc.day, "00") + " " + dc.time);
+                        dirtyDetails = true;
+                        break;
+                    case FormBase.IDNO:
+                        chcStatus.setText(Convert.toString(dc.year) + "-" + MyLocale.formatLong(dc.month, "00") + "-" + MyLocale.formatLong(dc.day, "00") + " " + dc.time + " " + MyLocale.getMsg(319, "not Found"));
+                        dirtyDetails = true;
+                        break;
+                    default:
+                        // chcStatus.setText(""); // or do not change
+                        break;
                 }
             } else if (ev.target == hiddenDate) {
-                DateChooser.dayFirst = true;
-                final DateChooser dc = new DateChooser(Vm.getLocale());
+                final DateTimeChooser dc = new DateTimeChooser(Vm.getLocale(),false);
                 dc.title = MyLocale.getMsg(329, "Hidden date");
                 Preferences.itself().setSubWindowSize(dc);
                 if (newHiddenDate.length() == 10)
@@ -743,10 +740,10 @@ public class DetailsPanel extends CellPanel {
                     } catch (NumberFormatException e) {
                         dc.reset(new Time());
                     }
-                if (dc.execute() == ewe.ui.FormBase.IDOK) {
+                if (dc.run() == ewe.ui.FormBase.IDOK) {
                     newHiddenDate = Convert.toString(dc.year) + "-" + MyLocale.formatLong(dc.month, "00") + "-" + MyLocale.formatLong(dc.day, "00");
                     dirtyDetails = true;
-                    // profile.hasUnsavedChanges=true;
+                    GuiImageBroker.setButtonText(hiddenDate,MyLocale.getMsg(305, "Hidden on:") + newHiddenDate);
                 }
             } else if (ev.target == btnLog) {
                 String url = "";
