@@ -27,12 +27,10 @@ import CacheWolf.controls.InfoBox;
 import CacheWolf.controls.MyScrollBarPanel;
 import CacheWolf.database.*;
 import CacheWolf.exp.OCLogExport;
+import CacheWolf.imp.GCImporter;
 import CacheWolf.navi.Navigate;
 import CacheWolf.navi.TransformCoordinates;
-import CacheWolf.utils.CWWrapper;
-import CacheWolf.utils.Common;
-import CacheWolf.utils.MyLocale;
-import CacheWolf.utils.STRreplace;
+import CacheWolf.utils.*;
 import ewe.fx.*;
 import ewe.graphics.AniImage;
 import ewe.graphics.InteractivePanel;
@@ -47,18 +45,16 @@ import ewe.util.Hashtable;
 import ewe.util.Iterator;
 import ewe.util.Vector;
 import ewe.util.mString;
+import org.json.JSONObject;
 
 /**
  * Class to create the panel to show the way point details.<br>
  * Also allows for creation and editing of way points
  */
 public class DetailsPanel extends CellPanel {
-
     private final int BUG = 0;
     private final int GOTO = 1;
     private final int NOTES = 2;
-    private int thisWidth;
-    private int thisHeight;
     private MyChoice waypoint;
     private mInput alias;
     private mInput owner;
@@ -67,18 +63,16 @@ public class DetailsPanel extends CellPanel {
     private MyChoice terrain;
     private MyChoice cacheSize;
     private MyChoice more;
-
     private mButton coordinates;
     private mButton btnCountryState;
     private mButton btnHint;
-
     private mLabel lblOwner;
     private mLabel lblSolved;
     private mLabel lblBlacklist;
     private mLabel lblStatus;
-
     private LastLogsPanel lastLogs;
     private mCheckBox cbIsSolved;
+    private mButton btnUploadCoordsToGC;
     private mCheckBox cbIsBlacklisted;
     private mButton btnFoundDate;
     private mButton hiddenDate;
@@ -87,16 +81,9 @@ public class DetailsPanel extends CellPanel {
     private AttributesViewer attViewer;
     private CellPanel logPanel;
     private mTextPad ownLog;
-
-    // ===== data handles =====
     private mButton btnLog;
     private mButton btnLogToOC;
-
-    // ===== flags =====
     private mButton btnEditLog;
-    /**
-     * waypoint to be displayed.
-     */
     private CacheHolder ch;
     private CacheHolder mainCache;
     /**
@@ -163,6 +150,7 @@ public class DetailsPanel extends CellPanel {
         lblBlacklist = new mLabel(MyLocale.getMsg(363, "Blacklist") + ": ");
         lblStatus = new mLabel(MyLocale.getMsg(307, "Status:"));
         cbIsSolved = new mCheckBox("");
+        btnUploadCoordsToGC = GuiImageBroker.getButton(MyLocale.getMsg(31415, "Upload corrected Coords"), "");
         cbIsBlacklisted = new mCheckBox("");
         chcStatus = new mComboBox(CacheHolder.GetGuiLogTypes(), 0);
         btnFoundDate = GuiImageBroker.getButton("", "calendar");
@@ -180,8 +168,6 @@ public class DetailsPanel extends CellPanel {
 
     public void makeLayout(int windowWidth, int windowHeight) {
 
-        thisWidth = windowWidth;
-        thisHeight = windowHeight;
         double f = Preferences.itself().fontSize * 12.5;
         int anzPerLine = Math.max(1, (int) (((double) windowWidth) / f));
         isBigScreen = anzPerLine > 1;
@@ -250,13 +236,14 @@ public class DetailsPanel extends CellPanel {
 
         CellPanel solvedPanel = new CellPanel();
         solvedPanel.addNext(lblSolved, DONTSTRETCH, DONTFILL | LEFT);
-        solvedPanel.addNext(cbIsSolved);
+        solvedPanel.addNext(cbIsSolved, DONTSTRETCH, DONTFILL | LEFT);
+        solvedPanel.addNext(btnUploadCoordsToGC, DONTSTRETCH, DONTFILL | LEFT);
         solvedPanel.addNext(lblBlacklist, DONTSTRETCH, DONTFILL | LEFT);
-        solvedPanel.addNext(cbIsBlacklisted);
+        solvedPanel.addNext(cbIsBlacklisted, DONTSTRETCH, DONTFILL | LEFT);
 
         CellPanel foundPanel = new CellPanel();
         foundPanel.addNext(lblStatus, DONTSTRETCH, DONTFILL | LEFT);
-        foundPanel.addNext(chcStatus, HSTRETCH, (HFILL | RIGHT));
+        foundPanel.addNext(chcStatus, HSTRETCH, HFILL | RIGHT);
         foundPanel.addLast(btnFoundDate, DONTSTRETCH, DONTFILL);
 
 
@@ -338,6 +325,12 @@ public class DetailsPanel extends CellPanel {
         GuiImageBroker.setButtonText(hiddenDate, MyLocale.getMsg(305, "Hidden on:") + mainCache.getHidden());
         owner.setText(mainCache.getOwner());
         this.cbIsSolved.setState(ch.isSolved());
+        if (ch.isSolved()) {
+            enable(btnUploadCoordsToGC);
+            disable(btnUploadCoordsToGC);
+        }
+        else
+            disable(btnUploadCoordsToGC);
         chcStatus.setText(ch.getStatusText());
         newCacheType = ch.getType();
         GuiImageBroker.setButtonIconAndText(cacheType.getBtn(), CacheType.type2Gui(newCacheType), GuiImageBroker.makeImageForButton(cacheType.getBtn(), CacheType.type2Gui(newCacheType), CacheType.typeImageNameForId(newCacheType)));
@@ -731,7 +724,7 @@ public class DetailsPanel extends CellPanel {
                         break;
                 }
             } else if (ev.target == hiddenDate) {
-                final DateTimeChooser dc = new DateTimeChooser(Vm.getLocale(),false);
+                final DateTimeChooser dc = new DateTimeChooser(Vm.getLocale(), false);
                 dc.title = MyLocale.getMsg(329, "Hidden date");
                 Preferences.itself().setSubWindowSize(dc);
                 if (newHiddenDate.length() == 10)
@@ -743,7 +736,7 @@ public class DetailsPanel extends CellPanel {
                 if (dc.run() == ewe.ui.FormBase.IDOK) {
                     newHiddenDate = Convert.toString(dc.year) + "-" + MyLocale.formatLong(dc.month, "00") + "-" + MyLocale.formatLong(dc.day, "00");
                     dirtyDetails = true;
-                    GuiImageBroker.setButtonText(hiddenDate,MyLocale.getMsg(305, "Hidden on:") + newHiddenDate);
+                    GuiImageBroker.setButtonText(hiddenDate, MyLocale.getMsg(305, "Hidden on:") + newHiddenDate);
                 }
             } else if (ev.target == btnLog) {
                 String url = "";
@@ -801,7 +794,63 @@ public class DetailsPanel extends CellPanel {
                 }
             } else if (ev.target == this.btnHint) {
                 new InfoBox(MyLocale.getMsg(402, "Hint"), hint).wait(FormBase.OKB);
+            } else if (ev.target == cbIsSolved) {
+                if (cbIsSolved.getState()) {
+                    enable(btnUploadCoordsToGC);
+                    disable(btnUploadCoordsToGC);
+                } else
+                    disable(btnUploadCoordsToGC);
+            } else if (ev.target == btnUploadCoordsToGC) {
+                uploadCoordsToGC();
             }
+        }
+    }
+
+    private void resetCoordsAtGC() {
+        try {
+            GCImporter gcImporter = new GCImporter();
+            if (gcImporter.login()) {
+                gcImporter.fetchWayPointPage(mainCache.getCode());
+                String userToken = gcImporter.getUserToken();
+
+                JSONObject resetString = new JSONObject();
+                JSONObject rdto = new JSONObject();
+                rdto.put("ut", userToken);
+                resetString.put("dto", rdto);
+                UrlFetcher.setpostData(resetString.toString());
+                String resetResponse = UrlFetcher.fetch("https://www.geocaching.com/seek/cache_details.aspx/ResetUserCoordinate");
+                if (resetResponse.length() > 0) {
+                    resetResponse = "";
+                }
+            }
+        } catch (Exception e) {
+            // war wohl nix
+        }
+    }
+
+    private void uploadCoordsToGC() {
+        try {
+            GCImporter gcImporter = new GCImporter();
+            if (gcImporter.login()) {
+                gcImporter.fetchWayPointPage(mainCache.getCode());
+                String userToken = gcImporter.getUserToken();
+
+                JSONObject data = new JSONObject();
+                data.put("lon", mainCache.getWpt().lonDec);
+                data.put("lat", mainCache.getWpt().latDec);
+                JSONObject dto = new JSONObject();
+                dto.put("ut", userToken);
+                dto.put("data", data);
+                JSONObject result = new JSONObject();
+                result.put("dto", dto);
+                UrlFetcher.setpostData(result.toString());
+                String WebPage = UrlFetcher.fetch("https://www.geocaching.com/seek/cache_details.aspx/SetUserCoordinate");
+                if (WebPage.length() > 0) {
+                    WebPage = "";
+                }
+            }
+        } catch (Exception e) {
+            // war wohl nix
         }
     }
 

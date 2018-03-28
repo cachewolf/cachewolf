@@ -51,7 +51,7 @@ public class CacheHolder {
     private final static int MSG_NR = 0;
     private final static int GC_MSG = 1;
     private final static int IDX_WRITENOTE = 5;
-    private final static String[][] _logType = {{"353", ""}, {"319", "Didn't find it"}, //
+    private final static String[][] _logType = {{"0", ""}, {"319", "Didn't find it"}, //
             {"318", "Found it"}, //
             {"355", "Attended"}, //
             {"361", "Webcam Photo Taken"}, //

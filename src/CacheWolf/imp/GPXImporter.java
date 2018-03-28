@@ -66,7 +66,7 @@ public class GPXImporter extends MinML {
     boolean fromTC = false;
     boolean nameFound = false;
     int zaehlerGel = 0;
-    GCImporter imgSpider;
+    GCImporter gcImporter;
     StringBuffer stringBuffer;
     String shortDescription = "";
     private Vector files = new Vector();
@@ -112,8 +112,8 @@ public class GPXImporter extends MinML {
                 if (importGui.execute() == FormBase.IDCANCEL) {
                     return;
                 }
-                imgSpider = new GCImporter();
-                imgSpider.setImportGui(importGui);
+                gcImporter = new GCImporter();
+                gcImporter.setImportGui(importGui);
                 downloadPics = importGui.downloadDescriptionImages || importGui.downloadSpoilerImages || importGui.downloadLogImages;
             } else if (how == DONOTLOADPICTURES) {
                 downloadPics = false;
@@ -712,11 +712,11 @@ public class GPXImporter extends MinML {
                 } else {
                     String wayPoint = holder.getCode();
                     if (wayPoint.startsWith("GC")) {
-                        imgSpider.fetchWayPointPage(wayPoint);
-                        chD.setLongDescription(imgSpider.getDescription());
-                        imgSpider.getImages(chD);
+                        gcImporter.fetchWayPointPage(wayPoint);
+                        chD.setLongDescription(gcImporter.getDescription());
+                        gcImporter.getImages(chD);
                         // todo if Attributes are in the gpx (Version 1.1.0) : don't spider them
-                        imgSpider.getAttributes(chD);
+                        gcImporter.getAttributes(chD);
                     }
                 }
             }

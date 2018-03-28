@@ -256,7 +256,10 @@ public class UrlFetcher {
 
         if (postData != null) {
             conn.setPostData(postData);
-            conn.setRequestField("Content-Type", "application/x-www-form-urlencoded");
+            if (postData.startsWith("{"))
+                conn.setRequestField("Content-Type", "application/json; charset=UTF-8");
+            else
+                conn.setRequestField("Content-Type", "application/x-www-form-urlencoded");
         }
 
         int redirectionCounter = 0;

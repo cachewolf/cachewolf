@@ -1519,7 +1519,7 @@ public class GCImporter {
     /**
      * login to geocaching.com
      */
-    private boolean login() {
+    public boolean login() {
 
         if (loggedIn) {
             return true;
@@ -2441,6 +2441,15 @@ public class GCImporter {
         return "";
     }
 
+    public String getUserToken() {
+
+        RexUserToken.search(wayPointPage);
+        if (!RexUserToken.didMatch()) {
+            Preferences.itself().log("[SpiderGC.java:getLogs]check RexUserToken!", null);
+            return "";
+        }
+        return RexUserToken.stringMatched(1);
+    }
     /**
      * Get the logs
      */
@@ -2448,14 +2457,9 @@ public class GCImporter {
         boolean fetchAllLogs = isFoundByMe;
         final LogList reslts = newCacheDetails.CacheLogs;
         reslts.clear();
-
-        RexUserToken.search(wayPointPage);
-        if (!RexUserToken.didMatch()) {
-            Preferences.itself().log("[SpiderGC.java:getLogs]check RexUserToken!", null);
+        final String userToken = getUserToken();
+        if (userToken.length() == 0)
             return;
-        }
-        final String userToken = RexUserToken.stringMatched(1);
-
         int idx = 0;
         int nLogs = 0;
         boolean foundown = false;
