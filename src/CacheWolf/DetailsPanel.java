@@ -86,26 +86,10 @@ public class DetailsPanel extends CellPanel {
     private mButton btnEditLog;
     private CacheHolder ch;
     private CacheHolder mainCache;
-    /**
-     * details have changed FIXME: make this obsolete
-     */
     private boolean dirtyDetails = false;
-    /**
-     * cache is blacklisted FIXME: make this obsolete
-     */
     private boolean blackStatus = false;
-    /**
-     * blacklist status was changed by user FIXME: make this obsolete
-     */
     private boolean blackStatusChanged = false;
-    /**
-     * FIXME
-     */
     private boolean needsTableUpdate = false;
-    /**
-     * String to display for invalid or not applicable terrain or difficulty values.
-     */
-
     private String newWaypoint;
     private byte newDifficulty;
     private byte newTerrain;
@@ -113,8 +97,8 @@ public class DetailsPanel extends CellPanel {
     private byte newCacheSize;
     private String newHiddenDate;
     private String hint;
-
     private boolean isBigScreen;
+    private GCImporter gcImporter;
 
     /**
      * public constructor for detail panels. should only be called from main tab.
@@ -150,7 +134,7 @@ public class DetailsPanel extends CellPanel {
         lblBlacklist = new mLabel(MyLocale.getMsg(363, "Blacklist") + ": ");
         lblStatus = new mLabel(MyLocale.getMsg(307, "Status:"));
         cbIsSolved = new mCheckBox("");
-        btnUploadCoordsToGC = GuiImageBroker.getButton(MyLocale.getMsg(31415, "Upload corrected Coords"), "");
+        btnUploadCoordsToGC = GuiImageBroker.getButton(MyLocale.getMsg(371, "wegen der buttonlänge Correcting coordinates"), "upload");
         cbIsBlacklisted = new mCheckBox("");
         chcStatus = new mComboBox(CacheHolder.GetGuiLogTypes(), 0);
         btnFoundDate = GuiImageBroker.getButton("", "calendar");
@@ -325,12 +309,10 @@ public class DetailsPanel extends CellPanel {
         GuiImageBroker.setButtonText(hiddenDate, MyLocale.getMsg(305, "Hidden on:") + mainCache.getHidden());
         owner.setText(mainCache.getOwner());
         this.cbIsSolved.setState(ch.isSolved());
-        if (ch.isSolved()) {
-            enable(btnUploadCoordsToGC);
-            disable(btnUploadCoordsToGC);
-        }
-        else
-            disable(btnUploadCoordsToGC);
+        if (cbIsSolved.getState()) {
+            GuiImageBroker.setButtonText(btnUploadCoordsToGC, MyLocale.getMsg(370, "Correcting coordinates"));
+        } else
+            GuiImageBroker.setButtonText(btnUploadCoordsToGC, MyLocale.getMsg(371, "Restore Original Coordinates"));
         chcStatus.setText(ch.getStatusText());
         newCacheType = ch.getType();
         GuiImageBroker.setButtonIconAndText(cacheType.getBtn(), CacheType.type2Gui(newCacheType), GuiImageBroker.makeImageForButton(cacheType.getBtn(), CacheType.type2Gui(newCacheType), CacheType.typeImageNameForId(newCacheType)));
@@ -796,19 +778,25 @@ public class DetailsPanel extends CellPanel {
                 new InfoBox(MyLocale.getMsg(402, "Hint"), hint).wait(FormBase.OKB);
             } else if (ev.target == cbIsSolved) {
                 if (cbIsSolved.getState()) {
-                    enable(btnUploadCoordsToGC);
-                    disable(btnUploadCoordsToGC);
+                    GuiImageBroker.setButtonText(btnUploadCoordsToGC, MyLocale.getMsg(370, "Correcting coordinates"));
                 } else
-                    disable(btnUploadCoordsToGC);
+                    GuiImageBroker.setButtonText(btnUploadCoordsToGC, MyLocale.getMsg(371, "Restore Original Coordinates"));
             } else if (ev.target == btnUploadCoordsToGC) {
-                uploadCoordsToGC();
+                if (cbIsSolved.getState()) {
+                    uploadCoordsToGC();
+                } else
+                    resetCoordsAtGC();
             }
         }
     }
 
     private void resetCoordsAtGC() {
+        Vm.showWait(true);
+        InfoBox infB = new InfoBox(MyLocale.getMsg(611, "Status"), MyLocale.getMsg(371, "Restore Original Coordinates"), InfoBox.DISPLAY_ONLY);
+        infB.exec();
         try {
-            GCImporter gcImporter = new GCImporter();
+            if (gcImporter == null)
+                gcImporter = new GCImporter();
             if (gcImporter.login()) {
                 gcImporter.fetchWayPointPage(mainCache.getCode());
                 String userToken = gcImporter.getUserToken();
@@ -819,24 +807,35 @@ public class DetailsPanel extends CellPanel {
                 resetString.put("dto", rdto);
                 UrlFetcher.setpostData(resetString.toString());
                 String resetResponse = UrlFetcher.fetch("https://www.geocaching.com/seek/cache_details.aspx/ResetUserCoordinate");
-                if (resetResponse.length() > 0) {
-                    resetResponse = "";
+                JSONObject response = new JSONObject(resetResponse);
+                response =  new JSONObject(response.getString("d"));
+                if (!response.getString("status").equals("success")) {
+                    Preferences.itself().log("resetCoordsAtGC status is " + response.getString("status"), null);
+                    infB.setText(MyLocale.getMsg(7013, "error") + ": " + response.getString("status"));
+                } else {
+                    infB.close(0);
                 }
             }
         } catch (Exception e) {
-            // war wohl nix
+            Preferences.itself().log("resetCoordsAtGC: ", e);
+            infB.setInfo(MyLocale.getMsg(7013, "error"));
         }
+        Vm.showWait(false);
     }
 
     private void uploadCoordsToGC() {
+        InfoBox infB = new InfoBox(MyLocale.getMsg(611, "Status"), MyLocale.getMsg(370, "Correcting coordinates"), InfoBox.DISPLAY_ONLY);
+        infB.exec();
+        Vm.showWait(true);
         try {
-            GCImporter gcImporter = new GCImporter();
+            if (gcImporter == null)
+                gcImporter = new GCImporter();
             if (gcImporter.login()) {
                 gcImporter.fetchWayPointPage(mainCache.getCode());
                 String userToken = gcImporter.getUserToken();
 
                 JSONObject data = new JSONObject();
-                data.put("lon", mainCache.getWpt().lonDec);
+                data.put("lng", mainCache.getWpt().lonDec);
                 data.put("lat", mainCache.getWpt().latDec);
                 JSONObject dto = new JSONObject();
                 dto.put("ut", userToken);
@@ -844,14 +843,21 @@ public class DetailsPanel extends CellPanel {
                 JSONObject result = new JSONObject();
                 result.put("dto", dto);
                 UrlFetcher.setpostData(result.toString());
-                String WebPage = UrlFetcher.fetch("https://www.geocaching.com/seek/cache_details.aspx/SetUserCoordinate");
-                if (WebPage.length() > 0) {
-                    WebPage = "";
+                String uploadResponse = UrlFetcher.fetch("https://www.geocaching.com/seek/cache_details.aspx/SetUserCoordinate");
+                JSONObject response = new JSONObject(uploadResponse);
+                response =  new JSONObject(response.getString("d"));
+                if (!response.getString("status").equals("success")) {
+                    Preferences.itself().log("uploadCoordsToGC status is " + response.getString("status"), null);
+                    infB.setText(MyLocale.getMsg(7013, "error") + ": " + response.getString("status"));
+                } else {
+                    infB.close(0);
                 }
             }
         } catch (Exception e) {
-            // war wohl nix
+            Preferences.itself().log("uploadCoordsToGC: ", e);
+            infB.setInfo(MyLocale.getMsg(7013, "error"));
         }
+        Vm.showWait(false);
     }
 
     private void createWaypoint() {

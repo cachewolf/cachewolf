@@ -118,6 +118,7 @@ svg2png.exe "svg\Button\position_yellow.svg" "symbols\position_yellow_vga.png" %
 svg2png.exe "svg\Button\position_red.svg" "symbols\position_red_vga.png" %BIGRESOLUTION%
 svg2png.exe "svg\Button\position_green.svg" "symbols\position_green_vga.png" %BIGRESOLUTION%
 svg2png.exe "svg\Button\no.svg" "symbols\no_vga.png" %BIGRESOLUTION%
+svg2png.exe "svg\Button\upload.svg" "symbols\upload_vga.png" %BIGRESOLUTION%
 
 svg2png.exe "svg\Size\sizeLarge.svg" "symbols\sizeLarge_vga.png" %BIGRESOLUTION%
 svg2png.exe "svg\Size\sizeMicro.svg" "symbols\sizeMicro_vga.png" %BIGRESOLUTION%
@@ -255,6 +256,7 @@ svg2png.exe "svg\Button\position_yellow.svg" "symbols\position_yellow.png" %RESO
 svg2png.exe "svg\Button\position_red.svg" "symbols\position_red.png" %RESOLUTION%
 svg2png.exe "svg\Button\position_green.svg" "symbols\position_green.png" %RESOLUTION%
 svg2png.exe "svg\Button\no.svg" "symbols\no.png" %RESOLUTION%
+svg2png.exe "svg\Button\upload.svg" "symbols\upload.png" %RESOLUTION%
 
 svg2png.exe "svg\Size\sizeLarge.svg" "symbols\sizeLarge.png" %RESOLUTION%
 svg2png.exe "svg\Size\sizeMicro.svg" "symbols\sizeMicro.png" %RESOLUTION%

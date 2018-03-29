@@ -2479,22 +2479,22 @@ public class GCImporter {
             idx++;
             String url = "https://www.geocaching.com/seek/geocache.logbook?tkn=" + userToken + "&idx=" + idx + "&num=" + num + "&decrypt=false";
             UrlFetcher.setRequestorProperty("Content-Type", "application/json; charset=UTF-8");
-            JSONObject resp = null;
+            JSONObject response = null;
             String fetchResult = "";
             try {
                 fetchResult = UrlFetcher.fetch(url);
                 Preferences.itself().log("" + nLogs); // in 100er Schritten
-                resp = new JSONObject(fetchResult);
+                response = new JSONObject(fetchResult);
             } catch (Exception e) {
                 if (fetchResult == null)
                     fetchResult = "";
                 Preferences.itself().log("Error getting Logs. \r\n" + fetchResult, e);
                 return;
             }
-            if (!resp.getString("status").equals("success")) {
-                Preferences.itself().log("status is " + resp.getString("status"), null);
+            if (!response.getString("status").equals("success")) {
+                Preferences.itself().log("status is " + response.getString("status"), null);
             }
-            final JSONArray data = resp.getJSONArray("data");
+            final JSONArray data = response.getJSONArray("data");
             fertig = data.length() < num;
             for (int index = 0; index < data.length(); index++) {
                 nLogs++;
