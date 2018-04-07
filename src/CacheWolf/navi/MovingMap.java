@@ -2156,7 +2156,7 @@ class MovingMapPanel extends InteractivePanel implements EventListener {
 
     //Overrides: imageBeginDragged(...) in InteractivePanel
     public boolean imageBeginDragged(AniImage which, Point pos) {
-        if (mm.isZoomingMode() == true) {
+        if (mm.isZoomingMode()) {
             return false;
         }
         // drag at mapcontrols doesn't drag the map

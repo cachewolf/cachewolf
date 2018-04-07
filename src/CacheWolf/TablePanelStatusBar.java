@@ -214,7 +214,7 @@ class DBStats {
         int counter = 0;
         for (int i = 0; i < MainForm.profile.cacheDB.size(); i++) {
             holder = MainForm.profile.cacheDB.get(i);
-            if (holder.isFound() == true) {
+            if (holder.isFound()) {
                 if (holder.isCacheWpt())
                     counter++;
             }

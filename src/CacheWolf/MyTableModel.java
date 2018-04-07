@@ -407,7 +407,7 @@ public class MyTableModel extends TableModel {
                             return ch.getName();
                         // Now need more checks
                         IconAndText wpVal = new IconAndText();
-                        if (ch.hasBugs() == true)
+                        if (ch.hasBugs())
                             wpVal.addColumn(bug);
                         if (ch.getNoFindLogs() > 0) {
                             if (ch.getNoFindLogs() > noFindLogs.length)

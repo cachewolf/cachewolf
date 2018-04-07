@@ -1417,7 +1417,7 @@ public class GCImporter {
             jj++;
             final CacheHolder ch = (CacheHolder) e.nextElement();
             infB.setInfo(MyLocale.getMsg(5530, "Update: ") + ch.getCode() + " (" + (jj) + " / " + possibleUpdateList.size() + ")");
-            final int test = spiderSingle(MainForm.profile.cacheDB.getIndex(ch), infB);
+            final int test = spiderSingle(ch, infB);
             if (test == SPIDER_CANCEL) {
                 break;
             } else {
@@ -1439,13 +1439,12 @@ public class GCImporter {
      *
      * @return 1 if spider was successful, -1 if spider was cancelled (by closing the infobox etc...), 0 error, but continue with next cache
      */
-    public int spiderSingle(int number, InfoBox pInfB) {
+    public int spiderSingle(final CacheHolder cacheInDB, InfoBox pInfB) {
         int ret = SPIDER_CANCEL;
         if (login()) {
             this.infB = pInfB;
-            final CacheHolder cacheInDB = MainForm.profile.cacheDB.get(number);
             if (cacheInDB.isAddiWpt())
-                return SPIDER_ERROR; // addi waypoint, comes with parent cache
+                return SPIDER_ERROR;
             try {
                 newCache = new CacheHolder(cacheInDB.getCode());
                 newCacheDetails = newCache.getDetails();
@@ -1484,6 +1483,42 @@ public class GCImporter {
         loggedIn = false; // check again login on next spider
         wayPointPageIndex = 0;
         return wayPointPageGetLatLon();
+    }
+
+    public int uploadCoordsToGC(CacheHolder mainCache, InfoBox infB) {
+        try {
+            if (login()) {
+                fetchWayPointPage(mainCache.getCode());
+                String userToken = getUserToken();
+
+                JSONObject data = new JSONObject();
+                data.put("lng", mainCache.getWpt().lonDec);
+                data.put("lat", mainCache.getWpt().latDec);
+                JSONObject dto = new JSONObject();
+                dto.put("ut", userToken);
+                dto.put("data", data);
+                JSONObject result = new JSONObject();
+                result.put("dto", dto);
+                UrlFetcher.setpostData(result.toString());
+                String uploadResponse = UrlFetcher.fetch("https://www.geocaching.com/seek/cache_details.aspx/SetUserCoordinate");
+                JSONObject response = new JSONObject(uploadResponse);
+                response =  new JSONObject(response.getString("d"));
+                if (!response.getString("status").equals("success")) {
+                    Preferences.itself().log("uploadCoordsToGC status is " + response.getString("status"), null);
+                    infB.setText(MyLocale.getMsg(7013, "error") + ": " + response.getString("status"));
+                    return SPIDER_ERROR;
+                } else {
+                    return SPIDER_OK;
+                }
+            }
+            else {
+                return SPIDER_CANCEL; // could not login
+            }
+        } catch (Exception e) {
+            Preferences.itself().log("uploadCoordsToGC: ", e);
+            infB.setInfo(MyLocale.getMsg(7013, "error"));
+            return  SPIDER_ERROR;
+        }
     }
 
     public boolean isFoundByMe(CacheHolder ch) {

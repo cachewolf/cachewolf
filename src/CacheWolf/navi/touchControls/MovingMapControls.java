@@ -111,7 +111,7 @@ public class MovingMapControls implements ICommandListener {
             return false;
         }
         Role r = (Role) object;
-        if (r.getState() == true) {
+        if (r.getState()) {
             return changeRoleState(role, r, false);
         } else {
             return changeRoleState(role, r, true);
@@ -148,7 +148,7 @@ public class MovingMapControls implements ICommandListener {
 
     private boolean changeRoleState(String roleName, Role role, boolean b) {
         role.setState(b);
-        if (b == true) {
+        if (b) {
             String[] rToDis = role.getRolesToDisable();
             if (rToDis != null) {
                 for (int i = 0; i < rToDis.length; i++) {

@@ -827,36 +827,10 @@ public class DetailsPanel extends CellPanel {
         InfoBox infB = new InfoBox(MyLocale.getMsg(611, "Status"), MyLocale.getMsg(370, "Correcting coordinates"), InfoBox.DISPLAY_ONLY);
         infB.exec();
         Vm.showWait(true);
-        try {
-            if (gcImporter == null)
-                gcImporter = new GCImporter();
-            if (gcImporter.login()) {
-                gcImporter.fetchWayPointPage(mainCache.getCode());
-                String userToken = gcImporter.getUserToken();
-
-                JSONObject data = new JSONObject();
-                data.put("lng", mainCache.getWpt().lonDec);
-                data.put("lat", mainCache.getWpt().latDec);
-                JSONObject dto = new JSONObject();
-                dto.put("ut", userToken);
-                dto.put("data", data);
-                JSONObject result = new JSONObject();
-                result.put("dto", dto);
-                UrlFetcher.setpostData(result.toString());
-                String uploadResponse = UrlFetcher.fetch("https://www.geocaching.com/seek/cache_details.aspx/SetUserCoordinate");
-                JSONObject response = new JSONObject(uploadResponse);
-                response =  new JSONObject(response.getString("d"));
-                if (!response.getString("status").equals("success")) {
-                    Preferences.itself().log("uploadCoordsToGC status is " + response.getString("status"), null);
-                    infB.setText(MyLocale.getMsg(7013, "error") + ": " + response.getString("status"));
-                } else {
-                    infB.close(0);
-                }
-            }
-        } catch (Exception e) {
-            Preferences.itself().log("uploadCoordsToGC: ", e);
-            infB.setInfo(MyLocale.getMsg(7013, "error"));
-        }
+        if (gcImporter == null)
+            gcImporter = new GCImporter();
+        gcImporter.uploadCoordsToGC(mainCache, infB);
+        infB.close(0);
         Vm.showWait(false);
     }
 

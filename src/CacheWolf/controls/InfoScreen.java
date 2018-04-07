@@ -40,7 +40,7 @@ public class InfoScreen extends Form {
     public InfoScreen(String datei, String tit, boolean readFromFile) {
         String myText = "";
         this.setTitle(tit);
-        if (readFromFile == true) {
+        if (readFromFile) {
             try {
                 FileReader in = new FileReader(datei);
                 myText = in.readAll();

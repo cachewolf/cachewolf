@@ -102,8 +102,6 @@ public class TablePanelMenu extends MenuBar {
                 spiderRoute = new MenuItem(MyLocale.getMsg(137, "Download along a Route from geocaching.com")), //
                 mnuSeparator, loadGCVotes = new MenuItem(MyLocale.getMsg(1208, "Import ratings from GCVote")), //
                 fetchOCLink = new MenuItem(MyLocale.getMsg(1209, "Fetch link to OC - Cache")), //
-                mnuSeparator, //
-                update = new MenuItem(MyLocale.getMsg(1014, "Update cache data")), //
         };
         updateGCVotesMenu();
         return new Menu(mnuImport, MyLocale.getMsg(175, "Import"));
@@ -132,7 +130,10 @@ public class TablePanelMenu extends MenuBar {
                 exportPOI = new MenuItem(MyLocale.getMsg(135, "to POI")), //
                 exportTPL = new MenuItem(MyLocale.getMsg(128, "via Template")), //
                 exportOCLog = new MenuItem(MyLocale.getMsg(1210, "logs to OC")), //
-                exportGarminPic = new MenuItem("Garmin pictures"),};
+                exportGarminPic = new MenuItem("Garmin pictures"),
+                mnuSeparator, //
+                update = new MenuItem(MyLocale.getMsg(370, "Correcting coordinates")), //
+        };
         if (Preferences.itself().gpsbabel == null) {
             exportGPSBabel.modifiers = MenuItem.Disabled;
             exportGPSBabel.setText(MyLocale.getMsg(136, "to GPS : gpsbabel missing."));
@@ -278,30 +279,42 @@ public class TablePanelMenu extends MenuBar {
     }
 
     public void updateSelectedCaches() {
-        Time startZeit = new Time();
-        UrlFetcher.usedTime = 0;
-        CacheDB cacheDB = MainForm.profile.cacheDB;
-        CacheHolder ch;
         ImportGui importGui = new ImportGui(MyLocale.getMsg(1014, "updateSelectedCaches"), ImportGui.TRAVELBUGS | ImportGui.ALL, ImportGui.DESCRIPTIONIMAGE | ImportGui.SPOILERIMAGE | ImportGui.LOGIMAGE);
         if (importGui.execute() == FormBase.IDCANCEL) {
             return;
         }
-
         GCImporter gcImporter = new GCImporter();
         gcImporter.setImportGui(importGui);
         gcImporter.setMaxLogsToSpider(Preferences.itself().maxLogsToSpider);
 
-        OCXMLImporter ocSync = new OCXMLImporter();
+        updateSelectedCaches(gcImporter, false);
+    }
+
+    public void updateSelectedCaches(boolean atGC) {
+        GCImporter gcImporter = new GCImporter();
+        updateSelectedCaches(gcImporter, atGC);
+    }
+
+    public void updateSelectedCaches(GCImporter gcImporter, boolean atGC) {
+        Time startZeit = new Time();
+        UrlFetcher.usedTime = 0;
+        CacheDB cacheDB = MainForm.profile.cacheDB;
+        CacheHolder ch;
+
         Vm.showWait(true);
         boolean alreadySaid = false;
         boolean alreadySaid2 = false;
-        InfoBox infB = new InfoBox("Info", "Loading", InfoBox.PROGRESS_WITH_WARNINGS);
+        InfoBox infB;
+        if (atGC)
+            infB = new InfoBox("Info", MyLocale.getMsg(370, "Correcting coordinates"), InfoBox.PROGRESS_WITH_WARNINGS);
+        else
+            infB = new InfoBox("Info", "Loading", InfoBox.PROGRESS_WITH_WARNINGS);
         infB.exec();
 
         Vector cachesToUpdate = new Vector();
         for (int i = 0; i < cacheDB.size(); i++) {
             ch = cacheDB.get(i);
-            if (ch.isChecked == true && ch.isVisible()) {
+            if (ch.isChecked && ch.isVisible()) {
                 // should work even if only the wayPoint is created
                 if (ch.isGC() || ch.isOC())
                 // Notiz: Wenn es ein addi Wpt ist, sollte eigentlich der Maincache gespidert werden
@@ -329,16 +342,26 @@ public class TablePanelMenu extends MenuBar {
             infB.setInfo(MyLocale.getMsg(5513, "Loading: ") + ch.getCode() + " (" + (j + 1) + " / " + cachesToUpdate.size() + ")");
             infB.redisplay();
             if (ch.isGC()) {
-                int test = gcImporter.spiderSingle(i, infB);
-                if (test == GCImporter.SPIDER_CANCEL) {
+                int result;
+                if (atGC && ch.isSolved()) {
+                    result = gcImporter.uploadCoordsToGC(ch, infB);
+                }
+                else {
+                    result = gcImporter.spiderSingle(ch, infB);
+                }
+                if (result == GCImporter.SPIDER_CANCEL) {
                     infB.close(0);
                     break;
-                } else if (test == GCImporter.SPIDER_ERROR || test == GCImporter.SPIDER_IGNORE_PREMIUM) {
+                } else if (result == GCImporter.SPIDER_ERROR || result == GCImporter.SPIDER_IGNORE_PREMIUM) {
                     spiderErrors++;
                 } else {
                     // MainForm.profile.hasUnsavedChanges=true;
                 }
             } else {
+                OCXMLImporter ocSync = null;
+                if (ocSync == null) {
+                    ocSync = new OCXMLImporter();
+                }
                 if (!ocSync.syncSingle(i, infB)) {
                     infB.close(0);
                     break;
@@ -616,7 +639,7 @@ public class TablePanelMenu extends MenuBar {
                 tablePanel.resetModel();
             }
             if (mev.selectedItem == update) {
-                updateSelectedCaches();
+                updateSelectedCaches(true);
             }
             // /////////////////////////////////////////////////////////////////////
             // subMenu for export, part of "Application" menu

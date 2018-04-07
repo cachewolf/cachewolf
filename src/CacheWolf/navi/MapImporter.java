@@ -342,7 +342,7 @@ public class MapImporter extends Form {
             // display coords in another format
             if (ev.target == infButton) {
                 boolean retry = true;
-                while (retry == true) {
+                while (retry) {
                     try {
                         retry = false;
                         wfl.getMapImageFileNameObject().setPath(MainForm.profile.getMapsSubDir(mapsPath));
