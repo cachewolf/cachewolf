@@ -13,6 +13,7 @@ function toPNG {
     for j in *.svg; do
         export fn=`basename $j .svg`
         echo Converting $j to PNG
+        #add -resize <w>x<h> here if you want to resize the image
         convert "$fn".svg "$fn".png     
     done
     popd
