@@ -1,0 +1,237 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg xmlns:xml="http://www.w3.org/XML/1998/namespace" x="0" y="0" width="32" height="32" overflow="hidden"
+     viewBox="0, 0, 755.9055, 755.9055" preserveAspectRatio="xMidYMid" font-size="0" id="svg" xml:space="default"
+     xmlns="http://www.w3.org/2000/svg" version="1.1">
+    <defs id="def1" xml:space="default">
+        <linearGradient x1="191.4799" y1="166.3504" x2="228.9385" y2="166.3504" gradientUnits="userSpaceOnUse" gradientTransform="scale(0.899869, 1.111273)" id="SVGID_Fill9_" xml:space="preserve">
+      <stop offset="21.1207%" stop-color="#C0AB95" stop-opacity="1" id="stop102" xml:space="preserve" />
+      <stop offset="57.3276%" stop-color="#F2D7BA" stop-opacity="1" id="stop104" xml:space="preserve" />
+      <stop offset="84.0517%" stop-color="#C0AB95" stop-opacity="1" id="stop106" xml:space="preserve" />
+    </linearGradient>
+    <linearGradient x1="190.4677" y1="166.0365" x2="225.7168" y2="166.0365" gradientUnits="userSpaceOnUse" gradientTransform="scale(0.899869, 1.111273)" id="SVGID_Stroke1_" xml:space="preserve">
+      <stop offset="21.1207%" stop-color="#C0AB95" stop-opacity="1" id="stop95" xml:space="preserve" />
+      <stop offset="57.3276%" stop-color="#F2D7BA" stop-opacity="1" id="stop97" xml:space="preserve" />
+      <stop offset="84.0517%" stop-color="#C0AB95" stop-opacity="1" id="stop99" xml:space="preserve" />
+    </linearGradient>
+    <linearGradient x1="176.4174" y1="171.1504" x2="194.3601" y2="171.1504" gradientUnits="userSpaceOnUse" gradientTransform="scale(0.8623324, 1.159646)" id="SVGID_Fill10_" xml:space="preserve">
+      <stop offset="0%" stop-color="#39393B" stop-opacity="1" id="stop118" xml:space="preserve" />
+      <stop offset="53.4483%" stop-color="#AFABAB" stop-opacity="1" id="stop120" xml:space="preserve" />
+      <stop offset="100%" stop-color="#39393B" stop-opacity="1" id="stop122" xml:space="preserve" />
+    </linearGradient>
+    <linearGradient x1="175.3107" y1="170.7996" x2="190.7918" y2="170.7996" gradientUnits="userSpaceOnUse" gradientTransform="scale(0.8623324, 1.159646)" id="SVGID_Stroke2_" xml:space="preserve">
+      <stop offset="0%" stop-color="#39393B" stop-opacity="1" id="stop111" xml:space="preserve" />
+      <stop offset="52.5862%" stop-color="#AFABAB" stop-opacity="1" id="stop113" xml:space="preserve" />
+      <stop offset="100%" stop-color="#39393B" stop-opacity="1" id="stop115" xml:space="preserve" />
+    </linearGradient>
+    <linearGradient x1="213.6842" y1="67.02976" x2="257.3002" y2="67.02976" gradientUnits="userSpaceOnUse" gradientTransform="scale(0.9269456, 1.078812)" id="SVGID_Fill11_" xml:space="preserve">
+      <stop offset="4.97804%" stop-color="#839597" stop-opacity="1" id="stop166" xml:space="preserve" />
+      <stop offset="8.345531%" stop-color="#DADCDC" stop-opacity="1" id="stop168" xml:space="preserve" />
+      <stop offset="10.5417%" stop-color="#C4CBCC" stop-opacity="1" id="stop170" xml:space="preserve" />
+      <stop offset="12.8843%" stop-color="#839597" stop-opacity="1" id="stop172" xml:space="preserve" />
+      <stop offset="15.9592%" stop-color="#475253" stop-opacity="1" id="stop174" xml:space="preserve" />
+      <stop offset="19.7657%" stop-color="#353E3F" stop-opacity="1" id="stop176" xml:space="preserve" />
+      <stop offset="20.6442%" stop-color="#FFFFFF" stop-opacity="1" id="stop178" xml:space="preserve" />
+      <stop offset="21.2299%" stop-color="#F1F1F1" stop-opacity="1" id="stop180" xml:space="preserve" />
+      <stop offset="39.0922%" stop-color="#DCE4E5" stop-opacity="1" id="stop182" xml:space="preserve" />
+      <stop offset="46.7057%" stop-color="#839597" stop-opacity="1" id="stop184" xml:space="preserve" />
+      <stop offset="48.6091%" stop-color="#676C6C" stop-opacity="1" id="stop186" xml:space="preserve" />
+      <stop offset="50.5124%" stop-color="#444949" stop-opacity="1" id="stop188" xml:space="preserve" />
+      <stop offset="52.8551%" stop-color="#323434" stop-opacity="1" id="stop190" xml:space="preserve" />
+      <stop offset="55.6369%" stop-color="#484D4D" stop-opacity="1" id="stop192" xml:space="preserve" />
+      <stop offset="60.6149%" stop-color="#839597" stop-opacity="1" id="stop194" xml:space="preserve" />
+      <stop offset="77.4524%" stop-color="#839597" stop-opacity="1" id="stop196" xml:space="preserve" />
+      <stop offset="78.6237%" stop-color="#FFFFFF" stop-opacity="1" id="stop198" xml:space="preserve" />
+      <stop offset="87.2621%" stop-color="#FFFFFF" stop-opacity="1" id="stop200" xml:space="preserve" />
+      <stop offset="98.5359%" stop-color="#839597" stop-opacity="1" id="stop202" xml:space="preserve" />
+    </linearGradient>
+    <linearGradient x1="214.6326" y1="67.45199" x2="256.1775" y2="67.45199" gradientUnits="userSpaceOnUse" gradientTransform="scale(0.9269456, 1.078812)" id="SVGID_Stroke3_" xml:space="preserve">
+      <stop offset="4.97804%" stop-color="#839597" stop-opacity="1" id="stop127" xml:space="preserve" />
+      <stop offset="8.345531%" stop-color="#DADCDC" stop-opacity="1" id="stop129" xml:space="preserve" />
+      <stop offset="10.5417%" stop-color="#C4CBCC" stop-opacity="1" id="stop131" xml:space="preserve" />
+      <stop offset="12.8843%" stop-color="#839597" stop-opacity="1" id="stop133" xml:space="preserve" />
+      <stop offset="15.9592%" stop-color="#475253" stop-opacity="1" id="stop135" xml:space="preserve" />
+      <stop offset="19.7657%" stop-color="#353E3F" stop-opacity="1" id="stop137" xml:space="preserve" />
+      <stop offset="20.6442%" stop-color="#FFFFFF" stop-opacity="1" id="stop139" xml:space="preserve" />
+      <stop offset="21.2299%" stop-color="#F1F1F1" stop-opacity="1" id="stop141" xml:space="preserve" />
+      <stop offset="39.0922%" stop-color="#DCE4E5" stop-opacity="1" id="stop143" xml:space="preserve" />
+      <stop offset="46.7057%" stop-color="#839597" stop-opacity="1" id="stop145" xml:space="preserve" />
+      <stop offset="48.6091%" stop-color="#676C6C" stop-opacity="1" id="stop147" xml:space="preserve" />
+      <stop offset="50.5124%" stop-color="#444949" stop-opacity="1" id="stop149" xml:space="preserve" />
+      <stop offset="52.8551%" stop-color="#323434" stop-opacity="1" id="stop151" xml:space="preserve" />
+      <stop offset="55.6369%" stop-color="#484D4D" stop-opacity="1" id="stop153" xml:space="preserve" />
+      <stop offset="60.6149%" stop-color="#839597" stop-opacity="1" id="stop155" xml:space="preserve" />
+      <stop offset="77.4524%" stop-color="#839597" stop-opacity="1" id="stop157" xml:space="preserve" />
+      <stop offset="78.6237%" stop-color="#FFFFFF" stop-opacity="1" id="stop159" xml:space="preserve" />
+      <stop offset="87.2621%" stop-color="#FFFFFF" stop-opacity="1" id="stop161" xml:space="preserve" />
+      <stop offset="98.5359%" stop-color="#839597" stop-opacity="1" id="stop163" xml:space="preserve" />
+    </linearGradient>
+    <linearGradient x1="209.1272" y1="100.7157" x2="284.607" y2="100.7157" gradientUnits="userSpaceOnUse" gradientTransform="scale(0.8025756, 1.245988)" id="SVGID_Fill12_" xml:space="preserve">
+      <stop offset="0%" stop-color="#F40000" stop-opacity="1" id="stop214" xml:space="preserve" />
+      <stop offset="46.9828%" stop-color="#E20001" stop-opacity="1" id="stop216" xml:space="preserve" />
+      <stop offset="65.9483%" stop-color="#570B0D" stop-opacity="1" id="stop218" xml:space="preserve" />
+    </linearGradient>
+    <linearGradient x1="210.3201" y1="101.002" x2="283.362" y2="101.002" gradientUnits="userSpaceOnUse" gradientTransform="scale(0.8025756, 1.245988)" id="SVGID_Stroke4_" xml:space="preserve">
+      <stop offset="0%" stop-color="#F40000" stop-opacity="1" id="stop207" xml:space="preserve" />
+      <stop offset="46.9828%" stop-color="#E20001" stop-opacity="1" id="stop209" xml:space="preserve" />
+      <stop offset="65.9483%" stop-color="#570B0D" stop-opacity="1" id="stop211" xml:space="preserve" />
+    </linearGradient>
+    <linearGradient x1="181.4325" y1="92.10477" x2="264.677" y2="92.10477" gradientUnits="userSpaceOnUse" gradientTransform="scale(0.845948, 1.182106)" id="SVGID_Fill13_" xml:space="preserve">
+      <stop offset="0%" stop-color="#F40000" stop-opacity="1" id="stop230" xml:space="preserve" />
+      <stop offset="46.9828%" stop-color="#E20001" stop-opacity="1" id="stop232" xml:space="preserve" />
+      <stop offset="65.9483%" stop-color="#570B0D" stop-opacity="1" id="stop234" xml:space="preserve" />
+    </linearGradient>
+    <linearGradient x1="182.5192" y1="92.45444" x2="263.4973" y2="92.45444" gradientUnits="userSpaceOnUse" gradientTransform="scale(0.845948, 1.182106)" id="SVGID_Stroke5_" xml:space="preserve">
+      <stop offset="0%" stop-color="#F40000" stop-opacity="1" id="stop223" xml:space="preserve" />
+      <stop offset="46.9828%" stop-color="#E20001" stop-opacity="1" id="stop225" xml:space="preserve" />
+      <stop offset="65.9483%" stop-color="#570B0D" stop-opacity="1" id="stop227" xml:space="preserve" />
+    </linearGradient>
+    <linearGradient x1="175.7479" y1="84.88352" x2="249.3345" y2="84.88352" gradientUnits="userSpaceOnUse" gradientTransform="scale(0.8302531, 1.204452)" id="SVGID_Fill14_" xml:space="preserve">
+      <stop offset="0%" stop-color="#F40000" stop-opacity="1" id="stop246" xml:space="preserve" />
+      <stop offset="47.4138%" stop-color="#E20001" stop-opacity="1" id="stop248" xml:space="preserve" />
+      <stop offset="54.3103%" stop-color="#570B0D" stop-opacity="1" id="stop250" xml:space="preserve" />
+    </linearGradient>
+    <linearGradient x1="176.8837" y1="85.22146" x2="248.1163" y2="85.22146" gradientUnits="userSpaceOnUse" gradientTransform="scale(0.8302531, 1.204452)" id="SVGID_Stroke6_" xml:space="preserve">
+      <stop offset="0%" stop-color="#F40000" stop-opacity="1" id="stop239" xml:space="preserve" />
+      <stop offset="47.4138%" stop-color="#E20001" stop-opacity="1" id="stop241" xml:space="preserve" />
+      <stop offset="54.3103%" stop-color="#570B0D" stop-opacity="1" id="stop243" xml:space="preserve" />
+    </linearGradient>
+    <linearGradient x1="159.5463" y1="93.40244" x2="241.1989" y2="93.40244" gradientUnits="userSpaceOnUse" gradientTransform="scale(0.9275604, 1.078097)" id="SVGID_Fill15_" xml:space="preserve">
+      <stop offset="43.5345%" stop-color="#EEEBEB" stop-opacity="0.156863" id="stop255" xml:space="preserve" />
+      <stop offset="69.8276%" stop-color="#EEEEEE" stop-opacity="0.392157" id="stop257" xml:space="preserve" />
+    </linearGradient>
+    <linearGradient x1="219.8516" y1="54.72495" x2="260.3398" y2="54.72495" gradientUnits="userSpaceOnUse" gradientTransform="scale(0.9537596, 1.048482)" id="SVGID_Fill16_" xml:space="preserve">
+      <stop offset="0%" stop-color="#BD0707" stop-opacity="1" id="stop285" xml:space="preserve" />
+      <stop offset="9.31373%" stop-color="#FC0909" stop-opacity="1" id="stop287" xml:space="preserve" />
+      <stop offset="20.5882%" stop-color="#FEAFAF" stop-opacity="1" id="stop289" xml:space="preserve" />
+      <stop offset="85.7843%" stop-color="#FF0606" stop-opacity="1" id="stop291" xml:space="preserve" />
+      <stop offset="100%" stop-color="#AF0F0F" stop-opacity="1" id="stop293" xml:space="preserve" />
+    </linearGradient>
+    <linearGradient x1="220.7731" y1="55.2407" x2="259.1631" y2="55.2407" gradientUnits="userSpaceOnUse" gradientTransform="scale(0.9537596, 1.048482)" id="SVGID_Stroke7_" xml:space="preserve">
+      <stop offset="0%" stop-color="#BD0707" stop-opacity="1" id="stop274" xml:space="preserve" />
+      <stop offset="9.31373%" stop-color="#FC0909" stop-opacity="1" id="stop276" xml:space="preserve" />
+      <stop offset="20.5882%" stop-color="#FEAFAF" stop-opacity="1" id="stop278" xml:space="preserve" />
+      <stop offset="85.7843%" stop-color="#FF0606" stop-opacity="1" id="stop280" xml:space="preserve" />
+      <stop offset="100%" stop-color="#AF0F0F" stop-opacity="1" id="stop282" xml:space="preserve" />
+    </linearGradient>
+    <linearGradient x1="191.4799" y1="166.3504" x2="228.9385" y2="166.3504" gradientUnits="userSpaceOnUse" gradientTransform="scale(0.899869, 1.111273)" id="SVGID_Fill9_-0" xml:space="preserve">
+      <stop offset="21.1207%" stop-color="#C0AB95" stop-opacity="1" id="stop102-9" xml:space="preserve" />
+      <stop offset="57.3276%" stop-color="#F2D7BA" stop-opacity="1" id="stop104-3" xml:space="preserve" />
+      <stop offset="84.0517%" stop-color="#C0AB95" stop-opacity="1" id="stop106-9" xml:space="preserve" />
+    </linearGradient>
+    <linearGradient x1="190.4677" y1="166.0365" x2="225.7168" y2="166.0365" gradientUnits="userSpaceOnUse" gradientTransform="scale(0.899869, 1.111273)" id="SVGID_Stroke1_-7" xml:space="preserve">
+      <stop offset="21.1207%" stop-color="#C0AB95" stop-opacity="1" id="stop95-2" xml:space="preserve" />
+      <stop offset="57.3276%" stop-color="#F2D7BA" stop-opacity="1" id="stop97-2" xml:space="preserve" />
+      <stop offset="84.0517%" stop-color="#C0AB95" stop-opacity="1" id="stop99-1" xml:space="preserve" />
+    </linearGradient>
+    <linearGradient x1="176.4174" y1="171.1504" x2="194.3601" y2="171.1504" gradientUnits="userSpaceOnUse" gradientTransform="scale(0.8623324, 1.159646)" id="SVGID_Fill10_-7" xml:space="preserve">
+      <stop offset="0%" stop-color="#39393B" stop-opacity="1" id="stop118-3" xml:space="preserve" />
+      <stop offset="53.4483%" stop-color="#AFABAB" stop-opacity="1" id="stop120-2" xml:space="preserve" />
+      <stop offset="100%" stop-color="#39393B" stop-opacity="1" id="stop122-2" xml:space="preserve" />
+    </linearGradient>
+    <linearGradient x1="175.3107" y1="170.7996" x2="190.7918" y2="170.7996" gradientUnits="userSpaceOnUse" gradientTransform="scale(0.8623324, 1.159646)" id="SVGID_Stroke2_-0" xml:space="preserve">
+      <stop offset="0%" stop-color="#39393B" stop-opacity="1" id="stop111-5" xml:space="preserve" />
+      <stop offset="52.5862%" stop-color="#AFABAB" stop-opacity="1" id="stop113-8" xml:space="preserve" />
+      <stop offset="100%" stop-color="#39393B" stop-opacity="1" id="stop115-7" xml:space="preserve" />
+    </linearGradient>
+    <linearGradient x1="213.6842" y1="67.02976" x2="257.3002" y2="67.02976" gradientUnits="userSpaceOnUse" gradientTransform="scale(0.9269456, 1.078812)" id="SVGID_Fill11_-2" xml:space="preserve">
+      <stop offset="4.97804%" stop-color="#839597" stop-opacity="1" id="stop166-7" xml:space="preserve" />
+      <stop offset="8.345531%" stop-color="#DADCDC" stop-opacity="1" id="stop168-2" xml:space="preserve" />
+      <stop offset="10.5417%" stop-color="#C4CBCC" stop-opacity="1" id="stop170-0" xml:space="preserve" />
+      <stop offset="12.8843%" stop-color="#839597" stop-opacity="1" id="stop172-1" xml:space="preserve" />
+      <stop offset="15.9592%" stop-color="#475253" stop-opacity="1" id="stop174-7" xml:space="preserve" />
+      <stop offset="19.7657%" stop-color="#353E3F" stop-opacity="1" id="stop176-7" xml:space="preserve" />
+      <stop offset="20.6442%" stop-color="#FFFFFF" stop-opacity="1" id="stop178-6" xml:space="preserve" />
+      <stop offset="21.2299%" stop-color="#F1F1F1" stop-opacity="1" id="stop180-9" xml:space="preserve" />
+      <stop offset="39.0922%" stop-color="#DCE4E5" stop-opacity="1" id="stop182-0" xml:space="preserve" />
+      <stop offset="46.7057%" stop-color="#839597" stop-opacity="1" id="stop184-7" xml:space="preserve" />
+      <stop offset="48.6091%" stop-color="#676C6C" stop-opacity="1" id="stop186-5" xml:space="preserve" />
+      <stop offset="50.5124%" stop-color="#444949" stop-opacity="1" id="stop188-0" xml:space="preserve" />
+      <stop offset="52.8551%" stop-color="#323434" stop-opacity="1" id="stop190-8" xml:space="preserve" />
+      <stop offset="55.6369%" stop-color="#484D4D" stop-opacity="1" id="stop192-7" xml:space="preserve" />
+      <stop offset="60.6149%" stop-color="#839597" stop-opacity="1" id="stop194-7" xml:space="preserve" />
+      <stop offset="77.4524%" stop-color="#839597" stop-opacity="1" id="stop196-3" xml:space="preserve" />
+      <stop offset="78.6237%" stop-color="#FFFFFF" stop-opacity="1" id="stop198-9" xml:space="preserve" />
+      <stop offset="87.2621%" stop-color="#FFFFFF" stop-opacity="1" id="stop200-8" xml:space="preserve" />
+      <stop offset="98.5359%" stop-color="#839597" stop-opacity="1" id="stop202-5" xml:space="preserve" />
+    </linearGradient>
+    <linearGradient x1="214.6326" y1="67.45199" x2="256.1775" y2="67.45199" gradientUnits="userSpaceOnUse" gradientTransform="scale(0.9269456, 1.078812)" id="SVGID_Stroke3_-3" xml:space="preserve">
+      <stop offset="4.97804%" stop-color="#839597" stop-opacity="1" id="stop127-5" xml:space="preserve" />
+      <stop offset="8.345531%" stop-color="#DADCDC" stop-opacity="1" id="stop129-7" xml:space="preserve" />
+      <stop offset="10.5417%" stop-color="#C4CBCC" stop-opacity="1" id="stop131-1" xml:space="preserve" />
+      <stop offset="12.8843%" stop-color="#839597" stop-opacity="1" id="stop133-8" xml:space="preserve" />
+      <stop offset="15.9592%" stop-color="#475253" stop-opacity="1" id="stop135-2" xml:space="preserve" />
+      <stop offset="19.7657%" stop-color="#353E3F" stop-opacity="1" id="stop137-7" xml:space="preserve" />
+      <stop offset="20.6442%" stop-color="#FFFFFF" stop-opacity="1" id="stop139-4" xml:space="preserve" />
+      <stop offset="21.2299%" stop-color="#F1F1F1" stop-opacity="1" id="stop141-3" xml:space="preserve" />
+      <stop offset="39.0922%" stop-color="#DCE4E5" stop-opacity="1" id="stop143-6" xml:space="preserve" />
+      <stop offset="46.7057%" stop-color="#839597" stop-opacity="1" id="stop145-4" xml:space="preserve" />
+      <stop offset="48.6091%" stop-color="#676C6C" stop-opacity="1" id="stop147-9" xml:space="preserve" />
+      <stop offset="50.5124%" stop-color="#444949" stop-opacity="1" id="stop149-2" xml:space="preserve" />
+      <stop offset="52.8551%" stop-color="#323434" stop-opacity="1" id="stop151-5" xml:space="preserve" />
+      <stop offset="55.6369%" stop-color="#484D4D" stop-opacity="1" id="stop153-8" xml:space="preserve" />
+      <stop offset="60.6149%" stop-color="#839597" stop-opacity="1" id="stop155-1" xml:space="preserve" />
+      <stop offset="77.4524%" stop-color="#839597" stop-opacity="1" id="stop157-4" xml:space="preserve" />
+      <stop offset="78.6237%" stop-color="#FFFFFF" stop-opacity="1" id="stop159-5" xml:space="preserve" />
+      <stop offset="87.2621%" stop-color="#FFFFFF" stop-opacity="1" id="stop161-5" xml:space="preserve" />
+      <stop offset="98.5359%" stop-color="#839597" stop-opacity="1" id="stop163-4" xml:space="preserve" />
+    </linearGradient>
+    <linearGradient x1="209.1272" y1="100.7157" x2="284.607" y2="100.7157" gradientUnits="userSpaceOnUse" gradientTransform="scale(0.8025756, 1.245988)" id="SVGID_Fill12_-7" xml:space="preserve">
+      <stop offset="0%" stop-color="#F40000" stop-opacity="1" id="stop214-1" xml:space="preserve" />
+      <stop offset="46.9828%" stop-color="#E20001" stop-opacity="1" id="stop216-4" xml:space="preserve" />
+      <stop offset="65.9483%" stop-color="#570B0D" stop-opacity="1" id="stop218-0" xml:space="preserve" />
+    </linearGradient>
+    <linearGradient x1="210.3201" y1="101.002" x2="283.362" y2="101.002" gradientUnits="userSpaceOnUse" gradientTransform="scale(0.8025756, 1.245988)" id="SVGID_Stroke4_-3" xml:space="preserve">
+      <stop offset="0%" stop-color="#F40000" stop-opacity="1" id="stop207-1" xml:space="preserve" />
+      <stop offset="46.9828%" stop-color="#E20001" stop-opacity="1" id="stop209-3" xml:space="preserve" />
+      <stop offset="65.9483%" stop-color="#570B0D" stop-opacity="1" id="stop211-6" xml:space="preserve" />
+    </linearGradient>
+    <linearGradient x1="181.4325" y1="92.10477" x2="264.677" y2="92.10477" gradientUnits="userSpaceOnUse" gradientTransform="scale(0.845948, 1.182106)" id="SVGID_Fill13_-4" xml:space="preserve">
+      <stop offset="0%" stop-color="#F40000" stop-opacity="1" id="stop230-2" xml:space="preserve" />
+      <stop offset="46.9828%" stop-color="#E20001" stop-opacity="1" id="stop232-0" xml:space="preserve" />
+      <stop offset="65.9483%" stop-color="#570B0D" stop-opacity="1" id="stop234-5" xml:space="preserve" />
+    </linearGradient>
+    <linearGradient x1="182.5192" y1="92.45444" x2="263.4973" y2="92.45444" gradientUnits="userSpaceOnUse" gradientTransform="scale(0.845948, 1.182106)" id="SVGID_Stroke5_-0" xml:space="preserve">
+      <stop offset="0%" stop-color="#F40000" stop-opacity="1" id="stop223-2" xml:space="preserve" />
+      <stop offset="46.9828%" stop-color="#E20001" stop-opacity="1" id="stop225-9" xml:space="preserve" />
+      <stop offset="65.9483%" stop-color="#570B0D" stop-opacity="1" id="stop227-0" xml:space="preserve" />
+    </linearGradient>
+    <linearGradient x1="175.7479" y1="84.88352" x2="249.3345" y2="84.88352" gradientUnits="userSpaceOnUse" gradientTransform="scale(0.8302531, 1.204452)" id="SVGID_Fill14_-2" xml:space="preserve">
+      <stop offset="0%" stop-color="#F40000" stop-opacity="1" id="stop246-8" xml:space="preserve" />
+      <stop offset="47.4138%" stop-color="#E20001" stop-opacity="1" id="stop248-0" xml:space="preserve" />
+      <stop offset="54.3103%" stop-color="#570B0D" stop-opacity="1" id="stop250-6" xml:space="preserve" />
+    </linearGradient>
+    <linearGradient x1="176.8837" y1="85.22146" x2="248.1163" y2="85.22146" gradientUnits="userSpaceOnUse" gradientTransform="scale(0.8302531, 1.204452)" id="SVGID_Stroke6_-3" xml:space="preserve">
+      <stop offset="0%" stop-color="#F40000" stop-opacity="1" id="stop239-9" xml:space="preserve" />
+      <stop offset="47.4138%" stop-color="#E20001" stop-opacity="1" id="stop241-8" xml:space="preserve" />
+      <stop offset="54.3103%" stop-color="#570B0D" stop-opacity="1" id="stop243-7" xml:space="preserve" />
+    </linearGradient>
+    <linearGradient x1="159.5463" y1="93.40244" x2="241.1989" y2="93.40244" gradientUnits="userSpaceOnUse" gradientTransform="scale(0.9275604, 1.078097)" id="SVGID_Fill15_-0" xml:space="preserve">
+      <stop offset="43.5345%" stop-color="#EEEBEB" stop-opacity="0.156863" id="stop255-1" xml:space="preserve" />
+      <stop offset="69.8276%" stop-color="#EEEEEE" stop-opacity="0.392157" id="stop257-1" xml:space="preserve" />
+    </linearGradient>
+    <linearGradient x1="219.8516" y1="54.72495" x2="260.3398" y2="54.72495" gradientUnits="userSpaceOnUse" gradientTransform="scale(0.9537596, 1.048482)" id="SVGID_Fill16_-7" xml:space="preserve">
+      <stop offset="0%" stop-color="#BD0707" stop-opacity="1" id="stop285-5" xml:space="preserve" />
+      <stop offset="9.31373%" stop-color="#FC0909" stop-opacity="1" id="stop287-5" xml:space="preserve" />
+      <stop offset="20.5882%" stop-color="#FEAFAF" stop-opacity="1" id="stop289-0" xml:space="preserve" />
+      <stop offset="85.7843%" stop-color="#FF0606" stop-opacity="1" id="stop291-6" xml:space="preserve" />
+      <stop offset="100%" stop-color="#AF0F0F" stop-opacity="1" id="stop293-2" xml:space="preserve" />
+    </linearGradient>
+    <linearGradient x1="220.7731" y1="55.2407" x2="259.1631" y2="55.2407" gradientUnits="userSpaceOnUse" gradientTransform="scale(0.9537596, 1.048482)" id="SVGID_Stroke7_-8" xml:space="preserve">
+      <stop offset="0%" stop-color="#BD0707" stop-opacity="1" id="stop274-4" xml:space="preserve" />
+      <stop offset="9.31373%" stop-color="#FC0909" stop-opacity="1" id="stop276-2" xml:space="preserve" />
+      <stop offset="20.5882%" stop-color="#FEAFAF" stop-opacity="1" id="stop278-2" xml:space="preserve" />
+      <stop offset="85.7843%" stop-color="#FF0606" stop-opacity="1" id="stop280-4" xml:space="preserve" />
+      <stop offset="100%" stop-color="#AF0F0F" stop-opacity="1" id="stop282-7" xml:space="preserve" />
+    </linearGradient>
+    </defs>
+    <g transform="translate(0, -97)" id="layer1" xml:space="default">
+        <g transform="matrix(2.685446, 0, 0, 2.685446, 6.85714, 102.6198)" id="g12" xml:space="preserve">
+      <path d="M17.502 0 L262.526 0 C272.187 0 280.028 7.832 280.028 17.502 L280.028 262.526 C280.028 272.196 272.187 280.028 262.526 280.028 L17.502 280.028 C7.841 280.027 0 272.195 0 262.526 L0 17.502 C0 7.841 7.841 0 17.502 0 z" id="path2" xml:space="preserve" connector-curvature="0" style="fill:#324D5B;" />
+      <path d="M52.505 175.017 L227.522 175.017 C237.183 175.017 245.024 182.858 245.024 192.519 L245.024 280.028 L35.003 280.028 L35.003 192.519 C35.003 182.858 42.844 175.017 52.505 175.017 z" id="path4" xml:space="preserve" connector-curvature="0" style="fill:#CCD0D2;" />
+      <path d="M52.505 157.515 L227.522 157.515 C237.183 157.515 245.024 165.356 245.024 175.017 L245.024 201.27 L35.003 201.27 L35.003 175.017 C35.003 165.356 42.844 157.515 52.505 157.515 z" id="path6" xml:space="preserve" connector-curvature="0" style="fill:#E4E7E7;" />
+      <path d="M245.024 0 L245.024 105.01 C245.024 114.68 237.183 122.512 227.522 122.512 L52.505 122.512 C42.844 122.512 35.003 114.68 35.003 105.01 L35.003 0 z" id="path8" xml:space="preserve" connector-curvature="0" style="fill:#2B414D;" />
+      <path d="M122.512 0 L122.512 96.259 C122.512 101.089 126.432 105.01 131.263 105.01 L218.772 105.01 C223.611 105.01 227.523 101.09 227.523 96.259 L227.523 0 z M210.021 78.758 C210.021 83.58801 206.109 87.509 201.27 87.509 L192.519 87.509 C187.68 87.509 183.768 83.589 183.768 78.758 L183.768 26.253 C183.768 21.423 187.68 17.502 192.519 17.502 L201.27 17.502 C206.109 17.502 210.021 21.422 210.021 26.253 z" id="path10" xml:space="preserve" connector-curvature="0" style="fill:#CCD0D2;" />
+    </g>
+    </g>
+</svg>

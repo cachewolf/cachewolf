@@ -1,0 +1,81 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xml="http://www.w3.org/XML/1998/namespace" x="0" y="0" width="32" height="32" overflow="hidden"
+     viewBox="0, 0, 128, 128" preserveAspectRatio="xMidYMid" font-size="0" id="svg"
+     xml:space="default" xmlns="http://www.w3.org/2000/svg" version="1.1">
+    <defs id="def1" xml:space="default">
+        <linearGradient x1="0%" y1="0%" x2="100%" y2="0%" gradientUnits="objectBoundingBox" id="id3"
+                        xml:space="default">
+            <stop offset="0%" stop-color="#EEEEEE" stop-opacity="1" id="T" xml:space="default"/>
+            <stop offset="100%" stop-color="#D2D2D2" stop-opacity="1" id="U" xml:space="default"/>
+        </linearGradient>
+        <linearGradient x1="0%" y1="0%" x2="100%" y2="0%" gradientUnits="objectBoundingBox" id="id4"
+                        xml:space="default">
+            <stop offset="0%" stop-opacity="1" id="V" xml:space="default"/>
+            <stop offset="100%" stop-opacity="0.536" id="W" xml:space="default"/>
+        </linearGradient>
+        <linearGradient x1="0%" y1="0%" x2="100%" y2="0%" gradientUnits="objectBoundingBox" id="id5"
+                        xml:space="default">
+            <stop offset="0%" stop-opacity="1" id="X" xml:space="default"/>
+            <stop offset="100%" stop-color="#DDDDDD" stop-opacity="0" id="Y" xml:space="default"/>
+        </linearGradient>
+        <filter x="-0.147" y="-0.145" width="1.294" height="1.29" color-interpolation-filters="auto" id="id6"
+                xml:space="default">
+            <feGaussianBlur stdDeviation="1.81881" id="Z" xml:space="default"/>
+        </filter>
+        <filter x="none" y="none" width="none" height="none" color-interpolation-filters="auto" id="id7"
+                xml:space="default">
+            <feGaussianBlur stdDeviation="2.58594" id="a" xml:space="default"/>
+        </filter>
+        <radialGradient cx="81.79" cy="100.32" r="44.42" fx="81.79" fy="100.32" gradientUnits="userSpaceOnUse"
+                        xlink:href="#id3"
+                        gradientTransform="matrix(2.002605, -1.597031, 1.777333, 2.228695, -279.2355, 23.70383)"
+                        id="id8" xml:space="default"/>
+        <radialGradient cx="89.51" cy="22.254" r="18.279" fx="89.51" fy="22.254" gradientUnits="userSpaceOnUse"
+                        xlink:href="#id4" gradientTransform="matrix(1, 0, 0, 0.9746789, 0, 0.4391072)" id="id9"
+                        xml:space="default"/>
+        <linearGradient x1="98.33" y1="14.793" x2="86.82" y2="25.1" gradientUnits="userSpaceOnUse" xlink:href="#id5"
+                        gradientTransform="matrix(0.9671488, 0, 0, 0.9671488, 0.4562212, -0.08680339)" id="A"
+                        xml:space="default"/>
+        <linearGradient x1="0%" y1="22.88" x2="0" y2="101.01" gradientUnits="userSpaceOnUse" xlink:href="#C" id="B"
+                        xml:space="default"/>
+        <linearGradient x1="0%" y1="0%" x2="100%" y2="0%" gradientUnits="objectBoundingBox" id="C" xml:space="default">
+            <stop offset="0%" stop-color="#F0FF80" stop-opacity="1" id="b" xml:space="default"/>
+            <stop offset="100%" stop-color="#E3AD00" stop-opacity="1" id="c" xml:space="default"/>
+        </linearGradient>
+        <linearGradient x1="0%" y1="8.211" x2="0" y2="121.04" gradientUnits="userSpaceOnUse" xlink:href="#H" id="D"
+                        xml:space="default"/>
+        <radialGradient cx="63.21" cy="-8.84" r="54.27" fx="63.21" fy="-8.84" gradientUnits="userSpaceOnUse"
+                        xlink:href="#I" gradientTransform="matrix(1.260655, 0, 0, 0.9847417, -16.47631, 0.9860661)"
+                        id="E" xml:space="default"/>
+        <radialGradient cx="63.894" cy="117.35" r="53.91" fx="63.894" fy="117.35" gradientUnits="userSpaceOnUse"
+                        xlink:href="#G" gradientTransform="matrix(1, 0, 0, 0.08641975, 0, 107.2096)" id="F"
+                        xml:space="default"/>
+        <linearGradient x1="0%" y1="0%" x2="100%" y2="0%" gradientUnits="objectBoundingBox" id="G" xml:space="default">
+            <stop offset="0%" stop-opacity="1" id="d" xml:space="default"/>
+            <stop offset="100%" stop-opacity="0" id="e" xml:space="default"/>
+        </linearGradient>
+        <linearGradient x1="0%" y1="0%" x2="100%" y2="0%" gradientUnits="objectBoundingBox" id="H" xml:space="default">
+            <stop offset="0%" stop-color="#888888" stop-opacity="1" id="f" xml:space="default"/>
+            <stop offset="100%" stop-color="#494949" stop-opacity="1" id="g" xml:space="default"/>
+        </linearGradient>
+        <linearGradient x1="0%" y1="0%" x2="100%" y2="0%" gradientUnits="objectBoundingBox" id="I" xml:space="default">
+            <stop offset="0%" stop-color="#EEEEEE" stop-opacity="1" id="h" xml:space="default"/>
+            <stop offset="100%" stop-color="#EEEEEE" stop-opacity="0" id="i" xml:space="default"/>
+        </linearGradient>
+    </defs>
+    <g transform="translate(1.132458, 3.31)" id="id1" xml:space="default">
+        <path d="M20.09375 4.1185 L20.09375 122.1185 L108.9375 122.1185 L108.9375 35.96225 L108.3438 35.33725 C108.5542 35.48164 108.7606 35.63941 108.9688 35.77475 L78.09375 4.14975 C78.15029 4.229347 78.19368 4.320052 78.25 4.39975 L78 4.1185 L20.09375 4.1185 z"
+              filter="url(#id7)" opacity="0.809" transform="matrix(0.9671488, 0, 0, 0.9712615, 0.4562212, -0.6145683)"
+              id="J" xml:space="default"/>
+        <path d="M19.88987 2.542632 L19.88987 116.6662 L105.815 116.6662 L105.815 33.34028 L75.89383 2.542635 L19.88987 2.542635 z"
+              id="K" xml:space="default" style="fill:url(#id8);"/>
+        <path d="M81.69804 28.3095 L81.8332 19.9585 C81.90112 13.35941 80.95614 8.41074 77.78578 3.947142 L80.36234 3.915939 L107.8627 29.53084 C103.7947 26.88545 98.24152 28.7396 91.0008 28.50523 L81.69804 28.3095 z"
+              filter="url(#id6)" opacity="0.505" transform="matrix(1.016085, 0, 0, 1.112241, -4.924696, -0.3452414)"
+              id="L" xml:space="default" style="fill:url(#id9);"/>
+        <path d="M81.61586 25.81168 L81.74658 17.73502 C81.81227 11.35271 79.05501 6.898952 75.98879 2.581988 L105.8555 33.17015 C101.9212 30.61167 97.61588 26.22765 90.61302 26.00098 L81.61586 25.81168 z"
+              id="M" xml:space="default" style="fill:#EEEEEE;"/>
+        <path d="M81.61586 25.81168 L81.74658 17.73502 C81.81227 11.35271 79.05501 6.898952 75.98879 2.581988 L105.8555 33.17015 C101.9212 30.61167 97.61588 26.22765 90.61302 26.00098 L81.61586 25.81168 z"
+              id="N" xml:space="default"/>
+    </g>
+</svg>

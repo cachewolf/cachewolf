@@ -24,8 +24,8 @@ package CacheWolf.database;
 /**
  * stores latDec and lonDec as public double (no getter/setter)<br>
  * implements .equals(anotherPoint) and .isValid()<br>
- * @author pfeffer
  *
+ * @author pfeffer
  */
 public class CoordinatePoint {
     public double latDec;
@@ -36,26 +36,26 @@ public class CoordinatePoint {
      * set latDec and lonDec to make valid
      */
     public CoordinatePoint() {
-	latDec = -91;
-	lonDec = -361;
+        latDec = -91;
+        lonDec = -361;
     }
 
     public CoordinatePoint(CoordinatePoint t) {
-	latDec = t.latDec;
-	lonDec = t.lonDec;
+        latDec = t.latDec;
+        lonDec = t.lonDec;
     }
 
     public CoordinatePoint(double lat, double lon) {
-	latDec = lat;
-	lonDec = lon;
+        latDec = lat;
+        lonDec = lon;
     }
 
     public boolean equals(CoordinatePoint testpoint) {
-	return latDec == testpoint.latDec && lonDec == testpoint.lonDec;
+        return latDec == testpoint.latDec && lonDec == testpoint.lonDec;
     }
 
     public boolean isValid() {
-	return latDec <= 90.0 && latDec >= -90.0 && lonDec <= 360 && lonDec >= -360;
+        return latDec <= 90.0 && latDec >= -90.0 && lonDec <= 360 && lonDec >= -360;
     }
 
 }

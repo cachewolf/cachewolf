@@ -29,31 +29,30 @@ import CacheWolf.database.CacheType;
  * Class to export the cache database (index) to an CSV File which can bei easy
  * importet bei MS AutoRoute (testet with AR 2001 German) Format of the file:
  * Name;Breitengrad;Längengrad;Typ1;Typ2;Waypoint;Datum;Hyperlink
- * 
  */
 public class MSARCSVExporter extends Exporter {
 
     public MSARCSVExporter() {
-	super();
-	this.setOutputFileExtension("*.csv");
-	this.decimalSeparator = ',';
-	this.setExportMethod(EXPORT_METHOD_LAT_LON);
+        super();
+        this.setOutputFileExtension("*.csv");
+        this.decimalSeparator = ',';
+        this.setExportMethod(EXPORT_METHOD_LAT_LON);
     }
 
     public String header() {
-	return "Name;Breitengrad;L\u00E4ngengrad;Typ1;Typ2;Waypoint;Datum;Hyperlink\r";
+        return "Name;Breitengrad;L\u00E4ngengrad;Typ1;Typ2;Waypoint;Datum;Hyperlink\r";
     }
 
     public String record(CacheHolder ch, String lat, String lon) {
-	StringBuffer str = new StringBuffer(200);
-	str.append("\"" + ch.getCode() + " - " + ch.getName() + "\";");
-	str.append(lat + ";" + lon + ";");
-	str.append("\"" + CacheType.type2SymTag(ch.getType()) + "\";");
-	str.append("\"" + CacheSize.cw2ExportString(ch.getSize()) + "\";");
-	str.append("\"" + ch.getCode() + "\";");
-	str.append("\"" + ch.getHidden() + "\";");
-	str.append("\"" + ch.getDetails().URL + "\"\r\n");
+        StringBuffer str = new StringBuffer(200);
+        str.append("\"" + ch.getCode() + " - " + ch.getName() + "\";");
+        str.append(lat + ";" + lon + ";");
+        str.append("\"" + CacheType.type2SymTag(ch.getType()) + "\";");
+        str.append("\"" + CacheSize.cw2ExportString(ch.getSize()) + "\";");
+        str.append("\"" + ch.getCode() + "\";");
+        str.append("\"" + ch.getHidden() + "\";");
+        str.append("\"" + ch.getDetails().URL + "\"\r\n");
 
-	return str.toString();
+        return str.toString();
     }
 }

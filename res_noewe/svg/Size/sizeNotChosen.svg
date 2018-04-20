@@ -1,0 +1,14 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg xmlns:xml="http://www.w3.org/XML/1998/namespace" x="0" y="0" width="32" height="24" overflow="hidden" viewBox="0, 0, 257, 192.75" preserveAspectRatio="xMidYMid" font-size="0px" id="svg" xml:space="preserve"  xmlns="http://www.w3.org/2000/svg" version="1.1">
+  <rect x="10.7501" y="161.9169" width="16.9167" height="16.9166" stroke-width="0.2" id="rect937" xml:space="preserve" style="fill:#DADADA;" />
+  <rect x="80.3334" y="139.9169" width="38.6667" height="38.6667" stroke-width="0.2" id="rect939" xml:space="preserve" style="fill:#DADADA;" />
+  <rect x="130.667" y="133.5503" width="45" height="45" stroke-width="0.2" id="rect941" xml:space="preserve" style="fill:#DADADA;" />
+  <rect x="188.667" y="127.8336" width="62.4668" height="56.7111" stroke-width="0.2" id="rect943" xml:space="preserve" style="fill:#BEBDBD;" />
+  <rect x="39.2668" y="150.5503" width="28.4333" height="28.4333" stroke-width="0.2" id="rect945" xml:space="preserve" style="fill:#CED0D3;" />
+  <rect x="5.809109" y="5.643891" width="245.6959" height="181.7585" stroke="#ABABAB" stroke-width="10.13738" id="rect947" xml:space="preserve" style="fill:none;" />
+  <g transform="translate(0, 117.75)" id="g953" xml:space="preserve">
+    <path d="M212.859 25.6339 L214.678 27.5833 L211.754 30.3126 L209.935 28.3631 z M216.498 29.5328 L218.318 31.4823 L215.393 34.2116 L213.574 32.2621 z M220.137 33.4318 L221.957 35.3813 L219.032 38.1105 L217.213 36.16109 z M223.776 37.3307 L225.596 39.2802 L222.671 42.0095 L220.852 40.06 z M227.415 41.22969 L229.234 43.1792 L226.31 45.9085 L224.491 43.959 z M231.054 45.12869 L232.874 47.07809 L229.949 49.8074 L228.13 47.85789 z M234.693 49.02759 L236.513 50.97709 L233.589 53.70639 L231.769 51.75689 z M209.22 21.73489 L211.039 23.68439 L208.115 26.41369 L206.296 24.46419 z" stroke-linejoin="round" id="path949" xml:space="preserve" connector-curvature="0" style="fill:#861D23;" />
+    <path d="M233.724 29.2007 L231.774 31.0202 L229.045 28.096 L230.994 26.2765 z M229.825 32.8397 L227.875 34.6592 L225.146 31.735 L227.095 29.9155 z M225.925 36.4787 L223.976 38.2982 L221.247 35.374 L223.196 33.5545 z M222.026 40.1178 L220.077 41.9373 L217.348 39.0131 L219.297 37.1936 z M218.128 43.7568 L216.178 45.5763 L213.449 42.6521 L215.398 40.8326 z M214.229 47.3958 L212.279 49.2153 L209.55 46.2911 L211.5 44.4716 z M210.33 51.0349 L208.38 52.8544 L205.651 49.9302 L207.6 48.1106 z M237.622 25.5616 L235.673 27.3812 L232.944 24.4569 L234.893 22.6374 z" stroke-linejoin="round" id="path951" xml:space="preserve" connector-curvature="0" style="fill:#861D23;" />
+  </g>
+</svg>

@@ -26,7 +26,6 @@ import CacheWolf.utils.SafeXML;
 /**
  * This class represents the settings of the filter that can be done when the users changes the
  * filter in CacheWolf.
- * 
  */
 public class FilterData {
 
@@ -48,7 +47,7 @@ public class FilterData {
     private String filterDiff = "L";
     private String filterTerr = "L";
 
-    private long[] filterAttr = { 0l, 0l, 0l, 0l };
+    private long[] filterAttr = {0l, 0l, 0l, 0l};
     private int filterAttrChoice = 0;
 
     // filter setting for state of cache
@@ -63,7 +62,6 @@ public class FilterData {
 
     /**
      * Constructor for a profile
-     * 
      */
     public FilterData() { // public constructor
     }
@@ -73,38 +71,37 @@ public class FilterData {
      * If a non empty String is passed as parameter, then this String is used as ID-tag for the filter.
      * If it is empty, then the ID tag will not appear in the cache data.
      * The ID tag is the string which is used in the filter screen to appear in the filter list.
-     * 
-     * @param ID
-     *            ID tag of filter
+     *
+     * @param ID ID tag of filter
      * @return XML represenation of filter
      */
     public String toXML(String ID) {
-	// do not change order, cause reading this is done in simple way
-	String saveID = "";
-	if (ID != null && !ID.equals("")) {
-	    saveID = "id = \"" + SafeXML.string2Html(ID) + "\" ";
-	}
-	// '|' is splitter, it'll not work correctly if contained in any search item
-	// alternative: '\u0399'
-	String searchSeparator = "|";
-	// just one entry for search to make it easier extendable later
-	return "    <FILTERDATA " + saveID + "rose = \"" + getFilterRose() + "\"" + //
-		" type = \"" + getFilterType() + "\"" + //
-		" var = \"" + getFilterVar() + "\"" + //
-		" dist = \"" + getFilterDist().replace('"', ' ') + "\"" + //
-		" diff = \"" + getFilterDiff() + "\"" + //
-		" terr = \"" + getFilterTerr() + "\"" + //
-		" size = \"" + getFilterSize() + "\"" + //
-		" attributesYes = \"" + filterAttr[0] + "\"" + //
-		" attributesNo = \"" + filterAttr[2] + "\"" + //
-		" attributesChoice = \"" + getFilterAttrChoice() + "\"" + //
-		" status = \"" + SafeXML.string2Html(getFilterStatus()) + "\"" + //
-		" useRegexp = \"" + useRegexp() + "\"" + //
-		" noCoord = \"" + getFilterNoCoord() + "\"" + //
-		" attributesYes1 = \"" + filterAttr[1] + "\"" + //
-		" attributesNo1 = \"" + filterAttr[3] + "\"" + //
-		" search = \"" + syncDate + searchSeparator + namePattern + searchSeparator + nameCompare + (nameCaseSensitive ? "1" : "0") + "\"" + //
-		" />\n";
+        // do not change order, cause reading this is done in simple way
+        String saveID = "";
+        if (ID != null && !ID.equals("")) {
+            saveID = "id = \"" + SafeXML.string2Html(ID) + "\" ";
+        }
+        // '|' is splitter, it'll not work correctly if contained in any search item
+        // alternative: '\u0399'
+        String searchSeparator = "|";
+        // just one entry for search to make it easier extendable later
+        return "    <FILTERDATA " + saveID + "rose = \"" + getFilterRose() + "\"" + //
+                " type = \"" + getFilterType() + "\"" + //
+                " var = \"" + getFilterVar() + "\"" + //
+                " dist = \"" + getFilterDist().replace('"', ' ') + "\"" + //
+                " diff = \"" + getFilterDiff() + "\"" + //
+                " terr = \"" + getFilterTerr() + "\"" + //
+                " size = \"" + getFilterSize() + "\"" + //
+                " attributesYes = \"" + filterAttr[0] + "\"" + //
+                " attributesNo = \"" + filterAttr[2] + "\"" + //
+                " attributesChoice = \"" + getFilterAttrChoice() + "\"" + //
+                " status = \"" + SafeXML.string2Html(getFilterStatus()) + "\"" + //
+                " useRegexp = \"" + useRegexp() + "\"" + //
+                " noCoord = \"" + getFilterNoCoord() + "\"" + //
+                " attributesYes1 = \"" + filterAttr[1] + "\"" + //
+                " attributesNo1 = \"" + filterAttr[3] + "\"" + //
+                " search = \"" + syncDate + searchSeparator + namePattern + searchSeparator + nameCompare + (nameCaseSensitive ? "1" : "0") + "\"" + //
+                " />\n";
     }
 
     /**
@@ -112,154 +109,154 @@ public class FilterData {
      * not cause nullPointer Exceptions
      */
     public void normaliseFilters() {
-	String manyOnes = "11111111111111111111111111111";
-	if (getFilterRose().length() < FILTERROSE.length()) {
-	    setFilterRose((getFilterRose() + manyOnes).substring(0, FILTERROSE.length()));
-	}
-	if (getFilterVar().length() < FILTERVAR.length()) {
-	    setFilterVar((getFilterVar() + manyOnes).substring(0, FILTERVAR.length()));
-	}
-	if (getFilterType().length() < FILTERTYPE.length()) {
-	    setFilterType((getFilterType() + manyOnes).substring(0, FILTERTYPE.length()));
-	}
-	if (getFilterSize().length() < FILTERSIZE.length()) {
-	    setFilterSize((getFilterSize() + manyOnes).substring(0, FILTERSIZE.length()));
-	}
-	if (getFilterDist().length() == 0)
-	    setFilterDist("L");
-	if (getFilterDiff().length() == 0)
-	    setFilterDiff("L");
-	if (getFilterTerr().length() == 0)
-	    setFilterTerr("L");
+        String manyOnes = "11111111111111111111111111111";
+        if (getFilterRose().length() < FILTERROSE.length()) {
+            setFilterRose((getFilterRose() + manyOnes).substring(0, FILTERROSE.length()));
+        }
+        if (getFilterVar().length() < FILTERVAR.length()) {
+            setFilterVar((getFilterVar() + manyOnes).substring(0, FILTERVAR.length()));
+        }
+        if (getFilterType().length() < FILTERTYPE.length()) {
+            setFilterType((getFilterType() + manyOnes).substring(0, FILTERTYPE.length()));
+        }
+        if (getFilterSize().length() < FILTERSIZE.length()) {
+            setFilterSize((getFilterSize() + manyOnes).substring(0, FILTERSIZE.length()));
+        }
+        if (getFilterDist().length() == 0)
+            setFilterDist("L");
+        if (getFilterDiff().length() == 0)
+            setFilterDiff("L");
+        if (getFilterTerr().length() == 0)
+            setFilterTerr("L");
     }
 
     // Getter and Setter for private properties
 
     public String getFilterType() {
-	return filterType;
+        return filterType;
     }
 
     public void setFilterType(String filterType) {
-	this.filterType = filterType;
+        this.filterType = filterType;
     }
 
     public String getFilterRose() {
-	return filterRose;
+        return filterRose;
     }
 
     public void setFilterRose(String filterRose) {
-	this.filterRose = filterRose;
+        this.filterRose = filterRose;
     }
 
     public String getFilterSize() {
-	return filterSize;
+        return filterSize;
     }
 
     public void setFilterSize(String filterSize) {
-	this.filterSize = filterSize;
+        this.filterSize = filterSize;
     }
 
     public String getFilterVar() {
-	return filterVar;
+        return filterVar;
     }
 
     public void setFilterVar(String filterVar) {
-	this.filterVar = filterVar;
+        this.filterVar = filterVar;
     }
 
     public String getFilterDist() {
-	return filterDist;
+        return filterDist;
     }
 
     public void setFilterDist(String filterDist) {
-	this.filterDist = filterDist;
+        this.filterDist = filterDist;
     }
 
     public String getFilterDiff() {
-	return filterDiff;
+        return filterDiff;
     }
 
     public void setFilterDiff(String filterDiff) {
-	this.filterDiff = filterDiff;
+        this.filterDiff = filterDiff;
     }
 
     public String getFilterTerr() {
-	return filterTerr;
+        return filterTerr;
     }
 
     public void setFilterTerr(String filterTerr) {
-	this.filterTerr = filterTerr;
+        this.filterTerr = filterTerr;
     }
 
     public long[] getFilterAttr() {
-	return filterAttr;
+        return filterAttr;
     }
 
     public void setFilterAttr(long[] filterAttr) {
-	this.filterAttr = filterAttr;
+        this.filterAttr = filterAttr;
     }
 
     public int getFilterAttrChoice() {
-	return filterAttrChoice;
+        return filterAttrChoice;
     }
 
     public void setFilterAttrChoice(int filterAttrChoice) {
-	this.filterAttrChoice = filterAttrChoice;
+        this.filterAttrChoice = filterAttrChoice;
     }
 
     public String getFilterStatus() {
-	return filterStatus;
+        return filterStatus;
     }
 
     public void setFilterStatus(String filterStatus) {
-	this.filterStatus = filterStatus;
+        this.filterStatus = filterStatus;
     }
 
     public boolean useRegexp() {
-	return useRegexp;
+        return useRegexp;
     }
 
     public void setUseRegexp(boolean useRegexp) {
-	this.useRegexp = useRegexp;
+        this.useRegexp = useRegexp;
     }
 
     public boolean getFilterNoCoord() {
-	return filterNoCoord;
+        return filterNoCoord;
     }
 
     public void setFilterNoCoord(boolean filterNoCoord) {
-	this.filterNoCoord = filterNoCoord;
+        this.filterNoCoord = filterNoCoord;
     }
 
     public String getSyncDate() {
-	return this.syncDate;
+        return this.syncDate;
     }
 
     public void setSyncDate(String date) {
-	this.syncDate = date;
+        this.syncDate = date;
     }
 
     public String getNamePattern() {
-	return this.namePattern;
+        return this.namePattern;
     }
 
     public void setNamePattern(String pattern) {
-	this.namePattern = pattern;
+        this.namePattern = pattern;
     }
 
     public int getNameCompare() {
-	return this.nameCompare;
+        return this.nameCompare;
     }
 
     public void setNameCompare(int compare) {
-	this.nameCompare = compare;
+        this.nameCompare = compare;
     }
 
     public boolean getNameCaseSensitive() {
-	return this.nameCaseSensitive;
+        return this.nameCaseSensitive;
     }
 
     public void setNameCaseSensitive(boolean caseSensitiv) {
-	this.nameCaseSensitive = caseSensitiv;
+        this.nameCaseSensitive = caseSensitiv;
     }
 }

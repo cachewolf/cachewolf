@@ -21,32 +21,16 @@ See http://www.cachewolf.de/ for more information.
  */
 package CacheWolf.utils;
 
-import gro.cachewolf.tls.TlsSocket;
-
 import ewe.data.Property;
 import ewe.data.PropertyList;
-import ewe.io.AsciiCodec;
-import ewe.io.FileBase;
-import ewe.io.IOException;
-import ewe.io.IOHandle;
-import ewe.io.InputStream;
-import ewe.io.MemoryFile;
-import ewe.io.MemoryStream;
-import ewe.io.OutputStream;
-import ewe.io.Stream;
-import ewe.io.StreamAdapter;
-import ewe.io.StreamUtils;
-import ewe.io.TextCodec;
+import ewe.io.*;
 import ewe.net.Socket;
 import ewe.net.URL;
 import ewe.sys.Convert;
 import ewe.sys.Handle;
 import ewe.sys.Vm;
-import ewe.util.ByteArray;
-import ewe.util.CharArray;
-import ewe.util.SubString;
-import ewe.util.Vector;
-import ewe.util.mString;
+import ewe.util.*;
+import gro.cachewolf.tls.TlsSocket;
 
 /**
  * Use this class to create an HttpConnection with a Web Server and to read in the data for the connection.<p>
@@ -73,6 +57,32 @@ import ewe.util.mString;
 //##################################################################
 public class HttpConnection {
     //	##################################################################
+    private static final int SocketConnected = 0x1;
+    private static final String[] encodings = {"transfer-coding", "transfer-encoding"};
+    private static String proxy = "";
+    private static int proxyPort = 0;
+    private static boolean useProxy = false;
+    private static Vector lines;
+    private static SubString data;
+    /**
+     * This is the list of properties for the server and document.
+     * It is only valid after a connection has been made, since it is sent by the server to the requestor.
+     * One property that will always be in this list will be "response" (the first line sent by the server in response to the request).
+     * All other properties will be as specified by the server,
+     * and <b>the property names will be converted to all lowercase letters</b>.
+     **/
+    public ewe.data.PropertyList responseFields;
+    /**
+     * This is the response code from the server. It is only valid after a connection has
+     * been made.
+     **/
+    public int responseCode;
+    /**
+     * If the document you supplied is already URL encoded, set this to true.
+     **/
+    public boolean documentIsEncoded;
+    protected TlsSocket openSocket;
+    protected TlsSocket connectedSocket;
     /**
      * The host to connect to.
      **/
@@ -81,7 +91,6 @@ public class HttpConnection {
      * The port to connect to.
      **/
     private int port;
-
     private boolean useSslTls;
     private boolean proxyDocumentIsSslTls;
     private String proxyDocumentHost;
@@ -105,23 +114,15 @@ public class HttpConnection {
      * This is initially null, so you will have to create a new PropertyList for it, or use one of the setRequestField() or addRequestField() methods.
      **/
     private ewe.data.PropertyList requestFields;
+
     /**
-     * This is the list of properties for the server and document.
-     * It is only valid after a connection has been made, since it is sent by the server to the requestor.
-     * One property that will always be in this list will be "response" (the first line sent by the server in response to the request).
-     * All other properties will be as specified by the server,
-     * and <b>the property names will be converted to all lowercase letters</b>.
-     **/
-    public ewe.data.PropertyList responseFields;
-    /**
-     * This is the response code from the server. It is only valid after a connection has
-     * been made.
-     **/
-    public int responseCode;
-    /**
-     * If the document you supplied is already URL encoded, set this to true.
-     **/
-    public boolean documentIsEncoded;
+     * This returns true if post data has been set for this connection.
+     * FIXME: unreferenced!
+     */
+    //	public boolean hasPostData()
+    //	{
+    //	return bytesToPost != null;
+    //	}
     /**
      * Set this to true for keep alive mode requests.
      **/
@@ -135,12 +136,51 @@ public class HttpConnection {
      * This is the codec used when sending data to the server.
      **/
     private TextCodec textCodec;
-
     private Stream bytesToPost;
     private Object originalPostData;
-    private static String proxy = "";
-    private static int proxyPort = 0;
-    private static boolean useProxy = false;
+    private byte[] buffer;
+
+    /**
+     * Create an HttpConnection with an http:// URL.
+     *
+     * @param url The full url, starting with http://
+     */
+    //	===================================================================
+    public HttpConnection(String url)
+    //	===================================================================
+    {
+        setUrl(url);
+    }
+
+    /**
+     * If a connection has already been made to the server, then you can call
+     * this method and the HttpConnection protocol will be done over this Socket.
+     * @param sock The already connected socket.
+     * FIXME: not referenced
+     */
+    ////	===================================================================
+    //	public void setAlreadyOpenSocket(Socket sock)
+    ////	===================================================================
+    //	{
+    //	openSocket = sock;
+    //	}
+
+    /**
+     * Create a new HttpConnection to the specified host and port to fetch the specified document.
+     *
+     * @param host     The host to connect to.
+     * @param port     The port to connect on.
+     * @param document the document to get.
+     *                 FIXME: not referenced
+     */
+    ////	===================================================================
+    //	public HttpConnection(String host, int port, String document)
+    ////	===================================================================
+    //	{
+    //	this.host = host;
+    //	this.port = port;
+    //	this.document = document;
+    //	}
 
     //	FIXME: why is this called immediately from preferences screen? shouldn't we read it from preferences instead?
     public static void setProxy(String proxyi, int proxyporti, boolean useproxyi) {
@@ -148,15 +188,6 @@ public class HttpConnection {
         proxyPort = proxyporti;
         useProxy = useproxyi;
     }
-
-    /**
-     * This returns true if post data has been set for this connection.
-     * FIXME: unreferenced!
-     */
-    //	public boolean hasPostData()
-    //	{
-    //	return bytesToPost != null;
-    //	}
 
     /**
      * Get a new HttpConnection whose parameters are copied from this HttpConnection
@@ -218,6 +249,22 @@ public class HttpConnection {
         return requestFields;
     }
 
+    //	FIXME: never referenced
+    ////	===================================================================
+    //	public HttpConnection(URL url)
+    ////	===================================================================
+    //	{
+    //	this(url.toString());
+    //	documentIsEncoded = true;
+    //	}
+    //	private static char [] space = {' '}, percentSpace = {'%','2','0'};
+
+    public void setRequestFields(PropertyList pl)
+    //	===================================================================
+    {
+        getRequestFields().set(pl);
+    }
+
     /**
      * Set the data to post out as either a Stream, InputStream,byte[],ByteArray or String.
      * If the data is a Stream or InputStream then you must also call setPostDataLength()
@@ -269,56 +316,8 @@ public class HttpConnection {
     {
         getRequestFields().set(name, property);
     }
-
-    public void setRequestFields(PropertyList pl)
-    //	===================================================================
-    {
-        getRequestFields().set(pl);
-    }
-
-    protected TlsSocket openSocket;
-    protected TlsSocket connectedSocket;
-
-    /**
-     * If a connection has already been made to the server, then you can call
-     * this method and the HttpConnection protocol will be done over this Socket.
-     * @param sock The already connected socket.
-     * FIXME: not referenced
-     */
-    ////	===================================================================
-    //	public void setAlreadyOpenSocket(Socket sock)
-    ////	===================================================================
-    //	{
-    //	openSocket = sock;
-    //	}
-
-    /**
-     * Create a new HttpConnection to the specified host and port to fetch the specified document.
-     * @param host The host to connect to.
-     * @param port The port to connect on.
-     * @param document the document to get.
-     * FIXME: not referenced
-     */
-    ////	===================================================================
-    //	public HttpConnection(String host, int port, String document)
-    ////	===================================================================
-    //	{
-    //	this.host = host;
-    //	this.port = port;
-    //	this.document = document;
-    //	}
-
-    /**
-     * Create an HttpConnection with an http:// URL.
-     *
-     * @param url The full url, starting with http://
-     */
-    //	===================================================================
-    public HttpConnection(String url)
-    //	===================================================================
-    {
-        setUrl(url);
-    }
+    //	never referenced
+    //	private static final int DataReady = 0x2;
 
     public void setUrl(String url) {
 
@@ -379,16 +378,6 @@ public class HttpConnection {
 
     //	FIXME: never referenced
     ////	===================================================================
-    //	public HttpConnection(URL url)
-    ////	===================================================================
-    //	{
-    //	this(url.toString());
-    //	documentIsEncoded = true;
-    //	}
-    //	private static char [] space = {' '}, percentSpace = {'%','2','0'};
-
-    //	FIXME: never referenced
-    ////	===================================================================
     //	public String toURLString()
     ////	===================================================================
     //	{
@@ -418,13 +407,6 @@ public class HttpConnection {
                 throw new IOException(errorMessage);
         }
     }
-
-    private static final int SocketConnected = 0x1;
-    //	never referenced
-    //	private static final int DataReady = 0x2;
-
-    private static Vector lines;
-    private static SubString data;
 
     //	===================================================================
     private int makeRequest(InputStream is, OutputStream os, TextCodec td) throws IOException
@@ -519,9 +501,6 @@ public class HttpConnection {
         contentLength = responseFields.getInt("content-length", -1);
         return responseCode;
     }
-
-    private static final String[] encodings = {"transfer-coding", "transfer-encoding"};
-    private byte[] buffer;
 
     /**
      * Copy from the "in" stream to the "out" stream. The streams are NOT closed.

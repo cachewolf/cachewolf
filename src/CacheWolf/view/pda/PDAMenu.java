@@ -30,33 +30,33 @@ public abstract class PDAMenu extends Form {
 
     protected static final String CANCEL = "__Cancel_Exit__";
 
-    public abstract void actionPerformed(String actionCommand);
-
     public PDAMenu() {
-	setPreferredSize(Preferences.itself().getScreenWidth(), Preferences.itself().getScreenHeight());
+        setPreferredSize(Preferences.itself().getScreenWidth(), Preferences.itself().getScreenHeight());
     }
 
-    public void onControlEvent(ControlEvent paramEvent) {
-	switch (paramEvent.type) {
-	case ControlEvent.PRESSED:
-	    if (paramEvent.action.equals(CANCEL)) {
-		exit(0);
+    public abstract void actionPerformed(String actionCommand);
 
-	    } else {
-		actionPerformed(paramEvent.action);
-	    }
-	}
-	super.onControlEvent(paramEvent);
+    public void onControlEvent(ControlEvent paramEvent) {
+        switch (paramEvent.type) {
+            case ControlEvent.PRESSED:
+                if (paramEvent.action.equals(CANCEL)) {
+                    exit(0);
+
+                } else {
+                    actionPerformed(paramEvent.action);
+                }
+        }
+        super.onControlEvent(paramEvent);
     }
 
     protected void buildMenu() {
-	PDAMenuButton button = new PDAMenuButton(MyLocale.getMsg(6057, "Back"), CANCEL);
-	addLast(button);
+        PDAMenuButton button = new PDAMenuButton(MyLocale.getMsg(6057, "Back"), CANCEL);
+        addLast(button);
     }
 
     protected void addMenuItem(String item, String actionCommand) {
-	PDAMenuButton button = new PDAMenuButton(item, actionCommand);
-	addLast(button);
+        PDAMenuButton button = new PDAMenuButton(item, actionCommand);
+        addLast(button);
     }
 
 }

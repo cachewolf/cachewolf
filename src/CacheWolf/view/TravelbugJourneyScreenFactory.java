@@ -21,8 +21,6 @@
 */
 package CacheWolf.view;
 
-import java.lang.reflect.Constructor;
-
 import CacheWolf.MainForm;
 import CacheWolf.MainTab;
 import CacheWolf.Preferences;
@@ -36,65 +34,67 @@ import ewe.reflect.Reflect;
 import ewe.sys.Vm;
 import ewe.ui.Form;
 
-public class TravelbugJourneyScreenFactory {
+import java.lang.reflect.Constructor;
 
-    /**
-     * Variante fuer Desktop unter Java???
-     */
-    private static boolean isSwing;
-    static {
-	Preferences.itself().log("Static initializer start ");
-	Class swingClass = null;
-	try {
-	    swingClass = TravelbugJourneyScreen.class.getClassLoader().loadClass("javax.swing.JTable");
-	} catch (Exception e) {
-	    Preferences.itself().log("Swing not found");
-	    Preferences.itself().log(e.toString());
-	    //ignore!
-	}
-	isSwing = swingClass != null;
-	isSwing = false;
-    }
+public class TravelbugJourneyScreenFactory {
 
     /**
      * Variante fuer Android-PDA
      */
     private static final boolean isAndroid = false;
+    /**
+     * Variante fuer Desktop unter Java???
+     */
+    private static boolean isSwing;
+
+    static {
+        Preferences.itself().log("Static initializer start ");
+        Class swingClass = null;
+        try {
+            swingClass = TravelbugJourneyScreen.class.getClassLoader().loadClass("javax.swing.JTable");
+        } catch (Exception e) {
+            Preferences.itself().log("Swing not found");
+            Preferences.itself().log(e.toString());
+            //ignore!
+        }
+        isSwing = swingClass != null;
+        isSwing = false;
+    }
 
     public static Form createTravelbugJourneyScreen() {
-	TravelBugJourneyScreenModel model = new TravelBugJourneyScreenModel();
-	model.onlyLogged = Preferences.itself().travelbugShowOnlyNonLogged;
-	int curCacheNo = MainTab.itself.tablePanel.getSelectedCache();
-	CacheDB cacheDB = MainForm.profile.cacheDB;
-	CacheHolder ch = cacheDB.get(curCacheNo);
-	model.actualCache = ch;
-	TravelbugJourneyList myTravelbugJourneys = new TravelbugJourneyList();
-	myTravelbugJourneys.readTravelbugsFile();
+        TravelBugJourneyScreenModel model = new TravelBugJourneyScreenModel();
+        model.onlyLogged = Preferences.itself().travelbugShowOnlyNonLogged;
+        int curCacheNo = MainTab.itself.tablePanel.getSelectedCache();
+        CacheDB cacheDB = MainForm.profile.cacheDB;
+        CacheHolder ch = cacheDB.get(curCacheNo);
+        model.actualCache = ch;
+        TravelbugJourneyList myTravelbugJourneys = new TravelbugJourneyList();
+        myTravelbugJourneys.readTravelbugsFile();
 
-	model.allTravelbugJourneys = myTravelbugJourneys;
+        model.allTravelbugJourneys = myTravelbugJourneys;
 
-	Preferences.itself().log("Mobile-Device: " + Vm.isMobile());
-	Preferences.itself().log("Preference for Mobile-Device: " + Preferences.itself().mobileGUI);
-	if (Vm.isMobile() && Preferences.itself().mobileGUI) {
-	    try {
-		Class loadClass = Reflect.getForName("CacheWolf.view.pda.PDATravelbugJourneyScreen").getReflectedClass();
-		Constructor constructor = loadClass.getConstructor(new Class[] { model.getClass() });
-		Form result = (Form) constructor.newInstance(new Object[] { model });
-		Preferences.itself().log("TBScreen successfully instantiated");
-		return result;
-	    } catch (Throwable e) {
-		Preferences.itself().log("CacheWolf.view.pda.PDATravelbugJourneyScreen not found");
-		Preferences.itself().log("Error in instantiating TravelBugJourneyScreen", e, true);
-		e.printStackTrace();
-		//ignore?? VM on WinPC seems to have no classloader
-		return new PDATravelbugJourneyScreen(model);
-	    }
-	} else if (isSwing) {
-	    throw new InstantiationError("No Swing GUI available");
-	} else if (isAndroid) {
-	    throw new InstantiationError("No Android GUI available");
-	} else {
-	    return new TravelbugJourneyScreen(model);
-	}
+        Preferences.itself().log("Mobile-Device: " + Vm.isMobile());
+        Preferences.itself().log("Preference for Mobile-Device: " + Preferences.itself().mobileGUI);
+        if (Vm.isMobile() && Preferences.itself().mobileGUI) {
+            try {
+                Class loadClass = Reflect.getForName("CacheWolf.view.pda.PDATravelbugJourneyScreen").getReflectedClass();
+                Constructor constructor = loadClass.getConstructor(new Class[]{model.getClass()});
+                Form result = (Form) constructor.newInstance(new Object[]{model});
+                Preferences.itself().log("TBScreen successfully instantiated");
+                return result;
+            } catch (Throwable e) {
+                Preferences.itself().log("CacheWolf.view.pda.PDATravelbugJourneyScreen not found");
+                Preferences.itself().log("Error in instantiating TravelBugJourneyScreen", e, true);
+                e.printStackTrace();
+                //ignore?? VM on WinPC seems to have no classloader
+                return new PDATravelbugJourneyScreen(model);
+            }
+        } else if (isSwing) {
+            throw new InstantiationError("No Swing GUI available");
+        } else if (isAndroid) {
+            throw new InstantiationError("No Android GUI available");
+        } else {
+            return new TravelbugJourneyScreen(model);
+        }
     }
 }

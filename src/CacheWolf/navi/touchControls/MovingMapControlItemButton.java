@@ -27,36 +27,36 @@ import ewe.graphics.AniImage;
 
 public class MovingMapControlItemButton extends MovingMapControlItem {
 
-	private int command;
-	private AniImageGrayScaled aniImage;
+    private int command;
+    private AniImageGrayScaled aniImage;
 
-	public MovingMapControlItemButton(String source, String iconSrc, int actionCommand, int alpha) {
-		Image image = MovingMapControlItem.createImage(source, iconSrc, alpha);
-		aniImage = new AniImageGrayScaled(image);
-		aniImage.freeSource();
-		command = actionCommand;
-		aniImage.properties |= mImage.AlwaysOnTop;
-		xProperties |= IS_ICON_WITH_COMMAND;
-	}
+    public MovingMapControlItemButton(String source, String iconSrc, int actionCommand, int alpha) {
+        Image image = MovingMapControlItem.createImage(source, iconSrc, alpha);
+        aniImage = new AniImageGrayScaled(image);
+        aniImage.freeSource();
+        command = actionCommand;
+        aniImage.properties |= mImage.AlwaysOnTop;
+        xProperties |= IS_ICON_WITH_COMMAND;
+    }
 
-	public int getActionCommand() {
-		return command;
-	}
+    public int getActionCommand() {
+        return command;
+    }
 
-	public int getWidth() {
-		return aniImage.getWidth();
-	}
+    public int getWidth() {
+        return aniImage.getWidth();
+    }
 
-	public int getHeight() {
-		return aniImage.getHeight();
-	}
+    public int getHeight() {
+        return aniImage.getHeight();
+    }
 
-	public AniImage getImage() {
-		return aniImage;
-	}
+    public AniImage getImage() {
+        return aniImage;
+    }
 
-	public void setText(String text) {
+    public void setText(String text) {
 
-	}
+    }
 
 }

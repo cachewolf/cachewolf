@@ -1,0 +1,20 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xml="http://www.w3.org/XML/1998/namespace" x="0" y="0" width="32" height="32" overflow="hidden"
+     viewBox="0, 0, 200, 200" preserveAspectRatio="xMidYMid" font-size="0" id="svg"
+     xml:space="default" xmlns="http://www.w3.org/2000/svg" version="1.1">
+    <defs id="def1" xml:space="default">
+        <linearGradient x1="0%" y1="0%" x2="100%" y2="0%" gradientUnits="objectBoundingBox" id="linearGradient1404"
+                        xml:space="default">
+            <stop offset="0%" stop-color="#00FF00" stop-opacity="1" id="stop1400" xml:space="default"/>
+            <stop offset="100%" stop-color="#00FF00" stop-opacity="0" id="stop1402" xml:space="default"/>
+        </linearGradient>
+        <linearGradient x1="34.55473" y1="197.9702" x2="166.2027" y2="197.9702" gradientUnits="userSpaceOnUse"
+                        xlink:href="#linearGradient1404" id="linearGradient1406" xml:space="default"/>
+    </defs>
+    <g transform="translate(0, -97)" id="layer1" xml:space="default">
+        <path d="M100.4829 101.4997 A65.71986 65.71986 0 0 0 34.55473 167.2195 C34.55473 222.0556 100.4829 294.4411 100.4829 294.4411 C100.4829 294.4411 166.2028 222.0555 166.2028 167.2195 A65.71986 65.71986 0 0 0 100.4829 101.4997 z M100.4829 205.6516 A38.43206 38.43206 0 1 1 138.9149 167.2195 A38.43206 38.43206 0 0 1 100.4829 205.6516 z"
+              stroke="#000000" stroke-width="5.207595" id="path14" xml:space="default" connector-curvature="0"
+              style="fill:url(#linearGradient1406);"/>
+    </g>
+</svg>

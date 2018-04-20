@@ -22,15 +22,7 @@
 package CacheWolf.exp;
 
 import CacheWolf.controls.ExecutePanel;
-import ewe.ui.CheckBoxGroup;
-import ewe.ui.ControlConstants;
-import ewe.ui.ControlEvent;
-import ewe.ui.Event;
-import ewe.ui.Form;
-import ewe.ui.FormBase;
-import ewe.ui.mCheckBox;
-import ewe.ui.mInput;
-import ewe.ui.mLabel;
+import ewe.ui.*;
 
 public class TomTomExporterScreen extends Form {
     private final ExecutePanel executePanel;
@@ -39,67 +31,67 @@ public class TomTomExporterScreen extends Form {
     mInput inpPrefix;
 
     public TomTomExporterScreen(String title) {
-	super();
-	this.title = title;
+        super();
+        this.title = title;
 
-	// checkboxgroup for fileformat
-	chkGroupFormat = new CheckBoxGroup();
-	chkASC = new mCheckBox(".asc");
-	chkASC.setGroup(chkGroupFormat);
-	chkOV2 = new mCheckBox(".ov2");
-	chkOV2.setGroup(chkGroupFormat);
-	chkGroupFormat.selectIndex(TomTomExporter.TT_OV2);
+        // checkboxgroup for fileformat
+        chkGroupFormat = new CheckBoxGroup();
+        chkASC = new mCheckBox(".asc");
+        chkASC.setGroup(chkGroupFormat);
+        chkOV2 = new mCheckBox(".ov2");
+        chkOV2.setGroup(chkGroupFormat);
+        chkGroupFormat.selectIndex(TomTomExporter.TT_OV2);
 
-	this.addLast(new mLabel("Fileformat"));
-	this.addNext(chkASC);
-	this.addLast(chkOV2);
+        this.addLast(new mLabel("Fileformat"));
+        this.addNext(chkASC);
+        this.addLast(chkOV2);
 
-	// checkbox for one file for all or one file per cachetype
-	chkOneFilePerType = new mCheckBox("Eine Datei pro Cachetyp");
-	chkOneFilePerType.setState(true);
-	this.addLast(chkOneFilePerType);
+        // checkbox for one file for all or one file per cachetype
+        chkOneFilePerType = new mCheckBox("Eine Datei pro Cachetyp");
+        chkOneFilePerType.setState(true);
+        this.addLast(chkOneFilePerType);
 
-	//prefix for files, if one file per cachetype
-	inpPrefix = new mInput("GC-");
-	activateInpPrefix();
-	this.addLast(inpPrefix);
+        //prefix for files, if one file per cachetype
+        inpPrefix = new mInput("GC-");
+        activateInpPrefix();
+        this.addLast(inpPrefix);
 
-	executePanel = new ExecutePanel(this);
+        executePanel = new ExecutePanel(this);
     }
 
     public int getFormat() {
-	return chkGroupFormat.getSelectedIndex();
+        return chkGroupFormat.getSelectedIndex();
     }
 
     public boolean oneFilePerType() {
-	return chkOneFilePerType.getState();
+        return chkOneFilePerType.getState();
     }
 
     public String getPrefix() {
-	return inpPrefix.getText();
+        return inpPrefix.getText();
     }
 
     private void activateInpPrefix() {
-	if (chkOneFilePerType.getState())
-	    inpPrefix.modify(0, ControlConstants.Disabled);
-	else
-	    inpPrefix.modify(ControlConstants.Disabled, 0);
-	inpPrefix.repaintNow();
+        if (chkOneFilePerType.getState())
+            inpPrefix.modify(0, ControlConstants.Disabled);
+        else
+            inpPrefix.modify(ControlConstants.Disabled, 0);
+        inpPrefix.repaintNow();
     }
 
     public void onEvent(Event ev) {
-	if (ev instanceof ControlEvent && ev.type == ControlEvent.PRESSED) {
-	    if (ev.target == executePanel.cancelButton) {
-		this.close(FormBase.IDCANCEL);
-	    }
-	    if (ev.target == executePanel.applyButton) {
-		this.close(FormBase.IDOK);
-	    }
-	    if (ev.target == chkOneFilePerType) {
-		activateInpPrefix();
-	    }
-	}
-	super.onEvent(ev);
+        if (ev instanceof ControlEvent && ev.type == ControlEvent.PRESSED) {
+            if (ev.target == executePanel.cancelButton) {
+                this.close(FormBase.IDCANCEL);
+            }
+            if (ev.target == executePanel.applyButton) {
+                this.close(FormBase.IDOK);
+            }
+            if (ev.target == chkOneFilePerType) {
+                activateInpPrefix();
+            }
+        }
+        super.onEvent(ev);
     }
 
 }

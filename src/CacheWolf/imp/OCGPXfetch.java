@@ -31,69 +31,69 @@ import ewe.ui.FormBase;
 
 public class OCGPXfetch {
     public static void doIt() {
-	String hostname = Preferences.itself().lastOCSite;
-	boolean oldDownloadAllOC = Preferences.itself().downloadAllOC;
-	boolean onlyListedAtOC = false;
-	ImportGui importGui = new ImportGui(MyLocale.getMsg(130, "Download from opencaching"), ImportGui.ALL | ImportGui.HOST, ImportGui.DESCRIPTIONIMAGE | ImportGui.SPOILERIMAGE | ImportGui.LOGIMAGE);
-	boolean downloadPics = importGui.downloadDescriptionImages;
-	importGui.missingCheckBox.setText(MyLocale.getMsg(164, "only listed at OC"));
-	importGui.missingCheckBox.setState(onlyListedAtOC);
-	if (importGui.execute() == FormBase.IDCANCEL) {
-	    return;
-	}
-	onlyListedAtOC = Preferences.itself().downloadAllOC;
-	Preferences.itself().downloadAllOC = oldDownloadAllOC;
-	if (importGui.domains.getSelectedItem() != null) {
-	    hostname = (String) importGui.domains.getSelectedItem();
-	    Preferences.itself().lastOCSite = hostname;
-	}
+        String hostname = Preferences.itself().lastOCSite;
+        boolean oldDownloadAllOC = Preferences.itself().downloadAllOC;
+        boolean onlyListedAtOC = false;
+        ImportGui importGui = new ImportGui(MyLocale.getMsg(130, "Download from opencaching"), ImportGui.ALL | ImportGui.HOST, ImportGui.DESCRIPTIONIMAGE | ImportGui.SPOILERIMAGE | ImportGui.LOGIMAGE);
+        boolean downloadPics = importGui.downloadDescriptionImages;
+        importGui.missingCheckBox.setText(MyLocale.getMsg(164, "only listed at OC"));
+        importGui.missingCheckBox.setState(onlyListedAtOC);
+        if (importGui.execute() == FormBase.IDCANCEL) {
+            return;
+        }
+        onlyListedAtOC = Preferences.itself().downloadAllOC;
+        Preferences.itself().downloadAllOC = oldDownloadAllOC;
+        if (importGui.domains.getSelectedItem() != null) {
+            hostname = (String) importGui.domains.getSelectedItem();
+            Preferences.itself().lastOCSite = hostname;
+        }
 
-	try {
-	    String address = "http://" + hostname + "/search.php?";
-	    address += "searchto=searchbyfinder"; // searchbydistance
-	    address += "&showresult=1&expert=0&sort=bydistance&orderRatingFirst=0";
-	    address += "&f_userowner=0&f_userfound=0&f_inactive=0&f_ignored=0";
-	    address += "&f_otherPlatforms="; // 0 = all 1 = nur OC
-	    if (onlyListedAtOC)
-		address += "1";
-	    else
-		address += "0";
-	    address += "&country=&difficultymin=0&difficultymax=0&terrainmin=0&terrainmax=0&cachetype=1;2;3;4;5;6;7;8;9;10&cachesize=1;2;3;4;5;6;7&cache_attribs=&cache_attribs_not=";
-	    address += "&logtype=1,7";
-	    address += "&utf8=1&output=gpx&zip=1";
-	    address += "&count=max";
-	    address += "&finder=" + Preferences.itself().myAlias;
-	    String tmpFile = MainForm.profile.dataDir + "dummy.zip";
-	    login();
-	    UrlFetcher.fetchDataFile(address, tmpFile);
-	    File ftmp = new File(tmpFile);
-	    if (ftmp.exists() && ftmp.length() > 0) {
-		GPXImporter gpx = new GPXImporter(tmpFile);
-		if (downloadPics)
-		    gpx.doIt(GPXImporter.DOLOADPICTURES);
-		else
-		    gpx.doIt(GPXImporter.DONOTLOADPICTURES);
-	    }
-	    ftmp.delete();
-	} catch (IOException e) {
-	}
+        try {
+            String address = "http://" + hostname + "/search.php?";
+            address += "searchto=searchbyfinder"; // searchbydistance
+            address += "&showresult=1&expert=0&sort=bydistance&orderRatingFirst=0";
+            address += "&f_userowner=0&f_userfound=0&f_inactive=0&f_ignored=0";
+            address += "&f_otherPlatforms="; // 0 = all 1 = nur OC
+            if (onlyListedAtOC)
+                address += "1";
+            else
+                address += "0";
+            address += "&country=&difficultymin=0&difficultymax=0&terrainmin=0&terrainmax=0&cachetype=1;2;3;4;5;6;7;8;9;10&cachesize=1;2;3;4;5;6;7&cache_attribs=&cache_attribs_not=";
+            address += "&logtype=1,7";
+            address += "&utf8=1&output=gpx&zip=1";
+            address += "&count=max";
+            address += "&finder=" + Preferences.itself().myAlias;
+            String tmpFile = MainForm.profile.dataDir + "dummy.zip";
+            login();
+            UrlFetcher.fetchDataFile(address, tmpFile);
+            File ftmp = new File(tmpFile);
+            if (ftmp.exists() && ftmp.length() > 0) {
+                GPXImporter gpx = new GPXImporter(tmpFile);
+                if (downloadPics)
+                    gpx.doIt(GPXImporter.DOLOADPICTURES);
+                else
+                    gpx.doIt(GPXImporter.DONOTLOADPICTURES);
+            }
+            ftmp.delete();
+        } catch (IOException e) {
+        }
     }
 
     public static boolean login() {
-	// TODO this is only a preliminary Version of login
-	// todo for other opencaching sites
-	boolean loggedIn = false;
-	String page;
-	try {
-	    String loginDaten = "target=myhome.php&action=login&email=" + Preferences.itself().myAlias + "&password=" + Preferences.itself().password;
-	    UrlFetcher.setpostData(loginDaten);
-	    page = UrlFetcher.fetch("http://www.opencaching.de/login.php");
-	    // final PropertyList pl = UrlFetcher.getDocumentProperties();
-	    page = UrlFetcher.fetch("http://www.opencaching.de/myhome.php");
-	    loggedIn = page.indexOf("Eingeloggt als") > -1;
-	} catch (IOException e) {
-	    Preferences.itself().log("Fehler", e);
-	}
-	return loggedIn;
+        // TODO this is only a preliminary Version of login
+        // todo for other opencaching sites
+        boolean loggedIn = false;
+        String page;
+        try {
+            String loginDaten = "target=myhome.php&action=login&email=" + Preferences.itself().myAlias + "&password=" + Preferences.itself().password;
+            UrlFetcher.setpostData(loginDaten);
+            page = UrlFetcher.fetch("http://www.opencaching.de/login.php");
+            // final PropertyList pl = UrlFetcher.getDocumentProperties();
+            page = UrlFetcher.fetch("http://www.opencaching.de/myhome.php");
+            loggedIn = page.indexOf("Eingeloggt als") > -1;
+        } catch (IOException e) {
+            Preferences.itself().log("Fehler", e);
+        }
+        return loggedIn;
     }
 }

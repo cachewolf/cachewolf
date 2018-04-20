@@ -1,0 +1,42 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg xmlns:xml="http://www.w3.org/XML/1998/namespace" x="0" y="0" width="32" height="32" overflow="hidden" viewBox="0, 0, 200, 200"
+     preserveAspectRatio="xMidYMid" font-size="0" id="svg" xml:space="default"
+     xmlns="http://www.w3.org/2000/svg" version="1.1">
+    <g transform="translate(0, -97)" id="layer1" xml:space="default">
+        <g stroke-width="1.8" id="g4629" xml:space="default" type="inkscape:box3d" perspectiveID="#perspective4661"
+           corner0="0.33068421 : -0.28172894 : 0 : 1" corner7="-0.033226766 : -0.66186783 : 0.25 : 1"
+           style="fill:none;">
+            <path d="M193.9014 241.2097 L188.7925 173.4151 L150.0862 194.3848 L154.3871 251.457 z" fill-rule="evenOdd"
+                  stroke-width="0.4321961" stroke-linejoin="round" id="path4631" xml:space="default"
+                  type="inkscape:box3dside" box3dsidetype="6"
+                  points="188.79246,173.41505 150.08614,194.38475 154.38706,251.45702 193.90141,241.20968 "
+                  style="fill:#353564;"/>
+            <path d="M188.7925 173.4151 L19.10895 131.6136 L3.689813 167.4435 L150.0861 194.3848 z" fill-rule="evenOdd"
+                  stroke-width="0.4321961" stroke-linejoin="round" id="path4639" xml:space="default"
+                  type="inkscape:box3dside" box3dsidetype="13"
+                  points="19.108954,131.61362 3.6898131,167.44349 150.08614,194.38475 188.79246,173.41505 "
+                  style="fill:#AFAFDE;"/>
+            <path d="M154.3871 251.457 L9.277045 241.5849 L3.689813 167.4435 L150.0861 194.3848 z" fill-rule="evenOdd"
+                  stroke-width="0.4321961" stroke-linejoin="round" id="path4641" xml:space="default"
+                  type="inkscape:box3dside" box3dsidetype="11"
+                  points="9.2770454,241.58486 3.6898131,167.44349 150.08614,194.38475 154.38706,251.45702 "
+                  style="fill:#E9E9FF;"/>
+            <path d="M193.9014 241.2097 L26.141 224.9274 L9.277045 241.5849 L154.3871 251.457 z" fill-rule="evenOdd"
+                  stroke-width="0.4321961" stroke-linejoin="round" id="path4633" xml:space="default"
+                  type="inkscape:box3dside" box3dsidetype="5"
+                  points="26.141001,224.92738 9.2770454,241.58486 154.38706,251.45702 193.90141,241.20968 "
+                  style="fill:#4D4D9F;"/>
+            <path d="M26.141 224.9274 L19.10895 131.6136 L3.689813 167.4435 L9.277045 241.5849 z" fill-rule="evenOdd"
+                  stroke-width="0.4321961" stroke-linejoin="round" id="path4637" xml:space="default"
+                  type="inkscape:box3dside" box3dsidetype="14"
+                  points="19.108954,131.61362 3.6898131,167.44349 9.2770454,241.58486 26.141001,224.92738 "
+                  style="fill:#D7D7FF;"/>
+            <path d="M193.9014 241.2097 L26.141 224.9274 L19.10895 131.6136 L188.7925 173.4151 z" fill-rule="evenOdd"
+                  stroke-width="0.4321961" stroke-linejoin="round" id="path4635" xml:space="default"
+                  type="inkscape:box3dside" box3dsidetype="3"
+                  points="26.141001,224.92738 19.108954,131.61362 188.79246,173.41505 193.90141,241.20968 "
+                  style="fill:#8686BF;"/>
+        </g>
+    </g>
+</svg>

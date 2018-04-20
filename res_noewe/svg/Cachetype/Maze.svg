@@ -1,0 +1,156 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xml="http://www.w3.org/XML/1998/namespace" x="0" y="0" width="32" height="32" overflow="hidden"
+     viewBox="0, 0, 16, 16" preserveAspectRatio="xMidYMid" font-size="0" id="svg"
+     xml:space="default" xmlns="http://www.w3.org/2000/svg" version="1.1">
+    <defs id="def1" xml:space="default">
+        <linearGradient x1="0%" y1="0%" x2="100%" y2="0%" gradientUnits="objectBoundingBox" id="linearGradient7758"
+                        xml:space="default">
+            <stop offset="0%" stop-color="#FAFFFC" stop-opacity="1" id="stop7760" xml:space="default"/>
+            <stop offset="15.83652%" stop-color="#92C95A" stop-opacity="1" id="stop7762" xml:space="default"/>
+            <stop offset="70.20202%" stop-color="#1A913E" stop-opacity="1" id="stop7764" xml:space="default"/>
+            <stop offset="100%" stop-color="#146E2F" stop-opacity="1" id="stop7766" xml:space="default"/>
+        </linearGradient>
+        <linearGradient x1="0%" y1="0%" x2="100%" y2="0%" gradientUnits="objectBoundingBox" id="linearGradient7692"
+                        xml:space="default">
+            <stop offset="0%" stop-color="#FFFFFF" stop-opacity="1" id="stop7694" xml:space="default"/>
+            <stop offset="100%" stop-color="#D49218" stop-opacity="1" id="stop7696" xml:space="default"/>
+        </linearGradient>
+        <linearGradient x1="0%" y1="0%" x2="100%" y2="0%" gradientUnits="objectBoundingBox" id="linearGradient7671"
+                        xml:space="default">
+            <stop offset="0%" stop-color="#FAFFFC" stop-opacity="1" id="stop7673" xml:space="default"/>
+            <stop offset="20.20202%" stop-color="#8DDAA5" stop-opacity="1" id="stop7679" xml:space="default"/>
+            <stop offset="83.8792%" stop-color="#44DE74" stop-opacity="1" id="stop7675" xml:space="default"/>
+            <stop offset="100%" stop-color="#146E2F" stop-opacity="0" id="stop7677" xml:space="default"/>
+        </linearGradient>
+        <linearGradient x1="0%" y1="0%" x2="100%" y2="0%" gradientUnits="objectBoundingBox" id="linearGradient7646"
+                        xml:space="default">
+            <stop offset="0%" stop-color="#FAFFFC" stop-opacity="1" id="stop7648" xml:space="default"/>
+            <stop offset="40.40404%" stop-color="#92C95A" stop-opacity="1" id="stop7654" xml:space="default"/>
+            <stop offset="70.20202%" stop-color="#1A913E" stop-opacity="1" id="stop7756" xml:space="default"/>
+            <stop offset="100%" stop-color="#146E2F" stop-opacity="1" id="stop7650" xml:space="default"/>
+        </linearGradient>
+        <linearGradient x1="0%" y1="0%" x2="100%" y2="0%" gradientUnits="objectBoundingBox" id="linearGradient7591"
+                        xml:space="default">
+            <stop offset="0%" stop-color="#FFFFFF" stop-opacity="1" id="stop7593" xml:space="default"/>
+            <stop offset="20.6904%" stop-color="#FFFFFF" stop-opacity="1" id="stop7599" xml:space="default"/>
+            <stop offset="57.54133%" stop-color="#333567" stop-opacity="1" id="stop7601" xml:space="default"/>
+            <stop offset="100%" stop-color="#333567" stop-opacity="1" id="stop7595" xml:space="default"/>
+        </linearGradient>
+        <linearGradient x1="0%" y1="0%" x2="100%" y2="0%" gradientUnits="objectBoundingBox" id="linearGradient3829"
+                        xml:space="default">
+            <stop offset="0%" stop-color="#FFFFFF" stop-opacity="1" id="stop3835" xml:space="default"/>
+            <stop offset="52.34026%" stop-color="#FFB600" stop-opacity="1" id="stop3839" xml:space="default"/>
+            <stop offset="100%" stop-color="#FFE45C" stop-opacity="1" id="stop3837" xml:space="default"/>
+        </linearGradient>
+        <linearGradient x1="8" y1="8" x2="13" y2="13.5" gradientUnits="userSpaceOnUse" xlink:href="#linearGradient3829"
+                        id="linearGradient3843" xml:space="default"/>
+        <linearGradient x1="8" y1="8" x2="4.21182" y2="3.5" gradientUnits="userSpaceOnUse"
+                        xlink:href="#linearGradient3829" id="linearGradient3845" xml:space="default"/>
+        <linearGradient x1="8" y1="8" x2="9.742383" y2="10.63896" gradientUnits="userSpaceOnUse"
+                        xlink:href="#linearGradient3829" id="linearGradient3847" xml:space="default"/>
+        <radialGradient cx="0.9421753" cy="6.102694" r="0.9305422" fx="0.9421753" fy="6.102694"
+                        gradientUnits="userSpaceOnUse" xlink:href="#linearGradient7591"
+                        gradientTransform="matrix(1.119256, -0.1019784, 0.1472553, 1.616189, 4.481817, -3.180464)"
+                        id="radialGradient7618" xml:space="default"/>
+        <radialGradient cx="0.9421753" cy="6.102694" r="0.9305422" fx="0.9421753" fy="6.102694"
+                        gradientUnits="userSpaceOnUse" xlink:href="#linearGradient7591"
+                        gradientTransform="matrix(1.119256, -0.1019784, 0.1472553, 1.616189, 4.481817, -3.180464)"
+                        id="radialGradient7658" xml:space="default"/>
+        <linearGradient x1="-2.65" y1="4.5" x2="-0.85" y2="4.5" gradientUnits="userSpaceOnUse"
+                        xlink:href="#linearGradient7692" gradientTransform="matrix(1, 0, 0, 0.7375, 0, 0.39375)"
+                        id="linearGradient7744" xml:space="default"/>
+        <radialGradient cx="1.5" cy="0.75" r="1.4" fx="1.5" fy="0.75" gradientUnits="userSpaceOnUse"
+                        xlink:href="#linearGradient7692" id="radialGradient7746" xml:space="default"/>
+        <radialGradient cx="8.02008" cy="9.717626" r="6.072298" fx="8.02008" fy="9.717626"
+                        gradientUnits="userSpaceOnUse" xlink:href="#linearGradient7758"
+                        gradientTransform="matrix(1.028971, 7.023369E-08, -7.401066E-08, 1.084306, -0.1469361, 1.210983)"
+                        id="radialGradient7751" xml:space="default"/>
+    </defs>
+    <g display="inline" id="layer16" xml:space="default">
+        <g display="inline" transform="translate(0, 2.074725)" id="g7634" xml:space="default">
+            <path d="M3.279897 7.528116 L2.734975 8.100776 C2.734975 8.100776 2.882259 8.504307 3.713084 8.708556 C3.049404 8.016103 3.279897 7.528116 3.279897 7.528116 z"
+                  display="inline" enable-background="accumulate" fill-rule="evenOdd" stroke-width="0.3"
+                  stroke-linejoin="round" id="path7636" xml:space="default" nodetypes="cccc" marker="none"
+                  overflow="visible" style="fill:#333567;"/>
+            <path d="M2.805171 7.914929 L2.260249 8.487589 C2.260249 8.487589 2.407534 8.89112 3.238359 9.095369 C2.574679 8.402916 2.805171 7.914929 2.805171 7.914929 z"
+                  display="inline" enable-background="accumulate" fill-rule="evenOdd" stroke-width="0.3"
+                  stroke-linejoin="round" id="path7638" xml:space="default" nodetypes="cccc" marker="none"
+                  overflow="visible" style="fill:#333567;"/>
+        </g>
+        <g display="inline" transform="translate(9.585415, 1.75)" id="g7713" xml:space="default">
+            <path d="M-2.5 1.5 L-1 1.5 L-0.5 6 L-3 6 L-2.5 1.5 z" display="inline" enable-background="accumulate"
+                  stroke="#D49218" fill-rule="evenOdd" stroke-width="0.3" stroke-linejoin="round" id="rect7690"
+                  xml:space="default" nodetypes="ccccc" marker="none" overflow="visible"
+                  style="fill:url(#linearGradient7744);"/>
+            <path d="M2.5 1.25 A1.25 1.25 0 0 1 1.25 2.5 A1.25 1.25 0 0 1 0 1.25 A1.25 1.25 0 0 1 1.25 0 A1.25 1.25 0 0 1 2.5 1.25 z"
+                  display="inline" enable-background="accumulate" stroke="#D49218" fill-rule="evenOdd"
+                  stroke-width="0.3" stroke-linejoin="round" transform="translate(-3, -0.25)" id="path7700"
+                  xml:space="default" ry="1.25" rx="1.25" cy="1.25" cx="1.25" type="arc" marker="none"
+                  overflow="visible" style="fill:url(#radialGradient7746);"/>
+        </g>
+        <path d="M3.285415 9.740109 C3.55125 8.183145 4.746927 3.515143 7.821679 7.067583 C11.05467 3.499142 11.97 7.88122 12.46344 9.388461 C15.98555 12.84759 11.99161 15.38962 8.085415 15.43681 C4.179218 15.484 0.1840158 12.96281 3.285415 9.740109 z"
+              display="inline" stroke="#146E30" fill-rule="evenOdd" stroke-width="0.5" stroke-linejoin="round"
+              id="path7075" xml:space="default" nodetypes="ccczc" style="fill:url(#radialGradient7751);"/>
+        <g display="inline" transform="matrix(-1, 0, 0, 1, 15.78432, 1.810989)" id="g7640" xml:space="default">
+            <path d="M3.279897 7.528116 L2.734975 8.100776 C2.734975 8.100776 2.882259 8.504307 3.713084 8.708556 C3.049404 8.016103 3.279897 7.528116 3.279897 7.528116 z"
+                  display="inline" enable-background="accumulate" fill-rule="evenOdd" stroke-width="0.3"
+                  stroke-linejoin="round" id="path7642" xml:space="default" nodetypes="cccc" marker="none"
+                  overflow="visible" style="fill:#333567;"/>
+            <path d="M2.805171 7.914929 L2.260249 8.487589 C2.260249 8.487589 2.407534 8.89112 3.238359 9.095369 C2.574679 8.402916 2.805171 7.914929 2.805171 7.914929 z"
+                  display="inline" enable-background="accumulate" fill-rule="evenOdd" stroke-width="0.3"
+                  stroke-linejoin="round" id="path7644" xml:space="default" nodetypes="cccc" marker="none"
+                  overflow="visible" style="fill:#333567;"/>
+        </g>
+        <g display="inline" transform="translate(0, 2.074725)" id="g7630" xml:space="default">
+            <path d="M3.279897 7.528116 L2.734975 8.100776 C2.734975 8.100776 2.882259 8.504307 3.713084 8.708556 C3.049404 8.016103 3.279897 7.528116 3.279897 7.528116 z"
+                  display="inline" enable-background="accumulate" fill-rule="evenOdd" stroke-width="0.3"
+                  stroke-linejoin="round" id="path7622" xml:space="default" nodetypes="cccc" marker="none"
+                  overflow="visible" style="fill:#333567;"/>
+            <path d="M2.805171 7.914929 L2.260249 8.487589 C2.260249 8.487589 2.407534 8.89112 3.238359 9.095369 C2.574679 8.402916 2.805171 7.914929 2.805171 7.914929 z"
+                  display="inline" enable-background="accumulate" fill-rule="evenOdd" stroke-width="0.3"
+                  stroke-linejoin="round" id="path7628" xml:space="default" nodetypes="cccc" marker="none"
+                  overflow="visible" style="fill:#333567;"/>
+        </g>
+        <g display="inline" transform="translate(0, 2.074725)" id="g7681" xml:space="default">
+            <path d="M4.413187 7.648352 C4.82574 8.340361 6.606768 8.55992 7.085714 7.912088 C7.376409 7.02566 6.777211 4.589724 5.696703 4.589011 C4.7014 4.588355 4.20242 6.811027 4.413187 7.648352 z"
+                  display="inline" enable-background="accumulate" fill-rule="evenOdd" stroke-width="0.3"
+                  stroke-linejoin="round" id="path7603" xml:space="default" nodetypes="cccc" marker="none"
+                  overflow="visible" style="fill:#FFFFFF;"/>
+            <path d="M7.031208 6.885314 C7.015185 7.627855 6.618294 7.964811 6.138452 7.954315 C5.658609 7.943819 5.276626 7.589825 5.292648 6.847284 C5.308671 6.104743 5.71666 5.253451 6.196502 5.263948 C6.676345 5.274444 7.047229 6.142772 7.031208 6.885314 z"
+                  display="inline" enable-background="accumulate" fill-rule="evenOdd" stroke-width="0.3"
+                  stroke-linejoin="round" id="path7588" xml:space="default" transform-center-y="0.040574285"
+                  transform-center-x="0.46986347" nodetypes="csssc" marker="none" overflow="visible"
+                  style="fill:url(#radialGradient7658);"/>
+            <path d="M4.413187 7.648352 C4.82574 8.340361 6.606768 8.55992 7.085714 7.912088 C7.376409 7.02566 6.777211 4.589724 5.696703 4.589011 C4.7014 4.588355 4.20242 6.811027 4.413187 7.648352 z"
+                  display="inline" enable-background="accumulate" stroke="#146E30" fill-rule="evenOdd"
+                  stroke-width="0.3" stroke-linejoin="round" id="path7586" xml:space="default" nodetypes="cccc"
+                  marker="none" overflow="visible" style="fill:none;"/>
+        </g>
+        <g display="inline" transform="matrix(-1, 0, 0, 1, 15.62105, 2.074725)" id="g7610" xml:space="default">
+            <path d="M4.413187 7.648352 C4.82574 8.340361 6.606768 8.55992 7.085714 7.912088 C7.376409 7.02566 6.777211 4.589724 5.696703 4.589011 C4.7014 4.588355 4.20242 6.811027 4.413187 7.648352 z"
+                  display="inline" enable-background="accumulate" fill-rule="evenOdd" stroke-width="0.3"
+                  stroke-linejoin="round" id="path7612" xml:space="default" nodetypes="cccc" marker="none"
+                  overflow="visible" style="fill:#FFFFFF;"/>
+            <path d="M7.031208 6.885314 C7.015185 7.627855 6.618294 7.964811 6.138452 7.954315 C5.658609 7.943819 5.276626 7.589825 5.292648 6.847284 C5.308671 6.104743 5.71666 5.253451 6.196502 5.263948 C6.676345 5.274444 7.047229 6.142772 7.031208 6.885314 z"
+                  display="inline" enable-background="accumulate" fill-rule="evenOdd" stroke-width="0.3"
+                  stroke-linejoin="round" id="path7614" xml:space="default" nodetypes="csssc"
+                  transform-center-x="0.46986347" transform-center-y="0.040574285" marker="none" overflow="visible"
+                  style="fill:url(#radialGradient7618);"/>
+            <path d="M4.413187 7.648352 C4.82574 8.340361 6.606768 8.55992 7.085714 7.912088 C7.376409 7.02566 6.777211 4.589724 5.696703 4.589011 C4.7014 4.588355 4.20242 6.811027 4.413187 7.648352 z"
+                  display="inline" enable-background="accumulate" stroke="#146E30" fill-rule="evenOdd"
+                  stroke-width="0.3" stroke-linejoin="round" id="path7616" xml:space="default" nodetypes="cccc"
+                  marker="none" overflow="visible" style="fill:none;"/>
+        </g>
+        <g display="inline" transform="translate(0.1085265, 0)" id="g7734" xml:space="default">
+            <path d="M0.835857 1.536118 L4.114222 2.222942 L3.147526 3.054796 L5.593244 4.346564 L2.033304 3.331854 L3 2.5 L0.835857 1.536118 z"
+                  display="inline" enable-background="accumulate" stroke="#D49218" fill-rule="evenOdd"
+                  stroke-width="0.2" stroke-linejoin="round" id="path7728" xml:space="default" nodetypes="ccccccc"
+                  marker="none" overflow="visible" style="fill:#ECC03F;"/>
+            <path d="M14.94709 1.536118 L11.66873 2.222942 L12.63542 3.054796 L10.1897 4.346564 L13.74964 3.331854 L12.78295 2.5 L14.94709 1.536118 z"
+                  display="inline" enable-background="accumulate" stroke="#D49218" fill-rule="evenOdd"
+                  stroke-width="0.2" stroke-linejoin="round" id="path7732" xml:space="default" nodetypes="ccccccc"
+                  marker="none" overflow="visible" style="fill:#ECC03F;"/>
+        </g>
+    </g>
+</svg>
