@@ -173,6 +173,8 @@ public class GCImporter {
     private static Regex koordRex;
     private static Regex descRex;
     private static Regex typeRex;
+
+    private static Regex uuidRex;
     // images Spoiler
     private static String spoilerSectionStart, spoilerSectionEnd, spoilerSectionStart2;
     private static String imgCommentExStart, imgCommentExEnd;
@@ -325,6 +327,8 @@ public class GCImporter {
             bugTotalRecords = p.getProp("bugTotalRecords");
             bugNameStart = p.getProp("bugNameStart");
             bugNameEnd = p.getProp("bugNameEnd");
+
+	    	    uuidRex = new Regex(p.getProp("uuidRex"));
 
         } catch (final Exception ex) {
             Preferences.itself().log("Error fetching Properties.", ex);
@@ -2252,6 +2256,7 @@ public class GCImporter {
                         getAddWaypoints(wayPointPage, newCache.getCode(), newCache.isFound());
                         getAttributes(newCacheDetails);
                         newCache.setLastSync((new Time()).format("yyyyMMddHHmmss"));
+			newCache.setIdOC (wayPointPageGetUuid());
                         newCache.setIncomplete(false);
                         Preferences.itself().log("ready " + newCache.getCode() + " : " + newCache.getLastSync());
                         break;
@@ -3032,6 +3037,21 @@ public class GCImporter {
                 }
             }
         }
+    }
+
+    private String wayPointPageGetUuid (){
+        uuidRex.searchFrom(wayPointPage, wayPointPageIndex);
+        if (uuidRex.didMatch()) {
+            Preferences.itself().log("[SpiderGC.java:wayPointPageIndex] regEx matched!", null);
+            //wayPointPageIndex = hintsRex.matchedTo();
+            //return hintsRex.stringMatched(1);
+        } else {
+            Preferences.itself().log("[SpiderGC.java:wayPointPageIndex] regEx didn't match!", null);
+            //Preferences.itself().log("[SpiderGC.java:getHints]check hintsRex!", null);
+            //return "";
+        }
+	return "";
+	//HIER
     }
 
     public void getAttributes(CacheHolderDetail chD) {

@@ -35,14 +35,13 @@ public class ServerDHParams
      */
     public void encode(OutputStream output) throws IOException
     {
-    	throw new UnsupportedClassVersionError();/*
         DHParameters dhParameters = publicKey.getParameters();
         BigInteger Ys = publicKey.getY();
 
         TlsDHUtils.writeDHParameter(dhParameters.getP(), output);
         TlsDHUtils.writeDHParameter(dhParameters.getG(), output);
         TlsDHUtils.writeDHParameter(Ys, output);
-*/    }
+    }
 
     /**
      * Parse a {@link ServerDHParams} from an {@link InputStream}.

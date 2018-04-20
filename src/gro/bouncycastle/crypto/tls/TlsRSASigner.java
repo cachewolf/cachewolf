@@ -21,12 +21,10 @@ public class TlsRSASigner
         AsymmetricKeyParameter privateKey, byte[] hash)
         throws CryptoException
     {
-    	throw new UnsupportedClassVersionError();/*
-        Signer signer = makeSigner(algorithm, true, true,
-            new ParametersWithRandom(privateKey, this.context.getSecureRandom()));
+        Signer signer = makeSigner(algorithm, true, true, new ParametersWithRandom(privateKey, this.context.getSecureRandom()));
         signer.update(hash, 0, hash.length);
         return signer.generateSignature();
-*/    }
+    }
 
     
     public boolean verifyRawSignature(SignatureAndHashAlgorithm algorithm, byte[] sigBytes,

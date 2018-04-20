@@ -116,12 +116,11 @@ public class PKCS1Encoding
 
         if (param instanceof ParametersWithRandom)
         {
-        	throw new UnsupportedClassVersionError();/*
             ParametersWithRandom rParam = (ParametersWithRandom)param;
 
             this.random = rParam.getRandom();
             kParam = (AsymmetricKeyParameter)rParam.getParameters();
-*/        }
+        }
         else
         {
             kParam = (AsymmetricKeyParameter)param;

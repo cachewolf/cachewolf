@@ -84,10 +84,9 @@ public class TBSCertificate
         }
         else
         {
-        	throw new UnsupportedClassVersionError();/*
             seqStart = -1;          // field 0 is missing!
             version = new ASN1Integer(0);
-*/        }
+        }
 
         boolean isV1 = false;
         boolean isV2 = false;

@@ -75,9 +75,8 @@ public abstract class ECPoint
 
     public final ECPoint getDetachedPoint()
     {
-    	throw new UnsupportedClassVersionError();/*
         return normalize().detach();
-*/    }
+    }
 
     public ECCurve getCurve()
     {

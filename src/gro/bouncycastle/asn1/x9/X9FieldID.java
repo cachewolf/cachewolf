@@ -62,11 +62,11 @@ public class X9FieldID
      */
     public X9FieldID(int m, int k1, int k2, int k3)
     {
-    	throw new UnsupportedClassVersionError();/*
         this.id = characteristic_two_field;
         ASN1EncodableVector fieldIdParams = new ASN1EncodableVector();
         fieldIdParams.add(new ASN1Integer(m));
         
+        throw new UnsupportedClassVersionError();/*
         if (k2 == 0) 
         {
             if (k3 != 0)

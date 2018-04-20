@@ -89,7 +89,6 @@ public class DLSequence
         throws IOException
     {
         ASN1OutputStream dOut = out.getDLSubStream();
-        throw new UnsupportedClassVersionError();/*
         int length = getBodyLength();
 
         out.write(BERTags.SEQUENCE | BERTags.CONSTRUCTED);
@@ -97,9 +96,10 @@ public class DLSequence
 
         for (Enumeration e = this.getObjects(); e.hasMoreElements();)
         {
+        	throw new UnsupportedClassVersionError();/*
             Object obj = e.nextElement();
 
             dOut.writeObject((ASN1Encodable)obj);
-        }
-*/    }
+*/        }
+    }
 }

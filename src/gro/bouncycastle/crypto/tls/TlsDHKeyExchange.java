@@ -44,10 +44,9 @@ public class TlsDHKeyExchange
             this.tlsSigner = new TlsRSASigner();
             break;
         case KeyExchangeAlgorithm.DHE_DSS:
-        	throw new UnsupportedClassVersionError();/*
             this.tlsSigner = new TlsDSSSigner();
             break;
-*/        default:
+        default:
             throw new IllegalArgumentException("unsupported key exchange algorithm");
         }
 

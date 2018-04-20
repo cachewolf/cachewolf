@@ -98,9 +98,8 @@ class RecordStream
      */
     void setRestrictReadVersion(boolean enabled)
     {
-    	throw new UnsupportedClassVersionError();/*
       this.restrictReadVersion = enabled;
-*/    }
+    }
 
     void setPendingConnectionState(TlsCompression tlsCompression, TlsCipher tlsCipher)
     {

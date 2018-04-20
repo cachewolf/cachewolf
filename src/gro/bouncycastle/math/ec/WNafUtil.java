@@ -14,11 +14,12 @@ public abstract class WNafUtil
 
     public static int[] generateCompactNaf(BigInteger k)
     {
-    	throw new UnsupportedClassVersionError();/*
         if ((k.bitLength() >>> 16) != 0)
         {
+        	throw new UnsupportedClassVersionError();/*
             throw new IllegalArgumentException("'k' must have bitlength < 2^16");
-        }
+*/        }
+        	throw new UnsupportedClassVersionError();/*
         if (k.signum() == 0)
         {
             return EMPTY_INTS;

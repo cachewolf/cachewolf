@@ -63,9 +63,8 @@ public class TlsUtils
     {
         if (!isValidUint8(i))
         {
-        	throw new UnsupportedClassVersionError();/*
             throw new TlsFatalAlert(AlertDescription.internal_error);
-        */}
+        }
     }
     public static void checkUint8(long i) throws IOException
     {

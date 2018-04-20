@@ -20,14 +20,13 @@ public abstract class ASN1Object
     public byte[] getEncoded()
         throws IOException
     {
-    	throw new UnsupportedClassVersionError();/*
         ByteArrayOutputStream bOut = new ByteArrayOutputStream();
         ASN1OutputStream      aOut = new ASN1OutputStream(bOut);
 
         aOut.writeObject(this);
 
         return bOut.toByteArray();
-*/    }
+    }
 
     /**
      * Return either the default for "BER" or a DER encoding if "DER" is specified.

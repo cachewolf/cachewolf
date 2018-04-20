@@ -24,9 +24,8 @@ public class TlsExtensionsUtils
 
     public static void addEncryptThenMACExtension(Hashtable extensions)
     {
-    	throw new UnsupportedClassVersionError();/*
         extensions.put(EXT_encrypt_then_mac, createEncryptThenMACExtension());
-*/    }
+    }
 
     public static void addExtendedMasterSecretExtension(Hashtable extensions)
     {
@@ -132,13 +131,15 @@ public class TlsExtensionsUtils
     {
         return TlsUtils.EMPTY_BYTES;
     }
-
+*/
+    
     public static byte[] createEncryptThenMACExtension()
     {
+    	throw new UnsupportedClassVersionError();/*
         return createEmptyExtensionData();
-    }
+*/    }
 
-    public static byte[] createExtendedMasterSecretExtension()
+/*    public static byte[] createExtendedMasterSecretExtension()
     {
         return createEmptyExtensionData();
     }

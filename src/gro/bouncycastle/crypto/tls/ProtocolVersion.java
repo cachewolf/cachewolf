@@ -2,7 +2,7 @@ package gro.bouncycastle.crypto.tls;
 
 import ewe.io.IOException;
 
-//import org.bouncycastle.util.Strings;
+import gro.bouncycastle.util.Strings;
 
 public final class ProtocolVersion
 {
@@ -146,12 +146,11 @@ public final class ProtocolVersion
     private static ProtocolVersion getUnknownVersion(int major, int minor, String prefix)
         throws IOException
     {
-    	throw new UnsupportedClassVersionError(); /*
         TlsUtils.checkUint8(major);
         TlsUtils.checkUint8(minor);
 
         int v = (major << 8) | minor;
         String hex = Strings.toUpperCase(Integer.toHexString(0x10000 | v).substring(1));
         return new ProtocolVersion(v, prefix + " 0x" + hex);
-*/    }
+    }
 }

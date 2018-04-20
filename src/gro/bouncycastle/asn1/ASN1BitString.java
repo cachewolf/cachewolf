@@ -215,12 +215,13 @@ public abstract class ASN1BitString
     
     protected boolean asn1Equals(        ASN1Primitive  o)
     {
-    	throw new UnsupportedClassVersionError();/*
         if (!(o instanceof ASN1BitString))
         {
+            throw new UnsupportedClassVersionError();/*
             return false;
-        }
+*/        }
 
+        throw new UnsupportedClassVersionError();/*
         ASN1BitString other = (ASN1BitString)o;
 
         return this.padBits == other.padBits

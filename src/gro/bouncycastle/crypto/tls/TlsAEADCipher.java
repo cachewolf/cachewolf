@@ -130,14 +130,14 @@ public class TlsAEADCipher
             TlsUtils.writeUint64(seqNo, nonce, encryptImplicitNonce.length);
             break;
         case NONCE_DRAFT_CHACHA20_POLY1305:
-	throw new UnsupportedClassVersionError();/*
             TlsUtils.writeUint64(seqNo, nonce, nonce.length - 8);
             for (int i = 0; i < encryptImplicitNonce.length; ++i)
             {
+            	throw new UnsupportedClassVersionError();/*
                 nonce[i] ^= encryptImplicitNonce[i];
-            }
+*/            }
             break;
-*/        default:
+        default:
             throw new TlsFatalAlert(AlertDescription.internal_error);
         }
 

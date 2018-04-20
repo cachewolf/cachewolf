@@ -160,9 +160,9 @@ public abstract class TlsProtocol
     protected void handleClose(boolean user_canceled)
         throws IOException
     {
-    	throw new UnsupportedClassVersionError();/*
         if (!closed)
         {
+        	throw new UnsupportedClassVersionError();/*
             this.closed = true;
 
             if (user_canceled && !appDataReady)
@@ -178,8 +178,8 @@ public abstract class TlsProtocol
             {
                 cleanupHandshake();
             }
-        }
-*/    }
+*/        }
+    }
 
     protected void handleException(short alertDescription, String message, Throwable cause)
         throws IOException

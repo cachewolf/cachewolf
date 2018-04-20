@@ -32,7 +32,6 @@ public abstract class AbstractTlsClient
     protected boolean allowUnexpectedServerExtension(Integer extensionType, byte[] extensionData)
         throws IOException
     {
-    	throw new UnsupportedClassVersionError();/* 
         switch (extensionType.intValue())
         {
         case ExtensionType.elliptic_curves:
@@ -41,12 +40,14 @@ public abstract class AbstractTlsClient
              * Supported Elliptic Curves Extension is clearly intended to be client-only. If
              * present, we still require that it is a valid EllipticCurveList.
              * /
+    	throw new UnsupportedClassVersionError();/* 
             TlsECCUtils.readSupportedEllipticCurvesExtension(extensionData);
             return true;
-        default:
+*/        default:
+    	throw new UnsupportedClassVersionError();/* 
             return false;
-        }
-   */ }
+*/        }
+    }
 
     protected void checkForUnexpectedServerExtension(Hashtable serverExtensions, Integer extensionType)
         throws IOException

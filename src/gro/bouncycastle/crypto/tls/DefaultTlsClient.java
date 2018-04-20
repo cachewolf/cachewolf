@@ -11,11 +11,9 @@ public abstract class DefaultTlsClient
     }
 
     public DefaultTlsClient(TlsCipherFactory cipherFactory)
-    {
-    	throw new UnsupportedClassVersionError();/*
-    	
+    {    	
         super(cipherFactory);
-*/    }
+    }
 
     public int[] getCipherSuites()
     {

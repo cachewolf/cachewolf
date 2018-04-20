@@ -143,24 +143,22 @@ public class RSADigestSigner
 	public byte[] generateSignature()
 	// throws CryptoException, DataLengthException
 	{
-		throw new UnsupportedClassVersionError();/*
-												  if (!forSigning) { throw new
-												  IllegalStateException(
-												  "RSADigestSigner not initialised for signature generation."
-												  ); }
-												  
-												  byte[] hash = new
-												  byte[digest.getDigestSize()];
-												  digest.doFinal(hash, 0);
-												  
-												  try { byte[] data =
-												  derEncode(hash); return
-												  rsaEngine.processBlock(data,
-												  0, data.length); } catch
-												  (IOException e) { throw new
-												  CryptoException
-												  ("unable to encode signature: "
-												  + e.getMessage(), e); }
+		if (!forSigning) {
+			  throw new UnsupportedClassVersionError();/*
+			throw new IllegalStateException("RSADigestSigner not initialised for signature generation.");
+*/		}
+
+		  throw new UnsupportedClassVersionError();/*
+		byte[] hash = new byte[digest.getDigestSize()];
+		digest.doFinal(hash, 0);
+
+		try {
+			byte[] data = derEncode(hash);
+			return rsaEngine.processBlock(data,	0, data.length);
+		} catch (IOException e) {
+			throw new CryptoException("unable to encode signature: " + e.getMessage(), e);
+		}
+												  throw new UnsupportedClassVersionError();/*
 */	}
 
 	/**

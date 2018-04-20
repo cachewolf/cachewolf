@@ -27,9 +27,8 @@ public class DefaultTlsCipherFactory
         switch (encryptionAlgorithm)
         {
         case EncryptionAlgorithm._3DES_EDE_CBC:
-    	throw new UnsupportedClassVersionError();/*
             return createDESedeCipher(context, macAlgorithm);
-*/        case EncryptionAlgorithm.AES_128_CBC:
+        case EncryptionAlgorithm.AES_128_CBC:
 	throw new UnsupportedClassVersionError();/*
             return createAESCipher(context, 16, macAlgorithm);
 */        case EncryptionAlgorithm.AES_128_CCM:

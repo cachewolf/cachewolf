@@ -46,12 +46,11 @@ class DeferredHash
         int prfAlgorithm = context.getSecurityParameters().getPrfAlgorithm();
         if (prfAlgorithm == PRFAlgorithm.tls_prf_legacy)
         {
-        	throw new UnsupportedClassVersionError();/*
             CombinedHash legacyHash = new CombinedHash();
             legacyHash.init(context);
             buf.updateDigest(legacyHash);
             return legacyHash.notifyPRFDetermined();
-*/        }
+        }
 
         this.prfHashAlgorithm = Shorts.valueOf(TlsUtils.getHashAlgorithmForPRFAlgorithm(prfAlgorithm));
 

@@ -280,7 +280,6 @@ public class ASN1UTCTime
         ASN1OutputStream  out)
         throws IOException
     {
-    	throw new UnsupportedClassVersionError();/*
         out.write(BERTags.UTC_TIME);
 
         int length = time.length;
@@ -289,9 +288,10 @@ public class ASN1UTCTime
 
         for (int i = 0; i != length; i++)
         {
+        	throw new UnsupportedClassVersionError();/*
             out.write((byte)time[i]);
-        }
-*/    }
+*/        }
+    }
 
     boolean asn1Equals(
         ASN1Primitive o)

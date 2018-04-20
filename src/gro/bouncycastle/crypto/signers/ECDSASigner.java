@@ -33,9 +33,8 @@ public class ECDSASigner
      */
     public ECDSASigner()
     {
-    	throw new UnsupportedClassVersionError();/*
         this.kCalculator = new RandomDSAKCalculator();
-*/    }
+    }
 
     /**
      * Configuration with an alternate, possibly deterministic calculator of K.

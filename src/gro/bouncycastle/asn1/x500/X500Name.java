@@ -233,12 +233,11 @@ public class X500Name
             }
             else
             {
-              	throw new UnsupportedClassVersionError();/*
-                                if (rdn.getFirst().getType().equals(attributeType))
+                if (rdn.getFirst().getType().equals(attributeType))
                 {
                     res[count++] = rdn;
                 }
-*/            }
+            }
         }
 
         	throw new UnsupportedClassVersionError();/*

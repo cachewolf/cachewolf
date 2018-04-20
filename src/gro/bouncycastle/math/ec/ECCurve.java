@@ -158,9 +158,8 @@ public abstract class ECCurve
     {
         if (endomorphism instanceof GLVEndomorphism)
         {
-        	throw new UnsupportedClassVersionError();/*
             return new GLVMultiplier(this, (GLVEndomorphism)endomorphism);
-*/        }
+        }
 
         return new WNafL2RMultiplier();
     }

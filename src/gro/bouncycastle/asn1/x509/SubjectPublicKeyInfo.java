@@ -59,10 +59,9 @@ public class SubjectPublicKeyInfo
         AlgorithmIdentifier algId,
         byte[]              publicKey)
     {
-    	throw new UnsupportedClassVersionError();/*
         this.keyData = new DERBitString(publicKey);
         this.algId = algId;
-*/    }
+    }
 
     /**
      @deprecated use SubjectPublicKeyInfo.getInstance()

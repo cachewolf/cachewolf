@@ -198,17 +198,20 @@ public abstract class ASN1TaggedObject
         boolean isExplicit)
         throws IOException
     {
-    	throw new UnsupportedClassVersionError();/*
         switch (tag)
         {
         case BERTags.SET:
+        	throw new UnsupportedClassVersionError();/*
             return ASN1Set.getInstance(this, isExplicit).parser();
-        case BERTags.SEQUENCE:
+*/        case BERTags.SEQUENCE:
+    	throw new UnsupportedClassVersionError();/*
             return ASN1Sequence.getInstance(this, isExplicit).parser();
-        case BERTags.OCTET_STRING:
+*/        case BERTags.OCTET_STRING:
+    	throw new UnsupportedClassVersionError();/*
             return ASN1OctetString.getInstance(this, isExplicit).parser();
-        }
+*/        }
 
+    	throw new UnsupportedClassVersionError();/*
         if (isExplicit)
         {
             return getObject();

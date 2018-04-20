@@ -250,9 +250,8 @@ public abstract class ASN1Set
 
         if (doSort)
         {
-        	throw new UnsupportedClassVersionError();/*
             this.sort();
-*/        }
+        }
     }
   
     /**

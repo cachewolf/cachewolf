@@ -87,9 +87,8 @@ public class DERUTF8String
      */
     public DERUTF8String(String string)
     {
-    	throw new UnsupportedClassVersionError();/*
         this.string = Strings.toUTF8ByteArray(string);
-*/    }
+    }
 
     public String getString()
     {

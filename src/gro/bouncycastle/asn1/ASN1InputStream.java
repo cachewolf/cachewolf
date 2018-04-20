@@ -144,9 +144,8 @@ public class ASN1InputStream
 
         if ((tag & APPLICATION) != 0)
         {
-        	throw new UnsupportedClassVersionError();/*
             return new DERApplicationSpecific(isConstructed, tagNo, defIn.toByteArray());
-*/        }
+        }
 
         if ((tag & TAGGED) != 0)
         {

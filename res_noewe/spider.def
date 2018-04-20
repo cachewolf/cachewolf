@@ -138,3 +138,10 @@ attBlockExStart = Attributes
 attBlockExEnd  = What are Attributes?</a></small></p>
 attExStart = /images/attributes/
 attExEnd = " alt=
+
+#--------------------------------------
+#Section2f: UUID
+#--------------------------------------
+#uuidRex = <link rel="canonical" href="https://www.geocaching.com/seek/cache_details.aspx?guid=([-a-z0-9]+)" />
+#uuidRex = <link rel="c
+uuidRex = guid=([-0-9a-z]+)
