@@ -64,8 +64,7 @@ public class GCImporter {
     /**
      * Cache was spidered without problems
      */
-    public final static int SPIDER_OK = 1;
-    final static String hex = ewe.util.TextEncoder.hex;
+    private final static int SPIDER_OK = 1;
     private final static String distanceUnit = (Preferences.itself().metricSystem == Metrics.IMPERIAL ? " " + Metrics.getUnit(Metrics.MILES) + " " : " " + Metrics.getUnit(Metrics.KILOMETER) + " ");
     private final static double MAXNROFCACHESPERLISTPAGE = 20.0;
     //# CachTypRestrictions
@@ -1257,17 +1256,19 @@ public class GCImporter {
                 final CacheHolder ch = MainForm.profile.cacheDB.get(i);
                 if (!ch.isBlack()) {
                     if (ch.isGC()) {
-                        if (spiderAllFinds //
-                                || ( //
-                                (!ch.isArchived()) //
-                                        && ch.kilom >= fromDistanceInKm //
-                                        && ch.kilom <= toDistanceInKm //
-                                        && (!(doNotgetFound && (ch.isFound() || ch.isOwned()))) //
-                                        && (restrictedCacheType == CacheType.CW_TYPE_ERROR || restrictedCacheType == ch.getType()) // all typs or chTyp=selected typ
-                        ) //
-                                ) //
-                        {
-                            possibleUpdateList.put(ch.getCode(), ch);
+                        if ( Preferences.itself().havePremiumMemberRights || !ch.isPremiumCache() ) {
+                            if (spiderAllFinds //
+                                    || ( //
+                                    (!ch.isArchived()) //
+                                            && ch.kilom >= fromDistanceInKm //
+                                            && ch.kilom <= toDistanceInKm //
+                                            && (!(doNotgetFound && (ch.isFound() || ch.isOwned()))) //
+                                            && (restrictedCacheType == CacheType.CW_TYPE_ERROR || restrictedCacheType == ch.getType()) // all typs or chTyp=selected typ
+                            ) //
+                                    ) //
+                            {
+                                possibleUpdateList.put(ch.getCode(), ch);
+                            }
                         }
                     }
                 }
@@ -1516,7 +1517,30 @@ public class GCImporter {
             }
         } catch (Exception e) {
             Preferences.itself().log("uploadCoordsToGC: ", e);
-            infB.setInfo(MyLocale.getMsg(7013, "error"));
+            infB.setInfo(MyLocale.getMsg(7013, "error: " + e.getLocalizedMessage()));
+            return  SPIDER_ERROR;
+        }
+    }
+
+    public int uploadLogToGC(CacheHolder mainCache, InfoBox infB) {
+        try {
+            if (login()) {
+                String url = "https://www.geocaching.com/play/geocache/" + mainCache.getCode() + "/log";
+                String logPage = UrlFetcher.fetch(url);
+                String postData = getItemString(extractor.set(logPage, "action=\"/play/geocache/","<div class",0,Extractor.EXCLUDESTARTEND).findNext(), "__RequestVerificationToken");
+
+                url="https://www.geocaching.com/api/proxy/web/v1/Geocache/" + mainCache.getCode() + "/GeocacheLog";
+                // String uploadResponse = UrlFetcher.fetch(url);
+                // JSONObject response = new JSONObject(uploadResponse);
+                return  SPIDER_OK;
+            }
+            else {
+                return SPIDER_CANCEL; // could not login
+            }
+        }
+        catch (Exception e) {
+            Preferences.itself().log("uploadLogToGC: ", e);
+            infB.setInfo(MyLocale.getMsg(7013, "error: ") + e.getLocalizedMessage());
             return  SPIDER_ERROR;
         }
     }
@@ -1797,7 +1821,7 @@ public class GCImporter {
             return 3;
         }
         UrlFetcher.rememberCookies();
-        final String postData = getStringValueFromWebPageFor("__RequestVerificationToken") //
+        final String postData = getItemString(WebPage, "__RequestVerificationToken") //
                 + "&" + "Username=" + encodeUTF8URL(Utils.encodeJavaUtf8String(username)) //
                 + "&" + "Password=" + encodeUTF8URL(Utils.encodeJavaUtf8String(passwort)) //
                 ;
@@ -1860,8 +1884,8 @@ public class GCImporter {
      *
      * @return
      */
-    private String getStringValueFromWebPageFor(String _Item) {
-        String Result = extractor.set(WebPage, _Item, ">", 0, Extractor.EXCLUDESTARTEND).findNext();
+    private String getItemString(String _ExtractFrom, String _Item) {
+        String Result = extractor.set(_ExtractFrom, _Item, ">", 0, Extractor.EXCLUDESTARTEND).findNext();
         String sItem = extractor.set(Result, "value=\"", "\"", 0, Extractor.EXCLUDESTARTEND).findNext();
         if (sItem.length() > 0) {
             Result = _Item + "=" + sItem;
@@ -3063,8 +3087,8 @@ public class GCImporter {
             final char c = (char) what[i];
             if (c <= ' ' || c == '+' || c == '&' || c == '%' || c == '=' || c == '|' || c == '{' || c == '}' || c > 0x7f) {
                 dest[d++] = '%';
-                dest[d++] = hex.charAt((c >> 4) & 0xf);
-                dest[d++] = hex.charAt(c & 0xf);
+                dest[d++] = ewe.util.TextEncoder.hex.charAt((c >> 4) & 0xf);
+                dest[d++] = ewe.util.TextEncoder.hex.charAt(c & 0xf);
             } else
                 dest[d++] = c;
         }
