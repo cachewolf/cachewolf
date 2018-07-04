@@ -561,9 +561,8 @@ public abstract class ECFieldElement
         {
             if (x == null || x.signum() < 0 || x.bitLength() > m)
             {
-            	throw new UnsupportedClassVersionError();/*
                 throw new IllegalArgumentException("x value invalid in F2m field element");
-*/            }
+            }
 
             	throw new UnsupportedClassVersionError();/*
             if ((k2 == 0) && (k3 == 0))

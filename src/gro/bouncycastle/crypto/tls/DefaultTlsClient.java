@@ -46,9 +46,8 @@ public abstract class DefaultTlsClient
         case KeyExchangeAlgorithm.DH_anon:
         case KeyExchangeAlgorithm.DH_DSS:
         case KeyExchangeAlgorithm.DH_RSA:
-        	throw new UnsupportedClassVersionError();/*
             return createDHKeyExchange(keyExchangeAlgorithm);
-*/
+
         case KeyExchangeAlgorithm.DHE_DSS:
         case KeyExchangeAlgorithm.DHE_RSA:
              return createDHEKeyExchange(keyExchangeAlgorithm);

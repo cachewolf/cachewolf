@@ -92,9 +92,8 @@ public class DERUTF8String
 
     public String getString()
     {
-    	throw new UnsupportedClassVersionError();/*
         return Strings.fromUTF8ByteArray(string);
-*/    }
+    }
 
     public String toString()
     {

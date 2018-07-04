@@ -141,9 +141,8 @@ public abstract class AbstractX500NameStyle
 
         if (rdns1[0].getFirst() != null && rdns2[0].getFirst() != null)
         {
-        	throw new UnsupportedClassVersionError();/*
             reverse = !rdns1[0].getFirst().getType().equals(rdns2[0].getFirst().getType());  // guess forward
-*/        }
+        }
 
         	throw new UnsupportedClassVersionError();/*
         for (int i = 0; i != rdns1.length; i++)

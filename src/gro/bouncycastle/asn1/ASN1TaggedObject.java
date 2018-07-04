@@ -201,9 +201,8 @@ public abstract class ASN1TaggedObject
         switch (tag)
         {
         case BERTags.SET:
-        	throw new UnsupportedClassVersionError();/*
             return ASN1Set.getInstance(this, isExplicit).parser();
-*/        case BERTags.SEQUENCE:
+        case BERTags.SEQUENCE:
     	throw new UnsupportedClassVersionError();/*
             return ASN1Sequence.getInstance(this, isExplicit).parser();
 */        case BERTags.OCTET_STRING:

@@ -48,15 +48,16 @@ public class ServerNameList
         short[] nameTypesSeen = new short[0];
         for (int i = 0; i < serverNameList.size(); ++i)
         {
-            throw new UnsupportedClassVersionError();/*
             ServerName entry = (ServerName)serverNameList.elementAt(i);
 
             nameTypesSeen = checkNameType(nameTypesSeen, entry.getNameType());
             if (nameTypesSeen == null)
             {
+            	throw new UnsupportedClassVersionError();/*
                 throw new TlsFatalAlert(AlertDescription.internal_error);
-            }
+*/            }
 
+        	throw new UnsupportedClassVersionError();/*
             entry.encode(buf);
 */        }
         throw new UnsupportedClassVersionError();/*

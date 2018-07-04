@@ -73,17 +73,18 @@ public class Certificate
     public void encode(OutputStream output)
         throws IOException
     {
-    	throw new UnsupportedClassVersionError();/*
         Vector derEncodings = new Vector(this.certificateList.length);
 
         int totalLength = 0;
         for (int i = 0; i < this.certificateList.length; ++i)
         {
+        	throw new UnsupportedClassVersionError();/*
             byte[] derEncoding = certificateList[i].getEncoded(ASN1Encoding.DER);
             derEncodings.addElement(derEncoding);
             totalLength += derEncoding.length + 3;
-        }
+*/        }
 
+    	throw new UnsupportedClassVersionError();/*
         TlsUtils.checkUint24(totalLength);
         TlsUtils.writeUint24(totalLength, output);
 

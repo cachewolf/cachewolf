@@ -21,10 +21,9 @@ public abstract class TlsDSASigner
             new ParametersWithRandom(privateKey, this.context.getSecureRandom()));
         if (algorithm == null)
         {
-        	throw new UnsupportedClassVersionError();/*
             // Note: Only use the SHA1 part of the (MD5/SHA1) hash
             signer.update(hash, 16, 20);
-*/        }
+        }
         else
         {
             signer.update(hash, 0, hash.length);

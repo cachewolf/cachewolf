@@ -99,16 +99,18 @@ public class TlsECDHKeyExchange extends AbstractTlsKeyExchange
 
         if (tlsSigner == null)
         {
-        	throw new UnsupportedClassVersionError();/*
             try
             {
+            	throw new UnsupportedClassVersionError();/*
                 this.ecAgreePublicKey = TlsECCUtils.validateECPublicKey((ECPublicKeyParameters) this.serverPublicKey);
-            }
+*/            }
             catch (ClassCastException e)
             {
+            	throw new UnsupportedClassVersionError();/*
                 throw new TlsFatalAlert(AlertDescription.certificate_unknown, e);
-            }
+*/            }
 
+        /*Unreachable ->	throw new UnsupportedClassVersionError();/*
             TlsUtils.validateKeyUsage(x509Cert, KeyUsage.keyAgreement);
 */        }
         else

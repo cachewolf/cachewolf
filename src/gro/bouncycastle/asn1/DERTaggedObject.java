@@ -83,9 +83,9 @@ public class DERTaggedObject
     {
         if (!empty)
         {
-        	throw new UnsupportedClassVersionError();/*
             ASN1Primitive primitive = obj.toASN1Primitive().toDERObject();
 
+            throw new UnsupportedClassVersionError();/*
             if (explicit)
             {
                 out.writeTag(BERTags.CONSTRUCTED | BERTags.TAGGED, tagNo);

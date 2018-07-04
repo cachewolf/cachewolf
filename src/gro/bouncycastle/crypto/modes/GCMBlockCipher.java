@@ -188,12 +188,11 @@ public class GCMBlockCipher
         }
         else
         {
-        	throw new UnsupportedClassVersionError(); /*
             gHASH(J0, nonce, nonce.length);
             byte[] X = new byte[BLOCK_SIZE];
             Pack.longToBigEndian((long)nonce.length * 8, X, 8);
             gHASHBlock(J0, X);
-*/        }
+        }
 
         this.S = new byte[BLOCK_SIZE];
         this.S_at = new byte[BLOCK_SIZE];

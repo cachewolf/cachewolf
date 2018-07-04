@@ -44,10 +44,9 @@ public class TlsMac
         }
         else
         {
-        	throw new UnsupportedClassVersionError();/*
             this.digestBlockSize = 64;
             this.digestOverhead = 8;
-*/        }
+        }
 
         if (TlsUtils.isSSL(context))
         {

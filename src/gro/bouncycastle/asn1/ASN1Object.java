@@ -90,9 +90,8 @@ public abstract class ASN1Object
      */
     public ASN1Primitive toASN1Object()
     {
-    	throw new UnsupportedClassVersionError();/*
         return this.toASN1Primitive();
-*/    }
+    }
 
     /**
      * Return true if obj is a byte array and represents an object with the given tag value.

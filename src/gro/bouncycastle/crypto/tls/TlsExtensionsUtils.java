@@ -29,9 +29,8 @@ public class TlsExtensionsUtils
 
     public static void addExtendedMasterSecretExtension(Hashtable extensions)
     {
-    	throw new UnsupportedClassVersionError();/*
         extensions.put(EXT_extended_master_secret, createExtendedMasterSecretExtension());
-*/    }
+    }
 
     public static void addHeartbeatExtension(Hashtable extensions, HeartbeatExtension heartbeatExtension)
         throws IOException
@@ -139,12 +138,13 @@ public class TlsExtensionsUtils
         return createEmptyExtensionData();
 */    }
 
-/*    public static byte[] createExtendedMasterSecretExtension()
+    public static byte[] createExtendedMasterSecretExtension()
     {
+    	throw new UnsupportedClassVersionError();/*
         return createEmptyExtensionData();
-    }
+*/    }
 
-    public static byte[] createHeartbeatExtension(HeartbeatExtension heartbeatExtension)
+/*    public static byte[] createHeartbeatExtension(HeartbeatExtension heartbeatExtension)
         throws IOException
     {
         if (heartbeatExtension == null)

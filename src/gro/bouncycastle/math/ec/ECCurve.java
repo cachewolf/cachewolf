@@ -215,13 +215,12 @@ public abstract class ECCurve
         {
             return getInfinity();
         }
-        throw new UnsupportedClassVersionError();/*
 
         // TODO Default behaviour could be improved if the two curves have the same coordinate system by copying any Z coordinates.
         p = p.normalize();
 
         return validatePoint(p.getXCoord().toBigInteger(), p.getYCoord().toBigInteger(), p.withCompression);
-*/    }
+    }
 
     /**
      * Normalization ensures that any projective coordinate is 1, and therefore that the x, y

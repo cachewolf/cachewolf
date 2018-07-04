@@ -60,9 +60,8 @@ public class OCSPStatusRequest
     {
         if (responderIDList == null || responderIDList.isEmpty())
         {
-        	throw new UnsupportedClassVersionError();/*
             TlsUtils.writeUint16(0, output);
-*/        }
+        }
         else
         {
         	throw new UnsupportedClassVersionError();/*

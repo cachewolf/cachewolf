@@ -62,12 +62,13 @@ class DeferredHash
     
     public void trackHashAlgorithm(short hashAlgorithm)
     {
-    	throw new UnsupportedClassVersionError();/*
         if (buf == null)
         {
+            throw new UnsupportedClassVersionError();/*
             throw new IllegalStateException("Too late to track more hash algorithms");
-        }
+*/        }
 
+        throw new UnsupportedClassVersionError();/*
         checkTrackingHash(Shorts.valueOf(hashAlgorithm));
 */    }
     

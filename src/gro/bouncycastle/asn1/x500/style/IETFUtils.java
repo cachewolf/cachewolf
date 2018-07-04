@@ -180,9 +180,8 @@ public class IETFUtils
                 }
                 else
                 {
-                	throw new UnsupportedClassVersionError();/*
                     builder.addRDN(oid, unescape(value));
-*/                }
+                }
             }
             else
             {

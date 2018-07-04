@@ -217,9 +217,8 @@ public abstract class ASN1BitString
     {
         if (!(o instanceof ASN1BitString))
         {
-            throw new UnsupportedClassVersionError();/*
             return false;
-*/        }
+        }
 
         throw new UnsupportedClassVersionError();/*
         ASN1BitString other = (ASN1BitString)o;

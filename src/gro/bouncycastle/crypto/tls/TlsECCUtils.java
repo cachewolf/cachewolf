@@ -67,9 +67,8 @@ public class TlsECCUtils
     {
         if (namedCurves == null || namedCurves.length < 1)
         {
-        	throw new UnsupportedClassVersionError();/*
             throw new TlsFatalAlert(AlertDescription.internal_error);
-*/        }
+        }
 
         return TlsUtils.encodeUint16ArrayWithUint16Length(namedCurves);
     }

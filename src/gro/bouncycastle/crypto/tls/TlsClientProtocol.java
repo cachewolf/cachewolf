@@ -96,10 +96,9 @@ public class TlsClientProtocol
             SessionParameters sessionParameters = sessionToResume.exportSessionParameters();
             if (sessionParameters != null)
             {
-            	throw new UnsupportedClassVersionError();/*
                 this.tlsSession = sessionToResume;
                 this.sessionParameters = sessionParameters;
-*/            }
+            }
         }
 
         sendClientHelloMessage();

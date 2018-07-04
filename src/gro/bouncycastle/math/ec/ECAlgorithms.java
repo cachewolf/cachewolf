@@ -33,9 +33,8 @@ public class ECAlgorithms
     {
         if (ps == null || ks == null || ps.length != ks.length || ps.length < 1)
         {
-        	throw new UnsupportedClassVersionError();/*
             throw new IllegalArgumentException("point and scalar arrays should be non-null, and of equal, non-zero, length");
-*/        }
+        }
 
         	throw new UnsupportedClassVersionError();/*
         int count = ps.length;

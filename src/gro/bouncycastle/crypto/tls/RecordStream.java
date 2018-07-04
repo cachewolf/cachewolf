@@ -80,9 +80,8 @@ class RecordStream
 
     void setReadVersion(ProtocolVersion readVersion)
     {
-    	throw new UnsupportedClassVersionError();/*
       this.readVersion = readVersion;
-*/    }
+    }
 
     void setWriteVersion(ProtocolVersion writeVersion)
     {

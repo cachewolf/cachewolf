@@ -262,23 +262,27 @@ public class TlsDHUtils
 
     public static DHParameters getParametersForDHEGroup(short dheGroup)
     {
-    	throw new UnsupportedClassVersionError();/*
         switch (dheGroup)
         {
         case FiniteFieldDHEGroup.ffdhe2432:
+        	throw new UnsupportedClassVersionError();/*
             return draft_ffdhe2432;
-        case FiniteFieldDHEGroup.ffdhe3072:
+*/        case FiniteFieldDHEGroup.ffdhe3072:
+	throw new UnsupportedClassVersionError();/*
             return draft_ffdhe3072;
-        case FiniteFieldDHEGroup.ffdhe4096:
+*/        case FiniteFieldDHEGroup.ffdhe4096:
+	throw new UnsupportedClassVersionError();/*
             return draft_ffdhe4096;
-        case FiniteFieldDHEGroup.ffdhe6144:
+*/        case FiniteFieldDHEGroup.ffdhe6144:
+        	throw new UnsupportedClassVersionError();/*
             return draft_ffdhe6144;
-        case FiniteFieldDHEGroup.ffdhe8192:
+*/        case FiniteFieldDHEGroup.ffdhe8192:
+        	throw new UnsupportedClassVersionError();/*
             return draft_ffdhe8192;
-        default:
+*/        default:
             return null;
         }
-*/    }
+    }
 
     public static boolean containsDHECipherSuites(int[] cipherSuites)
     {

@@ -144,9 +144,8 @@ public abstract class ASN1Sequence
             {
                 if (obj instanceof BERTaggedObject)
                 {
-                	throw new UnsupportedClassVersionError();/*
                     return new BERSequence(obj.getObject());
-*/                }
+                }
                 else
                 {
                   	throw new UnsupportedClassVersionError();/*

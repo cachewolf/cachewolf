@@ -240,13 +240,12 @@ public class X500Name
             }
         }
 
-        	throw new UnsupportedClassVersionError();/*
         RDN[] tmp = new RDN[count];
 
         System.arraycopy(res, 0, tmp, 0, tmp.length);
 
         return tmp;
-*/    }
+    }
 
     public ASN1Primitive toASN1Primitive()
     {

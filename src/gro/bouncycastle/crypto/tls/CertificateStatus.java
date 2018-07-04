@@ -5,7 +5,7 @@ import ewe.io.InputStream;
 import ewe.io.OutputStream;
 
 //import org.bouncycastle.asn1.ASN1Encoding;
-//import org.bouncycastle.asn1.ocsp.OCSPResponse;
+import gro.bouncycastle.asn1.ocsp.OCSPResponse;
 
 public class CertificateStatus
 {
@@ -14,12 +14,13 @@ public class CertificateStatus
 
     public CertificateStatus(short statusType, Object response)
     {
-    	throw new UnsupportedClassVersionError();/*
         if (!isCorrectType(statusType, response))
         {
+            throw new UnsupportedClassVersionError();/*
             throw new IllegalArgumentException("'response' is not an instance of the correct type");
-        }
+*/        }
         
+        throw new UnsupportedClassVersionError();/*
         this.statusType = statusType;
         this.response = response;
 */    }
@@ -93,7 +94,7 @@ public class CertificateStatus
 
         return new CertificateStatus(status_type, response);
     }
-
+*/
     protected static boolean isCorrectType(short statusType, Object response)
     {
         switch (statusType)
@@ -104,4 +105,4 @@ public class CertificateStatus
             throw new IllegalArgumentException("'statusType' is an unsupported CertificateStatusType");
         }
     }
-*/}
+}

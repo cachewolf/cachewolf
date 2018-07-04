@@ -92,9 +92,8 @@ public class KeyUsage
 
     public int getPadBits()
     {
-    	throw new UnsupportedClassVersionError();/*
         return bitString.getPadBits();
-*/    }
+    }
 
     public String toString()
     {

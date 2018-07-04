@@ -63,9 +63,8 @@ public class HMacDSAKCalculator
 
         if (mInt.compareTo(n) >= 0)
         {
-            throw new UnsupportedClassVersionError();/*
             mInt = mInt.subtract(n);
-*/        }
+        }
 
         throw new UnsupportedClassVersionError();/*
         byte[] mVal = BigIntegers.asUnsignedByteArray(mInt);

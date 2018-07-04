@@ -11,9 +11,8 @@ public abstract class FiniteFields
     {
         if (exponents[0] != 0)
         {
-        	throw new UnsupportedClassVersionError();/*
             throw new IllegalArgumentException("Irreducible polynomials in GF(2) must have constant term");
-*/        }
+        }
         	throw new UnsupportedClassVersionError();/*
         for (int i = 1; i < exponents.length; ++i)
         {

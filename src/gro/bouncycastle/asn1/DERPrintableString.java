@@ -125,9 +125,8 @@ public class DERPrintableString
     {
         if (validate && !isPrintableString(string))
         {
-            throw new UnsupportedClassVersionError();/*
             throw new IllegalArgumentException("string contains illegal characters");
-*/        }
+        }
 
         throw new UnsupportedClassVersionError();/*
         this.string = Strings.toByteArray(string);

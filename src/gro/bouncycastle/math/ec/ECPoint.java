@@ -240,9 +240,8 @@ public abstract class ECPoint
         case ECCurve.COORD_AFFINE:
         case ECCurve.COORD_LAMBDA_AFFINE:
         {
-        	throw new UnsupportedClassVersionError();/*
             return this;
-*/        }
+        }
         default:
         {
             ECFieldElement Z1 = getZCoord(0);

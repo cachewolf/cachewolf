@@ -133,9 +133,8 @@ public class TlsAEADCipher
             TlsUtils.writeUint64(seqNo, nonce, nonce.length - 8);
             for (int i = 0; i < encryptImplicitNonce.length; ++i)
             {
-            	throw new UnsupportedClassVersionError();/*
                 nonce[i] ^= encryptImplicitNonce[i];
-*/            }
+            }
             break;
         default:
             throw new TlsFatalAlert(AlertDescription.internal_error);

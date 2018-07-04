@@ -39,9 +39,7 @@ public class TlsRSASigner
 
     public Signer createSigner(SignatureAndHashAlgorithm algorithm, AsymmetricKeyParameter privateKey)
     {
-    	throw new UnsupportedClassVersionError();/*
         return makeSigner(algorithm, false, true, new ParametersWithRandom(privateKey, this.context.getSecureRandom()));
-        */
     }
     
     public Signer createVerifyer(SignatureAndHashAlgorithm algorithm, AsymmetricKeyParameter publicKey)

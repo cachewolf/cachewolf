@@ -37,7 +37,6 @@ public class TlsNullCipher
 
         if (clientWriteDigest != null)
         {
-        	throw new UnsupportedClassVersionError();/*
             int key_block_size = clientWriteDigest.getDigestSize()
                 + serverWriteDigest.getDigestSize();
             byte[] key_block = TlsUtils.calculateKeyBlock(context, key_block_size);
@@ -54,9 +53,10 @@ public class TlsNullCipher
 
             if (offset != key_block_size)
             {
+            	throw new UnsupportedClassVersionError();/*
                 throw new TlsFatalAlert(AlertDescription.internal_error);
-            }
-*/        }
+*/            }
+        }
 
         	throw new UnsupportedClassVersionError();/*
         if (context.isServer())

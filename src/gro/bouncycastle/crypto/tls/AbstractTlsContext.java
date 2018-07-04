@@ -106,11 +106,12 @@ abstract class AbstractTlsContext
          * NOT export any key material based on the new master secret for any subsequent
          * application-level authentication. In particular, it MUST disable [RFC5705] [..].
          */
-    	throw new UnsupportedClassVersionError();/*
         if (context_value != null && !TlsUtils.isValidUint16(context_value.length))
         {
+            throw new UnsupportedClassVersionError();/*
             throw new IllegalArgumentException("'context_value' must have length less than 2^16 (or be null)");
-        }
+*/        }
+        throw new UnsupportedClassVersionError();/*
 
         SecurityParameters sp = getSecurityParameters();
         byte[] cr = sp.getClientRandom(), sr = sp.getServerRandom();

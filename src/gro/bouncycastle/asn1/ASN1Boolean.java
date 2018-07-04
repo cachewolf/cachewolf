@@ -161,9 +161,8 @@ public class ASN1Boolean
     {
         if (o instanceof ASN1Boolean)
         {
-            throw new UnsupportedClassVersionError();/*
             return (value[0] == ((ASN1Boolean)o).value[0]);
-*/        }
+        }
 
         throw new UnsupportedClassVersionError();/*
         return false;

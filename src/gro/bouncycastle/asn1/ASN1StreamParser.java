@@ -43,9 +43,8 @@ public class ASN1StreamParser
         switch (tagValue)
         {
             case BERTags.EXTERNAL:
-            	throw new UnsupportedClassVersionError();/*
                 return new DERExternalParser(this);
-*/            case BERTags.OCTET_STRING:
+            case BERTags.OCTET_STRING:
 	throw new UnsupportedClassVersionError();/*
                 return new BEROctetStringParser(this);
 */            case BERTags.SEQUENCE:

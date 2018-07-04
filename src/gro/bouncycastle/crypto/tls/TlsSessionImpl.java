@@ -23,9 +23,8 @@ class TlsSessionImpl implements TlsSession
     }
     public synchronized SessionParameters exportSessionParameters()    
     {
-    	throw new UnsupportedClassVersionError();/*
         return this.sessionParameters == null ? null : this.sessionParameters.copy();
-*/    }
+    }
 
     public synchronized byte[] getSessionID()
     {

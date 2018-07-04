@@ -288,9 +288,8 @@ public class ASN1UTCTime
 
         for (int i = 0; i != length; i++)
         {
-        	throw new UnsupportedClassVersionError();/*
             out.write((byte)time[i]);
-*/        }
+        }
     }
 
     boolean asn1Equals(

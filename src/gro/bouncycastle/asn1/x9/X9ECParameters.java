@@ -36,9 +36,8 @@ public class X9ECParameters
         if (!(seq.getObjectAt(0) instanceof ASN1Integer)
            || !((ASN1Integer)seq.getObjectAt(0)).getValue().equals(ONE))
         {
-        	throw new UnsupportedClassVersionError();/*
             throw new IllegalArgumentException("bad version in X9ECParameters");
-*/        }
+        }
 
         	throw new UnsupportedClassVersionError();/*
         X9Curve     x9c = new X9Curve(

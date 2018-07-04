@@ -144,9 +144,8 @@ public class RSADigestSigner
 	// throws CryptoException, DataLengthException
 	{
 		if (!forSigning) {
-			  throw new UnsupportedClassVersionError();/*
 			throw new IllegalStateException("RSADigestSigner not initialised for signature generation.");
-*/		}
+		}
 
 		  throw new UnsupportedClassVersionError();/*
 		byte[] hash = new byte[digest.getDigestSize()];

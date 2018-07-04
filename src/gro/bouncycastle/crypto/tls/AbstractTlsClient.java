@@ -39,11 +39,10 @@ public abstract class AbstractTlsClient
              * Exception added based on field reports that some servers do send this, although the
              * Supported Elliptic Curves Extension is clearly intended to be client-only. If
              * present, we still require that it is a valid EllipticCurveList.
-             * /
-    	throw new UnsupportedClassVersionError();/* 
+             */
             TlsECCUtils.readSupportedEllipticCurvesExtension(extensionData);
             return true;
-*/        default:
+        default:
     	throw new UnsupportedClassVersionError();/* 
             return false;
 */        }

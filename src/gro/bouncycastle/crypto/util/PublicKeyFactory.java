@@ -105,9 +105,8 @@ public class PublicKeyFactory
             BigInteger j = null;
             if (dhParams.getJ() != null)
             {
-            	throw new UnsupportedClassVersionError();/*
                 j = dhParams.getJ();
-*/            }
+            }
 
         	throw new UnsupportedClassVersionError();/*
             DHValidationParameters validation = null;

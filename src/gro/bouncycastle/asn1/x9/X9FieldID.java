@@ -66,9 +66,9 @@ public class X9FieldID
         ASN1EncodableVector fieldIdParams = new ASN1EncodableVector();
         fieldIdParams.add(new ASN1Integer(m));
         
-        throw new UnsupportedClassVersionError();/*
         if (k2 == 0) 
         {
+        	throw new UnsupportedClassVersionError();/*
             if (k3 != 0)
             {
                 throw new IllegalArgumentException("inconsistent k values");
@@ -76,9 +76,10 @@ public class X9FieldID
 
             fieldIdParams.add(tpBasis);
             fieldIdParams.add(new ASN1Integer(k1));
-        } 
+*/        } 
         else 
         {
+        	throw new UnsupportedClassVersionError();/*
             if (k2 <= k1 || k3 <= k2)
             {
                 throw new IllegalArgumentException("inconsistent k values");
@@ -90,8 +91,9 @@ public class X9FieldID
             pentanomialParams.add(new ASN1Integer(k2));
             pentanomialParams.add(new ASN1Integer(k3));
             fieldIdParams.add(new DERSequence(pentanomialParams));
-        }
+*/        }
         
+    /* Unreachable code ->	throw new UnsupportedClassVersionError();/*
         this.parameters = new DERSequence(fieldIdParams);
 */    }
 
