@@ -3073,7 +3073,6 @@ public class GCImporter {
         uuidRex.searchFrom(wayPointPage, wayPointPageIndex);
         if (uuidRex.didMatch()) {
             wayPointPageIndex = uuidRex.matchedTo();
-            Preferences.itself().log("[SpiderGC.java:wayPointPageIndex] value is: " + uuidRex.stringMatched(), null);
 	    return uuidRex.stringMatched(1);
         } else {
             return "";
