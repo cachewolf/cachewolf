@@ -170,12 +170,8 @@ public class URLUTF8Encoder {
      * </ul>
      *
      * @param s           The string to be encoded
-     * @param spaceToPlus true if you wish a space to be encoded as a '+',
-     *                    false to encode it as %20
      * @return The encoded string
      */
-
-
     public static String encode(String s) {
         return encode(s, true);
     }

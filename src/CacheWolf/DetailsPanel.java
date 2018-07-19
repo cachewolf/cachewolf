@@ -721,6 +721,7 @@ public class DetailsPanel extends CellPanel {
                     GuiImageBroker.setButtonText(hiddenDate, MyLocale.getMsg(305, "Hidden on:") + newHiddenDate);
                 }
             } else if (ev.target == btnLog) {
+                // uploadLogToGC();
                 String url = "";
                 if (mainCache.isCacheWpt()) {
                     CacheHolderDetail chD = mainCache.getDetails();
@@ -744,7 +745,9 @@ public class DetailsPanel extends CellPanel {
                             url = "http://" + OC.getOCHostName(mainCache.getCode()) + "/log.php?wp=" + mainCache.getCode();
                         }
                     } else { // bei GC loggen
-                        url = "http://www.geocaching.com/seek/log.aspx?ID=" + mainCache.getCacheID();
+                        // url = "http://www.geocaching.com/seek/log.aspx?ID=" + mainCache.getCacheID();
+                        // url = "http://www.geocaching.com/seek/log.aspx?WP=" + mainCache.getCode();
+                        url = "https://www.geocaching.com/play/geocache/" + mainCache.getCode() + "/log";
                     }
 
                     if (url.length() > 0) {
@@ -753,7 +756,8 @@ public class DetailsPanel extends CellPanel {
 
                 } else {
                     if (mainCache.isCustomWpt() && mainCache.getCode().startsWith("GC")) {
-                        url = "http://www.geocaching.com/seek/log.aspx?ID=" + mainCache.getCacheID();
+                        // url = "http://www.geocaching.com/seek/log.aspx?ID=" + mainCache.getCacheID();
+                        url = "https://www.geocaching.com/play/geocache/" + mainCache.getCode() + "/log";
                         callExternalProgram(Preferences.itself().browser, url);
                     }
                 }
@@ -830,6 +834,17 @@ public class DetailsPanel extends CellPanel {
         if (gcImporter == null)
             gcImporter = new GCImporter();
         gcImporter.uploadCoordsToGC(mainCache, infB);
+        infB.close(0);
+        Vm.showWait(false);
+    }
+
+    private void uploadLogToGC() {
+        InfoBox infB = new InfoBox(MyLocale.getMsg(611, "Status"), MyLocale.getMsg(370, "Correcting coordinates"), InfoBox.DISPLAY_ONLY);
+        infB.exec();
+        Vm.showWait(true);
+        if (gcImporter == null)
+            gcImporter = new GCImporter();
+        gcImporter.uploadLogToGC(mainCache, infB);
         infB.close(0);
         Vm.showWait(false);
     }
