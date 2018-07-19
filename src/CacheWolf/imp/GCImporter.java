@@ -3072,15 +3072,10 @@ public class GCImporter {
     private String wayPointPageGetUuid (){
         uuidRex.searchFrom(wayPointPage, wayPointPageIndex);
         if (uuidRex.didMatch()) {
-            Preferences.itself().log("[SpiderGC.java:wayPointPageIndex] regEx matched!", null);
             wayPointPageIndex = uuidRex.matchedTo();
-            Preferences.itself().log("[SpiderGC.java:wayPointPageIndex] regEx at position: " + wayPointPageIndex, null);
             Preferences.itself().log("[SpiderGC.java:wayPointPageIndex] value is: " + uuidRex.stringMatched(), null);
-            Preferences.itself().log("[SpiderGC.java:wayPointPageIndex] value(1) is: " + uuidRex.stringMatched(1));
 	    return uuidRex.stringMatched(1);
         } else {
-            Preferences.itself().log("[SpiderGC.java:wayPointPageIndex] regEx didn't match!", null);
-            Preferences.itself().log("[SpiderGC.java:getHints]check hintsRex!", null);
             return "";
         }
     }
