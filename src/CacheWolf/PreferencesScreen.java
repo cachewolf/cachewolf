@@ -862,7 +862,7 @@ class GPSPortOptions extends SerialPortOptions {
         btnTest = new mButton(MyLocale.getMsg(7104, "Test$t"));
         ed.addField(ed.addLast(btnTest.setCell(CellConstants.DONTSTRETCH)), "test");
         txtOutput = new TextDisplay();
-        ScrollBarPanel sbp = new MyScrollBarPanel(txtOutput);
+        MyScrollBarPanel sbp = new MyScrollBarPanel(txtOutput);
         sbp.setOptions(ScrollablePanel.AlwaysShowVerticalScrollers | ScrollablePanel.AlwaysShowHorizontalScrollers);
         ed.addField(ed.addLast(sbp), "out");
 

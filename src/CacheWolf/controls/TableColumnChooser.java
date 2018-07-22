@@ -93,26 +93,31 @@ public class TableColumnChooser extends CellPanel {
     }
 
     /**
-     * Converts a comma delimited string into an integer array.
-     * Each value is checked and has to be between min and max, If not it is
-     * replaced with default
+     * Converts a comma separated string into an integer array.
      *
-     * @param minSize TODO
+     * @param configString the comma separated string
+     * @param minElementValue       the lowest value for an element of the string
+     * @param maxElementValue       the highest value for an element of the string
+     * @param defaultElementValue   the value used to possibly replace an element of the string
+     * @param minArrayLength        the array will be at least this length
+     * @return result               an array of int
      */
-    public static int[] str2Array(String configString, int min, int max, int def, int minSize) {
+    public static int[] str2Array(String configString, int minElementValue, int maxElementValue, int defaultElementValue, int minArrayLength) {
         Vector strConfigVector = new Vector(18);
         SubString.split(configString, ',', strConfigVector);
         int i;
         int nElem = strConfigVector.size();
-        int[] res = new int[nElem > minSize ? nElem : minSize];
+        int[] result = new int[nElem > minArrayLength ? nElem : minArrayLength];
+        // fill from string
         for (i = 0; i < nElem; i++) {
-            res[i] = Common.parseInt((String) strConfigVector.elementAt(i));
-            if (res[i] < min || res[i] > max)
-                res[i] = def;
+            result[i] = Common.parseInt((String) strConfigVector.elementAt(i));
+            if (result[i] < minElementValue || result[i] > maxElementValue)
+                result[i] = defaultElementValue;
         }
-        for (i = nElem + 1; i < minSize; i++)
-            res[i] = def;
-        return res;
+        // fill with default value up to min length
+        for (i = nElem + 1; i < minArrayLength; i++)
+            result[i] = defaultElementValue;
+        return result;
     }
 
     public String getSelectedCols() {

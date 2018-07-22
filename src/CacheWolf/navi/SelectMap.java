@@ -38,8 +38,8 @@ import ewe.ui.*;
 public class SelectMap extends Form {
     private final ExecutePanel executePanel;
     public boolean worldfileexists = false;
-    ScrollBarPanel top;
-    ScrollBarPanel bot;
+    MyScrollBarPanel top;
+    MyScrollBarPanel bot;
     String mapsPath;
     mList nonCMaps = new mList(3, 1, false);
     mList CMaps = new mList(3, 1, false);

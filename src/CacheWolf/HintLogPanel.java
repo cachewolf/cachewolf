@@ -95,7 +95,7 @@ public class HintLogPanel extends CellPanel {
                 hintpane.addLast(codeButtonPanel, DONTSTRETCH, FILL);
         }
 
-        ScrollBarPanel sbphint = new MyScrollBarPanel(hint);
+        MyScrollBarPanel sbphint = new MyScrollBarPanel(hint);
         hint.modify(ControlConstants.NotEditable, 0);
         hintpane.addLast(sbphint, CellConstants.STRETCH, (CellConstants.FILL | CellConstants.WEST));
 

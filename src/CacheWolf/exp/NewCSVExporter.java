@@ -154,10 +154,6 @@ public class NewCSVExporter extends Exporter {
                 return " "; // for showing percent of task
             }
             return ch.getCode() + " not found";
-        } else {
-            if (ch.getCode().equals("GC28RK8")) {
-                doit = true;
-            }
         }
         return null;
     }

@@ -209,90 +209,18 @@ public class GCImporter {
         initialiseProperties();
     }
 
-    public static boolean setGCLanguage(String toLanguage) {
-        // language now goes into gc account Display Preferences
-        // (is permanent, must be reset)
-        // must do post (get no longer works)
-
-        String languages[] = {"en-US", //00
-                "ca-ES", //01
-                "cs-CZ", //02
-                "da-DK", //03
-                "de-DE", //04
-                "el-GR", //05
-                "et-EE", //06
-                "es-ES", //07
-                "fr-FR", //08
-                "it-IT", //09
-                "ja-JP", //10
-                "ko-KR", //11
-                "lv-LV", //12
-                "lb-LU", //13
-                "hu-HU", //14
-                "nl-NL", //15
-                "nb-NO", //16
-                "pl-PL", //17
-                "pt-PT", //18
-                "ro-RO", //19
-                "ru-RU", //20
-                "fi-FI", //21
-                "sl-SI", //22
-                "sv-SE",//23
-        };
-        String languageCode = "00"; // defaults to "en-US"
-        for (int i = 0; i < languages.length; i++) {
-            if (toLanguage.equals(languages[i])) {
-                languageCode = MyLocale.formatLong(i, "00");
-                break;
-            }
-        }
-        String url = "https://www.geocaching.com/my/recentlyviewedcaches.aspx";
+    private boolean setGCLanguage(String toLanguage) {
+        String url = "https://www.geocaching.com/account/chrome/setculture?culture=" + toLanguage;
         try {
             WebPage = UrlFetcher.fetch(url);
         } catch (final Exception ex) {
-            Preferences.itself().log("[recentlyviewedcaches]:Exception", ex, true);
+            Preferences.itself().log("[setculture]:Exception", ex, true);
             return false;
         }
-        final String postData = "__EVENTTARGET=ctl00$ctl30$uxLocaleList$uxLocaleList$ctl" + languageCode + "$uxLocaleItem" //
-                + "&" + "__EVENTARGUMENT="//
-                + getViewState() //
-                + "&" + "ctl00%24ContentBody%24wp=" //
-                ;
-        try {
-            UrlFetcher.setpostData(postData);
-            WebPage = UrlFetcher.fetch(url);
-        } catch (final Exception ex) {
-            Preferences.itself().log("[setGCLanguage] Exception", ex);
-            return false;
-        }
-
-        String languageBlock = extractor.set(WebPage, "<ul class=\"language-list\">", "</ul>", 0, true).findNext();
-        languageBlock = extractor.set(languageBlock, "class=\"selected\"", "</li>", 0, true).findNext();
-        String newLanguage = extractor.set(languageBlock, "$uxLocaleList$ctl", "$uxLocaleItem", 0, true).findNext();
-
-        if (newLanguage.equals(languageCode)) {
+        if (WebPage.indexOf("isLoggedIn: true") > -1) {
             return true;
-        } else
-            return false;
-
-	/*
-	if (stillLoggedIn(WebPage)) {
-	    // check success
-	    return true;
-	} else {
-	    return false;
-	}
-	*/
-    }
-
-    private static boolean stillLoggedIn(String page) {
-        if (!(page.indexOf("ctl00_hlSignOut") > -1)) {
-            if (!(page.indexOf("ctl00_uxLoginStatus_hlSignOut") > -1)) {
-                Preferences.itself().log(page, null);
-                return false;
-            }
         }
-        return true;
+        return false;
     }
 
     /**
@@ -300,7 +228,7 @@ public class GCImporter {
      *
      * @return
      */
-    private static String getViewState() {
+    private String getViewState() {
         String Result = "";
         int searchPosition = 0;
         final Regex rexViewstateFieldCount = new Regex("id=\"__VIEWSTATEFIELDCOUNT\" value=\"(.*?)\" />");
@@ -563,7 +491,7 @@ public class GCImporter {
 
     public void setOldGCLanguage() {
         if (Preferences.itself().changedGCLanguageToEnglish) {
-            GCImporter.setGCLanguage(Preferences.itself().oldGCLanguage);
+            setGCLanguage(Preferences.itself().oldGCLanguage);
             Preferences.itself().changedGCLanguageToEnglish = false;
         }
     }
@@ -1256,7 +1184,7 @@ public class GCImporter {
                 final CacheHolder ch = MainForm.profile.cacheDB.get(i);
                 if (!ch.isBlack()) {
                     if (ch.isGC()) {
-                        if ( Preferences.itself().havePremiumMemberRights || !ch.isPremiumCache() ) {
+                        if (Preferences.itself().havePremiumMemberRights || !ch.isPremiumCache()) {
                             if (spiderAllFinds //
                                     || ( //
                                     (!ch.isArchived()) //
@@ -1503,7 +1431,7 @@ public class GCImporter {
                 UrlFetcher.setpostData(result.toString());
                 String uploadResponse = UrlFetcher.fetch("https://www.geocaching.com/seek/cache_details.aspx/SetUserCoordinate");
                 JSONObject response = new JSONObject(uploadResponse);
-                response =  new JSONObject(response.getString("d"));
+                response = new JSONObject(response.getString("d"));
                 if (!response.getString("status").equals("success")) {
                     Preferences.itself().log("uploadCoordsToGC status is " + response.getString("status"), null);
                     infB.setText(MyLocale.getMsg(7013, "error") + ": " + response.getString("status"));
@@ -1511,14 +1439,13 @@ public class GCImporter {
                 } else {
                     return SPIDER_OK;
                 }
-            }
-            else {
+            } else {
                 return SPIDER_CANCEL; // could not login
             }
         } catch (Exception e) {
             Preferences.itself().log("uploadCoordsToGC: ", e);
             infB.setInfo(MyLocale.getMsg(7013, "error: " + e.getLocalizedMessage()));
-            return  SPIDER_ERROR;
+            return SPIDER_ERROR;
         }
     }
 
@@ -1527,21 +1454,19 @@ public class GCImporter {
             if (login()) {
                 String url = "https://www.geocaching.com/play/geocache/" + mainCache.getCode() + "/log";
                 String logPage = UrlFetcher.fetch(url);
-                String postData = getItemString(extractor.set(logPage, "action=\"/play/geocache/","<div class",0,Extractor.EXCLUDESTARTEND).findNext(), "__RequestVerificationToken");
+                String postData = getItemString(extractor.set(logPage, "action=\"/play/geocache/", "<div class", 0, Extractor.EXCLUDESTARTEND).findNext(), "__RequestVerificationToken");
 
-                url="https://www.geocaching.com/api/proxy/web/v1/Geocache/" + mainCache.getCode() + "/GeocacheLog";
+                url = "https://www.geocaching.com/api/proxy/web/v1/Geocache/" + mainCache.getCode() + "/GeocacheLog";
                 // String uploadResponse = UrlFetcher.fetch(url);
                 // JSONObject response = new JSONObject(uploadResponse);
-                return  SPIDER_OK;
-            }
-            else {
+                return SPIDER_OK;
+            } else {
                 return SPIDER_CANCEL; // could not login
             }
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             Preferences.itself().log("uploadLogToGC: ", e);
             infB.setInfo(MyLocale.getMsg(7013, "error: ") + e.getLocalizedMessage());
-            return  SPIDER_ERROR;
+            return SPIDER_ERROR;
         }
     }
 
@@ -2215,11 +2140,11 @@ public class GCImporter {
                         extractor.set(wayPointPage, correctedCoordinate, ";", 0, Extractor.EXCLUDESTARTEND);
                         String extracted = extractor.findNext();
                         if (extracted.length() > 0) {
-                            String newLatLng = extractValue.set(extracted,"newLatLng\":[", "]",0,Extractor.EXCLUDESTARTEND).findNext();
+                            String newLatLng = extractValue.set(extracted, "newLatLng\":[", "]", 0, Extractor.EXCLUDESTARTEND).findNext();
                             String oldLatLng = extractValue.findNext("oldLatLng\":[");
                             newCache.setIsSolved(true);
                             if (newLatLng.equals(oldLatLng)) {
-                                Preferences.itself().log(newCache.getCode() + " coords equal original.",null);
+                                Preferences.itself().log(newCache.getCode() + " coords equal original.", null);
                             }
                         }
                         /*
@@ -2509,6 +2434,7 @@ public class GCImporter {
         }
         return RexUserToken.stringMatched(1);
     }
+
     /**
      * Get the logs
      */
@@ -3073,7 +2999,7 @@ public class GCImporter {
         String attribute;
         chD.attributes.clear();
         while ((attribute = attEx.findNext()).length() > 0) {
-                chD.attributes.add(attribute);
+            chD.attributes.add(attribute);
         }
         chD.getParent().setAttribsAsBits(chD.attributes.getAttribsAsBits());
     }

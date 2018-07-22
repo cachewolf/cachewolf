@@ -717,7 +717,7 @@ class CacheTour extends CellPanel {
 
         public ScrollablePanel getScrollablePanel() {
             dontAutoScroll = amScrolling = true;
-            ScrollBarPanel sp = new MyScrollBarPanel(this);
+            MyScrollBarPanel sp = new MyScrollBarPanel(this);
             sp.modify(0, TakeControlEvents);
             return sp;
         }

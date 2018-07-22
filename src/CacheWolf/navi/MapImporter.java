@@ -55,7 +55,7 @@ public class MapImporter extends Form {
     Vector GCPs = new Vector();
     MapInfoObject wfl = new MapInfoObject();
     mButton infButton;
-    ScrollBarPanel scp;
+    MyScrollBarPanel scp;
     AniImage mapImg;
     int imageWidth, imageHeight = 0;
 

@@ -53,7 +53,7 @@ public class TravelbugScreen extends Form implements ITravelbugScreen {
         this.setTitle(title);
         this.setPreferredSize(240, -1);
         disp = new myList(tbl, allowNew);
-        ScrollBarPanel sbp = new MyScrollBarPanel(disp, ScrollablePanel.NeverShowHorizontalScrollers);
+        MyScrollBarPanel sbp = new MyScrollBarPanel(disp, ScrollablePanel.NeverShowHorizontalScrollers);
         this.addLast(sbp);
         executePanel = new ExecutePanel(this);
         executePanel.disable(FormBase.YESB);

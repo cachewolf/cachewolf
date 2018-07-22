@@ -52,7 +52,7 @@ public class DescriptionPanel extends CellPanel {
         buttonPanel.addNext(btnText = GuiImageBroker.getButton("Text", "text"), HSTRETCH, HFILL);
         buttonPanel.addNext(btnHtml = GuiImageBroker.getButton("Html", "html"), HSTRETCH, HFILL);
         buttonPanel.addLast(btnMinus = GuiImageBroker.getButton("-", "minus"), HSTRETCH, HFILL);
-        ScrollBarPanel sbp = new MyScrollBarPanel(disp, 0);
+        MyScrollBarPanel sbp = new MyScrollBarPanel(disp, 0);
         final CellPanel descP = new CellPanel();
         descP.addLast(sbp);
 

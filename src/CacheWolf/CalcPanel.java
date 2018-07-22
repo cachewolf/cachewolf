@@ -129,7 +129,7 @@ public final class CalcPanel extends CellPanel {
 
         // Output
         txtOutput = new TextDisplay(3, 1); // Need to limit size for small screens
-        ScrollBarPanel sbp = new MyScrollBarPanel(txtOutput);
+        MyScrollBarPanel sbp = new MyScrollBarPanel(txtOutput);
         BottomP.addLast(sbp, STRETCH, (FILL | LEFT));
         BottomP.addLast(btnClear = GuiImageBroker.getButton("Clear", "clear"), DONTSTRETCH, (DONTFILL | LEFT));
 

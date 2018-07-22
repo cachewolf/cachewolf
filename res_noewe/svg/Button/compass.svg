@@ -1,55 +1,42 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
-<svg xmlns:xml="http://www.w3.org/XML/1998/namespace" x="0" y="0" width="32" height="32" overflow="hidden" viewBox="0, 0, 500, 500"
-     preserveAspectRatio="xMidYMid" font-size="0" fill-rule="evenOdd" shape-rendering="geometricPrecision" id="svg"
-     xml:space="default"
-     xmlns="http://www.w3.org/2000/svg" version="1.1">
-    <defs shape-rendering="geometricPrecision" id="def1" xml:space="default">
-        <radialGradient cx="250" cy="250" r="207" fx="250" fy="250" gradientUnits="userSpaceOnUse"
-                        shape-rendering="geometricPrecision" id="a" xml:space="default">
-            <stop offset="0%" stop-color="#FFFFFF" stop-opacity="1" shape-rendering="geometricPrecision" id="stop2"
-                  xml:space="default"/>
-            <stop offset="58.8%" stop-color="#F5F5F5" stop-opacity="1" shape-rendering="geometricPrecision" id="stop4"
-                  xml:space="default"/>
-            <stop offset="100%" stop-color="#979798" stop-opacity="1" shape-rendering="geometricPrecision" id="stop6"
-                  xml:space="default"/>
-        </radialGradient>
-        <radialGradient cx="250" cy="250" r="207" fx="250" fy="250" gradientUnits="userSpaceOnUse"
-                        shape-rendering="geometricPrecision" id="a-3" xml:space="default">
-            <stop offset="0%" stop-color="#FFFFFF" stop-opacity="1" shape-rendering="geometricPrecision" id="stop2-6"
-                  xml:space="default"/>
-            <stop offset="58.8%" stop-color="#F5F5F5" stop-opacity="1" shape-rendering="geometricPrecision" id="stop4-9"
-                  xml:space="default"/>
-            <stop offset="100%" stop-color="#979798" stop-opacity="1" shape-rendering="geometricPrecision" id="stop6-9"
-                  xml:space="default"/>
-        </radialGradient>
-    </defs>
-    <circle cx="247.8813" cy="250" r="220" stroke="#008BFF" stroke-width="37.5" shape-rendering="geometricPrecision"
-            id="circle2" xml:space="default" style="fill:#008BFF;"/>
-    <g shape-rendering="geometricPrecision" transform="translate(-2.118644, 3.898305E-06)" id="g875"
-       xml:space="default">
-        <circle cx="250" cy="250" r="185" stroke="#434242" stroke-width="10" shape-rendering="geometricPrecision"
-                id="circle13" xml:space="default" style="fill:url(#a-3);"/>
-        <path d="M407 247 L391 247 L391 248 C391 250 392 252 393 253 C395 255 397 255 400 256 L400 257 L379 257 L379 256 L385 254 C386 253 387 253 388 251 L388 247 L373 247 L372 248 C371 249 371 250 371 251 L371 253 C371 257 372 260 374 262 C376 265 378 266 382 267 L382 268 L369 267 L369 232 L370 232 L370 233 C370 234 370 235 371 236 C371 236 371 237 372 237 L406 237 C407 237 407 237 408 236 L408 232 L410 232 L410 266 L398 266 L398 264 C400 264 403 263 404 262 L407 258 z M261 364 L262 377 L260 377 C260 374 258 371 256 369 C254 367 251 366 249 366 C247 366 245 367 244 368 C243 369 242 370 242 371 C242 372 242 373 243 374 C243 375 244 376 246 377 C246 377 249 378 252 380 C257 382 260 385 262 387 C263 389 264 391 264 394 C264 397 263 400 260 402 C257 405 254 406 250 406 L246 406 C245 405 244 405 242 404 L238 404 L237 406 L236 406 L236 391 L237 391 C238 395 239 398 242 401 C244 403 247 404 250 404 C252 404 254 403 255 402 C257 401 257 400 257 398 C257 397 257 396 256 395 C256 394 255 393 254 393 C253 392 251 391 249 390 C245 388 242 386 241 385 C239 384 238 382 237 381 C236 379 236 377 236 375 C236 372 237 370 239 367 C242 365 245 364 248 364 L252 364 L255 366 C257 366 258 367 258 367 C259 367 259 366 259 366 C260 366 260 365 260 364 z M126 280 L125 280 L125 278 L123 277 C123 277 121 276 118 275 L85 262 L85 261 L111 251 L85 240 L85 239 L118 226 C121 224 123 223 124 223 C125 222 125 221 125 220 L126 220 L126 238 L125 238 L125 235 C124 234 124 234 123 234 L118 236 L99 243 L114 250 L118 248 C121 247 122 247 123 246 C124 246 125 245 125 244 L125 242 L126 242 L126 261 L125 261 L125 258 C125 258 125 257 124 257 L123 257 C123 257 121 257 119 258 L100 265 L117 272 C119 273 120 273 121 273 C121 273 122 274 123 274 C123 274 124 273 125 273 L125 270 L126 270 z M243 92 L263 117 L263 100 C263 97 263 96 262 95 C261 94 260 93 257 93 L257 92 L271 92 L271 93 C269 93 268 94 267 94 C267 94 266 95 266 96 C266 96 265 98 265 100 L265 133 L264 133 L237 100 L237 125 C237 128 238 129 239 130 C240 131 241 131 242 131 L243 131 L243 132 L229 132 L229 131 C231 131 233 131 234 130 C235 129 235 128 235 125 L235 97 L234 96 C233 95 233 94 232 94 C231 93 230 93 229 93 L229 92 z"
-              shape-rendering="geometricPrecision" id="path15" xml:space="default" connector-curvature="0"
-              style="fill:#434242;"/>
-        <path d="M430 250 L415 250 M85 250 L70 250 M250 70 L250 85 M250 415 L250 430 M424 297 L409 293 M91 207 L76 203 M297 76 L293 91 M207 409 L203 424 M406 340 L393 333 M107 167 L94 160 M340 94 L332 107 M167 393 L160 406 M377 377 L367 367 M133 133 L123 123 M377 123 L367 133 M133 367 L123 377 M340 406 L332 393 M167 107 L160 94 M406 160 L393 168 M107 333 L94 340 M297 424 L293 409 M207 91 L203 76 M424 203 L409 207 M91 293 L76 297"
-              stroke="#434242" stroke-width="7.5" stroke-linecap="round" shape-rendering="geometricPrecision"
-              id="path17" xml:space="default" connector-curvature="0" style="fill:none;"/>
-        <polygon points="233,267 250,345 267,267 345,250 267,233 250,155 233,233 155,250"
-                 shape-rendering="geometricPrecision" id="polygon19" xml:space="default" style="fill:#CDCDCE;"/>
-        <polygon points="265,265 356,144 235,235 144,356" stroke="#434242" stroke-width="10" stroke-linejoin="round"
-                 shape-rendering="geometricPrecision" id="polygon21" xml:space="default" style="fill:none;"/>
-        <polygon points="265,265 250,250 353,147" shape-rendering="geometricPrecision" id="polygon23"
-                 xml:space="default" style="fill:#279DFF;"/>
-        <polygon points="235,235 250,250 147,353" shape-rendering="geometricPrecision" id="polygon25"
-                 xml:space="default" style="fill:#474747;"/>
-        <polygon points="265,265 250,250 147,353" shape-rendering="geometricPrecision" id="polygon27"
-                 xml:space="default" style="fill:#6D6D6D;"/>
-        <polygon points="235,235 250,250 353,147" shape-rendering="geometricPrecision" id="polygon29"
-                 xml:space="default" style="fill:#0076D8;"/>
-        <circle r="20" stroke="#434242" stroke-width="5" shape-rendering="geometricPrecision"
-                transform="matrix(0.455, 0.455, -0.455, 0.455, 249.998, 250)" id="circle31" xml:space="default"
-                style="fill:#FFFFFF;"/>
-    </g>
+<svg x="0" y="0" width="32" height="31.90382" viewBox="0, 0, 236.22, 235.51" preserveAspectRatio="xMidYMid" font-size="0" id="Layer_1" xml:space="default" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xml="http://www.w3.org/XML/1998/namespace" version="1.1">
+  <circle cx="120.23" cy="118.9" r="79.09" id="circle4597" xml:space="default" style="fill:none;" />
+  <path d="M41.83 115.27 A90 90 0 0 1 56.41 77.41 C57.22 76.21001 55.27 75.08 54.47 76.27 A91.4 91.4 0 0 0 39.66 114.66 C39.46 116.08 41.66 116.66 41.83 115.26 z" transform="translate(-7.76, -7.8)" id="path4599" xml:space="default" style="fill:#474747;" />
+  <path d="M199.51 176 A86.9 86.9 0 0 1 53.50999 171.44 A87.89 87.89 0 0 1 41.1 126.7 A1.13 1.13 0 0 0 38.85 126.7 A89.15 89.15 0 0 0 161.12 209.47 A90.72 90.72 0 0 0 201.45 177.19 C202.28 176 200.33 174.88 199.51 176.05 z" transform="translate(-7.76, -7.8)" id="path4601" xml:space="default" style="fill:#474747;" />
+  <path d="M213.43 142.6 A90.88 90.88 0 0 1 201.56 172.95 C200.8 174.19 202.74 175.32 203.5 174.09 A92.57 92.57 0 0 0 215.6 143.21 C215.88 141.8 213.71 141.21 213.43 142.61 z" transform="translate(-7.76, -7.8)" id="path4603" xml:space="default" style="fill:#474747;" />
+  <path d="M214.57 134.06 Q214.4 136.06 214.15 138.06 A1.13 1.13 0 0 0 215.28 139.19 A1.15 1.15 0 0 0 216.4 138 Q216.65 136 216.82 134 C216.94 132.56 214.69 132.57 214.57 134 z" transform="translate(-7.76, -7.8)" id="path4605" xml:space="default" style="fill:#474747;" />
+  <path d="M60.87 71.51 C80.50999 48.11 111.09 36.08 141.43 40.84 A86.88 86.88 0 0 1 214.88 126.7 A1.13 1.13 0 0 0 217.13 126.7 A89.17 89.17 0 0 0 101.52 41.55 A90.38 90.38 0 0 0 59.28 69.92 C58.35 71.02 59.94 72.62 60.87 71.50999 z" transform="translate(-7.76, -7.8)" id="path4607" xml:space="default" style="fill:#474747;" />
+  <path d="M207.67 126.7 C207.39 159.92 186.53 190.29 155.12 201.64 A80.42 80.42 0 0 1 66.8 177.74 C45.3 151.96 42.35999 114.29 59.8 85.54001 A80.44 80.44 0 0 1 144.19 48.65001 C180.99 56.24001 207.4 89.36001 207.72 126.65 A1.13 1.13 0 0 0 209.97 126.65 C209.68 92.65001 188.44 61.65001 156.4 49.76001 C123.88 37.76001 86.23999 48.12001 64.39999 75.02001 C42.89 101.56 40.15 139.76 57.81 169 A82.74 82.74 0 0 0 143.41 207.19 C181.8 199.92 209.59 165.5 209.92 126.71 A1.13 1.13 0 0 0 207.67 126.7 z" transform="translate(-7.76, -7.8)" id="path4609" xml:space="default" style="fill:#474747;" />
+  <circle cx="120.23" cy="118.9" r="67.55" id="circle4611" xml:space="default" style="fill:none;" />
+  <path d="M179.13 126.7 C178.85 148.19 165.42 167.8 144.96 174.97 A51.16 51.16 0 1 1 138.55 76.65 C162.16 81.65 178.82 102.78 179.13 126.71 A1.13 1.13 0 0 0 181.38 126.71 A53.39 53.39 0 0 0 86.75 92.78 A53.39 53.39 0 0 0 137.83 179.19 C163 174.53 181.05 152 181.38 126.7 A1.13 1.13 0 0 0 179.13 126.7 z" transform="translate(-7.76, -7.8)" id="path4613" xml:space="default" style="fill:#474747;" />
+  <line x1="120.23" y1="200.19" x2="120.23" y2="171" stroke="#474747" stroke-miterlimit="10" id="line4615" xml:space="default" />
+  <line x1="120.23" y1="66.79" x2="120.23" y2="37.6" stroke="#474747" stroke-miterlimit="10" id="line4617" xml:space="default" />
+  <line x1="62.74" y1="176.38" x2="83.39" y2="155.74" stroke="#474747" stroke-miterlimit="10" id="line4619" xml:space="default" />
+  <line x1="157.07" y1="82.05" x2="177.71" y2="61.41" stroke="#474747" stroke-miterlimit="10" id="line4621" xml:space="default" />
+  <line x1="38.93" y1="120.5" x2="68.13" y2="120.5" stroke="#474747" stroke-miterlimit="10" id="line4623" xml:space="default" />
+  <line x1="172.33" y1="120.5" x2="201.52" y2="120.5" stroke="#474747" stroke-miterlimit="10" id="line4625" xml:space="default" />
+  <line x1="62.74" y1="61.41" x2="83.39" y2="82.05" stroke="#474747" stroke-miterlimit="10" id="line4627" xml:space="default" />
+  <line x1="157.07" y1="155.74" x2="177.71" y2="176.38" stroke="#474747" stroke-miterlimit="10" id="line4629" xml:space="default" />
+  <polygon points="119.84,50.67 106.05,119.66 134.41,119.66 119.84,50.67" id="polygon4631" xml:space="default" style="fill:#00ACBB;" />
+  <polyline points="134.41,118.9 119.84,187.12 106.05,118.9" id="polyline4633" xml:space="default" style="fill:#00ACBB;" />
+  <polygon points="188.45,120.11 119.46,106.32 119.46,134.68 188.45,120.11" id="polygon4635" xml:space="default" style="fill:#00ACBB;" />
+  <polyline points="120.23,134.68 52,120.11 120.23,106.32" id="polyline4637" xml:space="default" style="fill:#00ACBB;" />
+  <polygon points="145.06,94.6 113.93,115.35 124.59,126.02 145.06,94.6" id="polygon4639" xml:space="default" style="fill:#00ACBB;" />
+  <polyline points="124.88,125.73 93.75,145.91 114.22,115.07" id="polyline4641" xml:space="default" style="fill:#00ACBB;" />
+  <polygon points="145.34,145.91 124.59,114.78 113.93,125.44 145.34,145.91" id="polygon4643" xml:space="default" style="fill:#00ACBB;" />
+  <polyline points="114.22,125.73 94.04,94.6 124.88,115.07" id="polyline4645" xml:space="default" style="fill:#00ACBB;" />
+  <circle cx="120.23" cy="118.9" r="12.56" stroke="#474747" stroke-width="0.68px" stroke-miterlimit="10" id="circle4647" xml:space="default" style="fill:none;" />
+  <rect x="126.3" y="65.09" width="1.73" height="129.1" stroke="#474747" stroke-width="2.72px" stroke-miterlimit="10" transform="translate(60.59, -49.97) rotate(25.55, 0, 0)" id="rect4649" xml:space="default" style="fill:#474747;" />
+  <polygon points="132.92,74.47 153.36,53.25 146.33,81.2 144.07,70.26 132.92,74.47" stroke="#474747" stroke-width="0.41px" stroke-miterlimit="10" id="polygon4651" xml:space="default" style="fill:#474747;" />
+  <polygon points="102.18,157.89 94.44,161.01 85.42,179.86 95.21,184.54 104.22,165.68 102.18,157.89" stroke="#474747" stroke-width="0.41px" stroke-miterlimit="10" id="polygon4653" xml:space="default" style="fill:#474747;" />
+  <circle cx="127.99" cy="126.7" r="5.48" transform="translate(-48.66, 181.42) rotate(-65.02, 0, 0)" id="circle4655" xml:space="default" style="fill:#474747;" />
+  <path d="M156.84 165.52 A56.56 56.56 0 0 0 166.1 156.11 C166.98 154.98 165.4 153.38 164.51 154.52 A56.56 56.56 0 0 1 155.25 163.93 C154.12 164.84 155.72 166.42 156.84 165.52 z" transform="translate(-7.76, -7.8)" id="path4657" xml:space="default" style="fill:#474747;" />
+  <path d="M167.67 153.13 A1.13 1.13 0 0 0 167.67 150.88 A1.13 1.13 0 0 0 167.67 153.13 z" transform="translate(-7.76, -7.8)" id="path4659" xml:space="default" style="fill:#474747;" />
+  <path d="M96.84 87.84 A50.65 50.65 0 0 0 89.71999 95.45 C88.84 96.6 90.78999 97.71999 91.66 96.59 A48 48 0 0 1 98.42999 89.42999 C99.52999 88.48 97.92999 86.89999 96.84 87.84 z" transform="translate(-7.76, -7.8)" id="path4661" xml:space="default" style="fill:#474747;" />
+  <path d="M88.33 100.13 A1.13 1.13 0 0 0 88.33 97.88 A1.13 1.13 0 0 0 88.33 100.13 z" transform="translate(-7.76, -7.8)" id="path4663" xml:space="default" style="fill:#474747;" />
+  <path d="M126 10 L133 20.55 L133 9.88 A2.34 2.34 0 0 1 133.45 8.32 A1.5 1.5 0 0 1 134.65 7.8 A1.55 1.55 0 0 1 135.88 8.32 A2.32 2.32 0 0 1 136.33 9.879999 L136.33 23.95 Q136.33 26.31 134.33 26.31 A2.6 2.6 0 0 1 133.45 26.17 A2.22 2.22 0 0 1 132.72 25.72 A4.26 4.26 0 0 1 132.09 25.01 L131.5 24.17 L124.7 13.75 L124.7 24.23 A2.24 2.24 0 0 1 124.22 25.78 A1.58 1.58 0 0 1 123 26.3 A1.56 1.56 0 0 1 121.77 25.77 A2.28 2.28 0 0 1 121.31 24.23 L121.31 10.42 A3.91 3.91 0 0 1 121.51 9.04 A2 2 0 0 1 122.28 8.14 A2.09 2.09 0 0 1 123.44 7.79 A1.9 1.9 0 0 1 124.89 8.38 A4.41 4.41 0 0 1 125.43 9.08 z" transform="translate(-7.76, -7.8)" id="path4665" xml:space="default" style="fill:#474747;" />
+  <path d="M134.88 237.63 A5.27 5.27 0 0 1 134.04 240.55 A5.56 5.56 0 0 1 131.59 242.55 A9.17 9.17 0 0 1 127.77 243.28 A8.6 8.6 0 0 1 123.4 242.28 A5.82 5.82 0 0 1 121.4 240.36 A4.37 4.37 0 0 1 120.64 238.02 A1.58 1.58 0 0 1 122.26 236.42 A1.38 1.38 0 0 1 123.26 236.79 A2.88 2.88 0 0 1 123.94 237.88 A7.31 7.31 0 0 0 124.68 239.31 A3 3 0 0 0 125.8 240.26 A4.12 4.12 0 0 0 127.69 240.63 A4.27 4.27 0 0 0 130.31 239.88 A2.26 2.26 0 0 0 131.31 238.01 A2 2 0 0 0 130.77 236.56 A3.51 3.51 0 0 0 129.37 235.71 Q128.51 235.42 127.07 235.09 A16.85 16.85 0 0 1 123.84 234.03 A5.21 5.21 0 0 1 121.78 232.38 A4.28 4.28 0 0 1 121.02 229.79 A4.45 4.45 0 0 1 121.83 227.17 A5.08 5.08 0 0 1 124.16 225.41 A9.55 9.55 0 0 1 127.75 224.79 A8.88 8.88 0 0 1 130.6 225.2 A6 6 0 0 1 132.6 226.29 A4.53 4.53 0 0 1 133.76 227.71 A3.28 3.28 0 0 1 134.13 229.16 A1.71 1.71 0 0 1 133.67 230.33 A1.46 1.46 0 0 1 132.53 230.85 A1.31 1.31 0 0 1 131.58 230.54 A4.2 4.2 0 0 1 130.88 229.54 A4.62 4.62 0 0 0 129.71 227.96 A3.43 3.43 0 0 0 127.51 227.39 A3.81 3.81 0 0 0 125.25 228.01 A1.79 1.79 0 0 0 124.39 229.49 A1.5 1.5 0 0 0 124.68 230.42 A2.47 2.47 0 0 0 125.49 231.09 A5.5 5.5 0 0 0 126.49 231.53 Q127.01 231.69 128.22 231.99 A27.46 27.46 0 0 1 130.96 232.77 A8.32 8.32 0 0 1 133.05 233.77 A4.27 4.27 0 0 1 134.39 235.31 A5 5 0 0 1 134.88 237.63 z" transform="translate(-7.76, -7.8)" id="path4667" xml:space="default" style="fill:#474747;" />
+  <path d="M235.16 119.8 A9.55 9.55 0 0 1 239.94 120.93 A7.32 7.32 0 0 1 242.94 124.14 A10.94 10.94 0 0 1 243.94 129.03 A12 12 0 0 1 243.38 132.8 A8.16 8.16 0 0 1 241.7 135.74 A7.36 7.36 0 0 1 238.94 137.64 A10.89 10.89 0 0 1 231.43 137.64 A7.46 7.46 0 0 1 228.66 135.73 A8.17 8.17 0 0 1 226.98 132.73 A12 12 0 0 1 226.41 128.98 A11.58 11.58 0 0 1 227 125.19 A8.14 8.14 0 0 1 228.71 122.26 A7.42 7.42 0 0 1 231.44 120.41 A9.83 9.83 0 0 1 235.16 119.8 z M240.31 129.01 A8.4 8.4 0 0 0 239.68 125.6 A4.75 4.75 0 0 0 237.87 123.42 A5 5 0 0 0 235.17 122.68 A4.9 4.9 0 0 0 233.17 123.09 A4.43 4.43 0 0 0 231.58 124.28 A5.7 5.7 0 0 0 230.58 126.28 A9 9 0 0 0 230.2 129.01 A9.25 9.25 0 0 0 230.58 131.77 A5.65 5.65 0 0 0 231.67 133.77 A4.55 4.55 0 0 0 233.28 134.98 A5.09 5.09 0 0 0 237.83 134.69 A4.81 4.81 0 0 0 239.69 132.54 A8.3 8.3 0 0 0 240.31 129 z" transform="translate(-7.76, -7.8)" id="path4669" xml:space="default" style="fill:#474747;" />
+  <path d="M22 135.18 L19.11 124.45 L16.18 135.18 Q15.84 136.4 15.64 136.93 A2.32 2.32 0 0 1 14.94 137.93 A2 2 0 0 1 13.61 138.35 A2.18 2.18 0 0 1 12.51 138.1 A1.91 1.91 0 0 1 11.81 137.39 A4.47 4.47 0 0 1 11.37 136.3 Q11.2 135.67 11.06 135.13 L8 123 A7.06 7.06 0 0 1 7.73 121.4 A1.57 1.57 0 0 1 8.22 120.23 A1.66 1.66 0 0 1 9.43 119.75 A1.37 1.37 0 0 1 10.76 120.38 A7.2 7.2 0 0 1 11.36 122.22 L13.7 132.67 L16.32 122.89 A15.81 15.81 0 0 1 16.84 121.18 A2.47 2.47 0 0 1 17.6 120.18 A2.2 2.2 0 0 1 19.03 119.75 A2.08 2.08 0 0 1 20.45 120.2 A2.45 2.45 0 0 1 21.15 121.2 Q21.34 121.73 21.67 122.93 L24.32 132.71 L26.66 122.26 A12.08 12.08 0 0 1 27 121 A2.05 2.05 0 0 1 27.52 120.17 A1.48 1.48 0 0 1 28.6 119.8 A1.68 1.68 0 0 1 29.8 120.27 A1.56 1.56 0 0 1 30.29 121.45 A7.67 7.67 0 0 1 30.02 123.05 L27.02 135.05 Q26.72 136.27 26.51 136.84 A2.38 2.38 0 0 1 25.83 137.84 A2 2 0 0 1 24.47 138.27 A2 2 0 0 1 23.14 137.86 A2.24 2.24 0 0 1 22.44 136.93 Q22.31 136.44 22 135.18 z" transform="translate(-7.76, -7.8)" id="path4671" xml:space="default" style="fill:#474747;" />
 </svg>

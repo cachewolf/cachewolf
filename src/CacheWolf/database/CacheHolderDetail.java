@@ -445,7 +445,8 @@ public class CacheHolderDetail {
         } else {
             // if no URL is stored, set default URL (at this time only possible for gc.com)
             if (parent.isGC()) {
-                URL = "http://www.geocaching.com/seek/cache_details.aspx?wp=" + parent.getCode();
+                //URL = "http://www.geocaching.com/seek/cache_details.aspx?wp=" + parent.getCode();
+                URL = "https://coord.info/" + parent.getCode();
             }
         }
 

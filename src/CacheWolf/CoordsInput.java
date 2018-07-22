@@ -431,7 +431,7 @@ class GeoCodeGui extends Form {
 
         // Description of found sites
         choice = new mList(8, 50, false);
-        ScrollBarPanel sbp = new MyScrollBarPanel(choice, 0);
+        MyScrollBarPanel sbp = new MyScrollBarPanel(choice, 0);
         sbp.setOptions(MyScrollBarPanel.NeverShowVerticalScrollers);
         mainPanel.addLast(sbp, CellConstants.STRETCH, CellConstants.FILL | CellConstants.WEST);
 

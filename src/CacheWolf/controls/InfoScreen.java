@@ -50,7 +50,7 @@ public class InfoScreen extends Form {
         } else
             myText = datei;
         disp.setHtml(myText);
-        ScrollBarPanel sbp = new MyScrollBarPanel(disp, ScrollablePanel.NeverShowHorizontalScrollers);
+        MyScrollBarPanel sbp = new MyScrollBarPanel(disp, ScrollablePanel.NeverShowHorizontalScrollers);
         this.addLast(sbp);
         executePanel = new ExecutePanel(this, FormBase.OKB);
         Preferences.itself().setBigWindowSize(this);

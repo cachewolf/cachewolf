@@ -440,7 +440,7 @@ class ImagePanelImage extends AniImage {
  */
 class ImageDetailForm extends Form {
     ImageInteractivePanel ipp = new ImageInteractivePanel();
-    ScrollBarPanel scp;
+    MyScrollBarPanel scp;
 
     public ImageDetailForm(String imgLoc, String imgTitle, String imgComment) {
         scp = new MyScrollBarPanel(ipp);
@@ -466,7 +466,7 @@ class ImageDetailForm extends Form {
  */
 class ImageInteractivePanel extends InteractivePanel {
     int state = -1; // 0 = nothing, -1 = scaled to window, 1 = scaled to original size
-    ScrollBarPanel scp;
+    MyScrollBarPanel scp;
     String imgLoc = "";
     AniImage pic = null;
     private Menu mClose = new Menu(new String[]{"Close"}, "");

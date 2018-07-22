@@ -42,7 +42,7 @@ public class NotesScreen extends Form {
     CacheHolder ch = null;
     CacheHolderDetail chD = null;
     mButton addDateTime;
-    ScrollBarPanel sbp = new MyScrollBarPanel(wayNotes);
+    MyScrollBarPanel sbp = new MyScrollBarPanel(wayNotes);
 
     public NotesScreen(CacheHolder _ch) {
         addDateTime = GuiImageBroker.getButton("", "date_time");
