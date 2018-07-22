@@ -118,7 +118,7 @@ public class Attribute {
             {"72", "2652", "landf", "0", "45", "Lost And Found Tour"}, //
             {"73", "2654", "rv", "0", "46", "Truck Driver/RV"}, //
             {"74", "2656", "field_puzzle", "0", "47", "Field Puzzle"},//
-            {"75", "2658", "uv", "0", "48", "UV Light required"}, //
+            {"75", "2658", "UV", "0", "48", "UV Light required"}, //
             {"76", "2660", "snowshoes", "0", "49", "Snowshoes"}, //
             {"77", "2662", "skiis", "0", "50", "Cross Country Skis"}, //
             {"78", "2664", "s-tool", "0", "51", "Special Tool required"}, //
