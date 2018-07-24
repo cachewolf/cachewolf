@@ -233,21 +233,19 @@ public class X500Name
             }
             else
             {
-              	throw new UnsupportedClassVersionError();/*
-                                if (rdn.getFirst().getType().equals(attributeType))
+                if (rdn.getFirst().getType().equals(attributeType))
                 {
                     res[count++] = rdn;
                 }
-*/            }
+            }
         }
 
-        	throw new UnsupportedClassVersionError();/*
         RDN[] tmp = new RDN[count];
 
         System.arraycopy(res, 0, tmp, 0, tmp.length);
 
         return tmp;
-*/    }
+    }
 
     public ASN1Primitive toASN1Primitive()
     {

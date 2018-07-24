@@ -74,9 +74,8 @@ public abstract class ASN1Primitive
      */
     ASN1Primitive toDLObject()
     {
-    	throw new UnsupportedClassVersionError();/*
         return this;
- */   }
+   }
 
     public abstract int hashCode();
 

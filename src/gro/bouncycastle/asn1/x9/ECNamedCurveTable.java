@@ -6,9 +6,9 @@ import gro.bouncycastle.asn1.ASN1ObjectIdentifier;
 //import gro.bouncycastle.asn1.anssi.ANSSINamedCurves;
 //import gro.bouncycastle.asn1.cryptopro.ECGOST3410NamedCurves;
 //import gro.bouncycastle.asn1.gm.GMNamedCurves;
-//import gro.bouncycastle.asn1.nist.NISTNamedCurves;
+import gro.bouncycastle.asn1.nist.NISTNamedCurves;
 import gro.bouncycastle.asn1.sec.SECNamedCurves;
-//import gro.bouncycastle.asn1.teletrust.TeleTrusTNamedCurves;
+import gro.bouncycastle.asn1.teletrust.TeleTrusTNamedCurves;
 
 /**
  * A general class that reads all X9.62 style EC curve tables.
@@ -23,8 +23,7 @@ public class ECNamedCurveTable
      * @return an X9ECParameters object or null if the curve is not available.
      */
 	
-    public static X9ECParameters getByName(
-        String name)
+    public static X9ECParameters getByName(String name)
     {
         X9ECParameters ecP = X962NamedCurves.getByName(name);
 
@@ -35,15 +34,13 @@ public class ECNamedCurveTable
 
         if (ecP == null)
         {
-        	throw new UnsupportedClassVersionError();/*
             ecP = NISTNamedCurves.getByName(name);
-*/        }
+        }
 
         if (ecP == null)
         {
-        	throw new UnsupportedClassVersionError();/*
             ecP = TeleTrusTNamedCurves.getByName(name);
-*/        }
+        }
 
         if (ecP == null)
         {

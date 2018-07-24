@@ -121,16 +121,17 @@ public class Time
 
     public String getTime()
     {
-    	throw new UnsupportedClassVersionError();/*
         if (time instanceof ASN1UTCTime)
         {
+        	throw new UnsupportedClassVersionError();/*
             return ((ASN1UTCTime)time).getAdjustedTime();
-        }
+*/        }
         else
         {
+        	throw new UnsupportedClassVersionError();/*
             return ((ASN1GeneralizedTime)time).getTime();
-        }
-*/    }
+*/        }
+    }
 
     public Date getDate()
     {

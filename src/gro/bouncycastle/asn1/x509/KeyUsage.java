@@ -82,9 +82,8 @@ public class KeyUsage
      */
     public boolean hasUsages(int usages)
     {
-    	throw new UnsupportedClassVersionError();/*
         return (bitString.intValue() & usages) == usages;
-*/    }
+    }
 
     public byte[] getBytes()
     {
@@ -93,9 +92,8 @@ public class KeyUsage
 
     public int getPadBits()
     {
-    	throw new UnsupportedClassVersionError();/*
         return bitString.getPadBits();
-*/    }
+    }
 
     public String toString()
     {

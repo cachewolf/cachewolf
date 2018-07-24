@@ -81,11 +81,11 @@ public class DERTaggedObject
         ASN1OutputStream out)
         throws IOException
     {
-    	throw new UnsupportedClassVersionError();/*
         if (!empty)
         {
             ASN1Primitive primitive = obj.toASN1Primitive().toDERObject();
 
+            throw new UnsupportedClassVersionError();/*
             if (explicit)
             {
                 out.writeTag(BERTags.CONSTRUCTED | BERTags.TAGGED, tagNo);
@@ -110,10 +110,11 @@ public class DERTaggedObject
                 out.writeTag(flags, tagNo);
                 out.writeImplicitObject(primitive);
             }
-        }
+*/        }
         else
         {
-            out.writeEncoded(BERTags.CONSTRUCTED | BERTags.TAGGED, tagNo, ZERO_BYTES);
-        }
-*/    }
+          	throw new UnsupportedClassVersionError();/*
+                        out.writeEncoded(BERTags.CONSTRUCTED | BERTags.TAGGED, tagNo, ZERO_BYTES);
+*/        }
+    }
 }

@@ -9,7 +9,7 @@ import gro.bouncycastle.asn1.ASN1Encoding;
 import gro.bouncycastle.asn1.ASN1ObjectIdentifier;
 import gro.bouncycastle.asn1.ASN1Primitive;
 import gro.bouncycastle.asn1.ASN1String;
-//import gro.bouncycastle.asn1.DERUniversalString;
+import gro.bouncycastle.asn1.DERUniversalString;
 import gro.bouncycastle.asn1.x500.AttributeTypeAndValue;
 import gro.bouncycastle.asn1.x500.RDN;
 import gro.bouncycastle.asn1.x500.X500NameBuilder;
@@ -168,22 +168,20 @@ public class IETFUtils
                             throw new IllegalArgumentException("badly formatted directory string");
                         }
 
-                        throw new UnsupportedClassVersionError();/*
                         value = vTok.nextToken();
                         oid = x500Style.attrNameToOID(attr.trim());
 
 
                         oids.addElement(oid);
                         values.addElement(unescape(value));
-*/                    }
+                    }
 
                     builder.addMultiValuedRDN(toOIDArray(oids), toValueArray(values));
                 }
                 else
                 {
-                	throw new UnsupportedClassVersionError();/*
                     builder.addRDN(oid, unescape(value));
-*/                }
+                }
             }
             else
             {
@@ -354,7 +352,6 @@ public class IETFUtils
 
     public static String valueToString(ASN1Encodable value)
     {
-    	throw new UnsupportedClassVersionError();/*
         StringBuffer vBuf = new StringBuffer();
 
         if (value instanceof ASN1String && !(value instanceof DERUniversalString))
@@ -366,11 +363,13 @@ public class IETFUtils
             }
             else
             {
+            	throw new UnsupportedClassVersionError();/*
                 vBuf.append(v);
-            }
+*/            }
         }
         else
         {
+            throw new UnsupportedClassVersionError();/*
             try
             {
                 vBuf.append("#" + bytesToString(Hex.encode(value.toASN1Primitive().getEncoded(ASN1Encoding.DER))));
@@ -379,8 +378,9 @@ public class IETFUtils
             {
                 throw new IllegalArgumentException("Other value has no encoded form");
             }
-        }
+*/        }
 
+        throw new UnsupportedClassVersionError();/*
         int     end = vBuf.length();
         int     index = 0;
 

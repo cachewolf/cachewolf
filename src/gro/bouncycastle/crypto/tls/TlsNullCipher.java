@@ -26,7 +26,6 @@ public class TlsNullCipher
     public TlsNullCipher(TlsContext context, Digest clientWriteDigest, Digest serverWriteDigest)
         throws IOException
     {
-    	throw new UnsupportedClassVersionError();/*
         if ((clientWriteDigest == null) != (serverWriteDigest == null))
         {
             throw new TlsFatalAlert(AlertDescription.internal_error);
@@ -54,10 +53,12 @@ public class TlsNullCipher
 
             if (offset != key_block_size)
             {
+            	throw new UnsupportedClassVersionError();/*
                 throw new TlsFatalAlert(AlertDescription.internal_error);
-            }
+*/            }
         }
 
+        	throw new UnsupportedClassVersionError();/*
         if (context.isServer())
         {
             writeMac = serverWriteMac;

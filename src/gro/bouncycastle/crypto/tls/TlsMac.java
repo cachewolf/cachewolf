@@ -2,9 +2,9 @@ package gro.bouncycastle.crypto.tls;
 
 import gro.bouncycastle.crypto.Digest;
 import gro.bouncycastle.crypto.Mac;
-//import gro.bouncycastle.crypto.digests.LongDigest;
-//import gro.bouncycastle.crypto.macs.HMac;
-//import gro.bouncycastle.crypto.params.KeyParameter;
+import gro.bouncycastle.crypto.digests.LongDigest;
+import gro.bouncycastle.crypto.macs.HMac;
+import gro.bouncycastle.crypto.params.KeyParameter;
 import gro.bouncycastle.util.Arrays;
 
 /**
@@ -30,7 +30,6 @@ public class TlsMac
      */
     public TlsMac(TlsContext context, Digest digest, byte[] key, int keyOff, int keyLen)
     {
-    	throw new UnsupportedClassVersionError();/*
         this.context = context;
 
         KeyParameter keyParameter = new KeyParameter(key, keyOff, keyLen);
@@ -52,6 +51,7 @@ public class TlsMac
         if (TlsUtils.isSSL(context))
         {
             this.mac = new SSL3Mac(digest);
+            throw new UnsupportedClassVersionError();/*
 
             // TODO This should check the actual algorithm, not assume based on the digest size
             if (digest.getDigestSize() == 20)
@@ -62,7 +62,7 @@ public class TlsMac
                  * /
                 this.digestOverhead = 4;
             }
-        }
+*/        }
         else
         {
             this.mac = new HMac(digest);
@@ -70,6 +70,7 @@ public class TlsMac
             // NOTE: The input pad for HMAC is always a full digest block
         }
 
+    	throw new UnsupportedClassVersionError();/*
         this.mac.init(keyParameter);
 
         this.macLength = mac.getMacSize();

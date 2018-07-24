@@ -8,7 +8,7 @@ import gro.bouncycastle.crypto.params.ECDomainParameters;
 import gro.bouncycastle.crypto.params.ECKeyParameters;
 //import gro.bouncycastle.crypto.params.ECPrivateKeyParameters;
 import gro.bouncycastle.crypto.params.ECPublicKeyParameters;
-//import gro.bouncycastle.crypto.params.ParametersWithRandom;
+import gro.bouncycastle.crypto.params.ParametersWithRandom;
 import gro.bouncycastle.math.ec.ECAlgorithms;
 import gro.bouncycastle.math.ec.ECConstants;
 import gro.bouncycastle.math.ec.ECCurve;
@@ -33,9 +33,8 @@ public class ECDSASigner
      */
     public ECDSASigner()
     {
-    	throw new UnsupportedClassVersionError();/*
         this.kCalculator = new RandomDSAKCalculator();
-*/    }
+    }
 
     /**
      * Configuration with an alternate, possibly deterministic calculator of K.
@@ -55,19 +54,20 @@ public class ECDSASigner
 
         if (forSigning)
         {
-        	throw new UnsupportedClassVersionError();/*
             if (param instanceof ParametersWithRandom)
             {
+            	throw new UnsupportedClassVersionError();/*
                 ParametersWithRandom rParam = (ParametersWithRandom)param;
 
                 this.key = (ECPrivateKeyParameters)rParam.getParameters();
                 providedRandom = rParam.getRandom();
-            }
+*/            }
             else
             {
+            	throw new UnsupportedClassVersionError();/*
                 this.key = (ECPrivateKeyParameters)param;
-            }
-*/        }
+*/            }
+        }
         else
         {
           this.key = (ECPublicKeyParameters)param;

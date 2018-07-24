@@ -2,7 +2,7 @@ package gro.bouncycastle.crypto.params;
 
 import gro.bouncycastle.crypto.CipherParameters;
 
-import java.security.SecureRandom;
+import ewe.security.SecureRandom;
 
 public class ParametersWithRandom
     implements CipherParameters

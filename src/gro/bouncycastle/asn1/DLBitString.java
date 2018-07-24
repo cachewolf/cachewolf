@@ -127,7 +127,6 @@ public class DLBitString
         ASN1OutputStream  out)
         throws IOException
     {
-    	throw new UnsupportedClassVersionError();/*
         byte[] string = data;
         byte[] bytes = new byte[string.length + 1];
 
@@ -135,7 +134,7 @@ public class DLBitString
         System.arraycopy(string, 0, bytes, 1, bytes.length - 1);
 
         out.writeEncoded(BERTags.BIT_STRING, bytes);
-*/    }
+    }
 
     static DLBitString fromOctetString(byte[] bytes)
     {

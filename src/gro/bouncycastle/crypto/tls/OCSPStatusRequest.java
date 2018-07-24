@@ -58,13 +58,13 @@ public class OCSPStatusRequest
      */
     public void encode(OutputStream output) throws IOException
     {
-    	throw new UnsupportedClassVersionError();/*
         if (responderIDList == null || responderIDList.isEmpty())
         {
             TlsUtils.writeUint16(0, output);
         }
         else
         {
+        	throw new UnsupportedClassVersionError();/*
             ByteArrayOutputStream buf = new ByteArrayOutputStream();
             for (int i = 0; i < responderIDList.size(); ++i)
             {
@@ -75,8 +75,11 @@ public class OCSPStatusRequest
             TlsUtils.checkUint16(buf.size());
             TlsUtils.writeUint16(buf.size(), output);
             Streams.writeBufTo(buf, output);
-        }
+*/        }
 
+    	//throw new UnsupportedClassVersionError();
+    	/*
+    	
         if (requestExtensions == null)
         {
             TlsUtils.writeUint16(0, output);

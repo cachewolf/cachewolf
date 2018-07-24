@@ -36,12 +36,11 @@ public class RSABlindedEngine
 
         if (param instanceof ParametersWithRandom)
         {
-        	throw new UnsupportedClassVersionError();/*
             ParametersWithRandom    rParam = (ParametersWithRandom)param;
 
             key = (RSAKeyParameters)rParam.getParameters();
             random = rParam.getRandom();
-*/        }
+        }
         else
         {
             key = (RSAKeyParameters)param;

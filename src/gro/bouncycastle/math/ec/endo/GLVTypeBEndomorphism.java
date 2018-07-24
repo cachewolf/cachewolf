@@ -4,7 +4,7 @@ import ewe.math.BigInteger;
 import gro.bouncycastle.math.ec.ECConstants;
 import gro.bouncycastle.math.ec.ECCurve;
 import gro.bouncycastle.math.ec.ECPointMap;
-//import gro.bouncycastle.math.ec.ScaleXPointMap;
+import gro.bouncycastle.math.ec.ScaleXPointMap;
 
 public class GLVTypeBEndomorphism implements GLVEndomorphism
 {
@@ -14,11 +14,10 @@ public class GLVTypeBEndomorphism implements GLVEndomorphism
 
     public GLVTypeBEndomorphism(ECCurve curve, GLVTypeBParameters parameters)
     {
-    	throw new UnsupportedClassVersionError();/*
         this.curve = curve;
         this.parameters = parameters;
         this.pointMap = new ScaleXPointMap(curve.fromBigInteger(parameters.getBeta()));
-*/    }
+    }
 
     public BigInteger[] decomposeScalar(BigInteger k)
     {

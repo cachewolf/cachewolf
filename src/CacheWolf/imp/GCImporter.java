@@ -142,6 +142,8 @@ public class GCImporter {
     private static Regex koordRex;
     private static Regex descRex;
     private static Regex typeRex;
+    private static Regex uuidRex;
+
     // images Spoiler
     private static String spoilerSectionStart, spoilerSectionEnd, spoilerSectionStart2;
     private static String imgCommentExStart, imgCommentExEnd;
@@ -353,7 +355,7 @@ public class GCImporter {
             bugTotalRecords = p.getProp("bugTotalRecords");
             bugNameStart = p.getProp("bugNameStart");
             bugNameEnd = p.getProp("bugNameEnd");
-
+            uuidRex = new Regex(p.getProp("uuidRex"));
         } catch (final Exception ex) {
             Preferences.itself().log("Error fetching Properties.", ex);
         }
@@ -2211,6 +2213,7 @@ public class GCImporter {
                         getAddWaypoints(wayPointPage, newCache.getCode(), newCache.isFound());
                         getAttributes(newCacheDetails);
                         newCache.setLastSync((new Time()).format("yyyyMMddHHmmss"));
+                        newCache.setIdOC (wayPointPageGetUuid());
                         newCache.setIncomplete(false);
                         Preferences.itself().log("ready " + newCache.getCode() + " : " + newCache.getLastSync());
                         break;
@@ -2991,6 +2994,17 @@ public class GCImporter {
             }
         }
     }
+
+    private String wayPointPageGetUuid (){
+        uuidRex.searchFrom(wayPointPage, wayPointPageIndex);
+        if (uuidRex.didMatch()) {
+            wayPointPageIndex = uuidRex.matchedTo();
+	    return uuidRex.stringMatched(1);
+        } else {
+            return "";
+        }
+    }
+
 
     public void getAttributes(CacheHolderDetail chD) {
         final Extractor attBlock = new Extractor(wayPointPage, attBlockExStart, attBlockExEnd, 0, true);

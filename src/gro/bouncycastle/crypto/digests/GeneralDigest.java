@@ -2,7 +2,7 @@ package gro.bouncycastle.crypto.digests;
 
 import gro.bouncycastle.crypto.ExtendedDigest;
 import gro.bouncycastle.util.Memoable;
-//import org.bouncycastle.util.Pack;
+import gro.bouncycastle.util.Pack;
 
 /**
  * base implementation of MD4 family style digest as outlined in
@@ -38,11 +38,10 @@ public abstract class GeneralDigest
 
     protected GeneralDigest(byte[] encodedState)
     {
-    	throw new UnsupportedClassVersionError();/*
         System.arraycopy(encodedState, 0, xBuf, 0, xBuf.length);
         xBufOff = Pack.bigEndianToInt(encodedState, 4);
         byteCount = Pack.bigEndianToLong(encodedState, 8);
-*/    }
+    }
 
     protected void copyIn(GeneralDigest t)
     {

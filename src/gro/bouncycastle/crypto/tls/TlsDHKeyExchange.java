@@ -44,10 +44,9 @@ public class TlsDHKeyExchange
             this.tlsSigner = new TlsRSASigner();
             break;
         case KeyExchangeAlgorithm.DHE_DSS:
-        	throw new UnsupportedClassVersionError();/*
             this.tlsSigner = new TlsDSSSigner();
             break;
-*/        default:
+        default:
             throw new IllegalArgumentException("unsupported key exchange algorithm");
         }
 
@@ -242,13 +241,14 @@ public class TlsDHKeyExchange
 
     public void processClientKeyExchange(InputStream input) throws IOException
     {
-    	throw new UnsupportedClassVersionError();/*
         if (dhAgreePublicKey != null)
         {
+        	throw new UnsupportedClassVersionError();/*
             // For dss_fixed_dh and rsa_fixed_dh, the key arrived in the client certificate
             return;
-        }
+*/        }
 
+    	throw new UnsupportedClassVersionError();/*
         BigInteger Yc = TlsDHUtils.readDHParameter(input);
         
         this.dhAgreePublicKey = TlsDHUtils.validateDHPublicKey(new DHPublicKeyParameters(Yc, dhParameters));

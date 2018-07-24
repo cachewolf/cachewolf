@@ -53,23 +53,24 @@ public abstract class AbstractTlsKeyExchange
              */
             if (this.supportedSignatureAlgorithms == null)
             {
-        	throw new UnsupportedClassVersionError();/*
                 switch (keyExchange)
                 {
                 case KeyExchangeAlgorithm.DH_DSS:
                 case KeyExchangeAlgorithm.DHE_DSS:
                 case KeyExchangeAlgorithm.SRP_DSS:
                 {
+                	throw new UnsupportedClassVersionError();/*
                     this.supportedSignatureAlgorithms = TlsUtils.getDefaultDSSSignatureAlgorithms();
                     break;
-                }
+*/                }
 
                 case KeyExchangeAlgorithm.ECDH_ECDSA:
                 case KeyExchangeAlgorithm.ECDHE_ECDSA:
                 {
+                	throw new UnsupportedClassVersionError();/*
                     this.supportedSignatureAlgorithms = TlsUtils.getDefaultECDSASignatureAlgorithms();
                     break;
-                }
+*/                }
 
                 case KeyExchangeAlgorithm.DH_RSA:
                 case KeyExchangeAlgorithm.DHE_RSA:
@@ -79,9 +80,10 @@ public abstract class AbstractTlsKeyExchange
                 case KeyExchangeAlgorithm.RSA_PSK:
                 case KeyExchangeAlgorithm.SRP_RSA:
                 {
+                	throw new UnsupportedClassVersionError();/*
                     this.supportedSignatureAlgorithms = TlsUtils.getDefaultRSASignatureAlgorithms();
                     break;
-                }
+*/                }
 
                 case KeyExchangeAlgorithm.DHE_PSK:
                 case KeyExchangeAlgorithm.ECDHE_PSK:
@@ -90,14 +92,16 @@ public abstract class AbstractTlsKeyExchange
                     break;
 
                 default:
+                	throw new UnsupportedClassVersionError();/*
                     throw new IllegalStateException("unsupported key exchange algorithm");
-                }
-*/            }
+*/                }
+            }
         }
         else if (this.supportedSignatureAlgorithms != null)
         {
+        	throw new UnsupportedClassVersionError();/*
             throw new IllegalStateException("supported_signature_algorithms not allowed for " + clientVersion);
-        }
+*/        }
     }
 
     public void processServerCertificate(Certificate serverCertificate)

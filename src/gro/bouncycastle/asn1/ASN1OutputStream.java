@@ -107,11 +107,10 @@ public class ASN1OutputStream
     void writeEncoded(int flags, int tagNo, byte[] bytes)
         throws IOException
     {
-    	throw new UnsupportedClassVersionError();/*
         writeTag(flags, tagNo);
         writeLength(bytes.length);
         write(bytes);
-*/    }
+    }
 
     protected void writeNull()
         throws IOException

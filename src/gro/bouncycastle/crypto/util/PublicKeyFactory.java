@@ -19,8 +19,8 @@ import gro.bouncycastle.asn1.x509.AlgorithmIdentifier;
 //import gro.bouncycastle.asn1.x509.DSAParameter;
 import gro.bouncycastle.asn1.x509.SubjectPublicKeyInfo;
 import gro.bouncycastle.asn1.x509.X509ObjectIdentifiers;
-//import gro.bouncycastle.asn1.x9.DHPublicKey;
-//import gro.bouncycastle.asn1.x9.DomainParameters;
+import gro.bouncycastle.asn1.x9.DHPublicKey;
+import gro.bouncycastle.asn1.x9.DomainParameters;
 import gro.bouncycastle.asn1.x9.ECNamedCurveTable;
 //import gro.bouncycastle.asn1.x9.ValidationParams;
 import gro.bouncycastle.asn1.x9.X962Parameters;
@@ -92,7 +92,6 @@ public class PublicKeyFactory
         }
         else if (algId.getAlgorithm().equals(X9ObjectIdentifiers.dhpublicnumber))
         {
-        	throw new UnsupportedClassVersionError();/*
             DHPublicKey dhPublicKey = DHPublicKey.getInstance(keyInfo.parsePublicKey());
 
             BigInteger y = dhPublicKey.getY();
@@ -109,6 +108,7 @@ public class PublicKeyFactory
                 j = dhParams.getJ();
             }
 
+        	throw new UnsupportedClassVersionError();/*
             DHValidationParameters validation = null;
             ValidationParams dhValidationParms = dhParams.getValidationParams();
             if (dhValidationParms != null)

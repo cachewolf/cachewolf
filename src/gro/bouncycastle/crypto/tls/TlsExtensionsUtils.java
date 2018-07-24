@@ -24,15 +24,13 @@ public class TlsExtensionsUtils
 
     public static void addEncryptThenMACExtension(Hashtable extensions)
     {
-    	throw new UnsupportedClassVersionError();/*
         extensions.put(EXT_encrypt_then_mac, createEncryptThenMACExtension());
-*/    }
+    }
 
     public static void addExtendedMasterSecretExtension(Hashtable extensions)
     {
-    	throw new UnsupportedClassVersionError();/*
         extensions.put(EXT_extended_master_secret, createExtendedMasterSecretExtension());
-*/    }
+    }
 
     public static void addHeartbeatExtension(Hashtable extensions, HeartbeatExtension heartbeatExtension)
         throws IOException
@@ -132,18 +130,21 @@ public class TlsExtensionsUtils
     {
         return TlsUtils.EMPTY_BYTES;
     }
-
+*/
+    
     public static byte[] createEncryptThenMACExtension()
     {
+    	throw new UnsupportedClassVersionError();/*
         return createEmptyExtensionData();
-    }
+*/    }
 
     public static byte[] createExtendedMasterSecretExtension()
     {
+    	throw new UnsupportedClassVersionError();/*
         return createEmptyExtensionData();
-    }
+*/    }
 
-    public static byte[] createHeartbeatExtension(HeartbeatExtension heartbeatExtension)
+/*    public static byte[] createHeartbeatExtension(HeartbeatExtension heartbeatExtension)
         throws IOException
     {
         if (heartbeatExtension == null)

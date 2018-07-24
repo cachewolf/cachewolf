@@ -123,12 +123,12 @@ public class DERPrintableString
         String   string,
         boolean  validate)
     {
-    	throw new UnsupportedClassVersionError();/*
         if (validate && !isPrintableString(string))
         {
             throw new IllegalArgumentException("string contains illegal characters");
         }
 
+        throw new UnsupportedClassVersionError();/*
         this.string = Strings.toByteArray(string);
 */    }
     public String getString()

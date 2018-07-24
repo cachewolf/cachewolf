@@ -159,12 +159,12 @@ public class ASN1Boolean
     protected boolean asn1Equals(
         ASN1Primitive  o)
     {
-    	throw new UnsupportedClassVersionError();/*
         if (o instanceof ASN1Boolean)
         {
             return (value[0] == ((ASN1Boolean)o).value[0]);
         }
 
+        throw new UnsupportedClassVersionError();/*
         return false;
 */    }
     

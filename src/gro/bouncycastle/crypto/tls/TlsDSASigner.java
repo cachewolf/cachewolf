@@ -7,7 +7,7 @@ import gro.bouncycastle.crypto.Digest;
 import gro.bouncycastle.crypto.Signer;
 import gro.bouncycastle.crypto.digests.NullDigest;
 import gro.bouncycastle.crypto.params.AsymmetricKeyParameter;
-//import org.bouncycastle.crypto.params.ParametersWithRandom;
+import gro.bouncycastle.crypto.params.ParametersWithRandom;
 import gro.bouncycastle.crypto.signers.DSADigestSigner;
 
 public abstract class TlsDSASigner
@@ -17,7 +17,6 @@ public abstract class TlsDSASigner
         AsymmetricKeyParameter privateKey, byte[] hash)
         throws CryptoException
     {
-    	throw new UnsupportedClassVersionError();/*
         Signer signer = makeSigner(algorithm, true, true,
             new ParametersWithRandom(privateKey, this.context.getSecureRandom()));
         if (algorithm == null)
@@ -29,6 +28,7 @@ public abstract class TlsDSASigner
         {
             signer.update(hash, 0, hash.length);
         }
+        	throw new UnsupportedClassVersionError();/*
         return signer.generateSignature();
 */    }
 

@@ -43,7 +43,6 @@ public class ServerNameList
      */
     public void encode(OutputStream output) throws IOException
     {
-    	throw new UnsupportedClassVersionError();/*
         ByteArrayOutputStream buf = new ByteArrayOutputStream();
 
         short[] nameTypesSeen = new short[0];
@@ -54,11 +53,14 @@ public class ServerNameList
             nameTypesSeen = checkNameType(nameTypesSeen, entry.getNameType());
             if (nameTypesSeen == null)
             {
+            	throw new UnsupportedClassVersionError();/*
                 throw new TlsFatalAlert(AlertDescription.internal_error);
-            }
+*/            }
 
+        	throw new UnsupportedClassVersionError();/*
             entry.encode(buf);
-        }
+*/        }
+        throw new UnsupportedClassVersionError();/*
 
         TlsUtils.checkUint16(buf.size());
         TlsUtils.writeUint16(buf.size(), output);

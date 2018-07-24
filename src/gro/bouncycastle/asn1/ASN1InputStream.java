@@ -144,9 +144,8 @@ public class ASN1InputStream
 
         if ((tag & APPLICATION) != 0)
         {
-        	throw new UnsupportedClassVersionError();/*
             return new DERApplicationSpecific(isConstructed, tagNo, defIn.toByteArray());
-*/        }
+        }
 
         if ((tag & TAGGED) != 0)
         {
@@ -158,13 +157,13 @@ public class ASN1InputStream
             switch (tagNo)
             {
                 case OCTET_STRING:
-                	throw new UnsupportedClassVersionError();/*
                     //
                     // yes, people actually do this...
                     //
                     ASN1EncodableVector v = buildDEREncodableVector(defIn);
                     ASN1OctetString[] strings = new ASN1OctetString[v.size()];
 
+                    throw new UnsupportedClassVersionError();/*
                     for (int i = 0; i != strings.length; i++)
                     {
                         strings[i] = (ASN1OctetString)v.get(i);

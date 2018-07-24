@@ -137,7 +137,6 @@ public abstract class AbstractX500NameStyle
             return false;
         }
 
-    	throw new UnsupportedClassVersionError();/*
         boolean reverse = false;
 
         if (rdns1[0].getFirst() != null && rdns2[0].getFirst() != null)
@@ -145,6 +144,7 @@ public abstract class AbstractX500NameStyle
             reverse = !rdns1[0].getFirst().getType().equals(rdns2[0].getFirst().getType());  // guess forward
         }
 
+        	throw new UnsupportedClassVersionError();/*
         for (int i = 0; i != rdns1.length; i++)
         {
             if (!foundMatch(reverse, rdns1[i], rdns2))

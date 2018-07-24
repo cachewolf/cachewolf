@@ -37,7 +37,6 @@ public class ASN1StreamParser
 
     ASN1Encodable readIndef(int tagValue) throws IOException
     {
-    	throw new UnsupportedClassVersionError();/*
         // Note: INDEF => CONSTRUCTED
 
         // TODO There are other tags that may be constructed (e.g. BIT_STRING)
@@ -46,15 +45,19 @@ public class ASN1StreamParser
             case BERTags.EXTERNAL:
                 return new DERExternalParser(this);
             case BERTags.OCTET_STRING:
+	throw new UnsupportedClassVersionError();/*
                 return new BEROctetStringParser(this);
-            case BERTags.SEQUENCE:
+*/            case BERTags.SEQUENCE:
+	throw new UnsupportedClassVersionError();/*
                 return new BERSequenceParser(this);
-            case BERTags.SET:
+*/            case BERTags.SET:
+	throw new UnsupportedClassVersionError();/*
                 return new BERSetParser(this);
-            default:
+*/            default:
+	throw new UnsupportedClassVersionError();/*
                 throw new ASN1Exception("unknown BER object encountered: 0x" + Integer.toHexString(tagValue));
-        }
-*/    }
+*/        }
+    }
 
     ASN1Encodable readImplicit(boolean constructed, int tag) throws IOException
     {

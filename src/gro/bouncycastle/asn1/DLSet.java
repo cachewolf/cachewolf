@@ -130,7 +130,6 @@ public class DLSet
         ASN1OutputStream out)
         throws IOException
     {
-    	throw new UnsupportedClassVersionError();/*
         ASN1OutputStream dOut = out.getDLSubStream();
         int length = getBodyLength();
 
@@ -139,9 +138,10 @@ public class DLSet
 
         for (Enumeration e = this.getObjects(); e.hasMoreElements();)
         {
+        	throw new UnsupportedClassVersionError();/*
             Object obj = e.nextElement();
 
             dOut.writeObject((ASN1Encodable)obj);
-        }
-*/    }
+*/        }
+    }
 }

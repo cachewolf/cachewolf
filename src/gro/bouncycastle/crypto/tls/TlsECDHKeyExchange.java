@@ -45,10 +45,8 @@ public class TlsECDHKeyExchange extends AbstractTlsKeyExchange
         case KeyExchangeAlgorithm.ECDH_anon:
         case KeyExchangeAlgorithm.ECDH_RSA:
         case KeyExchangeAlgorithm.ECDH_ECDSA:
-        	throw new UnsupportedClassVersionError();/*
             this.tlsSigner = null;
             break;
-            */
         default:
             throw new IllegalArgumentException("unsupported key exchange algorithm");
         }
@@ -101,16 +99,18 @@ public class TlsECDHKeyExchange extends AbstractTlsKeyExchange
 
         if (tlsSigner == null)
         {
-        	throw new UnsupportedClassVersionError();/*
             try
             {
+            	throw new UnsupportedClassVersionError();/*
                 this.ecAgreePublicKey = TlsECCUtils.validateECPublicKey((ECPublicKeyParameters) this.serverPublicKey);
-            }
+*/            }
             catch (ClassCastException e)
             {
+            	throw new UnsupportedClassVersionError();/*
                 throw new TlsFatalAlert(AlertDescription.certificate_unknown, e);
-            }
+*/            }
 
+        /*Unreachable ->	throw new UnsupportedClassVersionError();/*
             TlsUtils.validateKeyUsage(x509Cert, KeyUsage.keyAgreement);
 */        }
         else

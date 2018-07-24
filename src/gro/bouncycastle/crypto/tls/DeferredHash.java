@@ -46,12 +46,11 @@ class DeferredHash
         int prfAlgorithm = context.getSecurityParameters().getPrfAlgorithm();
         if (prfAlgorithm == PRFAlgorithm.tls_prf_legacy)
         {
-        	throw new UnsupportedClassVersionError();/*
             CombinedHash legacyHash = new CombinedHash();
             legacyHash.init(context);
             buf.updateDigest(legacyHash);
             return legacyHash.notifyPRFDetermined();
-*/        }
+        }
 
         this.prfHashAlgorithm = Shorts.valueOf(TlsUtils.getHashAlgorithmForPRFAlgorithm(prfAlgorithm));
 
@@ -63,12 +62,13 @@ class DeferredHash
     
     public void trackHashAlgorithm(short hashAlgorithm)
     {
-    	throw new UnsupportedClassVersionError();/*
         if (buf == null)
         {
+            throw new UnsupportedClassVersionError();/*
             throw new IllegalStateException("Too late to track more hash algorithms");
-        }
+*/        }
 
+        throw new UnsupportedClassVersionError();/*
         checkTrackingHash(Shorts.valueOf(hashAlgorithm));
 */    }
     

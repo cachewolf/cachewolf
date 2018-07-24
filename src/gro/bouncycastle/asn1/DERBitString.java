@@ -128,7 +128,6 @@ public class DERBitString
         ASN1OutputStream  out)
         throws IOException
     {
-    	throw new UnsupportedClassVersionError();/*
         byte[] string = derForm(data, padBits);
         byte[] bytes = new byte[string.length + 1];
 
@@ -136,7 +135,7 @@ public class DERBitString
         System.arraycopy(string, 0, bytes, 1, bytes.length - 1);
 
         out.writeEncoded(BERTags.BIT_STRING, bytes);
-*/    }
+    }
 
     static DERBitString fromOctetString(byte[] bytes)
     {

@@ -118,14 +118,13 @@ public class GCMBlockCipher
         }
         else if (params instanceof ParametersWithIV)
         {
-        	throw new UnsupportedClassVersionError();/*
             ParametersWithIV param = (ParametersWithIV)params;
 
             newNonce = param.getIV();
             initialAssociatedText  = null;
             macSize = 16;
             keyParam = (KeyParameter)param.getParameters();
-*/        }
+        }
         else
         {
             throw new IllegalArgumentException("invalid parameters passed to GCM");
@@ -189,12 +188,11 @@ public class GCMBlockCipher
         }
         else
         {
-        	throw new UnsupportedClassVersionError(); /*
             gHASH(J0, nonce, nonce.length);
             byte[] X = new byte[BLOCK_SIZE];
             Pack.longToBigEndian((long)nonce.length * 8, X, 8);
             gHASHBlock(J0, X);
-*/        }
+        }
 
         this.S = new byte[BLOCK_SIZE];
         this.S_at = new byte[BLOCK_SIZE];

@@ -93,14 +93,13 @@ public class TlsClientProtocol
         TlsSession sessionToResume = tlsClient.getSessionToResume();
         if (sessionToResume != null && sessionToResume.isResumable())
         {
-        	throw new UnsupportedClassVersionError();/*
             SessionParameters sessionParameters = sessionToResume.exportSessionParameters();
             if (sessionParameters != null)
             {
                 this.tlsSession = sessionToResume;
                 this.sessionParameters = sessionParameters;
             }
-*/        }
+        }
 
         sendClientHelloMessage();
         this.connection_state = CS_CLIENT_HELLO;

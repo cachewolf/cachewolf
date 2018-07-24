@@ -53,10 +53,9 @@ public class TlsECCUtils
 
     public static int[] getSupportedEllipticCurvesExtension(Hashtable extensions) throws IOException
     {
-    	throw new UnsupportedClassVersionError();/*
         byte[] extensionData = TlsUtils.getExtensionData(extensions, EXT_elliptic_curves);
         return extensionData == null ? null : readSupportedEllipticCurvesExtension(extensionData);
-*/    }
+    }
 
     public static short[] getSupportedPointFormatsExtension(Hashtable extensions) throws IOException
     {
@@ -68,9 +67,8 @@ public class TlsECCUtils
     {
         if (namedCurves == null || namedCurves.length < 1)
         {
-        	throw new UnsupportedClassVersionError();/*
             throw new TlsFatalAlert(AlertDescription.internal_error);
-*/        }
+        }
 
         return TlsUtils.encodeUint16ArrayWithUint16Length(namedCurves);
     }

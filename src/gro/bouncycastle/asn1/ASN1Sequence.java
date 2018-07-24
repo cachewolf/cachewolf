@@ -142,16 +142,16 @@ public abstract class ASN1Sequence
             //
             if (obj.isExplicit())
             {
-            	throw new UnsupportedClassVersionError();/*
                 if (obj instanceof BERTaggedObject)
                 {
                     return new BERSequence(obj.getObject());
                 }
                 else
                 {
-                    return new DLSequence(obj.getObject());
-                }
-*/            }
+                  	throw new UnsupportedClassVersionError();/*
+                                      return new DLSequence(obj.getObject());
+*/                }
+            }
             else
             {
                 if (obj.getObject() instanceof ASN1Sequence)

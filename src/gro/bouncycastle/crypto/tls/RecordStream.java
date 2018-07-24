@@ -80,9 +80,8 @@ class RecordStream
 
     void setReadVersion(ProtocolVersion readVersion)
     {
-    	throw new UnsupportedClassVersionError();/*
       this.readVersion = readVersion;
-*/    }
+    }
 
     void setWriteVersion(ProtocolVersion writeVersion)
     {
@@ -98,9 +97,8 @@ class RecordStream
      */
     void setRestrictReadVersion(boolean enabled)
     {
-    	throw new UnsupportedClassVersionError();/*
       this.restrictReadVersion = enabled;
-*/    }
+    }
 
     void setPendingConnectionState(TlsCompression tlsCompression, TlsCipher tlsCipher)
     {
