@@ -148,9 +148,8 @@ public abstract class ASN1Sequence
                 }
                 else
                 {
-                  	throw new UnsupportedClassVersionError();/*
                                       return new DLSequence(obj.getObject());
-*/                }
+                }
             }
             else
             {

@@ -53,23 +53,23 @@ public class TlsNullCipher
 
             if (offset != key_block_size)
             {
-            	throw new UnsupportedClassVersionError();/*
                 throw new TlsFatalAlert(AlertDescription.internal_error);
-*/            }
+            }
         }
 
-        	throw new UnsupportedClassVersionError();/*
         if (context.isServer())
         {
+        	throw new UnsupportedClassVersionError();/*
             writeMac = serverWriteMac;
             readMac = clientWriteMac;
-        }
+*/        }
         else
         {
+        	throw new UnsupportedClassVersionError();/*
             writeMac = clientWriteMac;
             readMac = serverWriteMac;
-        }
-*/    }
+*/        }
+    }
 
     public int getPlaintextLimit(int ciphertextLimit)
     {

@@ -3,7 +3,7 @@ package gro.bouncycastle.asn1.x9;
 import ewe.util.Enumeration;
 import ewe.util.Vector;
 import gro.bouncycastle.asn1.ASN1ObjectIdentifier;
-//import gro.bouncycastle.asn1.anssi.ANSSINamedCurves;
+import gro.bouncycastle.asn1.anssi.ANSSINamedCurves;
 //import gro.bouncycastle.asn1.cryptopro.ECGOST3410NamedCurves;
 //import gro.bouncycastle.asn1.gm.GMNamedCurves;
 import gro.bouncycastle.asn1.nist.NISTNamedCurves;
@@ -44,9 +44,8 @@ public class ECNamedCurveTable
 
         if (ecP == null)
         {
-        	throw new UnsupportedClassVersionError();/*
             ecP = ANSSINamedCurves.getByName(name);
-*/        }
+        }
 
         if (ecP == null)
         {

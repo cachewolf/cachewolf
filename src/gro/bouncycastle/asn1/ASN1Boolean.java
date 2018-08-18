@@ -164,9 +164,8 @@ public class ASN1Boolean
             return (value[0] == ((ASN1Boolean)o).value[0]);
         }
 
-        throw new UnsupportedClassVersionError();/*
         return false;
-*/    }
+    }
     
     public int hashCode()
     {

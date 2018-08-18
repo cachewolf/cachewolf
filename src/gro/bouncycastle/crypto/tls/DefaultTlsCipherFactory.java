@@ -32,9 +32,8 @@ public class DefaultTlsCipherFactory
             return createAESCipher(context, 16, macAlgorithm);
         case EncryptionAlgorithm.AES_128_CCM:
             // NOTE: Ignores macAlgorithm
-        	throw new UnsupportedClassVersionError();/*
             return createCipher_AES_CCM(context, 16, 16);
-*/        case EncryptionAlgorithm.AES_128_CCM_8:
+        case EncryptionAlgorithm.AES_128_CCM_8:
             // NOTE: Ignores macAlgorithm
 	throw new UnsupportedClassVersionError();/*
             return createCipher_AES_CCM(context, 16, 8);

@@ -16,9 +16,8 @@ public class CertificateStatus
     {
         if (!isCorrectType(statusType, response))
         {
-            throw new UnsupportedClassVersionError();/*
             throw new IllegalArgumentException("'response' is not an instance of the correct type");
-*/        }
+        }
         
         throw new UnsupportedClassVersionError();/*
         this.statusType = statusType;

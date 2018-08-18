@@ -166,9 +166,8 @@ public abstract class TlsProtocol
 
             if (user_canceled && !appDataReady)
             {
-            	throw new UnsupportedClassVersionError();/*
                 raiseAlertWarning(AlertDescription.user_canceled, "User canceled handshake");
-*/            }
+            }
 
             	throw new UnsupportedClassVersionError();/*
             raiseAlertWarning(AlertDescription.close_notify, "Connection closed");

@@ -36,18 +36,22 @@ public class ECAlgorithms
             throw new IllegalArgumentException("point and scalar arrays should be non-null, and of equal, non-zero, length");
         }
 
-        	throw new UnsupportedClassVersionError();/*
         int count = ps.length;
         switch (count)
         {
         case 1:
+        	throw new UnsupportedClassVersionError();/*
             return ps[0].multiply(ks[0]);
-        case 2:
+*/        case 2:
+        	throw new UnsupportedClassVersionError();/*
             return sumOfTwoMultiplies(ps[0], ks[0], ps[1], ks[1]);
-        default:
+*/        default:
+        	throw new UnsupportedClassVersionError();/*
             break;
-        }
+*/        }
 
+// ->    	throw new UnsupportedClassVersionError();
+        /*
         ECPoint p = ps[0];
         ECCurve c = p.getCurve();
 

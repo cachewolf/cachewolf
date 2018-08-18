@@ -564,14 +564,15 @@ public abstract class ECFieldElement
                 throw new IllegalArgumentException("x value invalid in F2m field element");
             }
 
-            	throw new UnsupportedClassVersionError();/*
             if ((k2 == 0) && (k3 == 0))
             {
+                throw new UnsupportedClassVersionError();/*
                 this.representation = TPB;
                 this.ks = new int[]{ k1 }; 
-            }
+*/            }
             else
             {
+                throw new UnsupportedClassVersionError();/*
                 if (k2 >= k3)
                 {
                     throw new IllegalArgumentException(
@@ -584,8 +585,10 @@ public abstract class ECFieldElement
                 }
                 this.representation = PPB;
                 this.ks = new int[]{ k1, k2, k3 }; 
-            }
+*/            }
 
+//->            throw new UnsupportedClassVersionError();
+            /*
             this.m = m;
             this.x = new LongArray(x);
 */        }

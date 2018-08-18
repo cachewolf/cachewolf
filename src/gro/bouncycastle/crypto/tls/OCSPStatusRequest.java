@@ -64,14 +64,15 @@ public class OCSPStatusRequest
         }
         else
         {
-        	throw new UnsupportedClassVersionError();/*
             ByteArrayOutputStream buf = new ByteArrayOutputStream();
             for (int i = 0; i < responderIDList.size(); ++i)
             {
+            	throw new UnsupportedClassVersionError();/*
                 ResponderID responderID = (ResponderID) responderIDList.elementAt(i);
                 byte[] derEncoding = responderID.getEncoded(ASN1Encoding.DER);
                 TlsUtils.writeOpaque16(derEncoding, buf);
-            }
+*/            }
+        	throw new UnsupportedClassVersionError();/*
             TlsUtils.checkUint16(buf.size());
             TlsUtils.writeUint16(buf.size(), output);
             Streams.writeBufTo(buf, output);

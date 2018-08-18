@@ -370,17 +370,18 @@ public abstract class ECCurve
         switch (type)
         {
         case 0x00: // infinity
-        	throw new UnsupportedClassVersionError();/*
         {
             if (encoded.length != 1)
             {
+            	throw new UnsupportedClassVersionError();/*
                 throw new IllegalArgumentException("Incorrect length for infinity encoding");
-            }
+*/            }
 
+        	throw new UnsupportedClassVersionError();/*
             p = getInfinity();
             break;
-        }
-*/        case 0x02: // compressed
+*/        }
+        case 0x02: // compressed
         case 0x03: // compressed
         {
             if (encoded.length != (expectedLength + 1))

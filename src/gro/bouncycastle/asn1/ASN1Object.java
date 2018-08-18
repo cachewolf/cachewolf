@@ -102,9 +102,8 @@ public abstract class ASN1Object
      */
     protected static boolean hasEncodedTagValue(Object obj, int tagValue)
     {
-    	throw new UnsupportedClassVersionError();/*
         return (obj instanceof byte[]) && ((byte[])obj)[0] == tagValue;
-*/    }
+    }
 
     /**
      * Method providing a primitive representation of this object suitable for encoding.

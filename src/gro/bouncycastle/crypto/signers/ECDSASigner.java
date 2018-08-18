@@ -6,7 +6,7 @@ import gro.bouncycastle.crypto.CipherParameters;
 import gro.bouncycastle.crypto.DSA;
 import gro.bouncycastle.crypto.params.ECDomainParameters;
 import gro.bouncycastle.crypto.params.ECKeyParameters;
-//import gro.bouncycastle.crypto.params.ECPrivateKeyParameters;
+import gro.bouncycastle.crypto.params.ECPrivateKeyParameters;
 import gro.bouncycastle.crypto.params.ECPublicKeyParameters;
 import gro.bouncycastle.crypto.params.ParametersWithRandom;
 import gro.bouncycastle.math.ec.ECAlgorithms;
@@ -56,12 +56,11 @@ public class ECDSASigner
         {
             if (param instanceof ParametersWithRandom)
             {
-            	throw new UnsupportedClassVersionError();/*
                 ParametersWithRandom rParam = (ParametersWithRandom)param;
 
                 this.key = (ECPrivateKeyParameters)rParam.getParameters();
                 providedRandom = rParam.getRandom();
-*/            }
+            }
             else
             {
             	throw new UnsupportedClassVersionError();/*

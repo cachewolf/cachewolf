@@ -220,12 +220,11 @@ public abstract class ASN1BitString
             return false;
         }
 
-        throw new UnsupportedClassVersionError();/*
         ASN1BitString other = (ASN1BitString)o;
 
         return this.padBits == other.padBits
             && Arrays.areEqual(this.getBytes(), other.getBytes());
-*/    }
+    }
 
     protected static byte[] derForm(byte[] data, int padBits)
     {

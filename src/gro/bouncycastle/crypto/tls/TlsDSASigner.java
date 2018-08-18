@@ -28,9 +28,8 @@ public abstract class TlsDSASigner
         {
             signer.update(hash, 0, hash.length);
         }
-        	throw new UnsupportedClassVersionError();/*
         return signer.generateSignature();
-*/    }
+    }
 
     public boolean verifyRawSignature(SignatureAndHashAlgorithm algorithm, byte[] sigBytes,
         AsymmetricKeyParameter publicKey, byte[] hash)

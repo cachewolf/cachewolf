@@ -13,17 +13,18 @@ public abstract class FiniteFields
         {
             throw new IllegalArgumentException("Irreducible polynomials in GF(2) must have constant term");
         }
-        	throw new UnsupportedClassVersionError();/*
         for (int i = 1; i < exponents.length; ++i)
         {
+        	throw new UnsupportedClassVersionError();/*
             if (exponents[i] <= exponents[i - 1])
             {
                 throw new IllegalArgumentException("Polynomial exponents must be montonically increasing");
             }
+*/
         }
 
         return new GenericPolynomialExtensionField(GF_2, new GF2Polynomial(exponents));
-*/    }
+    }
 
 //    public static PolynomialExtensionField getTernaryExtensionField(Term[] terms)
 //    {

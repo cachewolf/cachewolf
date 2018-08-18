@@ -128,9 +128,9 @@ public class DERPrintableString
             throw new IllegalArgumentException("string contains illegal characters");
         }
 
-        throw new UnsupportedClassVersionError();/*
         this.string = Strings.toByteArray(string);
-*/    }
+    }
+
     public String getString()
     {
         return Strings.fromByteArray(string);

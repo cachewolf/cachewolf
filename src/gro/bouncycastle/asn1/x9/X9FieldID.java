@@ -68,12 +68,13 @@ public class X9FieldID
         
         if (k2 == 0) 
         {
-        	throw new UnsupportedClassVersionError();/*
             if (k3 != 0)
             {
+                throw new UnsupportedClassVersionError();/*
                 throw new IllegalArgumentException("inconsistent k values");
-            }
+*/            }
 
+            throw new UnsupportedClassVersionError();/*
             fieldIdParams.add(tpBasis);
             fieldIdParams.add(new ASN1Integer(k1));
 */        } 

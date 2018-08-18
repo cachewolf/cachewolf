@@ -421,12 +421,13 @@ public abstract class ASN1Set
     boolean asn1Equals(
         ASN1Primitive o)
     {
-    	throw new UnsupportedClassVersionError();/*
         if (!(o instanceof ASN1Set))
         {
+            throw new UnsupportedClassVersionError();/*
             return false;
-        }
+*/        }
 
+        throw new UnsupportedClassVersionError();/*
         ASN1Set   other = (ASN1Set)o;
 
         if (this.size() != other.size())

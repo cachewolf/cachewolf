@@ -269,12 +269,11 @@ public class GCMBlockCipher
             atBlock[atBlockPos] = in[inOff + i];
             if (++atBlockPos == BLOCK_SIZE)
             {
-            	throw new UnsupportedClassVersionError();/*
                 // Hash each block as it fills
                 gHASHBlock(S_at, atBlock);
                 atBlockPos = 0;
                 atLength += BLOCK_SIZE;
-*/            }
+            }
         }
     }
     private void initCipher()

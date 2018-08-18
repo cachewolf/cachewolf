@@ -72,9 +72,8 @@ public class TlsRSASigner
         }
         else if (algorithm == null)
         {
-        	throw new UnsupportedClassVersionError();/*
             d = new CombinedHash();
-*/        }
+        }
         else
         {
             d = TlsUtils.createHash(algorithm.getHash());

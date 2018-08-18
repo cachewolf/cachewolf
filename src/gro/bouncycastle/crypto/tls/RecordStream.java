@@ -144,15 +144,15 @@ class RecordStream
 
     void checkRecordHeader(byte[] recordHeader) throws IOException
     {
-    	throw new UnsupportedClassVersionError();/*
         short type = TlsUtils.readUint8(recordHeader, TLS_HEADER_TYPE_OFFSET);
 
         /*
          * RFC 5246 6. If a TLS implementation receives an unexpected record type, it MUST send an
          * unexpected_message alert.
-         * /
+         */
         checkType(type, AlertDescription.unexpected_message);
 
+        throw new UnsupportedClassVersionError();/*
         if (!restrictReadVersion)
         {
             int version = TlsUtils.readVersionRaw(recordHeader, TLS_HEADER_VERSION_OFFSET);

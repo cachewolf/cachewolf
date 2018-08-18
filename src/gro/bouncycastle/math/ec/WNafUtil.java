@@ -18,12 +18,13 @@ public abstract class WNafUtil
         {
             throw new IllegalArgumentException("'k' must have bitlength < 2^16");
         }
-        	throw new UnsupportedClassVersionError();/*
         if (k.signum() == 0)
         {
+            throw new UnsupportedClassVersionError();/*
             return EMPTY_INTS;
-        }
+*/        }
 
+        throw new UnsupportedClassVersionError();/*
         BigInteger _3k = k.shiftLeft(1).add(k);
 
         int bits = _3k.bitLength();

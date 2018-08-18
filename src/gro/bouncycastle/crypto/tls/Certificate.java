@@ -6,7 +6,7 @@ import ewe.io.InputStream;
 import ewe.io.OutputStream;
 import ewe.util.Vector;
 
-//import org.bouncycastle.asn1.ASN1Encoding;
+import gro.bouncycastle.asn1.ASN1Encoding;
 import gro.bouncycastle.asn1.ASN1Primitive;
 
 /**
@@ -78,11 +78,10 @@ public class Certificate
         int totalLength = 0;
         for (int i = 0; i < this.certificateList.length; ++i)
         {
-        	throw new UnsupportedClassVersionError();/*
             byte[] derEncoding = certificateList[i].getEncoded(ASN1Encoding.DER);
             derEncodings.addElement(derEncoding);
             totalLength += derEncoding.length + 3;
-*/        }
+        }
 
     	throw new UnsupportedClassVersionError();/*
         TlsUtils.checkUint24(totalLength);
