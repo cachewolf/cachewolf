@@ -1511,7 +1511,7 @@ public class CacheHolder {
 
             result = Integer.toString(gcId);
         } else if (isOC()) {
-            result = getIdOC();
+            result = idOC;
         }
 
         return result;

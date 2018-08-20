@@ -314,7 +314,9 @@ public class GCImporter {
             shortDescRex = new Regex(p.getProp("shortDescRex"));
             longDescRex = new Regex(p.getProp("longDescRex"));
             hintsRex = new Regex(p.getProp("hintsRex"));
-            notesRex = new Regex("<span id=\"cache_note\">((?s).*?)</span>");
+            // notesRex = new Regex("<span id=\"cache_note\">((?s).*?)</span>");
+            // <span id="viewCacheNote" class="formatted">7821</span>
+            notesRex = new Regex("viewCacheNote\" class=\"formatted\">((?s).*?)</span>");
 
             spoilerSectionStart = p.getProp("spoilerSectionStart");
             spoilerSectionEnd = p.getProp("spoilerSectionEnd");
@@ -2083,7 +2085,7 @@ public class GCImporter {
         try {
             wayPointPage = UrlFetcher.fetch("https://www.geocaching.com/seek/cache_details.aspx?wp=" + wayPoint);
             Preferences.itself().log("Fetched: " + wayPoint);
-            //Preferences.itself().log("Fetched: " + wayPoint + "\r\n" + wayPointPage);
+            // Preferences.itself().log("Fetched: " + wayPoint + "\r\n" + wayPointPage);
         } catch (final Exception ex) {
             Preferences.itself().log("Could not fetch " + wayPoint, ex);
             ret = SPIDER_ERROR;
@@ -2166,11 +2168,11 @@ public class GCImporter {
                         // order of occurrence in wayPointPage
                         wayPointPageIndex = 0;
                         // from <head
+                        newCache.setType(wayPointPageGetType());
                         newCache.setDifficulty(wayPointPageGetDiff());
                         newCache.setTerrain(wayPointPageGetTerr());
                         // from <body
                         this.backgroudImageName = wayPointPageGetBackgroundImageUrl();
-                        newCache.setType(wayPointPageGetType());
                         newCache.setName(wayPointPageGetName());
                         String owner = wayPointPageGetOwner();
                         newCache.setOwner(owner);
@@ -2287,7 +2289,8 @@ public class GCImporter {
         cacheTypeRex.searchFrom(wayPointPage, wayPointPageIndex);
         if (cacheTypeRex.didMatch()) {
             wayPointPageIndex = cacheTypeRex.matchedTo();
-            return CacheType.gcSpider2CwType(cacheTypeRex.stringMatched(1));
+            String cacheType = cacheTypeRex.stringMatched(1);
+            return CacheType.gcSpider2CwType(cacheType);
         } else {
             Preferences.itself().log("[SpiderGC.java:getType]check cacheTypeRex!", null);
             return 0;
