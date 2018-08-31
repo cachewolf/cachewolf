@@ -1,4 +1,4 @@
-package org.bouncycastle.asn1;
+package gro.bouncycastle.asn1;
 
 import ewe.io.IOException;
 import ewe.io.InputStream;

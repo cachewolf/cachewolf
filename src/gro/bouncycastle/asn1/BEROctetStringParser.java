@@ -1,7 +1,7 @@
-package org.bouncycastle.asn1;
+package gro.bouncycastle.asn1;
 
-import java.io.IOException;
-import java.io.InputStream;
+import ewe.io.IOException;
+import ewe.io.InputStream;
 
 import gro.bouncycastle.util.io.Streams;
 

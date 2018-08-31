@@ -1,6 +1,6 @@
-package org.bouncycastle.math.field;
+package gro.bouncycastle.math.field;
 
-import org.bouncycastle.util.Arrays;
+import gro.bouncycastle.util.Arrays;
 
 class GF2Polynomial implements Polynomial
 {

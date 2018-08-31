@@ -1,16 +1,16 @@
 package org.bouncycastle.asn1.anssi;
 
 import java.math.BigInteger;
-import java.util.Enumeration;
-import java.util.Hashtable;
+import ewe.util.Enumeration;
+import ewe.util.Hashtable;
 
-import org.bouncycastle.asn1.ASN1ObjectIdentifier;
-import org.bouncycastle.asn1.x9.X9ECParameters;
-import org.bouncycastle.asn1.x9.X9ECParametersHolder;
-import org.bouncycastle.asn1.x9.X9ECPoint;
-import org.bouncycastle.math.ec.ECCurve;
-import org.bouncycastle.util.Strings;
-import org.bouncycastle.util.encoders.Hex;
+import gro.bouncycastle.asn1.ASN1ObjectIdentifier;
+import gro.bouncycastle.asn1.x9.X9ECParameters;
+import gro.bouncycastle.asn1.x9.X9ECParametersHolder;
+import gro.bouncycastle.asn1.x9.X9ECPoint;
+import gro.bouncycastle.math.ec.ECCurve;
+import gro.bouncycastle.util.Strings;
+import gro.bouncycastle.util.encoders.Hex;
 
 /**
  * ANSSI Elliptic curve table.
