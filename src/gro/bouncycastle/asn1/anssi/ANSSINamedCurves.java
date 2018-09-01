@@ -1,6 +1,6 @@
-package org.bouncycastle.asn1.anssi;
+package gro.bouncycastle.asn1.anssi;
 
-import java.math.BigInteger;
+import ewe.math.BigInteger;
 import ewe.util.Enumeration;
 import ewe.util.Hashtable;
 
