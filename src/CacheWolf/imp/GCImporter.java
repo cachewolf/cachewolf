@@ -314,8 +314,6 @@ public class GCImporter {
             shortDescRex = new Regex(p.getProp("shortDescRex"));
             longDescRex = new Regex(p.getProp("longDescRex"));
             hintsRex = new Regex(p.getProp("hintsRex"));
-            // notesRex = new Regex("<span id=\"cache_note\">((?s).*?)</span>");
-            // <span id="viewCacheNote" class="formatted">7821</span>
             notesRex = new Regex("viewCacheNote\" class=\"formatted\">((?s).*?)</span>");
 
             spoilerSectionStart = p.getProp("spoilerSectionStart");

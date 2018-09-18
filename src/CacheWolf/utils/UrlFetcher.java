@@ -21,16 +21,16 @@
  */
 package CacheWolf.utils;
 
+import CacheWolf.Preferences;
 import com.jcraft.jzlib.GZIPInputStream;
 import ewe.data.Property;
 import ewe.data.PropertyList;
 import ewe.io.*;
-import ewe.sys.Vm;
 import ewe.sys.Time;
+import ewe.sys.Vm;
 import ewe.util.ByteArray;
 import ewe.util.CharArray;
 import ewe.util.mString;
-import CacheWolf.Preferences;
 
 public class UrlFetcher {
     final static String hex = ewe.util.TextEncoder.hex;
@@ -178,7 +178,7 @@ public class UrlFetcher {
 
     public static String fetch(String address, boolean useGZip) throws IOException {
         if (useGZip) {
-	    setRequestorProperty("Accept-Encoding", "gzip");
+            setRequestorProperty("Accept-Encoding", "gzip");
         }
         ByteArray daten = fetchByteArray(address);
         boolean gzip = false;
@@ -194,18 +194,18 @@ public class UrlFetcher {
             if (gzip) {
                 ByteArrayInputStream bis = new ByteArrayInputStream(daten.data);
                 GZIPInputStream zis = new GZIPInputStream(bis);
-		byte[] newBuffer = new byte[1024];
-		int bytesRead = zis.read(newBuffer);
-		int allBytes = bytesRead;
-		while (bytesRead == 1024){
-		    byte[]extendedBuffer = new byte[newBuffer.length+1024];
-		    Vm.arraycopy(newBuffer, 0, extendedBuffer, 0, newBuffer.length);
-		    byte[] nextChunk = new byte[1024];
-		    bytesRead = zis.read(nextChunk);
-		    allBytes += bytesRead;
-		    Vm.arraycopy(nextChunk, 0, extendedBuffer, newBuffer.length, bytesRead);
-		    newBuffer = extendedBuffer;
-		}
+                byte[] newBuffer = new byte[1024];
+                int bytesRead = zis.read(newBuffer);
+                int allBytes = bytesRead;
+                while (bytesRead == 1024) {
+                    byte[] extendedBuffer = new byte[newBuffer.length + 1024];
+                    Vm.arraycopy(newBuffer, 0, extendedBuffer, 0, newBuffer.length);
+                    byte[] nextChunk = new byte[1024];
+                    bytesRead = zis.read(nextChunk);
+                    allBytes += bytesRead;
+                    Vm.arraycopy(nextChunk, 0, extendedBuffer, newBuffer.length, bytesRead);
+                    newBuffer = extendedBuffer;
+                }
                 return new BetterUTF8Codec().decodeUTF8(newBuffer, 0, allBytes).toString();
             } else {
                 return new BetterUTF8Codec().decodeUTF8(daten.data, 0, daten.length).toString();
@@ -257,7 +257,7 @@ public class UrlFetcher {
 
             conn.connect();
 
-	    Preferences.itself().log("Request "+url+ " returned status-code: " + conn.responseCode);
+            Preferences.itself().log("Request " + url + " returned status-code: " + conn.responseCode);
             if (conn.responseCode < 300 || conn.responseCode > 399) {
                 if (conn.responseCode > 399) {
                     // abort with error
