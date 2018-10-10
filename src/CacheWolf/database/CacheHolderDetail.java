@@ -155,7 +155,10 @@ public class CacheHolderDetail {
     }
 
     public void setGCNotes(String notes) {
-        gCNotes = notes;
+        if (notes.length()>0) {
+            gCNotes = notes;
+            parent.setHasNote(true);
+        }
     }
 
     public boolean setCacheNotes(String notes) {
