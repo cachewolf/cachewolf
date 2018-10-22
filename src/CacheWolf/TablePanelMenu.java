@@ -780,33 +780,34 @@ public class TablePanelMenu extends MenuBar {
                 preferencesScreen.execute(MainForm.itself.getFrame(), Gui.CENTER_FRAME);
                 // überflüssig, wurde ja gerade gespeichert und auch bei Abbruch wurde keine Preferences Variable gesetzt ! Preferences.itself().readPrefFile();
                 if (Preferences.itself().fontSize != fontsize || Preferences.itself().useBigIcons != useBigIcons) {
-                    try {
+		    //                    try {
                         MainTab.itself.saveUnsavedChanges(true);
-                        File f = new File("./ready.txt");
-                        f.delete();
-                        InfoBox infB = new InfoBox("Icons werden erzeugt!", "Icons werden erzeugt!", InfoBox.DISPLAY_ONLY);
-                        if (Preferences.itself().useBigIcons) {
-                            ewe.sys.Process p = Vm.exec("./_createBigIcons.cmd " + Preferences.itself().fontSize + " >>./log.txt");
-                        } else {
-                            ewe.sys.Process p = Vm.exec("./_createIcons.cmd " + Preferences.itself().fontSize + " >>./log.txt");
-                        }
-                        infB.show();
-                        Vm.showWait(true);
-                        for (int i = 0; i < 60; i++) {
-                            Vm.sleep(1000 * 5);
-                            if (f.exists() || infB.isClosed()) {
-                                infB.close(0);
-                                break;
-                            }
-                        }
-                        f.delete();
-                        Vm.showWait(false);
-                        new InfoBox("Restart required!", "Neustart erforderlich!").wait(FormBase.OKB);
-                        ewe.sys.Vm.exit(0);
-                    } catch (IOException ioex) {
-                        Vm.showWait(false);
-                        new InfoBox("Error creating new Icons!", "Error creating new Icons!" + ioex.getLocalizedMessage()).wait(FormBase.OKB);
-                    }
+                        //File f = new File("./ready.txt");
+                        //f.delete();
+                        //InfoBox infB = new InfoBox("Icons werden erzeugt!", "Icons werden erzeugt!", InfoBox.DISPLAY_ONLY);
+                        //if (Preferences.itself().useBigIcons) {
+                        //    ewe.sys.Process p = Vm.exec("./_createBigIcons.cmd " + Preferences.itself().fontSize + " >>./log.txt");
+                        //} else {
+                        //    ewe.sys.Process p = Vm.exec("./_createIcons.cmd " + Preferences.itself().fontSize + " >>./log.txt");
+                        //}
+                        //infB.show();
+                        //Vm.showWait(true);
+                        //for (int i = 0; i < 60; i++) {
+                        //    Vm.sleep(1000 * 5);
+                        //    if (f.exists() || infB.isClosed()) {
+                        //        infB.close(0);
+                        //        break;
+                        //    }
+                        //}
+                        //f.delete();
+                        //Vm.showWait(false);
+                        //new InfoBox("Restart required!", "Neustart erforderlich!").wait(FormBase.OKB);
+                        //ewe.sys.Vm.exit(0);
+			//}
+		    //catch (IOException ioex) {
+                    //    Vm.showWait(false);
+                    //    new InfoBox("Error creating new Icons!", "Error creating new Icons!" + ioex.getLocalizedMessage()).wait(FormBase.OKB);
+                    //}
                 }
             }
             if (mev.selectedItem == savenoxit) {
