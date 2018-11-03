@@ -466,12 +466,11 @@ public abstract class ECPoint
 
         if (compressed)
         {
-        	throw new UnsupportedClassVersionError();/*
             byte[] PO = new byte[X.length + 1];
             PO[0] = (byte)(normed.getCompressionYTilde() ? 0x03 : 0x02);
             System.arraycopy(X, 0, PO, 1, X.length);
             return PO;
-*/        }
+        }
 
         byte[] Y = normed.getYCoord().getEncoded();
 

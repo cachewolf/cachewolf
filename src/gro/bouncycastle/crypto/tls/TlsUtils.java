@@ -70,9 +70,8 @@ public class TlsUtils
     {
         if (!isValidUint8(i))
         {
-        	throw new UnsupportedClassVersionError();/*
             throw new TlsFatalAlert(AlertDescription.internal_error);
-*/        }
+        }
     }
 
     public static void checkUint16(int i) throws IOException
@@ -728,12 +727,12 @@ public class TlsUtils
         v.addElement(Shorts.valueOf(SignatureAlgorithm.ecdsa));
         return v;
     }
-
+*/
     public static Vector getDefaultDSSSignatureAlgorithms()
     {
         return vectorOfOne(new SignatureAndHashAlgorithm(HashAlgorithm.sha1, SignatureAlgorithm.dsa));
     }
-
+/*
     public static Vector getDefaultECDSASignatureAlgorithms()
     {
         return vectorOfOne(new SignatureAndHashAlgorithm(HashAlgorithm.sha1, SignatureAlgorithm.ecdsa));
@@ -1441,14 +1440,15 @@ public class TlsUtils
         }
         return arr;
     }
-
+*/
     private static Vector vectorOfOne(Object obj)
     {
+    	throw new UnsupportedClassVersionError();/*
         Vector v = new Vector(1);
         v.addElement(obj);
         return v;
-    }
-*/
+*/    }
+
     public static int getCipherType(int ciphersuite) throws IOException
     {
     	throw new UnsupportedClassVersionError();/*

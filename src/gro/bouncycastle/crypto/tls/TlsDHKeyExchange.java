@@ -243,10 +243,9 @@ public class TlsDHKeyExchange
     {
         if (dhAgreePublicKey != null)
         {
-        	throw new UnsupportedClassVersionError();/*
             // For dss_fixed_dh and rsa_fixed_dh, the key arrived in the client certificate
             return;
-*/        }
+        }
 
     	throw new UnsupportedClassVersionError();/*
         BigInteger Yc = TlsDHUtils.readDHParameter(input);

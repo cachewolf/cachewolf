@@ -14,10 +14,9 @@ public class HeartbeatExtension
         {
             throw new IllegalArgumentException("'mode' is not a valid HeartbeatMode value");
         }
-    	throw new UnsupportedClassVersionError();/*
 
         this.mode = mode;
-*/    }
+    }
 
     public short getMode()
     {

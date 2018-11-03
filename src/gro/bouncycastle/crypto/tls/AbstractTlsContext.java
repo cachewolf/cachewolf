@@ -108,9 +108,8 @@ abstract class AbstractTlsContext
          */
         if (context_value != null && !TlsUtils.isValidUint16(context_value.length))
         {
-            throw new UnsupportedClassVersionError();/*
             throw new IllegalArgumentException("'context_value' must have length less than 2^16 (or be null)");
-*/        }
+        }
         throw new UnsupportedClassVersionError();/*
 
         SecurityParameters sp = getSecurityParameters();

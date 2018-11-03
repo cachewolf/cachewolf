@@ -147,17 +147,19 @@ public class RSADigestSigner
 			throw new IllegalStateException("RSADigestSigner not initialised for signature generation.");
 		}
 
-		  throw new UnsupportedClassVersionError();/*
 		byte[] hash = new byte[digest.getDigestSize()];
 		digest.doFinal(hash, 0);
 
-		try {
+/* ->		try { */
+			throw new UnsupportedClassVersionError();/*
 			byte[] data = derEncode(hash);
 			return rsaEngine.processBlock(data,	0, data.length);
-		} catch (IOException e) {
+*/
+/* ->			} catch (IOException e) { */
+/*	throw new UnsupportedClassVersionError();/*
 			throw new CryptoException("unable to encode signature: " + e.getMessage(), e);
 		}
-												  throw new UnsupportedClassVersionError();/*
+        throw new UnsupportedClassVersionError();/*
 */	}
 
 	/**

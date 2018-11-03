@@ -45,9 +45,8 @@ public class ASN1StreamParser
             case BERTags.EXTERNAL:
                 return new DERExternalParser(this);
             case BERTags.OCTET_STRING:
-	throw new UnsupportedClassVersionError();/*
                 return new BEROctetStringParser(this);
-*/            case BERTags.SEQUENCE:
+            case BERTags.SEQUENCE:
 	throw new UnsupportedClassVersionError();/*
                 return new BERSequenceParser(this);
 */            case BERTags.SET:

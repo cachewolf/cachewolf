@@ -22,7 +22,7 @@ import gro.bouncycastle.asn1.x509.X509ObjectIdentifiers;
 import gro.bouncycastle.asn1.x9.DHPublicKey;
 import gro.bouncycastle.asn1.x9.DomainParameters;
 import gro.bouncycastle.asn1.x9.ECNamedCurveTable;
-//import gro.bouncycastle.asn1.x9.ValidationParams;
+import gro.bouncycastle.asn1.x9.ValidationParams;
 import gro.bouncycastle.asn1.x9.X962Parameters;
 import gro.bouncycastle.asn1.x9.X9ECParameters;
 import gro.bouncycastle.asn1.x9.X9ECPoint;
@@ -31,7 +31,7 @@ import gro.bouncycastle.crypto.ec.CustomNamedCurves;
 import gro.bouncycastle.crypto.params.AsymmetricKeyParameter;
 //import gro.bouncycastle.crypto.params.DHParameters;
 //import gro.bouncycastle.crypto.params.DHPublicKeyParameters;
-//import gro.bouncycastle.crypto.params.DHValidationParameters;
+import gro.bouncycastle.crypto.params.DHValidationParameters;
 //import gro.bouncycastle.crypto.params.DSAParameters;
 //import gro.bouncycastle.crypto.params.DSAPublicKeyParameters;
 import gro.bouncycastle.crypto.params.ECDomainParameters;
@@ -108,19 +108,20 @@ public class PublicKeyFactory
                 j = dhParams.getJ();
             }
 
-        	throw new UnsupportedClassVersionError();/*
             DHValidationParameters validation = null;
             ValidationParams dhValidationParms = dhParams.getValidationParams();
             if (dhValidationParms != null)
             {
+            	throw new UnsupportedClassVersionError();/*
                 byte[] seed = dhValidationParms.getSeed();
                 BigInteger pgenCounter = dhValidationParms.getPgenCounter();
 
                 // TODO Check pgenCounter size?
 
                 validation = new DHValidationParameters(seed, pgenCounter.intValue());
-            }
+*/            }
 
+            throw new UnsupportedClassVersionError();/*
             return new DHPublicKeyParameters(y, new DHParameters(p, g, q, j, validation));
 */        }
         else if (algId.getAlgorithm().equals(PKCSObjectIdentifiers.dhKeyAgreement))

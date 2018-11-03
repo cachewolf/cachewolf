@@ -28,7 +28,10 @@ import ewe.fx.IconAndText;
 import ewe.fx.Image;
 import ewe.io.File;
 import ewe.io.FileBase;
+import ewe.io.IOException;
 import ewe.ui.*;
+import ewe.sys.Process;
+import ewe.sys.Vm;
 
 /**
  * hold preloaded versions of GUI images in a single place
@@ -38,6 +41,9 @@ import ewe.ui.*;
 
 public final class GuiImageBroker {
     private static final String basedir = FileBase.getProgramDirectory() + "/symbols/";
+
+    private static final String INKSCAPE = "inkscape";
+
     public static Image found;
     public static Image disabled;
     public static Image archived;
@@ -45,7 +51,7 @@ public final class GuiImageBroker {
     public static Image bonus;
     public static Image owned;
     public static Image dnf;
-    private static String extension;
+    private static boolean useBigIcons;
     private static boolean useText = true;
     private static boolean useIcons = true;
     private static boolean leftIcons = false;
@@ -61,10 +67,7 @@ public final class GuiImageBroker {
         GuiImageBroker.useText = useText;
         GuiImageBroker.useIcons = useIcons;
         GuiImageBroker.leftIcons = leftIcons;
-        if (useBigIcons)
-            extension = "_vga.png";
-        else
-            extension = ".png";
+	GuiImageBroker.useBigIcons = useBigIcons;
         if (found == null) {
             found = getCacheTypeImage("found");
             disabled = getCacheTypeImage("disabled");
@@ -110,15 +113,84 @@ public final class GuiImageBroker {
 
     private static String getImageName(String icon) {
         String in;
+        String extension = useBigIcons ? "_vga.png" : ".png";
+
         File f = new File(basedir + icon + extension);
         if (f.exists()) {
             in = f.getAbsolutePath();
             // log("using image " + in);
         } else {
             in = icon + extension;
+	    String platform = Vm.getPlatform();
+	    Preferences.itself().log("Platform is: " + platform);
+	    Preferences.itself().log("icon name is: " + in);
+	    Preferences.itself().log("icon filename is: " + f);
+	    if ("Java".equals(platform) && isInkscapePresent()){
+		try{
+		    File f1 = new File (FileBase.getProgramDirectory() + "/svg/Button/" + icon+".svg");
+		    File f2 = new File (FileBase.getProgramDirectory() + "/svg/Cachetype/" + icon+".svg");
+		    File f3 = new File (FileBase.getProgramDirectory() + "/svg/Size/" + icon+".svg");
+		    File f4 = new File (FileBase.getProgramDirectory() + "/svg/Star/" + icon+".svg");
+		    File f5 = new File (FileBase.getProgramDirectory() + "/svg/Waypoint/" + icon+".svg");
+		    File sourceFile;
+		    String width = "32";
+		    if (f1.exists()){
+			sourceFile = f1;
+			width = useBigIcons?"32":"16";
+		    }
+		    else if (f2.exists()){
+			sourceFile = f2;
+			width = width = useBigIcons?"30":"15";
+		    }
+		    else if (f3.exists()){
+			sourceFile = f3;
+			width = useBigIcons?"32":"16";
+		    }
+		    else if (f4.exists()){
+			sourceFile = f4;
+			width = useBigIcons?"120":"60";
+		    }
+		    else if (f5.exists()){
+			sourceFile = f5;
+			width = useBigIcons?"30":"15";
+		    }
+		    else{
+			sourceFile= null;
+		    }
+		    Preferences.itself().log("file to convert:    " + sourceFile);
+		    Preferences.itself().log("  destination-file: " + f);
+		    Process p = Vm.exec(new String[]{INKSCAPE, "-z", "-w", width, "-e", f.toString(), sourceFile.toString()});
+		    p.waitFor();
+		    Preferences.itself().log("result of convert: " + p.exitValue());
+		}
+		catch (IOException e){
+		    Preferences.itself().log("Can not convert svg to png");
+		    Vm.printStackTrace(e, Vm.err ());
+		    //can not convert....
+		}
+	    }
             //log("rem svg2png.exe \"svg\\Button\\" + icon + ".svg\" \"symbols\\" + icon + ".png\" %RESOLUTION%");
         }
         return in;
+    }
+
+    private static Boolean inkscapeFound = null;
+    private static boolean isInkscapePresent(){
+	if (inkscapeFound == null){
+	    //Check if this process executes, if yes, then the app is present
+	    try{
+	        Process p = Vm.exec(new String[]{INKSCAPE, "-z", "-V"});
+	        p.waitFor();
+	        inkscapeFound = Boolean.TRUE;
+		Preferences.itself().log("Inkscape found!");
+	    }
+	    catch (IOException e){
+		Preferences.itself().log("Can not start inkscape.\nCan not convert svg to png");
+	        inkscapeFound = Boolean.FALSE;
+	    }
+	}
+
+	return inkscapeFound.booleanValue ();
     }
 
     private static String getText(String text) {

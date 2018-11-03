@@ -54,9 +54,7 @@ public abstract class DefaultTlsClient
         case KeyExchangeAlgorithm.ECDH_anon:
         case KeyExchangeAlgorithm.ECDH_ECDSA:
         case KeyExchangeAlgorithm.ECDH_RSA:
-        	throw new UnsupportedClassVersionError();/*
           return createECDHKeyExchange(keyExchangeAlgorithm);
-*/
         case KeyExchangeAlgorithm.ECDHE_ECDSA:
         case KeyExchangeAlgorithm.ECDHE_RSA:
           return createECDHEKeyExchange(keyExchangeAlgorithm);

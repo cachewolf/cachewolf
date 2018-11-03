@@ -195,11 +195,11 @@ public class TlsClientProtocol
         }
         case HandshakeType.certificate_status:
         {
-        	throw new UnsupportedClassVersionError();    	/*
             switch (this.connection_state)
             {
             case CS_SERVER_CERTIFICATE:
             {
+            	throw new UnsupportedClassVersionError();    	/*
                 if (!this.allowCertificateStatus)
                 {
                     /*
@@ -218,12 +218,15 @@ public class TlsClientProtocol
 
                 this.connection_state = CS_CERTIFICATE_STATUS;
                 break;
-            }
+*/            }
             default:
+            	throw new UnsupportedClassVersionError();    	/*
                 throw new TlsFatalAlert(AlertDescription.unexpected_message);
-            }
+*/            }
+// ->        	throw new UnsupportedClassVersionError();    	
+            /*
             break;
-      */  }
+*/        }
         case HandshakeType.finished:
         {
             switch (this.connection_state)

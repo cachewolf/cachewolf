@@ -101,9 +101,8 @@ public class TlsECDHKeyExchange extends AbstractTlsKeyExchange
         {
             try
             {
-            	throw new UnsupportedClassVersionError();/*
                 this.ecAgreePublicKey = TlsECCUtils.validateECPublicKey((ECPublicKeyParameters) this.serverPublicKey);
-*/            }
+            }
             catch (ClassCastException e)
             {
             	throw new UnsupportedClassVersionError();/*

@@ -39,7 +39,6 @@ public class X9ECParameters
             throw new IllegalArgumentException("bad version in X9ECParameters");
         }
 
-        	throw new UnsupportedClassVersionError();/*
         X9Curve     x9c = new X9Curve(
                         X9FieldID.getInstance(seq.getObjectAt(1)),
                         ASN1Sequence.getInstance(seq.getObjectAt(2)));
@@ -47,6 +46,7 @@ public class X9ECParameters
         this.curve = x9c.getCurve();
         Object p = seq.getObjectAt(3);
 
+        throw new UnsupportedClassVersionError();/*
         if (p instanceof X9ECPoint)
         {
             this.g = ((X9ECPoint)p);

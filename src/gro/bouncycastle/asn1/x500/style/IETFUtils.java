@@ -185,15 +185,16 @@ public class IETFUtils
             }
             else
             {
-            	throw new UnsupportedClassVersionError();/*
                 X500NameTokenizer   vTok = new X500NameTokenizer(token, '=');
 
                 String              attr = vTok.nextToken();
 
                 if (!vTok.hasMoreTokens())
                 {
+                    throw new UnsupportedClassVersionError();/*
                     throw new IllegalArgumentException("badly formatted directory string");
-                }
+*/                }
+                throw new UnsupportedClassVersionError();/*
 
                 String               value = vTok.nextToken();
                 ASN1ObjectIdentifier oid = x500Style.attrNameToOID(attr.trim());

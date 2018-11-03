@@ -142,11 +142,10 @@ public abstract class GeneralDigest
 
     protected void populateState(byte[] state)
     {
-    	throw new UnsupportedClassVersionError();/*
         System.arraycopy(xBuf, 0, state, 0, xBufOff);
         Pack.intToBigEndian(xBufOff, state, 4);
         Pack.longToBigEndian(byteCount, state, 8);
-    */}
+    }
 
     public int getByteLength()
     {

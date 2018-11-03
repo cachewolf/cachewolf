@@ -347,7 +347,6 @@ private static final int[] Tinv0 =
                 t5 ^= t4; W[i + 2][3] = t5;
             }
 
-          	throw new UnsupportedClassVersionError();/*
             u = subWord(shift(t5, 8)) ^ rcon;
             t0 ^= u;  W[12][0] = t0;
             t1 ^= t0; W[12][1] = t1;
@@ -355,7 +354,7 @@ private static final int[] Tinv0 =
             t3 ^= t2; W[12][3] = t3;
 
             break;
-*/        }
+        }
         case 8:
         {
         	throw new UnsupportedClassVersionError();/*

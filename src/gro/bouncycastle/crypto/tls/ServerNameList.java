@@ -53,9 +53,8 @@ public class ServerNameList
             nameTypesSeen = checkNameType(nameTypesSeen, entry.getNameType());
             if (nameTypesSeen == null)
             {
-            	throw new UnsupportedClassVersionError();/*
                 throw new TlsFatalAlert(AlertDescription.internal_error);
-*/            }
+            }
 
         	throw new UnsupportedClassVersionError();/*
             entry.encode(buf);

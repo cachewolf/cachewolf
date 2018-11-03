@@ -77,15 +77,14 @@ public class TlsECCUtils
     {
         if (ecPointFormats == null || !Arrays.contains(ecPointFormats, ECPointFormat.uncompressed))
         {
-        	throw new UnsupportedClassVersionError();/*
             /*
              * RFC 4492 5.1. If the Supported Point Formats Extension is indeed sent, it MUST
              * contain the value 0 (uncompressed) as one of the items in the list of point formats.
-             * /
+             */
 
             // NOTE: We add it at the end (lowest preference)
             ecPointFormats = Arrays.append(ecPointFormats, ECPointFormat.uncompressed);
-*/        }
+        }
 
         return TlsUtils.encodeUint8ArrayWithUint8Length(ecPointFormats);
     }

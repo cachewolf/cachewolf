@@ -35,9 +35,8 @@ public class TlsExtensionsUtils
     public static void addHeartbeatExtension(Hashtable extensions, HeartbeatExtension heartbeatExtension)
         throws IOException
     {
-    	throw new UnsupportedClassVersionError();/*
         extensions.put(EXT_heartbeat, createHeartbeatExtension(heartbeatExtension));
-*/    }
+    }
 
     public static void addMaxFragmentLengthExtension(Hashtable extensions, short maxFragmentLength)
         throws IOException
@@ -144,9 +143,10 @@ public class TlsExtensionsUtils
         return createEmptyExtensionData();
 */    }
 
-/*    public static byte[] createHeartbeatExtension(HeartbeatExtension heartbeatExtension)
+    public static byte[] createHeartbeatExtension(HeartbeatExtension heartbeatExtension)
         throws IOException
     {
+    	throw new UnsupportedClassVersionError();/*
         if (heartbeatExtension == null)
         {
             throw new TlsFatalAlert(AlertDescription.internal_error);
@@ -157,9 +157,9 @@ public class TlsExtensionsUtils
         heartbeatExtension.encode(buf);
 
         return buf.toByteArray();
-    }
+*/    }
 
-    public static byte[] createMaxFragmentLengthExtension(short maxFragmentLength)
+/*    public static byte[] createMaxFragmentLengthExtension(short maxFragmentLength)
         throws IOException
     {
         TlsUtils.checkUint8(maxFragmentLength);

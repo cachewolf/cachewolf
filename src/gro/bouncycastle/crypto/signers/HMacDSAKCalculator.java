@@ -4,7 +4,7 @@ import ewe.math.BigInteger;
 import ewe.security.SecureRandom;
 import gro.bouncycastle.crypto.Digest;
 import gro.bouncycastle.crypto.macs.HMac;
-//import gro.bouncycastle.crypto.params.KeyParameter;
+import gro.bouncycastle.crypto.params.KeyParameter;
 import gro.bouncycastle.util.Arrays;
 import gro.bouncycastle.util.BigIntegers;
 
@@ -66,7 +66,6 @@ public class HMacDSAKCalculator
             mInt = mInt.subtract(n);
         }
 
-        throw new UnsupportedClassVersionError();/*
         byte[] mVal = BigIntegers.asUnsignedByteArray(mInt);
 
         System.arraycopy(mVal, 0, m, m.length - mVal.length, mVal.length);
@@ -98,7 +97,7 @@ public class HMacDSAKCalculator
         hMac.update(V, 0, V.length);
 
         hMac.doFinal(V, 0);
-*/    }
+    }
 
     public BigInteger nextK()
     {

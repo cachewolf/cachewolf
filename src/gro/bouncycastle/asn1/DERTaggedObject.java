@@ -85,18 +85,19 @@ public class DERTaggedObject
         {
             ASN1Primitive primitive = obj.toASN1Primitive().toDERObject();
 
-            throw new UnsupportedClassVersionError();/*
             if (explicit)
             {
+                throw new UnsupportedClassVersionError();/*
                 out.writeTag(BERTags.CONSTRUCTED | BERTags.TAGGED, tagNo);
                 out.writeLength(primitive.encodedLength());
                 out.writeObject(primitive);
-            }
+*/            }
             else
             {
                 //
                 // need to mark constructed types...
                 //
+                throw new UnsupportedClassVersionError();/*
                 int flags;
                 if (primitive.isConstructed())
                 {
@@ -109,7 +110,8 @@ public class DERTaggedObject
 
                 out.writeTag(flags, tagNo);
                 out.writeImplicitObject(primitive);
-            }
+*/            }
+/* -->            throw new UnsupportedClassVersionError();/*
 */        }
         else
         {

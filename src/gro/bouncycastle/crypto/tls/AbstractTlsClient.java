@@ -43,9 +43,8 @@ public abstract class AbstractTlsClient
             TlsECCUtils.readSupportedEllipticCurvesExtension(extensionData);
             return true;
         default:
-    	throw new UnsupportedClassVersionError();/* 
             return false;
-*/        }
+        }
     }
 
     protected void checkForUnexpectedServerExtension(Hashtable serverExtensions, Integer extensionType)

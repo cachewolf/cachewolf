@@ -96,10 +96,9 @@ public class DLSequence
 
         for (Enumeration e = this.getObjects(); e.hasMoreElements();)
         {
-        	throw new UnsupportedClassVersionError();/*
             Object obj = e.nextElement();
 
             dOut.writeObject((ASN1Encodable)obj);
-*/        }
+        }
     }
 }

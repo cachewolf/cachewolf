@@ -265,9 +265,8 @@ public class TlsDHUtils
         switch (dheGroup)
         {
         case FiniteFieldDHEGroup.ffdhe2432:
-        	throw new UnsupportedClassVersionError();/*
             return draft_ffdhe2432;
-*/        case FiniteFieldDHEGroup.ffdhe3072:
+        case FiniteFieldDHEGroup.ffdhe3072:
 	throw new UnsupportedClassVersionError();/*
             return draft_ffdhe3072;
 */        case FiniteFieldDHEGroup.ffdhe4096:

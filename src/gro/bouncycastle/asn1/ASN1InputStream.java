@@ -163,12 +163,13 @@ public class ASN1InputStream
                     ASN1EncodableVector v = buildDEREncodableVector(defIn);
                     ASN1OctetString[] strings = new ASN1OctetString[v.size()];
 
-                    throw new UnsupportedClassVersionError();/*
                     for (int i = 0; i != strings.length; i++)
                     {
+                    	throw new UnsupportedClassVersionError();/*
                         strings[i] = (ASN1OctetString)v.get(i);
-                    }
+*/                    }
 
+                    throw new UnsupportedClassVersionError();/*
                     return new BEROctetString(strings);
 */                case SEQUENCE:
                     if (lazyEvaluate)
