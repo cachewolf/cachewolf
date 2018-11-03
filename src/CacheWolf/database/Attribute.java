@@ -131,7 +131,7 @@ public class Attribute {
             {"85", "2678", "fuel", "0", "58", "Fuel nearby"}, //
             {"86", "2680", "food", "0", "59", "Food nearby"}, //
             {"87", "2682", "wirelessbeacon", "0", "60", "Wireless Beacon"}, //
-            {"88", "2584", "firstaid", "23", "123", "First aid available"}, // OC special
+            {"88", "2684", "firstaid", "23", "123", "First aid available"}, // OC special
             {"89", "2686", "partnership", "0", "61", "Partnership Cache"}, // previous : sponsored
             {"90", "2688", "frontyard", "0", "65", "Front Yard (Private Residence)"}, //
             {"91", "2690", "seasonal", "0", "62", "Seasonal Access"}, //

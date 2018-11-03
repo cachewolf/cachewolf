@@ -1608,7 +1608,6 @@ public class GCImporter {
         loggedInAs = extractor.findNext();
         Preferences.itself().log("[checkGCSettings]:loggedInAs= " + loggedInAs, null);
         if (loggedInAs.length() == 0) {
-            //Preferences.itself().log(page);
             return 6;
         }
 
@@ -1749,7 +1748,7 @@ public class GCImporter {
         }
         UrlFetcher.rememberCookies();
         final String postData = getItemString(WebPage, "__RequestVerificationToken") //
-                + "&" + "Username=" + encodeUTF8URL(Utils.encodeJavaUtf8String(username)) //
+                + "&" + "UsernameOrEmail=" + encodeUTF8URL(Utils.encodeJavaUtf8String(username)) //
                 + "&" + "Password=" + encodeUTF8URL(Utils.encodeJavaUtf8String(passwort)) //
                 ;
         try {
