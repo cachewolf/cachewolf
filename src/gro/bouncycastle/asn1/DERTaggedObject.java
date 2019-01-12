@@ -87,11 +87,10 @@ public class DERTaggedObject
 
             if (explicit)
             {
-                throw new UnsupportedClassVersionError();/*
                 out.writeTag(BERTags.CONSTRUCTED | BERTags.TAGGED, tagNo);
                 out.writeLength(primitive.encodedLength());
                 out.writeObject(primitive);
-*/            }
+            }
             else
             {
                 //

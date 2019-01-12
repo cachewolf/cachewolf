@@ -27,8 +27,7 @@ public interface Signer
      * generate a signature for the message we've been loaded with using
      * the key we were initialised with.
      */
-    public byte[] generateSignature();
-        //throws CryptoException, DataLengthException;
+    public byte[] generateSignature() throws CryptoException, DataLengthException;
 
     /**
      * return true if the internal state represents the signature described

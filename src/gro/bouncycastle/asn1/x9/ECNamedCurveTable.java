@@ -5,7 +5,7 @@ import ewe.util.Vector;
 import gro.bouncycastle.asn1.ASN1ObjectIdentifier;
 import gro.bouncycastle.asn1.anssi.ANSSINamedCurves;
 //import gro.bouncycastle.asn1.cryptopro.ECGOST3410NamedCurves;
-//import gro.bouncycastle.asn1.gm.GMNamedCurves;
+import gro.bouncycastle.asn1.gm.GMNamedCurves;
 import gro.bouncycastle.asn1.nist.NISTNamedCurves;
 import gro.bouncycastle.asn1.sec.SECNamedCurves;
 import gro.bouncycastle.asn1.teletrust.TeleTrusTNamedCurves;
@@ -49,9 +49,8 @@ public class ECNamedCurveTable
 
         if (ecP == null)
         {
-        	throw new UnsupportedClassVersionError();/*
             ecP = GMNamedCurves.getByName(name);
-*/        }
+        }
 
         return ecP;
     }

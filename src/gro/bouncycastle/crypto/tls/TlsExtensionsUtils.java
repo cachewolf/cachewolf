@@ -41,9 +41,8 @@ public class TlsExtensionsUtils
     public static void addMaxFragmentLengthExtension(Hashtable extensions, short maxFragmentLength)
         throws IOException
     {
-    	throw new UnsupportedClassVersionError();/*
         extensions.put(EXT_max_fragment_length, createMaxFragmentLengthExtension(maxFragmentLength));
-*/    }
+    }
 
     public static void addPaddingExtension(Hashtable extensions, int dataLength)
         throws IOException
@@ -159,17 +158,19 @@ public class TlsExtensionsUtils
         return buf.toByteArray();
 */    }
 
-/*    public static byte[] createMaxFragmentLengthExtension(short maxFragmentLength)
+    public static byte[] createMaxFragmentLengthExtension(short maxFragmentLength)
         throws IOException
     {
+    	throw new UnsupportedClassVersionError(); /*
         TlsUtils.checkUint8(maxFragmentLength);
 
         byte[] extensionData = new byte[1];
         TlsUtils.writeUint8(maxFragmentLength, extensionData, 0);
         return extensionData;
-    }
+*/
+    	}
 
-    public static byte[] createPaddingExtension(int dataLength)
+/*    public static byte[] createPaddingExtension(int dataLength)
         throws IOException
     {
         TlsUtils.checkUint16(dataLength);

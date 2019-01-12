@@ -63,9 +63,8 @@ public class ECDSASigner
             }
             else
             {
-            	throw new UnsupportedClassVersionError();/*
                 this.key = (ECPrivateKeyParameters)param;
-*/            }
+            }
         }
         else
         {

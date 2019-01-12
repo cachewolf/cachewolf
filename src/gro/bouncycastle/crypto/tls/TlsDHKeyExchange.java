@@ -247,11 +247,10 @@ public class TlsDHKeyExchange
             return;
         }
 
-    	throw new UnsupportedClassVersionError();/*
         BigInteger Yc = TlsDHUtils.readDHParameter(input);
         
         this.dhAgreePublicKey = TlsDHUtils.validateDHPublicKey(new DHPublicKeyParameters(Yc, dhParameters));
-*/    }
+    }
 
     public byte[] generatePremasterSecret()
         throws IOException

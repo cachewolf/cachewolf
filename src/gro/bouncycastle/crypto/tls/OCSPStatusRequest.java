@@ -7,7 +7,7 @@ import ewe.io.InputStream;
 import ewe.io.OutputStream;
 import ewe.util.Vector;
 import gro.bouncycastle.asn1.ASN1Encoding;
-//import gro.bouncycastle.asn1.ocsp.ResponderID;
+import gro.bouncycastle.asn1.ocsp.ResponderID;
 import gro.bouncycastle.asn1.x509.Extensions;
 import gro.bouncycastle.util.io.Streams;
 
@@ -67,11 +67,10 @@ public class OCSPStatusRequest
             ByteArrayOutputStream buf = new ByteArrayOutputStream();
             for (int i = 0; i < responderIDList.size(); ++i)
             {
-            	throw new UnsupportedClassVersionError();/*
                 ResponderID responderID = (ResponderID) responderIDList.elementAt(i);
                 byte[] derEncoding = responderID.getEncoded(ASN1Encoding.DER);
                 TlsUtils.writeOpaque16(derEncoding, buf);
-*/            }
+            }
         	throw new UnsupportedClassVersionError();/*
             TlsUtils.checkUint16(buf.size());
             TlsUtils.writeUint16(buf.size(), output);

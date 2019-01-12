@@ -260,9 +260,8 @@ public abstract class ASN1BitString
             {
                 if (data[data.length - 1] != (byte)(data[data.length - 1] & (0xff << padBits)))
                 {
-                	throw new UnsupportedClassVersionError();/*
                     return new DLBitString(data, padBits);
-*/                }
+                }
             }
         }
 

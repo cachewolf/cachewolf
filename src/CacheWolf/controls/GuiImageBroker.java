@@ -118,13 +118,10 @@ public final class GuiImageBroker {
         File f = new File(basedir + icon + extension);
         if (f.exists()) {
             in = f.getAbsolutePath();
-            // log("using image " + in);
+            Preferences.itself().log("using image " + in);
         } else {
             in = icon + extension;
 	    String platform = Vm.getPlatform();
-	    Preferences.itself().log("Platform is: " + platform);
-	    Preferences.itself().log("icon name is: " + in);
-	    Preferences.itself().log("icon filename is: " + f);
 	    if ("Java".equals(platform) && isInkscapePresent()){
 		try{
 		    File f1 = new File (FileBase.getProgramDirectory() + "/svg/Button/" + icon+".svg");
@@ -133,35 +130,32 @@ public final class GuiImageBroker {
 		    File f4 = new File (FileBase.getProgramDirectory() + "/svg/Star/" + icon+".svg");
 		    File f5 = new File (FileBase.getProgramDirectory() + "/svg/Waypoint/" + icon+".svg");
 		    File sourceFile;
-		    String width = "32";
+		    int height = 32;
 		    if (f1.exists()){
 			sourceFile = f1;
-			width = useBigIcons?"32":"16";
 		    }
 		    else if (f2.exists()){
 			sourceFile = f2;
-			width = width = useBigIcons?"30":"15";
 		    }
 		    else if (f3.exists()){
 			sourceFile = f3;
-			width = useBigIcons?"32":"16";
 		    }
 		    else if (f4.exists()){
 			sourceFile = f4;
-			width = useBigIcons?"120":"60";
 		    }
 		    else if (f5.exists()){
 			sourceFile = f5;
-			width = useBigIcons?"30":"15";
 		    }
 		    else{
 			sourceFile= null;
 		    }
-		    Preferences.itself().log("file to convert:    " + sourceFile);
-		    Preferences.itself().log("  destination-file: " + f);
-		    Process p = Vm.exec(new String[]{INKSCAPE, "-z", "-w", width, "-e", f.toString(), sourceFile.toString()});
+		    height = Preferences.itself().fontSize;
+		    if (useBigIcons) height *= 2;
+		    Preferences.itself().log("Icon generator converts: " + sourceFile + " to: " + f.getAbsolutePath());
+		    Process p = Vm.exec(new String[]{INKSCAPE, "-z", "-h", Integer.toString(height), "-e", f.toString(), sourceFile.toString()});
 		    p.waitFor();
-		    Preferences.itself().log("result of convert: " + p.exitValue());
+		    in = f.getAbsolutePath();
+		    
 		}
 		catch (IOException e){
 		    Preferences.itself().log("Can not convert svg to png");
@@ -169,7 +163,6 @@ public final class GuiImageBroker {
 		    //can not convert....
 		}
 	    }
-            //log("rem svg2png.exe \"svg\\Button\\" + icon + ".svg\" \"symbols\\" + icon + ".png\" %RESOLUTION%");
         }
         return in;
     }

@@ -40,9 +40,8 @@ public class ECAlgorithms
         switch (count)
         {
         case 1:
-        	throw new UnsupportedClassVersionError();/*
             return ps[0].multiply(ks[0]);
-*/        case 2:
+        case 2:
         	throw new UnsupportedClassVersionError();/*
             return sumOfTwoMultiplies(ps[0], ks[0], ps[1], ks[1]);
 */        default:

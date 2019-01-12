@@ -105,9 +105,8 @@ public class TlsECDHKeyExchange extends AbstractTlsKeyExchange
             }
             catch (ClassCastException e)
             {
-            	throw new UnsupportedClassVersionError();/*
                 throw new TlsFatalAlert(AlertDescription.certificate_unknown, e);
-*/            }
+            }
 
         /*Unreachable ->	throw new UnsupportedClassVersionError();/*
             TlsUtils.validateKeyUsage(x509Cert, KeyUsage.keyAgreement);

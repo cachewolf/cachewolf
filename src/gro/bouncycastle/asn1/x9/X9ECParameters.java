@@ -46,16 +46,18 @@ public class X9ECParameters
         this.curve = x9c.getCurve();
         Object p = seq.getObjectAt(3);
 
-        throw new UnsupportedClassVersionError();/*
         if (p instanceof X9ECPoint)
         {
+            throw new UnsupportedClassVersionError();/*
             this.g = ((X9ECPoint)p);
-        }
+*/        }
         else
         {
+        throw new UnsupportedClassVersionError();/*
             this.g = new X9ECPoint(curve, (ASN1OctetString)p);
-        }
+*/        }
 
+/* -> UNreachable        throw new UnsupportedClassVersionError();/*
         this.n = ((ASN1Integer)seq.getObjectAt(4)).getValue();
         this.seed = x9c.getSeed();
 

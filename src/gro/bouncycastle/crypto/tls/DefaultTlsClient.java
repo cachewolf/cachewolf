@@ -60,9 +60,8 @@ public abstract class DefaultTlsClient
           return createECDHEKeyExchange(keyExchangeAlgorithm);
 
         case KeyExchangeAlgorithm.RSA:
-        	throw new UnsupportedClassVersionError();/*
           return createRSAKeyExchange();
-*/
+
         default:
             /*
              * Note: internal error here; the TlsProtocol implementation verifies that the

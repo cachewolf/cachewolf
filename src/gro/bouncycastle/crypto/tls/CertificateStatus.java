@@ -19,17 +19,17 @@ public class CertificateStatus
             throw new IllegalArgumentException("'response' is not an instance of the correct type");
         }
         
-        throw new UnsupportedClassVersionError();/*
         this.statusType = statusType;
         this.response = response;
+    }
+
+    public short getStatusType()
+    {
+    	throw new UnsupportedClassVersionError();/*
+        return statusType;
 */    }
 
     /*
-    public short getStatusType()
-    {
-        return statusType;
-    }
-
     public Object getResponse()
     {
         return response;

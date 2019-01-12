@@ -146,12 +146,12 @@ public abstract class AbstractX500NameStyle
 
         for (int i = 0; i != rdns1.length; i++)
         {
-        	throw new UnsupportedClassVersionError();/*
             if (!foundMatch(reverse, rdns1[i], rdns2))
             {
+            	throw new UnsupportedClassVersionError();/*
                 return false;
-            }
-*/        }
+*/            }
+        }
 
         	throw new UnsupportedClassVersionError();/*
         return true;

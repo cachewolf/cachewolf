@@ -15,12 +15,12 @@ public abstract class FiniteFields
         }
         for (int i = 1; i < exponents.length; ++i)
         {
-        	throw new UnsupportedClassVersionError();/*
             if (exponents[i] <= exponents[i - 1])
             {
+            	throw new UnsupportedClassVersionError();/*
                 throw new IllegalArgumentException("Polynomial exponents must be montonically increasing");
-            }
-*/
+*/            }
+
         }
 
         return new GenericPolynomialExtensionField(GF_2, new GF2Polynomial(exponents));

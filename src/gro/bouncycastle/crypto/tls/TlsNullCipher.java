@@ -59,10 +59,9 @@ public class TlsNullCipher
 
         if (context.isServer())
         {
-        	throw new UnsupportedClassVersionError();/*
             writeMac = serverWriteMac;
             readMac = clientWriteMac;
-*/        }
+        }
         else
         {
         	throw new UnsupportedClassVersionError();/*

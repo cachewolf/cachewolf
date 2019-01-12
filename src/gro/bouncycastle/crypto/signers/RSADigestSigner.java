@@ -140,8 +140,7 @@ public class RSADigestSigner
 	 * we were initialised with.
 	 */
 
-	public byte[] generateSignature()
-	// throws CryptoException, DataLengthException
+	public byte[] generateSignature() throws CryptoException, DataLengthException
 	{
 		if (!forSigning) {
 			throw new IllegalStateException("RSADigestSigner not initialised for signature generation.");
@@ -150,17 +149,15 @@ public class RSADigestSigner
 		byte[] hash = new byte[digest.getDigestSize()];
 		digest.doFinal(hash, 0);
 
-/* ->		try { */
-			throw new UnsupportedClassVersionError();/*
+		try {
 			byte[] data = derEncode(hash);
 			return rsaEngine.processBlock(data,	0, data.length);
-*/
-/* ->			} catch (IOException e) { */
-/*	throw new UnsupportedClassVersionError();/*
+
+			} catch (IOException e) {
+	throw new UnsupportedClassVersionError();/*
 			throw new CryptoException("unable to encode signature: " + e.getMessage(), e);
-		}
-        throw new UnsupportedClassVersionError();/*
-*/	}
+*/		}
+	}
 
 	/**
 	 * return true if the internal state represents the signature described in

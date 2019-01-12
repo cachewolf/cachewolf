@@ -78,10 +78,9 @@ public class TlsUtils
     {
         if (!isValidUint16(i))
         {
-        	throw new UnsupportedClassVersionError();/*
             throw new TlsFatalAlert(AlertDescription.internal_error);
-        	 */    }
         }
+    }
 
     public static void checkUint16(long i) throws IOException
     {
@@ -248,15 +247,16 @@ public class TlsUtils
         buf[offset + 1] = (byte)i;
     }
 
-    /*
     public static void writeUint24(int i, OutputStream output)
         throws IOException
     {
+    	throw new UnsupportedClassVersionError(); /*
         output.write((byte)(i >>> 16));
         output.write((byte)(i >>> 8));
         output.write((byte)i);
+   	 */
     }
-*/
+
     public static void writeUint24(int i, byte[] buf, int offset)
     {
         buf[offset] = (byte)(i >>> 16);
@@ -732,13 +732,13 @@ public class TlsUtils
     {
         return vectorOfOne(new SignatureAndHashAlgorithm(HashAlgorithm.sha1, SignatureAlgorithm.dsa));
     }
-/*
     public static Vector getDefaultECDSASignatureAlgorithms()
     {
+    	throw new UnsupportedClassVersionError();/*
         return vectorOfOne(new SignatureAndHashAlgorithm(HashAlgorithm.sha1, SignatureAlgorithm.ecdsa));
-    }
+*/    }
 
-    public static Vector getDefaultRSASignatureAlgorithms()
+/*    public static Vector getDefaultRSASignatureAlgorithms()
     {
         return vectorOfOne(new SignatureAndHashAlgorithm(HashAlgorithm.sha1, SignatureAlgorithm.rsa));
     }

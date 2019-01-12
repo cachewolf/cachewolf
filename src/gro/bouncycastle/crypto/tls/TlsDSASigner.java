@@ -35,19 +35,22 @@ public abstract class TlsDSASigner
         AsymmetricKeyParameter publicKey, byte[] hash)
         throws CryptoException
     {
-    	throw new UnsupportedClassVersionError();/*
         Signer signer = makeSigner(algorithm, true, false, publicKey);
         if (algorithm == null)
         {
+            throw new UnsupportedClassVersionError();/*
             // Note: Only use the SHA1 part of the (MD5/SHA1) hash
             signer.update(hash, 16, 20);
-        }
+*/        }
         else
         {
+            throw new UnsupportedClassVersionError();/*
             signer.update(hash, 0, hash.length);
+*/        }
+// ->        throw new UnsupportedClassVersionError();/*
+//->        return signer.verifySignature(sigBytes);
+// <- */
         }
-        return signer.verifySignature(sigBytes);
-*/    }
 
     public Signer createSigner(SignatureAndHashAlgorithm algorithm, AsymmetricKeyParameter privateKey)
     {
