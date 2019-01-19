@@ -199,17 +199,18 @@ public class TlsClientProtocol
             {
             case CS_SERVER_CERTIFICATE:
             {
-            	throw new UnsupportedClassVersionError();    	/*
                 if (!this.allowCertificateStatus)
                 {
                     /*
                      * RFC 3546 3.6. If a server returns a "CertificateStatus" message, then the
                      * server MUST have included an extension of type "status_request" with empty
                      * "extension_data" in the extended server hello..
-                     * /
+                     */
+                	throw new UnsupportedClassVersionError();    	/*
                     throw new TlsFatalAlert(AlertDescription.unexpected_message);
-                }
+*/                }
 
+                	throw new UnsupportedClassVersionError();    	/*
                 this.certificateStatus = CertificateStatus.parse(buf);
 
                 assertEmpty(buf);

@@ -566,10 +566,9 @@ public abstract class ECFieldElement
 
             if ((k2 == 0) && (k3 == 0))
             {
-                throw new UnsupportedClassVersionError();/*
                 this.representation = TPB;
                 this.ks = new int[]{ k1 }; 
-*/            }
+            }
             else
             {
                 throw new UnsupportedClassVersionError();/*

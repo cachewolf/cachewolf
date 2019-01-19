@@ -205,9 +205,8 @@ public abstract class ASN1TaggedObject
         case BERTags.SEQUENCE:
             return ASN1Sequence.getInstance(this, isExplicit).parser();
         case BERTags.OCTET_STRING:
-    	throw new UnsupportedClassVersionError();/*
             return ASN1OctetString.getInstance(this, isExplicit).parser();
-*/        }
+        }
 
     	throw new UnsupportedClassVersionError();/*
         if (isExplicit)

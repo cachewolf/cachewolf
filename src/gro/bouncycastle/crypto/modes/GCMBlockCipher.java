@@ -398,20 +398,21 @@ public class GCMBlockCipher
 
         if (atLength > atLengthPre)
         {
-        	throw new UnsupportedClassVersionError();/*
             /*
              *  Some AAD was sent after the cipher started. We determine the difference b/w the hash value
              *  we actually used when the cipher started (S_atPre) and the final hash value calculated (S_at).
              *  Then we carry this difference forward by multiplying by H^c, where c is the number of (full or
              *  partial) cipher-text blocks produced, and adjust the current hash.
-             * /
+             */
 
             // Finish hash for partial AAD block
             if (atBlockPos > 0)
             {
+            	throw new UnsupportedClassVersionError();/*
                 gHASHPartial(S_at, atBlock, 0, atBlockPos);
-            }
+*/            }
 
+        	throw new UnsupportedClassVersionError();/*
             // Find the difference between the AAD hashes
             if (atLengthPre > 0)
             {

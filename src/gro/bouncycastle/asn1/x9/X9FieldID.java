@@ -70,9 +70,8 @@ public class X9FieldID
         {
             if (k3 != 0)
             {
-                throw new UnsupportedClassVersionError();/*
                 throw new IllegalArgumentException("inconsistent k values");
-*/            }
+            }
 
             throw new UnsupportedClassVersionError();/*
             fieldIdParams.add(tpBasis);

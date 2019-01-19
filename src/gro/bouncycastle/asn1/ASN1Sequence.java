@@ -208,9 +208,9 @@ public abstract class ASN1Sequence
 
     public ASN1Encodable[] toArray()
     {
-    	throw new UnsupportedClassVersionError();/*
         ASN1Encodable[] values = new ASN1Encodable[this.size()];
 
+        throw new UnsupportedClassVersionError();/*
         for (int i = 0; i != this.size(); i++)
         {
             values[i] = this.getObjectAt(i);

@@ -662,11 +662,12 @@ public abstract class ECPoint
         // B.3 pg 62
         public ECPoint add(ECPoint b)
         {
-        	throw new UnsupportedClassVersionError();/*
             if (this.isInfinity())
             {
+                throw new UnsupportedClassVersionError();/*
                 return b;
-            }
+*/            }
+            throw new UnsupportedClassVersionError();/*
             if (b.isInfinity())
             {
                 return this;

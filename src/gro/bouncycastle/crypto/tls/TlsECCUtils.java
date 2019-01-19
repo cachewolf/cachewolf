@@ -91,12 +91,13 @@ public class TlsECCUtils
 
     public static int[] readSupportedEllipticCurvesExtension(byte[] extensionData) throws IOException
     {
-    	throw new UnsupportedClassVersionError();/*
         if (extensionData == null)
         {
+            throw new UnsupportedClassVersionError();/*
             throw new IllegalArgumentException("'extensionData' cannot be null");
-        }
+*/        }
 
+        throw new UnsupportedClassVersionError();/*
         ByteArrayInputStream buf = new ByteArrayInputStream(extensionData);
 
         int length = TlsUtils.readUint16(buf);

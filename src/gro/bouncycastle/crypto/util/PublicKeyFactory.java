@@ -112,14 +112,13 @@ public class PublicKeyFactory
             ValidationParams dhValidationParms = dhParams.getValidationParams();
             if (dhValidationParms != null)
             {
-            	throw new UnsupportedClassVersionError();/*
                 byte[] seed = dhValidationParms.getSeed();
                 BigInteger pgenCounter = dhValidationParms.getPgenCounter();
 
                 // TODO Check pgenCounter size?
 
                 validation = new DHValidationParameters(seed, pgenCounter.intValue());
-*/            }
+            }
 
             throw new UnsupportedClassVersionError();/*
             return new DHPublicKeyParameters(y, new DHParameters(p, g, q, j, validation));

@@ -11,7 +11,7 @@ import gro.bouncycastle.crypto.digests.NullDigest;
 import gro.bouncycastle.crypto.params.AsymmetricKeyParameter;
 import gro.bouncycastle.crypto.params.ParametersWithRandom;
 import gro.bouncycastle.crypto.params.RSAKeyParameters;
-//import gro.bouncycastle.crypto.signers.GenericSigner;
+import gro.bouncycastle.crypto.signers.GenericSigner;
 import gro.bouncycastle.crypto.signers.RSADigestSigner;
 
 public class TlsRSASigner
@@ -94,9 +94,8 @@ public class TlsRSASigner
              * RFC 5246 4.7. Note that earlier versions of TLS used a different RSA signature scheme
              * that did not include a DigestInfo encoding.
              */
-            throw new UnsupportedClassVersionError();/*
             s = new GenericSigner(createRSAImpl(), d);
-*/        }
+        }
 
         s.init(forSigning, cp);
         return s;

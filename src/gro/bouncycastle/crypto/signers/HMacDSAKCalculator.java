@@ -101,11 +101,11 @@ public class HMacDSAKCalculator
 
     public BigInteger nextK()
     {
-    	throw new UnsupportedClassVersionError();/*
         byte[] t = new byte[((n.bitLength() + 7) / 8)];
 
         for (;;)
         {
+        	throw new UnsupportedClassVersionError();/*
             int tOff = 0;
 
             while (tOff < t.length)
@@ -136,8 +136,8 @@ public class HMacDSAKCalculator
             hMac.update(V, 0, V.length);
 
             hMac.doFinal(V, 0);
-        }
-*/    }
+*/        }
+    }
 
     private BigInteger bitsToInt(byte[] t)
     {

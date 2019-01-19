@@ -45,13 +45,14 @@ public class HeartbeatExtension
      */
     public static HeartbeatExtension parse(InputStream input) throws IOException
     {
-    	throw new UnsupportedClassVersionError();/*
         short mode = TlsUtils.readUint8(input);
         if (!HeartbeatMode.isValid(mode))
         {
+        	throw new UnsupportedClassVersionError();/*
             throw new TlsFatalAlert(AlertDescription.illegal_parameter);
-        }
+*/        }
 
+    	throw new UnsupportedClassVersionError();/*
         return new HeartbeatExtension(mode);
 */    }
 }

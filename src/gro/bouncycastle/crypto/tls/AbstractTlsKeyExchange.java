@@ -66,10 +66,9 @@ public abstract class AbstractTlsKeyExchange
                 case KeyExchangeAlgorithm.ECDH_ECDSA:
                 case KeyExchangeAlgorithm.ECDHE_ECDSA:
                 {
-                	throw new UnsupportedClassVersionError();/*
                     this.supportedSignatureAlgorithms = TlsUtils.getDefaultECDSASignatureAlgorithms();
                     break;
-*/                }
+                }
 
                 case KeyExchangeAlgorithm.DH_RSA:
                 case KeyExchangeAlgorithm.DHE_RSA:

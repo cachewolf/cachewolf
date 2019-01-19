@@ -83,16 +83,16 @@ public class Certificate
             totalLength += derEncoding.length + 3;
         }
 
-    	throw new UnsupportedClassVersionError();/*
         TlsUtils.checkUint24(totalLength);
         TlsUtils.writeUint24(totalLength, output);
 
         for (int i = 0; i < derEncodings.size(); ++i)
         {
+        	throw new UnsupportedClassVersionError();/*
             byte[] derEncoding = (byte[])derEncodings.elementAt(i);
             TlsUtils.writeOpaque24(derEncoding, output);
-        }
-*/    }
+*/        }
+    }
 
     /**
      * Parse a {@link Certificate} from an {@link InputStream}.

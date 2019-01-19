@@ -423,9 +423,8 @@ public abstract class ASN1Set
     {
         if (!(o instanceof ASN1Set))
         {
-            throw new UnsupportedClassVersionError();/*
             return false;
-*/        }
+        }
 
         throw new UnsupportedClassVersionError();/*
         ASN1Set   other = (ASN1Set)o;

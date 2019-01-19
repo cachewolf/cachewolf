@@ -110,12 +110,12 @@ abstract class AbstractTlsContext
         {
             throw new IllegalArgumentException("'context_value' must have length less than 2^16 (or be null)");
         }
-        throw new UnsupportedClassVersionError();/*
 
         SecurityParameters sp = getSecurityParameters();
         byte[] cr = sp.getClientRandom(), sr = sp.getServerRandom();
 
         int seedLength = cr.length + sr.length;
+        throw new UnsupportedClassVersionError();/*
         if (context_value != null)
         {
             seedLength += (2 + context_value.length);

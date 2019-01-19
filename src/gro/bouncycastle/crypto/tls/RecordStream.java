@@ -152,17 +152,18 @@ class RecordStream
          */
         checkType(type, AlertDescription.unexpected_message);
 
-        throw new UnsupportedClassVersionError();/*
         if (!restrictReadVersion)
         {
+            throw new UnsupportedClassVersionError();/*
             int version = TlsUtils.readVersionRaw(recordHeader, TLS_HEADER_VERSION_OFFSET);
             if ((version & 0xffffff00) != 0x0300)
             {
                 throw new TlsFatalAlert(AlertDescription.illegal_parameter);
             }
-        }
+*/        }
         else
         {
+        throw new UnsupportedClassVersionError();/*
             ProtocolVersion version = TlsUtils.readVersion(recordHeader, TLS_HEADER_VERSION_OFFSET);
             if (readVersion == null)
             {
@@ -172,12 +173,14 @@ class RecordStream
             {
                 throw new TlsFatalAlert(AlertDescription.illegal_parameter);
             }
-        }
+*/        }
 
+// ->        throw new UnsupportedClassVersionError();
+        /*
         int length = TlsUtils.readUint16(recordHeader, TLS_HEADER_LENGTH_OFFSET);
 
         checkLength(length, ciphertextLimit, AlertDescription.record_overflow);
-*/    }
+// */    }
 
     boolean readRecord()
         throws IOException

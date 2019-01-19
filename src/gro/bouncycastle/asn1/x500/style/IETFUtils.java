@@ -191,9 +191,8 @@ public class IETFUtils
 
                 if (!vTok.hasMoreTokens())
                 {
-                    throw new UnsupportedClassVersionError();/*
                     throw new IllegalArgumentException("badly formatted directory string");
-*/                }
+                }
                 throw new UnsupportedClassVersionError();/*
 
                 String               value = vTok.nextToken();

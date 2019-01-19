@@ -55,13 +55,12 @@ public class TlsMac
             // TODO This should check the actual algorithm, not assume based on the digest size
             if (digest.getDigestSize() == 20)
             {
-            	throw new UnsupportedClassVersionError();/*
                 /*
                  * NOTE: When SHA-1 is used with the SSL 3.0 MAC, the secret + input pad is not
                  * digest block-aligned.
-                 * /
+                 */
                 this.digestOverhead = 4;
-*/            }
+            }
         }
         else
         {

@@ -20,9 +20,8 @@ public abstract class WNafUtil
         }
         if (k.signum() == 0)
         {
-            throw new UnsupportedClassVersionError();/*
             return EMPTY_INTS;
-*/        }
+        }
 
         throw new UnsupportedClassVersionError();/*
         BigInteger _3k = k.shiftLeft(1).add(k);

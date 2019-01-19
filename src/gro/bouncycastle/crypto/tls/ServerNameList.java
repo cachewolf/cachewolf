@@ -56,9 +56,8 @@ public class ServerNameList
                 throw new TlsFatalAlert(AlertDescription.internal_error);
             }
 
-        	throw new UnsupportedClassVersionError();/*
             entry.encode(buf);
-*/        }
+        }
         throw new UnsupportedClassVersionError();/*
 
         TlsUtils.checkUint16(buf.size());

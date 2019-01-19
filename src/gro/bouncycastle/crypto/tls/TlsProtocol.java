@@ -169,11 +169,11 @@ public abstract class TlsProtocol
                 raiseAlertWarning(AlertDescription.user_canceled, "User canceled handshake");
             }
 
-            	throw new UnsupportedClassVersionError();/*
             raiseAlertWarning(AlertDescription.close_notify, "Connection closed");
 
             recordStream.safeClose();
 
+            throw new UnsupportedClassVersionError();/*
             if (!appDataReady)
             {
                 cleanupHandshake();

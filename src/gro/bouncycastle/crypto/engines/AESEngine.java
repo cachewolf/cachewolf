@@ -357,7 +357,6 @@ private static final int[] Tinv0 =
         }
         case 8:
         {
-        	throw new UnsupportedClassVersionError();/*
             int t0 = Pack.littleEndianToInt(key,  0); W[0][0] = t0;
             int t1 = Pack.littleEndianToInt(key,  4); W[0][1] = t1;
             int t2 = Pack.littleEndianToInt(key,  8); W[0][2] = t2;
@@ -369,6 +368,7 @@ private static final int[] Tinv0 =
 
             int u, rcon = 1;
 
+            throw new UnsupportedClassVersionError();/*
             for (int i = 2; i < 14; i += 2)
             {
                 u = subWord(shift(t7, 8)) ^ rcon; rcon <<= 1;

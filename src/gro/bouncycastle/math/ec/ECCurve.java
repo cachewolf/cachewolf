@@ -373,9 +373,8 @@ public abstract class ECCurve
         {
             if (encoded.length != 1)
             {
-            	throw new UnsupportedClassVersionError();/*
                 throw new IllegalArgumentException("Incorrect length for infinity encoding");
-*/            }
+            }
 
         	throw new UnsupportedClassVersionError();/*
             p = getInfinity();
