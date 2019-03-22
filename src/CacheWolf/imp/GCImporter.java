@@ -2676,10 +2676,10 @@ public class GCImporter {
             }
             int typeStart = imgUrl.lastIndexOf('.');
             if (typeStart > -1) {
-                String imgType = (imgUrl.substring(typeStart).toLowerCase() + "    ").substring(0, 4).trim();
+                String imgType = (imgUrl.substring(typeStart).toLowerCase() + "     ").substring(0, 5).trim();
                 // Delete possible characters in URL after the image extension
                 imgUrl = imgUrl.substring(0, imgUrl.lastIndexOf('.') + imgType.length());
-                if (imgType.startsWith(".jpg") || imgType.startsWith(".bmp") || imgType.startsWith(".png") || imgType.startsWith(".gif")) {
+                if (imgType.startsWith(".jpg") || imgType.startsWith(".jpeg") || imgType.startsWith(".bmp") || imgType.startsWith(".png") || imgType.startsWith(".gif")) {
                     try {
                         CacheImage imageInfo = spiderImage(wayPoint, imgUrl, imgType);
                         imageInfo.setComment(""); // correct dirty hack
@@ -2742,8 +2742,8 @@ public class GCImporter {
             }
             int typeStart = imgUrl.lastIndexOf('.');
             if (typeStart > 0) {
-                String imgType = (imgUrl.substring(typeStart).toLowerCase() + "    ").substring(0, 4).trim();
-                if (imgType.startsWith(".jpg") || imgType.startsWith(".bmp") || imgType.startsWith(".png") || imgType.startsWith(".gif")) {
+                String imgType = (imgUrl.substring(typeStart).toLowerCase() + "     ").substring(0, 5).trim();
+                if (imgType.startsWith(".jpg") || imgType.startsWith(".jpeg") || imgType.startsWith(".bmp") || imgType.startsWith(".png") || imgType.startsWith(".gif")) {
                     // Delete possible characters in URL after the image extension
                     imgUrl = imgUrl.substring(0, imgUrl.lastIndexOf('.') + imgType.length());
                     if (this.backgroudImageName.length() == 0 || imgUrl.indexOf(this.backgroudImageName) < 0) {

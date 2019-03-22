@@ -29,11 +29,7 @@ import ewe.fx.Color;
 import ewe.fx.Dimension;
 import ewe.fx.Font;
 import ewe.fx.Insets;
-import ewe.io.File;
-import ewe.io.FileBase;
-import ewe.io.IOException;
-import ewe.io.SerialPort;
-import ewe.io.SerialPortOptions;
+import ewe.io.*;
 import ewe.net.Socket;
 import ewe.reflect.FieldTransfer;
 import ewe.reflect.Reflect;
@@ -436,13 +432,13 @@ public class PreferencesScreen extends Form {
                 int oldFontsize = Preferences.itself().fontSize;
                 Preferences.itself().setBaseDir(DataDir.getText());
                 Preferences.itself().setMapsBaseDir(MapsDir.getText());
-		int newFontSize = Convert.toInt(fontSize.getText());
+                int newFontSize = Convert.toInt(fontSize.getText());
                 if (newFontSize < 6)
                     newFontSize = 11;
-		if (newFontSize != Preferences.itself().fontSize){
-		    Preferences.itself().fontSize = newFontSize;
-		    cleanIcons();
-		}
+                if (newFontSize != Preferences.itself().fontSize) {
+                    Preferences.itself().fontSize = newFontSize;
+                    cleanIcons();
+                }
                 Preferences.itself().fontSize = newFontSize;
 
                 Preferences.itself().fontName = fontName.getText();
@@ -590,13 +586,13 @@ public class PreferencesScreen extends Form {
         super.onEvent(ev);
     }
 
-    private void cleanIcons(){
-	FileBugfix baseDir = new FileBugfix(FileBase.getProgramDirectory() + "/symbols");
+    private void cleanIcons() {
+        FileBugfix baseDir = new FileBugfix(FileBase.getProgramDirectory() + "/symbols");
         String[] tmp = baseDir.list("*.png", FileBase.LIST_FILES_ONLY);
-	for (int i=0; i < tmp.length;i++){
-	    File fileToDelete = new File (baseDir, tmp[i]);
-	    boolean success = fileToDelete.delete ();
-	}
+        for (int i = 0; i < tmp.length; i++) {
+            File fileToDelete = new File(baseDir, tmp[i]);
+            boolean success = fileToDelete.delete();
+        }
     }
 }
 

@@ -173,9 +173,13 @@ public class Preferences extends MinML {
      * overwrite stored Logs with the ones now fetched from GC
      */
     public boolean overwriteLogs = true;
-    /** */
+    /**
+     *
+     */
     public boolean askForMaxNumbersOnImport = false;
-    /** */
+    /**
+     *
+     */
     public boolean addPremiumGC = false;
     public boolean useGCFavoriteValue = false; // use GCVote
     // Export
@@ -1321,8 +1325,8 @@ public class Preferences extends MinML {
      *                       BE versions or RC versions) by including the line
      *                       <p>
      *                       <pre>
-     *                                                                                                                                                                                                                             Preferences.itself().debug = true;
-     *                                                                                                                                                                                                                             </pre>
+     *                                                                                                                                                                                                                                                   Preferences.itself().debug = true;
+     *                                                                                                                                                                                                                                                   </pre>
      *                       <p>
      *                       in Version.getRelease()
      */
