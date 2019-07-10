@@ -125,6 +125,7 @@ public class GCImporter {
     private static String unpublishedGeocache = "Unpublished Geocache";
     private static String unavailableGeocache = "This cache is temporarily unavailable";
     private static String archivedGeocache = "This cache has been archived";
+    private static String lockedGeocache = "This cache has been locked";
     private static String foundByMe = "ctl00_ContentBody_GeoNav_logText";
     private static String correctedCoordinate = "\"isUserDefined\":true";
     // private static String premiumCacheForPM = "Warning NoBottomSpacing" is a PM-Cache for PMs
@@ -2138,6 +2139,7 @@ public class GCImporter {
 
                         newCache.setAvailable(!(wayPointPage.indexOf(unavailableGeocache) > -1));
                         newCache.setArchived(wayPointPage.indexOf(archivedGeocache) > -1);
+                        newCache.setArchived(wayPointPage.indexOf(lockedGeocache) > -1);
                         extractor.set(wayPointPage, correctedCoordinate, ";", 0, Extractor.EXCLUDESTARTEND);
                         String extracted = extractor.findNext();
                         if (extracted.length() > 0) {
