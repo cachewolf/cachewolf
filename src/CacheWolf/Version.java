@@ -39,7 +39,7 @@ import ewe.util.Properties;
 public class Version {
     static final int VER_MAJOR = 1;
     static final int VER_MINOR = 3;
-    static final String VER_SVN = "$LastRevision: 5006 $";
+    static final String VER_SVN = "$LastRevision: 5180 $";
     // next line (don't modify) is replaced at ant build.xml (with date or svn revision or something else. see there) 
     static final int SVN_REVISION = Common.parseInt(VER_SVN.substring(VER_SVN.indexOf(" ") + 1, VER_SVN.lastIndexOf(" ")));
     static final int VERSION_TYPE = 3;

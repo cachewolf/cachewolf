@@ -1051,7 +1051,7 @@ public class GCImporter {
         // if (possibleUpdateList.size() == 0 // prima, alle tauchen in der sureUpdateList (Liste bei GC) auf
         if (possibleUpdateList.size() == startSize //
                 || possibleUpdateList.size() > maxUpdate // Restmenge zu gross, wir nehmen nur die sicher geänderten.
-                ) {
+        ) {
             possibleUpdateList.clear();
         }
         Preferences.itself().log("possibly " + possibleUpdateList.size() + " + known " + sureUpdateList.size());
@@ -1196,7 +1196,7 @@ public class GCImporter {
                                             && (!(doNotgetFound && (ch.isFound() || ch.isOwned()))) //
                                             && (restrictedCacheType == CacheType.CW_TYPE_ERROR || restrictedCacheType == ch.getType()) // all typs or chTyp=selected typ
                             ) //
-                                    ) //
+                            ) //
                             {
                                 possibleUpdateList.put(ch.getCode(), ch);
                             }
@@ -2139,7 +2139,8 @@ public class GCImporter {
 
                         newCache.setAvailable(!(wayPointPage.indexOf(unavailableGeocache) > -1));
                         newCache.setArchived(wayPointPage.indexOf(archivedGeocache) > -1);
-                        newCache.setArchived(wayPointPage.indexOf(lockedGeocache) > -1);
+                        if (wayPointPage.indexOf(lockedGeocache) > -1)
+                            newCache.setArchived(true);
                         extractor.set(wayPointPage, correctedCoordinate, ";", 0, Extractor.EXCLUDESTARTEND);
                         String extracted = extractor.findNext();
                         if (extracted.length() > 0) {
@@ -2215,7 +2216,7 @@ public class GCImporter {
                         getAddWaypoints(wayPointPage, newCache.getCode(), newCache.isFound());
                         getAttributes(newCacheDetails);
                         newCache.setLastSync((new Time()).format("yyyyMMddHHmmss"));
-                        newCache.setIdOC (wayPointPageGetUuid());
+                        newCache.setIdOC(wayPointPageGetUuid());
                         newCache.setIncomplete(false);
                         Preferences.itself().log("ready " + newCache.getCode() + " : " + newCache.getLastSync());
                         break;
@@ -2998,11 +2999,11 @@ public class GCImporter {
         }
     }
 
-    private String wayPointPageGetUuid (){
+    private String wayPointPageGetUuid() {
         uuidRex.searchFrom(wayPointPage, wayPointPageIndex);
         if (uuidRex.didMatch()) {
             wayPointPageIndex = uuidRex.matchedTo();
-	    return uuidRex.stringMatched(1);
+            return uuidRex.stringMatched(1);
         } else {
             return "";
         }
