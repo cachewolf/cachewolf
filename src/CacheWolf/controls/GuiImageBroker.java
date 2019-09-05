@@ -122,40 +122,52 @@ public final class GuiImageBroker {
         } else {
             in = icon + extension;
             String platform = Vm.getPlatform();
-            if ("Java".equals(platform) && isInkscapePresent()) {
-                try {
-                    File f1 = new File(FileBase.getProgramDirectory() + "/svg/Button/" + icon + ".svg");
-                    File f2 = new File(FileBase.getProgramDirectory() + "/svg/Cachetype/" + icon + ".svg");
-                    File f3 = new File(FileBase.getProgramDirectory() + "/svg/Size/" + icon + ".svg");
-                    File f4 = new File(FileBase.getProgramDirectory() + "/svg/Star/" + icon + ".svg");
-                    File f5 = new File(FileBase.getProgramDirectory() + "/svg/Waypoint/" + icon + ".svg");
-                    File sourceFile;
-                    int height = 32;
-                    if (f1.exists()) {
-                        sourceFile = f1;
-                    } else if (f2.exists()) {
-                        sourceFile = f2;
-                    } else if (f3.exists()) {
-                        sourceFile = f3;
-                    } else if (f4.exists()) {
-                        sourceFile = f4;
-                    } else if (f5.exists()) {
-                        sourceFile = f5;
-                    } else {
-                        sourceFile = null;
+            boolean useSvg2png = false;
+            try {
+                int height = Preferences.itself().fontSize;
+                if (useBigIcons) height *= 2;
+                int width = height;
+                File f1 = new File(FileBase.getProgramDirectory() + "/svg/Button/" + icon + ".svg");
+                File f2 = new File(FileBase.getProgramDirectory() + "/svg/Cachetype/" + icon + ".svg");
+                File f3 = new File(FileBase.getProgramDirectory() + "/svg/Size/" + icon + ".svg");
+                File f4 = new File(FileBase.getProgramDirectory() + "/svg/Star/" + icon + ".svg");
+                File f5 = new File(FileBase.getProgramDirectory() + "/svg/Waypoint/" + icon + ".svg");
+                File sourceFile;
+                if (f1.exists()) {
+                    sourceFile = f1;
+                } else if (f2.exists()) {
+                    sourceFile = f2;
+                } else if (f3.exists()) {
+                    sourceFile = f3;
+                } else if (f4.exists()) {
+                    sourceFile = f4;
+                    width = 5 * width;
+                } else if (f5.exists()) {
+                    sourceFile = f5;
+                } else {
+                    sourceFile = null;
+                }
+                Preferences.itself().log("Icon generator converts: " + sourceFile + " to: " + f.getAbsolutePath());
+                if (System.getProperty("os.name") != null) {
+                    if (System.getProperty("os.name").indexOf("indows") > -1) {
+                        useSvg2png = true;
                     }
-                    height = Preferences.itself().fontSize;
-                    if (useBigIcons) height *= 2;
-                    Preferences.itself().log("Icon generator converts: " + sourceFile + " to: " + f.getAbsolutePath());
-                    Process p = Vm.exec(new String[]{INKSCAPE, "-z", "-h", Integer.toString(height), "-e", f.toString(), sourceFile.toString()});
+                }
+                if (useSvg2png) {
+                    Process p = Vm.exec(new String[]{"./svg2png.exe", sourceFile.toString(), f.toString(), Integer.toString(width)});
                     p.waitFor();
                     in = f.getAbsolutePath();
-
-                } catch (IOException e) {
-                    Preferences.itself().log("Can not convert svg to png");
-                    Vm.printStackTrace(e, Vm.err());
-                    //can not convert....
+                } else {
+                    if ("Java".equals(platform) && isInkscapePresent()) {
+                        Process p = Vm.exec(new String[]{INKSCAPE, "-z", "-h", Integer.toString(height), "-e", f.toString(), sourceFile.toString()});
+                        p.waitFor();
+                        in = f.getAbsolutePath();
+                    }
                 }
+            } catch (IOException e) {
+                Preferences.itself().log("Can not convert svg to png");
+                Vm.printStackTrace(e, Vm.err());
+                //can not convert....
             }
         }
         return in;
