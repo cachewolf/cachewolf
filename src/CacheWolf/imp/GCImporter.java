@@ -121,7 +121,7 @@ public class GCImporter {
     private static Regex longDescRex;
     private static Regex hintsRex;
     private static Regex notesRex;
-    private static String premiumGeocache = "Premium Member Only";
+    private static String premiumGeocache = "Geocache > Premium Member";
     private static String unpublishedGeocache = "Unpublished Geocache";
     private static String unavailableGeocache = "This cache is temporarily unavailable";
     private static String archivedGeocache = "This cache has been archived";
