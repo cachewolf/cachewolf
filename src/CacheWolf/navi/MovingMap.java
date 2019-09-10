@@ -1309,8 +1309,7 @@ public final class MovingMap extends Form implements ICommandListener {
      * loads the best map for lat/lon according to mapChangeModus lat/lon will be at the screen-pos of posCircle when posCircle is not on the screen (shifted outside my the user) then this routine uses the centre of the screen to find the best map
      * but anyway the map will be adjusted (moved) relativ to posCircle when a better map was found the called method updateposition will set posCirle Lat/-Lon to lat/lon.
      *
-     * @param lat
-     * @param lon
+     * @param where lat/lon
      * @param loadIfSameScale false: will not change the map if the better map has the same scale as the current . - this is used not to change the map, if it covers already the screen completely true: willchange the map, regardless of change in scale
      */
     public void setBestMap(CWPoint where, boolean loadIfSameScale) {
@@ -1464,8 +1463,8 @@ public final class MovingMap extends Form implements ICommandListener {
      * sets and displays the map
      *
      * @param newmap
-     * @param lat    move map so that lat/lon is in the centre / -361: don't adust to lat/lon
-     * @param lon    -361: don't adust to lat/lon
+     * @param where    move map so that lat/lon is in the centre / -361: don't adust to lat/lon
+     *                 lon -361: don't adust to lat/lon
      */
     public void setMap(MapInfoObject newmap, CWPoint where) {
         if (newmap == null) {
@@ -2281,7 +2280,7 @@ class MovingMapPanel extends InteractivePanel implements EventListener {
     }
 
     /**
-     * @param mapImage the mapImage to set
+     * @param mainMap the mapImage to set
      */
     public void setMainMap(MapImage mainMap) {
         this.mainMap = mainMap;
@@ -2438,13 +2437,13 @@ class MovingMapPanel extends InteractivePanel implements EventListener {
                             addCachetoListMenuItem = new MenuItem(MyLocale.getMsg(199, "Add to cachetour"));
                             kontextMenu.addItem(addCachetoListMenuItem);
                         }
-                        String stmp = clickedCache.getDetails().Hints;
+                        String stmp = clickedCache.getDetails().getHints();
                         stmp = stmp.substring(0, Math.min(10, stmp.length())).trim();
                         if (!stmp.equals("")) {
                             kontextMenu.addItem(hintMenuItem = new MenuItem("Hint: " + stmp));
                         }
                         if (clickedCache.getType() == CacheType.CW_TYPE_QUESTION) {
-                            stmp = clickedCache.getDetails().LongDescription;
+                            stmp = clickedCache.getDetails().getLongDescription();
                             if (!stmp.equals("")) {
                                 kontextMenu.addItem(missionMenuItem = new MenuItem("?: "));
                             }
@@ -2545,10 +2544,10 @@ class MovingMapPanel extends InteractivePanel implements EventListener {
                         MainForm.itself.addCache(clickedCache.getCode());
                     }
                     if (action == hintMenuItem) {
-                        new InfoBox("Hint", STRreplace.replace(Common.rot13(clickedCache.getDetails().Hints), "<br>", "\n")).wait(FormBase.OKB);
+                        new InfoBox("Hint", STRreplace.replace(Common.rot13(clickedCache.getDetails().getHints()), "<br>", "\n")).wait(FormBase.OKB);
                     }
                     if (action == missionMenuItem) {
-                        new InfoBox("Mission", STRreplace.replace(clickedCache.getDetails().LongDescription, "<br>", "\n")).wait(FormBase.OKB);
+                        new InfoBox("Mission", STRreplace.replace(clickedCache.getDetails().getLongDescription(), "<br>", "\n")).wait(FormBase.OKB);
                     }
                     /*
                      * for (int i=0; i<miLuminary.length; i++) { if (action == miLuminary[i]) { kontextMenu.close(); mm.MainTab.itself.navigate.setLuminary(i); mm.updateGps(mm.MainTab.itself.navigate.gpsPos.getFix()); miLuminary[i].modifiers |=

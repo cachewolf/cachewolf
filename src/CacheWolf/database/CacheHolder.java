@@ -287,7 +287,7 @@ public class CacheHolder {
                 // forceload of details, creates waypoint.xml if missing
                 result.details = result.getDetails();
                 // make sure details get (re)written in new format
-                result.details.hasUnsavedChanges = true;
+                result.details.setUnsaved(true);
                 // update information on notes and solver info
                 result.setHasNote(!result.details.getCacheNotes().equals(""));
                 result.setHasSolver(!result.details.getSolver().equals(""));
@@ -322,9 +322,9 @@ public class CacheHolder {
             ch = (CacheHolder) cachesWithLoadedDetails.get(i);
             if (ch != null) {
                 chD = ch.getDetails();
-                if (chD != null && chD.hasUnsavedChanges) {
+                if (chD != null && chD.isUnsaved()) {
                     // ch.calcRecommendationScore();
-                    chD.saveCacheDetails(MainForm.profile.dataDir);
+                    chD.saveCacheXML(MainForm.profile.dataDir);
                 }
             }
         }
@@ -1081,7 +1081,9 @@ public class CacheHolder {
             }
         } else {
             if (ch.getStatus().length() > 0) {
-                this.setStatus(ch.getStatus());
+                if (!Preferences.itself().keepTimeOnUpdate) {
+                    this.setStatus(ch.getStatus());
+                }
                 this.setFound(ch.isFound());
             }
         }
@@ -1103,9 +1105,9 @@ public class CacheHolder {
             if (this.detailsLoaded()) {
                 CacheHolderDetail chD = getDetails();
                 if (chD != null) {
-                    chD.CacheLogs.calcRecommendations();
-                    setNumFoundsSinceRecommendation(chD.CacheLogs.getFoundsSinceRecommendation());
-                    setNumRecommended(chD.CacheLogs.getNumRecommended());
+                    chD.getCacheLogs().calcRecommendations();
+                    setNumFoundsSinceRecommendation(chD.getCacheLogs().getFoundsSinceRecommendation());
+                    setNumRecommended(chD.getCacheLogs().getNumRecommended());
                 } else { // cache doesn't have details
                     setNumFoundsSinceRecommendation(-1);
                     setNumRecommended(-1);
@@ -1265,7 +1267,7 @@ public class CacheHolder {
     public CacheHolderDetail getDetails() {
         if (details == null) {
             details = new CacheHolderDetail(this);
-            details.readCache(MainForm.profile.dataDir);
+            details.readCacheXML(MainForm.profile.dataDir);
             if (details != null && !cachesWithLoadedDetails.contains(this)) {
                 cachesWithLoadedDetails.add(this);
                 if (cachesWithLoadedDetails.size() >= Preferences.itself().maxDetails)
@@ -1280,12 +1282,12 @@ public class CacheHolder {
      */
     public void saveCacheDetails() {
         checkIncomplete();
-        this.getDetails().saveCacheDetails(MainForm.profile.dataDir);
+        this.getDetails().saveCacheXML(MainForm.profile.dataDir);
     }
 
     void releaseCacheDetails() {
-        if (details != null && details.hasUnsavedChanges) {
-            details.saveCacheDetails(MainForm.profile.dataDir);
+        if (details != null && details.isUnsaved()) {
+            details.saveCacheXML(MainForm.profile.dataDir);
         }
         details = null;
         cachesWithLoadedDetails.remove(this);
@@ -1791,7 +1793,7 @@ public class CacheHolder {
                 // || getCacheOwner().length() > 0
                 // || getDateHidden().length() > 0
                 // || getCacheName().length() == 0
-                    )
+            )
                 ret = true;
             else
                 ret = false;

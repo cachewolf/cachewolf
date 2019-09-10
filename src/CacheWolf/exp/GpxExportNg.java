@@ -600,14 +600,14 @@ public class GpxExportNg {
                 if (exportStyle == NOGSEXTENSION) {
                     // no <cmt> in PQs / ?Myfinds (used for POI)
                     ret.append("    <cmt>").append(SafeXML.cleanGPX(ch.getName()));
-                    ret.append("\n" + SafeXML.cleanGPX(Common.rot13(removeHTMLTags.replaceAll(handleLinebreaks.replaceAll(ch.getDetails().Hints)))));
+                    ret.append("\n" + SafeXML.cleanGPX(Common.rot13(removeHTMLTags.replaceAll(handleLinebreaks.replaceAll(ch.getDetails().getHints())))));
                     ret.append("</cmt>").append(newLine);
                 }
             } else {
                 // is ADDI
                 ret.append("    <cmt>");
                 // ev zus maincachedetails Hints
-                ret.append(SafeXML.cleanGPX(ch.getDetails().LongDescription));
+                ret.append(SafeXML.cleanGPX(ch.getDetails().getLongDescription()));
                 ret.append("</cmt>").append(newLine);
             }
         }
@@ -631,7 +631,7 @@ public class GpxExportNg {
         if (exportStyle == STYLE_PQEXTENSIONS || exportStyle == STYLE_MYFINDS) {
             if (ch.isCacheWpt()) {
                 if (!ch.isCustomWpt()) {
-                    ret.append("    <url>").append(ch.getDetails().URL).append("</url>").append(newLine);
+                    ret.append("    <url>").append(ch.getDetails().getURL()).append("</url>").append(newLine);
                     ret.append("    <urlname>").append(SafeXML.cleanGPX(ch.getName())).append("</urlname>").append(newLine);
                 }
             }
@@ -639,7 +639,7 @@ public class GpxExportNg {
 
         if (exportOptions.getGPXVersion() == 1) {
             // link - tag
-            CacheImages images = ch.getDetails().images.getDisplayImages(ch.getCode());
+            CacheImages images = ch.getDetails().getImages().getDisplayImages(ch.getCode());
             if (ch.isCacheWpt()) {
                 if (!ch.isCustomWpt()) {
                     for (int i = 0; i < images.size(); i++) {
@@ -711,7 +711,7 @@ public class GpxExportNg {
                 .append("      <groundspeak:state>").append(SafeXML.cleanGPX(ch.getDetails().getState())).append("</groundspeak:state>").append(newLine)//
                 .append("      <groundspeak:short_description html=\"").append(ch.isHTML() ? TRUE : FALSE).append("\"></groundspeak:short_description>").append(newLine)//
                 .append("      <groundspeak:long_description html=\"").append(ch.isHTML() ? TRUE : FALSE).append("\">").append(SafeXML.cleanGPX(formatLongDescription())).append("</groundspeak:long_description>").append(newLine)//
-                .append("      <groundspeak:encoded_hints>").append(SafeXML.cleanGPX(Common.rot13(ch.getDetails().Hints))).append("</groundspeak:encoded_hints>").append(newLine)//
+                .append("      <groundspeak:encoded_hints>").append(SafeXML.cleanGPX(Common.rot13(ch.getDetails().getHints()))).append("</groundspeak:encoded_hints>").append(newLine)//
                 .append("      <groundspeak:logs>").append(newLine)//
                 .append(formatLogs())//
                 .append("      </groundspeak:logs>").append(newLine)//
@@ -767,8 +767,8 @@ public class GpxExportNg {
     private String formatTbs() {
         StringBuffer ret = new StringBuffer();
         Travelbug Tb;
-        for (int i = 0; i < ch.getDetails().Travelbugs.size(); i++) {
-            Tb = ch.getDetails().Travelbugs.getTB(i);
+        for (int i = 0; i < ch.getDetails().getTravelbugs().size(); i++) {
+            Tb = ch.getDetails().getTravelbugs().getTB(i);
             ret.append("        <groundspeak:travelbug id=\"").//
                     append(Integer.toString(i)).//
                     append("\" ref=\"TB\">").//
@@ -790,9 +790,9 @@ public class GpxExportNg {
     private String formatAttributes() {
         StringBuffer ret = new StringBuffer();
         Attribute attrib;
-        for (int i = 0; i < ch.getDetails().attributes.count(); i++) {
+        for (int i = 0; i < ch.getDetails().getAttributes().count(); i++) {
             // <groundspeak:attribute id="X" inc="Y">text für X</groundspeak:attribute>
-            attrib = ch.getDetails().attributes.getAttribute(i);
+            attrib = ch.getDetails().getAttributes().getAttribute(i);
             if (attrib.getGCId().length() > 0) {
                 ret.append("        <groundspeak:attribute id=\"").//
                         append(attrib.getGCId()).//
@@ -822,7 +822,7 @@ public class GpxExportNg {
                 }
             }
         } else { // it is PQ
-            LogList logs = ch.getDetails().CacheLogs;
+            LogList logs = ch.getDetails().getCacheLogs();
 
             int exportlogs;
             if (maxLogs < logs.size()) {
@@ -871,8 +871,8 @@ public class GpxExportNg {
     private Log createAttrLog(int exportlogs) {
         StringBuffer logText = new StringBuffer();
         if (attrib2Log) {
-            for (int i = 0; i < ch.getDetails().attributes.count(); i++) {
-                Attribute attrib = ch.getDetails().attributes.getAttribute(i);
+            for (int i = 0; i < ch.getDetails().getAttributes().count(); i++) {
+                Attribute attrib = ch.getDetails().getAttributes().getAttribute(i);
                 logText.append(attrib.getInc() == 1 ? "Yes: " : "No: ").append(attrib.getMsg()).append("<br />").append(newLine);
             }
         }
@@ -1052,11 +1052,11 @@ public class GpxExportNg {
      */
     private String formatLongDescription() {
         if (ch.isAddiWpt() || ch.isCustomWpt()) {
-            return ch.getDetails().LongDescription;
+            return ch.getDetails().getLongDescription();
         } else {
             StringBuffer ret = new StringBuffer();
             String delim = "";
-            ret.append(ch.getDetails().LongDescription);
+            ret.append(ch.getDetails().getLongDescription());
             if (ch.isHTML()) {
                 delim = "<br />";
             } else {
@@ -1080,7 +1080,7 @@ public class GpxExportNg {
                     trans.add(new Regex("@@ADDIDELIM@@", delim));
                     trans.add(new Regex("@@ADDILAT@@", formatAddiLatLon(addi.getWpt())));
                     trans.add(new Regex("@@ADDILON@@", ""));
-                    trans.add(new Regex("@@ADDILONG@@", addi.getDetails().LongDescription));
+                    trans.add(new Regex("@@ADDILONG@@", addi.getDetails().getLongDescription()));
                     ret.append(trans.replaceAll(GPXADDIINMAIN));
                 }
                 ret.append(delim).append(newLine);

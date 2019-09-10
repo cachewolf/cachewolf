@@ -74,7 +74,7 @@ public class NotesScreen extends Form {
             }
             if (ev.target == executePanel.applyButton) {
                 chD.setCacheNotes(wayNotes.getText());
-                chD.saveCacheDetails(MainForm.profile.dataDir);
+                chD.saveCacheXML(MainForm.profile.dataDir);
                 this.close(0);
             }
             if (ev.target == executePanel.cancelButton) {
@@ -89,7 +89,7 @@ public class NotesScreen extends Form {
                 if ((!chD.getCacheNotes().equals(wayNotes.getText()))) {
                     if (new InfoBox(MyLocale.getMsg(144, "Warning"),MyLocale.getMsg(353, "Save changes made to the notes?")).wait(FormBase.YESB | FormBase.NOB) == FormBase.IDYES) {
                         chD.setCacheNotes(wayNotes.getText());
-                        chD.saveCacheDetails(MainForm.profile.dataDir);
+                        chD.saveCacheXML(MainForm.profile.dataDir);
                     }
                 }
             }

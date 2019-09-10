@@ -158,10 +158,10 @@ public class HintLogPanel extends CellPanel {
         Vm.showWait(true);
         StringBuffer dummy = new StringBuffer(DEFAULT_STRINGBUFFER_SIZE);
         int counter = 0;
-        int nLogs = currCache.CacheLogs.size();
+        int nLogs = currCache.getCacheLogs().size();
         int logsPerPage = Preferences.itself().logsPerPage;
         for (int i = crntLogPosition; i < nLogs; i++) {
-            dummy.append(SafeXML.html2iso8859s1(currCache.CacheLogs.getLog(i).toHtml()));
+            dummy.append(SafeXML.html2iso8859s1(currCache.getCacheLogs().getLog(i).toHtml()));
             dummy.append("<br>");
             if (++counter >= logsPerPage)
                 break;
@@ -219,14 +219,14 @@ public class HintLogPanel extends CellPanel {
      */
     public void onEvent(Event ev) {
         if (ev instanceof ControlEvent && ev.type == ControlEvent.PRESSED) {
-            int minLogs = java.lang.Math.min(Preferences.itself().logsPerPage, currCache.CacheLogs.size());
+            int minLogs = java.lang.Math.min(Preferences.itself().logsPerPage, currCache.getCacheLogs().size());
             if (ev.target == moreBt) {
                 prevBt.modify(0, ControlConstants.Disabled);
                 prevBt.repaintNow();
                 crntLogPosition += minLogs;
-                if (crntLogPosition >= currCache.CacheLogs.size()) {
+                if (crntLogPosition >= currCache.getCacheLogs().size()) {
                     //crntLogPosition = cache.CacheLogs.size()-5;
-                    crntLogPosition = currCache.CacheLogs.size() - minLogs;
+                    crntLogPosition = currCache.getCacheLogs().size() - minLogs;
                     moreBt.modify(ControlConstants.Disabled, 0);
                     moreBt.repaintNow();
                 }
@@ -265,8 +265,8 @@ public class HintLogPanel extends CellPanel {
     }
 
     private void resetHintText() {
-        if (!currCache.Hints.equals("null"))
-            hint.setText(STRreplace.replace(this.currCache.Hints, "<br>", "\n"));
+        if (!currCache.getHints().equals("null"))
+            hint.setText(STRreplace.replace(this.currCache.getHints(), "<br>", "\n"));
         else
             hint.setText("");
         GuiImageBroker.setButtonIconAndText(codeButton, MyLocale.getMsg(400, "Decode"), decodeButtonImage);

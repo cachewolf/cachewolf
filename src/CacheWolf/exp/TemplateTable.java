@@ -246,16 +246,16 @@ public class TemplateTable {
             varParams.put("STATE", "");
             varParams.put("OWNLOG", "");
         } else {
-            varParams.put("URL", chD.URL);
+            varParams.put("URL", chD.getURL());
             if (cache.isHTML()) {
                 if (ModTyp == 0) {
-                    varParams.put("DESCRIPTION", SafeXML.cleanGPX(chD.LongDescription));
+                    varParams.put("DESCRIPTION", SafeXML.cleanGPX(chD.getLongDescription()));
                 } else {
                     varParams.put("DESCRIPTION", modifyLongDesc(chD, ModTyp));
                 }
             } else {
                 // what was the reason? replace or no replace? I dont remember
-                varParams.put("DESCRIPTION", STRreplace.replace(chD.LongDescription, "\n", "<br>"));
+                varParams.put("DESCRIPTION", STRreplace.replace(chD.getLongDescription(), "\n", "<br>"));
             }
 
             if (badChars != null) {
@@ -264,68 +264,68 @@ public class TemplateTable {
                 } else {
                     varParams.put("NOTES", STRreplace.replace(badChars.replaceAll(chD.getCacheNotes()), "\n", "<br>"));
                 }
-                varParams.put("HINTS", (ModTyp == 0) ? SafeXML.cleanGPX(badChars.replaceAll(chD.Hints)) : badChars.replaceAll(chD.Hints));
-                varParams.put("DECRYPTEDHINTS", (ModTyp == 0) ? SafeXML.cleanGPX(badChars.replaceAll(Common.rot13(chD.Hints))) : badChars.replaceAll(Common.rot13(chD.Hints)));
+                varParams.put("HINTS", (ModTyp == 0) ? SafeXML.cleanGPX(badChars.replaceAll(chD.getHints())) : badChars.replaceAll(chD.getHints()));
+                varParams.put("DECRYPTEDHINTS", (ModTyp == 0) ? SafeXML.cleanGPX(badChars.replaceAll(Common.rot13(chD.getHints()))) : badChars.replaceAll(Common.rot13(chD.getHints())));
             } else {
                 if (ModTyp == 0) {
                     varParams.put("NOTES", SafeXML.cleanGPX(chD.getCacheNotes()));
                 } else {
                     varParams.put("NOTES", STRreplace.replace(chD.getCacheNotes(), "\n", "<br>"));
                 }
-                varParams.put("HINTS", (ModTyp == 0) ? SafeXML.cleanGPX(chD.Hints) : chD.Hints);
-                varParams.put("DECRYPTEDHINTS", (ModTyp == 0) ? SafeXML.cleanGPX(Common.rot13(chD.Hints)) : Common.rot13(chD.Hints));
+                varParams.put("HINTS", (ModTyp == 0) ? SafeXML.cleanGPX(chD.getHints()) : chD.getHints());
+                varParams.put("DECRYPTEDHINTS", (ModTyp == 0) ? SafeXML.cleanGPX(Common.rot13(chD.getHints())) : Common.rot13(chD.getHints()));
             }
-            if (chD.Travelbugs.size() > 0)
-                varParams.put("BUGS", (ModTyp == 0) ? SafeXML.cleanGPX(chD.Travelbugs.toHtml()) : chD.Travelbugs.toHtml());
+            if (chD.getTravelbugs().size() > 0)
+                varParams.put("BUGS", (ModTyp == 0) ? SafeXML.cleanGPX(chD.getTravelbugs().toHtml()) : chD.getTravelbugs().toHtml());
             if (chD.getSolver() != null && chD.getSolver().trim().length() > 0)
                 varParams.put("SOLVER", STRreplace.replace(chD.getSolver(), "\n", "<br/>\n"));
             varParams.put("COUNTRY", chD.getCountry());
             varParams.put("STATE", chD.getState());
 
             // attributes
-            Vector attVect = new Vector(chD.attributes.count() + 1);
-            for (int i = 0; i < chD.attributes.count(); i++) {
+            Vector attVect = new Vector(chD.getAttributes().count() + 1);
+            for (int i = 0; i < chD.getAttributes().count(); i++) {
                 Hashtable atts = new Hashtable();
-                atts.put("PATHANDIMAGE", chD.attributes.getAttribute(i).getPathAndImageName());
-                atts.put("IMAGE", chD.attributes.getAttribute(i).getImageName());
-                atts.put("GCID", chD.attributes.getAttribute(i).getGCId());
-                atts.put("INC", "" + chD.attributes.getAttribute(i).getInc());
-                atts.put("INC2TXT", chD.attributes.getAttribute(i).getInc() == 1 ? "YES:" : "NO:");
+                atts.put("PATHANDIMAGE", chD.getAttributes().getAttribute(i).getPathAndImageName());
+                atts.put("IMAGE", chD.getAttributes().getAttribute(i).getImageName());
+                atts.put("GCID", chD.getAttributes().getAttribute(i).getGCId());
+                atts.put("INC", "" + chD.getAttributes().getAttribute(i).getInc());
+                atts.put("INC2TXT", chD.getAttributes().getAttribute(i).getInc() == 1 ? "YES:" : "NO:");
                 if (i % 5 == 4)
                     atts.put("BR", "<br/>");
                 else
                     atts.put("BR", "");
-                atts.put("INFO", chD.attributes.getAttribute(i).getMsg());
-                atts.put("GCINFO", chD.attributes.getAttribute(i).getGCText());
+                atts.put("INFO", chD.getAttributes().getAttribute(i).getMsg());
+                atts.put("GCINFO", chD.getAttributes().getAttribute(i).getGCText());
                 attVect.add(atts);
             }
             varParams.put("ATTRIBUTES", attVect);
 
             // logs
-            Vector logVect = new Vector(chD.CacheLogs.size());
-            int maxlogs = chD.CacheLogs.size();
+            Vector logVect = new Vector(chD.getCacheLogs().size());
+            int maxlogs = chD.getCacheLogs().size();
             for (int i = 0; i < maxlogs; i++) {
-                if (chD.CacheLogs.getLog(i).isFoundLog()) {
-                    varParams.put("LASTFOUND", chD.CacheLogs.getLog(i).getDate());
+                if (chD.getCacheLogs().getLog(i).isFoundLog()) {
+                    varParams.put("LASTFOUND", chD.getCacheLogs().getLog(i).getDate());
                     break;
                 }
             }
 
             String lastFive = "";
             for (int i = 0; i < maxlogs; i++) {
-                if (chD.CacheLogs.getLog(i).isFoundLog()) {
+                if (chD.getCacheLogs().getLog(i).isFoundLog()) {
                     lastFive = lastFive + "+";
-                } else if (chD.CacheLogs.getLog(i).isDNFLog()) {
+                } else if (chD.getCacheLogs().getLog(i).isDNFLog()) {
                     lastFive = lastFive + "-";
-                } else if (chD.CacheLogs.getLog(i).isArchivedLog()) {
+                } else if (chD.getCacheLogs().getLog(i).isArchivedLog()) {
                     lastFive = lastFive + "!";
-                } else if (chD.CacheLogs.getLog(i).isPublishLog()) {
+                } else if (chD.getCacheLogs().getLog(i).isPublishLog()) {
                     lastFive = lastFive + "P";
-                } else if (chD.CacheLogs.getLog(i).isUnArchivedLog()) {
+                } else if (chD.getCacheLogs().getLog(i).isUnArchivedLog()) {
                     lastFive = lastFive + "U";
-                } else if (chD.CacheLogs.getLog(i).isDisabledLog()) {
+                } else if (chD.getCacheLogs().getLog(i).isDisabledLog()) {
                     lastFive = lastFive + "D";
-                } else if (chD.CacheLogs.getLog(i).isEnabledLog()) {
+                } else if (chD.getCacheLogs().getLog(i).isEnabledLog()) {
                     lastFive = lastFive + "E";
                 } else {
                     lastFive = lastFive + "o";
@@ -340,7 +340,7 @@ public class TemplateTable {
             for (int i = 0; i < maxlogs; i++) {
                 Hashtable logs = new Hashtable();
                 String stmp;
-                if (chD.CacheLogs.getLog(i).getIcon().equals(Log.MAXLOGICON)) {
+                if (chD.getCacheLogs().getLog(i).getIcon().equals(Log.MAXLOGICON)) {
                     logs.put("WAYPOINT", code);
                     logs.put("ICON", Log.MAXLOGICON);
                     logs.put("LOGTYPE", "");
@@ -349,11 +349,11 @@ public class TemplateTable {
                     stmp = "<hr>" + MyLocale.getMsg(736, "Too many logs") + "<hr>";
                 } else {
                     logs.put("WAYPOINT", code);
-                    logs.put("ICON", chD.CacheLogs.getLog(i).getIcon());
-                    logs.put("LOGTYPE", chD.CacheLogs.getLog(i).icon2GPXType());
-                    logs.put("DATE", chD.CacheLogs.getLog(i).getDate());
-                    logs.put("LOGGER", (ModTyp == 0) ? SafeXML.cleanGPX(chD.CacheLogs.getLog(i).getLogger()) : chD.CacheLogs.getLog(i).getLogger());
-                    stmp = STRreplace.replace(chD.CacheLogs.getLog(i).getMessage().trim(), "http://www.geocaching.com/images/icons/", null);
+                    logs.put("ICON", chD.getCacheLogs().getLog(i).getIcon());
+                    logs.put("LOGTYPE", chD.getCacheLogs().getLog(i).icon2GPXType());
+                    logs.put("DATE", chD.getCacheLogs().getLog(i).getDate());
+                    logs.put("LOGGER", (ModTyp == 0) ? SafeXML.cleanGPX(chD.getCacheLogs().getLog(i).getLogger()) : chD.getCacheLogs().getLog(i).getLogger());
+                    stmp = STRreplace.replace(chD.getCacheLogs().getLog(i).getMessage().trim(), "http://www.geocaching.com/images/icons/", null);
                 }
                 logs.put("MESSAGE", (ModTyp == 0) ? SafeXML.cleanGPX(stmp) : stmp);
                 logVect.add(logs);
@@ -387,7 +387,7 @@ public class TemplateTable {
                 addis.put("TYPE", CacheType.type2TypeTag(ch.getType())); // <type>
                 addis.put("SYM", CacheType.type2SymTag(ch.getType())); // <sym>
                 addis.put("GSTYPE", CacheType.type2GSTypeTag(ch.getType())); // <groundspeak:type>
-                addis.put("LONGDESC", (ModTyp == 0) ? SafeXML.cleanGPX(ch.getDetails().LongDescription) : ch.getDetails().LongDescription);
+                addis.put("LONGDESC", (ModTyp == 0) ? SafeXML.cleanGPX(ch.getDetails().getLongDescription()) : ch.getDetails().getLongDescription());
                 addiVect.add(addis);
             }
             varParams.put("ADDIS", addiVect);
@@ -401,13 +401,13 @@ public class TemplateTable {
                 }
             } else
                 exportPath = "";
-            Vector imgVect = new Vector(chD.images.size());
-            for (int i = 0; i < chD.images.size(); i++) {
+            Vector imgVect = new Vector(chD.getImages().size());
+            for (int i = 0; i < chD.getImages().size(); i++) {
                 Hashtable imgs = new Hashtable();
-                String imgUrl = chD.images.get(i).getURL();
+                String imgUrl = chD.getImages().get(i).getURL();
                 boolean doit = true;
-                for (int j = i + 1; j < chD.images.size(); j++) {
-                    String jmgUrl = chD.images.get(j).getURL();
+                for (int j = i + 1; j < chD.getImages().size(); j++) {
+                    String jmgUrl = chD.getImages().get(j).getURL();
                     if (imgUrl.equals(jmgUrl)) {
                         doit = false;
                         break;
@@ -415,12 +415,12 @@ public class TemplateTable {
                 }
                 if (doit) {
                     imgs.put("PROFILDIR", MainForm.profile.dataDir);
-                    String imgFilename = chD.images.get(i).getFilename();
+                    String imgFilename = chD.getImages().get(i).getFilename();
                     imgs.put("FILENAME", imgFilename);
-                    String title = chD.images.get(i).getTitle();
+                    String title = chD.getImages().get(i).getTitle();
                     imgs.put("TEXT", title);
-                    imgs.put("COMMENT", chD.images.get(i).getComment());
-                    imgs.put("URL", chD.images.get(i).getURL());
+                    imgs.put("COMMENT", chD.getImages().get(i).getComment());
+                    imgs.put("URL", chD.getImages().get(i).getURL());
                     if (!expName.equals("")) {
                         String src = MainForm.profile.dataDir + imgFilename;
                         String dest;
@@ -447,24 +447,24 @@ public class TemplateTable {
      * Modify the image links in the long description so that they point to image files in the local directory<br>
      * Also copy the image file to the target directory so that it can be displayed.<br>
      *
-     * @param int ModTypLongDesc == 1 get image from profile path, == 2 get image from html-path
+     * @param ModTypLongDesc == 1 get image from profile path, == 2 get image from html-path
      * @return The modified long description
      */
     private String modifyLongDesc(CacheHolderDetail chD, int ModTypLongDesc) {
-        StringBuffer s = new StringBuffer(chD.LongDescription.length());
+        StringBuffer s = new StringBuffer(chD.getLongDescription().length());
         int start = 0;
         int pos;
         int imageNo = 0;
         String imgsrc = "";
         if (ModTypLongDesc == 1)
             imgsrc = "file://" + MainForm.profile.dataDir;
-        while (start >= 0 && (pos = chD.LongDescription.indexOf("<img", start)) > 0) {
-            if (imageNo >= chD.images.size())
+        while (start >= 0 && (pos = chD.getLongDescription().indexOf("<img", start)) > 0) {
+            if (imageNo >= chD.getImages().size())
                 break;
-            s.append(chD.LongDescription.substring(start, pos));
-            start = chD.LongDescription.indexOf(">", pos) + 1;
-            String oldurl = chD.images.get(imageNo).getURL();
-            String imgString = chD.LongDescription.substring(pos, start);
+            s.append(chD.getLongDescription().substring(start, pos));
+            start = chD.getLongDescription().indexOf(">", pos) + 1;
+            String oldurl = chD.getImages().get(imageNo).getURL();
+            String imgString = chD.getLongDescription().substring(pos, start);
             imgString = STRreplace.replace(imgString, "\n", "");
             imgString = STRreplace.replace(imgString, "\r", "");
             imgString = STRreplace.replace(imgString, "groundspeak", "geocaching");
@@ -474,12 +474,12 @@ public class TemplateTable {
                     oldurl = oldurl.substring(i);
                 }
             }
-            String newurl = imgsrc + chD.images.get(imageNo).getFilename();
+            String newurl = imgsrc + chD.getImages().get(imageNo).getFilename();
             s.append(STRreplace.replace(imgString, oldurl, newurl));
             imageNo++;
         }
         if (start >= 0)
-            s.append(chD.LongDescription.substring(start));
+            s.append(chD.getLongDescription().substring(start));
         return s.toString();
     }
 

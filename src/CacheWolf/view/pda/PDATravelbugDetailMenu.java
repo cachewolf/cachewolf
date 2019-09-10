@@ -70,7 +70,7 @@ public class PDATravelbugDetailMenu extends PDAMenu {
             if (curCacheNo >= 0 && curCacheNo < cacheDB.size()) {
                 CacheHolder ch = cacheDB.get(curCacheNo);
                 CacheHolderDetail cacheDetails = ch.getDetails();
-                cacheDetails.Travelbugs.add(tb);
+                cacheDetails.getTravelbugs().add(tb);
                 journeyScreen.model.allTravelbugJourneys.addTbDrop(tb, MainForm.profile.name, ch.getCode());
                 ch.hasBugs(true);
                 ch.saveCacheDetails();

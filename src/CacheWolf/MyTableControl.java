@@ -281,7 +281,7 @@ public class MyTableControl extends TableControl {
                 mainCache = ch.mainCache;
             }
             chD = mainCache.getDetails();
-            url = chD.URL;
+            url = chD.getURL();
             String wpName = mainCache.getIdOC();
             if (clickedColumn == 14) {
                 if (mainCache.isOC()) {
@@ -340,7 +340,7 @@ public class MyTableControl extends TableControl {
 
                 if (mainCache.isOC()) {
                     if (chD != null) {
-                        url = chD.URL;
+                        url = chD.getURL();
                         if (url.indexOf("viewcache") >= 0) {
                             url = STRreplace.replace(url, "viewcache", "log");
                         }

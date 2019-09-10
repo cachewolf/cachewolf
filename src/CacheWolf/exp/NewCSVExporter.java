@@ -164,9 +164,9 @@ public class NewCSVExporter extends Exporter {
             Log ownLog = chD.getOwnLog();
             if (ownLog != null) {
                 String ownLogId = ownLog.getLogID();
-                int anz = chD.CacheLogs.size();
+                int anz = chD.getCacheLogs().size();
                 for (int i = anz - 1; i >= 0; i--) {
-                    Log log = chD.CacheLogs.getLog(i);
+                    Log log = chD.getCacheLogs().getLog(i);
                     if (log.getLogID().equals(ownLogId)) {
                         if (!(log.getFinderID().equals(Preferences.itself().gcMemberId))) {
                             return "wrong own log" + ch.getCode() + "\r\n";
@@ -186,9 +186,9 @@ public class NewCSVExporter extends Exporter {
     public String differentReviewers(CacheHolder ch) {
         CacheHolderDetail chD = ch.getDetails();
         //if (chD.State.equals("Baden-Württemberg")) {
-        int anz = chD.CacheLogs.size();
+        int anz = chD.getCacheLogs().size();
         for (int i = anz - 1; i >= 0; i--) {
-            Log log = chD.CacheLogs.getLog(i);
+            Log log = chD.getCacheLogs().getLog(i);
             if (log.isPublishLog()) {
                 if (reviewers.containsKey(log.getLogger())) {
                     return null;
@@ -232,7 +232,7 @@ public class NewCSVExporter extends Exporter {
         if (ch.isAddiWpt())
             return null;
         CacheHolderDetail chD = ch.getDetails();
-        LogList logs = chD.CacheLogs;
+        LogList logs = chD.getCacheLogs();
         Time ownDate = DateFormat.toDate(chD.getOwnLog().getDate());
         int diffDays = 0;
         int ownDays = getDays(ownDate);
@@ -282,7 +282,7 @@ public class NewCSVExporter extends Exporter {
             return null;
         }
         CacheHolderDetail chD = ch.getDetails();
-        LogList logs = chD.CacheLogs;
+        LogList logs = chD.getCacheLogs();
         Time ownDate;
         try {
             String myLogDate = chD.getOwnLog().getDate();
@@ -335,7 +335,7 @@ public class NewCSVExporter extends Exporter {
         if (ch.isAddiWpt())
             return null;
         CacheHolderDetail chD = ch.getDetails();
-        LogList logs = chD.CacheLogs;
+        LogList logs = chD.getCacheLogs();
         for (int i = 0; i < logs.size(); i++) {
             Log theLog = logs.getLog(i);
             if (theLog.getLogger().toUpperCase().equals("GSAK")) {

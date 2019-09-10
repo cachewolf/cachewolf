@@ -891,8 +891,8 @@ public class Parser {
                     op.append(addiWpt.getName());
                     op.append("] = \" $");
                     op.append(addiWpt.getCode());
-                    if (addiWpt.getDetails().LongDescription.trim().length() > 0)
-                        op.append("\n   \"" + STRreplace.replace(addiWpt.getDetails().LongDescription, "\"", "\"\"") + "\"");
+                    if (addiWpt.getDetails().getLongDescription().trim().length() > 0)
+                        op.append("\n   \"" + STRreplace.replace(addiWpt.getDetails().getLongDescription(), "\"", "\"\"") + "\"");
                     op.append("\n   goto($");
                     op.append(addiWpt.getCode());
                     op.append("); STOP\nENDIF\n\n");

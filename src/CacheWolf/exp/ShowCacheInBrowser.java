@@ -97,10 +97,10 @@ public class ShowCacheInBrowser {
                     int pos;
                     int imageNo = 0;
                     Regex imgRex = new Regex("src=(?:\\s*[^\"|']*?)(?:\"|')(.*?)(?:\"|')");
-                    while (start >= 0 && (pos = ch.getDetails().LongDescription.indexOf("<img", start)) > 0) {
-                        if (imageNo >= ch.getDetails().images.size())
+                    while (start >= 0 && (pos = ch.getDetails().getLongDescription().indexOf("<img", start)) > 0) {
+                        if (imageNo >= ch.getDetails().getImages().size())
                             break;
-                        imgRex.searchFrom(ch.getDetails().LongDescription, pos);
+                        imgRex.searchFrom(ch.getDetails().getLongDescription(), pos);
                         String imgUrl = imgRex.stringMatched(1);
                         if (imgUrl.lastIndexOf('.') > 0 && imgUrl.toLowerCase().startsWith("http")) {
                             String imgType = (imgUrl.substring(imgUrl.lastIndexOf('.')).toLowerCase() + "    ").substring(0, 4).trim();
@@ -108,20 +108,20 @@ public class ShowCacheInBrowser {
                                 imageNo++;
                             }
                         }
-                        start = ch.getDetails().LongDescription.indexOf(">", pos);
+                        start = ch.getDetails().getLongDescription().indexOf(">", pos);
                         if (start >= 0)
                             start++;
                     }
                     // Do the remaining pictures which are not included in main body of text
                     // They will be hidden initially and can be displayed by clicking on a link
-                    if (imageNo < ch.getDetails().images.size()) {
-                        Vector imageVect = new Vector(ch.getDetails().images.size() - imageNo);
-                        for (; imageNo < ch.getDetails().images.size(); imageNo++) {
+                    if (imageNo < ch.getDetails().getImages().size()) {
+                        Vector imageVect = new Vector(ch.getDetails().getImages().size() - imageNo);
+                        for (; imageNo < ch.getDetails().getImages().size(); imageNo++) {
                             Hashtable imgs = new Hashtable();
-                            imgs.put("IMAGE", "<img src=\"file://" + MainForm.profile.dataDir + ch.getDetails().images.get(imageNo).getFilename() + "\" border=0>");
-                            imgs.put("IMAGETEXT", ch.getDetails().images.get(imageNo).getTitle());
-                            if (imageNo < ch.getDetails().images.size())
-                                imgs.put("IMAGECOMMENT", ch.getDetails().images.get(imageNo).getComment());
+                            imgs.put("IMAGE", "<img src=\"file://" + MainForm.profile.dataDir + ch.getDetails().getImages().get(imageNo).getFilename() + "\" border=0>");
+                            imgs.put("IMAGETEXT", ch.getDetails().getImages().get(imageNo).getTitle());
+                            if (imageNo < ch.getDetails().getImages().size())
+                                imgs.put("IMAGECOMMENT", ch.getDetails().getImages().get(imageNo).getComment());
                             imgs.put("I", "'img" + new Integer(imageNo).toString() + "'");
                             imageVect.add(imgs);
                         }
@@ -129,8 +129,8 @@ public class ShowCacheInBrowser {
                     }
                     if (!ch.isAvailable())
                         tpl.setParam("UNAVAILABLE", "1");
-                    if (!ch.getDetails().Hints.equals("null"))
-                        tpl.setParam("HINT", Common.rot13(ch.getDetails().Hints));
+                    if (!ch.getDetails().getHints().equals("null"))
+                        tpl.setParam("HINT", Common.rot13(ch.getDetails().getHints()));
                 } catch (Exception e) {
                     Preferences.itself().log("Problem getting parameter , Cache: " + ch.getCode(), e, true);
                 }

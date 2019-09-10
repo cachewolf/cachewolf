@@ -95,13 +95,13 @@ public class DescriptionPanel extends CellPanel {
             isHtml = cache.isHTML();
             if (cache.isAddiWpt()) {
                 isHtml = cache.mainCache.isHTML();
-                if (cache.getDetails().LongDescription != null && cache.getDetails().LongDescription.length() > 0)
-                    desc = cache.getDetails().LongDescription + (isHtml ? "<hr>\n" : "\n") + cache.mainCache.getDetails().LongDescription;
+                if (cache.getDetails().getLongDescription() != null && cache.getDetails().getLongDescription().length() > 0)
+                    desc = cache.getDetails().getLongDescription() + (isHtml ? "<hr>\n" : "\n") + cache.mainCache.getDetails().getLongDescription();
                 else
-                    desc = cache.mainCache.getDetails().LongDescription;
+                    desc = cache.mainCache.getDetails().getLongDescription();
             } else
                 // not an addi-wpt
-                desc = cache.getDetails().LongDescription;
+                desc = cache.getDetails().getLongDescription();
         }
         // HtmlDisplay does not show the <sup> tag correctly, so we need to replace with ^
         if (desc.indexOf("<sup>") >= 0) {
@@ -136,9 +136,9 @@ public class DescriptionPanel extends CellPanel {
             CacheImages Images;
             // cache which supplies the images (could be main cache)
             if (cache.isAddiWpt()) {
-                Images = cache.mainCache.getDetails().images;
+                Images = cache.mainCache.getDetails().getImages();
             } else {
-                Images = cache.getDetails().images;
+                Images = cache.getDetails().getImages();
             }
             StringBuffer s = new StringBuffer(desc.length() + Images.size() * 100);
             int start = 0;
@@ -194,7 +194,7 @@ public class DescriptionPanel extends CellPanel {
      * Get the descriptions for the pictures (if they exist)
      *
      * @param imagesShown images already shown as part of long description (don't show again)
-     * @param chD
+     * @param ci images
      */
     private String getPicDesc(int imagesShown, CacheImages ci) {
         StringBuffer sb = new StringBuffer(1000);

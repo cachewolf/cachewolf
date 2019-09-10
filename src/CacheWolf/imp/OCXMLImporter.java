@@ -418,7 +418,7 @@ public class OCXMLImporter extends MinML {
         inf.setInfo(MyLocale.getMsg(1609, "Importing Cache:") + " " + numCacheImported + " / " + numCacheUpdated + "\n");
         if (name.equals("type")) {
             holder.setType(CacheType.ocType2CwType(atts.getValue("id")));
-            holder.getDetails().attributes.clear();
+            holder.getDetails().getAttributes().clear();
             return;
         }
         if (name.equals("status")) {
@@ -461,11 +461,11 @@ public class OCXMLImporter extends MinML {
             final String CName = atts.getValue("nccom") + " " + atts.getValue("gccom");
             if (!CName.equals(" ")) {
                 holder.setOwner(holder.getOwner() + " / " + CName.trim());
-                holder.getDetails().attributes.add(7); // wwwlink
-                holder.setAttribsAsBits(holder.getDetails().attributes.getAttribsAsBits());
+                holder.getDetails().getAttributes().add(7); // wwwlink
+                holder.setAttribsAsBits(holder.getDetails().getAttributes().getAttribsAsBits());
             } else {
-                holder.getDetails().attributes.add(6); // oconly
-                holder.setAttribsAsBits(holder.getDetails().attributes.getAttribsAsBits());
+                holder.getDetails().getAttributes().add(6); // oconly
+                holder.setAttribsAsBits(holder.getDetails().getAttributes().getAttribsAsBits());
             }
             if (holder.getCode().length() == 0)
                 throw new IllegalArgumentException("empty waypointname"); // this should not happen - it is likey a bug in opencaching / it happens on 27-12-2006 on cache OC143E
@@ -474,8 +474,8 @@ public class OCXMLImporter extends MinML {
 
         if (name.equals("attribute")) {
             final int id = Integer.parseInt(atts.getValue("id"));
-            holder.getDetails().attributes.add(id);
-            holder.setAttribsAsBits(holder.getDetails().attributes.getAttribsAsBits());
+            holder.getDetails().getAttributes().add(id);
+            holder.setAttribsAsBits(holder.getDetails().getAttributes().getAttribsAsBits());
             return;
         }
 
@@ -547,7 +547,7 @@ public class OCXMLImporter extends MinML {
             // the guid (=strData) is not part of gpx , so we use id of cacheID
             holder = getHolder(cacheID, true); // Allocate a new CacheHolder object
             holder.setIdOC(cacheID);
-            holder.getDetails().URL = "https://" + hostname + "/viewcache.php?cacheid=" + cacheID;
+            holder.getDetails().setURL("https://" + hostname + "/viewcache.php?cacheid=" + cacheID);
             return;
         }
         if (holder == null)
@@ -572,12 +572,12 @@ public class OCXMLImporter extends MinML {
             }
             // clear data (picture, logs) if we do a complete Update
             if (!incUpdate) {
-                holder.getDetails().CacheLogs.clear();
-                holder.getDetails().images.clear();
+                holder.getDetails().getCacheLogs().clear();
+                holder.getDetails().getImages().clear();
             }
 
             // save all
-            holder.getDetails().hasUnsavedChanges = true; // this makes CachHolder save the details in case that they are unloaded from memory
+            holder.getDetails().setUnsaved(true); // this makes CachHolder save the details in case that they are unloaded from memory
             // chD.saveCacheDetails(MainForm.profile.dataDir);
             // MainForm.profile.saveIndex(pref,Profile.NO_SHOW_PROGRESS_BAR); // this is done after .xml is completly processed
 
@@ -630,7 +630,7 @@ public class OCXMLImporter extends MinML {
             if (downloadPics && isHTML) {
                 getImageNamesFromDescription();
             }
-            holder.getDetails().hasUnsavedChanges = true;
+            holder.getDetails().setUnsaved(true);
             return;
         }
 
@@ -645,17 +645,17 @@ public class OCXMLImporter extends MinML {
             // then this one is added (for another language)
             // otherwise all previous descriptions will be overwritten ( or there are none yet)
             if (holder.isUpdated())
-                holder.getDetails().LongDescription += linebraek + processingDescLang + ":" + linebraek + strData + linebraek;
+                holder.getDetails().setLongDescription(holder.getDetails().getLongDescription() + linebraek + processingDescLang + ":" + linebraek + strData + linebraek);
             else
-                holder.getDetails().LongDescription = processingDescLang + ":" + linebraek + strData + linebraek;
+                holder.getDetails().setLongDescription(processingDescLang + ":" + linebraek + strData + linebraek);
             return;
         }
 
         if (name.equals("desc")) { // </desc>
             if (isHTML)
-                holder.getDetails().LongDescription += SafeXML.html2iso8859s1(strData);
+                holder.getDetails().setLongDescription(holder.getDetails().getLongDescription() + SafeXML.html2iso8859s1(strData));
             else
-                holder.getDetails().LongDescription += strData;
+                holder.getDetails().setLongDescription(holder.getDetails().getLongDescription() + strData);
             return;
         }
         if (name.equals("hint")) {
@@ -665,9 +665,9 @@ public class OCXMLImporter extends MinML {
             else
                 linebreak = "\n";
             if (holder.isUpdated())
-                holder.getDetails().Hints += linebreak + "[" + processingDescLang + ":]" + linebreak + Common.rot13(strData) + linebreak;
+                holder.getDetails().setHints(holder.getDetails().getHints() + linebreak + "[" + processingDescLang + ":]" + linebreak + Common.rot13(strData) + linebreak);
             else
-                holder.getDetails().Hints = "[" + processingDescLang + ":]" + linebreak + Common.rot13(strData) + linebreak;
+                holder.getDetails().setHints("[" + processingDescLang + ":]" + linebreak + Common.rot13(strData) + linebreak);
             // remark:
             // holder.cache_updated will be set to true
             // after the subtag-infos of tag <cachedesc> have been entered
@@ -682,9 +682,9 @@ public class OCXMLImporter extends MinML {
         if (holder == null)
             return;
         if (name.equals("cachelog")) { // </cachelog>
-            if (holder.getDetails().CacheLogs.merge(new Log(logId, finderID, logIcon, logDate, logFinder, logData, loggerRecommended)) > -1) {
+            if (holder.getDetails().getCacheLogs().merge(new Log(logId, finderID, logIcon, logDate, logFinder, logData, loggerRecommended)) > -1) {
                 numLogImported++;
-                holder.getDetails().hasUnsavedChanges = true; // chD.saveCacheDetails(MainForm.profile.dataDir);
+                holder.getDetails().setUnsaved(true); // chD.saveCacheDetails(MainForm.profile.dataDir);
             }
             //
             if ((logFinder.equalsIgnoreCase(user) || logFinder.equalsIgnoreCase(Preferences.itself().myAlias2)) && logtype == 1) {
@@ -749,7 +749,7 @@ public class OCXMLImporter extends MinML {
             ii.setTitle(picTitle);
             ii.setURL(picUrl);
             getPic(ii);
-            holder.getDetails().hasUnsavedChanges = true; // saveCacheDetails(MainForm.profile.dataDir);
+            holder.getDetails().setUnsaved(true); // saveCacheDetails(MainForm.profile.dataDir);
             return;
         }
     }
@@ -779,7 +779,7 @@ public class OCXMLImporter extends MinML {
         imgRegexUrl.setIgnoreCase(true);
         int descIndex = 0;
         int numDownloaded = 1;
-        while (imgRegexUrl.searchFrom(holder.getDetails().LongDescription, descIndex)) { // "img" found
+        while (imgRegexUrl.searchFrom(holder.getDetails().getLongDescription(), descIndex)) { // "img" found
             imgTag = imgRegexUrl.stringMatched(1); // (1) enthlt das gesamte <img ...>-tag
             fetchUrl = imgRegexUrl.stringMatched(2); // URL in Anfhrungszeichen in (2) falls ohne in (3) Ergebnis ist auf jeden Fall ohne Anfhrungszeichen
             if (fetchUrl == null) {
@@ -831,7 +831,7 @@ public class OCXMLImporter extends MinML {
                 if (ftest.length() == 0) {
                     ftest.delete();
                 } else {
-                    holder.getDetails().images.add(imageInfo);
+                    holder.getDetails().getImages().add(imageInfo);
                 }
             } else {
                 if (downloadPics) {
@@ -839,7 +839,7 @@ public class OCXMLImporter extends MinML {
                     ftest = new File(target);
                     if (ftest.exists()) {
                         if (ftest.length() > 0) {
-                            holder.getDetails().images.add(imageInfo);
+                            holder.getDetails().getImages().add(imageInfo);
                         } else {
                             ftest.delete();
                         }

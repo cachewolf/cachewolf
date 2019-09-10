@@ -270,16 +270,16 @@ public class DataMover {
             Vector fileNames = new Vector();
             CacheHolderDetail chD = ch.getDetails();
             //chD.images : Description Images,  Spoiler Images
-            for (int i = 0; i < chD.images.size(); i++) {
-                fileNames.add(chD.images.get(i).getFilename());
+            for (int i = 0; i < chD.getImages().size(); i++) {
+                fileNames.add(chD.getImages().get(i).getFilename());
             }
             //chD.logImages
-            for (int i = 0; i < chD.logImages.size(); i++) {
-                fileNames.add(chD.logImages.get(i).getFilename());
+            for (int i = 0; i < chD.getLogImages().size(); i++) {
+                fileNames.add(chD.getLogImages().get(i).getFilename());
             }
             //chD.userImages
-            for (int i = 0; i < chD.userImages.size(); i++) {
-                fileNames.add(chD.userImages.get(i).getFilename());
+            for (int i = 0; i < chD.getUserImages().size(); i++) {
+                fileNames.add(chD.getUserImages().get(i).getFilename());
             }
             // Cache XML
             fileNames.add(ch.getCode().toLowerCase() + ".xml");

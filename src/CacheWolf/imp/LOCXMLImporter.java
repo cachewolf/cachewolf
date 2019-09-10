@@ -104,7 +104,7 @@ public class LOCXMLImporter extends MinML {
         }
 
         if (name.equals("link")) {
-            holder.getDetails().URL = strData;
+            holder.getDetails().setURL(strData);
             return;
         }
     }

@@ -35,42 +35,42 @@ import ewe.ui.FormBase;
 import ewe.util.mString;
 
 public class CacheHolderDetail {
-
-    public String LongDescription = "";
-    public String LastUpdate = "";
-    public String Hints = "";
-    public LogList CacheLogs = new LogList();
-    public CacheImages images = new CacheImages();
-    public CacheImages logImages = new CacheImages();
-    public CacheImages userImages = new CacheImages();
-    public Attributes attributes = new Attributes();
-    public TravelbugList Travelbugs = new TravelbugList();
-    // public String Bugs = ""; Superceded by Travelbugs
-    public String URL = "";
-    /**
-     * For faster cache import (from opencaching) changes are only written when the details are freed from memory
-     * If you want to save the changes automatically when the details are unloaded, set this to true
-     */
-    public boolean hasUnsavedChanges = false;
-    PrintWriter detfile;
-    /**
-     * CacheHolder of the detail. <b>Only</b> set by CacheHolder when creating detail!
-     **/
-    private CacheHolder parent = null;
-    private String version = "";
-    private String CacheNotes = "";
+    private CacheHolder parent;
+    private String mLongDescription;
+    private String mHints;
+    private LogList mCacheLogs;
+    private CacheImages images; // description and spoiler
+    private CacheImages logImages;
+    private CacheImages userImages;
+    private Attributes attributes;
+    private TravelbugList Travelbugs;
+    private String URL;
+    private String CacheNotes;
+    private String gCNotes;
     private String solver;
     private Log ownLog;
     private String country;
     private String state;
-    private String gCNotes = "";
+    private boolean unsaved;
 
     public CacheHolderDetail(CacheHolder ch) {
         parent = ch;
+        mLongDescription = "";
+        mHints = "";
+        mCacheLogs = new LogList();
+        images = new CacheImages();
+        logImages = new CacheImages();
+        userImages = new CacheImages();
+        attributes = new Attributes();
+        Travelbugs = new TravelbugList();
+        URL = "";
+        CacheNotes = "";
+        gCNotes = "";
         solver = "";
         ownLog = null;
         country = "";
         state = "";
+        unsaved = false;
     }
 
     // quick debug info
@@ -83,57 +83,6 @@ public class CacheHolderDetail {
             return parent + "(" + parent.mainCache + ")";
     }
 
-    public CacheHolder getParent() {
-        return parent;
-    }
-
-    public String getSolver() {
-        return this.solver;
-    }
-
-    public void setSolver(String solver) {
-        if (!this.solver.equals(solver))
-            parent.setUpdated(true);
-        parent.setHasSolver(!solver.trim().equals(""));
-        this.solver = solver;
-    }
-
-    public Log getOwnLog() {
-        return this.ownLog;
-    }
-
-    public void setOwnLog(Log ownLog) {
-        this.ownLog = ownLog;
-    }
-
-    public String getCountry() {
-        return country;
-    }
-
-    public void setCountry(String country) {
-        this.country = country;
-    }
-
-    public String getState() {
-        return state;
-    }
-
-    public void setState(String state) {
-        this.state = state;
-    }
-
-    public void setLongDescription(String longDescription) {
-        String s = stripControlChars(longDescription);
-        if (LongDescription.equals(""))
-            parent.setNew(true);
-        else {
-            if (!s.equals(LongDescription)) {
-                parent.setUpdated(true);
-            }
-        }
-        LongDescription = s;
-    }
-
     private String stripControlChars(String desc) {
         StringBuffer sb = new StringBuffer(desc.length());
         for (int i = 0; i < desc.length(); i++) {
@@ -142,54 +91,6 @@ public class CacheHolderDetail {
                 sb.append(c);
         }
         return sb.toString();
-    }
-
-    public void setHints(String hints) {
-        if (!Hints.equals(hints))
-            parent.setUpdated(true);
-        Hints = hints;
-    }
-
-    public String getGCNotes() {
-        return gCNotes;
-    }
-
-    public void setGCNotes(String notes) {
-        if (notes.length()>0) {
-            gCNotes = notes;
-            parent.setHasNote(true);
-        }
-    }
-
-    public boolean setCacheNotes(String notes) {
-        boolean ret = !this.CacheNotes.equals(notes);
-        if (ret) {
-            parent.setUpdated(true);
-            this.CacheNotes = notes;
-            parent.setHasNote(!this.CacheNotes.trim().equals(""));
-        }
-        return ret;
-    }
-
-    public String getCacheNotes() {
-        return this.CacheNotes;
-    }
-
-    public void setCacheLogs(LogList newLogs) {
-        if (Preferences.itself().overwriteLogs) {
-            CacheLogs = newLogs;
-            parent.setLogUpdated(true);
-            hasUnsavedChanges = true;
-        } else {
-            int size = newLogs.size();
-            for (int i = size - 1; i >= 0; i--) { // Loop over all new logs, must start with oldest log
-                if (CacheLogs.merge(newLogs.getLog(i)) >= 0)
-                    parent.setLogUpdated(true);
-            }
-        }
-        if (CacheLogs.purgeLogs() > 0)
-            hasUnsavedChanges = true;
-        parent.setNoFindLogs(CacheLogs.countNotFoundLogs());
     }
 
     /**
@@ -228,9 +129,9 @@ public class CacheHolderDetail {
             this.setCacheNotes(this.CacheNotes + newChD.getGCNotes());
         }
         this.images = newChD.images;
-        setLongDescription(newChD.LongDescription);
-        setHints(newChD.Hints);
-        setCacheLogs(newChD.CacheLogs);
+        setLongDescription(newChD.mLongDescription);
+        setHints(newChD.mHints);
+        setCacheLogs(newChD.mCacheLogs);
         if (newChD.ownLog != null) {
             this.ownLog = newChD.ownLog;
         }
@@ -247,9 +148,9 @@ public class CacheHolderDetail {
      * Method to parse a specific cache.xml file.<br>
      * It fills information on cache details, hints, logs, notes and images.<br>
      *
-     * @param dir
+     * @param dir path where the profile is stored
      */
-    void readCache(String dir) {
+    void readCacheXML(String dir) {
         FileReader in = null;
         CacheImage imageInfo;
         // If parent cache has empty waypoint then don't do anything.<br>
@@ -260,8 +161,7 @@ public class CacheHolderDetail {
         if (cacheFile.exists()) {
             try {
                 in = new FileReader(cacheFile.getAbsolutePath());
-            } catch (Exception e) {
-                in = null;
+            } catch (Exception ignored) {
             }
         }
         if (in == null) {
@@ -269,36 +169,35 @@ public class CacheHolderDetail {
             if (cacheFile.exists()) {
                 try {
                     in = new FileReader(cacheFile.getAbsolutePath());
-                } catch (Exception e) {
+                } catch (Exception ignored) {
                 }
             } else {
                 return; // leerer neuer Wegpunkt
             }
         }
-
         String text = "";
-        try {
-            text = in.readAll();
-        } catch (Exception e) {
+        if (in != null) {
+            try {
+                text = in.readAll();
+            } catch (IOException ignored) {
+            }
+            try {
+                in.close();
+            } catch (Exception ignored) {
+            }
         }
-
-        try {
-            in.close();
-        } catch (Exception e) {
-        }
-
         if (text.length() == 0) {
             new InfoBox(MyLocale.getMsg(5500, "Error"), MyLocale.getMsg(31415, "Could not read cache details for cache: ") + parent.getCode()).wait(FormBase.OKB);
             return;
         }
-
+        // parse text xml
         Extractor ex = new Extractor(text, "<VERSION value = \"", "\"/>", 0, true);
-        version = ex.findNext();
-        LongDescription = ex.findNext("<DETAILS><![CDATA[", "]]></DETAILS>");
+        String version = ex.findNext();
+        mLongDescription = ex.findNext("<DETAILS><![CDATA[", "]]></DETAILS>");
         country = ex.findNext("<COUNTRY><![CDATA[", "]]></COUNTRY>");
         state = ex.findNext("<STATE><![CDATA[", "]]></STATE>");
         attributes.XmlAttributesEnd(ex.findNext("<ATTRIBUTES>", "</ATTRIBUTES>"));
-        Hints = ex.findNext("<HINTS><![CDATA[", "]]></HINTS>");
+        mHints = ex.findNext("<HINTS><![CDATA[", "]]></HINTS>");
 
         Extractor subex = new Extractor(ex.findNext("<LOGS>", "</LOGS>"), "<OWNLOGID>", "</OWNLOGID>", 0, true);
         String OwnLogId = subex.findNext();
@@ -314,10 +213,10 @@ public class CacheHolderDetail {
         } else {
             ownLog = null;
         }
-        CacheLogs.clear();
+        mCacheLogs.clear();
         String dummy = subex.findNext("<LOG>", "</LOG>");
         while (dummy.length() > 0) {
-            CacheLogs.add(new Log(dummy));
+            mCacheLogs.add(new Log(dummy));
             dummy = subex.findNext();
         }
 
@@ -391,7 +290,7 @@ public class CacheHolderDetail {
             while ((dummy = subex.findNext()).length() > 0) {
                 imageInfo = userImages.get(imgNr++);
                 imageInfo.setTitle(dummy);
-                searchStart = subex.searchedFrom();
+                // searchStart = subex.searchedFrom();
             }
         } else if (version.equals("4")) {
             String tmp = ex.findNext("<IMAGES>", "</IMAGES");
@@ -413,22 +312,17 @@ public class CacheHolderDetail {
                     imageInfo.setTitle(getImageInfos.stringMatched(5));
                     imageInfo.setComment(getImageInfos.stringMatched(7));
                     switch (src) {
-                        case CacheImage.FROMDESCRIPTION:
-                            this.images.add(imageInfo);
-                            break;
                         case CacheImage.FROMLOG:
                             this.logImages.add(imageInfo);
-                            break;
-                        case CacheImage.FROMSPOILER:
-                            this.images.add(imageInfo);
                             break;
                         case CacheImage.FROMUSER:
                             this.userImages.add(imageInfo);
                             break;
+                        case CacheImage.FROMDESCRIPTION:
+                        case CacheImage.FROMSPOILER:
                         default:
                             // ist wohl 0 (als update Relikt von version 3)
                             this.images.add(imageInfo);
-                            continue;
                     }
                 }
             }
@@ -456,29 +350,23 @@ public class CacheHolderDetail {
         this.setSolver(ex.findNext("<SOLVER><![CDATA[", "]]></SOLVER>"));
     }
 
-    public void deleteFile(String FileName) {
-        // File exists?
-        boolean exists = (new File(FileName)).exists();
-        // yes: then delete
+    public void deleteCacheXML(String FileName) {
+        boolean exists = new File(FileName).exists();
         if (exists) {
-            boolean ok = (new File(FileName)).delete();
-            if (ok)
-                ok = true;
+            new File(FileName).delete();
         }
         boolean exists2 = (new File(FileName.toLowerCase())).exists();
-        // yes: delete
         if (exists2) {
-            boolean ok2 = (new File(FileName.toLowerCase())).delete();
-            if (ok2)
-                ok2 = true;
+            new File(FileName.toLowerCase()).delete();
         }
     }
 
     /**
      * Method to save a cache.xml file.
      */
-    public void saveCacheDetails(String dir) {
-        deleteFile(dir + parent.getCode() + ".xml");
+    public void saveCacheXML(String dir) {
+        PrintWriter detfile;
+        deleteCacheXML(dir + parent.getCode() + ".xml");
         try {
             detfile = new PrintWriter(new BufferedWriter(new FileWriter(new File(dir + parent.getCode().toLowerCase() + ".xml").getAbsolutePath())));
         } catch (Exception e) {
@@ -490,11 +378,11 @@ public class CacheHolderDetail {
                 detfile.print("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n");
                 detfile.print("<CACHEDETAILS>\r\n");
                 detfile.print("<VERSION value = \"" + Profile.CURRENTFILEFORMAT + "\"/>\n");
-                detfile.print("<DETAILS><![CDATA[" + LongDescription + "]]></DETAILS>\r\n");
+                detfile.print("<DETAILS><![CDATA[" + mLongDescription + "]]></DETAILS>\r\n");
                 detfile.print("<COUNTRY><![CDATA[" + country + "]]></COUNTRY>\n");
                 detfile.print("<STATE><![CDATA[" + state + "]]></STATE>\n");
                 detfile.print(attributes.XmlAttributesWrite());
-                detfile.print("<HINTS><![CDATA[" + Hints + "]]></HINTS>\r\n");
+                detfile.print("<HINTS><![CDATA[" + mHints + "]]></HINTS>\r\n");
                 detfile.print("<LOGS>\r\n");
                 if (ownLog != null) {
                     detfile.print("<OWNLOGID>" + ownLog.getLogID() + "</OWNLOGID>\r\n");
@@ -503,18 +391,16 @@ public class CacheHolderDetail {
                     detfile.print("<OWNLOGID></OWNLOGID>\r\n");
                     detfile.print("<OWNLOG><![CDATA[]]></OWNLOG>\r\n");
                 }
-                for (int i = 0; i < CacheLogs.size(); i++) {
-                    detfile.print(CacheLogs.getLog(i).toXML());
+                for (int i = 0; i < mCacheLogs.size(); i++) {
+                    detfile.print(mCacheLogs.getLog(i).toXML());
                 }
                 detfile.print("</LOGS>\r\n");
-
                 detfile.print("<NOTES><![CDATA[" + CacheNotes + "]]></NOTES>\n");
                 detfile.print("<IMAGES>\n");
-                printImages(images);
-                printImages(logImages);
-                printImages(userImages);
+                detfile.print(getIMG(images));
+                detfile.print(getIMG(logImages));
+                detfile.print(getIMG(userImages));
                 detfile.print("</IMAGES>\n");
-
                 detfile.print(Travelbugs.toXML());
                 detfile.print("<URL><![CDATA[" + URL + "]]></URL>\r\n");
                 detfile.print("<SOLVER><![CDATA[" + getSolver() + "]]></SOLVER>\r\n");
@@ -530,21 +416,23 @@ public class CacheHolderDetail {
         } catch (Exception e) {
             Preferences.itself().log("Problem waypoint " + parent.getCode() + " writing to a details file: ", e);
         }
-        hasUnsavedChanges = false;
+        unsaved = false;
     }
 
-    private void printImages(CacheImages imgs) {
+    private String getIMG(CacheImages imgs) {
+        StringBuffer sIMG = new StringBuffer();
         for (int i = 0; i < imgs.size(); i++) {
             CacheImage img = imgs.get(i);
-            detfile.print("<IMG");
-            detfile.print(addAttribute("SRC", String.valueOf(img.getSource())));
-            detfile.print(addAttribute("URL", SafeXML.string2Html(img.getURL())));
-            detfile.print(addAttribute("TITLE", img.getTitle()));
-            detfile.print(addAttribute("CMT", img.getComment()));
-            detfile.print(">");
-            detfile.print(SafeXML.string2Html(img.getFilename()));
-            detfile.print("</IMG>\n");
+            sIMG.append("<IMG");
+            sIMG.append(addAttribute("SRC", String.valueOf(img.getSource())));
+            sIMG.append(addAttribute("URL", SafeXML.string2Html(img.getURL())));
+            sIMG.append(addAttribute("TITLE", img.getTitle()));
+            sIMG.append(addAttribute("CMT", img.getComment()));
+            sIMG.append(">");
+            sIMG.append(SafeXML.string2Html(img.getFilename()));
+            sIMG.append("</IMG>\n");
         }
+        return sIMG.toString();
     }
 
     private String addAttribute(String att, String attValue) {
@@ -553,20 +441,21 @@ public class CacheHolderDetail {
         } else {
             return "";
         }
-
     }
 
-    /**
+    /* *
      * Return true if this cache has additional info for some pictures
      *
      * @return true if cache has additional info, false otherwise
-     */
+     * /
+    /*
     public boolean hasCacheImage() {
         for (int i = this.images.size() - 1; i >= 0; i--)
             if (!this.images.get(i).getComment().equals(""))
                 return true;
         return false;
     }
+     */
 
     /**
      * change id in waypoint details and rename associated files. Function should only be called by CacheHolder
@@ -638,7 +527,7 @@ public class CacheHolderDetail {
         // rename the files
         try {
             // since we use *.* we do not need FileBugFix
-            String srcFiles[] = new File(profiledir).list(parent.getCode().concat("*.*"), ewe.io.FileBase.LIST_FILES_ONLY);
+            String[] srcFiles = new File(profiledir).list(parent.getCode().concat("*.*"), ewe.io.FileBase.LIST_FILES_ONLY);
             for (int i = 0; i < srcFiles.length; i++) {
                 String newfile = newWptId.concat(srcFiles[i].substring(oldWptLength));
                 File srcFile = new File(profiledir.concat(srcFiles[i]));
@@ -651,7 +540,186 @@ public class CacheHolderDetail {
             // TODO: any chance of a roll back?
             // TODO: should we ignore a file not found?
         }
-        hasUnsavedChanges = true;
+        unsaved = true;
         return success;
+    }
+
+    /**
+     * For faster cache import changes are only written when the details are freed from memory
+     * If you want to save the changes automatically when the details are unloaded, set this to true
+     */
+    boolean isUnsaved() {
+        return unsaved;
+    }
+
+    public void setUnsaved(boolean unsaved) {
+        this.unsaved = unsaved;
+    }
+
+    public CacheHolder getParent() {
+        return parent;
+    }
+
+    public void setParent(CacheHolder parent) {
+        this.parent = parent;
+    }
+
+    public String getLongDescription() {
+        return mLongDescription;
+    }
+
+    public void setLongDescription(String longDescription) {
+        String s = stripControlChars(longDescription);
+        if (mLongDescription.equals(""))
+            parent.setNew(true);
+        else {
+            if (!s.equals(mLongDescription)) {
+                parent.setUpdated(true);
+            }
+        }
+        mLongDescription = s;
+    }
+
+    public String getHints() {
+        return mHints;
+    }
+
+    public void setHints(String hints) {
+        if (!mHints.equals(hints))
+            parent.setUpdated(true);
+        mHints = hints;
+    }
+
+    public LogList getCacheLogs() {
+        return mCacheLogs;
+    }
+
+    private void setCacheLogs(LogList newLogs) {
+        if (Preferences.itself().overwriteLogs) {
+            mCacheLogs = newLogs;
+            parent.setLogUpdated(true);
+            unsaved = true;
+        } else {
+            int size = newLogs.size();
+            for (int i = size - 1; i >= 0; i--) { // Loop over all new logs, must start with oldest log
+                if (mCacheLogs.merge(newLogs.getLog(i)) >= 0)
+                    parent.setLogUpdated(true);
+            }
+        }
+        if (mCacheLogs.purgeLogs() > 0)
+            unsaved = true;
+        parent.setNoFindLogs(mCacheLogs.countNotFoundLogs());
+    }
+
+    public CacheImages getImages() {
+        return images;
+    }
+
+    public void setImages(CacheImages images) {
+        this.images = images;
+    }
+
+    public CacheImages getLogImages() {
+        return logImages;
+    }
+
+    /*
+    public void setLogImages(CacheImages logImages) {
+        this.logImages = logImages;
+    }
+     */
+
+    public CacheImages getUserImages() {
+        return userImages;
+    }
+
+    /*
+    public void setUserImages(CacheImages userImages) {
+        this.userImages = userImages;
+    }
+     */
+
+    public Attributes getAttributes() {
+        return attributes;
+    }
+
+    public void setAttributes(Attributes attributes) {
+        this.attributes = attributes;
+    }
+
+    public TravelbugList getTravelbugs() {
+        return Travelbugs;
+    }
+
+    public void setTravelbugs(TravelbugList travelbugs) {
+        Travelbugs = travelbugs;
+    }
+
+    public String getURL() {
+        return URL;
+    }
+
+    public void setURL(String URL) {
+        this.URL = URL;
+    }
+
+    public String getCacheNotes() {
+        return this.CacheNotes;
+    }
+
+    public boolean setCacheNotes(String notes) {
+        boolean ret = !this.CacheNotes.equals(notes);
+        if (ret) {
+            parent.setUpdated(true);
+            this.CacheNotes = notes;
+            parent.setHasNote(!this.CacheNotes.trim().equals(""));
+        }
+        return ret;
+    }
+
+    public String getGCNotes() {
+        return gCNotes;
+    }
+
+    public void setGCNotes(String notes) {
+        if (notes.length() > 0) {
+            gCNotes = notes;
+            parent.setHasNote(true);
+        }
+    }
+
+    public String getSolver() {
+        return this.solver;
+    }
+
+    public void setSolver(String solver) {
+        if (!this.solver.equals(solver))
+            parent.setUpdated(true);
+        parent.setHasSolver(!solver.trim().equals(""));
+        this.solver = solver;
+    }
+
+    public Log getOwnLog() {
+        return this.ownLog;
+    }
+
+    public void setOwnLog(Log ownLog) {
+        this.ownLog = ownLog;
+    }
+
+    public String getCountry() {
+        return country;
+    }
+
+    public void setCountry(String country) {
+        this.country = country;
+    }
+
+    public String getState() {
+        return state;
+    }
+
+    public void setState(String state) {
+        this.state = state;
     }
 }

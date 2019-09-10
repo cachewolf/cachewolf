@@ -2209,7 +2209,7 @@ public class GCImporter {
 
                         if (fetchTBs)
                             getBugs(newCacheDetails);
-                        newCache.hasBugs(newCacheDetails.Travelbugs.size() > 0);
+                        newCache.hasBugs(newCacheDetails.getTravelbugs().size() > 0);
                         this.getImages(newCacheDetails);
 
                         newCacheDetails.setGCNotes(getNotes());
@@ -2447,7 +2447,7 @@ public class GCImporter {
      */
     private void getLogs(boolean isFoundByMe) throws Exception {
         boolean fetchAllLogs = isFoundByMe;
-        final LogList reslts = newCacheDetails.CacheLogs;
+        final LogList reslts = newCacheDetails.getCacheLogs();
         reslts.clear();
         final String userToken = getUserToken();
         if (userToken.length() == 0)
@@ -2575,7 +2575,7 @@ public class GCImporter {
      * @return A HTML formatted string with bug names and there purpose
      */
     public void getBugs(CacheHolderDetail chD) throws Exception {
-        chD.Travelbugs.clear();
+        chD.getTravelbugs().clear();
         if (wayPointPage.indexOf("ctl00_ContentBody_uxTravelBugList_uxNoTrackableItemsLabel") >= 0) {
             return; // there are no trackables
         }
@@ -2608,7 +2608,7 @@ public class GCImporter {
                         bugDetails = UrlFetcher.fetch(link);
                         exBugName.set(bugDetails, bugDetailsStart, bugDetailsEnd, 0, Extractor.EXCLUDESTARTEND); // reusing
                         // exBugName
-                        chD.Travelbugs.add(new Travelbug(link.substring(1 + link.indexOf("=")), bug, exBugName.findNext()));
+                        chD.getTravelbugs().add(new Travelbug(link.substring(1 + link.indexOf("=")), bug, exBugName.findNext()));
                     } catch (final Exception ex) {
                         Preferences.itself().log("[SpiderGC.java:getBugs] Could not fetch buginfo from " + link, ex);
                     }
@@ -2617,7 +2617,7 @@ public class GCImporter {
             infB.setInfo(oldInfoBox);
             if (exBugWrong) {
                 if (blockLength > 200)
-                    Preferences.itself().log("[SpiderGC.java:getBugs]check TBs bugExStart / bugExEnd! blockLength = " + blockLength + " for " + chD.URL, null);
+                    Preferences.itself().log("[SpiderGC.java:getBugs]check TBs bugExStart / bugExEnd! blockLength = " + blockLength + " for " + chD.getURL(), null);
             }
         } else {
             Preferences.itself().log("[SpiderGC.java:getBugs]check TBs blockExStart / blockExEnd! ", null);
@@ -2636,7 +2636,7 @@ public class GCImporter {
         // (and is an other object than that in the DB)
         // So the already downloaded images are listed in chD.images
         // But we will build this list from clean
-        chD.images.clear();
+        chD.getImages().clear();
         spideredUrls = new Vector();
         spiderCounter = 0; // the first file
 
@@ -2644,7 +2644,7 @@ public class GCImporter {
         String wayPoint = chD.getParent().getCode();
         final CacheHolder oldCh = MainForm.profile.cacheDB.get(wayPoint);
         if (oldCh != null)
-            oldImages = oldCh.getDetails().images;
+            oldImages = oldCh.getDetails().getImages();
         else
             oldImages = new CacheImages();
         this.getDescriptionImages(chD);
@@ -2665,7 +2665,7 @@ public class GCImporter {
         // ==================================
         // checking img - tags of description
         // ==================================
-        String longDesc = STRreplace.replace(chD.LongDescription, "<IMG", "<img");
+        String longDesc = STRreplace.replace(chD.getLongDescription(), "<IMG", "<img");
         longDesc = STRreplace.replace(longDesc, "SRC=", "src=");
         longDesc = STRreplace.replace(longDesc, "HREF=", "href=");
         longDesc = STRreplace.replace(longDesc, "'", "\"");
@@ -2688,7 +2688,7 @@ public class GCImporter {
                         CacheImage imageInfo = spiderImage(wayPoint, imgUrl, imgType);
                         imageInfo.setComment(""); // correct dirty hack
                         // title from title or alt
-                        chD.images.add(imageInfo);
+                        chD.getImages().add(imageInfo);
                     } catch (Exception e) {
                         Preferences.itself().log("Error loading image: " + imgUrl, e);
                     }
@@ -2716,7 +2716,7 @@ public class GCImporter {
                         CacheImage imageInfo = spiderImage(wayPoint, imgUrl, imgType);
                         imageInfo.setComment(null); // correct dirty hack
                         imageInfo.setTitle(extractValue.findNext(">", "<"));
-                        chD.images.add(imageInfo);
+                        chD.getImages().add(imageInfo);
                     } catch (Exception e) {
                         Preferences.itself().log("Error loading image: " + imgUrl, e);
                     }
@@ -2764,7 +2764,7 @@ public class GCImporter {
                                         imgComment = imgComment.substring(0, imgComment.length() - 6);
                                 }
                                 cacheImage.setComment(imgComment);
-                                chD.images.add(cacheImage);
+                                chD.getImages().add(cacheImage);
                             }
                         } catch (Exception e) {
                             Preferences.itself().log("Error loading image: " + imgUrl, e);
@@ -2920,40 +2920,40 @@ public class GCImporter {
                 final Extractor exRowBlock = new Extractor(wayBlock, rowBlockExStart, rowBlockExEnd, 0, false);
                 String rowBlock = exRowBlock.findNext();
                 while ((rowBlock = exRowBlock.findNext()).length() > 0) {
-                    CacheHolder hd = null;
+                    CacheHolder tmpCacheHolder;
 
                     final Extractor exPrefix = new Extractor(rowBlock, prefixExStart, prefixExEnd, 0, true);
                     final String prefix = exPrefix.findNext();
-                    String adWayPoint;
+                    String additionalWayPointCode;
                     if (prefix.length() == 2)
-                        adWayPoint = prefix + wayPoint.substring(2);
+                        additionalWayPointCode = prefix + wayPoint.substring(2);
                     else
-                        adWayPoint = MyLocale.formatLong(counter, "00") + wayPoint.substring(2);
+                        additionalWayPointCode = MyLocale.formatLong(counter, "00") + wayPoint.substring(2);
                     counter++;
-                    final int idx = MainForm.profile.getCacheIndex(adWayPoint);
+                    final int idx = MainForm.profile.getCacheIndex(additionalWayPointCode);
 
                     if (idx >= 0) {
                         // Creating new CacheHolder, but accessing old cache.xml file
-                        hd = new CacheHolder();
-                        hd.setCode(adWayPoint);
+                        tmpCacheHolder = new CacheHolder();
+                        tmpCacheHolder.setCode(additionalWayPointCode);
                         // Accessing Details reads file if not yet done
-                        hd.getDetails();
+                        tmpCacheHolder.getDetails();
                     } else {
-                        hd = new CacheHolder();
-                        hd.setCode(adWayPoint);
+                        tmpCacheHolder = new CacheHolder();
+                        tmpCacheHolder.setCode(additionalWayPointCode);
                     }
-                    hd.initStates(idx < 0);
+                    tmpCacheHolder.initStates(idx < 0);
 
                     nameRex.search(rowBlock);
                     if (nameRex.didMatch()) {
-                        hd.setName(nameRex.stringMatched(1));
+                        tmpCacheHolder.setName(nameRex.stringMatched(1));
                     } else {
                         Preferences.itself().log("check nameRex in spider.def" + Preferences.NEWLINE + rowBlock, null);
                     }
 
                     koordRex.search(rowBlock);
                     if (koordRex.didMatch()) {
-                        hd.setWpt(new CWPoint(koordRex.stringMatched(1)));
+                        tmpCacheHolder.setWpt(new CWPoint(koordRex.stringMatched(1)));
                         koords_not_yet_found = false;
                     } else {
                         if (koords_not_yet_found) {
@@ -2965,7 +2965,7 @@ public class GCImporter {
 
                     typeRex.search(rowBlock);
                     if (typeRex.didMatch()) {
-                        hd.setType(CacheType.gcSpider2CwType(typeRex.stringMatched(1)));
+                        tmpCacheHolder.setType(CacheType.gcSpider2CwType(typeRex.stringMatched(1)));
                         //hd.setType(CacheType.gpxType2CwType("Waypoint|" + typeRex.stringMatched(1)));
                     } else {
                         Preferences.itself().log("check typeRex in spider.def" + Preferences.NEWLINE + rowBlock, null);
@@ -2974,25 +2974,25 @@ public class GCImporter {
                     rowBlock = exRowBlock.findNext();
                     descRex.search(rowBlock);
                     if (descRex.didMatch()) {
-                        hd.getDetails().setLongDescription(descRex.stringMatched(1).trim());
+                        tmpCacheHolder.getDetails().setLongDescription(descRex.stringMatched(1).trim());
                     } else {
                         Preferences.itself().log("check descRex in spider.def" + Preferences.NEWLINE + rowBlock, null);
                     }
-                    hd.setFound(is_found);
-                    hd.setSize(CacheSize.CW_SIZE_NOTCHOSEN);
-                    hd.setDifficulty(CacheTerrDiff.CW_DT_UNSET);
-                    hd.setTerrain(CacheTerrDiff.CW_DT_UNSET);
+                    tmpCacheHolder.setFound(is_found);
+                    tmpCacheHolder.setSize(CacheSize.CW_SIZE_NOTCHOSEN);
+                    tmpCacheHolder.setDifficulty(CacheTerrDiff.CW_DT_UNSET);
+                    tmpCacheHolder.setTerrain(CacheTerrDiff.CW_DT_UNSET);
 
                     if (idx < 0) {
-                        MainForm.profile.cacheDB.add(hd);
-                        hd.saveCacheDetails();
+                        MainForm.profile.cacheDB.add(tmpCacheHolder);
+                        tmpCacheHolder.saveCacheDetails();
                     } else {
-                        final CacheHolder cx = MainForm.profile.cacheDB.get(idx);
-                        final boolean checked = cx.isChecked;
-                        cx.initStates(false);
-                        cx.update(hd);
-                        cx.isChecked = checked;
-                        cx.saveCacheDetails();
+                        final CacheHolder additionalWayPointFromDB = MainForm.profile.cacheDB.get(idx);
+                        final boolean checked = additionalWayPointFromDB.isChecked;
+                        additionalWayPointFromDB.initStates(false);
+                        additionalWayPointFromDB.update(tmpCacheHolder);
+                        additionalWayPointFromDB.isChecked = checked;
+                        additionalWayPointFromDB.saveCacheDetails();
                     }
                 }
             }
@@ -3015,11 +3015,11 @@ public class GCImporter {
         final String atts = attBlock.findNext();
         final Extractor attEx = new Extractor(atts, attExStart, attExEnd, 0, true);
         String attribute;
-        chD.attributes.clear();
+        chD.getAttributes().clear();
         while ((attribute = attEx.findNext()).length() > 0) {
-            chD.attributes.add(attribute);
+            chD.getAttributes().add(attribute);
         }
-        chD.getParent().setAttribsAsBits(chD.attributes.getAttribsAsBits());
+        chD.getParent().setAttribsAsBits(chD.getAttributes().getAttribsAsBits());
     }
 
     public String encodeUTF8URL(byte[] what) {

@@ -305,7 +305,7 @@ public class POIExporter extends Exporter {
             formatMain(ch, lat, lon, "", "");
             return result.toString();
         } else {
-            CacheImages images = ch.getDetails().images.getDisplayImages(ch.getCode());
+            CacheImages images = ch.getDetails().getImages().getDisplayImages(ch.getCode());
             String alreadyDone = "";
             for (int i = 0; i < images.size(); i++) {
                 String filename = images.get(i).getFilename();

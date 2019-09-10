@@ -242,7 +242,7 @@ public class ExploristExporter {
         sb.append(",");
         sb.append(removeCommas(ch.getOwner()));
         sb.append(",");
-        sb.append(removeCommas(Common.rot13(det.Hints)));
+        sb.append(removeCommas(Common.rot13(det.getHints())));
         sb.append(",");
 
         if (!add.equals("")) { // Set Picture in Explorist to Virtual for Addis
@@ -254,9 +254,9 @@ public class ExploristExporter {
         sb.append(toGsDateFormat(ch.getHidden())); // created - DDMMYYY, YYY = year - 1900
         sb.append(",");
         String lastFound = "0000";
-        for (int i = 0; i < det.CacheLogs.size(); i++) {
-            if (det.CacheLogs.getLog(i).isFoundLog() && det.CacheLogs.getLog(i).getDate().compareTo(lastFound) > 0) {
-                lastFound = det.CacheLogs.getLog(i).getDate();
+        for (int i = 0; i < det.getCacheLogs().size(); i++) {
+            if (det.getCacheLogs().getLog(i).isFoundLog() && det.getCacheLogs().getLog(i).getDate().compareTo(lastFound) > 0) {
+                lastFound = det.getCacheLogs().getLog(i).getDate();
             }
         }
 

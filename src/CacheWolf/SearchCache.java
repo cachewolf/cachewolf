@@ -76,10 +76,10 @@ public class SearchCache {
                         && ch.getName().toUpperCase().indexOf(searchStr) < 0 //
                         && ch.getStatus().toUpperCase().indexOf(searchStr) < 0 //
                         && (!searchInDescriptionAndNotes //
-                        || chD.LongDescription.toUpperCase().indexOf(searchStr) < 0 //
+                        || chD.getLongDescription().toUpperCase().indexOf(searchStr) < 0 //
                         && chD.getCacheNotes().toUpperCase().indexOf(searchStr) < 0) //
                         && (!searchInLogs //
-                        || chD.CacheLogs.allMessages().toUpperCase().indexOf(searchStr) < 0))//
+                        || chD.getCacheLogs().allMessages().toUpperCase().indexOf(searchStr) < 0))//
                     ch.isFlagged = false;
                 else
                     ch.isFlagged = true;

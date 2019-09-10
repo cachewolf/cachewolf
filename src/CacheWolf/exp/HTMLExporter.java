@@ -120,8 +120,8 @@ public class HTMLExporter {
                         if (det != null) {
 
                             // Add the icon to list of icons to copy to dest directory
-                            for (int j = 0; j < det.CacheLogs.size() - 1; j++) {
-                                icon = det.CacheLogs.getLog(j).getIcon();
+                            for (int j = 0; j < det.getCacheLogs().size() - 1; j++) {
+                                icon = det.getCacheLogs().getLog(j).getIcon();
                                 if (logIcons.find(icon) < 0) {
                                     logIcons.add(icon);
                                 }
@@ -129,11 +129,11 @@ public class HTMLExporter {
 
                             // Log images
                             logImg.clear();
-                            for (int j = 0; j < det.logImages.size(); j++) {
+                            for (int j = 0; j < det.getLogImages().size(); j++) {
                                 logImgParams = new Hashtable();
-                                String logImgFile = det.logImages.get(j).getFilename();
+                                String logImgFile = det.getLogImages().get(j).getFilename();
                                 logImgParams.put("FILE", logImgFile);
-                                logImgParams.put("TEXT", det.logImages.get(j).getTitle());
+                                logImgParams.put("TEXT", det.getLogImages().get(j).getTitle());
                                 if (Files.copy(MainForm.profile.dataDir + logImgFile, targetDir + logImgFile))
                                     logImg.add(logImgParams);
                                 else {
@@ -145,11 +145,11 @@ public class HTMLExporter {
 
                             // User images
                             usrImg.clear();
-                            for (int j = 0; j < det.userImages.size(); j++) {
+                            for (int j = 0; j < det.getUserImages().size(); j++) {
                                 usrImgParams = new Hashtable();
-                                String usrImgFile = det.userImages.get(j).getFilename();
+                                String usrImgFile = det.getUserImages().get(j).getFilename();
                                 usrImgParams.put("FILE", usrImgFile);
-                                usrImgParams.put("TEXT", det.userImages.get(j).getTitle());
+                                usrImgParams.put("TEXT", det.getUserImages().get(j).getTitle());
                                 if (Files.copy(MainForm.profile.dataDir + usrImgFile, targetDir + usrImgFile))
                                     usrImg.add(usrImgParams);
                                 else {

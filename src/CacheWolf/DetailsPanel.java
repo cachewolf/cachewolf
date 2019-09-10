@@ -338,7 +338,7 @@ public class DetailsPanel extends CellPanel {
         IImage btnSizeNewImage = GuiImageBroker.makeImageForButton(cacheSize.getBtn(), text, icon);
         GuiImageBroker.setButtonIconAndText(cacheSize.getBtn(), text, btnSizeNewImage);
         CacheHolderDetail mainCacheDetails = mainCache.getDetails();
-        attViewer.showImages(mainCacheDetails.attributes);
+        attViewer.showImages(mainCacheDetails.getAttributes());
 
         if (ch.isAddiWpt() || ch.isCustomWpt()) {
             disable(difficulty.getBtn());
@@ -380,12 +380,12 @@ public class DetailsPanel extends CellPanel {
         hint = "";
         if (ch.isAddiWpt()) {
             CacheHolderDetail cacheDetails = ch.getDetails();
-            hint = STRreplace.replace(cacheDetails.LongDescription, "<br>", "\n");
+            hint = STRreplace.replace(cacheDetails.getLongDescription(), "<br>", "\n");
             if (hint.length() > 0) {
                 hint = hint + "\n-\n";
             }
         }
-        hint += STRreplace.replace(Common.rot13(mainCacheDetails.Hints), "<br>", "\n");
+        hint += STRreplace.replace(Common.rot13(mainCacheDetails.getHints()), "<br>", "\n");
         if (hint.length() > 0) {
             enable(btnHint);
         } else {
@@ -398,9 +398,9 @@ public class DetailsPanel extends CellPanel {
         Dimension lastLogsDimension = lastLogs.getMySize(null);
         int lastLogsWidth = lastLogsDimension.width;
         int lastLogsHeight = lastLogsDimension.height;
-        int anz = Math.min(5, mainCacheDetails.CacheLogs.size());
+        int anz = Math.min(5, mainCacheDetails.getCacheLogs().size());
         for (int i = 0; i < anz; i++) {
-            Log log = mainCacheDetails.CacheLogs.getLog(i);
+            Log log = mainCacheDetails.getCacheLogs().getLog(i);
             if (!(log.getIcon().equals(Log.MAXLOGICON))) {
                 AniImage ai = new AniImage(log.getIcon());
                 ai.setLocation(i * Math.max(ai.getWidth(), (int) (lastLogsWidth / anz)), (int) ((lastLogsHeight - ai.getHeight()) / 2));
@@ -574,7 +574,7 @@ public class DetailsPanel extends CellPanel {
                 } else if (menu == this.more.getMnu()) {
                     switch (more.getSelectedIndex()) {
                         case BUG:
-                            final TravelbugInCacheScreen ts = new TravelbugInCacheScreen(ch.getDetails().Travelbugs.toHtml(), "Travelbugs");
+                            final TravelbugInCacheScreen ts = new TravelbugInCacheScreen(ch.getDetails().getTravelbugs().toHtml(), "Travelbugs");
                             ts.execute(this.getFrame(), Gui.CENTER_FRAME);
                             break;
                         case NOTES:
@@ -737,7 +737,7 @@ public class DetailsPanel extends CellPanel {
                     }
                     if (mainCache.isOC()) {
                         if (chD != null) {
-                            url = chD.URL;
+                            url = chD.getURL();
                             if (url.indexOf("viewcache") >= 0) {
                                 url = STRreplace.replace(url, "viewcache", "log");
                             }
@@ -986,10 +986,10 @@ public class DetailsPanel extends CellPanel {
         }
         dirtyDetails = false;
         needsTableUpdate = false;
-        ch.getDetails().hasUnsavedChanges = true;
+        ch.getDetails().setUnsaved(true);
         if (!oldWaypoint.equals(ch.getCode())) {
             // Delete old XML - File
-            ch.getDetails().deleteFile(MainForm.profile.dataDir + oldWaypoint + ".xml");
+            ch.getDetails().deleteCacheXML(MainForm.profile.dataDir + oldWaypoint + ".xml");
         }
     }
 
@@ -1041,7 +1041,7 @@ public class DetailsPanel extends CellPanel {
 
             public void popupMenuEvent(Object selectedItem) {
                 if (selectedItem.equals(mnuPickupTB)) {
-                    final Travelbug tb = TravelbugPickup.pickupTravelbug(getCache().getDetails().Travelbugs);
+                    final Travelbug tb = TravelbugPickup.pickupTravelbug(getCache().getDetails().getTravelbugs());
                     TravelbugJourneyList tbjList;
                     if (tb != null) {
                         dirtyDetails = true;
@@ -1051,9 +1051,9 @@ public class DetailsPanel extends CellPanel {
                         // Add the tb to this list
                         tbjList.addTbPickup(tb, MainForm.profile.name, getCache().getCode());
                         tbjList.saveTravelbugsFile();
-                        setHtml(getCache().getDetails().Travelbugs.toHtml());
+                        setHtml(getCache().getDetails().getTravelbugs().toHtml());
                         repaint();
-                        getCache().hasBugs(getCache().getDetails().Travelbugs.size() > 0);
+                        getCache().hasBugs(getCache().getDetails().getTravelbugs().size() > 0);
                     }
                 } else if (selectedItem.equals(mnuDropTB)) {
                     TravelbugJourneyList tbjList;
@@ -1064,12 +1064,12 @@ public class DetailsPanel extends CellPanel {
                     tbs.execute();
                     if (tbs.selectedItem >= 0) {
                         Travelbug tb = tbl.getTB(tbs.selectedItem);
-                        getCache().getDetails().Travelbugs.add(tb);
+                        getCache().getDetails().getTravelbugs().add(tb);
                         tbjList.addTbDrop(tb, MainForm.profile.name, getCache().getCode());
                     }
                     tbjList.saveTravelbugsFile();
-                    getCache().hasBugs(getCache().getDetails().Travelbugs.size() > 0);
-                    setHtml(getCache().getDetails().Travelbugs.toHtml());
+                    getCache().hasBugs(getCache().getDetails().getTravelbugs().size() > 0);
+                    setHtml(getCache().getDetails().getTravelbugs().toHtml());
                     repaint();
                     dirtyDetails = true;
                 } else {

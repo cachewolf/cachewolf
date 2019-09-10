@@ -98,7 +98,7 @@ public class TravelbugMenu extends MenuBar {
             } else if (mev.selectedItem == mnuDropTB) {
                 if (view.selectedRow >= 0 && view.selectedRow < view.modTbJourneyList.numRows) {
                     Travelbug tb = model.allTravelbugJourneys.getTBJourney(view.selectedRow).getTb();
-                    view.chD.Travelbugs.add(tb);
+                    view.chD.getTravelbugs().add(tb);
                     model.allTravelbugJourneys.addTbDrop(tb, MainForm.profile.name, view.waypoint);
                     view.chDmodified = true;
                     view.ch.hasBugs(true);

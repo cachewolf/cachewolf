@@ -126,7 +126,7 @@ public class GarminPicExporter {
         CacheHolderDetail det = ch.getDetails();
         if (det == null)
             return 1; // No details; increment export errors
-        int nImg = det.images.size();
+        int nImg = det.getImages().size();
         if (nImg == 0)
             return 0; // Nothing to copy
         int retCode = 0;
@@ -135,7 +135,7 @@ public class GarminPicExporter {
         picsCopied.clear(); // Clear the hashtable which keeps track of pictures copied
         for (int i = nImg - 1; i >= 0; i--) { // Start from top to get more pics with sensible names
             // The pictures embedded in the text description have no title and are at the beginning
-            CacheImage imgInfo = det.images.get(i);
+            CacheImage imgInfo = det.getImages().get(i);
             // Skip this pic if it was already copied
             if (picsCopied.containsKey(imgInfo.getFilename())) {
                 continue;

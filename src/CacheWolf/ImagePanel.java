@@ -107,16 +107,16 @@ public class ImagePanel extends CellPanel {
             imgDesc = new InputBox("Description").input("", 10);
             // Create Destination Filename
             String ext = imgFile.getFileExt().substring(imgFile.getFileExt().lastIndexOf('.'));
-            imgDestName = cacheDetails.getParent().getCode() + "_U_" + (cacheDetails.userImages.size() + 1) + ext;
+            imgDestName = cacheDetails.getParent().getCode() + "_U_" + (cacheDetails.getUserImages().size() + 1) + ext;
 
             CacheImage userCacheImage = new CacheImage(CacheImage.FROMUSER);
             userCacheImage.setFilename(imgDestName);
             userCacheImage.setTitle(imgDesc);
-            cacheDetails.userImages.add(userCacheImage);
+            cacheDetails.getUserImages().add(userCacheImage);
             // Copy File
             Files.copy(imgFile.getFullPath(), MainForm.profile.dataDir + imgDestName);
             // Save Data
-            cacheDetails.saveCacheDetails(MainForm.profile.dataDir);
+            cacheDetails.saveCacheXML(MainForm.profile.dataDir);
         }
     }
 
@@ -169,13 +169,13 @@ class ImagesPanel extends InteractivePanel {
             thumb_size = ((Preferences.itself().getScreenWidth() - 2 * padding) / 3);
             thumb_size = thumb_size - padding;
             double rowCounter1 = 0;
-            if (chD.images.getDisplayImages(chD.getParent().getCode()).size() > 0) {
-                rowCounter1 = chD.images.getDisplayImages(chD.getParent().getCode()).size();
+            if (chD.getImages().getDisplayImages(chD.getParent().getCode()).size() > 0) {
+                rowCounter1 = chD.getImages().getDisplayImages(chD.getParent().getCode()).size();
                 rowCounter1 = java.lang.Math.ceil(rowCounter1 / 3);
             }
             double rowCounter2 = 0;
-            if (chD.userImages.size() > 0) {
-                rowCounter2 = chD.userImages.size();
+            if (chD.getUserImages().size() > 0) {
+                rowCounter2 = chD.getUserImages().size();
                 rowCounter2 = java.lang.Math.ceil(rowCounter2 / 3);
             }
             int rowCounter = (int) (rowCounter1 + rowCounter2);
@@ -186,16 +186,16 @@ class ImagesPanel extends InteractivePanel {
 
             locY = 20;
             locX = padding;
-            addImages(chD.images.getDisplayImages(chD.getParent().getCode()));
+            addImages(chD.getImages().getDisplayImages(chD.getParent().getCode()));
             // load user images
             if (locCounter == 1 || locCounter == 2)
                 locY = locY + thumb_size;
-            if (chD.userImages.size() > 0) {
+            if (chD.getUserImages().size() > 0) {
                 addTitle(MyLocale.getMsg(341, "User Images:"));
                 locY = locY + 20;
                 locX = padding;
                 locCounter = 0;
-                addImages(chD.userImages);
+                addImages(chD.getUserImages());
             }
             oldChD = chD;
         } // cache!=oldCache
@@ -247,7 +247,7 @@ class ImagesPanel extends InteractivePanel {
      * Add the images to the panel. Can add both normal and user images
      *
      * @param pImages    Vector of images or userImages
-     * @param imagesText Vector of image texts or user image texts
+     *  imagesText Vector of image texts or user image texts
      */
     private void addImages(CacheImages pImages) {
         String location, imgText;
