@@ -448,9 +448,9 @@ public class ASN1InputStream
 	throw new UnsupportedClassVersionError();/*
                 return new DERGeneralString(defIn.toByteArray());
 */            case IA5_STRING:
-	throw new UnsupportedClassVersionError();/*
                 return new DERIA5String(defIn.toByteArray());
-*/            case INTEGER:
+            /* throw new UnsupportedClassVersionError(); */
+            case INTEGER:
                 return new ASN1Integer(defIn.toByteArray(), false);
             case NULL:
                 return DERNull.INSTANCE;   // actual content is ignored (enforce 0 length?)

@@ -233,6 +233,7 @@ public class UrlFetcher {
      * @throws IOException
      */
     public static ByteArray fetchByteArray(String url) throws IOException {
+        // if (url.startsWith("http://"))            url = STRreplace.replace(url,"http://", "https://");
         webZeitStart = new Time();
         conn = new HttpConnection(url);
         String urltmp = url;
