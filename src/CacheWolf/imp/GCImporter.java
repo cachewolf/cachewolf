@@ -1457,7 +1457,7 @@ public class GCImporter {
             if (login()) {
                 String url = "https://www.geocaching.com/play/geocache/" + mainCache.getCode() + "/log";
                 String logPage = UrlFetcher.fetch(url);
-                String postData = getItemString(extractor.set(logPage, "action=\"/play/geocache/", "<div class", 0, Extractor.EXCLUDESTARTEND).findNext(), "__RequestVerificationToken");
+                String postData = getItemString(extractor.set(logPage, "action=\"/play/geocache/", "<div class", 0, Extractor.EXCLUDESTARTEND).findNext());
 
                 url = "https://www.geocaching.com/api/proxy/web/v1/Geocache/" + mainCache.getCode() + "/GeocacheLog";
                 // String uploadResponse = UrlFetcher.fetch(url);
@@ -1730,7 +1730,7 @@ public class GCImporter {
         if (passwort.equals("")) {
             InfoBox passwortInput = new InfoBox(MyLocale.getMsg(5506, "Password"), MyLocale.getMsg(5505, "Enter Password"), InfoBox.INPUT);
             passwortInput.setInputPassword(passwort);
-            int code = FormBase.IDOK;
+            int code;
             code = passwortInput.execute();
             passwort = passwortInput.getInput();
             passwortInput.close(0);
@@ -1748,7 +1748,7 @@ public class GCImporter {
             return 3;
         }
         UrlFetcher.rememberCookies();
-        final String postData = getItemString(WebPage, "__RequestVerificationToken") //
+        final String postData = getItemString(WebPage) //
                 + "&" + "UsernameOrEmail=" + encodeUTF8URL(Utils.encodeJavaUtf8String(username)) //
                 + "&" + "Password=" + encodeUTF8URL(Utils.encodeJavaUtf8String(passwort)) //
                 ;
@@ -1809,13 +1809,13 @@ public class GCImporter {
     /**
      * from WebPage
      *
-     * @return
+     * @return the __RequestVerificationToken...
      */
-    private String getItemString(String _ExtractFrom, String _Item) {
-        String Result = extractor.set(_ExtractFrom, _Item, ">", 0, Extractor.EXCLUDESTARTEND).findNext();
+    private String getItemString(String _ExtractFrom) {
+        String Result = extractor.set(_ExtractFrom, "__RequestVerificationToken", ">", 0, Extractor.EXCLUDESTARTEND).findNext();
         String sItem = extractor.set(Result, "value=\"", "\"", 0, Extractor.EXCLUDESTARTEND).findNext();
         if (sItem.length() > 0) {
-            Result = _Item + "=" + sItem;
+            Result = "__RequestVerificationToken" + "=" + sItem;
         }
         return Result;
     }
@@ -1901,7 +1901,7 @@ public class GCImporter {
         boolean ret = false;
         boolean save = false;
         boolean is_archived_GC = false;
-        boolean is_found_GC = false;
+        boolean is_found_GC;
 
         if (ch.isBlack())
             return false;
@@ -1951,7 +1951,7 @@ public class GCImporter {
             ret = true;
         }
         if (Preferences.itself().checkDTS) {
-            final String dts[] = mString.split(getDTS(), '/');
+            final String[] dts = mString.split(getDTS(), '/');
             if (dts.length == 3) {
                 if (difficultyChanged(ch, CacheTerrDiff.v1Converter(dts[0]))) {
                     save = true;
@@ -1971,7 +1971,7 @@ public class GCImporter {
             } else {
                 try {
                     Preferences.itself().log("[SpiderGC.java:updateExists]check DTS calculation (DTSRex)! \n" + aCacheDescriptionOfListPage, null);
-                } catch (Exception e) {
+                } catch (Exception ignored) {
                 }
             }
         }
@@ -2065,8 +2065,7 @@ public class GCImporter {
         }
         final Time lastLogGC = DateFormat.toDate(stmp);
         // String timecheck = DateFormat.toYYMMDD(lastLogGC);
-        final boolean ret = lastUpdateCW.compareTo(lastLogGC) < 0;
-        return ret;
+        return lastUpdateCW.compareTo(lastLogGC) < 0;
     }
 
     private boolean TBchanged(CacheHolder ch) {
@@ -2455,7 +2454,7 @@ public class GCImporter {
         int idx = 0;
         int nLogs = 0;
         boolean foundown = false;
-        boolean fertig = false;
+        boolean fertig;
         int num = 100;
 
         if (maxLogs == -1) {
@@ -2471,7 +2470,7 @@ public class GCImporter {
             idx++;
             String url = "https://www.geocaching.com/seek/geocache.logbook?tkn=" + userToken + "&idx=" + idx + "&num=" + num + "&decrypt=false";
             UrlFetcher.setRequestorProperty("Content-Type", "application/json; charset=UTF-8");
-            JSONObject response = null;
+            JSONObject response;
             String fetchResult = "";
             try {
                 fetchResult = UrlFetcher.fetch(url);
