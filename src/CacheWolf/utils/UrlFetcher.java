@@ -5,7 +5,7 @@
     It supports the sites geocaching.com and opencaching.de
 
     Copyright (C) 2006  CacheWolf development team
-	See http://www.cachewolf.de/ for more information.
+        See http://www.cachewolf.de/ for more information.
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation; version 2 of the License.
@@ -172,7 +172,6 @@ public class UrlFetcher {
     }
 
     public static String fetch(String address) throws IOException {
-        // Preferences.itself().log("fetch: " + address);
         return fetch(address, true);
     }
 
@@ -191,6 +190,7 @@ public class UrlFetcher {
                     }
                 }
             }
+            String result;
             if (gzip) {
                 ByteArrayInputStream bis = new ByteArrayInputStream(daten.data);
                 GZIPInputStream zis = new GZIPInputStream(bis);
@@ -206,10 +206,11 @@ public class UrlFetcher {
                     Vm.arraycopy(nextChunk, 0, extendedBuffer, newBuffer.length, bytesRead);
                     newBuffer = extendedBuffer;
                 }
-                return new BetterUTF8Codec().decodeUTF8(newBuffer, 0, allBytes).toString();
+                 result = new BetterUTF8Codec().decodeUTF8(newBuffer, 0, allBytes).toString();
             } else {
-                return new BetterUTF8Codec().decodeUTF8(daten.data, 0, daten.length).toString();
+                result = new BetterUTF8Codec().decodeUTF8(daten.data, 0, daten.length).toString();
             }
+            return result;
         }
         throw new IOException("got no data from web");
     }
