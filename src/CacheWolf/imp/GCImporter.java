@@ -5,7 +5,7 @@
     It supports the sites geocaching.com and opencaching.de
 
     Copyright (C) 2006  CacheWolf development team
-	See http://www.cachewolf.de/ for more information.
+        See http://www.cachewolf.de/ for more information.
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation; version 2 of the License.
@@ -1217,10 +1217,10 @@ public class GCImporter {
     String commit = "ctl00$ContentBody$uxSave=Save Changes";
     
     final String postData = "__EVENTTARGET=" //
-    	+ "&" + "__EVENTARGUMENT="//
+        + "&" + "__EVENTARGUMENT="//
     
-    	+ "&" + UrlFetcher.encodeURL(setLanguageEN, false) //
-    	+ "&" + UrlFetcher.encodeURL(commit, true) //
+        + "&" + UrlFetcher.encodeURL(setLanguageEN, false) //
+        + "&" + UrlFetcher.encodeURL(commit, true) //
     ;
     try {
         UrlFetcher.setpostData(postData);
@@ -1229,7 +1229,7 @@ public class GCImporter {
     } catch (final Exception ex) {
         Preferences.itself().log("[checkGCSettings] Error at post checkGCSettings", ex);
         return 1;
-    }	
+    }   
     }
     */
 
@@ -1526,25 +1526,21 @@ public class GCImporter {
                 String expires = (String) ht.get("expires");
                 String cookie = (String) ht.get("auth");
                 boolean withoutExpiration = true;
-                if (cookie != null) {
-                    if (cookie.length() > 0) {
-                        if (expires != null) {
-                            if (expires.length() > 0) {
-                                withoutExpiration = false;
-                                // check expires
-                                String[] sExpires = mString.split(expires, ' ');
-                                Time tExpires = DateFormat.toDate(sExpires[1]);
-                                Time now = new Time();
-                                if (tExpires.after(now)) {
-                                    UrlFetcher.setCookie("gspkauth;www.geocaching.com", "gspkauth=" + cookie + ";");
-                                    isExpired = false;
-                                }
-                            }
-                        }
-                        if (withoutExpiration) {
+                if (cookie != null && cookie.length() > 0) {
+                    if (expires != null && expires.length() > 0) {
+                        withoutExpiration = false;
+                        // check expires
+                        String[] sExpires = mString.split(expires, ' ');
+                        Time tExpires = DateFormat.toDate(sExpires[1]);
+                        Time now = new Time();
+                        if (tExpires.after(now)) {
                             UrlFetcher.setCookie("gspkauth;www.geocaching.com", "gspkauth=" + cookie + ";");
                             isExpired = false;
                         }
+                    }
+                    if (withoutExpiration) {
+                        UrlFetcher.setCookie("gspkauth;www.geocaching.com", "gspkauth=" + cookie + ";");
+                        isExpired = false;
                     }
                 }
             }
@@ -1651,15 +1647,15 @@ public class GCImporter {
             }
         }
 
-	/*
+        /*
     // other place to check/set selected language
-	String languageBlock = ext.set(page, "\"selected-language\"", "</div>", 0, true).findNext();
-	String oldLanguage = ext.set(languageBlock, "<a href=\"#\">", "&#9660;</a>", 0, true).findNext();
-	if (oldLanguage.equals("English")) {
-	    Preferences.itself().switchGCLanguageToEnglish = false;
-	    return 0;
-	}
-	*/
+        String languageBlock = ext.set(page, "\"selected-language\"", "</div>", 0, true).findNext();
+        String oldLanguage = ext.set(languageBlock, "<a href=\"#\">", "&#9660;</a>", 0, true).findNext();
+        if (oldLanguage.equals("English")) {
+            Preferences.itself().switchGCLanguageToEnglish = false;
+            return 0;
+        }
+        */
 
         //8.)
         if (retCode == 0) {
@@ -1677,8 +1673,17 @@ public class GCImporter {
                     String username = Preferences.itself().gcLogin;
                     // remember for next time, so you don't have to login
                     String gspkauth = "";
-                    String expires = "";
+                    //expire-date is not always returned as a cookie. We set its value with the currently known value:
+                    Hashtable login = Preferences.itself().getGCLogin(username);
+                    String expires;
+                    if (login != null && login.get("expires") != null){ 
+                        expires = (String) login.get("expires");
+                    }
+                    else{
+                        expires = "";
+                    }
                     for (int i = 0; i < theCookie.length; i++) {
+                        Preferences.itself().log ("Cookie read: " + theCookie[i]);
                         String[] rp = mString.split(theCookie[i], '=');
                         if (rp.length == 2) {
                             if (rp[0].equalsIgnoreCase("gspkauth")) {

@@ -95,7 +95,6 @@ public class TablePanel extends CellPanel {
                     addLast(statusBar, DONTSTRETCH, FILL);
             }
         }
-
     }
 
     /**

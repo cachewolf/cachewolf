@@ -84,7 +84,6 @@ public final class GuiImageBroker {
         File f = new File(basedir + icon + ".png");
         if (f.exists()) {
             in = f.getAbsolutePath();
-            log("using image " + in);
         } else {
             in = icon + ".png";
         }
@@ -100,7 +99,6 @@ public final class GuiImageBroker {
         File f = new File(basedir + icon + "_map.png");
         if (f.exists()) {
             in = f.getAbsolutePath();
-            log("using image " + in);
         } else {
             in = "map/" + icon + "_map.png";
         }
@@ -118,7 +116,6 @@ public final class GuiImageBroker {
         File f = new File(basedir + icon + extension);
         if (f.exists()) {
             in = f.getAbsolutePath();
-            Preferences.itself().log("using image " + in);
         } else {
             in = icon + extension;
             String platform = Vm.getPlatform();
