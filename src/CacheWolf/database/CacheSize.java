@@ -315,7 +315,7 @@ public final class CacheSize {
      */
     public static byte gcSpiderString2Cw(final String spiderstring) throws IllegalArgumentException {
         // at the moment both sources use the same strings
-        return gcGpxString2Cw(spiderstring);
+        return gcGpxString2Cw(spiderstring.trim());
     }
 
     /**

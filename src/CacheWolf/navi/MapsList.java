@@ -585,8 +585,10 @@ public final class MapsList extends Vector {
     }
 
     /**
-     * @param if more than one map includes topleft and bottomright than the one will be returned which has its center nearest to topleft. If you have gps-pos and goto-pos as topleft and bottomright use gps as topleft. if topleft is really topleft or
-     *           if it is bottomright is not relevant.
+     * If more than one map includes topleft and bottomright than the one will be returned which has its center nearest to topleft.
+     * If you have gps-pos and goto-pos as topleft and bottomright use gps as topleft.
+     * if topleft is really topleft or
+     * if it is bottomright is not relevant.
      * @return a map which includs topleft and bottomright, if no map includes both it returns null
      */
     public final MapInfoObject getMapForArea(CWPoint topleft, CWPoint bottomright) {

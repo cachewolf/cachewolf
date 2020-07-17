@@ -215,8 +215,8 @@ public class MapInfoObject extends BoundingBox {
     /**
      * Method to load a .wfl-file
      *
-     * @param mapsPath path to the map inclunding / at the end
-     * @param thisMap  name of the map without extension
+     * mapsPath path to the map including / at the end
+     * thisMap  name of the map without extension
      * @throws IOException         when there was a problem reading .wfl-file
      * @throws IOException         when lat/lon were out of range
      * @throws ArithmeticException when affine data is not correct, e.g. it is not possible to inverse affine-transformation
