@@ -19,6 +19,10 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
+
+/// Cache-Details:
+// curl 'https://www.opencaching.de/okapi/services/caches/geocache?consumer_key=EgcYTe8ZZsWd4PqGXNu6&cache_code=OC15EC9&langpref=de&fields=code|name|location|type|status|owner|founds|size2|difficulty|terrain|short_descriptions|descriptions|hint2|images|attrnames|latest_logs|trackables|alt_wpts|date_hidden|internal_id'
+// Cache-Suche: https://www.opencaching.de/okapi/services/caches/search/nearest?center=50.4|7.432&consumer_key=EgcYTe8ZZsWd4PqGXNu6&radius=20
 package CacheWolf.imp;
 
 import CacheWolf.MainForm;
@@ -29,7 +33,9 @@ import CacheWolf.controls.InfoBox;
 import CacheWolf.database.*;
 import CacheWolf.navi.TransformCoordinates;
 import CacheWolf.utils.*;
+
 import com.stevesoft.ewe_pat.Regex;
+
 import ewe.io.BufferedReader;
 import ewe.io.File;
 import ewe.io.IOException;
@@ -45,8 +51,13 @@ import ewe.util.Hashtable;
 import ewe.util.zip.ZipEntry;
 import ewe.util.zip.ZipException;
 import ewe.util.zip.ZipFile;
+
 import ewesoft.xml.MinML;
 import ewesoft.xml.sax.AttributeList;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 /**
  * Class to import Data from opencaching. It uses the lastmodified parameter to identify new or changed caches. See here: http://www.opencaching.com/phpBB2/viewtopic.php?t=281 (out-dated) See here: http://www.opencaching.de/doc/xml/xml11.htm and
@@ -214,16 +225,23 @@ public class OCXMLImporter extends MinML {
         picCnt = 0;
         // Build url
         String url = "https://" + hostname + "/xml/ocxml11.php?" + "modifiedsince=" + lastS + "&cache=1" + "&cachedesc=1";
-        if (downloadPics)
+        if (downloadPics){
             url += "&picture=1";
-        else
+	}
+        else{
             url += "&picture=0";
+	}
         url += "&cachelog=1" + "&removedobject=0" + "&lat=" + centre.getLatDeg(TransformCoordinates.DD) + "&lon=" + centre.getLonDeg(TransformCoordinates.DD) + "&distance=" + dist + "&charset=utf-8" + "&cdata=0" + "&session=0";
+
+	String okapiUrl = "https://www.opencaching.de/okapi/services/caches/search/nearest?center=" + centre.getLatDeg(TransformCoordinates.DD) + "%7C" + centre.getLonDeg(TransformCoordinates.DD) + "&consumer_key=EgcYTe8ZZsWd4PqGXNu6&radius=" + dist;
+
+	Preferences.itself ().log ("Downloading from OC:" + okapiUrl);
         inf = new InfoBox("Opencaching download", MyLocale.getMsg(1608, "downloading data\n from opencaching"), InfoBox.PROGRESS_WITH_WARNINGS, false);
         inf.relayout(false);
         inf.exec();
 
         isSyncSingle = false;
+	success = syncOkapi(okapiUrl);
         success = syncOC(url);
         MainForm.profile.saveIndex(Profile.SHOW_PROGRESS_BAR, Profile.FORCESAVE);
         Vm.showWait(false);
@@ -235,6 +253,160 @@ public class OCXMLImporter extends MinML {
             inf.setInfo(finalMessage);
         }
         inf.showButton(FormBase.YESB);
+    }
+
+    private boolean syncOkapi(String url){
+	String finalMessage = "Import successful";
+	try{
+	    final String listOfAllCaches = UrlFetcher.fetch (url);
+	    Preferences.itself().log ("The result from cachesearch: \n" + listOfAllCaches + "\n\n");
+	    final JSONObject response = new JSONObject(listOfAllCaches);
+            final JSONArray results = response.getJSONArray("results");
+	    for (int index = 0; index < results.length() && index < 1 ; index++) {
+		//einzelnen Cache einlesen
+		final Object ocCode = results.get(index);
+		updateOkapi (ocCode.toString());
+	    }
+	    
+	    return true;
+	}
+	catch (IOException e){
+	    finalMessage = "Could not get cache-list:" + e.getMessage();
+	    return false;
+	}
+	catch (JSONException e){
+	    finalMessage = "Could not parse JSON" + e.getMessage();
+	    return false;
+	}
+	finally{
+	    inf.setInfo(finalMessage);
+	}
+    }
+
+    private boolean updateOkapi(final String ocCode) throws IOException, JSONException{
+	//TODO: is_found mit User-Id und Anzahl logs.
+	final String detailUrl = "https://www.opencaching.de/okapi/services/caches/geocache?"+
+	    "consumer_key=EgcYTe8ZZsWd4PqGXNu6&cache_code="+ocCode+"&langpref=de&"+
+	    "fields=name|location|type|status|owner|gc_code|size2|difficulty|terrain|short_description|description|hints2|images|trackables|alt_wpts|attr_acodes|date_hidden|internal_id|code|recommendations|latest_logs&lpc=all"
+	    .replaceAll("\\|","%7C");
+	final String cacheAsJsonString = UrlFetcher.fetch(detailUrl);
+	Preferences.itself().log ("CacheDetails: " + cacheAsJsonString);
+
+	//------------
+	final int index = cacheDB.getIndex(ocCode);
+	final CacheHolder syncHolder;
+	if (index == -1) {
+	    syncHolder = new CacheHolder();
+	    Preferences.itself().log("Importing new Cache!");
+	    numCacheImported++;
+	    syncHolder.setNew(true);
+	    cacheDB.add(syncHolder);
+	    DBindexID.put(syncHolder.getIdOC(), syncHolder.getCode());
+	}
+	// update (overwrite) data
+	else {
+	    syncHolder = cacheDB.get(index);
+
+	    Preferences.itself().log("Updating existing Cache!");
+	    numCacheUpdated++;
+	    syncHolder.setNew(false);
+	    syncHolder.setIncomplete(false);
+	    cacheDB.get(index).update(syncHolder);
+	    DBindexID.put(syncHolder.getIdOC(), syncHolder.getCode());
+	}
+
+	// clear data (picture, logs) if we do a complete Update
+	if (!incUpdate) {
+	    syncHolder.getDetails().getCacheLogs().clear();
+	    syncHolder.getDetails().getImages().clear();
+	}
+	JSONObject cacheAsJson = new JSONObject(cacheAsJsonString);
+	syncHolder.setName(cacheAsJson.getString("name"));
+	final JSONObject ownerObject = cacheAsJson.getJSONObject("owner");
+	syncHolder.setOwner(ownerObject.getString("username"));
+	final String locationText = cacheAsJson.getString("location");
+	syncHolder.getWpt().latDec = Common.parseDouble(locationText.substring(0, locationText.indexOf('|')));
+	syncHolder.getWpt().lonDec = Common.parseDouble(locationText.substring(locationText.indexOf('|')+1));
+	syncHolder.setDifficulty ((byte)(cacheAsJson.getDouble("difficulty")*10));
+	syncHolder.setTerrain ((byte)(cacheAsJson.getDouble("terrain")*10));
+	final String hiddenText = cacheAsJson.getString("date_hidden");
+	syncHolder.setHidden(hiddenText.substring(0, hiddenText.indexOf('T')));
+	syncHolder.setCode(cacheAsJson.get("code").toString());
+	final String statusText = cacheAsJson.getString("status");
+	syncHolder.setStatus(translateStatus(statusText));
+	final String typeString = cacheAsJson.getString("type");
+	syncHolder.setType(translateType(typeString));
+        //        result.idOC = (String) attributes.get("ocCacheID"); ???
+	final Time lastSync = new Time();
+	Preferences.itself().log("Aktuelle Zeit ist: " + lastSync.format("yyyyMMddHHmmss"));
+	syncHolder.setLastSync (lastSync.format("yyyyMMddHHmmss"));
+	syncHolder.setNumRecommended (cacheAsJson.getInt("recommendations"));
+	final String sizeText = cacheAsJson.getString("size2");
+	syncHolder.setSize(translateSize(sizeText));
+
+	//Attributes setzen:
+	setAttribute (syncHolder, cacheAsJson.getJSONArray("attr_acodes"));
+        //        result.numFoundsSinceRecommendation = Convert.toInt((String) attributes.get("num_found")); ???
+
+        syncHolder.getDetails().setLongDescription(cacheAsJson.getString("description"));
+	final String hintsText = cacheAsJson.getJSONObject("hints2")
+	    .getString("de");
+        syncHolder.getDetails().setHints(Common.rot13(hintsText));
+	//Logs setzen:
+        //syncHolder.setCacheLogs(newChD.mCacheLogs);
+
+	// save all
+        syncHolder.getDetails().saveCacheXML(MainForm.profile.dataDir);
+	syncHolder.getDetails().setUnsaved(true); // this makes CachHolder save the details in case that they are unloaded from memory
+
+	//------------
+	return true;
+    }
+
+    private String translateStatus(final String input){
+	if ("Available".equals(input)){
+	    return "";
+	}
+	//Other statuses will follow:
+	else{	
+	    throw new IllegalArgumentException ("Can not handle status " + input);
+	    //return "";
+	}
+    }
+
+    private byte translateType(final String input){
+	if ("Virtual".equals(input)){
+	    return CacheType.CW_TYPE_VIRTUAL;
+	}
+	else if ("Multi".equals(input)){
+	    return CacheType.CW_TYPE_MULTI;
+	}
+	else{	
+	    throw new IllegalArgumentException ("Can not handle type " + input);
+	    //return "";
+	}	    
+    }
+
+    private byte translateSize(final String input){
+	if ("small".equals(input)){
+	    return CacheSize.CW_SIZE_SMALL;
+	}
+	else if ("Multi".equals(input)){
+	    return CacheType.CW_TYPE_MULTI;
+	}
+	else{	
+	    throw new IllegalArgumentException ("Can not handle size " + input);
+	    //return "";
+	}	    
+    }
+
+    private void setAttribute(CacheHolder holder, JSONArray attributes) throws JSONException{
+	for (int i=0; i < attributes.length();i++){
+	    final String attributeName = attributes.getString(i);
+	    holder.getDetails()
+		.getAttributes()
+		.addByOcId (attributeName);
+	}
     }
 
     private boolean syncOC(String address) {
@@ -409,75 +581,75 @@ public class OCXMLImporter extends MinML {
     }
 
     private void startCache(String name, AttributeList atts) {
-        if (name.equals("id")) {
-            cacheID = atts.getValue("id");
-            return;
-        }
-        if (holder == null)
-            return;
-        inf.setInfo(MyLocale.getMsg(1609, "Importing Cache:") + " " + numCacheImported + " / " + numCacheUpdated + "\n");
-        if (name.equals("type")) {
-            holder.setType(CacheType.ocType2CwType(atts.getValue("id")));
-            holder.getDetails().getAttributes().clear();
-            return;
-        }
-        if (name.equals("status")) {
-            // meaning of OC status :
-            // 1=Kann gesucht werden ;
-            // 2=Momentan nicht verfügbar ;
-            // 3=Archiviert ;
-            // 4= ;
-            // 5= ;
-            // 6=Gesperrt ;
-            // are there more ? ;
-            if (atts.getValue("id").equals("1")) {
-                holder.setAvailable(true);
-                holder.setArchived(false);
-            } else {
-                holder.setAvailable(false);
-                if ((atts.getValue("id").equals("3")) || (atts.getValue("id").equals("6")) || (atts.getValue("id").equals("7"))) {
-                    if (!isSyncSingle) {
-                        holder = null;
-                        numCacheImported--;
-                    } else {
-                        // Umsetzung wie in gpx für Status 6
-                        if (atts.getValue("id").equals("6")) {
-                            holder.setArchived(false);
-                        } else {
-                            holder.setArchived(true);
-                        }
-                    }
-                }
-            }
-            return;
-        }
-        if (name.equals("size")) {
-            holder.setSize(CacheSize.ocXmlString2Cw(atts.getValue("id")));
-            return;
-        }
+        // if (name.equals("id")) {
+        //     cacheID = atts.getValue("id");
+        //     return;
+        // }
+        // if (holder == null)
+        //     return;
+        // inf.setInfo(MyLocale.getMsg(1609, "Importing Cache:") + " " + numCacheImported + " / " + numCacheUpdated + "\n");
+        // if (name.equals("type")) {
+        //     holder.setType(CacheType.ocType2CwType(atts.getValue("id")));
+        //     holder.getDetails().getAttributes().clear();
+        //     return;
+        // }
+        // if (name.equals("status")) {
+        //     // meaning of OC status :
+        //     // 1=Kann gesucht werden ;
+        //     // 2=Momentan nicht verfügbar ;
+        //     // 3=Archiviert ;
+        //     // 4= ;
+        //     // 5= ;
+        //     // 6=Gesperrt ;
+        //     // are there more ? ;
+        //     if (atts.getValue("id").equals("1")) {
+        //         holder.setAvailable(true);
+        //         holder.setArchived(false);
+        //     } else {
+        //         holder.setAvailable(false);
+        //         if ((atts.getValue("id").equals("3")) || (atts.getValue("id").equals("6")) || (atts.getValue("id").equals("7"))) {
+        //             if (!isSyncSingle) {
+        //                 holder = null;
+        //                 numCacheImported--;
+        //             } else {
+        //                 // Umsetzung wie in gpx für Status 6
+        //                 if (atts.getValue("id").equals("6")) {
+        //                     holder.setArchived(false);
+        //                 } else {
+        //                     holder.setArchived(true);
+        //                 }
+        //             }
+        //         }
+        //     }
+        //     return;
+        // }
+        // if (name.equals("size")) {
+        //     holder.setSize(CacheSize.ocXmlString2Cw(atts.getValue("id")));
+        //     return;
+        // }
 
-        if (name.equals("waypoints")) {
-            holder.setCode(atts.getValue("oc"));
-            final String CName = atts.getValue("nccom") + " " + atts.getValue("gccom");
-            if (!CName.equals(" ")) {
-                holder.setOwner(holder.getOwner() + " / " + CName.trim());
-                holder.getDetails().getAttributes().add(7); // wwwlink
-                holder.setAttribsAsBits(holder.getDetails().getAttributes().getAttribsAsBits());
-            } else {
-                holder.getDetails().getAttributes().add(6); // oconly
-                holder.setAttribsAsBits(holder.getDetails().getAttributes().getAttribsAsBits());
-            }
-            if (holder.getCode().length() == 0)
-                throw new IllegalArgumentException("empty waypointname"); // this should not happen - it is likey a bug in opencaching / it happens on 27-12-2006 on cache OC143E
-            return;
-        }
+        // if (name.equals("waypoints")) {
+        //     holder.setCode(atts.getValue("oc"));
+        //     final String CName = atts.getValue("nccom") + " " + atts.getValue("gccom");
+        //     if (!CName.equals(" ")) {
+        //         holder.setOwner(holder.getOwner() + " / " + CName.trim());
+        //         holder.getDetails().getAttributes().add(7); // wwwlink
+        //         holder.setAttribsAsBits(holder.getDetails().getAttributes().getAttribsAsBits());
+        //     } else {
+        //         holder.getDetails().getAttributes().add(6); // oconly
+        //         holder.setAttribsAsBits(holder.getDetails().getAttributes().getAttribsAsBits());
+        //     }
+        //     if (holder.getCode().length() == 0)
+        //         throw new IllegalArgumentException("empty waypointname"); // this should not happen - it is likey a bug in opencaching / it happens on 27-12-2006 on cache OC143E
+        //     return;
+        // }
 
-        if (name.equals("attribute")) {
-            final int id = Integer.parseInt(atts.getValue("id"));
-            holder.getDetails().getAttributes().add(id);
-            holder.setAttribsAsBits(holder.getDetails().getAttributes().getAttribsAsBits());
-            return;
-        }
+        // if (name.equals("attribute")) {
+        //     final int id = Integer.parseInt(atts.getValue("id"));
+        //     holder.getDetails().getAttributes().add(id);
+        //     holder.setAttribsAsBits(holder.getDetails().getAttributes().getAttribsAsBits());
+        //     return;
+        // }
 
     }
 

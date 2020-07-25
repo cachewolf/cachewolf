@@ -139,8 +139,8 @@ public class Attributes {
      *
      * @param OC attribute ID
      */
-    public void add(int attIdOC) {
-        Attribute attr = new Attribute(attIdOC);
+    public void addByOcId(String attIdOC) {
+        Attribute attr = Attribute.FromOcId(attIdOC);
         for (int i = 0; i < _count; i++) {
             if (attribs[i].getId() == (attr.getId())) {
                 return;
