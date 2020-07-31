@@ -135,15 +135,15 @@ public final class CacheType {
     //
     private static final CTyp[] cTypRef = {
             // custom waypoints
-            new CTyp(CW_TYPE_CUSTOM, (byte) 0, 'P', "0", "0", "0", (byte) -128, 'C', "Custom", new String[]{"Geocache|Custom", "Custom", "Custom", ""}, 1, 10, 0x000100),
+            new CTyp(CW_TYPE_CUSTOM, (byte) 0, 'P', "0", "0", "", (byte) -128, 'C', "Custom", new String[]{"Geocache|Custom", "Custom", "Custom", ""}, 1, 10, 0x000100),
             // Cache waypoints
-            new CTyp(CW_TYPE_TRADITIONAL, (byte) 2, 'C', "2", "2", "2", (byte) -126, 'T', "Tradi", new String[]{"Geocache|Traditional Cache", "Geocache", "Traditional Cache", "Traditional|Classic"}, 2, 0, 0x000001),
-            new CTyp(CW_TYPE_MULTI, (byte) 3, 'C', "3", "3", "3", (byte) -125, 'M', "Multi", new String[]{"Geocache|Multi-cache", "Geocache", "Multi-cache", "Multi|Offset"}, 3, 1, 0x000002),
-            new CTyp(CW_TYPE_VIRTUAL, (byte) 4, 'C', "4", "4", "4", (byte) -124, 'V', "Virtual", new String[]{"Geocache|Virtual Cache", "Geocache", "Virtual Cache", "Virtual"}, 4, 2, 0x000004),
+            new CTyp(CW_TYPE_TRADITIONAL, (byte) 2, 'C', "2", "2", "Traditional", (byte) -126, 'T', "Tradi", new String[]{"Geocache|Traditional Cache", "Geocache", "Traditional Cache", "Traditional|Classic"}, 2, 0, 0x000001),
+            new CTyp(CW_TYPE_MULTI, (byte) 3, 'C', "3", "3", "Multi", (byte) -125, 'M', "Multi", new String[]{"Geocache|Multi-cache", "Geocache", "Multi-cache", "Multi|Offset"}, 3, 1, 0x000002),
+            new CTyp(CW_TYPE_VIRTUAL, (byte) 4, 'C', "4", "4", "Virtual", (byte) -124, 'V', "Virtual", new String[]{"Geocache|Virtual Cache", "Geocache", "Virtual Cache", "Virtual"}, 4, 2, 0x000004),
             new CTyp(CW_TYPE_LETTERBOX, (byte) 5, 'C', "5", "5", "", (byte) -123, 'L', "Letterbox", new String[]{"Geocache|Letterbox Hybrid", "Geocache", "Letterbox Hybrid", "Letterbox"}, 5, 3, 0x000008),
-            new CTyp(CW_TYPE_EVENT, (byte) 6, 'C', "6", "6", "6", (byte) -122, 'X', "Event", new String[]{"Geocache|Event Cache", "Geocache", "Event Cache", "Event"}, 6, 4, 0x000010),
+            new CTyp(CW_TYPE_EVENT, (byte) 6, 'C', "6", "6", "Event", (byte) -122, 'X', "Event", new String[]{"Geocache|Event Cache", "Geocache", "Event Cache", "Event"}, 6, 4, 0x000010),
             new CTyp(CW_TYPE_MEGA_EVENT, (byte) 100, 'C', "453", "453", "", (byte) 101, 'X', "Megaevent", new String[]{"Geocache|Mega-Event Cache", "Geocache", "Mega-Event Cache", "Mega"}, 14, 9, 0x000200),
-            new CTyp(CW_TYPE_WEBCAM, (byte) 11, 'C', "11", "11", "5", (byte) -117, 'W', "Webcam", new String[]{"Geocache|Webcam Cache", "Geocache", "Webcam Cache", "Webcam"}, 11, 5, 0x000020),
+            new CTyp(CW_TYPE_WEBCAM, (byte) 11, 'C', "11", "11", "Webcam", (byte) -117, 'W', "Webcam", new String[]{"Geocache|Webcam Cache", "Geocache", "Webcam Cache", "Webcam"}, 11, 5, 0x000020),
             new CTyp(CW_TYPE_MYSTERY, (byte) 8, 'C', "8", "8", "", (byte) -120, 'U', "Mystery", new String[]{"Geocache|Unknown Cache", "Geocache", "Unknown Cache", "Mystery"}, 8, 6, 0x000040),
             new CTyp(CW_TYPE_LOCATIONLESS, (byte) 12, 'C', "12", "12", "", (byte) -116, 'O', "Locless", new String[]{"Geocache|Locationless (Reverse) Cache", "Geocache", "Locationless (Reverse) Cache", "Locationless"}, 12, 8, 0x000080),
             new CTyp(CW_TYPE_CITO, (byte) 13, 'C', "13", "13", "", (byte) -115, 'X', "Cito", new String[]{"Geocache|Cache In Trash Out Event", "Geocache", "Cache In Trash Out Event", "CITO"}, 13, 17, 0x020000),
@@ -166,9 +166,9 @@ public final class CacheType {
             // error on waypoint
             new CTyp(CW_TYPE_ERROR, CW_TYPE_ERROR, 'E', "", "", "", (byte) -1, '-', "guiError", new String[]{"", "", "", ""}, 49, -1, 0),
             // mapped types (recognized on input from gpx or download-spider / or cw - version)
-            new CTyp(CW_TYPE_MYSTERY, (byte) 1, 'C', "", "", "1", (byte) -1, 'U', "", new String[]{"Geocache|Other", "Geocache", "Other", "Other"}, 21, -1, 0),
-            new CTyp(CW_TYPE_MYSTERY, (byte) 7, 'C', "7", "", "7", (byte) -121, 'U', "", new String[]{"Geocache|Quiz", "Geocache", "Quiz", "Quiz"}, 7, -1, 0),
-            new CTyp(CW_TYPE_MYSTERY, (byte) 9, 'C', "9", "", "9", (byte) -119, 'U', "", new String[]{"Geocache|Moving", "Geocache", "Moving", "Moving"}, 9, -1, 0),
+            new CTyp(CW_TYPE_MYSTERY, (byte) 1, 'C', "", "", "Other", (byte) -1, 'U', "", new String[]{"Geocache|Other", "Geocache", "Other", "Other"}, 21, -1, 0),
+            new CTyp(CW_TYPE_MYSTERY, (byte) 7, 'C', "7", "", "Quiz", (byte) -121, 'U', "", new String[]{"Geocache|Quiz", "Geocache", "Quiz", "Quiz"}, 7, -1, 0),
+            new CTyp(CW_TYPE_MYSTERY, (byte) 9, 'C', "9", "", "Moving", (byte) -119, 'U', "", new String[]{"Geocache|Moving", "Geocache", "Moving", "Moving"}, 9, -1, 0),
             new CTyp(CW_TYPE_LAB, (byte) 105, 'P', "0", "", "", (byte) -1, 'Z', "Lab", new String[]{"Geocache|Lab Cache", "Geocache", "Geocache|Lab Cache", "LAB"}, 23, 0, 0x000001),
             new CTyp(CW_TYPE_LAB, (byte) 0, 'P', "0", "", "", (byte) -1, 'Z', "Lab", new String[]{"Groundspeak Lost and Found Celebration", "Geocache", "Groundspeak Lost and Found Celebration", "LAB"}, 2, 0, 0x000001),
             new CTyp(CW_TYPE_TRADITIONAL, (byte) 10, 'C', "10", "", "10", (byte) -118, 'U', "", new String[]{"Geocache|DriveIn", "Geocache", "DriveIn", "DriveIn"}, 10, -1, 0),

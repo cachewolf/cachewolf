@@ -176,8 +176,18 @@ public class OCXMLImporter extends MinML {
         url += "&cachelog=1" + "&removedobject=0" + "&wp=" + ch.getCode() + "&charset=utf-8" + "&cdata=0" + "&session=0";
         ch.setUpdated(false);
         isSyncSingle = true;
-        syncOC(url);
-        inf.close(0);
+        //syncOC(url);
+	try{
+	    updateOkapi(ch.getCode());
+	}
+	catch (Exception e){
+	    Preferences.itself().log ("Error while updating OC-Cache: " + e);
+	    return false;
+	}
+	finally{
+	    inf.close(0);
+	}
+
         return true;
     }
 
@@ -242,11 +252,13 @@ public class OCXMLImporter extends MinML {
 
         isSyncSingle = false;
 	success = syncOkapi(okapiUrl);
-        success = syncOC(url);
+        //TODO diese Zeile löschen! success = syncOC(url);
+	//TODO: lastSync setzen und beim importieren zum Abgleich verwenden:
+ 
         MainForm.profile.saveIndex(Profile.SHOW_PROGRESS_BAR, Profile.FORCESAVE);
         Vm.showWait(false);
         if (success) {
-            MainForm.profile.setLast_sync_opencaching(dateOfthisSync.format("yyyyMMddHHmmss"));
+            MainForm.profile.setLast_sync_opencaching(/*TODO: dateOfthisSync.format("yyyyMMddHHmmss")*/"20200731165908");
             // Preferences.itself().savePreferences();
             finalMessage = MyLocale.getMsg(1607, "Update from opencaching successful");
             inf.addWarning("Number of" + "\n...caches new/updated: " + numCacheImported + " / " + numCacheUpdated + "\n...cache descriptions new/updated: " + numDescImported + "\n...logs new/updated: " + numLogImported);
@@ -262,7 +274,7 @@ public class OCXMLImporter extends MinML {
 	    Preferences.itself().log ("The result from cachesearch: \n" + listOfAllCaches + "\n\n");
 	    final JSONObject response = new JSONObject(listOfAllCaches);
             final JSONArray results = response.getJSONArray("results");
-	    for (int index = 0; index < results.length() && index < 1 ; index++) {
+	    for (int index = 0; index < results.length(); index++) {
 		//einzelnen Cache einlesen
 		final Object ocCode = results.get(index);
 		updateOkapi (ocCode.toString());
@@ -336,7 +348,7 @@ public class OCXMLImporter extends MinML {
 	syncHolder.setStatus(translateStatus(statusText));
 	final String typeString = cacheAsJson.getString("type");
 	syncHolder.setType(translateType(typeString));
-        //        result.idOC = (String) attributes.get("ocCacheID"); ???
+        //result.idOC = (String) attributes.get("ocCacheID"); ???
 	final Time lastSync = new Time();
 	Preferences.itself().log("Aktuelle Zeit ist: " + lastSync.format("yyyyMMddHHmmss"));
 	syncHolder.setLastSync (lastSync.format("yyyyMMddHHmmss"));
@@ -349,18 +361,53 @@ public class OCXMLImporter extends MinML {
         //        result.numFoundsSinceRecommendation = Convert.toInt((String) attributes.get("num_found")); ???
 
         syncHolder.getDetails().setLongDescription(cacheAsJson.getString("description"));
-	final String hintsText = cacheAsJson.getJSONObject("hints2")
-	    .getString("de");
-        syncHolder.getDetails().setHints(Common.rot13(hintsText));
-	//Logs setzen:
-        //syncHolder.setCacheLogs(newChD.mCacheLogs);
+	final JSONObject hintsObject = cacheAsJson.getJSONObject("hints2");
+	if (hintsObject.has("de")){
+	    final String hintsText = hintsObject.getString("de");
+	    syncHolder.getDetails().setHints(Common.rot13(hintsText));
+	}
 
+	LogList cacheLogs = readLogList(cacheAsJson.getJSONArray("latest_logs"));
+	syncHolder.getDetails().getCacheLogs().purgeLogs();
+	for (int i=0; i < cacheLogs.size(); i++){
+	    syncHolder.getDetails().getCacheLogs().merge(cacheLogs.getLog(i));
+	}
 	// save all
         syncHolder.getDetails().saveCacheXML(MainForm.profile.dataDir);
 	syncHolder.getDetails().setUnsaved(true); // this makes CachHolder save the details in case that they are unloaded from memory
 
 	//------------
 	return true;
+    }
+
+    private LogList readLogList (JSONArray listOfJsonLogs) throws JSONException{
+	LogList result = new LogList();
+	for (int i=0; i < listOfJsonLogs.length(); i++){
+	    JSONObject logAsJson = listOfJsonLogs.getJSONObject(i);
+	    JSONObject user = logAsJson.getJSONObject("user");
+	    String logID = logAsJson.getString("uuid");
+	    String finderId= user.getString("uuid");
+	    String icon = translateIcon(logAsJson.getString("type"));
+	    String date = logAsJson.getString("date").substring(0, 10);
+	    String logger = user.getString("username");
+	    String message = logAsJson.getString("comment");
+	    Log log = new Log(logID, finderID, icon, date, logger, message);
+	    result.add (log);
+	}
+
+	return result;
+    }
+
+    private String translateIcon(final String input){
+	if (input.equals("Found it")){
+		return Log.typeText2Image("Found");
+	}
+	else if(input.equals("Didn't find it")){
+		    return Log.typeText2Image("Not Found");
+	}
+	else{
+             return Log.typeText2Image("Note");
+	}
     }
 
     private String translateStatus(final String input){
@@ -375,29 +422,18 @@ public class OCXMLImporter extends MinML {
     }
 
     private byte translateType(final String input){
-	if ("Virtual".equals(input)){
-	    return CacheType.CW_TYPE_VIRTUAL;
-	}
-	else if ("Multi".equals(input)){
-	    return CacheType.CW_TYPE_MULTI;
-	}
-	else{	
+	byte result = CacheType.ocType2CwType(input);
+	if (result == -1){
 	    throw new IllegalArgumentException ("Can not handle type " + input);
-	    //return "";
-	}	    
+	}
+	else{
+	    return result;
+	}
     }
 
     private byte translateSize(final String input){
-	if ("small".equals(input)){
-	    return CacheSize.CW_SIZE_SMALL;
-	}
-	else if ("Multi".equals(input)){
-	    return CacheType.CW_TYPE_MULTI;
-	}
-	else{	
-	    throw new IllegalArgumentException ("Can not handle size " + input);
-	    //return "";
-	}	    
+	byte result = CacheSize.ocXmlString2Cw(input);
+	return result;
     }
 
     private void setAttribute(CacheHolder holder, JSONArray attributes) throws JSONException{

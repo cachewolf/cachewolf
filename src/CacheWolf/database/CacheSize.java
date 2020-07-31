@@ -75,29 +75,30 @@ public final class CacheSize {
      * geocaching.com size strings as found by analyzing GPX files
      * plus opencaching & terracaching Very large + none
      */
-    public static final String GC_SIZE_MICRO = "Micro";
-    public static final String GC_SIZE_SMALL = "Small";
-    public static final String GC_SIZE_REGULAR = "Regular";
-    public static final String GC_SIZE_MEDIUM = "Medium";
-    public static final String GC_SIZE_LARGE = "Large";
+    public static final String GC_SIZE_MICRO = "micro";
+    public static final String GC_SIZE_SMALL = "small";
+    public static final String GC_SIZE_REGULAR = "regular";
+    public static final String GC_SIZE_MEDIUM = "medium";
+    public static final String GC_SIZE_LARGE = "large";
     public static final String GC_SIZE_NOTCHOSEN = "Not chosen";
-    public static final String GC_SIZE_OTHER = "Other";
-    public static final String GC_SIZE_VIRTUAL = "Virtual";
+    public static final String GC_SIZE_OTHER = "other";
+    public static final String GC_SIZE_VIRTUAL = "virtual";
 
-    public static final String OCTC_SIZE_VERYLARGE = "Very large";
-    public static final String OCTC_SIZE_NONE = "None";
+    public static final String OCTC_SIZE_VERYLARGE = "xlarge";
+    public static final String OCTC_SIZE_NONE = "none";
 
     /*
      * OpenCaching Size IDs see
      * http://oc-server.svn.sourceforge.net/viewvc/oc-server/doc/sql/static-data/data.sql?view=markup
      */
-    public static final String OC_SIZE_OTHER = "1";
-    public static final String OC_SIZE_MICRO = "2";
-    public static final String OC_SIZE_SMALL = "3";
-    public static final String OC_SIZE_NORMAL = "4";
-    public static final String OC_SIZE_LARGE = "5";
-    public static final String OC_SIZE_VERYLARGE = "6";
-    public static final String OC_SIZE_NONE = "7";
+    public static final String OC_SIZE_OTHER = "other";
+    public static final String OC_SIZE_NANO = "nano";
+    public static final String OC_SIZE_MICRO = "micro";
+    public static final String OC_SIZE_SMALL = "small";
+    public static final String OC_SIZE_NORMAL = "regular";
+    public static final String OC_SIZE_LARGE = "large";
+    public static final String OC_SIZE_VERYLARGE = "xlarge";
+    public static final String OC_SIZE_NONE = "none";
 
     /*
      * TerraCaching Size IDs taken from old GPXimporter (?? reliable source ??)
@@ -328,7 +329,7 @@ public final class CacheSize {
      * CW_SIZE_*
      */
     public static byte ocXmlString2Cw(final String ocxmlstring) throws IllegalArgumentException {
-        if (ocxmlstring.equals(OC_SIZE_OTHER)) {
+        if (ocxmlstring.equals(OC_SIZE_OTHER) || ocxmlstring.equals(OC_SIZE_NANO)) {
             return CW_SIZE_OTHER;
         } else if (ocxmlstring.equals(OC_SIZE_MICRO)) {
             return CW_SIZE_MICRO;
