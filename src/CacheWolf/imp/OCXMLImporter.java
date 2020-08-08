@@ -66,7 +66,7 @@ import org.json.JSONObject;
  * Class to import Data from opencaching. It uses the lastmodified parameter to identify new or changed caches. See here: http://www.opencaching.com/phpBB2/viewtopic.php?t=281 (out-dated) See here: http://www.opencaching.de/doc/xml/xml11.htm and
  * http://develforum.opencaching.de/viewtopic.php?t=135&postdays=0&postorder=asc&start=0 for more information.
  */
-public class OCXMLImporter extends MinML {
+public class OCXMLImporter {
     static protected final int STAT_INIT = 0;
     static protected final int STAT_CACHE = 1;
     static protected final int STAT_CACHE_DESC = 2;
@@ -456,7 +456,7 @@ public class OCXMLImporter extends MinML {
 	}
     }
 
-    public void startElement(String name, AttributeList atts) {
+    private void startElement(String name, AttributeList atts) {
         if (debugGPX) {
             for (int i = 0; i < atts.getLength(); i++) {
                 Preferences.itself().log(" Name: " + atts.getName(i) + " Value: " + atts.getValue(i));
@@ -510,7 +510,7 @@ public class OCXMLImporter extends MinML {
 
     }
 
-    public void endElement(String name) {
+    private void endElement(String name) {
         // examine data
         switch (state) {
             case STAT_CACHE:
@@ -907,6 +907,7 @@ public class OCXMLImporter extends MinML {
         return ch;
     }
 
+    //TODO: Das muessen wir noch aus dem images-Attribute auslesen:
     private void getImageNamesFromDescription() {
         String fetchUrl;
         String imgTag;
