@@ -23,6 +23,9 @@
 /// Cache-Details:
 // curl 'https://www.opencaching.de/okapi/services/caches/geocache?consumer_key=EgcYTe8ZZsWd4PqGXNu6&cache_code=OC15EC9&langpref=de&fields=code|name|location|type|status|owner|founds|size2|difficulty|terrain|short_descriptions|descriptions|hint2|images|attrnames|latest_logs|trackables|alt_wpts|date_hidden|internal_id'
 // Cache-Suche: https://www.opencaching.de/okapi/services/caches/search/nearest?center=50.4|7.432&consumer_key=EgcYTe8ZZsWd4PqGXNu6&radius=20
+
+//Mit found-flag: https://www.opencaching.de/okapi/services/caches/geocache?consumer_key=EgcYTe8ZZsWd4PqGXNu6&cache_code=OC137FD&langpref=de&fields=name|location|type|status|owner|gc_code|size2|difficulty|terrain|short_description|description|hints2|images|trackables|alt_wpts|attr_acodes|date_hidden|internal_id|code|recommendations|latest_logs|is_found&user_uuid=a57adda6-25d8-102b-9493-00163e103232&lpc=all
+//User-Infos: https://www.opencaching.de/okapi/services/users/by_username?consumer_key=EgcYTe8ZZsWd4PqGXNu6&username=colleisarco&fields=uuid
 package CacheWolf.imp;
 
 import CacheWolf.MainForm;
@@ -176,7 +179,6 @@ public class OCXMLImporter extends MinML {
         url += "&cachelog=1" + "&removedobject=0" + "&wp=" + ch.getCode() + "&charset=utf-8" + "&cdata=0" + "&session=0";
         ch.setUpdated(false);
         isSyncSingle = true;
-        //syncOC(url);
 	try{
 	    updateOkapi(ch.getCode());
 	}
@@ -252,7 +254,6 @@ public class OCXMLImporter extends MinML {
 
         isSyncSingle = false;
 	success = syncOkapi(okapiUrl);
-        //TODO diese Zeile löschen! success = syncOC(url);
 	//TODO: lastSync setzen und beim importieren zum Abgleich verwenden:
  
         MainForm.profile.saveIndex(Profile.SHOW_PROGRESS_BAR, Profile.FORCESAVE);
@@ -265,6 +266,15 @@ public class OCXMLImporter extends MinML {
             inf.setInfo(finalMessage);
         }
         inf.showButton(FormBase.YESB);
+    }
+
+    private String getUserUuid () throws JSONException, IOException{
+	final String username = URL.encodeURL(Preferences.itself().myAlias,true);
+	String url = "https://www.opencaching.de/okapi/services/users/by_username?consumer_key=EgcYTe8ZZsWd4PqGXNu6&username="+username+"&fields=uuid";
+	final String response = UrlFetcher.fetch(url);
+	final JSONObject responseJson = new JSONObject(response);
+	Preferences.itself().log ("Users UUID is: " + responseJson);
+	return responseJson.getString("uuid");
     }
 
     private boolean syncOkapi(String url){
@@ -297,11 +307,15 @@ public class OCXMLImporter extends MinML {
 
     private boolean updateOkapi(final String ocCode) throws IOException, JSONException{
 	//TODO: is_found mit User-Id und Anzahl logs.
-	final String detailUrl = "https://www.opencaching.de/okapi/services/caches/geocache?"+
-	    "consumer_key=EgcYTe8ZZsWd4PqGXNu6&cache_code="+ocCode+"&langpref=de&"+
-	    "fields=name|location|type|status|owner|gc_code|size2|difficulty|terrain|short_description|description|hints2|images|trackables|alt_wpts|attr_acodes|date_hidden|internal_id|code|recommendations|latest_logs&lpc=all"
-	    .replaceAll("\\|","%7C");
-	final String cacheAsJsonString = UrlFetcher.fetch(detailUrl);
+	final String detailUrl = ("https://www.opencaching.de/okapi/services/caches/geocache?"+
+				  "cache_code="+ocCode+
+				  "&langpref=de&"+
+				  "fields=name|location|type|status|owner|gc_code|size2|difficulty|terrain|short_description|description|hints2|images|trackables|alt_wpts|attr_acodes|date_hidden|internal_id|code|recommendations|latest_logs|is_found&"+
+				  "user_uuid="+(URL.encodeURL (getUserUuid(), true))+
+				  "&consumer_key=EgcYTe8ZZsWd4PqGXNu6"+
+				  "&lpc=all").replaceAll("\\|","%7C");
+	Preferences.itself().log ("CacheDetail-URL: [" + detailUrl + "]");
+	final String cacheAsJsonString = UrlFetcher.fetch(detailUrl,true);
 	Preferences.itself().log ("CacheDetails: " + cacheAsJsonString);
 
 	//------------
@@ -345,7 +359,15 @@ public class OCXMLImporter extends MinML {
 	syncHolder.setHidden(hiddenText.substring(0, hiddenText.indexOf('T')));
 	syncHolder.setCode(cacheAsJson.get("code").toString());
 	final String statusText = cacheAsJson.getString("status");
-	syncHolder.setStatus(translateStatus(statusText));
+	//Order is important: setAvailable overwrites archived if the value is true:
+	syncHolder.setAvailable (!("Temporarily unavailable".equals(statusText)));
+	syncHolder.setArchived("Archived".equals(statusText));
+	boolean isFound = cacheAsJson.getBoolean("is_found");
+	syncHolder.setFound(isFound);
+	if (isFound){
+	    //TODO: Wahrscheinlich einfacher in LoadLogs...
+	    //syncHolder.setStatus(visitedDate);
+	}
 	final String typeString = cacheAsJson.getString("type");
 	syncHolder.setType(translateType(typeString));
         //result.idOC = (String) attributes.get("ocCacheID"); ???
@@ -410,17 +432,6 @@ public class OCXMLImporter extends MinML {
 	}
     }
 
-    private String translateStatus(final String input){
-	if ("Available".equals(input)){
-	    return "";
-	}
-	//Other statuses will follow:
-	else{	
-	    throw new IllegalArgumentException ("Can not handle status " + input);
-	    //return "";
-	}
-    }
-
     private byte translateType(final String input){
 	byte result = CacheType.ocType2CwType(input);
 	if (result == -1){
@@ -443,87 +454,6 @@ public class OCXMLImporter extends MinML {
 		.getAttributes()
 		.addByOcId (attributeName);
 	}
-    }
-
-    private boolean syncOC(String address) {
-        boolean success = true;
-        File tmpFile = null;
-        BufferedReader r;
-
-        // inf = new InfoBox("Opencaching download", MyLocale.getMsg(1608,"downloading data\n from opencaching"), InfoBox.PROGRESS_WITH_WARNINGS, false);
-
-        picCnt = 0;
-        String finalMessage = "";
-        try {
-            holder = null;
-            final String target = MainForm.profile.dataDir + "dummy.zip";
-            UrlFetcher.fetchDataFile(address, target);
-
-            // parse
-            tmpFile = new File(target);
-            if (tmpFile.getLength() == 0) {
-                throw new IOException("no updates available");
-            }
-
-            final ZipFile zif = new ZipFile(target);
-            ZipEntry zipEnt;
-            final Enumeration zipEnum = zif.entries();
-            inf.setInfo("...unzipping update file");
-            while (zipEnum.hasMoreElements()) {
-                zipEnt = (ZipEntry) zipEnum.nextElement();
-                // skip over PRC-files and empty files
-                if (zipEnt.getSize() > 0 && zipEnt.getName().endsWith("xml")) {
-                    TextReader tr = new TextReader(zif.getInputStream(zipEnt));
-                    tr.codec = new BetterUTF8Codec();
-                    String lineRead = tr.readLine().toLowerCase();
-                    if (lineRead.startsWith("ï»¿")) {
-                        // erste Zeile überlesen
-                        // <?xml version="1.0" encoding="utf-8"?>
-                        // weil der parser das erste Zeichen nicht mag und dann aussteigt
-                        tr.read();
-                    }
-                    //r = new BufferedReader(new InputStreamReader(zif.getInputStream(zipEnt), IO.JAVA_UTF8_CODEC));
-                    parse(tr);
-                    tr.close();
-                }
-            }
-            zif.close();
-        } catch (final ZipException e) {
-            finalMessage = MyLocale.getMsg(1614, "Error while unzipping udpate file");
-            success = false;
-        } catch (final IOException e) {
-            if (e.getMessage().equalsIgnoreCase("no updates available")) {
-                finalMessage = "No updates available";
-                success = false;
-            } else {
-                if (e.getMessage().equalsIgnoreCase("could not connect") || e.getMessage().equalsIgnoreCase("unkown host")) { // is there a better way to find out what happened?
-                    finalMessage = MyLocale.getMsg(1616, "Error: could not download update file from " + hostname);
-                } else {
-                    finalMessage = "IOException: " + e.getMessage();
-                }
-                success = false;
-            }
-        } catch (final IllegalArgumentException e) {
-            finalMessage = MyLocale.getMsg(1621, "Error parsing update file\n this is likely a bug in " + hostname + "\nplease try again later\n, state:") + " " + state + ", waypoint: " + holder.getCode();
-            success = false;
-            Preferences.itself().log("Parse error: " + state + " " + holder.getCode(), e, true);
-        } catch (final Exception e) { // here should be used the correct exception
-            if (holder != null)
-                finalMessage = MyLocale.getMsg(1615, "Error parsing update file, state:") + " " + state + ", waypoint: " + holder.getCode();
-            else
-                finalMessage = MyLocale.getMsg(1615, "Error parsing update file, state:") + " " + state + ", waypoint: <unkown>";
-            success = false;
-            Preferences.itself().log("", e, true);
-        } finally {
-            if (tmpFile != null)
-                tmpFile.delete();
-        }
-        /*
-         * for (int i=cacheDB.size()-1; i >=0; i--) { ch = (CacheHolder)cacheDB.get(i); if (ch.wayPoint.toUpperCase().startsWith("OC")) { //TODO only handle changed caches ch.calcRecommendationScore(); } }
-         */
-        inf.setInfo(finalMessage);
-
-        return success;
     }
 
     public void startElement(String name, AttributeList atts) {
