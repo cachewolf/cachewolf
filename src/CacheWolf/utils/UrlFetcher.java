@@ -234,7 +234,6 @@ public class UrlFetcher {
      * @throws IOException
      */
     public static ByteArray fetchByteArray(String url) throws IOException {
-        // if (url.startsWith("http://"))            url = STRreplace.replace(url,"http://", "https://");
         webZeitStart = new Time();
         conn = new HttpConnection(url);
         String urltmp = url;
@@ -259,7 +258,7 @@ public class UrlFetcher {
 
             conn.connect();
 
-            Preferences.itself().log("Request " + url + " returned status-code: " + conn.responseCode);
+            Preferences.itself().log("Request [" + url + "] returned status-code: [" + conn.responseCode + ']');
             if (conn.responseCode < 300 || conn.responseCode > 399) {
                 if (conn.responseCode > 399) {
                     // abort with error
@@ -267,7 +266,7 @@ public class UrlFetcher {
                     requestorProperties = null;
                     postData = null;
                     forceRedirect = false;
-                    throw new IOException("URL: " + urltmp + "\nhttp response code: " + conn.responseCode);
+		    throw new IOException("URL: " + urltmp + "\nhttp response code: " + conn.responseCode);
                 } else {
                     if (forceRedirect) {
                         // hack for expedia, doing the original url again. (forceRedirect == true)
