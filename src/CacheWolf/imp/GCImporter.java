@@ -751,8 +751,7 @@ public class GCImporter {
                 String tableOfWebPage;
                 if (listBlockRex.didMatch()) {
                     tableOfWebPage = listBlockRex.stringMatched(1);
-                }
-		else {
+                } else {
                     Preferences.itself().log("[SpiderGC.java:fillDownloadLists]check listBlockRex!" + WebPage);
                     tableOfWebPage = "";
                 }
@@ -1209,6 +1208,31 @@ public class GCImporter {
         }
     }
 
+    /* 
+    private boolean setGCLanguage(String toLanguage) {
+    // switch to English with
+    // url = "http://www.geocaching.com/account/ManagePreferences.aspx";
+    // todo to work successfull with this perhaps set all values (did not test).
+    String setLanguageEN = "ctl00$ContentBody$uxLanguagePreference=en-US";
+    String commit = "ctl00$ContentBody$uxSave=Save Changes";
+    
+    final String postData = "__EVENTTARGET=" //
+        + "&" + "__EVENTARGUMENT="//
+    
+        + "&" + UrlFetcher.encodeURL(setLanguageEN, false) //
+        + "&" + UrlFetcher.encodeURL(commit, true) //
+    ;
+    try {
+        UrlFetcher.setpostData(postData);
+        page = UrlFetcher.fetch(url);
+        Preferences.itself().log(page, null);
+    } catch (final Exception ex) {
+        Preferences.itself().log("[checkGCSettings] Error at post checkGCSettings", ex);
+        return 1;
+    }   
+    }
+    */
+
     private double examineCacheDescriptionOfListPage(double fromDistance, double toDistance) {
         double distance;
         Preferences.itself().log("[AP:] start examineCacheDescriptionOfListPage");
@@ -1239,28 +1263,22 @@ public class GCImporter {
                             sureUpdateList.put(chWaypoint, ch);
                         }
                     }
-                }
-		else {
-                    Preferences.itself().log("[!!!AP:] premium cache found: [" + chWaypoint + "]");
+                } else {
+                    Preferences.itself().log("[AP:] premium cache found: [" + chWaypoint + "]");
                     // ein PremiumCache für ein BasicMember
                     if (ch == null) {
                         if (Preferences.itself().addPremiumGC) {
-			    Preferences.itself().log("[!!!AP:] premium cache found, cache-holder is null: [" + chWaypoint + "]");
                             numPrivateNew = numPrivateNew + 1;
                             ch = new CacheHolder(chWaypoint);
                             ch.setIsPremiumCache(true);
                             // next 2 for to avoid warning triangle
-			    Preferences.itself().log("[!!!AP:] premium cache found, content is: [" + aCacheDescriptionOfListPage + "]");
-			    ch.setType(CacheType.CW_TYPE_CUSTOM);
-                            ch.setType(getWayPointType(aCacheDescriptionOfListPage));
-
+                            ch.setType(CacheType.CW_TYPE_CUSTOM);
                             ch.setWpt(Preferences.itself().curCentrePt); // or MainForm.profile.centre
                             ch.getDetails().setLongDescription(aCacheDescriptionOfListPage); // for Info
                             ch.saveCacheDetails();
                             MainForm.profile.cacheDB.add(ch);
                         }
-                    }
-		    else {
+                    } else {
                         boolean save = false;
                         possibleUpdateList.remove(chWaypoint);
                         if (updateExists(ch)) {
@@ -1285,23 +1303,6 @@ public class GCImporter {
         }
 
         return toDistance;
-    }
-
-    private byte getWayPointType (String cacheDescription){
-	Preferences.itself().log("[AP!!!] getWayPointType called");
-	Regex pmWaypointType = new Regex("/images/icons/container/(.*?)\\.gif");
-	pmWaypointType.search(cacheDescription);
-	String tableOfWebPage;
-	if (listBlockRex.didMatch()) {
-	    tableOfWebPage = listBlockRex.stringMatched(1);
-	    Preferences.itself().log("[AP!!!]check getWayPointType: " + tableOfWebPage);
-	}
-	else {
-	    tableOfWebPage = "";
-	    Preferences.itself().log("[AP!!!]check getWayPointType did not match: ");
-	}
-
-	return CacheType.CW_TYPE_CUSTOM;
     }
 
     private void downloadCaches() {
@@ -2086,6 +2087,7 @@ public class GCImporter {
         try {
             wayPointPage = UrlFetcher.fetch("https://www.geocaching.com/seek/cache_details.aspx?wp=" + wayPoint);
             Preferences.itself().log("Fetched: " + wayPoint);
+            // Preferences.itself().log("Fetched: " + wayPoint + "\r\n" + wayPointPage);
         } catch (final Exception ex) {
             Preferences.itself().log("Could not fetch " + wayPoint, ex);
             ret = SPIDER_ERROR;
@@ -2111,8 +2113,6 @@ public class GCImporter {
                         ret = SPIDER_CANCEL;
                     else if (newCache.isPremiumCache()) {
                         if (!Preferences.itself().havePremiumMemberRights) {
-			    Preferences.itself().log("[AP!!!:] getCacheByWaypointName: " +newCache.getCode());
-			    //Preferences.itself().log("[AP!!!:] waypointPage\n: " +wayPointPage + "\n\n\n");
                             // Premium cache spidered by non premium member
                             // alternative Abfrage
                             // wayPointPage.indexOf("PersonalCacheNote") == -1 // (BasicMember hat keine PersonalCacheNote)
@@ -2339,7 +2339,7 @@ public class GCImporter {
         sizeRex.searchFrom(wayPointPage, wayPointPageIndex);
         if (sizeRex.didMatch()) {
             wayPointPageIndex = sizeRex.matchedTo();
-            return CacheSize.gcSpiderString2Cw(sizeRex.stringMatched(1).trim());
+            return CacheSize.gcSpiderString2Cw(sizeRex.stringMatched(1));
         } else {
             Preferences.itself().log("[SpiderGC.java:getSize]check sizeRex!", null);
             return CacheSize.gcSpiderString2Cw("None");
