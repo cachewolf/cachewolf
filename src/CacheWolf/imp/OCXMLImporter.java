@@ -394,6 +394,8 @@ public class OCXMLImporter {
 	for (int i=0; i < cacheLogs.size(); i++){
 	    syncHolder.getDetails().getCacheLogs().merge(cacheLogs.getLog(i));
 	}
+	CacheImages imageList = readImageList(cacheAsJson.getJSONArray("images"));
+	syncHolder.getDetails().setImages(imageList);
 	// save all
         syncHolder.getDetails().saveCacheXML(MainForm.profile.dataDir);
 	syncHolder.getDetails().setUnsaved(true); // this makes CachHolder save the details in case that they are unloaded from memory
@@ -402,8 +404,24 @@ public class OCXMLImporter {
 	return true;
     }
 
-    private LogList readLogList (JSONArray listOfJsonLogs) throws JSONException{
-	LogList result = new LogList();
+    private CacheImages readImageList(final JSONArray listOfJsonImages) throws JSONException{
+	final CacheImages result = new CacheImages();
+	for (int i=0; i < listOfJsonImages.length(); i++){
+	    JSONObject imageAsJson = listOfJsonImages.getJSONObject(i);
+	    final String url = imageAsJson.getString("url");
+	    final String caption = imageAsJson.getString("caption");
+	    final boolean isSpoiler = imageAsJson.getBoolean("is_spoiler");
+            final CacheImage cacheImage = new CacheImage(isSpoiler?CacheImage.FROMSPOILER:CacheImage.FROMDESCRIPTION);
+            cacheImage.setTitle(picTitle);
+            cacheImage.setURL(picUrl);
+	    //TODO: AP: getPic(cacheImage);
+	    result.add(cacheImage);
+	}
+	return result;
+    }
+    
+    private LogList readLogList (final JSONArray listOfJsonLogs) throws JSONException{
+	final LogList result = new LogList();
 	for (int i=0; i < listOfJsonLogs.length(); i++){
 	    JSONObject logAsJson = listOfJsonLogs.getJSONObject(i);
 	    JSONObject user = logAsJson.getJSONObject("user");
