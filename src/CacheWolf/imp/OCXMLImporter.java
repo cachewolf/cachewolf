@@ -395,13 +395,22 @@ public class OCXMLImporter {
 	    syncHolder.getDetails().getCacheLogs().merge(cacheLogs.getLog(i));
 	}
 	CacheImages imageList = readImageList(cacheAsJson.getJSONArray("images"));
-	syncHolder.getDetails().setImages(imageList);
+	loadPictures (syncHolder, imageList);
+	//syncHolder.getDetails().setImages(imageList);
 	// save all
         syncHolder.getDetails().saveCacheXML(MainForm.profile.dataDir);
 	syncHolder.getDetails().setUnsaved(true); // this makes CachHolder save the details in case that they are unloaded from memory
 
 	//------------
 	return true;
+    }
+
+    private void loadPictures (final CacheHolder cacheHolder, final CacheImages cacheImages){
+	getImageNamesFromDescription(cacheHolder);
+	for (int i=0; i < cacheImages.size();i++){
+	    CacheImage cacheImage = cacheImages.get(i);
+	    //	    getPic(cacheHolder, cacheImage);
+	}
     }
 
     private CacheImages readImageList(final JSONArray listOfJsonImages) throws JSONException{
@@ -412,9 +421,8 @@ public class OCXMLImporter {
 	    final String caption = imageAsJson.getString("caption");
 	    final boolean isSpoiler = imageAsJson.getBoolean("is_spoiler");
             final CacheImage cacheImage = new CacheImage(isSpoiler?CacheImage.FROMSPOILER:CacheImage.FROMDESCRIPTION);
-            cacheImage.setTitle(picTitle);
-            cacheImage.setURL(picUrl);
-	    //TODO: AP: getPic(cacheImage);
+            cacheImage.setTitle(caption);
+            cacheImage.setURL(url);
 	    result.add(cacheImage);
 	}
 	return result;
@@ -784,7 +792,7 @@ public class OCXMLImporter {
             numDescImported++;
             holder.isHTML(isHTML);
             if (downloadPics && isHTML) {
-                getImageNamesFromDescription();
+                getImageNamesFromDescription(holder);
             }
             holder.getDetails().setUnsaved(true);
             return;
@@ -904,7 +912,7 @@ public class OCXMLImporter {
             final CacheImage ii = new CacheImage(CacheImage.FROMUNKNOWN);
             ii.setTitle(picTitle);
             ii.setURL(picUrl);
-            getPic(ii);
+            getPic(holder, ii);
             holder.getDetails().setUnsaved(true); // saveCacheDetails(MainForm.profile.dataDir);
             return;
         }
@@ -912,21 +920,20 @@ public class OCXMLImporter {
 
     private CacheHolder getHolder(String guid, boolean create) {// See also LOCXMLImporter
         CacheHolder ch = null;
-        // Integer INTR = (Integer)DBindexID.get(guid);
         final String wp = (String) DBindexID.get(guid);
-        // if(INTR != null){
         if (wp != null) {
-            // ch = cacheDB.get(INTR.intValue());
             ch = cacheDB.get(wp);
-        } else {
-            if (create)
+        }
+	else {
+	    if (create){
                 ch = new CacheHolder();
+	    }
         }
         return ch;
     }
 
     //TODO: Das muessen wir noch aus dem images-Attribute auslesen:
-    private void getImageNamesFromDescription() {
+    private void getImageNamesFromDescription(final CacheHolder syncHolder) {
         String fetchUrl;
         String imgTag;
         String imgAltText;
@@ -936,14 +943,16 @@ public class OCXMLImporter {
         imgRegexUrl.setIgnoreCase(true);
         int descIndex = 0;
         int numDownloaded = 1;
-        while (imgRegexUrl.searchFrom(holder.getDetails().getLongDescription(), descIndex)) { // "img" found
+        while (imgRegexUrl.searchFrom(syncHolder.getDetails().getLongDescription(), descIndex)) { // "img" found
             imgTag = imgRegexUrl.stringMatched(1); // (1) enthlt das gesamte <img ...>-tag
+	    Preferences.itself().log ("[AP!!!] getimagenamesfromdescription: " + imgTag);
             fetchUrl = imgRegexUrl.stringMatched(2); // URL in Anfhrungszeichen in (2) falls ohne in (3) Ergebnis ist auf jeden Fall ohne Anfhrungszeichen
             if (fetchUrl == null) {
                 fetchUrl = imgRegexUrl.stringMatched(3);
             }
-            if (fetchUrl == null) { // TODO Fehler ausgeben: nicht abgedeckt ist der Fall, dass in einem Cache Links auf Bilder mit unterschiedlichen URL, aber gleichem Dateinamen sind.
-                inf.addWarning(MyLocale.getMsg(1617, "Ignoriere Fehler in html-Cache-Description: \"<img\" without \"src=\" in cache " + holder.getCode()));
+            if (fetchUrl == null) {
+		// TODO Fehler ausgeben: nicht abgedeckt ist der Fall, dass in einem Cache Links auf Bilder mit unterschiedlichen URL, aber gleichem Dateinamen sind.
+                inf.addWarning(MyLocale.getMsg(1617, "Ignoriere Fehler in html-Cache-Description: \"<img\" without \"src=\" in cache " + syncHolder.getCode()));
                 continue;
             }
             inf.setInfo(MyLocale.getMsg(1611, "Importing cache description:") + " " + numDescImported + "\n" + MyLocale.getMsg(1620, "downloading embedded images: ") + numDownloaded++);
@@ -952,11 +961,15 @@ public class OCXMLImporter {
                 if (imgAltText == null)
                     imgAltText = imgRegexAlt.stringMatched(2);
                 // no alternative text as image title -> use filename
-            } else {
-                if (fetchUrl.toLowerCase().indexOf("opencaching.") > 0 || fetchUrl.toLowerCase().indexOf("geocaching.com") > 0) // wenn von Opencaching oder geocaching ist Dateiname doch nicht so toll, weil nur aus Nummer bestehend
+            }
+	    else {
+                if (fetchUrl.toLowerCase().indexOf("opencaching.") > 0 || fetchUrl.toLowerCase().indexOf("geocaching.com") > 0){
+		    // wenn von Opencaching oder geocaching ist Dateiname doch nicht so toll, weil nur aus Nummer bestehend
                     imgAltText = "No image title";
-                else
+		}
+                else{
                     imgAltText = fetchUrl.substring(fetchUrl.lastIndexOf('/') + 1);
+		}
             }
             descIndex = imgRegexUrl.matchedTo();
             try {
@@ -966,19 +979,21 @@ public class OCXMLImporter {
                     fetchUrl = new URL(new URL("https://" + hostname + "/"), fetchUrl).toString();
                 }
             } catch (final MalformedURLException e) {
-                final String ErrMessage = MyLocale.getMsg(1618, "Ignoring error in cache: ") + holder.getCode() + ": ignoring MalformedUrlException: " + e.getMessage() + " while downloading from URL:" + fetchUrl;
+                final String ErrMessage = MyLocale.getMsg(1618, "Ignoring error in cache: ") + syncHolder.getCode() + ": ignoring MalformedUrlException: " + e.getMessage() + " while downloading from URL:" + fetchUrl;
                 inf.addWarning("\n" + ErrMessage);
                 Preferences.itself().log(ErrMessage, e);
             }
             final CacheImage imageInfo = new CacheImage(CacheImage.FROMDESCRIPTION);
             imageInfo.setURL(fetchUrl);
+	    Preferences.itself().log ("[AP!!!] getimagenamesfromdescription: fetching: " + fetchUrl);
             imageInfo.setTitle(imgAltText);
-            getPic(imageInfo);
+	    Preferences.itself().log ("[AP!!!] getimagenamesfromdescription: imgAltText: " + imgAltText);
+            getPic(syncHolder, imageInfo);
         }
     }
 
-    private void getPic(CacheImage imageInfo) { // TODO handling of relativ URLs
-        String fileName = holder.getCode() + "_" + imageInfo.getURL().substring(imageInfo.getURL().lastIndexOf('/') + 1);
+    private void getPic(final CacheHolder cacheHolder, final CacheImage imageInfo) { // TODO handling of relativ URLs
+        String fileName = cacheHolder.getCode() + "_" + imageInfo.getURL().substring(imageInfo.getURL().lastIndexOf('/') + 1);
         fileName = Common.ClearForFileName(fileName).toLowerCase();
         final String target = MainForm.profile.dataDir + fileName;
         imageInfo.setFilename(fileName);
@@ -987,31 +1002,35 @@ public class OCXMLImporter {
             if (ftest.exists()) {
                 if (ftest.length() == 0) {
                     ftest.delete();
-                } else {
-                    holder.getDetails().getImages().add(imageInfo);
                 }
-            } else {
+		else {
+                    cacheHolder.getDetails().getImages().add(imageInfo);
+                }
+            }
+	    else {
                 if (downloadPics) {
                     UrlFetcher.fetchDataFile(imageInfo.getURL(), target);
                     ftest = new File(target);
                     if (ftest.exists()) {
                         if (ftest.length() > 0) {
-                            holder.getDetails().getImages().add(imageInfo);
-                        } else {
+                            cacheHolder.getDetails().getImages().add(imageInfo);
+                        }
+			else {
                             ftest.delete();
                         }
                     }
                 }
             }
-        } catch (final IOException e) {
+        }
+	catch (final IOException e) {
             String ErrMessage;
             String wp, n;
-            if (holder != null && holder.getCode() != null)
-                wp = holder.getCode();
+            if (cacheHolder != null && cacheHolder.getCode() != null)
+                wp = cacheHolder.getCode();
             else
                 wp = "WP???";
-            if (holder != null && holder.getName() != null)
-                n = holder.getName();
+            if (cacheHolder != null && cacheHolder.getName() != null)
+                n = cacheHolder.getName();
             else
                 n = "name???";
 
@@ -1020,23 +1039,25 @@ public class OCXMLImporter {
                 m = e.getMessage();
                 if (m == null)
                     m = "";
-            } catch (Exception e2) {
+            }
+	    catch (Exception e2) {
                 m = "";
             }
 
             if (m.length() == 0)
                 ErrMessage = "Ignoring error: OCXMLImporter.getPic: IOExeption == null, while downloading picture: " + fileName + " from URL:" + imageInfo.getURL();
-            else {
+            else
+		{
                 if (m.equalsIgnoreCase("could not connect") || m.equalsIgnoreCase("unkown host")) {
                     // is there a better way to find out what happened?
                     ErrMessage = MyLocale.getMsg(1618, "Ignoring error in cache: ") + n + " (" + wp + ")" + MyLocale.getMsg(1619, ": could not download image from URL: ") + imageInfo.getURL();
-                } else
+                }
+		else{
                     ErrMessage = MyLocale.getMsg(1618, "Ignoring error in cache: ") + n + " (" + wp + "): ignoring IOException: " + m + " while downloading picture:" + fileName + " from URL:" + imageInfo.getURL();
+		}
             }
             inf.addWarning(ErrMessage);
             Preferences.itself().log(ErrMessage, e, true);
         }
-
     }
-
 }

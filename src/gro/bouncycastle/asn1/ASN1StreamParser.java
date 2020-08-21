@@ -59,7 +59,7 @@ public class ASN1StreamParser
 
     ASN1Encodable readImplicit(boolean constructed, int tag) throws IOException
     {
-    	throw new UnsupportedClassVersionError();/*
+    	throw new UnsupportedClassVersionError();/* 
         if (_in instanceof IndefiniteLengthInputStream)
         {
             if (!constructed)
