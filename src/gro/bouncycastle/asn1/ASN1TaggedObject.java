@@ -208,7 +208,7 @@ public abstract class ASN1TaggedObject
             return ASN1OctetString.getInstance(this, isExplicit).parser();
         }
 
-    	throw new UnsupportedClassVersionError();/*
+    	throw new UnsupportedClassVersionError();/* 
         if (isExplicit)
         {
             return getObject();

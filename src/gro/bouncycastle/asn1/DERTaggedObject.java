@@ -96,7 +96,7 @@ public class DERTaggedObject
                 //
                 // need to mark constructed types...
                 //
-                throw new UnsupportedClassVersionError();/*
+                throw new UnsupportedClassVersionError();/* 
                 int flags;
                 if (primitive.isConstructed())
                 {

@@ -409,7 +409,7 @@ public class OCXMLImporter {
 	getImageNamesFromDescription(cacheHolder);
 	for (int i=0; i < cacheImages.size();i++){
 	    CacheImage cacheImage = cacheImages.get(i);
-	    //	    getPic(cacheHolder, cacheImage);
+	    getPic(cacheHolder, cacheImage);
 	}
     }
 
