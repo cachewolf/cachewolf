@@ -426,7 +426,7 @@ public abstract class ASN1Set
             return false;
         }
 
-        throw new UnsupportedClassVersionError();/*
+        throw new UnsupportedClassVersionError();/* 
         ASN1Set   other = (ASN1Set)o;
 
         if (this.size() != other.size())

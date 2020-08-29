@@ -157,7 +157,7 @@ public class ASN1GeneralizedTime
         Date time,
         Locale locale)
     {
-    	throw new UnsupportedClassVersionError();/*
+    	throw new UnsupportedClassVersionError();/* 
         SimpleDateFormat dateF = new SimpleDateFormat("yyyyMMddHHmmss'Z'", locale);
 
         dateF.setTimeZone(new SimpleTimeZone(0, "Z"));

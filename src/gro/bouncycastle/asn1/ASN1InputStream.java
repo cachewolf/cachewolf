@@ -168,7 +168,7 @@ public class ASN1InputStream
                         strings[i] = (ASN1OctetString)v.get(i);
                     }
 
-                    throw new UnsupportedClassVersionError();/*
+                    throw new UnsupportedClassVersionError();/* 
                     return new BEROctetString(strings);
 */                case SEQUENCE:
                     if (lazyEvaluate)

@@ -41,7 +41,7 @@ public class Attribute {
     private final static int GC_ID = 4; // auch OC neues gpx
     private final static int GC_TEXT = 5; // for export , didn't extract by myself, copied from forum
     private static final String[][] attRef = { //
-            {"00", "2502", "available", "38", "13", "Available at all times"},//
+            {"00", "2502", "available", "A39", "13", "Available at all times"},//
             {"01", "2504", "bicycles", "0", "32", "Bicycles"},//
             {"02", "2506", "boat", "52", "4", "Boat"},//
             // {"03","2508","cactus","0","0",""},//
@@ -64,7 +64,7 @@ public class Attribute {
             {"19", "2540", "motorcycles", "0", "33", "Motorcycles"},//
             {"20", "2542", "night", "1", "14", "Recommended at night"},//
             {"21", "2544", "onehour", "0", "7", "Takes less than an hour"},//
-            {"22", "2546", "parking", "18", "25", "Parking available"},//
+            {"22", "2546", "parking", "A33", "25", "Parking available"},//
             {"23", "2548", "phone", "22", "29", "Telephone nearby"},//
             {"24", "2550", "picnic", "0", "30", "Picnic tables nearby"},//
             {"25", "2552", "poisonoak", "16", "17", "Poison plants"},//
@@ -105,7 +105,7 @@ public class Attribute {
             {"59", "2620", "oconly", "6", "106", "Only loggable at Opencaching"},//
             {"60", "2622", "othercache", "57", "157", "Other cache type"}, // OC special
             {"61", "2624", "overnight", "37", "137", "Overnight stay necessary"}, // OC special
-            {"62", "2644", "train", "10", "110", "Active railway nearby"}, // OC special
+            {"62", "2644", "train", "10", "A60", "Active railway nearby"}, // OC special
             {"63", "2630", "riddle", "55", "0", ""},//OC ?
             {"64", "2646", "webcam", "32", "132", "Webcam"}, // OC special
             {"65", "2634", "steep", "27", "127", "Hilly area"}, // OC special
@@ -123,7 +123,7 @@ public class Attribute {
             {"77", "2662", "skiis", "0", "50", "Cross Country Skis"}, //
             {"78", "2664", "s-tool", "0", "51", "Special Tool required"}, //
             {"79", "2666", "nightcache", "0", "52", "Night Cache"}, //
-            {"80", "2668", "parkngrab", "0", "53", "Park and grab"}, //
+            {"80", "2668", "parkngrab", "A19", "53", "Park and grab"}, //
             {"81", "2670", "abandonedbuilding", "0", "54", "Abandoned structure"}, //
             {"82", "2672", "hike_short", "0", "55", "Short hike"}, //
             {"83", "2674", "hike_med", "0", "56", "Medium Hike"}, //
@@ -134,7 +134,7 @@ public class Attribute {
             {"88", "2684", "firstaid", "23", "123", "First aid available"}, // OC special
             {"89", "2686", "partnership", "0", "61", "Partnership Cache"}, // previous : sponsored
             {"90", "2688", "frontyard", "0", "65", "Front Yard (Private Residence)"}, //
-            {"91", "2690", "seasonal", "0", "62", "Seasonal Access"}, //
+            {"91", "2690", "seasonal", "A44", "62", "Seasonal Access"}, //
             {"92", "2692", "teamwork", "0", "66", "Teamwork Required"}, //
             {"93", "2694", "touristOK", "0", "63", "Tourist Friendly"}, //
             {"94", "2696", "treeclimbing", "0", "64", "Tree Climbing"}, //
@@ -154,6 +154,10 @@ public class Attribute {
     private long[] _bit = {0l, 0l};
 
     // Constructors
+    private Attribute (){
+	//empty
+    }
+
     public Attribute(int id, int inc) {
         _Id = id;
         setInc(inc);
@@ -166,7 +170,7 @@ public class Attribute {
     }
 
     public Attribute(int attIdOC) {
-        OCAttNo2attNo(attIdOC);
+        //OCAttNo2attNo(attIdOC);
         setIdBit();
     }
 
@@ -249,18 +253,19 @@ public class Attribute {
         Preferences.itself().log("Error converting Attribute " + attributeName);
     }
 
-    // for OC Constructor
-    private void OCAttNo2attNo(int attIdOC) {
+    public static Attribute FromOcId(final String attIdOC) {
+	Attribute result = new Attribute();
         for (int i = 0; i < maxAttRef; i++) {
-            if (attIdOC == Common.parseInt(attRef[i][OC_ID])) {
-                _Id = i;
-                _Inc = 1;
-                _ImageName = attRef[i][PIC_NAME] + "-yes.gif";
-                return;
+            if (attRef[i][OC_ID].equals(attIdOC)) {
+                result._Id = i;
+                result._Inc = 1;
+                result._ImageName = attRef[i][PIC_NAME] + "-yes.gif";
+                return result;
             }
         }
-        _Id = -1; // Error
-        _ImageName = "error.gif";
+        result._Id = -1; // Error
+        result._ImageName = "error.gif";
+	return result;
     }
 
     // for GC Constructor gpx-Import
