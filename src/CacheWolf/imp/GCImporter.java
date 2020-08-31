@@ -1252,6 +1252,7 @@ public class GCImporter {
                             // next 2 for to avoid warning triangle
                             Preferences.itself().log("[!!!AP:] premium cache found, content is: [" + aCacheDescriptionOfListPage + "]");
                             ch.setType(CacheType.CW_TYPE_CUSTOM);
+			    //Hier besser Json von map.details holen:
                             ch.setType(getWayPointType(aCacheDescriptionOfListPage));
 
                             ch.setWpt(Preferences.itself().curCentrePt); // or MainForm.profile.centre
@@ -1295,10 +1296,16 @@ public class GCImporter {
         if (pmSizeRegEx.didMatch()) {
             sizeString = pmSizeRegEx.stringMatched(1);
             Preferences.itself().log("[AP!!!]check getWayPointType: " + sizeString);
+	    if ("small".equals(sizeString)){
+		return CacheSize.CW_SIZE_SMALL;
+	    }
+	    else{
+            Preferences.itself().log("[AP!!!]check getWayPointType contains unkown cachesize: " + sizeString);
+	    }
         }
         else {
             sizeString = "";
-            Preferences.itself().log("[AP!!!]check getWayPointType did not match: ");
+            Preferences.itself().log("[AP!!!]check getWayPointType did not match");
         }
 
         return CacheType.CW_TYPE_CUSTOM;
