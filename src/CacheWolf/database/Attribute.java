@@ -102,7 +102,7 @@ public class Attribute {
             {"56", "2614", "moving", "31", "131", "Moving target"}, // OC special
             {"57", "2616", "naturschutz", "43", "143", "Breeding season / protected nature"}, // OC special
             {"58", "2618", "nogps", "35", "135", "Without GPS (letterboxes, cistes, compass juggling ...)"}, // OC special
-            {"59", "2620", "oconly", "6", "106", "Only loggable at Opencaching"},//
+            {"59", "2620", "oconly", "A1", "106", "Only loggable at Opencaching"},//
             {"60", "2622", "othercache", "57", "157", "Other cache type"}, // OC special
             {"61", "2624", "overnight", "37", "137", "Overnight stay necessary"}, // OC special
             {"62", "2644", "train", "10", "A60", "Active railway nearby"}, // OC special

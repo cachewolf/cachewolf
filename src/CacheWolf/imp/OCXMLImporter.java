@@ -932,7 +932,6 @@ public class OCXMLImporter {
         return ch;
     }
 
-    //TODO: Das muessen wir noch aus dem images-Attribute auslesen:
     private void getImageNamesFromDescription(final CacheHolder syncHolder) {
         String fetchUrl;
         String imgTag;

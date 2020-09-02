@@ -148,7 +148,7 @@ public abstract class AbstractX500NameStyle
         {
             if (!foundMatch(reverse, rdns1[i], rdns2))
             {
-            	throw new UnsupportedClassVersionError();/*
+            	throw new UnsupportedClassVersionError();/* 
                 return false;
 */            }
         }
