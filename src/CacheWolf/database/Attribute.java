@@ -139,23 +139,26 @@ public class Attribute {
             {"93", "2694", "touristOK", "0", "63", "Tourist Friendly"}, //
             {"94", "2696", "treeclimbing", "0", "64", "Tree Climbing"}, //
             {"95", "2698", "geotour", "0", "67", "GeoTour"}, //
+            {"96", "2700", "bonus", "0", "69", "Bonus cache"}, //
+            {"97", "2702", "powertrail", "0", "70", "Power trail"}, //
+            {"98", "2704", "challenge", "0", "71", "Challenge cache"}, //
+            {"99", "2706", "solutionchecker", "0", "72", "Geocaching.com solution checker"}, //
             // {"-1","2500","error","0","0",""}, //
     };
-    public static int maxAttRef = attRef.length;
-    private static String IMAGEDIR = STRreplace.replace(FileBase.getProgramDirectory() + "/attributes/", "//", "/");
+    private static final String IMAGEDIR = STRreplace.replace(FileBase.getProgramDirectory() + "/attributes/", "//", "/");
     private static final mImage errorImage = new mImage(IMAGEDIR + "error.gif");
-    private static mImage[] yesImages = new mImage[maxAttRef];
-    private static mImage[] noImages = new mImage[maxAttRef];
-    private static mImage[] nonImages = new mImage[maxAttRef];
-    // Constructors end
+    public static int maxAttRef = attRef.length;
+    private static final mImage[] yesImages = new mImage[maxAttRef];
+    private static final mImage[] noImages = new mImage[maxAttRef];
+    private static final mImage[] nonImages = new mImage[maxAttRef];
     private int _Id;
     private int _Inc; // Yes=1 No=0 non=2
     private String _ImageName;
-    private long[] _bit = {0l, 0l};
+    private long[] _bit = {0L, 0L};
 
     // Constructors
-    private Attribute (){
-	//empty
+    private Attribute() {
+        //empty
     }
 
     public Attribute(int id, int inc) {
@@ -166,11 +169,6 @@ public class Attribute {
 
     public Attribute(String attributeName) {
         attName2attNo(attributeName);
-        setIdBit();
-    }
-
-    public Attribute(int attIdOC) {
-        //OCAttNo2attNo(attIdOC);
         setIdBit();
     }
 
@@ -190,14 +188,11 @@ public class Attribute {
 
     // *** public part
     public static long[] getIdBit(int id) {
-        long[] bit = new long[2];
+        long[] bit = new long[2]; // a long is inizialized with 0
         if (id > -1 && id < maxAttRef) {
             int b = Common.parseInt(attRef[id][BIT_NR]);
-            bit[0] = b > 63 ? 0l : (1L << b);
+            bit[0] = b > 63 ? 0L : (1L << b);
             bit[1] = b > 63 ? (1L << b - 64) : 0;
-        } else {
-            bit[0] = 0;
-            bit[1] = 0;
         }
         return bit;
     }
@@ -237,6 +232,21 @@ public class Attribute {
         return errorImage.image.getWidth();
     }
 
+    public static Attribute FromOcId(final String attIdOC) {
+        Attribute result = new Attribute();
+        for (int i = 0; i < maxAttRef; i++) {
+            if (attRef[i][OC_ID].equals(attIdOC)) {
+                result._Id = i;
+                result._Inc = 1;
+                result._ImageName = attRef[i][PIC_NAME] + "-yes.gif";
+                return result;
+            }
+        }
+        result._Id = -1; // Error
+        result._ImageName = "error.gif";
+        return result;
+    }
+
     // for GC Constructor Spider
     private void attName2attNo(String attributeName) {
         String an = attributeName.substring(0, attributeName.length() - 4);
@@ -251,21 +261,6 @@ public class Attribute {
         _Id = -1; // Error
         _ImageName = "error.gif";
         Preferences.itself().log("Error converting Attribute " + attributeName);
-    }
-
-    public static Attribute FromOcId(final String attIdOC) {
-	Attribute result = new Attribute();
-        for (int i = 0; i < maxAttRef; i++) {
-            if (attRef[i][OC_ID].equals(attIdOC)) {
-                result._Id = i;
-                result._Inc = 1;
-                result._ImageName = attRef[i][PIC_NAME] + "-yes.gif";
-                return result;
-            }
-        }
-        result._Id = -1; // Error
-        result._ImageName = "error.gif";
-	return result;
     }
 
     // for GC Constructor gpx-Import
@@ -385,7 +380,7 @@ public class Attribute {
     /**
      * Get the image for a given attribute number. We use lazy initialisation here, i.e. the images are only loaded when they are requested.
      *
-     * @return
+     * @return ?
      */
     public mImage getImage() {
         if (_Id < 0 || _Id >= maxAttRef) {
