@@ -620,44 +620,36 @@ public class OCXMLImporter {
     }
 
     private void startCacheLog(String name, AttributeList atts) {
-        if (name.equals("id")) {
-            logId = atts.getValue("id");
-            return;
-        }
+        // if (name.equals("id")) {
+        //     logId = atts.getValue("id");
+        //     return;
+        // }
 
-        if (name.equals("cacheid")) {
-            holder = getHolder(atts.getValue("id"), false);
-            return;
-        }
-        if (holder == null)
-            return;
+        // if (name.equals("cacheid")) {
+        //     holder = getHolder(atts.getValue("id"), false);
+        //     return;
+        // }
+        // if (holder == null)
+        //     return;
 
-        inf.setInfo(MyLocale.getMsg(1612, "Importing Cachlog:") + " " + numLogImported);
+        // inf.setInfo(MyLocale.getMsg(1612, "Importing Cachlog:") + " " + numLogImported);
 
-        if (name.equals("logtype")) {
-            logtype = Convert.toInt(atts.getValue("id"));
-            switch (logtype) {
-                case 1:
-                    logIcon = Log.typeText2Image("Found");
-                    break;
-                case 2:
-                    logIcon = Log.typeText2Image("Not Found");
-                    holder.setNoFindLogs((byte) (holder.getNoFindLogs() + 1));
-                    break;
-                case 3:
-                    logIcon = Log.typeText2Image("Note");
-            }
-            loggerRecommended = atts.getValue("recommended").equals("1");
-            return;
-        }
-    }
-
-    private void startPicture(String name, AttributeList atts) {
-        if (name.equals("object")) {
-            cacheID = atts.getValue("id"); // are there picture without cacheID?
-            holder = getHolder(cacheID, false);
-            return;
-        }
+        // if (name.equals("logtype")) {
+        //     logtype = Convert.toInt(atts.getValue("id"));
+        //     switch (logtype) {
+        //         case 1:
+        //             logIcon = Log.typeText2Image("Found");
+        //             break;
+        //         case 2:
+        //             logIcon = Log.typeText2Image("Not Found");
+        //             holder.setNoFindLogs((byte) (holder.getNoFindLogs() + 1));
+        //             break;
+        //         case 3:
+        //             logIcon = Log.typeText2Image("Note");
+        //     }
+        //     loggerRecommended = atts.getValue("recommended").equals("1");
+        //     return;
+        // }
     }
 
     private void endCache(String name) {
