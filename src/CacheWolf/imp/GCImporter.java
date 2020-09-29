@@ -1228,7 +1228,8 @@ public class GCImporter {
                 if (Preferences.itself().havePremiumMemberRights || !isPremiumOnly) {
                     if (ch == null) { // not in DB
                         downloadList.add(chWaypoint);
-                    } else {
+                    }
+		    else {
                         Preferences.itself().log("[AP:] Waypoint is in Database: [" + chWaypoint + "]");
                         if (ch.isPremiumCache() != isPremiumOnly) {
                             ch.setIsPremiumCache(isPremiumOnly);
@@ -1262,8 +1263,11 @@ public class GCImporter {
                         }
                     }
                     else {
+			Preferences.itself().log("[!!!AP:] premium cache found, cache-holder is not null: [" + chWaypoint + "]");
                         boolean save = false;
                         possibleUpdateList.remove(chWaypoint);
+			//Hier besser Json von map.details holen:
+			ch.setType(getWayPointType(aCacheDescriptionOfListPage));
                         if (updateExists(ch)) {
                             ch.setLastSync(""); //
                             save = true;

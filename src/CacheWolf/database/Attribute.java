@@ -139,10 +139,10 @@ public class Attribute {
             {"93", "2694", "touristOK", "0", "63", "Tourist Friendly"}, //
             {"94", "2696", "treeclimbing", "0", "64", "Tree Climbing"}, //
             {"95", "2698", "geotour", "0", "67", "GeoTour"}, //
-            {"96", "2700", "bonus", "0", "69", "Bonus cache"}, //
+            {"96", "2700", "bonuscache", "0", "69", "Bonus cache"}, //
             {"97", "2702", "powertrail", "0", "70", "Power trail"}, //
-            {"98", "2704", "challenge", "0", "71", "Challenge cache"}, //
-            {"99", "2706", "solutionchecker", "0", "72", "Geocaching.com solution checker"}, //
+            {"98", "2704", "challengecache", "0", "71", "Challenge cache"}, //
+            {"99", "2706", "hqsolutionchecker", "0", "72", "Geocaching.com solution checker"}, //
             // {"-1","2500","error","0","0",""}, //
     };
     private static final String IMAGEDIR = STRreplace.replace(FileBase.getProgramDirectory() + "/attributes/", "//", "/");
