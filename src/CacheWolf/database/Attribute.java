@@ -95,7 +95,7 @@ public class Attribute {
             {"49", "2600", "car", "24", "0", ""},//
             {"50", "2602", "cave", "50", "150", "Cave equipment"}, // OC special
             {"51", "2604", "date", "A44", "142", "All seasons"}, // OC special
-            {"52", "2606", "day", "40", "140", "by day only"}, // OC special
+            {"52", "2606", "day", "A41", "140", "by day only"}, // OC special
             {"53", "2608", "indoor", "33", "133", "Within enclosed rooms (caves, buildings etc.)"}, // OC special
             {"54", "2610", "interestsign", "30", "130", "Point of interest"}, // OC special
             {"55", "2612", "letter", "8", "108", "Letterbox (needs stamp)"}, // OC special
