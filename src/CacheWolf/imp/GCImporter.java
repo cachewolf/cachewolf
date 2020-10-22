@@ -1253,6 +1253,7 @@ public class GCImporter {
                             // next 2 for to avoid warning triangle
                             Preferences.itself().log("[!!!AP:] premium cache found, content is: [" + aCacheDescriptionOfListPage + "]");
                             ch.setType(CacheType.CW_TYPE_CUSTOM);
+			    JSONObject mapDetails = getJsonDescriptionOfCache (chWaypoint);
 			    //Hier besser Json von map.details holen:
                             ch.setType(getWayPointType(aCacheDescriptionOfListPage));
 
@@ -1290,6 +1291,13 @@ public class GCImporter {
         }
 
         return toDistance;
+    }
+
+    private JSONObject getJsonDescriptionOfCache(String gcCode){
+	String url = ...
+	    String response= UrlFetcher(...);
+	new JSONObject(response)
+return result
     }
 
     private byte getWayPointType (String cacheDescription){
