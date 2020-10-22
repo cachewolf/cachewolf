@@ -68,7 +68,7 @@ public class Attribute {
             {"23", "2548", "phone", "22", "29", "Telephone nearby"},//
             {"24", "2550", "picnic", "0", "30", "Picnic tables nearby"},//
             {"25", "2552", "poisonoak", "16", "17", "Poison plants"},//
-            {"26", "2554", "public", "19", "26", "Public transportation"},//
+            {"26", "2554", "public", "A34", "26", "Public transportation"},//
             {"27", "2556", "quads", "0", "34", "Quads"},//
             {"28", "2558", "rappelling", "49", "3", "Climbing gear"},//
             {"29", "2560", "restrooms", "21", "28", "Public restrooms nearby"},//
@@ -85,7 +85,7 @@ public class Attribute {
             {"39", "2580", "wading", "26", "11", "May require wading"},//
             {"40", "2582", "water", "20", "27", "Drinking water nearby"},//
             {"41", "2584", "wheelchair", "0", "24", "Wheelchair accessible"},//
-            {"42", "2586", "winter", "44", "15", "Available during winter"},//
+            {"42", "2586", "winter", "A47", "15", "Available during winter"},//
             {"43", "2588", "firstaid", "0", "42", "Firstaid"},// GC: Cachewartung notwendig (Auto Attribut) , OC: erste Hilfe
             {"44", "2590", "flashlight", "48", "44", "Flashlight required"},//
             {"45", "2592", "aircraft", "53", "153", "Aircraft"},// OC special
@@ -94,8 +94,8 @@ public class Attribute {
             {"48", "2598", "ask", "58", "158", "Ask owner for start conditions"}, // OC special
             {"49", "2600", "car", "24", "0", ""},//
             {"50", "2602", "cave", "50", "150", "Cave equipment"}, // OC special
-            {"51", "2604", "date", "42", "142", "All seasons"}, // OC special
-            {"52", "2606", "day", "40", "140", "by day only"}, // OC special
+            {"51", "2604", "date", "A44", "142", "All seasons"}, // OC special
+            {"52", "2606", "day", "A41", "140", "by day only"}, // OC special
             {"53", "2608", "indoor", "33", "133", "Within enclosed rooms (caves, buildings etc.)"}, // OC special
             {"54", "2610", "interestsign", "30", "130", "Point of interest"}, // OC special
             {"55", "2612", "letter", "8", "108", "Letterbox (needs stamp)"}, // OC special
@@ -117,7 +117,7 @@ public class Attribute {
             {"71", "2650", "wwwlink", "7", "107", "Hyperlink to another caching portal only"}, // OC special
             {"72", "2652", "landf", "0", "45", "Lost And Found Tour"}, //
             {"73", "2654", "rv", "0", "46", "Truck Driver/RV"}, //
-            {"74", "2656", "field_puzzle", "0", "47", "Field Puzzle"},//
+            {"74", "2656", "field_puzzle", "A15", "47", "Field Puzzle"},//
             {"75", "2658", "UV", "0", "48", "UV Light required"}, //
             {"76", "2660", "snowshoes", "0", "49", "Snowshoes"}, //
             {"77", "2662", "skiis", "0", "50", "Cross Country Skis"}, //
