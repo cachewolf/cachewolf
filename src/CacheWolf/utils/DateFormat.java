@@ -26,7 +26,7 @@ package CacheWolf.utils;
  *    February 27 - Found dates which happened this year
  *    February 27, 2004 - Found date in previous year
  * The internal standard is sortable:
- *    2004-02-27    - YYYY-MM-DD   
+ *    2004-02-27    - YYYY-MM-DD
  */
 
 import ewe.sys.Time;
@@ -40,161 +40,163 @@ public class DateFormat {
     //static int yearPos = 2;
 
     public static void setGCDateFormat(String gCDateFormat) {
-	dayPos = gCDateFormat.indexOf("d");
-	monthPos = gCDateFormat.indexOf("M");
-	//yearPos = gCDateFormat.indexOf("y");
+        dayPos = gCDateFormat.indexOf("d");
+        monthPos = gCDateFormat.indexOf("M");
+        //yearPos = gCDateFormat.indexOf("y");
     }
 
-    /** Convert the US Format DateHidden/DateVisited into a sortable format */
+    /**
+     * Convert the US Format DateHidden/DateVisited into a sortable format
+     */
     public static String toYYMMDD(String date) {
-	return toYYMMDD(toDate(date));
+        return toYYMMDD(toDate(date));
     }
 
     public static Time toDate(String ds) {
-	if (ds == null || ds.equals("") || ds.indexOf("1900") > -1)
-	    return new Time(5, 5, 1900);
-	Time d = new Time();
-	d.hour = 0;
-	d.minute = 0;
-	d.second = 0;
-	d.millis = 0;
-	if (ds.indexOf("day") > 0) {
-	    final long adaylong = new Time(2, 1, 2000).getTime() - new Time(1, 1, 2000).getTime();
-	    if (ds.indexOf("Yesterday") > -1) {
-		d.setTime(d.getTime() - adaylong);
-	    } else {
-		d.setTime(d.getTime() - adaylong * Common.parseInt(ds.substring(0, 1)));
-	    }
-	} else {
-	    String[] SDate;
-	    ds = STRreplace.replace(ds, ",", " ");
-	    ds = STRreplace.replace(ds, "  ", " ");
-	    SDate = mString.split(ds, ' ');
-	    if (SDate.length == 1) {
-		if (ds.indexOf('/') > -1)
-		    SDate = mString.split(ds, '/');
-		else if (ds.indexOf('-') > -1)
-		    SDate = mString.split(ds, '-');
-		else if (ds.indexOf('.') > -1)
-		    SDate = mString.split(ds, '.');
-		// trying to determine Dateformat
-		int v0 = Common.parseInt(SDate[0]);
-		int v1 = Common.parseInt(SDate[1]);
-		int v2 = Common.parseInt(SDate[2]);
-		int dd, mm, yy;
-		if (v0 > 31) {
-		    // yyyy MM dd
-		    yy = v0;
-		    mm = v1;
-		    dd = v2;
-		} else {
-		    yy = v2;
-		    if ((v0 == 0) || (v1 == 0)) {
-			// month as text MMM
-			String month;
-			if (v0 == 0) {
-			    month = SDate[0];
-			    dd = v1;
-			} else {
-			    month = SDate[1];
-			    dd = v0;
-			}
-			mm = monthName2int(month);
-		    } else {
-			// MM dd yyyy (doesn't work for dd MM yyyy)
-			if (dayPos < monthPos) {
-			    dd = v0;
-			    mm = v1;
-			} else {
-			    mm = v0;
-			    dd = v1;
-			}
-		    }
+        if (ds == null || ds.equals("") || ds.indexOf("1900") > -1)
+            return new Time(5, 5, 1900);
+        Time d = new Time();
+        d.hour = 0;
+        d.minute = 0;
+        d.second = 0;
+        d.millis = 0;
+        if (ds.indexOf("day") > 0) {
+            final long adaylong = new Time(2, 1, 2000).getTime() - new Time(1, 1, 2000).getTime();
+            if (ds.indexOf("Yesterday") > -1) {
+                d.setTime(d.getTime() - adaylong);
+            } else {
+                d.setTime(d.getTime() - adaylong * Common.parseInt(ds.substring(0, 1)));
+            }
+        } else {
+            String[] SDate;
+            ds = STRreplace.replace(ds, ",", " ");
+            ds = STRreplace.replace(ds, "  ", " ");
+            SDate = mString.split(ds, ' ');
+            if (SDate.length == 1) {
+                if (ds.indexOf('/') > -1)
+                    SDate = mString.split(ds, '/');
+                else if (ds.indexOf('-') > -1)
+                    SDate = mString.split(ds, '-');
+                else if (ds.indexOf('.') > -1)
+                    SDate = mString.split(ds, '.');
+                // trying to determine Dateformat
+                int v0 = Common.parseInt(SDate[0]);
+                int v1 = Common.parseInt(SDate[1]);
+                int v2 = Common.parseInt(SDate[2]);
+                int dd, mm, yy;
+                if (v0 > 31) {
+                    // yyyy MM dd
+                    yy = v0;
+                    mm = v1;
+                    dd = v2;
+                } else {
+                    yy = v2;
+                    if ((v0 == 0) || (v1 == 0)) {
+                        // month as text MMM
+                        String month;
+                        if (v0 == 0) {
+                            month = SDate[0];
+                            dd = v1;
+                        } else {
+                            month = SDate[1];
+                            dd = v0;
+                        }
+                        mm = monthName2int(month);
+                    } else {
+                        // MM dd yyyy (doesn't work for dd MM yyyy)
+                        if (dayPos < monthPos) {
+                            dd = v0;
+                            mm = v1;
+                        } else {
+                            mm = v0;
+                            dd = v1;
+                        }
+                    }
 
-		}
-		d.month = mm;
-		d.day = dd;
-		d.year = yy;
-	    } else {
-		// starting with dayOfWeek or missing year
-		int offs = SDate.length - 3;
-		if (offs < 0)
-		    offs = 0;
-		int v0 = Common.parseInt(SDate[offs]);
-		if (v0 == 0) {
-		    d.day = Common.parseInt(SDate[offs + 1]);
-		    d.month = monthName2int(SDate[offs]);
-		} else {
-		    d.day = Common.parseInt(SDate[offs]);
-		    d.month = monthName2int(SDate[offs + 1]);
-		}
-		if (SDate.length > 2) {
-		    int yy = Common.parseInt(SDate[offs + 2]);
-		    if (yy < 100)
-			d.year = 2000 + yy;
-		    else
-			d.year = yy;
-		} else
-		    // missing year
-		    ; // d.year = this year
-	    }
-	}
-	return d;
+                }
+                d.month = mm;
+                d.day = dd;
+                d.year = yy;
+            } else {
+                // starting with dayOfWeek or missing year
+                int offs = SDate.length - 3;
+                if (offs < 0)
+                    offs = 0;
+                int v0 = Common.parseInt(SDate[offs]);
+                if (v0 == 0) {
+                    d.day = Common.parseInt(SDate[offs + 1]);
+                    d.month = monthName2int(SDate[offs]);
+                } else {
+                    d.day = Common.parseInt(SDate[offs]);
+                    d.month = monthName2int(SDate[offs + 1]);
+                }
+                if (SDate.length > 2) {
+                    int yy = Common.parseInt(SDate[offs + 2]);
+                    if (yy < 100)
+                        d.year = 2000 + yy;
+                    else
+                        d.year = yy;
+                } else
+                    // missing year
+                    ; // d.year = this year
+            }
+        }
+        return d;
     }
 
     private static int monthName2int(String month) {
-	final String enMonthNames[] = { "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December" };
-	for (int m = 0; m < 12; m++) {
-	    if (enMonthNames[m].startsWith(month)) {
-		return m + 1;
-	    }
-	}
-	final String deMonthNames[] = { "Januar", "Februar", "März", "April", "Mai", "Juni", "Juli", "August", "September", "Oktober", "November", "Dezember" };
-	for (int m = 0; m < 12; m++) {
-	    if (deMonthNames[m].startsWith(month)) {
-		return m + 1;
-	    }
-	}
-	return 1; // Januar if not detected / in other language
+        final String enMonthNames[] = {"January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"};
+        for (int m = 0; m < 12; m++) {
+            if (enMonthNames[m].startsWith(month)) {
+                return m + 1;
+            }
+        }
+        final String deMonthNames[] = {"Januar", "Februar", "März", "April", "Mai", "Juni", "Juli", "August", "September", "Oktober", "November", "Dezember"};
+        for (int m = 0; m < 12; m++) {
+            if (deMonthNames[m].startsWith(month)) {
+                return m + 1;
+            }
+        }
+        return 1; // Januar if not detected / in other language
     }
 
     public static String toYYMMDD(Time d) {
-	return toYYMMDD(d, '-');
+        return toYYMMDD(d, '-');
     }
 
     public static String toYYMMDD(Time d, char separator) {
-	// the CW Time Format is with separator
-	String f = "yyyy" + separator + "MM" + separator + "dd";
-	return d.format(f);
+        // the CW Time Format is with separator
+        String f = "yyyy" + separator + "MM" + separator + "dd";
+        return d.format(f);
     }
 
     // from lastSyncDate (yyyyMMddHHmmss) to gpxLogdate (yyyy-MM-dd)
     // if no lastSyncDate returns current Date
     public static String yyyyMMddHHmmss2gpxLogdate(String yyyyMMddHHmmss) {
-	Time d = new Time();
-	try {
-	    d.parse(yyyyMMddHHmmss, "yyyyMMddHHmmss");
-	} catch (IllegalArgumentException e) {
-	    d = new Time();
-	}
-	return d.format("yyyy-MM-dd"); // +d.format("HH:mm:ss"); is set to 00:00:00 at gpxExport
+        Time d = new Time();
+        try {
+            d.parse(yyyyMMddHHmmss, "yyyyMMddHHmmss");
+        } catch (IllegalArgumentException e) {
+            d = new Time();
+        }
+        return d.format("yyyy-MM-dd"); // +d.format("HH:mm:ss"); is set to 00:00:00 at gpxExport
     }
 
     public static String formatLastSyncDate(String timeRepresentation, String format) {
-	if (!timeRepresentation.equals("")) {
-	    try {
-		Time t = new Time();
-		t.parse(timeRepresentation, "yyyyMMddHHmmss");
-		if (format.length() == 0)
-		    return t.toString();
-		else
-		    return t.format(format);
-	    } catch (Exception e) {
-	    }
-	    return "";
-	} else {
-	    return "";
-	}
+        if (!timeRepresentation.equals("")) {
+            try {
+                Time t = new Time();
+                t.parse(timeRepresentation, "yyyyMMddHHmmss");
+                if (format.length() == 0)
+                    return t.toString();
+                else
+                    return t.format(format);
+            } catch (Exception e) {
+            }
+            return "";
+        } else {
+            return "";
+        }
 
     }
 }

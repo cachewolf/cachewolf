@@ -31,25 +31,25 @@ import CacheWolf.database.CacheHolder;
  */
 public class ASCExporter extends Exporter {
 
-	public ASCExporter() {
-		super();
-		this.setOutputFileExtension("*.csv");
-		this.setRecordMethod(LAT_LON);
-	}
+    public ASCExporter() {
+        super();
+        this.setOutputFileExtension("*.csv");
+        this.setExportMethod(EXPORT_METHOD_LAT_LON);
+    }
 
-	public String record(CacheHolder holder, String lat, String lon) {
-		StringBuffer strBuf = new StringBuffer(100);
-		String dummy;
-		dummy = holder.getName();
-		dummy = dummy.replace(',', ' ');
-		strBuf.append(dummy);
-		strBuf.append(",");
-		strBuf.append(dummy);
-		strBuf.append(",");
-		strBuf.append(lon);
-		strBuf.append(",");
-		strBuf.append(lat);
-		strBuf.append(",,,,\r\n");
-		return strBuf.toString();
-	}
+    public String record(CacheHolder holder, String lat, String lon) {
+        StringBuffer strBuf = new StringBuffer(100);
+        String dummy;
+        dummy = holder.getName();
+        dummy = dummy.replace(',', ' ');
+        strBuf.append(dummy);
+        strBuf.append(",");
+        strBuf.append(dummy);
+        strBuf.append(",");
+        strBuf.append(lon);
+        strBuf.append(",");
+        strBuf.append(lat);
+        strBuf.append(",,,,\r\n");
+        return strBuf.toString();
+    }
 }

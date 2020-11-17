@@ -1,0 +1,27 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg xmlns:xml="http://www.w3.org/XML/1998/namespace" x="0px" y="0px" width="32" height="32" overflow="hidden" viewBox="0, 0, 512, 512" preserveAspectRatio="xMidYMid" font-size="0" id="svg" xml:space="preserve"  xmlns="http://www.w3.org/2000/svg" version="1.1">
+  <rect x="13.128" y="13.128" width="485.744" height="485.744" xml:space="preserve" style="fill:#EFEFEF;" />
+  <rect x="13.128" y="13.128" width="485.744" height="78.769" xml:space="preserve" style="fill:#61ACD2;" />
+  <rect x="13.128" y="13.128" width="78.769" height="78.769" xml:space="preserve" style="fill:#F4A026;" />
+  <rect x="420.103" y="13.128" width="78.769" height="78.769" xml:space="preserve" style="fill:#CA463D;" />
+  <path d="M444.144 291.482 L344.807 203.128 C339.388 198.309 331.092 198.796 326.274 204.212 C321.455 209.63 321.94 217.928 327.358 222.746 L415.665 301.292 L327.3571 379.837 C321.9391 384.655 321.4531 392.953 326.273 398.371 C328.867 401.288 332.468 402.774 336.088 402.774 C339.19 402.774 342.307 401.68 344.808 399.455 L444.1451 311.101 C446.9471 308.609 448.548 305.04 448.548 301.292 C448.547 297.544 446.945 293.973 444.144 291.482 z" xml:space="preserve" />
+  <path d="M185.727 204.212 C180.908 198.794 172.611 198.308 167.193 203.128 L67.85601 291.482 C65.05601 293.974 63.45301 297.543 63.45301 301.291 C63.45301 305.039 65.05601 308.609 67.85601 311.1 L167.193 399.454 C169.694 401.679 172.809 402.773 175.914 402.773 C179.532 402.773 183.135 401.286 185.729 398.37 C190.547 392.952 190.061 384.654 184.645 379.836 L96.33501 301.293 L184.643 222.748 C190.06 217.928 190.547 209.63 185.727 204.212 z" xml:space="preserve" />
+  <path d="M287.374 196.612 C280.444 194.515 273.106 198.432 271.004 205.371 L215.866 387.416 C213.764 394.356 217.686 401.685 224.625 403.787 C225.894 404.17 227.174 404.354 228.436 404.354 C234.069 404.354 239.277 400.698 240.996 395.028 L296.134 212.983 C298.236 206.043 294.315 198.714 287.374 196.612 z" xml:space="preserve" />
+  <path d="M498.872 0 L13.128 0 C5.877 0 0 5.877 0 13.128 L0 498.872 C0 506.123 5.877 512 13.128 512 L498.872 512 C506.121 512 512 506.123 512 498.872 L512 13.128 C512 5.877 506.121 0 498.872 0 z M485.744 26.256 L485.744 78.769 L433.231 78.769 L433.231 26.256 L485.744 26.256 z M105.026 78.769 L105.026 26.256 L406.975 26.256 L406.975 78.769 L105.026 78.769 z M26.256 26.256 L78.769 26.256 L78.769 78.769 L26.256 78.769 L26.256 26.256 z M26.256 485.744 L26.256 105.026 L485.743 105.026 L485.743 485.744 L26.256 485.744 z" xml:space="preserve" />
+  <g xml:space="preserve" />
+  <g xml:space="preserve" />
+  <g xml:space="preserve" />
+  <g xml:space="preserve" />
+  <g xml:space="preserve" />
+  <g xml:space="preserve" />
+  <g xml:space="preserve" />
+  <g xml:space="preserve" />
+  <g xml:space="preserve" />
+  <g xml:space="preserve" />
+  <g xml:space="preserve" />
+  <g xml:space="preserve" />
+  <g xml:space="preserve" />
+  <g xml:space="preserve" />
+  <g xml:space="preserve" />
+</svg>

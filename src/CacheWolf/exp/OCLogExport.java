@@ -44,78 +44,78 @@ public final class OCLogExport {
 
     public static void doit() {
 
-	if (cacheDB == null)
-	    cacheDB = MainForm.profile.cacheDB;
-	int totalWaypoints = cacheDB.countVisible();
-	int updated = 0;
-	ProgressBarForm pbf = new ProgressBarForm();
-	Handle h = new Handle();
+        if (cacheDB == null)
+            cacheDB = MainForm.profile.cacheDB;
+        int totalWaypoints = cacheDB.countVisible();
+        int updated = 0;
+        ProgressBarForm pbf = new ProgressBarForm();
+        Handle h = new Handle();
 
-	pbf.showMainTask = false;
-	pbf.setTask(h, "logging opencaching ...");
-	pbf.exec();
-	if (OCGPXfetch.login()) {
-	    for (int o = 0; o < cacheDB.size(); o += 1) {
-		if (pbf.exitValue == -1)
-		    break;
-		CacheHolder ch = cacheDB.get(o);
-		if (ch.isVisible()) {
-		    doOneLog(ch);
-		    updated++;
-		    h.progress = (float) updated / (float) totalWaypoints;
-		    h.changed();
-		}
-	    }
-	}
-	pbf.exit(0);
+        pbf.showMainTask = false;
+        pbf.setTask(h, "logging opencaching ...");
+        pbf.exec();
+        if (OCGPXfetch.login()) {
+            for (int o = 0; o < cacheDB.size(); o += 1) {
+                if (pbf.exitValue == -1)
+                    break;
+                CacheHolder ch = cacheDB.get(o);
+                if (ch.isVisible()) {
+                    doOneLog(ch);
+                    updated++;
+                    h.progress = (float) updated / (float) totalWaypoints;
+                    h.changed();
+                }
+            }
+        }
+        pbf.exit(0);
     }
 
     public static void doOneLog(CacheHolder ch) {
-	if (!ch.isFound())
-	    return;
-	// take GC log direct to OC, needs valid ch
-	Vm.showWait(true);
-	String wpName = ch.getIdOC();
-	if (wpName.length() > 1) {
-	    if (!loggedIn)
-		loggedIn = OCGPXfetch.login();
-	    if (loggedIn) {
-		if (wpName.charAt(0) < 65) {
-		    // noch nicht bei OC gelogged
-		    wpName = ch.getIdOC().substring(1);
-		    String url = "http://" + OC.getOCHostName(wpName) + "/log.php?wp=" + wpName;
-		    String page = "";
-		    try {
-			CacheHolderDetail chD = ch.getDetails();
-			if (chD.getOwnLog() != null) {
-			    page = UrlFetcher.fetch(url);
-			    loggedIn = page.indexOf("Eingeloggt als") > -1; // next time perhaps
-			    String ocCacheId = new Extractor(page, "viewcache.php?cacheid=", "\">", 0, true).findNext();
-			    String postData = "cacheid=" + ocCacheId + "&version3=1&descMode=3";
-			    if (ch.getType() == CacheType.CW_TYPE_EVENT || ch.getType() == CacheType.CW_TYPE_MEGA_EVENT || ch.getType() == CacheType.CW_TYPE_MAZE)
-				postData = postData + "&logtype=7";
-			    else
-				postData = postData + "&logtype=1";
-			    Time logDate = DateFormat.toDate(chD.getOwnLog().getDate());
-			    postData += "&logday=" + logDate.day;
-			    postData += "&logmonth=" + logDate.month;
-			    postData += "&logyear=" + logDate.year;
-			    postData += "&logtext=" + UrlFetcher.toUtf8Url(chD.getOwnLog().getMessage());
-			    postData += "&submitform=Log+eintragen"; // todo for other opencaching sites
-			    UrlFetcher.setpostData(postData);
-			    page = UrlFetcher.fetch(url);
-			    OCLinkImporter.updateOCLink(ch);
-			    if (ch.getIdOC().startsWith("-")) {
-				ch.setIdOC("!" + ch.getIdOC().substring(1));
-				ch.saveCacheDetails();
-			    }
-			}
-		    } catch (IOException e) {
-			// dann nicht
-		    }
-		}
-	    }
-	}
-	Vm.showWait(false);
+        if (!ch.isFound())
+            return;
+        // take GC log direct to OC, needs valid ch
+        Vm.showWait(true);
+        String wpName = ch.getIdOC();
+        if (wpName.length() > 1) {
+            if (!loggedIn)
+                loggedIn = OCGPXfetch.login();
+            if (loggedIn) {
+                if (wpName.charAt(0) < 65) {
+                    // noch nicht bei OC gelogged
+                    wpName = ch.getIdOC().substring(1);
+                    String url = "http://" + OC.getOCHostName(wpName) + "/log.php?wp=" + wpName;
+                    String page = "";
+                    try {
+                        CacheHolderDetail chD = ch.getDetails();
+                        if (chD.getOwnLog() != null) {
+                            page = UrlFetcher.fetch(url);
+                            loggedIn = page.indexOf("Eingeloggt als") > -1; // next time perhaps
+                            String ocCacheId = new Extractor(page, "viewcache.php?cacheid=", "\">", 0, true).findNext();
+                            String postData = "cacheid=" + ocCacheId + "&version3=1&descMode=3";
+                            if (ch.getType() == CacheType.CW_TYPE_EVENT || ch.getType() == CacheType.CW_TYPE_MEGA_EVENT || ch.getType() == CacheType.CW_TYPE_MAZE)
+                                postData = postData + "&logtype=7";
+                            else
+                                postData = postData + "&logtype=1";
+                            Time logDate = DateFormat.toDate(chD.getOwnLog().getDate());
+                            postData += "&logday=" + logDate.day;
+                            postData += "&logmonth=" + logDate.month;
+                            postData += "&logyear=" + logDate.year;
+                            postData += "&logtext=" + UrlFetcher.toUtf8Url(chD.getOwnLog().getMessage());
+                            postData += "&submitform=Log+eintragen"; // todo for other opencaching sites
+                            UrlFetcher.setpostData(postData);
+                            page = UrlFetcher.fetch(url);
+                            OCLinkImporter.updateOCLink(ch);
+                            if (ch.getIdOC().startsWith("-")) {
+                                ch.setIdOC("!" + ch.getIdOC().substring(1));
+                                ch.saveCacheDetails();
+                            }
+                        }
+                    } catch (IOException e) {
+                        // dann nicht
+                    }
+                }
+            }
+        }
+        Vm.showWait(false);
     }
 }

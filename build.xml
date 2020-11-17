@@ -4,18 +4,23 @@
 	<!--
 		This is the ant (http://ant.apache.org/) build file for CacheWolf
 
-		Arguments: -Dbuild.version=integer source code version covered by the
-		build. of "official" builds this shoul be the svn revision number
-		Default: todays date (YYYYMMDD) -Dbuild.type=interger see
-		src/CacheWolf/Version.kava VERSION_TYPES for valid values Default: 3
-		(InDevelopmentNewest) -Dbuild.cab=true also build a cab version from
-		the PPC2003 zip file. Default: do not build it. To build it in linux
-		you need cablist - here is a skript from UncleOwen, that does all you
-		need: http://www.geoclub.de/viewtopic.php?f=40&t=32351&p=674236 to
-		install it in linux / ubuntu. For
-		windows make sure to check the prerequisites on
-		http://ant.apache.org/manual/OptionalTasks/cab.html
-		Further information about ant can be found at
+		Arguments: 
+		-Dbuild.version=integer
+			source code version covered by the build. of "official" builds this should be the svn revision number
+			Default: todays date (YYYYMMDD) 
+		-Dbuild.type=interger
+			see src/CacheWolf/Version.java VERSION_TYPES for valid values
+			Default: 3 (InDevelopmentNewest) 
+		-Dbuild.cab=true
+			also build a cab version from the PPC2003 zip file. 
+			Default: do not build it.
+			
+		To build it in linux you need cablist - here is a skript from UncleOwen, that does all you need:
+		http://www.geoclub.de/viewtopic.php?f=40&t=32351&p=674236 to install it in linux / ubuntu.
+
+		For windows make sure to check the prerequisites on	http://ant.apache.org/manual/OptionalTasks/cab.html
+			
+		Further information about ant can be found at 
 		http://ant.apache.org/manual/
 		http://help.eclipse.org/help33/topic/org.eclipse.platform.doc.user/gettingStarted/qs-81_basics.htm
 		or check one of the many ant tutorials on the web
@@ -44,13 +49,15 @@
 	<!--
 		TODO: find out how to get svn revision information platform
 		independent.
+		perhaps: 
+		svn info -show-item revision
 	-->
 	<!--
 		TODO: especially since svnversion would give better information if
-		current directory is up to date
+		current directory is up to date		
 	-->
 	<!--
-		set a default build.version as long as not defined otherwiese on
+		set a default build.version as long as not defined otherwise on
 		command line
 	-->
 	<tstamp>
@@ -268,7 +275,7 @@
 		<mkdir dir="${assemble.dir}" />
 
 		<copy file="${ewe.progdir}/Jar/CacheWolf.jar" todir="${assemble.dir}" />
-		<copy file="lib/java_ewe.dll" todir="${assemble.dir}" />
+		<copy file="programs/java_ewe.dll" todir="${assemble.dir}" />
 		<copy file="docs/cachewolf.svg" todir="${assemble.dir}" />
 		<antcall target="copyres" />
 
@@ -333,11 +340,10 @@
 	<target name="compile" depends="fixreleasenumber" description="compile sources with java">
 		<mkdir dir="${classes.dir}" />
 		<javac source="1.3" target="1.1" encoding="windows-1252"
-			classpath="./lib/CompileEwe.zip:./lib/" destdir="${classes.dir}"
+			classpath="./Libraries/CompiledEwe.jar:./lib/" destdir="${classes.dir}"
 			deprecation="off" nowarn="on" srcdir="src"
-			includes="CacheWolf/*.java,CacheWolf/*/*.java,org/*.java,org/*/*.java" 
+			includes="CacheWolf/*.java,CacheWolf/*/*.java,gro/cachewolf/**/*.java,gro/bouncycastle/**/*.java" 
 			includeantruntime="false"/>
-
 	</target>
 
 	<target name="copyppcdll" description="copy modified dll for PPC2003">
@@ -438,7 +444,7 @@
 		if="build.cab">
 		<mkdir dir="${classes.dir}" />
 		<javac source="1.5" target="1.5" encoding="windows-1252"
-			destdir="${classes.dir}" srcdir="src" includes="build/*.java" 
+			destdir="${classes.dir}" srcdir="tools" includes="build/*.java" 
 			includeantruntime="false"/>
 	</target>
 </project>

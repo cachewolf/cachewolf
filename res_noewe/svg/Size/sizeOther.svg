@@ -1,0 +1,15 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg xmlns:xml="http://www.w3.org/XML/1998/namespace" x="0" y="0" width="32" height="24" overflow="hidden" viewBox="0, 0, 257, 192.75" preserveAspectRatio="xMidYMid" font-size="0px" id="svg" xml:space="preserve"  xmlns="http://www.w3.org/2000/svg" version="1.1">
+  <g transform="matrix(1, 0, 0, 2.818353, 0, -5.595681)" id="g1013" xml:space="preserve">
+    <rect x="10.7502" y="42.1671" width="16.9167" height="16.9166" stroke-width="0.2" id="rect997" xml:space="preserve" style="fill:#DADADA;" />
+    <rect x="80.3335" y="20.1671" width="38.6667" height="38.6667" stroke-width="0.2" id="rect999" xml:space="preserve" style="fill:#DADADA;" />
+    <rect x="130.667" y="13.8004" width="45" height="45" stroke-width="0.2" id="rect1001" xml:space="preserve" style="fill:#DADADA;" />
+    <rect x="188.667" y="8.08376" width="62.4668" height="56.7111" stroke-width="0.2" id="rect1003" xml:space="preserve" style="fill:#BEBDBD;" />
+    <rect x="39.267" y="30.8004" width="28.4333" height="28.4333" stroke-width="0.2" id="rect1005" xml:space="preserve" style="fill:#CED0D3;" />
+    <rect x="3.3645" y="5.16705" width="249.636" height="62.6667" stroke="#ABABAB" stroke-width="6" id="rect1007" xml:space="preserve" style="fill:none;" />
+    <g id="g1011" xml:space="preserve">
+      <path d="M235.42 25.8417 C235.42 27.6967 235.14 29.3358 234.58 30.7592 C234.02 32.1825 233.227 33.4162 232.2 34.4604 C231.179 35.5046 229.951 36.4408 228.516 37.2692 C227.081 38.0975 225.463 38.85 223.66 39.5267 L223.66 45.8004 L214.14 45.8004 L214.14 36.5254 C215.482 36.1812 216.697 35.8269 217.784 35.4623 C218.872 35.0977 220.011 34.5071 221.201 33.6904 C222.321 32.9612 223.198 32.1154 223.831 31.1529 C224.464 30.1904 224.78 29.0996 224.78 27.8804 C224.78 26.0663 224.172 24.7727 222.956 23.9998 C221.739 23.2269 220.029 22.8404 217.824 22.8404 C216.465 22.8404 214.933 23.1015 213.23 23.6235 C211.527 24.1456 209.966 24.8179 208.549 25.6404 L207.42 25.6404 L207.42 17.3367 C208.61 16.8467 210.442 16.3348 212.915 15.801 C215.388 15.2673 217.897 15.0004 220.44 15.0004 C225.037 15.0004 228.683 16.0008 231.378 18.0017 C234.073 20.0025 235.42 22.6158 235.42 25.8417 z M224.78 57.0004 L213.58 57.0004 L213.58 49.7204 L224.78 49.7204 z" stroke-width="0.2" stroke-linejoin="round" id="path1009" xml:space="preserve" connector-curvature="0" style="fill:#861D23;" />
+    </g>
+  </g>
+</svg>

@@ -1,102 +1,161 @@
 <mmc>
-	<settings	fontsize="14"/>
+    <settings fontsize="14"/>
 
-	<role	name="always"	active="true"/>
-	<role	name="menu"/>
-	<role	name="done"	disable="map|centermap|zoom|detail"/>
-	<role	name="zoom"	disable="map|centermap|detail"/>
-	<role	name="centermap"	disable="zoom|map|detail"/>
-	<role	name="map"	disable="zoom|centermap|detail"/>
-	<role	name="detail"	disable="zoom|centermap|map"/>
-	<role	name="show_map"		active="true"/>	<!--	this	name	of	role	is	fix	in	code!	-->
-	<role	name="show_caches"	active="true"/>	<!--	this	name	of	role	is	fix	in	code!	-->
-	<role	name="fill_white"	active="true"/>	<!--	this	name	of	role	is	fix	in	code!	-->
-	<role	name="zoom_manually"/>			<!--	this	name	of	role	is	fix	in	code!	-->
-
-
-
-	<button	action="changeStateOfRole"	fromLeft="0"	fromTop="0"	changeStateof="map"	location="top.png"			visibleIf="!map"	localeDefault="map"	localeID="4271"	alignText="L"	textOffsetLeft="10"/>
-	<button	action="changeStateOfRole"	fromLeft="0"	fromTop="0"	changeStateof="map"	location="top_active.png"		visibleIf="map"		localeDefault="map"	localeID="4271"	alignText="L"	textOffsetLeft="10"/>
-
-	<button	action="changeStateOfRole"	fromLeft="140"	fromTop="0"	changeStateof="zoom"	location="top.png"			visibleIf="!zoom"	localeDefault="zoom"	localeID="4294"	alignText="L"	textOffsetLeft="10"/>
-	<button	action="changeStateOfRole"	fromLeft="140"	fromTop="0"	changeStateof="zoom"	location="top_active.png"		visibleIf="zoom"	localeDefault="zoom"	localeID="4294"	alignText="L"	textOffsetLeft="10"/>
-
-	<button	action="changeStateOfRole"	fromLeft="280"	fromTop="0"	changeStateof="centermap"	location="top.png"		visibleIf="!centermap"	localeDefault="center to"	localeID="4295"	alignText="L"	textOffsetLeft="10"/>
-	<button	action="changeStateOfRole"	fromLeft="280"	fromTop="0"	changeStateof="centermap"	location="top_active.png"	visibleIf="centermap"	localeDefault="center to"	localeID="4295"	alignText="L"	textOffsetLeft="10"/>
-
-	<button	action="changeStateOfRole"	fromLeft="420"	fromTop="0"	changeStateof="detail"	location="top.png"		visibleIf="!detail"	localeDefault="detail"	localeID="4296"	alignText="L"	textOffsetLeft="10"/>
-	<button	action="changeStateOfRole"	fromLeft="420"	fromTop="0"	changeStateof="detail"	location="top_active.png"	visibleIf="detail"	localeDefault="detail"	localeID="4296"	alignText="L"	textOffsetLeft="10"/>
-
-	<button	action=""	fromLeft="560"	fromTop="0"	location="top_long.png"	visibleIf="always"/>
-	<button	action="close"	fromRight="30"	fromTop="0"	changeStateof="detail"	location="close.png"	icon="icon_close.png"	visibleIf="always"	/>
+    <role name="always" active="true"/>
+    <role name="menu"/>
+    <role name="done" disable="map|centermap|zoom|detail"/>
+    <role name="zoom" disable="map|centermap|detail"/>
+    <role name="centermap" disable="zoom|map|detail"/>
+    <role name="map" disable="zoom|centermap|detail"/>
+    <role name="detail" disable="zoom|centermap|map"/>
+    <role name="show_map" active="true"/>    <!--	this	name	of	role	is	fix	in	code!	-->
+    <role name="show_caches" active="true"/>    <!--	this	name	of	role	is	fix	in	code!	-->
+    <role name="fill_white" active="true"/>    <!--	this	name	of	role	is	fix	in	code!	-->
+    <role name="zoom_manually"/>            <!--	this	name	of	role	is	fix	in	code!	-->
 
 
-	<!--	sub	menu:	map	-->
-	<button	action="selectMap"		fromLeft="0"	fromTop="20"	location="row.png"	icon="icon_folder.png"		visibleIf="map"			localeDefault="Select a map manually$s"	localeID="4235"	alignText="L"	textOffsetLeft="20"/>
-	<button	action="changeMapDir"		fromLeft="0"	fromTop="40"	location="row.png"	icon="icon_folders.png"		visibleIf="map"			localeDefault="Change map directory"	localeID="4237"	alignText="L"	textOffsetLeft="20"/>
-	<button	changeStateof="show_map"	fromLeft="0"	fromTop="60"	location="row.png"	icon="icon_map.png"		visibleIf="map+!show_map"	localeDefault="Show map"		localeID="4239"	alignText="L"	textOffsetLeft="20"	action="changeStateOfRole"/>
-	<button	changeStateof="show_map"	fromLeft="0"	fromTop="60"	location="row.png"	icon="icon_nomap.png"		visibleIf="map+show_map"	localeDefault="Hide map"		localeID="4241"	alignText="L"	textOffsetLeft="20"	action="changeStateOfRole"/>
-	<button	changeStateof="fill_white"	fromLeft="0"	fromTop="80"	location="row.png"	icon="icon_map_no_fill.png"	visibleIf="map+fill_white"	localeDefault="Show white areas"	localeID="4267"	alignText="L"	textOffsetLeft="20"	action="changeStateOfRole"/>
-	<button	changeStateof="fill_white"	fromLeft="0"	fromTop="80"	location="row.png"	icon="icon_map_fill.png"	visibleIf="map+!fill_white"	localeDefault="Fill white areas"	localeID="4266"	alignText="L"	textOffsetLeft="20"	action="changeStateOfRole"/>
-	<button	changeStateof="show_caches"	fromLeft="0"	fromTop="100"	location="row.png"	icon="icon_map_cache.png"	visibleIf="map+!show_caches"	localeDefault="Alle Cache anzeigen"	localeID="4268"	alignText="L"	textOffsetLeft="20"	action="changeStateOfRole"/>
-	<button	changeStateof="show_caches"	fromLeft="0"	fromTop="100"	location="row.png"	icon="icon_map_no_cache.png"	visibleIf="map+show_caches"	localeDefault="Keine Cache anzeigen"	localeID="4269"	alignText="L"	textOffsetLeft="20"	action="changeStateOfRole"/>
+    <button action="changeStateOfRole" fromLeft="0" fromTop="0" changeStateof="map" location="top.png" visibleIf="!map"
+            localeDefault="map" localeID="4271" alignText="L" textOffsetLeft="10"/>
+    <button action="changeStateOfRole" fromLeft="0" fromTop="0" changeStateof="map" location="top_active.png"
+            visibleIf="map" localeDefault="map" localeID="4271" alignText="L" textOffsetLeft="10"/>
 
-	<!--	sub	menu:	zoom	-->
-	<button	action="changeStateOfRole"	fromLeft="140"	fromTop="20"	changeStateof="zoom_manually"	location="row.png"	icon="icon_zoom.png"	visibleIf="zoom+!zoom_manually"	localeDefault="Manual zoom"	localeID="4292"	alignText="L"	textOffsetLeft="20"/>
-	<button	action="changeStateOfRole"	fromLeft="140"	fromTop="20"	changeStateof="zoom_manually"	location="row.png"	icon="icon_zoom.png"	visibleIf="zoom+zoom_manually"	localeDefault="Manual zoom"	localeID="4292"	alignText="L"	textOffsetLeft="20"/>
-	<button	action="zoomin"	fromLeft="140"	fromTop="40"	location="row.png"	icon="icon_zoom_in.png"	visibleIf="zoom"	localeDefault="Zoom in"	localeID="4291"	alignText="L"	textOffsetLeft="20"/>
-	<button	action="zoomout"	fromLeft="140"	fromTop="60"	location="row.png"	icon="icon_zoom_out.png"	visibleIf="zoom"	localeDefault="Zoom out"	localeID="4290"	alignText="L"	textOffsetLeft="20"/>
-	<button	action="1to1"	fromLeft="140"	fromTop="80"	location="row.png"	icon="icon_1to1.png"	visibleIf="zoom"	localeDefault="Zoom to original resolution"	localeID="4293"	alignText="L"	textOffsetLeft="20"/>
+    <button action="changeStateOfRole" fromLeft="140" fromTop="0" changeStateof="zoom" location="top.png"
+            visibleIf="!zoom" localeDefault="zoom" localeID="4294" alignText="L" textOffsetLeft="10"/>
+    <button action="changeStateOfRole" fromLeft="140" fromTop="0" changeStateof="zoom" location="top_active.png"
+            visibleIf="zoom" localeDefault="zoom" localeID="4294" alignText="L" textOffsetLeft="10"/>
 
-	<!--	sub	menu:	center	map	-->
-	<button	action="moveToDest"	fromLeft="280"	fromTop="20"	location="row.png"	icon="icon_to_target.png"	visibleIf="centermap"	localeDefault="Move to goto point"	localeID="4260"	alignText="L"	textOffsetLeft="20"/>
-	<button	action="moveToGps"	fromLeft="280"	fromTop="40"	location="row.png"	icon="icon_to_gps.png"	visibleIf="centermap"	localeDefault="Move to GPS position"	localeID="4262"	alignText="L"	textOffsetLeft="20"/>
-	<button	action="moveToCenter"	fromLeft="280"	fromTop="60"	location="row.png"	icon="icon_to_centre.png"	visibleIf="centermap"	localeDefault="Move to centre"	localeID="4264"	alignText="L"	textOffsetLeft="20"/>
+    <button action="changeStateOfRole" fromLeft="280" fromTop="0" changeStateof="centermap" location="top.png"
+            visibleIf="!centermap" localeDefault="center to" localeID="4295" alignText="L" textOffsetLeft="10"/>
+    <button action="changeStateOfRole" fromLeft="280" fromTop="0" changeStateof="centermap" location="top_active.png"
+            visibleIf="centermap" localeDefault="center to" localeID="4295" alignText="L" textOffsetLeft="10"/>
 
-	<!--	sub	menu:	detail	-->
-	<button	action="highestResGpsDest"	fromLeft="420"	fromTop="20"	location="row.png"	icon="icon_map_pos_dest.png"	visibleIf="detail"	localeDefault=	"Highest res. containing dest. cur. position"	localeID="4244"	alignText="L"	textOffsetLeft="20"/>
-	<button	action="highestResolution"	fromLeft="420"	fromTop="40"	location="row.png"	icon="icon_map_highest_res.png"	visibleIf="detail"	localeDefault="Highest resolution"	localeID="4246"	alignText="L"	textOffsetLeft="20"/>
-	<button	action="keepManResolution"	fromLeft="420"	fromTop="60"	location="row.png"	icon="icon_map_man_res.png"	visibleIf="detail"	localeDefault="Keep manual resolution"	localeID="4248"	alignText="L"	textOffsetLeft="20"/>
-	<button	action="allCachesRes"		fromLeft="420"	fromTop="80"	location="row.png"	icon="icon_map_all.png"	visibleIf="detail"	localeDefault="Load a map containing all marked caches"	localeID="4252"	alignText="L"	textOffsetLeft="20"/>
-	<button	action="moreDetails"		fromLeft="420"	fromTop="100"	location="row.png"	icon="icon_map_more_details.png"	visibleIf="detail"	localeDefault="Load a map with more details"	localeID="4254"	alignText="L"	textOffsetLeft="20"/>
-	<button	action="moreOverview"		fromLeft="420"	fromTop="120"	location="row.png"	icon="icon_map_less_details.png"	visibleIf="detail"	localeDefault="Load a map for a better overview"	localeID="4256"	alignText="L"	textOffsetLeft="20"/>
+    <button action="changeStateOfRole" fromLeft="420" fromTop="0" changeStateof="detail" location="top.png"
+            visibleIf="!detail" localeDefault="detail" localeID="4296" alignText="L" textOffsetLeft="10"/>
+    <button action="changeStateOfRole" fromLeft="420" fromTop="0" changeStateof="detail" location="top_active.png"
+            visibleIf="detail" localeDefault="detail" localeID="4296" alignText="L" textOffsetLeft="10"/>
 
-	<!--	statusline	-->
-	<button	action=""	fromLeft="0"	fromBottom="25"	location="status_long.png"	visibleIf="always"/>
-	<button	action=""	fromRight="200"	fromBottom="25"	location="status.png"		visibleIf="always"	content="distance"	alignText="C"/>
-	<button	action=""	fromRight="100"	fromBottom="25"	location="status.png"		visibleIf="always"	content="scale"		alignText="C"/>
+    <button action="" fromLeft="560" fromTop="0" location="top_long.png" visibleIf="always"/>
+    <button action="close" fromRight="30" fromTop="0" changeStateof="detail" location="close.png" icon="icon_close.png"
+            visibleIf="always"/>
 
 
-	<!--status	line	icons-->
+    <!--	sub	menu:	map	-->
+    <button action="selectMap" fromLeft="0" fromTop="20" location="row.png" icon="icon_folder.png" visibleIf="map"
+            localeDefault="Select a map manually$s" localeID="4235" alignText="L" textOffsetLeft="20"/>
+    <button action="changeMapDir" fromLeft="0" fromTop="40" location="row.png" icon="icon_folders.png" visibleIf="map"
+            localeDefault="Change map directory" localeID="4237" alignText="L" textOffsetLeft="20"/>
+    <button changeStateof="show_map" fromLeft="0" fromTop="60" location="row.png" icon="icon_map.png"
+            visibleIf="map+!show_map" localeDefault="Show map" localeID="4239" alignText="L" textOffsetLeft="20"
+            action="changeStateOfRole"/>
+    <button changeStateof="show_map" fromLeft="0" fromTop="60" location="row.png" icon="icon_nomap.png"
+            visibleIf="map+show_map" localeDefault="Hide map" localeID="4241" alignText="L" textOffsetLeft="20"
+            action="changeStateOfRole"/>
+    <button changeStateof="fill_white" fromLeft="0" fromTop="80" location="row.png" icon="icon_map_no_fill.png"
+            visibleIf="map+fill_white" localeDefault="Show white areas" localeID="4267" alignText="L"
+            textOffsetLeft="20" action="changeStateOfRole"/>
+    <button changeStateof="fill_white" fromLeft="0" fromTop="80" location="row.png" icon="icon_map_fill.png"
+            visibleIf="map+!fill_white" localeDefault="Fill white areas" localeID="4266" alignText="L"
+            textOffsetLeft="20" action="changeStateOfRole"/>
+    <button changeStateof="show_caches" fromLeft="0" fromTop="100" location="row.png" icon="icon_map_cache.png"
+            visibleIf="map+!show_caches" localeDefault="Alle Cache anzeigen" localeID="4268" alignText="L"
+            textOffsetLeft="20" action="changeStateOfRole"/>
+    <button changeStateof="show_caches" fromLeft="0" fromTop="100" location="row.png" icon="icon_map_no_cache.png"
+            visibleIf="map+show_caches" localeDefault="Keine Cache anzeigen" localeID="4269" alignText="L"
+            textOffsetLeft="20" action="changeStateOfRole"/>
 
-	<!--	sub	menu:	map	-->
-	<button	action="selectMap"	fromLeft="10"	fromBottom="22"	location="icon_folder.png"	visibleIf="always"/>
-	<button	action="changeMapDir"	fromLeft="30"	fromBottom="22"	location="icon_folders.png"	visibleIf="always"/>
-	<button	fromLeft="50"	fromBottom="22"	changeStateof="show_map"	location="icon_map.png"			visibleIf="!show_map"		action="changeStateOfRole"/>
-	<button	fromLeft="50"	fromBottom="22"	changeStateof="show_map"	location="icon_nomap.png"		visibleIf="show_map"		action="changeStateOfRole"/>
-	<button	fromLeft="70"	fromBottom="22"	changeStateof="fill_white"	location="icon_map_fill.png"		visibleIf="!fill_white"		action="changeStateOfRole"/>
-	<button	fromLeft="70"	fromBottom="22"	changeStateof="fill_white"	location="icon_map_no_fill.png"		visibleIf="fill_white"		action="changeStateOfRole"/>
-	<button	fromLeft="90"	fromBottom="22"	changeStateof="show_caches"	location="icon_map_cache.png"		visibleIf="!show_caches"	action="changeStateOfRole"/>
-	<button	fromLeft="90"	fromBottom="22"	changeStateof="show_caches"	location="icon_map_no_cache.png"	visibleIf="show_caches"		action="changeStateOfRole"/>
+    <!--	sub	menu:	zoom	-->
+    <button action="changeStateOfRole" fromLeft="140" fromTop="20" changeStateof="zoom_manually" location="row.png"
+            icon="icon_zoom.png" visibleIf="zoom+!zoom_manually" localeDefault="Manual zoom" localeID="4292"
+            alignText="L" textOffsetLeft="20"/>
+    <button action="changeStateOfRole" fromLeft="140" fromTop="20" changeStateof="zoom_manually" location="row.png"
+            icon="icon_zoom.png" visibleIf="zoom+zoom_manually" localeDefault="Manual zoom" localeID="4292"
+            alignText="L" textOffsetLeft="20"/>
+    <button action="zoomin" fromLeft="140" fromTop="40" location="row.png" icon="icon_zoom_in.png" visibleIf="zoom"
+            localeDefault="Zoom in" localeID="4291" alignText="L" textOffsetLeft="20"/>
+    <button action="zoomout" fromLeft="140" fromTop="60" location="row.png" icon="icon_zoom_out.png" visibleIf="zoom"
+            localeDefault="Zoom out" localeID="4290" alignText="L" textOffsetLeft="20"/>
+    <button action="1to1" fromLeft="140" fromTop="80" location="row.png" icon="icon_1to1.png" visibleIf="zoom"
+            localeDefault="Zoom to original resolution" localeID="4293" alignText="L" textOffsetLeft="20"/>
 
-	<!--	sub	menu:	zoom	-->
-	<button	action="changeStateOfRole"	fromLeft="140"	fromBottom="22"	changeStateof="zoom_manually"	location="icon_zoom.png"	visibleIf="!zoom_manually"/>
-	<button	action="changeStateOfRole"	fromLeft="140"	fromBottom="22"	changeStateof="zoom_manually"	location="icon_zoom.png"	visibleIf="zoom_manually"/>
-	<button	action="zoomin"			fromLeft="160"	fromBottom="22"	location="icon_zoom_in.png"	visibleIf="always"/>
-	<button	action="zoomout"		fromLeft="180"	fromBottom="22"	location="icon_zoom_out.png"	visibleIf="always"/>
-	<button	action="1to1"			fromLeft="200"	fromBottom="22"	location="icon_1to1.png"	visibleIf="always"/>
+    <!--	sub	menu:	center	map	-->
+    <button action="moveToDest" fromLeft="280" fromTop="20" location="row.png" icon="icon_to_target.png"
+            visibleIf="centermap" localeDefault="Move to goto point" localeID="4260" alignText="L" textOffsetLeft="20"/>
+    <button action="moveToGps" fromLeft="280" fromTop="40" location="row.png" icon="icon_to_gps.png"
+            visibleIf="centermap" localeDefault="Move to GPS position" localeID="4262" alignText="L"
+            textOffsetLeft="20"/>
+    <button action="moveToCenter" fromLeft="280" fromTop="60" location="row.png" icon="icon_to_centre.png"
+            visibleIf="centermap" localeDefault="Move to centre" localeID="4264" alignText="L" textOffsetLeft="20"/>
 
-	<!--	sub	menu:	center	map	-->
-	<button	action="moveToDest"	fromLeft="250"	fromBottom="22"	location="icon_to_target.png"	visibleIf="always"/>
-	<button	action="moveToGps"	fromLeft="270"	fromBottom="22"	location="icon_to_gps.png"	visibleIf="always"/>
-	<button	action="moveToCenter"	fromLeft="290"	fromBottom="22"	location="icon_to_centre.png"	visibleIf="always"/>
+    <!--	sub	menu:	detail	-->
+    <button action="highestResGpsDest" fromLeft="420" fromTop="20" location="row.png" icon="icon_map_pos_dest.png"
+            visibleIf="detail" localeDefault="Highest res. containing dest. cur. position" localeID="4244" alignText="L"
+            textOffsetLeft="20"/>
+    <button action="highestResolution" fromLeft="420" fromTop="40" location="row.png" icon="icon_map_highest_res.png"
+            visibleIf="detail" localeDefault="Highest resolution" localeID="4246" alignText="L" textOffsetLeft="20"/>
+    <button action="keepManResolution" fromLeft="420" fromTop="60" location="row.png" icon="icon_map_man_res.png"
+            visibleIf="detail" localeDefault="Keep manual resolution" localeID="4248" alignText="L"
+            textOffsetLeft="20"/>
+    <button action="allCachesRes" fromLeft="420" fromTop="80" location="row.png" icon="icon_map_all.png"
+            visibleIf="detail" localeDefault="Load a map containing all marked caches" localeID="4252" alignText="L"
+            textOffsetLeft="20"/>
+    <button action="moreDetails" fromLeft="420" fromTop="100" location="row.png" icon="icon_map_more_details.png"
+            visibleIf="detail" localeDefault="Load a map with more details" localeID="4254" alignText="L"
+            textOffsetLeft="20"/>
+    <button action="moreOverview" fromLeft="420" fromTop="120" location="row.png" icon="icon_map_less_details.png"
+            visibleIf="detail" localeDefault="Load a map for a better overview" localeID="4256" alignText="L"
+            textOffsetLeft="20"/>
 
-	<!--	sub	menu:	detail	-->
-	<button	action="highestResGpsDest"	fromLeft="340"	fromBottom="22"	location="icon_map_pos_dest.png"	visibleIf="always"/>
-	<button	action="highestResolution"	fromLeft="360"	fromBottom="22"	location="icon_map_highest_res.png"	visibleIf="always"/>
-	<button	action="keepManResolution"	fromLeft="380"	fromBottom="22"	location="icon_map_man_res.png"		visibleIf="always"/>
-	<button	action="allCachesRes"		fromLeft="400"	fromBottom="22"	location="icon_map_all.png"		visibleIf="always"/>
-	<button	action="moreDetails"		fromLeft="420"	fromBottom="22"	location="icon_map_more_details.png"	visibleIf="always"/>
-	<button	action="moreOverview"		fromLeft="440"	fromBottom="22"	location="icon_map_less_details.png"	visibleIf="always"/>
+    <!--	statusline	-->
+    <button action="" fromLeft="0" fromBottom="25" location="status_long.png" visibleIf="always"/>
+    <button action="" fromRight="200" fromBottom="25" location="status.png" visibleIf="always" content="distance"
+            alignText="C"/>
+    <button action="" fromRight="100" fromBottom="25" location="status.png" visibleIf="always" content="scale"
+            alignText="C"/>
+
+
+    <!--status	line	icons-->
+
+    <!--	sub	menu:	map	-->
+    <button action="selectMap" fromLeft="10" fromBottom="22" location="icon_folder.png" visibleIf="always"/>
+    <button action="changeMapDir" fromLeft="30" fromBottom="22" location="icon_folders.png" visibleIf="always"/>
+    <button fromLeft="50" fromBottom="22" changeStateof="show_map" location="icon_map.png" visibleIf="!show_map"
+            action="changeStateOfRole"/>
+    <button fromLeft="50" fromBottom="22" changeStateof="show_map" location="icon_nomap.png" visibleIf="show_map"
+            action="changeStateOfRole"/>
+    <button fromLeft="70" fromBottom="22" changeStateof="fill_white" location="icon_map_fill.png"
+            visibleIf="!fill_white" action="changeStateOfRole"/>
+    <button fromLeft="70" fromBottom="22" changeStateof="fill_white" location="icon_map_no_fill.png"
+            visibleIf="fill_white" action="changeStateOfRole"/>
+    <button fromLeft="90" fromBottom="22" changeStateof="show_caches" location="icon_map_cache.png"
+            visibleIf="!show_caches" action="changeStateOfRole"/>
+    <button fromLeft="90" fromBottom="22" changeStateof="show_caches" location="icon_map_no_cache.png"
+            visibleIf="show_caches" action="changeStateOfRole"/>
+
+    <!--	sub	menu:	zoom	-->
+    <button action="changeStateOfRole" fromLeft="140" fromBottom="22" changeStateof="zoom_manually"
+            location="icon_zoom.png" visibleIf="!zoom_manually"/>
+    <button action="changeStateOfRole" fromLeft="140" fromBottom="22" changeStateof="zoom_manually"
+            location="icon_zoom.png" visibleIf="zoom_manually"/>
+    <button action="zoomin" fromLeft="160" fromBottom="22" location="icon_zoom_in.png" visibleIf="always"/>
+    <button action="zoomout" fromLeft="180" fromBottom="22" location="icon_zoom_out.png" visibleIf="always"/>
+    <button action="1to1" fromLeft="200" fromBottom="22" location="icon_1to1.png" visibleIf="always"/>
+
+    <!--	sub	menu:	center	map	-->
+    <button action="moveToDest" fromLeft="250" fromBottom="22" location="icon_to_target.png" visibleIf="always"/>
+    <button action="moveToGps" fromLeft="270" fromBottom="22" location="icon_to_gps.png" visibleIf="always"/>
+    <button action="moveToCenter" fromLeft="290" fromBottom="22" location="icon_to_centre.png" visibleIf="always"/>
+
+    <!--	sub	menu:	detail	-->
+    <button action="highestResGpsDest" fromLeft="340" fromBottom="22" location="icon_map_pos_dest.png"
+            visibleIf="always"/>
+    <button action="highestResolution" fromLeft="360" fromBottom="22" location="icon_map_highest_res.png"
+            visibleIf="always"/>
+    <button action="keepManResolution" fromLeft="380" fromBottom="22" location="icon_map_man_res.png"
+            visibleIf="always"/>
+    <button action="allCachesRes" fromLeft="400" fromBottom="22" location="icon_map_all.png" visibleIf="always"/>
+    <button action="moreDetails" fromLeft="420" fromBottom="22" location="icon_map_more_details.png"
+            visibleIf="always"/>
+    <button action="moreOverview" fromLeft="440" fromBottom="22" location="icon_map_less_details.png"
+            visibleIf="always"/>
 
 </mmc>

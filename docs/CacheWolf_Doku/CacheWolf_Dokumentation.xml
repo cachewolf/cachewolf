@@ -1,46 +1,47 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- This document was created with Syntext Serna Free. -->
 <!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.4//EN"
-"http://www.oasis-open.org/docbook/xml/4.4/docbookx.dtd" [
-<!ENTITY _anlage_faq SYSTEM "_anlage_faq.xml">
-<!ENTITY _anlage_gplv2 SYSTEM "_anlage_gplv2.xml">
-<!ENTITY _anlage_versionsgeschichte SYSTEM "_anlage_versionsgeschichte.xml">
-<!ENTITY _allgemein SYSTEM "_allgemein.xml">
-<!ENTITY _installation SYSTEM "_installation.xml">
-<!ENTITY _erster_start SYSTEM "_erster_start.xml">
-<!ENTITY _ansichten SYSTEM "_ansichten.xml">
-<!ENTITY _menu SYSTEM "_menu.xml">
-<!ENTITY _benutzte_dateien SYSTEM "_benutzte_dateien.xml">
-]>
+        "http://www.oasis-open.org/docbook/xml/4.4/docbookx.dtd" [
+        <!ENTITY _anlage_faq SYSTEM "_anlage_faq.xml">
+        <!ENTITY _anlage_gplv2 SYSTEM "_anlage_gplv2.xml">
+        <!ENTITY _anlage_versionsgeschichte SYSTEM "_anlage_versionsgeschichte.xml">
+        <!ENTITY _allgemein SYSTEM "_allgemein.xml">
+        <!ENTITY _installation SYSTEM "_installation.xml">
+        <!ENTITY _erster_start SYSTEM "_erster_start.xml">
+        <!ENTITY _ansichten SYSTEM "_ansichten.xml">
+        <!ENTITY _menu SYSTEM "_menu.xml">
+        <!ENTITY _benutzte_dateien SYSTEM "_benutzte_dateien.xml">
+        ]>
 <book>
-  <title>CacheWolf Dokumentation</title>
+    <title>CacheWolf Dokumentation</title>
 
-  <bookinfo>
-    <edition>1.0</edition>
+    <bookinfo>
+        <edition>1.0</edition>
 
-    <productnumber>ab 1.2</productnumber>
+        <productnumber>ab 1.2</productnumber>
 
-    <pubdate>Noch nicht veröffentlicht!</pubdate>
+        <pubdate>Noch nicht veröffentlicht!</pubdate>
 
-    <releaseinfo>Dieses Dokument in der Ausgabe 1.0 bezieht sich auf die
-    CacheWolf Version ab 1.2.</releaseinfo>
-  </bookinfo>
+        <releaseinfo>Dieses Dokument in der Ausgabe 1.0 bezieht sich auf die
+            CacheWolf Version ab 1.2.
+        </releaseinfo>
+    </bookinfo>
 
-  &_allgemein;
+    &_allgemein;
 
-  &_installation;
+    &_installation;
 
-  &_erster_start;
+    &_erster_start;
 
-  &_ansichten;
+    &_ansichten;
 
-  &_menu;
+    &_menu;
 
-  &_benutzte_dateien;
+    &_benutzte_dateien;
 
-  &_anlage_faq;
+    &_anlage_faq;
 
-  &_anlage_versionsgeschichte;
+    &_anlage_versionsgeschichte;
 
-  &_anlage_gplv2;
+    &_anlage_gplv2;
 </book>

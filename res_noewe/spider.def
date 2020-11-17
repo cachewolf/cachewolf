@@ -29,7 +29,7 @@ DTSRex             = small">(.*?)/(.*?)<(.*)\\s*(.*)container/(.*)\\.gif
 #                            GC34CQJ
 #                            |
 waypointRex        = \\|\\s+GC(.*?)\\s+\\|
-TypeRex            = www.geocaching.com/images/wpttypes/(.*?)\\.gif
+TypeRex            = /images/[W,w]pt[T,t]ypes/(.*?)\\.gif
 found              = class="Success"
 own                = /WptTypes/name_tag.gif
 TBRex              = /wpttypes/([0-9]+).gif" alt="(.*?)"
@@ -42,9 +42,8 @@ TBRex              = /wpttypes/([0-9]+).gif" alt="(.*?)"
 #...size geocache, with difficulty of 1, terrain of 1.5. It...
 difficultyRex      = difficulty of (.*?),
 terrainRex         = terrain of (.*?). It
-#                                                  title="About Cache Types"><img src="/images/WptTypes/2.gif" alt="Traditional Cache"
-#<a href="/about/cache_types.aspx" target="_blank" title="About Cache Types"><img src="/images/WptTypes/8.gif" alt="Mystery-Cache" title="Mystery-Cache" /></a>
-cacheTypeRex       = /images/WptTypes/(.*?)\\.gif" alt="
+#<meta name="og:image" content="https://www.geocaching.com/images/facebook/wpttypes/3.png" property="og:image" />
+cacheTypeRex       = facebook/wpttypes/(.*?)\\.png
 #<span id="ctl00_ContentBody_CacheName">EDUARD-MÖRIKE-WEG 5B</span>
 cacheNameRex       = tBody_CacheName">((?s).*?)</span>
 #Ein Geocache von <a href="http://www.geocaching.com/profile/?guid=7715b8c5-bbbb-4b57-bf14-251b134758d2&wid=66b27589-480e-4251-86f3-42884af5f6fd&ds=2">Trebbi</a>
@@ -138,3 +137,10 @@ attBlockExStart = Attributes
 attBlockExEnd  = What are Attributes?</a></small></p>
 attExStart = /images/attributes/
 attExEnd = " alt=
+
+#--------------------------------------
+#Section2f: UUID
+#--------------------------------------
+#uuidRex = <link rel="canonical" href="https://www.geocaching.com/seek/cache_details.aspx?guid=([-a-z0-9]+)" />
+#uuidRex = <link rel="c
+uuidRex = guid=([-0-9a-z]+)

@@ -28,40 +28,40 @@ import ewe.ui.FormBase;
 
 public class CacheWolf {
     public static void main(String args[]) {
-	ewe.sys.Vm.startEwe(args);
+        ewe.sys.Vm.startEwe(args);
 
-	// get program command line parameters and switches
-	// Vm.getProgramArguments(); <-- only works in eclipse, but mixes the letters in the ewe-vm (tested in ewe-1.49 on win xp)
-	String configfile = null;
-	boolean debug = false;
-	if (args.length > 0) {
-	    for (int i = 0; i < args.length; i++) {
-		if (args[i] != null && args[i].length() > 1 && (args[i].startsWith("-") || args[i].startsWith("/"))) {
-		    String c = args[i].substring(1, args[i].length());
-		    if (c.equalsIgnoreCase("c")) {
-			if (i < args.length - 1) {
-			    configfile = args[i + 1];
-			    i++;
-			} else {
-			    new InfoBox(MyLocale.getMsg(5500, "Error"), MyLocale.getMsg(7200, "Usage: CacheWolf [-c <path to pref.xml>] [-debug]")).wait(FormBase.OKB);
-			    // return usage info
-			    ewe.sys.Vm.exit(1);
-			}
-		    }
-		    if (c.equalsIgnoreCase("debug")) {
-			debug = true;
-		    }
+        // get program command line parameters and switches
+        // Vm.getProgramArguments(); <-- only works in eclipse, but mixes the letters in the ewe-vm (tested in ewe-1.49 on win xp)
+        String configfile = null;
+        boolean debug = false;
+        if (args.length > 0) {
+            for (int i = 0; i < args.length; i++) {
+                if (args[i] != null && args[i].length() > 1 && (args[i].startsWith("-") || args[i].startsWith("/"))) {
+                    String c = args[i].substring(1, args[i].length());
+                    if (c.equalsIgnoreCase("c")) {
+                        if (i < args.length - 1) {
+                            configfile = args[i + 1];
+                            i++;
+                        } else {
+                            new InfoBox(MyLocale.getMsg(5500, "Error"), MyLocale.getMsg(7200, "Usage: CacheWolf [-c <path to pref.xml>] [-debug]")).wait(FormBase.OKB);
+                            // return usage info
+                            ewe.sys.Vm.exit(1);
+                        }
+                    }
+                    if (c.equalsIgnoreCase("debug")) {
+                        debug = true;
+                    }
 
-		}
-	    }
-	}
-	// debug = true will permanently set this in pref.xml
-	// !!! debug = false will be overwritten by reading pref.xml
-	MainForm mainForm = new MainForm(debug, configfile);
-	Device.preventIdleState(true);
-	mainForm.execute();
-	Device.preventIdleState(false);
-	ewe.sys.Vm.exit(0);
+                }
+            }
+        }
+        // debug = true will permanently set this in pref.xml
+        // !!! debug = false will be overwritten by reading pref.xml
+        MainForm mainForm = new MainForm(debug, configfile);
+        Device.preventIdleState(true);
+        mainForm.execute();
+        Device.preventIdleState(false);
+        ewe.sys.Vm.exit(0);
     }
 
 }

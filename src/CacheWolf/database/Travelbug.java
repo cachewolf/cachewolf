@@ -25,9 +25,8 @@ import CacheWolf.utils.SafeXML;
 
 /**
  * This contains the basic information of a GC travelbug.
- * 
+ *
  * @author salzkammergut
- * 
  */
 public class Travelbug {
     /**
@@ -36,80 +35,94 @@ public class Travelbug {
      * use the id
      */
     private String guid; // 0
-    /** GC Name i.e. "First Roman Geocoin" */
+    /**
+     * GC Name i.e. "First Roman Geocoin"
+     */
     private String name; // 1
-    /** GC tracking no i.e. 652345, needed for logging */
+    /**
+     * GC tracking no i.e. 652345, needed for logging
+     */
     private String trackingNo; // 2
-    /** GC Mission */
+    /**
+     * GC Mission
+     */
     private String mission; // 3
 
-    /** Construct a travelbug with a given name */
+    /**
+     * Construct a travelbug with a given name
+     */
     public Travelbug(String name) {
-	this("", name, "");
+        this("", name, "");
     }
 
-    /** Construct a travelbug with id, name and mission */
+    /**
+     * Construct a travelbug with id, name and mission
+     */
     public Travelbug(String guid, String name, String mission) {
-	this.guid = guid;
-	this.name = SafeXML.html2iso8859s1(name);
-	this.mission = mission;
-	setTrackingNo("");
+        this.guid = guid;
+        this.name = SafeXML.html2iso8859s1(name);
+        this.mission = mission;
+        setTrackingNo("");
     }
 
     public String getGuid() {
-	return guid;
+        return guid;
     }
 
     public void setGuid(String guid) {
-	this.guid = guid;
+        this.guid = guid;
     }
 
     public String getName() {
-	return name;
+        return name;
     }
 
     public void setName(String name) {
-	this.name = SafeXML.html2iso8859s1(name);
+        this.name = SafeXML.html2iso8859s1(name);
     }
 
     public String getTrackingNo() {
-	return trackingNo;
+        return trackingNo;
     }
 
     public void setTrackingNo(String trackingNo) {
-	this.trackingNo = trackingNo;
-    }
-
-    public void setMission(String mission) {
-	this.mission = mission;
+        this.trackingNo = trackingNo;
     }
 
     public String getMission() {
-	return this.mission;
+        return this.mission;
     }
 
-    /** Return XML representation of travelbug for storing in cache.xml */
+    public void setMission(String mission) {
+        this.mission = mission;
+    }
+
+    /**
+     * Return XML representation of travelbug for storing in cache.xml
+     */
     public String toXML() {
-	StringBuffer s = new StringBuffer(300);
-	s.append("  <tb guid=\"");
-	s.append(guid);
-	s.append("\"><name><![CDATA[");
-	s.append(name);
-	s.append("]]></name><![CDATA[");
-	s.append(mission);
-	s.append("]]></tb>\n");
-	return s.toString();
+        StringBuffer s = new StringBuffer(300);
+        s.append("  <tb guid=\"");
+        s.append(guid);
+        s.append("\"><name><![CDATA[");
+        s.append(name);
+        s.append("]]></name><![CDATA[");
+        s.append(mission);
+        s.append("]]></tb>\n");
+        return s.toString();
     }
 
-    /** Return HTML representation of travelbug for display on screen */
+    /**
+     * Return HTML representation of travelbug for display on screen
+     */
     public String toHtml() {
-	StringBuffer s = new StringBuffer(300);
-	s.append("<b>Name:</b> ");
-	s.append(name);
-	s.append("<br>");
-	s.append(mission);
-	s.append("<hr>");
-	return s.toString();
+        StringBuffer s = new StringBuffer(300);
+        s.append("<b>Name:</b> ");
+        s.append(name);
+        s.append("<br>");
+        s.append(mission);
+        s.append("<hr>");
+        return s.toString();
     }
 
 }

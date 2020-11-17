@@ -1,0 +1,16 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg xmlns:xml="http://www.w3.org/XML/1998/namespace" x="0px" y="0px" width="32" height="32" overflow="hidden" viewBox="0, 0, 500, 500" preserveAspectRatio="xMidYMid" font-size="0" id="svg" xml:space="preserve"  xmlns="http://www.w3.org/2000/svg" version="1.1">
+  <circle cx="250" cy="250" r="225" xml:space="preserve" style="fill:#0A0A0A;" />
+  <circle cx="250" cy="250" r="153" stroke="#04C101" stroke-width="8" xml:space="preserve" />
+  <circle cx="250" cy="250" r="70" stroke="#04C101" stroke-width="8" xml:space="preserve" />
+  <g stroke-width="0" xml:space="preserve" style="fill:none;">
+    <path d="M370 58 A225 225 0 0 1 442 370 L250 250" fill-opacity="0.6" xml:space="preserve" style="fill:#038100;" />
+  </g>
+  <g stroke-width="0" xml:space="preserve" style="fill:none;">
+    <path d="M370 58 A225 225 0 0 1 465 180 L250 250" fill-opacity="0.5" xml:space="preserve" style="fill:#05B901;" />
+  </g>
+  <line x1="250" y1="250" x2="370" y2="58" stroke="#08FF02" stroke-width="9" xml:space="preserve" />
+  <circle cx="250" cy="250" r="207" stroke="#0A0A0A" fill-opacity="0" stroke-width="8" stroke-opacity="0.47" xml:space="preserve" />
+  <circle cx="250" cy="250" r="225" stroke="#B9B9B9" fill-opacity="0" stroke-width="32" xml:space="preserve" style="fill:#0A0A0A;" />
+</svg>

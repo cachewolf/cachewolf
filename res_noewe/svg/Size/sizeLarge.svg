@@ -1,0 +1,12 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg xmlns:xml="http://www.w3.org/XML/1998/namespace" x="0" y="0" width="32" height="24" overflow="hidden" viewBox="0, 0, 257, 192.75" preserveAspectRatio="xMidYMid" font-size="0px" id="svg" xml:space="preserve"  xmlns="http://www.w3.org/2000/svg" version="1.1">
+  <g transform="matrix(1, 0, 0, 2.82648, 0, -7.973152)" id="g14" xml:space="preserve">
+    <rect x="10.3857" y="43.1669" width="16.9167" height="16.9166" stroke-width="0.2" id="rect2" xml:space="preserve" style="fill:#DADADA;" />
+    <rect x="79.969" y="21.1669" width="38.6667" height="38.6667" stroke-width="0.2" id="rect4" xml:space="preserve" style="fill:#DADADA;" />
+    <rect x="130.302" y="14.8003" width="45" height="45" stroke-width="0.2" id="rect6" xml:space="preserve" style="fill:#8D1B1E;" />
+    <rect x="188.302" y="9.0836" width="62.4667" height="56.7111" stroke-width="0.2" id="rect8" xml:space="preserve" style="fill:#BEBDBD;" />
+    <rect x="38.9025" y="31.8003" width="28.4333" height="28.4333" stroke-width="0.2" id="rect10" xml:space="preserve" style="fill:#CED0D3;" />
+    <rect x="3.00012" y="6.16689" width="249.636" height="62.6667" stroke="#ABABAB" stroke-width="6" id="rect12" xml:space="preserve" style="fill:none;" />
+  </g>
+</svg>

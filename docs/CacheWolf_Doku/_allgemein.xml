@@ -1,361 +1,389 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <chapter>
-  <chapterinfo>
+    <chapterinfo>
+        <title>Vor der Installation</title>
+
+        <date>12.3.2008</date>
+
+        <releaseinfo>CacheWolf 1.2</releaseinfo>
+
+        <author>
+            <surname>René Schmidt</surname>
+        </author>
+
+        <revhistory>
+            <revision>
+                <revnumber>0.1</revnumber>
+
+                <date>09. April 2010</date>
+
+                <author>
+                    <surname>René Schmidt</surname>
+                </author>
+
+                <revdescription>
+                    <para>Erster Entwurf, nur grober Aufbau/Gliederung; teilweise
+                        Übernahme von Inhalt von cachewolf.de
+                    </para>
+                </revdescription>
+            </revision>
+
+            <revision>
+                <revnumber>0.2</revnumber>
+
+                <date>12. April 2010</date>
+
+                <author>
+                    <surname>René Schmidt</surname>
+                </author>
+
+                <revdescription>
+                    <para>Section Hilfe eingefügt</para>
+                </revdescription>
+            </revision>
+
+            <revision>
+                <revnumber>0.3</revnumber>
+
+                <date>13. April 2010</date>
+
+                <author>
+                    <surname>René Schmidt</surname>
+                </author>
+
+                <revdescription>
+                    <para>Voraussetzungen PocketPC eingefügt</para>
+                </revdescription>
+            </revision>
+
+            <revision>
+                <revnumber>0.4</revnumber>
+
+                <date>19. April 2010</date>
+
+                <author>
+                    <surname>René Schmidt</surname>
+                </author>
+
+                <revdescription>
+                    <para>Voraussetzungen Zaurus eingefügt</para>
+                </revdescription>
+            </revision>
+        </revhistory>
+    </chapterinfo>
+
     <title>Vor der Installation</title>
 
-    <date>12.3.2008</date>
-
-    <releaseinfo>CacheWolf 1.2</releaseinfo>
-
-    <author>
-      <surname>René Schmidt</surname>
-    </author>
-
-    <revhistory>
-      <revision>
-        <revnumber>0.1</revnumber>
-
-        <date>09. April 2010</date>
-
-        <author>
-          <surname>René Schmidt</surname>
-        </author>
-
-        <revdescription>
-          <para>Erster Entwurf, nur grober Aufbau/Gliederung; teilweise
-          Übernahme von Inhalt von cachewolf.de</para>
-        </revdescription>
-      </revision>
-
-      <revision>
-        <revnumber>0.2</revnumber>
-
-        <date>12. April 2010</date>
-
-        <author>
-          <surname>René Schmidt</surname>
-        </author>
-
-        <revdescription>
-          <para>Section Hilfe eingefügt</para>
-        </revdescription>
-      </revision>
-
-      <revision>
-        <revnumber>0.3</revnumber>
-
-        <date>13. April 2010</date>
-
-        <author>
-          <surname>René Schmidt</surname>
-        </author>
-
-        <revdescription>
-          <para>Voraussetzungen PocketPC eingefügt</para>
-        </revdescription>
-      </revision>
-
-      <revision>
-        <revnumber>0.4</revnumber>
-
-        <date>19. April 2010</date>
-
-        <author>
-          <surname>René Schmidt</surname>
-        </author>
-
-        <revdescription>
-          <para>Voraussetzungen Zaurus eingefügt</para>
-        </revdescription>
-      </revision>
-    </revhistory>
-  </chapterinfo>
-
-  <title>Vor der Installation</title>
-
-  <section>
-    <title>Über Cachewolf</title>
-
-    <para>CacheWolf ist eine kostenlose (Open Source) Software, um das
-    "papierlose" Cachen zu ermöglichen.</para>
-
-    <para>CacheWolf ist ein Programm, das alle Funktionen, die man zum
-    Geocachen braucht, vereint. Es enthält eine kleine Datenbank zur
-    Verwaltung der Caches, die automatisch aus den wichtigsten Datenbanken
-    (geocaching.com und opencaching.de) heruntergeladen und importiert werden
-    können. Zu jedem Cache werden sowohl die Beschreibung, einschließlich der
-    Bilder und Spoiler, als auch die Logs importiert und können jederzeit
-    angezeigt werden. Daneben werden die Travelbugs, die sich in den Caches
-    befinden, angezeigt. Außerdem enthält CacheWolf eine große und
-    übersichtliche Kompass-Rose, mit deren Hilfe man sich zum Cache führen
-    lassen kann (dafür ist eine GPS-Receiver Voraussetzung). Zusätzlich kann
-    man sich auf einen Karten, die automatisch aus dem Internet
-    heruntergeladen werden können (beispielsweise die topografischen Karten
-    der meisten deutschen Landesvermessungsämter), anzeigen lassen, wo sich
-    die Caches und man sich selbst befindet. Erweiterte Funktionen bietet die
-    integrierte Planungsmöglichkeit von Cache-Touren und die
-    Travelbugsverwaltung. Zur Unterstützung bei der Lösung von Multicaches,
-    enthält Cachewolf eine Verwaltung von Zwischen-Stationen, eine Berechnung
-    neuer Koordinaten aus Richtung und Entfernung und einen "Solver", in dem
-    man in einer vereinfachten Programmiersprache ("WolfLanguage")
-    komplizierte Berechnungen durchführen lassen kann.</para>
-
-    <para>CacheWolf läuft sowohl auf dem PC (in Windows, MacOS und Linux) als
-    auch auf Windows Mobile basierten PDAs. Auf allen Betriebssystemen wird
-    exakt die selbe Datenstruktur verwendet, so dass zwischen PC und PDA die
-    Daten leicht kopiert werden können. </para>
-  </section>
-
-  <section>
-    <title>Copyright/Lizenz</title>
-
-    <para>Das Urheberrecht von Cachewolf liegt beim Entwicklungsteam von
-    Cachewolf. Mehr Informationen können unter <ulink
-    url="http://developer.berlios.de/projects/cachewolf/ ">http://developer.berlios.de/projects/cachewolf/
-    </ulink> abgerufen werden. </para>
-
-    <para>Cachewolf ist OpenSource, das heißt, der Quelltext ist für jedermann
-    frei zugänglich. Es wurde unter der GNU General Public License, in Version
-    2 der von der Free Software Foundation entwickelten Fassung,
-    veröffentlicht. Unter diesen Bedingungen kann Cachewolf verbreitet
-    und/oder bearbeitet werden. Der Wortlaut der GNU Public License v2 kann
-    unter <ulink
-    url="http://www.gnu.org/licenses/gpl-2.0.html">http://www.gnu.org/licenses/gpl-2.0.html</ulink>
-    oder in der Anlage eingesehen werden.</para>
-
-    <para>Cachewolf wird in der Hoffnung, dass es nützlich ist, verbreitet. Es
-    wird mit der Verbreitung und Entwicklung keinerlei Garantie übernommen,
-    insbesondere auch keine impilzite Garantie für die allgemeine
-    Gebrauchsfähigkeit oder die Gebrauchsfähigkeit für einen bestimmten Zweck.
-    Für weitere Informationen schauen Sie bitte in die GNU General Public
-    License v2.</para>
-  </section>
-
-  <section>
-    <title>Systemvoraussetzungen</title>
-
-    <para>Cachewolf hat ist generell unter Windows, Linux, MacOS und Windows
-    Mobile lauffähig. Je nach verwendeter Version unterscheiden sich diese
-    geringfügig.</para>
-
     <section>
-      <title>Windows</title>
+        <title>Über Cachewolf</title>
 
-      <para>Mindestvoraussetzungen:</para>
+        <para>CacheWolf ist eine kostenlose (Open Source) Software, um das
+            "papierlose" Cachen zu ermöglichen.
+        </para>
 
-      <itemizedlist>
-        <listitem>
-          <para>Windows XP, Windows Vista oder Windows 7</para>
-        </listitem>
+        <para>CacheWolf ist ein Programm, das alle Funktionen, die man zum
+            Geocachen braucht, vereint. Es enthält eine kleine Datenbank zur
+            Verwaltung der Caches, die automatisch aus den wichtigsten Datenbanken
+            (geocaching.com und opencaching.de) heruntergeladen und importiert werden
+            können. Zu jedem Cache werden sowohl die Beschreibung, einschließlich der
+            Bilder und Spoiler, als auch die Logs importiert und können jederzeit
+            angezeigt werden. Daneben werden die Travelbugs, die sich in den Caches
+            befinden, angezeigt. Außerdem enthält CacheWolf eine große und
+            übersichtliche Kompass-Rose, mit deren Hilfe man sich zum Cache führen
+            lassen kann (dafür ist eine GPS-Receiver Voraussetzung). Zusätzlich kann
+            man sich auf einen Karten, die automatisch aus dem Internet
+            heruntergeladen werden können (beispielsweise die topografischen Karten
+            der meisten deutschen Landesvermessungsämter), anzeigen lassen, wo sich
+            die Caches und man sich selbst befindet. Erweiterte Funktionen bietet die
+            integrierte Planungsmöglichkeit von Cache-Touren und die
+            Travelbugsverwaltung. Zur Unterstützung bei der Lösung von Multicaches,
+            enthält Cachewolf eine Verwaltung von Zwischen-Stationen, eine Berechnung
+            neuer Koordinaten aus Richtung und Entfernung und einen "Solver", in dem
+            man in einer vereinfachten Programmiersprache ("WolfLanguage")
+            komplizierte Berechnungen durchführen lassen kann.
+        </para>
 
-        <listitem>
-          <para>5 Megabyte freier Speicherplatz für Cachewolf (3 Megabyte
-          zusätzlich für die Installation)</para>
-        </listitem>
-
-        <listitem>
-          <para>20 Megabyte freier Speicherplatz für Profildaten</para>
-        </listitem>
-      </itemizedlist>
-
-      <para>Empfohlene Voraussetzungen:</para>
-
-      <itemizedlist>
-        <listitem>
-          <para>Windows XP, Windows Vista oder Windows 7</para>
-        </listitem>
-
-        <listitem>
-          <para>5 Megabyte freier Speicherplatz für Cachewolf (3 Megabyte
-          zusätzlich für die Installation)</para>
-        </listitem>
-
-        <listitem>
-          <para>500 Megabyte freier Speicherplatz für Profildaten (inklusive
-          Karten)</para>
-        </listitem>
-
-        <listitem>
-          <para>Internetanschluss</para>
-        </listitem>
-      </itemizedlist>
+        <para>CacheWolf läuft sowohl auf dem PC (in Windows, MacOS und Linux) als
+            auch auf Windows Mobile basierten PDAs. Auf allen Betriebssystemen wird
+            exakt die selbe Datenstruktur verwendet, so dass zwischen PC und PDA die
+            Daten leicht kopiert werden können.
+        </para>
     </section>
 
     <section>
-      <title>Java</title>
+        <title>Copyright/Lizenz</title>
 
-      <para>Mindestvoraussetzungen:</para>
+        <para>Das Urheberrecht von Cachewolf liegt beim Entwicklungsteam von
+            Cachewolf. Mehr Informationen können unter <ulink
+                    url="http://developer.berlios.de/projects/cachewolf/ ">
+                http://developer.berlios.de/projects/cachewolf/
+            </ulink> abgerufen werden.
+        </para>
 
-      <itemizedlist>
-        <listitem>
-          <para>Windows 2000, Windows XP, Windows Vista, Windows 7, Linux oder
-          MacOS</para>
-        </listitem>
+        <para>Cachewolf ist OpenSource, das heißt, der Quelltext ist für jedermann
+            frei zugänglich. Es wurde unter der GNU General Public License, in Version
+            2 der von der Free Software Foundation entwickelten Fassung,
+            veröffentlicht. Unter diesen Bedingungen kann Cachewolf verbreitet
+            und/oder bearbeitet werden. Der Wortlaut der GNU Public License v2 kann
+            unter
+            <ulink
+                    url="http://www.gnu.org/licenses/gpl-2.0.html">http://www.gnu.org/licenses/gpl-2.0.html
+            </ulink>
+            oder in der Anlage eingesehen werden.
+        </para>
 
-        <listitem>
-          <para>Java Runtime Version 1.5 oder besser</para>
-        </listitem>
-
-        <listitem>
-          <para>5 Megabyte freier Speicherplatz für Cachewolf (3 Megabyte
-          zusätzlich für die Installation)</para>
-        </listitem>
-
-        <listitem>
-          <para>20 Megabyte freier Speicherplatz für Profildaten</para>
-        </listitem>
-      </itemizedlist>
-
-      <para>Empfohlene Voraussetzungen:</para>
-
-      <itemizedlist>
-        <listitem>
-          <para>Windows 2000, Windows XP, Windows Vista, Windows 7, Linux oder
-          MacOS</para>
-        </listitem>
-
-        <listitem>
-          <para>Java Runtime Version 1.5 oder besser</para>
-        </listitem>
-
-        <listitem>
-          <para>5 Megabyte freier Speicherplatz für Cachewolf (3 Megabyte
-          zusätzlich für die Installation)</para>
-        </listitem>
-
-        <listitem>
-          <para>500 Megabyte freier Speicherplatz für Profildaten (inklusive
-          Karten)</para>
-        </listitem>
-
-        <listitem>
-          <para>Internetanschluss</para>
-        </listitem>
-      </itemizedlist>
+        <para>Cachewolf wird in der Hoffnung, dass es nützlich ist, verbreitet. Es
+            wird mit der Verbreitung und Entwicklung keinerlei Garantie übernommen,
+            insbesondere auch keine impilzite Garantie für die allgemeine
+            Gebrauchsfähigkeit oder die Gebrauchsfähigkeit für einen bestimmten Zweck.
+            Für weitere Informationen schauen Sie bitte in die GNU General Public
+            License v2.
+        </para>
     </section>
 
     <section>
-      <title>Pocket PC</title>
+        <title>Systemvoraussetzungen</title>
 
-      <para>Mindestvoraussetzungen:</para>
+        <para>Cachewolf hat ist generell unter Windows, Linux, MacOS und Windows
+            Mobile lauffähig. Je nach verwendeter Version unterscheiden sich diese
+            geringfügig.
+        </para>
 
-      <itemizedlist>
-        <listitem>
-          <para>Windows Mobile</para>
-        </listitem>
+        <section>
+            <title>Windows</title>
 
-        <listitem>
-          <para>2,5 Megabyte freier Speicherplatz für EWE VM im Hauptspeicher
-          des Gerätes</para>
-        </listitem>
+            <para>Mindestvoraussetzungen:</para>
 
-        <listitem>
-          <para>5 Megabyte freier Speicherplatz für Cachewolf</para>
-        </listitem>
+            <itemizedlist>
+                <listitem>
+                    <para>Windows XP, Windows Vista oder Windows 7</para>
+                </listitem>
 
-        <listitem>
-          <para>20 Megabyte freier Speicherplatz für Profildaten</para>
-        </listitem>
-      </itemizedlist>
+                <listitem>
+                    <para>5 Megabyte freier Speicherplatz für Cachewolf (3 Megabyte
+                        zusätzlich für die Installation)
+                    </para>
+                </listitem>
 
-      <para>Empfohlene Voraussetzungen:</para>
+                <listitem>
+                    <para>20 Megabyte freier Speicherplatz für Profildaten</para>
+                </listitem>
+            </itemizedlist>
 
-      <itemizedlist>
-        <listitem>
-          <para>Windows Mobile</para>
-        </listitem>
+            <para>Empfohlene Voraussetzungen:</para>
 
-        <listitem>
-          <para>2,5 Megabyte freier Speicherplatz für EWE VM im Hauptspeicher
-          des Gerätes</para>
-        </listitem>
+            <itemizedlist>
+                <listitem>
+                    <para>Windows XP, Windows Vista oder Windows 7</para>
+                </listitem>
 
-        <listitem>
-          <para>5 Megabyte freier Speicherplatz für Cachewolf (3 Megabyte
-          zusätzlich für die Installation)</para>
-        </listitem>
+                <listitem>
+                    <para>5 Megabyte freier Speicherplatz für Cachewolf (3 Megabyte
+                        zusätzlich für die Installation)
+                    </para>
+                </listitem>
 
-        <listitem>
-          <para>500 Megabyte freier Speicherplatz für Profildaten (inklusive
-          Karten)</para>
-        </listitem>
+                <listitem>
+                    <para>500 Megabyte freier Speicherplatz für Profildaten (inklusive
+                        Karten)
+                    </para>
+                </listitem>
 
-        <listitem>
-          <para>Internet</para>
-        </listitem>
+                <listitem>
+                    <para>Internetanschluss</para>
+                </listitem>
+            </itemizedlist>
+        </section>
 
-        <listitem>
-          <para>GPS-Empfänger</para>
-        </listitem>
-      </itemizedlist>
+        <section>
+            <title>Java</title>
+
+            <para>Mindestvoraussetzungen:</para>
+
+            <itemizedlist>
+                <listitem>
+                    <para>Windows 2000, Windows XP, Windows Vista, Windows 7, Linux oder
+                        MacOS
+                    </para>
+                </listitem>
+
+                <listitem>
+                    <para>Java Runtime Version 1.5 oder besser</para>
+                </listitem>
+
+                <listitem>
+                    <para>5 Megabyte freier Speicherplatz für Cachewolf (3 Megabyte
+                        zusätzlich für die Installation)
+                    </para>
+                </listitem>
+
+                <listitem>
+                    <para>20 Megabyte freier Speicherplatz für Profildaten</para>
+                </listitem>
+            </itemizedlist>
+
+            <para>Empfohlene Voraussetzungen:</para>
+
+            <itemizedlist>
+                <listitem>
+                    <para>Windows 2000, Windows XP, Windows Vista, Windows 7, Linux oder
+                        MacOS
+                    </para>
+                </listitem>
+
+                <listitem>
+                    <para>Java Runtime Version 1.5 oder besser</para>
+                </listitem>
+
+                <listitem>
+                    <para>5 Megabyte freier Speicherplatz für Cachewolf (3 Megabyte
+                        zusätzlich für die Installation)
+                    </para>
+                </listitem>
+
+                <listitem>
+                    <para>500 Megabyte freier Speicherplatz für Profildaten (inklusive
+                        Karten)
+                    </para>
+                </listitem>
+
+                <listitem>
+                    <para>Internetanschluss</para>
+                </listitem>
+            </itemizedlist>
+        </section>
+
+        <section>
+            <title>Pocket PC</title>
+
+            <para>Mindestvoraussetzungen:</para>
+
+            <itemizedlist>
+                <listitem>
+                    <para>Windows Mobile</para>
+                </listitem>
+
+                <listitem>
+                    <para>2,5 Megabyte freier Speicherplatz für EWE VM im Hauptspeicher
+                        des Gerätes
+                    </para>
+                </listitem>
+
+                <listitem>
+                    <para>5 Megabyte freier Speicherplatz für Cachewolf</para>
+                </listitem>
+
+                <listitem>
+                    <para>20 Megabyte freier Speicherplatz für Profildaten</para>
+                </listitem>
+            </itemizedlist>
+
+            <para>Empfohlene Voraussetzungen:</para>
+
+            <itemizedlist>
+                <listitem>
+                    <para>Windows Mobile</para>
+                </listitem>
+
+                <listitem>
+                    <para>2,5 Megabyte freier Speicherplatz für EWE VM im Hauptspeicher
+                        des Gerätes
+                    </para>
+                </listitem>
+
+                <listitem>
+                    <para>5 Megabyte freier Speicherplatz für Cachewolf (3 Megabyte
+                        zusätzlich für die Installation)
+                    </para>
+                </listitem>
+
+                <listitem>
+                    <para>500 Megabyte freier Speicherplatz für Profildaten (inklusive
+                        Karten)
+                    </para>
+                </listitem>
+
+                <listitem>
+                    <para>Internet</para>
+                </listitem>
+
+                <listitem>
+                    <para>GPS-Empfänger</para>
+                </listitem>
+            </itemizedlist>
+        </section>
+
+        <section>
+            <title>Zaurus</title>
+
+            <para>Mindestvoraussetzungen:</para>
+
+            <itemizedlist>
+                <listitem>
+                    <para>Zaurus SL-5500 oder Nachfolge-Modell</para>
+                </listitem>
+
+                <listitem>
+                    <para>3 Megabyte freier Speicherplatz für EWE VM</para>
+                </listitem>
+
+                <listitem>
+                    <para>5 Megabyte freier Speicherplatz für Cachewolf</para>
+                </listitem>
+
+                <listitem>
+                    <para>20 Megabyte freier Speicherplatz für Profildaten</para>
+                </listitem>
+            </itemizedlist>
+
+            <para>Empfohlene Voraussetzungen:</para>
+
+            <itemizedlist>
+                <listitem>
+                    <para>Zaurus SL-5500 oder Nachfolge-Modell</para>
+                </listitem>
+
+                <listitem>
+                    <para>3 Megabyte freier Speicherplatz für EWE VM</para>
+                </listitem>
+
+                <listitem>
+                    <para>5 Megabyte freier Speicherplatz für Cachewolf (3 Megabyte
+                        zusätzlich für die Installation)
+                    </para>
+                </listitem>
+
+                <listitem>
+                    <para>500 Megabyte freier Speicherplatz für Profildaten (inklusive
+                        Karten)
+                    </para>
+                </listitem>
+
+                <listitem>
+                    <para>Internet</para>
+                </listitem>
+
+                <listitem>
+                    <para>GPS-Empfänger</para>
+                </listitem>
+            </itemizedlist>
+        </section>
     </section>
 
     <section>
-      <title>Zaurus</title>
+        <title>Hilfe</title>
 
-      <para>Mindestvoraussetzungen:</para>
+        <para>Für Fragen und bei Fehlern und Problemen mit Cachewolf gibt es im
+            Forum (<ulink
+                    url="http://www.geoclub.de/viewforum.php?f=40">http://www.geoclub.de/viewforum.php?f=40</ulink>)
+            Unterstützung. Häufig gestellte Fragen sind als Anlage zu dieser
+            Dokumentation verfügbar.
+        </para>
 
-      <itemizedlist>
-        <listitem>
-          <para>Zaurus SL-5500 oder Nachfolge-Modell</para>
-        </listitem>
-
-        <listitem>
-          <para>3 Megabyte freier Speicherplatz für EWE VM</para>
-        </listitem>
-
-        <listitem>
-          <para>5 Megabyte freier Speicherplatz für Cachewolf</para>
-        </listitem>
-
-        <listitem>
-          <para>20 Megabyte freier Speicherplatz für Profildaten</para>
-        </listitem>
-      </itemizedlist>
-
-      <para>Empfohlene Voraussetzungen:</para>
-
-      <itemizedlist>
-        <listitem>
-          <para>Zaurus SL-5500 oder Nachfolge-Modell</para>
-        </listitem>
-
-        <listitem>
-          <para>3 Megabyte freier Speicherplatz für EWE VM</para>
-        </listitem>
-
-        <listitem>
-          <para>5 Megabyte freier Speicherplatz für Cachewolf (3 Megabyte
-          zusätzlich für die Installation)</para>
-        </listitem>
-
-        <listitem>
-          <para>500 Megabyte freier Speicherplatz für Profildaten (inklusive
-          Karten)</para>
-        </listitem>
-
-        <listitem>
-          <para>Internet</para>
-        </listitem>
-
-        <listitem>
-          <para>GPS-Empfänger</para>
-        </listitem>
-      </itemizedlist>
+        <para>Fehler können auch auf der Projektseite von Berlios (<ulink
+                url="http://developer.berlios.de/projects/cachewolf/">
+            http://developer.berlios.de/projects/cachewolf/</ulink>)
+            berichtet werden.
+        </para>
     </section>
-  </section>
-
-  <section>
-    <title>Hilfe</title>
-
-    <para>Für Fragen und bei Fehlern und Problemen mit Cachewolf gibt es im
-    Forum (<ulink
-    url="http://www.geoclub.de/viewforum.php?f=40">http://www.geoclub.de/viewforum.php?f=40</ulink>)
-    Unterstützung. Häufig gestellte Fragen sind als Anlage zu dieser
-    Dokumentation verfügbar. </para>
-
-    <para>Fehler können auch auf der Projektseite von Berlios (<ulink
-    url="http://developer.berlios.de/projects/cachewolf/">http://developer.berlios.de/projects/cachewolf/</ulink>)
-    berichtet werden.</para>
-  </section>
 </chapter>

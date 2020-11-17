@@ -31,40 +31,15 @@ import CacheWolf.utils.MyLocale;
 import ewe.filechooser.FileChooser;
 import ewe.filechooser.FileChooserBase;
 import ewe.sys.Convert;
-import ewe.ui.ControlEvent;
-import ewe.ui.Event;
-import ewe.ui.Form;
-import ewe.ui.FormBase;
-import ewe.ui.mCheckBox;
-import ewe.ui.mChoice;
-import ewe.ui.mInput;
-import ewe.ui.mLabel;
+import ewe.ui.*;
 
 /**
  * @author pfeffer
- *         This Class is the Dialog for Download from Opencaching.de
- *         is called from OCXMLImporter
- *         20061209 Bugfix: Checking for uninitialised missingCheckBox
+ * This Class is the Dialog for Download from Opencaching.de
+ * is called from OCXMLImporter
+ * 20061209 Bugfix: Checking for uninitialised missingCheckBox
  */
 public class ImportGui extends Form {
-    public boolean downloadDescriptionImages;
-    public boolean downloadSpoilerImages;
-    public boolean downloadLogImages;
-    private final ExecutePanel executePanel;
-    public mChoice chcType;
-    public mInput maxDistanceInput;
-    private mInput minDistanceInput;
-    public mInput maxNumberInput;
-    public mInput maxNumberUpdates;
-    public mInput maxLogsInput;
-    private mCheckBox descriptionImageCheckBox, /* mapsCheckBox, */travelbugsCheckBox;
-    private mCheckBox spoilerImageCheckBox, logImageCheckBox;
-    public mCheckBox foundCheckBox, missingCheckBox;
-    public mChoice domains;
-
-    private String fileName;
-
-    boolean isGC = true;
     public static final int DIST = 1;
     public static final int ALL = 4;
     public static final int INCLUDEFOUND = 8;
@@ -75,246 +50,261 @@ public class ImportGui extends Form {
     public static final int TYPE = 256;
     public static final int HOST = 512;
     public static final int MINDIST = 1024;
-
     public static final int MAXUPDATE = 4096;
     public static final int FILENAME = 8192; // track or route gpx
-
     public static final byte DESCRIPTIONIMAGE = 1;
     public static final byte SPOILERIMAGE = 2;
     public static final byte LOGIMAGE = 4;
+    private final ExecutePanel executePanel;
+    public boolean downloadDescriptionImages;
+    public boolean downloadSpoilerImages;
+    public boolean downloadLogImages;
+    public mChoice chcType;
+    public mInput maxDistanceInput;
+    public mInput maxNumberInput;
+    public mInput maxNumberUpdates;
+    public mInput maxLogsInput;
+    public mCheckBox foundCheckBox, missingCheckBox;
+    public mChoice domains;
+    boolean isGC = true;
+    private mInput minDistanceInput;
+    private mCheckBox descriptionImageCheckBox, /* mapsCheckBox, */
+            travelbugsCheckBox;
+    private mCheckBox spoilerImageCheckBox, logImageCheckBox;
+    private String fileName;
 
     public ImportGui(String title, int options, int imageOptions) {
-	super();
+        super();
 
-	isGC = ((options & ISGC) > 0);
-	downloadDescriptionImages = Preferences.itself().downloadDescriptionImages;
-	downloadSpoilerImages = Preferences.itself().downloadSpoilerImages;
-	downloadLogImages = Preferences.itself().downloadLogImages;
+        isGC = ((options & ISGC) > 0);
+        downloadDescriptionImages = Preferences.itself().downloadDescriptionImages;
+        downloadSpoilerImages = Preferences.itself().downloadSpoilerImages;
+        downloadLogImages = Preferences.itself().downloadLogImages;
 
-	this.title = title;
+        this.title = title;
 
-	if ((options & HOST) > 0) {
-	    domains = new mChoice(OC.OCHostNames(), OC.getSiteIndex(Preferences.itself().lastOCSite));
-	    domains.setTextSize(25, 1);
-	    this.addLast(domains, DONTSTRETCH, DONTFILL | WEST);
-	}
+        if ((options & HOST) > 0) {
+            domains = new mChoice(OC.OCHostNames(), OC.getSiteIndex(Preferences.itself().lastOCSite));
+            domains.setTextSize(25, 1);
+            this.addLast(domains, DONTSTRETCH, DONTFILL | WEST);
+        }
 
-	if ((options & TYPE) > 0) {
-	    this.addLast(chcType = new mChoice(new String[] { MyLocale.getMsg(1627, "All caches"), MyLocale.getMsg(2, "Tradi"), MyLocale.getMsg(3, "Multi"), MyLocale.getMsg(4, "Virtual"), MyLocale.getMsg(5, "Letterbox"), MyLocale.getMsg(6, "Event"),
-		    MyLocale.getMsg(14, "Mega Event"), MyLocale.getMsg(11, "Webcam"), MyLocale.getMsg(8, "Mysterie"), MyLocale.getMsg(13, "CITO"), MyLocale.getMsg(18, "Earth"), MyLocale.getMsg(15, "WhereIGo"), }, 0), STRETCH, (FILL | WEST));
-	}
+        if ((options & TYPE) > 0) {
+            this.addLast(chcType = new mChoice(new String[]{MyLocale.getMsg(1627, "All caches"), MyLocale.getMsg(2, "Tradi"), MyLocale.getMsg(3, "Multi"), MyLocale.getMsg(4, "Virtual"), MyLocale.getMsg(5, "Letterbox"), MyLocale.getMsg(6, "Event"),
+                    MyLocale.getMsg(14, "Mega Event"), MyLocale.getMsg(11, "Webcam"), MyLocale.getMsg(8, "Mysterie"), MyLocale.getMsg(13, "CITO"), MyLocale.getMsg(18, "Earth"), MyLocale.getMsg(15, "WhereIGo"),}, 0), STRETCH, (FILL | WEST));
+        }
 
-	if ((options & MINDIST) > 0) {
-	    this.addNext(new mLabel(MyLocale.getMsg(1628, "min. Distance:")), DONTSTRETCH, (DONTFILL | WEST));
-	    minDistanceInput = new mInput();
-	    minDistanceInput.setText(MainForm.profile.getMinDistGC());
-	    this.addNext(minDistanceInput, DONTSTRETCH, (DONTFILL | WEST));
-	    this.addLast(new mLabel(" km/mi."), DONTSTRETCH, (DONTFILL | WEST));
-	}
+        if ((options & MINDIST) > 0) {
+            this.addNext(new mLabel(MyLocale.getMsg(1628, "min. Distance:")), DONTSTRETCH, (DONTFILL | WEST));
+            minDistanceInput = new mInput();
+            minDistanceInput.setText(MainForm.profile.getMinDistGC());
+            this.addNext(minDistanceInput, DONTSTRETCH, (DONTFILL | WEST));
+            this.addLast(new mLabel(" km/mi."), DONTSTRETCH, (DONTFILL | WEST));
+        }
 
-	if ((options & DIST) > 0) {
-	    this.addNext(new mLabel(MyLocale.getMsg(1601, "Distance:")), DONTSTRETCH, (DONTFILL | WEST));
-	    maxDistanceInput = new mInput();
-	    String dist1;
-	    String dist2;
-	    if (isGC) {
-		dist1 = MainForm.profile.getDistGC();
-		dist2 = MainForm.profile.getDistOC();
-	    } else {
-		dist1 = MainForm.profile.getDistOC();
-		dist2 = MainForm.profile.getDistGC();
-	    }
-	    if (dist1.equals("") || dist1.equals("0") || dist1.equals("0.0")) {
-		dist1 = dist2;
-	    }
-	    maxDistanceInput.setText(dist1);
-	    this.addNext(maxDistanceInput, DONTSTRETCH, (DONTFILL | WEST));
-	    this.addLast(new mLabel(" km/mi."), DONTSTRETCH, (DONTFILL | WEST));
-	}
+        if ((options & DIST) > 0) {
+            this.addNext(new mLabel(MyLocale.getMsg(1601, "Distance:")), DONTSTRETCH, (DONTFILL | WEST));
+            maxDistanceInput = new mInput();
+            String dist1;
+            String dist2;
+            if (isGC) {
+                dist1 = MainForm.profile.getDistGC();
+                dist2 = MainForm.profile.getDistOC();
+            } else {
+                dist1 = MainForm.profile.getDistOC();
+                dist2 = MainForm.profile.getDistGC();
+            }
+            if (dist1.equals("") || dist1.equals("0") || dist1.equals("0.0")) {
+                dist1 = dist2;
+            }
+            maxDistanceInput.setText(dist1);
+            this.addNext(maxDistanceInput, DONTSTRETCH, (DONTFILL | WEST));
+            this.addLast(new mLabel(" km/mi."), DONTSTRETCH, (DONTFILL | WEST));
+        }
 
-	if ((options & MAXNUMBER) > 0) {
-	    this.addNext(new mLabel(MyLocale.getMsg(1623, "Max. number:")), DONTSTRETCH, (DONTFILL | WEST));
-	    maxNumberInput = new mInput();
-	    if (Preferences.itself().maxSpiderNumber < 0 || Preferences.itself().maxSpiderNumber == Integer.MAX_VALUE) {
-		maxNumberInput.setText("");
-	    } else {
-		maxNumberInput.setText(Integer.toString(Preferences.itself().maxSpiderNumber));
-	    }
-	    this.addNext(maxNumberInput, DONTSTRETCH, (DONTFILL | WEST));
-	    this.addLast(new mLabel(MyLocale.getMsg(1624, " caches")), DONTSTRETCH, (DONTFILL | WEST));
-	}
+        if ((options & MAXNUMBER) > 0) {
+            this.addNext(new mLabel(MyLocale.getMsg(1623, "Max. number:")), DONTSTRETCH, (DONTFILL | WEST));
+            maxNumberInput = new mInput();
+            if (Preferences.itself().maxSpiderNumber < 0 || Preferences.itself().maxSpiderNumber == Integer.MAX_VALUE) {
+                maxNumberInput.setText("");
+            } else {
+                maxNumberInput.setText(Integer.toString(Preferences.itself().maxSpiderNumber));
+            }
+            this.addNext(maxNumberInput, DONTSTRETCH, (DONTFILL | WEST));
+            this.addLast(new mLabel(MyLocale.getMsg(1624, " caches")), DONTSTRETCH, (DONTFILL | WEST));
+        }
 
-	if ((options & MAXUPDATE) > 0) {
-	    this.addNext(new mLabel(MyLocale.getMsg(1631, "Max. Updates:")), DONTSTRETCH, (DONTFILL | WEST));
-	    maxNumberUpdates = new mInput();
-	    maxNumberUpdates.setText("");
-	    this.addNext(maxNumberUpdates, DONTSTRETCH, (DONTFILL | WEST));
-	    this.addLast(new mLabel(MyLocale.getMsg(1624, " caches")), DONTSTRETCH, (DONTFILL | WEST));
-	}
+        if ((options & MAXUPDATE) > 0) {
+            this.addNext(new mLabel(MyLocale.getMsg(1631, "Max. Updates:")), DONTSTRETCH, (DONTFILL | WEST));
+            maxNumberUpdates = new mInput();
+            maxNumberUpdates.setText("");
+            this.addNext(maxNumberUpdates, DONTSTRETCH, (DONTFILL | WEST));
+            this.addLast(new mLabel(MyLocale.getMsg(1624, " caches")), DONTSTRETCH, (DONTFILL | WEST));
+        }
 
-	if ((options & MAXLOGS) > 0) {
-	    this.addNext(new mLabel(MyLocale.getMsg(1626, "Max. logs:")), DONTSTRETCH, (DONTFILL | WEST));
-	    maxLogsInput = new mInput();
-	    if (Preferences.itself().maxLogsToSpider == -1) {
-		maxLogsInput.setText("");
-	    } else {
-		maxLogsInput.setText(Convert.toString(Preferences.itself().maxLogsToSpider));
-	    }
-	    this.addLast(maxLogsInput, DONTSTRETCH, (DONTFILL | WEST));
-	}
+        if ((options & MAXLOGS) > 0) {
+            this.addNext(new mLabel(MyLocale.getMsg(1626, "Max. logs:")), DONTSTRETCH, (DONTFILL | WEST));
+            maxLogsInput = new mInput();
+            if (Preferences.itself().maxLogsToSpider == -1) {
+                maxLogsInput.setText("");
+            } else {
+                maxLogsInput.setText(Convert.toString(Preferences.itself().maxLogsToSpider));
+            }
+            this.addLast(maxLogsInput, DONTSTRETCH, (DONTFILL | WEST));
+        }
 
-	if ((imageOptions & ImportGui.DESCRIPTIONIMAGE) > 0) {
-	    descriptionImageCheckBox = new mCheckBox();
-	    descriptionImageCheckBox.setText(MyLocale.getMsg(1602, "Download Description images"));
-	    descriptionImageCheckBox.setState(downloadDescriptionImages);
-	    this.addLast(descriptionImageCheckBox, DONTSTRETCH, DONTFILL | WEST);
-	}
+        if ((imageOptions & ImportGui.DESCRIPTIONIMAGE) > 0) {
+            descriptionImageCheckBox = new mCheckBox();
+            descriptionImageCheckBox.setText(MyLocale.getMsg(1602, "Download Description images"));
+            descriptionImageCheckBox.setState(downloadDescriptionImages);
+            this.addLast(descriptionImageCheckBox, DONTSTRETCH, DONTFILL | WEST);
+        }
 
-	if ((imageOptions & ImportGui.SPOILERIMAGE) > 0) {
-	    spoilerImageCheckBox = new mCheckBox();
-	    spoilerImageCheckBox.setText(MyLocale.getMsg(1632, "Download spoiler images"));
-	    spoilerImageCheckBox.setState(downloadSpoilerImages);
-	    this.addLast(spoilerImageCheckBox, DONTSTRETCH, DONTFILL | WEST);
-	}
+        if ((imageOptions & ImportGui.SPOILERIMAGE) > 0) {
+            spoilerImageCheckBox = new mCheckBox();
+            spoilerImageCheckBox.setText(MyLocale.getMsg(1632, "Download spoiler images"));
+            spoilerImageCheckBox.setState(downloadSpoilerImages);
+            this.addLast(spoilerImageCheckBox, DONTSTRETCH, DONTFILL | WEST);
+        }
 
-	if ((imageOptions & ImportGui.LOGIMAGE) > 0) {
-	    logImageCheckBox = new mCheckBox();
-	    logImageCheckBox.setText(MyLocale.getMsg(1633, "Download log images"));
-	    logImageCheckBox.setState(downloadLogImages);
-	    // this.addLast(logImageCheckBox, DONTSTRETCH, DONTFILL | WEST);
-	}
+        if ((imageOptions & ImportGui.LOGIMAGE) > 0) {
+            logImageCheckBox = new mCheckBox();
+            logImageCheckBox.setText(MyLocale.getMsg(1633, "Download log images"));
+            logImageCheckBox.setState(downloadLogImages);
+            // this.addLast(logImageCheckBox, DONTSTRETCH, DONTFILL | WEST);
+        }
 
-	if ((options & TRAVELBUGS) > 0) {
-	    travelbugsCheckBox = new mCheckBox();
-	    travelbugsCheckBox.setText(MyLocale.getMsg(1625, "Download TBs"));
-	    travelbugsCheckBox.setState(Preferences.itself().downloadTBs);
-	    this.addLast(travelbugsCheckBox, DONTSTRETCH, DONTFILL | WEST);
-	}
+        if ((options & TRAVELBUGS) > 0) {
+            travelbugsCheckBox = new mCheckBox();
+            travelbugsCheckBox.setText(MyLocale.getMsg(1625, "Download TBs"));
+            travelbugsCheckBox.setState(Preferences.itself().downloadTBs);
+            this.addLast(travelbugsCheckBox, DONTSTRETCH, DONTFILL | WEST);
+        }
 
-	if ((options & INCLUDEFOUND) > 0) {
-	    foundCheckBox = new mCheckBox();
-	    foundCheckBox.setText(MyLocale.getMsg(1622, "Exclude found caches"));
-	    foundCheckBox.setState(Preferences.itself().doNotGetFound);
-	    this.addLast(foundCheckBox, DONTSTRETCH, DONTFILL | WEST);
-	}
+        if ((options & INCLUDEFOUND) > 0) {
+            foundCheckBox = new mCheckBox();
+            foundCheckBox.setText(MyLocale.getMsg(1622, "Exclude found caches"));
+            foundCheckBox.setState(Preferences.itself().doNotGetFound);
+            this.addLast(foundCheckBox, DONTSTRETCH, DONTFILL | WEST);
+        }
 
-	if ((options & ALL) > 0) {
-	    missingCheckBox = new mCheckBox();
-	    missingCheckBox.setText(MyLocale.getMsg(1606, "Alle erneut downloaden"));
-	    missingCheckBox.setState(Preferences.itself().downloadAllOC);
-	    this.addLast(missingCheckBox, DONTSTRETCH, DONTFILL | WEST);
-	}
+        if ((options & ALL) > 0) {
+            missingCheckBox = new mCheckBox();
+            missingCheckBox.setText(MyLocale.getMsg(1606, "Alle erneut downloaden"));
+            missingCheckBox.setState(Preferences.itself().downloadAllOC);
+            this.addLast(missingCheckBox, DONTSTRETCH, DONTFILL | WEST);
+        }
 
-	if ((options & FILENAME) > 0) {
-	    String dir = Preferences.itself().getImporterPath("LocGpxImporter");
-	    FileChooser fc = new FileChooser(FileChooserBase.OPEN, dir);
-	    fc.addMask("*.gpx");
-	    fc.setTitle(MyLocale.getMsg(909, "Select file(s)"));
-	    if (fc.execute() != FormBase.IDCANCEL) {
-		dir = fc.getChosenDirectory().toString();
-		Preferences.itself().setImporterPath("LocGpxImporter", dir);
-		// String files[] = fc.getAllChosen();
-		fileName = fc.file;
-	    } else {
-		fileName = "";
-	    }
-	}
-	executePanel = new ExecutePanel(this);
+        if ((options & FILENAME) > 0) {
+            String dir = Preferences.itself().getImporterPath("LocGpxImporter");
+            FileChooser fc = new FileChooser(FileChooserBase.OPEN, dir);
+            fc.addMask("*.gpx");
+            fc.setTitle(MyLocale.getMsg(909, "Select file(s)"));
+            if (fc.execute() != FormBase.IDCANCEL) {
+                dir = fc.getChosenDirectory().toString();
+                Preferences.itself().setImporterPath("LocGpxImporter", dir);
+                // String files[] = fc.getAllChosen();
+                fileName = fc.file;
+            } else {
+                fileName = "";
+            }
+        }
+        executePanel = new ExecutePanel(this);
     }
 
     public String getFileName() {
-	return fileName;
+        return fileName;
     }
 
     public void onEvent(Event ev) {
-	if (ev instanceof ControlEvent && ev.type == ControlEvent.PRESSED) {
-	    if (ev.target == executePanel.cancelButton) {
-		this.close(FormBase.IDCANCEL);
-	    }
-	    if (ev.target == executePanel.applyButton) {
-		if (missingCheckBox != null)
-		    Preferences.itself().downloadAllOC = missingCheckBox.state;
-		if (descriptionImageCheckBox != null)
-		    downloadDescriptionImages = descriptionImageCheckBox.state;
-		if (spoilerImageCheckBox != null)
-		    downloadSpoilerImages = spoilerImageCheckBox.state;
-		if (logImageCheckBox != null)
-		    downloadLogImages = logImageCheckBox.state;
-		if (travelbugsCheckBox != null)
-		    Preferences.itself().downloadTBs = travelbugsCheckBox.state;
-		Preferences.itself().savePreferences();
-		this.close(FormBase.IDOK);
-	    }
-	}
-	super.onEvent(ev);
+        if (ev instanceof ControlEvent && ev.type == ControlEvent.PRESSED) {
+            if (ev.target == executePanel.cancelButton) {
+                this.close(FormBase.IDCANCEL);
+            }
+            if (ev.target == executePanel.applyButton) {
+                if (missingCheckBox != null)
+                    Preferences.itself().downloadAllOC = missingCheckBox.state;
+                if (descriptionImageCheckBox != null)
+                    downloadDescriptionImages = descriptionImageCheckBox.state;
+                if (spoilerImageCheckBox != null)
+                    downloadSpoilerImages = spoilerImageCheckBox.state;
+                if (logImageCheckBox != null)
+                    downloadLogImages = logImageCheckBox.state;
+                if (travelbugsCheckBox != null)
+                    Preferences.itself().downloadTBs = travelbugsCheckBox.state;
+                Preferences.itself().savePreferences();
+                this.close(FormBase.IDOK);
+            }
+        }
+        super.onEvent(ev);
     }
 
     public int getIntFromInput(mInput input, int defauld) {
-	if (input == null) {
-	    return defauld;
-	} else {
-	    int max = defauld;
-	    final String maxUpdateString = input.getText();
-	    if (maxUpdateString.length() != 0) {
-		max = Convert.toInt(maxUpdateString);
-	    }
-	    return max;
-	}
+        if (input == null) {
+            return defauld;
+        } else {
+            int max = defauld;
+            final String maxUpdateString = input.getText();
+            if (maxUpdateString.length() != 0) {
+                max = Convert.toInt(maxUpdateString);
+            }
+            return max;
+        }
     }
 
     public double getDoubleFromInput(mInput input, double defauld) {
-	if (input == null) {
-	    return defauld;
-	} else {
-	    return Common.parseDouble(input.getText());
-	}
+        if (input == null) {
+            return defauld;
+        } else {
+            return Common.parseDouble(input.getText());
+        }
     }
 
     public byte getRestrictedCacheType() {
-	byte RestrictedType = CacheType.CW_TYPE_ERROR;
+        byte RestrictedType = CacheType.CW_TYPE_ERROR;
 
-	if (chcType != null) {
-	    switch (chcType.getInt()) {
-	    case 0:
-		RestrictedType = CacheType.CW_TYPE_ERROR;
-		break;
-	    case 1:
-		RestrictedType = CacheType.CW_TYPE_TRADITIONAL;
-		break;
-	    case 2:
-		RestrictedType = CacheType.CW_TYPE_MULTI;
-		break;
-	    case 3:
-		RestrictedType = CacheType.CW_TYPE_VIRTUAL;
-		break;
-	    case 4:
-		RestrictedType = CacheType.CW_TYPE_LETTERBOX;
-		break;
-	    case 5:
-		RestrictedType = CacheType.CW_TYPE_EVENT;
-		break;
-	    case 6:
-		RestrictedType = CacheType.CW_TYPE_MEGA_EVENT;
-		break;
-	    case 7:
-		RestrictedType = CacheType.CW_TYPE_WEBCAM;
-		break;
-	    case 8:
-		RestrictedType = CacheType.CW_TYPE_MYSTERY;
-		break;
-	    case 9:
-		RestrictedType = CacheType.CW_TYPE_CITO;
-		break;
-	    case 10:
-		RestrictedType = CacheType.CW_TYPE_EARTH;
-		break;
-	    case 11:
-		RestrictedType = CacheType.CW_TYPE_WHEREIGO;
-		break;
-	    default:
-		RestrictedType = CacheType.CW_TYPE_ERROR;
-	    }
-	}
-	return RestrictedType;
+        if (chcType != null) {
+            switch (chcType.getInt()) {
+                case 0:
+                    RestrictedType = CacheType.CW_TYPE_ERROR;
+                    break;
+                case 1:
+                    RestrictedType = CacheType.CW_TYPE_TRADITIONAL;
+                    break;
+                case 2:
+                    RestrictedType = CacheType.CW_TYPE_MULTI;
+                    break;
+                case 3:
+                    RestrictedType = CacheType.CW_TYPE_VIRTUAL;
+                    break;
+                case 4:
+                    RestrictedType = CacheType.CW_TYPE_LETTERBOX;
+                    break;
+                case 5:
+                    RestrictedType = CacheType.CW_TYPE_EVENT;
+                    break;
+                case 6:
+                    RestrictedType = CacheType.CW_TYPE_MEGA_EVENT;
+                    break;
+                case 7:
+                    RestrictedType = CacheType.CW_TYPE_WEBCAM;
+                    break;
+                case 8:
+                    RestrictedType = CacheType.CW_TYPE_MYSTERY;
+                    break;
+                case 9:
+                    RestrictedType = CacheType.CW_TYPE_CITO;
+                    break;
+                case 10:
+                    RestrictedType = CacheType.CW_TYPE_EARTH;
+                    break;
+                case 11:
+                    RestrictedType = CacheType.CW_TYPE_WHEREIGO;
+                    break;
+                default:
+                    RestrictedType = CacheType.CW_TYPE_ERROR;
+            }
+        }
+        return RestrictedType;
     }
 }

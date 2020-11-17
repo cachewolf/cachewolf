@@ -1,0 +1,42 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg xmlns:xml="http://www.w3.org/XML/1998/namespace" x="0" y="0" width="32" height="32" overflow="hidden" viewBox="0, 0, 45, 45" preserveAspectRatio="xMidYMid" font-size="0" id="svg" xml:space="preserve"  xmlns="http://www.w3.org/2000/svg" version="1.1">
+  <defs id="def1" xml:space="preserve">
+    <clipPath clipPathUnits="userSpaceOnUse" id="clipPath16" xml:space="preserve">
+      <path d="M0 36 L36 36 L36 0 L0 0 L0 36 z" id="path18" xml:space="preserve" />
+    </clipPath>
+  </defs>
+  <g transform="matrix(1.25, 0, 0, -1.25, 0, 45)" id="g10" xml:space="preserve">
+    <g id="g12" xml:space="preserve">
+      <g clip-path="url(#clipPath16)" id="g14" xml:space="preserve">
+        <g transform="translate(31, 21)" id="g20" xml:space="preserve">
+          <path d="M0 0 C0 -1.104 -0.895 -2 -2 -2 L-24 -2 C-25.104 -2 -26 -1.104 -26 0 L-26 8 C-26 9.105 -25.104 10 -24 10 L-2 10 C-0.895 10 0 9.105 0 8 L0 0 z" id="path22" xml:space="preserve" style="fill:#FDCB58;" />
+        </g>
+        <g transform="translate(33, 17)" id="g24" xml:space="preserve">
+          <path d="M0 0 C0 -1.104 -0.895 -2 -2 -2 L-28 -2 C-29.104 -2 -30 -1.104 -30 0 L-30 8 C-30 9.105 -29.104 10 -28 10 L-2 10 C-0.895 10 0 9.105 0 8 L0 0 z" id="path26" xml:space="preserve" style="fill:#FDD888;" />
+        </g>
+        <g transform="translate(35, 3)" id="g28" xml:space="preserve">
+          <path d="M0 0 C0 -1.104 -0.895 -2 -2 -2 L-32 -2 C-33.104 -2 -34 -1.104 -34 0 L-34 18 C-34 19.105 -33.104 20 -32 20 L-2 20 C-0.895 20 0 19.105 0 18 L0 0 z" id="path30" xml:space="preserve" style="fill:#FEE7B8;" />
+        </g>
+        <g transform="translate(10.9995, 22)" id="g32" xml:space="preserve">
+          <path d="M0 0 z" id="path34" xml:space="preserve" style="fill:#67757F;" />
+        </g>
+        <g transform="translate(10.9995, 22)" id="g36" xml:space="preserve">
+          <path d="M0 0 z" id="path38" xml:space="preserve" style="fill:#67757F;" />
+        </g>
+        <g transform="translate(23, 33)" id="g40" xml:space="preserve">
+          <path d="M0 0 L-5 0 C-6.104 0 -7 -0.895 -7 -2 L-7 -3 L-5 -3 C-3.895 -3 -3 -3.895 -3 -5 L0 -5 C1.105 -5 2 -4.104 2 -3 L2 -2 C2 -0.895 1.105 0 0 0" id="path42" xml:space="preserve" style="fill:#78B159;" />
+        </g>
+        <g transform="translate(17, 29)" id="g44" xml:space="preserve">
+          <path d="M0 0 L-5 0 C-6.104 0 -7 -0.895 -7 -2 L-7 -3 L-5 -3 C-3.895 -3 -3 -3.895 -3 -5 L0 -5 C1.105 -5 2 -4.104 2 -3 L2 -2 C2 -0.895 1.105 0 0 0" id="path46" xml:space="preserve" style="fill:#F18F26;" />
+        </g>
+        <g transform="translate(13, 22)" id="g48" xml:space="preserve">
+          <path d="M0 0 C0 -1.104 -0.895 -2 -2 -2 L-7 -2 C-8.104 -2 -9 -1.104 -9 0 L-9 1 C-9 2.105 -8.104 3 -7 3 L-2 3 C-0.895 3 0 2.105 0 1 L0 0 z" id="path50" xml:space="preserve" style="fill:#9268CA;" />
+        </g>
+        <g transform="translate(10.9995, 0)" id="g52" xml:space="preserve">
+          <path d="M0 0 z" id="path54" xml:space="preserve" style="fill:#67757F;" />
+        </g>
+      </g>
+    </g>
+  </g>
+</svg>

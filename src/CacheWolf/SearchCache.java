@@ -38,7 +38,7 @@ public class SearchCache {
     CacheDB cacheDB;
 
     public SearchCache(CacheDB DB) {
-	cacheDB = DB;
+        cacheDB = DB;
     }
 
     /**
@@ -47,49 +47,49 @@ public class SearchCache {
      * The search only acts on the filtered (=visible) set of caches
      */
     public void search(String searchStr, boolean searchInDescriptionAndNotes, boolean searchInLogs) {
-	if (searchStr.length() > 0) {
-	    MainForm.profile.selectionChanged = true;
-	    searchStr = searchStr.toUpperCase();
-	    CacheHolder ch;
-	    int counter = 0;
-	    if (searchInDescriptionAndNotes || searchInLogs) {
-		counter = cacheDB.countVisible();
-	    }
-	    CWProgressBar cwp = new CWProgressBar(MyLocale.getMsg(219, "Searching..."), 0, counter, searchInDescriptionAndNotes);
-	    cwp.exec();
-	    cwp.allowExit(true);
-	    //Search through complete database
-	    //Mark finds by setting is_flaged
-	    //TableModel will be responsible for displaying marked caches.
-	    CacheHolderDetail chD;
-	    for (int i = 0; i < cacheDB.size(); i++) {
-		cwp.setPosition(i);
-		ch = cacheDB.get(i);
-		if (!ch.isVisible())
-		    break; // Reached end of visible records
-		if (searchInDescriptionAndNotes || searchInLogs) {
-		    chD = ch.getDetails();
-		} else {
-		    chD = null;
-		}
-		if (ch.getCode().toUpperCase().indexOf(searchStr) < 0 //
-			&& ch.getName().toUpperCase().indexOf(searchStr) < 0 //
-			&& ch.getStatus().toUpperCase().indexOf(searchStr) < 0 //
-			&& (!searchInDescriptionAndNotes //
-			|| chD.LongDescription.toUpperCase().indexOf(searchStr) < 0 //
-				&& chD.getCacheNotes().toUpperCase().indexOf(searchStr) < 0) //
-			&& (!searchInLogs //
-			|| chD.CacheLogs.allMessages().toUpperCase().indexOf(searchStr) < 0))//
-		    ch.isFlagged = false;
-		else
-		    ch.isFlagged = true;
-		if (cwp.isClosed())
-		    break;
-	    } // for
-	    cwp.exit(0);
-	    MainForm.profile.setShowSearchResult(true);
-	    MainTab.itself.tablePanel.selectRow(0);
-	} // if
+        if (searchStr.length() > 0) {
+            MainForm.profile.selectionChanged = true;
+            searchStr = searchStr.toUpperCase();
+            CacheHolder ch;
+            int counter = 0;
+            if (searchInDescriptionAndNotes || searchInLogs) {
+                counter = cacheDB.countVisible();
+            }
+            CWProgressBar cwp = new CWProgressBar(MyLocale.getMsg(219, "Searching..."), 0, counter, searchInDescriptionAndNotes);
+            cwp.exec();
+            cwp.allowExit(true);
+            //Search through complete database
+            //Mark finds by setting is_flaged
+            //TableModel will be responsible for displaying marked caches.
+            CacheHolderDetail chD;
+            for (int i = 0; i < cacheDB.size(); i++) {
+                cwp.setPosition(i);
+                ch = cacheDB.get(i);
+                if (!ch.isVisible())
+                    break; // Reached end of visible records
+                if (searchInDescriptionAndNotes || searchInLogs) {
+                    chD = ch.getDetails();
+                } else {
+                    chD = null;
+                }
+                if (ch.getCode().toUpperCase().indexOf(searchStr) < 0 //
+                        && ch.getName().toUpperCase().indexOf(searchStr) < 0 //
+                        && ch.getStatus().toUpperCase().indexOf(searchStr) < 0 //
+                        && (!searchInDescriptionAndNotes //
+                        || chD.getLongDescription().toUpperCase().indexOf(searchStr) < 0 //
+                        && chD.getCacheNotes().toUpperCase().indexOf(searchStr) < 0) //
+                        && (!searchInLogs //
+                        || chD.getCacheLogs().allMessages().toUpperCase().indexOf(searchStr) < 0))//
+                    ch.isFlagged = false;
+                else
+                    ch.isFlagged = true;
+                if (cwp.isClosed())
+                    break;
+            } // for
+            cwp.exit(0);
+            MainForm.profile.setShowSearchResult(true);
+            MainTab.itself.tablePanel.selectRow(0);
+        } // if
     }
 
     /**
@@ -97,10 +97,10 @@ public class SearchCache {
      * cache database.
      */
     public void clearSearch() {
-	MainForm.profile.selectionChanged = true;
-	MainForm.profile.setShowSearchResult(false);
-	for (int i = cacheDB.size() - 1; i >= 0; i--) {
-	    cacheDB.get(i).isFlagged = false;
-	}
+        MainForm.profile.selectionChanged = true;
+        MainForm.profile.setShowSearchResult(false);
+        for (int i = cacheDB.size() - 1; i >= 0; i--) {
+            cacheDB.get(i).isFlagged = false;
+        }
     }
 }

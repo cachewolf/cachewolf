@@ -22,6 +22,7 @@
 package CacheWolf.utils;
 
 /* $Id$ */
+
 import ewe.sys.mThread;
 import ewe.ui.MessageBox;
 
@@ -32,13 +33,13 @@ import ewe.ui.MessageBox;
  * This class is not mature -> make it mature<br>
  * or<br>
  * use it only when you get in the ewe-vm the exception:<br>
- *  ewe.sys Event Direction Exception:<br>
- *  This Task cannot be done within a timer tick <br>
- *  when you use the normal MessageBox<br>
- * @author pfeffer
- * 
- * FIXME: add javadoc!
+ * ewe.sys Event Direction Exception:<br>
+ * This Task cannot be done within a timer tick <br>
+ * when you use the normal MessageBox<br>
  *
+ * @author pfeffer
+ * <p>
+ * FIXME: add javadoc!
  */
 public class MessageBoxFixed {
     private String title, text;
@@ -47,38 +48,38 @@ public class MessageBoxFixed {
     private boolean done;
 
     public MessageBoxFixed(final String title_, final String text_, final int type_) {
-	set(title_, text_, type_);
+        set(title_, text_, type_);
     }
 
     public void set(final String title_, final String text_, final int type_) {
-	title = title_;
-	text = text_;
-	type = type_;
+        title = title_;
+        text = text_;
+        type = type_;
     }
 
     public int execute() {
-	final MBThread t = new MBThread(); // start a new thread is necessary because the simple ewe v1.49 threading model doesn't allow displaying of a messageBox in this kind of thread
-	t.start();
-	done = false;
-	while (!done) {
-	    try {
-		mThread.sleep(100);
-	    } catch (InterruptedException e) {
-	    }
-	}
-	return ret;
+        final MBThread t = new MBThread(); // start a new thread is necessary because the simple ewe v1.49 threading model doesn't allow displaying of a messageBox in this kind of thread
+        t.start();
+        done = false;
+        while (!done) {
+            try {
+                mThread.sleep(100);
+            } catch (InterruptedException e) {
+            }
+        }
+        return ret;
     }
 
     class MBThread extends mThread {
-	public MessageBox mb;
+        public MessageBox mb;
 
-	public void run() {
-	    mb = new MessageBox(title, text, type);
-	    mb.show();
-	    done = false;
-	    mb.waitUntilClosed();
-	    done = true;
-	    // interrupt(); this doesn't work at all, neither in sun-vm nor in ewe-vm v1.49
-	}
+        public void run() {
+            mb = new MessageBox(title, text, type);
+            mb.show();
+            done = false;
+            mb.waitUntilClosed();
+            done = true;
+            // interrupt(); this doesn't work at all, neither in sun-vm nor in ewe-vm v1.49
+        }
     }
 }

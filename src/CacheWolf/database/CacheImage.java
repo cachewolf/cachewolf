@@ -22,10 +22,10 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 package CacheWolf.database;
 
 /**
- * This class is used to hold information about an image in a cache. It may be used for normal 
+ * This class is used to hold information about an image in a cache. It may be used for normal
  * images, log images and user added images.
- * @author Engywuck
  *
+ * @author Engywuck
  */
 public class CacheImage {
 
@@ -43,70 +43,76 @@ public class CacheImage {
     private char source = ' ';
 
     public CacheImage(char source) {
-	this.source = source;
+        this.source = source;
     }
 
     public char getSource() {
-	return source;
+        return source;
     }
 
     /**
      * Gets the filename of the image (without path)
+     *
      * @return Filename
      */
     public String getFilename() {
-	return filename;
+        return filename;
     }
 
     /**
      * Sets the filename
+     *
      * @param filename Well...
      */
     public void setFilename(String filename) {
-	this.filename = filename;
+        this.filename = filename;
     }
 
     /**
-     * Gets the title of the image. 
+     * Gets the title of the image.
+     *
      * @return Title
      */
     public String getTitle() {
-	return title;
+        return title;
     }
 
     /**
      * Sets the image title.
+     *
      * @param text Image title
      */
     public void setTitle(String text) {
-	if (text != null)
-	    this.title = text;
+        if (text != null)
+            this.title = text;
     }
 
     /**
      * Gets an additional comment for the image, if there is any.
+     *
      * @return Comment
      */
     public String getComment() {
-	return comment;
+        return comment;
     }
 
     /**
      * Sets the comment of the image.
+     *
      * @param comment Comment
      */
     public void setComment(String comment) {
-	if (comment != null)
-	    this.comment = comment;
+        if (comment != null)
+            this.comment = comment;
     }
 
     public String getURL() {
-	return url;
+        return url;
     }
 
     public void setURL(String url) {
-	if (url != null)
-	    this.url = url;
+        if (url != null)
+            this.url = url;
     }
 
 }

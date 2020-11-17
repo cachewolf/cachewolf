@@ -1,0 +1,41 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg xmlns:xml="http://www.w3.org/XML/1998/namespace" x="0" y="0" width="32" height="32" overflow="hidden" viewBox="0, 0, 16, 16"
+     preserveAspectRatio="xMidYMid" font-size="0" id="svg" xml:space="default"
+     xmlns="http://www.w3.org/2000/svg" version="1.1">
+    <g display="inline" id="layer4" xml:space="default">
+        <g display="inline" transform="translate(0, -2.5)" id="g4799" xml:space="default">
+            <path d="M11 5.5 L11 9.5 L14.5 7.5 L14.5 4 L11 5.5 z" display="inline" stroke="#000000" fill-rule="evenOdd"
+                  stroke-width="0.5" stroke-linejoin="round" id="path4797" xml:space="default" nodetypes="ccccc"
+                  style="fill:#FFFFFF;"/>
+            <path d="M1 5.5 L1 9.5 L11 9.5 L11 5.5 L1 5.5 z" display="inline" stroke="#000000" fill-rule="evenOdd"
+                  stroke-width="0.5" stroke-linejoin="round" id="path4795" xml:space="default" style="fill:#FFFFFF;"/>
+            <g display="inline" transform="translate(0, -4)" id="g4790" xml:space="default">
+                <path d="M11.5 9 L11.5 10 L15 8.5 L15 7.5 L11.5 9 z M11.5 10 L11.5 9 L0.5 9 L0.5 10 L11.5 10 z"
+                      display="inline" stroke="#000000" fill-rule="evenOdd" stroke-width="0.5" stroke-linejoin="round"
+                      id="path4768" xml:space="default" nodetypes="cccccccccc" style="fill:#FFDE19;"/>
+                <path d="M0.5 9 L4.5 7.5 L15 7.5 L11.5 9 L0.5 9 z" display="inline" stroke="#000000" fill-rule="evenOdd"
+                      stroke-width="0.5" stroke-linejoin="round" id="path4766" xml:space="default" nodetypes="ccccc"
+                      style="fill:#FFDE19;"/>
+                <path d="M3 8.5 L11.5 8.5 L12.5 8 L4.5 8 L3 8.5 z" display="inline" fill-rule="evenOdd"
+                      stroke-width="1px" id="path4770" xml:space="default" nodetypes="ccccc" style="fill:#E56200;"/>
+            </g>
+        </g>
+        <g display="inline" transform="translate(0, 2.5)" id="g4746" xml:space="default">
+            <path d="M7.5 12.5 L7.5 8 L14.5 3 C14.5 3 14.5 6 14.5 7 C14.5 7.33541 14.26833 7.798754 14 8 C12 9.5 7.5 12.5 7.5 12.5 z"
+                  display="inline" stroke="#000000" fill-rule="evenOdd" stroke-width="0.5" stroke-linejoin="round"
+                  id="path4646" xml:space="default" nodetypes="cccssc" style="fill:#FFFFFF;"/>
+            <path d="M1.5 8 C1.5 8 1.5 10.5 1.5 11.5 C1.5 12.1364 2.363604 13 3 13 C4 13 5.5 13 6.5 13 C7.136396 13 8 12.1364 8 11.5 C8 10.5 8 8 8 8 L1.5 8 z"
+                  display="inline" stroke="#000000" fill-rule="evenOdd" stroke-width="0.5" stroke-linejoin="round"
+                  id="path4648" xml:space="default" nodetypes="csssscc" style="fill:#FFFFFF;"/>
+            <path d="M1 7.5 L8.5 2.5 L15.5 2.5 L8.5 7.5 L1 7.5 z" display="inline" stroke="#000000" fill-rule="evenOdd"
+                  stroke-width="0.5" stroke-linejoin="round" id="path4650" xml:space="default" nodetypes="ccccc"
+                  style="fill:#FFDE19;"/>
+            <path d="M8.5 7.5 L8.5 8.5 L15.5 3.5 L15.5 2.5 L8.5 7.5 z M8.5 8.5 L8.5 7.5 L1 7.5 L1 8.5 L8.5 8.5 z"
+                  display="inline" stroke="#000000" fill-rule="evenOdd" stroke-width="0.5" stroke-linejoin="round"
+                  id="path4652" xml:space="default" nodetypes="cccccccccc" style="fill:#FFDE19;"/>
+            <path d="M4 6.5 L8 6.5 L12.5 3.5 L8.5 3.5 L4 6.5 z" display="inline" fill-rule="evenOdd" stroke-width="1px"
+                  id="path4739" xml:space="default" style="fill:#E56200;"/>
+        </g>
+    </g>
+</svg>

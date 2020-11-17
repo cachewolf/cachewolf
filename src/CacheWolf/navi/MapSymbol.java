@@ -30,31 +30,31 @@ public class MapSymbol extends MapImage {
     Object mapObject;
 
     public MapSymbol(String name, String filename, CWPoint where) {
-	this.name = name;
-	this.filename = filename;
-	this.where = where;
-	loadImage();
+        this.name = name;
+        this.filename = filename;
+        this.where = where;
+        loadImage();
     }
 
     public MapSymbol(String name, Object mapObject, String filename, CWPoint where) {
-	this.name = name;
-	this.filename = filename;
-	this.where = where;
-	this.mapObject = mapObject;
-	loadImage();
+        this.name = name;
+        this.filename = filename;
+        this.where = where;
+        this.mapObject = mapObject;
+        loadImage();
     }
 
     public MapSymbol(String name, Object mapObject, ewe.fx.Image fromIm, CWPoint where) {
-	this.name = name;
-	this.where = where;
-	this.mapObject = mapObject;
-	setImage(fromIm);
+        this.name = name;
+        this.where = where;
+        this.mapObject = mapObject;
+        setImage(fromIm);
     }
 
     private void loadImage() {
-	if (filename != null) {
-	    setImage(new ewe.fx.Image(filename), 0);
-	    freeSource();
-	}
+        if (filename != null) {
+            setImage(new ewe.fx.Image(filename), 0);
+            freeSource();
+        }
     }
 }
