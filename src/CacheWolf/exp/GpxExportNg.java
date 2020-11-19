@@ -547,7 +547,17 @@ public class GpxExportNg {
             return "";
         }
 
-        return ret.toString();
+	
+	for (int i = 0; i < ret.length();i++){
+	    if (i < 3680)
+		Preferences.itself().log ("Das Zeichen: " + ret.charAt(i) + ' ' + ((int) ret.charAt(i)));
+	    if (ret.charAt(i) > 0x1000){
+		ret.setCharAt(i, ' ');
+	    }
+	}
+        String result =  ret.toString();
+	
+	return result;	
     }
 
     private String formatCompact() {
