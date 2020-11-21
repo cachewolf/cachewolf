@@ -547,17 +547,15 @@ public class GpxExportNg {
             return "";
         }
 
-	
+	//characters between 0xd800 and 0xdfff are not really UTF-8. Actually they occur as Emoticons. Modern JDK can
+        // handle these characters but ewe encodes them not in such a way other programs (here basecamp) can use them.
+        // See https://geoclub.de/forum/viewtopic.php?p=1316546&sid=c62cf31f96e7fbe389f148fde438d994#p1316546
 	for (int i = 0; i < ret.length();i++){
-	    if (i < 3680)
-		Preferences.itself().log ("Das Zeichen: " + ret.charAt(i) + ' ' + ((int) ret.charAt(i)));
-	    if (ret.charAt(i) > 0x1000){
+	    if (ret.charAt(i) >= 0xd800){
 		ret.setCharAt(i, ' ');
 	    }
 	}
-        String result =  ret.toString();
-	
-	return result;	
+        return ret.toString();
     }
 
     private String formatCompact() {
