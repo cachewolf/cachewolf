@@ -61,6 +61,8 @@ public class GCImporter {
      * Error occured while spidering
      */
     public final static int SPIDER_ERROR = 0;
+
+    private final static String MAP_URL = "https://tiles01.geocaching.com/map.details?i=";
     /**
      * Cache was spidered without problems
      */
@@ -1249,24 +1251,31 @@ public class GCImporter {
                             Preferences.itself().log("[!!!AP:] premium cache found, cache-holder is null: [" + chWaypoint + "]");
                             numPrivateNew = numPrivateNew + 1;
                             ch = new CacheHolder(chWaypoint);
-                            ch.setIsPremiumCache(true);
-                            // next 2 for to avoid warning triangle
-                            Preferences.itself().log("[!!!AP:] premium cache found, content is: [" + aCacheDescriptionOfListPage + "]");
-                            ch.setType(CacheType.CW_TYPE_CUSTOM);
-			    JSONObject mapDetails = getJsonDescriptionOfCache (chWaypoint);
-			    //Hier besser Json von map.details holen:
-                            ch.setType(getWayPointType(aCacheDescriptionOfListPage));
-
-                            ch.setWpt(Preferences.itself().curCentrePt); // or MainForm.profile.centre
-                            ch.getDetails().setLongDescription(aCacheDescriptionOfListPage); // for Info
-                            ch.saveCacheDetails();
                             MainForm.profile.cacheDB.add(ch);
-                        }
-                    }
+			}
+		    }
+		    else{
+                        possibleUpdateList.remove(chWaypoint);
+		    }
+
+		    if (ch != null){			
+			ch.setIsPremiumCache(true);
+			JSONObject mapDetails = getJsonDescriptionOfCache (chWaypoint);
+
+			// next 2 for to avoid warning triangle
+			Preferences.itself().log("[!!!AP:] premium cache found, content is: [" + aCacheDescriptionOfListPage + "]");
+			ch.setType(CacheType.CW_TYPE_CUSTOM);
+			//Hier besser Json von map.details holen:
+			ch.setType(getWayPointType(aCacheDescriptionOfListPage));
+			
+			ch.setWpt(Preferences.itself().curCentrePt); // or MainForm.profile.centre
+			ch.getDetails().setLongDescription(aCacheDescriptionOfListPage); // for Info
+			ch.saveCacheDetails();
+		    }
+		    /*                    }
                     else {
 			Preferences.itself().log("[!!!AP:] premium cache found, cache-holder is not null: [" + chWaypoint + "]");
                         boolean save = false;
-                        possibleUpdateList.remove(chWaypoint);
 			//Hier besser Json von map.details holen:
 			ch.setType(getWayPointType(aCacheDescriptionOfListPage));
                         if (updateExists(ch)) {
@@ -1279,7 +1288,8 @@ public class GCImporter {
                         }
                         if (save)
                             ch.saveCacheDetails();
-                    }
+			    }
+		    */
                 }
 
             } else {
@@ -1294,10 +1304,16 @@ public class GCImporter {
     }
 
     private JSONObject getJsonDescriptionOfCache(String gcCode){
-	String url = ...
-	    String response= UrlFetcher(...);
-	new JSONObject(response)
-return result
+        try{
+            String url = MAP_URL + gcCode;
+            String response= UrlFetcher.fetch(url);
+            Preferences.itself().log ("[AP!]: Result from urllfetch:\n"+response+"\n\n");
+            return new JSONObject(response);
+        }
+	catch (Exception ex){
+	    Preferences.itself().log("While while loading cache-details for code: " + gcCode);
+            return null;
+	}
     }
 
     private byte getWayPointType (String cacheDescription){
