@@ -182,9 +182,8 @@ public class ASN1InputStream
                 case SET:
                     return DERFactory.createSet(buildDEREncodableVector(defIn));
                 case EXTERNAL:
-	throw new UnsupportedClassVersionError();/*
                     return new DERExternal(buildDEREncodableVector(defIn));                
-*/                default:
+                default:
                     throw new IOException("unknown tag " + tagNo + " encountered");
             }
         }
