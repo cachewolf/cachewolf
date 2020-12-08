@@ -307,12 +307,14 @@ public abstract class ASN1Sequence
     boolean asn1Equals(
         ASN1Primitive o)
     {
-    	throw new UnsupportedClassVersionError();/* 
         if (!(o instanceof ASN1Sequence))
         {
+            throw new UnsupportedClassVersionError();/* 
             return false;
+            */
         }
         
+        throw new UnsupportedClassVersionError();/* 
         ASN1Sequence   other = (ASN1Sequence)o;
 
         if (this.size() != other.size())
