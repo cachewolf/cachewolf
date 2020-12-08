@@ -42,6 +42,7 @@ import ewe.util.*;
 import ewesoft.xml.MinML;
 import ewesoft.xml.sax.AttributeList;
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 /**
@@ -1252,13 +1253,7 @@ public class GCImporter {
                             numPrivateNew = numPrivateNew + 1;
                             ch = new CacheHolder(chWaypoint);
                             MainForm.profile.cacheDB.add(ch);
-			}
-		    }
-		    else{
-                        possibleUpdateList.remove(chWaypoint);
-		    }
 
-		    if (ch != null){			
 			ch.setIsPremiumCache(true);
 			JSONObject mapDetails = getJsonDescriptionOfCache (chWaypoint);
 
@@ -1266,30 +1261,18 @@ public class GCImporter {
 			Preferences.itself().log("[!!!AP:] premium cache found, content is: [" + aCacheDescriptionOfListPage + "]");
 			ch.setType(CacheType.CW_TYPE_CUSTOM);
 			//Hier besser Json von map.details holen:
-			ch.setType(getWayPointType(aCacheDescriptionOfListPage));
+			ch.setType(getWayPointType(mapDetails));
 			
 			ch.setWpt(Preferences.itself().curCentrePt); // or MainForm.profile.centre
 			ch.getDetails().setLongDescription(aCacheDescriptionOfListPage); // for Info
 			ch.saveCacheDetails();
+
+			}
 		    }
-		    /*                    }
-                    else {
-			Preferences.itself().log("[!!!AP:] premium cache found, cache-holder is not null: [" + chWaypoint + "]");
-                        boolean save = false;
-			//Hier besser Json von map.details holen:
-			ch.setType(getWayPointType(aCacheDescriptionOfListPage));
-                        if (updateExists(ch)) {
-                            ch.setLastSync(""); //
-                            save = true;
-                        }
-                        if (!ch.isPremiumCache()) {
-                            ch.setIsPremiumCache(true);
-                            save = true;
-                        }
-                        if (save)
-                            ch.saveCacheDetails();
-			    }
-		    */
+		    else{
+                        possibleUpdateList.remove(chWaypoint);
+		    }
+
                 }
 
             } else {
@@ -1308,7 +1291,7 @@ public class GCImporter {
             String url = MAP_URL + gcCode;
             String response= UrlFetcher.fetch(url);
             Preferences.itself().log ("[AP!]: Result from urllfetch:\n"+response+"\n\n");
-            return new JSONObject(response);
+            return new JSONObject(response).getJSONArray("data")[0];
         }
 	catch (Exception ex){
 	    Preferences.itself().log("While while loading cache-details for code: " + gcCode);
@@ -1316,25 +1299,14 @@ public class GCImporter {
 	}
     }
 
-    private byte getWayPointType (String cacheDescription){
-        Preferences.itself().log("[AP!!!] getWayPointType called");
-        Regex pmSizeRegEx = new Regex("/images/icons/container/(.*?)\\.gif");
-        pmSizeRegEx.search(cacheDescription);
-        String sizeString;
-        if (pmSizeRegEx.didMatch()) {
-            sizeString = pmSizeRegEx.stringMatched(1);
-            Preferences.itself().log("[AP!!!]check getWayPointType: " + sizeString);
-	    if ("small".equals(sizeString)){
-		return CacheSize.CW_SIZE_SMALL;
-	    }
-	    else{
-            Preferences.itself().log("[AP!!!]check getWayPointType contains unkown cachesize: " + sizeString);
-	    }
-        }
-        else {
-            sizeString = "";
-            Preferences.itself().log("[AP!!!]check getWayPointType did not match");
-        }
+    private byte getWayPointType (JSONObject cacheDescription) {
+	try {
+	    Preferences.itself().log("[AP!!!] getWayPointType called");
+	    final JSONObject type = cacheDescription.getJSONObject ("type");
+	}
+	catch (JSONException e){
+	    throw new RuntimeException (e);
+	}
 
         return CacheType.CW_TYPE_CUSTOM;
     }

@@ -60,7 +60,7 @@ public class Attribute {
             {"15", "2532", "hunting", "12", "22", "Hunting"},//
             {"16", "2534", "jeeps", "0", "35", "Off-road vehicles"},//
             {"17", "2536", "kids", "59", "6", "Recommended for kids"},//
-            {"18", "2538", "mine", "15", "20", "Abandoned mines"},//
+            {"18", "2538", "mine", "A65", "20", "Abandoned mines"},//
             {"19", "2540", "motorcycles", "0", "33", "Motorcycles"},//
             {"20", "2542", "night", "1", "14", "Recommended at night"},//
             {"21", "2544", "onehour", "0", "7", "Takes less than an hour"},//
