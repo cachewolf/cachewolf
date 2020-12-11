@@ -143,8 +143,8 @@ public class Attribute {
             {"97", "2702", "powertrail", "0", "70", "Power trail"}, //
             {"98", "2704", "challengecache", "0", "71", "Challenge cache"}, //
             {"99", "2706", "hqsolutionchecker", "0", "72", "Geocaching.com solution checker"}, //
-            {"100", "2707", "safari", "A72", "0", "Safari Virtual Cache"}
-            {"101", "2708", "children", "A65", "0", "Suitable for children (10-12 years)"}
+            {"100", "2707", "safari", "A72", "0", "Safari Virtual Cache"},
+            {"101", "2708", "children", "A71", "0", "Suitable for children (10-12 years)"}
             // {"-1","2500","error","0","0",""}, //
     };
     private static final String IMAGEDIR = STRreplace.replace(FileBase.getProgramDirectory() + "/attributes/", "//", "/");
