@@ -1291,7 +1291,8 @@ public class GCImporter {
             String url = MAP_URL + gcCode;
             String response= UrlFetcher.fetch(url);
             Preferences.itself().log ("[AP!]: Result from urllfetch:\n"+response+"\n\n");
-            return new JSONObject(response).getJSONArray("data")[0];
+            return new JSONObject(response).getJSONArray("data")
+		.getJSONObject(0);
         }
 	catch (Exception ex){
 	    Preferences.itself().log("While while loading cache-details for code: " + gcCode);
