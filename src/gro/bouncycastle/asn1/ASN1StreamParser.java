@@ -49,9 +49,8 @@ public class ASN1StreamParser
             case BERTags.SEQUENCE:
                 return new BERSequenceParser(this);
             case BERTags.SET:
-	throw new UnsupportedClassVersionError();/*
                 return new BERSetParser(this);
-*/            default:
+            default:
 	throw new UnsupportedClassVersionError();/*
                 throw new ASN1Exception("unknown BER object encountered: 0x" + Integer.toHexString(tagValue));
 */        }
