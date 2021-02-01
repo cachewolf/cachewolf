@@ -1309,8 +1309,6 @@ public class GCImporter {
 	catch (JSONException e){
 	    throw new RuntimeException (e);
 	}
-
-        return CacheType.CW_TYPE_CUSTOM;
     }
 
     private void downloadCaches() {
