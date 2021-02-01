@@ -1304,6 +1304,7 @@ public class GCImporter {
 	try {
 	    Preferences.itself().log("[AP!!!] getWayPointType called");
 	    final JSONObject type = cacheDescription.getJSONObject ("type");
+            return (byte) type.getInt("value");
 	}
 	catch (JSONException e){
 	    throw new RuntimeException (e);
