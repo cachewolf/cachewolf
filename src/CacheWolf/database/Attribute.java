@@ -97,7 +97,7 @@ public class Attribute {
             {"51", "2604", "date", "A44", "142", "All seasons"}, // OC special
             {"52", "2606", "day", "A41", "140", "by day only"}, // OC special
             {"53", "2608", "indoor", "33", "133", "Within enclosed rooms (caves, buildings etc.)"}, // OC special
-            {"54", "2610", "interestsign", "30", "130", "Point of interest"}, // OC special
+            {"54", "2610", "interestsign", "A30", "130", "Point of interest"}, // OC special
             {"55", "2612", "letter", "8", "108", "Letterbox (needs stamp)"}, // OC special
             {"56", "2614", "moving", "31", "131", "Moving target"}, // OC special
             {"57", "2616", "naturschutz", "43", "143", "Breeding season / protected nature"}, // OC special

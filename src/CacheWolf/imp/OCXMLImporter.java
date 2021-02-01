@@ -486,7 +486,7 @@ public class OCXMLImporter {
         String fetchUrl;
         String imgTag;
         String imgAltText;
-        final Regex imgRegexUrl = new Regex("(<img[^>]*src=[\"\']([^>^\"^\']*)[^>]*>|<img[^>]*src=([^>^\"^\'^ ]*)[^>]*>)"); // Ergebnis enthlt keine Anfhrungszeichen
+        final Regex imgRegexUrl = new Regex("(<img[^>]*src=[\"\']([^>^\"^\']*)[^>]*>|<img[^>]*src=([^>^\"^\'^ ]*)[^>]*>)"); // Ergebnis enthaelt keine Anfuehrungszeichen
         final Regex imgRegexAlt = new Regex("(?:alt=[\"\']([^>^\"^\']*)|alt=([^>^\"^\'^ ]*))"); // get alternative text for Pic
         imgRegexAlt.setIgnoreCase(true);
         imgRegexUrl.setIgnoreCase(true);
