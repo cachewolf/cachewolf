@@ -344,8 +344,11 @@ public class OCXMLImporter {
         // clear data (picture, logs) if we do a complete Update
         if (!incUpdate) {
             syncHolder.getDetails().getCacheLogs().clear();
-            syncHolder.getDetails().getImages().clear();
         }
+	//Images will always be (re)loaded
+	syncHolder.getDetails().getImages().clear();
+	//TODO: Delete existing images from filesystem
+
         JSONObject cacheAsJson = new JSONObject(cacheAsJsonString);
         syncHolder.setName(cacheAsJson.getString("name"));
         final JSONObject ownerObject = cacheAsJson.getJSONObject("owner");

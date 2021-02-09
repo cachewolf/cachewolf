@@ -208,14 +208,17 @@ public abstract class ASN1TaggedObject
             return ASN1OctetString.getInstance(this, isExplicit).parser();
         }
 
-    	throw new UnsupportedClassVersionError();/* 
         if (isExplicit)
         {
+        	throw new UnsupportedClassVersionError();/* 
             return getObject();
+            */
         }
 
+    	throw new UnsupportedClassVersionError();/* 
         throw new ASN1Exception("implicit tagging not implemented for tag: " + tag);
-*/    }
+        */
+    }
 
     public ASN1Primitive getLoadedObject()
     {
