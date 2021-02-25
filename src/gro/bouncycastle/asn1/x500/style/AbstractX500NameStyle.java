@@ -152,9 +152,8 @@ public abstract class AbstractX500NameStyle
             }
         }
 
-        	throw new UnsupportedClassVersionError();/*
         return true;
-*/    }
+    }
 
     private boolean foundMatch(boolean reverse, RDN rdn, RDN[] possRDNs)
     {

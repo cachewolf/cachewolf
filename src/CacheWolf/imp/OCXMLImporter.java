@@ -322,7 +322,7 @@ public class OCXMLImporter {
             cacheDB.get(index).update(syncHolder);
             DBindexID.put(syncHolder.getIdOC(), syncHolder.getCode());
         }
-	syncHolder.setURL("https://opencaching.de/" + ocCode.toUpperCase());
+	syncHolder.getDetails().setURL("https://opencaching.de/" + ocCode.toUpperCase());
         // clear data (picture, logs) if we do a complete Update
         if (!incUpdate) {
             syncHolder.getDetails().getCacheLogs().clear();
