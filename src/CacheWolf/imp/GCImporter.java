@@ -1303,13 +1303,16 @@ public class GCImporter {
 
     private byte getWayPointType (JSONObject cacheDescription) {
 	try {
-	    Preferences.itself().log("[AP!!!] getWayPointType called");
 	    final JSONObject type = cacheDescription.getJSONObject ("type");
             return (byte) type.getInt("value");
 	}
 	catch (JSONException e){
 	    throw new RuntimeException (e);
 	}
+    }
+
+    private byte getCacheSize (JSONObject cacheDescription){
+	Preferences.itself().log("[AP!!!] getCachSize called\n " + cacheDescription);
     }
 
     private void downloadCaches() {
