@@ -148,14 +148,12 @@ public abstract class AbstractX500NameStyle
         {
             if (!foundMatch(reverse, rdns1[i], rdns2))
             {
-            	throw new UnsupportedClassVersionError();/* 
                 return false;
-*/            }
+            }
         }
 
-        	throw new UnsupportedClassVersionError();/*
         return true;
-*/    }
+    }
 
     private boolean foundMatch(boolean reverse, RDN rdn, RDN[] possRDNs)
     {

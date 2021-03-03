@@ -169,14 +169,6 @@ public class OCXMLImporter {
         dateOfthisSync.parse(lastS, "yyyyMMddHHmmss");
 
         picCnt = 0;
-        // Build url
-        String url = "https://" + hostname + "/xml/ocxml11.php?" + "modifiedsince=" + lastS + "&cache=1" + "&cachedesc=1";
-
-        if (downloadPics)
-            url += "&picture=1";
-        else
-            url += "&picture=0";
-        url += "&cachelog=1" + "&removedobject=0" + "&wp=" + ch.getCode() + "&charset=utf-8" + "&cdata=0" + "&session=0";
         ch.setUpdated(false);
         isSyncSingle = true;
         try{
@@ -235,16 +227,6 @@ public class OCXMLImporter {
             ch.setLogUpdated(false);
         }
         picCnt = 0;
-        // Build url
-        String url = "https://" + hostname + "/xml/ocxml11.php?" + "modifiedsince=" + lastS + "&cache=1" + "&cachedesc=1";
-        if (downloadPics){
-            url += "&picture=1";
-        }
-        else{
-            url += "&picture=0";
-        }
-        url += "&cachelog=1" + "&removedobject=0" + "&lat=" + centre.getLatDeg(TransformCoordinates.DD) + "&lon=" + centre.getLonDeg(TransformCoordinates.DD) + "&distance=" + dist + "&charset=utf-8" + "&cdata=0" + "&session=0";
-
         String okapiUrl = "https://www.opencaching.de/okapi/services/caches/search/nearest?center=" + centre.getLatDeg(TransformCoordinates.DD) + "%7C" + centre.getLonDeg(TransformCoordinates.DD) + "&consumer_key=EgcYTe8ZZsWd4PqGXNu6&radius=" + dist;
 
         Preferences.itself ().log ("Downloading from OC:" + okapiUrl);
@@ -340,7 +322,7 @@ public class OCXMLImporter {
             cacheDB.get(index).update(syncHolder);
             DBindexID.put(syncHolder.getIdOC(), syncHolder.getCode());
         }
-
+	syncHolder.getDetails().setURL("https://opencaching.de/" + ocCode.toUpperCase());
         // clear data (picture, logs) if we do a complete Update
         if (!incUpdate) {
             syncHolder.getDetails().getCacheLogs().clear();
@@ -383,7 +365,6 @@ public class OCXMLImporter {
 
         //Attributes setzen:
         setAttribute (syncHolder, cacheAsJson.getJSONArray("attr_acodes"));
-        //        result.numFoundsSinceRecommendation = Convert.toInt((String) attributes.get("num_found")); ???
 
         syncHolder.getDetails().setLongDescription(cacheAsJson.getString("description"));
         final JSONObject hintsObject = cacheAsJson.getJSONObject("hints2");
@@ -399,12 +380,10 @@ public class OCXMLImporter {
         }
         CacheImages imageList = readImageList(cacheAsJson.getJSONArray("images"));
         loadPictures (syncHolder, imageList);
-        //syncHolder.getDetails().setImages(imageList);
         // save all
         syncHolder.getDetails().saveCacheXML(MainForm.profile.dataDir);
         syncHolder.getDetails().setUnsaved(true); // this makes CachHolder save the details in case that they are unloaded from memory
 
-        //------------
         return true;
     }
 
