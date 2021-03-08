@@ -57,7 +57,7 @@ public class Attribute {
             {"13", "2528", "hiking", "25", "9", "Significant hike"},//
             //{ "13", "2528", "hiking", "25", "125", "Long walk" }, // OC special
             {"14", "2530", "horses", "0", "37", "Horses"},//
-            {"15", "2532", "hunting", "12", "22", "Hunting"},//
+            {"15", "2532", "hunting", "A62", "22", "Hunting"},//
             {"16", "2534", "jeeps", "0", "35", "Off-road vehicles"},//
             {"17", "2536", "kids", "59", "6", "Recommended for kids"},//
             {"18", "2538", "mine", "A65", "20", "Abandoned mines"},//
