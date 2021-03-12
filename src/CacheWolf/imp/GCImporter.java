@@ -1313,7 +1313,7 @@ public class GCImporter {
 
     private byte getCacheSize (JSONObject cacheDescription){
 	Preferences.itself().log("[AP!!!] getCachSize called\n " + cacheDescription);
-
+	JSONObject container = cacheDescription.getJSONObject("container");
 	return CacheSize.CW_SIZE_NOTCHOSEN;
     }
 
