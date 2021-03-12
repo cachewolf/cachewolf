@@ -1314,7 +1314,7 @@ public class GCImporter {
     private byte getCacheSize (JSONObject cacheDescription){
 	Preferences.itself().log("[AP!!!] getCachSize called\n " + cacheDescription);
 
-	//--> return CacheSize.CW_SIZE_NOTCHOSEN;
+	return CacheSize.CW_SIZE_NOTCHOSEN;
     }
 
     private void downloadCaches() {

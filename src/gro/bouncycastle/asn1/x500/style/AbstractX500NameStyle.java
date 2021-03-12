@@ -157,9 +157,9 @@ public abstract class AbstractX500NameStyle
 
     private boolean foundMatch(boolean reverse, RDN rdn, RDN[] possRDNs)
     {
-    	throw new UnsupportedClassVersionError();/*
         if (reverse)
         {
+        	throw new UnsupportedClassVersionError();/*
             for (int i = possRDNs.length - 1; i >= 0; i--)
             {
                 if (possRDNs[i] != null && rdnAreEqual(rdn, possRDNs[i]))
@@ -168,9 +168,10 @@ public abstract class AbstractX500NameStyle
                     return true;
                 }
             }
-        }
+*/        }
         else
         {
+        	throw new UnsupportedClassVersionError();/*
             for (int i = 0; i != possRDNs.length; i++)
             {
                 if (possRDNs[i] != null && rdnAreEqual(rdn, possRDNs[i]))
@@ -179,7 +180,9 @@ public abstract class AbstractX500NameStyle
                     return true;
                 }
             }
-        }
+*/        }
+
+/*    	throw new UnsupportedClassVersionError();/*
 
         return false;
 */    }
