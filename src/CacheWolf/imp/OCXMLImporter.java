@@ -380,6 +380,9 @@ public class OCXMLImporter {
         }
         CacheImages imageList = readImageList(cacheAsJson.getJSONArray("images"));
         loadPictures (syncHolder, imageList);
+
+	loadAdditionalWaypoints(cacheAsJson.getJSONArray ("alt_wpts"));
+
         // save all
         syncHolder.getDetails().saveCacheXML(MainForm.profile.dataDir);
         syncHolder.getDetails().setUnsaved(true); // this makes CachHolder save the details in case that they are unloaded from memory
@@ -589,5 +592,45 @@ public class OCXMLImporter {
             inf.addWarning(ErrMessage);
             Preferences.itself().log(ErrMessage, e, true);
         }
+    }
+
+    private void loadAdditionalWaypoints(final JSONArray altWptList){
+	if (altWptList == null){
+	    return;
+	}
+
+	//--
+        final int index = cacheDB.getIndex(ocCode);
+        final CacheHolder syncHolder;
+        if (index == -1) {
+            syncHolder = new CacheHolder();
+            Preferences.itself().log("Importing new additional waypoint!");
+            syncHolder.setNew(true);
+            cacheDB.add(syncHolder);
+            DBindexID.put(syncHolder.getIdOC(), syncHolder.getCode());
+        }
+        // update (overwrite) data
+        else {
+            syncHolder = cacheDB.get(index);
+            Preferences.itself().log("Updating existing additional waypoint!");
+            syncHolder.setNew(false);
+            syncHolder.setIncomplete(false);
+            cacheDB.get(index).update(syncHolder);
+            DBindexID.put(syncHolder.getIdOC(), syncHolder.getCode());
+        }
+	//-- Code duplette above: extrahieren!
+	syncHolder.setName (altWptList.getName());
+        final String locationText = cacheAsJson.getString("location");
+        syncHolder.getWpt().latDec = Common.parseDouble(locationText.substring(0, locationText.indexOf('|')));
+        syncHolder.getWpt().lonDec = Common.parseDouble(locationText.substring(locationText.indexOf('|')+1));
+	/*
+name	"OC13356-2"
+location	"50.23245|8.543917"
+type	"parking"
+type_name	"Parkplatz"
+gc_type	"Parking Area"
+sym	"Parking Area"
+description	"Forellengut"
+	*/
     }
 }

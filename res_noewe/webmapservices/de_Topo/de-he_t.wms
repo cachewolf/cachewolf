@@ -3,7 +3,7 @@ Name:                                  de.Hessen Topographische Karte
 MapType:                               de.he 
 #MainUrl:                               http://www.gds-srv.hessen.de/cgi-bin/lika-services/de-viewer/access/ogc-free-maps.ows?
 MainUrl:                               http://www.gds-srv.hessen.de/cgi-bin/lika-services/ogc-free-maps.ows?
-LayersUrlPart:                         LAYERS=adv_dtk
+LayersUrlPart:                         LAYERS=he_pg25
 ImageFormatUrlPart:                    FORMAT=image/jpeg
 ImageFileExtension:                    .jpg
 CoordinateReferenceSystemCacheWolf:    31467 31466 31468 31469
