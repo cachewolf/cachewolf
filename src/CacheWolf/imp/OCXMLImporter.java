@@ -595,42 +595,50 @@ public class OCXMLImporter {
     }
 
     private void loadAdditionalWaypoints(final JSONArray altWptList){
-	if (altWptList == null){
+	if (altWptList == null || true){
 	    return;
 	}
-
-	//--
-        final int index = cacheDB.getIndex(ocCode);
-        final CacheHolder syncHolder;
-        if (index == -1) {
-            syncHolder = new CacheHolder();
-            Preferences.itself().log("Importing new additional waypoint!");
-            syncHolder.setNew(true);
-            cacheDB.add(syncHolder);
-            DBindexID.put(syncHolder.getIdOC(), syncHolder.getCode());
-        }
-        // update (overwrite) data
-        else {
-            syncHolder = cacheDB.get(index);
-            Preferences.itself().log("Updating existing additional waypoint!");
-            syncHolder.setNew(false);
-            syncHolder.setIncomplete(false);
-            cacheDB.get(index).update(syncHolder);
-            DBindexID.put(syncHolder.getIdOC(), syncHolder.getCode());
-        }
-	//-- Code duplette above: extrahieren!
-	syncHolder.setName (altWptList.getName());
-        final String locationText = cacheAsJson.getString("location");
-        syncHolder.getWpt().latDec = Common.parseDouble(locationText.substring(0, locationText.indexOf('|')));
-        syncHolder.getWpt().lonDec = Common.parseDouble(locationText.substring(locationText.indexOf('|')+1));
-	/*
-name	"OC13356-2"
-location	"50.23245|8.543917"
-type	"parking"
-type_name	"Parkplatz"
-gc_type	"Parking Area"
-sym	"Parking Area"
-description	"Forellengut"
-	*/
+	/*	
+	for (int i = 0; i < altWptList.length (); i++){
+	    JSONObject altWaypoint = (JSONObject) altWptList.get(i);
+	    final String ocCode = altWaypoint.getString("name");
+	    //--
+	    final int index = cacheDB.getIndex(ocCode);
+	    final CacheHolder syncHolder;
+	    if (index == -1) {
+		syncHolder = new CacheHolder();
+		Preferences.itself().log("Importing new additional waypoint!");
+		syncHolder.setNew(true);
+		cacheDB.add(syncHolder);
+		DBindexID.put(syncHolder.getIdOC(), syncHolder.getCode());
+	    }
+	    // update (overwrite) data
+	    else {
+		syncHolder = cacheDB.get(index);
+		Preferences.itself().log("Updating existing additional waypoint!");
+		syncHolder.setNew(false);
+		syncHolder.setIncomplete(false);
+		cacheDB.get(index).update(syncHolder);
+		DBindexID.put(syncHolder.getIdOC(), syncHolder.getCode());
+	    }
+	    //-- Code duplette above: extrahieren!
+	    syncHolder.setCode (ocCode);
+	    //-- Haben wir auch schon weiter oben so gesehen...
+	    final String locationText = altWaypoint.getString("location");
+	    syncHolder.getWpt().latDec = Common.parseDouble(locationText.substring(0, locationText.indexOf('|')));
+	    syncHolder.getWpt().lonDec = Common.parseDouble(locationText.substring(locationText.indexOf('|')+1));
+	    
+	    //syncHolder.setType (altWaypoint.getString("gc_type"));
+	    //syncHolder.setName (altWaypoint.getString("description"));
+	}
+	    /*
+	      name	"OC13356-2"
+	      location	"50.23245|8.543917"
+	      type	"parking"
+	      type_name	"Parkplatz"
+	      gc_type	"Parking Area"
+	      sym	"Parking Area"
+	      description	"Forellengut"
+	    */
     }
 }
