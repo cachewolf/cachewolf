@@ -154,7 +154,7 @@ public final class CacheType {
             new CTyp(CW_TYPE_MAZE, (byte) 103, 'C', "", "1304", "", (byte) -1, 'Z', "Maze", new String[]{"Geocache|GPS Adventures Exhibit", "Geocache", "GPS Adventures Exhibit", "MAZE"}, 17, 20, 0x100000),
             new CTyp(CW_TYPE_GIGA_EVENT, (byte) 106, 'C', "", "7005", "", (byte) -1, 'X', "Gigaevent", new String[]{"Geocache|Giga-Event Cache", "Geocache", "Giga-Event Cache", "Giga"}, 22, 9, 0x000200),
             // additional waypoints
-            new CTyp(CW_TYPE_PARKING, (byte) 50, 'A', "50", "Parking Area", "", (byte) -78, 'P', "Parking", new String[]{"Waypoint|Parking Area", "Parking Area", "Parking Area", ""}, 50, 11, 0x000800),
+            new CTyp(CW_TYPE_PARKING, (byte) 50, 'A', "50", "Parking Area", "Parking Area", (byte) -78, 'P', "Parking", new String[]{"Waypoint|Parking Area", "Parking Area", "Parking Area", ""}, 50, 11, 0x000800),
             new CTyp(CW_TYPE_STAGE, (byte) 51, 'A', "51", "Physical Stage", "", (byte) -77, 'S', "Stage", new String[]{"Waypoint|Physical Stage", "Physical Stage", "Physical Stage", ""}, 51, 12, 0x001000),
             new CTyp(CW_TYPE_QUESTION, (byte) 52, 'A', "52", "Virtual Stage", "", (byte) -76, 'Q', "Question", new String[]{"Waypoint|Virtual Stage", "Virtual Stage", "Virtual Stage", ""}, 52, 13, 0x002000),
             new CTyp(CW_TYPE_FINAL, (byte) 53, 'A', "53", "Final Location", "", (byte) -75, 'F', "Final", new String[]{"Waypoint|Final Location", "Final Location", "Final Location", ""}, 53, 14, 0x004000),
