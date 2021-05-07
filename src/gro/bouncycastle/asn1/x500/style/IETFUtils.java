@@ -193,13 +193,12 @@ public class IETFUtils
                 {
                     throw new IllegalArgumentException("badly formatted directory string");
                 }
-                throw new UnsupportedClassVersionError();/*
 
                 String               value = vTok.nextToken();
                 ASN1ObjectIdentifier oid = x500Style.attrNameToOID(attr.trim());
 
                 builder.addRDN(oid, unescape(value));
-*/            }
+            }
         }
 
         return builder.build().getRDNs();

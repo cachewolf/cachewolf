@@ -1312,8 +1312,14 @@ public class GCImporter {
     }
 
     private byte getCacheSize (JSONObject cacheDescription){
-	Preferences.itself().log("[AP!!!] getCachSize called\n " + cacheDescription);
-	JSONObject container = cacheDescription.getJSONObject("container");
+	Preferences.itself().log("[AP!!!] getCacheSize called\n " + cacheDescription);
+	try{
+	    JSONObject container = cacheDescription.getJSONObject("container");
+	}
+	catch (JSONException e){
+	    throw new RuntimeException (e);
+	}
+
 	return CacheSize.CW_SIZE_NOTCHOSEN;
     }
 
@@ -1615,7 +1621,8 @@ public class GCImporter {
         UrlFetcher.rememberCookies();
         // 1.) loggedInAs
         String loggedInAs;
-        extractor.set(page, "<span class=\"user-name\">", "</span>", 0, true);
+        //extractor.set(page, "<span class=\"user-name\">", "</span>", 0, true);
+	extractor.set(page, "username\": \"", "\"", 0, true);
         loggedInAs = extractor.findNext();
         Preferences.itself().log("[checkGCSettings]:loggedInAs= " + loggedInAs, null);
         if (loggedInAs.length() == 0) {
