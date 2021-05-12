@@ -149,9 +149,8 @@ public class ECNamedCurveTable
 
         if (ecP == null)
         {
-        	throw new UnsupportedClassVersionError();/*
             ecP = SECNamedCurves.getByOID(oid);
-*/        }
+        }
 
         // NOTE: All the NIST curves are currently from SEC, so no point in redundant OID lookup
 

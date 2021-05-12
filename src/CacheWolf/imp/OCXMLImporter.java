@@ -597,6 +597,7 @@ public class OCXMLImporter {
 	}
 	Preferences.itself().log("Found additional waypoints: " +altWptList);
        
+	//TODO: Clean-Code: Seems to be duplicated from above. Check and extract methods for the same:
 	for (int i = 0; i < altWptList.length (); i++){
 	    JSONObject altWaypoint = (JSONObject) altWptList.get(i);
 	    Preferences.itself().log("Additional waypoint " +altWaypoint);
@@ -606,6 +607,7 @@ public class OCXMLImporter {
 	    final CacheHolder syncHolder;
 	    if (index == -1) {
 		syncHolder = new CacheHolder();
+		syncHolder.setCode (ocCode);
 		Preferences.itself().log("Importing new additional waypoint!");
 		syncHolder.setNew(true);
 		cacheDB.add(syncHolder);
@@ -620,9 +622,7 @@ public class OCXMLImporter {
 		cacheDB.get(index).update(syncHolder);
 		DBindexID.put(syncHolder.getIdOC(), syncHolder.getCode());
 	    }
-	    //-- Code duplette above: extrahieren!
-	    syncHolder.setCode (ocCode);
-	    //-- Haben wir auch schon weiter oben so gesehen...
+	    //-- TODO: Duplicated code: The same has been implemented above
 	    final String locationText = altWaypoint.getString("location");
 	    syncHolder.getWpt().latDec = Common.parseDouble(locationText.substring(0, locationText.indexOf('|')));
 	    syncHolder.getWpt().lonDec = Common.parseDouble(locationText.substring(locationText.indexOf('|')+1));
