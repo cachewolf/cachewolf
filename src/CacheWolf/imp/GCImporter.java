@@ -1715,13 +1715,17 @@ public class GCImporter {
                     Preferences.itself().savePreferences();
                 }
                 //9.)
+
                 String membershipBlock = extractor.set(page, "membership-details\">", "</dl>", 0, true).findNext();
                 String memberId = extractValue.set(membershipBlock, "<dd>", "</dd>", 0, true).findNext();
                 Preferences.itself().gcMemberId = memberId;
-                String membership = extractValue.findNext();
-                membership = membership.trim();
-                Preferences.itself().havePremiumMemberRights = membership.indexOf("Basic") == -1;
-            } catch (final Exception ex) {
+		Regex regEx = new Regex("\"membershipLevel\": \"(.*)\"");
+		regEx.search(page);
+		if (regEx.didMatch() && "Basic".equals (regEx.stringMatched(1))){
+		    Preferences.itself().havePremiumMemberRights = false;
+		}
+            }
+	    catch (final Exception ex) {
                 Preferences.itself().log("[checkGCSettings] " + gcSettingsUrl + page, ex);
             }
         }
