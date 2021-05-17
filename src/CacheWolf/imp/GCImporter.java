@@ -754,8 +754,7 @@ public class GCImporter {
                 String tableOfWebPage;
                 if (listBlockRex.didMatch()) {
                     tableOfWebPage = listBlockRex.stringMatched(1);
-                }
-                else {
+                } else {
                     Preferences.itself().log("[SpiderGC.java:fillDownloadLists]check listBlockRex!" + WebPage);
                     tableOfWebPage = "";
                 }
@@ -1231,8 +1230,7 @@ public class GCImporter {
                 if (Preferences.itself().havePremiumMemberRights || !isPremiumOnly) {
                     if (ch == null) { // not in DB
                         downloadList.add(chWaypoint);
-                    }
-		    else {
+                    } else {
                         Preferences.itself().log("[AP:] Waypoint is in Database: [" + chWaypoint + "]");
                         if (ch.isPremiumCache() != isPremiumOnly) {
                             ch.setIsPremiumCache(isPremiumOnly);
@@ -1243,8 +1241,7 @@ public class GCImporter {
                             sureUpdateList.put(chWaypoint, ch);
                         }
                     }
-                }
-                else {
+                } else {
                     Preferences.itself().log("[!!!AP:] premium cache found: [" + chWaypoint + "]");
                     // ein PremiumCache für ein BasicMember
                     if (ch == null) {
@@ -1254,25 +1251,24 @@ public class GCImporter {
                             ch = new CacheHolder(chWaypoint);
                             MainForm.profile.cacheDB.add(ch);
 
-			ch.setIsPremiumCache(true);
-			JSONObject mapDetails = getJsonDescriptionOfCache (chWaypoint);
+                            ch.setIsPremiumCache(true);
+                            JSONObject mapDetails = getJsonDescriptionOfCache(chWaypoint);
 
-			// next 2 for to avoid warning triangle
-			Preferences.itself().log("[!!!AP:] premium cache found, content is: [" + aCacheDescriptionOfListPage + "]");
-			ch.setType(CacheType.CW_TYPE_CUSTOM);
-			//Hier besser Json von map.details holen:
-			ch.setType(getWayPointType(mapDetails));
-			ch.setSize(getCacheSize(mapDetails));
+                            // next 2 for to avoid warning triangle
+                            Preferences.itself().log("[!!!AP:] premium cache found, content is: [" + aCacheDescriptionOfListPage + "]");
+                            ch.setType(CacheType.CW_TYPE_CUSTOM);
+                            //Hier besser Json von map.details holen:
+                            ch.setType(getWayPointType(mapDetails));
+                            ch.setSize(getCacheSize(mapDetails));
 
-			ch.setWpt(Preferences.itself().curCentrePt); // or MainForm.profile.centre
-			ch.getDetails().setLongDescription(aCacheDescriptionOfListPage); // for Info
-			ch.saveCacheDetails();
+                            ch.setWpt(Preferences.itself().curCentrePt); // or MainForm.profile.centre
+                            ch.getDetails().setLongDescription(aCacheDescriptionOfListPage); // for Info
+                            ch.saveCacheDetails();
 
-			}
-		    }
-		    else{
+                        }
+                    } else {
                         possibleUpdateList.remove(chWaypoint);
-		    }
+                    }
 
                 }
 
@@ -1287,34 +1283,32 @@ public class GCImporter {
         return toDistance;
     }
 
-    private JSONObject getJsonDescriptionOfCache(String gcCode){
-        try{
+    private JSONObject getJsonDescriptionOfCache(String gcCode) {
+        try {
             String url = MAP_URL + gcCode;
-            String response= UrlFetcher.fetch(url);
-            Preferences.itself().log ("[AP!]: Result from urllfetch:\n"+response+"\n\n");
+            String response = UrlFetcher.fetch(url);
+            Preferences.itself().log("[AP!]: Result from urllfetch:\n" + response + "\n\n");
             return new JSONObject(response).getJSONArray("data")
-		.getJSONObject(0);
-        }
-	catch (Exception ex){
-	    Preferences.itself().log("While while loading cache-details for code: " + gcCode);
+                    .getJSONObject(0);
+        } catch (Exception ex) {
+            Preferences.itself().log("While while loading cache-details for code: " + gcCode);
             return null;
-	}
+        }
     }
 
-    private byte getWayPointType (JSONObject cacheDescription) {
-	try {
-	    final JSONObject type = cacheDescription.getJSONObject ("type");
+    private byte getWayPointType(JSONObject cacheDescription) {
+        try {
+            final JSONObject type = cacheDescription.getJSONObject("type");
             return (byte) type.getInt("value");
-	}
-	catch (JSONException e){
-	    throw new RuntimeException (e);
-	}
+        } catch (JSONException e) {
+            throw new RuntimeException(e);
+        }
     }
 
-    private byte getCacheSize (JSONObject cacheDescription){
-	Preferences.itself().log("[AP!!!] getCachSize called\n " + cacheDescription);
+    private byte getCacheSize(JSONObject cacheDescription) {
+        Preferences.itself().log("[AP!!!] getCachSize called\n " + cacheDescription);
 
-	return CacheSize.CW_SIZE_NOTCHOSEN;
+        return CacheSize.CW_SIZE_NOTCHOSEN;
     }
 
     private void downloadCaches() {
@@ -1356,22 +1350,20 @@ public class GCImporter {
         updateTillNow = updateTillNow + limit;
         int jj = 0;
         for (final Enumeration e = possibleUpdateList.elements(); e.hasMoreElements(); ) {
-            if (jj == limit || infB.isClosed()){
+            if (jj == limit || infB.isClosed()) {
                 break;
-	    }
+            }
             jj++;
             final CacheHolder ch = (CacheHolder) e.nextElement();
             infB.setInfo(MyLocale.getMsg(5530, "Update: ") + ch.getCode() + " (" + (jj) + " / " + possibleUpdateList.size() + ")");
             final int test = spiderSingle(ch, infB);
             if (test == SPIDER_CANCEL) {
                 break;
-            }
-	    else if (test == SPIDER_ERROR) {
-		spiderErrors++;
-		Preferences.itself().log("[updateCaches] could not spider " + ch.getCode(), null);
-	    }
-	    else if (test == SPIDER_IGNORE_PREMIUM) {
-		spiderIgnorePremium++;
+            } else if (test == SPIDER_ERROR) {
+                spiderErrors++;
+                Preferences.itself().log("[updateCaches] could not spider " + ch.getCode(), null);
+            } else if (test == SPIDER_IGNORE_PREMIUM) {
+                spiderIgnorePremium++;
             }
         }
     }
@@ -1385,24 +1377,24 @@ public class GCImporter {
         int ret = SPIDER_CANCEL;
         if (login()) {
             this.infB = pInfB;
-            if (cacheInDB.isAddiWpt()){
+            if (cacheInDB.isAddiWpt()) {
                 return SPIDER_ERROR;
-	    }
+            }
 
             try {
                 newCache = new CacheHolder(cacheInDB.getCode());
                 newCacheDetails = newCache.getDetails();
                 newCache.initStates(false);
                 ret = getCacheByWaypointName(Preferences.itself().downloadTBs);
-                if (newCache.details == null){
+                if (newCache.details == null) {
                     newCache.details = newCacheDetails;
-		}
+                }
                 // Save the spidered data
                 if (ret == SPIDER_OK) {
                     cacheInDB.initStates(false);
-                    if (!Preferences.itself().useGCFavoriteValue){
+                    if (!Preferences.itself().useGCFavoriteValue) {
                         newCache.setNumRecommended(cacheInDB.getNumRecommended()); // gcvote Bewertung bleibt erhalten
-		    }
+                    }
                     cacheInDB.update(newCache);
                     cacheInDB.saveCacheDetails();
                 }
@@ -1616,7 +1608,7 @@ public class GCImporter {
         // 1.) loggedInAs
         String loggedInAs;
         //extractor.set(page, "<span class=\"user-name\">", "</span>", 0, true);
-	extractor.set(page, "username\": \"", "\"", 0, true);
+        extractor.set(page, "username\": \"", "\"", 0, true);
         loggedInAs = extractor.findNext();
         Preferences.itself().log("[checkGCSettings]:loggedInAs= " + loggedInAs, null);
         if (loggedInAs.length() == 0) {
@@ -1691,14 +1683,13 @@ public class GCImporter {
                     //expire-date is not always returned as a cookie. We set its value with the currently known value:
                     Hashtable login = Preferences.itself().getGCLogin(username);
                     String expires;
-                    if (login != null && login.get("expires") != null){ 
+                    if (login != null && login.get("expires") != null) {
                         expires = (String) login.get("expires");
-                    }
-                    else{
+                    } else {
                         expires = "";
                     }
                     for (int i = 0; i < theCookie.length; i++) {
-                        Preferences.itself().log ("Cookie read: " + theCookie[i]);
+                        Preferences.itself().log("Cookie read: " + theCookie[i]);
                         String[] rp = mString.split(theCookie[i], '=');
                         if (rp.length == 2) {
                             if (rp[0].equalsIgnoreCase("gspkauth")) {
@@ -1715,12 +1706,11 @@ public class GCImporter {
                     Preferences.itself().savePreferences();
                 }
                 //9.)
-                String membershipBlock = extractor.set(page, "membership-details\">", "</dl>", 0, true).findNext();
+                //
+                String membershipBlock = extractor.set(page, "Membership:", "</dl>", 0, true).findNext();
                 String memberId = extractValue.set(membershipBlock, "<dd>", "</dd>", 0, true).findNext();
                 Preferences.itself().gcMemberId = memberId;
-                String membership = extractValue.findNext();
-                membership = membership.trim();
-                Preferences.itself().havePremiumMemberRights = membership.indexOf("Basic") == -1;
+                Preferences.itself().havePremiumMemberRights = membershipBlock.indexOf("Basic") == -1;
             } catch (final Exception ex) {
                 Preferences.itself().log("[checkGCSettings] " + gcSettingsUrl + page, ex);
             }
@@ -2127,7 +2117,7 @@ public class GCImporter {
                         ret = SPIDER_CANCEL;
                     else if (newCache.isPremiumCache()) {
                         if (!Preferences.itself().havePremiumMemberRights) {
-                            Preferences.itself().log("[AP!!!:] getCacheByWaypointName: " +newCache.getCode());
+                            Preferences.itself().log("[AP!!!:] getCacheByWaypointName: " + newCache.getCode());
                             //Preferences.itself().log("[AP!!!:] waypointPage\n: " +wayPointPage + "\n\n\n");
                             // Premium cache spidered by non premium member
                             // alternative Abfrage
@@ -2138,15 +2128,13 @@ public class GCImporter {
                                 chOld.setIsPremiumCache(true);
                                 chOld.setLastSync(""); //
                                 chOld.saveCacheDetails();
-                            }
-			    else if (Preferences.itself().addPremiumGC) {
-				MainForm.profile.cacheDB.add(newCache);
-				newCache.saveCacheDetails();
+                            } else if (Preferences.itself().addPremiumGC) {
+                                MainForm.profile.cacheDB.add(newCache);
+                                newCache.saveCacheDetails();
                             }
                             ret = SPIDER_IGNORE_PREMIUM;
                         }
-                    }
-		    else if (wayPointPage.indexOf(unpublishedGeocache) > -1) {
+                    } else if (wayPointPage.indexOf(unpublishedGeocache) > -1) {
                         Preferences.itself().log("unpublished Geocache: " + newCache.getCode(), null);
                         spiderTrys = MAX_SPIDER_TRYS;
                         ret = SPIDER_IGNORE;
