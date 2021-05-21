@@ -1559,8 +1559,9 @@ public class GCImporter {
                     return false;
                 }
             }
-
-            switch (checkGCSettings()) {
+	    
+	    //	    checkGCSettings2();
+            switch (checkGCSettings2()) {
                 case 0:
                     loggedIn = true;
                     break;
@@ -1593,6 +1594,129 @@ public class GCImporter {
 
         } while (retry);
         return loggedIn;
+    }
+
+    private int checkGCSettings2(){
+        String userSettings ;
+        String gcSettingsUrl = "https://www.geocaching.com/play/serverparameters/params";
+        try {
+            userSettings = UrlFetcher.fetch(gcSettingsUrl); // getting cookies
+        } catch (final Exception ex) {
+            Preferences.itself().log("[checkGCSettings]:Exception calling " + gcSettingsUrl + " with userID ", ex);
+            return 2;
+        }
+	Preferences.itself ().log ("[AP]: serverparameters: " + userSettings);
+	//Will be needed later:
+        UrlFetcher.rememberCookies();
+
+	//The result of the Web-service returned a piece of JavaScript-Code and no JSon. Since we have no JS-interpreter,
+	//we use poor man's parser get the information:
+
+        // 1.) loggedInAs will be used to ensure that we are really logged:
+	Regex usRegEx = new Regex("\"username\":\\s*\"(.*)\"");
+	usRegEx.search(userSettings);
+	if(usRegEx.didMatch()){
+	    String userName = usRegEx.stringMatched(1);
+	    Preferences.itself ().log ("[AP]: serverparameters-name: " + userName);
+	}
+	else{
+	    return 6;
+	}
+
+        //4.) distanceUnit
+	Regex distRegEx = new Regex("\"unitSetName\":\\s*\"(.*)\"");
+	distRegEx.search(userSettings);
+	if(distRegEx.didMatch()){
+	    String distanceUnit = distRegEx.stringMatched(1);
+	    Preferences.itself ().log ("[AP]: serverparameters-distanceUnit: " + distanceUnit);
+	    String distanceUnitInPreferences = Preferences.itself().metricSystem == Metrics.METRIC ? "Metric" : "Imperial";
+	    if (!distanceUnit.equalsIgnoreCase(distanceUnitInPreferences)) {
+		Preferences.itself().log("serverparameters received from server ["+distanceUnit+"] does not match in Preferences: ["+distanceUnitInPreferences+"]");
+		return 3;
+	    }
+	}
+	else{
+	    Preferences.itself().log ("distance-unit not found in serverparamters");
+	    return 3;
+	}
+	
+        //5.) GCDateFormat
+	Regex dateRegEx = new Regex("\"dateFormat\":\\s*\"(.*)\"");
+	dateRegEx.search(userSettings);
+	if(dateRegEx.didMatch()){
+	    String dateFormat = dateRegEx.stringMatched(1);
+	    Preferences.itself ().log ("[AP]: serverparameters-dateFormat: " + dateFormat);
+	}
+        // 2.) oldLanguage
+	Regex languageRegEx = new Regex("\"localRegion\":\\s*\"(.*)\"");
+	languageRegEx.search(userSettings);
+	if(languageRegEx.didMatch()){
+	    String language = languageRegEx.stringMatched(1);
+	    Preferences.itself ().log ("[AP]: serverparameters-language: " + language);
+	    byte retCode = 0;
+	    if (language.equals("en-US")) {
+		Preferences.itself().changedGCLanguageToEnglish = false;
+	    } else {
+		Preferences.itself().oldGCLanguage = language;
+		if (setGCLanguage("en-US")) {
+		    Preferences.itself().changedGCLanguageToEnglish = true;
+		} else {
+		    Preferences.itself().changedGCLanguageToEnglish = false;
+		    retCode = 1;
+		}
+	    }
+
+	}
+	// 9.) Membership
+	Regex membershipRegEx = new Regex("\"userType\":\\s*\"(.*)\"");
+	membershipRegEx.search(userSettings);
+	if(membershipRegEx.didMatch()){
+	    String membership = membershipRegEx.stringMatched(1);
+	    Preferences.itself ().log ("[AP]: serverparameters-membership: " + membership);
+	    //Preferences.itself().gcMemberId = memberId;
+	    Preferences.itself().havePremiumMemberRights = membership.indexOf("Basic") == -1;
+	}
+
+	// ? Username
+	// gspkauth-Cookie lesen und merken??
+	String theCookie[] = mString.split(UrlFetcher.getCookie("gspkauth;www.geocaching.com"), ';');
+	if (theCookie.length <= 1) {
+	    new InfoBox(MyLocale.getMsg(5523, "Login error!"), MyLocale.getMsg(5524, "Bitte korrigieren Sie Ihr Benutzerkonto in den Einstellungen!\n\n")).wait(FormBase.OKB);
+	    return 5;
+	}
+	else {
+	    String username = Preferences.itself().gcLogin;
+	    // remember for next time, so you don't have to login
+	    String gspkauth = "";
+	    //expire-date is not always returned as a cookie. We set its value with the currently known value:
+	    Hashtable login = Preferences.itself().getGCLogin(username);
+	    String expires;
+	    if (login != null && login.get("expires") != null) {
+		expires = (String) login.get("expires");
+	    }
+	    else {
+		expires = "";
+	    }
+	    for (int i = 0; i < theCookie.length; i++) {
+		Preferences.itself().log("Cookie read: " + theCookie[i]);
+		String[] rp = mString.split(theCookie[i], '=');
+		if (rp.length == 2) {
+		    if (rp[0].equalsIgnoreCase("gspkauth")) {
+			gspkauth = rp[1];
+		    }
+		    else if (rp[0].trim().equalsIgnoreCase("expires")) {
+			expires = rp[1];
+			break;
+		    }
+		}
+	    }
+	    if (gspkauth.length() > 0) {
+		Preferences.itself().setGCLogin(username, gspkauth, expires);
+	    }
+	    Preferences.itself().savePreferences();
+	}
+
+	return 0;
     }
 
     private byte checkGCSettings() {
@@ -1633,6 +1757,30 @@ public class GCImporter {
         DateFormat.setGCDateFormat(GCDateFormat);
 
         // 2.) oldLanguage
+	//Jetzt mit Ajax holen: URL ist: GET https://www.geocaching.com/play/serverparameters/params
+	/* Result sieht so aus:
+var serverParameters = {
+  "user:info": {
+    "username": "ColleIsarco",
+    "referenceCode": "PR20BGT",
+    "userType": "Basic",
+    "isLoggedIn": true,
+    "dateFormat": "MM/dd/yyyy",
+    "unitSetName": "Metric",
+    "roles": [
+      "Public",
+      "Basic"
+    ],
+    "publicGuid": "d5c7361e-dc3c-4c77-860a-df16cb8d1f37",
+    "avatarUrl": "https://img.geocaching.com/avatar/faf16b90-4824-46ae-88bc-24f52b4e7fda.jpg"
+  },
+  "app:options": {
+    "localRegion": "en-US",
+    "coordInfoUrl": "https://coord.info",
+    "paymentUrl": "https://payments.geocaching.com"
+  }
+};	   
+	 */
         String languageBlock = extractor.findNext("selected\"><a href=\"/account", "</li>");
         String oldLanguage = extractValue.set(languageBlock, "culture=", "\"", 0, true).findNext();
         Preferences.itself().log("[checkGCSettings]:Language= " + oldLanguage, null);
@@ -1650,7 +1798,7 @@ public class GCImporter {
                 Preferences.itself().changedGCLanguageToEnglish = true;
             } else {
                 Preferences.itself().changedGCLanguageToEnglish = false;
-                retCode = 1;
+                return 1;
             }
         }
 
