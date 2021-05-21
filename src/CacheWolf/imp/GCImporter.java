@@ -1565,6 +1565,9 @@ public class GCImporter {
                     return false;
                 }
             }
+	    if (!getMemberIdAndAuthToken()){
+		break;
+	    }
 
             switch (checkGCSettings()) {
                 case 0:
@@ -1601,128 +1604,141 @@ public class GCImporter {
         return loggedIn;
     }
 
-    private byte checkGCSettings() {
-        String page = "";
-        String gcSettingsUrl = "https://www.geocaching.com/account/settings/preferences";
+    private int checkGCSettings(){
+        String userSettings ;
+        String gcSettingsUrl = "https://www.geocaching.com/play/serverparameters/params";
         try {
-            page = UrlFetcher.fetch(gcSettingsUrl); // getting cookies
+            userSettings = UrlFetcher.fetch(gcSettingsUrl); // getting cookies
         } catch (final Exception ex) {
             Preferences.itself().log("[checkGCSettings]:Exception calling " + gcSettingsUrl + " with userID ", ex);
             return 2;
         }
+	Preferences.itself ().log ("[checkGCSettings]: serverparameters: " + userSettings);
+	//Will be needed later:
         UrlFetcher.rememberCookies();
-        // 1.) loggedInAs
-        String loggedInAs;
-        //extractor.set(page, "<span class=\"user-name\">", "</span>", 0, true);
-        extractor.set(page, "username\": \"", "\"", 0, true);
-        loggedInAs = extractor.findNext();
-        Preferences.itself().log("[checkGCSettings]:loggedInAs= " + loggedInAs, null);
-        if (loggedInAs.length() == 0) {
-            return 6;
-        }
 
-        //4.) distanceUnit
-        //<label><input checked="checked" id="DistanceUnits" name="DistanceUnits" type="radio" value="Metric" /> Metric</label>
-        String distanceUnitBlock = extractor.findNext("checked\" id=\"DistanceUnits", "/label");
-        String distanceUnit = extractValue.set(distanceUnitBlock, "value=\"", "\"", 0, true).findNext();
-        Preferences.itself().log("[checkGCSettings]:Units= " + distanceUnit, null);
-        String compareTo = Preferences.itself().metricSystem == Metrics.METRIC ? "Metric" : "Imperial";
-        if (!distanceUnit.equalsIgnoreCase(compareTo)) {
-            Preferences.itself().log(page, null);
-            return 3;
-        }
+	//The result of the Web-service returned a piece of JavaScript-Code and no JSon. Since we have no JS-interpreter,
+	//we use poor man's parser get the information:
 
-        //5.) GCDateFormat
-        String GCDateFormatBlock = extractor.findNext("<label for=\"SelectedDateFormat", "<label for=\"SelectedGPXVersion");
-        String GCDateFormat = extractValue.set(GCDateFormatBlock, "selected\" value=\"", "\">", 0, true).findNext();
-        Preferences.itself().log("[checkGCSettings]:GCDateFormat= " + GCDateFormat, null);
-        DateFormat.setGCDateFormat(GCDateFormat);
+        // 1.) loggedInAs will be used to ensure that we are really logged:
+	//TODO: Is this really needed?
+	Regex usRegEx = new Regex("\"username\":\\s*\"(.*)\"");
+	usRegEx.search(userSettings);
+	if(usRegEx.didMatch()){
+	    String userName = usRegEx.stringMatched(1);
+	    Preferences.itself ().log ("[checkGCSettings]: serverparameters-name: " + userName);
+	}
+	else{
+	    return 6;
+	}
 
-        // 2.) oldLanguage
-        String languageBlock = extractor.findNext("selected\"><a href=\"/account", "</li>");
-        String oldLanguage = extractValue.set(languageBlock, "culture=", "\"", 0, true).findNext();
-        Preferences.itself().log("[checkGCSettings]:Language= " + oldLanguage, null);
+        //2.) distanceUnit
+	Regex distRegEx = new Regex("\"unitSetName\":\\s*\"(.*)\"");
+	distRegEx.search(userSettings);
+	if(distRegEx.didMatch()){
+	    String distanceUnit = distRegEx.stringMatched(1);
+	    Preferences.itself ().log ("[checkGCSettings]: serverparameters-distanceUnit: " + distanceUnit);
+	    String distanceUnitInPreferences = Preferences.itself().metricSystem == Metrics.METRIC ? "Metric" : "Imperial";
+	    if (!distanceUnit.equalsIgnoreCase(distanceUnitInPreferences)) {
+		Preferences.itself().log("serverparameters received from server ["+distanceUnit+"] does not match in Preferences: ["+distanceUnitInPreferences+"]");
+		return 3;
+	    }
+	}
+	else{
+	    Preferences.itself().log ("distance-unit not found in serverparamters");
+	    return 3;
+	}
+	
+        //3.) GCDateFormat
+	Regex dateRegEx = new Regex("\"dateFormat\":\\s*\"(.*)\"");
+	dateRegEx.search(userSettings);
+	if(dateRegEx.didMatch()){
+	    String dateFormat = dateRegEx.stringMatched(1);
+	    Preferences.itself ().log ("[checkGCSettings]: serverparameters-dateFormat: " + dateFormat);
+	}
+        // 4.) oldLanguage
+	Regex languageRegEx = new Regex("\"localRegion\":\\s*\"(.*)\"");
+	languageRegEx.search(userSettings);
+	if(languageRegEx.didMatch()){
+	    String language = languageRegEx.stringMatched(1);
+	    Preferences.itself ().log ("[checkGCSettings]: serverparameters-language: " + language);
+	    byte retCode = 0;
+	    if (language.equals("en-US")) {
+		Preferences.itself().changedGCLanguageToEnglish = false;
+	    } else {
+		Preferences.itself().oldGCLanguage = language;
+		if (setGCLanguage("en-US")) {
+		    Preferences.itself().changedGCLanguageToEnglish = true;
+		} else {
+		    Preferences.itself().changedGCLanguageToEnglish = false;
+		    retCode = 1;
+		}
+	    }
 
-        //6.)ctl00$ContentBody$uxInstantMessengerProvider
+	}
+	// 5.) Membership
+	Regex membershipRegEx = new Regex("\"userType\":\\s*\"(.*)\"");
+	membershipRegEx.search(userSettings);
+	if(membershipRegEx.didMatch()){
+	    String membership = membershipRegEx.stringMatched(1);
+	    Preferences.itself ().log ("[checkGCSettings]: serverparameters-membership: " + membership);
+	    Preferences.itself().havePremiumMemberRights = membership.indexOf("Basic") == -1;
+	}
 
-        //7.) ctl00$ContentBody$ddlGPXVersion
+	return 0;
+    }
 
-        byte retCode = 0;
-        if (oldLanguage.equals("en-US")) {
-            Preferences.itself().changedGCLanguageToEnglish = false;
-        } else {
-            Preferences.itself().oldGCLanguage = oldLanguage;
-            if (setGCLanguage("en-US")) {
-                Preferences.itself().changedGCLanguageToEnglish = true;
-            } else {
-                Preferences.itself().changedGCLanguageToEnglish = false;
-                retCode = 1;
-            }
-        }
+    private boolean getMemberIdAndAuthToken() {
+        String page = "";
+	final String gcSettingsUrl = "https://www.geocaching.com/account/settings/membership";
+	try {
+	    page = UrlFetcher.fetch(gcSettingsUrl);
+	    //save login Cookie
+	    UrlFetcher.rememberCookies();
+	    String theCookie[] = mString.split(UrlFetcher.getCookie("gspkauth;www.geocaching.com"), ';');
+	    if (theCookie.length <= 1) {
+		new InfoBox(MyLocale.getMsg(5523, "Login error!"), MyLocale.getMsg(5524, "Bitte korrigieren Sie Ihr Benutzerkonto in den Einstellungen!\n\n")).wait(FormBase.OKB);
+		return false;
+	    }
+	    else {
+		String username = Preferences.itself().gcLogin;
+		// remember for next time, so you don't have to login
+		String gspkauth = "";
+		//expire-date is not always returned as a cookie. We set its value with the currently known value:
+		Hashtable login = Preferences.itself().getGCLogin(username);
+		String expires;
+		if (login != null && login.get("expires") != null) {
+		    expires = (String) login.get("expires");
+		} else {
+		    expires = "";
+		}
+		for (int i = 0; i < theCookie.length; i++) {
+		    Preferences.itself().log("Cookie read: " + theCookie[i]);
+		    String[] rp = mString.split(theCookie[i], '=');
+		    if (rp.length == 2) {
+			if (rp[0].equalsIgnoreCase("gspkauth")) {
+			    gspkauth = rp[1];
+			} else if (rp[0].trim().equalsIgnoreCase("expires")) {
+			    expires = rp[1];
+			    break;
+			}
+		    }
+		}
+		if (gspkauth.length() > 0) {
+		    Preferences.itself().setGCLogin(username, gspkauth, expires);
+		}
+		Preferences.itself().savePreferences();
+	    }
+	    String membershipBlock = extractor.set(page, "Membership:", "</dl>", 0, true).findNext();
+	    String memberId = extractValue.set(membershipBlock, "<dd>", "</dd>", 0, true).findNext();
+	    Preferences.itself().gcMemberId = memberId;
+	    Preferences.itself().havePremiumMemberRights = membershipBlock.indexOf("Basic") == -1;
+	} 
+	catch (final Exception ex) {
+	    Preferences.itself().log("[checkGCSettings] " + gcSettingsUrl + page, ex);
+	}
 
-        /*
-    // other place to check/set selected language
-        String languageBlock = ext.set(page, "\"selected-language\"", "</div>", 0, true).findNext();
-        String oldLanguage = ext.set(languageBlock, "<a href=\"#\">", "&#9660;</a>", 0, true).findNext();
-        if (oldLanguage.equals("English")) {
-            Preferences.itself().switchGCLanguageToEnglish = false;
-            return 0;
-        }
-        */
-
-        //8.)
-        if (retCode == 0) {
-            page = "";
-            gcSettingsUrl = "https://www.geocaching.com/account/settings/membership";
-            try {
-                page = UrlFetcher.fetch(gcSettingsUrl);
-                //save login Cookie
-                UrlFetcher.rememberCookies();
-                String theCookie[] = mString.split(UrlFetcher.getCookie("gspkauth;www.geocaching.com"), ';');
-                if (theCookie.length <= 1) {
-                    new InfoBox(MyLocale.getMsg(5523, "Login error!"), MyLocale.getMsg(5524, "Bitte korrigieren Sie Ihr Benutzerkonto in den Einstellungen!\n\n")).wait(FormBase.OKB);
-                    return 5;
-                } else {
-                    String username = Preferences.itself().gcLogin;
-                    // remember for next time, so you don't have to login
-                    String gspkauth = "";
-                    //expire-date is not always returned as a cookie. We set its value with the currently known value:
-                    Hashtable login = Preferences.itself().getGCLogin(username);
-                    String expires;
-                    if (login != null && login.get("expires") != null) {
-                        expires = (String) login.get("expires");
-                    } else {
-                        expires = "";
-                    }
-                    for (int i = 0; i < theCookie.length; i++) {
-                        Preferences.itself().log("Cookie read: " + theCookie[i]);
-                        String[] rp = mString.split(theCookie[i], '=');
-                        if (rp.length == 2) {
-                            if (rp[0].equalsIgnoreCase("gspkauth")) {
-                                gspkauth = rp[1];
-                            } else if (rp[0].trim().equalsIgnoreCase("expires")) {
-                                expires = rp[1];
-                                break;
-                            }
-                        }
-                    }
-                    if (gspkauth.length() > 0) {
-                        Preferences.itself().setGCLogin(username, gspkauth, expires);
-                    }
-                    Preferences.itself().savePreferences();
-                }
-                //9.)
-                //
-                String membershipBlock = extractor.set(page, "Membership:", "</dl>", 0, true).findNext();
-                String memberId = extractValue.set(membershipBlock, "<dd>", "</dd>", 0, true).findNext();
-                Preferences.itself().gcMemberId = memberId;
-                Preferences.itself().havePremiumMemberRights = membershipBlock.indexOf("Basic") == -1;
-            } catch (final Exception ex) {
-                Preferences.itself().log("[checkGCSettings] " + gcSettingsUrl + page, ex);
-            }
-        }
-
-        return retCode;
+        return true;
 
     }
 
