@@ -28,6 +28,7 @@ import CacheWolf.database.CacheDB;
 import CacheWolf.database.CacheHolder;
 import CacheWolf.navi.TransformCoordinates;
 import CacheWolf.utils.*;
+
 import ewe.io.*;
 import ewe.sys.Convert;
 import ewe.sys.Handle;
@@ -36,6 +37,7 @@ import ewe.ui.FormBase;
 import ewe.ui.ProgressBarForm;
 import ewe.util.Hashtable;
 
+import com.stevesoft.ewe_pat.Regex;
 /**
  * This class holds a profile, i.e. a group of caches with a centre location
  *
@@ -605,8 +607,20 @@ public class Profile {
      * @param ch
      */
     public void setAddiRef(CacheHolder ch) {
-        String mainwpt = ch.getCode().substring(2);
-        int mainindex = cacheDB.getIndex("GC" + mainwpt);
+	String mainwpt;
+	int mainindex;
+	Regex ocPattern = new Regex ("(OC.+)(-[0-9]+)");
+	;
+	if (ocPattern.search(ch.getCode())){
+		mainwpt = ocPattern.group(1);
+		mainindex = cacheDB.getIndex("OC"+mainwpt);
+	    //TODO mainpt =...; mainIndex=...
+	}
+	else{
+	    mainwpt = ch.getCode().substring(2);
+	    mainindex = cacheDB.getIndex("GC" + mainwpt);
+	}
+	
         if (mainindex < 0 || !cacheDB.get(mainindex).isCacheWpt()) {
             for (int i = 0; i < OC.OCSites.length; i++) {
                 mainindex = cacheDB.getIndex(OC.OCSites[i][OC.OC_PREFIX] + mainwpt);
@@ -615,15 +629,19 @@ public class Profile {
                 }
             }
         }
-        if (mainindex < 0 || !cacheDB.get(mainindex).isCacheWpt())
+        if (mainindex < 0 || !cacheDB.get(mainindex).isCacheWpt()){
             mainindex = cacheDB.getIndex("CW" + mainwpt);
-        if (mainindex < 0 /* || !cacheDB.get(mainindex)..isCacheWpt() */) {
+	}
+
+        if (mainindex < 0) {
             ch.setIncomplete(true);
-        } else {
+        }
+	else {
             CacheHolder mainch = cacheDB.get(mainindex);
             if (mainch.getCode().equals(ch.getCode())) {
                 ch.setIncomplete(true);
-            } else {
+            }
+	    else {
                 mainch.addiWpts.add(ch);
                 ch.mainCache = mainch;
                 ch.setAttributesFromMainCache();
