@@ -610,11 +610,9 @@ public class Profile {
 	String mainwpt;
 	int mainindex;
 	Regex ocPattern = new Regex ("(OC.+)(-[0-9]+)");
-	;
 	if (ocPattern.search(ch.getCode())){
-		mainwpt = ocPattern.group(1);
-		mainindex = cacheDB.getIndex("OC"+mainwpt);
-	    //TODO mainpt =...; mainIndex=...
+	    mainwpt = ocPattern.stringMatched(1);
+	    mainindex = cacheDB.getIndex(mainwpt);
 	}
 	else{
 	    mainwpt = ch.getCode().substring(2);
