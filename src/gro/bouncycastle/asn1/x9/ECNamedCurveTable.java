@@ -156,9 +156,8 @@ public class ECNamedCurveTable
 
         if (ecP == null)
         {
-        	throw new UnsupportedClassVersionError();/*
             ecP = TeleTrusTNamedCurves.getByOID(oid);
-*/        }
+        }
 
         if (ecP == null)
         {

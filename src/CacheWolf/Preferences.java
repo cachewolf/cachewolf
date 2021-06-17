@@ -72,182 +72,232 @@ public class Preferences extends MinML {
      * HintLogPanel: Determines how many logs are shown per page
      */
     public final int DEFAULT_LOGS_PER_PAGE = 5;
+
     /**
      * Log file is in program directory and called log.txt
      */
     private final String LOGFILENAME = FileBase.getProgramDirectory() + "/log.txt";
+
     // General / Account
     /**
      * The base directory contains one subdirectory for each profile
      */
     public String baseDir = "data/";
+
     /**
      * If true, the last profile is reloaded automatically without a dialogue
      */
     public boolean autoReloadLastProfile = true;
+
     /**
      * This is the login alias for geocaching.com and opencaching.de
      */
     public String myAlias = "";
+
     public String gcLogin = "";
+
     /**
      * Premium Member ?
      */
     public boolean havePremiumMemberRights = true;
+
     /**
      * The own GC member ID (for gpx - export)
      */
     public String gcMemberId = "";
+
     /**
      * This is an alternative alias used to identify found caches
      */
     public String myAlias2 = "";
+
     // Maps/GPS
     /**
      * Optional password, if empty you are asked. (OC equal GC)
      */
     public String password = "";
+
     // GPS Serial Port Options
     /**
      * Serial port Name and Bits, Parity, Stopbits, Baudrate
      */
     public SerialPortOptions mySPO = new SerialPortOptions();
+
     /**
      * True if the GPS data should be forwarded to an IP address
      */
     public boolean forwardGPS = false;
+
     /**
      * IP address for forwarding GPS data
      */
     public String forwardGpsHost = "192.168.1.15";
+
     /**
      * Should GPS data be received from a GPSD on this or another host?
      */
     public int useGPSD = GPSD_DISABLED;
+
     /**
      * IP address of GPSD host
      */
     public String gpsdHost = "127.0.0.1";
+
     /**
      * Port for forwarding GPS data
      */
     public int gpsdPort = DEFAULT_GPSD_PORT;
+
     /**
      * True if the GPS data should be logged to a file
      */
     public boolean logGPS = false;
+
     /**
      * Timer for logging GPS data
      */
     public String logGPSTimer = "5";
+
     // Import from GC
     /**
      * Check if lastFound in Listpage is newer than saved log
      */
     public boolean checkLog = false;
+
     /**
      * Check if Difficulty, Terrain or Size changed in Listpage
      */
     public boolean checkDTS = true;
+
     /**
      * Check if TBs changed in Listpage
      */
     public boolean checkTBs = true;
+
     /**
      * maximum number of logs to store in cache details
      */
     public int maxLogsToKeep = Integer.MAX_VALUE;
+
     /**
      * keep own logs even when exceeding <code>maxLogsToKeep</code>
      */
     public boolean alwaysKeepOwnLogs = true;
+
     /**
      * GC (and OC) don't save the logTime. CW perhaps has the time.
      */
     public boolean keepTimeOnUpdate = true;
+
     /**
      * Maximum logs to spider
      */
     public int maxLogsToSpider = 99;
+
     /**
      * overwrite stored Logs with the ones now fetched from GC
      */
     public boolean overwriteLogs = true;
+
     /**
      *
      */
     public boolean askForMaxNumbersOnImport = false;
+
+    /**
+     * How GC will display a date. This value is read from GCs userpreference.
+     * Currently we will only support "MM/dd/yyyy", "dd/MM/yyyy", "dd.MM.yyyy"
+     */
+    private String gcDateFormat = "MM/dd/yyyy";
     /**
      *
      */
     public boolean addPremiumGC = false;
+
     public boolean useGCFavoriteValue = false; // use GCVote
+
     // Export
     /**
      * Add short details to waypoint on export
      */
     public boolean addDetailsToWaypoint = false;
+
     /**
      * Add short details to name on export
      */
     public boolean addDetailsToName = false;
+
     /**
      * The type of connection which GPSBABEL uses: com1 OR usb.
      */
     public String garminConn = "com1";
+
     /**
      * Additional options for GPSBabel, i.e. -s to synthethise short names
      */
     public String garminGPSBabelOptions = "";
+
     // Screen
     /**
      * The locale code (DE, EN, ...)
      */
     public String language = "Auto";
+
     /**
      * the name of an existing font to use
      */
     public String fontName;
+
     /**
      * The default font name and size will be determined automatically
      */
     public int fontSize;
+
     /**
      * display text (on buttons ...) else display icons.
      */
     public boolean useText = true;
+
     /**
      * display icons (on buttons ...) else display text.
      */
     public boolean useIcons = true;
+
     /**
      * display big icons. default only true for VGA PDAs
      */
     public boolean useBigIcons = false;
+
     /**
      * True if don't use tabs for program navigation (using Buttons with a homepage)
      */
     public boolean noTabs = true;
+
     /**
      * True if the tabs are to be displayed at the top of the screen
      */
     public boolean tabsAtTop = true;
+
     /**
      * True its on the same side as the tab selection
      */
     public boolean menuAtTab = true;
+
     /**
      * True if the status bar is to be displayed (hidden if false)
      */
     public boolean showStatus = true;
+
     /**
      * True if the application can be closed by clicking on the close button in the top line. This can be set to avoid accidental closing of the application
      */
     public boolean hasCloseButton = true;
+
     /**
      * set automatically
      */
     public int preferredControlsWidth = 0;
+
     public int preferredControlsHeight = 0;
 
     // Tabcards
@@ -255,49 +305,61 @@ public class Preferences extends MinML {
      * TablePanel: SortingGroupedByCache
      */
     public boolean SortingGroupedByCache = true;
+
     /**
      * DescriptionPanel: True if the description panel should show images
      */
     public boolean descShowImg = true;
+
     /**
      * ImagePanel: If this is true, deleted images are shown with a red ?-Image
      */
     public boolean showDeletedImages = true;
+
     public int logsPerPage = DEFAULT_LOGS_PER_PAGE;
+
     /**
      * The path to the browser
      */
     public String browser = "";
+
     // More
     /**
      * Name of HTTP proxy for spidering
      */
     public String myproxy = "";
+
     /**
      * HTTP proxy port when spidering
      */
     public String myproxyport = "";
+
     /**
      * Flag whether proxy is to be used
      */
     public boolean proxyActive = false;
+
     /**
      * The metric system to use
      */
     public int metricSystem = Metrics.METRIC;
+
     /**
      * set Debugging. can also be set by program arguments
      */
     public boolean debug = false;
+
     /**
      * The list of visible columns in the list view
      */
     public String listColMap = "0,1,2,3,4,5,6,7,8,9,10,11,12";
+
     // lookout of TablePanel Cachetable
     /**
      * The columns which are to be displayed in TravelbugsJourneyScreen. See also TravelbugJourney
      */
     public String travelbugColMap = "1,4,5,6,8,9,10,7";
+
     // Travelbugs
     public String absoluteBaseDir; // wird gespeichert
 
@@ -307,116 +369,149 @@ public class Preferences extends MinML {
     // NOT SET BY PreferencesScreen
     // ////////////////////////////////////////////////////////////////////////////////////
     public String absoluteMapsBaseDir; // wird gespeichert
+
     /**
      * Maximum number of new caches to spider
      */
     public int maxSpiderNumber = 200;
+
     /**
      * icons middle or left (on Buttons) - middle looks better : not used
      */
     public boolean leftIcons = false;
+
     /**
      * Name of last used profile
      */
     public String lastProfile = "home";
+
     /**
      * If true current cetre will be set from gps position
      */
     public boolean setCurrentCentreFromGPSPosition = true;
+
     /**
      * True if the SIP is always visible
      */
     public boolean fixSIP = false;
+
     /**
      * The widths for each column in list view
      */
     public String listColWidth = "15,20,20,25,92,177,144,83,60,105,50,104,22,30,30,30,30,30,30,30,30,30,30";
+
     /**
      * TRUE if we want automatic sorting (by distance)
      */
     public boolean sortAutomatic = true;
+
     public boolean hasTickColumn = true;
+
     /**
      * Initial height of hints field (set to 0 to hide them initially)
      */
     public int initialHintHeight = DEFAULT_INITIAL_HINT_HEIGHT;
+
     /**
      * True if the Solver should ignore the case of variables
      */
     public boolean solverIgnoreCase = true;
+
     /** screen is big enough to hold additional information like cache notes */
     /**
      * True if the solver expects arguments for trigonometric functions in degrees
      */
     public boolean solverDegMode = true;
+
     /**
      * Max. length for Garmin waypoint names (for etrex which can only accept 6 chars)
      */
     public int garminMaxLen = 0;
+
     /**
      * OC true = alle neu Laden false = wenn ?nderungsdatum neuer
      */
     public boolean downloadAllOC = false;
+
     public String lastOCSite = OC.OCSites[0][OC.OC_HOSTNAME];
+
     /**
      * The currently used centre point, can be different from the profile's centrepoint. This is used for spidering
      */
     public CWPoint curCentrePt = new CWPoint();
+
     public boolean changedGCLanguageToEnglish = false;
+
     /**
      * True if the goto panel is North centered
      */
     public boolean northCenteredGoto = true;
+
     /**
      * Number of CacheHolder details that are kept in memory
      */
     public int maxDetails = 50;
+
     /**
      * Number of details to delete when maxDetails have been stored in cachesWithLoadedDetails
      */
     public int deleteDetails = 5;
+
     /**
      * Download images when loading cache data
      */
     public boolean downloadDescriptionImages = true;
+
     public boolean downloadSpoilerImages = true;
+
     public boolean downloadLogImages = false;
+
     /**
      * Download TB information when loading cache data
      */
     public boolean downloadTBs = true;
+
     /**
      * Last mode select in the DataMover for processing cache
      */
     public int processorMode = 0;
+
     /**
      * Determines whether to fill the white areas on the map
      */
     public boolean fillWhiteArea = false;
+
     public boolean showCachesOnMap = true;
+
     // maps
     public float lastScale = 1f;
     /**
      * Width and height of free defined tile size
      */
     public int tilewidth;
+
     public int tileheight;
+
     // maps download
     /**
      * How many pixels should maptiles overlap
      */
     public int mapOverlapping = 2;
+
     /**
      * The column widths for the travelbug journeys.
      */
     public String travelbugColWidth = "212,136,62,90,50,56,90,38,50,50,94,50";
+
     /**
      * If this flag is true, only non-logged travelbug journeys will be shown
      */
     public boolean travelbugShowOnlyNonLogged = false;
     //
     public String oldGCLanguage = "";
+
     public boolean doNotGetFound = true;
+
     /**
      * This switches the behaviour of GUI-Element factories.
      * If set to true, it will construct alternative Forms.
@@ -424,34 +519,45 @@ public class Preferences extends MinML {
      * Add <MobileGui value="true"/> to your pref.xml
      */
     public boolean mobileGUI = false;
+
     /**
      * True if the preferences were changed and need to be saved
      */
     public boolean dirty = false;
+
     public String gpsbabel = null;
 
     // ////////////////////////////////////////////////////////////////////////////////////
     // Constructor
     // ////////////////////////////////////////////////////////////////////////////////////
     protected int lastSavedWidth = -1;
+
     protected int lastSavedHeight = -1;
+
     /**
      * Maps
      */
     String mapsBaseDir = "data/maps/";
+
     boolean forceLog = false;
+
     // Hashtable is saving filter data objects the user wants to save
     private Hashtable filterList = new Hashtable(15);
+
     private String pathToConfigFile;
+
     private Rect screenSize = (Rect) Window.getGuiInfo(WindowConstants.INFO_SCREEN_RECT, null, new Rect(), 0);
+
     /**
      * The width of the MainForm
      */
     private int screenWidth = screenSize.width;
+
     /**
      * The height of the MainForm
      */
     private int screenHeight = screenSize.height;
+
     /**
      * Helper variables for XML parser
      */
@@ -1587,5 +1693,13 @@ public class Preferences extends MinML {
         absoluteMapsBaseDir = absoluteMapsBaseDir.replace('\\', '/');
         if (!absoluteMapsBaseDir.endsWith("/"))
             absoluteMapsBaseDir += "/";
+    }
+
+    public void setGcDateFormat (String dateFormat){
+	gcDateFormat = dateFormat;
+    }
+
+    public String getGcDateFormat (){
+	return gcDateFormat;
     }
 }

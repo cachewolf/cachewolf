@@ -192,9 +192,8 @@ public class X9ECParameters
      */
     public X9Curve getCurveEntry()
     {
-    	throw new UnsupportedClassVersionError();/*
         return new X9Curve(curve, seed);
-*/    }
+    }
 
     /**
      * Return the ASN.1 entry representing the FieldID.
