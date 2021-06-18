@@ -32,6 +32,8 @@ package CacheWolf.utils;
 import ewe.sys.Time;
 import ewe.util.mString;
 
+import CacheWolf.Preferences;
+
 public class DateFormat {
 
     static int dayPos = 0;
@@ -67,23 +69,46 @@ public class DateFormat {
             } else {
                 d.setTime(d.getTime() - adaylong * Common.parseInt(ds.substring(0, 1)));
             }
-        } else {
+        }
+	else {
             String[] SDate;
             ds = STRreplace.replace(ds, ",", " ");
             ds = STRreplace.replace(ds, "  ", " ");
             SDate = mString.split(ds, ' ');
             if (SDate.length == 1) {
-                if (ds.indexOf('/') > -1)
+                if (ds.indexOf('/') > -1){
                     SDate = mString.split(ds, '/');
-                else if (ds.indexOf('-') > -1)
+		}
+                else if (ds.indexOf('-') > -1){
                     SDate = mString.split(ds, '-');
-                else if (ds.indexOf('.') > -1)
+		}
+                else if (ds.indexOf('.') > -1){
                     SDate = mString.split(ds, '.');
+		}
                 // trying to determine Dateformat
                 int v0 = Common.parseInt(SDate[0]);
                 int v1 = Common.parseInt(SDate[1]);
                 int v2 = Common.parseInt(SDate[2]);
-                int dd, mm, yy;
+		String dateFormat = Preferences.itself ().getGcDateFormat();
+		if ("MM/dd/yyyy".equals (dateFormat)){
+		    d.day = v1;
+		    d.month = v0;
+		    d.year = v2;
+		}
+		else if ("d/M/yyyy".equals (dateFormat) || "dd.MM.yyyy".equals (dateFormat) || "d/M/yyyy".equals(dateFormat)){
+		    d.day = v0;
+		    d.month = v1;
+		    d.year = v2;
+		}
+		else if ("yyyy-MM-dd".equals (dateFormat)){
+		    d.day = v2;
+		    d.month = v1;
+		    d.year = v0;
+		}
+		else{
+		    throw new RuntimeException ("unsupported dateFormat {" + dateFormat + "}");
+		}
+		/*                int dd, mm, yy;
                 if (v0 > 31) {
                     // yyyy MM dd
                     yy = v0;
@@ -114,10 +139,13 @@ public class DateFormat {
                     }
 
                 }
+		
                 d.month = mm;
                 d.day = dd;
                 d.year = yy;
-            } else {
+		*/
+            }
+	    else {
                 // starting with dayOfWeek or missing year
                 int offs = SDate.length - 3;
                 if (offs < 0)
