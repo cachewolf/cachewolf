@@ -192,9 +192,8 @@ public class X9ECParameters
      */
     public X9Curve getCurveEntry()
     {
-    	throw new UnsupportedClassVersionError();/*
         return new X9Curve(curve, seed);
-*/    }
+    }
 
     /**
      * Return the ASN.1 entry representing the FieldID.
@@ -231,7 +230,6 @@ public class X9ECParameters
      */
     public ASN1Primitive toASN1Primitive()
     {
-    	throw new UnsupportedClassVersionError();/*
         ASN1EncodableVector v = new ASN1EncodableVector();
 
         v.add(new ASN1Integer(ONE));
@@ -246,5 +244,5 @@ public class X9ECParameters
         }
 
         return new DERSequence(v);
-*/    }
+    }
 }

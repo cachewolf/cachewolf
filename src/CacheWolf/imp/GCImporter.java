@@ -1654,8 +1654,10 @@ public class GCImporter {
 	dateRegEx.search(userSettings);
 	if(dateRegEx.didMatch()){
 	    String dateFormat = dateRegEx.stringMatched(1);
+	    Preferences.itself ().setGcDateFormat (dateFormat);
 	    Preferences.itself ().log ("[checkGCSettings]: serverparameters-dateFormat: " + dateFormat);
 	}
+
         // 4.) oldLanguage
 	Regex languageRegEx = new Regex("\"localRegion\":\\s*\"(.*)\"");
 	languageRegEx.search(userSettings);
@@ -1665,11 +1667,13 @@ public class GCImporter {
 	    byte retCode = 0;
 	    if (language.equals("en-US")) {
 		Preferences.itself().changedGCLanguageToEnglish = false;
-	    } else {
+	    }
+	    else {
 		Preferences.itself().oldGCLanguage = language;
 		if (setGCLanguage("en-US")) {
 		    Preferences.itself().changedGCLanguageToEnglish = true;
-		} else {
+		}
+		else {
 		    Preferences.itself().changedGCLanguageToEnglish = false;
 		    retCode = 1;
 		}
