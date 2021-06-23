@@ -230,7 +230,6 @@ public class X9ECParameters
      */
     public ASN1Primitive toASN1Primitive()
     {
-    	throw new UnsupportedClassVersionError();/*
         ASN1EncodableVector v = new ASN1EncodableVector();
 
         v.add(new ASN1Integer(ONE));
@@ -245,5 +244,5 @@ public class X9ECParameters
         }
 
         return new DERSequence(v);
-*/    }
+    }
 }
