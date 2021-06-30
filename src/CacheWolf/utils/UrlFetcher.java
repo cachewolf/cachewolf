@@ -267,7 +267,8 @@ public class UrlFetcher {
                     postData = null;
                     forceRedirect = false;
 		    throw new IOException("URL: " + urltmp + "\nhttp response code: " + conn.responseCode);
-                } else {
+                }
+		else {
                     if (forceRedirect) {
                         // hack for expedia, doing the original url again. (forceRedirect == true)
                         // expedia always must redirect >=1 time, but sometimes that is missed
@@ -280,7 +281,8 @@ public class UrlFetcher {
                         urltmp = null;
                     }
                 }
-            } else {
+            }
+	    else {
                 //  redirection
                 urltmp = conn.getRedirectTo();
                 // Preferences.itself().log("Url Redirected to " + urltmp);
@@ -297,7 +299,8 @@ public class UrlFetcher {
         if (conn.isOpen()) {
             daten = conn.readData();
             conn.disconnect();
-        } else
+        }
+	else
             daten = null;
         maxRedirections = 5;
         requestorProperties = null;

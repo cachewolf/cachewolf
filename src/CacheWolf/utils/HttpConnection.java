@@ -30,6 +30,7 @@ import ewe.sys.Convert;
 import ewe.sys.Handle;
 import ewe.sys.Vm;
 import ewe.util.*;
+import CacheWolf.Preferences;
 import gro.cachewolf.tls.TlsSocket;
 
 /**
@@ -54,9 +55,13 @@ import gro.cachewolf.tls.TlsSocket;
  * document or call readInText() to read in and convert the document to text.
  * </ol>
  **/
-//##################################################################
+
 public class HttpConnection {
-    //	##################################################################
+
+    //Files / Images with more than size will currently be denied.
+    //This is to prevent to download MJPEGs which have an infinite size. (eg. OC14469)
+    private static final long MAX_FILESIZE = 8L * 1024L * 1024L;
+
     private static final int SocketConnected = 0x1;
     private static final String[] encodings = {"transfer-coding", "transfer-encoding"};
     private static String proxy = "";
@@ -64,6 +69,7 @@ public class HttpConnection {
     private static boolean useProxy = false;
     private static Vector lines;
     private static SubString data;
+
     /**
      * This is the list of properties for the server and document.
      * It is only valid after a connection has been made, since it is sent by the server to the requestor.
@@ -72,21 +78,25 @@ public class HttpConnection {
      * and <b>the property names will be converted to all lowercase letters</b>.
      **/
     public ewe.data.PropertyList responseFields;
+
     /**
      * This is the response code from the server. It is only valid after a connection has
      * been made.
      **/
     public int responseCode;
+
     /**
      * If the document you supplied is already URL encoded, set this to true.
      **/
     public boolean documentIsEncoded;
     protected TlsSocket openSocket;
     protected TlsSocket connectedSocket;
+
     /**
      * The host to connect to.
      **/
     private String host;
+
     /**
      * The port to connect to.
      **/
@@ -94,20 +104,24 @@ public class HttpConnection {
     private boolean useSslTls;
     private boolean proxyDocumentIsSslTls;
     private String proxyDocumentHost;
+
     /**
      * The document to fetch/submit.
      **/
     private String document;
+
     /**
      * This is the command to be sent to the server. By default it is "GET". If you call
      * setPostData() and command is "GET" then the command will be replaced by "POST".
      **/
     private String command = "GET";
+
     /**
      * This is the version sent to the server. By default it is "HTTP/1.1". You could
      * change it to something else if necessary.
      **/
     private String requestVersion = "HTTP/1.1";
+
     /**
      * These are the properties that will be sent to the WebServer.
      * These are sent after the initial GET/POST line.
@@ -116,22 +130,16 @@ public class HttpConnection {
     private ewe.data.PropertyList requestFields;
 
     /**
-     * This returns true if post data has been set for this connection.
-     * FIXME: unreferenced!
-     */
-    //	public boolean hasPostData()
-    //	{
-    //	return bytesToPost != null;
-    //	}
-    /**
      * Set this to true for keep alive mode requests.
      **/
     private boolean keepAliveMode;
+
     /**
      * This is the length of the document <b>read in</b>, valid after a connection call. If it is -1, then the
      * web server has not provided the length of the document.
      **/
     private int contentLength = -1;
+
     /**
      * This is the codec used when sending data to the server.
      **/
@@ -145,44 +153,10 @@ public class HttpConnection {
      *
      * @param url The full url, starting with http://
      */
-    //	===================================================================
-    public HttpConnection(String url)
-    //	===================================================================
-    {
+    public HttpConnection(String url) {
         setUrl(url);
     }
 
-    /**
-     * If a connection has already been made to the server, then you can call
-     * this method and the HttpConnection protocol will be done over this Socket.
-     * @param sock The already connected socket.
-     * FIXME: not referenced
-     */
-    ////	===================================================================
-    //	public void setAlreadyOpenSocket(Socket sock)
-    ////	===================================================================
-    //	{
-    //	openSocket = sock;
-    //	}
-
-    /**
-     * Create a new HttpConnection to the specified host and port to fetch the specified document.
-     *
-     * @param host     The host to connect to.
-     * @param port     The port to connect on.
-     * @param document the document to get.
-     *                 FIXME: not referenced
-     */
-    ////	===================================================================
-    //	public HttpConnection(String host, int port, String document)
-    ////	===================================================================
-    //	{
-    //	this.host = host;
-    //	this.port = port;
-    //	this.document = document;
-    //	}
-
-    //	FIXME: why is this called immediately from preferences screen? shouldn't we read it from preferences instead?
     public static void setProxy(String proxyi, int proxyporti, boolean useproxyi) {
         proxy = proxyi;
         proxyPort = proxyporti;
@@ -240,28 +214,14 @@ public class HttpConnection {
      * connection is made. You can add directly to this OR you can call setRequestField() or
      * addRequestField();
      */
-    //	===================================================================
-    private PropertyList getRequestFields()
-    //	===================================================================
-    {
+    private PropertyList getRequestFields() {
         if (requestFields == null)
             requestFields = new PropertyList();
         return requestFields;
     }
 
-    //	FIXME: never referenced
-    ////	===================================================================
-    //	public HttpConnection(URL url)
-    ////	===================================================================
-    //	{
-    //	this(url.toString());
-    //	documentIsEncoded = true;
-    //	}
-    //	private static char [] space = {' '}, percentSpace = {'%','2','0'};
 
-    public void setRequestFields(PropertyList pl)
-    //	===================================================================
-    {
+    public void setRequestFields(PropertyList pl) {
         getRequestFields().set(pl);
     }
 
@@ -273,21 +233,21 @@ public class HttpConnection {
      *
      * @param data the data to post either as a Stream, InputStream, byte[] or ByteArray
      */
-    //	===================================================================
-    public void setPostData(Object data)
-    //	===================================================================
-    {
-        if (data instanceof Stream)
+    public void setPostData(Object data) {
+        if (data instanceof Stream){
             bytesToPost = (Stream) data;
+	}
         else if (data instanceof ByteArray) {
             originalPostData = data;
             bytesToPost = new MemoryFile((ByteArray) data);
             getRequestFields().defaultTo("Content-Length", Convert.toString(((ByteArray) data).length));
-        } else if (data instanceof byte[]) {
+        }
+	else if (data instanceof byte[]) {
             originalPostData = data;
             bytesToPost = new MemoryFile(new ByteArray((byte[]) data));
             getRequestFields().defaultTo("Content-Length", Convert.toString(((byte[]) data).length));
-        } else if (data instanceof String) {
+        }
+	else if (data instanceof String) {
             String s = (String) data;
             TextCodec td = textCodec;
             if (td == null)
@@ -298,10 +258,14 @@ public class HttpConnection {
             } catch (IOException e) {
                 // Global.getPref().log("Ignored exception", e, true);
             }
-        } else if (data instanceof InputStream)
+        }
+	else if (data instanceof InputStream){
             bytesToPost = new StreamAdapter((InputStream) data);
-        if (bytesToPost != null && command.equalsIgnoreCase("get"))
+	}
+
+        if (bytesToPost != null && command.equalsIgnoreCase("get")){
             command = "POST";
+	}
     }
 
     /**
@@ -310,17 +274,11 @@ public class HttpConnection {
      * @param name     The name of the property.
      * @param property The value of the property.
      */
-    //	===================================================================
-    public void setRequestField(String name, String property)
-    //	===================================================================
-    {
+    public void setRequestField(String name, String property) {
         getRequestFields().set(name, property);
     }
-    //	never referenced
-    //	private static final int DataReady = 0x2;
 
     public void setUrl(String url) {
-
         url = FileBase.fixupPath(url);
 
         String uu = url;
@@ -328,7 +286,8 @@ public class HttpConnection {
             useSslTls = true;
             port = 443;
             uu = "http://" + uu.substring(8);
-        } else {
+        }
+	else {
             useSslTls = false;
             port = 80;
         }
@@ -337,8 +296,9 @@ public class HttpConnection {
             uu = uu.replace('\\', '/');
             host = uu.substring(7);
             int first = host.indexOf('/');
-            if (first == -1)
+            if (first == -1){
                 document = "/";
+	    }
             else {
                 document = host.substring(first);
                 host = host.substring(0, first);
@@ -370,64 +330,56 @@ public class HttpConnection {
     }
 
     public String getHost() {
-        if (HttpConnection.useProxy)
+        if (HttpConnection.useProxy){
             return proxyDocumentHost;
-        else
+	}
+        else{
             return host;
+	}
     }
 
-    //	FIXME: never referenced
-    ////	===================================================================
-    //	public String toURLString()
-    ////	===================================================================
-    //	{
-    //	return "http://"+host+":"+port+document;
-    //	}
-    //	===================================================================
-    private String getEncodedDocument()
-    //	===================================================================
-    {
-        if (documentIsEncoded)
+    private String getEncodedDocument() {
+        if (documentIsEncoded){
             return document;
-        else
+	}
+        else{
             return URL.encodeURL(document, false);
+	}
     }
 
-    //	===================================================================
-    private Object waitOnIO(Handle h, String errorMessage) throws IOException
-    //	===================================================================
-    {
+    private Object waitOnIO(Handle h, String errorMessage) throws IOException {
         try {
             h.waitOn(Handle.Success);
             return h.returnValue;
         } catch (Exception e) {
-            if (h.errorObject instanceof IOException)
+            if (h.errorObject instanceof IOException){
                 throw (IOException) h.errorObject;
-            else
+	    }
+            else{
                 throw new IOException(errorMessage);
+	    }
         }
     }
 
-    //	===================================================================
-    private int makeRequest(InputStream is, OutputStream os, TextCodec td) throws IOException
-    //	===================================================================
-    {
+    private int makeRequest(InputStream is, OutputStream os, TextCodec td) throws IOException {
         responseCode = -1;
-        if (td == null)
-            td = textCodec;
-        if (td == null)
+        if (td == null){
             td = new AsciiCodec();
+	}
         PropertyList pl = new PropertyList();
-        if (requestFields != null)
+        if (requestFields != null){
             pl.set(requestFields);
+	}
         pl.defaultTo("Connection", "close");
         pl.defaultTo("Host", host);
-        StringBuffer sb = new StringBuffer();
+        
+	StringBuffer sb = new StringBuffer();
         sb.append(command + " " + getEncodedDocument() + " " + requestVersion + "\r\n");
         for (int i = 0; i < pl.size(); i++) {
             Property p = (Property) pl.get(i);
-            if (p.value != null)
+            if (p.value != null){
                 sb.append(p.name + ": " + p.value + "\r\n");
+	    }
         }
         sb.append("\r\n");
         String req = sb.toString();
@@ -435,38 +387,32 @@ public class HttpConnection {
         ByteArray ba = ((TextCodec) td.getCopy()).encodeText(rc, 0, rc.length, true, null);
         os.write(ba.data, 0, ba.length);
         os.flush();
-        //
+
         if (bytesToPost != null) {
-            //			IOTransfer iot = new IOTransfer();
-            //			iot.transfer(bytesToPost,sock);
             transfer(bytesToPost, os);
             os.flush();
             bytesToPost.close();
-        /*
-	    // For debugging - output eol and a blank line.
-	    byte[] ret = new byte[]{(byte)'\r',(byte)'\n'};
-	    sock.write(ret);
-	    sock.write(ret);
-	    sock.flush();
-	     */
         }
-        //
+
         int lastReceived = -1;
-        //
         ba.clear();
         while (true) {
             int got = is.read();
-            if (got == -1)
+            if (got == -1){
                 throw new IOException("Unexpected end of stream." + ba.toString());
+	    }
             if (got == 10) {
-                if (lastReceived == 10)
+                if (lastReceived == 10){
                     break; //Got all the data now.
-            } else if (got == 13)
+		}
+            }
+	    else if (got == 13){
                 continue; //Ignore CR.
+	    }
             ba.append((byte) got);
             lastReceived = got;
         }
-        //
+
         CharArray all = ((TextCodec) td.getCopy()).decodeText(ba.data, 0, ba.length, true, null);
         if (data == null) {
             data = new SubString();
@@ -475,25 +421,27 @@ public class HttpConnection {
         data.set(all.data, 0, all.length);
         int got = data.split('\n', lines);
         responseFields = new ewe.data.PropertyList();
-        if (got == 0)
+        if (got == 0){
             throw new IOException("No response");
+	}
 
         String response = lines.get(0).toString();
         responseFields.set("response", response);
-        {
-            int idx = response.indexOf(' ');
-            if (idx != -1) {
-                int id2 = response.indexOf(' ', idx + 1);
-                if (id2 != -1) {
-                    responseCode = ewe.sys.Convert.toInt(response.substring(idx + 1, id2));
-                }
-            }
-        }
+
+	int idx = response.indexOf(' ');
+	if (idx != -1) {
+	    int id2 = response.indexOf(' ', idx + 1);
+	    if (id2 != -1) {
+		responseCode = ewe.sys.Convert.toInt(response.substring(idx + 1, id2));
+	    }
+	}
+
         for (int i = 1; i < got; i++) {
             String s = lines.get(i).toString();
-            int idx = s.indexOf(':');
-            if (idx == -1)
+            idx = s.indexOf(':');
+            if (idx == -1){
                 continue;
+	    }
             String name = s.substring(0, idx).trim().toLowerCase();
             String value = s.substring(idx + 1).trim();
             responseFields.add(name, value);
@@ -505,33 +453,29 @@ public class HttpConnection {
     /**
      * Copy from the "in" stream to the "out" stream. The streams are NOT closed.
      **/
-    //	===================================================================
-    public void transfer(Stream in, OutputStream out) throws IOException
-    //	===================================================================
-    {
+    public void transfer(Stream in, OutputStream out) throws IOException {
         int bufferSize = 1024;
         byte[] buff = new byte[bufferSize];
         while (true) {
-            /**
+            /*
              * This readBytes method will block the current Coroutine until at
              * least one byte is read. It will let other Coroutines run if it
              * has to wait.
-             **/
+             */
             int read = in.read(buff, 0, buff.length);
             if (read == -1)
                 break;
             if (read == 0)
                 continue;
-            /**
+            /*
              * This writeBytes method will block the current Coroutine until
              * all bytes are written. It will let other Coroutines run if it
              * has to wait.
-             **/
+             */
             out.write(buff, 0, read);
-            // copied += read;
-            /**
+            /*
              * Allow other threads to have some time to execute.
-             **/
+             */
         }
         out.flush();
     }
@@ -546,28 +490,36 @@ public class HttpConnection {
      * @return null if no redirection is needed, otherwise the location directed to.
      */
     public String getRedirectTo() {
-        if (responseCode < 300 || responseCode > 399)
+        if (responseCode < 300 || responseCode > 399){
             return null;
-        return responseFields.getString("location", null);
+	}
+	else{
+	    return responseFields.getString("location", null);
+	}
     }
 
-    //	===================================================================
-    private int readInChunkedHeader(InputStream connection, ByteArray buff, CharArray chBuff) throws IOException
-    //	===================================================================
-    {
-        if (buffer == null)
-            buffer = new byte[10240];
-        if (buff == null)
+    private int readInChunkedHeader(InputStream connection, ByteArray buff, CharArray chBuff) throws IOException {
+        if (buff == null){
             buff = new ByteArray();
+	}
         buff.clear();
-        while (true) {
+
+	int count = 0;
+	while (true) {
             int got = connection.read();
-            if (got == -1)
+            if (got == -1){
                 throw new IOException();
-            if (got == '\n')
+	    }
+            if (got == '\n'){
                 break;
+	    }
             buff.append((byte) got);
+	    count++;
+            if (count > 1024){
+		break;
+	    }
         }
+
         chBuff = new AsciiCodec().decodeText(buff.data, 0, buff.length, true, chBuff);
         String s = new String(chBuff.data, 0, chBuff.length);
         String length = mString.leftOf(s, ';').trim().toUpperCase();
@@ -588,14 +540,11 @@ public class HttpConnection {
      * reports Success, then the returnValue of the Handle will be a ewe.util.ByteArray
      * object that holds the data read in.
      */
-    //	===================================================================
-    private Handle readInData(final InputStream connection)
-    //	===================================================================
-    {
+    private Handle readInData(final InputStream connection) {
         int length = responseFields.getInt("content-length", -1);
-        if (length == 0)
+        if (length == 0){
             return new Handle(Handle.Succeeded, new ByteArray());
-        getInputStream();
+	}
         return StreamUtils.readAllBytes(getInputStream(), null, length, 0);
     }
 
@@ -608,10 +557,7 @@ public class HttpConnection {
      * <p>
      * FIXME: never referenced
      */
-    //	===================================================================
-    public Handle readInData()
-    //	===================================================================
-    {
+    public Handle readInData() {
         return readInData(connectedSocket.inputStream);
     }
 
@@ -619,50 +565,50 @@ public class HttpConnection {
      * Get an InputStream to read in the data. This is a very important method as it is used by
      * the readInData() method.
      **/
-    //	===================================================================
     private InputStream getInputStream()
-    //	===================================================================
     {
         int length = responseFields.getInt("content-length", -1);
-        if ("chunked".equals(responseFields.getValue(encodings, null)))
+        if ("chunked".equals(responseFields.getValue(encodings, null))){
             return new MemoryStream(true) {
                 private byte[] buff = new byte[10240];
                 private int leftInBlock = 0;
                 private ByteArray ba = new ByteArray();
                 private CharArray ca = new CharArray();
 
-                //-------------------------------------------------------------------
-                protected boolean loadAndPutDataBlock() throws IOException
-                //-------------------------------------------------------------------
-                {
+                protected boolean loadAndPutDataBlock() throws IOException {
                     if (leftInBlock <= 0) {
                         leftInBlock = readInChunkedHeader(connectedSocket.inputStream, ba, ca);
                         if (leftInBlock <= 0)
                             return false;
                     }
                     int toRead = leftInBlock;
-                    if (toRead > buff.length)
+                    if (toRead > buff.length){
                         toRead = buff.length;
+		    }
                     int got = connectedSocket.inputStream.read(buff, 0, toRead);
-                    if (got == -1)
+                    if (got == -1){
                         throw new IOException();
+		    }
                     leftInBlock -= got;
                     putInBuffer(buff, 0, got);
                     if (leftInBlock == 0) {
                         while (true) {
                             got = connectedSocket.inputStream.read();
-                            if (got == -1)
+                            if (got == -1){
                                 throw new IOException();
-                            if (got == '\n')
+			    }
+                            if (got == '\n'){
                                 break;
+			    }
                         }
                     }
-                    return true;
+		    return true;
                 }
             }.toInputStream();
-            //throw new IOException("Cannot get input stream from this!");
-        else
-            return new CWPartialInputStream(connectedSocket.inputStream, length).toInputStream();
+	}
+        else{
+            return new CWPartialInputStream(connectedSocket.inputStream, MAX_FILESIZE).toInputStream();
+	}
     }
 
     /*
@@ -671,70 +617,9 @@ public class HttpConnection {
      * @param connection The socket returned by a connect() call.
      * @return A ByteArray containing the read in data.
      */
-    /*
-    //===================================================================
-    public ByteArray readData(Socket connection) throws IOException
-    //===================================================================
-    {
-    return (ByteArray)waitOnIO(readInData(connection),"Error reading data.");
-    }
-     */
-    public ByteArray readData() throws IOException
-    //	===================================================================
-    {
+    public ByteArray readData() throws IOException {
         return (ByteArray) waitOnIO(readInData(openSocket.inputStream), "Error reading data.");
     }
-
-    /**
-     * Read in all the data from the Socket, converting it to text using the specified
-     * codec.
-     * @param connection The socket returned by a connect() call.
-     * @param documentTextDecoder The text codec to use to convert the bytes read in into text. If
-     * this is null then a simple Ascii codec will be used.
-     * @return A Handle with which you can monitor the connection. When the Handle
-    reports Success, then the returnValue of the Handle will be a ewe.util.CharArray
-    object that holds the text read in.
-     */
-    /*
-    //===================================================================
-    private Handle readInText(final Socket connection,TextCodec documentTextDecoder)
-    //===================================================================
-    {
-    if (documentTextDecoder == null) documentTextDecoder = new AsciiCodec();
-    final TextCodec cc = (TextCodec)documentTextDecoder.getCopy();
-    return new ewe.sys.TaskObject(){
-    	protected void doRun(){
-    		try{
-    			Handle h = readInData(connection);
-    			if (!waitOnSuccess(h,true)) return;
-    			ByteArray ba = (ByteArray)h.returnValue;
-    			handle.returnValue = cc.decodeText(ba.data,0,ba.length,true,null);
-    			handle.set(Handle.Succeeded);
-    		}catch(Exception e){
-    			handle.errorObject = e;
-    			handle.set(Handle.Failed);
-    		}
-    	}
-    }.startTask();
-    }
-     */
-    /**
-     * Read in the document body from the Socket. This method blocks until the complete
-     * data is read in. readInText() is a non-blocking version.
-     * @param connection The socket returned by a connect() call.
-     * @param documentTextDecoder The text codec to use to convert the bytes read in into text. If
-     * this is null then a simple Ascii codec will be used.
-     * @return A CharArray containing the text that was read in.
-     */
-
-    /*
-    //===================================================================
-    public CharArray readText(Socket connection,TextCodec documentTextDecoder) throws IOException
-    //===================================================================
-    {
-    return (CharArray)waitOnIO(readInText(connection,documentTextDecoder),"Error reading data.");
-    }
-     */
 
     /**
      * Connect asynchronously. This makes the connection, sends the request and requestor properties
@@ -744,10 +629,7 @@ public class HttpConnection {
      * @return A Handle used to monitor the connection. When the Handle reports a state of
      * Success, then the returnValue of the IOHandle will hold the connected socket.
      */
-    //	===================================================================
-    public Handle connectAsync()
-    //	===================================================================
-    {
+    public Handle connectAsync() {
         return connectAsync(new AsciiCodec());
     }
 
@@ -760,38 +642,31 @@ public class HttpConnection {
      * @return A Handle used to monitor the connection. When the Handle reports a state of
      * Success, then the returnValue of the Handle will hold the connected socket.
      */
-    //	===================================================================
     private Handle connectAsync(final TextCodec serverTextDecoder)
-    //	===================================================================
     {
         return new ewe.sys.TaskObject() {
             protected void doRun() {
                 while (true) {
-                    //
                     // Create a Socket using an IOHandle.
-                    //
                     Handle sh;
                     Socket sock;
                     if (openSocket != null) {
                         sh = new Handle(Handle.Succeeded, openSocket);
                         sock = openSocket.socket;
-                    } else {
+                    }
+		    else {
                         sh = new IOHandle();
                         sock = new Socket(host, port, (IOHandle) sh);
-                        // openSocket = sock;
                     }
-                    // Handle sh = (openSocket != null) ? new Handle(Handle.Succeeded,openSocket) : new IOHandle();
-                    // Socket sock = (openSocket != null) ? openSocket : new Socket(host,port,(IOHandle)sh);
+
                     try {
-                        //
                         // Now wait until connected.
-                        //
-                        if (!waitOnSuccess(sh, true))
+                        if (!waitOnSuccess(sh, true)){
                             return;
-                        //
+			    }
+
                         // Report that the socket connection was made.
                         // Now have to decode the data.
-                        //
                         handle.setFlags(SocketConnected, 0);
 
                         TlsSocket tls = new TlsSocket(useSslTls, sock);
@@ -799,12 +674,14 @@ public class HttpConnection {
                         handle.returnValue = connectedSocket = tls;
                         handle.setFlags(Handle.Success, 0);
                         return;
-                    } catch (Throwable e) {
+                    }
+		    catch (Throwable e) {
                         e.printStackTrace();
                         if (openSocket == null) {
                             handle.failed(e);
                             return;
-                        } else {
+                        }
+			else {
                             openSocket = null;
                             continue;
                         }
