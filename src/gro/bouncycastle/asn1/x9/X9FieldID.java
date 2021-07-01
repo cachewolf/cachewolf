@@ -73,10 +73,9 @@ public class X9FieldID
                 throw new IllegalArgumentException("inconsistent k values");
             }
 
-            throw new UnsupportedClassVersionError();/*
             fieldIdParams.add(tpBasis);
             fieldIdParams.add(new ASN1Integer(k1));
-*/        } 
+        } 
         else 
         {
         	throw new UnsupportedClassVersionError();/*
