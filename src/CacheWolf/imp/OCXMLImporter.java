@@ -476,7 +476,6 @@ public class OCXMLImporter {
         int numDownloaded = 1;
         while (imgRegexUrl.searchFrom(syncHolder.getDetails().getLongDescription(), descIndex)) { // "img" found
             imgTag = imgRegexUrl.stringMatched(1); // (1) enthlt das gesamte <img ...>-tag
-            Preferences.itself().log ("[AP!!!] getimagenamesfromdescription: " + imgTag);
             fetchUrl = imgRegexUrl.stringMatched(2); // URL in Anfhrungszeichen in (2) falls ohne in (3) Ergebnis ist auf jeden Fall ohne Anfhrungszeichen
             if (fetchUrl == null) {
                 fetchUrl = imgRegexUrl.stringMatched(3);
@@ -516,9 +515,7 @@ public class OCXMLImporter {
             }
             final CacheImage imageInfo = new CacheImage(CacheImage.FROMDESCRIPTION);
             imageInfo.setURL(fetchUrl);
-            Preferences.itself().log ("[AP!!!] getimagenamesfromdescription: fetching: " + fetchUrl);
             imageInfo.setTitle(imgAltText);
-            Preferences.itself().log ("[AP!!!] getimagenamesfromdescription: imgAltText: " + imgAltText);
             getPic(syncHolder, imageInfo);
         }
     }
@@ -595,7 +592,6 @@ public class OCXMLImporter {
 	if (altWptList == null){
 	    return;
 	}
-	Preferences.itself().log("Found additional waypoints: " +altWptList);
        
 	//TODO: Clean-Code: Seems to be duplicated from above. Check and extract methods for the same:
 	for (int i = 0; i < altWptList.length (); i++){
@@ -629,7 +625,7 @@ public class OCXMLImporter {
 	    
 
 	    syncHolder.setType (translateType(altWaypoint.getString("gc_type")));
-	    syncHolder.setName (altWaypoint.getString("description"));
+	    syncHolder.setName (altWaypoint.getString("type_name"));
 	    syncHolder.getDetails().saveCacheXML(MainForm.profile.dataDir);
 	    syncHolder.getDetails().setUnsaved(true); // this makes CachHolder save the details in case that they are unloaded from memory
 
