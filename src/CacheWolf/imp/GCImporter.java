@@ -1260,7 +1260,7 @@ public class GCImporter {
                             //Hier besser Json von map.details holen:
                             ch.setType(getWayPointType(mapDetails));
                             ch.setSize(getCacheSize(mapDetails));
-
+			    ch.setDifficulty(getDifficulty(mapDetails));
                             ch.setWpt(Preferences.itself().curCentrePt); // or MainForm.profile.centre
                             ch.getDetails().setLongDescription(aCacheDescriptionOfListPage); // for Info
                             ch.saveCacheDetails();
