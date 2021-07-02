@@ -1309,6 +1309,10 @@ public class GCImporter {
 	Preferences.itself().log("[AP!!!] getCacheSize called\n " + cacheDescription);
 	try{
 	    JSONObject container = cacheDescription.getJSONObject("container");
+	    final String containerSizeText = container.getString("text");
+	    if ("small".equalsIgnoreCase(containerSizeText)){
+		return CacheSize.CW_SIZE_SMALL;
+	    }
 	}
 	catch (JSONException e){
 	    throw new RuntimeException (e);
