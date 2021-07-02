@@ -305,6 +305,7 @@ public class OCXMLImporter {
         final CacheHolder syncHolder;
         if (index == -1) {
             syncHolder = new CacheHolder();
+	    syncHolder.setCode (ocCode);
             Preferences.itself().log("Importing new Cache!");
             numCacheImported++;
             syncHolder.setNew(true);

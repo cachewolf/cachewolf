@@ -368,9 +368,9 @@ private static final int[] Tinv0 =
 
             int u, rcon = 1;
 
-            throw new UnsupportedClassVersionError();/*
             for (int i = 2; i < 14; i += 2)
             {
+                throw new UnsupportedClassVersionError();/*
                 u = subWord(shift(t7, 8)) ^ rcon; rcon <<= 1;
                 t0 ^= u;  W[i    ][0] = t0;
                 t1 ^= t0; W[i    ][1] = t1;
@@ -381,8 +381,9 @@ private static final int[] Tinv0 =
                 t5 ^= t4; W[i + 1][1] = t5;
                 t6 ^= t5; W[i + 1][2] = t6;
                 t7 ^= t6; W[i + 1][3] = t7;
-            }
+*/            }
 
+            throw new UnsupportedClassVersionError();/*
             u = subWord(shift(t7, 8)) ^ rcon;
             t0 ^= u;  W[14][0] = t0;
             t1 ^= t0; W[14][1] = t1;
