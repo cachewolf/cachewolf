@@ -408,9 +408,8 @@ public class GCMBlockCipher
             // Finish hash for partial AAD block
             if (atBlockPos > 0)
             {
-            	throw new UnsupportedClassVersionError();/*
                 gHASHPartial(S_at, atBlock, 0, atBlockPos);
-*/            }
+            }
 
         	throw new UnsupportedClassVersionError();/*
             // Find the difference between the AAD hashes
