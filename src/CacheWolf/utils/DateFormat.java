@@ -90,17 +90,23 @@ public class DateFormat {
                 int v1 = Common.parseInt(SDate[1]);
                 int v2 = Common.parseInt(SDate[2]);
 		String dateFormat = Preferences.itself ().getGcDateFormat();
-		if ("MM/dd/yyyy".equals (dateFormat)){
+		if ("MM/dd/yyyy".equals (dateFormat)||
+		    "M/d/yyyy".equals(dateFormat)){
 		    d.day = v1;
 		    d.month = v0;
 		    d.year = v2;
 		}
-		else if ("d/M/yyyy".equals (dateFormat) || "dd.MM.yyyy".equals (dateFormat) || "d/M/yyyy".equals(dateFormat)){
+		else if ("d/M/yyyy".equals (dateFormat)
+			 || "d.M.yyyy".equals (dateFormat)
+			 || "dd.MM.yyyy".equals (dateFormat)
+			 || "dd-MM-yyyy".equals (dateFormat)
+			 || "dd/MM/yyyy".equals(dateFormat)){
 		    d.day = v0;
 		    d.month = v1;
 		    d.year = v2;
 		}
-		else if ("yyyy-MM-dd".equals (dateFormat)){
+		else if ("yyyy-MM-dd".equals (dateFormat)||
+			 "yyyy/MM/dd".equals (dateFormat)){
 		    d.day = v2;
 		    d.month = v1;
 		    d.year = v0;
