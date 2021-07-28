@@ -411,13 +411,14 @@ public class GCMBlockCipher
                 gHASHPartial(S_at, atBlock, 0, atBlockPos);
             }
 
-        	throw new UnsupportedClassVersionError();/*
             // Find the difference between the AAD hashes
             if (atLengthPre > 0)
             {
+                throw new UnsupportedClassVersionError();/*
                 GCMUtil.xor(S_at, S_atPre);
-            }
+*/            }
 
+            throw new UnsupportedClassVersionError();/*
             // Number of cipher-text blocks produced
             long c = ((totalLength * 8) + 127) >>> 7;
 

@@ -82,7 +82,7 @@ public class Attribute {
             {"36", "2574", "swimming", "29", "12", "May require swimming"},//
             {"37", "2576", "thorn", "13", "39", "Thorns"},//
             {"38", "2578", "ticks", "A64", "19", "Ticks"},//
-            {"39", "2580", "wading", "26", "11", "May require wading"},//
+            {"39", "2580", "wading", "A22", "11", "May require wading"},//
             {"40", "2582", "water", "20", "27", "Drinking water nearby"},//
             {"41", "2584", "wheelchair", "0", "24", "Wheelchair accessible"},//
             {"42", "2586", "winter", "A47", "15", "Available during winter"},//
