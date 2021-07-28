@@ -1306,7 +1306,6 @@ public class GCImporter {
     }
 
     private byte getCacheSize (JSONObject cacheDescription){
-	Preferences.itself().log("[AP!!!] getCacheSize called\n " + cacheDescription);
 	try{
 	    JSONObject container = cacheDescription.getJSONObject("container");
 	    final String containerSizeText = container.getString("text");
@@ -1321,8 +1320,13 @@ public class GCImporter {
         return CacheSize.CW_SIZE_NOTCHOSEN;
     }
 
-    private void downloadCaches() {
+    private byte getDifficulty (JSONObject cacheDescription){
+	Preferences.itself().log("[AP!!!] getDifficulty called\n " + cacheDescription);
+	JSONObject difficulty = cacheDescription.getJSONObject("difficulty");
+	difficulty.getString("text");
+    }
 
+    private void downloadCaches() {
         infB.addWarning(MyLocale.getMsg(5531, "New: ") + downloadList.size());
         int limit = Math.min(downloadList.size(), maxNew - newTillNow);
         newTillNow = newTillNow + limit;
