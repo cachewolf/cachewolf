@@ -1773,7 +1773,7 @@ public class CacheHolder {
         if (isCacheWpt()) {
             if (this.code.length() < 3 || getDifficulty() < CacheTerrDiff.CW_DT_UNSET || getTerrain() < CacheTerrDiff.CW_DT_UNSET || getSize() == CacheSize.CW_SIZE_ERROR || getOwner().length() == 0 || getHidden().length() == 0
                     || getName().length() == 0)
-                ret = true;
+                ret = true; // is incomplete
             else
                 ret = false;
         } else if (isAddiWpt()) {
