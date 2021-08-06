@@ -169,8 +169,8 @@ public final class CacheType {
             new CTyp(CW_TYPE_MYSTERY, (byte) 1, 'C', "", "", "Other", (byte) -1, 'U', "", new String[]{"Geocache|Other", "Geocache", "Other", "Other"}, 21, -1, 0),
             new CTyp(CW_TYPE_MYSTERY, (byte) 7, 'C', "7", "", "Quiz", (byte) -121, 'U', "", new String[]{"Geocache|Quiz", "Geocache", "Quiz", "Quiz"}, 7, -1, 0),
             new CTyp(CW_TYPE_MYSTERY, (byte) 9, 'C', "9", "", "Moving", (byte) -119, 'U', "", new String[]{"Geocache|Moving", "Geocache", "Moving", "Moving"}, 9, -1, 0),
-            new CTyp(CW_TYPE_LAB, (byte) 105, 'P', "0", "", "", (byte) -1, 'Z', "Lab", new String[]{"Geocache|Lab Cache", "Geocache", "Geocache|Lab Cache", "LAB"}, 23, 0, 0x000001),
-            new CTyp(CW_TYPE_LAB, (byte) 0, 'P', "0", "", "", (byte) -1, 'Z', "Lab", new String[]{"Groundspeak Lost and Found Celebration", "Geocache", "Groundspeak Lost and Found Celebration", "LAB"}, 2, 0, 0x000001),
+            new CTyp(CW_TYPE_LAB, (byte) 105, 'C', "0", "", "", (byte) -1, 'Z', "Lab", new String[]{"Geocache|Lab Cache", "Geocache", "Lab Cache", "LAB"}, 23, 0, 0x000001),
+            new CTyp(CW_TYPE_LAB, (byte) 0, 'C', "0", "", "", (byte) -1, 'Z', "Lab", new String[]{"Groundspeak Lost and Found Celebration", "Geocache", "Groundspeak Lost and Found Celebration", "LAB"}, 2, 0, 0x000001),
             new CTyp(CW_TYPE_TRADITIONAL, (byte) 10, 'C', "10", "", "10", (byte) -118, 'U', "", new String[]{"Geocache|DriveIn", "Geocache", "DriveIn", "DriveIn"}, 10, -1, 0),
             new CTyp(CW_TYPE_EVENT, (byte) 14, 'C', "", "3653", "", (byte) -1, 'X', "", new String[]{"Geocache|Lost and Found Event Cache", "Geocache", "Lost and Found Event Cache", ""}, 6, -1, 0),
             new CTyp(CW_TYPE_MYSTERY, (byte) 108, 'P', "", "", "8", (byte) -1, 'U', "", new String[]{"only on OC download", "", "", ""}, 19, -1, 0),
@@ -226,7 +226,7 @@ public final class CacheType {
     }
 
     /**
-     * check if a given waypoint type is an Custom waypoint
+     * check if a given waypoint type is a Custom waypoint
      *
      * @param type waypoint type to check
      * @return true if it is an Custom waypint, false otherwise
