@@ -85,13 +85,13 @@ public class ECDSASigner
     public BigInteger[] generateSignature(
         byte[] message)
     {
-    	throw new UnsupportedClassVersionError();/*
 
         ECDomainParameters ec = key.getParameters();
         BigInteger n = ec.getN();
         BigInteger e = calculateE(n, message);
         BigInteger d = ((ECPrivateKeyParameters)key).getD();
 
+        throw new UnsupportedClassVersionError();/*
         if (kCalculator.isDeterministic())
         {
             kCalculator.init(n, d, message);
