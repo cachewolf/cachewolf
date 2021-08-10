@@ -105,11 +105,11 @@ public class HMacDSAKCalculator
 
         for (;;)
         {
-        	throw new UnsupportedClassVersionError();/*
             int tOff = 0;
 
             while (tOff < t.length)
             {
+                throw new UnsupportedClassVersionError();/*
                 hMac.update(V, 0, V.length);
 
                 hMac.doFinal(V, 0);
@@ -117,7 +117,8 @@ public class HMacDSAKCalculator
                 int len = Math.min(t.length - tOff, V.length);
                 System.arraycopy(V, 0, t, tOff, len);
                 tOff += len;
-            }
+*/            }
+            throw new UnsupportedClassVersionError();/*
 
             BigInteger k = bitsToInt(t);
 
