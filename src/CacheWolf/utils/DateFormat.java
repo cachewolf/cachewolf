@@ -36,16 +36,10 @@ import CacheWolf.Preferences;
 
 public class DateFormat {
 
+    final private static String MONTH_NAMES[] = {"Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
+
     static int dayPos = 0;
     static int monthPos = 1;
-
-    //static int yearPos = 2;
-
-    public static void setGCDateFormat(String gCDateFormat) {
-        dayPos = gCDateFormat.indexOf("d");
-        monthPos = gCDateFormat.indexOf("M");
-        //yearPos = gCDateFormat.indexOf("y");
-    }
 
     /**
      * Convert the US Format DateHidden/DateVisited into a sortable format
@@ -55,142 +49,82 @@ public class DateFormat {
     }
 
     public static Time toDate(String ds) {
-        if (ds == null || ds.equals("") || ds.indexOf("1900") > -1)
+	//Preferences.itself().log("DateFormat.toDate: " +ds);
+        if (ds == null || ds.equals("") || ds.indexOf("1900") > -1){
             return new Time(5, 5, 1900);
-        Time d = new Time();
-        d.hour = 0;
-        d.minute = 0;
-        d.second = 0;
-        d.millis = 0;
-        if (ds.indexOf("day") > 0) {
-            final long adaylong = new Time(2, 1, 2000).getTime() - new Time(1, 1, 2000).getTime();
-            if (ds.indexOf("Yesterday") > -1) {
-                d.setTime(d.getTime() - adaylong);
-            } else {
-                d.setTime(d.getTime() - adaylong * Common.parseInt(ds.substring(0, 1)));
-            }
-        }
-	else {
-            String[] SDate;
-            ds = STRreplace.replace(ds, ",", " ");
-            ds = STRreplace.replace(ds, "  ", " ");
-            SDate = mString.split(ds, ' ');
-            if (SDate.length == 1) {
-                if (ds.indexOf('/') > -1){
-                    SDate = mString.split(ds, '/');
-		}
-                else if (ds.indexOf('-') > -1){
-                    SDate = mString.split(ds, '-');
-		}
-                else if (ds.indexOf('.') > -1){
-                    SDate = mString.split(ds, '.');
-		}
-                // trying to determine Dateformat
-                int v0 = Common.parseInt(SDate[0]);
-                int v1 = Common.parseInt(SDate[1]);
-                int v2 = Common.parseInt(SDate[2]);
-		String dateFormat = Preferences.itself ().getGcDateFormat();
-		if ("MM/dd/yyyy".equals (dateFormat)||
-		    "M/d/yyyy".equals(dateFormat)){
-		    d.day = v1;
-		    d.month = v0;
-		    d.year = v2;
-		}
-		else if ("d/M/yyyy".equals (dateFormat)
-			 || "d.M.yyyy".equals (dateFormat)
-			 || "dd.MM.yyyy".equals (dateFormat)
-			 || "dd-MM-yyyy".equals (dateFormat)
-			 || "dd/MM/yyyy".equals(dateFormat)){
-		    d.day = v0;
-		    d.month = v1;
-		    d.year = v2;
-		}
-		else if ("yyyy-MM-dd".equals (dateFormat)||
-			 "yyyy/MM/dd".equals (dateFormat)){
-		    d.day = v2;
-		    d.month = v1;
-		    d.year = v0;
-		}
-		else{
-		    throw new RuntimeException ("unsupported dateFormat {" + dateFormat + "}");
-		}
-		/*                int dd, mm, yy;
-                if (v0 > 31) {
-                    // yyyy MM dd
-                    yy = v0;
-                    mm = v1;
-                    dd = v2;
-                } else {
-                    yy = v2;
-                    if ((v0 == 0) || (v1 == 0)) {
-                        // month as text MMM
-                        String month;
-                        if (v0 == 0) {
-                            month = SDate[0];
-                            dd = v1;
-                        } else {
-                            month = SDate[1];
-                            dd = v0;
-                        }
-                        mm = monthName2int(month);
-                    } else {
-                        // MM dd yyyy (doesn't work for dd MM yyyy)
-                        if (dayPos < monthPos) {
-                            dd = v0;
-                            mm = v1;
-                        } else {
-                            mm = v0;
-                            dd = v1;
-                        }
-                    }
+	}
 
-                }
-		
-                d.month = mm;
-                d.day = dd;
-                d.year = yy;
-		*/
-            }
-	    else {
-                // starting with dayOfWeek or missing year
-                int offs = SDate.length - 3;
-                if (offs < 0)
-                    offs = 0;
-                int v0 = Common.parseInt(SDate[offs]);
-                if (v0 == 0) {
-                    d.day = Common.parseInt(SDate[offs + 1]);
-                    d.month = monthName2int(SDate[offs]);
-                } else {
-                    d.day = Common.parseInt(SDate[offs]);
-                    d.month = monthName2int(SDate[offs + 1]);
-                }
-                if (SDate.length > 2) {
-                    int yy = Common.parseInt(SDate[offs + 2]);
-                    if (yy < 100)
-                        d.year = 2000 + yy;
-                    else
-                        d.year = yy;
-                } else
-                    // missing year
-                    ; // d.year = this year
-            }
-        }
-        return d;
+        Time d = new Time();
+	String dateFormat = Preferences.itself ().getGcDateFormat();
+
+	ds = STRreplace.replace(ds, ",", " ");
+	ds = STRreplace.replace(ds, "  ", " ");
+
+	Preferences.itself().log("DateFormat.toDate-format: " +dateFormat + " -- " + ds);	
+	final String[] splittedDate;
+	if (dateFormat.indexOf('/') > -1){
+	    splittedDate = mString.split(ds, '/');
+	}
+	else if (dateFormat.indexOf('-') > -1){
+	    splittedDate = mString.split(ds, '-');
+	}
+	else if (dateFormat.indexOf('.') > -1){
+	    splittedDate = mString.split(ds, '.');
+	}
+	else{
+	    splittedDate = mString.split(ds, ' ');
+	}
+	// trying to determine Dateformat
+	int v0 = Common.parseInt(splittedDate[0].trim());
+	int v1 = Common.parseInt(splittedDate[1].trim());
+	int v2 = Common.parseInt(splittedDate[2].trim());
+	if ("MM/dd/yyyy".equals (dateFormat)||
+	    "M/d/yyyy".equals(dateFormat)){
+	    d.day = v1;
+	    d.month = v0;
+	    d.year = v2;
+	}
+	else if ("d/M/yyyy".equals (dateFormat)
+		 || "d.M.yyyy".equals (dateFormat)
+		 || "dd.MM.yyyy".equals (dateFormat)
+		 || "dd-MM-yyyy".equals (dateFormat)
+		 || "dd/MM/yyyy".equals(dateFormat)){
+	    d.day = v0;
+	    d.month = v1;
+	    d.year = v2;
+	}
+	else if ("yyyy-MM-dd".equals (dateFormat)||
+		 "yyyy/MM/dd".equals (dateFormat)){
+	    d.day = v2;
+	    d.month = v1;
+	    d.year = v0;
+	}
+	else if ("dd/MMM/yyyy".equals (dateFormat) ||
+		 "dd.MMM.yyyy".equals (dateFormat)){
+	    d.day = v0;
+	    d.month = monthName2int(splittedDate[1]);
+	    d.year = v2;
+	}
+	else if ("MMM/dd/yyyy".equals (dateFormat)){
+	    d.day = v1;
+	    d.month = monthName2int(splittedDate[0]);
+	    d.year = v2;
+	}
+	else{
+	    throw new RuntimeException ("unsupported dateFormat {" + dateFormat + "}");
+	}
+	
+	return d;
     }
 
+
     private static int monthName2int(String month) {
-        final String enMonthNames[] = {"January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"};
         for (int m = 0; m < 12; m++) {
-            if (enMonthNames[m].startsWith(month)) {
+            if (MONTH_NAMES[m].startsWith(month)) {
                 return m + 1;
             }
         }
-        final String deMonthNames[] = {"Januar", "Februar", "März", "April", "Mai", "Juni", "Juli", "August", "September", "Oktober", "November", "Dezember"};
-        for (int m = 0; m < 12; m++) {
-            if (deMonthNames[m].startsWith(month)) {
-                return m + 1;
-            }
-        }
+
         return 1; // Januar if not detected / in other language
     }
 
