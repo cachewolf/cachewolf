@@ -1553,7 +1553,7 @@ public class GCImporter {
 		}
 		catch (Exception e){
 		    Preferences.itself().log("Could not parse expires-date of auth-cookie " + e);
-		    Preferences.itself().log("From preferences: " + Preferences.itself().getGCLogin(Preferences.itself().gcLogin))
+		    Preferences.itself().log("From preferences: " + Preferences.itself().getGCLogin(Preferences.itself().gcLogin));
 		}
 	    }
 
