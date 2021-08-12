@@ -1547,24 +1547,30 @@ public class GCImporter {
                 String expires = (String) ht.get("expires");
                 String cookie = (String) ht.get("auth");
                 boolean withoutExpiration = true;
-                if (cookie != null && cookie.length() > 0) {
-                    if (expires != null && expires.length() > 0) {
-                        withoutExpiration = false;
-                        // check expires
-                        String[] sExpires = mString.split(expires, ' ');
-                        Time tExpires = DateFormat.toDate(sExpires[1]);
-                        Time now = new Time();
-                        if (tExpires.after(now)) {
-                            UrlFetcher.setCookie("gspkauth;www.geocaching.com", "gspkauth=" + cookie + ";");
-                            isExpired = false;
-                        }
-                    }
-                    if (withoutExpiration) {
-                        UrlFetcher.setCookie("gspkauth;www.geocaching.com", "gspkauth=" + cookie + ";");
-                        isExpired = false;
-                    }
-                }
-            }
+		try{
+		    if (cookie != null && cookie.length() > 0) {
+			if (expires != null && expires.length() > 0) {
+			    withoutExpiration = false;
+			    // check expires
+			    String[] sExpires = mString.split(expires, ' ');
+			    Time tExpires = DateFormat.toDate(sExpires[1]);
+			    Time now = new Time();
+			    if (tExpires.after(now)) {
+				UrlFetcher.setCookie("gspkauth;www.geocaching.com", "gspkauth=" + cookie + ";");
+				isExpired = false;
+			    }
+			}
+			if (withoutExpiration) {
+			    UrlFetcher.setCookie("gspkauth;www.geocaching.com", "gspkauth=" + cookie + ";");
+			    isExpired = false;
+			}
+		    }
+		}
+		catch (Exception e){
+		    Preferences.itself().log("Could not parse expires-date of auth-cookie " + e);
+		    Preferences.itself().log("From preferences: " + Preferences.itself().getGCLogin(Preferences.itself().gcLogin));
+		}
+	    }
 
             if (isExpired) {
                 byte ret = gcLogin(); // todo ? get the cookie for gcLogin, not for myAlias
