@@ -52,7 +52,8 @@ public class TravelbugJourneyScreenFactory {
         Class swingClass = null;
         try {
             swingClass = TravelbugJourneyScreen.class.getClassLoader().loadClass("javax.swing.JTable");
-        } catch (Exception e) {
+        }
+	catch (Exception e) {
             Preferences.itself().log("Swing not found");
             Preferences.itself().log(e.toString());
             //ignore!
@@ -82,18 +83,21 @@ public class TravelbugJourneyScreenFactory {
                 Form result = (Form) constructor.newInstance(new Object[]{model});
                 Preferences.itself().log("TBScreen successfully instantiated");
                 return result;
-            } catch (Throwable e) {
+            }
+	    catch (Throwable e) {
                 Preferences.itself().log("CacheWolf.view.pda.PDATravelbugJourneyScreen not found");
                 Preferences.itself().log("Error in instantiating TravelBugJourneyScreen", e, true);
-                e.printStackTrace();
                 //ignore?? VM on WinPC seems to have no classloader
                 return new PDATravelbugJourneyScreen(model);
             }
-        } else if (isSwing) {
+        }
+	else if (isSwing) {
             throw new InstantiationError("No Swing GUI available");
-        } else if (isAndroid) {
+        }
+	else if (isAndroid) {
             throw new InstantiationError("No Android GUI available");
-        } else {
+        }
+	else {
             return new TravelbugJourneyScreen(model);
         }
     }

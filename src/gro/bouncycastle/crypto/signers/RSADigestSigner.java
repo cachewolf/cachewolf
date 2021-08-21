@@ -153,10 +153,10 @@ public class RSADigestSigner
 			byte[] data = derEncode(hash);
 			return rsaEngine.processBlock(data,	0, data.length);
 
-			} catch (IOException e) {
-	throw new UnsupportedClassVersionError();/*
+			}
+		catch (IOException e) {
 			throw new CryptoException("unable to encode signature: " + e.getMessage(), e);
-*/		}
+		}
 	}
 
 	/**
