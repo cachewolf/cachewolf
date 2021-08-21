@@ -48,73 +48,16 @@ public class DateFormat {
         return toYYMMDD(toDate(date));
     }
 
+    public static Time toDate(String input, String dateFormat){
+	Time result = new Time();
+	result.parse (input, dateFormat);
+
+	return result;
+    }
+
     public static Time toDate(String ds) {
-	//Preferences.itself().log("DateFormat.toDate: " +ds);
-        if (ds == null || ds.equals("") || ds.indexOf("1900") > -1){
-            return new Time(5, 5, 1900);
-	}
-
-        Time d = new Time();
 	String dateFormat = Preferences.itself ().getGcDateFormat();
-
-	ds = STRreplace.replace(ds, ",", " ");
-	ds = STRreplace.replace(ds, "  ", " ");
-
-	Preferences.itself().log("DateFormat.toDate-format: " +dateFormat + " -- " + ds);	
-	final String[] splittedDate;
-	if (dateFormat.indexOf('/') > -1){
-	    splittedDate = mString.split(ds, '/');
-	}
-	else if (dateFormat.indexOf('-') > -1){
-	    splittedDate = mString.split(ds, '-');
-	}
-	else if (dateFormat.indexOf('.') > -1){
-	    splittedDate = mString.split(ds, '.');
-	}
-	else{
-	    splittedDate = mString.split(ds, ' ');
-	}
-	// trying to determine Dateformat
-	int v0 = Common.parseInt(splittedDate[0].trim());
-	int v1 = Common.parseInt(splittedDate[1].trim());
-	int v2 = Common.parseInt(splittedDate[2].trim());
-	if ("MM/dd/yyyy".equals (dateFormat)||
-	    "M/d/yyyy".equals(dateFormat)){
-	    d.day = v1;
-	    d.month = v0;
-	    d.year = v2;
-	}
-	else if ("d/M/yyyy".equals (dateFormat)
-		 || "d.M.yyyy".equals (dateFormat)
-		 || "dd.MM.yyyy".equals (dateFormat)
-		 || "dd-MM-yyyy".equals (dateFormat)
-		 || "dd/MM/yyyy".equals(dateFormat)){
-	    d.day = v0;
-	    d.month = v1;
-	    d.year = v2;
-	}
-	else if ("yyyy-MM-dd".equals (dateFormat)||
-		 "yyyy/MM/dd".equals (dateFormat)){
-	    d.day = v2;
-	    d.month = v1;
-	    d.year = v0;
-	}
-	else if ("dd/MMM/yyyy".equals (dateFormat) ||
-		 "dd.MMM.yyyy".equals (dateFormat)){
-	    d.day = v0;
-	    d.month = monthName2int(splittedDate[1]);
-	    d.year = v2;
-	}
-	else if ("MMM/dd/yyyy".equals (dateFormat)){
-	    d.day = v1;
-	    d.month = monthName2int(splittedDate[0]);
-	    d.year = v2;
-	}
-	else{
-	    throw new RuntimeException ("unsupported dateFormat {" + dateFormat + "}");
-	}
-	
-	return d;
+	return toDate (ds.trim(), dateFormat);
     }
 
 
@@ -144,7 +87,8 @@ public class DateFormat {
         Time d = new Time();
         try {
             d.parse(yyyyMMddHHmmss, "yyyyMMddHHmmss");
-        } catch (IllegalArgumentException e) {
+        }
+	catch (IllegalArgumentException e) {
             d = new Time();
         }
         return d.format("yyyy-MM-dd"); // +d.format("HH:mm:ss"); is set to 00:00:00 at gpxExport
@@ -162,7 +106,8 @@ public class DateFormat {
             } catch (Exception e) {
             }
             return "";
-        } else {
+        }
+	else {
             return "";
         }
 

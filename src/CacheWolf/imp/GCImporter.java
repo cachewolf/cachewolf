@@ -1558,7 +1558,7 @@ public class GCImporter {
 			    withoutExpiration = false;
 			    // check expires
 			    String[] sExpires = mString.split(expires, ' ');
-			    Time tExpires = DateFormat.toDate(sExpires[1]);
+			    Time tExpires = DateFormat.toDate(sExpires[1], "dd-MMM-yyyy");
 			    Time now = new Time();
 			    if (tExpires.after(now)) {
 				UrlFetcher.setCookie("gspkauth;www.geocaching.com", "gspkauth=" + cookie + ";");
@@ -1573,7 +1573,7 @@ public class GCImporter {
 		}
 		catch (Exception e){
 		    Preferences.itself().log("Could not parse expires-date of auth-cookie " + e);
-		    Preferences.itself().log("From preferences: " + Preferences.itself().getGCLogin(Preferences.itself().gcLogin));
+		    Preferences.itself().log("From preferences: " + expires);
 		}
 	    }
 
@@ -1733,7 +1733,8 @@ public class GCImporter {
 		String expires;
 		if (login != null && login.get("expires") != null) {
 		    expires = (String) login.get("expires");
-		} else {
+		}
+		else {
 		    expires = "";
 		}
 		for (int i = 0; i < theCookie.length; i++) {
@@ -1742,7 +1743,8 @@ public class GCImporter {
 		    if (rp.length == 2) {
 			if (rp[0].equalsIgnoreCase("gspkauth")) {
 			    gspkauth = rp[1];
-			} else if (rp[0].trim().equalsIgnoreCase("expires")) {
+			}
+			else if (rp[0].trim().equalsIgnoreCase("expires")) {
 			    expires = rp[1];
 			    break;
 			}
