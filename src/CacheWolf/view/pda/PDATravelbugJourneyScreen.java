@@ -1,5 +1,6 @@
 package CacheWolf.view.pda;
 
+import CacheWolf.Preferences;
 import CacheWolf.database.TravelbugJourney;
 import CacheWolf.model.TravelBugJourneyScreenModel;
 import ewe.graphics.AniImage;
@@ -23,17 +24,21 @@ public class PDATravelbugJourneyScreen extends PDAList {
      */
 
     public PDATravelbugJourneyScreen(TravelBugJourneyScreenModel travelbugModel) {
+	Preferences.itself().log("PDATravelbugJourneyScreen<init> called");
         addListener(this);
         setTitle("TravelBugs");
 
         model = travelbugModel;
 
-        // backgroundImage = new Image("bug_vga.gif");
         for (int i = 0; i < model.allTravelbugJourneys.size(); i++) {
-            model.shownTravelbugJourneys.add(model.allTravelbugJourneys.getTBJourney(i));
+	    Preferences.itself().log("PDATravelbugJourneyScreen<init> setting model 1: " + i);
+            TravelbugJourney tbJourney = model.allTravelbugJourneys.getTBJourney(i);
+	    Preferences.itself().log("PDATravelbugJourneyScreen<init> setting model 2: " + tbJourney);
+            model.shownTravelbugJourneys.add(tbJourney);
         }
         createShowSet();
         setupTBButtons();
+	Preferences.itself().log("PDATravelbugJourneyScreen<init> finished");
     }
 
     public void onControlEvent(ControlEvent ev) {

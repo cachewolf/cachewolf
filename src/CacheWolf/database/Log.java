@@ -28,10 +28,14 @@ import com.stevesoft.ewe_pat.Regex;
 import com.stevesoft.ewe_pat.Transformer;
 
 public class Log {
+    public final static String DATEFORMAT="yyyy-MM-dd";
+
     public final static String MAXLOGICON = "MAXLOG";
+
     private static String INVALIDLOGICON = null;
     private Transformer handleLinebreaks;
     private Transformer removeHTMLTags;
+    
     /**
      * The icon which describes the log e.g. icon_sad
      */

@@ -27,6 +27,7 @@ import CacheWolf.database.CacheDB;
 import CacheWolf.database.CacheHolder;
 import CacheWolf.database.CacheHolderDetail;
 import CacheWolf.database.CacheType;
+import CacheWolf.database.Log;
 import CacheWolf.imp.OCGPXfetch;
 import CacheWolf.imp.OCLinkImporter;
 import CacheWolf.utils.DateFormat;
@@ -92,11 +93,13 @@ public final class OCLogExport {
                             loggedIn = page.indexOf("Eingeloggt als") > -1; // next time perhaps
                             String ocCacheId = new Extractor(page, "viewcache.php?cacheid=", "\">", 0, true).findNext();
                             String postData = "cacheid=" + ocCacheId + "&version3=1&descMode=3";
-                            if (ch.getType() == CacheType.CW_TYPE_EVENT || ch.getType() == CacheType.CW_TYPE_MEGA_EVENT || ch.getType() == CacheType.CW_TYPE_MAZE)
+                            if (ch.getType() == CacheType.CW_TYPE_EVENT || ch.getType() == CacheType.CW_TYPE_MEGA_EVENT || ch.getType() == CacheType.CW_TYPE_MAZE){
                                 postData = postData + "&logtype=7";
-                            else
+			    }
+                            else{
                                 postData = postData + "&logtype=1";
-                            Time logDate = DateFormat.toDate(chD.getOwnLog().getDate());
+			    }
+                            Time logDate = DateFormat.toDate(chD.getOwnLog().getDate(), Log.DATEFORMAT);
                             postData += "&logday=" + logDate.day;
                             postData += "&logmonth=" + logDate.month;
                             postData += "&logyear=" + logDate.year;

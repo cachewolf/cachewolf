@@ -126,24 +126,6 @@ public class NewCSVExporter extends Exporter {
                 return "\r\n";
         }
     }
-    /* */
-
-    /*
-    // _wrong_ownlog_date
-    public String record(CacheHolder ch) {
-    CacheHolderDetail chD = ch.getDetails();
-    if (chD != null) {
-        Log ownLog = chD.getOwnLog();
-        if (ownLog != null) {
-    	Time ownDate = DateFormat.toDate(ownLog.getDate());
-    	if (ownDate.year == 1900) {
-    	    return ch.getCode() + "\n";
-    	}
-        }
-    }
-    return null;
-    }
-    */
 
     private String checkOwnLog(CacheHolder ch) {
         if (spider == null)
@@ -233,7 +215,7 @@ public class NewCSVExporter extends Exporter {
             return null;
         CacheHolderDetail chD = ch.getDetails();
         LogList logs = chD.getCacheLogs();
-        Time ownDate = DateFormat.toDate(chD.getOwnLog().getDate());
+        Time ownDate = DateFormat.toDate(chD.getOwnLog().getDate(), Log.DATEFORMAT);
         int diffDays = 0;
         int ownDays = getDays(ownDate);
         String strLogDate = "";
@@ -289,17 +271,18 @@ public class NewCSVExporter extends Exporter {
             if (myLogDate == null || myLogDate.length() == 0) {
                 return "missing own Logdate:" + ch.getCode() + "\r\n";
             }
-            ownDate = DateFormat.toDate(myLogDate);
+            ownDate = DateFormat.toDate(myLogDate, Log.DATEFORMAT);
         } catch (Exception e) {
             return "wrong own Logdate:" + ch.getCode() + "\r\n";
         }
         for (int i = 0; i < logs.size(); i++) {
             Log theLog = logs.getLog(i);
             if (theLog.isFoundLog()) {
-                if (ownDate.after(DateFormat.toDate(theLog.getDate()))) {
+                if (ownDate.after(DateFormat.toDate(theLog.getDate(), Log.DATEFORMAT))) {
                     return null;
                 }
-            } else if (theLog.isPublishLog()) {
+            }
+	    else if (theLog.isPublishLog()) {
                 StringBuffer str = new StringBuffer(200);
                 str.append("\"" + ch.getCode() + "\";");
                 str.append("\"" + ch.getName() + "\";");
@@ -320,9 +303,9 @@ public class NewCSVExporter extends Exporter {
         } catch (Exception e) {
             return "missing own log: " + ch.getCode() + "\r\n";
         }
-        Time ownDate = DateFormat.toDate(sOwnDate);
+        Time ownDate = DateFormat.toDate(sOwnDate, Log.DATEFORMAT);
         String sPlacedDate = ch.getHidden();
-        Time placedDate = DateFormat.toDate(sPlacedDate);
+        Time placedDate = DateFormat.toDate(sPlacedDate, Log.DATEFORMAT);
         if (ownDate.month == placedDate.month && ownDate.day == placedDate.day) {
             if (ownDate.year != placedDate.year) {
                 return ch.getCode() + ";" + ch.getName() + ";" + sOwnDate + ";" + sPlacedDate + ";" + (ownDate.year - placedDate.year) + ";" + CacheType.type2Gui(ch.getType()) + "\r\n";
