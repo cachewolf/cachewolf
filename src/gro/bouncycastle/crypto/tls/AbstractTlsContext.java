@@ -115,12 +115,13 @@ abstract class AbstractTlsContext
         byte[] cr = sp.getClientRandom(), sr = sp.getServerRandom();
 
         int seedLength = cr.length + sr.length;
-        throw new UnsupportedClassVersionError();/*
         if (context_value != null)
         {
+            throw new UnsupportedClassVersionError();/*
             seedLength += (2 + context_value.length);
-        }
+*/        }
 
+        throw new UnsupportedClassVersionError();/*
         byte[] seed = new byte[seedLength];
         int seedPos = 0;
 
