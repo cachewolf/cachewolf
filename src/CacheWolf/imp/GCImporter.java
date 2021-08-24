@@ -1261,6 +1261,7 @@ public class GCImporter {
                             ch.setType(getWayPointType(mapDetails));
                             ch.setSize(getCacheSize(mapDetails));
 			    ch.setDifficulty(getDifficulty(mapDetails));
+			    ch.setTerrain(getTerrain(mapDetails));
                             ch.setWpt(Preferences.itself().curCentrePt); // or MainForm.profile.centre
                             ch.getDetails().setLongDescription(aCacheDescriptionOfListPage); // for Info
                             ch.saveCacheDetails();
