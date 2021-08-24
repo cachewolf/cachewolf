@@ -2117,8 +2117,9 @@ public class GCImporter {
         logDateRex.search(aCacheDescriptionOfListPage);
         if (logDateRex.didMatch()) {
             stmp = logDateRex.stringMatched(1);
-        } else {
-            Preferences.itself().log("[SpiderGC.java:newFoundExists]check logDateRex!", null);
+        }
+	else {
+            Preferences.itself().log("[GCImporter: newFoundExists]check logDateRex!", null);
             return false;
         }
         final Time lastLogGC = DateFormat.toDate(stmp);

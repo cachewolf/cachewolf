@@ -50,7 +50,21 @@ public class DateFormat {
 
     public static Time toDate(String input, String dateFormat){
 	Time result = new Time();
-	result.parse (input, dateFormat);
+	
+	if ("today*".equalsIgnoreCase(input)){
+	    // intentionally do nothing
+	}
+	else if ("yesterday*".equalsIgnoreCase(input)){
+	    result.setTime (result.getTime () - (24L * 3600L * 1000L ));
+	}
+	else if (input.endsWith ("days ago*")){
+	    String daysString = input.substring (0, input.indexOf (' '));
+	    int days = Integer.parseInt(daysString);
+	    result.setTime (result.getTime () - (days * 24L * 3600L * 1000L ));
+	}
+	else{
+	    result.parse (input, dateFormat);
+	}
 
 	return result;
     }
