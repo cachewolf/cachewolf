@@ -49,23 +49,25 @@ public class DateFormat {
     }
 
     public static Time toDate(String input, String dateFormat){
+	Preferences.itself().log ("[DateFormat.toDate in]  " + input + " <-> " +dateFormat);
 	Time result = new Time();
-	
-	if ("today*".equalsIgnoreCase(input)){
-	    // intentionally do nothing
+	if (input != null){
+	    if (input.toLowerCase().contains("today")){
+		// intentionally do nothing
+	    }
+	    else if (input.toLowerCase().contains("yesterday")){
+		result.setTime (result.getTime () - (24L * 3600L * 1000L ));
+	    }
+	    else if (input.toLowerCase().contains("days ago")){
+		String daysString = input.substring (0, input.indexOf ("days")-1);
+		int days = Integer.parseInt(daysString);
+		result.setTime (result.getTime () - (days * 24L * 3600L * 1000L ));
+	    }
+	    else{
+		result.parse (input, dateFormat);
+	    }
 	}
-	else if ("yesterday*".equalsIgnoreCase(input)){
-	    result.setTime (result.getTime () - (24L * 3600L * 1000L ));
-	}
-	else if (input.endsWith ("days ago*")){
-	    String daysString = input.substring (0, input.indexOf (' '));
-	    int days = Integer.parseInt(daysString);
-	    result.setTime (result.getTime () - (days * 24L * 3600L * 1000L ));
-	}
-	else{
-	    result.parse (input, dateFormat);
-	}
-
+	    Preferences.itself().log ("[DateFormattoDate out] " + result.format("yyyy-MMM-dd"));
 	return result;
     }
 
