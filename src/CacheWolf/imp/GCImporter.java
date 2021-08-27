@@ -2146,12 +2146,6 @@ public class GCImporter {
                         ret = SPIDER_CANCEL;
                     else if (newCache.isPremiumCache()) {
                         if (!Preferences.itself().havePremiumMemberRights) {
-                            Preferences.itself().log("[AP!!!:] getCacheByWaypointName: " + newCache.getCode());
-                            //Preferences.itself().log("[AP!!!:] waypointPage\n: " +wayPointPage + "\n\n\n");
-                            // Premium cache spidered by non premium member
-                            // alternative Abfrage
-                            // wayPointPage.indexOf("PersonalCacheNote") == -1 // (BasicMember hat keine PersonalCacheNote)
-                            // Preferences.itself().log("Ignoring premium member cache: " + ch.getCode(), null);
                             spiderTrys = MAX_SPIDER_TRYS; // retry zwecklos da BasicMember
                             if (isInDB) {
                                 chOld.setIsPremiumCache(true);
@@ -2188,18 +2182,6 @@ public class GCImporter {
                                 Preferences.itself().log(newCache.getCode() + " coords equal original.", null);
                             }
                         }
-                        /*
-                        JSONObject initialLogs = new JSONObject(extractor.findNext("initalLogs = ", "};") + "}");
-                        JSONObject pageInfo = initialLogs.getJSONObject("pageInfo");
-                        int got = pageInfo.getInt("size"); //<=25
-                        int max = pageInfo.getInt("totalRows");
-                        if (max<=got) {
-
-                        }
-                        else {
-                        what else
-                        }
-                        */
                         // Logs: getAllLogs = isFoundByMe = (logged at gc (by spidering account) || marked as found in this profile)
                         getLogs((wayPointPage.indexOf(foundByMe) > -1) || (isInDB && chOld.isFound()));
 
@@ -2458,11 +2440,14 @@ public class GCImporter {
             notesRex.search(wayPointPage);
             if (notesRex.didMatch()) {
                 String tmp = notesRex.stringMatched(1);
-                if (tmp.length() > 2)
+                if (tmp.length() > 2){
                     return "<GC>" + tmp + "</GC>";
-                else
+		}
+                else{
                     return "";
-            } else {
+		}
+            }
+	    else {
                 Preferences.itself().log("[getNotes]check notesRex!", null);
             }
         }
@@ -2512,9 +2497,10 @@ public class GCImporter {
             String fetchResult = "";
             try {
                 fetchResult = UrlFetcher.fetch(url);
-                Preferences.itself().log("" + nLogs); // in 100er Schritten
+                Preferences.itself().log("[GCImporter.getLogs] getting logs " + nLogs + " to " + nLogs+99); // in 100er Schritten
                 response = new JSONObject(fetchResult);
-            } catch (Exception e) {
+            }
+	    catch (Exception e) {
                 if (fetchResult == null)
                     fetchResult = "";
                 Preferences.itself().log("Error getting Logs. \r\n" + fetchResult, e);
@@ -2523,54 +2509,63 @@ public class GCImporter {
             if (!response.getString("status").equals("success")) {
                 Preferences.itself().log("status is " + response.getString("status"), null);
             }
-            final JSONArray data = response.getJSONArray("data");
+            
+	    final JSONArray data = response.getJSONArray("data");
             fertig = data.length() < num;
             for (int index = 0; index < data.length(); index++) {
+                Preferences.itself().log("[GCImporter.getLogs] examining logs #" + nLogs); 
                 nLogs++;
-                final JSONObject entry = data.getJSONObject(index);
 
-                final String icon = entry.getString("LogTypeImage");
-                final String name = entry.getString("UserName");
-                String logText = SafeXML.html2iso8859s1(entry.getString("LogText"));
-                logText = STRreplace.replace(logText, "\u000b", " ");
-                logText = STRreplace.replace(logText, "<br/>", "<br>");
-                logText = correctSmilies(logText);
-                final String visitedDate = DateFormat.toYYMMDD(entry.getString("Visited"));
-                final String logID = entry.getString("LogID");
-                final String finderID = entry.getString("AccountID");
+		try{
+		    final JSONObject entry = data.getJSONObject(index);
 
-                // if this log says this Cache is found by me or other logtype
-                if ((name.equalsIgnoreCase(Preferences.itself().myAlias)) || (name.equalsIgnoreCase(Preferences.itself().myAlias2))) {
-                    if ((icon.equals(icon_smile) || icon.equals(icon_camera) || icon.equals(icon_attended))) {
-                        newCache.setFound(true);
-                        newCache.setStatus(visitedDate);
-                        // final String logId = entry.getString("LogID");
-                        newCacheDetails.setOwnLog(new Log(logID, finderID, icon, visitedDate, name, logText));
-                        foundown = true;
-                        nrOfOwnFinds = nrOfOwnFinds + 1;
-                        fertig = true;
-                    } else {
-                        // make it possible to edit a "write note"
-                        if (!newCache.isFound()) {
-                            // do not overwrite a find log
-                            newCacheDetails.setOwnLog(new Log(logID, finderID, icon, visitedDate, name, logText));
-                            newCache.setStatus(newCacheDetails.getOwnLog().icon2Message());
-                        }
-                    }
-                }
+		    final String icon = entry.getString("LogTypeImage");
+		    final String name = entry.getString("UserName");
+		    String logText = SafeXML.html2iso8859s1(entry.getString("LogText"));
+		    logText = STRreplace.replace(logText, "\u000b", " ");
+		    logText = STRreplace.replace(logText, "<br/>", "<br>");
+		    logText = correctSmilies(logText);
+		    final String visitedDate = DateFormat.toYYMMDD(entry.getString("Visited"));
+		    final String logID = entry.getString("LogID");
+		    final String finderID = entry.getString("AccountID");
+		    
+		    // if this log says this Cache is found by me or other logtype
+		    if ((name.equalsIgnoreCase(Preferences.itself().myAlias)) || (name.equalsIgnoreCase(Preferences.itself().myAlias2))) {
+			if ((icon.equals(icon_smile) || icon.equals(icon_camera) || icon.equals(icon_attended))) {
+			    newCache.setFound(true);
+			    newCache.setStatus(visitedDate);
+			    newCacheDetails.setOwnLog(new Log(logID, finderID, icon, visitedDate, name, logText));
+			    foundown = true;
+			    nrOfOwnFinds = nrOfOwnFinds + 1;
+			    fertig = true;
+			}
+			else {
+			    // make it possible to edit a "write note"
+			    if (!newCache.isFound()) {
+				// do not overwrite a find log
+				newCacheDetails.setOwnLog(new Log(logID, finderID, icon, visitedDate, name, logText));
+				newCache.setStatus(newCacheDetails.getOwnLog().icon2Message());
+			    }
+			}
+		    }
 
-                if (nLogs <= maxLogs || fetchAllLogs) {
-                    Log l = new Log(logID, finderID, icon, visitedDate, name, logText);
-                    reslts.add(l);
-                } else {
-                    // don't add more logs, but still searching own log
-                    if (foundown || !fetchAllLogs) {
-                        // ownLog or the last one (perhaps maxLogs + 1, the ownLog is possibly not found)
-                        reslts.add(new Log(logID, finderID, icon, visitedDate, name, logText));
-                        fertig = true;
+		    if (nLogs <= maxLogs || fetchAllLogs) {
+			Log l = new Log(logID, finderID, icon, visitedDate, name, logText);
+			reslts.add(l);
+		    }
+		    else {
+			// don't add more logs, but still searching own log
+			if (foundown || !fetchAllLogs) {
+			    // ownLog or the last one (perhaps maxLogs + 1, the ownLog is possibly not found)
+			    reslts.add(new Log(logID, finderID, icon, visitedDate, name, logText));
+			    fertig = true;
                         break;
-                    }
-                }
+			}
+		    }
+		}
+		catch(Exception e){
+		    Preferences.itself().log("[GCImporter.getLogs] examining log failed, continuing with next one\n", e);		    
+		}
             }
         } while (!fertig);
 
