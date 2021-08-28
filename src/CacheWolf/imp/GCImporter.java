@@ -318,7 +318,7 @@ public class GCImporter {
             shortDescRex = new Regex(p.getProp("shortDescRex"));
             longDescRex = new Regex(p.getProp("longDescRex"));
             hintsRex = new Regex(p.getProp("hintsRex"));
-            notesRex = new Regex("viewCacheNote\" class=\"formatted\">((?s).*?)</span>");
+            notesRex = new Regex("srOnlyCacheNote\" class=\"visually-hidden\">((?s).*?)</div>");
 
             spoilerSectionStart = p.getProp("spoilerSectionStart");
             spoilerSectionEnd = p.getProp("spoilerSectionEnd");
@@ -2321,9 +2321,9 @@ public class GCImporter {
         cacheNameRex.searchFrom(wayPointPage, wayPointPageIndex);
         if (cacheNameRex.didMatch()) {
             wayPointPageIndex = cacheNameRex.matchedTo();
-            return SafeXML.html2iso8859s1(cacheNameRex.stringMatched(1));
+            return SafeXML.html2iso8859s1(cacheNameRex.stringMatched(2));
         } else {
-            Preferences.itself().log("[SpiderGC.java:getName]check cacheNameRex!", null);
+            Preferences.itself().log("[SpiderGC.java:getName]check cacheNameRex!" + wayPointPage, null);
             return "???";
         }
     }
@@ -2448,7 +2448,7 @@ public class GCImporter {
 		}
             }
 	    else {
-                Preferences.itself().log("[getNotes]check notesRex!", null);
+                Preferences.itself().log("[getNotes]check notesRex!" + wayPointPage, null);
             }
         }
         return "";
