@@ -1301,7 +1301,7 @@ public class GCImporter {
             final JSONObject type = cacheDescription.getJSONObject("type");
             return (byte) type.getInt("value");
         } catch (JSONException e) {
-            throw new RuntimeException(e);
+            throw new RuntimeException(e); //
         }
     }
 
