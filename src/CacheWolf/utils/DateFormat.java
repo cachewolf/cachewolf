@@ -45,19 +45,23 @@ public class DateFormat {
 
     public static Time toDate(String input, String dateFormat) {
         Time result = new Time();
-        if (input != null) {
-            input = input.toLowerCase();
-            if (input.indexOf("yesterday") > -1){
-                result.setTime(result.getTime() - (24L * 3600L * 1000L));
+        try {
+            if (input != null) {
+                if (input.length() > 0) {
+                    input = input.toLowerCase();
+                    if (input.indexOf("yesterday") > -1) {
+                        result.setTime(result.getTime() - (24L * 3600L * 1000L));
+                    } else if (input.indexOf("days ago") > -1) {
+                        String daysString = input.substring(0, input.indexOf("days") - 1);
+                        int days = Integer.parseInt(daysString);
+                        result.setTime(result.getTime() - (days * 24L * 3600L * 1000L));
+                    } else if (input.indexOf("today") < 0) {
+                        result.parse(input, dateFormat);
+                    }
+                }
             }
-            else if (input.indexOf("days ago") > -1) {
-                String daysString = input.substring(0, input.indexOf("days") - 1);
-                int days = Integer.parseInt(daysString);
-                result.setTime(result.getTime() - (days * 24L * 3600L * 1000L));
-            }
-            else if (input.indexOf("today") < 0){
-                result.parse(input, dateFormat);
-            }
+        } catch (Exception ex) {
+            Preferences.itself().log("Error in Date Konversion of: " + input);
         }
         return result;
     }

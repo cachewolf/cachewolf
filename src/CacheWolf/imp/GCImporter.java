@@ -1532,30 +1532,29 @@ public class GCImporter {
                 String expires = (String) ht.get("expires");
                 String cookie = (String) ht.get("auth");
                 boolean withoutExpiration = true;
-		try{
-		    if (cookie != null && cookie.length() > 0) {
-			if (expires != null && expires.length() > 0) {
-			    withoutExpiration = false;
-			    // check expires
-			    String[] sExpires = mString.split(expires, ' ');
-			    Time tExpires = DateFormat.toDate(sExpires[1], "dd-MMM-yyyy");
-			    Time now = new Time();
-			    if (tExpires.after(now)) {
-				UrlFetcher.setCookie("gspkauth;www.geocaching.com", "gspkauth=" + cookie + ";");
-				isExpired = false;
-			    }
-			}
-			if (withoutExpiration) {
-			    UrlFetcher.setCookie("gspkauth;www.geocaching.com", "gspkauth=" + cookie + ";");
-			    isExpired = false;
-			}
-		    }
-		}
-		catch (Exception e){
-		    Preferences.itself().log("Could not parse expires-date of auth-cookie " + e);
-		    Preferences.itself().log("From preferences: " + expires);
-		}
-	    }
+                try {
+                    if (cookie != null && cookie.length() > 0) {
+                        if (expires != null && expires.length() > 0) {
+                            withoutExpiration = false;
+                            // check expires
+                            String[] sExpires = mString.split(expires, ' ');
+                            Time tExpires = DateFormat.toDate(sExpires[1], "dd-MMM-yyyy");
+                            Time now = new Time();
+                            if (tExpires.after(now)) {
+                                UrlFetcher.setCookie("gspkauth;www.geocaching.com", "gspkauth=" + cookie + ";");
+                                isExpired = false;
+                            }
+                        }
+                        if (withoutExpiration) {
+                            UrlFetcher.setCookie("gspkauth;www.geocaching.com", "gspkauth=" + cookie + ";");
+                            isExpired = false;
+                        }
+                    }
+                } catch (Exception e) {
+                    Preferences.itself().log("Could not parse expires-date of auth-cookie " + e);
+                    Preferences.itself().log("From preferences: " + expires);
+                }
+            }
 
             if (isExpired) {
                 byte ret = gcLogin(); // todo ? get the cookie for gcLogin, not for myAlias
@@ -1565,9 +1564,9 @@ public class GCImporter {
                     return false;
                 }
             }
-	    if (!getMemberIdAndAuthToken()){
-		break;
-	    }
+            if (!getMemberIdAndAuthToken()) {
+                break;
+            }
 
             switch (checkGCSettings()) {
                 case 0:
@@ -1604,8 +1603,8 @@ public class GCImporter {
         return loggedIn;
     }
 
-    private int checkGCSettings(){
-        String userSettings ;
+    private int checkGCSettings() {
+        String userSettings;
         String gcSettingsUrl = "https://www.geocaching.com/play/serverparameters/params";
         try {
             userSettings = UrlFetcher.fetch(gcSettingsUrl); // getting cookies
@@ -1613,136 +1612,128 @@ public class GCImporter {
             Preferences.itself().log("[checkGCSettings]:Exception calling " + gcSettingsUrl + " with userID ", ex);
             return 2;
         }
-	Preferences.itself ().log ("[checkGCSettings]: serverparameters: " + userSettings);
-	//Will be needed later:
+        Preferences.itself().log("[checkGCSettings]: serverparameters: " + userSettings);
+        //Will be needed later:
         UrlFetcher.rememberCookies();
 
-	//The result of the Web-service returned a piece of JavaScript-Code and no JSon. Since we have no JS-interpreter,
-	//we use poor man's parser get the information:
+        //The result of the Web-service returned a piece of JavaScript-Code and no JSon. Since we have no JS-interpreter,
+        //we use poor man's parser get the information:
 
         // 1.) loggedInAs will be used to ensure that we are really logged:
-	//TODO: Is this really needed?
-	Regex usRegEx = new Regex("\"username\":\\s*\"(.*)\"");
-	usRegEx.search(userSettings);
-	if(usRegEx.didMatch()){
-	    String userName = usRegEx.stringMatched(1);
-	    Preferences.itself ().log ("[checkGCSettings]: serverparameters-name: " + userName);
-	}
-	else{
-	    return 6;
-	}
+        //TODO: Is this really needed?
+        Regex usRegEx = new Regex("\"username\":\\s*\"(.*)\"");
+        usRegEx.search(userSettings);
+        if (usRegEx.didMatch()) {
+            String userName = usRegEx.stringMatched(1);
+            Preferences.itself().log("[checkGCSettings]: serverparameters-name: " + userName);
+        } else {
+            return 6;
+        }
 
         //2.) distanceUnit
-	Regex distRegEx = new Regex("\"unitSetName\":\\s*\"(.*)\"");
-	distRegEx.search(userSettings);
-	if(distRegEx.didMatch()){
-	    String distanceUnit = distRegEx.stringMatched(1);
-	    Preferences.itself ().log ("[checkGCSettings]: serverparameters-distanceUnit: " + distanceUnit);
-	    String distanceUnitInPreferences = Preferences.itself().metricSystem == Metrics.METRIC ? "Metric" : "Imperial";
-	    if (!distanceUnit.equalsIgnoreCase(distanceUnitInPreferences)) {
-		Preferences.itself().log("serverparameters received from server ["+distanceUnit+"] does not match in Preferences: ["+distanceUnitInPreferences+"]");
-		return 3;
-	    }
-	}
-	else{
-	    Preferences.itself().log ("distance-unit not found in serverparamters");
-	    return 3;
-	}
-	
+        Regex distRegEx = new Regex("\"unitSetName\":\\s*\"(.*)\"");
+        distRegEx.search(userSettings);
+        if (distRegEx.didMatch()) {
+            String distanceUnit = distRegEx.stringMatched(1);
+            Preferences.itself().log("[checkGCSettings]: serverparameters-distanceUnit: " + distanceUnit);
+            String distanceUnitInPreferences = Preferences.itself().metricSystem == Metrics.METRIC ? "Metric" : "Imperial";
+            if (!distanceUnit.equalsIgnoreCase(distanceUnitInPreferences)) {
+                Preferences.itself().log("serverparameters received from server [" + distanceUnit + "] does not match in Preferences: [" + distanceUnitInPreferences + "]");
+                return 3;
+            }
+        } else {
+            Preferences.itself().log("distance-unit not found in serverparamters");
+            return 3;
+        }
+
         //3.) GCDateFormat
-	Regex dateRegEx = new Regex("\"dateFormat\":\\s*\"(.*)\"");
-	dateRegEx.search(userSettings);
-	if(dateRegEx.didMatch()){
-	    String dateFormat = dateRegEx.stringMatched(1);
-	    Preferences.itself ().setGcDateFormat (dateFormat);
-	    Preferences.itself ().log ("[checkGCSettings]: serverparameters-dateFormat: " + dateFormat);
-	}
+        Regex dateRegEx = new Regex("\"dateFormat\":\\s*\"(.*)\"");
+        dateRegEx.search(userSettings);
+        if (dateRegEx.didMatch()) {
+            String dateFormat = dateRegEx.stringMatched(1);
+            Preferences.itself().setGcDateFormat(dateFormat);
+            Preferences.itself().log("[checkGCSettings]: serverparameters-dateFormat: " + dateFormat);
+        }
 
         // 4.) oldLanguage
-	Regex languageRegEx = new Regex("\"localRegion\":\\s*\"(.*)\"");
-	languageRegEx.search(userSettings);
-	if(languageRegEx.didMatch()){
-	    String language = languageRegEx.stringMatched(1);
-	    Preferences.itself ().log ("[checkGCSettings]: serverparameters-language: " + language);
-	    byte retCode = 0;
-	    if (language.equals("en-US")) {
-		Preferences.itself().changedGCLanguageToEnglish = false;
-	    }
-	    else {
-		Preferences.itself().oldGCLanguage = language;
-		if (setGCLanguage("en-US")) {
-		    Preferences.itself().changedGCLanguageToEnglish = true;
-		}
-		else {
-		    Preferences.itself().changedGCLanguageToEnglish = false;
-		    retCode = 1;
-		}
-	    }
+        Regex languageRegEx = new Regex("\"localRegion\":\\s*\"(.*)\"");
+        languageRegEx.search(userSettings);
+        if (languageRegEx.didMatch()) {
+            String language = languageRegEx.stringMatched(1);
+            Preferences.itself().log("[checkGCSettings]: serverparameters-language: " + language);
+            byte retCode = 0;
+            if (language.equals("en-US")) {
+                Preferences.itself().changedGCLanguageToEnglish = false;
+            } else {
+                Preferences.itself().oldGCLanguage = language;
+                if (setGCLanguage("en-US")) {
+                    Preferences.itself().changedGCLanguageToEnglish = true;
+                } else {
+                    Preferences.itself().changedGCLanguageToEnglish = false;
+                    retCode = 1;
+                }
+            }
 
-	}
-	// 5.) Membership
-	Regex membershipRegEx = new Regex("\"userType\":\\s*\"(.*)\"");
-	membershipRegEx.search(userSettings);
-	if(membershipRegEx.didMatch()){
-	    String membership = membershipRegEx.stringMatched(1);
-	    Preferences.itself ().log ("[checkGCSettings]: serverparameters-membership: " + membership);
-	    Preferences.itself().havePremiumMemberRights = membership.indexOf("Basic") == -1;
-	}
+        }
+        // 5.) Membership
+        Regex membershipRegEx = new Regex("\"userType\":\\s*\"(.*)\"");
+        membershipRegEx.search(userSettings);
+        if (membershipRegEx.didMatch()) {
+            String membership = membershipRegEx.stringMatched(1);
+            Preferences.itself().log("[checkGCSettings]: serverparameters-membership: " + membership);
+            Preferences.itself().havePremiumMemberRights = membership.indexOf("Basic") == -1;
+        }
 
-	return 0;
+        return 0;
     }
 
     private boolean getMemberIdAndAuthToken() {
         String page = "";
-	final String gcSettingsUrl = "https://www.geocaching.com/account/settings/membership";
-	try {
-	    page = UrlFetcher.fetch(gcSettingsUrl);
-	    //save login Cookie
-	    UrlFetcher.rememberCookies();
-	    String theCookie[] = mString.split(UrlFetcher.getCookie("gspkauth;www.geocaching.com"), ';');
-	    if (theCookie.length <= 1) {
-		new InfoBox(MyLocale.getMsg(5523, "Login error!"), MyLocale.getMsg(5524, "Bitte korrigieren Sie Ihr Benutzerkonto in den Einstellungen!\n\n")).wait(FormBase.OKB);
-		return false;
-	    }
-	    else {
-		String username = Preferences.itself().gcLogin;
-		// remember for next time, so you don't have to login
-		String gspkauth = "";
-		//expire-date is not always returned as a cookie. We set its value with the currently known value:
-		Hashtable login = Preferences.itself().getGCLogin(username);
-		String expires;
-		if (login != null && login.get("expires") != null) {
-		    expires = (String) login.get("expires");
-		}
-		else {
-		    expires = "";
-		}
-		for (int i = 0; i < theCookie.length; i++) {
-		    Preferences.itself().log("Cookie read: " + theCookie[i]);
-		    String[] rp = mString.split(theCookie[i], '=');
-		    if (rp.length == 2) {
-			if (rp[0].equalsIgnoreCase("gspkauth")) {
-			    gspkauth = rp[1];
-			}
-			else if (rp[0].trim().equalsIgnoreCase("expires")) {
-			    expires = rp[1];
-			    break;
-			}
-		    }
-		}
-		if (gspkauth.length() > 0) {
-		    Preferences.itself().setGCLogin(username, gspkauth, expires);
-		}
-		Preferences.itself().savePreferences();
-	    }
-	    String membershipBlock = extractor.set(page, "Membership:", "</dl>", 0, true).findNext();
-	    String memberId = extractValue.set(membershipBlock, "<dd>", "</dd>", 0, true).findNext();
-	    Preferences.itself().gcMemberId = memberId;
-	    Preferences.itself().havePremiumMemberRights = membershipBlock.indexOf("Basic") == -1;
-	} 
-	catch (final Exception ex) {
-	    Preferences.itself().log("[checkGCSettings] " + gcSettingsUrl + page, ex);
-	}
+        final String gcSettingsUrl = "https://www.geocaching.com/account/settings/membership";
+        try {
+            page = UrlFetcher.fetch(gcSettingsUrl);
+            //save login Cookie
+            UrlFetcher.rememberCookies();
+            String theCookie[] = mString.split(UrlFetcher.getCookie("gspkauth;www.geocaching.com"), ';');
+            if (theCookie.length <= 1) {
+                new InfoBox(MyLocale.getMsg(5523, "Login error!"), MyLocale.getMsg(5524, "Bitte korrigieren Sie Ihr Benutzerkonto in den Einstellungen!\n\n")).wait(FormBase.OKB);
+                return false;
+            } else {
+                String username = Preferences.itself().gcLogin;
+                // remember for next time, so you don't have to login
+                String gspkauth = "";
+                //expire-date is not always returned as a cookie. We set its value with the currently known value:
+                Hashtable login = Preferences.itself().getGCLogin(username);
+                String expires;
+                if (login != null && login.get("expires") != null) {
+                    expires = (String) login.get("expires");
+                } else {
+                    expires = "";
+                }
+                for (int i = 0; i < theCookie.length; i++) {
+                    Preferences.itself().log("Cookie read: " + theCookie[i]);
+                    String[] rp = mString.split(theCookie[i], '=');
+                    if (rp.length == 2) {
+                        if (rp[0].equalsIgnoreCase("gspkauth")) {
+                            gspkauth = rp[1];
+                        } else if (rp[0].trim().equalsIgnoreCase("expires")) {
+                            expires = rp[1];
+                            break;
+                        }
+                    }
+                }
+                if (gspkauth.length() > 0) {
+                    Preferences.itself().setGCLogin(username, gspkauth, expires);
+                }
+                Preferences.itself().savePreferences();
+            }
+            String membershipBlock = extractor.set(page, "Membership:", "</dl>", 0, true).findNext();
+            String memberId = extractValue.set(membershipBlock, "<dd>", "</dd>", 0, true).findNext();
+            Preferences.itself().gcMemberId = memberId;
+            Preferences.itself().havePremiumMemberRights = membershipBlock.indexOf("Basic") == -1;
+        } catch (final Exception ex) {
+            Preferences.itself().log("[checkGCSettings] " + gcSettingsUrl + page, ex);
+        }
 
         return true;
 
@@ -2097,8 +2088,7 @@ public class GCImporter {
         logDateRex.search(aCacheDescriptionOfListPage);
         if (logDateRex.didMatch()) {
             stmp = logDateRex.stringMatched(1);
-        }
-	else {
+        } else {
             Preferences.itself().log("[GCImporter: newFoundExists]check logDateRex!", null);
             return false;
         }
@@ -2440,14 +2430,12 @@ public class GCImporter {
             notesRex.search(wayPointPage);
             if (notesRex.didMatch()) {
                 String tmp = notesRex.stringMatched(1);
-                if (tmp.length() > 2){
+                if (tmp.length() > 2) {
                     return "<GC>" + tmp + "</GC>";
-		}
-                else{
+                } else {
                     return "";
-		}
-            }
-	    else {
+                }
+            } else {
                 Preferences.itself().log("[getNotes]check notesRex!" + wayPointPage, null);
             }
         }
@@ -2497,10 +2485,9 @@ public class GCImporter {
             String fetchResult = "";
             try {
                 fetchResult = UrlFetcher.fetch(url);
-                Preferences.itself().log("[GCImporter.getLogs] getting logs " + nLogs + " to " + nLogs+99); // in 100er Schritten
+                Preferences.itself().log("[GCImporter.getLogs] getting logs " + nLogs + " to " + nLogs + 99); // in 100er Schritten
                 response = new JSONObject(fetchResult);
-            }
-	    catch (Exception e) {
+            } catch (Exception e) {
                 if (fetchResult == null)
                     fetchResult = "";
                 Preferences.itself().log("Error getting Logs. \r\n" + fetchResult, e);
@@ -2509,63 +2496,60 @@ public class GCImporter {
             if (!response.getString("status").equals("success")) {
                 Preferences.itself().log("status is " + response.getString("status"), null);
             }
-            
-	    final JSONArray data = response.getJSONArray("data");
+
+            final JSONArray data = response.getJSONArray("data");
             fertig = data.length() < num;
             for (int index = 0; index < data.length(); index++) {
-                Preferences.itself().log("[GCImporter.getLogs] examining logs #" + nLogs); 
+                Preferences.itself().log("[GCImporter.getLogs] examining logs #" + nLogs);
                 nLogs++;
 
-		try{
-		    final JSONObject entry = data.getJSONObject(index);
+                try {
+                    final JSONObject entry = data.getJSONObject(index);
 
-		    final String icon = entry.getString("LogTypeImage");
-		    final String name = entry.getString("UserName");
-		    String logText = SafeXML.html2iso8859s1(entry.getString("LogText"));
-		    logText = STRreplace.replace(logText, "\u000b", " ");
-		    logText = STRreplace.replace(logText, "<br/>", "<br>");
-		    logText = correctSmilies(logText);
-		    final String visitedDate = DateFormat.toYYMMDD(entry.getString("Visited"));
-		    final String logID = entry.getString("LogID");
-		    final String finderID = entry.getString("AccountID");
-		    
-		    // if this log says this Cache is found by me or other logtype
-		    if ((name.equalsIgnoreCase(Preferences.itself().myAlias)) || (name.equalsIgnoreCase(Preferences.itself().myAlias2))) {
-			if ((icon.equals(icon_smile) || icon.equals(icon_camera) || icon.equals(icon_attended))) {
-			    newCache.setFound(true);
-			    newCache.setStatus(visitedDate);
-			    newCacheDetails.setOwnLog(new Log(logID, finderID, icon, visitedDate, name, logText));
-			    foundown = true;
-			    nrOfOwnFinds = nrOfOwnFinds + 1;
-			    fertig = true;
-			}
-			else {
-			    // make it possible to edit a "write note"
-			    if (!newCache.isFound()) {
-				// do not overwrite a find log
-				newCacheDetails.setOwnLog(new Log(logID, finderID, icon, visitedDate, name, logText));
-				newCache.setStatus(newCacheDetails.getOwnLog().icon2Message());
-			    }
-			}
-		    }
+                    final String icon = entry.getString("LogTypeImage");
+                    final String name = entry.getString("UserName");
+                    String logText = SafeXML.html2iso8859s1(entry.getString("LogText"));
+                    logText = STRreplace.replace(logText, "\u000b", " ");
+                    logText = STRreplace.replace(logText, "<br/>", "<br>");
+                    logText = correctSmilies(logText);
+                    final String visitedDate = DateFormat.toYYMMDD(entry.getString("Visited"));
+                    final String logID = entry.getString("LogID");
+                    final String finderID = entry.getString("AccountID");
 
-		    if (nLogs <= maxLogs || fetchAllLogs) {
-			Log l = new Log(logID, finderID, icon, visitedDate, name, logText);
-			reslts.add(l);
-		    }
-		    else {
-			// don't add more logs, but still searching own log
-			if (foundown || !fetchAllLogs) {
-			    // ownLog or the last one (perhaps maxLogs + 1, the ownLog is possibly not found)
-			    reslts.add(new Log(logID, finderID, icon, visitedDate, name, logText));
-			    fertig = true;
-                        break;
-			}
-		    }
-		}
-		catch(Exception e){
-		    Preferences.itself().log("[GCImporter.getLogs] examining log failed, continuing with next one\n", e);		    
-		}
+                    // if this log says this Cache is found by me or other logtype
+                    if ((name.equalsIgnoreCase(Preferences.itself().myAlias)) || (name.equalsIgnoreCase(Preferences.itself().myAlias2))) {
+                        if ((icon.equals(icon_smile) || icon.equals(icon_camera) || icon.equals(icon_attended))) {
+                            newCache.setFound(true);
+                            newCache.setStatus(visitedDate);
+                            newCacheDetails.setOwnLog(new Log(logID, finderID, icon, visitedDate, name, logText));
+                            foundown = true;
+                            nrOfOwnFinds = nrOfOwnFinds + 1;
+                            fertig = true;
+                        } else {
+                            // make it possible to edit a "write note"
+                            if (!newCache.isFound()) {
+                                // do not overwrite a find log
+                                newCacheDetails.setOwnLog(new Log(logID, finderID, icon, visitedDate, name, logText));
+                                newCache.setStatus(newCacheDetails.getOwnLog().icon2Message());
+                            }
+                        }
+                    }
+
+                    if (nLogs <= maxLogs || fetchAllLogs) {
+                        Log l = new Log(logID, finderID, icon, visitedDate, name, logText);
+                        reslts.add(l);
+                    } else {
+                        // don't add more logs, but still searching own log
+                        if (foundown || !fetchAllLogs) {
+                            // ownLog or the last one (perhaps maxLogs + 1, the ownLog is possibly not found)
+                            reslts.add(new Log(logID, finderID, icon, visitedDate, name, logText));
+                            fertig = true;
+                            break;
+                        }
+                    }
+                } catch (Exception e) {
+                    Preferences.itself().log("[GCImporter.getLogs] examining log failed, continuing with next one\n", e);
+                }
             }
         } while (!fertig);
 
