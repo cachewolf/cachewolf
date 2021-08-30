@@ -2497,7 +2497,7 @@ public class GCImporter {
             String fetchResult = "";
             try {
                 fetchResult = UrlFetcher.fetch(url);
-                Preferences.itself().log("[GCImporter.getLogs] getting logs " + nLogs + " to " + nLogs+99); // in 100er Schritten
+                Preferences.itself().log("[GCImporter.getLogs] getting logs " + nLogs + " to " + (nLogs+99)); // in 100er Schritten
                 response = new JSONObject(fetchResult);
             }
 	    catch (Exception e) {
