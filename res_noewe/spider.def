@@ -45,7 +45,7 @@ terrainRex         = terrain of (.*?). It
 #<meta name="og:image" content="https://www.geocaching.com/images/facebook/wpttypes/3.png" property="og:image" />
 cacheTypeRex       = facebook/wpttypes/(.*?)\\.png
 #<span id="ctl00_ContentBody_CacheName">EDUARD-MÖRIKE-WEG 5B</span>
-cacheNameRex       = tBody_CacheName">((?s).*?)</span>
+cacheNameRex       = tBody_CacheName((?s).*?)>((?s).*?)</span>
 #Ein Geocache von <a href="http://www.geocaching.com/profile/?guid=7715b8c5-bbbb-4b57-bf14-251b134758d2&wid=66b27589-480e-4251-86f3-42884af5f6fd&ds=2">Trebbi</a>
 #A cache by <a href="http://www.geocaching.com/profile/?guid=99dee790-35fc-4764-994d-639ab2e7f059&wid=34611971-fe8a-4d0c-82d7-b60e11714eb3&ds=2">tripleclaus</a>
 cacheOwnerRex      = &wid=(?:(?s).*?)>((?s).*?)<
