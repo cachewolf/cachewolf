@@ -2092,9 +2092,12 @@ public class GCImporter {
             Preferences.itself().log("[GCImporter: newFoundExists]check logDateRex!", null);
             return false;
         }
-        final Time lastLogGC = DateFormat.toDate(stmp);
-        // String timecheck = DateFormat.toYYMMDD(lastLogGC);
-        return lastUpdateCW.compareTo(lastLogGC) < 0;
+        if (stmp.length() > 0) {
+            final Time lastLogGC = DateFormat.toDate(stmp);
+            // String timecheck = DateFormat.toYYMMDD(lastLogGC);
+            return lastUpdateCW.compareTo(lastLogGC) < 0;
+        }
+        return false;
     }
 
     private boolean TBchanged(CacheHolder ch) {
