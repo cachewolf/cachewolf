@@ -1323,7 +1323,6 @@ public class GCImporter {
 
     private byte getDifficulty (JSONObject cacheDescription){
 	try{
-	    Preferences.itself().log("[AP!!!] getDifficulty called\n " + cacheDescription);
 	    JSONObject difficulty = cacheDescription.getJSONObject("difficulty");
 	    final String difficultyText = difficulty.getString("text");
 	    return CacheTerrDiff.v1Converter(difficultyText);
@@ -1331,6 +1330,9 @@ public class GCImporter {
 	catch (JSONException e){
 	    throw new RuntimeException (e);
 	}
+    }
+
+    private byte getTerrain(JSONObject cacheDescription){
     }
 
     private void downloadCaches() {
