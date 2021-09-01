@@ -29,17 +29,12 @@ package CacheWolf.utils;
  *    2004-02-27    - YYYY-MM-DD
  */
 
-import ewe.sys.Time;
-import ewe.util.mString;
-
 import CacheWolf.Preferences;
+import ewe.sys.Time;
 
 public class DateFormat {
 
-    final private static String MONTH_NAMES[] = {"Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
-
-    static int dayPos = 0;
-    static int monthPos = 1;
+    final private static String[] MONTH_NAMES = {"Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
 
     /**
      * Convert the US Format DateHidden/DateVisited into a sortable format
@@ -48,30 +43,32 @@ public class DateFormat {
         return toYYMMDD(toDate(date));
     }
 
-    public static Time toDate(String input, String dateFormat){
-	Time result = new Time();
-	
-	if ("today*".equalsIgnoreCase(input)){
-	    // intentionally do nothing
-	}
-	else if ("yesterday*".equalsIgnoreCase(input)){
-	    result.setTime (result.getTime () - (24L * 3600L * 1000L ));
-	}
-	else if (input.endsWith ("days ago*")){
-	    String daysString = input.substring (0, input.indexOf (' '));
-	    int days = Integer.parseInt(daysString);
-	    result.setTime (result.getTime () - (days * 24L * 3600L * 1000L ));
-	}
-	else{
-	    result.parse (input, dateFormat);
-	}
-
-	return result;
+    public static Time toDate(String input, String dateFormat) {
+        Time result = new Time();
+        try {
+            if (input != null) {
+                if (input.length() > 0) {
+                    input = input.toLowerCase();
+                    if (input.indexOf("yesterday") > -1) {
+                        result.setTime(result.getTime() - (24L * 3600L * 1000L));
+                    } else if (input.indexOf("days ago") > -1) {
+                        String daysString = input.substring(0, input.indexOf("days") - 1);
+                        int days = Integer.parseInt(daysString);
+                        result.setTime(result.getTime() - (days * 24L * 3600L * 1000L));
+                    } else if (input.indexOf("today") < 0) {
+                        result.parse(input, dateFormat);
+                    }
+                }
+            }
+        } catch (Exception ex) {
+            Preferences.itself().log("Error in Date Konversion of: " + input);
+        }
+        return result;
     }
 
     public static Time toDate(String ds) {
-	String dateFormat = Preferences.itself ().getGcDateFormat();
-	return toDate (ds.trim(), dateFormat);
+        String dateFormat = Preferences.itself().getGcDateFormat();
+        return toDate(ds.trim(), dateFormat);
     }
 
 
@@ -101,8 +98,7 @@ public class DateFormat {
         Time d = new Time();
         try {
             d.parse(yyyyMMddHHmmss, "yyyyMMddHHmmss");
-        }
-	catch (IllegalArgumentException e) {
+        } catch (IllegalArgumentException e) {
             d = new Time();
         }
         return d.format("yyyy-MM-dd"); // +d.format("HH:mm:ss"); is set to 00:00:00 at gpxExport
@@ -120,8 +116,7 @@ public class DateFormat {
             } catch (Exception e) {
             }
             return "";
-        }
-	else {
+        } else {
             return "";
         }
 
