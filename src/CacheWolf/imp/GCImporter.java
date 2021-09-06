@@ -1262,6 +1262,7 @@ public class GCImporter {
                             ch.setSize(getCacheSize(mapDetails));
 			    ch.setDifficulty(getDifficulty(mapDetails));
 			    ch.setTerrain(getTerrain(mapDetails));
+			    ch.setName(getName(mapDetails));
                             ch.setWpt(Preferences.itself().curCentrePt); // or MainForm.profile.centre
                             ch.getDetails().setLongDescription(aCacheDescriptionOfListPage); // for Info
                             ch.saveCacheDetails();
@@ -1339,7 +1340,7 @@ public class GCImporter {
 	    return CacheTerrDiff.v1Converter(difficultyText);
 	}
 	catch (JSONException e){
-	    xxxxx
+	    throw new RuntimeException (e);
 	}
     }
 
