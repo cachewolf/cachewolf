@@ -1333,6 +1333,14 @@ public class GCImporter {
     }
 
     private byte getTerrain(JSONObject cacheDescription){
+	try{
+	    JSONObject difficulty = cacheDescription.getJSONObject("terrain");
+	    final String difficultyText = difficulty.getString("text");
+	    return CacheTerrDiff.v1Converter(difficultyText);
+	}
+	catch (JSONException e){
+	    xxxxx
+	}
     }
 
     private void downloadCaches() {
