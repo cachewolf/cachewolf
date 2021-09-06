@@ -157,7 +157,7 @@ public final class CacheType {
             new CTyp(CW_TYPE_PARKING, (byte) 50, 'A', "50", "Parking Area", "Parking Area", (byte) -78, 'P', "Parking", new String[]{"Waypoint|Parking Area", "Parking Area", "Parking Area", ""}, 50, 11, 0x000800),
             new CTyp(CW_TYPE_STAGE, (byte) 51, 'A', "51", "Physical Stage", "", (byte) -77, 'S', "Stage", new String[]{"Waypoint|Physical Stage", "Physical Stage", "Physical Stage", ""}, 51, 12, 0x001000),
             new CTyp(CW_TYPE_QUESTION, (byte) 52, 'A', "52", "Virtual Stage", "", (byte) -76, 'Q', "Question", new String[]{"Waypoint|Virtual Stage", "Virtual Stage", "Virtual Stage", ""}, 52, 13, 0x002000),
-            new CTyp(CW_TYPE_FINAL, (byte) 53, 'A', "53", "Final Location", "", (byte) -75, 'F', "Final", new String[]{"Waypoint|Final Location", "Final Location", "Final Location", ""}, 53, 14, 0x004000),
+            new CTyp(CW_TYPE_FINAL, (byte) 53, 'A', "53", "Final Location", "Final Location", (byte) -75, 'F', "Final", new String[]{"Waypoint|Final Location", "Final Location", "Final Location", ""}, 53, 14, 0x004000),
             new CTyp(CW_TYPE_TRAILHEAD, (byte) 54, 'A', "54", "Trailhead", "Trailhead", (byte) -74, 'H', "Trailhead", new String[]{"Waypoint|Trailhead", "Trailhead", "Trailhead", ""}, 54, 15, 0x008000),
             new CTyp(CW_TYPE_REFERENCE, (byte) 55, 'A', "55", "Reference Point", "Reference Point", (byte) -73, 'R', "Reference", new String[]{"Waypoint|Reference Point", "Reference Point", "Reference Point", "Reference Point"}, 55, 16, 0x010000),
             new CTyp(CW_TYPE_REFERENCE, (byte) 55, 'A', "55", "Reference Point", "Point of Interest", (byte) -73, 'R', "Reference", new String[]{"Waypoint|Point of Interest", "Point of Interest", "", ""}, 55, 16, 0x010000),
