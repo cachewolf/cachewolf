@@ -665,7 +665,8 @@ public class Preferences extends MinML {
         if (screenSize.width > screenSize.height) {
             fWidth = 32;
             fHeight = 24;
-        } else {
+        }
+	else {
             fWidth = 24;
             fHeight = 32;
         }
