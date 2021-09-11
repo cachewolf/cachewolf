@@ -101,7 +101,7 @@ public class InfoBox extends Form {
                 executePanel = new ExecutePanel(this, FormBase.CANCELB);
 		Dimension pf = (Dimension) getTag(PREFERREDSIZE, new Dimension (10,10));
 		upperPanel.setMinimumSize(pf.width, Math.min(50, pf.height / 3));
-                lowerPanel.setMinimumSize(pf.width, Math.min(50, pf.height / 3));
+                lowerPanel.setMinimumSize(pf.width, Math.min(100, pf.height / 3));
                 break;
         }
         this.title = title;
