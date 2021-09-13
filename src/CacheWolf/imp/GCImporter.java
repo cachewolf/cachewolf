@@ -1344,6 +1344,13 @@ public class GCImporter {
 	}
     }
 
+    private String getName(JSONObject cacheDescription){
+	try{
+	}
+	catch(JSONException e){
+	}
+    }
+
     private void downloadCaches() {
         infB.addWarning(MyLocale.getMsg(5531, "New: ") + downloadList.size());
         int limit = Math.min(downloadList.size(), maxNew - newTillNow);

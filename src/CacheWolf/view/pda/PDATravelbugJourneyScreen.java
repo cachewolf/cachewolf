@@ -36,7 +36,9 @@ public class PDATravelbugJourneyScreen extends PDAList {
 	    Preferences.itself().log("PDATravelbugJourneyScreen<init> setting model 2: " + tbJourney);
             model.shownTravelbugJourneys.add(tbJourney);
         }
+	Preferences.itself().log("PDATravelbugJourneyScreen<init> setting model 3: ");
         createShowSet();
+	Preferences.itself().log("PDATravelbugJourneyScreen<init> setting model 4: ");
         setupTBButtons();
 	Preferences.itself().log("PDATravelbugJourneyScreen<init> finished");
     }
@@ -96,7 +98,8 @@ public class PDATravelbugJourneyScreen extends PDAList {
                 listButtons[i].toLogged = tbJourney.getToLogged();
                 listButtons[i].image = new AniImage("bug_vga.gif");
                 listButtons[i].modify(ControlConstants.Disabled, 1);
-            } else {
+            }
+	    else {
                 listButtons[i].text = listButtons[i].fromText = listButtons[i].toText = "";
                 listButtons[i].toLogged = listButtons[i].fromLogged = true;
                 listButtons[i].image = null;

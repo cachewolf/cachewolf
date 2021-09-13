@@ -21,6 +21,7 @@
 */
 package CacheWolf.view.pda;
 
+import CacheWolf.Preferences;
 import CacheWolf.database.Travelbug;
 import CacheWolf.database.TravelbugList;
 import CacheWolf.model.DefaultListModel;
@@ -44,9 +45,11 @@ public class PDATravelbugScreen extends PDAList implements ITravelbugScreen {
      */
     public PDATravelbugScreen(TravelbugList tbl, String title, boolean allowNew) {
         super();
+	Preferences.itself().log("PDATravelbugScreen<init> start");
         model = new DefaultListModel();
         for (int i = 0; i < tbl.size(); i++) {
             Travelbug tb = tbl.getTB(i);
+	    Preferences.itself().log("PDATravelbugScreen<init> -> " + tb);
             model.add(tb.getName());
         }
         if (allowNew) {
@@ -54,6 +57,7 @@ public class PDATravelbugScreen extends PDAList implements ITravelbugScreen {
         }
         model.createShowSet();
         setupTBButtons();
+	Preferences.itself().log("PDATravelbugScreen<init> end");
     }
 
     protected PDAListButton createListButton(int i) {
