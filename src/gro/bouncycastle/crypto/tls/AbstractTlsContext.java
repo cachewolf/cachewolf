@@ -117,9 +117,8 @@ abstract class AbstractTlsContext
         int seedLength = cr.length + sr.length;
         if (context_value != null)
         {
-            throw new UnsupportedClassVersionError();/*
             seedLength += (2 + context_value.length);
-*/        }
+        }
 
         throw new UnsupportedClassVersionError();/*
         byte[] seed = new byte[seedLength];

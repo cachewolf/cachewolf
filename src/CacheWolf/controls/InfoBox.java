@@ -23,6 +23,7 @@ package CacheWolf.controls;
 
 import CacheWolf.Preferences;
 import CacheWolf.utils.MyLocale;
+import ewe.fx.Dimension;
 import ewe.ui.*;
 
 public class InfoBox extends Form {
@@ -93,13 +94,14 @@ public class InfoBox extends Form {
                 msgArea.alignment = CENTER;
                 msgArea.anchor = CENTER;
                 upperPanel.addLast(msgArea.getScrollablePanel());
-                warnings = new TextMessage("");
+                warnings = new TextMessage("\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n");
                 warnings.autoWrap = autoWrap;
                 lowerPanel.addLast(warnings.getScrollablePanel());
                 this.addLast(splittablePanel);
                 executePanel = new ExecutePanel(this, FormBase.CANCELB);
-                upperPanel.setMinimumSize(preferredWidth, preferredHeight / 4);
-                lowerPanel.setMinimumSize(preferredWidth, preferredHeight / 4);
+		Dimension pf = (Dimension) getTag(PREFERREDSIZE, new Dimension (10,10));
+		upperPanel.setMinimumSize(pf.width, Math.min(50, pf.height / 3));
+                lowerPanel.setMinimumSize(pf.width, Math.min(100, pf.height / 3));
                 break;
         }
         this.title = title;
