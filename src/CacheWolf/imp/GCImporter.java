@@ -1263,6 +1263,7 @@ public class GCImporter {
 			    ch.setDifficulty(getDifficulty(mapDetails));
 			    ch.setTerrain(getTerrain(mapDetails));
 			    ch.setName(getName(mapDetails));
+			    ch.setOwner(getOwner(mapDetails));
                             ch.setWpt(Preferences.itself().curCentrePt); // or MainForm.profile.centre
                             ch.getDetails().setLongDescription(aCacheDescriptionOfListPage); // for Info
                             ch.saveCacheDetails();
@@ -1346,7 +1347,7 @@ public class GCImporter {
 
     private String getName(JSONObject cacheDescription){
 	try{
-	    final String name = cacheDescription.get("name"); 
+	    final String name = cacheDescription.getString("name"); 
 	    return name;
 	}
 	catch(JSONException e){

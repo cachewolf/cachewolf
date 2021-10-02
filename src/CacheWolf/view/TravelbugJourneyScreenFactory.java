@@ -88,7 +88,7 @@ public class TravelbugJourneyScreenFactory {
                 Preferences.itself().log("CacheWolf.view.pda.PDATravelbugJourneyScreen not found");
                 Preferences.itself().log("Error in instantiating TravelBugJourneyScreen", e, true);
                 //ignore?? VM on WinPC seems to have no classloader
-                return new PDATravelbugJourneyScreen(model);
+		    return new PDATravelbugJourneyScreen(model);
             }
         }
 	else if (isSwing) {
