@@ -1346,8 +1346,11 @@ public class GCImporter {
 
     private String getName(JSONObject cacheDescription){
 	try{
+	    final String name = cacheDescription.get("name"); 
+	    return name;
 	}
 	catch(JSONException e){
+	    throw new RuntimeException(e);
 	}
     }
 
