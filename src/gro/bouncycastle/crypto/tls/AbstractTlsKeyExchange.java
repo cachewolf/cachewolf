@@ -90,9 +90,8 @@ public abstract class AbstractTlsKeyExchange
                     break;
 
                 default:
-                	throw new UnsupportedClassVersionError();/*
                     throw new IllegalStateException("unsupported key exchange algorithm");
-*/                }
+                }
             }
         }
         else if (this.supportedSignatureAlgorithms != null)
