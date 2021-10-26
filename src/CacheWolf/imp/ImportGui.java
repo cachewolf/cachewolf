@@ -127,7 +127,8 @@ public class ImportGui extends Form {
             maxNumberInput = new mInput();
             if (Preferences.itself().maxSpiderNumber < 0 || Preferences.itself().maxSpiderNumber == Integer.MAX_VALUE) {
                 maxNumberInput.setText("");
-            } else {
+            }
+	    else {
                 maxNumberInput.setText(Integer.toString(Preferences.itself().maxSpiderNumber));
             }
             this.addNext(maxNumberInput, DONTSTRETCH, (DONTFILL | WEST));
@@ -137,7 +138,12 @@ public class ImportGui extends Form {
         if ((options & MAXUPDATE) > 0) {
             this.addNext(new mLabel(MyLocale.getMsg(1631, "Max. Updates:")), DONTSTRETCH, (DONTFILL | WEST));
             maxNumberUpdates = new mInput();
-            maxNumberUpdates.setText("");
+	    if (Preferences.itself().spiderUpdates < 0 || Preferences.itself().spiderUpdates == Integer.MAX_VALUE){
+		maxNumberUpdates.setText("");
+	    }
+	    else{
+		maxNumberUpdates.setText(Integer.toString(Preferences.itself().spiderUpdates));
+	    }
             this.addNext(maxNumberUpdates, DONTSTRETCH, (DONTFILL | WEST));
             this.addLast(new mLabel(MyLocale.getMsg(1624, " caches")), DONTSTRETCH, (DONTFILL | WEST));
         }
@@ -147,7 +153,8 @@ public class ImportGui extends Form {
             maxLogsInput = new mInput();
             if (Preferences.itself().maxLogsToSpider == -1) {
                 maxLogsInput.setText("");
-            } else {
+            }
+	    else {
                 maxLogsInput.setText(Convert.toString(Preferences.itself().maxLogsToSpider));
             }
             this.addLast(maxLogsInput, DONTSTRETCH, (DONTFILL | WEST));
