@@ -7,7 +7,7 @@ if [ ! -d bin ]; then
 fi
 
 compile_cw() {
-   javac \
+   /opt/jdk1.8.0_144/bin/javac \
       -source 1.3 \
       -target 1.1 \
       -g \
