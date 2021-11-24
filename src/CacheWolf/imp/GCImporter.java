@@ -1355,6 +1355,11 @@ public class GCImporter {
 	}
     }
 
+    private String getOwner (JSONObject cacheDescription){
+	JSONObject ownerObject = cacheDescription.getJSONObject("owner");
+	return ownerObject.getJSONString("text");
+    }
+
     private void downloadCaches() {
         infB.addWarning(MyLocale.getMsg(5531, "New: ") + downloadList.size());
         int limit = Math.min(downloadList.size(), maxNew - newTillNow);
