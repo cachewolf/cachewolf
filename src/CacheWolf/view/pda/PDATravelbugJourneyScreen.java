@@ -3,7 +3,7 @@ package CacheWolf.view.pda;
 import CacheWolf.Preferences;
 import CacheWolf.database.TravelbugJourney;
 import CacheWolf.model.TravelBugJourneyScreenModel;
-import ewe.graphics.AniImage;
+import CacheWolf.controls.GuiImageBroker;
 import ewe.ui.ControlConstants;
 import ewe.ui.ControlEvent;
 import ewe.ui.Form;
@@ -24,21 +24,16 @@ public class PDATravelbugJourneyScreen extends PDAList {
      */
 
     public PDATravelbugJourneyScreen(TravelBugJourneyScreenModel travelbugModel) {
-	Preferences.itself().log("PDATravelbugJourneyScreen<init> called");
         addListener(this);
         setTitle("TravelBugs");
 
         model = travelbugModel;
-
         for (int i = 0; i < model.allTravelbugJourneys.size(); i++) {
-	    Preferences.itself().log("PDATravelbugJourneyScreen<init> setting model 1: " + i);
             TravelbugJourney tbJourney = model.allTravelbugJourneys.getTBJourney(i);
-	    Preferences.itself().log("PDATravelbugJourneyScreen<init> setting model 2: " + tbJourney);
             model.shownTravelbugJourneys.add(tbJourney);
         }
         createShowSet();
         setupTBButtons();
-	Preferences.itself().log("PDATravelbugJourneyScreen<init> finished");
     }
 
     public void onControlEvent(ControlEvent ev) {
@@ -94,9 +89,10 @@ public class PDATravelbugJourneyScreen extends PDAList {
                 listButtons[i].fromLogged = tbJourney.getFromLogged();
                 listButtons[i].toText = tbJourney.getToWaypoint() + '/' + tbJourney.getToProfile();
                 listButtons[i].toLogged = tbJourney.getToLogged();
-                listButtons[i].image = new AniImage("bug_vga.gif");
+                listButtons[i].image = GuiImageBroker.getImage("bug");
                 listButtons[i].modify(ControlConstants.Disabled, 1);
-            } else {
+            }
+	    else {
                 listButtons[i].text = listButtons[i].fromText = listButtons[i].toText = "";
                 listButtons[i].toLogged = listButtons[i].fromLogged = true;
                 listButtons[i].image = null;
