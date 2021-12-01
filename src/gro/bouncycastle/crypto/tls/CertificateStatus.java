@@ -25,16 +25,16 @@ public class CertificateStatus
 
     public short getStatusType()
     {
-    	throw new UnsupportedClassVersionError();/*
         return statusType;
-*/    }
-
-    /*
-    public Object getResponse()
-    {
-        return response;
     }
 
+    public Object getResponse()
+    {
+        throw new UnsupportedClassVersionError();/*
+        return response;
+*/    }
+
+    	/*
     public OCSPResponse getOCSPResponse()
     {
         if (!isCorrectType(CertificateStatusType.ocsp, response))

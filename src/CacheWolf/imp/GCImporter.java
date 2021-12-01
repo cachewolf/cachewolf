@@ -875,7 +875,7 @@ public class GCImporter {
         //
         maxNew = Preferences.itself().maxSpiderNumber = importGui.getIntFromInput(importGui.maxNumberInput, Integer.MAX_VALUE);
         //
-        maxUpdate = importGui.getIntFromInput(importGui.maxNumberUpdates, Integer.MAX_VALUE);
+        maxUpdate = Preferences.itself().spiderUpdates = importGui.getIntFromInput(importGui.maxNumberUpdates, Integer.MAX_VALUE);
         if (menu == 1) {
             maxUpdate = 0;
         }
