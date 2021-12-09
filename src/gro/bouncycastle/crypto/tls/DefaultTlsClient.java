@@ -74,9 +74,8 @@ public abstract class DefaultTlsClient
 
     protected TlsKeyExchange createDHKeyExchange(int keyExchange)
     {
-    	throw new UnsupportedClassVersionError();/*
         return new TlsDHKeyExchange(keyExchange, supportedSignatureAlgorithms, null);
-*/    }
+    }
 
     protected TlsKeyExchange createDHEKeyExchange(int keyExchange)
     {
