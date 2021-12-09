@@ -766,139 +766,189 @@ public class Preferences extends MinML {
         String tmp;
         if (name.equals("browser")) {
             browser = atts.getValue("name");
-            if (browser == null || browser.length() == 0)
+            if (browser == null || browser.length() == 0){
                 browser = getDefaultBrowser();
-        } else if (name.equals("fixedsip")) {
+	    }
+        } 
+	else if (name.equals("fixedsip")) {
             if (atts.getValue("state").equals("true")) {
                 fixSIP = true;
             }
-        } else if (name.equals("font")) {
+        } 
+	else if (name.equals("font")) {
             fontSize = Convert.toInt(atts.getValue("size"));
             fontName = atts.getValue("name");
-            if (fontName == null)
+            if (fontName == null){
                 fontName = mApp.findFont("gui").getName();
-        } else if (name.equals("alias")) {
+	    }
+        } 
+	else if (name.equals("alias")) {
             myAlias = SafeXML.html2iso8859s1(atts.getValue("name"));
             tmp = SafeXML.html2iso8859s1(atts.getValue("password"));
-            if (tmp != null)
+            if (tmp != null){
                 password = tmp;
-        } else if (name.equals("alias2"))
-            myAlias2 = SafeXML.html2iso8859s1(atts.getValue("name"));
+	    }
+        } 
+	else if (name.equals("alias2")){
+	    myAlias2 = SafeXML.html2iso8859s1(atts.getValue("name"));
+	}
         else if (name.equals("gcmemberid")) {
             gcMemberId = atts.getValue("name");
             tmp = atts.getValue("Premium");
-            if (tmp != null)
+            if (tmp != null){
                 havePremiumMemberRights = Boolean.valueOf(tmp).booleanValue();
-        } else if (name.equals("location")) {
+	    }
+        } 
+	else if (name.equals("location")) {
             curCentrePt.set(atts.getValue("lat") + " " + atts.getValue("long"));
-        } else if (name.equals("port")) {
+        }
+	else if (name.equals("port")) {
             mySPO.portName = atts.getValue("portname");
             mySPO.baudRate = Convert.toInt(atts.getValue("baud"));
-        } else if (name.equals("portforward")) {
+        }
+	else if (name.equals("portforward")) {
             forwardGPS = Convert.toBoolean(atts.getValue("active"));
             forwardGpsHost = atts.getValue("destinationHost");
-        } else if (name.equals("gpsd")) {
+        }
+	else if (name.equals("gpsd")) {
             useGPSD = Convert.toInt(atts.getValue("active"));
             gpsdHost = atts.getValue("host");
             gpsdPort = Convert.toInt(atts.getValue("port"));
-        } else if (name.equals("portlog")) {
+        }
+	else if (name.equals("portlog")) {
             logGPS = Convert.toBoolean(atts.getValue("active"));
             logGPSTimer = atts.getValue("logTimer");
-        } else if (name.equals("lastprofile")) {
+        }
+	else if (name.equals("lastprofile")) {
             collectElement = new StringBuffer(50);
-            if (!atts.getValue("autoreload").equalsIgnoreCase("true"))
+            if (!atts.getValue("autoreload").equalsIgnoreCase("true")){
                 autoReloadLastProfile = false;
-        } else if (name.equals("CurrentCentre")) {
+	    }
+        }
+	else if (name.equals("CurrentCentre")) {
             setCurrentCentreFromGPSPosition = Boolean.valueOf(atts.getValue("FromGPSPosition")).booleanValue();
-        } else if (name.equals("basedir")) {
+        }
+	else if (name.equals("basedir")) {
             setBaseDir(atts.getValue("dir"));
-        } else if (name.equals("opencaching")) {
+        }
+	else if (name.equals("opencaching")) {
             tmp = atts.getValue("lastSite");
-            if (!(tmp == null) && OC.getSiteIndex(tmp) >= 0)
+            if (!(tmp == null) && OC.getSiteIndex(tmp) >= 0){
                 lastOCSite = tmp;
+	    }
             tmp = atts.getValue("downloadMissing");
-            if (!(tmp == null))
+            if (!(tmp == null)){
                 downloadAllOC = Boolean.valueOf(tmp).booleanValue();
-        } else if (name.equals("listview")) {
+	    }
+        }
+	else if (name.equals("listview")) {
             listColMap = atts.getValue("colmap");
-            if (("," + listColMap + ",").indexOf(",0,") >= 0)
+            if (("," + listColMap + ",").indexOf(",0,") >= 0){
                 this.hasTickColumn = true;
-            else
+	    }
+            else{
                 this.hasTickColumn = false;
+	    }
             listColWidth = atts.getValue("colwidths");
-            while ((new StringTokenizer(listColWidth, ",")).countTokens() < MyTableModel.N_COLUMNS)
+            while ((new StringTokenizer(listColWidth, ",")).countTokens() < MyTableModel.N_COLUMNS){
                 listColWidth += ",30"; // for older versions
-        } else if (name.equals("proxy")) {
+	    }
+        }
+	else if (name.equals("proxy")) {
             myproxy = atts.getValue("prx");
             myproxyport = atts.getValue("prt");
             tmp = atts.getValue("active");
-            if (tmp != null)
+            if (tmp != null){
                 proxyActive = Boolean.valueOf(tmp).booleanValue();
-        } else if (name.equals("garmin")) {
+	    }
+        }
+	else if (name.equals("garmin")) {
             garminConn = atts.getValue("connection");
             tmp = atts.getValue("GPSBabelOptions");
-            if (tmp != null)
+            if (tmp != null){
                 garminGPSBabelOptions = tmp;
+	    }
             tmp = atts.getValue("MaxWaypointLength");
-            if (tmp != null)
+            if (tmp != null){
                 garminMaxLen = Convert.toInt(tmp);
+	    }
             tmp = atts.getValue("addDetailsToWaypoint");
-            if (tmp != null)
+            if (tmp != null){
                 addDetailsToWaypoint = Boolean.valueOf(tmp).booleanValue();
+	    }
             tmp = atts.getValue("addDetailsToName");
-            if (tmp != null)
+            if (tmp != null){
                 addDetailsToName = Boolean.valueOf(tmp).booleanValue();
-        } else if (name.equals("imagepanel")) {
+	    }
+        }
+	else if (name.equals("imagepanel")) {
             showDeletedImages = Boolean.valueOf(atts.getValue("showdeletedimages")).booleanValue();
-        } else if (name.equals("descpanel")) {
+        }
+	else if (name.equals("descpanel")) {
             descShowImg = Boolean.valueOf(atts.getValue("showimages")).booleanValue();
-        } else if (name.equals("screen")) {
+        }
+	else if (name.equals("screen")) {
             noTabs = Boolean.valueOf(atts.getValue("noTabs")).booleanValue();
             tabsAtTop = Boolean.valueOf(atts.getValue("tabsAtTop")).booleanValue();
             menuAtTab = Boolean.valueOf(atts.getValue("menuAtTab")).booleanValue();
             showStatus = Boolean.valueOf(atts.getValue("showstatus")).booleanValue();
-            if (atts.getValue("hasclosebutton") != null)
+            if (atts.getValue("hasclosebutton") != null){
                 hasCloseButton = Boolean.valueOf(atts.getValue("hasclosebutton")).booleanValue();
+	    }
             if (atts.getValue("h") != null) {
                 lastSavedHeight = Convert.toInt(atts.getValue("h"));
                 lastSavedWidth = Convert.toInt(atts.getValue("w"));
             }
-            if (atts.getValue("useText") != null)
+            if (atts.getValue("useText") != null){
                 useText = Boolean.valueOf(atts.getValue("useText")).booleanValue();
-            else
+	    }
+            else{
                 useText = true;
-            if (atts.getValue("useIcons") != null)
+	    }
+            if (atts.getValue("useIcons") != null){
                 useIcons = Boolean.valueOf(atts.getValue("useIcons")).booleanValue();
-            else
+	    }
+            else{
                 useIcons = true;
-            if (atts.getValue("useBigIcons") != null)
+	    }
+            if (atts.getValue("useBigIcons") != null){
                 useBigIcons = Boolean.valueOf(atts.getValue("useBigIcons")).booleanValue();
+	    }
             else {
                 useBigIcons = screenWidth >= 400; // && Vm.isMobile()
             }
-        } else if (name.equals("hintlogpanel")) {
+        }
+	else if (name.equals("hintlogpanel")) {
             logsPerPage = Convert.parseInt(atts.getValue("logsperpage"));
             String strInitialHintHeight = atts.getValue("initialhintheight");
-            if (strInitialHintHeight != null)
+            if (strInitialHintHeight != null){
                 initialHintHeight = Convert.parseInt(strInitialHintHeight);
+	    }
             String strMaxLogsToSpider = atts.getValue("maxspiderlogs");
-            if (strMaxLogsToSpider != null)
+            if (strMaxLogsToSpider != null){
                 maxLogsToSpider = Convert.parseInt(strMaxLogsToSpider);
-        } else if (name.equals("solver")) {
+	    }
+        }
+	else if (name.equals("solver")) {
             solverIgnoreCase = Boolean.valueOf(atts.getValue("ignorevariablecase")).booleanValue();
             tmp = atts.getValue("degMode");
-            if (tmp != null)
+            if (tmp != null){
                 solverDegMode = Boolean.valueOf(tmp).booleanValue();
-        } else if (name.equals("mapspath")) {
+	    }
+        }
+	else if (name.equals("mapspath")) {
             setMapsBaseDir(atts.getValue("dir"));
-        } else if (name.equals("debug"))
+        }
+	else if (name.equals("debug")){
             debug = Boolean.valueOf(atts.getValue("value")).booleanValue();
+	}
         else if (isGpxStyleName(name)) {
             Hashtable h = getGpxExportPreferences(name);
             for (int i = 0; i < atts.getLength(); i++) {
                 h.put(atts.getName(i), atts.getValue(i));
             }
-        } else if (name.equals("expPref")) {
+        }
+	else if (name.equals("expPref")) {
             for (int i = 0; i < atts.getLength(); i++) {
                 String n = atts.getName(i);
                 // we no longer use the path "exp." as part of the className used to identfy the exporter
@@ -908,17 +958,21 @@ public class Preferences extends MinML {
                 }
                 exporterPreferences.put(n, atts.getValue(i));
             }
-        } else if (name.equals("impPath")) {
+        }
+	else if (name.equals("impPath")) {
             for (int i = 0; i < atts.getLength(); i++) {
                 importerPaths.put(atts.getName(i), atts.getValue(i));
             }
-        } else if (name.equals("travelbugs")) {
+        }
+	else if (name.equals("travelbugs")) {
             travelbugColMap = atts.getValue("colmap");
             travelbugColWidth = atts.getValue("colwidths");
             travelbugShowOnlyNonLogged = Boolean.valueOf(atts.getValue("shownonlogged")).booleanValue();
-        } else if (name.equals("gotopanel")) {
+        }
+	else if (name.equals("gotopanel")) {
             northCenteredGoto = Boolean.valueOf(atts.getValue("northcentered")).booleanValue();
-        } else if (name.equals("spider")) {
+        }
+	else if (name.equals("spider")) {
             doNotGetFound = !Boolean.valueOf(atts.getValue("getFinds")).booleanValue();
             checkLog = Boolean.valueOf(atts.getValue("checkLog")).booleanValue();
             overwriteLogs = Boolean.valueOf(atts.getValue("overwriteLogs")).booleanValue();
@@ -926,63 +980,85 @@ public class Preferences extends MinML {
             addPremiumGC = Boolean.valueOf(atts.getValue("addPremiumGC")).booleanValue();
             useGCFavoriteValue = Boolean.valueOf(atts.getValue("useGCFavoriteValue")).booleanValue();
             tmp = atts.getValue("checkTBs");
-            if (tmp != null)
+            if (tmp != null){
                 checkTBs = Boolean.valueOf(atts.getValue("checkTBs")).booleanValue();
+	    }
             tmp = atts.getValue("checkDTS");
-            if (tmp != null)
+            if (tmp != null){
                 checkDTS = Boolean.valueOf(atts.getValue("checkDTS")).booleanValue();
+	    }
         
 	    tmp = atts.getValue("spiderUpdates");
-	    if (tmp != null)
-	    spiderUpdates = Convert.parseInt(tmp);
+	    if (tmp != null && tmp.length () > 0){
+		spiderUpdates = Convert.parseInt(tmp);
+	    }
+	    else{
+		spiderUpdates = -1;
+	    }
 	
             tmp = atts.getValue("maxSpiderNumber");
-            if (tmp != null)
+            if (tmp != null){
                 maxSpiderNumber = Convert.parseInt(tmp);
+	    }
             tmp = atts.getValue("getDescPics");
-            if (tmp != null)
+            if (tmp != null){
                 downloadDescriptionImages = Boolean.valueOf(tmp).booleanValue();
+	    }
             tmp = atts.getValue("getSpoilerPics");
-            if (tmp != null)
+            if (tmp != null){
                 downloadSpoilerImages = Boolean.valueOf(tmp).booleanValue();
+	    }
             tmp = atts.getValue("getLogPics");
-            if (tmp != null)
+            if (tmp != null){
                 downloadLogImages = Boolean.valueOf(tmp).booleanValue();
+	    }
             tmp = atts.getValue("downloadTBs");
-            if (tmp != null)
+            if (tmp != null){
                 downloadTBs = Boolean.valueOf(tmp).booleanValue();
+	    }
             gcLogin = atts.getValue("gcLogin");
-            if (gcLogin == null)
+            if (gcLogin == null){
                 gcLogin = "";
-            else
+	    }
+            else{
                 gcLogin = SafeXML.html2iso8859s1(gcLogin);
-        } else if (name.equals("details")) {
+	    }
+        } 
+	else if (name.equals("details")) {
             maxDetails = Common.parseInt(atts.getValue("cacheSize"));
             deleteDetails = Common.parseInt(atts.getValue("delete"));
-            if (maxDetails < 2)
+            if (maxDetails < 2){
                 maxDetails = 2;
-            if (deleteDetails < 1)
+	    }
+            if (deleteDetails < 1){
                 deleteDetails = 1;
-        } else if (name.equals("metric")) {
+	    }
+        } 
+	else if (name.equals("metric")) {
             metricSystem = Common.parseInt(atts.getValue("type"));
             if (metricSystem != Metrics.METRIC && metricSystem != Metrics.IMPERIAL) {
                 metricSystem = Metrics.METRIC;
             }
-        } else if (name.equals("locale")) {
+        }
+	else if (name.equals("locale")) {
             language = atts.getValue("language");
-        } else if (name.equals("GCLogins")) {
+        }
+	else if (name.equals("GCLogins")) {
             Hashtable h = this.getGCLogin(SafeXML.html2iso8859s1(atts.getValue("id")));
             // name password cookies (gspkauth, ...?)
             for (int i = 0; i < atts.getLength(); i++) {
                 String key = atts.getName(i);
                 String value = atts.getValue(i);
-                if (value.equals("null"))
+                if (value.equals("null")){
                     continue;
-                if (key.equals("id"))
+		}
+                if (key.equals("id")){
                     value = SafeXML.html2iso8859s1(value);
+		}
                 h.put(key, value);
             }
-        } else if (name.equals("FILTERDATA")) {
+        }
+	else if (name.equals("FILTERDATA")) {
             // Creating a filter object and reading the saved data
             String id = SafeXML.html2iso8859s1(atts.getValue("id"));
             FilterData data = new FilterData();
@@ -1012,11 +1088,13 @@ public class Preferences extends MinML {
             String searchFilter = SafeXML.html2iso8859s1(atts.getValue("search"));
             String[] searchFilterList = ewe.util.mString.split(searchFilter, '|');
             for (int i = 0; i < searchFilterList.length; i++) {
-                if (i == 0)
+                if (i == 0){
                     data.setSyncDate(searchFilterList[i]);
-                if (i == 1)
+		}
+                else if (i == 1){
                     data.setNamePattern(searchFilterList[i]);
-                if (i == 2) {
+		}
+                else if (i == 2) {
                     if (searchFilterList[i].length() >= 2) {
                         data.setNameCompare(Integer.parseInt(searchFilterList[i].substring(0, 1)));
                         data.setNameCaseSensitive(searchFilterList[i].substring(1, 2).equals("0") ? false : true);
@@ -1025,56 +1103,72 @@ public class Preferences extends MinML {
             }
             // Filter object is remembered under the given ID
             this.addFilter(id, data);
-        } else if (name.equals("datamover")) {
+        }
+	else if (name.equals("datamover")) {
             tmp = atts.getValue("processorMode");
             if (tmp != null) {
                 processorMode = Convert.parseInt(tmp);
             }
-        } else if (name.equals("logkeeping")) {
+        }
+	else if (name.equals("logkeeping")) {
             tmp = atts.getValue("maximum");
-            if (tmp != null)
+            if (tmp != null){
                 maxLogsToKeep = Convert.parseInt(tmp);
-            if (maxLogsToKeep < 0)
+	    }
+            if (maxLogsToKeep < 0){
                 maxLogsToKeep = 0;
+	    }
 
             tmp = atts.getValue("keepown");
-            if (tmp != null)
+            if (tmp != null){
                 alwaysKeepOwnLogs = Boolean.valueOf(tmp).booleanValue();
+	    }
 
             tmp = atts.getValue("keepTimeOnUpdate");
-            if (tmp != null)
+            if (tmp != null){
                 keepTimeOnUpdate = Boolean.valueOf(tmp).booleanValue();
+	    }
 
-        } else if (name.equals("fillWhiteArea")) {
+        }
+	else if (name.equals("fillWhiteArea")) {
             tmp = atts.getValue("on");
             fillWhiteArea = tmp != null && tmp.equalsIgnoreCase("true");
-        } else if (name.equals("mapLoader")) {
+        }
+	else if (name.equals("mapLoader")) {
             tmp = atts.getValue("overlapping");
-            if (tmp == null || tmp.length() == 0)
+            if (tmp == null || tmp.length() == 0){
                 tmp = "0";
+	    }
             mapOverlapping = Convert.parseInt(tmp);
             tmp = atts.getValue("tilewidth");
             tilewidth = (tmp != null && tmp.length() > 0) ? Convert.parseInt(tmp) : 0;
             tmp = atts.getValue("tileheight");
             tileheight = (tmp != null && tmp.length() > 0) ? Convert.parseInt(tmp) : 0;
-        } else if (name.equals("Map")) {
+        }
+	else if (name.equals("Map")) {
             tmp = atts.getValue("showCachesOnMap");
-            if (tmp != null)
+            if (tmp != null){
                 showCachesOnMap = Boolean.valueOf(atts.getValue("showCachesOnMap")).booleanValue();
+	    }
             tmp = atts.getValue("lastScale");
-            if (tmp != null)
+            if (tmp != null){
                 lastScale = ((int) (Common.parseDouble(tmp) * 100)) / 100f;
-        } else if (name.equals("SortingGroupedByCache")) {
+	    }
+        }
+	else if (name.equals("SortingGroupedByCache")) {
             tmp = atts.getValue("on");
             SortingGroupedByCache = tmp != null && tmp.equalsIgnoreCase("true");
-        } else if (name.equals("MobileGui"))
+        }
+	else if (name.equals("MobileGui")){
             mobileGUI = Boolean.valueOf(atts.getValue("value")).booleanValue();
+	}
     }
 
     private boolean isGpxStyleName(String name) {
         for (int i = 0; i < this.gpxStyles.length; i++) {
-            if (name.equals(gpxStyles[i]))
+            if (name.equals(gpxStyles[i])){
                 return true;
+	    }
         }
         return false;
     }
