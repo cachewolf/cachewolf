@@ -29,7 +29,6 @@ import CacheWolf.database.CacheHolderDetail;
 import CacheWolf.database.CacheType;
 import CacheWolf.database.Log;
 import CacheWolf.imp.OCGPXfetch;
-import CacheWolf.imp.OCLinkImporter;
 import CacheWolf.utils.DateFormat;
 import CacheWolf.utils.Extractor;
 import CacheWolf.utils.UrlFetcher;
@@ -107,7 +106,6 @@ public final class OCLogExport {
                             postData += "&submitform=Log+eintragen"; // todo for other opencaching sites
                             UrlFetcher.setpostData(postData);
                             page = UrlFetcher.fetch(url);
-                            OCLinkImporter.updateOCLink(ch);
                             if (ch.getIdOC().startsWith("-")) {
                                 ch.setIdOC("!" + ch.getIdOC().substring(1));
                                 ch.saveCacheDetails();
