@@ -66,7 +66,7 @@ public class TablePanelMenu extends MenuBar {
     private MenuItem searchMenuContinue, searchMenuStart, searchMenuClr;
     private MenuItem importFromFiles, updateFindsFromFile, loadOC, loadOCFinds;
     private MenuItem downloadmap, kalibmap, importmap, selectMapPath;
-    private MenuItem spider, spiderRoute, spiderAllFinds, loadGCVotes, fetchOCLink, update, chkVersion;
+    private MenuItem spider, spiderRoute, spiderAllFinds, loadGCVotes, update, chkVersion;
     private MenuItem about, wolflang, sysinfo, legend;
     private MenuItem exportGpxNg, exporthtml, exporttop50, exportASC, exportTomTom, exportMSARCSV, exportPOI;
     private MenuItem exportOZI, exportKML, exportTPL, exportExplorist, exportOCLog;
@@ -101,7 +101,6 @@ public class TablePanelMenu extends MenuBar {
                 spiderAllFinds = new MenuItem(MyLocale.getMsg(217, "Spider all finds from geocaching.com")), //
                 spiderRoute = new MenuItem(MyLocale.getMsg(137, "Download along a Route from geocaching.com")), //
                 mnuSeparator, loadGCVotes = new MenuItem(MyLocale.getMsg(1208, "Import ratings from GCVote")), //
-                fetchOCLink = new MenuItem(MyLocale.getMsg(1209, "Fetch link to OC - Cache")), //
         };
         updateGCVotesMenu();
         return new Menu(mnuImport, MyLocale.getMsg(175, "Import"));
@@ -486,7 +485,7 @@ public class TablePanelMenu extends MenuBar {
                     tablePanel.refreshTable();
                 }
             }
-            if (mev.selectedItem == mnuOpenProfile) {
+            else if (mev.selectedItem == mnuOpenProfile) {
                 MainTab.itself.saveUnsavedChanges(true);
                 if (MainForm.itself.selectProfile(MainForm.PROFILE_SELECTOR_FORCED_ON, false)) {
 
@@ -513,13 +512,13 @@ public class TablePanelMenu extends MenuBar {
                     tablePanel.resetModel();
                 }
             }
-            if (mev.selectedItem == mnuDeleteProfile) {
+            else if (mev.selectedItem == mnuDeleteProfile) {
                 editProfile(2, 227, 226);
             }
-            if (mev.selectedItem == mnuRenameProfile) {
+            else if (mev.selectedItem == mnuRenameProfile) {
                 editProfile(3, 228, 229);
             }
-            if (mev.selectedItem == mnuEditCenter) {
+            else if (mev.selectedItem == mnuEditCenter) {
                 EditCenter f = new EditCenter();
                 f.execute(getFrame(), Gui.CENTER_FRAME);
                 tablePanel.refreshTable();
@@ -528,7 +527,7 @@ public class TablePanelMenu extends MenuBar {
             // /////////////////////////////////////////////////////////////////////
             // subMenu for import, part of "Application" menu
             // /////////////////////////////////////////////////////////////////////
-            if (mev.selectedItem == spider) {
+            else if (mev.selectedItem == spider) {
                 GCImporter gcImporter = new GCImporter();
                 MainTab.itself.saveUnsavedChanges(false);
                 gcImporter.doIt();
@@ -537,7 +536,7 @@ public class TablePanelMenu extends MenuBar {
                 tablePanel.resetModel();
                 gcImporter.setOldGCLanguage();
             }
-            if (mev.selectedItem == spiderRoute) {
+            else if (mev.selectedItem == spiderRoute) {
                 GCImporter gcImporter = new GCImporter();
                 MainTab.itself.saveUnsavedChanges(false);
                 gcImporter.doItAlongARoute();
@@ -546,7 +545,7 @@ public class TablePanelMenu extends MenuBar {
                 tablePanel.resetModel();
                 gcImporter.setOldGCLanguage();
             }
-            if (mev.selectedItem == spiderAllFinds) {
+            else if (mev.selectedItem == spiderAllFinds) {
                 GCImporter gcImporter = new GCImporter();
                 MainTab.itself.saveUnsavedChanges(false);
                 gcImporter.doIt(true);
@@ -555,7 +554,7 @@ public class TablePanelMenu extends MenuBar {
                 tablePanel.resetModel();
                 gcImporter.setOldGCLanguage();
             }
-            if (mev.selectedItem == loadGCVotes) {
+            else if (mev.selectedItem == loadGCVotes) {
                 if (!Preferences.itself().useGCFavoriteValue) {
                     if (sGCV == null)
                         sGCV = new GCVoteImporter();
@@ -563,11 +562,7 @@ public class TablePanelMenu extends MenuBar {
                     tablePanel.resetModel();
                 }
             }
-            if (mev.selectedItem == fetchOCLink) {
-                OCLinkImporter.doIt();
-                tablePanel.resetModel();
-            }
-            if (mev.selectedItem == importFromFiles) {
+            else if (mev.selectedItem == importFromFiles) {
                 String dir = Preferences.itself().getImporterPath("LocGpxImporter");
                 FileChooser fc = new FileChooser(FileChooserBase.OPEN | FileChooserBase.MULTI_SELECT, dir);
                 fc.addMask("*.gpx,*.zip,*.loc,*.txt,*.log,*.csv");
@@ -599,7 +594,7 @@ public class TablePanelMenu extends MenuBar {
                 setFiltBlackImage();
                 tablePanel.resetModel();
             }
-            if (mev.selectedItem == updateFindsFromFile) {
+            else if (mev.selectedItem == updateFindsFromFile) {
                 String dir = Preferences.itself().getImporterPath("LocGpxImporter");
                 FileChooser fc = new FileChooser(FileChooserBase.OPEN | FileChooserBase.MULTI_SELECT, dir);
                 fc.addMask("*.gpx,*.zip,*.txt,*.log");
@@ -625,61 +620,62 @@ public class TablePanelMenu extends MenuBar {
                 setFiltBlackImage();
                 tablePanel.resetModel();
             }
-            if (mev.selectedItem == loadOC) {
+            else if (mev.selectedItem == loadOC) {
                 OCXMLImporter oc = new OCXMLImporter();
                 oc.doIt();
                 MainForm.profile.setShowBlacklisted(false);
                 setFiltBlackImage();
                 tablePanel.resetModel();
             }
-            if (mev.selectedItem == loadOCFinds) {
+            else if (mev.selectedItem == loadOCFinds) {
                 OCGPXfetch.doIt();
                 MainForm.profile.setShowBlacklisted(false);
                 setFiltBlackImage();
                 tablePanel.resetModel();
             }
-            if (mev.selectedItem == update) {
+            else if (mev.selectedItem == update) {
                 updateSelectedCaches(true);
             }
             // /////////////////////////////////////////////////////////////////////
             // subMenu for export, part of "Application" menu
             // /////////////////////////////////////////////////////////////////////
-            if (mev.selectedItem == exporthtml) {
+            else if (mev.selectedItem == exporthtml) {
                 HTMLExporter htm = new HTMLExporter();
                 htm.doIt();
             }
-            if (mev.selectedItem == exportGpxNg) {
+            else if (mev.selectedItem == exportGpxNg) {
                 GpxExportNg gpx = new GpxExportNg();
                 gpx.doit();
             }
-            if (mev.selectedItem == exporttop50) {
+            else if (mev.selectedItem == exporttop50) {
                 OVLExporter ovl = new OVLExporter();
                 ovl.doIt();
             }
-            if (mev.selectedItem == exportASC) {
+            else if (mev.selectedItem == exportASC) {
                 ASCExporter asc = new ASCExporter();
                 asc.doIt();
             }
-            if (mev.selectedItem == exportTomTom) {
+            else if (mev.selectedItem == exportTomTom) {
                 TomTomExporter tt = new TomTomExporter();
                 tt.doIt();
             }
-            if (mev.selectedItem == exportMSARCSV) {
+            else if (mev.selectedItem == exportMSARCSV) {
                 MSARCSVExporter msar = new MSARCSVExporter();
                 // NewCSVExporter msar = new NewCSVExporter(NewCSVExporter.CHECKOWNLOG);
                 msar.doIt();
             }
-            if (mev.selectedItem == exportLOC) {
+            else if (mev.selectedItem == exportLOC) {
                 LocExporter loc = new LocExporter();
                 loc.doIt();
             }
-            if (mev.selectedItem == exportGPSBabel) {
+            else if (mev.selectedItem == exportGPSBabel) {
                 String gpsBabelCommand;
                 Vm.showWait(true);
                 LocExporter loc = new LocExporter();
-                // String tmpFileName = FileBase.getProgramDirectory() + "/temp.loc";
-                // Must not contain special characters, because we don't quote below, because quoting causes problems on some platforms.
-                // Find another way, when CW can be started from outside the program directory.
+                // Must not contain special characters, because we don't quote
+		// below, because quoting causes problems on some platforms.
+                // Find another way, when CW can be started from outside the
+		// program directory.
                 String tmpFileName = "temp.loc";
                 loc.setOutputFile(tmpFileName);
                 loc.doIt();
@@ -698,15 +694,15 @@ public class TablePanelMenu extends MenuBar {
                 ProgressBarForm.clear();
                 Vm.showWait(false);
             }
-            if (mev.selectedItem == exportOZI) {
+            else if (mev.selectedItem == exportOZI) {
                 OziExporter ozi = new OziExporter();
                 ozi.doIt();
             }
-            if (mev.selectedItem == exportKML) {
+            else if (mev.selectedItem == exportKML) {
                 KMLExporter kml = new KMLExporter();
                 kml.doIt();
             }
-            if (mev.selectedItem == exportTPL) {
+            else if (mev.selectedItem == exportTPL) {
                 FileChooser fc = new FileChooser(FileChooserBase.OPEN, FileBase.getProgramDirectory() + FileBase.separator + "templates");
                 fc.addMask("*.tpl");
                 fc.setTitle(MyLocale.getMsg(910, "Select Template file"));
@@ -716,39 +712,38 @@ public class TablePanelMenu extends MenuBar {
                 }
             }
             //
-            if (mev.selectedItem == exportOCLog) {
+            else if (mev.selectedItem == exportOCLog) {
                 OCLogExport.doit();
                 tablePanel.resetModel();
             }
-            if (mev.selectedItem == exportExplorist) {
+            else if (mev.selectedItem == exportExplorist) {
                 ExploristExporter mag = new ExploristExporter();
                 mag.doIt();
             }
-            if (mev.selectedItem == exportPOI) {
+            else if (mev.selectedItem == exportPOI) {
                 POIExporter spoilerpoi = new POIExporter();
                 spoilerpoi.doIt();
             }
-            if (mev.selectedItem == exportGarminPic) {
+            else if (mev.selectedItem == exportGarminPic) {
                 GarminPicExporter garminpic = new GarminPicExporter();
                 garminpic.doIt();
             }
 
-            // /////////////////////////////////////////////////////////////////////
+            // /////////////////////////////////////////////////////////////////
             // subMenu for maps, part of "Application" menu
-            // /////////////////////////////////////////////////////////////////////
-            if (mev.selectedItem == downloadmap) {
+            // /////////////////////////////////////////////////////////////////
+            else if (mev.selectedItem == downloadmap) {
                 MapLoaderGui mLG = new MapLoaderGui();
-                // .execute doesn't work because the tcp-socket uses another thread
-                // which cannot be startet if here .execute() is used!
+                // .execute doesn't work because the tcp-socket uses another
+		// thread which cannot be startet if here .execute() is used!
                 if (mLG.isCreated)
                     mLG.exec(); // no wait for close window
             }
-            if (mev.selectedItem == importmap) {
-
+            else if (mev.selectedItem == importmap) {
                 MapImporter map = new MapImporter();
                 map.importMap();
             }
-            if (mev.selectedItem == kalibmap) {
+            else if (mev.selectedItem == kalibmap) {
                 SelectMap sM = new SelectMap();
                 sM.execute();
                 if ((sM.getSelectedMap()).length() > 0) {
@@ -760,7 +755,7 @@ public class TablePanelMenu extends MenuBar {
                     }
                 }
             }
-            if (mev.selectedItem == selectMapPath) {
+            else if (mev.selectedItem == selectMapPath) {
                 FileChooser fc = new FileChooser(FileChooserBase.DIRECTORY_SELECT, MainForm.profile.getMapsDir());
                 fc.addMask("*.wfl");
                 fc.setTitle(MyLocale.getMsg(4200, "Select map directory:"));
@@ -769,10 +764,10 @@ public class TablePanelMenu extends MenuBar {
                 }
 
             }
-            // /////////////////////////////////////////////////////////////////////
+            // /////////////////////////////////////////////////////////////////
             // "Application" pulldown menu
-            // /////////////////////////////////////////////////////////////////////
-            if (mev.selectedItem == appMenuPreferences) {
+            // /////////////////////////////////////////////////////////////////
+            else if (mev.selectedItem == appMenuPreferences) {
                 tablePanel.saveColWidth();
                 int fontsize = Preferences.itself().fontSize;
                 boolean useBigIcons = Preferences.itself().useBigIcons;
@@ -780,72 +775,42 @@ public class TablePanelMenu extends MenuBar {
                 preferencesScreen.execute(MainForm.itself.getFrame(), Gui.CENTER_FRAME);
                 // überflüssig, wurde ja gerade gespeichert und auch bei Abbruch wurde keine Preferences Variable gesetzt ! Preferences.itself().readPrefFile();
                 if (Preferences.itself().fontSize != fontsize || Preferences.itself().useBigIcons != useBigIcons) {
-		    //                    try {
                         MainTab.itself.saveUnsavedChanges(true);
-                        //File f = new File("./ready.txt");
-                        //f.delete();
-                        //InfoBox infB = new InfoBox("Icons werden erzeugt!", "Icons werden erzeugt!", InfoBox.DISPLAY_ONLY);
-                        //if (Preferences.itself().useBigIcons) {
-                        //    ewe.sys.Process p = Vm.exec("./_createBigIcons.cmd " + Preferences.itself().fontSize + " >>./log.txt");
-                        //} else {
-                        //    ewe.sys.Process p = Vm.exec("./_createIcons.cmd " + Preferences.itself().fontSize + " >>./log.txt");
-                        //}
-                        //infB.show();
-                        //Vm.showWait(true);
-                        //for (int i = 0; i < 60; i++) {
-                        //    Vm.sleep(1000 * 5);
-                        //    if (f.exists() || infB.isClosed()) {
-                        //        infB.close(0);
-                        //        break;
-                        //    }
-                        //}
-                        //f.delete();
-                        //Vm.showWait(false);
-                        //new InfoBox("Restart required!", "Neustart erforderlich!").wait(FormBase.OKB);
-                        //ewe.sys.Vm.exit(0);
-			//}
-		    //catch (IOException ioex) {
-                    //    Vm.showWait(false);
-                    //    new InfoBox("Error creating new Icons!", "Error creating new Icons!" + ioex.getLocalizedMessage()).wait(FormBase.OKB);
-                    //}
                 }
             }
-            if (mev.selectedItem == savenoxit) {
+            else if (mev.selectedItem == savenoxit) {
                 MainForm.profile.saveIndex(Profile.SHOW_PROGRESS_BAR, Profile.FORCESAVE);
                 tablePanel.saveColWidth();
             }
-            /*
-             * if(mev.selectedItem == savenexit){ MainForm.profile.saveIndex(pref,Profile.SHOW_PROGRESS_BAR); tablePanel.saveColWidth(pref); ewe.sys.Vm.exit(0); }
-             */
-            if (mev.selectedItem == appMenuExit) {
+            else if (mev.selectedItem == appMenuExit) {
                 Preferences.itself().log("End CacheWolf");
                 MainTab.itself.saveUnsavedChanges(true);
                 Preferences.itself().log("End CacheWolf: changes saved!");
                 ewe.sys.Vm.exit(0);
             }
 
-            // /////////////////////////////////////////////////////////////////////
+            // /////////////////////////////////////////////////////////////////
             // "Search" pulldown menu
-            // /////////////////////////////////////////////////////////////////////
-            if (mev.selectedItem == searchMenuContinue) {
+            // /////////////////////////////////////////////////////////////////
+            else if (mev.selectedItem == searchMenuContinue) {
                 search();
                 tablePanel.refreshTable();
             }
-            if (mev.selectedItem == searchMenuStart) {
+            else if (mev.selectedItem == searchMenuStart) {
                 SearchCache ssc = new SearchCache(cacheDB);
                 ssc.clearSearch();
                 search();
                 tablePanel.refreshTable();
             }
-            if (mev.selectedItem == searchMenuClr) {
+            else if (mev.selectedItem == searchMenuClr) {
                 SearchCache ssc = new SearchCache(cacheDB);
                 ssc.clearSearch();
                 tablePanel.refreshTable();
             }
-            // /////////////////////////////////////////////////////////////////////
+            // /////////////////////////////////////////////////////////////////
             // "Filter" pulldown menu
-            // /////////////////////////////////////////////////////////////////////
-            if (mev.selectedItem == filtApply) {
+            // /////////////////////////////////////////////////////////////////
+            else if (mev.selectedItem == filtApply) {
                 Filter flt = new Filter();
                 if (MainForm.profile.getFilterActive() >= Filter.FILTER_ACTIVE) {
                     flt.clearFilter();
@@ -855,7 +820,7 @@ public class TablePanelMenu extends MenuBar {
                 }
                 tablePanel.refreshTable();
             }
-            if (mev.selectedItem == filtCreate) {
+            else if (mev.selectedItem == filtCreate) {
                 if (scnFilter == null)
                     scnFilter = new FilterScreen();
                 scnFilter.setData(MainForm.profile.getCurrentFilter());
@@ -864,19 +829,20 @@ public class TablePanelMenu extends MenuBar {
                 scnFilter.execute();
                 tablePanel.refreshTable();
             }
-            if (mev.selectedItem == filtInvert) {
+            else if (mev.selectedItem == filtInvert) {
                 Filter flt = new Filter();
                 flt.invertFilter();
                 tablePanel.refreshTable();
             }
-            if (mev.selectedItem == filtSelected) { // incremental filter
+            else if (mev.selectedItem == filtSelected) { // incremental filter
                 MainForm.profile.selectionChanged = true;
                 CacheHolder ch;
                 boolean filterChanged = false;
                 for (int i = cacheDB.size() - 1; i >= 0; i--) {
                     ch = cacheDB.get(i);
-                    // This is an incremental filter, i.e. it keeps the existing filter
-                    // status and only adds the marked caches to the filtered set
+                    // This is an incremental filter, i.e. it keeps the
+		    // existing filter status and only adds the marked caches
+		    // to the filtered set
                     if (ch.isChecked && ch.isVisible()) {
                         ch.setFiltered(true);
                         filterChanged = true;
@@ -887,7 +853,7 @@ public class TablePanelMenu extends MenuBar {
                 }
                 tablePanel.refreshTable();
             }
-            if (mev.selectedItem == filtNonSelected) {
+            else if (mev.selectedItem == filtNonSelected) {
                 MainForm.profile.selectionChanged = true;
                 CacheHolder ch;
                 boolean filterChanged = false;
@@ -905,18 +871,17 @@ public class TablePanelMenu extends MenuBar {
                 }
                 tablePanel.refreshTable();
             }
-            if (mev.selectedItem == filtBlack) {
-                // filtBlack.modifiers=filtBlack.modifiers|MenuItem.Checked;
+            else if (mev.selectedItem == filtBlack) {
                 MainForm.profile.setShowBlacklisted(!MainForm.profile.showBlacklisted());
                 setFiltBlackImage();
                 SearchCache ssc = new SearchCache(cacheDB);
                 ssc.clearSearch();// Clear search & restore filter status
                 tablePanel.refreshTable();
             }
-            // /////////////////////////////////////////////////////////////////////
+            // /////////////////////////////////////////////////////////////////
             // "Organise" pulldown menu
-            // /////////////////////////////////////////////////////////////////////
-            if (mev.selectedItem == orgNewWP) {
+            // /////////////////////////////////////////////////////////////////
+            else if (mev.selectedItem == orgNewWP) {
                 if (MainTab.itself.tablePanel.getSelectedCache() >= 0)
                     MainTab.itself.lastselected = cacheDB.get(MainTab.itself.tablePanel.getSelectedCache()).getCode();
                 else
@@ -924,33 +889,33 @@ public class TablePanelMenu extends MenuBar {
                 MainTab.itself.newWaypoint(new CacheHolder());
             }
 
-            if (mev.selectedItem == orgCopy) {
+            else if (mev.selectedItem == orgCopy) {
                 MainForm.profile.saveIndex(Profile.SHOW_PROGRESS_BAR, Profile.NOFORCESAVE);
                 DataMover dm = new DataMover();
                 dm.copyCaches(Preferences.itself().absoluteBaseDir + MainForm.itself.selectProfileDir(Preferences.itself().absoluteBaseDir, Preferences.itself().lastProfile, 0) + "/");
                 tablePanel.refreshTable();
             }
 
-            if (mev.selectedItem == orgMove) {
+            else if (mev.selectedItem == orgMove) {
                 MainForm.profile.saveIndex(Profile.SHOW_PROGRESS_BAR, Profile.NOFORCESAVE);
                 DataMover dm = new DataMover();
                 dm.moveCaches(Preferences.itself().absoluteBaseDir + MainForm.itself.selectProfileDir(Preferences.itself().absoluteBaseDir, Preferences.itself().lastProfile, 0) + "/");
                 tablePanel.refreshTable();
             }
 
-            if (mev.selectedItem == orgDelete) {
+            else if (mev.selectedItem == orgDelete) {
                 MainForm.profile.saveIndex(Profile.SHOW_PROGRESS_BAR, Profile.NOFORCESAVE);
                 DataMover dm = new DataMover();
                 dm.deleteCaches(true);
                 tablePanel.refreshTable();
             }
-            if (mev.selectedItem == orgRebuild) {
+            else if (mev.selectedItem == orgRebuild) {
                 Rebuild rb = new Rebuild();
                 rb.rebuild();
                 MainForm.profile.updateBearingDistance();
                 tablePanel.refreshTable();
             }
-            if (mev.selectedItem == orgCheckNotesAndSolver) {
+            else if (mev.selectedItem == orgCheckNotesAndSolver) {
                 // Checking every cache if notes or solver data exist
                 CWProgressBar cwp = new CWProgressBar(MyLocale.getMsg(219, "Searching..."), 0, cacheDB.size(), true);
                 cwp.exec();
@@ -968,7 +933,7 @@ public class TablePanelMenu extends MenuBar {
                 cwp.exit(0);
                 tablePanel.refreshTable();
             }
-            if (mev.selectedItem == orgTravelbugs) {
+            else if (mev.selectedItem == orgTravelbugs) {
                 Form tbs = TravelbugJourneyScreenFactory.createTravelbugJourneyScreen();
                 Preferences.itself().setBigWindowSize(this);
                 tbs.execute();
@@ -978,22 +943,22 @@ public class TablePanelMenu extends MenuBar {
                 toggleCacheTourVisible();
             }
 
-            // /////////////////////////////////////////////////////////////////////
+            // /////////////////////////////////////////////////////////////////
             // "About" pulldown menu
-            // /////////////////////////////////////////////////////////////////////
-            if (mev.selectedItem == about) {
+            // /////////////////////////////////////////////////////////////////
+            else if (mev.selectedItem == about) {
                 InfoScreen is = new InfoScreen(MyLocale.getLocalizedFile("info.html"), MyLocale.getMsg(117, "About"), true);
                 is.execute(MainForm.itself.getFrame(), Gui.CENTER_FRAME);
             }
-            if (mev.selectedItem == legend) {
+            else if (mev.selectedItem == legend) {
                 InfoScreen is = new InfoScreen(MyLocale.getLocalizedFile("legende.html"), MyLocale.getMsg(155, "Legend"), true);
                 is.execute(MainForm.itself.getFrame(), Gui.CENTER_FRAME);
             }
-            if (mev.selectedItem == wolflang) {
+            else if (mev.selectedItem == wolflang) {
                 InfoScreen is = new InfoScreen(MyLocale.getLocalizedFile("wolflang.html"), MyLocale.getMsg(118, "WolfLanguage"), true);
                 is.execute(MainForm.itself.getFrame(), Gui.CENTER_FRAME);
             }
-            if (mev.selectedItem == sysinfo) {
+            else if (mev.selectedItem == sysinfo) {
                 StringBuffer sb = new StringBuffer(400);
                 Font f = mApp.guiFont;
                 sb.append(MyLocale.getMsg(121, "Profile"));
@@ -1060,44 +1025,16 @@ public class TablePanelMenu extends MenuBar {
                 // Log for debug purposes
                 Preferences.itself().log(STRreplace.replace(sb.toString(), "<br>", Preferences.NEWLINE), null);
             }
-            if (mev.selectedItem == chkVersion) {
+            else if (mev.selectedItem == chkVersion) {
                 InfoBox ib = new InfoBox(MyLocale.getMsg(178, "Version Checking"), Version.getUpdateMessage());
                 ib.wait(FormBase.OKB);
             }
-        /*
-	    			else if (mev.selectedItem == this.miDetails) {
-	    				MainTab.itself.select(MainTab.itself.detailsPanel);
-	    			}
-	    			else if (mev.selectedItem == miOpen) {
-	    				penDoubleClicked(null);
-	    			}
-	    			else if (mev.selectedItem == this.miSpoiler) {
-	    				MainTab.itself.select(MainTab.itself.imagesPanel);
-	    			}
-	    			else if (mev.selectedItem == this.miHints) {
-	    				MainTab.itself.select(MainTab.itself.hintLogPanel);
-	    			}
-	    			else if (mev.selectedItem == this.miSolver) {
-	    				MainTab.itself.select(MainTab.itself.solverPanel);
-	    			}
-	    			else if (mev.selectedItem == this.miCalculator) {
-	    				MainTab.itself.select(MainTab.itself.calcPanel);
-	    			}
-	    			else if (mev.selectedItem == miGoto) {
-	    				MainTab.itself.gotoPanel.setDestinationAndSwitch(cacheDB.get(tablePanel.getSelectedCache()));
-	    			}
-	    			else if (mev.selectedItem == this.miMap) {
-	    				MainTab.itself.SwitchToMovingMap();
-	    			}
-	    			else if (mev.selectedItem == this.miRadar) {
-	    				MainTab.itself.select(MainTab.itself.radarPanel);
-	    			}
-	    */
-            // In case that the triggered event was due to one of the context menu items, process
-            // the event by the context menu handler
+            // In case that the triggered event was due to one of the context
+	    // menu items, process the event by the context menu handler
             tablePanel.myTableControl.popupMenuEvent(mev.selectedItem);
 
-        } else if (ev instanceof ControlEvent) {
+        }
+	else if (ev instanceof ControlEvent) {
             if (ev.type == ControlEvent.MENU_SHOWN) {
                 MainTab.itself.tablePanel.myTableControl.adjustAddiHideUnhideMenu();
             }
