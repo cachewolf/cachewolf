@@ -1356,8 +1356,13 @@ public class GCImporter {
     }
 
     private String getOwner (JSONObject cacheDescription){
-	JSONObject ownerObject = cacheDescription.getJSONObject("owner");
-	return ownerObject.getJSONString("text");
+	try{
+	    JSONObject ownerObject = cacheDescription.getJSONObject("owner");
+	    return ownerObject.getString("text");
+	}
+	catch (JSONException e){
+	    ----
+	}
     }
 
     private void downloadCaches() {

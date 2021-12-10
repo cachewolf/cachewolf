@@ -61,7 +61,7 @@ public class MapInfoObject extends BoundingBox {
     private MapImageFileNameObject mapImageFileNameObject;
     private byte mapType = 0; // 0=aus wfl-file, 1=empty map, 2=aus Tilestructure, 3=aus pack-file
     private CWPoint affineTopleft = new CWPoint();
-    ;
+
     private double transLatX, transLatY, transLonX, transLonY; // needed for the inverse calculation from lat/lon to x/y
     private int coordTrans = 0;
 
@@ -380,6 +380,7 @@ public class MapInfoObject extends BoundingBox {
             // calculate scale in meters per pixel
             final double heightkm = calcLatLon(0, heightpixel).getDistance(topleft);
             scale = (float) (heightkm * 1000 / heightpixel);
+	    Preferences.itself().log ("doCalc: " + center + " bottomRight: " + bottomright + " topLeft: " + topleft + " affineTopLeft: " + affineTopleft);
         } catch (final ArithmeticException ex) {
             throw new ArithmeticException(MyLocale.getMsg(4305, "Not allowed values in affine\n (matrix cannot be inverted)\n in file \n") + this.mapImageFileNameObject.getMapName());
         }
