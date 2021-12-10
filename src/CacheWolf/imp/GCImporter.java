@@ -1361,7 +1361,7 @@ public class GCImporter {
 	    return ownerObject.getString("text");
 	}
 	catch (JSONException e){
-	    ----
+	    throw new RuntimeException(e);
 	}
     }
 
