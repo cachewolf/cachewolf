@@ -1265,6 +1265,13 @@ public class GCImporter {
 			    ch.setName(getName(mapDetails));
 			    ch.setOwner(getOwner(mapDetails));
 			    ch.setHidden(getDateHidden(mapDetails));
+			    try{
+				newCacheDetails = ch.getDetails();
+				getLogs(true);
+			    }
+			    catch(Exception e){
+				Preferences.itself().log ("Error while loading the logs: ",e, true);
+			    }
                             ch.setWpt(Preferences.itself().curCentrePt); // or MainForm.profile.centre
                             ch.getDetails().setLongDescription(aCacheDescriptionOfListPage); // for Info
                             ch.saveCacheDetails();
@@ -1370,7 +1377,13 @@ public class GCImporter {
     }
 
     private String getDateHidden (JSONObject cacheDescription){
-	final String dateString = cacheDescription.getString ("hidden");
+	try{
+	    final String dateString = cacheDescription.getString ("hidden");
+	    return DateFormat.toYYMMDD(dateString);
+	}
+	catch (JSONException e){
+	    throw new RuntimeException(e);
+	}
     }
 
     private void downloadCaches() {
