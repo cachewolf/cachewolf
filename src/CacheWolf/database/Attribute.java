@@ -108,7 +108,7 @@ public class Attribute {
             {"62", "2644", "train", "10", "A60", "Active railway nearby"}, // OC special
             {"63", "2630", "riddle", "55", "0", ""},//OC ?
             {"64", "2646", "webcam", "32", "132", "Webcam"}, // OC special
-            {"65", "2634", "steep", "27", "127", "Hilly area"}, // OC special
+            {"65", "2634", "steep", "A23", "127", "Hilly area"}, // OC special
             {"66", "2636", "submerged", "34", "134", "In the water"}, // OC special
             {"67", "2638", "tide", "41", "141", "Tide"}, // OC special
             {"68", "2640", "time", "39", "139", "Only available at specified times"}, // OC special
