@@ -105,8 +105,8 @@ class DeferredHash
     
     public byte[] getFinalHash(short hashAlgorithm)
     {
-    	throw new UnsupportedClassVersionError();/*
         Digest d = (Digest)hashes.get(Shorts.valueOf(hashAlgorithm));
+        throw new UnsupportedClassVersionError();/*
         if (d == null)
         {
             throw new IllegalStateException("HashAlgorithm." + HashAlgorithm.getText(hashAlgorithm) + " is not being tracked");
