@@ -1264,6 +1264,7 @@ public class GCImporter {
 			    ch.setTerrain(getTerrain(mapDetails));
 			    ch.setName(getName(mapDetails));
 			    ch.setOwner(getOwner(mapDetails));
+			    ch.setDateHidden(getDateHidden(mapDetails));
                             ch.setWpt(Preferences.itself().curCentrePt); // or MainForm.profile.centre
                             ch.getDetails().setLongDescription(aCacheDescriptionOfListPage); // for Info
                             ch.saveCacheDetails();
@@ -1314,6 +1315,9 @@ public class GCImporter {
 	    final String containerSizeText = container.getString("text");
 	    if ("small".equalsIgnoreCase(containerSizeText)){
 		return CacheSize.CW_SIZE_SMALL;
+	    }
+	    else if ("regular".equalsIgnoreCase(containerSizeText)){
+		return CacheSize.CW_SIZE_REGULAR;
 	    }
 	}
 	catch (JSONException e){
