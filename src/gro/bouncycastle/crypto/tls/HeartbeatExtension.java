@@ -48,9 +48,8 @@ public class HeartbeatExtension
         short mode = TlsUtils.readUint8(input);
         if (!HeartbeatMode.isValid(mode))
         {
-        	throw new UnsupportedClassVersionError();/*
             throw new TlsFatalAlert(AlertDescription.illegal_parameter);
-*/        }
+        }
 
     	throw new UnsupportedClassVersionError();/*
         return new HeartbeatExtension(mode);

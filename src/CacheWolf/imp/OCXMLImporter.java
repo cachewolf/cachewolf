@@ -364,7 +364,9 @@ public class OCXMLImporter {
         //Attributes setzen:
         setAttribute (syncHolder, cacheAsJson.getJSONArray("attr_acodes"));
 
-        syncHolder.getDetails().setLongDescription(cacheAsJson.getString("description"));
+	String description=cacheAsJson.getString("description");
+	description=replaceEntitiesWithCharacters(description);
+        syncHolder.getDetails().setLongDescription(description);
         final JSONObject hintsObject = cacheAsJson.getJSONObject("hints2");
         if (hintsObject.has("de")){
             final String hintsText = hintsObject.getString("de");
@@ -386,6 +388,18 @@ public class OCXMLImporter {
         syncHolder.getDetails().setUnsaved(true); // this makes CachHolder save the details in case that they are unloaded from memory
 
         return true;
+    }
+
+    private String replaceEntitiesWithCharacters(String input){
+	input=STRreplace.replace(input, "&auml;","\u00e4");
+	input=STRreplace.replace(input, "&ouml;","\u00f6");
+	input=STRreplace.replace(input, "&uuml;","\u00fc");
+	input=STRreplace.replace(input, "&Auml;","\u00c4");
+	input=STRreplace.replace(input, "&Ouml;","\u00d4");
+	input=STRreplace.replace(input, "&Uuml;","\u00dc");
+	input=STRreplace.replace(input, "&szlig;","\u00df");
+
+	return input;
     }
 
     private void loadPictures (final CacheHolder cacheHolder, final CacheImages cacheImages){
