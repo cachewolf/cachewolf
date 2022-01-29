@@ -84,7 +84,8 @@ public final class GuiImageBroker {
         File f = new File(basedir + icon + ".png");
         if (f.exists()) {
             in = f.getAbsolutePath();
-        } else {
+        }
+	else {
             in = icon + ".png";
         }
         return in;
