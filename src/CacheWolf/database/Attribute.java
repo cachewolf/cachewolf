@@ -47,8 +47,8 @@ public class Attribute {
             // {"03","2508","cactus","0","0",""},//
             {"04", "2510", "campfires", "0", "38", "Campfires"},//
             {"05", "2512", "camping", "0", "31", "Camping available"},//
-            {"06", "2514", "cliff", "A24", "21", "Cliff / falling rocks"},//
-            {"07", "2516", "climbing", "28", "10", "Difficult climbing"},//
+            {"06", "2514", "cliff", "A61", "21", "Cliff / falling rocks"},//
+            {"07", "2516", "climbing", "A24", "10", "Difficult climbing"},//
             {"08", "2518", "compass", "47", "147", "Compass"}, // OC special
             {"09", "2520", "cow", "0", "43", "Watch for livestock"},//
             {"10", "2522", "danger", "9", "23", "Dangerous area"},//
