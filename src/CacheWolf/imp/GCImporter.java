@@ -1267,6 +1267,11 @@ public class GCImporter {
 			    ch.setHidden(getDateHidden(mapDetails));
 			    try{
 				newCacheDetails = ch.getDetails();
+				//Nur ein Versuch:
+				// HIER WEITER
+				// URL für Logbuch: https://www.geocaching.com/seek/geocache_logs.aspx?guid=2fc13cb7-20cd-44b4-bb7c-094d84df43b1
+				wayPointPage = WebPage; //Result von call in Zeile davor
+				
 				getLogs(true);
 			    }
 			    catch(Exception e){

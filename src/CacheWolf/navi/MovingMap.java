@@ -78,6 +78,7 @@ public final class MovingMap extends Form implements ICommandListener {
     private final static int NORMAL_KEEP_RESOLUTION = 1;
     private final static int HIGHEST_RESOLUTION = 2;
     private final static int HIGHEST_RESOLUTION_GPS_DEST = 3;
+
     // the layer for the buttons
     private final MovingMapControls controlsLayer;
     // Holds areas not filled by currentMap and/or used tiles
@@ -124,7 +125,8 @@ public final class MovingMap extends Form implements ICommandListener {
     private int lastYPos;
     private int lastWidth;
     private int lastHeight;
-    private int lastCompareX = Integer.MAX_VALUE, lastCompareY = Integer.MAX_VALUE;
+    private int lastCompareX = Integer.MAX_VALUE;
+    private int lastCompareY = Integer.MAX_VALUE;
     private boolean eventOccurred; // not yet implemented, don't know how (check for abort filling white areas)
     private int mapChangeModus = HIGHEST_RESOLUTION_GPS_DEST;
     private float scaleWanted;
@@ -491,8 +493,10 @@ public final class MovingMap extends Form implements ICommandListener {
      */
 
     public void addOverlaySet() {
-        if (tracks == null)
+        if (tracks == null){
             return; // no tracks
+	}
+	
         try {
             TrackOverlaySetCenterTopLeft = ScreenXY2LatLon(100, 100);
             addMissingOverlays();
@@ -521,10 +525,12 @@ public final class MovingMap extends Form implements ICommandListener {
     }
 
     public void addMissingOverlays() {
-        if (currentMap == null || (!posCircle.where.isValid()) || width == 0 || height == 0)
-            return; // height == 0 happens if this is called before the form
-        // ist displayed on the screen
-        if (TrackOverlays == null) {
+	// height == 0 happens if this is called before the form is displayed on the screen
+        if (currentMap == null || (!posCircle.where.isValid()) || width == 0 || height == 0){
+            return;
+	}
+	
+	if (TrackOverlays == null) {
             TrackOverlays = new TrackOverlay[9];
             TrackOverlaySetCenterTopLeft = ScreenXY2LatLon(100, 100);
         }
@@ -537,7 +543,7 @@ public final class MovingMap extends Form implements ICommandListener {
             for (int xi = 0; xi < 3; xi++) {
                 i = yi * 3 + xi;
                 if (TrackOverlays[i] == null) {
-                    Preferences.itself().log("addMissingOverlays: widht: " + width + ", height: " + height);
+                    Preferences.itself().log("addMissingOverlays: width: " + width + ", height: " + height);
                     TrackOverlays[i] = new TrackOverlay(ScreenXY2LatLon(upperleftOf4.x + (xi - 1) * width, upperleftOf4.y + (yi - 1) * height), width, height, currentMap);
                     TrackOverlays[i].setLocation(width + 1, height + 1);
                     // outside of the screen will hide it automatically
@@ -918,10 +924,12 @@ public final class MovingMap extends Form implements ICommandListener {
     }
 
     private void addSymbolIfNecessary(String pName, Object mapObject, Image imSymb, CWPoint where) {
-        if (findMapSymbol(pName) >= 0)
+        if (findMapSymbol(pName) >= 0){
             return;
-        else
+	}
+        else{
             addSymbol(pName, mapObject, imSymb, where);
+	}
     }
 
     public void addSymbolOnTop(String pName, Object mapObject, String filename, CWPoint where) {
@@ -1004,10 +1012,12 @@ public final class MovingMap extends Form implements ICommandListener {
                 if (ch.isVisible() && ch.getWpt().isValid()) {
                     if (Preferences.itself().showCachesOnMap) {
                         addSymbolIfNecessary(ch.getCode(), ch, CacheType.getBigCacheIcon(ch), ch.getWpt());
-                    } else {
+                    }
+		    else {
                         if (ch.isChecked || ch == cacheDB.get(MainTab.itself.tablePanel.getSelectedCache())) {
                             addSymbolIfNecessary(ch.getCode(), ch, CacheType.getBigCacheIcon(ch), ch.getWpt());
-                        } else {
+                        }
+			else {
                             removeMapSymbol(ch);
                         }
                     }

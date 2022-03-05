@@ -21,6 +21,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 package CacheWolf.database;
 
+import CacheWolf.Preferences;
 import CacheWolf.controls.GuiImageBroker;
 import CacheWolf.utils.MyLocale;
 import ewe.fx.Image;
@@ -431,37 +432,44 @@ public final class CacheType {
     public static Image getBigCacheIcon(CacheHolder ch) {
         byte typeId = ch.getType();
         Image im = cTypRef[Ref_Index(typeId)]._mapImage;
+	Preferences.itself().log ("getBigCacheIcon " + ch.getWpt() + "|" + im);	
         if (ch.isFound()) {
             if (cTypRef[Ref_Index(typeId)]._modImage[found] == null) {
                 cTypRef[Ref_Index(typeId)]._modImage[found] = newOverlayedImage(im, GuiImageBroker.found);
             }
             im = cTypRef[Ref_Index(typeId)]._modImage[found];
-        } else if (ch.isArchived()) {
+        }
+	else if (ch.isArchived()) {
             if (cTypRef[Ref_Index(typeId)]._modImage[archived] == null) {
                 cTypRef[Ref_Index(typeId)]._modImage[archived] = newOverlayedImage(im, GuiImageBroker.archived);
             }
             im = cTypRef[Ref_Index(typeId)]._modImage[archived];
-        } else if (!ch.isAvailable()) {
+        }
+	else if (!ch.isAvailable()) {
             if (cTypRef[Ref_Index(typeId)]._modImage[disabled] == null) {
                 cTypRef[Ref_Index(typeId)]._modImage[disabled] = newOverlayedImage(im, GuiImageBroker.disabled);
             }
             im = cTypRef[Ref_Index(typeId)]._modImage[disabled];
-        } else if (ch.isOwned()) {
+        }
+	else if (ch.isOwned()) {
             if (cTypRef[Ref_Index(typeId)]._modImage[owned] == null) {
                 cTypRef[Ref_Index(typeId)]._modImage[owned] = newOverlayedImage(im, GuiImageBroker.owned);
             }
             im = cTypRef[Ref_Index(typeId)]._modImage[owned];
-        } else if (ch.isSolved()) {
+        }
+	else if (ch.isSolved()) {
             if (cTypRef[Ref_Index(typeId)]._modImage[solved] == null) {
                 cTypRef[Ref_Index(typeId)]._modImage[solved] = newOverlayedImage(im, GuiImageBroker.solved);
             }
             im = cTypRef[Ref_Index(typeId)]._modImage[solved];
-        } else if (ch.getStatus().indexOf(MyLocale.getMsg(319, "Not Found")) > -1) {
+        }
+	else if (ch.getStatus().indexOf(MyLocale.getMsg(319, "Not Found")) > -1) {
             if (cTypRef[Ref_Index(typeId)]._modImage[dnf] == null) {
                 cTypRef[Ref_Index(typeId)]._modImage[dnf] = newOverlayedImage(im, GuiImageBroker.dnf);
             }
             im = cTypRef[Ref_Index(typeId)]._modImage[dnf];
-        } else if (ch.getName().toLowerCase().indexOf("bonus") > -1) {
+        }
+	else if (ch.getName().toLowerCase().indexOf("bonus") > -1) {
             if (cTypRef[Ref_Index(typeId)]._modImage[bonus] == null) {
                 cTypRef[Ref_Index(typeId)]._modImage[bonus] = newOverlayedImage(im, GuiImageBroker.bonus);
             }
