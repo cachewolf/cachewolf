@@ -21,6 +21,7 @@
  */
 package CacheWolf.navi;
 
+import CacheWolf.Preferences;
 import CacheWolf.database.CWPoint;
 
 public class MapSymbol extends MapImage {
@@ -53,6 +54,7 @@ public class MapSymbol extends MapImage {
 
     private void loadImage() {
         if (filename != null) {
+	    Preferences.itself().log("loadImage " + filename);
             setImage(new ewe.fx.Image(filename), 0);
             freeSource();
         }

@@ -172,9 +172,6 @@ public class MovingMapControls implements ICommandListener {
         setStateOfIcons();
 
         boolean action = checkRolesForAction(roleName, b);
-        //		if (action) {
-        //
-        //		}
         if (getStateOfRole(ROLE_WORKING)) {
             changeRoleState(ROLE_WORKING, false);
         }
@@ -228,23 +225,6 @@ public class MovingMapControls implements ICommandListener {
         }
         return false;
     }
-
-    // private void checkStateOfIcon(MovingMapControlItem item, AniImage ani) {
-    // if (MOVE_TO_DEST.equals(item.getActionCommand())) {
-    // if (movingMap.getDestination() != null) {
-    // ani.properties &= ~mImage.IsNotHot;
-    // } else {
-    // ani.properties |= mImage.IsNotHot;
-    // }
-    // }
-    // if (MOVE_TO_CENTER.equals(item.getActionCommand())) {
-    // if (Preferences.itself().getCurCentrePt().isValid())
-    // ani.properties &= ~mImage.IsNotHot;
-    // else {
-    // ani.properties |= mImage.IsNotHot;
-    //
-    // }
-    // }}
 
     public void updateContent(String contentName, String text) {
         if (contentName == null) {
