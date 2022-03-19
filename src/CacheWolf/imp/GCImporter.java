@@ -1265,6 +1265,7 @@ public class GCImporter {
 			    ch.setName(getName(mapDetails));
 			    ch.setOwner(getOwner(mapDetails));
 			    ch.setHidden(getDateHidden(mapDetails));
+			    ch.setOCId(getUuid(mapDetails));
 			    try{
 				newCacheDetails = ch.getDetails();
 				//Nur ein Versuch:
