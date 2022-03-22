@@ -673,9 +673,9 @@ public class TablePanelMenu extends MenuBar {
                 Vm.showWait(true);
                 LocExporter loc = new LocExporter();
                 // Must not contain special characters, because we don't quote
-		// below, because quoting causes problems on some platforms.
+                // below, because quoting causes problems on some platforms.
                 // Find another way, when CW can be started from outside the
-		// program directory.
+                // program directory.
                 String tmpFileName = "temp.loc";
                 loc.setOutputFile(tmpFileName);
                 loc.doIt();
@@ -735,7 +735,7 @@ public class TablePanelMenu extends MenuBar {
             else if (mev.selectedItem == downloadmap) {
                 MapLoaderGui mLG = new MapLoaderGui();
                 // .execute doesn't work because the tcp-socket uses another
-		// thread which cannot be startet if here .execute() is used!
+                // thread which cannot be startet if here .execute() is used!
                 if (mLG.isCreated)
                     mLG.exec(); // no wait for close window
             }
@@ -841,8 +841,8 @@ public class TablePanelMenu extends MenuBar {
                 for (int i = cacheDB.size() - 1; i >= 0; i--) {
                     ch = cacheDB.get(i);
                     // This is an incremental filter, i.e. it keeps the
-		    // existing filter status and only adds the marked caches
-		    // to the filtered set
+                    // existing filter status and only adds the marked caches
+                    // to the filtered set
                     if (ch.isChecked && ch.isVisible()) {
                         ch.setFiltered(true);
                         filterChanged = true;
@@ -892,15 +892,21 @@ public class TablePanelMenu extends MenuBar {
             else if (mev.selectedItem == orgCopy) {
                 MainForm.profile.saveIndex(Profile.SHOW_PROGRESS_BAR, Profile.NOFORCESAVE);
                 DataMover dm = new DataMover();
-                dm.copyCaches(Preferences.itself().absoluteBaseDir + MainForm.itself.selectProfileDir(Preferences.itself().absoluteBaseDir, Preferences.itself().lastProfile, 0) + "/");
+                final String targetProfile = MainForm.itself.selectProfileDir(Preferences.itself().absoluteBaseDir, Preferences.itself().lastProfile, 0);
+                if (!"".equals(targetProfile)){
+                    dm.copyCaches(Preferences.itself().absoluteBaseDir +  targetProfile + "/");
+                }
                 tablePanel.refreshTable();
             }
 
             else if (mev.selectedItem == orgMove) {
                 MainForm.profile.saveIndex(Profile.SHOW_PROGRESS_BAR, Profile.NOFORCESAVE);
                 DataMover dm = new DataMover();
-                dm.moveCaches(Preferences.itself().absoluteBaseDir + MainForm.itself.selectProfileDir(Preferences.itself().absoluteBaseDir, Preferences.itself().lastProfile, 0) + "/");
-                tablePanel.refreshTable();
+                final String targetProfile = MainForm.itself.selectProfileDir(Preferences.itself().absoluteBaseDir, Preferences.itself().lastProfile, 0);
+                if (!"".equals(targetProfile)){
+                    dm.moveCaches(Preferences.itself().absoluteBaseDir +  targetProfile + "/");
+                    tablePanel.refreshTable();
+                }
             }
 
             else if (mev.selectedItem == orgDelete) {
@@ -1030,11 +1036,11 @@ public class TablePanelMenu extends MenuBar {
                 ib.wait(FormBase.OKB);
             }
             // In case that the triggered event was due to one of the context
-	    // menu items, process the event by the context menu handler
+            // menu items, process the event by the context menu handler
             tablePanel.myTableControl.popupMenuEvent(mev.selectedItem);
 
         }
-	else if (ev instanceof ControlEvent) {
+        else if (ev instanceof ControlEvent) {
             if (ev.type == ControlEvent.MENU_SHOWN) {
                 MainTab.itself.tablePanel.myTableControl.adjustAddiHideUnhideMenu();
             }
@@ -1086,9 +1092,9 @@ class EditCenter extends Form {
      */
     public void onEvent(Event ev) {
         if (ev instanceof ControlEvent && ev.type == ControlEvent.PRESSED) {
-	    /*if (ev.target == btnCancel){
-	    	close(-1);
-	    }*/
+            /*if (ev.target == btnCancel){
+                close(-1);
+            }*/
             if (ev.target == btnOK) {
                 Preferences.itself().setCurrentCentreFromGPSPosition = chkSetCurrentCentreFromGPSPosition.getState();
                 close(1);
@@ -1232,5 +1238,4 @@ class SearchBox extends InputBox {
             this.addLast(useLogs, CellConstants.DONTSTRETCH, (CellConstants.DONTFILL | CellConstants.WEST));
         }
     }
-
 }
