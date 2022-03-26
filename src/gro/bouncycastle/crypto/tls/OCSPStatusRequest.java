@@ -71,15 +71,14 @@ public class OCSPStatusRequest
                 byte[] derEncoding = responderID.getEncoded(ASN1Encoding.DER);
                 TlsUtils.writeOpaque16(derEncoding, buf);
             }
-        	throw new UnsupportedClassVersionError();/*
             TlsUtils.checkUint16(buf.size());
             TlsUtils.writeUint16(buf.size(), output);
             Streams.writeBufTo(buf, output);
-*/        }
+        }
 
-    	//throw new UnsupportedClassVersionError();
-    	/*
-    	
+        throw new UnsupportedClassVersionError();
+        /*
+        
         if (requestExtensions == null)
         {
             TlsUtils.writeUint16(0, output);
@@ -103,7 +102,7 @@ public class OCSPStatusRequest
      */
     public static OCSPStatusRequest parse(InputStream input) throws IOException
     {
-    	throw new UnsupportedClassVersionError();/*
+        throw new UnsupportedClassVersionError();/*
         Vector responderIDList = new Vector();
         {
             int length = TlsUtils.readUint16(input);
