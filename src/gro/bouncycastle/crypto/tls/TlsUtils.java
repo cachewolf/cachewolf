@@ -646,13 +646,13 @@ public class TlsUtils
         return ProtocolVersion.get(i1, i2);
     }
 
-    /*
     public static int readVersionRaw(byte[] buf, int offset)
         throws IOException
     {
         return (buf[offset] << 8) | buf[offset + 1];
     }
 
+    /*
     public static int readVersionRaw(InputStream input)
         throws IOException
     {
