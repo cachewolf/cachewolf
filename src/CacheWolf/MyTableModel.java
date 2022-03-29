@@ -538,18 +538,18 @@ public class MyTableModel extends TableModel {
             // This helps on small PDA screens
             if (mappedCol == 0)
                 showExtraWptInfo = howToDo;
-        } else {
+        }
+	else {
             sortAscending = howToDo;
             Vm.showWait(true);
             // get selected Cache
             Point a = myTableControl.getSelectedCell(null);
             CacheHolder ch = null;
-            if ((a != null) && (a.y >= 0) && (a.y < cacheDB.size()))
+            if ((a != null) && (a.y >= 0) && (a.y < cacheDB.size())){
                 ch = cacheDB.get(a.y);
+	    }
             cacheDB.sort(new MyComparer(cacheDB, sortedBy, numRows), !sortAscending);
             updateRows();
-            // = cacheDB.rebuild(sortedVector of ch,
-            // invisibleVector of ch)
             // select previously selected Cache again
             if (ch != null) {
                 int rownum = MainForm.profile.getCacheIndex(ch.getCode());
@@ -557,6 +557,7 @@ public class MyTableModel extends TableModel {
                     myTableControl.cursorTo(rownum, 0, true);
             }
             this.isSorted = true;
+	    MainForm.profile.notifyUnsavedChanges(true);
             Vm.showWait(false);
         }
 
