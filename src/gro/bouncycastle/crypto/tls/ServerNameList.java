@@ -58,12 +58,11 @@ public class ServerNameList
 
             entry.encode(buf);
         }
-        throw new UnsupportedClassVersionError();/*
 
         TlsUtils.checkUint16(buf.size());
         TlsUtils.writeUint16(buf.size(), output);
         Streams.writeBufTo(buf, output);
-*/    }
+    }
 
     /**
      * Parse a {@link ServerNameList} from an {@link InputStream}.

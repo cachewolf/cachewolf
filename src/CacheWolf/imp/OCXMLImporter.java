@@ -91,14 +91,6 @@ public class OCXMLImporter {
     boolean incFinds = true;
     private Hashtable DBindexID = new Hashtable();
 
-    String picUrl = "";
-    String picTitle = "";
-    String picID;
-    String cacheID;
-
-    String logData, logIcon, logDate, logFinder, logId, finderID;
-    boolean loggerRecommended;
-    int logtype;
     String user;
 
     /**
@@ -289,11 +281,12 @@ public class OCXMLImporter {
 
     private boolean updateOkapi(final String ocCode) throws IOException, JSONException{
         //TODO: is_found mit User-Id und Anzahl logs.
+	final String userId = getUserUuid();
         final String detailUrl = ("https://www.opencaching.de/okapi/services/caches/geocache?"+
                                   "cache_code="+ocCode+
                                   "&langpref=de&"+
                                   "fields=name|location|type|status|owner|gc_code|size2|difficulty|terrain|short_description|description|hints2|images|trackables|alt_wpts|attr_acodes|date_hidden|internal_id|code|recommendations|latest_logs|is_found&"+
-                                  "user_uuid="+(URL.encodeURL (getUserUuid(), true))+
+                                  "user_uuid="+(URL.encodeURL (userId, true))+
                                   "&consumer_key=EgcYTe8ZZsWd4PqGXNu6"+
                                   "&lpc=all").replaceAll("\\|","%7C");
         Preferences.itself().log ("CacheDetail-URL: [" + detailUrl + "]");
@@ -376,7 +369,12 @@ public class OCXMLImporter {
         LogList cacheLogs = readLogList(cacheAsJson.getJSONArray("latest_logs"));
         syncHolder.getDetails().getCacheLogs().purgeLogs();
         for (int i=0; i < cacheLogs.size(); i++){
-            syncHolder.getDetails().getCacheLogs().merge(cacheLogs.getLog(i));
+	    Log log = cacheLogs.getLog(i);
+	    Preferences.itself().log ("Finder-Id: " + log.getFinderID());
+	    if (log.getFinderID().equalsIgnoreCase (userId)){
+		syncHolder.getDetails().setOwnLog(log);
+	    }
+            syncHolder.getDetails().getCacheLogs().merge(log);
         }
         CacheImages imageList = readImageList(cacheAsJson.getJSONArray("images"));
         loadPictures (syncHolder, imageList);
@@ -436,7 +434,7 @@ public class OCXMLImporter {
             String date = logAsJson.getString("date").substring(0, 10);
             String logger = user.getString("username");
             String message = logAsJson.getString("comment");
-            Log log = new Log(logID, finderID, icon, date, logger, message);
+            Log log = new Log(logID, finderId, icon, date, logger, message);
             result.add (log);
         }
 
