@@ -239,7 +239,8 @@ public class OCXMLImporter {
             inf.addWarning("Number of" + "\n...caches new/updated: " + numCacheImported + " / " + numCacheUpdated + "\n...cache descriptions new/updated: " + numDescImported + "\n...logs new/updated: " + numLogImported);
             inf.setInfo(finalMessage);
         }
-        inf.showButton(FormBase.YESB);
+        inf.setButtonText(MyLocale.getMsg(4107, "Done"), FormBase.CANCELB);
+	//         inf.showButton(FormBase.YESB);
     }
 
     private String getUserUuid () throws JSONException, IOException{
