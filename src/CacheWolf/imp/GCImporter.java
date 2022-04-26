@@ -1265,7 +1265,7 @@ public class GCImporter {
 			    ch.setName(getName(mapDetails));
 			    ch.setOwner(getOwner(mapDetails));
 			    ch.setHidden(getDateHidden(mapDetails));
-			    ch.setOCId(getUuid(mapDetails));
+			    ch.setIdOC(getUuid(mapDetails));
 			    try{
 				newCacheDetails = ch.getDetails();
 				//Nur ein Versuch:
@@ -1392,6 +1392,10 @@ public class GCImporter {
 	}
     }
 
+    private String getUuid (JSONObject cacheDescription){
+	return cacheDescription.getString("guid");
+    }
+    
     private void downloadCaches() {
         infB.addWarning(MyLocale.getMsg(5531, "New: ") + downloadList.size());
         int limit = Math.min(downloadList.size(), maxNew - newTillNow);
