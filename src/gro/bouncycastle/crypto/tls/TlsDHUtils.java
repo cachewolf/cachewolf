@@ -269,9 +269,8 @@ public class TlsDHUtils
         case FiniteFieldDHEGroup.ffdhe3072:
             return draft_ffdhe3072;
         case FiniteFieldDHEGroup.ffdhe4096:
-	throw new UnsupportedClassVersionError();/*
             return draft_ffdhe4096;
-*/        case FiniteFieldDHEGroup.ffdhe6144:
+        case FiniteFieldDHEGroup.ffdhe6144:
         	throw new UnsupportedClassVersionError();/*
             return draft_ffdhe6144;
 */        case FiniteFieldDHEGroup.ffdhe8192:
