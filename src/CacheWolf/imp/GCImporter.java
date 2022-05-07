@@ -1393,7 +1393,12 @@ public class GCImporter {
     }
 
     private String getUuid (JSONObject cacheDescription){
-	return cacheDescription.getString("guid");
+	try{
+	return cacheDescription.getString("g");
+	}
+	catch (JSONException e){
+	    throw new RuntimeException(e);
+	}
     }
     
     private void downloadCaches() {
