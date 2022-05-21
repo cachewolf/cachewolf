@@ -51,7 +51,7 @@ public class Attribute {
             {"07", "2516", "climbing", "A24", "10", "Difficult climbing"},//
             {"08", "2518", "compass", "47", "147", "Compass"}, // OC special
             {"09", "2520", "cow", "0", "43", "Watch for livestock"},//
-            {"10", "2522", "danger", "9", "23", "Dangerous area"},//
+            {"10", "2522", "danger", "A59", "23", "Dangerous area"},//
             {"11", "2524", "dogs", "0", "1", "Dogs"},//
             {"12", "2526", "fee", "36", "2", "Access or parking fee"},//
             {"13", "2528", "hiking", "25", "9", "Significant hike"},//
