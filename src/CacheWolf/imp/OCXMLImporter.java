@@ -164,7 +164,7 @@ public class OCXMLImporter {
         ch.setUpdated(false);
         isSyncSingle = true;
         try{
-            updateOkapi(ch.getCode());
+            updateOkapi(ch.getCode(), true, true);
         }
         catch (Exception e){
             Preferences.itself().log ("Error while updating OC-Cache: " + e);
@@ -187,10 +187,15 @@ public class OCXMLImporter {
             new InfoBox(MyLocale.getMsg(5500, "Error"), "Coordinates for centre must be set").wait(FormBase.OKB);
             return;
         }
-        final ImportGui importGui = new ImportGui(MyLocale.getMsg(130, "Download from opencaching"), ImportGui.ALL | ImportGui.DIST | ImportGui.INCLUDEFOUND | ImportGui.HOST, ImportGui.DESCRIPTIONIMAGE | ImportGui.SPOILERIMAGE | ImportGui.LOGIMAGE);
+        final ImportGui importGui = new ImportGui(MyLocale.getMsg(130, "Download from opencaching"),
+						  ImportGui.ALL | ImportGui.DIST | ImportGui.INCLUDEFOUND | ImportGui.HOST | ImportGui.MAXNUMBER | ImportGui.MAXUPDATE,
+						  ImportGui.DESCRIPTIONIMAGE | ImportGui.SPOILERIMAGE | ImportGui.LOGIMAGE);
         if (importGui.execute() == FormBase.IDCANCEL) {
             return;
         }
+	final int maxImport = importGui.getIntFromInput(importGui.maxNumberInput, Integer.MAX_VALUE);
+	final int  maxUpdate = importGui.getIntFromInput(importGui.maxNumberUpdates, Integer.MAX_VALUE);
+
         downloadPics = importGui.downloadDescriptionImages;
         Vm.showWait(true);
         String dist = importGui.maxDistanceInput.getText();
@@ -227,7 +232,7 @@ public class OCXMLImporter {
         inf.exec();
 
         isSyncSingle = false;
-        success = syncOkapi(okapiUrl);
+        success = syncOkapi(okapiUrl, maxUpdate, maxImport);
         //TODO: lastSync setzen und beim importieren zum Abgleich verwenden:
  
         MainForm.profile.saveIndex(Profile.SHOW_PROGRESS_BAR, Profile.FORCESAVE);
@@ -252,17 +257,30 @@ public class OCXMLImporter {
         return responseJson.getString("uuid");
     }
 
-    private boolean syncOkapi(String url){
+    private boolean syncOkapi(String url, final int maxUpdate, final int maxImport){
         String finalMessage = "Import successful";
         try{
             final String listOfAllCaches = UrlFetcher.fetch (url);
             Preferences.itself().log ("The result from cachesearch: \n" + listOfAllCaches + "\n\n");
             final JSONObject response = new JSONObject(listOfAllCaches);
             final JSONArray results = response.getJSONArray("results");
+	    int numUpdated = 0;
+	    int numImported = 0;
+
             for (int index = 0; index < results.length(); index++) {
                 //einzelnen Cache einlesen
                 final Object ocCode = results.get(index);
-                updateOkapi (ocCode.toString());
+                int updated = updateOkapi (ocCode.toString(), numUpdated < maxUpdate, numImported < maxImport);
+		switch(updated){
+		case 1:
+		    numUpdated++;
+		    break;
+		case 2:
+		    numImported++;
+		    break;
+		default:
+		    return true;
+		}
             }
             
             return true;
@@ -280,7 +298,14 @@ public class OCXMLImporter {
         }
     }
 
-    private boolean updateOkapi(final String ocCode) throws IOException, JSONException{
+    /**
+     * return true if a cache has been updated, false if it has been imported as new
+     */
+    private int updateOkapi(final String ocCode, final boolean canUpdate, final boolean canImport) throws IOException, JSONException{
+	if (!(canUpdate || canImport)){
+	    return 0;
+	}
+	
         //TODO: is_found mit User-Id und Anzahl logs.
 	final String userId = getUserUuid();
         final String detailUrl = ("https://www.opencaching.de/okapi/services/caches/geocache?"+
@@ -297,7 +322,11 @@ public class OCXMLImporter {
         //------------
         final int index = cacheDB.getIndex(ocCode);
         final CacheHolder syncHolder;
+	final int updated;
         if (index == -1) {
+	    if (!canImport){
+		return 2;
+	    }
             syncHolder = new CacheHolder();
 	    syncHolder.setCode (ocCode);
             Preferences.itself().log("Importing new Cache!");
@@ -305,17 +334,21 @@ public class OCXMLImporter {
             syncHolder.setNew(true);
             cacheDB.add(syncHolder);
             DBindexID.put(syncHolder.getIdOC(), syncHolder.getCode());
+	    updated = 2;
         }
         // update (overwrite) data
         else {
+	    if (!canUpdate){
+		return 1;
+	    }
             syncHolder = cacheDB.get(index);
-
             Preferences.itself().log("Updating existing Cache!");
             numCacheUpdated++;
             syncHolder.setNew(false);
             syncHolder.setIncomplete(false);
             cacheDB.get(index).update(syncHolder);
             DBindexID.put(syncHolder.getIdOC(), syncHolder.getCode());
+	    updated = 1;
         }
 	syncHolder.getDetails().setURL("https://opencaching.de/" + ocCode.toUpperCase());
         // clear data (picture, logs) if we do a complete Update
@@ -386,8 +419,8 @@ public class OCXMLImporter {
         syncHolder.getDetails().saveCacheXML(MainForm.profile.dataDir);
         syncHolder.getDetails().setUnsaved(true); // this makes CachHolder save the details in case that they are unloaded from memory
 
-        return true;
-    }
+        return updated;
+	}
 
     private String replaceEntitiesWithCharacters(String input){
 	input=STRreplace.replace(input, "&auml;","\u00e4");

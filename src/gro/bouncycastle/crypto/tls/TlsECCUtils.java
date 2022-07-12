@@ -550,8 +550,8 @@ public class TlsECCUtils
     }
     public static int readECExponent(int fieldSize, InputStream input) throws IOException
     {
-    	throw new UnsupportedClassVersionError();/* 
         BigInteger K = readECParameter(input);
+    	throw new UnsupportedClassVersionError();/* 
         if (K.bitLength() < 32)
         {
             int k = K.intValue();
