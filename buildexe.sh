@@ -1,5 +1,5 @@
 #!/bin/sh
-setenv LD_LIBRARY_PATH ~andi/tmp/git/cachewolf/programs
+export LD_LIBRARY_PATH=~andi/tmp/git/cachewolf/programs
 
 programs/ewecl programs/Jewel.ewe -c cw-pda.jnf
 programs/ewecl programs/Jewel.ewe -c cw-ppc2003.jnf

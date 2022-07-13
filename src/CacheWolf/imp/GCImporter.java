@@ -819,18 +819,21 @@ public class GCImporter {
             importGui = new ImportGui(MyLocale.getMsg(217, "Spider all finds from geocaching.com"), options, ImportGui.DESCRIPTIONIMAGE | ImportGui.SPOILERIMAGE | ImportGui.LOGIMAGE);
             // setting defaults for input
             importGui.maxNumberUpdates.setText("0");
-        } else if (menu == 0) {
+        }
+	else if (menu == 0) {
             options = options | ImportGui.TYPE | ImportGui.DIST | ImportGui.INCLUDEFOUND;
             if (Preferences.itself().askForMaxNumbersOnImport) {
                 options = options | ImportGui.MAXNUMBER | ImportGui.MAXUPDATE | ImportGui.MAXLOGS;
             }
             importGui = new ImportGui(MyLocale.getMsg(131, "Download from geocaching.com"), options, ImportGui.DESCRIPTIONIMAGE | ImportGui.SPOILERIMAGE | ImportGui.LOGIMAGE);
-        } else if (menu == 1) {
+        }
+	else if (menu == 1) {
             options = options | ImportGui.TYPE | ImportGui.DIST | ImportGui.INCLUDEFOUND | ImportGui.FILENAME;
             importGui = new ImportGui(MyLocale.getMsg(137, "Download along a Route from geocaching.com"), options, ImportGui.DESCRIPTIONIMAGE | ImportGui.SPOILERIMAGE | ImportGui.LOGIMAGE);
             importGui.maxDistanceInput.setText("0.5");
 
-        } else {
+        }
+	else {
             return false;
         }
 
@@ -854,8 +857,7 @@ public class GCImporter {
         cacheTypeRestriction = getCacheTypeRestriction(restrictedCacheType);
         //
         minDistance = 0.0; // no longer really used
-        // MainForm.profile.setMinDistGC(Convert.toString(0).replace(',', '.'));
-        //
+
         if ((options & ImportGui.DIST) > 0) {
             maxDistance = importGui.getDoubleFromInput(importGui.maxDistanceInput, 0);
             if (maxDistance == 0) {
@@ -1230,7 +1232,8 @@ public class GCImporter {
                 if (Preferences.itself().havePremiumMemberRights || !isPremiumOnly) {
                     if (ch == null) { // not in DB
                         downloadList.add(chWaypoint);
-                    } else {
+                    }
+		    else {
                         Preferences.itself().log("[AP:] Waypoint is in Database: [" + chWaypoint + "]");
                         if (ch.isPremiumCache() != isPremiumOnly) {
                             ch.setIsPremiumCache(isPremiumOnly);
@@ -1241,7 +1244,8 @@ public class GCImporter {
                             sureUpdateList.put(chWaypoint, ch);
                         }
                     }
-                } else {
+                }
+		else {
                     Preferences.itself().log("[!!!AP:] premium cache found: [" + chWaypoint + "]");
                     // ein PremiumCache für ein BasicMember
                     if (ch == null) {
@@ -1268,19 +1272,17 @@ public class GCImporter {
 			    ch.setIdOC(getUuid(mapDetails));
 			    try{
 				newCacheDetails = ch.getDetails();
-				//Nur ein Versuch:
-				// HIER WEITER
-				// URL für Logbuch: https://www.geocaching.com/seek/geocache_logs.aspx?guid=2fc13cb7-20cd-44b4-bb7c-094d84df43b1
 				final String url = "https://www.geocaching.com/seek/geocache_logs.aspx?guid=" + ch.getIdOC();
-				final String fetchResult = UrlFetcher.fetch(url);
-				
-				wayPointPage = fetchResult; //Result von call in Zeile davor
-				
+				final String fetchResult = UrlFetcher.fetch(url);				
+				wayPointPage = fetchResult; //Result von call in Zeile davor				
 				getLogs(true);
-			    }
+			    }			    
 			    catch(Exception e){
 				Preferences.itself().log ("Error while loading the logs: ",e, true);
 			    }
+			    getPmCacheCoordinates (ch, mapDetails);
+			    //!!!! -> naechster Schritt: newCache.setLastSync((new Time()).format("yyyyMMddHHmmss"));
+ 
                             ch.setWpt(Preferences.itself().curCentrePt); // or MainForm.profile.centre
                             ch.getDetails().setLongDescription(aCacheDescriptionOfListPage); // for Info
                             ch.saveCacheDetails();
@@ -1303,6 +1305,10 @@ public class GCImporter {
         return toDistance;
     }
 
+    private void getPmCacheCoordinates (CacheHolder ch, JSONObject mapDetails){
+	//!!!! -> Koordinaten ermitteln: (Trackables laden und geeignete koordinaten ermitteln.
+    }
+    
     private JSONObject getJsonDescriptionOfCache(String gcCode) {
         try {
             String url = MAP_URL + gcCode;
@@ -2242,7 +2248,8 @@ public class GCImporter {
                             }
                             ret = SPIDER_IGNORE_PREMIUM;
                         }
-                    } else if (wayPointPage.indexOf(unpublishedGeocache) > -1) {
+                    }
+		    else if (wayPointPage.indexOf(unpublishedGeocache) > -1) {
                         Preferences.itself().log("unpublished Geocache: " + newCache.getCode(), null);
                         spiderTrys = MAX_SPIDER_TRYS;
                         ret = SPIDER_IGNORE;
@@ -2255,8 +2262,9 @@ public class GCImporter {
 
                         newCache.setAvailable(!(wayPointPage.indexOf(unavailableGeocache) > -1));
                         newCache.setArchived(wayPointPage.indexOf(archivedGeocache) > -1);
-                        if (wayPointPage.indexOf(lockedGeocache) > -1)
+                        if (wayPointPage.indexOf(lockedGeocache) > -1){
                             newCache.setArchived(true);
+			}
                         extractor.set(wayPointPage, correctedCoordinate, ";", 0, Extractor.EXCLUDESTARTEND);
                         String extracted = extractor.findNext();
                         if (extracted.length() > 0) {
