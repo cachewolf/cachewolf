@@ -1271,6 +1271,7 @@ public class GCImporter {
 				//Nur ein Versuch:
 				// HIER WEITER
 				// URL für Logbuch: https://www.geocaching.com/seek/geocache_logs.aspx?guid=2fc13cb7-20cd-44b4-bb7c-094d84df43b1
+				final String url = "https://www.geocaching.com/seek/geocache_logs.aspx?guid=" + ch.getIdOC();
 				final String fetchResult = UrlFetcher.fetch(url);
 				
 				wayPointPage = fetchResult; //Result von call in Zeile davor
