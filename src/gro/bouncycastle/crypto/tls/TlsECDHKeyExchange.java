@@ -140,13 +140,14 @@ public class TlsECDHKeyExchange extends AbstractTlsKeyExchange
     public byte[] generateServerKeyExchange()
         throws IOException
     {
-    	throw new UnsupportedClassVersionError();/*
         if (!requiresServerKeyExchange())
         {
+            throw new UnsupportedClassVersionError();/*
             return null;
-        }
+*/        }
 
         // ECDH_anon is handled here, ECDHE_* in a subclass
+    	throw new UnsupportedClassVersionError();/*
 
         ByteArrayOutputStream buf = new ByteArrayOutputStream();
         this.ecAgreePrivateKey = TlsECCUtils.generateEphemeralServerKeyExchange(context.getSecureRandom(), namedCurves,
