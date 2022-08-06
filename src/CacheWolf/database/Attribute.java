@@ -113,7 +113,7 @@ public class Attribute {
             {"67", "2638", "tide", "41", "141", "Tide"}, // OC special
             {"68", "2640", "time", "39", "139", "Only available at specified times"}, // OC special
             {"69", "2642", "tools", "46", "0", "Special Tool required"},//
-            {"70", "2648", "wiki", "54", "154", "Investigation"}, // OC special
+            {"70", "2648", "wiki", "A14", "154", "Investigation"}, // OC special
             {"71", "2650", "wwwlink", "7", "107", "Hyperlink to another caching portal only"}, // OC special
             {"72", "2652", "landf", "0", "45", "Lost And Found Tour"}, //
             {"73", "2654", "rv", "0", "46", "Truck Driver/RV"}, //
