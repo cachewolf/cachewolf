@@ -141,9 +141,10 @@ public class TravelbugList extends MinML {
      */
     public String toHtml() {
         int size = tbList.size();
-        StringBuffer s = new StringBuffer(size * 300);
+        StringBuffer s = new StringBuffer(size * 300);	
         for (int i = 0; i < size; i++) {
-            s.append(getTB(i).toHtml());
+	    final String html = getTB(i).toHtml();
+            s.append(html);
         }
         return s.toString();
     }
@@ -156,7 +157,8 @@ public class TravelbugList extends MinML {
         StringBuffer s = new StringBuffer(size * 300);
         s.append("<TRAVELBUGS>\n");
         for (int i = 0; i < size; i++) {
-            s.append(getTB(i).toXML());
+	    final String xml = getTB(i).toXML();
+            s.append(xml);
         }
         s.append("</TRAVELBUGS>\n");
         return s.toString();
@@ -167,15 +169,20 @@ public class TravelbugList extends MinML {
      * must contain the enclosing <TRAVELBUGS> ... </TRAVELBUGS> XML tags.
      */
     public void addFromXML(String XMLString) {
-        try {
+	if (!XMLString.startsWith("<TRAVELBUGS>")){
+	    XMLString = "<TRAVELBUGS>" + XMLString + "</TRAVELBUGS>";
+	}
+	try {
             parse(new StringReader(XMLString));
-        } catch (Exception e) {
-            if (e instanceof NullPointerException)
-                Preferences.itself().log("Error reading cache-travelbug list: NullPointerException in Element " + lastName + ". Wrong attribute?", e, true);
-            else
-                Preferences.itself().log("Error reading cache-travelbug list: ", e);
         }
-        ;
+	catch (Exception e) {
+            if (e instanceof NullPointerException){
+                Preferences.itself().log("Error reading cache-travelbug list: NullPointerException in Element " + lastName + ". Wrong attribute?", e, true);
+	    }
+            else{
+                Preferences.itself().log("Error reading cache-travelbug list: ", e);
+	    }
+        }
     }
 
     /**
