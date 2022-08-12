@@ -170,14 +170,14 @@ public class TlsExtensionsUtils
 */
     	}
 
-/*    public static byte[] createPaddingExtension(int dataLength)
+    public static byte[] createPaddingExtension(int dataLength)
         throws IOException
     {
         TlsUtils.checkUint16(dataLength);
         return new byte[dataLength];
     }
 
-    public static byte[] createServerNameExtension(ServerNameList serverNameList)
+/*    public static byte[] createServerNameExtension(ServerNameList serverNameList)
         throws IOException
     {
         if (serverNameList == null)

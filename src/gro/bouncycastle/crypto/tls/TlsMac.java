@@ -108,13 +108,13 @@ public class TlsMac
      */
     public byte[] calculateMac(long seqNo, short type, byte[] message, int offset, int length)
     {
-    	throw new UnsupportedClassVersionError();/*
         ProtocolVersion serverVersion = context.getServerVersion();
         boolean isSSL = serverVersion.isSSL();
 
         byte[] macHeader = new byte[isSSL ? 11 : 13];
         TlsUtils.writeUint64(seqNo, macHeader, 0);
         TlsUtils.writeUint8(type, macHeader, 8);
+    	throw new UnsupportedClassVersionError();/*
         if (!isSSL)
         {
             TlsUtils.writeVersion(serverVersion, macHeader, 9);
