@@ -1281,7 +1281,7 @@ public class GCImporter {
 				Preferences.itself().log ("Error while loading the logs: ",e, true);
 			    }
 			    getPmCacheCoordinates (ch, mapDetails);
-			    //!!!! -> naechster Schritt: newCache.setLastSync((new Time()).format("yyyyMMddHHmmss"));
+			    //####!!!! -> naechster Schritt: newCache.setLastSync((new Time()).format("yyyyMMddHHmmss"));
  
                             ch.setWpt(Preferences.itself().curCentrePt); // or MainForm.profile.centre
                             ch.getDetails().setLongDescription(aCacheDescriptionOfListPage); // for Info
@@ -1306,7 +1306,11 @@ public class GCImporter {
     }
 
     private void getPmCacheCoordinates (CacheHolder ch, JSONObject mapDetails){
-	//!!!! -> Koordinaten ermitteln: (Trackables laden und geeignete koordinaten ermitteln.
+	//####!!!! -> Koordinaten ermitteln: (Trackables laden und geeignete koordinaten ermitteln.
+	//Zuerst im aktuellen Inventar schauen:
+	
+	//Keine aktuellen Trackables vorhanden, dann diese Adresse POSTen mit Parameter...
+	final String trackableUrl = "https://www.geocaching.com/track/search.aspx?wid="+ch.getIdOC();
     }
     
     private JSONObject getJsonDescriptionOfCache(String gcCode) {
