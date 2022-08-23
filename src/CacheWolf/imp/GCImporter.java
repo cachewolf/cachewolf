@@ -1556,8 +1556,8 @@ public class GCImporter {
                     Preferences.itself().log("Could not parse expires-date of auth-cookie " + e);
                     Preferences.itself().log("From preferences: " + expires);
                 }
+		Preferences.itself().log("[BEL:]  Auth-Cookie" + cookie.length() + ',' + expires + ','+isExpired);
             }
-	    Preferences.itself().log("[BEL:]  Auth-Cookie" + cookie.lenght() + ',' + expires + ','+isExpired);
 
             if (isExpired) {
                 byte ret = gcLogin(); // todo ? get the cookie for gcLogin, not for myAlias
