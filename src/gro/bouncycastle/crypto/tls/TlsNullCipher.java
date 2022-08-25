@@ -64,10 +64,9 @@ public class TlsNullCipher
         }
         else
         {
-        	throw new UnsupportedClassVersionError();/*
             writeMac = clientWriteMac;
             readMac = serverWriteMac;
-*/        }
+        }
     }
 
     public int getPlaintextLimit(int ciphertextLimit)

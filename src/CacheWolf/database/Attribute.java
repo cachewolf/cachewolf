@@ -111,7 +111,7 @@ public class Attribute {
             {"65", "2634", "steep", "A23", "127", "Hilly area"}, // OC special
             {"66", "2636", "submerged", "34", "134", "In the water"}, // OC special
             {"67", "2638", "tide", "41", "141", "Tide"}, // OC special
-            {"68", "2640", "time", "39", "139", "Only available at specified times"}, // OC special
+            {"68", "2640", "time", "A40", "139", "Only available at specified times"}, // OC special
             {"69", "2642", "tools", "46", "0", "Special Tool required"},//
             {"70", "2648", "wiki", "A14", "154", "Investigation"}, // OC special
             {"71", "2650", "wwwlink", "7", "107", "Hyperlink to another caching portal only"}, // OC special
