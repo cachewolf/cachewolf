@@ -1617,6 +1617,7 @@ public class GCImporter {
     public boolean login() {
 
         if (loggedIn) {
+	    Preferences.itself().log("[BEL:]  already logged in");
             return true;
         }
 
@@ -1630,6 +1631,7 @@ public class GCImporter {
             retrycount = retrycount + 1;
             boolean isExpired = true;
             if (Preferences.itself().hasGCLogin()) {
+		Preferences.itself().log("[BEL:]  hasGCLogin");
                 Hashtable ht = Preferences.itself().getGCLogin(Preferences.itself().gcLogin);
                 String expires = (String) ht.get("expires");
                 String cookie = (String) ht.get("auth");
@@ -1656,6 +1658,7 @@ public class GCImporter {
                     Preferences.itself().log("Could not parse expires-date of auth-cookie " + e);
                     Preferences.itself().log("From preferences: " + expires);
                 }
+		Preferences.itself().log("[BEL:]  Auth-Cookie" + cookie.length() + ',' + expires + ','+isExpired);
             }
 
             if (isExpired) {
@@ -1809,7 +1812,8 @@ public class GCImporter {
                 String expires;
                 if (login != null && login.get("expires") != null) {
                     expires = (String) login.get("expires");
-                } else {
+                }
+		else {
                     expires = "";
                 }
                 for (int i = 0; i < theCookie.length; i++) {

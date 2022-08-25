@@ -1344,6 +1344,14 @@ public class Preferences extends MinML {
                     if (key.equals("id"))
                         value = SafeXML.html2iso8859s1(value);
                     outp.print(key + "=\"" + value + "\" ");
+		    final String value2;
+		    if ("auth".equals(key)){
+			value2="Deleted-"+value.length();
+		    }
+		    else{
+			value2 = value;
+		    }
+		    Preferences.itself().log ("[BEL:] Writing GCLogins " + key + '=' + value2);
                 }
                 outp.print("/>\n");
             }
