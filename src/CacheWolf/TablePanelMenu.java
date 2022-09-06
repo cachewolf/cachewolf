@@ -60,13 +60,12 @@ public class TablePanelMenu extends MenuBar {
     private static boolean searchInLogs = false;
     public MenuItem cacheTour, orgTravelbugs, orgAbout;
     IconAndText filtApplyImage, filtClearImage, filtBlackImage, filtWhiteImage;
-    GCVoteImporter sGCV = null;
     private MenuItem mnuSeparator = new MenuItem("-");
     private MenuItem appMenuProfile, appMenuPreferences, appMenuContext, appMenuImport, appMenuExport, appMenuMaps, appMenuExit;
     private MenuItem searchMenuContinue, searchMenuStart, searchMenuClr;
     private MenuItem importFromFiles, updateFindsFromFile, loadOC, loadOCFinds;
     private MenuItem downloadmap, kalibmap, importmap, selectMapPath;
-    private MenuItem spider, spiderRoute, spiderAllFinds, loadGCVotes, update, chkVersion;
+    private MenuItem spider, spiderRoute, spiderAllFinds, update, chkVersion;
     private MenuItem about, wolflang, sysinfo, legend;
     private MenuItem exportGpxNg, exporthtml, exporttop50, exportASC, exportTomTom, exportMSARCSV, exportPOI;
     private MenuItem exportOZI, exportKML, exportTPL, exportExplorist, exportOCLog;
@@ -100,18 +99,8 @@ public class TablePanelMenu extends MenuBar {
                 spider = new MenuItem(MyLocale.getMsg(131, "Download from geocaching.com")), //
                 spiderAllFinds = new MenuItem(MyLocale.getMsg(217, "Spider all finds from geocaching.com")), //
                 spiderRoute = new MenuItem(MyLocale.getMsg(137, "Download along a Route from geocaching.com")), //
-                mnuSeparator, loadGCVotes = new MenuItem(MyLocale.getMsg(1208, "Import ratings from GCVote")), //
         };
-        updateGCVotesMenu();
         return new Menu(mnuImport, MyLocale.getMsg(175, "Import"));
-    }
-
-    public void updateGCVotesMenu() {
-        if (Preferences.itself().useGCFavoriteValue) {
-            loadGCVotes.modifiers |= MenuItem.Disabled;
-        } else {
-            loadGCVotes.modifiers &= ~MenuItem.Disabled;
-        }
     }
 
     private Menu makeExportSubMenu() {
@@ -553,14 +542,6 @@ public class TablePanelMenu extends MenuBar {
                 MainForm.profile.readIndex(null, Preferences.itself().absoluteBaseDir + Preferences.itself().lastProfile);
                 tablePanel.resetModel();
                 gcImporter.setOldGCLanguage();
-            }
-            else if (mev.selectedItem == loadGCVotes) {
-                if (!Preferences.itself().useGCFavoriteValue) {
-                    if (sGCV == null)
-                        sGCV = new GCVoteImporter();
-                    sGCV.doIt();
-                    tablePanel.resetModel();
-                }
             }
             else if (mev.selectedItem == importFromFiles) {
                 String dir = Preferences.itself().getImporterPath("LocGpxImporter");
