@@ -105,7 +105,7 @@ public class Attribute {
             {"59", "2620", "oconly", "A1", "106", "Only loggable at Opencaching"},//
             {"60", "2622", "othercache", "57", "157", "Other cache type"}, // OC special
             {"61", "2624", "overnight", "37", "137", "Overnight stay necessary"}, // OC special
-            {"62", "2644", "train", "10", "A60", "Active railway nearby"}, // OC special
+            {"62", "2644", "train", "A60", "10", "Active railway nearby"}, // OC special
             {"63", "2630", "riddle", "55", "0", ""},//OC ?
             {"64", "2646", "webcam", "A12", "132", "Webcam"}, // OC special
             {"65", "2634", "steep", "A23", "127", "Hilly area"}, // OC special
