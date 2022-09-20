@@ -30,7 +30,7 @@ import gro.bouncycastle.asn1.x9.X9ObjectIdentifiers;
 import gro.bouncycastle.crypto.ec.CustomNamedCurves;
 import gro.bouncycastle.crypto.params.AsymmetricKeyParameter;
 //import gro.bouncycastle.crypto.params.DHParameters;
-//import gro.bouncycastle.crypto.params.DHPublicKeyParameters;
+import gro.bouncycastle.crypto.params.DHPublicKeyParameters;
 import gro.bouncycastle.crypto.params.DHValidationParameters;
 //import gro.bouncycastle.crypto.params.DSAParameters;
 //import gro.bouncycastle.crypto.params.DSAPublicKeyParameters;
