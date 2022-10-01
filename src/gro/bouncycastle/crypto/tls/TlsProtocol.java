@@ -524,9 +524,8 @@ public abstract class TlsProtocol
 
     protected int applicationDataAvailable()
     {
-    	throw new UnsupportedClassVersionError();/*
         return applicationDataQueue.available();
-*/    }
+    }
 
     /**
      * Read data from the network. The method will return immediately, if there is still some data

@@ -523,7 +523,6 @@ public class PreferencesScreen extends Form {
                 Preferences.itself().askForMaxNumbersOnImport = chkAskForMaxValues.getState();
                 Preferences.itself().addPremiumGC = this.chkAddPremiumGC.getState();
                 Preferences.itself().useGCFavoriteValue = this.chkUseGCFavoriteValue.getState();
-                MainTab.itself.tablePanel.mainMenu.updateGCVotesMenu();
 
                 Preferences.itself().dirty = true;
                 Preferences.itself().savePreferences();
