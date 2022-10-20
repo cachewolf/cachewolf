@@ -1308,9 +1308,9 @@ public class GCImporter {
     private void getPmCacheCoordinates (CacheHolder ch, JSONObject mapDetails){
 	//####!!!! -> Koordinaten ermitteln: (Trackables laden und geeignete koordinaten ermitteln.
 	//Zuerst im aktuellen Inventar schauen:
-	final String payload = "{\"dto\":{\"data\":\""+ch.getCode()+"\",\"ut\":\"2\"}}";
-	final String inventarDesc = UrlFetcher.setpostData(payload);
-	Preferences.itself.log ("[AP]: " + inventarDesc);
+	//	int base35Code = getGsCode(ch.getCode();
+	//final String payload = "{\"dto\":{\"data\":\""+gsCode+"\",\"ut\":\"2\"}}";
+	//UrlFetcher.setpostData(payload);
 	//Siehe Zeile 1544ff.
 	
 	//Keine aktuellen Trackables vorhanden, dann diese Adresse POSTen mit Parameter...
