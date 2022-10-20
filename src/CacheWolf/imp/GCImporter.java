@@ -1309,7 +1309,8 @@ public class GCImporter {
 	//####!!!! -> Koordinaten ermitteln: (Trackables laden und geeignete koordinaten ermitteln.
 	//Zuerst im aktuellen Inventar schauen:
 	final String payload = "{\"dto\":{\"data\":\""+ch.getCode()+"\",\"ut\":\"2\"}}";
-	UrlFetcher.setpostData(payload);
+	final String inventarDesc = UrlFetcher.setpostData(payload);
+	Preferences.itself.log ("[AP]: " + inventarDesc);
 	//Siehe Zeile 1544ff.
 	
 	//Keine aktuellen Trackables vorhanden, dann diese Adresse POSTen mit Parameter...
