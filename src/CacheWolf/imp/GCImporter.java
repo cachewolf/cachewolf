@@ -1313,18 +1313,12 @@ public class GCImporter {
 		byte charVal = bytes[i];
 		result *= 16;
 		result += '0' <= charVal && charVal <= '9' ? charVal - '0' : 10 + charVal -'a';
-	    /*	while ( $#chars >= 0 ) {
-	    my $charVal = $chars[0];
-	    $result *=16;
-	    $result += $charVal + 10 - $aOrd 
-		if $aOrd <= $charVal && $charVal <= $zOrd;
-	    $result += $charVal - ord('0') 
-		if ord('0') <= $charVal && $charVal <= ord('9');
-	    shift @chars;
-	    */
 	    }
 	}
 	else{
+	    for (int i =0; i<bytes.length;i++){
+		byte charVal = bytes[i];
+	    }
 	    /*	while ( $#chars >= 0 ) {
 	    my $charVal = $chars[0];
 	    my $tmpResult = 0;
