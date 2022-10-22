@@ -1306,10 +1306,13 @@ public class GCImporter {
     }
 
     private int getBase35Code (final String gcCode){
-	byte[] bytes = gcCode.getBytes();
+	byte[] bytes = gcCode.toLowerCase().getBytes();
 	int result=0;
 	if (bytes.length < 5){
 	    for (int i =0; i<bytes.length;i++){
+		byte charVal = bytes[i];
+		result *= 16;
+		result += '0' <= charVal && charVal <= '9' ? charVal - '0' : 10 + charVal -'a';
 	    /*	while ( $#chars >= 0 ) {
 	    my $charVal = $chars[0];
 	    $result *=16;
