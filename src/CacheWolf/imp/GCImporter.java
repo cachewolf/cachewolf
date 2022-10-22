@@ -1305,6 +1305,10 @@ public class GCImporter {
         return toDistance;
     }
 
+    private int getBase35Code (final String gcCode){
+	byte[] bytes = gcCode.getBytes();
+	return 0;
+    }
     private void getPmCacheCoordinates (CacheHolder ch, JSONObject mapDetails){
 	//####!!!! -> Koordinaten ermitteln: (Trackables laden und geeignete koordinaten ermitteln.
 	//Zuerst im aktuellen Inventar schauen:
