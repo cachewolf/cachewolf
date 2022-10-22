@@ -42,9 +42,8 @@ public class ECAlgorithms
         case 1:
             return ps[0].multiply(ks[0]);
         case 2:
-        	throw new UnsupportedClassVersionError();/*
             return sumOfTwoMultiplies(ps[0], ks[0], ps[1], ks[1]);
-*/        default:
+        default:
         	throw new UnsupportedClassVersionError();/*
             break;
 */        }
