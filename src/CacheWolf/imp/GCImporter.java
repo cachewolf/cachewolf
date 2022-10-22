@@ -1307,6 +1307,40 @@ public class GCImporter {
 
     private int getBase35Code (final String gcCode){
 	byte[] bytes = gcCode.getBytes();
+	int result=0;
+	if (bytes.length < 5){
+	    for (int i =0; i<bytes.length;i++){
+	    /*	while ( $#chars >= 0 ) {
+	    my $charVal = $chars[0];
+	    $result *=16;
+	    $result += $charVal + 10 - $aOrd 
+		if $aOrd <= $charVal && $charVal <= $zOrd;
+	    $result += $charVal - ord('0') 
+		if ord('0') <= $charVal && $charVal <= ord('9');
+	    shift @chars;
+	    */
+	    }
+	}
+	else{
+	    /*	while ( $#chars >= 0 ) {
+	    my $charVal = $chars[0];
+	    my $tmpResult = 0;
+	    $tmpResult = $charVal + 10 - $aOrd 
+		if $aOrd <= $charVal && $charVal <= $zOrd;
+	    $tmpResult = $charVal - ord('0') 
+		if ord('0') <= $charVal && $charVal <= ord('9');
+	    $tmpResult-- if $charVal > ord('I');
+	    $tmpResult-- if $charVal > ord('L');
+	    $tmpResult-- if $charVal > ord('O');
+	    $tmpResult-- if $charVal > ord('S');
+	    $tmpResult-- if $charVal > ord('U');
+	    $result *= 31;
+	    $result += $tmpResult;
+	    shift @chars;
+	}    
+	$result += 65536 - 16 * (29791);
+	    */
+	}
 	return 0;
     }
     private void getPmCacheCoordinates (CacheHolder ch, JSONObject mapDetails){
