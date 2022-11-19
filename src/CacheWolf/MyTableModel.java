@@ -640,170 +640,142 @@ class MyComparer implements Comparer {
     Vector cacheDB;
 
     public MyComparer(CacheDB cacheDB, int colToCompare, int visibleSize) {
-        // visibleSize=MainTab.itself.tbP.myMod.numRows;
-        if (visibleSize < 2)
+        if (visibleSize < 2){
             return;
+	}
+	
         for (int i = visibleSize; i < cacheDB.size(); i++) {
             CacheHolder ch = cacheDB.get(i);
             ch.sort = "\uFFFF";
         }
-        if (colToCompare == 1) {
-            for (int i = 0; i < visibleSize; i++) {
-                CacheHolder ch = cacheDB.get(i);
-                ch.sort = String.valueOf(ch.getType());
-            }
-        } else if (colToCompare == 2) {
-            for (int i = 0; i < visibleSize; i++) {
-                CacheHolder ch = cacheDB.get(i);
-                ch.sort = String.valueOf(ch.getDifficulty());
-            }
-        } else if (colToCompare == 3) {
-            for (int i = 0; i < visibleSize; i++) {
-                CacheHolder ch = cacheDB.get(i);
-                ch.sort = String.valueOf(ch.getTerrain());
-            }
-        } else if (colToCompare == 4) {
-            for (int i = 0; i < visibleSize; i++) {
-                CacheHolder ch = cacheDB.get(i);
-                ch.sort = ch.getCode().toUpperCase();
-            }
-        } else if (colToCompare == 5) {
-            for (int i = 0; i < visibleSize; i++) {
-                CacheHolder ch = cacheDB.get(i);
-                ch.sort = ch.getName().trim().toLowerCase();
-            }
-        } else if (colToCompare == 6) {
-            for (int i = 0; i < visibleSize; i++) {
-                CacheHolder ch = cacheDB.get(i);
-                ch.sort = ch.getWpt().toString();
-            }
-        } else if (colToCompare == 7) {
-            for (int i = 0; i < visibleSize; i++) {
-                CacheHolder ch = cacheDB.get(i);
-                ch.sort = ch.getOwner().toLowerCase();
-            }
-        } else if (colToCompare == 8) {
-            for (int i = 0; i < visibleSize; i++) {
-                CacheHolder ch = cacheDB.get(i);
-                ch.sort = ch.getHidden();
-            }
-        } else if (colToCompare == 9) {
-            for (int i = 0; i < visibleSize; i++) {
-                CacheHolder ch = cacheDB.get(i);
-                ch.sort = ch.getStatus();
-            }
-        } else if (colToCompare == 10) {
-            for (int i = 0; i < visibleSize; i++) {
-                CacheHolder ch = cacheDB.get(i);
-                // CHECK Is the formatting correctly done?
-                if (ch.kilom == -1.0) {
-                    ch.sort = "\uFFFF";
-                } else {
-                    ch.sort = Common.formatDouble(ch.kilom * 1000, "000000000000");
-                }
-            }
-        } else if (colToCompare == 11) {
-            for (int i = 0; i < visibleSize; i++) {
-                CacheHolder ch = cacheDB.get(i);
-                if (ch.getBearing().equals("?")) {
-
-                    ch.sort = "\uFFFF";
-                } else {
-                    ch.sort = ch.getBearing();
-                }
-            }
-
-        } else if (colToCompare == 12) {
-            for (int i = 0; i < visibleSize; i++) {
-                CacheHolder ch = cacheDB.get(i);
-                ch.sort = Integer.toString(ch.getSize());
-            }
-        } else if (colToCompare == 13) {
-            for (int i = 0; i < visibleSize; i++) {
-                CacheHolder ch = cacheDB.get(i);
-                if (ch.isOC()) {
-                    ch.sort = MyLocale.formatLong(LogList.getScore(ch.getNumRecommended(), ch.getNumFoundsSinceRecommendation()), "000") + MyLocale.formatLong(ch.getNumRecommended(), "00000");
-                } else {
-                    if (Preferences.itself().useGCFavoriteValue) {
-                        ch.sort = MyLocale.formatLong(ch.getNumRecommended(), "000000") + "00000000";
-                    } else {
-                        int gcVote = ch.getNumRecommended();
-                        if (gcVote < 100) {
-                            ch.sort = MyLocale.formatLong(gcVote, "000") + "00000000";
-                        } else {
-                            int votes = gcVote / 100;
-                            gcVote = gcVote - 100 * votes;
-                            ch.sort = MyLocale.formatLong(gcVote, "000") + MyLocale.formatLong(votes, "00000000");
-                        }
-                    }
-                }
-            }
-        } else if (colToCompare == 14) {
-            for (int i = 0; i < visibleSize; i++) {
-                CacheHolder ch = cacheDB.get(i);
-                if (ch.isGC())
-                    if (ch.getIdOC().length() == 0)
-                        ch.sort = "\uFFFF";
-                    else
-                        ch.sort = ch.getIdOC();
-                else {
-                    ch.sort = OC.getGCWayPoint(ch.getOwner());
-                    if (ch.sort.length() == 0)
-                        ch.sort = "\uFFFF"; // ans Ende
-                }
-            }
-        } else if (colToCompare == 15) {
-            for (int i = 0; i < visibleSize; i++) {
-                CacheHolder ch = cacheDB.get(i);
-                if (ch.hasSolver()) {
-                    ch.sort = "1";
-                } else {
-                    ch.sort = "2";
-                }
-            }
-        } else if (colToCompare == 16) {
-            for (int i = 0; i < visibleSize; i++) {
-                CacheHolder ch = cacheDB.get(i);
-                if (ch.hasNote()) {
-                    ch.sort = "1";
-                } else {
-                    ch.sort = "2";
-                }
-            }
-        } else if (colToCompare == 17) {
-            for (int i = 0; i < visibleSize; i++) {
-                CacheHolder ch = cacheDB.get(i);
-                ch.sort = MyLocale.formatLong(ch.addiWpts.size(), "000");
-            }
-        } else if (colToCompare == 18) {
-            for (int i = 0; i < visibleSize; i++) {
-                CacheHolder ch = cacheDB.get(i);
-                ch.sort = MyLocale.formatLong(ch.getNoFindLogs(), "000");
-            }
-        } else if (colToCompare == 19) {
-            for (int i = 0; i < visibleSize; i++) {
-                CacheHolder ch = cacheDB.get(i);
-                ch.sort = ch.getLastSync();
-            }
-        } else if (colToCompare == 20) {
-            for (int i = 0; i < visibleSize; i++) {
-                CacheHolder ch = cacheDB.get(i);
-                if (ch.isPremiumCache()) {
-                    ch.sort = "1";
-                } else {
-                    ch.sort = "2";
-                }
-            }
-        } else if (colToCompare == 21) {
-            for (int i = 0; i < visibleSize; i++) {
-                CacheHolder ch = cacheDB.get(i);
-                if (ch.isSolved()) {
-                    ch.sort = "1";
-                } else {
-                    ch.sort = "2";
-                }
-            }
-        }
+	
+	for (int i = 0; i < visibleSize; i++) {
+	    CacheHolder ch = cacheDB.get(i);
+	    switch(colToCompare){
+	    case 1:
+		ch.sort = String.valueOf(ch.getType());
+		break;
+	    case 2:
+		ch.sort = String.valueOf(ch.getDifficulty());
+		break;
+	    case 3:
+		ch.sort = String.valueOf(ch.getTerrain());
+		break;
+	    case 4:
+		ch.sort = ch.getCode().toUpperCase();
+		break;
+	    case 5:
+		ch.sort = ch.getName().trim().toLowerCase();
+		break;
+	    case 6:
+		ch.sort = ch.getWpt().toString();
+		break;
+	    case 7:
+		ch.sort = ch.getOwner().toLowerCase();
+		break;
+	    case 8:
+		ch.sort = ch.getHidden();
+		break;
+	    case 9:
+		ch.sort = ch.getStatus();
+		break;
+	    case 10:
+		// CHECK Is the formatting correctly done?
+		if (ch.kilom == -1.0) {
+		    ch.sort = "\uFFFF";
+		}
+		else {
+		    ch.sort = Common.formatDouble(ch.kilom * 1000, "000000000000");
+		}
+		break;
+	    case 11:
+		if (ch.getBearing().equals("?")) {
+		    ch.sort = "\uFFFF";
+		}
+		else {
+		    ch.sort = ch.getBearing();
+		}
+		break;        
+	    case 12:
+		ch.sort = Integer.toString(ch.getSize());
+		break;
+	    case 13:
+		if (ch.isOC()) {
+		    ch.sort = MyLocale.formatLong(LogList.getScore(ch.getNumRecommended(), ch.getNumFoundsSinceRecommendation()), "000") + MyLocale.formatLong(ch.getNumRecommended(), "00000");
+		}
+		else {
+		    if (Preferences.itself().useGCFavoriteValue) {
+			ch.sort = MyLocale.formatLong(ch.getNumRecommended(), "000000") + "00000000";
+		    }
+		    else {
+			int gcVote = ch.getNumRecommended();
+			if (gcVote < 100) {
+			    ch.sort = MyLocale.formatLong(gcVote, "000") + "00000000";
+			}
+			else {
+			    int votes = gcVote / 100;
+			    gcVote = gcVote - 100 * votes;
+			    ch.sort = MyLocale.formatLong(gcVote, "000") + MyLocale.formatLong(votes, "00000000");
+			}
+		    }
+		}
+		break;
+	    case 14:
+		if (ch.isGC()){
+		    if (ch.getIdOC().length() == 0){
+			ch.sort = "\uFFFF";
+		    }
+		    else{
+			ch.sort = ch.getIdOC();
+		    }
+		}
+		else {
+		    ch.sort = OC.getGCWayPoint(ch.getOwner());
+		    if (ch.sort.length() == 0){
+			ch.sort = "\uFFFF"; // ans Ende
+		    }
+		}
+		break;
+	    case 15:
+		if (ch.hasSolver()) {
+		    ch.sort = "1";
+		}
+		else {
+		    ch.sort = "2";
+		}
+		break;
+	    case 16:
+		if (ch.hasNote()) {
+		    ch.sort = "1";
+		}
+		else {
+		    ch.sort = "2";
+		}
+		break;
+	    case 17:
+		ch.sort = MyLocale.formatLong(ch.addiWpts.size(), "000");
+		break;
+	    case 18:
+		ch.sort = MyLocale.formatLong(ch.getNoFindLogs(), "000");
+		break;
+	    case 19:
+		ch.sort = ch.getLastSync();
+		break;
+	    case 20:
+		if (ch.isPremiumCache()) {
+		    ch.sort = "1";
+		} else {
+		    ch.sort = "2";
+		}
+		break;
+	    case 21:
+		if (ch.isSolved()) {
+		    ch.sort = "1";
+		} else {
+		    ch.sort = "2";
+		}
+	    }
+	}
     }
 
     public int compare(Object o1, Object o2) {
