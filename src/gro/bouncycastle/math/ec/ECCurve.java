@@ -672,12 +672,14 @@ public abstract class ECCurve
 
         private static FiniteField buildField(int m, int k1, int k2, int k3)
         {
-        	throw new UnsupportedClassVersionError();/*
             if (k1 == 0)
             {
-                throw new IllegalArgumentException("k1 must be > 0");
+        	throw new UnsupportedClassVersionError();/*
+							   throw new IllegalArgumentException("k1 must be > 0");
+							 */
             }
 
+	    throw new UnsupportedClassVersionError();/*
             if (k2 == 0)
             {
                 if (k3 != 0)
