@@ -123,7 +123,12 @@ public class TablePanelStatusBar extends CellPanel {
             }
             if (ev.target == btnNoSorting) {
                 Preferences.itself().sortAutomatic = !Preferences.itself().sortAutomatic;
-                myTableModel.sortTable(-1, true);
+		if (Preferences.itself().sortAutomatic){
+		    myTableModel.sortTable(10, true);
+		}
+		else{
+		    myTableModel.sortTable(-1,true);
+		}
             }
             Gui.takeFocus(MainTab.itself.tablePanel.myTableControl, ControlConstants.ByKeyboard);
         }
