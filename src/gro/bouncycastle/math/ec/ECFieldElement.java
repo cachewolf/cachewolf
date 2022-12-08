@@ -699,12 +699,11 @@ public abstract class ECFieldElement
             // No check performed here for performance reasons. Instead the
             // elements involved are checked in ECPoint.F2m
             // checkFieldElements(this, b);
-        	throw new UnsupportedClassVersionError();/*
             LongArray iarrClone = (LongArray)this.x.clone();
             F2m bF2m = (F2m)b;
             iarrClone.addShiftedByWords(bF2m.x, 0);
             return new F2m(m, ks, iarrClone);
-*/        }
+        }
 
         public ECFieldElement addOne()
         {
