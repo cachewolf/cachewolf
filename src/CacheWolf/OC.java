@@ -27,16 +27,17 @@ public final class OC {
     public final static int OC_PREFIX = 1;
     public final static String[][] OCSites = {//
             {"www.opencaching.de", "OC"},// 1
-            {"www.opencaching.pl", "OP"},// 2
-            {"www.opencaching.cz", "OZ"},// 3
-            {"www.opencaching.org.uk", "OK"},// 4
-            {"www.opencaching.se", "OS"},// 5
-            {"www.opencaching.no", "ON"},// 6
-            {"www.opencaching.us", "OU"},// 7
-            {"www.opencachingspain.es", "OC"},// 8 !!!
-            {"www.opencaching.it", "OC"},// 9 !!!
-            {"www.opencaching.jp", "OJ"},// 10
-            {"www.opencaching.nl", "OB"},// 11
+	    //Currently, only de is supported:
+            //{"www.opencaching.pl", "OP"},// 2
+            //{"www.opencaching.cz", "OZ"},// 3
+            //{"www.opencaching.org.uk", "OK"},// 4
+            //{"www.opencaching.se", "OS"},// 5
+            //{"www.opencaching.no", "ON"},// 6
+            //{"www.opencaching.us", "OU"},// 7
+            //{"www.opencachingspain.es", "OC"},// 8 !!!
+            //{"www.opencaching.it", "OC"},// 9 !!!
+            //{"www.opencaching.jp", "OJ"},// 10
+            //{"www.opencaching.nl", "OB"},// 11
     };
 
     /**
