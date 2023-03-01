@@ -1610,11 +1610,11 @@ public abstract class ECPoint
 
             if (x != null)
             {
-            	throw new UnsupportedClassVersionError();/*
                 // Check if x and y are elements of the same field
                 ECFieldElement.F2m.checkFieldElements(this.x, this.y);
 
                 // Check if x and a are elements of the same field
+            	throw new UnsupportedClassVersionError();/*
                 if (curve != null)
                 {
                     ECFieldElement.F2m.checkFieldElements(this.x, this.curve.getA());
