@@ -1349,7 +1349,8 @@ public class GCImporter {
 	//Siehe Zeile 1544ff.
 	
 	//Keine aktuellen Trackables vorhanden, dann diese Adresse POSTen mit Parameter...
-	final String trackableUrl = "https://www.geocaching.com/track/search.aspx?wid="+ch.getIdOC();
+	//final String trackableUrl = "https://www.geocaching.com/track/search.aspx?wid="+ch.getIdOC();
+	final String detailUrl = "https://www.geocaching.com/api/proxy/web/v1/geocache/" + ch.getCode();
     }
     
     private JSONObject getJsonDescriptionOfCache(String gcCode) {

@@ -23,7 +23,6 @@ public abstract class WNafUtil
             return EMPTY_INTS;
         }
 
-        throw new UnsupportedClassVersionError();/*
         BigInteger _3k = k.shiftLeft(1).add(k);
 
         int bits = _3k.bitLength();
@@ -34,6 +33,7 @@ public abstract class WNafUtil
         int highBit = bits - 1, length = 0, zeroes = 0;
         for (int i = 1; i < highBit; ++i)
         {
+        throw new UnsupportedClassVersionError();/*
             if (!diff.testBit(i))
             {
                 ++zeroes;
@@ -44,8 +44,10 @@ public abstract class WNafUtil
             naf[length++] = (digit << 16) | zeroes;
             zeroes = 1;
             ++i;
+						 */
         }
 
+        throw new UnsupportedClassVersionError();/*
         naf[length++] = (1 << 16) | zeroes;
 
         if (naf.length > length)
