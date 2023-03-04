@@ -1262,12 +1262,13 @@ public class GCImporter {
                             MainForm.profile.cacheDB.add(ch);
 
                             ch.setIsPremiumCache(true);
-                            JSONObject mapDetails = getJsonDescriptionOfCache(chWaypoint);
 
                             // next 2 for to avoid warning triangle
                             Preferences.itself().log("[!!!AP:] premium cache found, content is: [" + aCacheDescriptionOfListPage + "]");
                             ch.setType(CacheType.CW_TYPE_CUSTOM);
                             //Hier besser Json von map.details holen:
+			    //Neue Methode::::
+                            JSONObject mapDetails = getJsonDescriptionOfCache(chWaypoint);
                             ch.setType(getWayPointType(mapDetails));
                             ch.setSize(getCacheSize(mapDetails));
 			    ch.setDifficulty(getDifficulty(mapDetails));
@@ -1276,6 +1277,7 @@ public class GCImporter {
 			    ch.setOwner(getOwner(mapDetails));
 			    ch.setHidden(getDateHidden(mapDetails));
 			    ch.setIdOC(getUuid(mapDetails));
+			    //Ende neue Methode, und dann damit nach getCacheByWaypointName!!!
 			    try{
 				newCacheDetails = ch.getDetails();
 				final String url = "https://www.geocaching.com/seek/geocache_logs.aspx?guid=" + ch.getIdOC();
@@ -1287,12 +1289,13 @@ public class GCImporter {
 				Preferences.itself().log ("Error while loading the logs: ",e, true);
 			    }
 			    getPmCacheCoordinates (ch, mapDetails);
-			    //####!!!! -> naechster Schritt: newCache.setLastSync((new Time()).format("yyyyMMddHHmmss"));
+			    ch.setLastSync((new Time()).format("yyyyMMddHHmmss"));
 			    ch.getDetails().setLongDescription(aCacheDescriptionOfListPage); // for Info
                             ch.saveCacheDetails();
 
                         }
-                    } else {
+                    }
+		    else {
                         possibleUpdateList.remove(chWaypoint);
                     }
 
@@ -1309,52 +1312,7 @@ public class GCImporter {
         return toDistance;
     }
 
-    private int getBase35Code (final String gcCode){
-	byte[] bytes = gcCode.toLowerCase().getBytes();
-	int result=0;
-	if (bytes.length < 5){
-	    for (int i =0; i<bytes.length;i++){
-		byte charVal = bytes[i];
-		result *= 16;
-		result += '0' <= charVal && charVal <= '9' ? charVal - '0' : 10 + charVal -'a';
-	    }
-	}
-	else{
-	    for (int i =0; i<bytes.length;i++){
-		byte charVal = bytes[i];
-	    }
-	    /*	while ( $#chars >= 0 ) {
-	    my $charVal = $chars[0];
-	    my $tmpResult = 0;
-	    $tmpResult = $charVal + 10 - $aOrd 
-		if $aOrd <= $charVal && $charVal <= $zOrd;
-	    $tmpResult = $charVal - ord('0') 
-		if ord('0') <= $charVal && $charVal <= ord('9');
-	    $tmpResult-- if $charVal > ord('I');
-	    $tmpResult-- if $charVal > ord('L');
-	    $tmpResult-- if $charVal > ord('O');
-	    $tmpResult-- if $charVal > ord('S');
-	    $tmpResult-- if $charVal > ord('U');
-	    $result *= 31;
-	    $result += $tmpResult;
-	    shift @chars;
-	}    
-	$result += 65536 - 16 * (29791);
-	    */
-	}
-	return 0;
-    }
-
     private void getPmCacheCoordinates (CacheHolder ch, JSONObject mapDetails) {
-	//####!!!! -> Koordinaten ermitteln: (Trackables laden und geeignete koordinaten ermitteln.
-	//Zuerst im aktuellen Inventar schauen:
-	//	int base35Code = getGsCode(ch.getCode();
-	//final String payload = "{\"dto\":{\"data\":\""+gsCode+"\",\"ut\":\"2\"}}";
-	//UrlFetcher.setpostData(payload);
-	//Siehe Zeile 1544ff.
-	
-	//Keine aktuellen Trackables vorhanden, dann diese Adresse POSTen mit Parameter...
-	//final String trackableUrl = "https://www.geocaching.com/track/search.aspx?wid="+ch.getIdOC();
 	final String detailUrl = "https://www.geocaching.com/api/proxy/web/v1/geocache/" + ch.getCode();
 	try{
     	    String response = UrlFetcher.fetch(detailUrl);
@@ -1539,6 +1497,7 @@ public class GCImporter {
      * @return 1 if spider was successful, -1 if spider was cancelled (by closing the infobox etc...), 0 error, but continue with next cache
      */
     public int spiderSingle(final CacheHolder cacheInDB, InfoBox pInfB) {
+	Preferences.itself().log("[spiderSingle] Updating " + cacheInDB.getCode());
         int ret = SPIDER_CANCEL;
         if (login()) {
             this.infB = pInfB;
@@ -2291,6 +2250,7 @@ public class GCImporter {
     }
 
     private int getCacheByWaypointName(boolean fetchTBs) {
+	Preferences.itself().log("[AP] getCacheByWaypointName called" + newCache.getCode () + " :PM " + newCache.isPremiumCache());
         int ret = SPIDER_OK;
         CacheHolder chOld = MainForm.profile.cacheDB.get(newCache.getCode());
         boolean isInDB = chOld != null;
@@ -2302,13 +2262,18 @@ public class GCImporter {
             final int MAX_SPIDER_TRYS = 3;
             while (spiderTrys++ < MAX_SPIDER_TRYS) {
                 ret = fetchWayPointPage(newCache.getCode());
+		Preferences.itself().log("[AP] getCacheByWaypointName called" + newCache.getCode () + " :ret= " + ret);
                 if (ret == SPIDER_OK) {
-                    newCache.setIsPremiumCache(wayPointPage.indexOf(premiumGeocache) > -1);
-                    if (infB.isClosed())
+		    boolean isPmCache = wayPointPage.indexOf(premiumGeocache) > -1;
+		    Preferences.itself().log("[AP] getCacheByWaypointName called" + newCache.getCode () + " :isPM = " + isPmCache);
+                    newCache.setIsPremiumCache(isPmCache);
+                    if (infB.isClosed()){
                         ret = SPIDER_CANCEL;
+		    }
                     else if (newCache.isPremiumCache()) {
                         if (!Preferences.itself().havePremiumMemberRights) {
                             spiderTrys = MAX_SPIDER_TRYS; // retry zwecklos da BasicMember
+			    //Hier update PM? Jawoll!
                             if (isInDB) {
                                 chOld.setIsPremiumCache(true);
                                 chOld.setLastSync(""); //
@@ -2411,7 +2376,7 @@ public class GCImporter {
 
             if ((spiderTrys >= MAX_SPIDER_TRYS) && (ret == SPIDER_OK)) {
                 Preferences.itself().log(">>> Failed to spider cache. Number of retrys exhausted.", null);
-                int decision = new InfoBox(MyLocale.getMsg(5500, "Error"), MyLocale.getMsg(5515, "Failed to load cache.%0aPleas check your internet connection.%0aRetry?")).wait(FormBase.DEFOKB | FormBase.NOB | FormBase.CANCELB);
+                int decision = new InfoBox(MyLocale.getMsg(5500, "Error"), MyLocale.getMsg(5515, "Failed to load cache.%0aPlease check your internet connection.%0aRetry?")).wait(FormBase.DEFOKB | FormBase.NOB | FormBase.CANCELB);
                 if (decision == FormBase.IDOK) {
                     continue; // retry even if failure
                 } else if (decision == FormBase.IDNO) {
@@ -2674,7 +2639,6 @@ public class GCImporter {
             final JSONArray data = response.getJSONArray("data");
             fertig = data.length() < num;
             for (int index = 0; index < data.length(); index++) {
-                Preferences.itself().log("[GCImporter.getLogs] examining logs #" + nLogs);
                 nLogs++;
 
                 try {
