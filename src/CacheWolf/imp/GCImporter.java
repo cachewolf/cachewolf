@@ -1269,15 +1269,7 @@ public class GCImporter {
                             ch.setType(CacheType.CW_TYPE_CUSTOM);
                             //Hier besser Json von map.details holen:
 			    //Neue Methode::::
-                            JSONObject mapDetails = getJsonDescriptionOfCache(chWaypoint);
-                            ch.setType(getWayPointType(mapDetails));
-                            ch.setSize(getCacheSize(mapDetails));
-			    ch.setDifficulty(getDifficulty(mapDetails));
-			    ch.setTerrain(getTerrain(mapDetails));
-			    ch.setName(getName(mapDetails));
-			    ch.setOwner(getOwner(mapDetails));
-			    ch.setHidden(getDateHidden(mapDetails));
-			    ch.setIdOC(getUuid(mapDetails));
+			    getWayPointDetails(ch);
 			    //TODO: getTBs...
 			    //Ende neue Methode, und dann damit nach getCacheByWaypointName!!!
 			    try{
@@ -1290,7 +1282,7 @@ public class GCImporter {
 			    catch(Exception e){
 				Preferences.itself().log ("Error while loading the logs: ",e, true);
 			    }
-			    getPmCacheCoordinates (ch, mapDetails);
+			    getPmCacheCoordinates (ch);
 			    ch.setLastSync((new Time()).format("yyyyMMddHHmmss"));
 			    ch.getDetails().setLongDescription(aCacheDescriptionOfListPage); // for Info
                             ch.saveCacheDetails();
@@ -1314,7 +1306,19 @@ public class GCImporter {
         return toDistance;
     }
 
-    private void getPmCacheCoordinates (CacheHolder ch, JSONObject mapDetails) {
+    private void getWayPointDetails(final CacheHolder ch){
+	JSONObject mapDetails = getJsonDescriptionOfCache(ch.getCode());
+	ch.setType(getWayPointType(mapDetails));
+	ch.setSize(getCacheSize(mapDetails));
+	ch.setDifficulty(getDifficulty(mapDetails));
+	ch.setTerrain(getTerrain(mapDetails));
+	ch.setName(getName(mapDetails));
+	ch.setOwner(getOwner(mapDetails));
+	ch.setHidden(getDateHidden(mapDetails));
+	ch.setIdOC(getUuid(mapDetails));
+    }
+    
+    private void getPmCacheCoordinates (CacheHolder ch) {
 	final String detailUrl = "https://www.geocaching.com/api/proxy/web/v1/geocache/" + ch.getCode();
 	try{
     	    String response = UrlFetcher.fetch(detailUrl);
@@ -2280,9 +2284,11 @@ public class GCImporter {
                             spiderTrys = MAX_SPIDER_TRYS; // retry zwecklos da BasicMember
 			    //Hier update PM? Jawoll!!!!
                             if (isInDB) {
-				JSONObject mapDetails = getJsonDescriptionOfCache(newCache.getCode());
-				newCache.setType(getWayPointType(mapDetails));
+				getWayPointDetails(chOld);
 				//Get Logs:
+				newCacheDetails = chOld.getDetails();
+				//Get TBs
+				//get ???
 
 				chOld.setIsPremiumCache(true);
 				chOld.setLastSync((new Time()).format("yyyyMMddHHmmss"));
