@@ -1255,6 +1255,7 @@ public class GCImporter {
                     Preferences.itself().log("[!!!AP:] premium cache found: [" + chWaypoint + "]");
                     // ein PremiumCache für ein BasicMember
                     if (ch == null) {
+			//downloadList.add(chWaypoint);
                         if (Preferences.itself().addPremiumGC) {
                             Preferences.itself().log("[!!!AP:] premium cache found, cache-holder is null: [" + chWaypoint + "]");
                             numPrivateNew = numPrivateNew + 1;
@@ -1277,6 +1278,7 @@ public class GCImporter {
 			    ch.setOwner(getOwner(mapDetails));
 			    ch.setHidden(getDateHidden(mapDetails));
 			    ch.setIdOC(getUuid(mapDetails));
+			    //TODO: getTBs...
 			    //Ende neue Methode, und dann damit nach getCacheByWaypointName!!!
 			    try{
 				newCacheDetails = ch.getDetails();
@@ -1455,9 +1457,11 @@ public class GCImporter {
                 if (test == SPIDER_CANCEL) {
                     infB.close(0);
                     break;
-                } else if (test == SPIDER_ERROR) {
+                }
+		else if (test == SPIDER_ERROR) {
                     spiderErrors++;
-                } else if (test == SPIDER_OK) {
+                }
+		else if (test == SPIDER_OK) {
                     MainForm.profile.cacheDB.add(newCache);
                     newCache.saveCacheDetails();
                 } // For test == SPIDER_IGNORE_PREMIUM and SPIDER_IGNORE there is nothing to do
@@ -2271,19 +2275,28 @@ public class GCImporter {
                         ret = SPIDER_CANCEL;
 		    }
                     else if (newCache.isPremiumCache()) {
+			Preferences.itself().log("[AP] getCacheByWaypointName going to update PM-Cache " + newCache.getCode ());
                         if (!Preferences.itself().havePremiumMemberRights) {
                             spiderTrys = MAX_SPIDER_TRYS; // retry zwecklos da BasicMember
-			    //Hier update PM? Jawoll!
+			    //Hier update PM? Jawoll!!!!
                             if (isInDB) {
-                                chOld.setIsPremiumCache(true);
-                                chOld.setLastSync(""); //
+				JSONObject mapDetails = getJsonDescriptionOfCache(newCache.getCode());
+				newCache.setType(getWayPointType(mapDetails));
+				//Get Logs:
+
+				chOld.setIsPremiumCache(true);
+				chOld.setLastSync((new Time()).format("yyyyMMddHHmmss"));
                                 chOld.saveCacheDetails();
-                            } else if (Preferences.itself().addPremiumGC) {
+                            }
+			    else if (Preferences.itself().addPremiumGC) {
                                 MainForm.profile.cacheDB.add(newCache);
                                 newCache.saveCacheDetails();
                             }
                             ret = SPIDER_IGNORE_PREMIUM;
                         }
+			else{
+			    Preferences.itself().log("[AP] getCacheByWaypointName get Data for PM-Cache " + newCache.getCode ());
+			}
                     }
 		    else if (wayPointPage.indexOf(unpublishedGeocache) > -1) {
                         Preferences.itself().log("unpublished Geocache: " + newCache.getCode(), null);
