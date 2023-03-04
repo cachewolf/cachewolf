@@ -80,7 +80,8 @@ public class TemplateTable {
             varParams.put("SHORTSIZE", CacheSize.getExportShortId(size));
             varParams.put("OWNER", (ModTyp == 0) ? SafeXML.cleanGPX(ch.getOwner()) : ch.getOwner());
             varParams.put("DATE", ch.getHidden());
-        } else {
+        }
+	else {
             difficulty = cache.getDifficulty();
             terrain = cache.getTerrain();
             size = cache.getSize();
@@ -93,7 +94,8 @@ public class TemplateTable {
                 varParams.put("TERRAIN", "");
                 varParams.put("SHORTTERRAIN", "");
                 varParams.put("SHTERRAIN", "");
-            } else {
+            }
+	    else {
                 varParams.put("DIFFICULTY", (difficulty < 0) ? "" : decSep.replaceAll(CacheTerrDiff.longDT(difficulty)));
                 String sHard = Integer.toString(difficulty);
                 varParams.put("SHORTDIFFICULTY", (difficulty < 0) ? "" : sHard);
@@ -163,6 +165,7 @@ public class TemplateTable {
         varParams.put("FOUND", cache.isFound() ? "TRUE" : "FALSE");
         varParams.put("OWN", cache.isOwned() ? "TRUE" : "FALSE");
         varParams.put("PM", cache.isPremiumCache() ? "TRUE" : "FALSE");
+
         if (!cache.isAvailable()) {
             varParams.put("IFNOTAVAILABLE", "-");
         }
@@ -181,61 +184,86 @@ public class TemplateTable {
         if (cache.isPremiumCache()) {
             varParams.put("IFPM", "?");
         }
-        if (cache.getType() == CacheType.CW_TYPE_TRADITIONAL) {
-            varParams.put("IFTRADITIONAL", "TR");
-        }
-        if (cache.getType() == CacheType.CW_TYPE_MULTI) {
-            varParams.put("IFMULTI", "MU");
-        }
-        if (cache.getType() == CacheType.CW_TYPE_MYSTERY) {
-            varParams.put("IFMYSTERY", "UN");
-        }
-        if (cache.getType() == CacheType.CW_TYPE_EVENT) {
-            varParams.put("IFEVENT", "EV");
-        }
-        if (cache.getType() == CacheType.CW_TYPE_CITO) {
-            varParams.put("IFCITO", "CI");
-        }
-        if (cache.getType() == CacheType.CW_TYPE_EARTH) {
-            varParams.put("IFEARTH", "EA");
-        }
-        if (cache.getType() == CacheType.CW_TYPE_MEGA_EVENT) {
-            varParams.put("IFMEGA", "ME");
-        }
-        if (cache.getType() == CacheType.CW_TYPE_GIGA_EVENT) {
-            varParams.put("IFGIGA", "GI");
-        }
-        if (cache.getType() == CacheType.CW_TYPE_LAB) {
-            varParams.put("IFLAB", "LA");
-        }
-        if (cache.getType() == CacheType.CW_TYPE_LETTERBOX) {
-            varParams.put("IFLETTERBOX", "LB");
-        }
-        if (cache.getType() == CacheType.CW_TYPE_WEBCAM) {
-            varParams.put("IFWEBCAM", "WC");
-        }
-        if (cache.getType() == CacheType.CW_TYPE_WHEREIGO) {
-            varParams.put("IFWHEREIGO", "WG");
-        }
-        if (cache.getType() == CacheType.CW_TYPE_PARKING) {
-            varParams.put("IFPARKING", "PA");
-        }
-        if (cache.getType() == CacheType.CW_TYPE_STAGE) {
-            varParams.put("IFSTAGE", "ST");
-        }
-        if (cache.getType() == CacheType.CW_TYPE_QUESTION) {
-            varParams.put("IFQUESTION", "QU");
-        }
-        if (cache.getType() == CacheType.CW_TYPE_FINAL) {
-            varParams.put("IFFINAL", "FI");
-        }
-        if (cache.getType() == CacheType.CW_TYPE_TRAILHEAD) {
-            varParams.put("IFTRAILHEAD", "TH");
-        }
-        if (cache.getType() == CacheType.CW_TYPE_REFERENCE) {
-            varParams.put("IFREFERENCE", "RE");
-        }
-        varParams.put("VOTE", cache.getRecommended());
+
+	switch (cache.getType()){
+	    case CacheType.CW_TYPE_TRADITIONAL:
+	        varParams.put("IFTRADITIONAL", "TR");
+	        break;        
+	    case CacheType.CW_TYPE_MULTI:
+                varParams.put("IFMULTI", "MU");
+		break;        
+            case CacheType.CW_TYPE_MYSTERY:
+		varParams.put("IFMYSTERY", "UN");
+                break;
+            case CacheType.CW_TYPE_EVENT:
+                varParams.put("IFEVENT", "EV");
+	        break;
+            case CacheType.CW_TYPE_CITO:
+                varParams.put("IFCITO", "CI");
+	        break;
+            case CacheType.CW_TYPE_EARTH:
+                varParams.put("IFEARTH", "EA");
+	        break;
+            case CacheType.CW_TYPE_MEGA_EVENT:
+                varParams.put("IFMEGA", "ME");
+	        break;
+            case CacheType.CW_TYPE_GIGA_EVENT:
+                varParams.put("IFGIGA", "GI");
+	        break;
+            case CacheType.CW_TYPE_LAB:
+                varParams.put("IFLAB", "LA");
+	        break;
+            case CacheType.CW_TYPE_LETTERBOX:
+                varParams.put("IFLETTERBOX", "LB");
+	        break;
+            case CacheType.CW_TYPE_WEBCAM:
+                varParams.put("IFWEBCAM", "WC");
+	        break;
+            case CacheType.CW_TYPE_WHEREIGO:
+                varParams.put("IFWHEREIGO", "WG");
+	        break;
+            case CacheType.CW_TYPE_PARKING:
+                varParams.put("IFPARKING", "PA");
+	        break;
+            case CacheType.CW_TYPE_STAGE:
+                varParams.put("IFSTAGE", "ST");
+	        break;
+            case CacheType.CW_TYPE_QUESTION:
+                varParams.put("IFQUESTION", "QU");
+	        break;
+            case CacheType.CW_TYPE_FINAL:
+                varParams.put("IFFINAL", "FI");
+	        break;
+            case CacheType.CW_TYPE_TRAILHEAD:
+                varParams.put("IFTRAILHEAD", "TH");
+	        break;
+            case CacheType.CW_TYPE_REFERENCE:
+                varParams.put("IFREFERENCE", "RE");
+	        break;
+            case CacheType.CW_TYPE_CUSTOM:
+                varParams.put("IFCUSTOM", "CU");
+	        break;
+            case CacheType.CW_TYPE_VIRTUAL:
+                varParams.put("IFVIRTUAL", "VI");
+	        break;
+            case CacheType.CW_TYPE_DRIVE_IN:
+                varParams.put("IFDRIVEIN", "DI");
+	        break;
+            case CacheType.CW_TYPE_LOCATIONLESS:
+                varParams.put("IFLOCATIONLESS", "LL");
+	        break;
+            case CacheType.CW_TYPE_APE:
+                varParams.put("IFAPE", "AP");
+	        break;
+            case CacheType.CW_TYPE_MAZE:
+                varParams.put("IFMAZE", "MZ");
+	        break;
+   	    default:
+                varParams.put("IFUNKNOWN", "NN");
+	        break;
+	}
+
+	varParams.put("VOTE", cache.getRecommended());
         if (chD == null) {
             varParams.put("URL", "");
             varParams.put("DESCRIPTION", "");

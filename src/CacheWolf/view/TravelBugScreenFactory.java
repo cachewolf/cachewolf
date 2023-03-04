@@ -72,13 +72,16 @@ public class TravelBugScreenFactory {
                 // ignore?? VM on WinPC seems to have no classloader
                 return new PDATravelbugScreen(tbl, title, allowNew.booleanValue());
             }
-        } else if (isSwing) {
+        }
+        else if (isSwing) {
             throw new InstantiationError("No Swing GUI available");
             // return new TravelbugJourneyScreen(model);
-        } else if (isAndroid) {
+        }
+        else if (isAndroid) {
             throw new InstantiationError("No Android GUI available");
             // return new TravelbugJourneyScreen(model);
-        } else {
+        }
+        else {
             return new TravelbugScreen(tbl, title, allowNew.booleanValue());
         }
     }
