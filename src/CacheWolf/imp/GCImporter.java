@@ -623,6 +623,11 @@ public class GCImporter {
 
         Time startZeit = new Time();
         while (nextPos != null) {
+	    try{
+		Thread.sleep(5*60*1000L);
+	    }
+	    catch (InterruptedException e){}
+	    
             if (importGui.getFileName().length() == 0) {
                 nextPos = nextRoutePoint(startPos, lateralDistance);
             } else {
@@ -1283,9 +1288,7 @@ public class GCImporter {
 			    }
 			    getPmCacheCoordinates (ch, mapDetails);
 			    //####!!!! -> naechster Schritt: newCache.setLastSync((new Time()).format("yyyyMMddHHmmss"));
- 
-                            ch.setWpt(Preferences.itself().curCentrePt); // or MainForm.profile.centre
-                            ch.getDetails().setLongDescription(aCacheDescriptionOfListPage); // for Info
+			    ch.getDetails().setLongDescription(aCacheDescriptionOfListPage); // for Info
                             ch.saveCacheDetails();
 
                         }
@@ -1361,7 +1364,8 @@ public class GCImporter {
 	    Preferences.itself().log("                  postedCoordinates:" + postedCoordinates + "\n\n");
 	    double lat = postedCoordinates.getDouble("latitude");
 	    double lon = postedCoordinates.getDouble("longitude");
-	    CWPoint coordinates = new CWPoint(lat, lon);	    
+	    CWPoint coordinates = new CWPoint(lat, lon);
+	    ch.setWpt(coordinates);
 	}
 	catch (Exception e){
 	    Preferences.itself().log ("Error while loading the details: ",e, true);
