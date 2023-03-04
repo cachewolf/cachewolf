@@ -34,6 +34,7 @@ import ewe.io.AsciiCodec;
 import ewe.io.File;
 import ewe.io.FileBase;
 import ewe.io.FileInputStream;
+import ewe.io.IOException;
 import ewe.net.URL;
 import ewe.sys.Time;
 import ewe.sys.Vm;
@@ -1340,7 +1341,8 @@ public class GCImporter {
 	}
 	return 0;
     }
-    private void getPmCacheCoordinates (CacheHolder ch, JSONObject mapDetails){
+
+    private void getPmCacheCoordinates (CacheHolder ch, JSONObject mapDetails) {
 	//####!!!! -> Koordinaten ermitteln: (Trackables laden und geeignete koordinaten ermitteln.
 	//Zuerst im aktuellen Inventar schauen:
 	//	int base35Code = getGsCode(ch.getCode();
@@ -1351,6 +1353,20 @@ public class GCImporter {
 	//Keine aktuellen Trackables vorhanden, dann diese Adresse POSTen mit Parameter...
 	//final String trackableUrl = "https://www.geocaching.com/track/search.aspx?wid="+ch.getIdOC();
 	final String detailUrl = "https://www.geocaching.com/api/proxy/web/v1/geocache/" + ch.getCode();
+	try{
+    	    String response = UrlFetcher.fetch(detailUrl);
+	    Preferences.itself().log("[AP!]: Result from detail-urllfetch:\n" + response + "\n\n");
+	    JSONObject json = new JSONObject(response);
+	    JSONObject postedCoordinates = json.getJSONObject("postedCoordinates");
+	    Preferences.itself().log("                  postedCoordinates:" + postedCoordinates + "\n\n");
+	    double lat = postedCoordinates.getDouble("latitude");
+	    double lon = postedCoordinates.getDouble("longitude");
+	    CWPoint coordinates = new CWPoint(lat, lon);	    
+	}
+	catch (Exception e){
+	    Preferences.itself().log ("Error while loading the details: ",e, true);
+	}
+	
     }
     
     private JSONObject getJsonDescriptionOfCache(String gcCode) {
@@ -1379,7 +1395,10 @@ public class GCImporter {
 	try{
 	    JSONObject container = cacheDescription.getJSONObject("container");
 	    final String containerSizeText = container.getString("text");
-	    if ("small".equalsIgnoreCase(containerSizeText)){
+	    if ("micro".equalsIgnoreCase(containerSizeText)){
+		return CacheSize.CW_SIZE_MICRO;
+	    }
+	    else if ("small".equalsIgnoreCase(containerSizeText)){
 		return CacheSize.CW_SIZE_SMALL;
 	    }
 	    else if ("regular".equalsIgnoreCase(containerSizeText)){
