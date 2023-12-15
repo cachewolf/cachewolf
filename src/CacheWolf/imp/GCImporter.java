@@ -2597,7 +2597,7 @@ public class GCImporter {
      * @param chD The previously fetched wayPointPage
      * @return A HTML formatted string with bug names and there purpose
      */
-    public void getBugs(CacheHolderDetail chD) throws Exception {
+    private void getBugs(CacheHolderDetail chD) throws Exception {
         chD.getTravelbugs().clear();
         if (wayPointPage.indexOf("ctl00_ContentBody_uxTravelBugList_uxNoTrackableItemsLabel") >= 0) {
             return; // there are no trackables
@@ -3045,7 +3045,7 @@ public class GCImporter {
         chD.getParent().setAttribsAsBits(chD.getAttributes().getAttribsAsBits());
     }
 
-    public String encodeUTF8URL(byte[] what) {
+    private String encodeUTF8URL(byte[] what) {
         final int max = what.length;
         // Assume each char is a UTF char and encoded into 6 chars
         final char[] dest = new char[6 * max];
@@ -3124,34 +3124,6 @@ public class GCImporter {
             return exDetails.findNext();
         } catch (final Exception ex) {
             Preferences.itself().log("[getBugMissionByGuid] Error getting TB " + guid, ex);
-            return "";
-        }
-    }
-
-    /**
-     * Fetch a bug's mission for a given tracking number
-     *
-     * @param trackNr the tracking number of the travelbug
-     * @return The mission
-     */
-    public String getBugMissionByTrackNr(String trackNr) {
-        String bugDetails;
-        try {
-            bugDetails = UrlFetcher.fetch(getBugByTrackNrUrl + trackNr);
-            Preferences.itself().log("[getBugMissionByTrackNr] Fetched bug detailsByTrackNr: " + trackNr);
-        } catch (final Exception ex) {
-            Preferences.itself().log("[getBugMissionByTrackNr] getBugByTrackNr " + trackNr, ex);
-            bugDetails = "";
-        }
-        try {
-            if (bugDetails.indexOf(bugNotFound) >= 0) {
-                Preferences.itself().log("[getBugMissionByTrackNr], bugNotFound " + trackNr, null);
-                return "";
-            }
-            final Extractor exDetails = new Extractor(bugDetails, bugDetailsStart, bugDetailsEnd, 0, Extractor.EXCLUDESTARTEND);
-            return exDetails.findNext();
-        } catch (final Exception ex) {
-            Preferences.itself().log("[getBugMissionByTrackNr] TB Details, bugNotFound " + trackNr, ex);
             return "";
         }
     }
