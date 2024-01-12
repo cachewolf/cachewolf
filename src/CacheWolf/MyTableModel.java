@@ -188,8 +188,9 @@ public class MyTableModel extends TableModel {
         // Convert to string
         StringBuffer sb = new StringBuffer(100);
         for (int i = 0; i < N_COLUMNS; i++) {
-            if (sb.length() != 0)
+            if (sb.length() != 0) {
                 sb.append(',');
+            }
             sb.append(colWidth[i]);
         }
         return sb.toString();
@@ -213,16 +214,18 @@ public class MyTableModel extends TableModel {
                         // check if main wpt is filtered
                         if (ch.mainCache != null) { // parent exists
                             if (!ch.mainCache.isVisible())
+                            {
                                 sortDB.add(ch); // Unfiltered Addi Wpt with
-                            // filtered Main Wpt, show it on
-                            // its own
-                            // else
-                            // Main cache is not filtered, Addi will be added
-                            // below main cache further down
-                            // This case doesn't seem to be a problem. It occurs
-                            // regularly, when
-                            // filtered addis are unfiltered, so there is not
-                            // need to log this case.
+                                // filtered Main Wpt, show it on
+                                // its own
+                                // else
+                                // Main cache is not filtered, Addi will be added
+                                // below main cache further down
+                                // This case doesn't seem to be a problem. It occurs
+                                // regularly, when
+                                // filtered addis are unfiltered, so there is not
+                                // need to log this case.
+                            }
                         } else { // Addi without main Cache
                             sortDB.add(ch);
                         }
@@ -231,8 +234,9 @@ public class MyTableModel extends TableModel {
                         if (ch.hasAddiWpt()) {
                             for (int j = 0; j < ch.addiWpts.getCount(); j++) {
                                 addiWpt = (CacheHolder) ch.addiWpts.get(j);
-                                if (addiWpt.isVisible())
+                                if (addiWpt.isVisible()) {
                                     sortDB.add(addiWpt);
+                                }
                             }
                         }// if hasAddiWpt
                     } // if AddiWpt
@@ -254,6 +258,7 @@ public class MyTableModel extends TableModel {
      *
      * @see ewe.ui.TableModel#getCellAttributes(int, int, boolean, ewe.ui.TableCellAttributes)
      */
+    @Override
     public TableCellAttributes getCellAttributes(int row, int col, boolean isSelected, TableCellAttributes ta) {
         ta = super.getCellAttributes(row, col, isSelected, ta);
         ta.alignment = CellConstants.LEFT;
@@ -269,14 +274,18 @@ public class MyTableModel extends TableModel {
                     // Selected lines are not considered, so far
                     CacheHolder ch = cacheDB.get(row);
                     if (ch != null) {
-                        if (ch.isOwned())
+                        if (ch.isOwned()) {
                             lineColorBG.set(COLOR_OWNED);
-                        else if (ch.isFound())
+                        }
+                        else if (ch.isFound()) {
                             lineColorBG.set(COLOR_FOUND);
-                        else if (ch.isFlagged)
+                        }
+                        else if (ch.isFlagged) {
                             lineColorBG.set(COLOR_FLAGED);
-                        else if (ch.getStatus().indexOf(MyLocale.getMsg(319, "not found")) > -1)
+                        }
+                        else if (ch.getStatus().indexOf(MyLocale.getMsg(319, "not found")) > -1) {
                             lineColorBG.set(COLOR_STATUS);
+                        }
                         else if (Preferences.itself().debug && ch.detailsLoaded()) {
                             lineColorBG.set(COLOR_DETAILS_LOADED);
                         }
@@ -334,17 +343,22 @@ public class MyTableModel extends TableModel {
         colorMerged.set((colorA.getRed() + colorB.getRed()) / 2, (colorA.getGreen() + colorB.getGreen()) / 2, (colorA.getBlue() + colorB.getBlue()) / 2);
     }
 
+    @Override
     public int calculateRowHeight(int row) {
         return java.lang.Math.max(18, charHeight + 4);
     }
 
+    @Override
     public int calculateColWidth(int col) {
-        if (col == -1)
+        if (col == -1) {
             return 0;
-        else if (col < numCols)
+        }
+        else if (col < numCols) {
             return colWidth[colMap[col]];
-        else
+        }
+        else {
             return 0;
+        }
     }
 
     /**
@@ -352,10 +366,12 @@ public class MyTableModel extends TableModel {
      *
      * @author skg
      */
+    @Override
     public Object getCellText(int row, int col) {
         return null;
     }
 
+    @Override
     public Object getCellData(int row, int col) {
         if (row == -1) {
             if (colMap[col] == sortedBy && isSorted) {
@@ -376,10 +392,12 @@ public class MyTableModel extends TableModel {
                 // needed here??
                 switch (colMap[col]) { // Faster than using column names
                     case 0: // Checkbox
-                        if (ch.isChecked)
+                        if (ch.isChecked) {
                             return checkboxTicked;
-                        else
+                        }
+                        else {
                             return checkboxUnticked;
+                        }
                     case 1: // Type
                         return CacheType.getTypeImage(ch.getType());
                     case 2: // Difficulty;
@@ -397,23 +415,28 @@ public class MyTableModel extends TableModel {
                     case 4: // Waypoint
                         if (showExtraWptInfo) {
                             IconAndText iat = ch.getModificationIcon(fm);
-                            if (iat != null)
+                            if (iat != null) {
                                 return iat;
+                            }
                         }
                         return ch.getCode();
                     case 5: // Cachename
                         // Fast return for majority of case
-                        if (!showExtraWptInfo || (ch.hasBugs() == false && ch.getNoFindLogs() == 0))
+                        if (!showExtraWptInfo || (ch.hasBugs() == false && ch.getNoFindLogs() == 0)) {
                             return ch.getName();
+                        }
                         // Now need more checks
                         IconAndText wpVal = new IconAndText();
-                        if (ch.hasBugs())
+                        if (ch.hasBugs()) {
                             wpVal.addColumn(bug);
+                        }
                         if (ch.getNoFindLogs() > 0) {
-                            if (ch.getNoFindLogs() > noFindLogs.length)
+                            if (ch.getNoFindLogs() > noFindLogs.length) {
                                 wpVal.addColumn(noFindLogs[noFindLogs.length - 1]);
-                            else
+                            }
+                            else {
                                 wpVal.addColumn(noFindLogs[ch.getNoFindLogs() - 1]);
+                            }
                         }
                         wpVal.addColumn(ch.getName());
                         return wpVal;
@@ -438,21 +461,26 @@ public class MyTableModel extends TableModel {
                     case 13: // OC / gcvote Bewertung
                         return ch.getRecommended();
                     case 14: //
-                        if (ch.isGC())
+                        if (ch.isGC()) {
                             return ch.getIdOC();
+                        }
                         else {
                             return OC.getGCWayPoint(ch.getOwner());
                         }
                     case 15: // Is solver filled?
-                        if (ch.hasSolver())
+                        if (ch.hasSolver()) {
                             return picHasSolver;
-                        else
+                        }
+                        else {
                             return null;
+                        }
                     case 16: // Does note exist?
-                        if (ch.hasNote())
+                        if (ch.hasNote()) {
                             return picHasNotes;
-                        else
+                        }
+                        else {
                             return null;
+                        }
                     case 17: // Number of Additional Waypoints;
                         if (ch.mainCache == null && ch.addiWpts.size() > 0) {
                             return String.valueOf(ch.addiWpts.size());
@@ -468,15 +496,19 @@ public class MyTableModel extends TableModel {
                     case 19: // Last sync date
                         return DateFormat.formatLastSyncDate(ch.getLastSync(), "yyyy-MM-dd HH:mm");
                     case 20: // PM
-                        if (ch.isPremiumCache())
+                        if (ch.isPremiumCache()) {
                             return picIsPM;
-                        else
+                        }
+                        else {
                             return null;
+                        }
                     case 21: // isSolved
-                        if (ch.isSolved())
+                        if (ch.isSolved()) {
                             return picIsSolved;
-                        else
+                        }
+                        else {
                             return null;
+                        }
                 } // Switch
             } // if
         } catch (Exception e) {
@@ -487,10 +519,12 @@ public class MyTableModel extends TableModel {
     }
 
     //Overrides: penPressed(...) in TableModel
+    @Override
     public boolean penPressed(Point onTable, Point cell) {
         boolean retval = false;
-        if (cell == null)
+        if (cell == null) {
             return false;
+        }
         try {
             // Check whether the click is on the checkbox image
             myTableControl.clickedColumn = colMap[cell.x];
@@ -499,10 +533,12 @@ public class MyTableModel extends TableModel {
                 if ((penEventModifiers & IKeys.SHIFT) > 0) {
                     if (myTableControl.cursor.y >= 0) {
                         // Second row being marked with shift key pressed
-                        if (myTableControl.cursor.y < cell.y)
+                        if (myTableControl.cursor.y < cell.y) {
                             toggleSelect(myTableControl.cursor.y + 1, cell.y, cell.x);
-                        else
+                        }
+                        else {
                             toggleSelect(cell.y, myTableControl.cursor.y - 1, cell.x);
+                        }
                     } else {
                         // Remember this row as start of range, but don't toggle yet
                     }
@@ -515,10 +551,12 @@ public class MyTableModel extends TableModel {
                 // but we have to sort by the column it is mapped into
                 int mappedCol = colMap[cell.x];
                 boolean sortvalue = true;
-                if (mappedCol == 0)
+                if (mappedCol == 0) {
                     sortvalue = !showExtraWptInfo;
-                else if (mappedCol == sortedBy)
+                }
+                else if (mappedCol == sortedBy) {
                     sortvalue = !sortAscending;
+                }
                 sortTable(mappedCol, sortvalue);
                 retval = true;
             }
@@ -536,10 +574,11 @@ public class MyTableModel extends TableModel {
             // Hide/unhide the additional information about a waypoint such as
             // travelbugs/number of notfound logs/yellow circle/red circle etc.
             // This helps on small PDA screens
-            if (mappedCol == 0)
+            if (mappedCol == 0) {
                 showExtraWptInfo = howToDo;
+            }
         }
-	else {
+        else {
             sortAscending = howToDo;
             Vm.showWait(true);
             // get selected Cache
@@ -547,17 +586,18 @@ public class MyTableModel extends TableModel {
             CacheHolder ch = null;
             if ((a != null) && (a.y >= 0) && (a.y < cacheDB.size())){
                 ch = cacheDB.get(a.y);
-	    }
+            }
             cacheDB.sort(new MyComparer(cacheDB, sortedBy, numRows), !sortAscending);
             updateRows();
             // select previously selected Cache again
             if (ch != null) {
                 int rownum = MainForm.profile.getCacheIndex(ch.getCode());
-                if (rownum >= 0)
+                if (rownum >= 0) {
                     myTableControl.cursorTo(rownum, 0, true);
+                }
             }
             this.isSorted = true;
-	    MainForm.profile.notifyUnsavedChanges(true);
+            MainForm.profile.notifyUnsavedChanges(true);
             Vm.showWait(false);
         }
 
@@ -624,6 +664,7 @@ public class MyTableModel extends TableModel {
     }
 
     // Overrides
+    @Override
     public void select(int row, int col, boolean selectOn) {
         myTableControl.cursorTo(row, col, true);
     }
@@ -639,145 +680,147 @@ public class MyTableModel extends TableModel {
 class MyComparer implements Comparer {
     Vector cacheDB;
 
-    public MyComparer(CacheDB cacheDB, int colToCompare, int visibleSize) {
+    //Mysterious, qualified import is required here, otherwise Java tries to load the class Cachewolf.database
+    public MyComparer(CacheWolf.database.CacheDB cacheDB, int colToCompare, int visibleSize) {
         if (visibleSize < 2){
             return;
-	}
-	
+        }
+
         for (int i = visibleSize; i < cacheDB.size(); i++) {
             CacheHolder ch = cacheDB.get(i);
             ch.sort = "\uFFFF";
         }
-	
-	for (int i = 0; i < visibleSize; i++) {
-	    CacheHolder ch = cacheDB.get(i);
-	    switch(colToCompare){
-	    case 1:
-		ch.sort = String.valueOf(ch.getType());
-		break;
-	    case 2:
-		ch.sort = String.valueOf(ch.getDifficulty());
-		break;
-	    case 3:
-		ch.sort = String.valueOf(ch.getTerrain());
-		break;
-	    case 4:
-		ch.sort = ch.getCode().toUpperCase();
-		break;
-	    case 5:
-		ch.sort = ch.getName().trim().toLowerCase();
-		break;
-	    case 6:
-		ch.sort = ch.getWpt().toString();
-		break;
-	    case 7:
-		ch.sort = ch.getOwner().toLowerCase();
-		break;
-	    case 8:
-		ch.sort = ch.getHidden();
-		break;
-	    case 9:
-		ch.sort = ch.getStatus();
-		break;
-	    case 10:
-		// CHECK Is the formatting correctly done?
-		if (ch.kilom == -1.0) {
-		    ch.sort = "\uFFFF";
-		}
-		else {
-		    ch.sort = Common.formatDouble(ch.kilom * 1000, "000000000000");
-		}
-		break;
-	    case 11:
-		if (ch.getBearing().equals("?")) {
-		    ch.sort = "\uFFFF";
-		}
-		else {
-		    ch.sort = ch.getBearing();
-		}
-		break;        
-	    case 12:
-		ch.sort = Integer.toString(ch.getSize());
-		break;
-	    case 13:
-		if (ch.isOC()) {
-		    ch.sort = MyLocale.formatLong(LogList.getScore(ch.getNumRecommended(), ch.getNumFoundsSinceRecommendation()), "000") + MyLocale.formatLong(ch.getNumRecommended(), "00000");
-		}
-		else {
-		    if (Preferences.itself().useGCFavoriteValue) {
-			ch.sort = MyLocale.formatLong(ch.getNumRecommended(), "000000") + "00000000";
-		    }
-		    else {
-			int gcVote = ch.getNumRecommended();
-			if (gcVote < 100) {
-			    ch.sort = MyLocale.formatLong(gcVote, "000") + "00000000";
-			}
-			else {
-			    int votes = gcVote / 100;
-			    gcVote = gcVote - 100 * votes;
-			    ch.sort = MyLocale.formatLong(gcVote, "000") + MyLocale.formatLong(votes, "00000000");
-			}
-		    }
-		}
-		break;
-	    case 14:
-		if (ch.isGC()){
-		    if (ch.getIdOC().length() == 0){
-			ch.sort = "\uFFFF";
-		    }
-		    else{
-			ch.sort = ch.getIdOC();
-		    }
-		}
-		else {
-		    ch.sort = OC.getGCWayPoint(ch.getOwner());
-		    if (ch.sort.length() == 0){
-			ch.sort = "\uFFFF"; // ans Ende
-		    }
-		}
-		break;
-	    case 15:
-		if (ch.hasSolver()) {
-		    ch.sort = "1";
-		}
-		else {
-		    ch.sort = "2";
-		}
-		break;
-	    case 16:
-		if (ch.hasNote()) {
-		    ch.sort = "1";
-		}
-		else {
-		    ch.sort = "2";
-		}
-		break;
-	    case 17:
-		ch.sort = MyLocale.formatLong(ch.addiWpts.size(), "000");
-		break;
-	    case 18:
-		ch.sort = MyLocale.formatLong(ch.getNoFindLogs(), "000");
-		break;
-	    case 19:
-		ch.sort = ch.getLastSync();
-		break;
-	    case 20:
-		if (ch.isPremiumCache()) {
-		    ch.sort = "1";
-		} else {
-		    ch.sort = "2";
-		}
-		break;
-	    case 21:
-		if (ch.isSolved()) {
-		    ch.sort = "1";
-		} else {
-		    ch.sort = "2";
-		}
-	    }
-	}
+
+        for (int i = 0; i < visibleSize; i++) {
+            CacheHolder ch = cacheDB.get(i);
+            switch(colToCompare){
+                case 1:
+                    ch.sort = String.valueOf(ch.getType());
+                    break;
+                case 2:
+                    ch.sort = String.valueOf(ch.getDifficulty());
+                    break;
+                case 3:
+                    ch.sort = String.valueOf(ch.getTerrain());
+                    break;
+                case 4:
+                    ch.sort = ch.getCode().toUpperCase();
+                    break;
+                case 5:
+                    ch.sort = ch.getName().trim().toLowerCase();
+                    break;
+                case 6:
+                    ch.sort = ch.getWpt().toString();
+                    break;
+                case 7:
+                    ch.sort = ch.getOwner().toLowerCase();
+                    break;
+                case 8:
+                    ch.sort = ch.getHidden();
+                    break;
+                case 9:
+                    ch.sort = ch.getStatus();
+                    break;
+                case 10:
+                    // CHECK Is the formatting correctly done?
+                    if (ch.kilom == -1.0) {
+                        ch.sort = "\uFFFF";
+                    }
+                    else {
+                        ch.sort = Common.formatDouble(ch.kilom * 1000, "000000000000");
+                    }
+                    break;
+                case 11:
+                    if (ch.getBearing().equals("?")) {
+                        ch.sort = "\uFFFF";
+                    }
+                    else {
+                        ch.sort = ch.getBearing();
+                    }
+                    break;
+                case 12:
+                    ch.sort = Integer.toString(ch.getSize());
+                    break;
+                case 13:
+                    if (ch.isOC()) {
+                        ch.sort = MyLocale.formatLong(LogList.getScore(ch.getNumRecommended(), ch.getNumFoundsSinceRecommendation()), "000") + MyLocale.formatLong(ch.getNumRecommended(), "00000");
+                    }
+                    else {
+                        if (Preferences.itself().useGCFavoriteValue) {
+                            ch.sort = MyLocale.formatLong(ch.getNumRecommended(), "000000") + "00000000";
+                        }
+                        else {
+                            int gcVote = ch.getNumRecommended();
+                            if (gcVote < 100) {
+                                ch.sort = MyLocale.formatLong(gcVote, "000") + "00000000";
+                            }
+                            else {
+                                int votes = gcVote / 100;
+                                gcVote = gcVote - 100 * votes;
+                                ch.sort = MyLocale.formatLong(gcVote, "000") + MyLocale.formatLong(votes, "00000000");
+                            }
+                        }
+                    }
+                    break;
+                case 14:
+                    if (ch.isGC()){
+                        if (ch.getIdOC().length() == 0){
+                            ch.sort = "\uFFFF";
+                        }
+                        else{
+                            ch.sort = ch.getIdOC();
+                        }
+                    }
+                    else {
+                        ch.sort = OC.getGCWayPoint(ch.getOwner());
+                        if (ch.sort.length() == 0){
+                            ch.sort = "\uFFFF"; // ans Ende
+                        }
+                    }
+                    break;
+                case 15:
+                    if (ch.hasSolver()) {
+                        ch.sort = "1";
+                    }
+                    else {
+                        ch.sort = "2";
+                    }
+                    break;
+                case 16:
+                    if (ch.hasNote()) {
+                        ch.sort = "1";
+                    }
+                    else {
+                        ch.sort = "2";
+                    }
+                    break;
+                case 17:
+                    ch.sort = MyLocale.formatLong(ch.addiWpts.size(), "000");
+                    break;
+                case 18:
+                    ch.sort = MyLocale.formatLong(ch.getNoFindLogs(), "000");
+                    break;
+                case 19:
+                    ch.sort = ch.getLastSync();
+                    break;
+                case 20:
+                    if (ch.isPremiumCache()) {
+                        ch.sort = "1";
+                    } else {
+                        ch.sort = "2";
+                    }
+                    break;
+                case 21:
+                    if (ch.isSolved()) {
+                        ch.sort = "1";
+                    } else {
+                        ch.sort = "2";
+                    }
+            }
+        }
     }
 
+    @Override
     public int compare(Object o1, Object o2) {
         CacheHolder oo1 = (CacheHolder) o1;
         CacheHolder oo2 = (CacheHolder) o2;

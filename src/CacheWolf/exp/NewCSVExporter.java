@@ -18,7 +18,7 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
-*/
+ */
 package CacheWolf.exp;
 
 import CacheWolf.Preferences;
@@ -45,7 +45,7 @@ public class NewCSVExporter extends Exporter {
     static int daysOfMonth[] = new int[]{31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
     private int what;
     /* */
-    // Prüfung ownlog
+    // Prï¿½fung ownlog
     private GCImporter spider = null;
     private boolean doit = true;
     /* */
@@ -65,24 +65,28 @@ public class NewCSVExporter extends Exporter {
         this.setExportMethod(EXPORT_METHOD_NO_PARAMS);
         this.what = what;
     }
-    // Ende Prüfung ownlog
+    // Ende Prï¿½fung ownlog
     /* */
 
     private static int getDays(int day, int month, int year)
     //-------------------------------------------------------------------
     {
         int ret = -1;
-        if (year < 1600)
+        if (year < 1600) {
             return ret;
+        }
         int yearsPast = (year - 1600 - 1);
         int leaps = yearsPast / 4 - (yearsPast / 100) + (yearsPast / 400);
-        if (yearsPast >= 1)
+        if (yearsPast >= 1) {
             leaps++;
-        if (month > 2 && Time.isLeapYear(year))
+        }
+        if (month > 2 && Time.isLeapYear(year)) {
             leaps++;
+        }
         int daysPast = leaps;
-        for (int i = 1; i < month; i++)
+        for (int i = 1; i < month; i++) {
             daysPast += daysOfMonth[i - 1];
+        }
         daysPast += day - 1;
         daysPast += (yearsPast + 1) * 365;
         return daysPast;
@@ -93,10 +97,12 @@ public class NewCSVExporter extends Exporter {
     }
     /* */
 
+    @Override
     public String header() {
         return null;
     }
 
+    @Override
     public String record(CacheHolder ch) {
         switch (what) {
             case CHECKOWNLOG:
@@ -118,6 +124,7 @@ public class NewCSVExporter extends Exporter {
         }
     }
 
+    @Override
     public String trailer() {
         switch (what) {
             case SUMPERDAY:
@@ -128,8 +135,9 @@ public class NewCSVExporter extends Exporter {
     }
 
     private String checkOwnLog(CacheHolder ch) {
-        if (spider == null)
+        if (spider == null) {
             spider = new GCImporter();
+        }
         if (doit) {
             Preferences.itself().log(ch.getCode(), null);
             if (spider.isFoundByMe(ch)) {
@@ -167,7 +175,7 @@ public class NewCSVExporter extends Exporter {
 
     public String differentReviewers(CacheHolder ch) {
         CacheHolderDetail chD = ch.getDetails();
-        //if (chD.State.equals("Baden-Württemberg")) {
+        //if (chD.State.equals("Baden-Wï¿½rttemberg")) {
         int anz = chD.getCacheLogs().size();
         for (int i = anz - 1; i >= 0; i--) {
             Log log = chD.getCacheLogs().getLog(i);
@@ -211,8 +219,9 @@ public class NewCSVExporter extends Exporter {
     }
 
     private String noFoundsForXDays(CacheHolder ch) {
-        if (ch.isAddiWpt())
+        if (ch.isAddiWpt()) {
             return null;
+        }
         CacheHolderDetail chD = ch.getDetails();
         LogList logs = chD.getCacheLogs();
         Time ownDate = DateFormat.toDate(chD.getOwnLog().getDate(), Log.DATEFORMAT);
@@ -235,8 +244,8 @@ public class NewCSVExporter extends Exporter {
             }
             if (theLog.isPublishLog() || (theLog.isArchivedLog() && !unarchiveStatus)) {
                 // ownDate before logDate
-                // es könnte noch ein foundlog vor dem publish kommen
-                // es könnte ein log nach dem archive kommen der aber durch unarchive aufgehoben ist
+                // es kÃ¶nnte noch ein foundlog vor dem publish kommen
+                // es kÃ¶nnte ein log nach dem archive kommen der aber durch unarchive aufgehoben ist
                 diffDays = 0;
                 break;
             }
@@ -257,8 +266,9 @@ public class NewCSVExporter extends Exporter {
     }
 
     private String possibleFTF(CacheHolder ch) {
-        if (ch.isAddiWpt())
+        if (ch.isAddiWpt()) {
             return null;
+        }
         byte chType = ch.getType();
         if (chType == CacheType.CW_TYPE_CITO || chType == CacheType.CW_TYPE_EVENT || chType == CacheType.CW_TYPE_GIGA_EVENT || chType == CacheType.CW_TYPE_MEGA_EVENT) {
             return null;
@@ -282,7 +292,7 @@ public class NewCSVExporter extends Exporter {
                     return null;
                 }
             }
-	    else if (theLog.isPublishLog()) {
+            else if (theLog.isPublishLog()) {
                 StringBuffer str = new StringBuffer(200);
                 str.append("\"" + ch.getCode() + "\";");
                 str.append("\"" + ch.getName() + "\";");
@@ -294,8 +304,9 @@ public class NewCSVExporter extends Exporter {
     }
 
     private String placedEqualsFoundDayMonth(CacheHolder ch) {
-        if (ch.isAddiWpt())
+        if (ch.isAddiWpt()) {
             return null;
+        }
         CacheHolderDetail chD = ch.getDetails();
         String sOwnDate;
         try {
@@ -315,8 +326,9 @@ public class NewCSVExporter extends Exporter {
     }
 
     private String GsakLog2Notes(CacheHolder ch) {
-        if (ch.isAddiWpt())
+        if (ch.isAddiWpt()) {
             return null;
+        }
         CacheHolderDetail chD = ch.getDetails();
         LogList logs = chD.getCacheLogs();
         for (int i = 0; i < logs.size(); i++) {
