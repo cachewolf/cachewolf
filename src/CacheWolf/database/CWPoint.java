@@ -71,7 +71,7 @@ public class CWPoint extends CoordinatePoint {
     /**
      * Create CWPoint by using coordinates in "CacheWolf" format
      *
-     * @param coord  String of type N 49° 33.167 E 011° 21.608
+     * @param coord  String of type N 49Â° 33.167 E 011Â° 21.608
      * @param format only CWPoint.CW or CWPoint.REGEX is supported
      */
     public CWPoint(String coord, int format) {
@@ -82,7 +82,7 @@ public class CWPoint extends CoordinatePoint {
     /**
      * set lat and lon by parsing coordinates with Regex
      *
-     * @param coord String like N 49° 33.167 E 011° 21.608
+     * @param coord String like N 49Â° 33.167 E 011Â° 21.608
      */
     public CWPoint(String coord) {
         set(coord);
@@ -186,7 +186,7 @@ public class CWPoint extends CoordinatePoint {
     /**
      * set lat and lon by using coordinates in "CacheWolf" format
      *
-     * @param coord  String of type N 49° 33.167 E 011° 21.608
+     * @param coord  String of type N 49Â° 33.167 E 011Â° 21.608
      * @param format only CWPoint.CW is supported
      */
     public void set(String coord, int format) {
@@ -221,7 +221,7 @@ public class CWPoint extends CoordinatePoint {
     /**
      * set lat and lon by parsing coordinates with regular expression
      *
-     * @param coord String of type N 49° 33.167 E 011° 21.608
+     * @param coord String of type N 49Â° 33.167 E 011Â° 21.608
      *              or -12.3456 23.4567
      *              or 32U 2345234 8902345
      */
@@ -229,10 +229,10 @@ public class CWPoint extends CoordinatePoint {
         //replace non-breaking-spaces by normal spaces
         coord = coord.replace((char) 0xA0, ' ');
 	/*		(?:
-				([NSns])\s*([0-9]{1,2})[\s°]+([0-9]{1,2})(?:\s+([0-9]{1,2}))?[,.]([0-9]{1,8})\s*
-				([EWewOo])\s*([0-9]{1,3})[\s°]+([0-9]{1,2})(?:\s+([0-9]{1,2}))?[,.]([0-9]{1,8})
+				([NSns])\s*([0-9]{1,2})[\sÂ°]+([0-9]{1,2})(?:\s+([0-9]{1,2}))?[,.]([0-9]{1,8})\s*
+				([EWewOo])\s*([0-9]{1,3})[\sÂ°]+([0-9]{1,2})(?:\s+([0-9]{1,2}))?[,.]([0-9]{1,8})
 				)|(?:
-				  ([+-NnSs]?[0-9]{1,2})[,.]([0-9]{1,8})(?:(?=\+)|(?=-)|\s+|\s*°\s*)([+-WwEeOo]?[0-9]{1,3})[,.]([0-9]{1,8})\s*[°]?
+				  ([+-NnSs]?[0-9]{1,2})[,.]([0-9]{1,8})(?:(?=\+)|(?=-)|\s+|\s*Â°\s*)([+-WwEeOo]?[0-9]{1,3})[,.]([0-9]{1,8})\s*[Â°]?
 				)|(?:
 				   ([0-9]{1,2}[C-HJ-PQ-X])\s*[EeOo]?\s*([0-9]{1,7})\s+[Nn]?\s*([0-9]{1,7})
 				)
@@ -246,11 +246,11 @@ public class CWPoint extends CoordinatePoint {
                 coord = coord.substring(coord.indexOf(' ') + 1, coord.length());
             }
         }
-        Regex rex = new Regex("(?:" + "([NSns])\\s*([0-9]{1,2})(?:[°\uC2B0]\\s*|\\s+[°\uC2B0]?\\s*)([0-9]{1,2})(?:(?:['’]\\s*|\\s+['’]?\\s*)([0-9]{1,2}))?(?:[,.]([0-9]{1,8}))?\\s*['’\"]?\\s*"
+        Regex rex = new Regex("(?:" + "([NSns])\\s*([0-9]{1,2})(?:[Â°\uC2B0]\\s*|\\s+[Â°\uC2B0]?\\s*)([0-9]{1,2})(?:(?:['Â’]\\s*|\\s+['\u2019]?\\s*)([0-9]{1,2}))?(?:[,.]([0-9]{1,8}))?\\s*['02019\"]?\\s*"
                 + "[,./_;+:-]*\\s*"
                 + // allow N xx xx.xxx / E xxx xx.xxx
-                "([EWewOo])\\s*([0-9]{1,3})(?:[°\uC2B0]\\s*|\\s+[°\uC2B0]?\\s*)([0-9]{1,2})(?:(?:['’]\\s*|\\s+['’]?\\s*)([0-9]{1,2}))?(?:[,.]([0-9]{1,8}))?\\s*['’\"]?" + ")|(?:" + "(?:([NnSs])\\s*(?![+-]))?"
-                + "([+-]?[0-9]{1,2})[,.]([0-9]{1,8})(?:(?=[+-EeWwOo])|\\s+|\\s*[°\uC2B0]\\s*)" + "[,./_;:]*\\s*" + "(?:([EeWwOo])\\s*(?![+-]))?" + "([+-]?[0-9]{1,3})[,.]([0-9]{1,8})\\s*[°\uC2B0]?" + ")|(?:"
+                "([EWewOo])\\s*([0-9]{1,3})(?:[Â°\uC2B0]\\s*|\\s+[Â°\uC2B0]?\\s*)([0-9]{1,2})(?:(?:['\u2019]\\s*|\\s+['\u2019]?\\s*)([0-9]{1,2}))?(?:[,.]([0-9]{1,8}))?\\s*['\u2019\"]?" + ")|(?:" + "(?:([NnSs])\\s*(?![+-]))?"
+                + "([+-]?[0-9]{1,2})[,.]([0-9]{1,8})(?:(?=[+-EeWwOo])|\\s+|\\s*[Â°\uC2B0]\\s*)" + "[,./_;:]*\\s*" + "(?:([EeWwOo])\\s*(?![+-]))?" + "([+-]?[0-9]{1,3})[,.]([0-9]{1,8})\\s*[Â°\uC2B0]?" + ")|(?:"
                 + "([0-9]{1,2}[C-HJ-PQ-X])\\s*[EeOo]?\\s*([0-9]{1,7})\\s+[Nn]?\\s*([0-9]{1,7})" + ")|(?:" + "[Rr]:?\\s*([+-]?[0-9]{1,7})\\s+[Hh]:?\\s*([+-]?[0-9]{1,7})" + ")|(?:" + "([\\-]{0,1}[0-9]{1,8})\\s+([\\-]{0,1}[0-9]{1,8})" + // projected easting northing
                 ")");
         this.makeInvalid(); //return unset / unvalid values if parsing was not successfull
@@ -636,10 +636,10 @@ public class CWPoint extends CoordinatePoint {
 
     /**
      * Returns the string reprenstation of the CWPoint
-     * Format ist CacheWolf (N 49° 33.167 E 011° 21.608), which can be used
+     * Format ist CacheWolf (N 49Â° 33.167 E 011Â° 21.608), which can be used
      * with parseLatLon
      *
-     * @return string like N 49° 33.167 E 011° 21.608
+     * @return string like N 49Â° 33.167 E 011Â° 21.608
      */
     public String toString() {
         return toString(TransformCoordinates.DMM);
@@ -657,11 +657,11 @@ public class CWPoint extends CoordinatePoint {
             return MyLocale.getMsg(999, "not set");
         switch (format) {
             case TransformCoordinates.DD:
-                return getNSLetter() + " " + STRreplace.replace(getLatDeg(format), "-", "") + "° " + getEWLetter() + " " + STRreplace.replace(getLonDeg(format), "-", "") + "°";
+                return getNSLetter() + " " + STRreplace.replace(getLatDeg(format), "-", "") + "Â° " + getEWLetter() + " " + STRreplace.replace(getLonDeg(format), "-", "") + "Â°";
             case TransformCoordinates.DMM:
-                return getNSLetter() + " " + getLatDeg(format) + "° " + getLatMin(format) + " " + getEWLetter() + " " + getLonDeg(format) + "° " + getLonMin(format);
+                return getNSLetter() + " " + getLatDeg(format) + "Â° " + getLatMin(format) + " " + getEWLetter() + " " + getLonDeg(format) + "Â° " + getLonMin(format);
             case TransformCoordinates.DMS:
-                return getNSLetter() + " " + getLatDeg(format) + "° " + getLatMin(format) + "\' " + getLatSec(format) + "\" " + getEWLetter() + " " + getLonDeg(format) + "° " + getLonMin(format) + "\' " + getLonSec(format) + "\"";
+                return getNSLetter() + " " + getLatDeg(format) + "Â° " + getLatMin(format) + "\' " + getLatSec(format) + "\" " + getEWLetter() + " " + getLonDeg(format) + "Â° " + getLonMin(format) + "\' " + getLonSec(format) + "\"";
             case TransformCoordinates.LAT_LON:
                 return getLatDeg(TransformCoordinates.DD) + "," + getLonDeg(TransformCoordinates.DD);
             case TransformCoordinates.LON_LAT:

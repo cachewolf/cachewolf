@@ -62,7 +62,7 @@ public class TablePanelStatusBar extends CellPanel {
         lblCenter = new mLabel("");
         lblCenter.setToolTip(MyLocale.getMsg(195, "Current centre"));
         // vermeide horizontales scrollen
-        // hängt auch von der Icongrösse / Schriftgrösse ab (ist so nicht korrekt)
+        // hÃ¤ngt auch von der IcongrÃ¶sse / SchriftgrÃ¶sse ab (ist so nicht korrekt)
         if (Preferences.itself().getScreenWidth() >= 640) {
             addLast(lblCenter, STRETCH, LEFT | FILL);
         }
