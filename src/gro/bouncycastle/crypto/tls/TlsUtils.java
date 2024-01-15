@@ -22,7 +22,7 @@ import gro.bouncycastle.asn1.x509.X509ObjectIdentifiers;
 import gro.bouncycastle.crypto.Digest;
 //import org.bouncycastle.crypto.digests.MD5Digest;
 import gro.bouncycastle.crypto.digests.SHA1Digest;
-//import org.bouncycastle.crypto.digests.SHA224Digest;
+import gro.bouncycastle.crypto.digests.SHA224Digest;
 import gro.bouncycastle.crypto.digests.SHA256Digest;
 //import org.bouncycastle.crypto.digests.SHA384Digest;
 import gro.bouncycastle.crypto.digests.SHA512Digest;
@@ -1193,8 +1193,7 @@ public class TlsUtils
         case HashAlgorithm.sha1:
             return new SHA1Digest();
         case HashAlgorithm.sha224:
-    	throw new UnsupportedClassVersionError();/*
-            return new SHA224Digest();*/
+            return new SHA224Digest();
         case HashAlgorithm.sha256:
             return new SHA256Digest();
         case HashAlgorithm.sha384:
@@ -1290,9 +1289,8 @@ public class TlsUtils
 */        case HashAlgorithm.sha1:
             return X509ObjectIdentifiers.id_SHA1;
         case HashAlgorithm.sha224:
-    	throw new UnsupportedClassVersionError();/*
             return NISTObjectIdentifiers.id_sha224;
-*/        case HashAlgorithm.sha256:
+        case HashAlgorithm.sha256:
             return NISTObjectIdentifiers.id_sha256;
         case HashAlgorithm.sha384:
     	throw new UnsupportedClassVersionError();/*
