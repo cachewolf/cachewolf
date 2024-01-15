@@ -67,7 +67,7 @@ public class Attribute {
             {"22", "2546", "parking", "A33", "25", "Parking available"},//
             {"23", "2548", "phone", "A37", "29", "Telephone nearby"},//
             {"24", "2550", "picnic", "0", "30", "Picnic tables nearby"},//
-            {"25", "2552", "poisonoak", "16", "17", "Poison plants"},//
+            {"25", "2552", "poisonoak", "A66", "17", "Poison plants"},//
             {"26", "2554", "public", "A34", "26", "Public transportation"},//
             {"27", "2556", "quads", "0", "34", "Quads"},//
             {"28", "2558", "rappelling", "49", "3", "Climbing gear"},//

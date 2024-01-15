@@ -23,6 +23,7 @@ package CacheWolf.database;
 
 import CacheWolf.*;
 import CacheWolf.utils.*;
+import CacheWolf.navi.TransformCoordinates;
 import com.stevesoft.ewe_pat.Regex;
 import ewe.fx.FontMetrics;
 import ewe.fx.IconAndText;
@@ -1130,9 +1131,9 @@ public class CacheHolder {
         sb.append("\" owner=\"");
         sb.append(SafeXML.string2Html(this.owner));
         sb.append("\" lat=\"");
-        sb.append(this.wpt.latDec);
+        sb.append(wpt.getLatDeg(TransformCoordinates.DD));
         sb.append("\" lon=\"");
-        sb.append(this.wpt.lonDec);
+        sb.append(wpt.getLonDeg(TransformCoordinates.DD));
         sb.append("\" hidden=\"");
         sb.append(this.hidden);
         sb.append("\" wayp=\"");
