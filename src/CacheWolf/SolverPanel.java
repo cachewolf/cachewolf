@@ -63,11 +63,13 @@ public class SolverPanel extends CellPanel {
         pnlStatButtons.addLast(pnlButtons, CellConstants.HSTRETCH, CellConstants.HFILL);
 
         if (Preferences.itself().tabsAtTop) {
-            if (Preferences.itself().menuAtTab)
+            if (Preferences.itself().menuAtTab) {
                 this.addLast(pnlStatButtons, HSTRETCH, HFILL).setTag(SPAN, new Dimension(3, 1));
+            }
         } else {
-            if (!Preferences.itself().menuAtTab)
+            if (!Preferences.itself().menuAtTab) {
                 this.addLast(pnlStatButtons, HSTRETCH, HFILL).setTag(SPAN, new Dimension(3, 1));
+            }
         }
 
         SplittablePanel split = new SplittablePanel(PanelSplitter.VERTICAL);
@@ -84,11 +86,13 @@ public class SolverPanel extends CellPanel {
         this.addLast(split);
 
         if (Preferences.itself().tabsAtTop) {
-            if (!Preferences.itself().menuAtTab)
+            if (!Preferences.itself().menuAtTab) {
                 this.addLast(pnlStatButtons, HSTRETCH, HFILL).setTag(SPAN, new Dimension(3, 1));
+            }
         } else {
-            if (Preferences.itself().menuAtTab)
+            if (Preferences.itself().menuAtTab) {
                 this.addLast(pnlStatButtons, HSTRETCH, HFILL).setTag(SPAN, new Dimension(3, 1));
+            }
         }
 
     }
@@ -132,6 +136,7 @@ public class SolverPanel extends CellPanel {
         ch = pCh;
     }
 
+    @Override
     public void setText(String what) {
         mText.setText(what);
     }
@@ -141,8 +146,9 @@ public class SolverPanel extends CellPanel {
     }
 
     public void setSelectionRange(int startChar, int startLine, int endChar, int endLine) {
-        if (MainTab.itself.solverPanel.mText.setSelectionRange(startChar, startLine, endChar, endLine))
+        if (MainTab.itself.solverPanel.mText.setSelectionRange(startChar, startLine, endChar, endLine)) {
             MainTab.itself.solverPanel.mText.repaintNow();
+        }
     }
 
     public void cls() {
@@ -157,16 +163,18 @@ public class SolverPanel extends CellPanel {
         InpScreen boxInp = new InpScreen(MyLocale.getMsg(1733, "Input command"));
         boxInp.input(parent.getFrame(), "", 100); //,Preferences.itself().getScreenWidth()*4/5);
         String s = boxInp.getInput();
-        if (s.equals("") || (boxInp.exitValue == FormBase.IDCANCEL))
+        if (s.equals("") || (boxInp.exitValue == FormBase.IDCANCEL)) {
             return;
+        }
         processCommand(s);
     }
 
     private void processCommand(String s) {
         msgFIFO.clear();
         tokeniser.tokenizeSource(s, msgFIFO); // Tokeniser sets message if an error occurred
-        if (msgFIFO.size() == 0)
+        if (msgFIFO.size() == 0) {
             parser.parse(tokeniser.TokenStack, msgFIFO);
+        }
         String msgStr = "";
         for (int i = 0; i < msgFIFO.size(); i++) {
             msgStr = msgStr + msgFIFO.get(i) + "\n";
@@ -181,6 +189,7 @@ public class SolverPanel extends CellPanel {
         mOutput.setText("");
     }
 
+    @Override
     public void onEvent(Event ev) {
         if (ev instanceof ControlEvent && ev.type == ControlEvent.PRESSED) {
             if (ev.target == mBtSolve) {
@@ -230,26 +239,32 @@ public class SolverPanel extends CellPanel {
             setMenu(mnuContext = getClipboardMenu(new Menu(new MenuItem[]{mnuClr = new MenuItem(MyLocale.getMsg(1734, "Clear output"))}, "")));
         }
 
+        @Override
         public void penRightReleased(Point p) {
             setMenu(mnuContext);
             doShowMenu(p); // direct call (not through doMenu) is neccesary because it will exclude the whole table
         }
 
+        @Override
         public void penHeld(Point p) {
             setMenu(mnuContext);
             doShowMenu(p);
         }
 
+        @Override
         public void popupMenuEvent(Object selectedItem) {
-            if (selectedItem == mnuClr)
+            if (selectedItem == mnuClr) {
                 this.setText("");
-            else
+            }
+            else {
                 super.popupMenuEvent(selectedItem);
+            }
         }
     }
 
     private class InputPanel extends mTextPad {
 
+        @Override
         public void penDoubleClicked(Point where) {
             execDirectCommand();
         }
@@ -264,5 +279,4 @@ public class SolverPanel extends CellPanel {
             return getInputValue();
         }
     }
-
 }
