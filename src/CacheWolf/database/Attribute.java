@@ -87,7 +87,7 @@ public class Attribute {
             {"41", "2584", "wheelchair", "0", "24", "Wheelchair accessible"},//
             {"42", "2586", "winter", "A47", "15", "Available during winter"},//
             {"43", "2588", "firstaid", "0", "42", "Firstaid"},// GC: Cachewartung notwendig (Auto Attribut) , OC: erste Hilfe
-            {"44", "2590", "flashlight", "48", "44", "Flashlight required"},//
+            {"44", "2590", "flashlight", "A52", "44", "Flashlight required"},//
             {"45", "2592", "aircraft", "53", "153", "Aircraft"},// OC special
             {"46", "2594", "animals", "17", "0", ""},// OC ?
             {"47", "2596", "arith_prob", "56", "156", "Arithmetical problem"}, // OC special
