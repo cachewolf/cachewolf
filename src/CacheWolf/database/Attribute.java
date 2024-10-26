@@ -70,7 +70,7 @@ public class Attribute {
             {"25", "2552", "poisonoak", "A66", "17", "Poison plants"},//
             {"26", "2554", "public", "A34", "26", "Public transportation"},//
             {"27", "2556", "quads", "0", "34", "Quads"},//
-            {"28", "2558", "rappelling", "49", "3", "Climbing gear"},//
+            {"28", "2558", "rappelling", "A53", "3", "Climbing gear"},//
             {"29", "2560", "restrooms", "21", "28", "Public restrooms nearby"},//
             {"30", "2562", "scenic", "0", "8", "Scenic view"},//
             {"31", "2564", "scuba", "51", "5", "Scuba gear"},//
