@@ -1544,13 +1544,13 @@ public abstract class TlsProtocol
         case CipherSuite.TLS_RSA_PSK_WITH_CAMELLIA_256_CBC_SHA384:
         case CipherSuite.TLS_RSA_PSK_WITH_NULL_SHA384:
         {
-            throw new UnsupportedClassVersionError();/*
             if (isTLSv12)
             {
+            throw new UnsupportedClassVersionError();/*
                 return PRFAlgorithm.tls_prf_sha384;
-            }
+*/            }
             return PRFAlgorithm.tls_prf_legacy;
-*/        }
+        }
 
         default:
         {
