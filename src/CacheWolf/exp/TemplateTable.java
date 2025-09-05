@@ -258,6 +258,9 @@ public class TemplateTable {
             case CacheType.CW_TYPE_MAZE:
                 varParams.put("IFMAZE", "MZ");
 	        break;
+            case CacheType.CW_TYPE_BLOCKPARTY:
+                varParams.put("IFBLOCKPARTY", "BP");
+                break;
    	    default:
                 varParams.put("IFUNKNOWN", "NN");
 	        break;
