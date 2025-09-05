@@ -123,6 +123,7 @@ public final class CacheType {
     public static final byte CW_TYPE_MAZE = 103;
     public static final byte CW_TYPE_LAB = 105;
     public static final byte CW_TYPE_GIGA_EVENT = 106;
+    public static final byte    CW_TYPE_BLOCKPARTY   = 107;
     // public static final int anzCacheTyps=cTypRef.length;
     public static final byte maxCWCType = 110;
     static final byte[] Ref_Index = new byte[maxCWCType];
@@ -144,6 +145,7 @@ public final class CacheType {
             new CTyp(CW_TYPE_LETTERBOX, (byte) 5, 'C', "5", "5", "", (byte) -123, 'L', "Letterbox", new String[]{"Geocache|Letterbox Hybrid", "Geocache", "Letterbox Hybrid", "Letterbox"}, 5, 3, 0x000008),
             new CTyp(CW_TYPE_EVENT, (byte) 6, 'C', "6", "6", "Event", (byte) -122, 'X', "Event", new String[]{"Geocache|Event Cache", "Geocache", "Event Cache", "Event"}, 6, 4, 0x000010),
             new CTyp(CW_TYPE_MEGA_EVENT, (byte) 100, 'C', "453", "453", "", (byte) 101, 'X', "Megaevent", new String[]{"Geocache|Mega-Event Cache", "Geocache", "Mega-Event Cache", "Mega"}, 14, 9, 0x000200),
+            new CTyp(CW_TYPE_BLOCKPARTY, (byte) 107, 'C', "4738", "4738", "", (byte) 101, 'X', "Event", new String[] {"Geocache|Event Cache", "Geocache", "Event Cache", "Event"}, 1213, 17, 0x200000)
             new CTyp(CW_TYPE_WEBCAM, (byte) 11, 'C', "11", "11", "Webcam", (byte) -117, 'W', "Webcam", new String[]{"Geocache|Webcam Cache", "Geocache", "Webcam Cache", "Webcam"}, 11, 5, 0x000020),
             new CTyp(CW_TYPE_MYSTERY, (byte) 8, 'C', "8", "8", "", (byte) -120, 'U', "Mystery", new String[]{"Geocache|Unknown Cache", "Geocache", "Unknown Cache", "Mystery"}, 8, 6, 0x000040),
             new CTyp(CW_TYPE_LOCATIONLESS, (byte) 12, 'C', "12", "12", "", (byte) -116, 'O', "Locless", new String[]{"Geocache|Locationless (Reverse) Cache", "Geocache", "Locationless (Reverse) Cache", "Locationless"}, 12, 8, 0x000080),
@@ -180,9 +182,9 @@ public final class CacheType {
     };
 
     public static byte[] guiOrder = {CacheType.CW_TYPE_CUSTOM, CacheType.CW_TYPE_TRADITIONAL, CacheType.CW_TYPE_MULTI, CacheType.CW_TYPE_VIRTUAL, CacheType.CW_TYPE_LETTERBOX //
-            , CacheType.CW_TYPE_EVENT, CacheType.CW_TYPE_MEGA_EVENT, CacheType.CW_TYPE_WEBCAM, CacheType.CW_TYPE_MYSTERY, CacheType.CW_TYPE_LOCATIONLESS //
+            , CacheType.CW_TYPE_EVENT, CacheType.CW_TYPE_BLOCKPARTY, CacheType.CW_TYPE_MEGA_EVENT, CacheType.CW_TYPE_GIGA_EVENT, CacheType.CW_TYPE_WEBCAM, CacheType.CW_TYPE_MYSTERY, CacheType.CW_TYPE_LOCATIONLESS //
             , CacheType.CW_TYPE_CITO, CacheType.CW_TYPE_EARTH, CacheType.CW_TYPE_WHEREIGO, CacheType.CW_TYPE_APE, CacheType.CW_TYPE_MAZE //
-            , CacheType.CW_TYPE_GIGA_EVENT, CacheType.CW_TYPE_LAB //
+            , CacheType.CW_TYPE_LAB //
             , CacheType.CW_TYPE_PARKING, CacheType.CW_TYPE_STAGE, CacheType.CW_TYPE_QUESTION, CacheType.CW_TYPE_FINAL, CacheType.CW_TYPE_TRAILHEAD, CacheType.CW_TYPE_REFERENCE //
     };
 
